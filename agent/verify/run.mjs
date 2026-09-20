@@ -472,6 +472,49 @@ async function main() {
   }
 
   const results = [];
+
+  // ── PRE-LIVE: the home is pushed, Pages is not enabled yet ──────────
+  // The same honest doctrine as the truth gate: until the site has once
+  // served a page, assertions against it measure a 404 that no visitor
+  // can reach - an operator-pending state, not an agent failure. Every
+  // assertion is recorded as suspended (never failed) under verdict
+  // PRE-LIVE, with the exact operator instruction. Only a definitive
+  // 404 qualifies; network errors go through the normal honest path.
+  // After any live measurement, a 404 is measured for real: HAS_FAILURES.
+  {
+    const probe = await fetchTarget(loaded.baseUrl, "/");
+    let everLive = false;
+    try {
+      const prev = JSON.parse(readFileSync(RESULTS_PATH, "utf8"));
+      everLive = Boolean(prev?.summary?.verdict) && prev.summary.verdict !== "PRE-LIVE";
+    } catch { /* first run - no previous results */ }
+    if (probe.status === 404 && !everLive) {
+      const preResults = loaded.assertions.map((a) => ({
+        id: a?.id ?? "?",
+        ok: null,
+        suspended: true,
+        ms: 0,
+        details: `SUSPENDED pre-live: GitHub Pages is not enabled yet (Settings > Pages > Deploy from a branch > main > root); the site answered HTTP 404`,
+      }));
+      const payload = {
+        format: "agent-verify-results-v1",
+        generatedAt: new Date().toISOString(),
+        runBy,
+        durationMs: Date.now() - startedAt,
+        summary: { total: preResults.length, passed: 0, failed: 0, suspended: preResults.length, verdict: "PRE-LIVE" },
+        preLive: {
+          reason: "GitHub Pages is not enabled yet - one operator action: Settings > Pages > Deploy from a branch > main > root.",
+          siteStatus: "HTTP 404",
+          instruction: "Once Pages serves the site, the next run measures every assertion for real; a 404 after any live run is a true failure.",
+        },
+        results: preResults,
+      };
+      writeResults(payload);
+      printTable(payload);
+      return;
+    }
+  }
+
   for (const a of loaded.assertions) {
     const t0 = Date.now();
     const r = await evaluate(a, loaded.baseUrl);

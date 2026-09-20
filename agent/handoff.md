@@ -43,11 +43,15 @@ The fix is standing order SO-1: **work that is not visible at the public URL doe
 | Steem chain (`cashmachine`) | Anchored checkpoints - outside every server | Chain truth |
 | `/home/z/my-project` | Ephemeral sandbox workbench | Not truth - dies with the session |
 
-Cloud agents on this home (all in GitHub Actions, sandbox-independent, zero secrets):
+Cloud agents on this home (all in GitHub Actions, sandbox-independent):
 console-publish (renders the status from the public chain, hourly at :45), truth-gate (measures the
-live site, hourly at :07), agent-verify (measures the agent, every 2h at :55), dex-watch (deposits on
-four chains, every 20 min). Three more workflows (agents-watch, money-watch, key-verify) wait for
-operator secrets - see OL-12 in agent/state.json.
+live site, hourly at :07; until Pages is enabled it records an honest PRE-LIVE verdict - never a
+false red), agent-verify (measures the agent, every 2h at :55; pre-live: all assertions suspended
+with the operator instruction), dex-watch (deposits on four chains, every 20 min), agents-watch
+(the fleet registry, hourly at :37, reads all 15 repos through the AGENTS_WATCH_TOKEN secret in the
+Actions vault), money-watch (the money path, every 15 min), key-verify (dormant until the operator
+adds the HEADCORNER secret; refuses honestly without it), bootstrap-pages (documented 403 evidence
++ retry button). The secret lives only in the vault - never in code, logs or receipts.
 
 ## 4. How to work (the loop)
 

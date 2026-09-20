@@ -300,10 +300,10 @@ function render(data){
     el("truth-history").innerHTML="<tr><td colspan='4' class='skel'>"+esc(t("none"))+"</td></tr>";
     return;
   }
-  var L=data.latest, green=L.verdict==="ALL-GREEN";
-  b.className=green?"green":"red";
-  w.textContent=green?"ALL-GREEN":(L.counts.fail+" RED");
-  s.textContent=fmtTime(L.at)+" · "+esc(L.runner||"github-actions")+" · "+esc(L.target||"");
+  var L=data.latest, green=L.verdict==="ALL-GREEN", pre=L.verdict==="PRE-LIVE";
+  b.className=green?"green":(pre?"wait":"red");
+  w.textContent=green?"ALL-GREEN":(pre?"PRE-LIVE":(L.counts.fail+" RED"));
+  s.textContent=fmtTime(L.at)+" · "+(pre&&L.preLive?esc(L.preLive.reason):esc(L.runner||"github-actions")+" · "+esc(L.target||""));
   el("v-mark").innerHTML=green
     ?'<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>'
     :'<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v8M12 16.5v.5"/></svg>';
@@ -327,7 +327,7 @@ function render(data){
   renderSlo(data.slo);
 
   var rows=runs.slice(-30).reverse().map(function(r){
-    var cls=r.verdict==="ALL-GREEN"?"pass":"fail";
+    var cls=r.verdict==="ALL-GREEN"?"pass":(r.verdict==="PRE-LIVE"?"skip":"fail");
     return "<tr><td class='mono'>"+fmtTime(r.at)+"</td><td><span class='st "+cls+"'>"+esc(r.verdict)+"</span></td><td class='mono'>"+r.pass+" / "+r.fail+" / "+(r.skip||0)+"</td><td>"+(r.runUrl?"<a href='"+esc(r.runUrl)+"' target='_blank' rel='noopener'>Actions</a>":"<span class='skel'>-</span>")+"</td></tr>";
   }).join("");
   el("truth-history").innerHTML=rows||"<tr><td colspan='4' class='skel'>"+esc(t("none"))+"</td></tr>";

@@ -150,6 +150,55 @@ function bucketFor(days, date) {
 
   // ── G1: the public site is up ─────────────────────────────────────
   const home = await fetchUrl(BASE + "/");
+
+  // ── PRE-LIVE: the home is pushed, Pages is not enabled yet ────────
+  // The single operator action this home waits for is Settings > Pages >
+  // Deploy from a branch > main > root. Until it happens, measuring the
+  // live site is measuring a 404 that nobody can visit. An honest
+  // PRE-LIVE verdict is recorded instead: never ALL-GREEN, never a
+  // false red, always timestamped with the exact instruction. A 404
+  // AFTER any live measurement is a real outage and stays RED - only a
+  // site that was never once alive can be PRE-LIVE.
+  let everLive = false;
+  try {
+    const h = JSON.parse(fs.readFileSync(HISTORY_PATH, "utf8"));
+    everLive = (h.runs || []).some((r) => r && r.verdict && r.verdict !== "PRE-LIVE");
+  } catch { /* first run - no history yet */ }
+  if (!home.ok && !everLive) {
+    const at = new Date().toISOString();
+    const runUrl = process.env.GITHUB_SERVER_URL && process.env.GITHUB_REPOSITORY && process.env.GITHUB_RUN_ID
+      ? `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`
+      : null;
+    const report = {
+      format: "truth-gate-v1",
+      runner: "github-actions",
+      at,
+      target: BASE,
+      verdict: "PRE-LIVE",
+      preLive: {
+        reason: "GitHub Pages is not enabled yet - one operator action: Settings > Pages > Deploy from a branch > main > root.",
+        siteStatus: `HTTP ${home.status}`,
+        instruction: "Once Pages serves the site, the next hourly run measures it for real; a 404 after any live run is a true outage (RED).",
+      },
+      counts: { pass: 0, fail: 0, skip: 1 },
+      durationMs: Date.now() - startedAt,
+      runUrl,
+      results: [
+        { gate: "G1-site-up", status: "SKIP", measured: `HTTP ${home.status} · pre-live`, note: "site never served yet; operator Pages action pending" },
+      ],
+    };
+    fs.writeFileSync(LATEST_PATH, JSON.stringify(report, null, 2) + "\n");
+    let history = { format: "truth-gate-history-v1", runs: [] };
+    try { history = JSON.parse(fs.readFileSync(HISTORY_PATH, "utf8")); } catch { /* first run */ }
+    if (!Array.isArray(history.runs)) history.runs = [];
+    history.runs.push({ at, verdict: "PRE-LIVE", pass: 0, fail: 0, skip: 1, runUrl });
+    if (history.runs.length > HISTORY_CAP) history.runs = history.runs.slice(-HISTORY_CAP);
+    fs.writeFileSync(HISTORY_PATH, JSON.stringify(history, null, 2) + "\n");
+    console.log(`VERDICT: PRE-LIVE · HTTP ${home.status} · Pages not enabled yet (operator action) · verdict recorded honestly`);
+    process.exitCode = 0;
+    return;
+  }
+
   const homeBytes = home.text ? Buffer.byteLength(home.text) : 0;
   record("G1-site-up", home.ok ? "PASS" : "FAIL", `HTTP ${home.status} · ${homeBytes} bytes`);
 
@@ -274,8 +323,11 @@ function bucketFor(days, date) {
   for (const s of (slo.slos || [])) prevStates[s.id] = s.state;
 
   // dataSince: the machine's public birth - the first recorded run ever.
-  // Never rewritten once set, so the window fill only grows.
-  if (!slo.dataSince) slo.dataSince = history.runs.length ? history.runs[0].at : now.toISOString();
+  // Never rewritten once set, so the window fill only grows. PRE-LIVE
+  // heartbeats (Pages not enabled yet) are machine liveness, not service
+  // measurements - the service's birth is its first LIVE measurement.
+  const firstLiveRun = history.runs.find((r) => r && r.verdict && r.verdict !== "PRE-LIVE");
+  if (!slo.dataSince) slo.dataSince = firstLiveRun ? firstLiveRun.at : (history.runs.length ? history.runs[0].at : now.toISOString());
   const dataSinceMs = Date.parse(slo.dataSince);
 
   // fresh start: seed the daily buckets from the raw history we still hold.
@@ -285,6 +337,7 @@ function bucketFor(days, date) {
   if (!slo.days.length && history.runs.length) {
     for (const r of history.runs) {
       if (!r || !r.at) continue;
+      if (r.verdict === "PRE-LIVE") continue; // heartbeat of an unborn service - not an SLI sample
       const b = bucketFor(slo.days, dayKeyUTC(Date.parse(r.at)));
       b.runs++;
       if (r.verdict === "ALL-GREEN") {
