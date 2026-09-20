@@ -48,12 +48,16 @@ Four workflows run inside this repository on its own GITHUB_TOKEN:
 
 Some data planes on the old home are fed from the ecosystem's private
 sovereign repositories: the heart's public mirror (`mirror.json`), the
-live ledger book (`saos-live.json`), the DEX engine's books
-(`dex/world.json`, `dex/grid.json`) and the agents registry refresh. On
-this home they are frozen at the port timestamp, and the three
-verification assertions that measure their freshness (A34, A36, A37) are
-honestly suspended in `agent/verify/assertions.json` with the reason
-recorded - they re-arm the moment a feed lands here.
+live ledger book (`saos-live.json`) and the agents registry refresh. On
+this home they are frozen at the port timestamp (their freshness
+assertions stay suspended with the reason recorded). The DEX engine's
+books (`dex/grid.json`, `dex/world.json`, `dex/state.json`,
+`dex/credits.json`, `dex/portfolio.json`) are no longer frozen: R63 added
+the `dex-mirror` machine (hourly :52, keyless public read) that
+re-mirrors them from the live Console mirror into this repository, and
+the three assertions that measure their freshness (A34, A36, A37) were
+re-armed - truth-gate G11 (`mirror-freshness`) keeps the served book
+honest in red.
 
 Activation (operator steps, in order):
 
@@ -62,7 +66,10 @@ Activation (operator steps, in order):
    money-watch and key-verify from the Console repository.
 2. Data planes: decide whether the sovereign heart dual-publishes to both
    homes or this home replaces the old one (the publish targets are code
-   on the sovereign side, documented as OL-12 in agent/state.json).
+   on the sovereign side, documented as OL-12 in agent/state.json). The
+   R63 mirror is a Domain-side pull of already-public data - it does not
+   decide this; if the heart ever pushes here directly, the mirror
+   becomes a silent no-op (identical files, no writes).
 3. Canonical home: optionally attach a custom domain under
    Settings > Pages - the site is base-path agnostic (all links relative),
    so it serves at the domain root; update the sitemap and robots
