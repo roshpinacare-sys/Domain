@@ -1,0 +1,148 @@
+{
+  "format": "agent-inspection-v1",
+  "id": "INS-R66-001",
+  "inspectionOf": [
+    "R66 (pre-push: staged Domain working tree 4 modified + 2 untracked files, staged Console working tree 1 modified file, sovereign sources TRUTH-AUDIT section 11 / BENCHMARK R66 / console twins)"
+  ],
+  "inspector": "standing supervisor-inspector (general-purpose agent, fresh context, second standing run)",
+  "conductedAt": "2026-09-20T16:53:03Z",
+  "operatorOrder": "all work is examined thoroughly before every push (2026-09-19); R66 directive: make sure you are on the latest commit and continue",
+  "verdict": "APPROVE-WITH-CONDITIONS",
+  "pushDecision": "APPROVE - push only after the four conditions below are met, then complete the post-push sequence immediately",
+  "method": "every claim re-measured from scratch: live HTTP fetches of both homes (books, latest.json, results.json), git archaeology in three repos (Domain, Console, sovereign Zip), an independent red-before run of the staged truth gate from a scratch copy, and an independent re-run of the new mirror machine's bite tests in a scratch directory against both the real public source and a doctored local http.server source (75h-stale book, garbage timestamp, 404, idempotence). Nothing was accepted from the delivering agent without a command and an observation.",
+  "claimsTable": [
+    {
+      "claim": "THE DEFECT: mirror.json and saos-live.json served on the Domain home were ported once at birth (9365852, 00:24:45Z) and never updated since - frozen ~17h while the Console twin serves fresh copies (~4.4h)",
+      "measured": "live curl at 16:41:47Z: Domain mirror.json generatedAt 2026-09-19T23:07:22.245Z (17.6h) and saos-live.json 23:07:23.586Z (17.6h); Console twins 2026-09-20T12:10:11.370Z / 12:10:14.488Z (4.5h); twin lag 13.0h both books. git log in domain-repo: exactly ONE commit touches each book - 9365852, 2026-09-20 00:24:45 +0000, 'domain home: the complete verified state of the public console, ported from Console@8450edc...'. index.html references mirror.json x3 and saos-live.json x1 (link + jget fetches into CACHE); truth.html, net.html, wallet.html, gate.html, acid.html and hub/api/index.html also reference them",
+      "verdict": "verified (17.4h/4.4h claimed at 16:36Z re-measured 17.48h/4.43h at that minute - honest within rounding)"
+    },
+    {
+      "claim": "THE ROOT CAUSE: the weave-console machine commits only status.json",
+      "measured": "git show --stat d9a4f67 (weave-console, 2026-09-20 15:47:51Z, cp#280, authored weave-console[bot]): status.json only, 2 insertions 2 deletions; .github/workflows/console-publish.yml runs render.mjs and does 'git add status.json' only, with the same 3-attempt rebase-retry loop",
+      "verdict": "verified"
+    },
+    {
+      "claim": "RED-BEFORE: staged G12 (weave-books-freshness) fails as the ONLY gate on the live unfixed site, lag ~13h",
+      "measured": "truth-gate-ci.cjs copied to /home/z/r66/insp-scratch/truth/ (never run inside the staged repo) and run at 16:42Z: G12 the ONLY failure - 'mirror 17.6h (lag 13.0h) · saos-live 17.6h (lag 13.0h) · thresholds 26h/2h ... broken mirror' - verdict '1 RED · 9 PASS · 1 FAIL · 2 SKIP', exit 1; all other gates green (G1 G2 G3 G10 G11 G5 G6 G8 G9 PASS, G4/G7 SKIP)",
+      "verdict": "verified exactly (perfect isolation, both axes fire on both books)"
+    },
+    {
+      "claim": "THE MACHINE: weave-mirror.mjs bite-tested - fresh source mirrored, stale source kept unmirrored, identical source produces no change",
+      "measured": "independent re-run in /home/z/r66/insp-scratch/machine/ (scratch copy of the file): (a) fresh dry run against the real Console source wrote both books (source 4.55h old), generatedAt preserved exactly (12:10:11.370Z / 12:10:14.488Z), honest WARN 'no local copy at all'; (b) a doctored 75h-stale book (3-digit-ms timestamps) served from a local python http.server, SRC sed'd in the scratch copy only: NOT written - 'WARN source 75h old (> 48h) - a dying pipeline is not mirrored, current copy kept', local copy byte-identical (their claim was 72h; same >48h code path); (c) idempotence: second run against the identical source: updated=0 kept=2, both files byte-identical; extra: 404 source kept with honest WARN; garbage generatedAt kept ('no parseable timestamp'); exit 0 in all warn cases by design, gate G12 is the enforcement",
+      "verdict": "verified (all four behaviors reproduced from scratch)"
+    },
+    {
+      "claim": "THE WORKFLOW: cron '57 * * * *' collides with nothing, permissions contents:write only, zero secrets, commit-retry matches dex-mirror.yml",
+      "measured": "all 9 cron lines in .github/workflows/: money 2,17,32,47 · dex-watch 9,29,49 · truth-gate 7 · moment 12,42 · agents-watch 37 · console-publish 45 · dex-mirror 52 · agent-verify 55 every 2h · weave-mirror 57 - no minute collision; permissions block contains only contents: write; no secrets.* reference anywhere in the file; the publish step is the proven dex-mirror.yml pattern step-for-step (git add the two books, diff --cached --quiet exit, 3-attempt commit + pull --rebase + push, checkout -- . + reset --hard origin/main + re-mirror inside the loop, error exit 1)",
+      "verdict": "verified"
+    },
+    {
+      "claim": "THE G12 CODE: unreadable local book FAIL; unreadable twin FAIL with corroboration note; missing generatedAt FAIL; SLO ledger untouched",
+      "measured": "code-read of the diff hunk (48 added lines, zero deletions in truth-gate-ci.cjs): local book unparseable or without generatedAt -> weaveOk=false ('unreadable'); twin fetch failed (src.json null) -> weaveOk=false with 'twin unreadable ... freshness cannot be corroborated'; SLO_TARGETS (5) and GATE_KEYS (g1/g2/g3/moment) unchanged - G12 absent from both, exactly the G11 precedent, so no SLO bucket or target changes; verdict string counts all FAILs ('1 RED'); hoursBetween uses Math.abs (conservative on clock skew)",
+      "verdict": "verified with two low findings (F-3, F-4 edge notes)"
+    },
+    {
+      "claim": "THE BOOKS: R28 born with real evidence and inspection ref; bridgehead advanced; OL-13 closed bilingually; handoff fleet list updated",
+      "measured": "staged requests.json: 28 entries, last R28, status delivered-public, evidence 2128 chars, inspection agent/inspections/INS-R66-001.json, session label follows the established convention; state.json requestRef R28, OL-13 status closed + resolvedAt + resolution (416 chars) + resolutionHe (349 chars), currentTask/currentTaskHe/lastHandoff rewritten for R66, generatedAt 16:36:06Z; handoff.md fleet paragraph adds weave-mirror (hourly :57, keyless, gate G12) between dex-mirror and key-verify; both JSON files valid, gate JS syntax-checked",
+      "verdict": "verified (timestamps staged - see F-6)"
+    },
+    {
+      "claim": "F-5/F-6 (Console repo): cadence tightening re-attributed to R27/2f2d18d; ee9df46 re-attributed to the sovereign repo; R61 evidence cites Console 594e656 + sovereign ee9df46 with honest markers",
+      "measured": "console-repo diff touches agent/requests.json only (3 evidence strings); 2f2d18d exists in console-repo (2026-09-17 07:57:23Z, message: 'agent-verify R27: ... Cadence tightened: every 6h -> every 2h'); ee9df46 is NOT a Console object (git cat-file: 'fatal: Not a valid object name') and IS the sovereign commit (my-project, 2026-09-19 22:20:18Z, 'r61: games view retired from the operator console...'); 594e656 is a real Console commit (R61 closure, 2026-09-19 22:46:35Z); book remains valid JSON, 61 entries, evidence lengths 496/473/392, bridgehead requestRef R61 unchanged",
+      "verdict": "verified (both attribution fixes correct, markers honest)"
+    },
+    {
+      "claim": "SECURITY: no secrets, no sandbox-internal paths, no attack surface added",
+      "measured": "full staged diff + both new files swept for x-access-token, ghp_, github_pat_, AKIA, PRIVATE KEY headers, STEEM_ACTIVE_WIF/WIF5 assignments, secrets.* references: zero matches; the only URL in the new files is https://roshpinacare-sys.github.io/Console (public); the single /home/z/my-project occurrence is a pre-existing context line in state.json's environment doctrine (unchanged by this diff); the workflow pushes with the repo's own token, no PAT, no pull_request trigger",
+      "verdict": "verified"
+    },
+    {
+      "claim": "PROFESSIONALISM: no emojis or decorative glyphs; typography consistent",
+      "measured": "codepoint scan of all 6 new/changed files: zero emoji/pictograph ranges; one U+2192 arrow in the new weave-mirror.mjs header - the committed fleet convention (key-verify.mjs x3, moment-watch.mjs, money-watch.mjs, truth-gate-ci.cjs all use it); middots and section banners match existing files; Console diff also clean",
+      "verdict": "verified"
+    },
+    {
+      "claim": "LIVE SWEEP: both homes up, Domain live gate ALL-GREEN (pre-G12), verify ALL_PASS, Console books fresh",
+      "measured": "Domain and Console homes both HTTP 200; Domain truth/latest.json at 16:20:11.742Z verdict ALL-GREEN (9 pass / 0 fail / 2 skip - the currently-live gate without G12); Domain agent/verify/results.json at 15:04:30.600Z ALL_PASS 53/53, 0 suspended; Console mirror books 12:10Z (4.5h at sweep - within the 26h dead-pipeline doctrine; after healing the Domain books carry the same generatedAt so a dead Console heart goes red on both homes via the age axis)",
+      "verdict": "verified (this is the state the delivery starts from)"
+    },
+    {
+      "claim": "CLAIMS AUDIT: TRUTH-AUDIT section 11 and BENCHMARK R66 factual claims",
+      "measured": "section 11 row 1: index.html mentions mirror.json x3 / saos-live.json x1 (exact), single port commit 9365852 (exact), 17.4h/4.4h standing measurement (re-measured 17.48h/4.43h at the staged 16:36:06Z moment - honest); row 2: weave-console commits status.json only (verified via d9a4f67 + workflow); row 3 residual: versus.html jgets dex/portfolio.json (line 363) and dex/money.json (line 390) while G11 loops only grid.json/world.json - the ungated portfolio/money/deposits/watch residual is accurately recorded and honestly deferred; BENCHMARK R66 table sums re-add: R65 53 -> R66 54 with only dimension 3 (freshness) 5->6, arithmetic and justifications consistent; sovereign repo HEAD = c074f66 = origin/main as the section states; the 5 updated console/ twins are byte-identical to the staged Domain files",
+      "verdict": "verified with findings F-1 (anticipatory past-tense claims), F-5 (workflow twin not synced)"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-1",
+      "severity": "MEDIUM",
+      "area": "agent/requests.json R28 evidence (staged) and TRUTH-AUDIT section 11 / BENCHMARK R66 (sovereign)",
+      "finding": "The public R28 evidence states in the past tense that 'the healing commit itself was made by the machine (dispatched first run), not by hand' and 'Green-after: G12 PASS measured on the live site after the machine's first run; dispatched truth-gate and agent-verify runs recorded in the sovereign worklog r66 entry'. None of this is true at inspection time: the workflow file is still untracked (not on the remote, so it cannot have been dispatched), the live books still measure frozen (17.6h, lag 13.0h at 16:42Z - my red-before run), and the sovereign worklog ends at the r65-inspector entry (no r66 section exists). The same anticipatory sentences appear in TRUTH-AUDIT section 11 and BENCHMARK R66 ('קומיט הריפוי עצמו נעשה על ידי המכונה')",
+      "evidence": "git status shows .github/workflows/weave-mirror.yml untracked; live curl + scratch gate run at 16:42Z (G12 FAIL, lag 13.0h); wc -l worklog.md = 2795, last section r65-inspector",
+      "recommendation": "push condition: immediately after the push, dispatch weave-mirror (so the healing commit is genuinely machine-made), measure G12 PASS on the live site, dispatch truth-gate and agent-verify, and append the r66 worklog entry documenting them - in that order, within minutes. If any step fails or is skipped, the public evidence must be corrected in a follow-up commit, not left standing",
+      "status": "open pending the post-push sequence"
+    },
+    {
+      "id": "F-2",
+      "severity": "LOW",
+      "area": "agent/inspections/ (staged tree)",
+      "finding": "INS-R66-001.json is not present in the staged tree - only INS-R65-001.json and README.md exist. Pushing R28 (delivered-public, R27+) without this report installed at agent/inspections/INS-R66-001.json would make A69 fail the live book ('inspection report not served publicly')",
+      "evidence": "ls agent/inspections/ at 16:44Z; A69 code path in agent/verify/run.mjs (200 + valid JSON + format agent-inspection-v1 + verdict)",
+      "recommendation": "install this report at agent/inspections/INS-R66-001.json in the same commit as the delivery (the R65 precedent)",
+      "status": "push condition (deliverer action)"
+    },
+    {
+      "id": "F-3",
+      "severity": "LOW",
+      "area": "truth/truth-gate-ci.cjs (staged G12)",
+      "finding": "A twin book that is fetchable and valid JSON but carries no generatedAt silently skips the twin-lag axis: neither FAIL nor note is emitted (the else-if only fires when src.json is null). The gate could then pass on the age axis alone while twin corroboration is silently unavailable. Not triggered by the real twin (both Console books carry generatedAt, measured)",
+      "evidence": "code-read of the G12 block: 'else if (!src.json)' misses the src.json-without-generatedAt case",
+      "recommendation": "future tightening: treat a readable twin without a parseable generatedAt like an unreadable twin (FAIL with the corroboration note)",
+      "status": "open (edge case, not reachable with the current live twin)"
+    },
+    {
+      "id": "F-4",
+      "severity": "LOW",
+      "area": "truth/truth-gate-ci.cjs (staged G12)",
+      "finding": "When the local book parses but generatedAt is missing, the failure note reads 'unreadable (HTTP <status>)' although the HTTP status may be 200 - imprecise wording for a schema failure; the behavior (FAIL) is correct",
+      "evidence": "code-read: the else branch reuses loc.status for both the unparseable and the missing-generatedAt cases",
+      "recommendation": "cosmetic: split the note into 'unreadable' vs 'no parseable generatedAt'",
+      "status": "open (cosmetic)"
+    },
+    {
+      "id": "F-5",
+      "severity": "LOW",
+      "area": "sovereign console/ twins (my-project working tree)",
+      "finding": "The twin sync is incomplete for the new workflow file: console/ holds flat workflow-*.yml copies of the 8 pre-existing workflows but no workflow-weave-mirror.yml, while the machine's .mjs twin IS synced byte-identical. A future session restoring the fleet from the sovereign log would miss the workflow that schedules the machine. (Parallel pre-existing gap, not this delivery's doing: workflow-moment-watch.yml is also absent)",
+      "evidence": "ls console/: 8 workflow-*.yml files, no weave-mirror copy; cmp of the 5 updated twins all identical; git status shows console/agents/weave-mirror.mjs untracked but no workflow twin",
+      "recommendation": "add console/workflow-weave-mirror.yml (and the missing moment-watch twin) in the sovereign push",
+      "status": "open (sovereign continuity only - the public Domain repo is the workflow's source of truth)"
+    },
+    {
+      "id": "F-6",
+      "severity": "INFO",
+      "area": "staged timestamps",
+      "finding": "requests.json generatedAt, R28 deliveredAt, state.json generatedAt, lastHandoff.at and OL-13 resolvedAt are all staged at 16:36:06Z - measured 15.8 minutes old at 16:52Z and aging until the push",
+      "evidence": "node read of the staged files vs date -u",
+      "recommendation": "true them to the actual push moment (the R65 precedent: R27's deliveredAt was trued from 10:30:00Z to 11:05:00Z before the push) or push within a few minutes of the staged values",
+      "status": "push condition (deliverer action)"
+    },
+    {
+      "id": "F-7",
+      "severity": "INFO",
+      "area": "verification limits / record accuracy",
+      "finding": "The operator briefing asserted that python isoformat with microseconds is NOT parseable by Date.parse. Measured in this sandbox (Node v24.21.0): '2026-09-20T15:43:38.298123' (naive, no Z) parses to 1789919018298 - microseconds truncated, interpreted as local time. No impact on this delivery: both homes' books serve Z-suffixed ISO-ms generatedAt (measured), and the machine's Number.isFinite guard still catches genuinely unparseable stamps (garbage-timestamp bite test passed)",
+      "evidence": "node -e Date.parse measurements + the garbage-timestamp bite test (WARN, nothing written)",
+      "recommendation": "none for this push; recorded so the inspection record stays measured rather than inherited",
+      "status": "noted"
+    }
+  ],
+  "liveStateSweep": {
+    "homes": "Domain 200 · Console 200",
+    "theDefectStanding": "Domain mirror.json/saos-live.json generatedAt 2026-09-19T23:07:2xZ (17.6h at 16:41:47Z) vs Console twins 2026-09-20T12:10:1xZ (4.5h) - lag 13.0h; the only commits ever touching them: 9365852 (the birth port, 00:24:45Z)",
+    "machines": "Domain truth/latest.json ALL-GREEN 9/0/2 at 16:20:11Z (the live pre-G12 gate); Domain agent/verify ALL_PASS 53/53 at 15:04:30Z; weave-console cp#280 15:47:51Z (status.json only); money-watch steady 16:13:12Z; dex-watch 0 deposits 15:52:54Z; moment-watch RISK_ON 15:45:37Z",
+    "security": "zero secret values in the staged diff and both new files (patterns: x-access-token, ghp_, github_pat_, AKIA, PRIVATE KEY, STEEM_ACTIVE_WIF, WIF5, secrets.*); only public URLs referenced; no new attack surface - the machine is keyless read + own-repo write",
+    "professionalism": "zero emojis/decorative glyphs in the 6 new/changed files and the Console diff; typography consistent with the existing fleet files (arrows, middots, section banners)"
+  },
+  "stagedDiffVerdict": "APPROVE-WITH-CONDITIONS. The staged delivery is verified true in every presently-measurable claim: the defect is real and standing (frozen books, single port commit, 13.0h twin lag), the root cause is confirmed (status.json-only machine), the red-before reproduces with perfect isolation (G12 the only failure, 1 RED · 9 PASS · 2 SKIP), the machine's bite tests all reproduce from scratch (stale-kept, garbage-kept, 404-kept, idempotent, fresh-mirrored with source timestamps preserved), the workflow is collision-free, secretless and pattern-identical to the proven dex-mirror, the SLO ledger is untouched by G12, the books and bridgehead are consistent, and the F-5/F-6 attribution fixes are correct against both repos' git. CONDITIONS: (1) install this report at agent/inspections/INS-R66-001.json in the delivery commit (A69); (2) true the staged 16:36:06Z timestamps to the actual push moment (F-6); (3) immediately after the push execute the sequence the R28 evidence describes - dispatch weave-mirror (machine-made healing commit), measure G12 PASS live, dispatch truth-gate and agent-verify, append the r66 worklog entry and push the sovereign sources (F-1); (4) if any post-push step fails or lags, correct the public evidence in a follow-up commit instead of leaving anticipatory claims standing. Findings F-3/F-4 (G12 edge cosmetics) and F-5 (workflow twin) are follow-ups, not blockers."
+}
