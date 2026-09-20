@@ -202,10 +202,12 @@ if (grid?.externalFlowUsd != null) {
   insights.push({ kind: "external-flow", tone: "info", text: `זרימת-חוץ מצטברת: ${grid.externalFlowUsd.toFixed(4)}$ מ-${grid?.run?.filledTotal ?? 0} מילויים (txids בספר הציבורי).` });
 }
 
-/* ═══ 4) אימון-כנון: קריאת-כיוון שנרשמת ומוכרעת ═══ */
+// ═══ 4) אימון-כנון: קריאת-כיוון שנרשמת ומוכרעת ═══
 
+// קריאה נרשמת רק עם מחיר-בסיס חי: קריאה בלי בסיס היא הבטחה שאין לה מדידה,
+// והכרעתה תיצור hit מזויף (0/null → ∞). אין מחיר — אין קריאה.
 let call = null; // אין קריאה כשאין מדידה
-if (steem24h != null) {
+if (steem24h != null && steemUsd != null) {
   call = steem24h >= CALL_THRESHOLD_PCT ? "UP" : steem24h <= -CALL_THRESHOLD_PCT ? "DOWN" : "FLAT";
 }
 
@@ -217,7 +219,8 @@ const now = Date.now();
 let resolvedNow = 0;
 if (steemUsd != null) {
   for (const h of history) {
-    if (h.call && h.call !== "FLAT" && !h.resolved && now - new Date(h.at).getTime() >= CALL_HORIZON_H * 3.6e6) {
+    // רק קריאות עם בסיס נמדד מוכרעות; קריאה ללא בסיס אינה נספרת לעולם (הגנת-יושר)
+    if (h.call && h.call !== "FLAT" && h.steemUsd != null && !h.resolved && now - new Date(h.at).getTime() >= CALL_HORIZON_H * 3.6e6) {
       const realizedPct = (steemUsd / h.steemUsd - 1) * 100;
       h.resolved = {
         at: new Date().toISOString(),

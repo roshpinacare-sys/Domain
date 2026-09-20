@@ -168,7 +168,7 @@ footer a:hover{color:var(--acc-bright)}
     </table>
   </div></div>
 
-  <div class="note"><b data-i="noteSloT">דוקטרינת ה-SLO.</b> <span data-i="noteSlo">ארבעה יעדי שירות הנמדדים מההיסטוריה הציבורית בלבד.</span></div>
+  <div class="note"><b data-i="noteSloT">דוקטרינת ה-SLO.</b> <span data-i="noteSlo">חמישה יעדי שירות הנמדדים מההיסטוריה הציבורית בלבד.</span></div>
 
   <div class="note"><b data-i="noteHowT">איך זה עובד.</b> <span data-i="noteHow">המכונה (truth/truth-gate-ci.cjs) רצה ב-Actions בקדנס שעתי ומודדת את האתר החי, לא את הריפו. הפלט נשמר ל-truth/latest.json וכל ריצה נרשמת ב-truth/history.json; ריצה עם כשל יוצאת אדומה בפומבי בדף ה-Actions של הריפו. שערי הסנדבוקס בלבד (תאומים מקומיים, שרת עבודה) לא נמדדים כאן ומסומנים לא-רלוונטי בכל ריצה.</span></div>
   <div class="note"><b data-i="noteDocT">דוקטרינת R58.</b> <span data-i="noteDoc">דור ממשק אחד לאתר: החזיתות מהדורות הקודמים (money · net · acid · gate · roast · defi · deposits · readiness · sovereign · versus) יצאו מהמחזור ומגישות הפניה קבועה לקונסולה. שער 8 מודד שהן נשארות stub-ים קטנים ושאף דף נוכחי לא מקשר אליהן.</span></div>
@@ -202,9 +202,9 @@ var I18N={
   sloWarm:"Measurement accrues since {since} · {fill}% of the 30-day window filled · {runs} runs measured. The SLO verdict is provisional until the window fills - the numbers are real, the tenure is not yet.",
   tSloName:"SLO", tSloTarget:"Target", tSloBudget:"Error budget", tSloEv:"Event", tSloDetail:"Detail",
   sloEvH:"Budget burn log", sloEvNone:"No burn events - all budgets within bounds", sloNone:"The SLO ledger is not published yet",
-  sloAvail:"Site availability", sloLinks:"Zero broken links", sloFresh:"Witness freshness", sloHeart:"Machine heartbeat",
+  sloAvail:"Site availability", sloLinks:"Zero broken links", sloFresh:"Witness freshness", sloMoment:"Moment freshness", sloHeart:"Machine heartbeat",
   sloBadRuns:"bad", sloOf:"of",
-  noteSloT:"The SLO doctrine (stage 4).", noteSlo:"Four service objectives measured from the public run history alone. Honesty rules: (1) a window that has not filled its 30 days is WARMING - the verdict is provisional, but a burned budget is burned on day one too; (2) red runs from before this SLO engine was born are never attributed to a specific gate - which gate failed is not guessed; (3) the heartbeat expects one run per hour, and a full day with no runs still consumes its expectation - a dead machine is visible in the SLI. Breaches and recoveries are public events in the burn log, never erased.",
+  noteSloT:"The SLO doctrine (stage 4).", noteSlo:"Five service objectives measured from the public run history alone. Honesty rules: (1) a window that has not filled its 30 days is WARMING - the verdict is provisional, but a burned budget is burned on day one too; (2) red runs from before this SLO engine was born are never attributed to a specific gate - which gate failed is not guessed; (3) the heartbeat expects one run per hour, and a full day with no runs still consumes its expectation - a dead machine is visible in the SLI. Breaches and recoveries are public events in the burn log, never erased.",
   noteDocT:"The R58 doctrine.", noteDoc:"One interface generation for the site: the previous-generation fronts (money, net, acid, gate, roast, defi, deposits, readiness, sovereign, versus) were retired and serve a permanent redirect to the console. Gate 8 measures that they stay small stubs and that no current page links to them.",
   fMotto:"No claim without measurement.", fTruth:"Sources of truth", fSite:"The site", fConsole:"The console", fWallet:"The wallet", fHub:"The content center",
   none:"no measured runs yet",
@@ -223,9 +223,9 @@ var I18N={
   sloWarm:"המדידה מצטברת מ-{since} · מילוי {fill}% מהחלון בן 30 הימים · {runs} ריצות נמדדו. פסק-דין ה-SLO זמני עד מילוי החלון · המספרים אמיתיים, הוותק עדיין לא.",
   tSloName:"SLO", tSloTarget:"יעד", tSloBudget:"תקציב שגיאה", tSloEv:"אירוע", tSloDetail:"פירוט",
   sloEvH:"יומן שריפת תקציב", sloEvNone:"אין אירועי שריפה · כל התקציבים בגבולות", sloNone:"פנקס ה-SLO טרם פורסם",
-  sloAvail:"זמינות האתר", sloLinks:"אפס קישורים שבורים", sloFresh:"טריות העדות", sloHeart:"פעימת המכונה",
+  sloAvail:"זמינות האתר", sloLinks:"אפס קישורים שבורים", sloFresh:"טריות העדות", sloMoment:"טריות הרגע", sloHeart:"פעימת המכונה",
   sloBadRuns:"רעות", sloOf:"מתוך",
-  noteSloT:"דוקטרינת ה-SLO (שלב 4).", noteSlo:"ארבעה יעדי שירות הנמדדים מהיסטוריית הריצות הציבורית בלבד. כללי הכנות: (1) חלון שטרם מילא 30 יום מסומן מתחמם · הפסק-דין זמני, אבל תקציב שנשרף נשרף גם ביום הראשון; (2) ריצות אדומות מהתקופה שקדמה למנוע ה-SLO לא מיוחסות לשער מסוים · לא מנחשים איזה שער נפל; (3) הפעימה מצפה לריצה אחת לשעה, ויום מלא בלי ריצות צורך את הציפייה שלו · מכונה מתה נראית במדד. הפרות והתאוששויות נרשמות כאירועים ציבוריים ביומן השריפה, לעולם לא נמחקות.",
+  noteSloT:"דוקטרינת ה-SLO (שלב 4).", noteSlo:"חמישה יעדי שירות הנמדדים מהיסטוריית הריצות הציבורית בלבד. כללי הכנות: (1) חלון שטרם מילא 30 יום מסומן מתחמם · הפסק-דין זמני, אבל תקציב שנשרף נשרף גם ביום הראשון; (2) ריצות אדומות מהתקופה שקדמה למנוע ה-SLO לא מיוחסות לשער מסוים · לא מנחשים איזה שער נפל; (3) הפעימה מצפה לריצה אחת לשעה, ויום מלא בלי ריצות צורך את הציפייה שלו · מכונה מתה נראית במדד. הפרות והתאוששויות נרשמות כאירועים ציבוריים ביומן השריפה, לעולם לא נמחקות.",
   noteDocT:"דוקטרינת R58.", noteDoc:"דור ממשק אחד לאתר: החזיתות מהדורות הקודמים (money · net · acid · gate · roast · defi · deposits · readiness · sovereign · versus) יצאו מהמחזור ומגישות הפניה קבועה לקונסולה. שער 8 מודד שהן נשארות stub-ים קטנים ושאף דף נוכחי לא מקשר אליהן.",
   fMotto:"שום טענה בלי מדידה.", fTruth:"מקורות אמת", fSite:"האתר", fConsole:"הקונסולה", fWallet:"הארנק", fHub:"מרכז התוכן",
   none:"אין עדיין ריצות מדודות",
@@ -249,7 +249,7 @@ function ageH(iso){return Math.max(0,(Date.now()-new Date(iso).getTime())/36e5);
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
 
 var lastData=null;
-var SLO_NAMES={availability:"sloAvail","link-integrity":"sloLinks",freshness:"sloFresh",heartbeat:"sloHeart"};
+var SLO_NAMES={availability:"sloAvail","link-integrity":"sloLinks",freshness:"sloFresh",moment:"sloMoment",heartbeat:"sloHeart"};
 function renderSlo(slo){
   var tbl=el("slo-table"),ev=el("slo-events"),warmNote=el("slo-warm-note");
   if(!slo||!slo.format||!slo.slos){
