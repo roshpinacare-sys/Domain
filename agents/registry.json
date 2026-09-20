@@ -1,6 +1,6 @@
 {
  "ok": true,
- "generatedAt": "2026-09-20T02:42:59Z",
+ "generatedAt": "2026-09-20T04:37:56Z",
  "source": "github-actions-api",
  "reposTotal": 15,
  "reposWithAgents": [
@@ -109,15 +109,15 @@
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 56,
-    "success": 53,
+    "runs_sampled": 57,
+    "success": 54,
     "failure": 3,
     "other": 0,
-    "successRate": 94.6,
+    "successRate": 94.7,
     "avgDurS": 18.1
    },
    "lastRun": {
-    "at": "2026-09-20T00:59:19Z",
+    "at": "2026-09-20T02:58:00Z",
     "conclusion": "success"
    }
   },
@@ -142,15 +142,15 @@
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 90,
-    "success": 89,
+    "runs_sampled": 92,
+    "success": 91,
     "failure": 1,
     "other": 0,
     "successRate": 98.9,
-    "avgDurS": 47.7
+    "avgDurS": 46.9
    },
    "lastRun": {
-    "at": "2026-09-20T01:46:39Z",
+    "at": "2026-09-20T03:47:09Z",
     "conclusion": "success"
    }
   },
@@ -180,10 +180,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 15
+    "avgDurS": 15.9
    },
    "lastRun": {
-    "at": "2026-09-20T01:53:41Z",
+    "at": "2026-09-20T03:54:29Z",
     "conclusion": "success"
    }
   },
@@ -213,10 +213,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 13.7
+    "avgDurS": 13.9
    },
    "lastRun": {
-    "at": "2026-09-20T02:33:33Z",
+    "at": "2026-09-20T04:34:22Z",
     "conclusion": "success"
    }
   },
@@ -246,10 +246,10 @@
     "failure": 3,
     "other": 0,
     "successRate": 97,
-    "avgDurS": 15
+    "avgDurS": 14.9
    },
    "lastRun": {
-    "at": "2026-09-20T02:17:15Z",
+    "at": "2026-09-20T04:17:23Z",
     "conclusion": "success"
    }
   },
@@ -279,10 +279,10 @@
     "failure": 0,
     "other": 10,
     "successRate": 90,
-    "avgDurS": 22.2
+    "avgDurS": 23.2
    },
    "lastRun": {
-    "at": "2026-09-20T02:33:44Z",
+    "at": "2026-09-20T04:34:32Z",
     "conclusion": "success"
    }
   },
@@ -307,15 +307,15 @@
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 21,
-    "success": 20,
+    "runs_sampled": 23,
+    "success": 22,
     "failure": 1,
     "other": 0,
-    "successRate": 95.2,
-    "avgDurS": 23
+    "successRate": 95.7,
+    "avgDurS": 22.5
    },
    "lastRun": {
-    "at": "2026-09-20T02:21:41Z",
+    "at": "2026-09-20T04:21:45Z",
     "conclusion": "success"
    }
   },
@@ -340,15 +340,15 @@
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 2,
-    "success": 2,
+    "runs_sampled": 5,
+    "success": 5,
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 15
+    "avgDurS": 18.6
    },
    "lastRun": {
-    "at": "2026-09-20T02:16:00Z",
+    "at": "2026-09-20T04:37:02Z",
     "conclusion": "success"
    }
   },
@@ -373,15 +373,15 @@
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 4,
-    "success": 3,
+    "runs_sampled": 6,
+    "success": 5,
     "failure": 0,
     "other": 1,
-    "successRate": 75,
-    "avgDurS": 41.8
+    "successRate": 83.3,
+    "avgDurS": 44.3
    },
    "lastRun": {
-    "at": "2026-09-20T02:16:02Z",
+    "at": "2026-09-20T03:43:08Z",
     "conclusion": "success"
    }
   },
@@ -406,15 +406,48 @@
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 3,
-    "success": 3,
+    "runs_sampled": 5,
+    "success": 5,
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 14
+    "avgDurS": 14.6
    },
    "lastRun": {
-    "at": "2026-09-20T01:48:45Z",
+    "at": "2026-09-20T03:49:38Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "domain-dex-mirror",
+   "name": "dex-mirror",
+   "repo": "Domain",
+   "visibility": "public",
+   "schedule": "hourly :52",
+   "layer": "MIRROR",
+   "role": {
+    "en": "Live book mirror of the new home - the engine publishes its beats (grid-beat/dex-beat) to the live Console mirror, and this agent re-mirrors the served files (grid, world, state, credits, portfolio) into this repository hourly so the money and defi fronts never serve a frozen book as live. Keyless public read; refuses to mirror a source older than 48h; writes only real changes.",
+    "he": "מראת הספר החי של הבית החדש - המנוע מפרסם את פעימותיו (grid-beat/dex-beat) למראה החיה של Console, והסוכן הזה משקף שעתית את הקבצים המוגשים (grid, world, state, credits, portfolio) לריפו הזה כדי שדפי הכסף וה-defi לעולם לא יגישו ספר קפוא כחי. קריאה ציבורית חסרת-מפתחות; מסרב לשקף מקור מעופש מ-48 שעות; כותב רק שינוי אמיתי."
+   },
+   "input": {
+    "en": "the live Console mirror (public URLs)",
+    "he": "המראה החיה של Console (URL-ים ציבוריים)"
+   },
+   "output": {
+    "en": "dex/{grid,world,state,credits,portfolio}.json kept honest",
+    "he": "dex/{grid,world,state,credits,portfolio}.json נשמרים כנים"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 1,
+    "success": 1,
+    "failure": 0,
+    "other": 0,
+    "successRate": 100,
+    "avgDurS": 12
+   },
+   "lastRun": {
+    "at": "2026-09-20T04:36:07Z",
     "conclusion": "success"
    }
   },
@@ -423,7 +456,7 @@
    "name": "dex-watch",
    "repo": "Domain",
    "visibility": "public",
-   "schedule": "every 20 min :07/:27/:47",
+   "schedule": "every 20 min :09/:29/:49",
    "layer": "MIRROR",
    "role": {
     "en": "The public deposits watcher of the new home - scans the real deposit addresses (TRON/ETH/SOL/BTC) over public RPC and updates the open deposits ledger the site displays.",
@@ -439,15 +472,48 @@
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 7,
-    "success": 7,
+    "runs_sampled": 13,
+    "success": 13,
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 13
+    "avgDurS": 12.5
    },
    "lastRun": {
-    "at": "2026-09-20T02:36:08Z",
+    "at": "2026-09-20T04:36:53Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "domain-moment-watch",
+   "name": "moment-watch",
+   "repo": "Domain",
+   "visibility": "public",
+   "schedule": "every 30 min :12/:42",
+   "layer": "AWARENESS",
+   "role": {
+    "en": "Sovereign moment agent - reads the live moment (market regime via BTC 24h + fear&greed, our parity line vs the live internal Steem book, fuel runway, measured anomalies) and records a deterministic directional call on STEEM that is only ever scored after its 6h horizon has passed, against a live price. Training as measurement, never as promise. Moves no money, signs nothing, dispatches nothing.",
+    "he": "סוכן הבנת-הרגע הריבוני - קורא את הרגע החי (משטר-שוק דרך BTC 24ש' + פחד-ותאווה, קו-הזהות שלנו מול ספר-Steem הפנימי החי, מסלול-הדלק, חריגות שנמדדו) ורושם קריאת-כיוון דטרמיניסטית על STEEM שמוכרעת רק לאחר אופק 6 השעות שלה, מול מחיר חי. אימון כמדידה, לא כהבטחה. לא זז כסף, לא חותם ולא מזניק."
+   },
+   "input": {
+    "en": "CoinGecko + alternative.me + Steem public RPC + our live mirrors",
+    "he": "CoinGecko + alternative.me + RPC ציבורי של Steem + המראות החיות שלנו"
+   },
+   "output": {
+    "en": "moment/moment.json + moment/history.json (scored calls)",
+    "he": "moment/moment.json + moment/history.json (קריאות מוכרעות)"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 3,
+    "success": 3,
+    "failure": 0,
+    "other": 0,
+    "successRate": 100,
+    "avgDurS": 26
+   },
+   "lastRun": {
+    "at": "2026-09-20T04:36:08Z",
     "conclusion": "success"
    }
   },
@@ -472,48 +538,15 @@
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 6,
-    "success": 6,
+    "runs_sampled": 13,
+    "success": 13,
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 15.8
+    "avgDurS": 15
    },
    "lastRun": {
-    "at": "2026-09-20T02:41:39Z",
-    "conclusion": "success"
-   }
-  },
-  {
-   "id": "domain-pages-build-deployment",
-   "name": "pages-build-deployment",
-   "repo": "Domain",
-   "visibility": "public",
-   "schedule": "automatic",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
-   },
-   "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
-   },
-   "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
-   },
-   "state": "live",
-   "stats": {
-    "runs_sampled": 3,
-    "success": 3,
-    "failure": 0,
-    "other": 0,
-    "successRate": 100,
-    "avgDurS": 34.7
-   },
-   "lastRun": {
-    "at": "2026-09-20T02:41:53Z",
+    "at": "2026-09-20T04:28:27Z",
     "conclusion": "success"
    }
   },
@@ -538,15 +571,15 @@
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 5,
-    "success": 5,
+    "runs_sampled": 9,
+    "success": 8,
     "failure": 0,
-    "other": 0,
-    "successRate": 100,
-    "avgDurS": 15.4
+    "other": 1,
+    "successRate": 88.9,
+    "avgDurS": 20.8
    },
    "lastRun": {
-    "at": "2026-09-20T02:22:46Z",
+    "at": "2026-09-20T04:20:28Z",
     "conclusion": "success"
    }
   },
@@ -637,15 +670,15 @@
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 80,
-    "success": 79,
+    "runs_sampled": 81,
+    "success": 80,
     "failure": 1,
     "other": 0,
     "successRate": 98.8,
-    "avgDurS": 43.9
+    "avgDurS": 43.8
    },
    "lastRun": {
-    "at": "2026-09-20T02:32:10Z",
+    "at": "2026-09-20T04:32:49Z",
     "conclusion": "success"
    }
   },
@@ -670,15 +703,15 @@
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 8,
-    "success": 8,
+    "runs_sampled": 9,
+    "success": 9,
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 50.8
+    "avgDurS": 50.4
    },
    "lastRun": {
-    "at": "2026-09-19T03:29:18Z",
+    "at": "2026-09-20T03:29:52Z",
     "conclusion": "success"
    }
   },
@@ -840,10 +873,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 59.6
+    "avgDurS": 59.2
    },
    "lastRun": {
-    "at": "2026-09-20T02:35:08Z",
+    "at": "2026-09-20T04:36:01Z",
     "conclusion": "success"
    }
   },
@@ -873,10 +906,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 49
+    "avgDurS": 50
    },
    "lastRun": {
-    "at": "2026-09-20T02:32:30Z",
+    "at": "2026-09-20T04:33:19Z",
     "conclusion": "success"
    }
   },
@@ -939,10 +972,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 39.3
+    "avgDurS": 39.1
    },
    "lastRun": {
-    "at": "2026-09-20T02:08:19Z",
+    "at": "2026-09-20T04:08:07Z",
     "conclusion": "success"
    }
   },
@@ -1033,15 +1066,15 @@
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 90,
-    "success": 83,
+    "runs_sampled": 96,
+    "success": 89,
     "failure": 7,
     "other": 0,
-    "successRate": 92.2,
-    "avgDurS": 20.2
+    "successRate": 92.7,
+    "avgDurS": 21.1
    },
    "lastRun": {
-    "at": "2026-09-20T02:31:23Z",
+    "at": "2026-09-20T04:31:35Z",
     "conclusion": "success"
    }
   },
@@ -1109,6 +1142,39 @@
    "lastRun": {
     "at": "2026-09-18T02:20:36Z",
     "conclusion": "success"
+   }
+  },
+  {
+   "id": "domain-pages-build-deployment",
+   "name": "pages-build-deployment",
+   "repo": "Domain",
+   "visibility": "public",
+   "schedule": "automatic",
+   "layer": "PUBLISH",
+   "role": {
+    "en": "GitHub Pages automatic deployment of the public site.",
+    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+   },
+   "input": {
+    "en": "pages build",
+    "he": "בילד דפים"
+   },
+   "output": {
+    "en": "live GitHub Pages site",
+    "he": "אתר GitHub Pages חי"
+   },
+   "state": "dormant",
+   "stats": {
+    "runs_sampled": 30,
+    "success": 24,
+    "failure": 0,
+    "other": 6,
+    "successRate": 80,
+    "avgDurS": 27
+   },
+   "lastRun": {
+    "at": "2026-09-20T04:37:04Z",
+    "conclusion": "cancelled"
    }
   },
   {
