@@ -1,0 +1,107 @@
+# WEAVE-HEART (DOMAIN TWIN) — הלב הענן של THE WEAVE, על דקות-Actions ציבוריות
+#
+# רקע (OL-14, 2026-09-20 12:36Z): מכסת הדקות של ריפואים-פרטיים מוצתה
+# בחשבון ה-Free — כל מכונות-הייצור ב-Zip נדחות בטרם-הרצה (כישלון
+# מיידי, בלי צעדים ובלי לוגים). ריפואים ציבוריים חיים בדקות בלתי-
+# מוגבלות ובחינם. התאום הזה מריץ את אותה המכונה בדיוק — אותם
+# סקריפטים, אותו ספר, אותה שרשרת — מהבית הציבורי Domain, על
+# checkout של הבית הריבוני Zip דרך ZIP_PAT (Actions Secret).
+#
+# מה זה משנה ומה לא:
+#   · הספר נשאר אחד — sovereign/ חי ב-Zip בלבד; התאום לא מעתיק
+#     מצב, הוא מזמין אותו מהמקור ודוחף חזרה אליו (pull-rebase
+#     למרוצים, שער-סודות קנוני על כל diff).
+#   · הקדנס מוסט ל-:13 — לעולם לא באותה דקה עם הלב המקורי ב-Zip
+#     (:00), כך שגם אם המפעיל יחזיר את החיוב והלב המקורי יקום —
+#     שני הלבבות מתחלפים במשמרות בלי התנגשות על אותה דחיפה.
+#   · אידמפוטנטיות היא הקו הקנוני: root שכבר עוגן ⇒ ALREADY-ANCHORED
+#     בכנות; שער ה-RC שופט שידורים; ההיסטוריה השופטת היחידה — השרשרת.
+#
+# שני סודות מפעיל עדיין לא הוגשו לכספת הזאת (ראה README של התאום):
+#   · WEAVE_STEEM_WIF — בלעדיו קו Steem רץ ב-dry-כנה וג'נזיס ה-SAOS
+#     מדלג; כל שאר הפעימה (אימות, קיפול, פרסום הספרים לקונסולה)
+#     חסר-מפתחות וממשיך לרוץ.
+#   · WEAVE_SEAL_PASSPHRASE — בלעדיו TAKEOVER לא יכול לפתוח את
+#     ה-seal; כל-עוד ה-runner הראשי חי (<26ש') הלב במצב אימות-בלבד
+#     ואינו זקוק לו. היעדרו יאדים את הריצה בכנות רק אם הסנדבוקס
+#     ייעלם — זו האמת וכך היא צריכה להיראות.
+
+name: weave-heart
+
+on:
+  schedule:
+    - cron: '13 * * * *'  # שעתי, בקיזוז מהלב המקורי (:00 ב-Zip)
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'heartbeat mode — auto: judge from the ledger/git freshness; force-beat: always take over and beat'
+        required: false
+        default: 'auto'
+        type: choice
+        options:
+          - auto
+          - force-beat
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: weave-heart-domain-twin
+  cancel-in-progress: false
+
+jobs:
+  heartbeat:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout the sovereign home (Zip via PAT — the twin never forks the book)
+        uses: actions/checkout@v4
+        with:
+          repository: roshpinacare-sys/Zip
+          token: ${{ secrets.ZIP_PAT }}
+          fetch-depth: 1
+
+      - name: Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install deps
+        run: bun install --frozen-lockfile --no-save 2>/dev/null || bun install --no-save
+
+      - name: Prisma client + DB skeleton
+        run: bunx prisma generate && bunx prisma db push
+        env:
+          DATABASE_URL: 'file:${{ github.workspace }}/db/custom.db'
+
+      - name: Sovereign beat (verify, or take over if the ledger is stale)
+        run: bun scripts/weave-beat.ts
+        env:
+          DATABASE_URL: 'file:${{ github.workspace }}/db/custom.db'
+          WEAVE_SEAL_PASSPHRASE: ${{ secrets.WEAVE_SEAL_PASSPHRASE }}
+          WEAVE_FORCE_BEAT: ${{ inputs.mode == 'force-beat' && '1' || '0' }}
+          WEAVE_STALE_MIN: '1560'
+          GITHUB_TOKEN: ${{ github.token }}
+          WEAVE_OPS_PAT: ${{ secrets.WEAVE_OPS_PAT }}
+          WEAVE_STEEM_WIF: ${{ secrets.WEAVE_STEEM_WIF }}
+          WEAVE_STEEM_ACCOUNT: cashmachine
+
+      - name: Upload beat report (evidence)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: weave-beat-report-domain-twin
+          path: sovereign/beat-report.json
+          retention-days: 30
+          if-no-files-found: ignore
+
+      - name: Dispatch anchor lines (schedule backstop)
+        if: always()
+        run: |
+          set -e
+          echo "[twin-heart] משגר את קווי העיגון בעקבות הפעימה (backstop)…"
+          gh workflow run weave-anchor-lines.yml --ref main
+          echo "[twin-heart] הקווים שוגרו כרצף אחד — הקדנס: פעימה ⇒ Steem/Hive ⇒ ZERO ⇒ דחיפה"
+        env:
+          GH_TOKEN: ${{ github.token }}

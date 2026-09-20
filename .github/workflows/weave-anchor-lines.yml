@@ -1,0 +1,140 @@
+# WEAVE-ANCHOR-LINES (DOMAIN TWIN) — קווי העדות על דקות-Actions ציבוריות
+#
+# תאום של קווי-העדות של Zip (OL-14): אותם סקריפטים, אותו ספר —
+# מהבית הציבורי Domain, על checkout של Zip דרך ZIP_PAT.
+# הקדנס הדו-שעתי מוסט ל-:33 (המקור ב-Zip: :20); ההנעה העיקרית —
+# הלב-התאום שמשגר את הקווים בעקבות כל פעימה.
+#
+# שקיפות-יכולת בכנות (עד שהמפעיל ישלים את שני הסודות לכספת):
+#   · קו Steem/Hive בלי WEAVE_STEEM_WIF ⇒ הסקריפט עצמו עובר ל-dry-כנה
+#     ("NO-WIF honest dry") — ירוק, ללא שידור.
+#   · קו ה-ZERO בלי WEAVE_SEAL_PASSPHRASE ⇒ השער הזה מוריד אותו
+#     בכנות ל-verify-only (קריאה-חוזרת חסרת-מפתחות מהשרשרת) —
+#     האימות חי, ההארכה ממתינה למפתח. מרגע שהסוד יוגדר — קו
+#     ה-ZERO חוזר ל-auto מלא, בלי שינוי קוד.
+
+name: weave-anchor-lines
+
+on:
+  schedule:
+    - cron: '33 */2 * * *'  # רשת-ביטחון דו-שעתית; ההנעה העיקרית — הלב
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'anchor mode — auto: anchor the latest checkpoint root on both lines if not yet anchored; dry: build payloads, broadcast nothing; verify-only: keyless readback, never broadcast'
+        required: false
+        default: 'auto'
+        type: choice
+        options:
+          - auto
+          - dry
+          - verify-only
+      recover:
+        description: 'recovery — txid (0x…64hex) of an on-chain ZERO anchor whose push reddened pre-verification: re-verify payload from chain and write the attestation'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: weave-anchor-lines-domain-twin
+  cancel-in-progress: false
+
+jobs:
+  anchor-lines:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout the sovereign home (Zip via PAT — the twin never forks the book)
+        uses: actions/checkout@v4
+        with:
+          repository: roshpinacare-sys/Zip
+          token: ${{ secrets.ZIP_PAT }}
+          fetch-depth: 1
+
+      - name: Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install deps
+        run: bun install --frozen-lockfile --no-save 2>/dev/null || bun install --no-save
+
+      - name: Prisma client + DB skeleton
+        run: bunx prisma generate && bunx prisma db push
+        env:
+          DATABASE_URL: 'file:${{ github.workspace }}/db/custom.db'
+
+      - name: Web-upload priority guard (honest skip while inbox pending)
+        id: webguard
+        run: |
+          PENDING=$(ls sovereign/web/inbox/*/job.json 2>/dev/null | wc -l)
+          echo "pending=$PENDING" >> "$GITHUB_OUTPUT"
+          if [ "$PENDING" -gt 0 ]; then
+            echo "דואר נכנס של רשת-האחסון לא ריק ($PENDING חבילות) — תקציב ה-RC מוקדש לשידור התוכן. הקווים יעגנו במחזור הבא."
+          else
+            echo "דואר נכנס ריק — הקווים פועלים כסדרם"
+          fi
+
+      - name: Line 1 — Steem/Hive anchor (external witness, posting authority)
+        id: steem
+        if: steps.webguard.outputs.pending == '0'
+        continue-on-error: true
+        run: |
+          MODE_FLAG=""
+          case "${{ inputs.mode }}" in
+            dry) MODE_FLAG="--dry" ;;
+            verify-only) MODE_FLAG="--verify-only" ;;
+          esac
+          bun scripts/weave-anchor.ts $MODE_FLAG
+        env:
+          DATABASE_URL: 'file:${{ github.workspace }}/db/custom.db'
+          WEAVE_STEEM_WIF: ${{ secrets.WEAVE_STEEM_WIF }}
+          WEAVE_SEAL_PASSPHRASE: ${{ secrets.WEAVE_SEAL_PASSPHRASE }}
+
+      - name: Line 2 — Zero-gas EVM anchor on Z Chain 9369 (auto, or honest keyless readback while the seal awaits the operator)
+        id: zero
+        if: steps.webguard.outputs.pending == '0'
+        continue-on-error: true
+        env:
+          DATABASE_URL: 'file:${{ github.workspace }}/db/custom.db'
+          WEAVE_SEAL_PASSPHRASE: ${{ secrets.WEAVE_SEAL_PASSPHRASE }}
+          SEAL_PP: ${{ secrets.WEAVE_SEAL_PASSPHRASE }}
+        run: |
+          MODE_FLAG=""
+          case "${{ inputs.mode }}" in
+            dry) MODE_FLAG="--dry" ;;
+            verify-only) MODE_FLAG="--verify-only" ;;
+          esac
+          # יכולת-בכנות: בלי ה-passphrase אין פתיחת seal — קו ה-ZERO יורד
+          # ל-verify-only (חסר-מפתחות) במקום להיכשל. כשהסוד יגיע — auto מלא.
+          if [ -z "$SEAL_PP" ] && [ -z "$MODE_FLAG" ]; then
+            echo "WEAVE_SEAL_PASSPHRASE אינו בכספת — קו ה-ZERO ב-verify-only (קריאה-חוזרת חסרת-מפתחות) עד השלמת הסוד על-ידי המפעיל"
+            MODE_FLAG="--verify-only"
+          fi
+          if [ -n "${{ inputs.recover }}" ]; then MODE_FLAG="--recover=${{ inputs.recover }}"; fi
+          bun scripts/weave-anchor-zero.ts $MODE_FLAG
+
+      - name: Honesty verdict — red if any line failed (skipped-by-guard = green honest skip)
+        if: always()
+        run: |
+          if [ "${{ steps.webguard.outputs.pending }}" != "0" ]; then
+            echo "דילוג-כנה: העלאת תוכן בעדיפות — אף קו לא רץ המחזור הזה"; exit 0
+          fi
+          echo "steem: ${{ steps.steem.outcome }} · zero: ${{ steps.zero.outcome }}"
+          if [ "${{ steps.steem.outcome }}" = "failure" ] || [ "${{ steps.zero.outcome }}" = "failure" ]; then
+            echo "לפחות קו עדות אחד אדום — הריצה אדומה בכנות"; exit 1
+          fi
+          echo "שני קווי העדות הושלמו"
+
+      - name: Upload anchor reports (evidence)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: weave-anchor-reports-domain-twin
+          path: |
+            sovereign/anchor-report.json
+            sovereign/zero-anchor-report.json
+          retention-days: 30
+          if-no-files-found: ignore

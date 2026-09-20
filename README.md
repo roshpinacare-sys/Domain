@@ -44,6 +44,62 @@ Four workflows run inside this repository on its own GITHUB_TOKEN:
 - `dex-watch` (every 20 min) - scans the public deposit addresses on
   TRON/ETH/SOL/BTC with public RPCs and maintains the open deposit book.
 
+## The machine twin (OL-14 healing, 2026-09-20)
+
+At 12:36Z on 2026-09-20 every private-repo Actions run across the
+ecosystem began failing instantly (jobs rejected before any step runs,
+no logs generated) — the measured pattern of the Free account's
+private-repo Actions minutes being exhausted, while public repositories
+kept running on free unlimited minutes (all public proof machines
+stayed green through the same window). The sovereign producer machines
+that live in the private Zip repository — weave-heart, weave-anchor-lines,
+web-publish, weave-ecosystem — stopped, and with them the live books
+(saos-live.json, mirror.json) froze at their 12:10Z state.
+
+The twin in this repository is the healing: the same machines, running
+the same unmodified scripts from the sovereign home, but hosted here
+where Actions minutes are free and unlimited. Each twin workflow checks
+out the private Zip repository via the `ZIP_PAT` secret (Actions vault
+only — never in code, never in logs), runs the machine, and pushes its
+commits back to Zip. The book is never forked: one sovereign home, one
+source of truth, one chain.
+
+- `weave-heart` (hourly at :13) — the sovereign heartbeat; verify-only
+  while the primary runner is alive, takeover when it is stale
+- `weave-anchor-lines` (bi-hourly at :33) — both evidence lines
+  (Steem/Hive anchor, zero-gas EVM anchor); while the operator's secrets
+  are pending it runs the Steem line in honest dry and the ZERO line in
+  keyless verify-only readback
+- `web-publish` (every 20 min at :03/:23/:43) — the sovereign storage
+  network publisher (posts inbox packages to Steem); honest no-wif skip
+  while the secret is pending
+- `weave-ecosystem` (daily at 06:30) — the G6 ecosystem unification
+  enforcement (full dup scan, committed beacon, honest red on violation)
+
+Cadences are deliberately offset from the original Zip machines so that
+if the operator restores billing and the private machines revive, both
+homes interleave without ever colliding on the same push. All state
+writes go through the canonical secret gate and the chain-aware
+idempotency of the machine itself (an already-anchored root is an
+ALREADY-ANCHORED honest skip, not an error).
+
+Two secrets are pending operator delivery in this repository's vault
+(Settings > Secrets and variables > Actions) for full capability —
+until then the twins run honestly degraded and say so in their logs:
+
+1. `WEAVE_STEEM_WIF` — the posting key of the witness account
+   (cashmachine). Without it: no Steem/Hive broadcasts (honest dry),
+   no SAOS live genesis placement (honest skip).
+2. `WEAVE_SEAL_PASSPHRASE` — the seal passphrase of the sovereign
+   network key. Without it: no takeover, no ZERO anchor extension
+   (keyless readback only). The cloud copy of this secret exists only
+   in the private Zip vault, which the API can never read back.
+
+The operator's alternatives are recorded honestly: restoring billing
+revives the original private machines instantly (the secrets are already
+in their vault), delivering the two secrets here gives the twin full
+capability for free, and doing both yields a redundant two-home machine.
+
 ## What is a frozen snapshot here (pending activation)
 
 Some data planes on the old home are fed from the ecosystem's private
