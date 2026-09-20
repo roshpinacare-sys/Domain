@@ -188,6 +188,36 @@ function bucketFor(days, date) {
       ],
     };
     fs.writeFileSync(LATEST_PATH, JSON.stringify(report, null, 2) + "\n");
+    // pre-live SLO ledger: the same public shape, zero live measurements.
+    // Written so the verdict commit (git add truth/*.json) always has all
+    // three files, and so the SLO page shows its honest state before birth.
+    const preSlo = {
+      format: "slo-v1",
+      generatedAt: at,
+      generator: "truth-gate-ci",
+      preLive: {
+        reason: "GitHub Pages is not enabled yet - the SLO ledger starts with the first LIVE measurement.",
+        since: at,
+      },
+      dataSince: null,
+      windowDays: SLO_WINDOW_DAYS,
+      targets: SLO_TARGETS.map((t) => ({ id: t.id, gate: t.gate || "hourly cadence", target: t.target })),
+      window: { daysCounted: 0, runs: 0, allGreen: 0, expectedRuns: 0, fillPct: 0 },
+      slos: SLO_TARGETS.map((t) => ({
+        id: t.id,
+        gate: t.gate || "cadence",
+        target: `${(t.target * 100).toFixed(0)}%`,
+        measured: null,
+        good: 0,
+        total: 0,
+        budgetAllowed: 0,
+        budgetConsumedPct: 0,
+        state: "WARMING",
+      })),
+      days: [],
+      events: [],
+    };
+    fs.writeFileSync(SLO_PATH, JSON.stringify(preSlo, null, 2) + "\n");
     let history = { format: "truth-gate-history-v1", runs: [] };
     try { history = JSON.parse(fs.readFileSync(HISTORY_PATH, "utf8")); } catch { /* first run */ }
     if (!Array.isArray(history.runs)) history.runs = [];
