@@ -1,6 +1,6 @@
 {
  "ok": true,
- "generatedAt": "2026-09-20T01:35:02Z",
+ "generatedAt": "2026-09-20T01:44:15Z",
  "source": "github-actions-api",
  "reposTotal": 15,
  "reposWithAgents": [
@@ -386,6 +386,39 @@
    }
   },
   {
+   "id": "domain-agents-watch",
+   "name": "agents-watch",
+   "repo": "Domain",
+   "visibility": "public",
+   "schedule": "hourly :37",
+   "layer": "REGISTRY",
+   "role": {
+    "en": "The agents registry of the new home - asks the GitHub API for the true state of every agent in all 15 repos (this one included) and refreshes the registry the console reads. The token lives only in the Actions secret vault.",
+    "he": "רישום הסוכנים של הבית החדש - שואל את ה-API של גיטהאב את מצבם האמיתי של כל הסוכנים בכל 15 הריפואים (כולל הזה) ומרענן את הרישום שהקונסולה קוראת. הטוקן חי בכספת הסודות של Actions בלבד."
+   },
+   "input": {
+    "en": "AGENTS_WATCH_TOKEN (Actions secret, never in code)",
+    "he": "AGENTS_WATCH_TOKEN (סוד Actions, לעולם לא בקוד)"
+   },
+   "output": {
+    "en": "agents/registry.json + gh-snapshot.json",
+    "he": "agents/registry.json + gh-snapshot.json"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 2,
+    "success": 1,
+    "failure": 0,
+    "other": 1,
+    "successRate": 50,
+    "avgDurS": 30
+   },
+   "lastRun": {
+    "at": "2026-09-20T01:34:16Z",
+    "conclusion": "success"
+   }
+  },
+  {
    "id": "domain-console-publish",
    "name": "console-publish",
    "repo": "Domain",
@@ -505,15 +538,15 @@
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 1,
-    "success": 1,
+    "runs_sampled": 2,
+    "success": 2,
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 15
+    "avgDurS": 16
    },
    "lastRun": {
-    "at": "2026-09-20T01:34:19Z",
+    "at": "2026-09-20T01:37:30Z",
     "conclusion": "success"
    }
   },
@@ -803,14 +836,14 @@
    "state": "live",
    "stats": {
     "runs_sampled": 100,
-    "success": 99,
+    "success": 100,
     "failure": 0,
-    "other": 1,
-    "successRate": 99,
-    "avgDurS": 57.8
+    "other": 0,
+    "successRate": 100,
+    "avgDurS": 59.4
    },
    "lastRun": {
-    "at": "2026-09-20T01:02:44Z",
+    "at": "2026-09-20T01:34:06Z",
     "conclusion": "success"
    }
   },
@@ -1043,39 +1076,6 @@
    "lastRun": {
     "at": "2026-09-20T00:26:05Z",
     "conclusion": "failure"
-   }
-  },
-  {
-   "id": "domain-agents-watch",
-   "name": "agents-watch",
-   "repo": "Domain",
-   "visibility": "public",
-   "schedule": "hourly :37",
-   "layer": "REGISTRY",
-   "role": {
-    "en": "The agents registry of the new home - asks the GitHub API for the true state of every agent in all 15 repos (this one included) and refreshes the registry the console reads. The token lives only in the Actions secret vault.",
-    "he": "רישום הסוכנים של הבית החדש - שואל את ה-API של גיטהאב את מצבם האמיתי של כל הסוכנים בכל 15 הריפואים (כולל הזה) ומרענן את הרישום שהקונסולה קוראת. הטוקן חי בכספת הסודות של Actions בלבד."
-   },
-   "input": {
-    "en": "AGENTS_WATCH_TOKEN (Actions secret, never in code)",
-    "he": "AGENTS_WATCH_TOKEN (סוד Actions, לעולם לא בקוד)"
-   },
-   "output": {
-    "en": "agents/registry.json + gh-snapshot.json",
-    "he": "agents/registry.json + gh-snapshot.json"
-   },
-   "state": "dormant",
-   "stats": {
-    "runs_sampled": 1,
-    "success": 0,
-    "failure": 0,
-    "other": 1,
-    "successRate": 0,
-    "avgDurS": 5
-   },
-   "lastRun": {
-    "at": "2026-09-20T01:34:16Z",
-    "conclusion": null
    }
   },
   {
