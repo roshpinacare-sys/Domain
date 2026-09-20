@@ -1,7 +1,7 @@
 // AGENTS-WATCH - סוכן רישום-הסוכנים (Task 37)
 //
 // רץ בריפו הציבורי כל שעה: שואל את ה-API של גיטהאב את מצבם האמיתי של
-// כל הסוכנים בכל 14 הריפואים (ריצות, הצלחות, משכים, פעם אחרונה),
+// כל הסוכנים בכל 15 הריפואים (ריצות, הצלחות, משכים, פעם אחרונה),
 // ממזג עם קטלוג התפקידים הקנוני (קלט->פלט) וכותב את agents/registry.json
 // שתצוגת הסוכנים בקונסולה הציבורית קוראת. אפס-סנדבוקס - הענן מתעדכן
 // לבד, הריפו הוא הבית.
@@ -9,7 +9,7 @@
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 
 const OWNER = "roshpinacare-sys";
-const REPOS = ["Adsmarket","anchor-baseline","Console","Project-files","roshpina","saos-control-center",
+const REPOS = ["Adsmarket","anchor-baseline","Console","Domain","Project-files","roshpina","saos-control-center",
   "saos-dex","saos-jummper","saos-sovereign-foundry","saos-sovereign-platform","Saosmartwallet","Sdk","steem","Zip"];
 const TOKEN = process.env.AGENTS_WATCH_TOKEN;
 if (!TOKEN) { console.error("AGENTS_WATCH_TOKEN missing"); process.exit(1); }
@@ -52,6 +52,38 @@ const CATALOG = {
     role:{en:"Publishes the public console pages - validates and ships every change to the site the world sees.",he:"מפרסם את דפי הקונסולה הציבוריים - מאמת ומשטח כל שינוי לאתר שהעולם רואה."},
     input:{en:"push to main",he:"דחיפה ל-main"},
     output:{en:"live console pages",he:"דפי קונסולה חיים"}},
+  "Domain|console-publish": { layer:"PUBLISH", schedule:"on push to main",
+    role:{en:"Publishes the new public home - validates and ships every change to the site the world will see.",he:"מפרסם את הבית הציבורי החדש - מאמת ומשטח כל שינוי לאתר שהעולם יראה."},
+    input:{en:"push to main",he:"דחיפה ל-main"},
+    output:{en:"live home pages",he:"דפי הבית החיים"}},
+  "Domain|truth-gate": { layer:"TRUTH", schedule:"hourly :07",
+    role:{en:"The truth machine of the new home - measures the live site every hour and commits the verdict (red included) publicly. Until Pages is enabled it records an honest PRE-LIVE verdict, never a false red.",he:"מכונת האמת של הבית החדש - מודדת את האתר החי כל שעה ומקמיטת את פסק הדין (כולל אדום) בפומבי. עד הפעלת Pages היא רושמת פסק דין PRE-LIVE כן, לעולם לא אדום שקר."},
+    input:{en:"the live deployed site",he:"האתר החי הפרוס"},
+    output:{en:"truth/latest.json + history + SLO ledger",he:"truth/latest.json + היסטוריה + ספר SLO"}},
+  "Domain|agent-verify": { layer:"TRUTH", schedule:"bi-hourly :55",
+    role:{en:"The network verifies the agent - measures 48 assertions against the live site and publishes the results as data. Pre-live (Pages not yet enabled): all assertions honestly suspended with the operator instruction.",he:"הרשת מאמתת את הסוכן - מודדת 48 קביעות מול האתר החי ומפרסמת את התוצאות כנתונים. במצב טרום-עלייה (Pages לא הופעל): כל הקביעות מושהות בכנות עם הוראת המפעיל."},
+    input:{en:"assertions.json + the live site",he:"assertions.json + האתר החי"},
+    output:{en:"agent/verify/results.json",he:"agent/verify/results.json"}},
+  "Domain|agents-watch": { layer:"REGISTRY", schedule:"hourly :37",
+    role:{en:"The agents registry of the new home - asks the GitHub API for the true state of every agent in all 15 repos (this one included) and refreshes the registry the console reads. The token lives only in the Actions secret vault.",he:"רישום הסוכנים של הבית החדש - שואל את ה-API של גיטהאב את מצבם האמיתי של כל הסוכנים בכל 15 הריפואים (כולל הזה) ומרענן את הרישום שהקונסולה קוראת. הטוקן חי בכספת הסודות של Actions בלבד."},
+    input:{en:"AGENTS_WATCH_TOKEN (Actions secret, never in code)",he:"AGENTS_WATCH_TOKEN (סוד Actions, לעולם לא בקוד)"},
+    output:{en:"agents/registry.json + gh-snapshot.json",he:"agents/registry.json + gh-snapshot.json"}},
+  "Domain|money-watch": { layer:"MONEY-PATH", schedule:"every 15 min :02/:17/:32/:47",
+    role:{en:"Money path sentinel of the new home - catches the weekly powerdown landing within minutes and dispatches the external grid immediately, and rules SEND-NOW/WAIT on the redemption outbox versus the measured TRON broadcast cost.",he:"צופה נתיב הכסף של הבית החדש - קולט את נחיתת ה-powerdown השבועית בתוך דקות ומזניק את הגריד החוץ מיד, ופוסק SEND-NOW/WAIT על תיבת הפדיון מול עלות השידור הנמדדת ב-TRON."},
+    input:{en:"Steem public RPC (account+powerdown) + trongrid + CoinGecko",he:"RPC ציבורי של Steem (חשבון+powerdown) + trongrid + CoinGecko"},
+    output:{en:"dex/money.json + immediate dex-grid dispatch on landing",he:"dex/money.json + הזנקת dex-grid מיידית בנחיתה"}},
+  "Domain|dex-watch": { layer:"MIRROR", schedule:"every 20 min :07/:27/:47",
+    role:{en:"The public deposits watcher of the new home - scans the real deposit addresses (TRON/ETH/SOL/BTC) over public RPC and updates the open deposits ledger the site displays.",he:"צופה ההפקדות הציבורי של הבית החדש - סורק את כתובות ההפקדה האמיתיות (TRON/ETH/SOL/BTC) ב-RPC ציבורי ומעדכן את ספר ההפקדות הפתוח שהאתר מציג."},
+    input:{en:"public RPC: TRON / ETH / SOL / BTC",he:"RPC ציבורי: TRON / ETH / SOL / BTC"},
+    output:{en:"dex/deposits.json - the open deposits ledger",he:"dex/deposits.json - ספר ההפקדות הפתוח"}},
+  "Domain|key-verify": { layer:"MONEY-PATH", schedule:"manual (dormant until HEADCORNER)",
+    role:{en:"Operator key check - dormant in the new home until the operator adds the HEADCORNER secret to the vault; then it verifies the key against the live chain, seals the WIF into the engine vault and dispatches the grid. Refuses honestly while absent.",he:"בדיקת מפתח המפעיל - רדום בבית החדש עד שהמפעיל יוסיף את הסוד HEADCORNER לכספת; אז תאמת את המפתח מול השרשרת החיה, תאטום את ה-WIF לכספת המנוע ותזניק את הגריד. מסרבת בכנות כל עוד חסר."},
+    input:{en:"HEADCORNER secret (operator-added) + live chain",he:"סוד HEADCORNER (בהוספת המפעיל) + שרשרת חיה"},
+    output:{en:"receipts/key-check.json (verdict, never the value)",he:"receipts/key-check.json (פסק דין, לעולם לא הערך)"}},
+  "Domain|bootstrap-pages": { layer:"PUBLISH", schedule:"manual (retry button)",
+    role:{en:"The one-click attempt to enable Pages through the repo token - kept as documented evidence of the measured 403s (PAT lacks Administration) and as a retry button if permissions ever change.",he:"ניסיון הלחיצה-האחת להפעלת Pages דרך הטוקן של הריפו - נשמר כתיעוד של 403 הנמדדים (ל-PAT אין Administration) וכפתור ניסיון-חוזר אם ההרשאות ישתנו."},
+    input:{en:"GITHUB_TOKEN (repo-scoped)",he:"GITHUB_TOKEN (היקף הריפו)"},
+    output:{en:"Pages enabled, or an honest 403 in the run log",he:"Pages מופעל, או 403 כן בלוג הריצה"}},
   "saos-sovereign-foundry|CI": { layer:"QA", schedule:"push / PR",
     role:{en:"Foundry quality gate - lint, typecheck, production build, API contract and concurrency checks against a throwaway SQLite. Repaired at the root (Task 43): the recovery drill is self-sufficient (fresh verified backup then restore dry-run with chain-proof) and owner-held-token assertions skip honestly - api-check 182 passed / 0 failed / 7 environment-held skips, green run 35161896260.",he:"שעת איכות של ה-foundry - lint, typecheck, בילד ייצור, בדיקות חוזה API ומקביליות מול SQLite חד-פעמי. תוקן מהשורש (Task 43): תרגיל ההתאוששות עצמאי (גיבוי מאומת טרי ואז שחזור dry-run עם הוכחת-שרשרת) וקביעות הטוקנים שבידי הבעלים מדלגות בכנות - api-check 182 עבר / 0 נכשלו / 7 דילוגים סביבתיים, ריצה ירוקה 35161896260."},
     input:{en:"push to main",he:"דחיפה ל-main"},
@@ -96,7 +128,7 @@ const CATALOG = {
 const GENERIC = { layer:"PUBLISH", schedule:"automatic",
   role:{en:"GitHub Pages automatic deployment of the public site.",he:"פריסה אוטומטית של GitHub Pages לאתר הציבורי."},
   input:{en:"pages build",he:"בילד דפים"}, output:{en:"live GitHub Pages site",he:"אתר GitHub Pages חי"} };
-const REPO_VIS = { Console:"public" };  // measured 2026-09-16: every repo except Console is private
+const REPO_VIS = { Console:"public", Domain:"public" };  // measured 2026-09-20: Console and Domain are public; every other repo is private
 
 async function api(url) {
   const r = await fetch(url, { headers: { Authorization: `token ${TOKEN}`, "User-Agent": "agents-watch", Accept: "application/vnd.github+json" } });
@@ -164,7 +196,7 @@ const out = process.env.REGISTRY_PATH || "agents/registry.json";
 const prev = existsSync(out) ? JSON.parse(readFileSync(out, "utf8")) : null;
 writeFileSync(out, JSON.stringify(reg, null, 1) + "\n");
 const changed = !prev || JSON.stringify(prev.agents) !== JSON.stringify(reg.agents);
-console.log(`agents: ${agents.length} | repos with agents: ${withAgent.size}/14 | changed: ${changed}`);
+console.log(`agents: ${agents.length} | repos with agents: ${withAgent.size}/${REPOS.length} | changed: ${changed}`);
 process.env.REGISTRY_CHANGED = changed ? "1" : "0";
 
 // ═══ GH-SNAPSHOT (Task 49) - רשת-ביטחון למכסת-הדפדפן ═══
@@ -187,7 +219,9 @@ try {
       catch (e) { console.error(`repo ${r}: ${e.message}`); }
     }
   }
-  const consoleRuns = await api(`https://api.github.com/repos/${OWNER}/Console/actions/runs?per_page=8`);
+  // The snapshot mirrors what this home's own views fetch live first
+  // (repos/roshpinacare-sys/Domain/actions/runs): the home's machines.
+  const domainRuns = await api(`https://api.github.com/repos/${OWNER}/Domain/actions/runs?per_page=8`);
   const snap = {
     ok: true,
     format: "gh-snapshot-v1",
@@ -198,7 +232,7 @@ try {
       name: r.name, pushed_at: r.pushed_at, updated_at: r.updated_at,
       html_url: r.html_url, visibility: r.visibility, archived: r.archived,
     })),
-    runs: (consoleRuns.workflow_runs || []).map((r) => ({
+    runs: (domainRuns.workflow_runs || []).map((r) => ({
       name: r.name, status: r.status, conclusion: r.conclusion,
       created_at: r.created_at, updated_at: r.updated_at, html_url: r.html_url,
     })),

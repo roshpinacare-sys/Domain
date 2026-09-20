@@ -1378,7 +1378,7 @@ function renderTraining(){
   if(cnt) cnt.textContent = fmtInt(v.summary.total);
   if(verd){ verd.textContent = v.summary.verdict==="ALL_PASS"?"ALL PASS":v.summary.verdict; verd.style.color = v.summary.verdict==="ALL_PASS"?"#34d399":"#fbbf24"; }
   if(fails) fails.textContent = fmtInt(v.summary.failed);
-  if(det) det.innerHTML = (v.results||[]).map(r=>"<tr><td class='mono strong'>"+esc(r.id)+"</td><td>"+esc((r.details||"").slice(0,140))+"</td><td><span class='tag "+(r.ok?"green":"red")+"'>"+(r.ok?"PASS":"FAIL")+"</span></td></tr>").join("");
+  if(det) det.innerHTML = (v.results||[]).map(r=>"<tr><td class='mono strong'>"+esc(r.id)+"</td><td>"+esc((r.details||"").slice(0,140))+"</td><td><span class='tag "+(r.suspended?"amber":(r.ok?"green":"red"))+"'>"+(r.suspended?"SUSP":(r.ok?"PASS":"FAIL"))+"</span></td></tr>").join("");
 }
 function renderAgents(){
   renderTraining();
@@ -1598,7 +1598,7 @@ function renderVerify(){
         '<a class="mono" style="font-size:12px;margin-inline-start:auto" href="https://github.com/roshpinacare-sys/Domain/actions/workflows/agent-verify.yml" target="_blank" rel="noopener">workflow</a>'+
       '</div></div>'+
       '<div class="tblwrap"><div class="tblscroll"><table><thead><tr><th>ID</th><th>'+esc(t("t.summary"))+'</th><th>'+esc(t("t.status"))+'</th></tr></thead><tbody>'+
-      (v.results||[]).map(r=>"<tr><td class='mono strong'>"+esc(r.id)+"</td><td>"+esc((r.details||"").slice(0,120))+"</td><td><span class='tag "+(r.ok?"green":"red")+"'>"+(r.ok?"PASS":"FAIL")+"</span></td></tr>").join("")+
+      (v.results||[]).map(r=>"<tr><td class='mono strong'>"+esc(r.id)+"</td><td>"+esc((r.details||"").slice(0,120))+"</td><td><span class='tag "+(r.suspended?"amber":(r.ok?"green":"red"))+"'>"+(r.suspended?"SUSP":(r.ok?"PASS":"FAIL"))+"</span></td></tr>").join("")+
       '</tbody></table></div></div>';
   } else {
     el.innerHTML = '<div class="note">'+esc(t("verify.none"))+'</div>';
