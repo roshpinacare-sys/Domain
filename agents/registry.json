@@ -1,12 +1,13 @@
 {
  "ok": true,
- "generatedAt": "2026-09-19T17:45:30Z",
+ "generatedAt": "2026-09-20T01:35:02Z",
  "source": "github-actions-api",
- "reposTotal": 14,
+ "reposTotal": 15,
  "reposWithAgents": [
   "Adsmarket",
   "anchor-baseline",
   "Console",
+  "Domain",
   "Project-files",
   "roshpina",
   "saos-control-center",
@@ -108,15 +109,15 @@
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 50,
-    "success": 48,
-    "failure": 2,
+    "runs_sampled": 56,
+    "success": 53,
+    "failure": 3,
     "other": 0,
-    "successRate": 96,
-    "avgDurS": 18
+    "successRate": 94.6,
+    "avgDurS": 18.1
    },
    "lastRun": {
-    "at": "2026-09-19T16:57:47Z",
+    "at": "2026-09-20T00:59:19Z",
     "conclusion": "success"
    }
   },
@@ -141,15 +142,15 @@
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 82,
-    "success": 80,
+    "runs_sampled": 89,
+    "success": 88,
     "failure": 1,
-    "other": 1,
-    "successRate": 97.6,
-    "avgDurS": 45.7
+    "other": 0,
+    "successRate": 98.9,
+    "avgDurS": 47.7
    },
    "lastRun": {
-    "at": "2026-09-19T16:45:57Z",
+    "at": "2026-09-20T00:50:34Z",
     "conclusion": "success"
    }
   },
@@ -179,10 +180,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 14.1
+    "avgDurS": 15.2
    },
    "lastRun": {
-    "at": "2026-09-19T16:53:38Z",
+    "at": "2026-09-20T00:56:48Z",
     "conclusion": "success"
    }
   },
@@ -215,7 +216,7 @@
     "avgDurS": 13.6
    },
    "lastRun": {
-    "at": "2026-09-19T17:30:22Z",
+    "at": "2026-09-20T01:32:50Z",
     "conclusion": "success"
    }
   },
@@ -278,10 +279,10 @@
     "failure": 3,
     "other": 0,
     "successRate": 97,
-    "avgDurS": 15.4
+    "avgDurS": 15
    },
    "lastRun": {
-    "at": "2026-09-19T17:41:08Z",
+    "at": "2026-09-20T01:31:02Z",
     "conclusion": "success"
    }
   },
@@ -307,14 +308,14 @@
    "state": "live",
    "stats": {
     "runs_sampled": 100,
-    "success": 83,
+    "success": 90,
     "failure": 0,
-    "other": 17,
-    "successRate": 83,
-    "avgDurS": 38.9
+    "other": 10,
+    "successRate": 90,
+    "avgDurS": 23.1
    },
    "lastRun": {
-    "at": "2026-09-19T17:41:20Z",
+    "at": "2026-09-20T01:33:03Z",
     "conclusion": "success"
    }
   },
@@ -339,15 +340,180 @@
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 11,
-    "success": 10,
+    "runs_sampled": 20,
+    "success": 19,
     "failure": 1,
     "other": 0,
-    "successRate": 90.9,
-    "avgDurS": 23
+    "successRate": 95,
+    "avgDurS": 22.3
    },
    "lastRun": {
-    "at": "2026-09-19T17:19:04Z",
+    "at": "2026-09-20T01:19:49Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "domain-agent-verify",
+   "name": "agent-verify",
+   "repo": "Domain",
+   "visibility": "public",
+   "schedule": "bi-hourly :55",
+   "layer": "TRUTH",
+   "role": {
+    "en": "The network verifies the agent - measures 48 assertions against the live site and publishes the results as data. Pre-live (Pages not yet enabled): all assertions honestly suspended with the operator instruction.",
+    "he": "הרשת מאמתת את הסוכן - מודדת 48 קביעות מול האתר החי ומפרסמת את התוצאות כנתונים. במצב טרום-עלייה (Pages לא הופעל): כל הקביעות מושהות בכנות עם הוראת המפעיל."
+   },
+   "input": {
+    "en": "assertions.json + the live site",
+    "he": "assertions.json + האתר החי"
+   },
+   "output": {
+    "en": "agent/verify/results.json",
+    "he": "agent/verify/results.json"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 1,
+    "success": 1,
+    "failure": 0,
+    "other": 0,
+    "successRate": 100,
+    "avgDurS": 13
+   },
+   "lastRun": {
+    "at": "2026-09-20T01:34:20Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "domain-console-publish",
+   "name": "console-publish",
+   "repo": "Domain",
+   "visibility": "public",
+   "schedule": "on push to main",
+   "layer": "PUBLISH",
+   "role": {
+    "en": "Publishes the new public home - validates and ships every change to the site the world will see.",
+    "he": "מפרסם את הבית הציבורי החדש - מאמת ומשטח כל שינוי לאתר שהעולם יראה."
+   },
+   "input": {
+    "en": "push to main",
+    "he": "דחיפה ל-main"
+   },
+   "output": {
+    "en": "live home pages",
+    "he": "דפי הבית החיים"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 2,
+    "success": 2,
+    "failure": 0,
+    "other": 0,
+    "successRate": 100,
+    "avgDurS": 13.5
+   },
+   "lastRun": {
+    "at": "2026-09-20T00:52:04Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "domain-dex-watch",
+   "name": "dex-watch",
+   "repo": "Domain",
+   "visibility": "public",
+   "schedule": "every 20 min :07/:27/:47",
+   "layer": "MIRROR",
+   "role": {
+    "en": "The public deposits watcher of the new home - scans the real deposit addresses (TRON/ETH/SOL/BTC) over public RPC and updates the open deposits ledger the site displays.",
+    "he": "צופה ההפקדות הציבורי של הבית החדש - סורק את כתובות ההפקדה האמיתיות (TRON/ETH/SOL/BTC) ב-RPC ציבורי ומעדכן את ספר ההפקדות הפתוח שהאתר מציג."
+   },
+   "input": {
+    "en": "public RPC: TRON / ETH / SOL / BTC",
+    "he": "RPC ציבורי: TRON / ETH / SOL / BTC"
+   },
+   "output": {
+    "en": "dex/deposits.json - the open deposits ledger",
+    "he": "dex/deposits.json - ספר ההפקדות הפתוח"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 4,
+    "success": 4,
+    "failure": 0,
+    "other": 0,
+    "successRate": 100,
+    "avgDurS": 13.3
+   },
+   "lastRun": {
+    "at": "2026-09-20T01:31:51Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "domain-money-watch",
+   "name": "money-watch",
+   "repo": "Domain",
+   "visibility": "public",
+   "schedule": "every 15 min :02/:17/:32/:47",
+   "layer": "MONEY-PATH",
+   "role": {
+    "en": "Money path sentinel of the new home - catches the weekly powerdown landing within minutes and dispatches the external grid immediately, and rules SEND-NOW/WAIT on the redemption outbox versus the measured TRON broadcast cost.",
+    "he": "צופה נתיב הכסף של הבית החדש - קולט את נחיתת ה-powerdown השבועית בתוך דקות ומזניק את הגריד החוץ מיד, ופוסק SEND-NOW/WAIT על תיבת הפדיון מול עלות השידור הנמדדת ב-TRON."
+   },
+   "input": {
+    "en": "Steem public RPC (account+powerdown) + trongrid + CoinGecko",
+    "he": "RPC ציבורי של Steem (חשבון+powerdown) + trongrid + CoinGecko"
+   },
+   "output": {
+    "en": "dex/money.json + immediate dex-grid dispatch on landing",
+    "he": "dex/money.json + הזנקת dex-grid מיידית בנחיתה"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 1,
+    "success": 1,
+    "failure": 0,
+    "other": 0,
+    "successRate": 100,
+    "avgDurS": 18
+   },
+   "lastRun": {
+    "at": "2026-09-20T01:34:17Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "domain-truth-gate",
+   "name": "truth-gate",
+   "repo": "Domain",
+   "visibility": "public",
+   "schedule": "hourly :07",
+   "layer": "TRUTH",
+   "role": {
+    "en": "The truth machine of the new home - measures the live site every hour and commits the verdict (red included) publicly. Until Pages is enabled it records an honest PRE-LIVE verdict, never a false red.",
+    "he": "מכונת האמת של הבית החדש - מודדת את האתר החי כל שעה ומקמיטת את פסק הדין (כולל אדום) בפומבי. עד הפעלת Pages היא רושמת פסק דין PRE-LIVE כן, לעולם לא אדום שקר."
+   },
+   "input": {
+    "en": "the live deployed site",
+    "he": "האתר החי הפרוס"
+   },
+   "output": {
+    "en": "truth/latest.json + history + SLO ledger",
+    "he": "truth/latest.json + היסטוריה + ספר SLO"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 1,
+    "success": 1,
+    "failure": 0,
+    "other": 0,
+    "successRate": 100,
+    "avgDurS": 15
+   },
+   "lastRun": {
+    "at": "2026-09-20T01:34:19Z",
     "conclusion": "success"
    }
   },
@@ -438,15 +604,15 @@
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 75,
-    "success": 74,
+    "runs_sampled": 79,
+    "success": 78,
     "failure": 1,
     "other": 0,
     "successRate": 98.7,
     "avgDurS": 43.9
    },
    "lastRun": {
-    "at": "2026-09-19T16:31:44Z",
+    "at": "2026-09-20T00:39:17Z",
     "conclusion": "success"
    }
   },
@@ -637,14 +803,14 @@
    "state": "live",
    "stats": {
     "runs_sampled": 100,
-    "success": 100,
+    "success": 99,
     "failure": 0,
-    "other": 0,
-    "successRate": 100,
-    "avgDurS": 59.5
+    "other": 1,
+    "successRate": 99,
+    "avgDurS": 57.8
    },
    "lastRun": {
-    "at": "2026-09-19T17:31:51Z",
+    "at": "2026-09-20T01:02:44Z",
     "conclusion": "success"
    }
   },
@@ -674,10 +840,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 57.9
+    "avgDurS": 48.4
    },
    "lastRun": {
-    "at": "2026-09-19T17:07:41Z",
+    "at": "2026-09-20T01:08:11Z",
     "conclusion": "success"
    }
   },
@@ -740,10 +906,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 40.2
+    "avgDurS": 39.2
    },
    "lastRun": {
-    "at": "2026-09-19T17:06:59Z",
+    "at": "2026-09-20T01:07:37Z",
     "conclusion": "success"
    }
   },
@@ -834,16 +1000,82 @@
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 63,
-    "success": 56,
+    "runs_sampled": 87,
+    "success": 80,
     "failure": 7,
     "other": 0,
-    "successRate": 88.9,
-    "avgDurS": 20.5
+    "successRate": 92,
+    "avgDurS": 20.2
    },
    "lastRun": {
-    "at": "2026-09-19T17:28:24Z",
+    "at": "2026-09-20T01:30:27Z",
     "conclusion": "success"
+   }
+  },
+  {
+   "id": "domain-bootstrap-pages",
+   "name": "bootstrap-pages",
+   "repo": "Domain",
+   "visibility": "public",
+   "schedule": "manual (retry button)",
+   "layer": "PUBLISH",
+   "role": {
+    "en": "The one-click attempt to enable Pages through the repo token - kept as documented evidence of the measured 403s (PAT lacks Administration) and as a retry button if permissions ever change.",
+    "he": "ניסיון הלחיצה-האחת להפעלת Pages דרך הטוקן של הריפו - נשמר כתיעוד של 403 הנמדדים (ל-PAT אין Administration) וכפתור ניסיון-חוזר אם ההרשאות ישתנו."
+   },
+   "input": {
+    "en": "GITHUB_TOKEN (repo-scoped)",
+    "he": "GITHUB_TOKEN (היקף הריפו)"
+   },
+   "output": {
+    "en": "Pages enabled, or an honest 403 in the run log",
+    "he": "Pages מופעל, או 403 כן בלוג הריצה"
+   },
+   "state": "degraded",
+   "stats": {
+    "runs_sampled": 1,
+    "success": 0,
+    "failure": 1,
+    "other": 0,
+    "successRate": 0,
+    "avgDurS": 6
+   },
+   "lastRun": {
+    "at": "2026-09-20T00:26:05Z",
+    "conclusion": "failure"
+   }
+  },
+  {
+   "id": "domain-agents-watch",
+   "name": "agents-watch",
+   "repo": "Domain",
+   "visibility": "public",
+   "schedule": "hourly :37",
+   "layer": "REGISTRY",
+   "role": {
+    "en": "The agents registry of the new home - asks the GitHub API for the true state of every agent in all 15 repos (this one included) and refreshes the registry the console reads. The token lives only in the Actions secret vault.",
+    "he": "רישום הסוכנים של הבית החדש - שואל את ה-API של גיטהאב את מצבם האמיתי של כל הסוכנים בכל 15 הריפואים (כולל הזה) ומרענן את הרישום שהקונסולה קוראת. הטוקן חי בכספת הסודות של Actions בלבד."
+   },
+   "input": {
+    "en": "AGENTS_WATCH_TOKEN (Actions secret, never in code)",
+    "he": "AGENTS_WATCH_TOKEN (סוד Actions, לעולם לא בקוד)"
+   },
+   "output": {
+    "en": "agents/registry.json + gh-snapshot.json",
+    "he": "agents/registry.json + gh-snapshot.json"
+   },
+   "state": "dormant",
+   "stats": {
+    "runs_sampled": 1,
+    "success": 0,
+    "failure": 0,
+    "other": 1,
+    "successRate": 0,
+    "avgDurS": 5
+   },
+   "lastRun": {
+    "at": "2026-09-20T01:34:16Z",
+    "conclusion": null
    }
   },
   {
