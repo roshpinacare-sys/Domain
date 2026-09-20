@@ -1,0 +1,949 @@
+{
+ "ok": true,
+ "generatedAt": "2026-09-19T17:45:30Z",
+ "source": "github-actions-api",
+ "reposTotal": 14,
+ "reposWithAgents": [
+  "Adsmarket",
+  "anchor-baseline",
+  "Console",
+  "Project-files",
+  "roshpina",
+  "saos-control-center",
+  "saos-dex",
+  "saos-jummper",
+  "saos-sovereign-foundry",
+  "saos-sovereign-platform",
+  "Saosmartwallet",
+  "Sdk",
+  "steem",
+  "Zip"
+ ],
+ "reposIdle": [],
+ "agents": [
+  {
+   "id": "adsmarket-claims-guard",
+   "name": "claims-guard",
+   "repo": "Adsmarket",
+   "visibility": "public",
+   "schedule": "daily 06:11 UTC",
+   "layer": "INTEGRITY",
+   "role": {
+    "en": "Marketing truth guard - enforces the repo iron principle: landing pages complete, zero forbidden glyphs per operator policy, live links (a dead link to our own network is a failure), and counts the txid receipts backing the claims.",
+    "he": "שומר האמת של השיווק - אוכף את עקרון הברזל של הריפו: עמודי נחיתה שלמים, אפס גליפים אסורים לפי מדיניות המפעיל, קישורים חיים (קישור מת של הרשת שלנו הוא כשל), וספירת קבלות ה-txid שמגבות את הטענות."
+   },
+   "input": {
+    "en": "marketing pages + documents",
+    "he": "עמודי שיווק + מסמכים"
+   },
+   "output": {
+    "en": "agent/status.json truth report",
+    "he": "דוח אמת agent/status.json"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 7,
+    "success": 4,
+    "failure": 3,
+    "other": 0,
+    "successRate": 57.1,
+    "avgDurS": 11.3
+   },
+   "lastRun": {
+    "at": "2026-09-19T06:26:50Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "anchor-baseline-baseline-integrity",
+   "name": "baseline-integrity",
+   "repo": "anchor-baseline",
+   "visibility": "public",
+   "schedule": "daily 07:13 UTC",
+   "layer": "INTEGRITY",
+   "role": {
+    "en": "Baseline history keeper - builds a SHA-256 manifest of all broadcasts, docs and downloads, compares to the previous manifest, reports additions and changes, and fails when history files are deleted.",
+    "he": "שומר ההיסטוריה של קו הבסיס - בונה מניפסט SHA-256 של כל השידורים, המסמכים וההורדות, משווה לקודם, מדווח תוספות ושינויים, ונכשל כשקבצי היסטוריה נמחקים."
+   },
+   "input": {
+    "en": "broadcasts + docs + download",
+    "he": "שידורים + מסמכים + הורדות"
+   },
+   "output": {
+    "en": "agent/status.json + manifest.sha256",
+    "he": "דוח agent/status.json + מניפסט SHA-256"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 5,
+    "success": 4,
+    "failure": 1,
+    "other": 0,
+    "successRate": 80,
+    "avgDurS": 8.6
+   },
+   "lastRun": {
+    "at": "2026-09-19T07:21:55Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "console-agent-verify",
+   "name": "agent-verify",
+   "repo": "Console",
+   "visibility": "public",
+   "schedule": "automatic",
+   "layer": "PUBLISH",
+   "role": {
+    "en": "GitHub Pages automatic deployment of the public site.",
+    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+   },
+   "input": {
+    "en": "pages build",
+    "he": "בילד דפים"
+   },
+   "output": {
+    "en": "live GitHub Pages site",
+    "he": "אתר GitHub Pages חי"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 50,
+    "success": 48,
+    "failure": 2,
+    "other": 0,
+    "successRate": 96,
+    "avgDurS": 18
+   },
+   "lastRun": {
+    "at": "2026-09-19T16:57:47Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "console-agents-watch",
+   "name": "agents-watch",
+   "repo": "Console",
+   "visibility": "public",
+   "schedule": "automatic",
+   "layer": "PUBLISH",
+   "role": {
+    "en": "GitHub Pages automatic deployment of the public site.",
+    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+   },
+   "input": {
+    "en": "pages build",
+    "he": "בילד דפים"
+   },
+   "output": {
+    "en": "live GitHub Pages site",
+    "he": "אתר GitHub Pages חי"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 82,
+    "success": 80,
+    "failure": 1,
+    "other": 1,
+    "successRate": 97.6,
+    "avgDurS": 45.7
+   },
+   "lastRun": {
+    "at": "2026-09-19T16:45:57Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "console-console-publish",
+   "name": "console-publish",
+   "repo": "Console",
+   "visibility": "public",
+   "schedule": "on push to main",
+   "layer": "PUBLISH",
+   "role": {
+    "en": "Publishes the public console pages - validates and ships every change to the site the world sees.",
+    "he": "מפרסם את דפי הקונסולה הציבוריים - מאמת ומשטח כל שינוי לאתר שהעולם רואה."
+   },
+   "input": {
+    "en": "push to main",
+    "he": "דחיפה ל-main"
+   },
+   "output": {
+    "en": "live console pages",
+    "he": "דפי קונסולה חיים"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 100,
+    "success": 100,
+    "failure": 0,
+    "other": 0,
+    "successRate": 100,
+    "avgDurS": 14.1
+   },
+   "lastRun": {
+    "at": "2026-09-19T16:53:38Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "console-dex-watch",
+   "name": "dex-watch",
+   "repo": "Console",
+   "visibility": "public",
+   "schedule": "every 20 min :07/:27/:47",
+   "layer": "MIRROR",
+   "role": {
+    "en": "The public deposits watcher - scans the real deposit addresses (TRON/ETH/SOL/BTC) over public RPC and updates the open deposits ledger the site displays and the DEX verifies against.",
+    "he": "צופה ההפקדות הציבורי - סורק את כתובות ההפקדה האמיתיות (TRON/ETH/SOL/BTC) ב-RPC ציבורי ומעדכן את ספר ההפקדות הפתוח שהאתר מציג והדקס מאמת מולו."
+   },
+   "input": {
+    "en": "public RPC: TRON / ETH / SOL / BTC",
+    "he": "RPC ציבורי: TRON / ETH / SOL / BTC"
+   },
+   "output": {
+    "en": "dex/deposits.json - the open deposits ledger",
+    "he": "dex/deposits.json - ספר ההפקדות הפתוח"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 100,
+    "success": 100,
+    "failure": 0,
+    "other": 0,
+    "successRate": 100,
+    "avgDurS": 13.6
+   },
+   "lastRun": {
+    "at": "2026-09-19T17:30:22Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "console-key-verify",
+   "name": "key-verify",
+   "repo": "Console",
+   "visibility": "public",
+   "schedule": "automatic",
+   "layer": "PUBLISH",
+   "role": {
+    "en": "GitHub Pages automatic deployment of the public site.",
+    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+   },
+   "input": {
+    "en": "pages build",
+    "he": "בילד דפים"
+   },
+   "output": {
+    "en": "live GitHub Pages site",
+    "he": "אתר GitHub Pages חי"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 2,
+    "success": 2,
+    "failure": 0,
+    "other": 0,
+    "successRate": 100,
+    "avgDurS": 17.5
+   },
+   "lastRun": {
+    "at": "2026-09-18T02:20:36Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "console-money-watch",
+   "name": "money-watch",
+   "repo": "Console",
+   "visibility": "public",
+   "schedule": "every 15 min :02/:17/:32/:47",
+   "layer": "MONEY-PATH",
+   "role": {
+    "en": "Money path sentinel - watches the two chokepoints of the real money path: detects the weekly powerdown landing within minutes and dispatches the external grid immediately (instead of waiting for the daily run), and rules SEND-NOW/WAIT on the redemption outbox versus the measured TRON broadcast cost.",
+    "he": "צופה נתיב הכסף - קולט את נחיתת ה-powerdown השבועית בתוך דקות ומזניק את הגריד החוץ מיד (במקום להמתין לריצה היומית), ופוסק SEND-NOW/WAIT על תיבת הפדיון מול עלות השידור הנמדדת ב-TRON."
+   },
+   "input": {
+    "en": "Steem public RPC (account+powerdown) + world.json + trongrid + CoinGecko",
+    "he": "RPC ציבורי של Steem (חשבון+powerdown) + world.json + trongrid + CoinGecko"
+   },
+   "output": {
+    "en": "dex/money.json + immediate dex-grid dispatch on landing",
+    "he": "dex/money.json + הזנקת dex-grid מיידית בנחיתה"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 100,
+    "success": 97,
+    "failure": 3,
+    "other": 0,
+    "successRate": 97,
+    "avgDurS": 15.4
+   },
+   "lastRun": {
+    "at": "2026-09-19T17:41:08Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "console-pages-build-deployment",
+   "name": "pages-build-deployment",
+   "repo": "Console",
+   "visibility": "public",
+   "schedule": "automatic",
+   "layer": "PUBLISH",
+   "role": {
+    "en": "GitHub Pages automatic deployment of the public site.",
+    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+   },
+   "input": {
+    "en": "pages build",
+    "he": "בילד דפים"
+   },
+   "output": {
+    "en": "live GitHub Pages site",
+    "he": "אתר GitHub Pages חי"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 100,
+    "success": 83,
+    "failure": 0,
+    "other": 17,
+    "successRate": 83,
+    "avgDurS": 38.9
+   },
+   "lastRun": {
+    "at": "2026-09-19T17:41:20Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "console-truth-gate",
+   "name": "truth-gate",
+   "repo": "Console",
+   "visibility": "public",
+   "schedule": "automatic",
+   "layer": "PUBLISH",
+   "role": {
+    "en": "GitHub Pages automatic deployment of the public site.",
+    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+   },
+   "input": {
+    "en": "pages build",
+    "he": "בילד דפים"
+   },
+   "output": {
+    "en": "live GitHub Pages site",
+    "he": "אתר GitHub Pages חי"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 11,
+    "success": 10,
+    "failure": 1,
+    "other": 0,
+    "successRate": 90.9,
+    "avgDurS": 23
+   },
+   "lastRun": {
+    "at": "2026-09-19T17:19:04Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "roshpina-controls-audit",
+   "name": "controls-audit",
+   "repo": "roshpina",
+   "visibility": "public",
+   "schedule": "daily 08:17 UTC",
+   "layer": "INTEGRITY",
+   "role": {
+    "en": "Controls auditor - verifies the controls-that-exist document is present and substantial, every control documented in its own section, the agent briefing and patch specs exist, and counts the broadcasts archive.",
+    "he": "מבקר הבקרות - מוודה שמסמך הבקרות-שקיימות נוכח ומהותי, שכל בקרה מתועדת בסעיף משלה, שתדריך הסוכן ומפרטי הפאטץ' קיימים, וסופר את ארכיון השידורים."
+   },
+   "input": {
+    "en": "controls + briefing + patch specs",
+    "he": "בקרות + תדריך + מפרטי פאטץ'"
+   },
+   "output": {
+    "en": "agent/status.json audit report",
+    "he": "דוח ביקורת agent/status.json"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 5,
+    "success": 4,
+    "failure": 1,
+    "other": 0,
+    "successRate": 80,
+    "avgDurS": 7.8
+   },
+   "lastRun": {
+    "at": "2026-09-19T08:29:22Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "saos-control-center-control-center-build",
+   "name": "control-center-build",
+   "repo": "saos-control-center",
+   "visibility": "public",
+   "schedule": "daily 12:37 UTC",
+   "layer": "QA",
+   "role": {
+    "en": "Control center quality gate - installs dependencies from the frozen lockfile, generates the Prisma client, runs a full typecheck and a production build. Every failed step is recorded honestly.",
+    "he": "שעת איכות של מרכז הבקרה - מתקין תלויות מהנעילה הקפואה, מייצר לקוח Prisma, מריץ בדיקת טיפוסים מלאה ובילד ייצור. כל שלב שנכשל נרשם בכנות."
+   },
+   "input": {
+    "en": "source + lockfile",
+    "he": "קוד + נעילה"
+   },
+   "output": {
+    "en": "agent/status.json build verdict",
+    "he": "פסק בילד ב-agent/status.json"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 6,
+    "success": 4,
+    "failure": 2,
+    "other": 0,
+    "successRate": 66.7,
+    "avgDurS": 44.5
+   },
+   "lastRun": {
+    "at": "2026-09-19T12:44:55Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "saos-dex-dex-beat",
+   "name": "dex-beat",
+   "repo": "saos-dex",
+   "visibility": "public",
+   "schedule": "every 2h :23",
+   "layer": "ALWAYS-UP",
+   "role": {
+    "en": "The exchange's cloud heart - loads the chain snapshot, runs deterministic ticks, verifies deposit claims against the public ledger, credits them, commits and publishes state to the public console.",
+    "he": "הלב הענן של הבורסה - טוען את תמונת-המצב, מריץ טיקים דטרמיניסטיים, מאמת תביעות הפקדה מול הספר הציבורי, מזכה, מבצע commit ומפרסם את המצב לקונסולה הציבורית."
+   },
+   "input": {
+    "en": "chain snapshot + signed deposit claims",
+    "he": "תמונת-מצב שרשרת + תביעות הפקדה חתומות"
+   },
+   "output": {
+    "en": "credits, chain commit, public state publish",
+    "he": "זיכויים, commit לשרשרת, פרסום מצב ציבורי"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 75,
+    "success": 74,
+    "failure": 1,
+    "other": 0,
+    "successRate": 98.7,
+    "avgDurS": 43.9
+   },
+   "lastRun": {
+    "at": "2026-09-19T16:31:44Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "saos-dex-dex-grid",
+   "name": "dex-grid",
+   "repo": "saos-dex",
+   "visibility": "public",
+   "schedule": "automatic",
+   "layer": "PUBLISH",
+   "role": {
+    "en": "GitHub Pages automatic deployment of the public site.",
+    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+   },
+   "input": {
+    "en": "pages build",
+    "he": "בילד דפים"
+   },
+   "output": {
+    "en": "live GitHub Pages site",
+    "he": "אתר GitHub Pages חי"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 8,
+    "success": 8,
+    "failure": 0,
+    "other": 0,
+    "successRate": 100,
+    "avgDurS": 50.8
+   },
+   "lastRun": {
+    "at": "2026-09-19T03:29:18Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "saos-jummper-jumpper-tests",
+   "name": "jumpper-tests",
+   "repo": "saos-jummper",
+   "visibility": "public",
+   "schedule": "daily 10:29 UTC",
+   "layer": "QA",
+   "role": {
+    "en": "Notary test suite - runs the full unit tests of the cross-chain proof notary (the hard gate), compiles the whole package, and attempts the live read-only witness demo with honest reporting of network failures.",
+    "he": "מבחני הנוטריון - מריץ את מלוא מבחני היחידה של נוטריון ההוכחות חוצה-השרשרות (השער הקשה), מקמפל את החבילה כולה, ומנסה את הדמו החי של עד הראייה הקריא עם דיווח כנה על כשלי רשת."
+   },
+   "input": {
+    "en": "test suite + package source",
+    "he": "מבחנים + קוד החבילה"
+   },
+   "output": {
+    "en": "agent/status.json with test counts",
+    "he": "דוח agent/status.json עם מספרי מבחנים"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 6,
+    "success": 4,
+    "failure": 2,
+    "other": 0,
+    "successRate": 66.7,
+    "avgDurS": 15.8
+   },
+   "lastRun": {
+    "at": "2026-09-19T10:35:25Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "saos-sovereign-platform-platform-selftest",
+   "name": "platform-selftest",
+   "repo": "saos-sovereign-platform",
+   "visibility": "public",
+   "schedule": "daily 13:41 UTC",
+   "layer": "QA",
+   "role": {
+    "en": "Edge engine selftest - runs the deterministic selftest of the dual-layer irrigation engine (no network, no randomness) and loads the frozen rule layer. The engine must answer identical answers always - that is the parity promise.",
+    "he": "מבחן-עצמי של מנוע הקצה - מריץ את המבחן הדטרמיניסטי של מנוע ההשקיה דו-השכבתי (אפס רשת, אפס אקראיות) וטוען את שכבת הכללים הקפואה. המנוע חייב לענות תשובות זהות תמיד - זו הבטחת הפריטיות."
+   },
+   "input": {
+    "en": "python/irrigation_engine.py",
+    "he": "מנוע ההשקיה בפייתון"
+   },
+   "output": {
+    "en": "agent/status.json selftest verdict",
+    "he": "פסק מבחן-עצמי ב-agent/status.json"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 6,
+    "success": 4,
+    "failure": 2,
+    "other": 0,
+    "successRate": 66.7,
+    "avgDurS": 14.2
+   },
+   "lastRun": {
+    "at": "2026-09-19T13:44:04Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "saosmartwallet-wallet-verify",
+   "name": "wallet-verify",
+   "repo": "Saosmartwallet",
+   "visibility": "public",
+   "schedule": "daily 14:43 UTC",
+   "layer": "QA",
+   "role": {
+    "en": "Wallet quality gate - installs dependencies, generates the Prisma client, runs a full typecheck and a production build of the seven-network wallet, and confirms the system-status reports exist.",
+    "he": "שעת איכות של הארנק - מתקין תלויות, מייצר לקוח Prisma, מריץ בדיקת טיפוסים מלאה ובילד ייצור של ארנק שבע-הרשתות, ומאשר שדוחות מצב-המערכת קיימים."
+   },
+   "input": {
+    "en": "source + lockfile",
+    "he": "קוד + נעילה"
+   },
+   "output": {
+    "en": "agent/status.json verify verdict",
+    "he": "פסק אימות ב-agent/status.json"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 7,
+    "success": 4,
+    "failure": 3,
+    "other": 0,
+    "successRate": 57.1,
+    "avgDurS": 83
+   },
+   "lastRun": {
+    "at": "2026-09-19T14:50:02Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "sdk-sdk-verify",
+   "name": "sdk-verify",
+   "repo": "Sdk",
+   "visibility": "public",
+   "schedule": "daily 09:23 UTC",
+   "layer": "INTEGRITY",
+   "role": {
+    "en": "SDK content verifier - confirms the docs and broadcasts directories exist and are not empty, builds a SHA-256 manifest and counts the document inventory.",
+    "he": "מאמת תוכן ה-SDK - מאשר שתיקיות התיעוד והשידורים קיימות ולא ריקות, בונה מניפסט SHA-256 וסופר את מלאי המסמכים."
+   },
+   "input": {
+    "en": "docs + broadcasts",
+    "he": "תיעוד + שידורים"
+   },
+   "output": {
+    "en": "agent/status.json + manifest.sha256",
+    "he": "דוח agent/status.json + מניפסט SHA-256"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 5,
+    "success": 4,
+    "failure": 1,
+    "other": 0,
+    "successRate": 80,
+    "avgDurS": 8.4
+   },
+   "lastRun": {
+    "at": "2026-09-19T09:32:17Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "steem-cloud-heart",
+   "name": "cloud-heart",
+   "repo": "steem",
+   "visibility": "public",
+   "schedule": "every 30 min",
+   "layer": "ALWAYS-UP",
+   "role": {
+    "en": "The fleet executor outside the sandbox - reads the living-attest from Steem/Hive over public RPC; fresh attest means sandbox alive (verify only), stale means takeover: key restore, full agent cycle, on-chain leadership marker, push.",
+    "he": "המבצע של הצי מחוץ לסנדבוקס - קורא את אימות-החיים מ-Steem/Hive דרך RPC ציבורי; אימות טרי = סנדבוקס חי (אימות בלבד), אימות בלהות = השתלטות: שחזור מפתח, מחזור סוכן מלא, סמן מנהיגות on-chain, דחיפה."
+   },
+   "input": {
+    "en": "public Steem/Hive RPC + fresh clone",
+    "he": "RPC ציבורי של Steem/Hive + קלון טרי"
+   },
+   "output": {
+    "en": "saosnet beat --live, chain attest, gitkeeper push",
+    "he": "saosnet beat --live, אימות שרשרת, דחיפת gitkeeper"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 100,
+    "success": 100,
+    "failure": 0,
+    "other": 0,
+    "successRate": 100,
+    "avgDurS": 59.5
+   },
+   "lastRun": {
+    "at": "2026-09-19T17:31:51Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "zip-weave-anchor-lines",
+   "name": "weave-anchor-lines",
+   "repo": "Zip",
+   "visibility": "public",
+   "schedule": "bi-hourly :20 + on every beat",
+   "layer": "WITNESS",
+   "role": {
+    "en": "Sequences both witness lines as one run - anchors the checkpoint root to Steem/Hive, then to Z Chain (zero-gas EVM), then exports and pushes once. Carries the merged anchor function of the two legacy lines (Task 24; their standalone workflows retired 2026-09-16).",
+    "he": "מריץ את שני קווי העדות כרצף אחד - מעגן את root הצ'קפוינט ל-Steem/Hive, אחר-כך ל-Z Chain‏ (EVM בגז-אפס), ומייצא ודוחף פעם אחת. נושא את פונקציית העיגון הממוזגת של שני הקווים ההיסטוריים (Task 24; ה-workflow העצמאי שלהם יצא לגמלאות ב-2026-09-16)."
+   },
+   "input": {
+    "en": "latest checkpoint root",
+    "he": "root של הצ'קפוינט האחרון"
+   },
+   "output": {
+    "en": "anchor txids recorded back into the ledger",
+    "he": "מזהי טרנזקציות העיגון חוזרים לספר"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 100,
+    "success": 100,
+    "failure": 0,
+    "other": 0,
+    "successRate": 100,
+    "avgDurS": 57.9
+   },
+   "lastRun": {
+    "at": "2026-09-19T17:07:41Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "zip-weave-ecosystem",
+   "name": "weave-ecosystem",
+   "repo": "Zip",
+   "visibility": "public",
+   "schedule": "daily 05:30",
+   "layer": "ENFORCEMENT",
+   "role": {
+    "en": "Ecosystem unification guard - scans all repos for duplication (target dup<0.2) and enforces the one-source-of-truth doctrine automatically.",
+    "he": "שומר איחוד האקוסיסטם - סורק את כל הריפואים לגילוי כפילויות (יעד dup<0.2) ואוכף את דוקטרינת מקור-האמת האחד אוטומטית."
+   },
+   "input": {
+    "en": "full org scan via contents API",
+    "he": "סריקת ארגון מלאה דרך contents API"
+   },
+   "output": {
+    "en": "ecosystem report commits",
+    "he": "קומיטים של דוח אקוסיסטם"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 7,
+    "success": 5,
+    "failure": 2,
+    "other": 0,
+    "successRate": 71.4,
+    "avgDurS": 53.7
+   },
+   "lastRun": {
+    "at": "2026-09-19T05:39:28Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "zip-weave-heart",
+   "name": "weave-heart",
+   "repo": "Zip",
+   "visibility": "public",
+   "schedule": "hourly :00",
+   "layer": "ALWAYS-UP",
+   "role": {
+    "en": "Cloud heart of The Weave - reads the ledger every hour, judges whether the primary runner is alive, verifies only when alive, takes over the full cycle when it is not.",
+    "he": "הלב הענן של The Weave - קורא את הספר כל שעה, פוסק אם הראנר הראשי חי, מאמת בלבד כשחי ומשתלט על המחזור המלא כשלא."
+   },
+   "input": {
+    "en": "fresh clone + ledger.json",
+    "he": "קלון טרי + ledger.json"
+   },
+   "output": {
+    "en": "attestations, checkpoints, heartbeat commits",
+    "he": "אימותים, צ'קפוינטים, קומיטים של פעימה"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 100,
+    "success": 100,
+    "failure": 0,
+    "other": 0,
+    "successRate": 100,
+    "avgDurS": 40.2
+   },
+   "lastRun": {
+    "at": "2026-09-19T17:06:59Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "zip-web-probe",
+   "name": "web-probe",
+   "repo": "Zip",
+   "visibility": "public",
+   "schedule": "automatic",
+   "layer": "PUBLISH",
+   "role": {
+    "en": "GitHub Pages automatic deployment of the public site.",
+    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+   },
+   "input": {
+    "en": "pages build",
+    "he": "בילד דפים"
+   },
+   "output": {
+    "en": "live GitHub Pages site",
+    "he": "אתר GitHub Pages חי"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 1,
+    "success": 1,
+    "failure": 0,
+    "other": 0,
+    "successRate": 100,
+    "avgDurS": 26
+   },
+   "lastRun": {
+    "at": "2026-09-19T00:07:17Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "zip-web-probe2",
+   "name": "web-probe2",
+   "repo": "Zip",
+   "visibility": "public",
+   "schedule": "automatic",
+   "layer": "PUBLISH",
+   "role": {
+    "en": "GitHub Pages automatic deployment of the public site.",
+    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+   },
+   "input": {
+    "en": "pages build",
+    "he": "בילד דפים"
+   },
+   "output": {
+    "en": "live GitHub Pages site",
+    "he": "אתר GitHub Pages חי"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 2,
+    "success": 2,
+    "failure": 0,
+    "other": 0,
+    "successRate": 100,
+    "avgDurS": 20.5
+   },
+   "lastRun": {
+    "at": "2026-09-19T00:15:04Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "zip-web-publish",
+   "name": "web-publish",
+   "repo": "Zip",
+   "visibility": "public",
+   "schedule": "automatic",
+   "layer": "PUBLISH",
+   "role": {
+    "en": "GitHub Pages automatic deployment of the public site.",
+    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+   },
+   "input": {
+    "en": "pages build",
+    "he": "בילד דפים"
+   },
+   "output": {
+    "en": "live GitHub Pages site",
+    "he": "אתר GitHub Pages חי"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 63,
+    "success": 56,
+    "failure": 7,
+    "other": 0,
+    "successRate": 88.9,
+    "avgDurS": 20.5
+   },
+   "lastRun": {
+    "at": "2026-09-19T17:28:24Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "project-files-archive-keeper",
+   "name": "archive-keeper",
+   "repo": "Project-files",
+   "visibility": "public",
+   "schedule": "weekly Mon 11:31 UTC",
+   "layer": "ARCHIVE",
+   "role": {
+    "en": "Archive keeper - opens every canonical zip archive end to end to prove it is not corrupt, builds a SHA-256 manifest and a size catalog. A corrupt archive is a red mark.",
+    "he": "שומר הארכיון - פותח כל ארכיון קנוני מקצה לקצה כדי להוכיח שאינו מושחת, בונה מניפסט SHA-256 וקטלוג גדלים. ארכיון מושחת הוא סימן אדום."
+   },
+   "input": {
+    "en": "canonical zip archives",
+    "he": "ארכיוני zip קנוניים"
+   },
+   "output": {
+    "en": "agent/status.json + archives.sha256",
+    "he": "דוח agent/status.json + מניפסט ארכיונים"
+   },
+   "state": "dormant",
+   "stats": {
+    "runs_sampled": 2,
+    "success": 1,
+    "failure": 1,
+    "other": 0,
+    "successRate": 50,
+    "avgDurS": 7
+   },
+   "lastRun": {
+    "at": "2026-09-16T21:11:56Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "saos-sovereign-foundry-ci",
+   "name": "CI",
+   "repo": "saos-sovereign-foundry",
+   "visibility": "public",
+   "schedule": "push / PR",
+   "layer": "QA",
+   "role": {
+    "en": "Foundry quality gate - lint, typecheck, production build, API contract and concurrency checks against a throwaway SQLite. Repaired at the root (Task 43): the recovery drill is self-sufficient (fresh verified backup then restore dry-run with chain-proof) and owner-held-token assertions skip honestly - api-check 182 passed / 0 failed / 7 environment-held skips, green run 35161896260.",
+    "he": "שעת איכות של ה-foundry - lint, typecheck, בילד ייצור, בדיקות חוזה API ומקביליות מול SQLite חד-פעמי. תוקן מהשורש (Task 43): תרגיל ההתאוששות עצמאי (גיבוי מאומת טרי ואז שחזור dry-run עם הוכחת-שרשרת) וקביעות הטוקנים שבידי הבעלים מדלגות בכנות - api-check 182 עבר / 0 נכשלו / 7 דילוגים סביבתיים, ריצה ירוקה 35161896260."
+   },
+   "input": {
+    "en": "push to main",
+    "he": "דחיפה ל-main"
+   },
+   "output": {
+    "en": "lint + typecheck + build + api + concurrency verdict",
+    "he": "פסק lint + typecheck + build + api + מקביליות"
+   },
+   "state": "dormant",
+   "stats": {
+    "runs_sampled": 100,
+    "success": 1,
+    "failure": 99,
+    "other": 0,
+    "successRate": 1,
+    "avgDurS": 137.7
+   },
+   "lastRun": {
+    "at": "2026-09-16T23:20:59Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "zip-weave-brain-restore",
+   "name": "weave-brain-restore",
+   "repo": "Zip",
+   "visibility": "public",
+   "schedule": "one-shot (manual)",
+   "layer": "RECOVERY",
+   "role": {
+    "en": "Restored the brain (3 NVIDIA NIM keys) from the fleet vault in the cloud after the sandbox DB was lost - the sovereign home, not a passing environment.",
+    "he": "השיב את המוח (3 מפתחות NVIDIA NIM) מכספת הצי בענן לאחר אובדן ה-DB של הסנדבוקס - הבית הריבוני, לא סביבה חולפת."
+   },
+   "input": {
+    "en": "WEAVE_SEAL_PASSPHRASE + sealed vault",
+    "he": "WEAVE_SEAL_PASSPHRASE + הכספת החתומה"
+   },
+   "output": {
+    "en": "brain keys restored to the sovereign chain",
+    "he": "מפתחות המוח הושבו לשרשרת הריבונית"
+   },
+   "state": "dormant",
+   "stats": {
+    "runs_sampled": 1,
+    "success": 1,
+    "failure": 0,
+    "other": 0,
+    "successRate": 100,
+    "avgDurS": 31
+   },
+   "lastRun": {
+    "at": "2026-09-15T13:13:10Z",
+    "conclusion": "success"
+   }
+  }
+ ]
+}
