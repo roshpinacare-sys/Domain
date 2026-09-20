@@ -1,6 +1,6 @@
 {
   "format": "slo-v1",
-  "generatedAt": "2026-09-20T04:20:49.877Z",
+  "generatedAt": "2026-09-20T04:37:46.657Z",
   "generator": "truth-gate-ci",
   "preLive": {
     "reason": "GitHub Pages is not enabled yet - the SLO ledger starts with the first LIVE measurement.",
@@ -25,6 +25,11 @@
       "target": 0.99
     },
     {
+      "id": "moment",
+      "gate": "G10-moment-freshness",
+      "target": 0.99
+    },
+    {
       "id": "heartbeat",
       "gate": "hourly cadence",
       "target": 0.9
@@ -32,10 +37,10 @@
   ],
   "window": {
     "daysCounted": 1,
-    "runs": 3,
-    "allGreen": 3,
+    "runs": 4,
+    "allGreen": 4,
     "expectedRuns": 2,
-    "fillPct": 0.2
+    "fillPct": 0.3
   },
   "slos": [
     {
@@ -43,9 +48,9 @@
       "gate": "G1-site-up",
       "target": "99%",
       "measured": 100,
-      "good": 3,
-      "total": 3,
-      "budgetAllowed": 0.03,
+      "good": 4,
+      "total": 4,
+      "budgetAllowed": 0.04,
       "budgetConsumedPct": 0,
       "state": "WARMING"
     },
@@ -54,9 +59,9 @@
       "gate": "G2-zero-broken-links",
       "target": "99%",
       "measured": 100,
-      "good": 3,
-      "total": 3,
-      "budgetAllowed": 0.03,
+      "good": 4,
+      "total": 4,
+      "budgetAllowed": 0.04,
       "budgetConsumedPct": 0,
       "state": "WARMING"
     },
@@ -65,9 +70,20 @@
       "gate": "G3-witness-freshness",
       "target": "99%",
       "measured": 100,
-      "good": 3,
-      "total": 3,
-      "budgetAllowed": 0.03,
+      "good": 4,
+      "total": 4,
+      "budgetAllowed": 0.04,
+      "budgetConsumedPct": 0,
+      "state": "WARMING"
+    },
+    {
+      "id": "moment",
+      "gate": "G10-moment-freshness",
+      "target": "99%",
+      "measured": 100,
+      "good": 1,
+      "total": 1,
+      "budgetAllowed": 0.01,
       "budgetConsumedPct": 0,
       "state": "WARMING"
     },
@@ -86,14 +102,16 @@
   "days": [
     {
       "date": "2026-09-20",
-      "runs": 3,
-      "allGreen": 3,
-      "g1Pass": 3,
-      "g1Runs": 3,
-      "g2Pass": 3,
-      "g2Runs": 3,
-      "g3Pass": 3,
-      "g3Runs": 3
+      "runs": 4,
+      "allGreen": 4,
+      "g1Pass": 4,
+      "g1Runs": 4,
+      "g2Pass": 4,
+      "g2Runs": 4,
+      "g3Pass": 4,
+      "g3Runs": 4,
+      "momentPass": 1,
+      "momentRuns": 1
     }
   ],
   "events": []
