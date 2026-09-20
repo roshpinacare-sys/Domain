@@ -1,0 +1,71 @@
+# WEAVE-MIRROR - סוכן שיקוף ספרי-ה-weave לבית Domain (R66 / OL-13)
+#
+# הבעיה שנמדדה (INS-R65-001 F-2): mirror.json ו-saos-live.json הועברו
+# לכאן פעם אחת בלידת הבית וקפאו לנצח - הלב הריבוני מפרסם ל-Console
+# החיה, והבית הזה הגיש אתמול כאילו הוא עכשיו (17.2ש' קפואות נמדדו
+# מול 4ש' טריות אצל התאום). הריפוי: שיקוף שעתי, חסר-מפתחות, מהמראה
+# הציבורית החיה - דוקטרינת R63 (dex-mirror) בהפעלה שנייה.
+#
+# תזמון: שעתי ב-:57 (מפת-הדקות של הצי ללא חפיפה אחת: money
+# :02/:17/:32/:47 · dex-watch :09/:29/:49 · truth-gate :07 · moment
+# :12/:42 · agents-watch :37 · console-publish :45 · dex-mirror :52 ·
+# agent-verify :55 דו-שעתי). אפס-סודות: קריאה ציבורית בלבד + הטוקן
+# של הריפו. שער G12 של מכונת האמת מודד את התוצאה המוגשת.
+
+name: weave-mirror
+
+on:
+  schedule:
+    - cron: '57 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: weave-mirror
+  cancel-in-progress: false
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Mirror the live weave books (keyless public read)
+        run: node agents/weave-mirror.mjs
+
+      - name: Publish the mirrored books
+        if: always()
+        run: |
+          git config user.name "weave-mirror"
+          git config user.email "weave-mirror@users.noreply.github.com"
+          git add mirror.json saos-live.json
+          if git diff --cached --quiet; then
+            echo "mirror unchanged - the live books are already ours"
+            exit 0
+          fi
+          for attempt in 1 2 3; do
+            git add mirror.json saos-live.json
+            git commit -m "weave-mirror: $(date -u +%Y-%m-%dT%H:%M:%SZ) · weave books mirrored from the live Console home (keyless)"
+            git pull --rebase origin main
+            if git push; then echo "mirror published (attempt ${attempt})"; exit 0; fi
+            echo "push failed (attempt ${attempt}); resetting to origin and re-mirroring"
+            git checkout -- .
+            git reset --hard origin/main
+            node agents/weave-mirror.mjs
+            git add mirror.json saos-live.json
+            if git diff --cached --quiet; then
+              echo "after re-mirror there is nothing to commit - the live books are already ours"
+              exit 0
+            fi
+          done
+          echo "ERROR: could not publish the mirror after 3 attempts"
+          exit 1
