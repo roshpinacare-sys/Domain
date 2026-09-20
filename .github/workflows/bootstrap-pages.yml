@@ -1,0 +1,51 @@
+# BOOTSTRAP-PAGES - הפעלה חד-פעמית של GitHub Pages לבית החדש.
+#
+# ל-PAT של הסנדבוקס אין הרשאת Administration (נמדד 403), אבל ל-GITHUB_TOKEN
+# של הריפו עצמו יש הרשאת pages:write כשמבקשים אותה מפורשות ב-workflow.
+# הריצה הזו מרימה את האתר מ-main/שורש בפעם הראשונה - ומכאן ה-deploy
+# אוטומטי בכל דחיפה (Deploy from a branch).
+#
+# רץ רק כשהקובץ עצמו משתנה, או ידנית (workflow_dispatch). גם כשהאתר כבר
+# מופעל זה נחשב הצלחה (409 = כבר קיים).
+
+name: bootstrap-pages
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [".github/workflows/bootstrap-pages.yml"]
+
+permissions:
+  pages: write
+  contents: read
+
+concurrency:
+  group: bootstrap-pages
+  cancel-in-progress: false
+
+jobs:
+  enable:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Enable GitHub Pages (deploy from main, root)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          set +e
+          CODE=$(curl -sS -o /tmp/pages-out.json -w "%{http_code}" -X POST \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "Content-Type: application/json" \
+            "https://api.github.com/repos/${REPO}/pages" \
+            -d '{"source":{"branch":"main","path":"/"}}')
+          echo "HTTP ${CODE}"
+          cat /tmp/pages-out.json || true
+          echo ""
+          case "$CODE" in
+            201) echo "PAGES ENABLED - the site will deploy from main"; exit 0;;
+            409) echo "PAGES ALREADY ENABLED"; exit 0;;
+            *) echo "FAILED - enable manually: Settings > Pages > Deploy from a branch (main, / (root))"; exit 1;;
+          esac
