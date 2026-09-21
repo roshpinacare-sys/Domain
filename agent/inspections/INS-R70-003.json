@@ -1,0 +1,131 @@
+{
+  "format": "agent-inspection-v1",
+  "inspectionId": "INS-R70-003",
+  "id": "INS-R70-003",
+  "inspectionOf": [
+    "R70 part-3 pre-push: the key-verify identification matrix (agents/key-verify.mjs: DOCUMENTED_ACCOUNTS × ROLES, chainAuthoritiesAll, identifyMatrix, armSteemWitness — the @cashmachine/posting door sealing WEAVE_STEEM_WIF into this repo's vault), plus the R31 evidence append recording the measured authority-mismatch receipt. Staged in /home/z/r70/domain (2 files vs HEAD 6e604f8: agents/key-verify.mjs +137/-21, agent/requests.json 1 line), sovereign twins (console/agents/key-verify.mjs + console/agent/requests.json)"
+  ],
+  "subject": "R70 part-3 — the identification matrix: on a primary mismatch, derive the value for every documented account × role, compare against the live chain, record the full matrix in the receipt, and arm the anchor-witness door (WEAVE_STEEM_WIF) on a @cashmachine/posting match",
+  "inspector": "standing supervisor-inspector (general-purpose agent, fresh context, zero-trust)",
+  "inspectedAt": "2026-09-21T09:35:00Z–09:45:00Z",
+  "operatorOrder": "third pre-push of the R70 chain: the measured authority-mismatch receipt (run 35583273117, commit 6e604f8) recorded, and the machine extended to identify the delivered key against every documented account",
+  "scope": "The staged git index of /home/z/r70/domain (exactly 2 modified files vs HEAD 6e604f8, verified: nothing else staged, nothing unstaged, nothing untracked in the repo), the measured receipt evidence (commit 6e604f8 + run 35583273117 step conclusions), my own independent live chain reads (condenser_api.get_accounts for headcorner/cashmachine/lsa — 12 authorities re-measured against the receipt's derived public key), the full staged script (node --check, a field-level receipt scan, my own re-run of the operator's scratch primitives test AND a fresh full-flow scratch run with a dummy value in /home/z/.r70/mtest — never inside the repo), the edge-case traces (cashmachine posting WIF direct; simultaneous doors), the A67/A69 book checks simulated on the staged tree, and the sovereign twins (deep-equal + byte-identity).",
+  "method": "Zero-trust re-measurement: 6e604f8 verified as ancestor of origin/main with the receipt blob read (verdict authority-mismatch, derived pub STM7grnQed1Vv9AFWNoC4H3UsHPtPwxD7S94RxyAXEJkQZKjzqSuL, chainActive STM5HhJD5WUX…); run 35583273117 step conclusions re-fetched via the API (verify step failure = the honest refusal, publish step success = the receipt commit); MY OWN keyless chain reads re-measured all 12 authorities of the three documented accounts against the receipt's derived pub — zero matches (the operator's exclusion claims re-measured, not accepted); every one of the 6 diff hunks read line-by-line; the new code read in full for write-ordering (every fail() path vs every gh PUT); node --check on the staged blob; the operator's scratch primitives test re-run by me (T1/T2/T3/T3b all reproduce); a FRESH full-flow scratch run of the staged script with my own dummy value (boot → derive → primary mismatch → 12-entry matrix → 0 matches → verdict 'unidentified', exit 1, clean receipt with the identification block — the honest-refusal path reproduced end-to-end, side-effect-free: live chain reads only, no token, no matches, no writes); the door-priority logic unit-tested with synthetic match lists (both-doors case included); the receipt field-scanned field-by-field for secret material (only STM public keys, prose, timestamps, valueKind metadata); vault re-listed (unchanged: 4 secrets — MAIN_KEY only, no canonical names, no WEAVE_STEEM_WIF yet, matching every book statement); A67/A69 simulated exactly as agent/verify/run.mjs implements them; security/glyph/timestamp sweeps (positive-control-validated) on both repos' diffs; twins deep-compared and byte-compared; part-2's condition closure verified (INS-R70-002 in-commit at 3e1d8a8, rebase parent, F-2 soft-reset fix landed, dispatch+measurement recorded).",
+  "claimsVerdicts": [
+    {
+      "claim": "M1. The receipt commit 6e604f8 exists on Domain origin/main and contains exactly the authority-mismatch verdict as described",
+      "evidence": "git merge-base --is-ancestor 6e604f8 origin/main → YES (on origin/main, one money-watch commit 62701d0 after it). Author: key-verify <key-verify@users.noreply.github.com>, 2026-09-21T09:26:26Z, touching exactly receipts/key-check.json (rewritten) + receipts/key-check-log.jsonl (1 line appended). The receipt: verdict 'authority-mismatch', derivedPublicKey STM7grnQed1Vv9AFWNoC4H3UsHPtPwxD7S94RxyAXEJkQZKjzqSuL, chainActive STM5HhJD5WUXu8vPhDmLaC2fTuuJYkwxF62Rt17HZ5G2PbnBvuHXF, source.repo now the truthful 'roshpinacare-sys/Domain' (the part-2 fix, live in a machine commit). Run 35583273117: head_sha 3e1d8a8, dispatched 09:26:15Z, verify step FAILURE (the honest exit-1), publish step SUCCESS — the exact honest-red + receipt-published pattern.",
+      "verdict": "true"
+    },
+    {
+      "claim": "M2. The script diff vs HEAD contains ONLY the matrix additions (constants, chainAuthoritiesAll, identifyMatrix, armSteemWitness, main() indexing, mismatch-branch) — nothing else",
+      "evidence": "All 6 hunks read line-by-line: @@ -28 (DOCUMENTED_ACCOUNTS + ROLES constants), @@ -88/-98 (chainAuthorities() → chainAuthoritiesAll(names): multi-account get_accounts, per-account authority map, accounts-not-readable guard on names[0]), @@ -123 (identifyMatrix + armSteemWitness), @@ -152 (main: chainsAll + chain = chainsAll[ACCOUNT]), @@ -172 (the primary authority-mismatch fail() replaced by the matrix branch: cashmachine/posting door → armSteemWitness + return; headcorner/active door → fall through to the existing grid path; other matches → identified-no-consumer; no matches → unidentified). No other change — the primary derive, posting/owner/memo pre-checks, the R38 grid-arming path, the receipt format and the workflow are untouched.",
+      "verdict": "true"
+    },
+    {
+      "claim": "M3. No vault write occurs on any non-armed verdict; the matrix itself is read-only",
+      "evidence": "identifyMatrix: wifToPriv probe (local), chainAuthoritiesAll (public RPC read), Gate.deriveAny per (account, role) (local computation) — zero writes. The mismatch branch: identified-no-consumer and unidentified both exit via fail() (receipt + exit 1) before any gh call beyond reads. armSteemWitness's own failure paths (no-relay-token, relay-public-key, relay-put rejected, relay-unverified) all abort before or without any persisted secret — the fail('relay-put') message itself records 'המפתח לא נשמר בשום מקום'. Re-verified in my live scratch run: dummy value → verdict 'unidentified', exit 1, zero gh writes (no token supplied, none needed).",
+      "verdict": "true"
+    },
+    {
+      "claim": "M4. The armed-steem-witness path writes ONLY WEAVE_STEEM_WIF into THIS repo's vault (sealed box, the repo's own public key) + the weave-anchor-lines dispatch; the receipt carries no secret value",
+      "evidence": "armSteemWitness read in full: homeRepo = GITHUB_REPOSITORY (this repo); GET /repos/{homeRepo}/actions/secrets/public-key; crypto_box_seal of deriveAny(value,'cashmachine','posting').wif; PUT /repos/{homeRepo}/actions/secrets/WEAVE_STEEM_WIF — the only vault write, and the only repo touched (no saos-dex write on this path); verification via the vault listing (fail if absent); dispatch POST weave-anchor-lines (the only dispatch); receipt fields: verdict/detail/relay {repo, secret, updatedAt}/dispatchNote/identification — my field-level scan of a live-produced receipt shows only STM public keys, prose, timestamps, and valueKind metadata. The dispatch failure mode is non-fatal (dispatchNote, verdict still armed — correct: the vault write already succeeded and the lines have a bi-hourly :33 schedule).",
+      "verdict": "true"
+    },
+    {
+      "claim": "M5. The receipt's identification block contains only public information",
+      "evidence": "Field-level scan of the receipt produced by my own scratch run: tested[] = 12 × {account, role, derived (STM pub), chain (STM pub)} — public keys by construction (the chain pubs are readable by anyone via get_accounts; the derived pubs are public keys, safe by design); matches[] = {account, role} name pairs; door = a name; valueKind = 'wif' | 'master-password' (format metadata, not the value — see F-7). No WIF, no passphrase, no token anywhere.",
+      "verdict": "true"
+    },
+    {
+      "claim": "M6. Syntax valid; the scratch test reproduces",
+      "evidence": "node --check on the staged blob (scratch copy): PASS. The operator's primitives test re-run by me: T1 dummy password → 12 derivations, 0 matches; T2 WIF invariance (same pub regardless of account/role — the property the cashmachine-WIF edge case depends on); T3/T3b wifToPriv discriminates WIF vs password. A FRESH full-flow run of the staged script with MY OWN dummy value: boot → derive → primary mismatch → 12-entry matrix → 0 matches → verdict 'unidentified', exit 1, receipt written with the full identification block and no secret material. The operator's scratch artifacts (agents/kv.mjs) verified byte-identical to the staged blob.",
+      "verdict": "true"
+    },
+    {
+      "claim": "M7. R31's appended evidence is accurate — no past-tense claims of success for the part-3 machine; its dispatch is future",
+      "evidence": "The append records the measured receipt (run id, verdict, the exclusion reads — all re-measured true by me) and describes the extension in design terms; the only past-tense verification claim ('verified end-to-end on a scratch copy with a test value: 12 derivations, honest unidentified verdict, clean receipt') is about the scratch test — which I reproduced independently. 'The extended machine's dispatch follows this push; its receipt will be recorded here.' — future tense. One wording nuance recorded as F-3: 'MAIN_KEY is a valid WIF (or master password) belonging to none of the three documented accounts' is proven only for the WIF interpretation (a master password for @cashmachine is exactly the live hypothesis the matrix will resolve); the preceding sentence is precise and the follow-up sentence frames the hypothesis correctly.",
+      "verdict": "true"
+    },
+    {
+      "claim": "M8. Twins identical (script archive byte-identical; requests deep-equal)",
+      "evidence": "sha256 of the staged agents/key-verify.mjs blob == sha256 of /home/z/my-project/console/agents/key-verify.mjs (byte-identical); python deep-compare: staged agent/requests.json == console/agent/requests.json (True). Bonus consistency: Domain HEAD agent/state.json == sovereign console/agent/state.json (byte-identical, sha256) — the part-2 state is mirrored, and part 3 correctly stages no state change in either.",
+      "verdict": "true"
+    },
+    {
+      "claim": "M9. Timestamps in the staged files are not in the future",
+      "evidence": "All timestamps in the staged diff enumerated vs inspection time 09:41:05Z: 06:50:24Z, 08:28:30Z, 08:47:00Z, 09:04:26Z, 09:26:26Z — all PAST; the latest is the measured receipt commit time. The books' generatedAt remains 08:47:00Z (stale-but-past, the continuing part-2 nuance — F-5).",
+      "verdict": "true"
+    },
+    {
+      "claim": "M10. key-verify.yml is UNCHANGED in this part",
+      "evidence": "git diff --cached --name-only → exactly [agent/requests.json, agents/key-verify.mjs]; key-verify.yml absent. The F-2 soft-reset fix from INS-R70-002 verified landed at HEAD: 'git reset --soft origin/main' with the receipt-stays-staged rationale in the echo (commit 3e1d8a8).",
+      "verdict": "true"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-1",
+      "severity": "MEDIUM",
+      "description": "origin/main moved past the staging base again: 6e604f8 → 62701d0 via one money-watch measurement commit (dex/money.json only — zero overlap with the 2 staged files). A push from the current index is non-fast-forward.",
+      "requiredFix": "git fetch origin && git pull --rebase (expected clean), then re-verify: the staged script content, the twins byte-identity/deep-equality, and the report-in-commit."
+    },
+    {
+      "id": "F-2",
+      "severity": "MEDIUM",
+      "description": "The sovereign Zip mirrors remain uncommitted — the third consecutive inspection carrying this condition (INS-R70-001 PC-3, INS-R70-002 PC-4, now). Zip HEAD == origin/main == c5fa4b5 while the worktree holds parts 1+2+3 (console/agent/handoff.md, requests.json, state.json, console/workflow-key-verify.yml, the untracked console/agents/key-verify.mjs) and the r70 worklog entry still does not exist. The part-1/part-2 Domain-side conditions all verified closed (report in-commit, rebases, dispatches, measurements, the F-2 fix) — but the sovereign record of the entire R70 chain lives only in an explicitly-ephemeral sandbox.",
+      "requiredFix": "Commit the sovereign mirrors THIS cycle — one honestly-labeled commit covering r70 parts 1+2+3 (including git add of the untracked console/agents/key-verify.mjs) — and write the r70 worklog entry with the measured chain of evidence (BEAT-ERROR → authority-mismatch → matrix extension). This is the last open item from the whole R70 series."
+    },
+    {
+      "id": "F-3",
+      "severity": "LOW",
+      "description": "R31's evidence sentence 'MAIN_KEY is a valid WIF (or master password) belonging to none of the three documented accounts' conflates two cases: the exclusion is MEASURED for the WIF interpretation (the derived pub matches none of the 12 authorities — re-verified by my own chain reads), but for the master-password interpretation 'belonging to none' is not yet knowable (a @cashmachine master password is precisely the live hypothesis). The adjacent sentences are precise ('derives a valid Steem key that matches NO authority' — true; the matrix follow-up — correctly framed), so the ledger is honest in substance; this is a wording-precision defect.",
+      "requiredFix": "When the part-3 dispatch result is appended, phrase the resolution exactly (e.g., 'if a WIF: no documented account; the master-password hypothesis is resolved by the matrix as …'). Optional micro-fix to the existing sentence in the same commit if convenient."
+    },
+    {
+      "id": "F-4",
+      "severity": "LOW",
+      "description": "receipt.target remains the static {repo: saos-dex, secret: STEEM_ACTIVE_WIF} (the primary door). With the new armed-steem-witness outcome, the receipt's target field points at the WRONG vault for that path; only receipt.relay ({repo: this repo, secret: WEAVE_STEEM_WIF}) disambiguates. A reader of a future armed-steem-witness receipt must cross-check relay to know where the key went.",
+      "requiredFix": "In a later delivery, set target dynamically (per-path: saos-dex/STEEM_ACTIVE_WIF for the grid door, this-repo/WEAVE_STEEM_WIF for the witness door) or add a one-line comment/field clarifying that 'target' names the primary door and 'relay' names the actually-used vault. Not blocking: the relay field is unambiguous and both fields name repos/secrets the README already documents."
+    },
+    {
+      "id": "F-5",
+      "severity": "LOW",
+      "description": "state.json is not refreshed in part 3: currentTask still describes the part-2 machine ('dispatched to identify the delivered key… on a full active match, seal it into saos-dex/STEEM_ACTIVE_WIF and dispatch the grid') — accurate for what happened, but silent on the matrix and the @cashmachine/posting door this delivery adds; lastHandoff still carries the pre-measurement 08:47:07 expectations ('anchor lines expected: Steem honest-dry, ZERO full' — falsified by the seal failure minutes later); generatedAt still 08:47:00Z while the books cite 09:26:26Z facts.",
+      "requiredFix": "After the part-3 dispatch is measured, refresh state.json in the same append (currentTask/lastHandoff/generatedAt) so a fresh session reads the measured truth, not the pre-measurement expectation. Not machine-checked; audit-trail hygiene."
+    },
+    {
+      "id": "F-6",
+      "severity": "INFO",
+      "description": "Simultaneous-door behavior verified deterministic: the door selector checks cashmachine/posting first, then headcorner/active (unit-tested with a both-match synthetic list → cashmachine/posting wins). Impossible for distinct master passwords (one value cannot derive two different accounts' authorities); reachable only if the operator deliberately set the same public key on two authorities. In that case the receipt's matches[] records BOTH matches, so the situation stays visible and reversible. Acceptable as designed.",
+      "requiredFix": "None (recorded so the priority order is documented as intentional)."
+    },
+    {
+      "id": "F-7",
+      "severity": "INFO",
+      "description": "The receipt publishes valueKind ('wif' vs 'master-password') — metadata about the FORM of the delivered vault value. It is not the value, and vault values are unreadable by API; but it does tell a future reader which derivation space the operator's MAIN_KEY lives in. The alternative (hiding it) would cost diagnostic value in exactly the scenario this delivery exists for (the identification). Judged acceptable; recorded for the record.",
+      "requiredFix": "None."
+    },
+    {
+      "id": "F-8",
+      "severity": "INFO",
+      "description": "Glyph check: the new code introduces one glyph not previously in this file — × (U+00D7, multiplication sign, in the 'accounts × roles' comments). It is a mathematical symbol consistent with the fleet's existing math convention (≥ and ≈ appear at HEAD in weave-beat.ts, weave-anchor-zero.ts, moment-watch.mjs, money-watch.mjs); ─, ✓, …, ·, — all pre-exist in this exact file at HEAD. No emojis, no non-fleet decorations. Zero verdict-vocabulary pins anywhere in agent/verify/assertions.json or truth-gate-ci.cjs, so the new verdicts (armed-steem-witness, identified-no-consumer, unidentified) cannot redden any machine check.",
+      "requiredFix": "None."
+    },
+    {
+      "id": "F-9",
+      "severity": "INFO",
+      "description": "Pre-existing (untouched by this diff): the headcorner posting-key fail() message says the posting key is 'used for anchoring/site login' (משמש לעיגון/כניסה לאתר) — but the anchor witness is @cashmachine's posting key (README item 2 / WEAVE_STEEM_WIF); @headcorner's posting has no documented machine consumer. Cosmetic inaccuracy in an edge-case message that pre-dates this delivery.",
+      "requiredFix": "Opportunistic wording fix in a later delivery; not part of this one."
+    }
+  ],
+  "verdict": "APPROVE-WITH-CONDITIONS",
+  "pushConditions": [
+    "PC-1 (blocking, protocol): install this report at /home/z/r70/domain/agent/inspections/INS-R70-003.json and stage it into the SAME commit as the part-3 delivery (R66/R68/R70 precedent).",
+    "PC-2 (blocking, mechanical): git fetch origin && git pull --rebase in /home/z/r70/domain (origin moved 6e604f8→62701d0, money-watch/dex-money only, zero overlap); after the rebase re-verify the staged script content, the twins (script byte-identity + requests deep-equality), and that the report is in the commit.",
+    "PC-3 (order + execution): push Domain, then IMMEDIATELY dispatch key-verify (workflow_dispatch) — the matrix is the delivery's purpose and its dispatch is what the books describe as following the push — then record the MEASURED matrix outcome (armed-steem-witness with the anchor-lines dispatch, or identified-no-consumer, or unidentified with the 12-entry matrix) in R31's evidence and the worklog, phrased per F-3. If the outcome is armed-steem-witness: verify WEAVE_STEEM_WIF appears in the vault listing and that weave-anchor-lines ran (or note its next :33 slot).",
+    "PC-4 (blocking for the R70 series, third and final notice): commit the sovereign Zip mirrors this cycle — one honestly-labeled commit covering r70 parts 1+2+3 (console/agent/handoff.md, requests.json, state.json, console/workflow-key-verify.yml, and git add the untracked console/agents/key-verify.mjs) — and write the r70 worklog entry with the full measured chain (BEAT-ERROR at the seal → authority-mismatch receipt → the identification matrix), closing INS-R70-001 PC-3 / INS-R70-002 PC-4.",
+    "PC-5 (recommended, fast-follow): the F-4 receipt.target disambiguation and the F-5 state.json refresh in the post-dispatch append (both one-liners; the F-9 wording fix opportunistically)."
+  ],
+  "claimsSummary": "10/10 claims measured TRUE (M7 with the F-3 wording nuance; M9 true with the stale generatedAt carried as F-5). The measured chain re-verified end-to-end (receipt commit, run steps, and MY OWN independent 12-authority chain reads excluding the derived key); the matrix is read-only outside the two armed paths; the armed-steem-witness path writes exactly one sealed box to exactly this repo's vault; the scratch test reproduced under my own run; the book checks pass on the staged tree; no secret values, no emojis, no future timestamps."
+}
