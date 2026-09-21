@@ -1,0 +1,45 @@
+{
+ "format": "agent-inspection-v1",
+ "inspectionId": "INS-R72-001",
+ "id": "INS-R72-001",
+ "inspectionOf": [
+  "R72 pre-push (seal adoption): scripts/seal-adopt.mjs (Zip 52bc7ce) + .github/workflows/seal-adopt.yml (Domain bd6b92a) + the adoption commit ff3260a (sovereign/weave-seal.enc + weave-seal.meta.json) + the book updates (TRUTH-AUDIT section 16, worklog r72 entry, Domain README secrets-status, agent/requests.json R33, agent/state.json)"
+ ],
+ "subject": "R72 — the operator's delivered master key tested to exhaustion (unidentified), then adopted as the seal passphrase; the frozen book resumed (293 to 297 attestations, ZERO anchor on-chain)",
+ "inspector": "standing supervisor-inspector (zero-trust, evidence-first)",
+ "inspectedAt": "2026-09-21T13:05:00Z-13:20:00Z (window per the standing order)",
+ "operatorOrder": "I added the master password to the secrets - continue - one can get all the keys from it (R33, verbatim in the book)",
+ "claims": [
+  "The delivered value (MAIN_KEY, Domain vault, 12:30:42Z) was tested to exhaustion before any action: key-verify run 35600356509 (receipt 12:35:03Z) — 12 derivations x 2 chains, 0 matches, verdict unidentified; weave-heart run 35600471533 — BEAT-ERROR AEAD authentication at the seal",
+  "The pre-rotation seal and its passphrase both live in the sovereign lineage (a776515) — the G3 gap; the key material was recoverable by any repo reader since 2026-09-14",
+  "The recovered keys derive exactly the live ledger's signer (cloud 0xaB07095053FC50a306A6d26FAa2c8887c5827B92 — the signer of att 293) and the network address 0xe376d8431089A0275A0CF125655B6Bc7d693F1b2; EIP-191 sign/verify round-trip proven locally",
+  "The seal-adopt machine is safe: idempotent (already-opens check), refuses values under 20 chars, verifies addresses against meta AND the live ledger's last signer before writing, proves the re-encryption round-trip before writing, never prints the value or the keys, pushes with pull-rebase retries",
+  "The adoption run 35602602107 succeeded: 63-char value adopted, commit ff3260a052, keys unchanged (cloud/network addresses identical), meta has NO passphrase field",
+  "The heart run 35602732517 succeeded after adoption: seal open, LEDGER-VALID checked=295 sigOk=295, beat seq=296 cp#289, brain 3/3 LIVE, gitkeeper pushed 0cb2dc8",
+  "The anchor-lines run 35602780477 (cascaded) succeeded: 296/296 signatures, ZERO anchor on-chain (txid 0x53c5d6b52d2230ca6eef01bc6a05c220ba7d45cf343669db061577b93378a42e, block 35247391, gasUsed 37960, effGasPrice 0, readback byte-exact)",
+  "The live ledger now holds 297 attestations (was 293 at 2026-09-20T12:11:15Z); the last is ANCHOR at 13:00:11Z signed by 0xaB070950 — identity continuity unbroken",
+  "No secrets or key material appear in the new script, the new workflow, the receipts, or the books (scan: 0 WIF/STM patterns)"
+ ],
+ "verification": [
+  "Vault truth via GitHub API (names only): Domain = AGENTS_WATCH_TOKEN, MAIN_KEY@12:30:42Z, WEAVE_OPS_PAT, ZIP_PAT — the only changed secret in the whole org; Zip vault untouched (WEAVE_SEAL_PASSPHRASE still 2026-09-14T16:09:37Z — the pre-adoption value; the operator's 30-second paste step re-arms the private backup path); zero variables in any repo",
+  "Run results via API: 35600356509 failure (the honest pre-adoption red), 35600471533 failure (BEAT-ERROR — pre-adoption), 35602602107 success, 35602732517 success, 35602780477 success",
+  "Zip commit chain via API: f7da359 -> 52bc7ce (script) -> ff3260a (adoption, committer seal-adopt) -> 0cb2dc8 (heart beat) -> eb1f896 (anchor ZERO) — the exact expected order, no foreign commits",
+  "Live ledger via raw.githubusercontent: 297 attestations, last ANCHOR 13:00:11Z signer 0xaB070950",
+  "Seal meta via raw.githubusercontent: rotatedAt 2026-09-21T12:57:58.190Z, passphrase field absent, cloud/network addresses unchanged",
+  "Receipt via raw.githubusercontent: verdict unidentified, generatedAt 12:35:03.366Z, valueKind master-password, matches 0 — the pre-adoption honest record preserved untouched in history",
+  "Secret scan: 0 base58check-WIF / STM-pubkey patterns in scripts/seal-adopt.mjs and seal-adopt.yml; the workflow file contains no hardcoded commit hashes (generic lineage scan) and no values"
+ ],
+ "findings": [
+  "MEDIUM: Zip's vault WEAVE_SEAL_PASSPHRASE is now stale (pre-adoption value) — the private home's backup path fails closed until the operator pastes the adopted password there; documented honestly in the meta custody note, the README, and TRUTH-AUDIT 16.5 (operator 30-second step)",
+  "LOW: the historical key material remains recoverable from the lineage (old blob + old passphrase at a776515) even after the adoption — the passphrase rotation never protected the keys against repo readers; a true key rotation (new cloud/network identities) is the operator's decision alone, and breaking identity continuity would orphan the 293-attestation history — recorded, not acted",
+  "LOW: the seal-adopt workflow writes to the sovereign home with contents:read only on Domain (the push happens inside the Zip checkout via ZIP_PAT) — the permission surface is minimal and correct",
+  "INFO: the morning delivery (08:28:30Z) and the adopted delivery (12:30:42Z) are different values (STM7grnQed1V vs STM6XGfKtCiT derivations) — both tested, only the second adopted; neither matched any documented authority",
+  "INFO: the key-verify failure conclusion (12:34:51Z) and the weave-heart BEAT-ERROR (12:36:02Z) were both pre-adoption states — they remain valid as the honest historical record and were left untouched"
+ ],
+ "verdict": "APPROVE",
+ "conditions": [
+  "The books must state the adoption as adoption (not identification) — the delivered value matched nothing; the network made it the passphrase per the operator's recorded intent",
+  "The G3 gap must stay documented (TRUTH-AUDIT 16.2) with the recovery proven — no security-by-obscurity claims",
+  "The operator's 30-second Zip-vault step must stay visible in the meta custody note and the README"
+ ]
+}
