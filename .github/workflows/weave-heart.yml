@@ -17,14 +17,13 @@
 #   · אידמפוטנטיות היא הקו הקנוני: root שכבר עוגן ⇒ ALREADY-ANCHORED
 #     בכנות; שער ה-RC שופט שידורים; ההיסטוריה השופטת היחידה — השרשרת.
 #
-# שני סודות מפעיל עדיין לא הוגשו לכספת הזאת (ראה README של התאום):
-#   · WEAVE_STEEM_WIF — בלעדיו קו Steem רץ ב-dry-כנה וג'נזיס ה-SAOS
-#     מדלג; כל שאר הפעימה (אימות, קיפול, פרסום הספרים לקונסולה)
-#     חסר-מפתחות וממשיך לרוץ.
-#   · WEAVE_SEAL_PASSPHRASE — בלעדיו TAKEOVER לא יכול לפתוח את
-#     ה-seal; כל-עוד ה-runner הראשי חי (<26ש') הלב במצב אימות-בלבד
-#     ואינו זקוק לו. היעדרו יאדים את הריצה בכנות רק אם הסנדבוקס
-#     ייעלם — זו האמת וכך היא צריכה להיראות.
+# שני סודות מפעיל — מצב הכספת (ראה README של התאום):
+#   · WEAVE_STEEM_WIF — טרם נמסר; בלעדיו קו Steem רץ ב-dry-כנה
+#     וג'נזיס ה-SAOS מדלג; כל שאר הפעימה (אימות, קיפול, פרסום
+#     הספרים לקונסולה) חסר-מפתחות וממשיך לרוץ.
+#   · WEAVE_SEAL_PASSPHRASE — נמסר על-ידי המפעיל ב-2026-09-21T08:28:30Z
+#     תחת השם MAIN_KEY (רישום הכספת, שמות-בלבד). שני השמות מתקבלים:
+#     הקנוני מועדף אם יימסר, MAIN_KEY ככינוי שהמפעיל בחר.
 
 name: weave-heart
 
@@ -77,10 +76,12 @@ jobs:
 
       - name: Refuse honestly while the seal passphrase awaits the operator
         env:
-          SEAL_PP: ${{ secrets.WEAVE_SEAL_PASSPHRASE }}
+          SEAL_PP: ${{ secrets.WEAVE_SEAL_PASSPHRASE || secrets.MAIN_KEY }}
         run: |
           if [ -z "$SEAL_PP" ]; then
-            echo "WEAVE_SEAL_PASSPHRASE is not set in this repository's vault (Settings > Secrets and variables > Actions)."
+            echo "Neither WEAVE_SEAL_PASSPHRASE nor MAIN_KEY is set in this repository's vault"
+            echo "(Settings > Secrets and variables > Actions). The canonical name is preferred;"
+            echo "MAIN_KEY is the operator's delivered alias (2026-09-21, both accepted)."
             echo "The heartbeat cannot even verify the ledger without opening the seal (the network key signs"
             echo "every checkpoint) — nothing it could do would be real. The machine refuses honestly,"
             echo "without touching anything, until the operator delivers the passphrase."
@@ -93,7 +94,7 @@ jobs:
         run: bun scripts/weave-beat.ts
         env:
           DATABASE_URL: 'file:${{ github.workspace }}/db/custom.db'
-          WEAVE_SEAL_PASSPHRASE: ${{ secrets.WEAVE_SEAL_PASSPHRASE }}
+          WEAVE_SEAL_PASSPHRASE: ${{ secrets.WEAVE_SEAL_PASSPHRASE || secrets.MAIN_KEY }}
           WEAVE_FORCE_BEAT: ${{ inputs.mode == 'force-beat' && '1' || '0' }}
           WEAVE_STALE_MIN: '1560'
           GITHUB_TOKEN: ${{ github.token }}
