@@ -38,7 +38,7 @@ const sodium = createRequire(path.join(sodiumDir, "probe.cjs"))("libsodium-wrapp
 const receipt = {
   format: "saos/key-check/1",
   generatedAt: new Date().toISOString(),
-  source: { repo: "Console", secret: SOURCE_SECRET },
+  source: { repo: process.env.GITHUB_REPOSITORY || "roshpinacare-sys/Domain", secret: SOURCE_SECRET },
   target: { repo: DEX_REPO, secret: SECRET_NAME },
   account: ACCOUNT,
   verdict: "unknown",
