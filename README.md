@@ -115,15 +115,20 @@ message (the key-verify precedent) and say so in their logs:
 
 1. `WEAVE_SEAL_PASSPHRASE` — **a key was delivered by the operator on
    2026-09-21T08:28:30Z under the name `MAIN_KEY`** (vault listing,
-   names only). First-run verification, measured 2026-09-21T09:04Z
-   (heart run 35581200547): the refusal gate passed (the secret is
-   read) but the beat failed at the seal — `BEAT-ERROR: Unsupported
-   state or unable to authenticate data` — **MAIN_KEY is not the seal
-   passphrase**. The twins accept both names (canonical preferred);
-   the seal gate still awaits the passphrase. The delivered key will
-   be identified by the R38 key-verify machine (dispatch follows this
-   delivery) — its verdict will be published to
-   `receipts/key-check.json`.
+   names only). It was tested to exhaustion, every rung receipted:
+   the heart failed at the seal (`BEAT-ERROR` authentication, run
+   35581200547) — not the seal passphrase; key-verify's
+   identification matrix (run 35585187927, receipt
+   `receipts/key-check.json`) derived the value for every documented
+   account × role — 12 derivations, 0 matches, verdict
+   `unidentified` — not a WIF of any authority and not a master
+   password of @headcorner, @cashmachine or @lsa. The delivered value
+   matches nothing the network can consume; a paste error is the
+   leading hypothesis (the 2026-09-18 R38 receipt proves the operator
+   holds the correct @headcorner key, and the chain's active has not
+   rotated since). The twins accept both names (canonical
+   preferred) — a re-delivery under `MAIN_KEY` or the canonical name
+   is tested automatically by the same machines.
 2. `WEAVE_STEEM_WIF` — the posting key of the witness account
    (cashmachine). Without it: no Steem/Hive broadcasts (honest dry),
    no SAOS live genesis placement (honest skip). The ZERO anchor
