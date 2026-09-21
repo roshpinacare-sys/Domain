@@ -77,6 +77,23 @@ jobs:
             echo "דואר נכנס ריק — הקווים פועלים כסדרם"
           fi
 
+      - name: Refuse honestly while the seal passphrase awaits the operator
+        id: sealguard
+        env:
+          SEAL_PP: ${{ secrets.WEAVE_SEAL_PASSPHRASE }}
+        run: |
+          if [ -z "$SEAL_PP" ]; then
+            echo "WEAVE_SEAL_PASSPHRASE is not set in this repository's vault (Settings > Secrets and variables > Actions)."
+            echo "Both evidence lines verify the ledger before anchoring (every checkpoint root is signed by"
+            echo "the network key sealed inside the envelope) — without the passphrase there is no honest"
+            echo "anchor run, not even a keyless readback (measured: --verify-only fails at the seal too)."
+            echo "The machine refuses honestly, without touching anything, until the operator delivers it."
+            echo "See README - the machine twin."
+            echo "seal=missing" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+          echo "seal=present" >> "$GITHUB_OUTPUT"
+
       - name: Line 1 — Steem/Hive anchor (external witness, posting authority)
         id: steem
         if: steps.webguard.outputs.pending == '0'
@@ -93,32 +110,28 @@ jobs:
           WEAVE_STEEM_WIF: ${{ secrets.WEAVE_STEEM_WIF }}
           WEAVE_SEAL_PASSPHRASE: ${{ secrets.WEAVE_SEAL_PASSPHRASE }}
 
-      - name: Line 2 — Zero-gas EVM anchor on Z Chain 9369 (auto, or honest keyless readback while the seal awaits the operator)
+      - name: Line 2 — Zero-gas EVM anchor on Z Chain 9369
         id: zero
         if: steps.webguard.outputs.pending == '0'
         continue-on-error: true
-        env:
-          DATABASE_URL: 'file:${{ github.workspace }}/db/custom.db'
-          WEAVE_SEAL_PASSPHRASE: ${{ secrets.WEAVE_SEAL_PASSPHRASE }}
-          SEAL_PP: ${{ secrets.WEAVE_SEAL_PASSPHRASE }}
         run: |
           MODE_FLAG=""
           case "${{ inputs.mode }}" in
             dry) MODE_FLAG="--dry" ;;
             verify-only) MODE_FLAG="--verify-only" ;;
           esac
-          # יכולת-בכנות: בלי ה-passphrase אין פתיחת seal — קו ה-ZERO יורד
-          # ל-verify-only (חסר-מפתחות) במקום להיכשל. כשהסוד יגיע — auto מלא.
-          if [ -z "$SEAL_PP" ] && [ -z "$MODE_FLAG" ]; then
-            echo "WEAVE_SEAL_PASSPHRASE אינו בכספת — קו ה-ZERO ב-verify-only (קריאה-חוזרת חסרת-מפתחות) עד השלמת הסוד על-ידי המפעיל"
-            MODE_FLAG="--verify-only"
-          fi
           if [ -n "${{ inputs.recover }}" ]; then MODE_FLAG="--recover=${{ inputs.recover }}"; fi
           bun scripts/weave-anchor-zero.ts $MODE_FLAG
+        env:
+          DATABASE_URL: 'file:${{ github.workspace }}/db/custom.db'
+          WEAVE_SEAL_PASSPHRASE: ${{ secrets.WEAVE_SEAL_PASSPHRASE }}
 
       - name: Honesty verdict — red if any line failed (skipped-by-guard = green honest skip)
         if: always()
         run: |
+          if [ "${{ steps.sealguard.outputs.seal }}" = "missing" ]; then
+            echo "סירוב-כנה: ה-seal ממתין למפעיל — אף קו לא רץ"; exit 1
+          fi
           if [ "${{ steps.webguard.outputs.pending }}" != "0" ]; then
             echo "דילוג-כנה: העלאת תוכן בעדיפות — אף קו לא רץ המחזור הזה"; exit 0
           fi

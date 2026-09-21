@@ -64,17 +64,20 @@ only — never in code, never in logs), runs the machine, and pushes its
 commits back to Zip. The book is never forked: one sovereign home, one
 source of truth, one chain.
 
-- `weave-heart` (hourly at :13) — the sovereign heartbeat; verify-only
-  while the primary runner is alive, takeover when it is stale
+- `weave-heart` (hourly at :13) — the sovereign heartbeat; refuses honestly
+  (measured: even ledger verification needs the sealed network key) until
+  WEAVE_SEAL_PASSPHRASE arrives, then full verify/takeover
 - `weave-anchor-lines` (bi-hourly at :33) — both evidence lines
-  (Steem/Hive anchor, zero-gas EVM anchor); while the operator's secrets
-  are pending it runs the Steem line in honest dry and the ZERO line in
-  keyless verify-only readback
+  (Steem/Hive anchor, zero-gas EVM anchor); refuses honestly until the
+  passphrase arrives (measured: even --verify-only needs the seal), then
+  Steem runs full with WEAVE_STEEM_WIF or honest-dry without it
 - `web-publish` (every 20 min at :03/:23/:43) — the sovereign storage
-  network publisher (posts inbox packages to Steem); honest no-wif skip
-  while the secret is pending
+  network publisher (posts inbox packages to Steem); green no-op while
+  the inbox is empty, honest no-wif skip once packages arrive
 - `weave-ecosystem` (daily at 06:30) — the G6 ecosystem unification
-  enforcement (full dup scan, committed beacon, honest red on violation)
+  enforcement (full dup scan, committed beacon, honest red on violation);
+  full capability, verified working end-to-end (dup=0.011 committed to
+  Zip from this twin on 2026-09-21T00:00:42Z)
 
 Cadences are deliberately offset from the original Zip machines so that
 if the operator restores billing and the private machines revive, both
@@ -85,15 +88,21 @@ ALREADY-ANCHORED honest skip, not an error).
 
 Two secrets are pending operator delivery in this repository's vault
 (Settings > Secrets and variables > Actions) for full capability —
-until then the twins run honestly degraded and say so in their logs:
+until then the twins refuse honestly with a clear message (the key-verify
+precedent) and say so in their logs:
 
-1. `WEAVE_STEEM_WIF` — the posting key of the witness account
+1. `WEAVE_SEAL_PASSPHRASE` — the seal passphrase of the sovereign
+   network key. This is the primary gate: every heartbeat, every anchor
+   line, even ledger verification requires opening the seal (the network
+   key signs every checkpoint). Without it the heart and the anchor
+   lines cannot run at all. The cloud copy of this secret exists only
+   in the private Zip vault, which the API can never read back; the
+   local copy lives in the operator's personal vault or `.env.local`
+   on a live sandbox (`cat .env.local`).
+2. `WEAVE_STEEM_WIF` — the posting key of the witness account
    (cashmachine). Without it: no Steem/Hive broadcasts (honest dry),
-   no SAOS live genesis placement (honest skip).
-2. `WEAVE_SEAL_PASSPHRASE` — the seal passphrase of the sovereign
-   network key. Without it: no takeover, no ZERO anchor extension
-   (keyless readback only). The cloud copy of this secret exists only
-   in the private Zip vault, which the API can never read back.
+   no SAOS live genesis placement (honest skip). The ZERO anchor line
+   does NOT need it (zero-gas Z Chain).
 
 The operator's alternatives are recorded honestly: restoring billing
 revives the original private machines instantly (the secrets are already
