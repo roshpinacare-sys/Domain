@@ -1,33 +1,33 @@
 {
  "ok": true,
  "format": "moment-watch-v1",
- "publishedAt": "2026-09-21T05:21:50.399Z",
+ "publishedAt": "2026-09-21T05:48:10.155Z",
  "engine": "Domain/agents/moment-watch · R62 sovereign moment",
  "role": "reads the live moment every 30 minutes (market regime, our parity line vs the live internal book, fuel runway, measured anomalies) and records a deterministic directional call that is only ever scored after its horizon has passed - training as measurement, never as promise",
  "market": {
-  "steemUsd": 0.055877,
-  "steem24h": -1.247810577236136,
-  "sbdUsd": 0.490062,
-  "btcUsd": 81382,
-  "btc24h": 1.090756604957647,
+  "steemUsd": 0.05572,
+  "steem24h": -1.6092412237995166,
+  "sbdUsd": 0.490072,
+  "btcUsd": 81641,
+  "btc24h": 1.4507530276901235,
   "fearGreed": {
    "value": 70,
    "label": "Greed"
   }
  },
- "paritySbdPerSteem": 0.11402026682338154,
+ "paritySbdPerSteem": 0.11369757913122969,
  "liveBook": {
-  "bestBid": 0.09607686148919135,
-  "bestAsk": 0.09961912266876806,
-  "bidsDepthSbd": 3834.42,
-  "asksDepthSteem": 527.75,
-  "levels": 21,
-  "bidSurplusBps": -1574
+  "bestBid": 0.09618104667609619,
+  "bestAsk": 0.09817441555030207,
+  "bidsDepthSbd": 3831.83,
+  "asksDepthSteem": 540.58,
+  "levels": 17,
+  "bidSurplusBps": -1541
  },
  "regime": {
   "label": "RISK_ON",
   "drivers": [
-   "BTC +1.1%",
+   "BTC +1.5%",
    "F&G 70"
   ],
   "thresholds": {
@@ -40,11 +40,11 @@
  },
  "runway": {
   "active": true,
-  "weeklySp": 475.4746251703201,
+  "weeklySp": 475.47521743126566,
   "nextPayment": "2026-09-26T02:01:27",
-  "remainingSp": 1901.8985006800417,
-  "weeklyUsd": 26.57,
-  "treasuryUsd": 274.93
+  "remainingSp": 1901.900869723824,
+  "weeklyUsd": 26.49,
+  "treasuryUsd": 274.16
  },
  "grid": {
   "verdict": "ARMED-LIVE",
@@ -82,7 +82,7 @@
   {
    "kind": "parity-edge",
    "tone": "good",
-   "text": "עומק-קנייה חי 1574bps מתחת לקו-הזהות (bid 0.0961 מול parity 0.1140) — עודף מדוד לגריד."
+   "text": "עומק-קנייה חי 1541bps מתחת לקו-הזהות (bid 0.0962 מול parity 0.1137) — עודף מדוד לגריד."
   },
   {
    "kind": "sbd-inventory",
@@ -92,7 +92,12 @@
   {
    "kind": "fuel",
    "tone": "info",
-   "text": "דלק נוחת 2026-09-26 — ≈475 SP ≈ 26.6$ בסימון חי."
+   "text": "דלק נוחת 2026-09-26 — ≈475 SP ≈ 26.5$ בסימון חי."
+  },
+  {
+   "kind": "grid-stale",
+   "tone": "warn",
+   "text": "מראת-הגריד מעופשת (26ש' מאז 2026-09-20T03:30:32.899Z) — חריגה מקצב הלב המובטח."
   },
   {
    "kind": "deposits",
