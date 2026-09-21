@@ -47,13 +47,13 @@ jobs:
         run: |
           git config user.name "weave-mirror"
           git config user.email "weave-mirror@users.noreply.github.com"
-          git add mirror.json saos-live.json
+          git add mirror.json saos-live.json status.json
           if git diff --cached --quiet; then
             echo "mirror unchanged - the live books are already ours"
             exit 0
           fi
           for attempt in 1 2 3; do
-            git add mirror.json saos-live.json
+            git add mirror.json saos-live.json status.json
             git commit -m "weave-mirror: $(date -u +%Y-%m-%dT%H:%M:%SZ) · weave books mirrored from the live Console home (keyless)"
             git pull --rebase origin main
             if git push; then echo "mirror published (attempt ${attempt})"; exit 0; fi
@@ -61,7 +61,7 @@ jobs:
             git checkout -- .
             git reset --hard origin/main
             node agents/weave-mirror.mjs
-            git add mirror.json saos-live.json
+            git add mirror.json saos-live.json status.json
             if git diff --cached --quiet; then
               echo "after re-mirror there is nothing to commit - the live books are already ours"
               exit 0
