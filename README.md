@@ -113,18 +113,17 @@ Secrets status (this repository's vault, Settings > Secrets and
 variables > Actions) — the gated twins refuse honestly with a clear
 message (the key-verify precedent) and say so in their logs:
 
-1. `WEAVE_SEAL_PASSPHRASE` — **delivered by the operator on
+1. `WEAVE_SEAL_PASSPHRASE` — **a key was delivered by the operator on
    2026-09-21T08:28:30Z under the name `MAIN_KEY`** (vault listing,
-   names only). The twins accept both names — the canonical one is
-   preferred if it is ever delivered, `MAIN_KEY` is the operator's
-   chosen alias. This is the primary gate: every heartbeat, every
-   anchor line, even ledger verification requires opening the seal
-   (the network key signs every checkpoint). With it delivered, the
-   heart and both anchor lines run at full capability on public
-   minutes (the ZERO line needs nothing beyond the seal; the Steem
-   line broadcasts only once `WEAVE_STEEM_WIF` arrives — until then
-   it runs an honest dry). First-run verification will be recorded
-   here once measured.
+   names only). First-run verification, measured 2026-09-21T09:04Z
+   (heart run 35581200547): the refusal gate passed (the secret is
+   read) but the beat failed at the seal — `BEAT-ERROR: Unsupported
+   state or unable to authenticate data` — **MAIN_KEY is not the seal
+   passphrase**. The twins accept both names (canonical preferred);
+   the seal gate still awaits the passphrase. The delivered key will
+   be identified by the R38 key-verify machine (dispatch follows this
+   delivery) — its verdict will be published to
+   `receipts/key-check.json`.
 2. `WEAVE_STEEM_WIF` — the posting key of the witness account
    (cashmachine). Without it: no Steem/Hive broadcasts (honest dry),
    no SAOS live genesis placement (honest skip). The ZERO anchor

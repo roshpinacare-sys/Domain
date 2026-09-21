@@ -1,0 +1,125 @@
+{
+  "format": "agent-inspection-v1",
+  "inspectionId": "INS-R70-002",
+  "id": "INS-R70-002",
+  "inspectionOf": [
+    "R70 part-2 pre-push: the key-verify wiring (key-verify.yml 2 refs HEADCORNER || MAIN_KEY, agents/key-verify.mjs one-line source.repo truth fix), the README door-item-1 measured-failure record, R31 evidence append, state.json currentTask refresh — staged in /home/z/r70/domain (5 files, 24+/19- vs HEAD 050338f), plus the sovereign worktree mirrors (console/agent/requests.json, console/agent/state.json, console/workflow-key-verify.yml, console/agents/key-verify.mjs)"
+  ],
+  "subject": "R70 part-2 — the measured first-run failure recorded honestly (MAIN_KEY is not the seal passphrase) and the pivot: MAIN_KEY wired into the R38 key-verify machine (HEADCORNER || MAIN_KEY) so the machine itself identifies the delivered key",
+  "inspector": "standing supervisor-inspector (general-purpose agent, fresh context, zero-trust)",
+  "inspectedAt": "2026-09-21T09:10:00Z–09:22:00Z",
+  "operatorOrder": "follow-up pre-push of the R70 part-2 delivery (the key-verify wiring) after the measured heart failure",
+  "scope": "The staged git index of /home/z/r70/domain (5 modified files vs HEAD 050338f, verified: exactly the 5 declared files, nothing untracked, nothing unstaged), the heart failure evidence (run 35581200547 logs downloaded and read step-by-step), the sovereign Zip worktree mirrors (deep-equal/byte-identity checks), the key-verify machine code read end-to-end (agents/key-verify.mjs, 233 lines, + gate-crypto.js deriveAny), the fleet-standard publish-retry pattern compared across money-watch/moment-watch/agents-watch/key-verify, the receipts consumers scanned, the A67/A69 book checks simulated against the staged tree, and the vault re-listed via API.",
+  "method": "Zero-trust re-measurement: the run 35581200547 logs downloaded via the API (Bearer token, never printed) and every step file read (gate env, beat error line, artifact digest, dispatch); step-level conclusions re-fetched via /runs/35581200547/jobs; secret-leak regex scan of the full extracted log tree (only match: the public artifact SHA256 digest; the passphrase appears only as GitHub-masked ***); every one of the 7 staged diff hunks read line-by-line; rg counts of HEADCORNER refs (2 functional with fallback, 0 bare); yaml.safe_load on the staged workflow; key-verify.mjs read in full (verdict vocabulary, fail()-before-any-write ordering, sealed-box relay, dispatch semantics) + gate-crypto.js deriveAny read (WIF first, Steemit master-password fallback → arbitrary input yields authority-mismatch, nothing written); the publish retry pattern compared against the three proven fleet workflows (which all re-run their generator inside the loop; key-verify does not); twins deep-compared (python) and archives byte-compared (sha256); receipts consumers scanned for source.repo dependence (none); A67/A69 simulated exactly as agent/verify/run.mjs implements them; security regex sweep (positive-control validated) of both repos' diffs; timestamp enumeration vs inspection time; vault re-listed (unchanged: 4 secrets, no HEADCORNER/WEAVE_SEAL_PASSPHRASE/WEAVE_STEEM_WIF — the fallback is what will feed key-verify today); the intervening origin commit 74cfa63 inspected (agent-verify results, A34 failure identified and contextualized).",
+  "claimsVerdicts": [
+    {
+      "claim": "K1. The heart failure is real and as described (gate passed, beat failed, exact BEAT-ERROR, no secret leaked)",
+      "evidence": "Run 35581200547 downloaded and read: head_sha 050338f, event workflow_dispatch, started 2026-09-21T09:04:05Z, conclusion failure. Step 'Refuse honestly…' → success (SEAL_PP: *** — masked, non-empty; MAIN_KEY was read). Step 'Sovereign beat' → failure with the exact line 'BEAT-ERROR: Unsupported state or unable to authenticate data' at 09:04:27.298Z, exit code 1, immediately after 'יבאו 293 אימותים' (ledger import) — i.e., at sealOpen (step 3 in weave-beat.ts), an AEAD authentication failure. Steps 8 (artifact upload) and 9 (anchor-lines dispatch, if:always()) succeeded. Log-wide secret scan: zero token/WIF/key patterns; the only hex-64 match is the artifact zip SHA256 digest (public metadata); the passphrase appears only as GitHub-masked '***'. The cascaded anchor-lines run 35581240558 (09:04:32Z, dispatched by the heart) failed its 'Honesty verdict' step the same way — the honest-red aftermath the README now records.",
+      "verdict": "true"
+    },
+    {
+      "claim": "K2. key-verify.yml: exactly 2 functional fallback refs, zero bare refs, YAML parses, exit-1 refusal preserved, nothing else functional changed",
+      "evidence": "rg: exactly 2 'secrets.HEADCORNER || secrets.MAIN_KEY' (line 40 gate env, line 62 verify-step env); 'secrets.HEADCORNER' without the fallback: zero matches. yaml.safe_load: OK (1 job). The gate keeps 'if [ -z \"$HEADCORNER\" ]; then … exit 1'. Hunk map: 3 hunks — header comment (+6 lines), gate (env + message naming both accepted names), verify-step env; the publish step, permissions (contents: write), concurrency (key-verify, cancel-in-progress: false), timeout 9m are byte-untouched vs HEAD.",
+      "verdict": "true"
+    },
+    {
+      "claim": "K3. key-verify.mjs: only the source.repo line changed; verdict vocabulary intact; sealed-box relay untouched; GITHUB_REPOSITORY always set in Actions",
+      "evidence": "git diff --cached: exactly 1 line — source.repo 'Console' → 'process.env.GITHUB_REPOSITORY || \"roshpinacare-sys/Domain\"'. Full read: the vocabulary is intact (no-secret, not-a-private-key, derive-failed, chain-unreadable, posting-key, owner-key, memo-key, authority-mismatch, no-relay-token, relay-public-key, relay-put, relay-unverified, armed); the sealed-box relay (crypto_box_seal → PUT saos-dex/STEEM_ACTIVE_WIF) untouched. GITHUB_REPOSITORY is a standard env var GitHub sets on every Actions run. No consumer depends on source.repo=='Console' (receipts/index.html links the file statically; agents/watch.mjs cites it in prose; README cites the path). The historical Console-era receipts remain untouched: receipts/ is not in the staged diff and the HEAD receipt (2026-09-18, verdict 'armed', source.repo 'Console') is preserved in git history.",
+      "verdict": "true"
+    },
+    {
+      "claim": "K4. README door item 1: measured facts with run id; key-verify outcome stated as pending",
+      "evidence": "The rewrite states only measured facts: 'First-run verification, measured 2026-09-21T09:04Z (heart run 35581200547): the refusal gate passed (the secret is read) but the beat failed at the seal — BEAT-ERROR: Unsupported state or unable to authenticate data — MAIN_KEY is not the seal passphrase. The twins accept both names (canonical preferred); the seal gate still awaits the passphrase.' The key-verify outcome is 'is being identified by the R38 key-verify machine — its verdict is published to receipts/key-check.json' — no success claim, no receipt verdict claimed. Items 2-3 untouched. (Minor tense note recorded as F-5: 'is being identified' is not yet literally true at push time — the dispatch follows the push.)",
+      "verdict": "true"
+    },
+    {
+      "claim": "K5. R31 evidence: first-run PENDING resolved with the honest FAILED measurement; new receipt PENDING explicit; no past-tense key-verify success",
+      "evidence": "The evidence append (after the preserved 'PENDING AT PUSH TIME' line, history not rewritten): 'FIRST-RUN MEASURED (2026-09-21T09:04:26Z, run 35581200547, dispatched after push 050338f): the refusal gate passed — MAIN_KEY is read from the vault — but the beat failed at the seal: BEAT-ERROR … Measured truth: MAIN_KEY is NOT the seal passphrase…' — every element matches the log I downloaded (head_sha, gate-pass second, error string verbatim). The follow-up is described in pipeline terms and ends 'Receipt verdict: PENDING - to be recorded once measured.' No past-tense key-verify success anywhere in the entry.",
+      "verdict": "true"
+    },
+    {
+      "claim": "K6. Twins: requests/state deep-equal across Domain and sovereign; workflow + script archives byte-identical",
+      "evidence": "python deep-compare: staged agent/requests.json == console/agent/requests.json (True), staged agent/state.json == console/agent/state.json (True). sha256: .github/workflows/key-verify.yml == console/workflow-key-verify.yml (byte-identical), agents/key-verify.mjs == console/agents/key-verify.mjs (byte-identical; note: the sovereign copy is a new untracked file that must be included in the sovereign commit).",
+      "verdict": "true"
+    },
+    {
+      "claim": "K7. Security sweep: no secret values in the staged content (names only; run id and error string are public metadata)",
+      "evidence": "Positive-control-validated regex scan (ghp_/github_pat_/gh[oaurus]_/WIF 5[HJK]…51-char/BEGIN blocks/[A-Fa-f0-9]{64}) of the full Domain staged diff and the sovereign worktree diff: zero matches. All mentions are secret NAMES (MAIN_KEY, HEADCORNER, WEAVE_SEAL_PASSPHRASE, WEAVE_STEEM_WIF, STEEM_ACTIVE_WIF, AGENTS_WATCH_TOKEN) — all already public in the README operator door. The run id 35581200547 and the AEAD error string are public Actions metadata.",
+      "verdict": "true"
+    },
+    {
+      "claim": "K8. Timestamps in the staged files are not in the future",
+      "evidence": "Enumerated vs inspection time 2026-09-21T09:18:32Z: 06:50:24Z (G6, past), 08:28:30Z (MAIN_KEY, past), 08:47:00Z (generatedAt/deliveredAt, past), 09:04:26Z (measured failure, past). No future timestamps. (Nuance recorded as F-4: generatedAt 08:47:00Z now predates facts cited in the same files — stale, not future.)",
+      "verdict": "true"
+    },
+    {
+      "claim": "K9. A69 against the staged tree: every delivered R27+ entry carries a served inspection ref; the part-2 commit does not break the served-report chain",
+      "evidence": "A69 simulated exactly as run.mjs implements it, on the staged tree + reports served at HEAD: 5 inspected entries R27+ (R27→INS-R66-001, R28→INS-R68-001 [verified in part 1], R29→INS-R68-002, R30→INS-R69-001, R31→INS-R70-001 — the latter served since 050338f, 164 lines, format+verdict valid), zero problems; A67 passes (requestRef R31 exists, delivered, evidence present). Part 2 adds no new book entry (correct: same operator request R31, evidence appended), so no new inspection ref is required by the machine — the report chain stays intact.",
+      "verdict": "true"
+    },
+    {
+      "claim": "K10. The key-verify flow is mismatch-safe and the armed path writes only the sealed box + dispatch",
+      "evidence": "agents/key-verify.mjs read end-to-end (233 lines): every non-armed path exits via fail() → process.exit(1) BEFORE the sealed-box relay — including not-a-private-key (STM prefix), derive-failed, posting/owner/memo-key, authority-mismatch (nothing written anywhere except the local receipt, which the workflow then publishes as the honest verdict), no-relay-token, relay-public-key, relay-put, relay-unverified. The armed path: derives pub (Gate.deriveAny — WIF first, Steemit master-password fallback, so an arbitrary passphrase input derives some key and lands at authority-mismatch, nothing written), compares bit-for-bit against the live chain active authority (condenser_api.get_accounts, 3 retries → chain-unreadable), then crypto_box_seal of the WIF to the saos-dex repo public key → PUT saos-dex/STEEM_ACTIVE_WIF → verifies via the secrets listing → dispatches dex-grid. The receipt carries only verdict/detail/derivedPublicKey (public anyway)/chainActive (public chain data)/timestamps/relay repo+secret name+updatedAt — never the value. The workflow envs exactly: HEADCORNER (aliased), AGENTS_WATCH_TOKEN (vault, exists — created 2026-09-20), SODIUM_DIR.",
+      "verdict": "true"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-1",
+      "severity": "MEDIUM",
+      "description": "origin/main moved past the staging base again: 050338f → 74cfa63 via the agent-verify results commit (2026-09-21T09:05:11Z, HAS_FAILURES 52/53) touching only agent/verify/results.json — zero overlap with the 5 staged files. A push from the current index is non-fast-forward and will be rejected.",
+      "requiredFix": "git fetch origin && git pull --rebase (expected clean), then re-verify: the 2 key-verify refs, the twins deep-equality/byte-identity, and that the inspection report is in the same commit."
+    },
+    {
+      "id": "F-2",
+      "severity": "MEDIUM",
+      "description": "The key-verify publish step's 3-attempt retry loop cannot actually retry — a latent deviation from the proven fleet pattern that this delivery activates. On a push race (origin moves every few minutes), attempt 1's failure handler runs 'git checkout -- .' + 'git reset --hard origin/main', which wipes the receipt content from the working tree (receipts/key-check.json and key-check-log.jsonl exist at HEAD with old content, so the files revert to the 2026-09-18 Console-era receipt). Attempt 2 then stages nothing new and 'git commit' exits 1 ('nothing to commit') under bash -e — the step goes red and the verdict receipt is lost (the verdict remains visible in the run log; on the armed path the vault write + grid dispatch already happened before publish). The proven fleet pattern (money-watch, moment-watch, agents-watch) re-runs its generator inside the loop after the reset ('node agents/…mjs' — verified 2 occurrences in each); key-verify has no regeneration line (1 occurrence only — the verify step). The earlier fleet-inspect audit (8cb6f20, finding E3) moved add+commit inside the loops but key-verify was dormant then and never received the generator re-run.",
+      "requiredFix": "Add regeneration inside the loop — 'node agents/key-verify.mjs' after the reset (the money-watch pattern; on the armed path a re-run repeats an idempotent sealed-box PUT and one extra grid dispatch, harmless per the r68 atomic-grid note) — or replace the hard reset with 'git reset --soft origin/main' so the receipt stays staged for the next commit. Until fixed: a publish race = honest red + verdict in the run log + re-dispatch; acceptable to ship, fix in the same or next delivery."
+    },
+    {
+      "id": "F-3",
+      "severity": "MEDIUM",
+      "description": "Part-1's PC-3 remains open: the sovereign Zip mirrors were never committed. Zip HEAD == origin/main == c5fa4b5; the worktree carries part-1 (console/agent/handoff.md) and part-2 (console/agent/requests.json, state.json, console/workflow-key-verify.yml, new untracked console/agents/key-verify.mjs) mixed and uncommitted, plus the uncommitted worklog (my R70-INSPECT-1 section only — the delivering agent's r70 worklog entry does not exist yet). The operator's four enumerated part-1 claims all verify TRUE (report in-commit 050338f ✓, rebase ✓ — parent is 8352113, the then-current tip, Domain pushed ✓, heart dispatched ✓), but the condition set from INS-R70-001 is not fully closed, and the sandbox holding these changes is explicitly ephemeral.",
+      "requiredFix": "Commit the sovereign mirrors in this cycle — one commit honestly labeled as covering r70 parts 1+2 (handoff, requests, state, workflow + script archives, including the untracked console/agents/key-verify.mjs) — and write the r70 worklog entry (parts 1+2, with the measured failure and the follow-up). Do it immediately after the Domain push, before anything else can reset the sandbox."
+    },
+    {
+      "id": "F-4",
+      "severity": "LOW",
+      "description": "Stale generatedAt: both books still say generatedAt 2026-09-21T08:47:00Z while their content now cites the 09:04:26Z measurement — the files claim a generation time ~17 minutes before facts they contain. Also state.json's lastHandoff (at 08:47) still carries the pre-measurement expectations ('anchor lines expected: Steem honest-dry, ZERO full') — defensible as a point-in-time handoff record, and currentTask corrects it, but a fresh session reading only the handoff would start from a falsified expectation.",
+      "requiredFix": "Bump generatedAt when appending measured facts (or regenerate the field at append time); consider refreshing lastHandoff.at/summary in the next delivery so the handoff carries the measured truth."
+    },
+    {
+      "id": "F-5",
+      "severity": "LOW",
+      "description": "Mild anticipatory tense at three spots: state.json currentTask 'The key-verify machine (R38) is dispatched to identify…' / Hebrew 'הוזנקה' (was dispatched), and README item 1 'is being identified' — at push time the machine is not yet dispatched (it can only be dispatched after this push, since the workflow change must land on main first). The machine-checkable ledger (R31 evidence) is properly PENDING-marked, so no book-level anticipatory claim exists.",
+      "requiredFix": "Dispatch key-verify immediately after the push (it is the delivery's own next step — this makes the statements true within minutes), or reword to 'will be dispatched after this push'. Not blocking."
+    },
+    {
+      "id": "F-6",
+      "severity": "INFO",
+      "description": "Context for the intervening commit: 74cfa63 records agent-verify 52/53 — the single failure is A34 (dex/grid.json publishedAt 2026-09-20T03:30:32.899Z, age 29.58h > 26h max) — the PRE-DOCUMENTED operator-waiting red (the grid awaits STEEM_ACTIVE_WIF; r69 predicted the reddening ~05:28Z). Not caused by this delivery; if MAIN_KEY is the @headcorner active key, this delivery is exactly what resolves it (armed path → vault write → grid dispatch). world.json is fresh (07:02:11Z — the dex-beat twin is alive); only the grid book ages.",
+      "requiredFix": "None (recorded so the red is read as the documented operator-waiting state, not a regression)."
+    },
+    {
+      "id": "F-7",
+      "severity": "INFO",
+      "description": "The pivot's rationale is historically supported: the Console-era receipt served at HEAD (2026-09-18) records verdict 'armed' for the identical flow (operator key → @headcorner active match → sealed to saos-dex/STEEM_ACTIVE_WIF → grid dispatched), so the operator's 'primary key' being the @headcorner key is plausible; key-verify will decide honestly. The vault is unchanged since part 1 (4 secrets; no canonical HEADCORNER — the fallback is what feeds the machine; no WEAVE_SEAL_PASSPHRASE, no WEAVE_STEEM_WIF, matching every book statement).",
+      "requiredFix": "None."
+    },
+    {
+      "id": "F-8",
+      "severity": "INFO",
+      "description": "Log hygiene of the failed run measured: the passphrase appears only as GitHub-masked '***' in env groups; the beat-report artifact contains verdict/verify context only (the script never writes the passphrase); the only hex-64 in the logs is the public artifact digest. The heart's always()-dispatch cascaded to anchor-lines run 35581240558, which failed its honesty verdict the same honest way — the exact aftermath the README/R31 now record as measured truth.",
+      "requiredFix": "None."
+    }
+  ],
+  "verdict": "APPROVE-WITH-CONDITIONS",
+  "pushConditions": [
+    "PC-1 (blocking, protocol): install this report at /home/z/r70/domain/agent/inspections/INS-R70-002.json and stage it into the SAME commit as the part-2 delivery. (The A69 machine check passes without it — R31→INS-R70-001 stays served and valid — but the institution's protocol requires the report to ride with the delivery it approves.)",
+    "PC-2 (blocking, mechanical): git fetch origin && git pull --rebase in /home/z/r70/domain (origin moved 050338f→74cfa63, agent/verify/results.json only, zero overlap); after the rebase re-verify the 2 key-verify refs, the twins (deep-equal books + byte-identical archives), and that the report is in the commit.",
+    "PC-3 (order + execution): push Domain, then IMMEDIATELY dispatch key-verify (workflow_dispatch) — it is the delivery's purpose and it makes the state.json/README present-tense statements true — then record the measured receipt verdict (whatever it is: armed / authority-mismatch / derive-failed / …) in R31's evidence, the README first-run line, and the worklog. This also closes the PC-4 chain from INS-R70-001.",
+    "PC-4 (this cycle, closes part-1 PC-3): commit the sovereign Zip mirrors — one commit honestly labeled as covering r70 parts 1+2 (console/agent/handoff.md, requests.json, state.json, console/workflow-key-verify.yml, the untracked console/agents/key-verify.mjs) — and write the r70 worklog entry (parts 1+2 with the measured failure and the follow-up outcome).",
+    "PC-5 (recommended, fast-follow): fix the key-verify publish retry loop per F-2 (add 'node agents/key-verify.mjs' inside the loop after the reset, the money-watch pattern, or switch to 'git reset --soft origin/main') — acceptable to ship before the fix because the failure mode is an honest red with the verdict preserved in the run log, but fix it before the machine becomes load-bearing."
+  ],
+  "claimsSummary": "10/10 claims measured TRUE (K4/K5 with the mild tense note recorded as F-5; K8 true as claimed with the stale-generatedAt nuance recorded as F-4). The failure record is exact (every element re-measured against the downloaded logs), the pivot is mismatch-safe by construction (fail() exits before any write; sealed box only), the twins are in sync, and the book checks pass on the staged tree."
+}
