@@ -1,0 +1,178 @@
+{
+  "format": "agent-inspection-v1",
+  "id": "INS-R68-001",
+  "inspectionOf": [
+    "R68 (pre-push: staged Domain working tree 6 modified + 2 untracked files - dex-beat.yml, dex-grid.yml, money-watch.yml, money-watch.mjs, README.md, agent/{requests,state,handoff}; staged Console working tree 2 modified files - money-watch.yml, money-watch.mjs; sovereign sources TRUTH-AUDIT section 13 + console/agent twins)"
+  ],
+  "inspector": "standing supervisor-inspector (general-purpose agent, fresh context, third standing run)",
+  "conductedAt": "2026-09-21T01:46:49Z",
+  "operatorOrder": "all work is examined thoroughly before every push (2026-09-19); the R68 operator instruction: continue the OL-14 healing (operator's secrets pending, to be uploaded later - 'תמשיך — עוד לא העליתי סודות, אחרי זה אני אעלה, אין בעישה')",
+  "verdict": "APPROVE-WITH-CONDITIONS",
+  "pushDecision": "APPROVE - push only after the five conditions below are met, then complete the post-push sequence immediately",
+  "method": "every claim re-measured from scratch: GitHub API reads of all four repos (workflow runs, workflow files, vault secret names and timestamps, repo permissions for the inspection token), live HTTP fetches of both public homes (world.json, grid.json, weave books, money.json, truth latest.json, agent-verify results.json), a full code-read of saos-dex's cloud-beat.ts (668 lines) and grid-beat.ts (340 lines) fetched from the contents API, an independent re-run of the staged shift-guard logic in a scratch directory (curl+jq replicating the workflow bash exactly), a line-by-line review of the money-watch.mjs diff on both homes with sha256 byte-identity checks, a re-derivation of the complete Domain cron minute map from the staged tree, and security/professionalism codepoint scans of every staged diff and new file. Nothing was accepted from the delivering agent without a command and an observation.",
+  "claimsTable": [
+    {
+      "claim": "THE DIAGNOSIS (OL-14): the saos-dex machines are quota-dead - dex-beat's last success 2026-09-20T10:31:28Z, all runs since the 12:36Z cut fail; public repos succeed in the same window",
+      "measured": "API at 01:30-01:35Z: saos-dex dex-beat run #84 the last success (created 10:31:28Z, updated 10:32:10Z, conclusion success, head commit 'dex-beat: 2026-09-20T08:32:53Z · h40348→h40828 · 0 credits · 480 ticks'); runs #85-#91 ALL failure, each completing in 3-4 seconds (#85 first failure at 12:35:55Z, #91 latest at 00:39:17Z). dex-grid: last run #9 success (created 2026-09-20T03:29:52Z, updated 03:30:40Z); no run since (next daily slot not yet reached). Zip sample: 12/12 most recent runs ALL failure (weave-heart #157-159, web-publish #157-159, weave-anchor-lines) spanning 23:07Z-01:31Z, each 3-6 seconds. Public same-window: Domain truth-gate #32 success 01:19:13Z, money-watch #94 success 01:30:13Z, weave-mirror #9 success 01:00:58Z; Console money-watch #238 success 01:32:57Z. saos-dex has exactly TWO workflows (dex-beat, dex-grid) - the delivery's 'these two are all of saos-dex' holds",
+      "verdict": "verified exactly (first private failure 12:35:55Z saos-dex / 12:36:09Z Zip - the '12:36Z cut' is honest rounding of both)"
+    },
+    {
+      "claim": "THE PRODUCER MAP: world.json frozen at 10:32:05.636Z = dex-beat's last success; grid.json frozen at 03:29Z = dex-grid's last success",
+      "measured": "live fetch at 01:32Z: Console dex/world.json publishedAt 2026-09-20T10:32:05.636Z (15.0h frozen) - inside run #84's window (10:31:28Z→10:32:10Z), 37s after run creation; the Domain-served mirror carries the identical publishedAt (10:32:05.636Z). Console dex/grid.json publishedAt 2026-09-20T03:30:32.899Z (21.9h) - inside dex-grid run #9's window (03:29:52Z→03:30:40Z); its verdict field reads ARMED-LIVE, armed=true, run.placed=3/cancelled=3. Successful dex-beat run durations measured 30-51s (last 10 successes) = 0.5-0.85 min - the evidence's '0.5-0.8 min' is honest within rounding",
+      "verdict": "verified (timestamp correlation exact for both books)"
+    },
+    {
+      "claim": "cloud-beat needs ZERO operator secrets - only the checkout credential + CONSOLE_TOKEN for publishing",
+      "measured": "full code-read of cloud-beat.ts (sha e7f09616, 668 lines): env consumption is exactly DATABASE_URL (self-set to file:cwd/db/dex.db), SAOS_DEX_STATE_DIR (self-set), CLOUD_TICKS (defaults 480; the twin passes 480), SAOS_RELAY_AGENT_ACCOUNT (defaults 'headcorner'), CONSOLE_TOKEN (clone+push of Console for the public publish, lines 589-595); the chain push (line 579) uses the checkout credential via pushWithRetry (push, pull --rebase --autostash, 1.5s, 3 tries; on final failure: honest 'chain push REJECTED ... publishing SKIPPED honestly', exit 0). No passphrase, no WIF, no other secret anywhere in the file. The twin's env block matches the original's (DATABASE_URL/CLOUD_TICKS/CONSOLE_TOKEN) with CONSOLE_TOKEN sourced from the Domain vault's WEAVE_OPS_PAT instead of saos-dex's CONSOLE_PUSH_TOKEN",
+      "verdict": "verified"
+    },
+    {
+      "claim": "grid-beat keyless would publish a FALSE 'DISARMED-NO-KEY' verdict while the true state is armed (the key lives in saos-dex's vault)",
+      "measured": "grid-beat.ts line 273: verdict = !armed ? 'DISARMED-NO-KEY' : placed > 0 ? 'ARMED-LIVE' : blocker.length ? 'ARMED-WAITING' : 'ARMED-STABLE' - the publish happens regardless of arming (only placement is gated, line 150 blocker 'STEEM_ACTIVE_WIF secret missing'); armed = !!activeWif() reads STEEM_ACTIVE_WIF. The live truth: grid.json served verdict ARMED-LIVE, armed=true; the saos-dex vault contains the secret NAME STEEM_ACTIVE_WIF (updated 2026-09-18T02:20:48Z) while the Domain vault does NOT - so a keyless twin run would indeed publish DISARMED-NO-KEY falsely. The refusal gate is therefore the only truthful option",
+      "verdict": "verified exactly (verdict line quoted; true state measured armed)"
+    },
+    {
+      "claim": "The inspection token holds admin/push on all four repos",
+      "measured": "GET /repos/roshpinacare-sys/{Console,saos-dex,Zip,Domain} with the operator-provided 93-char PAT: permissions block shows admin:true, maintain:true, push:true, triage:true, pull:true on ALL FOUR; Console and Domain private:false, saos-dex and Zip private:true. Honest boundary: the vault VALUES (ZIP_PAT, WEAVE_OPS_PAT) are write-only and not directly measurable here; the r65-era record states they were placed with this same 93-char PAT value, the r67 weave-ecosystem twin already proved the vault WEAVE_OPS_PAT live (clone+push to private Zip, commit da6f6ab), and the r68 twins' first post-push run is the remaining live proof for saos-dex checkout",
+      "verdict": "verified for the inspection token; vault-value equality rests on the recorded placement + first-run proof (push condition 4)"
+    },
+    {
+      "claim": "THE VAULTS: Domain has ZIP_PAT + WEAVE_OPS_PAT + AGENTS_WATCH_TOKEN and NO STEEM_ACTIVE_WIF; Console has AGENTS_WATCH_TOKEN only",
+      "measured": "GET actions/secrets: Domain = AGENTS_WATCH_TOKEN (2026-09-20T01:21:14Z), WEAVE_OPS_PAT (2026-09-20T23:55:27Z), ZIP_PAT (2026-09-20T23:55:27Z) - no STEEM_ACTIVE_WIF, exactly as the refusal gate assumes; Console = AGENTS_WATCH_TOKEN only (2026-09-16T15:15:31Z); saos-dex = CONSOLE_PUSH_TOKEN + STEEM_ACTIVE_WIF; Zip = WEAVE_OPS_PAT + WEAVE_SEAL_PASSPHRASE + WEAVE_STEEM_WIF. The operator's three pending secrets (README) map exactly onto the three absent-from-Domain names",
+      "verdict": "verified"
+    },
+    {
+      "claim": "THE CRON MAP: the new crons '53 */2 * * *' (dex-beat) and '48 3 * * *' (dex-grid) collide with no existing scheduled minute",
+      "measured": "re-derived from the staged .github/workflows/*.yml: money 2,17,32,47 · web-publish 3,23,43 · truth 7 · dex-watch 9,29,49 · moment 12,42 · heart 13 · lines 33 · agents 37 · console-publish 45 · dex-mirror 52 · dex-beat(NEW) 53 · agent-verify 55 (*/2) · weave-mirror 57 · ecosystem 06:30 daily · dex-grid(NEW) 03:48 daily · bootstrap-pages and key-verify have no cron. Full minute set {2,3,7,9,12,13,17,23,29,32,33,37,43,45,47,49,52,53,55,57} + the two daily slots: minute 53 was previously unused (52 dex-mirror and 55 agent-verify flank it); 03:48 occupies a minute no other workflow uses at any hour. Both new crons are offset from the originals exactly as documented (beat :53 vs saos-dex :23 same hour parity; grid 03:48 vs 03:17 - the original's observed 12-min cron delay does not close the 31-min gap)",
+      "verdict": "verified (zero collisions; the mandated map matches the staged tree exactly)"
+    },
+    {
+      "claim": "THE SHIFT GUARD: dex-beat verdict takeover=1 (original dead); dex-grid takeover=0 (last success ~21h < 23h, crosses before the twin's first 03:48Z slot)",
+      "measured": "independent re-run in /home/z/r68/insp-scratch (the guard bash replicated exactly with curl+jq, same URL, same jq projection, same thresholds) at 01:33:52Z: dex-beat - last run created_at=2026-09-21T00:39:17Z conclusion=failure → takeover=1 ('the original is not healthy (last: failure) — the twin takes over the beat'); dex-grid - last run created_at=2026-09-20T03:29:52Z conclusion=success, age 1324 minutes (22h04m) < 82800s → takeover=0 ('the original is alive ... the twin verifies only'). The 23h boundary crosses at 02:29:52Z - before the twin's first 03:48Z slot, so the first scheduled twin run will take over (and hit the refusal gate red until the operator delivers the key). The staged evidence's '21h' was 21h57m at its 01:27Z staging moment - floor-rounded, substance correct",
+      "verdict": "verified (both verdicts reproduced independently; guard bash reviewed - set -euo pipefail present, jq parsing with // empty, GNU date arithmetic sound, 2-attempt retry with 10s sleep, unknown-state exit 1 refusal, empty-runs-list falls through to takeover=1 which is correct)"
+    },
+    {
+      "claim": "THE MONEY-WATCH BACKSTOP: gh() token param, twin dispatch recorded honestly, sentinel semantics preserved, Domain/Console byte-identical",
+      "measured": "line-by-line diff review: gh(url, method, body, token=null) with TOKEN = token || process.env.AGENTS_WATCH_TOKEN - backward compatible; the twin dispatch sits INSIDE the new-landing branch only (landing && landingKey && alreadyDispatched !== landingKey), one attempt per payout with no retry (the catch records 'daily 03:17 run is the safety net' on the primary side); dispatch.twin records ok:true/note or ok:false/error honestly; the primary-failed-but-twin-succeeded case sets dispatch.ok=true with the note 'twin dispatched (original dispatch failed - see twin note)' - and the alreadyDispatched sentinel then suppresses re-dispatch on the next run exactly as before; the no-landing path is untouched ({attempted:false, ok:false, note:'no landing detected'}); TWIN_DISPATCH_TOKEN falls back to null → AGENTS_WATCH_TOKEN when unset. sha256 of agents/money-watch.mjs: Domain b918702dd3f68c190c735c45d20c9163c703f141b4f36fc004d3226881315372 = Console b918702d... (byte-identical). The live money.json already carries a dispatch object (keys attempted/note/ok) so the .twin sub-object publishes cleanly. Domain money-watch.yml: permissions + actions:write (github.token dispatches the same-repo twin - sound); Console money-watch.yml: env-only change, TWIN_DISPATCH_TOKEN = secrets.AGENTS_WATCH_TOKEN (cross-repo PAT dispatch)",
+      "verdict": "verified (sentinel semantics preserved exactly; both copies identical)"
+    },
+    {
+      "claim": "WORKFLOW IF-CONDITIONS: schedule+takeover=1 → run; schedule+takeover=0 → verify-only green; dispatch → run (bypass); the dex-grid refusal gate precedes everything and fails exit 1 on missing secret",
+      "measured": "truth-table read of both staged files: Beat/Grid step if: steps.guard.outputs.takeover == '1' || github.event_name == 'workflow_dispatch'; Verify-only step if: takeover != '1' && event != 'workflow_dispatch' - mutually exclusive and jointly exhaustive over (takeover, event); on dispatch with takeover=0 the verify-only step is correctly suppressed. dex-grid.yml order: Checkout → Bun → Cache → Install → Prisma → REFUSAL GATE (env KEY: secrets.STEEM_ACTIVE_WIF; [ -z \"$KEY\" ] → echo operator message → exit 1) → shift guard → grid step → verify-only - the refusal precedes the guard and every write, applies to schedule AND dispatch alike. Guard exit 1 (API unreachable after retries) fails the job with no later step running (no always()) - fail-closed, nothing touched. Triggers are schedule+workflow_dispatch only (no pull_request - secrets not exposed to third-party PRs). Concurrency groups dex-beat-domain-twin / dex-grid-domain-twin distinct from all others; timeout-minutes 9 matches the originals; checkout fetch-depth:1 matches the original's effective actions/checkout default",
+      "verdict": "verified"
+    },
+    {
+      "claim": "SECURITY: zero secret values in every staged diff and new file; only secret NAMES via ${{ secrets.X }} and github.token",
+      "measured": "codepoint/pattern sweep of domain.diff + console.diff + zip.diff + both new workflow files: zero matches for ghp_, github_pat_, x-access-token:<value>, AKIA, PRIVATE KEY headers, 5J/5K/5H WIF base58, ghs_/gho_, and any 93+-char token-shaped string. Secret-name references found: secrets.ZIP_PAT, secrets.WEAVE_OPS_PAT, secrets.STEEM_ACTIVE_WIF (dex-grid), secrets.AGENTS_WATCH_TOKEN (money-watch env), plus github.token x1 (Domain money-watch.yml TWIN_DISPATCH_TOKEN). The refusal-gate message is static text (no secret echo); the guard queries saos-dex with GH_TOKEN=ZIP_PAT (admin, measured). No new attack surface: the twins use vault PATs already placed by r67 for the same class of cross-repo checkout",
+      "verdict": "verified"
+    },
+    {
+      "claim": "PROFESSIONALISM: no banned glyphs in the changed public files; Hebrew workflow comments follow the established convention",
+      "measured": "emoji/pictograph/variation-selector scan of all staged diffs and new files: zero codepoints in the changed lines of README.md, handoff.md, requests.json, state.json, money-watch.mjs/yml, TRUTH-AUDIT.md and both new workflow files. The bilingual headers with Hebrew context blocks match the r67 twins (weave-heart.yml 'WEAVE-HEART (DOMAIN TWIN) — הלב הענן של THE WEAVE...' verified on the remote) and the saos-dex originals themselves (dex-beat.yml 'לב-הענן של הבורסה (Task 33)') - the convention is repo-native",
+      "verdict": "verified"
+    },
+    {
+      "claim": "BRIDGEHEAD TWINS: the sovereign console/agent files are byte-identical to the staged Domain agent files",
+      "measured": "cmp of my-project/console/agent/{requests.json,state.json,handoff.md} against r68/domain/agent/{...}: IDENTICAL (all three); all four JSON files parse cleanly (29 entries, last R29 with inspection field → INS-R68-001.json; state requestRef R29; handoff fleet lists all six twins: weave-heart :13, weave-anchor-lines :33, web-publish :03/:23/:43, weave-ecosystem 06:30, dex-beat :53, dex-grid 03:48)",
+      "verdict": "verified"
+    },
+    {
+      "claim": "THE R29 EVIDENCE: factual statements against measurements",
+      "measured": "every checkable statement re-measured true: 'local == origin/main 362bb9b, tree clean' (Zip remote main = 362bb9b, API-verified); 'saos-dex ... had no twin at all' (remote Domain workflow list contains no dex-* twin pre-r68); producer map (verified above); 'cloud-beat.ts read end-to-end needs ZERO operator secrets' (verified); 'both measured admin via the API' (verified for the inspection PAT; vault-value boundary noted); 'grid-beat keyless would publish a false DISARMED-NO-KEY' (verified); the shift-guard design and bite-test claims (reproduced independently - verdicts identical); the r67 escape description (verified in the post-hoc audit INS-R68-002: commits c270a25/3904a09 touch no book files, remote last entry R28, no inspection); 'the operator's secret map is now three' (README verified: WEAVE_SEAL_PASSPHRASE, WEAVE_STEEM_WIF, STEEM_ACTIVE_WIF with locations and unlocks). Staged timestamps 01:27:20Z (requests/state/lastHandoff/R29 deliveredAt) - see F-6",
+      "verdict": "verified (all presently-measurable statements true; anticipatory revival claims are the exception - finding F-1)"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-1",
+      "severity": "MEDIUM",
+      "area": "README.md (staged), agent/state.json (staged), agent/handoff.md (staged) - anticipatory revival claims",
+      "finding": "The public record states the revival as already done: README 'Revived world.json end-to-end on 2026-09-21 (chain advanced and published to Console; this home's :52 dex-mirror carries it here)' and 'Since r68 the engine behind those books is itself alive again'; state.json OL-14 update 'Until then: world.json is fresh again' and lastHandoff 'dex-beat twin ... revives the engine now'; handoff fleet 'dex-beat ... revives the dex engine and world.json on vault PATs alone'. None of this is true at push time: the twin workflows are untracked, the engine's world.json is frozen at 10:32:05.636Z (15.0h, A36 red since 16:32Z yesterday) and cannot advance until the pushed twin's first real run. The R66 F-1 precedent governs: anticipatory claims are acceptable ONLY as push conditions",
+      "evidence": "git status shows both workflow files untracked; live world.json publishedAt 2026-09-20T10:32:05.636Z (fetched 01:32Z); live agent-verify results.json 01:05:08Z: A36 the ONLY failure ('age 14.55h, maximum 6h', 52/53)",
+      "recommendation": "push condition: immediately after the push, dispatch dex-beat manually (workflow_dispatch bypasses the guard by design) or await the next :53 slot, then verify the takeover beat end-to-end - a dex-beat[bot] chain commit in saos-dex advancing the height, world.json publishedAt advancing on Console, the Domain :52 mirror carrying it, A36 green (53/53), G11 still PASS; append the r68 worklog entry and push the sovereign sources. If any step fails, correct the public record in a follow-up commit instead of leaving the revival claims standing",
+      "status": "open pending the post-push sequence"
+    },
+    {
+      "id": "F-2",
+      "severity": "MEDIUM",
+      "area": "agent/inspections/ (staged tree) - both reports absent",
+      "finding": "The staged inspections directory holds only INS-R65-001.json, INS-R66-001.json and README.md. R29 (delivered-public, R27+) references agent/inspections/INS-R68-001.json - pushing without it installed makes A69 fail the live book immediately ('inspection report not served publicly'). The R29 evidence ALSO promises agent/inspections/INS-R68-002.json (the labeled post-hoc audit of the r67 escape) - and nothing machine-checks that file, so a forgotten INS-R68-002 would leave the escape-repair silently incomplete",
+      "evidence": "ls agent/inspections/ at 01:44Z; staged R29 inspection field; A69 code path (served report + valid JSON + format + verdict)",
+      "recommendation": "hard push condition: install BOTH /home/z/r68/insp/INS-R68-001.json and /home/z/r68/insp/INS-R68-002.json at agent/inspections/ in the delivery commit (the R65/R66 precedent)",
+      "status": "push condition (deliverer action, blocking)"
+    },
+    {
+      "id": "F-3",
+      "severity": "LOW",
+      "area": "Console money-watch.yml TWIN_DISPATCH_TOKEN",
+      "finding": "The Console home's twin dispatch is a CROSS-repo dispatch (Console → Domain) using secrets.AGENTS_WATCH_TOKEN. Whether that token holds actions:write on Domain is not measurable from secret names; the agents-watch machine uses it for repo READS. If it is read-scoped, the Console-side backstop will 403 on every fuel landing during the quota window - recorded honestly (dispatch.twin ok:false with the error) but the backstop then rests entirely on Domain's own money-watch, whose github.token + actions:write same-repo dispatch is verified by construction",
+      "evidence": "Console money-watch.yml diff (env-only change); Domain money-watch.yml permissions actions:write + TWIN_DISPATCH_TOKEN: github.token; vault name listings show AGENTS_WATCH_TOKEN present in both vaults but permissions of its value are unmeasurable",
+      "recommendation": "accept the honest-degradation design, but note it for the operator: if a future fuel landing shows dispatch.twin ok:false with 403 from the Console side, upgrade AGENTS_WATCH_TOKEN's Domain actions permission (or accept the Domain-side backstop as the single live path)",
+      "status": "open (degrades honestly; verified path exists on the Domain side)"
+    },
+    {
+      "id": "F-4",
+      "severity": "LOW",
+      "area": "agents/money-watch.mjs - dispatch.twin.ok semantics during the keyless window",
+      "finding": "dispatch.twin.ok records that the DISPATCH was accepted (HTTP 204), not that the twin run carried the fuel. Until the operator delivers STEEM_ACTIVE_WIF, a fuel-landing dispatch of the Domain twin will be recorded ok:true while the dispatched run itself fails honestly at the refusal gate - so the note 'carries the fuel while the private original is quota-dead' is outcome-optimistic during that window (the same class of optimism the primary's 'daily 03:17 run is the safety net' note carries, but the primary's safety net is now also dead)",
+      "evidence": "dex-grid.yml refusal gate runs before the guard on every event including workflow_dispatch; money-watch.mjs dispatch.twin = { ok: true, note: '... carries the fuel ...' } on 204",
+      "recommendation": "after the operator delivers the key this becomes accurate; until then the operator-facing README already states the gate plainly. Optional future tightening: re-check the dispatched run's conclusion before claiming the fuel was carried",
+      "status": "open (wording hazard only; the refusal itself is loud and public)"
+    },
+    {
+      "id": "F-5",
+      "severity": "LOW",
+      "area": "staging drift and push order",
+      "finding": "The staged trees sit behind the live remotes: Domain base b32a525 vs remote main f5889ca (money-watch 01:30:23Z - the machines commit every 15 min), Console base 5ae03c2 vs remote a0e93e2 (dex-watch 01:34:11Z). Pushing without rebasing would be rejected or would revert nothing but still fail. Additionally the Console backstop references the Domain twin workflow, so the Domain push must land BEFORE the Console push",
+      "evidence": "API branch/main HEADs at 01:35Z vs local git rev-parse of the three staged trees (Zip is synchronized: local == remote == 362bb9b)",
+      "recommendation": "push condition: rebase both staged trees onto the live remotes, re-verify JSON validity and the money-watch.mjs byte-identity after the rebase, then push Domain first, then Console, then the sovereign sources",
+      "status": "push condition (deliverer action)"
+    },
+    {
+      "id": "F-6",
+      "severity": "INFO",
+      "area": "staged timestamps",
+      "finding": "requests.json generatedAt, R29 deliveredAt, state.json generatedAt and lastHandoff.at are all staged at 01:27:20Z - 19 minutes old at 01:46Z and aging until the push",
+      "evidence": "node read of the staged files vs date -u",
+      "recommendation": "true them to the actual push moment (the R65 precedent: R27's deliveredAt was trued before the push) or push within minutes",
+      "status": "push condition (deliverer action)"
+    },
+    {
+      "id": "F-7",
+      "severity": "INFO",
+      "area": "requests.json / state.json formatting",
+      "finding": "Both staged JSON files lost their trailing newline ('\\ No newline at end of file' in the diff) - the previous versions ended with one. No machine impact (all readers JSON.parse), purely a formatting inconsistency in the book files",
+      "evidence": "git diff tail markers on both files",
+      "recommendation": "cosmetic: restore the trailing newline in the delivery commit or leave as-is (no reader cares)",
+      "status": "noted"
+    },
+    {
+      "id": "F-8",
+      "severity": "INFO",
+      "area": "minor numeric imprecisions in the public record",
+      "finding": "Three small rounding drifts, none load-bearing: (1) R29 evidence and TRUTH-AUDIT 13 state the grid's last success '21h' before staging - actual 21h57m at the 01:27Z staging moment; (2) TRUTH-AUDIT 13 predicts 'G11-grid will go red ~05:28Z' - actual boundary 03:30:32.899Z + 26h = 05:30:32Z; (3) 'measured successful run durations 0.5-0.8 min' - measured range 0.5-0.85 min (51s = 0.85)",
+      "evidence": "guard re-run timestamps; MIRROR_MAX_AGE_H = 26 in truth-gate-ci.cjs; API run durations",
+      "recommendation": "none for this push; recorded so the inspection stays measured rather than inherited",
+      "status": "noted"
+    },
+    {
+      "id": "F-9",
+      "severity": "INFO",
+      "area": "shift-guard edge behaviors (all fail-safe)",
+      "finding": "Code-read notes: (1) the retry loop sleeps 10s even after the final failed attempt (cosmetic waste); (2) the '{}'/null LAST checks are dead-code defenses (gh --jq object construction never emits them; the real empty-runs case emits {created_at:null,conclusion:null} which correctly falls through to takeover=1 - no runs means the original never ran); (3) an IN-PROGRESS original run (conclusion null) reads as not-success → takeover - the 30/31-minute cadence offsets vs sub-minute run durations make overlap practically impossible; (4) workflow_dispatch bypasses the guard only at the step if-level - the guard step itself still runs and an unreachable API fails the run (fail-closed) before any write; (5) negative age from clock skew reads as alive (verify-only) - harmless direction",
+      "evidence": "line-by-line read of both guard blocks in the staged workflows",
+      "recommendation": "none required; all edges fail toward safety (red run, no write, or verify-only)",
+      "status": "noted"
+    }
+  ],
+  "liveStateSweep": {
+    "homes": "Domain 200 · Console 200",
+    "theStandingReds": "world.json frozen 2026-09-20T10:32:05.636Z on both homes (15.0h at 01:32Z) - A36 RED (agent-verify 52/53 at 01:05:08Z, A36 the only failure, 'age 14.55h, maximum 6h'); G11 still PASS but world axis reddens ~12:32Z today; grid.json frozen 03:30:32.899Z (21.9h) - A34/G11-grid pass until 05:30:32Z; weave books mirror.json/saos-live.json frozen 12:10:11.370Z/12:10:14.488Z on BOTH homes (the Console source died with the quota; the Domain weave-mirror correctly refuses to mirror a dying pipeline) - G12 passes until ~14:10:11Z. This is the honest-red state the delivery starts from and partly heals",
+    "machinesPublic": "Domain truth-gate #32 ALL-GREEN 10/0/2 at 01:19:34Z · money-watch #94 01:30:13Z · weave-mirror #9 01:00:58Z · Console money-watch #238 01:32:57Z · web-publish (r67 twin) #5 green 01:33:00Z · money.json fresh 01:33:05Z",
+    "machinesPrivate": "saos-dex dex-beat #85-#91 all fail since 12:35:55Z · Zip 12/12 sampled runs fail (weave-heart, weave-anchor-lines, web-publish) - quota-dead as diagnosed; dex-grid's next daily slot (03:17 original) has not yet been missed at sweep time",
+    "r67twinsLive": "weave-heart #4 fails at exactly 'Refuse honestly while the seal passphrase awaits the operator' (real beat step skipped) · weave-anchor-lines #5 same refusal (dispatched by the heart's backstop 21s after it) · weave-ecosystem #1 success (end-to-end proof da6f6ab) · web-publish #5 success",
+    "security": "zero secret values in every staged diff and new file (patterns: ghp_, github_pat_, x-access-token:value, AKIA, private keys, WIF base58, 93+-char blobs); only ${{ secrets.X }} names + github.token; no new attack surface (vault PATs already placed by r67 for the same class)",
+    "professionalism": "zero emojis/banned glyphs in the changed public files and both new workflow files; bilingual Hebrew-comment headers are the repo-native convention (verified against the r67 twins and the saos-dex originals)"
+  },
+  "stagedDiffVerdict": "APPROVE-WITH-CONDITIONS. The staged delivery is verified true in every presently-measurable claim: the OL-14 diagnosis stands exactly as recorded (dex-beat dead since 12:35:55Z, all private runs failing, public machines green in the same window), the producer map is timestamp-exact (world.json 10:32:05.636Z inside run #84's window; grid.json 03:30:32.899Z inside run #9's), cloud-beat is genuinely operator-secretless (full code-read: checkout credential + CONSOLE_TOKEN only), grid-beat keyless would genuinely publish a false DISARMED-NO-KEY while the live truth is ARMED-LIVE with the key present in the private vault (verdict line located), the inspection PAT measures admin on all four repos, the Domain vault holds exactly the three expected names and no STEEM_ACTIVE_WIF (the refusal gate is therefore correct and necessary), both new crons are collision-free in the complete re-derived minute map, the shift guard reproduces independently (takeover=1 for the beat, takeover=0 at 22h04m for the grid - crossing 02:29:52Z, before the twin's first 03:48Z slot), the money-watch backstop preserves the once-per-payout sentinel with honest recording and byte-identical copies on both homes, the if-conditions form a correct truth table with the refusal gate first and fail-closed unknown-state, security and professionalism are clean, the bridgehead twins are byte-identical, and the R29 evidence's checkable statements all measure true. CONDITIONS: (1) install BOTH reports at agent/inspections/ (INS-R68-001.json - A69 requires it; INS-R68-002.json - the escape repair promises it) (F-2); (2) rebase onto the live remotes, re-verify byte-identity and JSON validity, push Domain before Console (F-5); (3) true the 01:27:20Z staged timestamps to the push moment (F-6); (4) immediately after the push execute and verify the revival the public record already claims - dispatch dex-beat (or await the :53 slot), verify the chain commit by dex-beat[bot] in saos-dex, world.json publishedAt advancing on Console, the Domain mirror carrying it, A36 green 53/53, then dispatch truth-gate and agent-verify, append the r68 worklog entry and push the sovereign sources; if any step fails, correct the public record in a follow-up commit (F-1); (5) record that dex-grid's first scheduled run (03:48Z) will fail red at the refusal gate until the operator delivers STEEM_ACTIVE_WIF - expected honest behavior, not a defect. Findings F-3/F-4 (Console-side token scope, dispatch-vs-outcome wording) are honest-degradation follow-ups, not blockers."
+}

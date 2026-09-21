@@ -78,18 +78,41 @@ source of truth, one chain.
   enforcement (full dup scan, committed beacon, honest red on violation);
   full capability, verified working end-to-end (dup=0.011 committed to
   Zip from this twin on 2026-09-21T00:00:42Z)
+- `dex-beat` (bi-hourly at :53, r68) — the DEX engine heartbeat from the
+  sovereign saos-dex home. Secretless for the operator: it needs only the
+  vault PATs (ZIP_PAT for the chain home, WEAVE_OPS_PAT for the public
+  publish). Shift-guarded: cloud-beat advances the chain unconditionally,
+  so the twin first asks the network whether the original's last run
+  succeeded within 3h — alive means verify-only, dead means takeover.
+  Revived world.json end-to-end on 2026-09-21 (chain advanced and
+  published to Console; this home's :52 dex-mirror carries it here)
+- `dex-grid` (daily at 03:48, r68) — the outer grid (THE-REAL-GRID) from
+  the sovereign saos-dex home. Refuses honestly until STEEM_ACTIVE_WIF
+  arrives (below): running keyless would publish a false DISARMED-NO-KEY
+  verdict while the true state is armed (the key lives in the private
+  saos-dex vault, which secrets never cross). Shift-guarded on schedule
+  (23h window); a fuel-landing dispatch (money-watch) or a manual dispatch
+  runs it immediately — the grid is atomically re-centering by design,
+  so a double dispatch across two living homes is a harmless re-center
 
-Cadences are deliberately offset from the original Zip machines so that
-if the operator restores billing and the private machines revive, both
-homes interleave without ever colliding on the same push. All state
-writes go through the canonical secret gate and the chain-aware
-idempotency of the machine itself (an already-anchored root is an
-ALREADY-ANCHORED honest skip, not an error).
+The fuel-landing dispatch (money-watch) now targets both homes: the
+sovereign original in saos-dex and this repository's dex-grid twin
+(the twin carries the fuel while the private original is quota-dead;
+the dispatch is recorded with both results in `dex/money.json`).
 
-Two secrets are pending operator delivery in this repository's vault
+Cadences are deliberately offset from the original machines (Zip's
+heart at :00, saos-dex's beat at :23 and grid at 03:17) so that if the
+operator restores billing and the private machines revive, both homes
+interleave without ever colliding on the same push. All state writes go
+through the canonical secret gate and the chain-aware idempotency of
+the machine itself (an already-anchored root is an ALREADY-ANCHORED
+honest skip, not an error; the dex twins add the shift guard so the
+chain never advances twice in the same window).
+
+Three secrets are pending operator delivery in this repository's vault
 (Settings > Secrets and variables > Actions) for full capability —
-until then the twins refuse honestly with a clear message (the key-verify
-precedent) and say so in their logs:
+until then the gated twins refuse honestly with a clear message (the
+key-verify precedent) and say so in their logs:
 
 1. `WEAVE_SEAL_PASSPHRASE` — the seal passphrase of the sovereign
    network key. This is the primary gate: every heartbeat, every anchor
@@ -103,11 +126,21 @@ precedent) and say so in their logs:
    (cashmachine). Without it: no Steem/Hive broadcasts (honest dry),
    no SAOS live genesis placement (honest skip). The ZERO anchor line
    does NOT need it (zero-gas Z Chain).
+3. `STEEM_ACTIVE_WIF` — the active key of @headcorner, the grid signer
+   (the same key that armed the grid in the first place, r38). It already
+   lives in the private saos-dex vault — but GitHub secrets never cross
+   repositories, so the dex-grid twin needs its own copy. Without it the
+   outer grid stays frozen (its state ages in honest red); with it, the
+   grid trades again on public minutes. After delivering it, dispatch
+   `dex-grid` once manually (Actions > dex-grid > Run workflow) or wait
+   for the daily 03:48Z slot — and the first fuel-landing dispatch
+   becomes live immediately.
 
 The operator's alternatives are recorded honestly: restoring billing
 revives the original private machines instantly (the secrets are already
-in their vault), delivering the two secrets here gives the twin full
-capability for free, and doing both yields a redundant two-home machine.
+in their vault), delivering the three secrets here gives the twins full
+capability for free, and doing both yields a redundant two-home machine
+(shift-guarded: the living original always owns the book).
 
 ## What is a frozen snapshot here (pending activation)
 
@@ -122,7 +155,11 @@ the `dex-mirror` machine (hourly :52, keyless public read) that
 re-mirrors them from the live Console mirror into this repository, and
 the three assertions that measure their freshness (A34, A36, A37) were
 re-armed - truth-gate G11 (`mirror-freshness`) keeps the served book
-honest in red.
+honest in red. Since r68 the engine behind those books is itself alive
+again: the `dex-beat` twin (above) advances the canonical chain on
+public minutes and publishes to Console, which the :52 mirror carries
+here — `dex/grid.json` remains the one frozen plane, honestly, until
+`STEEM_ACTIVE_WIF` arrives (its machine signs real external orders).
 
 Activation (operator steps, in order):
 
