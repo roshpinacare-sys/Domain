@@ -5,13 +5,13 @@
 # הקדנס הדו-שעתי מוסט ל-:33 (המקור ב-Zip: :20); ההנעה העיקרית —
 # הלב-התאום שמשגר את הקווים בעקבות כל פעימה.
 #
-# שקיפות-יכולת בכנות (עד שהמפעיל ישלים את שני הסודות לכספת):
+# שקיפות-יכולת בכנות (מצב הכספת, עדכני ל-2026-09-21T08:28:30Z):
+#   · WEAVE_SEAL_PASSPHRASE — נמסר על-ידי המפעיל תחת השם MAIN_KEY
+#     (רישום הכספת, שמות-בלבד). שני השמות מתקבלים: הקנוני מועדף
+#     אם יימסר, MAIN_KEY ככינוי שהמפעיל בחר. קו ה-ZERO רץ ב-auto
+#     מלא (החותם מה-seal — אפס סוד נוסף).
 #   · קו Steem/Hive בלי WEAVE_STEEM_WIF ⇒ הסקריפט עצמו עובר ל-dry-כנה
 #     ("NO-WIF honest dry") — ירוק, ללא שידור.
-#   · קו ה-ZERO בלי WEAVE_SEAL_PASSPHRASE ⇒ השער הזה מוריד אותו
-#     בכנות ל-verify-only (קריאה-חוזרת חסרת-מפתחות מהשרשרת) —
-#     האימות חי, ההארכה ממתינה למפתח. מרגע שהסוד יוגדר — קו
-#     ה-ZERO חוזר ל-auto מלא, בלי שינוי קוד.
 
 name: weave-anchor-lines
 
@@ -80,10 +80,12 @@ jobs:
       - name: Refuse honestly while the seal passphrase awaits the operator
         id: sealguard
         env:
-          SEAL_PP: ${{ secrets.WEAVE_SEAL_PASSPHRASE }}
+          SEAL_PP: ${{ secrets.WEAVE_SEAL_PASSPHRASE || secrets.MAIN_KEY }}
         run: |
           if [ -z "$SEAL_PP" ]; then
-            echo "WEAVE_SEAL_PASSPHRASE is not set in this repository's vault (Settings > Secrets and variables > Actions)."
+            echo "Neither WEAVE_SEAL_PASSPHRASE nor MAIN_KEY is set in this repository's vault"
+            echo "(Settings > Secrets and variables > Actions). The canonical name is preferred;"
+            echo "MAIN_KEY is the operator's delivered alias (2026-09-21, both accepted)."
             echo "Both evidence lines verify the ledger before anchoring (every checkpoint root is signed by"
             echo "the network key sealed inside the envelope) — without the passphrase there is no honest"
             echo "anchor run, not even a keyless readback (measured: --verify-only fails at the seal too)."
@@ -108,7 +110,7 @@ jobs:
         env:
           DATABASE_URL: 'file:${{ github.workspace }}/db/custom.db'
           WEAVE_STEEM_WIF: ${{ secrets.WEAVE_STEEM_WIF }}
-          WEAVE_SEAL_PASSPHRASE: ${{ secrets.WEAVE_SEAL_PASSPHRASE }}
+          WEAVE_SEAL_PASSPHRASE: ${{ secrets.WEAVE_SEAL_PASSPHRASE || secrets.MAIN_KEY }}
 
       - name: Line 2 — Zero-gas EVM anchor on Z Chain 9369
         id: zero
@@ -124,7 +126,7 @@ jobs:
           bun scripts/weave-anchor-zero.ts $MODE_FLAG
         env:
           DATABASE_URL: 'file:${{ github.workspace }}/db/custom.db'
-          WEAVE_SEAL_PASSPHRASE: ${{ secrets.WEAVE_SEAL_PASSPHRASE }}
+          WEAVE_SEAL_PASSPHRASE: ${{ secrets.WEAVE_SEAL_PASSPHRASE || secrets.MAIN_KEY }}
 
       - name: Honesty verdict — red if any line failed (skipped-by-guard = green honest skip)
         if: always()

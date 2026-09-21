@@ -109,23 +109,26 @@ the machine itself (an already-anchored root is an ALREADY-ANCHORED
 honest skip, not an error; the dex twins add the shift guard so the
 chain never advances twice in the same window).
 
-Three secrets are pending operator delivery in this repository's vault
-(Settings > Secrets and variables > Actions) for full capability —
-until then the gated twins refuse honestly with a clear message (the
-key-verify precedent) and say so in their logs:
+Secrets status (this repository's vault, Settings > Secrets and
+variables > Actions) — the gated twins refuse honestly with a clear
+message (the key-verify precedent) and say so in their logs:
 
-1. `WEAVE_SEAL_PASSPHRASE` — the seal passphrase of the sovereign
-   network key. This is the primary gate: every heartbeat, every anchor
-   line, even ledger verification requires opening the seal (the network
-   key signs every checkpoint). Without it the heart and the anchor
-   lines cannot run at all. The cloud copy of this secret exists only
-   in the private Zip vault, which the API can never read back; the
-   local copy lives in the operator's personal vault or `.env.local`
-   on a live sandbox (`cat .env.local`).
+1. `WEAVE_SEAL_PASSPHRASE` — **delivered by the operator on
+   2026-09-21T08:28:30Z under the name `MAIN_KEY`** (vault listing,
+   names only). The twins accept both names — the canonical one is
+   preferred if it is ever delivered, `MAIN_KEY` is the operator's
+   chosen alias. This is the primary gate: every heartbeat, every
+   anchor line, even ledger verification requires opening the seal
+   (the network key signs every checkpoint). With it delivered, the
+   heart and both anchor lines run at full capability on public
+   minutes (the ZERO line needs nothing beyond the seal; the Steem
+   line broadcasts only once `WEAVE_STEEM_WIF` arrives — until then
+   it runs an honest dry). First-run verification will be recorded
+   here once measured.
 2. `WEAVE_STEEM_WIF` — the posting key of the witness account
    (cashmachine). Without it: no Steem/Hive broadcasts (honest dry),
-   no SAOS live genesis placement (honest skip). The ZERO anchor line
-   does NOT need it (zero-gas Z Chain).
+   no SAOS live genesis placement (honest skip). The ZERO anchor
+   line does NOT need it (zero-gas Z Chain).
 3. `STEEM_ACTIVE_WIF` — the active key of @headcorner, the grid signer
    (the same key that armed the grid in the first place, r38). It already
    lives in the private saos-dex vault — but GitHub secrets never cross
@@ -138,9 +141,10 @@ key-verify precedent) and say so in their logs:
 
 The operator's alternatives are recorded honestly: restoring billing
 revives the original private machines instantly (the secrets are already
-in their vault), delivering the three secrets here gives the twins full
-capability for free, and doing both yields a redundant two-home machine
-(shift-guarded: the living original always owns the book).
+in their vault), delivering the remaining secrets here completes the
+twins' full capability for free, and doing both yields a redundant
+two-home machine (shift-guarded: the living original always owns the
+book).
 
 ## What is a frozen snapshot here (pending activation)
 

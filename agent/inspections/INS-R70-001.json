@@ -1,0 +1,164 @@
+{
+  "format": "agent-inspection-v1",
+  "inspectionId": "INS-R70-001",
+  "id": "INS-R70-001",
+  "inspectionOf": [
+    "R70 pre-push: the primary-key wiring into the two seal-gated machine twins (weave-heart.yml 2 refs, weave-anchor-lines.yml 3 refs), the README secrets-status door, and the book repairs (R30 sync + inspection ref, R31 entry, state.json bridgehead, handoff.md) in /home/z/r70/domain (staged vs HEAD 10b7cf2), plus the sovereign mirrors in /home/z/my-project console/agent/* (unstaged)"
+  ],
+  "subject": "R70 — MAIN_KEY delivery wired into the machine twins (canonical-preferred, alias-fallback) + R30 book-sync repair + R31 ledger entry",
+  "inspector": "standing supervisor-inspector (general-purpose agent, fresh context, zero-trust)",
+  "inspectedAt": "2026-09-21T08:49:08Z–09:01:00Z (window per the standing order)",
+  "operatorOrder": "continue — I added the primary key (תמשיך — הוספתי מפתח ראשי); all work examined thoroughly before every push",
+  "scope": "The staged git index of /home/z/r70/domain (6 modified files, 100 insertions / 65 deletions vs HEAD 10b7cf2, verified: git status shows exactly the 6 declared files, nothing untracked) and the sovereign Zip worktree changes (console/agent/requests.json, console/agent/state.json, console/agent/handoff.md). Live vault state via GitHub API (names only). Sovereign checkout code paths (scripts/weave-beat.ts, scripts/weave-anchor-zero.ts, scripts/weave-anchor.ts). The machine's own book checks (agent/verify/run.mjs A67 ledger_integrity + A69 inspection_integrity) simulated against the staged tree.",
+  "method": "Zero-trust re-measurement, nothing accepted from the delivering agent: GitHub API vault listing (GET /repos/roshpinacare-sys/Domain/actions/secrets — names only, token never printed), every one of the 15 diff hunks of all 6 staged files read line-by-line (hunk map enumerated), regex counts of functional vs bare secret references, yaml.safe_load on both edited workflows (plus all 17 workflow files), full gate/dispatch/concurrency sections read in the staged files, git show 142b088 --stat for the INS-R69-001 serving proof, field-by-field JSON deep-compare of R30/R31 and full state/requests/handoff across the two repos (python deep-diff + sha256), the actual weave-beat.ts flow read end-to-end (sealOpen line 126 vs SANDBOX-ALIVE decision lines 336-388 vs G6 enrichment lines 159-221), weave-anchor-zero.ts env-scan (rg process.env over the whole file) + signer flow read, ledger.json scanned for the exact ecoMeasuredAt string, positive-control-validated security regex scan (ghp_/github_pat_/gh?_/WIF 5[HPJK] 51-char/BEGIN blocks/64-hex) of both repos' diffs, unicode inventory of added lines vs the HEAD glyph set, timestamp future-check, and a live API re-measurement of today's honest-red refusals (runs 35577717442, 35579059601) including the failing step names.",
+  "claimsVerdicts": [
+    {
+      "claim": "C1. MAIN_KEY exists in the Domain vault, created_at 2026-09-21T08:28:30Z",
+      "evidence": "GET /repos/roshpinacare-sys/Domain/actions/secrets (Bearer, names only) → 4 secrets: AGENTS_WATCH_TOKEN (2026-09-20T01:21:14Z), MAIN_KEY (created_at 2026-09-21T08:28:30Z, updated_at same), WEAVE_OPS_PAT (2026-09-20T23:55:27Z), ZIP_PAT (2026-09-20T23:55:27Z). total_count=4, single page.",
+      "verdict": "true"
+    },
+    {
+      "claim": "C2. The vault does NOT contain WEAVE_SEAL_PASSPHRASE under the canonical name (the || fallback feeds the machines today)",
+      "evidence": "The 4-secret listing above contains no WEAVE_SEAL_PASSPHRASE — and also no WEAVE_STEEM_WIF and no STEEM_ACTIVE_WIF, matching every staged book statement ('2 secrets pending'). With the canonical name unset, the expression secrets.WEAVE_SEAL_PASSPHRASE || secrets.MAIN_KEY evaluates to MAIN_KEY.",
+      "verdict": "true"
+    },
+    {
+      "claim": "C3. Exactly 5 functional fallback references across the two workflows, zero bare refs, both YAML parse",
+      "evidence": "rg over both workflows: exactly 5 lines matching 'secrets.WEAVE_SEAL_PASSPHRASE || secrets.MAIN_KEY' — weave-heart.yml lines 79 (SEAL_PP gate env) + 97 (beat step WEAVE_SEAL_PASSPHRASE env); weave-anchor-lines.yml lines 83 (SEAL_PP gate env) + 113 (Steem line env) + 129 (ZERO line env). Remaining mentions = comments/refusal text (7 total mentions per file, 5 functional + 2 textual). rg for 'secrets.WEAVE_SEAL_PASSPHRASE' NOT followed by the fallback: zero matches. python3 yaml.safe_load: both files parse (1 job each); all 17 workflow files in the staged tree parse OK.",
+      "verdict": "true"
+    },
+    {
+      "claim": "C4. GitHub Actions || semantics give canonical-preferred, alias-fallback",
+      "evidence": "Documented expression semantics: an unset secret evaluates to the empty string, which is falsy; 'A || B' returns A if A is truthy, else B. GitHub does not allow creating an empty-string secret (API/UI reject empty values), so set ⇒ non-empty ⇒ truthy. Therefore: canonical set → canonical; canonical unset + MAIN_KEY set → MAIN_KEY (today's state); both unset → '' → the -z gate refuses. No workflow annotation/warning is emitted for secrets missing from expressions on schedule/dispatch runs (silent empty-string evaluation), so no log-noise or behavioral risk.",
+      "verdict": "true"
+    },
+    {
+      "claim": "C5. The staged workflow diffs contain nothing else functional",
+      "evidence": "Hunk map of the full 309-line staged diff, every hunk read: weave-heart.yml 3 hunks (header comment rewrite; gate env + refusal message; beat env) and weave-anchor-lines.yml 4 hunks (header comment; gate env + refusal message; Steem env; ZERO env). Outside the 5 env lines, all changes are comment lines (Hebrew, prefixed #) and echo strings inside the refusal run blocks. No step added/removed, no cron/timeout/permissions/checkout/token change.",
+      "verdict": "true"
+    },
+    {
+      "claim": "C6. INS-R69-001.json is served since commit 142b088 — the R30 inspection-ref repair is factual",
+      "evidence": "git show 142b088 --stat: 'agent/inspections/INS-R69-001.json | 74 +++' added (commit 2026-09-21T02:49:49Z, r69 truth-numbers). The file exists at HEAD 10b7cf2 (git show HEAD:... parses, format agent-inspection-v1) and in the staged tree. The R30 entry in Domain's book did not exist before this delivery (the diff ADDS it) — the repair adds the entry plus the reference to the already-served report, exactly the INS-R68-002 precedent class (bookkeeping escape recorded, never masked).",
+      "verdict": "true"
+    },
+    {
+      "claim": "C7. Domain's staged R30 is otherwise identical to the sovereign book's R30 — the only delta is the added inspection field",
+      "evidence": "Field-by-field python compare of staged Domain R30 vs sovereign HEAD (c5fa4b5) R30: date, session, textHe, text, status, deliveredAt, evidence (3079 chars) all identical; the only delta is 'inspection': absent in HEAD → 'agent/inspections/INS-R69-001.json' staged. (The sovereign worktree R30 with the field added is fully identical to Domain's staged R30.)",
+      "verdict": "true"
+    },
+    {
+      "claim": "C8. The twins are in sync (state, requests, handoff)",
+      "evidence": "python deep-compare: Domain staged agent/state.json == sovereign worktree console/agent/state.json (IDENTICAL, 0 differences); agent/requests.json == console/agent/requests.json (IDENTICAL — R01..R31, generatedAt 08:47:00Z both); agent/handoff.md vs console/agent/handoff.md sha256 byte-identical. requestRef R31 in both.",
+      "verdict": "true"
+    },
+    {
+      "claim": "C9. weave-beat.ts calls sealOpen() BEFORE the SANDBOX-ALIVE/verify-only decision — a green run, even verify-only, proves the passphrase opens the seal",
+      "evidence": "Code flow read: line 126 'const seal = sealOpen();' (step 3, before any mode decision), line 130 ensureNetworkKeyFromSeal; G6 enrichment (lines 159-221, uses seal.cloudKeyHex) runs before the doctrine step; the SANDBOX-ALIVE/verify-only decision is lines 336-388 (step 4), and even its retreat path calls verifyLedger() (line 352) whose checkpoint-signature verification requires the sealed network key. Refusal message claim ('even ledger verification requires opening the seal') is the code's actual structure. sealOpen() without the passphrase throws (measured r67: BEAT-ERROR 'אין סיסמת seal').",
+      "verdict": "true"
+    },
+    {
+      "claim": "C10. weave-anchor-zero.ts requires no operator secret beyond the seal for a full ZERO-line anchor",
+      "evidence": "rg of every process.env read in the file: WEAVE_BRANCH and standard GITHUB_ACTIONS/GITHUB_REPOSITORY/GITHUB_SERVER_URL/GITHUB_RUN_ID only — no WIF, no RPC key, no private key env. Line 189 sealOpen(); network key from the seal signs the EIP-712 anchor, cloud key signs the attestation; header documents 'כטרנזקציית EVM אמיתית על Z Chain (Zero Network, chainId 9369)… gasPrice 0x0'. The script verifies the ledger before attesting (lines 218-220) and keeps an honest red gate if the chain stops being zero-gas ('ZERO-GATE-CLOSED… nothing attested').",
+      "verdict": "true"
+    },
+    {
+      "claim": "C11. The expected first-run trigger: eco measurement 2026-09-21T06:50:24Z awaits its witness attestation → the heart's G6 enrichment forces a FULL beat",
+      "evidence": "sovereign/reports/ecosystem-dup-latest.json: measuredAt 2026-09-21T06:50:23.954Z (dupRatio 0.011, 10 dupGroups, 1551 measured) — the R31 evidence quotes the second-rounded 06:50:24Z, the same rounding the Zip commit message c5fa4b5 uses; c5fa4b5 is Zip origin/main today. sovereign/ledger.json (293 attestations, exportedAt 2026-09-20T12:11:15Z): zero attestations whose evidence contains 'ecoMeasuredAt=2026-09-21T06:50:23.954Z' (and zero mentions of that timestamp anywhere). Therefore the heart's G6 step appends the witness attestation → ecoWitness ≠ null → line 351's verify-only retreat condition fails → full beat (the 'SANDBOX-ALIVE אך עבודה ריבונית ממתינה' branch, line 376). Independently, the last non-ANCHOR attestation is from 2026-09-20T06:10Z (≈26.8h stale) so the 26h takeover would also fire.",
+      "verdict": "true"
+    },
+    {
+      "claim": "C12. R31's evidence contains no anticipatory past-tense success claims — first-run verification marked PENDING",
+      "evidence": "The staged R31 evidence ends: 'First-run verification of the seal: PENDING AT PUSH TIME - appended below once measured.' The trigger sentence is labeled 'Expected first-run trigger'. Delivered facts stated are only the measured ones (vault listing, wiring, capability measured in r67/r68). state.json currentTask: 'First-run seal verification (heart dispatch) follows the push' (future tense). README: 'First-run verification will be recorded here once measured.' Live corroboration: no post-08:28:30Z run of either twin exists yet (latest heart 08:24:17Z, latest lines 08:39:40Z — both failed at the refusal gate).",
+      "verdict": "true"
+    },
+    {
+      "claim": "C13. No secret values, tokens, keys or passphrases in the staged content — names only",
+      "evidence": "Regex scan (positive-control validated against synthetic ghp_/github_pat_/WIF/hex strings) of the full Domain staged diff and the sovereign diff: zero matches for ghp_[A-Za-z0-9]{20,}, github_pat_…, gh[oaurus]_…, 5[HJK][1-9A-HJ-NP-Za-km-z]{49} (WIF), -----BEGIN blocks, or [A-Fa-f0-9]{64}. All mentions are secret NAMES (MAIN_KEY, WEAVE_SEAL_PASSPHRASE, WEAVE_STEEM_WIF, STEEM_ACTIVE_WIF, ZIP_PAT, WEAVE_OPS_PAT, AGENTS_WATCH_TOKEN) — all already public in the README's own operator door, pre-existing design.",
+      "verdict": "true"
+    },
+    {
+      "claim": "C14. No emojis or non-fleet glyphs in the changed files",
+      "evidence": "Unicode inventory of added (+) diff lines: only U+2014 EM DASH and U+00B7 MIDDLE DOT — both present in the HEAD versions (committed fleet convention). Full six-file scan: no emoji ranges (U+1F300-1FAFF, U+2600-27BF, FE0F) anywhere. Hebrew = working language, allowed.",
+      "verdict": "true"
+    },
+    {
+      "claim": "C15. Staged book timestamps are not in the future",
+      "evidence": "All timestamps in the staged diff enumerated and compared to inspection time 2026-09-21T08:56:01Z: latest is 08:47:00Z (generatedAt, R31 deliveredAt, lastHandoff.at) = 9.0 min in the past; MAIN_KEY 08:28:30Z = 27.5 min past; OL-7 closedAt 02:45:00Z matches the sovereign's already-committed closedAt. All PAST.",
+      "verdict": "true"
+    },
+    {
+      "claim": "C16. The refusal gates still refuse honestly when BOTH names are absent (exit-1 path preserved)",
+      "evidence": "Both staged gates read in full: 'if [ -z \"$SEAL_PP\" ]; then … exit 1' — with both secrets unset, SEAL_PP='' and the gate refuses before any machine step; anchor-lines' honesty-verdict step also re-checks sealguard.outputs.seal == missing → exit 1. Red-before measured live TODAY via the API: Domain run 35577717442 (weave-heart, schedule, 08:24:17Z) and run 35579059601 (weave-anchor-lines, schedule, 08:39:40Z — 11 minutes AFTER MAIN_KEY creation) both completed=failure at exactly the step 'Refuse honestly while the seal passphrase awaits the operator' — the key exists in the vault but the wiring (this push) is what is missing. The gate bites today; the refusal message now names both accepted names.",
+      "verdict": "true"
+    },
+    {
+      "claim": "C17. The heart's post-beat anchor-lines dispatch and the concurrency groups are untouched",
+      "evidence": "The staged diffs of both workflows contain no hunk touching them; the staged files still carry 'Dispatch anchor lines (schedule backstop)' (if: always(), gh workflow run weave-anchor-lines.yml --repo roshpinacare-sys/Domain --ref main, GH_TOKEN: github.token) and concurrency groups weave-heart-domain-twin / weave-anchor-lines-domain-twin, both cancel-in-progress: false, permissions unchanged (contents: write; heart also actions: write).",
+      "verdict": "true"
+    },
+    {
+      "claim": "C18. R31's operator words match the actual operator message",
+      "evidence": "Staged R31 textHe: 'תמשיך — הוספתי מפתח ראשי'; text: 'Continue — I added the primary key' — verbatim match to the operator's message for this delivery; session 'r70-primary-key (Z.ai session)' consistent with the r67/r68/r69 lineage conventions.",
+      "verdict": "true"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-1",
+      "severity": "MEDIUM",
+      "description": "INS-R70-001.json is referenced by R31's inspection field and by the bridgehead (state.requestRef=R31; A69 requires the report served) but is NOT in the staged tree. The book's own machine check was simulated against the staged tree: A69 fails with 'R31: inspection report not served publicly (missing file: agent/inspections/INS-R70-001.json)'. A67 passes (requestRef exists, delivered, evidence present).",
+      "requiredFix": "Install this report at /home/z/r70/domain/agent/inspections/INS-R70-001.json and git add it INTO THE SAME COMMIT as the delivery (R66/R68 precedent). Without it, the next agent-verify run goes red on the newly-pushed book."
+    },
+    {
+      "id": "F-2",
+      "severity": "MEDIUM",
+      "description": "origin/main moved past the staging base during the staging window: 10b7cf2 → f6d1247 via 4 machine measurement commits (moment-watch 08:48:54Z, money-watch 08:46:19Z, agents-watch, dex-watch 08:38:01Z) touching only agents/gh-snapshot.json, agents/registry.json, dex/deposits.json, dex/money.json, dex/watch.json, moment/history.json, moment/moment.json — zero overlap with the 6 staged files. A push from the current index is non-fast-forward and will be rejected.",
+      "requiredFix": "Before pushing: git fetch origin && git pull --rebase (expected clean — no file overlap), then re-verify: (a) the 5 fallback references still exact in both workflows, (b) twin identity Domain agent/* == sovereign console/agent/* still holds, (c) the report from F-1 is in the same commit."
+    },
+    {
+      "id": "F-3",
+      "severity": "LOW",
+      "description": "The ledgeredAt convention ('live entry, delivered with this push' on R26-R29) breaks: neither R30 nor R31 carries a ledgeredAt field. Not machine-checked (A67 checks id/status/evidence/bridgehead only), but the convention existed precisely to mark entries that become public only with the push that carries them.",
+      "requiredFix": "Either add \"ledgeredAt\": \"2026-09-21 (live entry, delivered with this push)\" to R30/R31 in the same commit, or consciously retire the field (document the retirement). Cosmetic for the machines, meaningful for the audit trail."
+    },
+    {
+      "id": "F-4",
+      "severity": "LOW",
+      "description": "handoff.md now cites README \"Secrets status\" — the phrase exists verbatim in the README (paragraph lead-in, line 112) but is not a markdown heading; the section lives inside '## The machine twin'. The previous text cited the real heading ('The machine twin'). A reader searching headings will not find it.",
+      "requiredFix": "Optional wording fix in a later delivery: cite the section as README 'The machine twin → Secrets status' or promote the lead-in to a heading. No reader harm today (the phrase is greppable)."
+    },
+    {
+      "id": "F-5",
+      "severity": "INFO",
+      "description": "Precision nit: R31 evidence and the workflow headers quote the G6 measurement as 2026-09-21T06:50:24Z; the file's measuredAt is 2026-09-21T06:50:23.954Z. Same measurement, same commit (c5fa4b5 — whose own message also uses :24Z). The trigger logic matches the exact file string, so no functional impact.",
+      "requiredFix": "None (recorded for exactness; if R31's evidence is appended post-push, the appended text can cite the exact .954Z value)."
+    },
+    {
+      "id": "F-6",
+      "severity": "INFO",
+      "description": "README wording check: 'With it delivered, the heart and both anchor lines run at full capability on public minutes' is a capability statement (design, measured in r67/r68), immediately qualified by '(the ZERO line needs nothing beyond the seal; the Steem line broadcasts only once WEAVE_STEEM_WIF arrives — until then it runs an honest dry)' and followed by the pending marker 'First-run verification will be recorded here once measured.' No anticipatory run-claim found anywhere in README/handoff/state/R31.",
+      "requiredFix": "None."
+    },
+    {
+      "id": "F-7",
+      "severity": "INFO",
+      "description": "Post-push obligation (not blocking, but promised by the delivery itself): the first-run verification is PENDING at push time by design. Next heart slot is :13Z (09:13Z if the push lands before it), or an immediate workflow_dispatch. The R31 evidence promises the measured result 'appended below once measured', and the README's first-run line must be filled with the measurement — per the standing order, work is examined after push as well.",
+      "requiredFix": "After push: trigger/await the heart run, then append the measured first-run outcome (green beat + G6 witness attestation + anchor lines: Steem honest-dry / ZERO full) to R31's evidence in the book and the README line, and note it in the worklog."
+    },
+    {
+      "id": "F-8",
+      "severity": "INFO",
+      "description": "Vault-vs-book consistency confirmed in both directions: the vault holds MAIN_KEY but neither WEAVE_SEAL_PASSPHRASE nor the two remaining operator secrets — exactly matching every staged statement ('primary key delivered as MAIN_KEY; 2 secrets pending'). No secret-name map of private infrastructure is published beyond names already in the README door (pre-existing, intentional operator instructions).",
+      "requiredFix": "None."
+    }
+  ],
+  "verdict": "APPROVE-WITH-CONDITIONS",
+  "pushConditions": [
+    "PC-1 (blocking): Install this report at /home/z/r70/domain/agent/inspections/INS-R70-001.json and stage it into the SAME commit as the delivery — the measured A69 simulation on the staged tree without it fails on R31's inspection reference (F-1).",
+    "PC-2 (blocking, mechanical): git fetch origin && git pull --rebase in /home/z/r70/domain before pushing (origin/main moved 10b7cf2→f6d1247 via 4 machine measurement commits, no file overlap — rebase expected clean); after rebase re-verify the 5 fallback refs, the twin byte-identity, and that the report is still in the commit (F-2).",
+    "PC-3 (order): Push Domain first, then commit the sovereign Zip mirrors (console/agent/requests.json, state.json, handoff.md + worklog r70 entry) so the twins never diverge publicly (fleet doctrine).",
+    "PC-4 (post-push, required follow-up): Measure the first run (scheduled :13Z or immediate dispatch) and append the measured verification to R31's evidence + the README first-run line + the worklog (F-7) — the delivery itself marks this PENDING; closing it is part of the delivery, not a new one."
+  ],
+  "claimsSummary": "18/18 claims measured TRUE (C11 with the .954Z precision nit recorded as F-5). Zero false claims, zero anticipatory success claims, zero secret values in the diff, zero new glyphs, zero future timestamps. The wiring is minimal and honest, and the refusal gates were measured biting live TODAY at 08:24Z/08:39Z."
+}
