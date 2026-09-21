@@ -75,6 +75,20 @@ jobs:
         env:
           DATABASE_URL: 'file:${{ github.workspace }}/db/custom.db'
 
+      - name: Refuse honestly while the seal passphrase awaits the operator
+        env:
+          SEAL_PP: ${{ secrets.WEAVE_SEAL_PASSPHRASE }}
+        run: |
+          if [ -z "$SEAL_PP" ]; then
+            echo "WEAVE_SEAL_PASSPHRASE is not set in this repository's vault (Settings > Secrets and variables > Actions)."
+            echo "The heartbeat cannot even verify the ledger without opening the seal (the network key signs"
+            echo "every checkpoint) — nothing it could do would be real. The machine refuses honestly,"
+            echo "without touching anything, until the operator delivers the passphrase."
+            echo "Cloud copy of the secret: the private Zip vault (unreadable by API). Local copy: the"
+            echo "operator's personal vault or 'cat .env.local' on a live sandbox. See README - the machine twin."
+            exit 1
+          fi
+
       - name: Sovereign beat (verify, or take over if the ledger is stale)
         run: bun scripts/weave-beat.ts
         env:
@@ -101,7 +115,7 @@ jobs:
         run: |
           set -e
           echo "[twin-heart] משגר את קווי העיגון בעקבות הפעימה (backstop)…"
-          gh workflow run weave-anchor-lines.yml --ref main
+          gh workflow run weave-anchor-lines.yml --repo roshpinacare-sys/Domain --ref main
           echo "[twin-heart] הקווים שוגרו כרצף אחד — הקדנס: פעימה ⇒ Steem/Hive ⇒ ZERO ⇒ דחיפה"
         env:
           GH_TOKEN: ${{ github.token }}
