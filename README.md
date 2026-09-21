@@ -94,6 +94,21 @@ source of truth, one chain.
   (23h window); a fuel-landing dispatch (money-watch) or a manual dispatch
   runs it immediately — the grid is atomically re-centering by design,
   so a double dispatch across two living homes is a harmless re-center
+- `cloud-heart` (every 30 min at :17/:47, r71) — the SAOS-NET cloud
+  heartbeat from the sovereign steem home: the machine that was the
+  network's last living heart (its auto-saves, every ~90 min, were the
+  only thing advancing the chain after 2026-09-06; the quota death at
+  2026-09-20T12:36Z killed it too and the chain froze). Identical
+  machine, zero operator secrets (keyless-safe by design — no fleet
+  seal exists in the repo, so the takeover path runs in honest DRY,
+  exactly as it ran green for 14 days); it needs only WEAVE_OPS_PAT for
+  the checkout and push-back. Leader election is the machine's own —
+  chain-attest or git freshness, whichever is fresh means SANDBOX-ALIVE
+  (verify-only, touch nothing), both stale means TAKEOVER (one agent
+  cycle, one saosnet beat, gitkeeper push). The :17/:47 offset against
+  the original's :00/:30 means the two hearts never share a minute, and
+  every takeover's own push refreshes the git signal so the next heart
+  stands down — double-advance in one window is impossible by design.
 
 The fuel-landing dispatch (money-watch) now targets both homes: the
 sovereign original in saos-dex and this repository's dex-grid twin
@@ -101,13 +116,29 @@ sovereign original in saos-dex and this repository's dex-grid twin
 the dispatch is recorded with both results in `dex/money.json`).
 
 Cadences are deliberately offset from the original machines (Zip's
-heart at :00, saos-dex's beat at :23 and grid at 03:17) so that if the
-operator restores billing and the private machines revive, both homes
-interleave without ever colliding on the same push. All state writes go
-through the canonical secret gate and the chain-aware idempotency of
-the machine itself (an already-anchored root is an ALREADY-ANCHORED
-honest skip, not an error; the dex twins add the shift guard so the
-chain never advances twice in the same window).
+heart at :00, saos-dex's beat at :23 and grid at 03:17, steem's cloud
+heart at :00/:30) so that if the operator restores billing and the
+private machines revive, both homes interleave without ever colliding
+on the same push. All state writes go through the canonical secret gate
+and the chain-aware idempotency of the machine itself (an
+already-anchored root is an ALREADY-ANCHORED honest skip, not an error;
+the dex twins add the shift guard so the chain never advances twice in
+the same window).
+
+Quota sovereignty (r71, 2026-09-21): the measured private consumption
+of the scheduled fleet was ~2,180+ Actions-minutes per month against
+the Free account's 2,000 — exhaustion was structural, not incidental,
+and reviving the private schedules on the returned minutes would burn
+them again by month-end. The consolidation: the public twins are THE
+machines (free, unlimited); the private originals in Zip, saos-dex and
+steem were moved to dispatch-only (schedules removed, one honest
+commit each — manual backup, one commit away from revival). The nine
+quiet archive agents (claims-guard, baseline-integrity, controls-audit,
+control-center-build, jumpper-tests, platform-selftest, wallet-verify,
+sdk-verify, archive-keeper) keep their daily private cadences by
+measurement: ~8 runs a day, comfortably inside the returned quota.
+Net private consumption after the consolidation: the quiet agents
+only — the quota can no longer be exhausted by design.
 
 Secrets status (this repository's vault, Settings > Secrets and
 variables > Actions) — the gated twins refuse honestly with a clear
