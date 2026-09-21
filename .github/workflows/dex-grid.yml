@@ -1,0 +1,125 @@
+# DEX-GRID (DOMAIN TWIN) — הזרימה החוץ של הבורסה, על דקות-Actions ציבוריות (r68)
+#
+# הרקע (OL-14, המשך r67): הרץ היומי של THE-REAL-GRID ב-saos-dex מת עם מכסת
+# הדקות ב-2026-09-20 — grid.json קפוא מ-03:29Z, ודלק-ה-powerdown שנוחת ב-02:01
+# ממתין לו לשווא. התאום מריץ את אותה המכונה בדיוק מהבית הציבורי Domain.
+#
+# למה כאן שער-סירוב ולא דילוג-ירוק: הגריד חמוש במפתח-ה-active של @headcorner
+# שחי בכספת הפרטית של saos-dex (נאטם שם ב-R38). סודות-Actions אינם חוצים
+# ריפואים לעולם — לתאום כאן אין גישה אליו. הרצת grid-beat בלי המפתח היתה
+# מפרסמת לציבור פסק-דין שקרי ("DISARMED-NO-KEY") בשעה שהאמת היא שהגריד חמוש
+# ורק המכונה חסומה. התאום מסרב בכנות, בלי לגעת בכלום, עד שהמפעיל ימסור
+# את המפתח לכספת הזאת (אותו מפתח שהוא עצמו חימש בו אז — הוא מחזיק אותו).
+#
+# שומר-המשמרת: בריצה מתוזמנת — אם המקור הצליח ב-23 השעות האחרונות, הוא חי
+# והתאום מוודא-בלבד. הזנקה ידנית (money-watch בנחיתת-דלק, או המפעיל) עוקפת
+# את השומר בכוונה: הגריד אטומי-יומי מעצם עיצובו (ביטול-הזמנותינו ופרישה
+# מחדש סביב הספר החי) — ריצה כפולה היא פרישה-חוזרת חסרת-נזק.
+
+name: dex-grid
+
+on:
+  schedule:
+    - cron: '48 3 * * *'  # יומי, בקיזוז מהמקור (03:17 ב-saos-dex)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dex-grid-domain-twin
+  cancel-in-progress: false
+
+jobs:
+  grid:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - name: Checkout the sovereign chain home (saos-dex via PAT — the twin never forks the book)
+        uses: actions/checkout@v4
+        with:
+          repository: roshpinacare-sys/saos-dex
+          token: ${{ secrets.ZIP_PAT }}
+          fetch-depth: 1
+
+      - name: Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Cache bun install
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: bun-dex-${{ hashFiles('bun.lock') }}
+          restore-keys: bun-dex-
+
+      - name: Install
+        run: bun install --frozen-lockfile
+
+      - name: Prisma client
+        run: bunx prisma generate
+
+      - name: Refuse honestly while the active key awaits the operator
+        env:
+          KEY: ${{ secrets.STEEM_ACTIVE_WIF }}
+        run: |
+          if [ -z "$KEY" ]; then
+            echo "STEEM_ACTIVE_WIF is not set in this repository's vault (Settings > Secrets and variables > Actions)."
+            echo "The grid signs every external order with the active key of @headcorner — without it there is"
+            echo "no placement at all. And running grid-beat keyless would publish a false DISARMED-NO-KEY"
+            echo "verdict while the true state is armed (the key lives in the private saos-dex vault,"
+            echo "which secrets never cross). The machine refuses honestly, touching nothing, until the"
+            echo "operator delivers the key — the same key that armed the grid in the first place."
+            echo "See README - the machine twin."
+            exit 1
+          fi
+
+      - name: Shift guard — the sovereign original owns the grid while it lives
+        id: guard
+        env:
+          GH_TOKEN: ${{ secrets.ZIP_PAT }}
+        run: |
+          set -euo pipefail
+          URL="repos/roshpinacare-sys/saos-dex/actions/workflows/dex-grid.yml/runs?per_page=1"
+          LAST=""
+          for attempt in 1 2; do
+            LAST=$(gh api "$URL" --jq '{created_at: .workflow_runs[0].created_at, conclusion: .workflow_runs[0].conclusion}' 2>/dev/null || true)
+            if [ -n "$LAST" ] && [ "$LAST" != "{}" ] && [ "$LAST" != "null" ]; then break; fi
+            echo "attempt ${attempt}: API unreachable — retrying in 10s"
+            sleep 10
+          done
+          if [ -z "$LAST" ] || [ "$LAST" = "{}" ] || [ "$LAST" = "null" ]; then
+            echo "shift state UNKNOWN (API unreachable after retries) — the twin does not take over blindly"
+            exit 1
+          fi
+          AT=$(printf '%s' "$LAST" | jq -r '.created_at // empty')
+          CC=$(printf '%s' "$LAST" | jq -r '.conclusion // empty')
+          echo "the original's last run: created_at=${AT} conclusion=${CC}"
+          if [ "$CC" = "success" ] && [ -n "$AT" ]; then
+            AGE_S=$(( $(date +%s) - $(date -u -d "$AT" +%s) ))
+            AGE_H=$(( AGE_S / 3600 ))
+            echo "the original's last success: ${AGE_H}h ago"
+            if [ "$AGE_S" -lt 82800 ]; then
+              echo "takeover=0" >> "$GITHUB_OUTPUT"
+              echo "reason=the original is alive (success ${AGE_H}h ago) — the twin verifies only" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+          fi
+          echo "takeover=1" >> "$GITHUB_OUTPUT"
+          echo "reason=the original is not healthy (last: ${CC:-unknown}) — the twin takes over the grid" >> "$GITHUB_OUTPUT"
+
+      - name: Grid (read the live book, mark to live feeds, place if armed, publish)
+        if: steps.guard.outputs.takeover == '1' || github.event_name == 'workflow_dispatch'
+        run: bun run grid-beat.ts
+        env:
+          SAOS_RELAY_AGENT_ACCOUNT: headcorner
+          STEEM_ACTIVE_WIF: ${{ secrets.STEEM_ACTIVE_WIF }}
+          CONSOLE_TOKEN: ${{ secrets.WEAVE_OPS_PAT }}
+
+      - name: Verify-only (this shift belongs to the living original)
+        if: steps.guard.outputs.takeover != '1' && github.event_name != 'workflow_dispatch'
+        run: |
+          echo "${{ steps.guard.outputs.reason }}"
+          echo "The twin takes over automatically when the original's last success ages past 23h."
+          echo "Nothing was touched — one home, one grid, one book."

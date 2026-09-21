@@ -20,6 +20,7 @@ on:
 
 permissions:
   contents: write
+  actions: write   # r68: same-repo dispatch of the dex-grid twin (fuel-landing backstop)
 
 concurrency:
   group: money-watch
@@ -41,6 +42,7 @@ jobs:
       - name: Money path watch (fuel landing + redemption verdict)
         env:
           AGENTS_WATCH_TOKEN: ${{ secrets.AGENTS_WATCH_TOKEN }}
+          TWIN_DISPATCH_TOKEN: ${{ github.token }}
         run: node agents/money-watch.mjs
 
       - name: Publish the money path state
