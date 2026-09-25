@@ -48,7 +48,7 @@ console-publish (renders the status from the public chain, hourly at :45), truth
 live site, hourly at :07 - the home went LIVE 2026-09-20 ~02:22Z, so it measures for real; a 404
 now is a true outage, never a PRE-LIVE verdict), agent-verify (measures the agent, every 2h at :55,
 53 assertions), dex-watch (deposits on four chains, every 20 min), agents-watch (the fleet registry,
-hourly at :37, reads all 15 repos through the AGENTS_WATCH_TOKEN secret in the Actions vault),
+hourly at :37, reads all 16 org repos (Defi added r124; Console-era 15) through the AGENTS_WATCH_TOKEN secret in the Actions vault),
 money-watch (the money path, every 15 min; on fuel landing it dispatches BOTH the
 sovereign saos-dex grid and the public dex-grid twin - the private dispatch dies with
 the quota, the twin carries the fuel), moment-watch (market-regime reading, every 30
@@ -66,8 +66,8 @@ each checking out its sovereign home via ZIP_PAT and pushing back to the one
 canonical book): weave-heart (hourly :13 - seal-gated; the operator delivered
 the passphrase on 2026-09-21T08:28:30Z under the name MAIN_KEY - both names
 accepted, canonical preferred), weave-anchor-lines (bi-hourly :33 - same seal
-gate via either name; with the seal delivered: Steem line honest-dry until
-WEAVE_STEEM_WIF, ZERO line full - it needs nothing beyond the seal), web-publish
+gate via either name; both lines publish live - the operator delivered
+WEAVE_STEEM_WIF and STEEM_ACTIVE_WIF in R72-R75; the honest-dry phase is closed), web-publish
 (every 20 min at :03/:23/:43 - green no-op without mail, honest no-wif skip),
 weave-ecosystem (daily 06:30 - verified end-to-end: dup beacon committed to Zip
 from this twin), dex-beat (bi-hourly :53 - SECRETLESS for the operator: revives
@@ -76,8 +76,9 @@ sovereign original succeeded within 3h the twin verifies only), dex-grid
 (daily 03:48 - refuses honestly until STEEM_ACTIVE_WIF, because a keyless run
 would falsely publish DISARMED-NO-KEY while the true state is armed in the
 private vault; shift-guarded on schedule, dispatches run immediately).
-Operator's two remaining secrets (README "Secrets status"): WEAVE_STEEM_WIF,
-STEEM_ACTIVE_WIF.
+Operator's secrets status: ALL DELIVERED (R72-R75, incl. WEAVE_STEEM_WIF and
+STEEM_ACTIVE_WIF). No remaining operator-side secrets are known; new needs open
+as honest refuse-until-delivered gates.
 
 ## 4. How to work (the loop)
 
