@@ -10,7 +10,7 @@ import { readFileSync, writeFileSync, existsSync } from "node:fs";
 
 const OWNER = "roshpinacare-sys";
 const REPOS = ["Adsmarket","anchor-baseline","Console","Domain","Project-files","roshpina","saos-control-center",
-  "saos-dex","saos-jummper","saos-sovereign-foundry","saos-sovereign-platform","Saosmartwallet","Sdk","steem","Zip"];
+  "Defi","saos-dex","saos-jummper","saos-sovereign-foundry","saos-sovereign-platform","Saosmartwallet","Sdk","steem","Zip"];
 const TOKEN = process.env.AGENTS_WATCH_TOKEN;
 if (!TOKEN) { console.error("AGENTS_WATCH_TOKEN missing"); process.exit(1); }
 
