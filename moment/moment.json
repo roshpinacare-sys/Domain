@@ -1,33 +1,33 @@
 {
  "ok": true,
  "format": "moment-watch-v1",
- "publishedAt": "2026-09-25T02:47:36.464Z",
+ "publishedAt": "2026-09-25T03:20:58.756Z",
  "engine": "Domain/agents/moment-watch · R62 sovereign moment",
  "role": "reads the live moment every 30 minutes (market regime, our parity line vs the live internal book, fuel runway, measured anomalies) and records a deterministic directional call that is only ever scored after its horizon has passed - training as measurement, never as promise",
  "market": {
-  "steemUsd": 0.061904,
-  "steem24h": -4.193642800738616,
-  "sbdUsd": 0.560133,
-  "btcUsd": 84444,
-  "btc24h": 0.1333915273639779,
+  "steemUsd": 0.063148,
+  "steem24h": -6.935721590191863,
+  "sbdUsd": 0.560112,
+  "btcUsd": 84199,
+  "btc24h": 0.002902551143206619,
   "fearGreed": {
    "value": 71,
    "label": "Greed"
   }
  },
- "paritySbdPerSteem": 0.11051660944811321,
+ "paritySbdPerSteem": 0.11274173736681234,
  "liveBook": {
   "bestBid": 0.0989991081161431,
   "bestAsk": 0.10041168792047395,
-  "bidsDepthSbd": 2870.48,
-  "asksDepthSteem": 700.04,
+  "bidsDepthSbd": 2870.45,
+  "asksDepthSteem": 821.86,
   "levels": 17,
-  "bidSurplusBps": -1042
+  "bidSurplusBps": -1219
  },
  "regime": {
   "label": "RISK_ON",
   "drivers": [
-   "BTC +0.1%",
+   "BTC +0.0%",
    "F&G 71"
   ],
   "thresholds": {
@@ -40,18 +40,18 @@
  },
  "runway": {
   "active": true,
-  "weeklySp": 475.60052645554885,
+  "weeklySp": 475.6012784135938,
   "nextPayment": "2026-09-26T02:01:27",
-  "remainingSp": 1902.4021058209564,
-  "weeklyUsd": 29.44,
-  "treasuryUsd": 299.29
+  "remainingSp": 1902.4051136531361,
+  "weeklyUsd": 30.03,
+  "treasuryUsd": 305.31
  },
  "grid": {
   "verdict": "ARMED-LIVE",
   "armed": true,
   "blocker": "buy-side waiting for SBD inventory: 0.039 SBD commitable < 0.15 needed",
   "externalFlowUsd": 0.005979,
-  "publishedAt": "2026-09-24T15:18:13.778Z"
+  "publishedAt": "2026-09-25T03:16:04.547Z"
  },
  "moneyPath": {
   "fuel": {
@@ -71,8 +71,8 @@
  },
  "call": "DOWN",
  "callStats": {
-  "resolved": 91,
-  "hits": 36,
+  "resolved": 92,
+  "hits": 37,
   "hitRatePct": 40,
   "horizonH": 6,
   "thresholdPct": 3
@@ -82,7 +82,7 @@
   {
    "kind": "parity-edge",
    "tone": "good",
-   "text": "עומק-קנייה חי 1042bps מתחת לקו-הזהות (bid 0.0990 מול parity 0.1105) — עודף מדוד לגריד."
+   "text": "עומק-קנייה חי 1219bps מתחת לקו-הזהות (bid 0.0990 מול parity 0.1127) — עודף מדוד לגריד."
   },
   {
    "kind": "sbd-inventory",
@@ -90,9 +90,14 @@
    "text": "צוואר-הקנייה של הגריד: buy-side waiting for SBD inventory: 0.039 SBD commitable < 0.15 needed"
   },
   {
+   "kind": "steem-move",
+   "tone": "info",
+   "text": "STEEM -6.9% ביממה — סימוני-הגריד ייגזרו מחדש בפעימה הבאה; תוכניות-עבר עלולות לא-רלוונטיות."
+  },
+  {
    "kind": "fuel",
    "tone": "info",
-   "text": "דלק נוחת 2026-09-26 — ≈476 SP ≈ 29.4$ בסימון חי."
+   "text": "דלק נוחת 2026-09-26 — ≈476 SP ≈ 30.0$ בסימון חי."
   },
   {
    "kind": "deposits",
