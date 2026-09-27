@@ -1,0 +1,74 @@
+# CLOUD-PULSE — פעימת האמת היומית של הענן: כרטיס Steem ששורד מוות-סנדבוקס (r128, משימה 4-b).
+#
+# הפער שנסגר (מומלץ במחקר 2-d, נמדד בהיסטוריה): כרטיס האמת היומי נשלח
+# מהדופק של הסנדבוקס (פורט 3033, חלון שנפתח ב-00:00 UTC מ-last_root_post
+# של @headcorner) — כלומר הוא מת עם הבית. ב-56 שעות המוות של r126 לא נכתב
+# אף כרטיס. הענן, שדווקא הוכיח חיות עצמאית מלאה באותן שעות, שתק.
+#
+# הקדנס: יומי, 00:35 UTC — 35 דקות אחרי פתיחת חלון הדופק. הסדר ברור:
+#   · הדופק חי ופרסם עד 00:35 (כרגיל — נמדד: היומי יוצא בפתיחת החלון) ⇒
+#     הענן קורא את last_root_post מהשרשרת, רואה "היום", ומסיים ירוק בלי
+#     לגעת. הכרטיס של הבית עדיף תמיד — הוא מגיע עם הספר החי.
+#   · הבית מת ⇒ הענן משלים: כרטיס אמת מינימלי, מסומן בכנות "(cloud
+#     fallback)", permlink דטרמיניסטי cloud-pulse-<YYYYMMDD> (ריצה חוזרת
+#     באותו יום = אידמפוטנטית מהשרשרת, לא כפילות).
+#
+# הרכבת-המפתח — לא ניחוש, מדידה (ראו agents/cloud-pulse.mjs): STEEM_POSTING_WIF
+# מהכספת הזאת (רישום 2026-09-23) נגזר לציבורי ומושווה ביט-מול-ביט מול
+# רשות-ה-posting החיה של @headcorner. נתיב-משנה: WEAVE_STEEM_WIF (עד-העיגון)
+# — אם הוא של headcorner ישמש; אם הוא של cashmachine — דילוג-RC כנה עם
+# המספרים (לעד הצי אין מנה ל-comment; נמדד: 170M מול 2.3B מקסימום ועלות
+# ~1.1B) — בדיוק הסיבה ש-web-publish עצמו משדר custom_json ולא comment.
+#
+# שערים בדרך: שער-RC לפני שידור (אין מנה ⇒ אין שידור, בכנות) · חוסר-סוד
+# מלא = דילוג-ירוק בסגנון web-publish · כישלון שידור = לוג כנה וריצה ירוקה
+# (הוראת המשימה; הכרטיס נשאר לדופק אם הבית יחזור). השידור עצמו — תבנית
+# הבית המוכחת: steem.broadcast.sendAsync (steem@0.7.11) עם מירוץ-זמן 45ש'
+# (לקח R98: ההבטחה היא מקור-האמת, לא callback).
+#
+# אפס קומיטים לריפו הזה: הפעימה רק קוראת (שרשרת + mirror.json מקומי)
+# ומשדרת לשרשרת. אין state בגיט — האידמפוטנטיות נגזרת מהשרשרת עצמה.
+
+name: cloud-pulse
+
+on:
+  schedule:
+    - cron: '35 0 * * *'  # יומי 00:35 UTC — אחרי חלון הדופק (00:00) ולפני כל ענן אחר
+  workflow_dispatch:
+    inputs:
+      dry:
+        description: 'dry — read the chain, build the card, print it, broadcast nothing'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloud-pulse
+  cancel-in-progress: false
+
+jobs:
+  pulse:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout (the public mirror + truth gate feed the card)
+        uses: actions/checkout@v4
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Steem client (steem@0.7.11 — the exact package the sovereign home signs with)
+        run: npm install --prefix /tmp/steemjs steem@0.7.11 --omit=dev --no-audit --no-fund --loglevel=error
+
+      - name: Daily truth card (cloud fallback when the sandbox pulse is silent)
+        env:
+          STEEM_POSTING_WIF: ${{ secrets.STEEM_POSTING_WIF }}
+          WEAVE_STEEM_WIF: ${{ secrets.WEAVE_STEEM_WIF }}
+          STEEM_JS_DIR: /tmp/steemjs
+          CLOUD_PULSE_DRY: ${{ inputs.dry && '1' || '' }}
+        run: node agents/cloud-pulse.mjs

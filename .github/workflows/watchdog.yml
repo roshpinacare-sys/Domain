@@ -1,0 +1,71 @@
+# WATCHDOG — כלב-השמירה על חיי הסנדבוקס (r128, משימה 4-b).
+#
+# הפער שנסגר כאן (נמדד ב-r126, הנפילה החמישית): הסנדבוקס מת ב-22/09 והוחזר
+# רק ב-27/09 — 56 שעות של שקט. הענן המשיך לרוץ לבד כל הזמן הזה (עוגנים
+# שעתיים, Pages חי), ולכן מבחוץ הכל נראה ירוק. למפעיל אין דרך לדעת שהבית
+# מת בלי להיכנס בעצמו — וזו בדיוק השאלה שהוא לא צריך לשאול.
+#
+# הכלב נובח פעם אחת ומפסיק: כשכל אותות-החיים הטהורים של הסנדבוקס ישנים
+# מעבר ל-26 שעות (קבלות Defi של הדיבונים · חוק state.json), הוא פותח Issue
+# אחד בשם SANDBOX-DOWN — גיטהאב שולח מייל לבעל החשבון, וזה ערוץ ההזעקה.
+# כשאות טרי נמדד שוב — ה-Issue נסגר אוטומטית עם ההוכחה. אפס קומיטים
+# במסלוך התקין: מצב-הדגל חי ב-Issue בלבד (עיצוב אפס-קומיטים מפורש).
+#
+# למה האותות האלה ולא "הקומיט האחרון ב-sovereign/": תאומי-הענן
+# (weave-anchor[bot]) כותבים ל-sovereign/ כל שעתיים גם כשהסנדבוקס מת —
+# בדיוק ב-56 השעות של r126 האות הזה נשאר ירוק ומטעה. הכלב מודד את מה
+# שרק הסנדבוקס כותב: קבלות הדיבונים ב-Defi ואת חוק state.json. האות
+# המעורב מתועד לשקיפות אך אינו קובע (ראו agents/watchdog.mjs).
+#
+# טוקנים: קריאת Zip/Defi (פרטיים) — ZIP_PAT. ניהול ה-Issue — ה-GITHUB_TOKEN
+# של הריפו (issues:write מוצהר למטה — הרשאה מובנית, לא תלוית-סקופ של PAT).
+# אם יצירת ה-Issue נדחית — נתיב-גיבוי כפול: ZIP_PAT, ואז קובץ-דגל
+# SANDBOX-DOWN.md בקומיט (גם הוא מזעיק במייל). שלושה נתיבים, כנות בלוג
+# לכל אחד.
+
+name: watchdog
+
+on:
+  schedule:
+    - cron: '10 * * * *'  # שעתי, בקיזוז מכל שאר המכונות (אין מי שרץ ב-:10)
+  workflow_dispatch:
+    inputs:
+      stale_h:
+        description: 'sandbox silence threshold in hours (default 26 — the house life doctrine)'
+        required: false
+        default: '26'
+        type: string
+      dry:
+        description: 'dry — measure everything, touch nothing (safe test of both verdict paths)'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  issues: write    # פתיחה/סגירה/הערה של דגל SANDBOX-DOWN — ערוץ ההזעקה
+  contents: write   # נתיב-הגיבוי בלבד: קובץ-דגל אם יצירת Issue נדחית
+
+concurrency:
+  group: watchdog
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - name: Checkout (the watchdog lives here)
+        uses: actions/checkout@v4
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Watch the sandbox heartbeat (defi receipts · state.json law)
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          ZIP_PAT: ${{ secrets.ZIP_PAT }}
+          WATCHDOG_STALE_H: ${{ inputs.stale_h || '26' }}
+          WATCHDOG_DRY: ${{ inputs.dry && '1' || '' }}
+        run: node agents/watchdog.mjs
