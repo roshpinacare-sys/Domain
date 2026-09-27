@@ -1,6 +1,6 @@
 {
   "format": "slo-v1",
-  "generatedAt": "2026-09-27T18:22:53.265Z",
+  "generatedAt": "2026-09-27T19:18:29.245Z",
   "generator": "truth-gate-ci",
   "dataSince": "2026-09-20T02:47:29.456Z",
   "windowDays": 30,
@@ -33,10 +33,10 @@
   ],
   "window": {
     "daysCounted": 8,
-    "runs": 191,
+    "runs": 192,
     "allGreen": 170,
-    "expectedRuns": 185,
-    "fillPct": 25.5
+    "expectedRuns": 186,
+    "fillPct": 25.6
   },
   "slos": [
     {
@@ -44,9 +44,9 @@
       "gate": "G1-site-up",
       "target": "99%",
       "measured": 100,
-      "good": 191,
-      "total": 191,
-      "budgetAllowed": 1.91,
+      "good": 192,
+      "total": 192,
+      "budgetAllowed": 1.92,
       "budgetConsumedPct": 0,
       "state": "WARMING"
     },
@@ -54,21 +54,21 @@
       "id": "link-integrity",
       "gate": "G2-zero-broken-links",
       "target": "99%",
-      "measured": 99.48,
+      "measured": 98.96,
       "good": 190,
-      "total": 191,
-      "budgetAllowed": 1.91,
-      "budgetConsumedPct": 52.36,
-      "state": "WARMING"
+      "total": 192,
+      "budgetAllowed": 1.92,
+      "budgetConsumedPct": 104.17,
+      "state": "BREACHED"
     },
     {
       "id": "freshness",
       "gate": "G3-witness-freshness",
       "target": "99%",
       "measured": 100,
-      "good": 191,
-      "total": 191,
-      "budgetAllowed": 1.91,
+      "good": 192,
+      "total": 192,
+      "budgetAllowed": 1.92,
       "budgetConsumedPct": 0,
       "state": "WARMING"
     },
@@ -77,9 +77,9 @@
       "gate": "G10-moment-freshness",
       "target": "99%",
       "measured": 100,
-      "good": 188,
-      "total": 188,
-      "budgetAllowed": 1.88,
+      "good": 189,
+      "total": 189,
+      "budgetAllowed": 1.89,
       "budgetConsumedPct": 0,
       "state": "WARMING"
     },
@@ -88,9 +88,9 @@
       "gate": "cadence",
       "target": "90%",
       "measured": 100,
-      "good": 185,
-      "total": 185,
-      "budgetAllowed": 18.5,
+      "good": 186,
+      "total": 186,
+      "budgetAllowed": 18.6,
       "budgetConsumedPct": 0,
       "state": "WARMING"
     }
@@ -189,16 +189,16 @@
     },
     {
       "date": "2026-09-27",
-      "runs": 19,
+      "runs": 20,
       "allGreen": 19,
-      "g1Pass": 19,
-      "g1Runs": 19,
+      "g1Pass": 20,
+      "g1Runs": 20,
       "g2Pass": 19,
-      "g2Runs": 19,
-      "g3Pass": 19,
-      "g3Runs": 19,
-      "momentPass": 19,
-      "momentRuns": 19
+      "g2Runs": 20,
+      "g3Pass": 20,
+      "g3Runs": 20,
+      "momentPass": 20,
+      "momentRuns": 20
     }
   ],
   "events": [
@@ -213,6 +213,12 @@
       "slo": "link-integrity",
       "type": "BUDGET-RECOVERED",
       "detail": "consumed 100% · 1 bad of 100 attributed runs"
+    },
+    {
+      "at": "2026-09-27T19:18:29.245Z",
+      "slo": "link-integrity",
+      "type": "BUDGET-BREACH",
+      "detail": "consumed 104.17% · 2 bad of 192 attributed runs"
     }
   ]
 }
