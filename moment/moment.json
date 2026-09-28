@@ -1,33 +1,28 @@
 {
- "ok": true,
+ "ok": false,
  "format": "moment-watch-v1",
- "publishedAt": "2026-09-28T08:26:52.951Z",
+ "publishedAt": "2026-09-28T08:51:47.481Z",
  "engine": "Domain/agents/moment-watch · R62 sovereign moment",
  "role": "reads the live moment every 30 minutes (market regime, our parity line vs the live internal book, fuel runway, measured anomalies) and records a deterministic directional call that is only ever scored after its horizon has passed - training as measurement, never as promise",
  "market": {
-  "steemUsd": 0.062549,
-  "steem24h": -6.44334755565536,
-  "sbdUsd": 0.592304,
-  "btcUsd": 82837,
-  "btc24h": -2.284223617438442,
+  "error": "fetch failed",
   "fearGreed": {
    "value": 74,
    "label": "Greed"
   }
  },
- "paritySbdPerSteem": 0.10560286609578863,
+ "paritySbdPerSteem": null,
  "liveBook": {
-  "bestBid": 0.0972022022022022,
-  "bestAsk": 0.09859016070196194,
-  "bidsDepthSbd": 2821.93,
-  "asksDepthSteem": 1858.49,
-  "levels": 13,
-  "bidSurplusBps": -795
+  "bestBid": 0.0972091259927482,
+  "bestAsk": 0.10488777008600797,
+  "bidsDepthSbd": 2810.81,
+  "asksDepthSteem": 1782.11,
+  "levels": 14,
+  "bidSurplusBps": null
  },
  "regime": {
-  "label": "RISK_ON",
+  "label": "UNKNOWN",
   "drivers": [
-   "BTC -2.3%",
    "F&G 74"
   ],
   "thresholds": {
@@ -40,11 +35,11 @@
  },
  "runway": {
   "active": true,
-  "weeklySp": 475.70510553776313,
+  "weeklySp": 475.70566529327675,
   "nextPayment": "2026-10-03T02:01:27",
-  "remainingSp": 1902.820422149813,
-  "weeklyUsd": 29.75,
-  "treasuryUsd": 302.21
+  "remainingSp": 1902.8226611718678,
+  "weeklyUsd": null,
+  "treasuryUsd": null
  },
  "grid": {
   "verdict": "ARMED-LIVE",
@@ -69,9 +64,9 @@
   },
   "redemption": "WAIT"
  },
- "call": "DOWN",
+ "call": null,
  "callStats": {
-  "resolved": 128,
+  "resolved": 127,
   "hits": 46,
   "hitRatePct": 36,
   "horizonH": 6,
@@ -79,21 +74,6 @@
  },
  "resolvedNow": 0,
  "insights": [
-  {
-   "kind": "parity-edge",
-   "tone": "good",
-   "text": "עומק-קנייה חי 795bps מתחת לקו-הזהות (bid 0.0972 מול parity 0.1056) — עודף מדוד לגריד."
-  },
-  {
-   "kind": "steem-move",
-   "tone": "info",
-   "text": "STEEM -6.4% ביממה — סימוני-הגריד ייגזרו מחדש בפעימה הבאה; תוכניות-עבר עלולות לא-רלוונטיות."
-  },
-  {
-   "kind": "fuel",
-   "tone": "info",
-   "text": "דלק נוחת 2026-10-03 — ≈476 SP ≈ 29.8$ בסימון חי."
-  },
   {
    "kind": "deposits",
    "tone": "info",
