@@ -1,0 +1,79 @@
+# PROOF-PIPELINE (Z-13, R132) — ספר-ההוכחות החי · AGENT-Z
+#
+# "פתרונות מהקיים" לפקודת-המפעיל: הרשת כבר ממומנת לעיגון (OP/Base גז זול)
+# — חסר רק חתימה. הצינור מודד חי, בונה calldata מוכן-לחתימה ל-anchor() של
+# SAOSRelay החי, ומפרסם את הספר ל-Console/proof/pipeline.json — שם כלל-
+# הטריגר T-RELAY-GAS-READY קורא אותו ומדליק את הרשת כשהדלק מממן שנתיים
+# אנקורים. חסר-מפתחות מהיסוד: מדידה ומתמטיקה בלבד, החתימה שייכת לכספת.
+#
+# ZIP_PAT נדרש לדחיפת הספר ל-Console (הבית-הציבורי של ספרי-האמת).
+
+name: proof-pipeline
+
+on:
+  schedule:
+    - cron: '40 4 * * *'  # יומי 04:40 UTC — אחרי הדיווח (01:10), לפני הפעימות
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: proof-pipeline
+  cancel-in-progress: false
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - name: Checkout Domain
+        uses: actions/checkout@v4
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install ethers (keccak + ABI encoding, keyless)
+        run: npm install ethers@6.13.4 --prefix /tmp/ethers --omit=dev --no-audit --no-fund --loglevel=error
+
+      - name: Checkout KPI source (Defi is private — read via vault PAT; honest skip if denied)
+        continue-on-error: true
+        uses: actions/checkout@v4
+        with:
+          repository: roshpinacare-sys/Defi
+          ref: main
+          token: ${{ secrets.ZIP_PAT }}
+          path: defi-kpi
+          fetch-depth: 1
+
+      - name: Checkout Console (book home — read+write via vault PAT)
+        uses: actions/checkout@v4
+        with:
+          repository: roshpinacare-sys/Console
+          ref: main
+          token: ${{ secrets.ZIP_PAT }}
+          path: console-book
+          fetch-depth: 1
+
+      - name: Run the proof pipeline (measure, digest, ready-to-sign)
+        env:
+          ETHERS_DIR: /tmp/ethers
+          GH_TOKEN: ${{ secrets.ZIP_PAT }}
+        run: node agents/proof-pipeline.mjs
+
+      - name: Publish the book to Console (public truth shelf)
+        run: |
+          set -u
+          cd console-book
+          git config user.name "proof-pipeline[bot]"
+          git config user.email "proof-pipeline[bot]@users.noreply.github.com"
+          git add proof/pipeline.json
+          if git diff --cached --quiet; then
+            echo "book unchanged — clean exit"
+          else
+            git commit -m "proof-pipeline: day book $(date -u +%F) · ready-to-sign anchor calldata (keyless) [skip ci]"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
