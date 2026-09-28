@@ -1,0 +1,73 @@
+# CONTENT-CAMPAIGN — הקול הפומבי העמוד (C-3, R130) · AGENT-Z
+#
+# שונה מ-daily-digest (01:10 — דיווח-משימה): כאן סלוט-תוכן יומי 13:10 UTC,
+# נושא-על לכל יום מהארסנל (ledger/grid/receipts/ladder/ecosystem/engineering/week).
+#
+# מפתח: posting בלבד (אותו סוד של C-1) — זיהוי ביט-מול-ביט מול רשות-ה-posting
+# החיה של @headcorner, שער-RC, אידמפוטנטי מהשרשרת (saos-<theme>-<YYYYMMDD>).
+# אסור-לזייף: מקור לא-זמין = "unavailable — nothing faked".
+
+name: content-campaign
+
+on:
+  schedule:
+    - cron: '10 13 * * *'  # יומי 13:10 UTC — סלוט שונה מ-C-1 (01:10) ומ-cloud-pulse (00:35)
+  workflow_dispatch:
+    inputs:
+      dry:
+        description: 'dry — build the post, print it, broadcast nothing'
+        required: false
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: content-campaign
+  cancel-in-progress: false
+
+jobs:
+  campaign:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Checkout KPI source (Defi is private — read via vault PAT; honest skip if denied)
+        continue-on-error: true
+        uses: actions/checkout@v4
+        with:
+          repository: roshpinacare-sys/Defi
+          ref: main
+          token: ${{ secrets.ZIP_PAT }}
+          path: defi-kpi
+          fetch-depth: 1
+
+      - name: Checkout peg offer source (saos-dex — same vault PAT; honest skip if denied)
+        continue-on-error: true
+        uses: actions/checkout@v4
+        with:
+          repository: roshpinacare-sys/saos-dex
+          ref: main
+          token: ${{ secrets.ZIP_PAT }}
+          path: saos-dex-offer
+          fetch-depth: 1
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Steem client (steem@0.7.11 — the home signing template)
+        run: npm install --prefix /tmp/steemjs steem@0.7.11 --omit=dev --no-audit --no-fund --loglevel=error
+
+      - name: Daily themed post (posting-only, measured, idempotent)
+        env:
+          STEEM_POSTING_WIF: ${{ secrets.STEEM_POSTING_WIF }}
+          WEAVE_STEEM_WIF: ${{ secrets.WEAVE_STEEM_WIF }}
+          STEEM_JS_DIR: /tmp/steemjs
+          GH_PAT: ${{ secrets.ZIP_PAT }}
+          CONTENT_DRY: ${{ inputs.dry && '1' || '' }}
+        run: node agents/content-campaign.mjs
