@@ -134,10 +134,11 @@ async function main() {
   log(`signer verified: ${derived} == book EOA ✓`);
 
   const provider = new ethers.JsonRpcProvider(pre.cfg.rpc, pre.cfg.chainId, { staticNetwork: true });
+  const signer = await wallet.connect(provider);
   const gasLimit = (pre.estimate * 120n) / 100n;   // 20% headroom over live estimate
   const gasPrice = (pre.gasPrice * 110n) / 100n;   // 10% over gasPrice for inclusion
   const nonceFresh = await rpc(pre.cfg.rpc, "eth_getTransactionCount", [EOA, "pending"]);
-  const tx = await wallet.sendTransaction({ to: pre.sig.to, data: pre.sig.data, value: 0, gasLimit, gasPrice, nonce: Number(nonceFresh), chainId: pre.cfg.chainId, type: 0 });
+  const tx = await signer.sendTransaction({ to: pre.sig.to, data: pre.sig.data, value: 0, gasLimit, gasPrice, nonce: Number(nonceFresh), chainId: pre.cfg.chainId, type: 0 });
   log(`broadcast: ${tx.hash}`);
   const receipt = await Promise.race([
     tx.wait(),
