@@ -42,13 +42,7 @@ jobs:
       - name: Install ethers (signing path only)
         run: npm install ethers@6.13.4 --prefix /tmp/ethers --omit=dev --no-audit --no-fund --loglevel=error
 
-      - name: Keyless pre-flight (always — the honest hourly measurement)
-        env:
-          ETHERS_DIR: /tmp/ethers
-        run: node agents/anchor-execute.mjs
-
-      - name: Execute the anchor (only when the operator's key is in the vault)
-        if: ${{ secrets.EVM_ANCHOR_PK != '' }}
+      - name: Run anchor-execute (DRYRUN without the vault key — FIRE when the operator adds EVM_ANCHOR_PK; the script itself is the honest gate, secrets context is not allowed in `if`)
         env:
           ETHERS_DIR: /tmp/ethers
           EVM_ANCHOR_PK: ${{ secrets.EVM_ANCHOR_PK }}
@@ -56,8 +50,7 @@ jobs:
           RECEIPT_OUT: /tmp/anchor-receipt.json
         run: node agents/anchor-execute.mjs
 
-      - name: Publish the receipt to the public book (only on a real anchor)
-        if: ${{ secrets.EVM_ANCHOR_PK != '' }}
+      - name: Checkout the public book (receipt lands here on a real anchor)
         uses: actions/checkout@v4
         with:
           repository: roshpinacare-sys/Console
@@ -66,11 +59,10 @@ jobs:
           path: console-book
           fetch-depth: 1
 
-      - name: Commit receipt
-        if: ${{ secrets.EVM_ANCHOR_PK != '' }}
+      - name: Commit receipt (only if the run produced one — file-existence gate, not a secrets gate)
         run: |
           set -u
-          test -f /tmp/anchor-receipt.json || { echo "no receipt — dry run"; exit 0; }
+          test -f /tmp/anchor-receipt.json || { echo "no receipt — hourly DRYRUN as designed"; exit 0; }
           cd console-book
           cp /tmp/anchor-receipt.json proof/anchor-receipt.json
           git config user.name "anchor-execute[bot]"
