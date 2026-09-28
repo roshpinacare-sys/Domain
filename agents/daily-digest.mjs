@@ -77,7 +77,13 @@ async function collect() {
   log("collecting measured inputs…");
   const out = {};
 
-  out.kpi = await fetchJson(RAW("Defi", "fleet/KPI.json"));
+  try {
+    out.kpi = existsSync("defi-kpi/fleet/KPI.json")
+      ? JSON.parse(readFileSync("defi-kpi/fleet/KPI.json", "utf8"))
+      : null;
+    if (out.kpi) log("  · KPI נקרא מ-checkout מקומי (defi-kpi)");
+  } catch { out.kpi = null; }
+  if (!out.kpi) out.kpi = await fetchJson(RAW("Defi", "fleet/KPI.json"));
   out.triggers = await fetchJson(RAW("Console", "triggers/current.json"));
   out.grid = await fetchJson(RAW("Console", "dex/grid.json"));
 
@@ -123,7 +129,11 @@ function buildCard(d) {
   // 2. ספר-הטריגרים
   L.push(`## 2. Trigger book (the loop)`);
   if (d.triggers && d.triggers.ok) {
-    L.push(`- rules ${d.triggers.rulesTotal ?? "?"} · fired **${d.triggers.fired ?? "?"}** · waited ${d.triggers.waited ?? "?"} · broken ${d.triggers.broken ?? "?"}`);
+    const fired = Array.isArray(d.triggers.fired) ? d.triggers.fired : [];
+    const waited = Array.isArray(d.triggers.waited) ? d.triggers.waited : [];
+    const firedIds = fired.map((r) => r?.id).filter(Boolean).join(", ");
+    L.push(`- rules ${d.triggers.rulesTotal ?? "?"} · fired **${fired.length}** · waited ${waited.length} · broken ${d.triggers.broken ?? "?"}`);
+    if (firedIds) L.push(`- fired rules: ${firedIds}`);
     L.push(`- book published: ${d.triggers.publishedAt || "?"} · engine: ${d.triggers.engine || "?"}`);
   } else L.push(`- trigger book: unavailable — nothing faked`);
   if (d.grid?.triggers) {

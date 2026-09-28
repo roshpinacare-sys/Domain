@@ -37,6 +37,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Checkout KPI source (Defi is private — read via vault PAT; honest skip if denied)
+        continue-on-error: true
+        uses: actions/checkout@v4
+        with:
+          repository: roshpinacare-sys/Defi
+          ref: main
+          token: ${{ secrets.ZIP_PAT }}
+          path: defi-kpi
+          fetch-depth: 1
+
       - name: Node 20
         uses: actions/setup-node@v4
         with:
