@@ -1,0 +1,57 @@
+name: daily-claim
+# Z-18e · דריסת-תשואה יומית — claim_reward_balance (posting-only, אידמפוטנטי, fail-soft)
+# קיזוז מה-digest של 01:10 ומהפעימה של :13; אין קומיטים — הסטטוס הכנה הוא התוצר.
+
+on:
+  schedule:
+    - cron: '37 2 * * *'
+  workflow_dispatch:
+    inputs:
+      dry:
+        description: 'DRY run (no broadcast — honest gate check only)'
+        required: false
+        default: 'false'
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-claim
+  cancel-in-progress: false
+
+jobs:
+  claim:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Domain
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Steem client (steem@0.7.11 — the home signing template)
+        run: |
+          npm install --prefix /tmp/steemjs steem@0.7.11 --omit=dev --no-audit --no-fund --loglevel=error
+          echo "module.exports = require('steem');" > /tmp/steemjs/probe.cjs
+
+      - name: Daily claim (posting-only, idempotent, measured)
+        env:
+          STEEM_POSTING_WIF: ${{ secrets.STEEM_POSTING_WIF }}
+          WEAVE_STEEM_WIF: ${{ secrets.WEAVE_STEEM_WIF }}
+          STEEM_JS_DIR: /tmp/steemjs
+          DAILY_CLAIM_DRY: ${{ inputs.dry && '1' || '' }}
+        run: node agents/daily-claim.mjs
+
+      - name: Upload claim status (evidence)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-claim-status
+          path: daily-claim-status.json
+          retention-days: 30
+          if-no-files-found: ignore
