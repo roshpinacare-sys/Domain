@@ -114,6 +114,17 @@ async function main() {
     process.exit(0);
   }
 
+  // Z-18 hardening: dedup against the public book — if TODAY's dayRoot already
+  // carries a verified receipt on THIS chain, the hourly demand is satisfied.
+  try {
+    const recUrl = "https://raw.githubusercontent.com/roshpinacare-sys/Console/main/proof/anchor-receipt.json";
+    const rec = await (await fetch(recUrl, { headers: { "User-Agent": "saos-anchor-execute" } })).json();
+    if (rec && rec.ok && rec.day === p.day && rec.chain === chainName && rec.readBack && rec.readBack.match === true) {
+      log(`VERDICT: ALREADY-ANCHORED · ${chainName} · day ${p.day} · receipt ${rec.txHash} — no duplicate signature (honest skip)`);
+      process.exit(0);
+    }
+  } catch { /* book unreadable — proceed honestly */ }
+
   // ── sign path: ethers is required only here ──
   const ETHERS_DIR = process.env.ETHERS_DIR || "/tmp/ethers/node_modules";
   let ethers;
@@ -140,10 +151,20 @@ async function main() {
   const nonceFresh = await rpc(pre.cfg.rpc, "eth_getTransactionCount", [EOA, "pending"]);
   const tx = await signer.sendTransaction({ to: pre.sig.to, data: pre.sig.data, value: 0, gasLimit, gasPrice, nonce: Number(nonceFresh), chainId: pre.cfg.chainId, type: 0 });
   log(`broadcast: ${tx.hash}`);
-  const receipt = await Promise.race([
-    tx.wait(),
-    sleep(150000).then(() => { throw new Error("receipt timeout 150s (tx may still land — verify by hash)"); }),
-  ]);
+  // Z-18 hardening: confirm on the chain-native node — some public providers
+  // 403 receipt fetches ("archive requires token") even at tip; poll both.
+  let receipt = null;
+  for (let i = 0; i < 60 && !receipt; i++) {
+    await sleep(3000);
+    for (const node of [pre.cfg.rpc2, pre.cfg.rpc]) {
+      try {
+        const r = await rpc(node, "eth_getTransactionReceipt", [tx.hash]);
+        if (r && r.blockNumber) { receipt = r; break; }
+      } catch { /* honest retry — public nodes flap */ }
+    }
+  }
+  if (!receipt) throw new Error(`receipt not seen in 180s — verify by hash: ${tx.hash}`);
+  receipt = { blockNumber: Number(BigInt(receipt.blockNumber)), gasUsed: Number(BigInt(receipt.gasUsed)), status: Number(BigInt(receipt.status)) };
   if (receipt.status !== 1) throw new Error(`tx REVERTED on-chain: ${tx.hash}`);
   log(`ANCHORED: block ${receipt.blockNumber} · gas ${receipt.gasUsed} · ${tx.hash}`);
 
