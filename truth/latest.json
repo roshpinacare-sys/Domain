@@ -1,100 +1,100 @@
 {
   "format": "truth-gate-v1",
   "runner": "github-actions",
-  "at": "2026-09-29T20:23:21.506Z",
+  "at": "2026-09-29T21:21:42.875Z",
   "target": "https://roshpinacare-sys.github.io/Domain",
-  "verdict": "2 RED",
+  "verdict": "ALL-GREEN",
   "counts": {
-    "pass": 8,
-    "fail": 2,
+    "pass": 10,
+    "fail": 0,
     "skip": 2
   },
-  "durationMs": 10934,
-  "runUrl": "https://github.com/roshpinacare-sys/Domain/actions/runs/36625948332",
+  "durationMs": 12469,
+  "runUrl": "https://github.com/roshpinacare-sys/Domain/actions/runs/36632700551",
   "results": [
     {
       "gate": "G1-site-up",
       "status": "PASS",
       "measured": "HTTP 200 · 166250 bytes",
       "note": "",
-      "at": "2026-09-29T20:23:10.838Z"
+      "at": "2026-09-29T21:21:30.610Z"
     },
     {
       "gate": "G2-zero-broken-links",
       "status": "PASS",
       "measured": "14 pages · 85 links · 0 broken · 5 undetermined",
       "note": "",
-      "at": "2026-09-29T20:23:20.745Z"
+      "at": "2026-09-29T21:21:42.195Z"
     },
     {
       "gate": "G3-witness-freshness",
       "status": "PASS",
-      "measured": "cp#901 · att 911 · age 4.4h (threshold 26h)",
+      "measured": "cp#920 · att 930 · age 0.4h (threshold 26h)",
       "note": "",
-      "at": "2026-09-29T20:23:20.766Z"
+      "at": "2026-09-29T21:21:42.206Z"
     },
     {
       "gate": "G10-moment-freshness",
-      "status": "FAIL",
-      "measured": "age 4.51h (threshold 2h) · regime UNKNOWN · call none",
-      "note": "moment-watch cadence broken - the published promise is a fresh reading every 30 minutes (Domain/actions/workflows/moment-watch.yml)",
-      "at": "2026-09-29T20:23:20.827Z"
+      "status": "PASS",
+      "measured": "age 0.52h (threshold 2h) · regime UNKNOWN · call none",
+      "note": "",
+      "at": "2026-09-29T21:21:42.284Z"
     },
     {
       "gate": "G11-mirror-freshness",
       "status": "PASS",
-      "measured": "grid 5.1h · world 5.3h (threshold 26h)",
+      "measured": "grid 3.7h · world 4.3h (threshold 26h)",
       "note": "",
-      "at": "2026-09-29T20:23:20.872Z"
+      "at": "2026-09-29T21:21:42.306Z"
     },
     {
       "gate": "G12-weave-books-freshness",
-      "status": "FAIL",
-      "measured": "mirror 4.4h (lag 3.4h) · saos-live 4.4h (lag 3.4h) · thresholds 26h/2h",
-      "note": "mirror.json lags the Console home by 3.4h > 2h (broken mirror) | saos-live.json lags the Console home by 3.4h > 2h (broken mirror) - the weave-mirror machine (hourly :57) keeps these served books honest",
-      "at": "2026-09-29T20:23:21.132Z"
+      "status": "PASS",
+      "measured": "mirror 0.9h (lag 0.0h) · saos-live 0.9h (lag 0.0h) · thresholds 26h/2h",
+      "note": "",
+      "at": "2026-09-29T21:21:42.574Z"
     },
     {
       "gate": "G5-live-format-consistency",
       "status": "PASS",
       "measured": "public book format=\"saos-live-v1\"",
       "note": "",
-      "at": "2026-09-29T20:23:21.151Z"
+      "at": "2026-09-29T21:21:42.585Z"
     },
     {
       "gate": "G6-bridgehead-sane",
       "status": "PASS",
       "measured": "format=\"agent-bridgehead-state-v1\" · phase task present",
       "note": "",
-      "at": "2026-09-29T20:23:21.173Z"
+      "at": "2026-09-29T21:21:42.596Z"
     },
     {
       "gate": "G8-complete-map",
       "status": "PASS",
       "measured": "9 system pages (min 10000B) · index links 9/9 · sitemap 9/9 · roast stub ok · hub/docs/reports 404 (banned, as required)",
       "note": "",
-      "at": "2026-09-29T20:23:21.504Z"
+      "at": "2026-09-29T21:21:42.856Z"
     },
     {
       "gate": "G4-no-forged-twins",
       "status": "SKIP",
       "measured": "sandbox-only (sovereign machine: scripts/benchmark-truth.cjs)",
       "note": "",
-      "at": "2026-09-29T20:23:21.504Z"
+      "at": "2026-09-29T21:21:42.856Z"
     },
     {
       "gate": "G7-dev-server",
       "status": "SKIP",
       "measured": "sandbox-only (the work server is not public infrastructure)",
       "note": "",
-      "at": "2026-09-29T20:23:21.504Z"
+      "at": "2026-09-29T21:21:42.856Z"
     },
     {
       "gate": "G9-slo-published",
       "status": "PASS",
-      "measured": "5 SLOs · window 30d · 10 day buckets · fill 32.4% · since 2026-09-20",
+      "measured": "5 SLOs · window 30d · 10 day buckets · fill 32.6% · since 2026-09-20",
       "note": "",
-      "at": "2026-09-29T20:23:21.506Z"
+      "at": "2026-09-29T21:21:42.875Z"
     }
   ]
 }
