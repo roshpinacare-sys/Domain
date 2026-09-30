@@ -96,6 +96,7 @@ jobs:
         run: node agents/blurt-curate.cjs
 
       - name: commit ledger + routes + receipts (secretless)
+        continue-on-error: true # fail-soft: books regenerate daily; a raced push is re-made by the retry loop below or the next run
         run: |
           git config user.name "saos-treasury"
           git config user.email "treasury@saos.local"
@@ -107,6 +108,12 @@ jobs:
             echo "no ledger changes"
           else
             git commit -m "treasury-route: capital book + router mirror · $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-            git pull --rebase origin main || true
-            git push origin HEAD:main
+            ok=0
+            for i in 1 2 3; do
+              if git pull --rebase origin main && git push origin HEAD:main; then ok=1; break; fi
+              echo "push attempt $i failed (concurrent commits on main) — re-pulling"
+              git rebase --abort 2>/dev/null || true
+              sleep 10
+            done
+            [ "$ok" = "1" ] && echo "books pushed" || echo "books landed locally; next run re-attempts (fail-soft)"
           fi
