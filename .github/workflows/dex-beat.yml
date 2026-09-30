@@ -62,6 +62,11 @@ jobs:
       - name: Prisma client
         run: bunx prisma generate
 
+      - name: Prisma schema push (Roast-65 fix — the BlockHeader corroboration table was added to the schema but db push was never wired into the beat; on a fresh runner the file does not exist and the engine refused to boot)
+        run: bunx prisma db push --skip-generate --accept-data-loss
+        env:
+          DATABASE_URL: 'file:${{ github.workspace }}/db/dex.db'
+
       - name: Shift guard — the sovereign original owns the book while it lives
         id: guard
         env:
