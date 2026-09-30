@@ -11,7 +11,9 @@
 #   - saos-dex: bun install + bun run typecheck
 # קונבנציות שנשמרות: checkout דרך ZIP_PAT (התבנית המוכחת), setup-bun
 # oven-sh/setup-bun@v2 (התבנית מ-wallet-verify), bun install --frozen-lockfile
-# כשיש bun.lock, prisma generate מותנה כשיש schema (התבנית מ-wallet-verify).
+# כשיש bun.lock. אין prisma generate — מריץ-ה-CI החי (36761607619) הוכיח שהוא
+# נשבר על prisma-7 CLI ("No command registered for `generate`") וש-tsc עובר
+# בלי-ו (אותה-המתכון שהוכח בסנדבוקס: bun install → tsc, ראה Tasks 10/11/12).
 # כנות: רגל-אחת אדומה לא מכסה על השנייה (fail-fast: false).
 
 name: org-selftests
@@ -78,17 +80,14 @@ jobs:
               python3 -m unittest tests.test_signingcontract -v
               ;;
             bun-kernel-smoke)
-              if [ -f prisma/schema.prisma ]; then bunx prisma generate; fi
               if [ -f bun.lock ]; then bun install --frozen-lockfile; else bun install; fi
               bun run kernel-smoke
               ;;
             bun-tsc)
-              if [ -f prisma/schema.prisma ]; then bunx prisma generate; fi
               if [ -f bun.lock ]; then bun install --frozen-lockfile; else bun install; fi
               bunx tsc --noEmit
               ;;
             bun-typecheck)
-              if [ -f prisma/schema.prisma ]; then bunx prisma generate; fi
               if [ -f bun.lock ]; then bun install --frozen-lockfile; else bun install; fi
               bun run typecheck
               ;;
