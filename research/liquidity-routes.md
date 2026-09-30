@@ -91,3 +91,32 @@ Prices: BTC $83,783 · ETH $2,674 · SOL $118.5 · HIVE $0.0569 · STEEM $0.0647
 powerdown lands (Tue 02:01) → money-watch jumps grid → grid market-makes fuel (81 orders/2d measured) → treasury-desk books it daily → head curates 4 authors/day (support + curation SP) → soldiers publish 3-chain content daily → fleet-social comments/votes → claims sweep all chains when rewards pend → routes.json tracks the cheapest external ingress → the moment HIVE-side capital ≥ threshold, HE SWAP.BTC/LTC/DOGE market-making activates on keys we already hold.
 
 **Bottom line**: the fleet already owns a live capital loop (~$31/wk in, market-making, booked daily). The BTC/ETH/SOL layer is fully wired on our side (keys, wallets, DEX books, route map); its ignition switch is one operator C-gate (exchange account) or one bridge coming within reach. Everything else was made autonomous this session.
+
+---
+
+## Z-27 addendum (2026-09-30 late) — depth, bridge truth, idle capital
+
+Books now committed daily by `dex-book.cjs`, `bridge-desk.cjs`, `capability-matrix.cjs` (treasury-route CI v2).
+
+### Depth corrections to this document (section 2)
+- The Hive-Engine legacy `book` table is **EMPTY** for wrapped coins. All real depth is in `marketpools` AMM:
+  | pair (SWAP.HIVE:X) | HIVE reserve | impact @100 HIVE | verdict |
+  |---|---|---|---|
+  | SWAP.BTC | 821,059 | 0.01% | deep — the BTC route |
+  | SWAP.LTC | 180,022 | 0.06% | deep |
+  | SWAP.DOGE | 186,285 | 0.05% | deep |
+  | LEO | 82,043 | 0.12% | deep-ish |
+  | SWAP.ETH | 631 | 15.85% | thin, not routable at size |
+  | SWAP.SOL | 93.5 | 106.93% | pool exists, dust-deep (corrects the "no SOL route" note above: present ≠ usable) |
+- Pool price for SWAP.BTC ≈ 1,482,409 HIVE ≈ **+0.5% over spot** (route cost baseline; was quoted 0.7% UNDER spot from stale metrics — AMM price is the truth).
+- Steem internal market: SBD feed 0.104102, mid 0.104208 → **+0.102% premium — no convert-grade arb**; SBD implied value ~$0.0067 (depeg is structural).
+
+### Bridge truth (section 2 corrections)
+- godex: STEEM/HIVE listed but `disabled:true`, min 2,400/2,800 units — **catalog ≠ bridge**.
+- changeNOW 1,281 coins / SideShift 201 / Exolix: none support STEEM or HIVE.
+- letsExchange, trocador, simpleSwap: auth-walled (403/401) — recorded, not probed further.
+- blocktrades: TLS-walled from sandbox IPs; daily CI re-probe armed (the only no-account candidate left standing).
+
+### Usage verification (new capability)
+- `capability-matrix.cjs` audits posting-authority ownership per run: steem 11/11 · hive 9/9-scoped · blurt 11/11 OURS (BLT pubkey = STM body + prefix swap, 10/10 chain-verified; recomputed checksums are WRONG — documented).
+- Idle-capital flags (committed daily): 7 steem soldiers curation-idle (VP 0, 30–35 SP) · head blurt VP 0 on 8,727 BP → `blurt-curate.cjs` armed (VP-floor 25%, 3×50%/run, byte-verify before sign).
