@@ -1,0 +1,124 @@
+{
+ "at": "2026-09-30T19:02:26.639Z",
+ "oracles": {
+  "btc": 83866.10389309525,
+  "eth": 2677.6454780479294,
+  "sol": 118.71875528354725,
+  "hive": 0.05692615143803446,
+  "steem": 0.0647304799327718,
+  "ltc": 66.12371714129124,
+  "doge": 0.0008962808190481702
+ },
+ "heMarket": [
+  {
+   "symbol": "SWAP.BTC",
+   "lastPriceHive": "1461593.00000002",
+   "usd": 83202.8645,
+   "volume24h": "243.20611233",
+   "bid": "1477270.86634999",
+   "ask": "1492948.73269995"
+  },
+  {
+   "symbol": "SWAP.LTC",
+   "lastPriceHive": "1172.99999999",
+   "usd": 66.7744,
+   "volume24h": "8583.40076605",
+   "bid": "1170.67572810",
+   "ask": "1172.99999993"
+  },
+  {
+   "symbol": "SWAP.DOGE",
+   "lastPriceHive": "1.66261851",
+   "usd": 0.0946,
+   "volume24h": "1455.95932109",
+   "bid": "1.64368261",
+   "ask": "1.67924469"
+  },
+  {
+   "symbol": "LEO",
+   "lastPriceHive": "0.07001001",
+   "usd": 0.004,
+   "volume24h": "173.39650228",
+   "bid": "0.07279179",
+   "ask": "0.07297675"
+  },
+  {
+   "symbol": "SWAP.ETH",
+   "lastPriceHive": "4600.00000000",
+   "usd": 261.8603,
+   "volume24h": "70.01950675",
+   "bid": "4775.00000000",
+   "ask": "8612.20000000"
+  }
+ ],
+ "bridges": {
+  "blocktrades": {
+   "reachable": false,
+   "http": "write EPROTO C0B22065AA7F0000:error:0A000438:SSL routines:ss"
+  },
+  "godex": {
+   "reachable": false,
+   "http": 404
+  },
+  "exolix": {
+   "reachable": true,
+   "http": 200,
+   "steem": false,
+   "hive": false
+  },
+  "stealthex": {
+   "reachable": false,
+   "http": 401
+  }
+ },
+ "paths": [
+  {
+   "target": "BTC",
+   "route": "STEEM -> blocktrades(no-account) -> self-custody BTC wallet",
+   "status": "PROBE-FAILED-FROM-NETWORK",
+   "detail": "probe from CI runner; TLS-blocked from sandbox on 09-30"
+  },
+  {
+   "target": "BTC",
+   "route": "STEEM -> MEXC account (deposit+sell) -> BTC withdraw",
+   "status": "C-GATE-OPERATOR",
+   "detail": "needs MEXC account+API keys (operator one-time action)"
+  },
+  {
+   "target": "BTC",
+   "route": "HIVE -> Hive-Engine DEX -> SWAP.BTC",
+   "status": "OPEN-NEEDS-HIVE-CAPITAL",
+   "detail": "active key held; HIVE liquid 1.34 = dust"
+  },
+  {
+   "target": "ETH",
+   "route": "HIVE -> HE -> SWAP.ETH",
+   "status": "OPEN-NEEDS-HIVE-CAPITAL",
+   "detail": "check token existence"
+  },
+  {
+   "target": "SOL",
+   "route": "any -> HE -> SWAP.SOL",
+   "status": "NO-LIVE-METRICS",
+   "detail": "SOL wraps on HE unverified"
+  },
+  {
+   "target": "LTC",
+   "route": "STEEM -> blocktrades -> LTC",
+   "status": "PROBE-FAILED-FROM-NETWORK",
+   "detail": "LTC = cheapest bridge coin (low fees)"
+  },
+  {
+   "target": "LTC",
+   "route": "HIVE -> HE -> SWAP.LTC",
+   "status": "OPEN-NEEDS-HIVE-CAPITAL",
+   "detail": null
+  },
+  {
+   "target": "DOGE",
+   "route": "HIVE -> HE -> SWAP.DOGE",
+   "status": "OPEN-NEEDS-HIVE-CAPITAL",
+   "detail": null
+  }
+ ]
+}
