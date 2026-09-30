@@ -11,9 +11,12 @@
 #   - saos-dex: bun install + bun run typecheck
 # קונבנציות שנשמרות: checkout דרך ZIP_PAT (התבנית המוכחת), setup-bun
 # oven-sh/setup-bun@v2 (התבנית מ-wallet-verify), bun install --frozen-lockfile
-# כשיש bun.lock. אין prisma generate — מריץ-ה-CI החי (36761607619) הוכיח שהוא
-# נשבר על prisma-7 CLI ("No command registered for `generate`") וש-tsc עובר
-# בלי-ו (אותה-המתכון שהוכח בסנדבוקס: bun install → tsc, ראה Tasks 10/11/12).
+# כשיש bun.lock, prisma generate מותנה **אחרי** ה-install (סדר wallet-verify).
+# לקחי-הריצות-החיות: (1) generate לפני install שובר את הרגל — bunx מושך את
+# prisma-7 מהרשת ("No command registered for `generate`") במקום את ה-CLI המקומי
+# מ-bun.lock; (2) בלי generate בכלל, platform/cc נכשלות על "@prisma/client has no
+# exported member 'PrismaClient'" — ה-client הגנרי נחוץ ל-tsc שם. הסדר הנכון
+# (הוכח חי: platform tsc exit 0 אחרי generate): install → generate → tsc.
 # כנות: רגל-אחת אדומה לא מכסה על השנייה (fail-fast: false).
 
 name: org-selftests
@@ -85,10 +88,12 @@ jobs:
               ;;
             bun-tsc)
               if [ -f bun.lock ]; then bun install --frozen-lockfile; else bun install; fi
+              if [ -f prisma/schema.prisma ]; then bunx prisma generate; fi
               bunx tsc --noEmit
               ;;
             bun-typecheck)
               if [ -f bun.lock ]; then bun install --frozen-lockfile; else bun install; fi
+              if [ -f prisma/schema.prisma ]; then bunx prisma generate; fi
               bun run typecheck
               ;;
           esac
