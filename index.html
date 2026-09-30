@@ -111,6 +111,7 @@ h2.sb svg{width:19px;height:19px;color:var(--acc);flex:none}
 .dot.live{background:var(--green);box-shadow:0 0 8px rgba(34,197,94,.55)}
 .dot.aging{background:var(--amber);box-shadow:0 0 8px rgba(234,179,8,.5)}
 .dot.dormant{background:var(--faint)}
+.dot.degraded{background:#f87171;box-shadow:0 0 8px rgba(239,68,68,.55)}
 .tag{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11px;border:1px solid var(--line);color:var(--dim);letter-spacing:.4px}
 .tag.emerald{color:#6ee7b7;border-color:rgba(16,185,129,.35);background:rgba(16,185,129,.10)}
 .tag.green{color:#86efac;border-color:rgba(34,197,94,.35);background:rgba(34,197,94,.07)}
@@ -1275,9 +1276,17 @@ function renderHome(){
     if(last) $("k-att-sub").textContent += " · "+t("home.lastAtt")+" "+timeAgo(last);
   }
   if(reg && reg.agents){
-    const live = reg.agents.filter(a=>a.state==="live").length;
-    $("k-fleet").textContent = live + "/" + reg.agents.length;
-    $("k-fleet-sub").textContent = reg.reposWithAgents.length+" "+t("net.ecoActive").toLowerCase();
+    const cnt = s => reg.agents.filter(a=>a.state===s).length;
+    const alive = cnt("live") + cnt("on-demand") + cnt("auto");
+    $("k-fleet").textContent = alive + "/" + reg.agents.length;
+    const parts = [];
+    if(cnt("live")) parts.push(cnt("live")+" scheduled-live");
+    if(cnt("on-demand")) parts.push(cnt("on-demand")+" on-demand");
+    if(cnt("backup")) parts.push(cnt("backup")+" manual backup (consolidated on the public rail)");
+    if(cnt("degraded")) parts.push(cnt("degraded")+" red (honest)");
+    if(cnt("stale")) parts.push(cnt("stale")+" stale");
+    if(cnt("dormant")) parts.push(cnt("dormant")+" idle");
+    $("k-fleet-sub").textContent = parts.join(" · ");
   }
   if(mi && mi.stats){
     $("k-brain").textContent = (mi.stats.brainLive??"…") + (mi.stats.brainKeys?(" / "+mi.stats.brainKeys):"");
@@ -1390,9 +1399,11 @@ function renderAgents(){
   if(reg && reg.agents){
     fl.innerHTML = reg.agents.map(a=>{
       const st = a.state||"dormant";
-      const dotCls = st==="live"?"live":(st==="aging"?"aging":"dormant");
+      const dotCls = (st==="live"||st==="on-demand"||st==="auto")?"live":(st==="degraded"?"degraded":(st==="backup"||st==="stale"?"aging":"dormant"));
       const lr = a.lastRun||{};
       const runUrl = lr.url?(" href='"+esc(lr.url)+"' target='_blank' rel='noopener'"):"";
+      const mig = a.migratedTo ? ('<div style="margin-top:5px;font-size:11.5px;color:var(--amber)">consolidated → '+esc(a.migratedTo)+'</div>') : "";
+      const note = a.stateNote ? ('<div style="margin-top:5px;font-size:11.5px;color:var(--dim)">'+esc(a.stateNote)+'</div>') : "";
       return '<a class="card hov" style="display:block"'+runUrl+'>'+
         '<div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start;margin-bottom:8px">'+
           '<span class="dot '+dotCls+'"></span><span class="tag">'+esc(a.layer||"…")+'</span></div>'+
@@ -1403,7 +1414,8 @@ function renderAgents(){
           '<div class="s"><div class="v num" style="font-size:15px">'+(a.stats?Math.round(a.stats.avgDurS):"…")+'s</div><div class="l">avg</div></div>'+
         '</div>'+
         '<div class="meter"><i style="width:'+(a.stats?Math.max(4,Math.min(100,a.stats.successRate)):0)+'%"></i></div>'+
-        '<div style="margin-top:9px;font-size:12px;color:var(--faint)">'+esc(a.schedule||"")+' · '+esc(lr.conclusion||st)+' · '+timeAgo(lr.at)+'</div>'+
+        '<div style="margin-top:9px;font-size:12px;color:var(--faint)">'+esc(a.schedule||a.trigger||"")+' · '+esc(lr.conclusion||st)+' · '+timeAgo(lr.at)+'</div>'+
+        mig + note +
       '</a>';
     }).join("");
   } else { fl.innerHTML = '<div class="card"><div class="failhonest">'+esc(t("fail.fetch"))+'</div></div>'; }

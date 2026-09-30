@@ -16,11 +16,11 @@ if (!TOKEN) { console.error("AGENTS_WATCH_TOKEN missing"); process.exit(1); }
 
 // ═══ קטלוג התפקידים הקנוני - מה כל סוכן עושה, מה נכנס ומה יוצא ═══
 const CATALOG = {
-  "Zip|weave-heart": { layer:"ALWAYS-UP", schedule:"hourly :00",
+  "Zip|weave-heart": { layer:"ALWAYS-UP", schedule:"manual backup (R71) - public twin Domain/weave-heart :13 carries the pulse",
     role:{en:"Cloud heart of The Weave - reads the ledger every hour, judges whether the primary runner is alive, verifies only when alive, takes over the full cycle when it is not.",he:"הלב הענן של The Weave - קורא את הספר כל שעה, פוסק אם הראנר הראשי חי, מאמת בלבד כשחי ומשתלט על המחזור המלא כשלא."},
     input:{en:"fresh clone + ledger.json",he:"קלון טרי + ledger.json"},
     output:{en:"attestations, checkpoints, heartbeat commits",he:"אימותים, צ'קפוינטים, קומיטים של פעימה"}},
-  "Zip|weave-anchor-lines": { layer:"WITNESS", schedule:"bi-hourly :20 + on every beat",
+  "Zip|weave-anchor-lines": { layer:"WITNESS", schedule:"manual backup (R71) - public twin Domain/weave-anchor-lines :33 carries the lines",
     role:{en:"Sequences both witness lines as one run - anchors the checkpoint root to Steem/Hive, then to Z Chain (zero-gas EVM), then exports and pushes once. Carries the merged anchor function of the two legacy lines (Task 24; their standalone workflows retired 2026-09-16).",he:"מריץ את שני קווי העדות כרצף אחד - מעגן את root הצ'קפוינט ל-Steem/Hive, אחר-כך ל-Z Chain‏ (EVM בגז-אפס), ומייצא ודוחף פעם אחת. נושא את פונקציית העיגון הממוזגת של שני הקווים ההיסטוריים (Task 24; ה-workflow העצמאי שלהם יצא לגמלאות ב-2026-09-16)."},
     input:{en:"latest checkpoint root",he:"root של הצ'קפוינט האחרון"},
     output:{en:"anchor txids recorded back into the ledger",he:"מזהי טרנזקציות העיגון חוזרים לספר"}},
@@ -32,14 +32,34 @@ const CATALOG = {
     role:{en:"Restored the brain (3 NVIDIA NIM keys) from the fleet vault in the cloud after the sandbox DB was lost - the sovereign home, not a passing environment.",he:"השיב את המוח (3 מפתחות NVIDIA NIM) מכספת הצי בענן לאחר אובדן ה-DB של הסנדבוקס - הבית הריבוני, לא סביבה חולפת."},
     input:{en:"WEAVE_SEAL_PASSPHRASE + sealed vault",he:"WEAVE_SEAL_PASSPHRASE + הכספת החתומה"},
     output:{en:"brain keys restored to the sovereign chain",he:"מפתחות המוח הושבו לשרשרת הריבונית"}},
-  "steem|cloud-heart": { layer:"ALWAYS-UP", schedule:"every 30 min",
+  "steem|cloud-heart": { layer:"ALWAYS-UP", schedule:"manual backup (R73) - public twin Domain/cloud-heart :17/:47 carries the beats",
     role:{en:"The fleet executor outside the sandbox - reads the living-attest from Steem/Hive over public RPC; fresh attest means sandbox alive (verify only), stale means takeover: key restore, full agent cycle, on-chain leadership marker, push.",he:"המבצע של הצי מחוץ לסנדבוקס - קורא את אימות-החיים מ-Steem/Hive דרך RPC ציבורי; אימות טרי = סנדבוקס חי (אימות בלבד), אימות בלהות = השתלטות: שחזור מפתח, מחזור סוכן מלא, סמן מנהיגות on-chain, דחיפה."},
     input:{en:"public Steem/Hive RPC + fresh clone",he:"RPC ציבורי של Steem/Hive + קלון טרי"},
     output:{en:"saosnet beat --live, chain attest, gitkeeper push",he:"saosnet beat --live, אימות שרשרת, דחיפת gitkeeper"}},
-  "saos-dex|dex-beat": { layer:"ALWAYS-UP", schedule:"every 2h :23",
+  "saos-dex|dex-beat": { layer:"ALWAYS-UP", schedule:"manual backup (R71) - public twin Domain/dex-beat :53 carries the ticks",
     role:{en:"The exchange's cloud heart - loads the chain snapshot, runs deterministic ticks, verifies deposit claims against the public ledger, credits them, commits and publishes state to the public console.",he:"הלב הענן של הבורסה - טוען את תמונת-המצב, מריץ טיקים דטרמיניסטיים, מאמת תביעות הפקדה מול הספר הציבורי, מזכה, מבצע commit ומפרסם את המצב לקונסולה הציבורית."},
     input:{en:"chain snapshot + signed deposit claims",he:"תמונת-מצב שרשרת + תביעות הפקדה חתומות"},
     output:{en:"credits, chain commit, public state publish",he:"זיכויים, commit לשרשרת, פרסום מצב ציבורי"}},
+  "saos-dex|grid-trigger": { layer:"TRIGGER", schedule:"manual backup (R75) - public twin Domain/grid-trigger-twin :09/:39 carries the mesh",
+    role:{en:"Trigger-mesh tick of the exchange rail - truth measurement (public RPC + anchor report), deterministic tick, state publish. Keyless by doctrine (R83).",he:"פעימת רשת-הטריגרים של מסילת הבורסה - מדידת-אמת (RPC ציבורי + דוח-עיגון), טיק דטרמיניסטי, פרסום-מצב. חסר-מפתחות מהיסוד (R83)."},
+    input:{en:"public RPC + fresh clone",he:"RPC ציבורי + קלון טרי"},
+    output:{en:"state commit + measured tick",he:"קומיט מצב + טיק נמדד"}},
+  "saos-dex|dex-grid": { layer:"PUBLISH", schedule:"manual backup (R71) - public twin Domain/dex-grid 03:48 carries the grid",
+    role:{en:"Exchange grid rail backup - the public twin in Domain carries the scheduled grid.",he:"גיבוי מסילת-הגריד של הבורסה - התאום הציבורי ב-Domain נושא את הגריד המתוזמן."},
+    input:{en:"grid state",he:"מצב גריד"},
+    output:{en:"grid publish",he:"פרסום גריד"}},
+  "steem|self-audience": { layer:"PUBLISH", schedule:"manual backup (R75) - public twin Domain/self-audience daily 14:30 UTC carries the audience",
+    role:{en:"Original audience rail on the private vault repo - the public twin on Domain (free Actions, secrets-gated) carries the daily audience cycle.",he:"מסילת-הקהל המקורית על ריפו-הכספת הפרטי - התאום הציבורי ב-Domain (Actions חינם, סודות-משוערים) נושא את מחזור-הקהל היומי."},
+    input:{en:"SA_FLEET_KEYS + SA_HEAD_ACTIVE (Actions secrets)",he:"SA_FLEET_KEYS + SA_HEAD_ACTIVE (סודות Actions)"},
+    output:{en:"posts, votes, receipts",he:"פוסטים, הצבעות, קבלות"}},
+  "Defi|canary": { layer:"INTEGRITY", schedule:"every 6h :17",
+    role:{en:"The hunter's canary - a one-second gate probe that answers a single question: are private Actions minutes flowing again? Its honest red IS the measurement while the free-plan cap is exhausted.",he:"הקנרית של הצייד - בדיקת-שער של שנייה אחת שעונה על שאלה אחת: האם דקות-ה-Actions הפרטיות זרמו בחזרה? האדום הכן שלה הוא המדידה כל-עוד המכסה החודשית אזולה."},
+    input:{en:"nothing (pure liveness probe)",he:"כלום (חיישן-חיים טהור)"},
+    output:{en:"green = minutes flowing / red = cap exhausted",he:"ירוק = דקות זורמות / אדום = מכסה אזולה"}},
+  "Defi|gitleaks-secret-scan": { layer:"INTEGRITY", schedule:"on push / PR",
+    role:{en:"Secret-scanning gate on every push - runs the gitleaks binary directly (the third-party action fails on private rails); zero findings verified locally on the full history 2026-09-30.",he:"שער סריקת-סודות בכל דחיפה - מריץ את בינארי ה-gitleaks ישירות (ה-action של צד-ג' נופל על מסילות-פרטיות); אפס ממצאים אומת מקומית על כל ההיסטוריה 2026-09-30."},
+    input:{en:"full git history",he:"כל ההיסטוריה"},
+    output:{en:"green gate or honest red with the finding count",he:"שער ירוק או אדום כן עם מספר הממצאים"}},
   "Console|money-watch": { layer:"MONEY-PATH", schedule:"every 15 min :02/:17/:32/:47",
     role:{en:"Money path sentinel - watches the two chokepoints of the real money path: detects the weekly powerdown landing within minutes and dispatches the external grid immediately (instead of waiting for the daily run), and rules SEND-NOW/WAIT on the redemption outbox versus the measured TRON broadcast cost.",he:"צופה נתיב הכסף - קולט את נחיתת ה-powerdown השבועית בתוך דקות ומזניק את הגריד החוץ מיד (במקום להמתין לריצה היומית), ופוסק SEND-NOW/WAIT על תיבת הפדיון מול עלות השידור הנמדדת ב-TRON."},
     input:{en:"Steem public RPC (account+powerdown) + world.json + trongrid + CoinGecko",he:"RPC ציבורי של Steem (חשבון+powerdown) + world.json + trongrid + CoinGecko"},
@@ -137,23 +157,80 @@ const CATALOG = {
     input:{en:"source + lockfile",he:"קוד + נעילה"},
     output:{en:"agent/status.json verify verdict",he:"פסק אימות ב-agent/status.json"}},
 };
-const GENERIC = { layer:"PUBLISH", schedule:"automatic",
-  role:{en:"GitHub Pages automatic deployment of the public site.",he:"פריסה אוטומטית של GitHub Pages לאתר הציבורי."},
-  input:{en:"pages build",he:"בילד דפים"}, output:{en:"live GitHub Pages site",he:"אתר GitHub Pages חי"} };
+const GENERIC = { layer:"PUBLISH",
+  role:{en:"Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",he:"Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."},
+  input:{en:"per workflow definition",he:"לפי הגדרת ה-workflow"}, output:{en:"per workflow definition",he:"לפי הגדרת ה-workflow"} };
 const REPO_VIS = { Console:"public", Domain:"public" };  // measured 2026-09-20: Console and Domain are public; every other repo is private
+
+// ═══ אמת-מהארטיפקט (R75 doctrine) ═══
+// הלקח הנמדד (סיבוב 2026-09-30): הקטלוג סטה מהמציאות — הוא הציג קרונות
+// שנמחקו ב-R71/R73 כחיים, ו-soldiers-על-הרכבת-הפרטית כ"GitHub Pages".
+// מעתה: הטריגר והלוח-זמנים נקראים מקובץ ה-workflow החי (contents API),
+// הקטלוג נושא רק תיאור-תפקיד, והמדינות מדברות בכנות:
+//   live      = מתוזמן, הריצה האחרונה ירוקה וטרייה
+//   on-demand = רץ על אירוע (push/PR/workflow_run) — חי בעת-מפגש, לא "מת"
+//   backup    = גיבוי ידני (R71/R73/R75) — התאום הציבורי ב-Domain נושא את הקדנס
+//   stale     = מתוזמן אך אין ריצה ירוקה טרייה (חשד: מכסה-פרטית)
+//   degraded  = הריצה האחרונה נכשלה — תמיד אדום כן, בלי קשר לטריגר
+//   dormant   = אין פעילות רלוונטית טרייה
+function triggerSummary(yml) {
+  if (!yml) return "unknown";
+  const has = (re) => re.test(yml);
+  const isSched = has(/(^|\n)\s*schedule\s*:/) || has(/-\s*cron\s*:/);
+  const isDisp  = has(/(^|\n)\s*workflow_dispatch\s*:/);
+  const isPush  = has(/(^|\n)\s*push\s*:/) || has(/\[\s*['"]?push/);
+  const isPR    = has(/(^|\n)\s*pull_request\s*:/) || has(/['"]?pull_request['"]?\s*,/);
+  const isWR    = has(/(^|\n)\s*workflow_run\s*:/);
+  const isRD    = has(/(^|\n)\s*repository_dispatch\s*:/);
+  const parts = [];
+  if (isSched) {
+    const crons = [...yml.matchAll(/cron\s*:\s*['"]([^'"]+)['"]/g)].map((m) => m[1]);
+    parts.push(crons.length ? "schedule " + crons.join(", ") : "schedule");
+  }
+  if (isPush) parts.push("on push");
+  if (isPR) parts.push("on PR");
+  if (isWR) parts.push("on workflow_run");
+  if (isRD) parts.push("on repository_dispatch");
+  if (isDisp) parts.push("manual dispatch");
+  return parts.join(" + ") || "event";
+}
+
+// מיפוי-המיגרז (R71/R73/R75): המקורות-הפרטיים הם גיבוי-ידני; התאום הציבורי נושא את הקדנס.
+const MIGRATED = {
+  "Zip|weave-heart": "Domain/weave-heart :13",
+  "Zip|weave-anchor-lines": "Domain/weave-anchor-lines :33",
+  "Zip|weave-ecosystem": "Domain/weave-ecosystem",
+  "steem|cloud-heart": "Domain/cloud-heart :17/:47",
+  "steem|self-audience": "Domain/self-audience daily 14:30 UTC",
+  "saos-dex|dex-beat": "Domain/dex-beat :53",
+  "saos-dex|dex-grid": "Domain/dex-grid 03:48",
+  "saos-dex|grid-trigger": "Domain/grid-trigger-twin :09/:39",
+};
+
+function stateOf(lastConcl, lastAt, trigger, name) {
+  if (name === "pages build and deployment") return "auto"; // GitHub מנהל אותו בעצמו
+  const ageH = lastAt ? (Date.now() - Date.parse(lastAt)) / 36e5 : Infinity;
+  const isSched  = /schedule/.test(trigger || "");
+  const isEvent  = /on (push|PR|workflow_run|repository_dispatch)/.test(trigger || "");
+  const isManual = /manual dispatch/.test(trigger || "");
+  const manualOnly = isManual && !isSched && !isEvent;
+  if (lastConcl === "failure") {
+    if (ageH < 48) return "degraded";      // כשל טרי — אדום כן
+    if (isSched) return "stale";           // מתוזמן אך אין ירוק טרי (חשד: מכסה)
+    return manualOnly ? "backup" : "dormant"; // כשל-היסטורי על טריגר-ביקוש/ידני ≠ שבור עכשיו
+  }
+  if (lastConcl === "success") {
+    if (manualOnly) return "backup";       // גיבוי-ידני — חי בעת-הזנקה
+    if (isSched) return ageH < 48 ? "live" : "stale";
+    return ageH < 168 ? "on-demand" : "dormant"; // רץ-אירוע: חי בעת-מפגש
+  }
+  return manualOnly ? "backup" : "dormant";
+}
 
 async function api(url) {
   const r = await fetch(url, { headers: { Authorization: `token ${TOKEN}`, "User-Agent": "agents-watch", Accept: "application/vnd.github+json" } });
   if (!r.ok) throw new Error(`${url} -> ${r.status}`);
   return r.json();
-}
-
-function stateOf(name, lastConcl, lastAt) {
-  if (name === "pages build and deployment") return "auto";
-  const ageH = lastAt ? (Date.now() - Date.parse(lastAt)) / 36e5 : Infinity;
-  if (lastConcl === "success" && ageH < 48) return "live";
-  if (lastConcl === "failure") return "degraded";
-  return "dormant";
 }
 
 const agents = [];
@@ -167,6 +244,13 @@ for (const repo of REPOS) {
     try { runs = (await api(`https://api.github.com/repos/${OWNER}/${repo}/actions/workflows/${w.id}/runs?per_page=100`)).workflow_runs || []; }
     catch (e) { console.error(`runs ${repo}/${w.name}: ${e.message}`); continue; }
     if (!runs.length) continue;
+    // אמת-מהארטיפקט: הטריגר נקרא מקובץ ה-workflow החי, לא מקטלוג שיכול להתיישן.
+    let yml = null;
+    try {
+      const c = await api(`https://api.github.com/repos/${OWNER}/${repo}/contents/${encodeURIComponent(w.path)}?ref=HEAD`);
+      yml = Buffer.from(c.content || "", "base64").toString("utf8");
+    } catch { yml = null; }
+    const trigger = triggerSummary(yml);
     const succ = runs.filter((r) => r.conclusion === "success").length;
     const fail = runs.filter((r) => r.conclusion === "failure").length;
     const durs = runs.slice(0, 40).map((r) => {
@@ -178,18 +262,29 @@ for (const repo of REPOS) {
     // itself was showing "dormant" while actively running).
     const last = runs.find((r) => r.conclusion) || runs[0];
     const cat = CATALOG[`${repo}|${w.name}`] || GENERIC;
+    const rail = REPO_VIS[repo] === "public" ? "public" : "private";
+    const st = stateOf(last.conclusion, last.run_started_at, trigger, w.name);
+    const mig = MIGRATED[`${repo}|${w.name}`];
+    // הערת-מכסה כנה: על הרכבת-הפרטית כשל-אחרון נושא בד"כ את משמעות המכסה החודשית (OL-14)
+    const stateNote = (rail === "private" && (st === "degraded" || st === "stale"))
+      ? "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule"
+      : undefined;
     agents.push({
       id: `${repo.toLowerCase()}-${w.name.toLowerCase().replace(/ /g, "-")}`,
       name: w.name, repo, visibility: REPO_VIS[repo] || "public",
-      schedule: cat.schedule, layer: cat.layer, role: cat.role, input: cat.input, output: cat.output,
-      state: stateOf(w.name, last.conclusion, last.run_started_at),
+      rail, trigger,
+      schedule: /schedule/.test(trigger) ? trigger : (cat.schedule || trigger),
+      layer: cat.layer, role: cat.role, input: cat.input, output: cat.output,
+      ...(mig ? { migratedTo: mig } : {}),
+      ...(stateNote ? { stateNote } : {}),
+      state: st,
       stats: { runs_sampled: runs.length, success: succ, failure: fail, other: runs.length - succ - fail,
         successRate: Math.round((1000 * succ) / runs.length) / 10, avgDurS: durs.length ? Math.round((10 * durs.reduce((a, b) => a + b, 0)) / durs.length) / 10 : null },
       lastRun: { at: last.run_started_at, conclusion: last.conclusion },
     });
   }
 }
-const order = { live: 0, degraded: 1, dormant: 2, auto: 3 };
+const order = { live: 0, "on-demand": 1, auto: 2, backup: 3, stale: 4, degraded: 5, dormant: 6 };
 agents.sort((a, b) => (order[a.state] ?? 9) - (order[b.state] ?? 9) || a.repo.localeCompare(b.repo) || a.name.localeCompare(b.name));
 
 const withAgent = new Set(agents.map((a) => a.repo));

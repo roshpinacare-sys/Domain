@@ -1,6 +1,6 @@
 {
  "ok": true,
- "generatedAt": "2026-09-30T03:48:39Z",
+ "generatedAt": "2026-09-30T15:37:09Z",
  "source": "github-actions-api",
  "reposTotal": 16,
  "reposWithAgents": [
@@ -28,19 +28,21 @@
    "name": "agent-verify",
    "repo": "Console",
    "visibility": "public",
-   "schedule": "automatic",
+   "rail": "public",
+   "trigger": "schedule 55 */2 * * * + manual dispatch",
+   "schedule": "schedule 55 */2 * * * + manual dispatch",
    "layer": "PUBLISH",
    "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
    },
    "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "state": "live",
    "stats": {
@@ -49,10 +51,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 20.7
+    "avgDurS": 20.4
    },
    "lastRun": {
-    "at": "2026-09-30T03:00:16Z",
+    "at": "2026-09-30T15:04:32Z",
     "conclusion": "success"
    }
   },
@@ -61,19 +63,21 @@
    "name": "agents-watch",
    "repo": "Console",
    "visibility": "public",
-   "schedule": "automatic",
+   "rail": "public",
+   "trigger": "schedule 37 * * * * + manual dispatch",
+   "schedule": "schedule 37 * * * * + manual dispatch",
    "layer": "PUBLISH",
    "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
    },
    "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "state": "live",
    "stats": {
@@ -82,10 +86,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 124
+    "avgDurS": 126.2
    },
    "lastRun": {
-    "at": "2026-09-30T02:50:00Z",
+    "at": "2026-09-30T14:54:31Z",
     "conclusion": "success"
    }
   },
@@ -94,7 +98,9 @@
    "name": "console-publish",
    "repo": "Console",
    "visibility": "public",
-   "schedule": "on push to main",
+   "rail": "public",
+   "trigger": "schedule 45 * * * * + manual dispatch",
+   "schedule": "schedule 45 * * * * + manual dispatch",
    "layer": "PUBLISH",
    "role": {
     "en": "Publishes the public console pages - validates and ships every change to the site the world sees.",
@@ -111,14 +117,14 @@
    "state": "live",
    "stats": {
     "runs_sampled": 100,
-    "success": 41,
-    "failure": 59,
+    "success": 50,
+    "failure": 50,
     "other": 0,
-    "successRate": 41,
-    "avgDurS": 15
+    "successRate": 50,
+    "avgDurS": 14.5
    },
    "lastRun": {
-    "at": "2026-09-30T02:56:50Z",
+    "at": "2026-09-30T15:02:10Z",
     "conclusion": "success"
    }
   },
@@ -127,7 +133,9 @@
    "name": "dex-watch",
    "repo": "Console",
    "visibility": "public",
-   "schedule": "every 20 min :07/:27/:47",
+   "rail": "public",
+   "trigger": "schedule 7,27,47 * * * * + manual dispatch",
+   "schedule": "schedule 7,27,47 * * * * + manual dispatch",
    "layer": "MIRROR",
    "role": {
     "en": "The public deposits watcher - scans the real deposit addresses (TRON/ETH/SOL/BTC) over public RPC and updates the open deposits ledger the site displays and the DEX verifies against.",
@@ -148,43 +156,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 14
+    "avgDurS": 14.8
    },
    "lastRun": {
-    "at": "2026-09-30T03:37:03Z",
-    "conclusion": "success"
-   }
-  },
-  {
-   "id": "console-gitleaks-secret-scan",
-   "name": "gitleaks-secret-scan",
-   "repo": "Console",
-   "visibility": "public",
-   "schedule": "automatic",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
-   },
-   "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
-   },
-   "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
-   },
-   "state": "live",
-   "stats": {
-    "runs_sampled": 100,
-    "success": 100,
-    "failure": 0,
-    "other": 0,
-    "successRate": 100,
-    "avgDurS": 12.2
-   },
-   "lastRun": {
-    "at": "2026-09-30T03:25:22Z",
+    "at": "2026-09-30T15:23:32Z",
     "conclusion": "success"
    }
   },
@@ -193,31 +168,33 @@
    "name": "grid-pulse",
    "repo": "Console",
    "visibility": "public",
-   "schedule": "automatic",
+   "rail": "public",
+   "trigger": "schedule 7 3,15 * * * + manual dispatch",
+   "schedule": "schedule 7 3,15 * * * + manual dispatch",
    "layer": "PUBLISH",
    "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
    },
    "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 21,
-    "success": 21,
+    "runs_sampled": 22,
+    "success": 22,
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 16.6
+    "avgDurS": 17.2
    },
    "lastRun": {
-    "at": "2026-09-30T03:18:39Z",
+    "at": "2026-09-30T15:21:49Z",
     "conclusion": "success"
    }
   },
@@ -226,7 +203,9 @@
    "name": "money-watch",
    "repo": "Console",
    "visibility": "public",
-   "schedule": "every 15 min :02/:17/:32/:47",
+   "rail": "public",
+   "trigger": "schedule 2,17,32,47 * * * * + manual dispatch",
+   "schedule": "schedule 2,17,32,47 * * * * + manual dispatch",
    "layer": "MONEY-PATH",
    "role": {
     "en": "Money path sentinel - watches the two chokepoints of the real money path: detects the weekly powerdown landing within minutes and dispatches the external grid immediately (instead of waiting for the daily run), and rules SEND-NOW/WAIT on the redemption outbox versus the measured TRON broadcast cost.",
@@ -243,47 +222,14 @@
    "state": "live",
    "stats": {
     "runs_sampled": 100,
-    "success": 99,
-    "failure": 1,
-    "other": 0,
-    "successRate": 99,
-    "avgDurS": 15.7
-   },
-   "lastRun": {
-    "at": "2026-09-30T03:22:06Z",
-    "conclusion": "success"
-   }
-  },
-  {
-   "id": "console-pages-build-deployment",
-   "name": "pages-build-deployment",
-   "repo": "Console",
-   "visibility": "public",
-   "schedule": "automatic",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
-   },
-   "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
-   },
-   "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
-   },
-   "state": "live",
-   "stats": {
-    "runs_sampled": 100,
-    "success": 71,
+    "success": 100,
     "failure": 0,
-    "other": 29,
-    "successRate": 71,
-    "avgDurS": 54.3
+    "other": 0,
+    "successRate": 100,
+    "avgDurS": 15.5
    },
    "lastRun": {
-    "at": "2026-09-30T03:37:12Z",
+    "at": "2026-09-30T15:22:31Z",
     "conclusion": "success"
    }
   },
@@ -292,31 +238,33 @@
    "name": "trigger-mesh",
    "repo": "Console",
    "visibility": "public",
-   "schedule": "automatic",
+   "rail": "public",
+   "trigger": "schedule 23 * * * * + manual dispatch",
+   "schedule": "schedule 23 * * * * + manual dispatch",
    "layer": "PUBLISH",
    "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
    },
    "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 43,
-    "success": 43,
+    "runs_sampled": 54,
+    "success": 54,
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 11.4
+    "avgDurS": 11
    },
    "lastRun": {
-    "at": "2026-09-30T03:34:47Z",
+    "at": "2026-09-30T14:38:05Z",
     "conclusion": "success"
    }
   },
@@ -325,19 +273,21 @@
    "name": "truth-gate",
    "repo": "Console",
    "visibility": "public",
-   "schedule": "automatic",
+   "rail": "public",
+   "trigger": "schedule 7 * * * * + manual dispatch",
+   "schedule": "schedule 7 * * * * + manual dispatch",
    "layer": "PUBLISH",
    "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
    },
    "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "state": "live",
    "stats": {
@@ -346,10 +296,10 @@
     "failure": 2,
     "other": 0,
     "successRate": 98,
-    "avgDurS": 24.9
+    "avgDurS": 25.1
    },
    "lastRun": {
-    "at": "2026-09-30T03:24:53Z",
+    "at": "2026-09-30T15:28:28Z",
     "conclusion": "success"
    }
   },
@@ -358,7 +308,9 @@
    "name": "agent-verify",
    "repo": "Domain",
    "visibility": "public",
-   "schedule": "bi-hourly :55",
+   "rail": "public",
+   "trigger": "schedule 55 */2 * * * + manual dispatch",
+   "schedule": "schedule 55 */2 * * * + manual dispatch",
    "layer": "TRUTH",
    "role": {
     "en": "The network verifies the agent - measures 48 assertions against the live site and publishes the results as data. Pre-live (Pages not yet enabled): all assertions honestly suspended with the operator instruction.",
@@ -379,10 +331,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 19.6
+    "avgDurS": 19.5
    },
    "lastRun": {
-    "at": "2026-09-30T03:05:18Z",
+    "at": "2026-09-30T15:09:43Z",
     "conclusion": "success"
    }
   },
@@ -391,7 +343,9 @@
    "name": "agents-watch",
    "repo": "Domain",
    "visibility": "public",
-   "schedule": "hourly :37",
+   "rail": "public",
+   "trigger": "schedule 37 * * * * + manual dispatch",
+   "schedule": "schedule 37 * * * * + manual dispatch",
    "layer": "REGISTRY",
    "role": {
     "en": "The agents registry of the new home - asks the GitHub API for the true state of every agent in all 15 repos (this one included) and refreshes the registry the console reads. The token lives only in the Actions secret vault.",
@@ -408,14 +362,14 @@
    "state": "live",
    "stats": {
     "runs_sampled": 100,
-    "success": 99,
+    "success": 100,
     "failure": 0,
-    "other": 1,
-    "successRate": 99,
-    "avgDurS": 119.9
+    "other": 0,
+    "successRate": 100,
+    "avgDurS": 125.5
    },
    "lastRun": {
-    "at": "2026-09-30T02:45:16Z",
+    "at": "2026-09-30T14:50:05Z",
     "conclusion": "success"
    }
   },
@@ -424,31 +378,33 @@
    "name": "anchor-execute",
    "repo": "Domain",
    "visibility": "public",
-   "schedule": "automatic",
+   "rail": "public",
+   "trigger": "schedule 55 * * * * + manual dispatch",
+   "schedule": "schedule 55 * * * * + manual dispatch",
    "layer": "PUBLISH",
    "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
    },
    "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 41,
-    "success": 39,
+    "runs_sampled": 53,
+    "success": 51,
     "failure": 2,
     "other": 0,
-    "successRate": 95.1,
-    "avgDurS": 17.6
+    "successRate": 96.2,
+    "avgDurS": 18
    },
    "lastRun": {
-    "at": "2026-09-30T03:03:02Z",
+    "at": "2026-09-30T15:07:09Z",
     "conclusion": "success"
    }
   },
@@ -457,19 +413,21 @@
    "name": "cloud-heart",
    "repo": "Domain",
    "visibility": "public",
-   "schedule": "automatic",
+   "rail": "public",
+   "trigger": "schedule 17,47 * * * * + manual dispatch",
+   "schedule": "schedule 17,47 * * * * + manual dispatch",
    "layer": "PUBLISH",
    "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
    },
    "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "state": "live",
    "stats": {
@@ -478,10 +436,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 36.6
+    "avgDurS": 36.7
    },
    "lastRun": {
-    "at": "2026-09-30T03:30:56Z",
+    "at": "2026-09-30T15:34:23Z",
     "conclusion": "success"
    }
   },
@@ -490,19 +448,21 @@
    "name": "cloud-pulse",
    "repo": "Domain",
    "visibility": "public",
-   "schedule": "automatic",
+   "rail": "public",
+   "trigger": "schedule 35 0 * * * + manual dispatch",
+   "schedule": "schedule 35 0 * * * + manual dispatch",
    "layer": "PUBLISH",
    "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
    },
    "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "state": "live",
    "stats": {
@@ -523,7 +483,9 @@
    "name": "console-publish",
    "repo": "Domain",
    "visibility": "public",
-   "schedule": "on push to main",
+   "rail": "public",
+   "trigger": "schedule 45 * * * * + manual dispatch",
+   "schedule": "schedule 45 * * * * + manual dispatch",
    "layer": "PUBLISH",
    "role": {
     "en": "Publishes the new public home - validates and ships every change to the site the world will see.",
@@ -540,14 +502,14 @@
    "state": "live",
    "stats": {
     "runs_sampled": 100,
-    "success": 96,
-    "failure": 4,
+    "success": 97,
+    "failure": 3,
     "other": 0,
-    "successRate": 96,
-    "avgDurS": 18.2
+    "successRate": 97,
+    "avgDurS": 17.9
    },
    "lastRun": {
-    "at": "2026-09-30T02:52:12Z",
+    "at": "2026-09-30T14:57:00Z",
     "conclusion": "success"
    }
   },
@@ -556,31 +518,33 @@
    "name": "content-campaign",
    "repo": "Domain",
    "visibility": "public",
-   "schedule": "automatic",
+   "rail": "public",
+   "trigger": "schedule 10 13 * * * + manual dispatch",
+   "schedule": "schedule 10 13 * * * + manual dispatch",
    "layer": "PUBLISH",
    "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
    },
    "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 3,
-    "success": 3,
+    "runs_sampled": 4,
+    "success": 4,
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 25.3
+    "avgDurS": 36.5
    },
    "lastRun": {
-    "at": "2026-09-29T13:29:57Z",
+    "at": "2026-09-30T13:28:04Z",
     "conclusion": "success"
    }
   },
@@ -589,19 +553,21 @@
    "name": "daily-claim",
    "repo": "Domain",
    "visibility": "public",
-   "schedule": "automatic",
+   "rail": "public",
+   "trigger": "schedule 37 2 * * * + manual dispatch",
+   "schedule": "schedule 37 2 * * * + manual dispatch",
    "layer": "PUBLISH",
    "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
    },
    "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "state": "live",
    "stats": {
@@ -622,19 +588,21 @@
    "name": "daily-digest",
    "repo": "Domain",
    "visibility": "public",
-   "schedule": "automatic",
+   "rail": "public",
+   "trigger": "schedule 10 1 * * * + manual dispatch",
+   "schedule": "schedule 10 1 * * * + manual dispatch",
    "layer": "PUBLISH",
    "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
    },
    "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "state": "live",
    "stats": {
@@ -655,31 +623,33 @@
    "name": "dex-grid",
    "repo": "Domain",
    "visibility": "public",
-   "schedule": "automatic",
+   "rail": "public",
+   "trigger": "schedule 48 3 * * * + manual dispatch",
+   "schedule": "schedule 48 3 * * * + manual dispatch",
    "layer": "PUBLISH",
    "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
    },
    "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 18,
-    "success": 14,
+    "runs_sampled": 19,
+    "success": 15,
     "failure": 4,
     "other": 0,
-    "successRate": 77.8,
-    "avgDurS": 45.4
+    "successRate": 78.9,
+    "avgDurS": 46.9
    },
    "lastRun": {
-    "at": "2026-09-29T17:38:50Z",
+    "at": "2026-09-30T03:57:12Z",
     "conclusion": "success"
    }
   },
@@ -688,7 +658,9 @@
    "name": "dex-mirror",
    "repo": "Domain",
    "visibility": "public",
-   "schedule": "hourly :52",
+   "rail": "public",
+   "trigger": "schedule 52 * * * * + manual dispatch",
+   "schedule": "schedule 52 * * * * + manual dispatch",
    "layer": "MIRROR",
    "role": {
     "en": "Live book mirror of the new home - the engine publishes its beats (grid-beat/dex-beat) to the live Console mirror, and this agent re-mirrors the served files (grid, world, state, credits, portfolio) into this repository hourly so the money and defi fronts never serve a frozen book as live. Keyless public read; refuses to mirror a source older than 48h; writes only real changes.",
@@ -712,7 +684,7 @@
     "avgDurS": 15.2
    },
    "lastRun": {
-    "at": "2026-09-30T02:56:45Z",
+    "at": "2026-09-30T15:02:07Z",
     "conclusion": "success"
    }
   },
@@ -721,7 +693,9 @@
    "name": "dex-watch",
    "repo": "Domain",
    "visibility": "public",
-   "schedule": "every 20 min :09/:29/:49",
+   "rail": "public",
+   "trigger": "schedule 9,29,49 * * * * + manual dispatch",
+   "schedule": "schedule 9,29,49 * * * * + manual dispatch",
    "layer": "MIRROR",
    "role": {
     "en": "The public deposits watcher of the new home - scans the real deposit addresses (TRON/ETH/SOL/BTC) over public RPC and updates the open deposits ledger the site displays.",
@@ -742,10 +716,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 14.1
+    "avgDurS": 13.8
    },
    "lastRun": {
-    "at": "2026-09-30T03:39:54Z",
+    "at": "2026-09-30T15:25:34Z",
     "conclusion": "success"
    }
   },
@@ -754,64 +728,33 @@
    "name": "foundry-mesh-tests",
    "repo": "Domain",
    "visibility": "public",
-   "schedule": "automatic",
+   "rail": "public",
+   "trigger": "schedule 17 5 * * * + on push + manual dispatch",
+   "schedule": "schedule 17 5 * * * + on push + manual dispatch",
    "layer": "PUBLISH",
    "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
    },
    "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 5,
-    "success": 5,
+    "runs_sampled": 6,
+    "success": 6,
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 27
+    "avgDurS": 25
    },
    "lastRun": {
-    "at": "2026-09-29T18:46:41Z",
-    "conclusion": "success"
-   }
-  },
-  {
-   "id": "domain-gitleaks-secret-scan",
-   "name": "gitleaks-secret-scan",
-   "repo": "Domain",
-   "visibility": "public",
-   "schedule": "automatic",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
-   },
-   "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
-   },
-   "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
-   },
-   "state": "live",
-   "stats": {
-    "runs_sampled": 22,
-    "success": 22,
-    "failure": 0,
-    "other": 0,
-    "successRate": 100,
-    "avgDurS": 16.6
-   },
-   "lastRun": {
-    "at": "2026-09-29T20:16:11Z",
+    "at": "2026-09-30T05:29:36Z",
     "conclusion": "success"
    }
   },
@@ -820,31 +763,33 @@
    "name": "grid-trigger-twin",
    "repo": "Domain",
    "visibility": "public",
-   "schedule": "automatic",
+   "rail": "public",
+   "trigger": "schedule 9,39 * * * * + manual dispatch",
+   "schedule": "schedule 9,39 * * * * + manual dispatch",
    "layer": "PUBLISH",
    "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
    },
    "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 77,
-    "success": 77,
+    "runs_sampled": 100,
+    "success": 100,
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 22
+    "avgDurS": 21
    },
    "lastRun": {
-    "at": "2026-09-30T03:23:16Z",
+    "at": "2026-09-30T15:26:25Z",
     "conclusion": "success"
    }
   },
@@ -853,7 +798,9 @@
    "name": "moment-watch",
    "repo": "Domain",
    "visibility": "public",
-   "schedule": "every 30 min :12/:42",
+   "rail": "public",
+   "trigger": "schedule 12,42 * * * * + manual dispatch",
+   "schedule": "schedule 12,42 * * * * + manual dispatch",
    "layer": "AWARENESS",
    "role": {
     "en": "Sovereign moment agent - reads the live moment (market regime via BTC 24h + fear&greed, our parity line vs the live internal Steem book, fuel runway, measured anomalies) and records a deterministic directional call on STEEM that is only ever scored after its 6h horizon has passed, against a live price. Training as measurement, never as promise. Moves no money, signs nothing, dispatches nothing.",
@@ -874,10 +821,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 30.2
+    "avgDurS": 20.6
    },
    "lastRun": {
-    "at": "2026-09-30T03:24:24Z",
+    "at": "2026-09-30T15:27:45Z",
     "conclusion": "success"
    }
   },
@@ -886,7 +833,9 @@
    "name": "money-watch",
    "repo": "Domain",
    "visibility": "public",
-   "schedule": "every 15 min :02/:17/:32/:47",
+   "rail": "public",
+   "trigger": "schedule 2,17,32,47 * * * * + manual dispatch",
+   "schedule": "schedule 2,17,32,47 * * * * + manual dispatch",
    "layer": "MONEY-PATH",
    "role": {
     "en": "Money path sentinel of the new home - catches the weekly powerdown landing within minutes and dispatches the external grid immediately, and rules SEND-NOW/WAIT on the redemption outbox versus the measured TRON broadcast cost.",
@@ -907,43 +856,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 16.4
+    "avgDurS": 17.1
    },
    "lastRun": {
-    "at": "2026-09-30T03:45:03Z",
-    "conclusion": "success"
-   }
-  },
-  {
-   "id": "domain-pages-build-deployment",
-   "name": "pages-build-deployment",
-   "repo": "Domain",
-   "visibility": "public",
-   "schedule": "automatic",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
-   },
-   "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
-   },
-   "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
-   },
-   "state": "live",
-   "stats": {
-    "runs_sampled": 100,
-    "success": 90,
-    "failure": 0,
-    "other": 10,
-    "successRate": 90,
-    "avgDurS": 31.3
-   },
-   "lastRun": {
-    "at": "2026-09-30T03:45:15Z",
+    "at": "2026-09-30T15:18:10Z",
     "conclusion": "success"
    }
   },
@@ -952,31 +868,33 @@
    "name": "proof-pipeline",
    "repo": "Domain",
    "visibility": "public",
-   "schedule": "automatic",
+   "rail": "public",
+   "trigger": "schedule 40 4 * * * + manual dispatch",
+   "schedule": "schedule 40 4 * * * + manual dispatch",
    "layer": "PUBLISH",
    "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
    },
    "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 2,
-    "success": 2,
+    "runs_sampled": 3,
+    "success": 3,
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 24.5
+    "avgDurS": 24
    },
    "lastRun": {
-    "at": "2026-09-29T04:49:57Z",
+    "at": "2026-09-30T04:50:51Z",
     "conclusion": "success"
    }
   },
@@ -985,31 +903,33 @@
    "name": "self-audience",
    "repo": "Domain",
    "visibility": "public",
-   "schedule": "automatic",
+   "rail": "public",
+   "trigger": "schedule 30 14 * * * + manual dispatch",
+   "schedule": "schedule 30 14 * * * + manual dispatch",
    "layer": "PUBLISH",
    "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
    },
    "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 3,
-    "success": 2,
+    "runs_sampled": 4,
+    "success": 3,
     "failure": 1,
     "other": 0,
-    "successRate": 66.7,
-    "avgDurS": 53.3
+    "successRate": 75,
+    "avgDurS": 91
    },
    "lastRun": {
-    "at": "2026-09-29T20:16:35Z",
+    "at": "2026-09-30T14:49:35Z",
     "conclusion": "success"
    }
   },
@@ -1018,31 +938,33 @@
    "name": "sovereign-selftests",
    "repo": "Domain",
    "visibility": "public",
-   "schedule": "automatic",
+   "rail": "public",
+   "trigger": "schedule 17 6 * * * + manual dispatch",
+   "schedule": "schedule 17 6 * * * + manual dispatch",
    "layer": "PUBLISH",
    "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
    },
    "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 2,
-    "success": 2,
+    "runs_sampled": 3,
+    "success": 3,
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 94
+    "avgDurS": 93.7
    },
    "lastRun": {
-    "at": "2026-09-29T06:34:27Z",
+    "at": "2026-09-30T06:35:03Z",
     "conclusion": "success"
    }
   },
@@ -1051,7 +973,9 @@
    "name": "truth-gate",
    "repo": "Domain",
    "visibility": "public",
-   "schedule": "hourly :07",
+   "rail": "public",
+   "trigger": "schedule 7 * * * * + manual dispatch",
+   "schedule": "schedule 7 * * * * + manual dispatch",
    "layer": "TRUTH",
    "role": {
     "en": "The truth machine of the new home - measures the live site every hour and commits the verdict (red included) publicly. Until Pages is enabled it records an honest PRE-LIVE verdict, never a false red.",
@@ -1072,10 +996,10 @@
     "failure": 2,
     "other": 0,
     "successRate": 98,
-    "avgDurS": 26.3
+    "avgDurS": 25.5
    },
    "lastRun": {
-    "at": "2026-09-30T03:22:39Z",
+    "at": "2026-09-30T15:25:51Z",
     "conclusion": "success"
    }
   },
@@ -1084,31 +1008,33 @@
    "name": "watchdog",
    "repo": "Domain",
    "visibility": "public",
-   "schedule": "automatic",
+   "rail": "public",
+   "trigger": "schedule 10 * * * * + manual dispatch",
+   "schedule": "schedule 10 * * * * + manual dispatch",
    "layer": "PUBLISH",
    "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
    },
    "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 60,
-    "success": 60,
+    "runs_sampled": 72,
+    "success": 72,
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 19.1
+    "avgDurS": 18.9
    },
    "lastRun": {
-    "at": "2026-09-30T03:26:03Z",
+    "at": "2026-09-30T15:29:49Z",
     "conclusion": "success"
    }
   },
@@ -1117,31 +1043,33 @@
    "name": "weave-anchor-lines",
    "repo": "Domain",
    "visibility": "public",
-   "schedule": "automatic",
+   "rail": "public",
+   "trigger": "schedule 33 */2 * * * + manual dispatch",
+   "schedule": "schedule 33 */2 * * * + manual dispatch",
    "layer": "PUBLISH",
    "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
    },
    "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "state": "live",
    "stats": {
     "runs_sampled": 100,
-    "success": 99,
-    "failure": 1,
+    "success": 100,
+    "failure": 0,
     "other": 0,
-    "successRate": 99,
-    "avgDurS": 75.1
+    "successRate": 100,
+    "avgDurS": 62.6
    },
    "lastRun": {
-    "at": "2026-09-30T03:25:27Z",
+    "at": "2026-09-30T15:29:03Z",
     "conclusion": "success"
    }
   },
@@ -1150,31 +1078,33 @@
    "name": "weave-ecosystem",
    "repo": "Domain",
    "visibility": "public",
-   "schedule": "automatic",
+   "rail": "public",
+   "trigger": "schedule 30 6 * * * + manual dispatch",
+   "schedule": "schedule 30 6 * * * + manual dispatch",
    "layer": "PUBLISH",
    "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
    },
    "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 10,
-    "success": 10,
+    "runs_sampled": 11,
+    "success": 11,
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 61.8
+    "avgDurS": 60.9
    },
    "lastRun": {
-    "at": "2026-09-29T06:50:34Z",
+    "at": "2026-09-30T06:50:53Z",
     "conclusion": "success"
    }
   },
@@ -1183,19 +1113,21 @@
    "name": "weave-heart",
    "repo": "Domain",
    "visibility": "public",
-   "schedule": "automatic",
+   "rail": "public",
+   "trigger": "schedule 13 * * * * + manual dispatch",
+   "schedule": "schedule 13 * * * * + manual dispatch",
    "layer": "PUBLISH",
    "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
    },
    "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "state": "live",
    "stats": {
@@ -1204,10 +1136,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 38.8
+    "avgDurS": 38.2
    },
    "lastRun": {
-    "at": "2026-09-30T03:24:54Z",
+    "at": "2026-09-30T15:28:33Z",
     "conclusion": "success"
    }
   },
@@ -1216,19 +1148,21 @@
    "name": "weave-mirror",
    "repo": "Domain",
    "visibility": "public",
-   "schedule": "automatic",
+   "rail": "public",
+   "trigger": "schedule 57 * * * * + manual dispatch",
+   "schedule": "schedule 57 * * * * + manual dispatch",
    "layer": "PUBLISH",
    "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
    },
    "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "state": "live",
    "stats": {
@@ -1237,10 +1171,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 16.5
+    "avgDurS": 16.8
    },
    "lastRun": {
-    "at": "2026-09-30T03:01:08Z",
+    "at": "2026-09-30T15:05:15Z",
     "conclusion": "success"
    }
   },
@@ -1249,19 +1183,21 @@
    "name": "web-publish",
    "repo": "Domain",
    "visibility": "public",
-   "schedule": "automatic",
+   "rail": "public",
+   "trigger": "schedule 3,23,43 * * * * + manual dispatch",
+   "schedule": "schedule 3,23,43 * * * * + manual dispatch",
    "layer": "PUBLISH",
    "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
    },
    "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "state": "live",
    "stats": {
@@ -1270,11 +1206,222 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 18.8
+    "avgDurS": 20.3
    },
    "lastRun": {
-    "at": "2026-09-30T03:36:08Z",
+    "at": "2026-09-30T15:23:39Z",
     "conclusion": "success"
+   }
+  },
+  {
+   "id": "console-gitleaks-secret-scan",
+   "name": "gitleaks-secret-scan",
+   "repo": "Console",
+   "visibility": "public",
+   "rail": "public",
+   "trigger": "on push + on PR + manual dispatch",
+   "schedule": "on push + on PR + manual dispatch",
+   "layer": "PUBLISH",
+   "role": {
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+   },
+   "input": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "output": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "state": "on-demand",
+   "stats": {
+    "runs_sampled": 100,
+    "success": 100,
+    "failure": 0,
+    "other": 0,
+    "successRate": 100,
+    "avgDurS": 15.9
+   },
+   "lastRun": {
+    "at": "2026-09-30T15:29:00Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "console-pages-build-deployment",
+   "name": "pages-build-deployment",
+   "repo": "Console",
+   "visibility": "public",
+   "rail": "public",
+   "trigger": "unknown",
+   "schedule": "unknown",
+   "layer": "PUBLISH",
+   "role": {
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+   },
+   "input": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "output": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "state": "on-demand",
+   "stats": {
+    "runs_sampled": 100,
+    "success": 72,
+    "failure": 0,
+    "other": 28,
+    "successRate": 72,
+    "avgDurS": 38.5
+   },
+   "lastRun": {
+    "at": "2026-09-30T15:32:37Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "domain-gitleaks-secret-scan",
+   "name": "gitleaks-secret-scan",
+   "repo": "Domain",
+   "visibility": "public",
+   "rail": "public",
+   "trigger": "on push + on PR + manual dispatch",
+   "schedule": "on push + on PR + manual dispatch",
+   "layer": "PUBLISH",
+   "role": {
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+   },
+   "input": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "output": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "state": "on-demand",
+   "stats": {
+    "runs_sampled": 22,
+    "success": 22,
+    "failure": 0,
+    "other": 0,
+    "successRate": 100,
+    "avgDurS": 16.6
+   },
+   "lastRun": {
+    "at": "2026-09-29T20:16:11Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "domain-pages-build-deployment",
+   "name": "pages-build-deployment",
+   "repo": "Domain",
+   "visibility": "public",
+   "rail": "public",
+   "trigger": "unknown",
+   "schedule": "unknown",
+   "layer": "PUBLISH",
+   "role": {
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+   },
+   "input": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "output": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "state": "on-demand",
+   "stats": {
+    "runs_sampled": 100,
+    "success": 90,
+    "failure": 0,
+    "other": 10,
+    "successRate": 90,
+    "avgDurS": 46.8
+   },
+   "lastRun": {
+    "at": "2026-09-30T15:32:29Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "domain-seal-adopt",
+   "name": "seal-adopt",
+   "repo": "Domain",
+   "visibility": "public",
+   "rail": "public",
+   "trigger": "manual dispatch",
+   "schedule": "manual dispatch",
+   "layer": "PUBLISH",
+   "role": {
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+   },
+   "input": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "output": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "state": "backup",
+   "stats": {
+    "runs_sampled": 3,
+    "success": 3,
+    "failure": 0,
+    "other": 0,
+    "successRate": 100,
+    "avgDurS": 20.3
+   },
+   "lastRun": {
+    "at": "2026-09-30T15:32:14Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "project-files-archive-keeper",
+   "name": "archive-keeper",
+   "repo": "Project-files",
+   "visibility": "public",
+   "rail": "private",
+   "trigger": "schedule 31 11 * * 1 + manual dispatch",
+   "schedule": "schedule 31 11 * * 1 + manual dispatch",
+   "layer": "ARCHIVE",
+   "role": {
+    "en": "Archive keeper - opens every canonical zip archive end to end to prove it is not corrupt, builds a SHA-256 manifest and a size catalog. A corrupt archive is a red mark.",
+    "he": "שומר הארכיון - פותח כל ארכיון קנוני מקצה לקצה כדי להוכיח שאינו מושחת, בונה מניפסט SHA-256 וקטלוג גדלים. ארכיון מושחת הוא סימן אדום."
+   },
+   "input": {
+    "en": "canonical zip archives",
+    "he": "ארכיוני zip קנוניים"
+   },
+   "output": {
+    "en": "agent/status.json + archives.sha256",
+    "he": "דוח agent/status.json + מניפסט ארכיונים"
+   },
+   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
+   "state": "stale",
+   "stats": {
+    "runs_sampled": 4,
+    "success": 1,
+    "failure": 3,
+    "other": 0,
+    "successRate": 25,
+    "avgDurS": 6
+   },
+   "lastRun": {
+    "at": "2026-09-28T11:44:08Z",
+    "conclusion": "failure"
    }
   },
   {
@@ -1282,7 +1429,9 @@
    "name": "claims-guard",
    "repo": "Adsmarket",
    "visibility": "public",
-   "schedule": "daily 06:11 UTC",
+   "rail": "private",
+   "trigger": "schedule 11 6 * * * + manual dispatch",
+   "schedule": "schedule 11 6 * * * + manual dispatch",
    "layer": "INTEGRITY",
    "role": {
     "en": "Marketing truth guard - enforces the repo iron principle: landing pages complete, zero forbidden glyphs per operator policy, live links (a dead link to our own network is a failure), and counts the txid receipts backing the claims.",
@@ -1296,17 +1445,18 @@
     "en": "agent/status.json truth report",
     "he": "דוח אמת agent/status.json"
    },
+   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
    "state": "degraded",
    "stats": {
-    "runs_sampled": 17,
+    "runs_sampled": 18,
     "success": 5,
-    "failure": 12,
+    "failure": 13,
     "other": 0,
-    "successRate": 29.4,
-    "avgDurS": 7
+    "successRate": 27.8,
+    "avgDurS": 6.8
    },
    "lastRun": {
-    "at": "2026-09-29T06:30:25Z",
+    "at": "2026-09-30T06:30:49Z",
     "conclusion": "failure"
    }
   },
@@ -1315,7 +1465,9 @@
    "name": "baseline-integrity",
    "repo": "anchor-baseline",
    "visibility": "public",
-   "schedule": "daily 07:13 UTC",
+   "rail": "private",
+   "trigger": "schedule 13 7 * * * + manual dispatch",
+   "schedule": "schedule 13 7 * * * + manual dispatch",
    "layer": "INTEGRITY",
    "role": {
     "en": "Baseline history keeper - builds a SHA-256 manifest of all broadcasts, docs and downloads, compares to the previous manifest, reports additions and changes, and fails when history files are deleted.",
@@ -1329,17 +1481,53 @@
     "en": "agent/status.json + manifest.sha256",
     "he": "דוח agent/status.json + מניפסט SHA-256"
    },
+   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
    "state": "degraded",
    "stats": {
-    "runs_sampled": 15,
+    "runs_sampled": 16,
     "success": 5,
-    "failure": 10,
+    "failure": 11,
     "other": 0,
-    "successRate": 33.3,
+    "successRate": 31.3,
     "avgDurS": 5.6
    },
    "lastRun": {
-    "at": "2026-09-29T07:27:22Z",
+    "at": "2026-09-30T07:28:58Z",
+    "conclusion": "failure"
+   }
+  },
+  {
+   "id": "console-key-verify",
+   "name": "key-verify",
+   "repo": "Console",
+   "visibility": "public",
+   "rail": "public",
+   "trigger": "manual dispatch",
+   "schedule": "manual dispatch",
+   "layer": "PUBLISH",
+   "role": {
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+   },
+   "input": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "output": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "state": "degraded",
+   "stats": {
+    "runs_sampled": 3,
+    "success": 2,
+    "failure": 1,
+    "other": 0,
+    "successRate": 66.7,
+    "avgDurS": 18.3
+   },
+   "lastRun": {
+    "at": "2026-09-30T15:32:20Z",
     "conclusion": "failure"
    }
   },
@@ -1348,31 +1536,34 @@
    "name": "canary",
    "repo": "Defi",
    "visibility": "public",
-   "schedule": "automatic",
-   "layer": "PUBLISH",
+   "rail": "private",
+   "trigger": "schedule 17 */6 * * * + manual dispatch",
+   "schedule": "schedule 17 */6 * * * + manual dispatch",
+   "layer": "INTEGRITY",
    "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+    "en": "The hunter's canary - a one-second gate probe that answers a single question: are private Actions minutes flowing again? Its honest red IS the measurement while the free-plan cap is exhausted.",
+    "he": "הקנרית של הצייד - בדיקת-שער של שנייה אחת שעונה על שאלה אחת: האם דקות-ה-Actions הפרטיות זרמו בחזרה? האדום הכן שלה הוא המדידה כל-עוד המכסה החודשית אזולה."
    },
    "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
+    "en": "nothing (pure liveness probe)",
+    "he": "כלום (חיישן-חיים טהור)"
    },
    "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
+    "en": "green = minutes flowing / red = cap exhausted",
+    "he": "ירוק = דקות זורמות / אדום = מכסה אזולה"
    },
+   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
    "state": "degraded",
    "stats": {
-    "runs_sampled": 53,
+    "runs_sampled": 56,
     "success": 0,
-    "failure": 53,
+    "failure": 56,
     "other": 0,
     "successRate": 0,
     "avgDurS": 5.9
    },
    "lastRun": {
-    "at": "2026-09-30T00:39:24Z",
+    "at": "2026-09-30T14:51:38Z",
     "conclusion": "failure"
    }
   },
@@ -1381,31 +1572,34 @@
    "name": "gitleaks-secret-scan",
    "repo": "Defi",
    "visibility": "public",
-   "schedule": "automatic",
-   "layer": "PUBLISH",
+   "rail": "private",
+   "trigger": "on push + on PR + manual dispatch",
+   "schedule": "on push / PR",
+   "layer": "INTEGRITY",
    "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+    "en": "Secret-scanning gate on every push - runs the gitleaks binary directly (the third-party action fails on private rails); zero findings verified locally on the full history 2026-09-30.",
+    "he": "שער סריקת-סודות בכל דחיפה - מריץ את בינארי ה-gitleaks ישירות (ה-action של צד-ג' נופל על מסילות-פרטיות); אפס ממצאים אומת מקומית על כל ההיסטוריה 2026-09-30."
    },
    "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
+    "en": "full git history",
+    "he": "כל ההיסטוריה"
    },
    "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
+    "en": "green gate or honest red with the finding count",
+    "he": "שער ירוק או אדום כן עם מספר הממצאים"
    },
+   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
    "state": "degraded",
    "stats": {
-    "runs_sampled": 90,
+    "runs_sampled": 94,
     "success": 0,
-    "failure": 90,
+    "failure": 94,
     "other": 0,
     "successRate": 0,
-    "avgDurS": 4.8
+    "avgDurS": 9.1
    },
    "lastRun": {
-    "at": "2026-09-29T20:22:36Z",
+    "at": "2026-09-30T15:26:06Z",
     "conclusion": "failure"
    }
   },
@@ -1414,6 +1608,8 @@
    "name": "bootstrap-pages",
    "repo": "Domain",
    "visibility": "public",
+   "rail": "public",
+   "trigger": "on push + manual dispatch",
    "schedule": "manual (retry button)",
    "layer": "PUBLISH",
    "role": {
@@ -1430,15 +1626,15 @@
    },
    "state": "degraded",
    "stats": {
-    "runs_sampled": 1,
+    "runs_sampled": 3,
     "success": 0,
-    "failure": 1,
+    "failure": 3,
     "other": 0,
     "successRate": 0,
-    "avgDurS": 6
+    "avgDurS": 10
    },
    "lastRun": {
-    "at": "2026-09-20T00:26:05Z",
+    "at": "2026-09-30T15:32:11Z",
     "conclusion": "failure"
    }
   },
@@ -1447,31 +1643,33 @@
    "name": "dex-beat",
    "repo": "Domain",
    "visibility": "public",
-   "schedule": "automatic",
+   "rail": "public",
+   "trigger": "schedule 53 */2 * * * + manual dispatch",
+   "schedule": "schedule 53 */2 * * * + manual dispatch",
    "layer": "PUBLISH",
    "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
    },
    "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "state": "degraded",
    "stats": {
     "runs_sampled": 100,
-    "success": 95,
-    "failure": 5,
+    "success": 89,
+    "failure": 11,
     "other": 0,
-    "successRate": 95,
-    "avgDurS": 48.7
+    "successRate": 89,
+    "avgDurS": 45.5
    },
    "lastRun": {
-    "at": "2026-09-30T03:00:14Z",
+    "at": "2026-09-30T15:04:30Z",
     "conclusion": "failure"
    }
   },
@@ -1480,6 +1678,8 @@
    "name": "key-verify",
    "repo": "Domain",
    "visibility": "public",
+   "rail": "public",
+   "trigger": "manual dispatch",
    "schedule": "manual (dormant until HEADCORNER)",
    "layer": "MONEY-PATH",
    "role": {
@@ -1496,48 +1696,15 @@
    },
    "state": "degraded",
    "stats": {
-    "runs_sampled": 3,
+    "runs_sampled": 5,
     "success": 0,
-    "failure": 3,
+    "failure": 5,
     "other": 0,
     "successRate": 0,
-    "avgDurS": 15
+    "avgDurS": 17.2
    },
    "lastRun": {
-    "at": "2026-09-21T12:34:51Z",
-    "conclusion": "failure"
-   }
-  },
-  {
-   "id": "project-files-archive-keeper",
-   "name": "archive-keeper",
-   "repo": "Project-files",
-   "visibility": "public",
-   "schedule": "weekly Mon 11:31 UTC",
-   "layer": "ARCHIVE",
-   "role": {
-    "en": "Archive keeper - opens every canonical zip archive end to end to prove it is not corrupt, builds a SHA-256 manifest and a size catalog. A corrupt archive is a red mark.",
-    "he": "שומר הארכיון - פותח כל ארכיון קנוני מקצה לקצה כדי להוכיח שאינו מושחת, בונה מניפסט SHA-256 וקטלוג גדלים. ארכיון מושחת הוא סימן אדום."
-   },
-   "input": {
-    "en": "canonical zip archives",
-    "he": "ארכיוני zip קנוניים"
-   },
-   "output": {
-    "en": "agent/status.json + archives.sha256",
-    "he": "דוח agent/status.json + מניפסט ארכיונים"
-   },
-   "state": "degraded",
-   "stats": {
-    "runs_sampled": 4,
-    "success": 1,
-    "failure": 3,
-    "other": 0,
-    "successRate": 25,
-    "avgDurS": 6
-   },
-   "lastRun": {
-    "at": "2026-09-28T11:44:08Z",
+    "at": "2026-09-30T15:32:13Z",
     "conclusion": "failure"
    }
   },
@@ -1546,7 +1713,9 @@
    "name": "controls-audit",
    "repo": "roshpina",
    "visibility": "public",
-   "schedule": "daily 08:17 UTC",
+   "rail": "private",
+   "trigger": "schedule 17 8 * * * + manual dispatch",
+   "schedule": "schedule 17 8 * * * + manual dispatch",
    "layer": "INTEGRITY",
    "role": {
     "en": "Controls auditor - verifies the controls-that-exist document is present and substantial, every control documented in its own section, the agent briefing and patch specs exist, and counts the broadcasts archive.",
@@ -1560,17 +1729,18 @@
     "en": "agent/status.json audit report",
     "he": "דוח ביקורת agent/status.json"
    },
+   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
    "state": "degraded",
    "stats": {
-    "runs_sampled": 15,
+    "runs_sampled": 16,
     "success": 5,
-    "failure": 10,
+    "failure": 11,
     "other": 0,
-    "successRate": 33.3,
-    "avgDurS": 6.2
+    "successRate": 31.3,
+    "avgDurS": 6.1
    },
    "lastRun": {
-    "at": "2026-09-29T08:34:22Z",
+    "at": "2026-09-30T08:35:17Z",
     "conclusion": "failure"
    }
   },
@@ -1579,7 +1749,9 @@
    "name": "control-center-build",
    "repo": "saos-control-center",
    "visibility": "public",
-   "schedule": "daily 12:37 UTC",
+   "rail": "private",
+   "trigger": "schedule 37 12 * * * + manual dispatch",
+   "schedule": "schedule 37 12 * * * + manual dispatch",
    "layer": "QA",
    "role": {
     "en": "Control center quality gate - installs dependencies from the frozen lockfile, generates the Prisma client, runs a full typecheck and a production build. Every failed step is recorded honestly.",
@@ -1593,17 +1765,18 @@
     "en": "agent/status.json build verdict",
     "he": "פסק בילד ב-agent/status.json"
    },
+   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
    "state": "degraded",
    "stats": {
-    "runs_sampled": 16,
+    "runs_sampled": 17,
     "success": 4,
-    "failure": 12,
+    "failure": 13,
     "other": 0,
-    "successRate": 25,
-    "avgDurS": 19.1
+    "successRate": 23.5,
+    "avgDurS": 18.2
    },
    "lastRun": {
-    "at": "2026-09-29T12:51:04Z",
+    "at": "2026-09-30T12:52:38Z",
     "conclusion": "failure"
    }
   },
@@ -1612,7 +1785,9 @@
    "name": "dex-beat",
    "repo": "saos-dex",
    "visibility": "public",
-   "schedule": "every 2h :23",
+   "rail": "private",
+   "trigger": "manual dispatch",
+   "schedule": "manual backup (R71) - public twin Domain/dex-beat :53 carries the ticks",
    "layer": "ALWAYS-UP",
    "role": {
     "en": "The exchange's cloud heart - loads the chain snapshot, runs deterministic ticks, verifies deposit claims against the public ledger, credits them, commits and publishes state to the public console.",
@@ -1626,17 +1801,19 @@
     "en": "credits, chain commit, public state publish",
     "he": "זיכויים, commit לשרשרת, פרסום מצב ציבורי"
    },
+   "migratedTo": "Domain/dex-beat :53",
+   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
    "state": "degraded",
    "stats": {
-    "runs_sampled": 96,
+    "runs_sampled": 98,
     "success": 83,
-    "failure": 13,
+    "failure": 15,
     "other": 0,
-    "successRate": 86.5,
-    "avgDurS": 30.7
+    "successRate": 84.7,
+    "avgDurS": 30.3
    },
    "lastRun": {
-    "at": "2026-09-21T10:32:30Z",
+    "at": "2026-09-30T15:32:18Z",
     "conclusion": "failure"
    }
   },
@@ -1645,20 +1822,24 @@
    "name": "dex-grid",
    "repo": "saos-dex",
    "visibility": "public",
-   "schedule": "automatic",
+   "rail": "private",
+   "trigger": "manual dispatch",
+   "schedule": "manual backup (R71) - public twin Domain/dex-grid 03:48 carries the grid",
    "layer": "PUBLISH",
    "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+    "en": "Exchange grid rail backup - the public twin in Domain carries the scheduled grid.",
+    "he": "גיבוי מסילת-הגריד של הבורסה - התאום הציבורי ב-Domain נושא את הגריד המתוזמן."
    },
    "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
+    "en": "grid state",
+    "he": "מצב גריד"
    },
    "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
+    "en": "grid publish",
+    "he": "פרסום גריד"
    },
+   "migratedTo": "Domain/dex-grid 03:48",
+   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
    "state": "degraded",
    "stats": {
     "runs_sampled": 16,
@@ -1678,31 +1859,35 @@
    "name": "grid-trigger",
    "repo": "saos-dex",
    "visibility": "public",
-   "schedule": "automatic",
-   "layer": "PUBLISH",
+   "rail": "private",
+   "trigger": "schedule */30 * * * * + manual dispatch",
+   "schedule": "schedule */30 * * * * + manual dispatch",
+   "layer": "TRIGGER",
    "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+    "en": "Trigger-mesh tick of the exchange rail - truth measurement (public RPC + anchor report), deterministic tick, state publish. Keyless by doctrine (R83).",
+    "he": "פעימת רשת-הטריגרים של מסילת הבורסה - מדידת-אמת (RPC ציבורי + דוח-עיגון), טיק דטרמיניסטי, פרסום-מצב. חסר-מפתחות מהיסוד (R83)."
    },
    "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
+    "en": "public RPC + fresh clone",
+    "he": "RPC ציבורי + קלון טרי"
    },
    "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
+    "en": "state commit + measured tick",
+    "he": "קומיט מצב + טיק נמדד"
    },
+   "migratedTo": "Domain/grid-trigger-twin :09/:39",
+   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
    "state": "degraded",
    "stats": {
-    "runs_sampled": 80,
+    "runs_sampled": 100,
     "success": 0,
-    "failure": 80,
+    "failure": 100,
     "other": 0,
     "successRate": 0,
-    "avgDurS": 4.2
+    "avgDurS": 4.5
    },
    "lastRun": {
-    "at": "2026-09-30T03:46:37Z",
+    "at": "2026-09-30T15:20:24Z",
     "conclusion": "failure"
    }
   },
@@ -1711,7 +1896,9 @@
    "name": "jumpper-tests",
    "repo": "saos-jummper",
    "visibility": "public",
-   "schedule": "daily 10:29 UTC",
+   "rail": "private",
+   "trigger": "schedule 29 10 * * * + manual dispatch",
+   "schedule": "schedule 29 10 * * * + manual dispatch",
    "layer": "QA",
    "role": {
     "en": "Notary test suite - runs the full unit tests of the cross-chain proof notary (the hard gate), compiles the whole package, and attempts the live read-only witness demo with honest reporting of network failures.",
@@ -1725,17 +1912,18 @@
     "en": "agent/status.json with test counts",
     "he": "דוח agent/status.json עם מספרי מבחנים"
    },
+   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
    "state": "degraded",
    "stats": {
-    "runs_sampled": 16,
+    "runs_sampled": 17,
     "success": 5,
-    "failure": 11,
+    "failure": 12,
     "other": 0,
-    "successRate": 31.3,
-    "avgDurS": 8.9
+    "successRate": 29.4,
+    "avgDurS": 8.8
    },
    "lastRun": {
-    "at": "2026-09-29T10:40:33Z",
+    "at": "2026-09-30T10:40:06Z",
     "conclusion": "failure"
    }
   },
@@ -1744,6 +1932,8 @@
    "name": "CI",
    "repo": "saos-sovereign-foundry",
    "visibility": "public",
+   "rail": "private",
+   "trigger": "on push + on PR",
    "schedule": "push / PR",
    "layer": "QA",
    "role": {
@@ -1758,6 +1948,7 @@
     "en": "lint + typecheck + build + api + concurrency verdict",
     "he": "פסק lint + typecheck + build + api + מקביליות"
    },
+   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
    "state": "degraded",
    "stats": {
     "runs_sampled": 100,
@@ -1777,20 +1968,23 @@
    "name": "gitleaks-secret-scan",
    "repo": "saos-sovereign-foundry",
    "visibility": "public",
-   "schedule": "automatic",
+   "rail": "private",
+   "trigger": "on push + on PR + manual dispatch",
+   "schedule": "on push + on PR + manual dispatch",
    "layer": "PUBLISH",
    "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
    },
    "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
+   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
    "state": "degraded",
    "stats": {
     "runs_sampled": 4,
@@ -1810,20 +2004,23 @@
    "name": "foundry-tests",
    "repo": "saos-sovereign-platform",
    "visibility": "public",
-   "schedule": "automatic",
+   "rail": "private",
+   "trigger": "on push + on PR + manual dispatch",
+   "schedule": "on push + on PR + manual dispatch",
    "layer": "PUBLISH",
    "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
    },
    "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
+   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
    "state": "degraded",
    "stats": {
     "runs_sampled": 6,
@@ -1843,7 +2040,9 @@
    "name": "platform-selftest",
    "repo": "saos-sovereign-platform",
    "visibility": "public",
-   "schedule": "daily 13:41 UTC",
+   "rail": "private",
+   "trigger": "schedule 41 13 * * * + manual dispatch",
+   "schedule": "schedule 41 13 * * * + manual dispatch",
    "layer": "QA",
    "role": {
     "en": "Edge engine selftest - runs the deterministic selftest of the dual-layer irrigation engine (no network, no randomness) and loads the frozen rule layer. The engine must answer identical answers always - that is the parity promise.",
@@ -1857,17 +2056,18 @@
     "en": "agent/status.json selftest verdict",
     "he": "פסק מבחן-עצמי ב-agent/status.json"
    },
+   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
    "state": "degraded",
    "stats": {
-    "runs_sampled": 16,
+    "runs_sampled": 17,
     "success": 4,
-    "failure": 12,
+    "failure": 13,
     "other": 0,
-    "successRate": 25,
-    "avgDurS": 7.6
+    "successRate": 23.5,
+    "avgDurS": 7.4
    },
    "lastRun": {
-    "at": "2026-09-29T13:51:17Z",
+    "at": "2026-09-30T13:50:33Z",
     "conclusion": "failure"
    }
   },
@@ -1876,7 +2076,9 @@
    "name": "wallet-verify",
    "repo": "Saosmartwallet",
    "visibility": "public",
-   "schedule": "daily 14:43 UTC",
+   "rail": "private",
+   "trigger": "schedule 43 14 * * * + manual dispatch",
+   "schedule": "schedule 43 14 * * * + manual dispatch",
    "layer": "QA",
    "role": {
     "en": "Wallet quality gate - installs dependencies, generates the Prisma client, runs a full typecheck and a production build of the seven-network wallet, and confirms the system-status reports exist.",
@@ -1890,17 +2092,18 @@
     "en": "agent/status.json verify verdict",
     "he": "פסק אימות ב-agent/status.json"
    },
+   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
    "state": "degraded",
    "stats": {
-    "runs_sampled": 17,
+    "runs_sampled": 18,
     "success": 4,
-    "failure": 13,
+    "failure": 14,
     "other": 0,
-    "successRate": 23.5,
-    "avgDurS": 38.9
+    "successRate": 22.2,
+    "avgDurS": 37.1
    },
    "lastRun": {
-    "at": "2026-09-29T14:57:04Z",
+    "at": "2026-09-30T14:59:43Z",
     "conclusion": "failure"
    }
   },
@@ -1909,7 +2112,9 @@
    "name": "sdk-verify",
    "repo": "Sdk",
    "visibility": "public",
-   "schedule": "daily 09:23 UTC",
+   "rail": "private",
+   "trigger": "schedule 23 9 * * * + manual dispatch",
+   "schedule": "schedule 23 9 * * * + manual dispatch",
    "layer": "INTEGRITY",
    "role": {
     "en": "SDK content verifier - confirms the docs and broadcasts directories exist and are not empty, builds a SHA-256 manifest and counts the document inventory.",
@@ -1923,17 +2128,18 @@
     "en": "agent/status.json + manifest.sha256",
     "he": "דוח agent/status.json + מניפסט SHA-256"
    },
+   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
    "state": "degraded",
    "stats": {
-    "runs_sampled": 15,
+    "runs_sampled": 16,
     "success": 5,
-    "failure": 10,
+    "failure": 11,
     "other": 0,
-    "successRate": 33.3,
-    "avgDurS": 6.5
+    "successRate": 31.3,
+    "avgDurS": 6.4
    },
    "lastRun": {
-    "at": "2026-09-29T09:37:04Z",
+    "at": "2026-09-30T09:36:57Z",
     "conclusion": "failure"
    }
   },
@@ -1942,7 +2148,9 @@
    "name": "cloud-heart",
    "repo": "steem",
    "visibility": "public",
-   "schedule": "every 30 min",
+   "rail": "private",
+   "trigger": "manual dispatch",
+   "schedule": "manual backup (R73) - public twin Domain/cloud-heart :17/:47 carries the beats",
    "layer": "ALWAYS-UP",
    "role": {
     "en": "The fleet executor outside the sandbox - reads the living-attest from Steem/Hive over public RPC; fresh attest means sandbox alive (verify only), stale means takeover: key restore, full agent cycle, on-chain leadership marker, push.",
@@ -1956,17 +2164,19 @@
     "en": "saosnet beat --live, chain attest, gitkeeper push",
     "he": "saosnet beat --live, אימות שרשרת, דחיפת gitkeeper"
    },
+   "migratedTo": "Domain/cloud-heart :17/:47",
+   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
    "state": "degraded",
    "stats": {
     "runs_sampled": 100,
-    "success": 41,
-    "failure": 59,
+    "success": 39,
+    "failure": 61,
     "other": 0,
-    "successRate": 41,
-    "avgDurS": 4.3
+    "successRate": 39,
+    "avgDurS": 4.5
    },
    "lastRun": {
-    "at": "2026-09-21T17:33:54Z",
+    "at": "2026-09-30T15:32:16Z",
     "conclusion": "failure"
    }
   },
@@ -1975,31 +2185,35 @@
    "name": "self-audience",
    "repo": "steem",
    "visibility": "public",
-   "schedule": "automatic",
+   "rail": "private",
+   "trigger": "schedule 30 14 * * * + manual dispatch",
+   "schedule": "schedule 30 14 * * * + manual dispatch",
    "layer": "PUBLISH",
    "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+    "en": "Original audience rail on the private vault repo - the public twin on Domain (free Actions, secrets-gated) carries the daily audience cycle.",
+    "he": "מסילת-הקהל המקורית על ריפו-הכספת הפרטי - התאום הציבורי ב-Domain (Actions חינם, סודות-משוערים) נושא את מחזור-הקהל היומי."
    },
    "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
+    "en": "SA_FLEET_KEYS + SA_HEAD_ACTIVE (Actions secrets)",
+    "he": "SA_FLEET_KEYS + SA_HEAD_ACTIVE (סודות Actions)"
    },
    "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
+    "en": "posts, votes, receipts",
+    "he": "פוסטים, הצבעות, קבלות"
    },
+   "migratedTo": "Domain/self-audience daily 14:30 UTC",
+   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
    "state": "degraded",
    "stats": {
-    "runs_sampled": 3,
+    "runs_sampled": 4,
     "success": 0,
-    "failure": 3,
+    "failure": 4,
     "other": 0,
     "successRate": 0,
     "avgDurS": 4
    },
    "lastRun": {
-    "at": "2026-09-29T18:58:19Z",
+    "at": "2026-09-30T14:40:50Z",
     "conclusion": "failure"
    }
   },
@@ -2008,7 +2222,9 @@
    "name": "weave-anchor-lines",
    "repo": "Zip",
    "visibility": "public",
-   "schedule": "bi-hourly :20 + on every beat",
+   "rail": "private",
+   "trigger": "manual dispatch",
+   "schedule": "manual backup (R71) - public twin Domain/weave-anchor-lines :33 carries the lines",
    "layer": "WITNESS",
    "role": {
     "en": "Sequences both witness lines as one run - anchors the checkpoint root to Steem/Hive, then to Z Chain (zero-gas EVM), then exports and pushes once. Carries the merged anchor function of the two legacy lines (Task 24; their standalone workflows retired 2026-09-16).",
@@ -2022,183 +2238,20 @@
     "en": "anchor txids recorded back into the ledger",
     "he": "מזהי טרנזקציות העיגון חוזרים לספר"
    },
+   "migratedTo": "Domain/weave-anchor-lines :33",
+   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
    "state": "degraded",
    "stats": {
     "runs_sampled": 100,
-    "success": 87,
-    "failure": 13,
+    "success": 85,
+    "failure": 15,
     "other": 0,
-    "successRate": 87,
-    "avgDurS": 33.7
+    "successRate": 85,
+    "avgDurS": 32.4
    },
    "lastRun": {
-    "at": "2026-09-21T18:47:57Z",
+    "at": "2026-09-30T15:32:01Z",
     "conclusion": "failure"
-   }
-  },
-  {
-   "id": "zip-weave-ecosystem",
-   "name": "weave-ecosystem",
-   "repo": "Zip",
-   "visibility": "public",
-   "schedule": "daily 05:30",
-   "layer": "ENFORCEMENT",
-   "role": {
-    "en": "Ecosystem unification guard - scans all repos for duplication (target dup<0.2) and enforces the one-source-of-truth doctrine automatically.",
-    "he": "שומר איחוד האקוסיסטם - סורק את כל הריפואים לגילוי כפילויות (יעד dup<0.2) ואוכף את דוקטרינת מקור-האמת האחד אוטומטית."
-   },
-   "input": {
-    "en": "full org scan via contents API",
-    "he": "סריקת ארגון מלאה דרך contents API"
-   },
-   "output": {
-    "en": "ecosystem report commits",
-    "he": "קומיטים של דוח אקוסיסטם"
-   },
-   "state": "degraded",
-   "stats": {
-    "runs_sampled": 9,
-    "success": 6,
-    "failure": 3,
-    "other": 0,
-    "successRate": 66.7,
-    "avgDurS": 48.7
-   },
-   "lastRun": {
-    "at": "2026-09-21T05:41:23Z",
-    "conclusion": "failure"
-   }
-  },
-  {
-   "id": "zip-weave-heart",
-   "name": "weave-heart",
-   "repo": "Zip",
-   "visibility": "public",
-   "schedule": "hourly :00",
-   "layer": "ALWAYS-UP",
-   "role": {
-    "en": "Cloud heart of The Weave - reads the ledger every hour, judges whether the primary runner is alive, verifies only when alive, takes over the full cycle when it is not.",
-    "he": "הלב הענן של The Weave - קורא את הספר כל שעה, פוסק אם הראנר הראשי חי, מאמת בלבד כשחי ומשתלט על המחזור המלא כשלא."
-   },
-   "input": {
-    "en": "fresh clone + ledger.json",
-    "he": "קלון טרי + ledger.json"
-   },
-   "output": {
-    "en": "attestations, checkpoints, heartbeat commits",
-    "he": "אימותים, צ'קפוינטים, קומיטים של פעימה"
-   },
-   "state": "degraded",
-   "stats": {
-    "runs_sampled": 100,
-    "success": 77,
-    "failure": 23,
-    "other": 0,
-    "successRate": 77,
-    "avgDurS": 18.7
-   },
-   "lastRun": {
-    "at": "2026-09-21T11:08:07Z",
-    "conclusion": "failure"
-   }
-  },
-  {
-   "id": "zip-web-publish",
-   "name": "web-publish",
-   "repo": "Zip",
-   "visibility": "public",
-   "schedule": "automatic",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
-   },
-   "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
-   },
-   "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
-   },
-   "state": "degraded",
-   "stats": {
-    "runs_sampled": 100,
-    "success": 33,
-    "failure": 67,
-    "other": 0,
-    "successRate": 33,
-    "avgDurS": 3.7
-   },
-   "lastRun": {
-    "at": "2026-09-21T11:12:28Z",
-    "conclusion": "failure"
-   }
-  },
-  {
-   "id": "console-key-verify",
-   "name": "key-verify",
-   "repo": "Console",
-   "visibility": "public",
-   "schedule": "automatic",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
-   },
-   "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
-   },
-   "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
-   },
-   "state": "dormant",
-   "stats": {
-    "runs_sampled": 2,
-    "success": 2,
-    "failure": 0,
-    "other": 0,
-    "successRate": 100,
-    "avgDurS": 17.5
-   },
-   "lastRun": {
-    "at": "2026-09-18T02:20:36Z",
-    "conclusion": "success"
-   }
-  },
-  {
-   "id": "domain-seal-adopt",
-   "name": "seal-adopt",
-   "repo": "Domain",
-   "visibility": "public",
-   "schedule": "automatic",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
-   },
-   "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
-   },
-   "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
-   },
-   "state": "dormant",
-   "stats": {
-    "runs_sampled": 1,
-    "success": 1,
-    "failure": 0,
-    "other": 0,
-    "successRate": 100,
-    "avgDurS": 19
-   },
-   "lastRun": {
-    "at": "2026-09-21T12:57:45Z",
-    "conclusion": "success"
    }
   },
   {
@@ -2206,6 +2259,8 @@
    "name": "weave-brain-restore",
    "repo": "Zip",
    "visibility": "public",
+   "rail": "private",
+   "trigger": "manual dispatch",
    "schedule": "one-shot (manual)",
    "layer": "RECOVERY",
    "role": {
@@ -2220,18 +2275,93 @@
     "en": "brain keys restored to the sovereign chain",
     "he": "מפתחות המוח הושבו לשרשרת הריבונית"
    },
-   "state": "dormant",
+   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
+   "state": "degraded",
    "stats": {
-    "runs_sampled": 1,
+    "runs_sampled": 3,
     "success": 1,
-    "failure": 0,
+    "failure": 2,
     "other": 0,
-    "successRate": 100,
-    "avgDurS": 31
+    "successRate": 33.3,
+    "avgDurS": 18
    },
    "lastRun": {
-    "at": "2026-09-15T13:13:10Z",
-    "conclusion": "success"
+    "at": "2026-09-30T15:32:09Z",
+    "conclusion": "failure"
+   }
+  },
+  {
+   "id": "zip-weave-ecosystem",
+   "name": "weave-ecosystem",
+   "repo": "Zip",
+   "visibility": "public",
+   "rail": "private",
+   "trigger": "manual dispatch",
+   "schedule": "daily 05:30",
+   "layer": "ENFORCEMENT",
+   "role": {
+    "en": "Ecosystem unification guard - scans all repos for duplication (target dup<0.2) and enforces the one-source-of-truth doctrine automatically.",
+    "he": "שומר איחוד האקוסיסטם - סורק את כל הריפואים לגילוי כפילויות (יעד dup<0.2) ואוכף את דוקטרינת מקור-האמת האחד אוטומטית."
+   },
+   "input": {
+    "en": "full org scan via contents API",
+    "he": "סריקת ארגון מלאה דרך contents API"
+   },
+   "output": {
+    "en": "ecosystem report commits",
+    "he": "קומיטים של דוח אקוסיסטם"
+   },
+   "migratedTo": "Domain/weave-ecosystem",
+   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
+   "state": "degraded",
+   "stats": {
+    "runs_sampled": 11,
+    "success": 6,
+    "failure": 5,
+    "other": 0,
+    "successRate": 54.5,
+    "avgDurS": 42.1
+   },
+   "lastRun": {
+    "at": "2026-09-30T15:32:03Z",
+    "conclusion": "failure"
+   }
+  },
+  {
+   "id": "zip-weave-heart",
+   "name": "weave-heart",
+   "repo": "Zip",
+   "visibility": "public",
+   "rail": "private",
+   "trigger": "manual dispatch",
+   "schedule": "manual backup (R71) - public twin Domain/weave-heart :13 carries the pulse",
+   "layer": "ALWAYS-UP",
+   "role": {
+    "en": "Cloud heart of The Weave - reads the ledger every hour, judges whether the primary runner is alive, verifies only when alive, takes over the full cycle when it is not.",
+    "he": "הלב הענן של The Weave - קורא את הספר כל שעה, פוסק אם הראנר הראשי חי, מאמת בלבד כשחי ומשתלט על המחזור המלא כשלא."
+   },
+   "input": {
+    "en": "fresh clone + ledger.json",
+    "he": "קלון טרי + ledger.json"
+   },
+   "output": {
+    "en": "attestations, checkpoints, heartbeat commits",
+    "he": "אימותים, צ'קפוינטים, קומיטים של פעימה"
+   },
+   "migratedTo": "Domain/weave-heart :13",
+   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
+   "state": "degraded",
+   "stats": {
+    "runs_sampled": 100,
+    "success": 74,
+    "failure": 26,
+    "other": 0,
+    "successRate": 74,
+    "avgDurS": 16.9
+   },
+   "lastRun": {
+    "at": "2026-09-30T15:31:59Z",
+    "conclusion": "failure"
    }
   },
   {
@@ -2239,32 +2369,35 @@
    "name": "web-probe",
    "repo": "Zip",
    "visibility": "public",
-   "schedule": "automatic",
+   "rail": "private",
+   "trigger": "manual dispatch",
+   "schedule": "manual dispatch",
    "layer": "PUBLISH",
    "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
    },
    "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
-   "state": "dormant",
+   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
+   "state": "degraded",
    "stats": {
-    "runs_sampled": 1,
+    "runs_sampled": 3,
     "success": 1,
-    "failure": 0,
+    "failure": 2,
     "other": 0,
-    "successRate": 100,
-    "avgDurS": 26
+    "successRate": 33.3,
+    "avgDurS": 12.7
    },
    "lastRun": {
-    "at": "2026-09-19T00:07:17Z",
-    "conclusion": "success"
+    "at": "2026-09-30T15:32:06Z",
+    "conclusion": "failure"
    }
   },
   {
@@ -2272,32 +2405,71 @@
    "name": "web-probe2",
    "repo": "Zip",
    "visibility": "public",
-   "schedule": "automatic",
+   "rail": "private",
+   "trigger": "manual dispatch",
+   "schedule": "manual dispatch",
    "layer": "PUBLISH",
    "role": {
-    "en": "GitHub Pages automatic deployment of the public site.",
-    "he": "פריסה אוטומטית של GitHub Pages לאתר הציבורי."
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
    },
    "input": {
-    "en": "pages build",
-    "he": "בילד דפים"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
    "output": {
-    "en": "live GitHub Pages site",
-    "he": "אתר GitHub Pages חי"
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
    },
-   "state": "dormant",
+   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
+   "state": "degraded",
    "stats": {
-    "runs_sampled": 2,
+    "runs_sampled": 4,
     "success": 2,
-    "failure": 0,
+    "failure": 2,
     "other": 0,
-    "successRate": 100,
-    "avgDurS": 20.5
+    "successRate": 50,
+    "avgDurS": 17.8
    },
    "lastRun": {
-    "at": "2026-09-19T00:15:04Z",
-    "conclusion": "success"
+    "at": "2026-09-30T15:32:08Z",
+    "conclusion": "failure"
+   }
+  },
+  {
+   "id": "zip-web-publish",
+   "name": "web-publish",
+   "repo": "Zip",
+   "visibility": "public",
+   "rail": "private",
+   "trigger": "manual dispatch",
+   "schedule": "manual dispatch",
+   "layer": "PUBLISH",
+   "role": {
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+   },
+   "input": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "output": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
+   "state": "degraded",
+   "stats": {
+    "runs_sampled": 100,
+    "success": 31,
+    "failure": 69,
+    "other": 0,
+    "successRate": 31,
+    "avgDurS": 4
+   },
+   "lastRun": {
+    "at": "2026-09-30T15:32:04Z",
+    "conclusion": "failure"
    }
   }
  ]
