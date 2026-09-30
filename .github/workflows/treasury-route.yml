@@ -1,0 +1,87 @@
+# SAOS TREASURY + ROUTE DESK on Domain (public rail, free Actions) — Z-26
+#
+# סוכן-האוצר: ספר-ההון-בידיים (steem+hive+blurt+TRON+Hive-Engine), תביעות-פרסים
+# (hive+blurt · posting-only · אידמפוטנטי), קורצ'ינג-ראש על-steem (4279 SP יעילים,
+# מתוחם: 4 הצבעות/יום × 50% · VP-floor 60% · rep ≥ 55 · גיל 20-480 דקות · ללא-עצמי).
+# סוכן-הנתבים: אורקלים + ספר-HE-DEX + בדיקות-גשרים — הספר-היומי של נתיבי-הנזילות.
+#
+# דוקטרינה: verify-then-sign · fail-soft (exit 0) · אפס-סודות-בקבלות/בספרים.
+
+name: treasury-route
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'agents/treasury-desk.cjs'
+      - 'agents/route-desk.cjs'
+      - '.github/workflows/treasury-route.yml'
+  schedule:
+    - cron: '20 16 * * *'   # 16:20 UTC — אחרי tri-bridge (15:05), סוגר-את-מחזור-הערך היומי
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: treasury-route
+  cancel-in-progress: false
+
+jobs:
+  treasury:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      NODE_PATH: /tmp/steemjs/node_modules
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: checkout private steem home (vault recovery source — proven Z-21 pattern)
+        uses: actions/checkout@v4
+        with:
+          repository: roshpinacare-sys/steem
+          token: ${{ secrets.WEAVE_OPS_PAT }}
+          fetch-depth: 1
+          path: steem-repo
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: steem client (steem@0.7.11 — same signer as the fleet)
+        run: |
+          npm install --prefix /tmp/steemjs steem@0.7.11 --omit=dev --no-audit --no-fund --loglevel=error
+          NODE_PATH=/tmp/steemjs/node_modules node -e "require('steem'); console.log('steem-js OK')"
+
+      - name: treasury desk (book + claims + head curation)
+        env:
+          SA_FLEET_KEYS: ${{ secrets.SA_FLEET_KEYS }}
+          SA_HEAD_POSTING: ${{ secrets.SA_HEAD_POSTING }}
+          STEEM_REPO_DIR: steem-repo
+          RECEIPT_OUT: agents/receipts/treasury-desk-receipt.json
+        run: node agents/treasury-desk.cjs
+
+      - name: route desk (oracles + HE book + bridge probes)
+        env:
+          ROUTES_JSON: agents/routes.json
+        run: node agents/route-desk.cjs
+
+      - name: commit ledger + routes + receipts (secretless)
+        run: |
+          git config user.name "saos-treasury"
+          git config user.email "treasury@saos.local"
+          mkdir -p agents/receipts
+          for p in agents/money-ledger.json agents/routes.json agents/routes.md agents/receipts/treasury-desk-receipt.json; do
+            [ -e "$p" ] && git add "$p" || true
+          done
+          if git diff --cached --quiet; then
+            echo "no ledger changes"
+          else
+            git commit -m "treasury-route: capital book + router mirror · $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            git pull --rebase origin main || true
+            git push origin HEAD:main
+          fi
