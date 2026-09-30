@@ -1,10 +1,17 @@
 'use strict';
 /**
- * tribridge.cjs — CROSS-CHAIN CONTENT ACTIVATION (Z-23, 2026-09-30).
+ * tribridge.cjs — CROSS-CHAIN CONTENT ACTIVATION (Z-23 · Z-25 English voice + support).
  *
- * האמת-המיושמת כאן: הצי מחזיק מפתחות-posting חיים על שלוש שרשראות (steem+hive+blurt)
- * ואילו תוכן פורסם רק על steem. הסוכן הזה סוגר את הפער: כל-פוסט-חייל-יומי מופץ
- * ל-hive (חינם, RC) ול-blurt (עמלה ~0.3 BLURT, מוזנת מקופת-הראש בתקרה-קשוחה).
+ * Z-25 changes (operator directive):
+ *  - wrappers in ENGLISH ONLY, zero AI-telltale markers (no em-dashes, no stock phrases);
+ *  - per-chain packaging: hive gets a desk-flavored editorial line, blurt a shorter casual one;
+ *  - tag normalization (legacy 'hebrew' tag retired everywhere);
+ *  - leofinance path on hive: defi cards post into the LeoFinance community (subscribe first,
+ *    fail-soft fallback to plain tag publish);
+ *  - cross-support votes: two rotating fleet voters support each verified crosspost (25%,
+ *    idempotent via active_votes, hive voters pass the same RC gate as publishers).
+ *
+ * אמת-המיושמת: הצי מחזיק מפתחות-posting חיים על שלוש שרשראות (steem+hive+blurt)
  *
  * דוקטרינה:
  *  - verify-then-sign: קריאה-חוזרת בייטים אחרי כל שידור; בלי קריאה-חוזרת = לא "verified".
@@ -39,6 +46,13 @@ const BLURT_CADENCE_DAYS = 3;
 const HIVE_OK = new Set(['cashmachine', 'haran', 'israelnews', 'lsa', 'macrame', 'siq', 'wic', 'wog', 'woq']);
 const RETIRED = new Set(['ynet']); // operator decision 2026-09-30 — no key, retired
 const HEAD = 'headcorner';
+const LEFINANCE_COMMUNITY = 'hive-167922';
+const SUPPORT_VOTERS = 2;   // fleet voters per verified crosspost
+const SUPPORT_WEIGHT = 2500; // 25% vote weight
+const PERSONAS = (() => { try { return JSON.parse(fs.readFileSync(path.join(__dirname, 'personas.json'), 'utf8')); } catch (_) { return []; } })();
+const personaOf = (who) => PERSONAS.find(p => p.account === who) || { desk: 'journal', brief: 'Notes from the network.' };
+// Nothing signed may carry an AI-telltale marker.
+const sanity = (s) => typeof s === 'string' && s.length > 0 && !/[—–]/.test(s) && !/\bdelve\b|\bmoreover\b|\bin conclusion\b|\bit'?s important to note\b/i.test(s);
 
 function rpcNode(node, method, params, timeout = 20000) {
   const payload = JSON.stringify({ jsonrpc: '2.0', method, params, id: 1 });
@@ -98,24 +112,47 @@ async function signAndBroadcast({ node, chainId, wif, ops }) {
   await rpcNode(node, 'condenser_api.broadcast_transaction', [signed]);
 }
 
-function crossBody(content, who, permlink) {
-  return content.body + '\n\n> Cross-posted from Steem: https://steemit.com/@' + who + '/' + permlink;
+function normTags(meta) {
+  let tags = Array.isArray(meta.tags) && meta.tags.length ? meta.tags.slice(0, 5).map(t => String(t)) : ['blog'];
+  tags = tags.filter(t => t !== 'hebrew'); // legacy tag retired fleet-wide
+  if (!tags.length) tags = ['blog'];
+  if (!tags.includes('blog') && tags.length < 5) tags.push('blog');
+  return tags;
 }
 
-async function publishCross({ who, wif, node, chainId, content, permlink }) {
+function crossBody(content, who, permlink, chain, dayIdx) {
+  const p = personaOf(who);
+  const url = 'https://steemit.com/@' + who + '/' + permlink;
+  const pools = chain === 'hive'
+    ? [
+        'Carrying today\'s note over from my Steem journal. ' + p.brief,
+        'Same piece I published on Steem today, shared here with the source attached.',
+        'Today\'s entry from the ' + p.desk + ' desk, mirrored from Steem.',
+      ]
+    : [
+        'Today\'s note, carried over from my Steem journal.',
+        'Reposting today\'s entry from Steem, source link below.',
+      ];
+  const intro = pools[dayIdx % pools.length];
+  return intro + '\n\n' + content.body + '\n\nFirst published on Steem: ' + url;
+}
+
+async function publishCross({ who, wif, node, chainId, content, permlink, chain, dayIdx, community }) {
   let meta = {};
   try { meta = JSON.parse(content.json_metadata || '{}'); } catch (_) {}
-  const tags = Array.isArray(meta.tags) && meta.tags.length ? meta.tags.slice(0, 5) : ['blog'];
-  const body = crossBody(content, who, permlink);
+  const tags = normTags(meta);
+  const body = crossBody(content, who, permlink, chain, dayIdx);
+  if (!sanity(body)) return { state: 'SKIP-SANITY-GATE' };
+  const extra = community ? { community } : {};
   const op = ['comment', {
-    parent_author: '', parent_permlink: tags[0],
-    author: who, permlink, title: content.title || ('SAOS update ' + permlink),
-    body, json_metadata: JSON.stringify({ tags, app: 'saos-tribridge/1', crosspost: { from: 'steem', author: who, permlink } }),
+    parent_author: '', parent_permlink: community || tags[0],
+    author: who, permlink, title: (content.title || ('Notes from the ' + personaOf(who).desk + ' desk')).slice(0, 250),
+    body, json_metadata: JSON.stringify({ tags, app: 'saos-tribridge/2', ...extra, crosspost: { from: 'steem', author: who, permlink } }),
   }];
   await signAndBroadcast({ node, chainId, wif, ops: [op] });
   await sleep(2500);
   const back = await getContent(node, who, permlink);
-  if (back && back.body && back.body.slice(0, 120) === body.slice(0, 120)) return { state: 'PUBLISHED-VERIFIED' };
+  if (back && back.body && back.body.slice(0, 120) === body.slice(0, 120)) return { state: 'PUBLISHED-VERIFIED', tags, community: !!community };
   if (back) return { state: 'PUBLISHED-BODY-MISMATCH' };
   return { state: 'PUBLISHED-READBACK-PENDING' };
 }
@@ -131,6 +168,7 @@ async function publishCross({ who, wif, node, chainId, content, permlink }) {
 
   const roster = keys.filter(k => !RETIRED.has(k.username) && k.username !== HEAD && /^[a-z0-9-]{3,16}$/.test(k.username));
   receipt.roster = roster.map(r => r.username);
+  const dayIdx = Math.floor(now.getTime() / 86400000);
 
   for (const { username: who, posting: wif } of roster) {
     const permlink = 'saos-' + who + '-' + ymd;
@@ -149,17 +187,27 @@ async function publishCross({ who, wif, node, chainId, content, permlink }) {
           receipt.results.push({ who, chain: 'hive', op: 'SKIP-RC-GATE', rcPct: Math.round(rc * 10) / 10 });
         } else {
           const existing = await getContent(HIVE_NODES[0], who, permlink);
-          if (existing) receipt.results.push({ who, chain: 'hive', op: 'ALREADY' });
+          if (existing) receipt.results.push({ who, chain: 'hive', op: 'ALREADY', permlink });
           else {
-            const r = await publishCross({ who, wif, node: HIVE_NODES[0], chainId: HIVE_CHAIN_ID, content: src, permlink });
-            receipt.results.push({ who, chain: 'hive', op: r.state });
+            let meta = {}; try { meta = JSON.parse(src.json_metadata || '{}'); } catch (_) {}
+            const wantLeo = normTags(meta).includes('leofinance');
+            let r = null;
+            if (wantLeo) {
+              try {
+                await signAndBroadcast({ node: HIVE_NODES[0], chainId: HIVE_CHAIN_ID, wif, ops: [['custom_json', { required_auths: [], required_posting_auths: [who], id: 'community', json: JSON.stringify(['subscribe', { community: LEFINANCE_COMMUNITY }]) }]] });
+                receipt.results.push({ who, chain: 'hive', op: 'LEO-SUBSCRIBE-SENT' });
+                await sleep(1200);
+                r = await publishCross({ who, wif, node: HIVE_NODES[0], chainId: HIVE_CHAIN_ID, content: src, permlink, chain: 'hive', dayIdx, community: LEFINANCE_COMMUNITY });
+              } catch (_) { r = null; } // fail-soft: fall back to plain tag publish
+            }
+            if (!r) r = await publishCross({ who, wif, node: HIVE_NODES[0], chainId: HIVE_CHAIN_ID, content: src, permlink, chain: 'hive', dayIdx });
+            receipt.results.push({ who, chain: 'hive', op: r.state, permlink, ...(r.tags ? { tags: r.tags, intoCommunity: !!r.community } : {}) });
           }
         }
       } catch (e) { receipt.results.push({ who, chain: 'hive', op: 'ERR', msg: String(e.message || e).slice(0, 100) }); }
     }
 
     // ---- BLURT (cadence: every 3rd day per soldier) ----
-    const dayIdx = Math.floor(now.getTime() / 86400000);
     const dueToday = (dayIdx + roster.findIndex(r => r.username === who)) % BLURT_CADENCE_DAYS === 0;
     if (!dueToday) {
       receipt.results.push({ who, chain: 'blurt', op: 'SKIP-CADENCE', note: '1-in-3 rotation (fuel economy)' });
@@ -170,13 +218,47 @@ async function publishCross({ who, wif, node, chainId, content, permlink }) {
         if (bal < BLURT_MIN_FUEL) receipt.results.push({ who, chain: 'blurt', op: 'SKIP-NO-FUEL', bal });
         else {
           const existing = await getContent(BLURT_NODES[0], who, permlink);
-          if (existing) receipt.results.push({ who, chain: 'blurt', op: 'ALREADY' });
+          if (existing) receipt.results.push({ who, chain: 'blurt', op: 'ALREADY', permlink });
           else {
-            const r = await publishCross({ who, wif, node: BLURT_NODES[0], chainId: BLURT_CHAIN_ID, content: src, permlink });
-            receipt.results.push({ who, chain: 'blurt', op: r.state });
+            const r = await publishCross({ who, wif, node: BLURT_NODES[0], chainId: BLURT_CHAIN_ID, content: src, permlink, chain: 'blurt', dayIdx });
+            receipt.results.push({ who, chain: 'blurt', op: r.state, permlink });
           }
         }
       } catch (e) { receipt.results.push({ who, chain: 'blurt', op: 'ERR', msg: String(e.message || e).slice(0, 100) }); }
+    }
+  }
+
+  // ---- CROSS-SUPPORT VOTES (support, not just extract) ----
+  // Two rotating fleet voters back each of today's crossposts (fresh + ALREADY, idempotent
+  // via active_votes read-back). Hive voters pass the same RC gate as publishers.
+  receipt.votes = [];
+  const voteTargets = receipt.results.filter(r => (r.op === 'PUBLISHED-VERIFIED' || r.op === 'ALREADY') && r.chain && r.permlink);
+  for (const tgt of voteTargets) {
+    const pool = (tgt.chain === 'hive' ? roster.filter(r => HIVE_OK.has(r.username)).map(r => r.username) : roster.map(r => r.username))
+      .filter(u => u !== tgt.who);
+    for (let v = 0; v < Math.min(SUPPORT_VOTERS, pool.length); v++) {
+      const voter = pool[(dayIdx + v) % pool.length];
+      const vwif = (roster.find(r => r.username === voter) || {}).posting;
+      const node = tgt.chain === 'hive' ? HIVE_NODES[0] : BLURT_NODES[0];
+      const chainId = tgt.chain === 'hive' ? HIVE_CHAIN_ID : BLURT_CHAIN_ID;
+      const V = { voter, on: tgt.who, chain: tgt.chain, weightPct: SUPPORT_WEIGHT / 100 };
+      if (!vwif) { V.status = 'SKIP-NO-KEY'; receipt.votes.push(V); continue; }
+      try {
+        const post = await getContent(node, tgt.who, tgt.permlink);
+        if (!post || !(post.active_votes || [])) { V.status = 'SKIP-POST-UNREAD'; receipt.votes.push(V); continue; }
+        if ((post.active_votes || []).some(x => x.voter === voter)) { V.status = 'ALREADY'; receipt.votes.push(V); continue; }
+        if (tgt.chain === 'hive') {
+          const rcRow = (await rpcNode(node, 'rc_api.find_rc_accounts', { accounts: [voter] })).rc_accounts[0];
+          const rc = rcPctOf(rcRow);
+          if (rc < HIVE_RC_GATE) { V.status = 'SKIP-RC-GATE'; receipt.votes.push(V); continue; }
+        }
+        await signAndBroadcast({ node, chainId, wif: vwif, ops: [['vote', { voter, author: tgt.who, permlink: tgt.permlink, weight: SUPPORT_WEIGHT }]] });
+        await sleep(1500);
+        const after = await getContent(node, tgt.who, tgt.permlink);
+        V.status = after && (after.active_votes || []).some(x => x.voter === voter) ? 'VOTED-VERIFIED' : 'VOTED-READBACK-PENDING';
+      } catch (e) { V.status = 'ERR'; V.msg = String(e.message || e).slice(0, 90); }
+      receipt.votes.push(V);
+      await sleep(900);
     }
   }
 
@@ -220,6 +302,7 @@ async function publishCross({ who, wif, node, chainId, content, permlink }) {
   // ---- summary (integer-only tallies) ----
   const tally = {};
   for (const r of receipt.results) tally[r.op || 'UNKNOWN'] = (tally[r.op || 'UNKNOWN'] || 0) + 1;
+  for (const v of receipt.votes || []) tally['VOTE-' + v.status] = (tally['VOTE-' + v.status] || 0) + 1;
   receipt.summary = { tally, fuelTransfers: receipt.fuel.filter(f => f.op === 'TRANSFER-BROADCAST').length, ms: Date.now() - t0 };
 
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
