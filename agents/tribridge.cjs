@@ -151,7 +151,8 @@ async function publishCross({ who, wif, node, chainId, content, permlink, chain,
   }];
   await signAndBroadcast({ node, chainId, wif, ops: [op] });
   await sleep(2500);
-  const back = await getContent(node, who, permlink);
+  let back = await getContent(node, who, permlink);
+  if (!back) { await sleep(5000); back = await getContent(node, who, permlink); } // nodes lag; one retry before honest PENDING
   if (back && back.body && back.body.slice(0, 120) === body.slice(0, 120)) return { state: 'PUBLISHED-VERIFIED', tags, community: !!community };
   if (back) return { state: 'PUBLISHED-BODY-MISMATCH' };
   return { state: 'PUBLISHED-READBACK-PENDING' };
