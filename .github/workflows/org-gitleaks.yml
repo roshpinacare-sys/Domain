@@ -1,0 +1,196 @@
+# ORG-GITLEAKS (Task 13-b) — סריקת-הסודות של כל-הארגון, מהבית-הציבורי
+#
+# האבחנה: כל-ה-Actions של הריפואים הפרטיים אדומים מאז 2026-09-20 (מכסת-הדקות
+# אזלה, תיקון-ה-billing בבעלות-המפעיל — והמפעיל אישר שה-billing לא יתוקן).
+# הסריקה הפרטית (gitleaks.yml בכל ריפו, binary-canonical v8.24.3) מתה עם הקווטה.
+# התאום הזה מריץ **את אותה-הסריקה בדיוק** על כל-16 הריפואים מהבית-הציבורי
+# Domain (דקות-Actions חינמיות ובלי-הגבלה לריפואים ציבוריים):
+#   - checkout דרך ZIP_PAT (התבנית המוכחת — foundry-mesh-tests / sovereign-selftests)
+#   - fetch-depth: 0 (היסטוריה מלאה — בדיוק כמו הסריקה הפרטית לכל-ריפו)
+#   - gitleaks v8.24.3 pinned direct binary: curl from gitleaks releases,
+#     `detect --source . --redact --no-banner` (התבנית מ-.github/workflows/gitleaks.yml
+#     של כל ריפו — task 11-f / 11 סופי)
+#   - ריפו עם ממצאים = הרגל שלו נכשלת (אדום-כן) בלי להפיל את שאר הרגליים
+#     (fail-fast: false — המטריצה עושה זאת מעצמה)
+# קבלות: אחרי המטריצה, receipts (if: always()) ממזג את סטטוסי-הרגליים לתוך
+# receipts/gitleaks/STATUS.json (ספירות-בלבד, אפס-תוכן-סודות) ומצמיד קבלה
+# בקונבנציית הבוטים (agents-watch): זהות gitleaks-hub[bot] + rebase-retry ×3.
+#
+# כנות: רגל-אחת אדומה לא מכסה על אחרת; רגל חסרה (missing) מפילה את הקבלה.
+# אפס-סודות-מפעיל: ZIP_PAT בלבד. הקבלה מכילה ספירות-בלבד.
+
+name: org-gitleaks
+
+on:
+  schedule:
+    - cron: '44 1,7,13,19 * * *'  # כל 6 שעות ב-:44 — בקיזוז משאר הפעימות
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: org-gitleaks
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        repo: [Adsmarket, Console, Domain, Defi, Project-files, Saosmartwallet, Sdk, Zip, anchor-baseline, roshpina, saos-control-center, saos-dex, saos-jummper, saos-sovereign-foundry, saos-sovereign-platform, steem]
+    steps:
+      - name: Prepare leg status (pending until the scan overwrites it)
+        if: always()
+        env:
+          REPO: ${{ matrix.repo }}
+        run: |
+          mkdir -p /tmp/gl-status
+          python3 -c 'import json,sys; json.dump({"repo":sys.argv[1],"findings":None,"conclusion":"pending"}, open(f"/tmp/gl-status/{sys.argv[1]}.json","w"))' "$REPO"
+
+      - name: Checkout ${{ matrix.repo }} (full history)
+        uses: actions/checkout@v4
+        with:
+          repository: roshpinacare-sys/${{ matrix.repo }}
+          ref: main
+          token: ${{ secrets.ZIP_PAT }}
+          fetch-depth: 0
+          path: scan
+
+      - name: gitleaks (direct pinned binary v8.24.3)
+        id: scan
+        env:
+          REPO: ${{ matrix.repo }}
+        run: |
+          set -uo pipefail
+          curl -sSL -o /tmp/gl.tgz https://github.com/gitleaks/gitleaks/releases/download/v8.24.3/gitleaks_8.24.3_linux_x64.tar.gz
+          tar -xzf /tmp/gl.tgz -C /tmp gitleaks
+          ( cd scan && /tmp/gitleaks detect --source . --report-format json --report-path /tmp/gl-report.json --redact --no-banner --log-level error )
+          RC=$?
+          COUNT=$(python3 -c "import json;print(len(json.load(open('/tmp/gl-report.json'))))" 2>/dev/null || echo "0")
+          echo "gitleaks findings: ${COUNT}"
+          if [ "${COUNT}" != "0" ]; then
+            # shapes only (rule id + file path) — no secret material ever
+            python3 - <<'SHAPEEOF'
+          import json
+          rows = sorted({(f.get('RuleID'), f.get('File'), f.get('StartLine')) for f in json.load(open('/tmp/gl-report.json'))})
+          for rule, path, line in rows:
+              print(f'shape: rule={rule} file={path}:{line}')
+          SHAPEEOF
+          fi
+          CONCLUSION=success
+          if [ "$RC" -ne 0 ]; then CONCLUSION=failure; fi
+          python3 - "$REPO" "$COUNT" "$CONCLUSION" <<'PYEOF'
+          import json, sys
+          repo, count, conclusion = sys.argv[1], int(sys.argv[2]), sys.argv[3]
+          with open(f"/tmp/gl-status/{repo}.json", "w") as fh:
+              json.dump({"repo": repo, "findings": count, "conclusion": conclusion}, fh)
+          PYEOF
+          exit $RC
+
+      - name: Upload leg status
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gitleaks-leg-${{ matrix.repo }}
+          path: /tmp/gl-status/${{ matrix.repo }}.json
+          if-no-files-found: error
+
+  receipts:
+    needs: scan
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Domain
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Download leg statuses
+        uses: actions/download-artifact@v4
+        with:
+          pattern: gitleaks-leg-*
+          merge-multiple: true
+          path: /tmp/gl-status
+
+      - name: Merge into receipts/gitleaks/STATUS.json (counts only)
+        run: |
+          cat > /tmp/merge_receipts.py <<'PYEOF'
+          import json, os, sys, glob, datetime
+
+          REPOS = ["Adsmarket", "Console", "Domain", "Defi", "Project-files", "Saosmartwallet", "Sdk", "Zip", "anchor-baseline", "roshpina", "saos-control-center", "saos-dex", "saos-jummper", "saos-sovereign-foundry", "saos-sovereign-platform", "steem"]
+
+          found = {}
+          for p in glob.glob("/tmp/gl-status/*.json"):
+              try:
+                  d = json.load(open(p))
+                  found[d.get("repo")] = d
+              except Exception:
+                  pass
+
+          repos, missing = {}, []
+          for r in REPOS:
+              d = found.get(r)
+              if d and d.get("conclusion") in ("success", "failure") and isinstance(d.get("findings"), int):
+                  repos[r] = {"findings": d["findings"], "conclusion": d["conclusion"]}
+              else:
+                  repos[r] = {"findings": None, "conclusion": "missing"}
+                  missing.append(r)
+
+          out = {
+              "generatedAt": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+              "workflow": "org-gitleaks",
+              "repos": dict(sorted(repos.items())),
+          }
+          os.makedirs("receipts/gitleaks", exist_ok=True)
+          with open("receipts/gitleaks/STATUS.json", "w") as fh:
+              json.dump(out, fh, indent=2, ensure_ascii=False)
+              fh.write("\n")
+
+          total = sum(r["findings"] or 0 for r in repos.values())
+          print(f"repos={len(REPOS)} missing={len(missing)} findings_total={total}")
+          for r, v in repos.items():
+              print(f"  {r}: findings={v['findings']} conclusion={v['conclusion']}")
+          open("/tmp/receipt-summary.txt", "w").write(f"{len(REPOS)} repos \u00b7 {total} findings")
+          open("/tmp/receipt-missing.txt", "w").write(",".join(missing))
+          PYEOF
+          python3 /tmp/merge_receipts.py
+
+      - name: Commit receipt (agents-watch convention — identity + rebase-retry ×3)
+        run: |
+          set -uo pipefail
+          if [ -z "$(git status --porcelain receipts/gitleaks/STATUS.json)" ]; then
+            echo "receipt unchanged - nothing to commit"
+            exit 0
+          fi
+          git config user.name "gitleaks-hub[bot]"
+          git config user.email "gitleaks-hub[bot]@users.noreply.github.com"
+          for attempt in 1 2 3; do
+            git add receipts/gitleaks/STATUS.json
+            git commit -m "org-gitleaks: $(cat /tmp/receipt-summary.txt) · $(date -u +%F)"
+            git pull --rebase origin main
+            if git push; then echo "receipt committed (attempt ${attempt})"; exit 0; fi
+            echo "push failed (attempt ${attempt}); resetting to origin and re-merging"
+            git reset --hard origin/main
+            python3 /tmp/merge_receipts.py
+            if [ -z "$(git status --porcelain receipts/gitleaks/STATUS.json)" ]; then
+              echo "receipt now identical to origin - nothing to commit"
+              exit 0
+            fi
+          done
+          echo "ERROR: could not commit the receipt after 3 attempts"
+          exit 1
+
+      - name: Honest gate — every leg must have reported
+        run: |
+          MISS="$(cat /tmp/receipt-missing.txt)"
+          if [ -n "$MISS" ]; then
+            echo "MISSING LEGS (no status artifact): ${MISS}"
+            exit 1
+          fi
+          echo "all 16 legs reported"

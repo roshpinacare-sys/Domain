@@ -1,0 +1,95 @@
+# ORG-SELFTESTS (Task 13-b) — הבדיקות-הדטרמיניסטיות-הזולות של הארגון, מהבית-הציבורי
+#
+# כמו org-gitleaks / sovereign-selftests: הבדיקות שחיו בריפואים פרטיים מתו
+# עם מכסת-ה-Actions (2026-09-20, BlobNotFound; המפעיל אישר שה-billing לא יתוקן).
+# הרגליים כאן הן הבדיקות-הזולות-והדטרמיניסטיות-שיש-היום בלבד (ריפואים בלי
+# בדיקה זולה מושמטים מהמטריצה — כנות: אין-כיסוי עד שתיכתב בדיקה):
+#   - saos-jummper: python3 -m unittest tests.test_signingcontract (17 assertions)
+#   - roshpina: bun install + bun run kernel-smoke (kernel sim — אפס-סודות)
+#   - saos-sovereign-platform / saos-control-center / saos-sovereign-foundry:
+#       bun install + bunx tsc --noEmit (שער-strict-clean)
+#   - saos-dex: bun install + bun run typecheck
+# קונבנציות שנשמרות: checkout דרך ZIP_PAT (התבנית המוכחת), setup-bun
+# oven-sh/setup-bun@v2 (התבנית מ-wallet-verify), bun install --frozen-lockfile
+# כשיש bun.lock, prisma generate מותנה כשיש schema (התבנית מ-wallet-verify).
+# כנות: רגל-אחת אדומה לא מכסה על השנייה (fail-fast: false).
+
+name: org-selftests
+
+on:
+  schedule:
+    - cron: '26 3 * * *'  # יומי 03:26 UTC — בקיזוז מ-sovereign-selftests (06:17)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: org-selftests
+  cancel-in-progress: false
+
+jobs:
+  selftest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - repo: saos-jummper
+            task: python-signingcontract
+          - repo: roshpina
+            task: bun-kernel-smoke
+          - repo: saos-sovereign-platform
+            task: bun-tsc
+          - repo: saos-control-center
+            task: bun-tsc
+          - repo: saos-sovereign-foundry
+            task: bun-tsc
+          - repo: saos-dex
+            task: bun-typecheck
+    steps:
+      - name: Checkout ${{ matrix.repo }}
+        uses: actions/checkout@v4
+        with:
+          repository: roshpinacare-sys/${{ matrix.repo }}
+          ref: main
+          token: ${{ secrets.ZIP_PAT }}
+          fetch-depth: 1
+
+      - name: Python 3.11
+        if: matrix.task == 'python-signingcontract'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Bun
+        if: startsWith(matrix.task, 'bun-')
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Run ${{ matrix.task }} on ${{ matrix.repo }}
+        run: |
+          set -euo pipefail
+          case "${{ matrix.task }}" in
+            python-signingcontract)
+              export PYTHONPATH="$PWD/src${PYTHONPATH:+:$PYTHONPATH}"
+              python3 -m unittest tests.test_signingcontract -v
+              ;;
+            bun-kernel-smoke)
+              if [ -f prisma/schema.prisma ]; then bunx prisma generate; fi
+              if [ -f bun.lock ]; then bun install --frozen-lockfile; else bun install; fi
+              bun run kernel-smoke
+              ;;
+            bun-tsc)
+              if [ -f prisma/schema.prisma ]; then bunx prisma generate; fi
+              if [ -f bun.lock ]; then bun install --frozen-lockfile; else bun install; fi
+              bunx tsc --noEmit
+              ;;
+            bun-typecheck)
+              if [ -f prisma/schema.prisma ]; then bunx prisma generate; fi
+              if [ -f bun.lock ]; then bun install --frozen-lockfile; else bun install; fi
+              bun run typecheck
+              ;;
+          esac
