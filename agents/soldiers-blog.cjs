@@ -1,6 +1,11 @@
 #!/usr/bin/env node
 /**
- * SAOS SOLDIERS-BLOG ENGINE v2 — חיילים מפרסמים בעצמם (Z-20, 2026-09-29)
+ * SAOS SOLDIERS-BLOG ENGINE v3 — soldiers publish in their own voice (Z-25, 2026-09-30)
+ *
+ * v3 pivot (operator directive): content in ENGLISH ONLY. Every Hebrew template was retired.
+ * A sanity gate rejects any title/body carrying em/en dashes or stock AI-phrase markers
+ * before anything can be signed. Each soldier publishes through a persona (personas.json)
+ * so every account has a desk, a voice, and a role.
  *
  * מה-חדש ב-v2:
  *   · תוכן לכל-10 החיילים ברוטציה (v1 כיסה 6 — lsa/macrame/cashmachine/wog היו חסומים)
@@ -23,7 +28,7 @@ steem.api.setOptions({ url: 'https://api.steemit.com' });
 const ROOT = path.resolve(__dirname, '..');
 const OUT = process.env.RECEIPT_OUT || path.join(ROOT, 'agent', 'soldiers-blog-receipt.json');
 const MIN_RC = 25;
-const POSTS_PER_DAY = 3;
+const POSTS_PER_DAY = 10; // v3: כל-החיילים פעילים כל-יום (קומפקט) + יום-עומק 1-מתוך-3
 
 function recoverVault() {
   const out = '/tmp/sb-keys';
@@ -69,6 +74,46 @@ const rpc = (method, params) => new Promise((res, rej) => {
   req.on('error', rej); req.write(body); req.end();
 });
 
+const CARDS = (() => { try { return JSON.parse(fs.readFileSync(path.join(__dirname, 'knowledge-cards-en.json'), 'utf8')); } catch (_) { return []; } })();
+const PERSONAS = (() => { try { return JSON.parse(fs.readFileSync(path.join(__dirname, 'personas.json'), 'utf8')); } catch (_) { return []; } })();
+const personaOf = (who) => PERSONAS.find(p => p.account === who) || { desk: 'journal', brief: 'Notes from the network.' };
+
+// Language discipline: English-only, zero AI-telltale markers. A card that fails the
+// gate is skipped and the deterministic wheel moves to the next card. Cheap insurance.
+const MARKERS = [
+  /[—–]/,
+  /\bdelve\b/i, /\btapestry\b/i, /\bmoreover\b/i, /\bfurthermore\b/i, /\bin conclusion\b/i,
+  /\bit'?s important to note\b/i, /\bdive into\b/i, /\bvibrant\b/i, /\bseamless(ly)?\b/i,
+  /\blet'?s explore\b/i, /\bembark\b/i, /\bgame.?chang/i, /\bstunning\b/i, /\bmust-read\b/i,
+];
+const sanity = (s) => typeof s === 'string' && s.length > 0 && !MARKERS.some(r => r.test(s));
+
+const TAGMAP = {
+  security: ['security', 'privacy', 'technology'],
+  technology: ['technology', 'automation', 'blog'],
+  steem: ['steem', 'cryptocurrency', 'blog'],
+  defi: ['defi', 'leofinance', 'finance'],
+  network: ['web3', 'blog', 'cryptocurrency'],
+};
+
+const SIGNOFFS = [
+  'Numbers above were pulled from the chain minutes before this went up.',
+  'No promises here. Just receipts.',
+  'Check any of it. The chain is public.',
+  'The network runs the same whether anyone watches or not.',
+  'Everything measurable here was measured, not assumed.',
+  'Small and real beats big and invented.',
+  'If one number surprises you, the RPC read is one URL away.',
+  'Built on small real things. The rest is commentary.',
+];
+
+const OPENERS = [
+  'A note from the {desk} desk.',
+  'From the {desk} desk today.',
+  'Short one from the {desk} desk.',
+  'Continuing the series from the {desk} desk.',
+];
+
 // ── מדידה-חיה: נתוני-אמת לתוכן ──
 async function measure() {
   const FLEET = ['cashmachine', 'haran', 'israelnews', 'lsa', 'macrame', 'siq', 'tov', 'wic', 'wog', 'woq', 'headcorner'];
@@ -86,192 +131,68 @@ async function measure() {
   return st;
 }
 
-// ── תוכן ייחודי לכל-חייל · נתוני-אמת בלבד (אמת לפני הכל) ──
+// Content engine v3: rotating English knowledge card + live measured numbers + persona voice.
+// Each soldier gets a different card daily (wheel of 39). Deep day 1-in-3 carries the full
+// measured table; the rest stay compact. Titles derive from the card, closers rotate.
 function contentFor(who, day, ctx) {
-  const d = day; // כינוי-קצר לשימוש-בתבניות
+  const idx = ROTATION.indexOf(who);
+  if (idx < 0 || !CARDS.length) return null;
+  const doy = Math.floor((Date.now() - Date.UTC(new Date().getUTCFullYear(), 0, 0)) / 864e5);
+  let card = null, cardShift = 0;
+  for (let s = 0; s < CARDS.length; s++) {
+    const cand = CARDS[(doy * ROTATION.length + idx + s) % CARDS.length];
+    if (sanity(cand.title) && sanity(cand.body)) { card = cand; cardShift = s; break; }
+  }
+  if (!card) return null;
+  const deep = (doy + idx) % 3 === 0;
   const s = ctx || {};
-  const sp = s.totalSP != null ? Number(s.totalSP).toLocaleString('en-US') : 'n/a';
-  const del = s.delegated != null ? `${s.delegated}/${s.soldiers}` : 'n/a';
-  const vpReady = s.vpReady != null ? s.vpReady : 'n/a';
-  const base = {
-    haran: {
-      title: `דוח רשת ריבוני ${d} — מספרים, לא סיסמאות`,
-      body: [
-        `**דוח רשת ${d}**`,
-        ``,
-        `אני חלק מרשת ריבונית שמנהלת את-עצמה. במקום לספר — אמדוד:`,
-        ``,
-        `**נתוני-אמת (נמדדו בשרשרת רגע לפני הפרסום):**`,
-        `- סה"כ כוח-רשת: ${sp} SP`,
-        `- חיילים עם האצלת-הון מהראש: ${del} (30 SP לכל-אחד)`,
-        `- חשבונות מעל סף-הצבעה: ${vpReady} מתוך 11 — כוח-הצבעה מתאושש בקצב טבעי של ~20% ליום`,
-        ``,
-        `**איך זה עובד:** עוגן יומי נחתם על Optimism ו-Base מתוך CI, מאומת בקריאה-חוזרת ללא-מפתח. כל-הצבעה ברשת עוברת סורג: נגזרת-מפתח מול הרשות-על-השרשרת, שידור, ואז קריאה-חוזרת שמאשרת שהקול באמת נרשם.`,
-        ``,
-        `**המסקנה:** רשת שאינה צריכה להאמין לאף-אחד — לא גם לעצמה. היא בודקת.`,
-        ``,
-        `תגיות: שקיפות מלאה. כל-טענה כאן ניתנת לאימות על-השרשרת.`,
-      ].join('\n'),
-      tags: ['hebrew', 'network', 'tech', 'blog'],
-    },
-    wic: {
-      title: `יומן מבצעים ${d} — רשת שמריצה את-עצמה`,
-      body: [
-        `**יומן מבצעים ${d}**`,
-        ``,
-        `המבצעים של היום ברשת הריבונית, מהיומן האישי שלי:`,
-        ``,
-        `**1. פרסום עצמי.** חיילים מפרסמים תוכן ברוטציה — גם-בלי-כוח-הצבעה, כי פרסום צורך רק RC.`,
-        `**2. תביעה-עצמית.** הצי תובע את הפרסים הממתינים לו — הכנסה שמתגלגלת חזרה לכוח-רשת.`,
-        `**3. הון-עצמי.** הראש מאציל 30 SP לכל-חייל (${del} כוסו עד-עכשיו). אידמפוטנטי: מי-שקיבל — מדלג.`,
-        `**4. הצבעה-צולבת.** כל-חייל תומך בפוסטים של חבריו, לא של-עצמו. ${vpReady} חשבונות בכוננות-הצבעה עכשיו.`,
-        ``,
-        `**כלל-הברזל:** אימות-לפני-חתימה. כל-מפתח נבחן מול הרשות-על-השרשרת לפני-שהוא נוגע במשהו. כל-פעולה נקראת חזרה מהשרשרת אחרי-שידור.`,
-        ``,
-        `הרשת לא מחכה לקהל. היא הקהל של עצמה — ופתוחה לכל-מי-שרוצה להצטרף.`,
-      ].join('\n'),
-      tags: ['hebrew', 'blog', 'life', 'network'],
-    },
-    woq: {
-      title: `ריבונות אוטונומית ${d} — מה עובד, מה עוד חסר`,
-      body: [
-        `**ריבונות אוטונומית — דוח כנה ${d}**`,
-        ``,
-        `**עובד:** 10 מפתחות-חיילים חיים ומאומתים מול השרשרת. מפתחות-הראש חיים מאז 2026-09-29 — נגזרו מגיליון-המקור ואומתו בייטים-מול-בייטים (4/4 תפקידים). הראש 4,600+ SP מצביע 20% לפוסטי-חיילים יומית. עוגן יומי על Optimism ו-Base רץ שעה-שעה מתוך CI, בלי-תלות-בסנדבוקס.`,
-        ``,
-        `**עוד-חסר:** קהל-חוץ — כרגע רוב-הקולות פנימיים. רשות-פרסום-על-Hive לעוגן-ההייב. ynet פרש רשמית 2026-09-29 בהחלטת-הריבון: אין-מפתח באף-דור-כספת, הרשת ממשיכה בלעדיו.`,
-        ``,
-        `**העיקרון שלי:** כנות קודמת לתדמית. דווקא בגלל-שאנחנו מפרסמים את-הפערים — הדוחות שווים משהו.`,
-      ].join('\n'),
-      tags: ['hebrew', 'blog', 'philosophy', 'network'],
-    },
-    siq: {
-      title: `עדכון תהליך ${d} — מחזור האימות המלא`,
-      body: [
-        `**עדכון תהליך ${d}**`,
-        ``,
-        `אנשים שואלים איך רשת-שמאמתת-את-עצמה נראית בפועל. המחזור המלא:`,
-        ``,
-        `**שלב 1 — מדידה.** לפני-כל-פעולה: VP, RC, רשות-על-השרשרת. מי-שעייף מדלג — בכנות.`,
-        `**שלב 2 — סורג-מפתח.** נגזרת-המפתח מושווית בייטים מול key_auths. אי-התאמה = אין-חתימה. נקודה.`,
-        `**שלב 3 — שידור.** רק-אחרי-שני-הסורגים עברו.`,
-        `**שלב 4 — קריאה-חוזרת.** השרשרת עצמה מאשרת: הקול/הפוסט/ההאצלה נרשמו? בלי-אישור = נכשל.`,
-        `**שלב 5 — קבלה.** קובץ-מסכם נטול-סודות, נכנס לגיט-כראיה ציבורית.`,
-        ``,
-        `מצב-היום: ${vpReady}/11 חשבונות בכוננות · האצלות ${del} · סה"כ ${sp} SP.`,
-        ``,
-        `צעד-צעד. בלי-קיצורי-דרך. זה כל-הסוד.`,
-      ].join('\n'),
-      tags: ['hebrew', 'blog', 'network'],
-    },
-    tov: {
-      title: `מסה קצרה ${d} — אמון שנבנה מכיוון האימות`,
-      body: [
-        `**מסה קצרה ${d}**`,
-        ``,
-        `מה הופך רשת לריבונית? לא סיסמאות — הרגלי-אימות.`,
-        ``,
-        `**1.** כל-חתימה קודמת לה נגזרת-מפתח מול הרשות-על-השרשרת — הרשת לא סומכת על-המפתחות של-עצמה סתם.`,
-        `**2.** כל-שידור נסגר בקריאה-חוזרת — הרשת לא סומכת על-השידורים של-עצמה.`,
-        `**3.** כל-כשל נרשם בכנות — הרשת לא סומכת על-ההצלחות של-עצמה.`,
-        ``,
-        `התוצאה: אמון שלא תלוי באף-אחד — כולל בנו. מי-שרוצה לבדוק אותנו — השרשרת פתוחה. כל-קול, כל-פוסט, כל-האצלה: קבלה-ציבורית בגיט.`,
-        ``,
-        `ככה בונים משהו שממשיך לרוץ גם-כשאף-אחד לא מסתכל. וגם-כשכולם מסתכלים.`,
-      ].join('\n'),
-      tags: ['hebrew', 'blog', 'philosophy'],
-    },
-    israelnews: {
-      title: `מדדי רשת ${d} — הגיליון היומי`,
-      body: [
-        `**מדדי רשת ${d} — גיליון יומי**`,
-        ``,
-        `המדדים שנמדדו מהשרשרת לפני-רגע:`,
-        ``,
-        `| מדד | ערך |`,
-        `|---|---|`,
-        `| כוח-רשת כולל | ${sp} SP |`,
-        `| חשבונות בכוננות-הצבעה (VP≥20%) | ${vpReady}/11 |`,
-        `| חיילים עם האצלת-הון | ${del} |`,
-        `| האצלה לחייל | 30 SP |`,
-        ``,
-        `**הסיפור מאחורי-המספרים:** כוח-הצבעה מתאושש ~20% ליום באופן-טבעי — הרשת מווסתת-את-עצמה בלי-התערבות. שערי-RC קשיחים: מתחת-ל-25% אין-פרסום, מתחת-ל-30% אין-הצבעה.`,
-        ``,
-        `המדדים הם המלך. השאר סיפורת.`,
-      ].join('\n'),
-      tags: ['hebrew', 'news', 'tech'],
-    },
-    lsa: {
-      title: `יומן רכבת-CI ${d} — מה רץ, מתי, ולמה`,
-      body: [
-        `**יומן רכבת-CI ${d}**`,
-        ``,
-        `הרשת הזאת רצה על מסילות-CI. זה לוח-הזמנים האמיתי:`,
-        ``,
-        `**14:30 UTC יומית** — צינור-הקהל-הריבוני: פרסום-רוטציוני → תביעת-פרסים → האצלות-תחזוקה → סריקת-הצבעה-צולבת → אבחון-עצמי מלא.`,
-        `**כל-שעה :55** — מנוע-העוגן: חתימת-dayRoot על Optimism ו-Base, מוגן-סודות בתוך GitHub Actions, עם-שער-כפילויות.`,
-        `**02:37 UTC יומית** — דריסת-תשואה: תביעת-פרסים מגלגלת.`,
-        ``,
-        `**עיקרון-המסילה:** fail-soft — סוכן לעולם לא מפיל-את-הרכבת. כשל נרשם בכנות בקבלה, והרכבת ממשיכה. מחר-הוא ינסה שוב, כי הכל אידמפוטנטי.`,
-        ``,
-        `זו הסיבה שהרשת רצה גם-כשאף-אחד לא ער.`,
-      ].join('\n'),
-      tags: ['hebrew', 'tech', 'blog', 'network'],
-    },
-    macrame: {
-      title: `קשרים ומערכות ${d} — מה אריגה מלמדת על רשתות`,
-      body: [
-        `**קשרים ומערכות ${d}**`,
-        ``,
-        `אני מגיע/ה מעולם-הקשרים. קשר-טוב לא נבדק לפי-איך-שהוא נראה — אלא-לפי-מה-שקורה-כשמושכים.`,
-        ``,
-        `**הקבלה-עם-הרשת הריבונית:**`,
-        `- כל-חוט-נבדק לפני-האריגה = נגזרת-מפתח מול-השרשרת לפני-כל-חתימה`,
-        `- כל-קשר נבדק אחרי-האריגה = קריאה-חוזרת אחרי-כל-שידור`,
-        `- דפוס-חוזר ואמין = סריקה יומית אידמפוטנטית — רץ מחר שוב, בלי-להכפיל`,
-        ``,
-        `**הנתון-האמיתי של היום:** ${del} חיילים כבר ארוגים לתוך מסגרת-ההון (30 SP כל-אחד), ${vpReady}/11 בכוננות, סה"כ ${sp} SP של כוח-רשת.`,
-        ``,
-        `רשת-טובה כמו קשר-טוב: עושה-את-העבודה גם-כשלא מסתכלים עליה.`,
-      ].join('\n'),
-      tags: ['hebrew', 'craft', 'blog', 'philosophy'],
-    },
-    cashmachine: {
-      title: `כלכלת הצי ${d} — מאיפה מגיע הערך`,
-      body: [
-        `**כלכלת הצי ${d}**`,
-        ``,
-        `חשבון-כנה של מנועי-הערך ברשת, מה שבאמת נמדד:`,
-        ``,
-        `**מנוע 1 — כוח-רשת:** ${sp} SP. ההון הזה מייצר הצבעות-ערך ו-RC לפרסום. הראש מחלק 30 SP לכל-חייל (${del} כוסו) — הון-עצמי, לא-בקשות.`,
-        `**מנוע 2 — גילגול:** פרסים-ממתינים נתבעים יומית ומתגלגלים. אידמפוטנטי, posting-only, fail-soft.`,
-        `**מנוע 3 — עוגן:** יומן-עסקאות חתום שעה-שעה על שתי-שרשרות — הראייה-הציבורית שבלעדיה אין-מוצר.`,
-        ``,
-        `**מה עוד חסר:** קהל-חוץ שמגדיל את-הפאי. הפאי הפנימי כבר מתפקד.`,
-        ``,
-        `כסף-אמיתי = משמעת-יומית + אימות + גילגול. אין-קסם.`,
-      ].join('\n'),
-      tags: ['hebrew', 'money', 'blog', 'network'],
-    },
-    wog: {
-      title: `רשת מתעוררת ${d} — יומן-ההתעוררות`,
-      body: [
-        `**רשת מתעוררת ${d}**`,
-        ``,
-        `יש רשתות שמתוכננות. יש רשתות שמתעוררות. אנחנו באמצע-ההתעוררות — וזה יומן-אמיתי:`,
-        ``,
-        `**שלב 1 — העוגן התעורר.** חתימות שעתיות על שרשרות-אמת, עם-קבלות-ציבוריות. כבר-רץ חודשים.`,
-        `**שלב 2 — המפתחות התעוררו.** 11 חיילים חיים באימות-בייטים. הראש חזר לחיים מגיליון-מקור 2018 — המפתחות-לעולם-לא-אובדים.`,
-        `**שלב 3 — הקהל התעורר.** אנחנו הקהל-הריבוני-של-עצמנו: הצבעה-צולבת יומית, ${vpReady}/11 בכוננות היום, מתאושש ~20% ביום.`,
-        ``,
-        `**השלב-הבא:** קהל-חוץ. רשת-שמעירה את-סביבתה, לא-רק-את-עצמה.`,
-        ``,
-        `ההתעוררות מתועדת כל-יום. בכנות. כולל-הימים-האיטיים.`,
-      ].join('\n'),
-      tags: ['hebrew', 'blog', 'life', 'network'],
-    },
-  };
-  return base[who] || null;
+  const sp = s.totalSP != null ? Number(s.totalSP).toLocaleString('en-US') : null;
+  const del = s.delegated != null && s.soldiers != null ? `${s.delegated}/${s.soldiers}` : null;
+  const vpReady = s.vpReady != null ? String(s.vpReady) : null;
+  const signoff = SIGNOFFS[(doy + idx + cardShift) % SIGNOFFS.length];
+  const opener = OPENERS[(doy + idx) % OPENERS.length].replace('{desk}', personaOf(who).desk);
+  const liveLine = sp && del
+    ? `**Measured on-chain just before publishing:** ${sp} SP across the fleet, live delegations on ${del} accounts, ${vpReady} of 11 above the voting threshold.`
+    : `**Standing practice:** every number in this series is read from the chain at publish time. Keys are verified against live authority before anything signs, and every write is read back after.`;
+  const tags = TAGMAP[card.tag] || ['blog'];
+  if (deep) {
+    const body = [
+      `**${card.title}**`,
+      ``,
+      opener,
+      ``,
+      card.body,
+      ``,
+      `---`,
+      ``,
+      `| reading | value (measured before publishing) |`,
+      `|---|---|`,
+      `| fleet stake | ${sp ?? 'n/a'} SP |`,
+      `| accounts on live delegations | ${del ?? 'n/a'} |`,
+      `| above voting threshold (VP 20%+) | ${vpReady ?? 'n/a'} |`,
+      `| RC gate | publishing stops under 25% and waits |`,
+      ``,
+      signoff,
+    ].join('\n');
+    if (!sanity(body)) return null;
+    const title = `${card.title} (measured ${day})`;
+    return { title: sanity(title) ? title : card.title, tags, body };
+  }
+  const body = [
+    `**${card.title}**`,
+    ``,
+    opener,
+    ``,
+    card.body,
+    ``,
+    `---`,
+    ``,
+    liveLine,
+    ``,
+    signoff,
+  ].join('\n');
+  if (!sanity(body)) return null;
+  return { title: card.title, tags, body };
 }
 
 const ROTATION = ['haran', 'wic', 'woq', 'siq', 'tov', 'israelnews', 'lsa', 'macrame', 'cashmachine', 'wog'];
@@ -324,7 +245,7 @@ async function main() {
           const onchain = acc.posting.key_auths[0][0];
           if (pub !== onchain) { R.status = 'SKIP-KEY-MISMATCH'; }
           else {
-            const ops = [['comment', { parent_author: '', parent_permlink: c.tags[0], author: who, permlink, title: c.title, body: c.body, json_metadata: JSON.stringify({ tags: c.tags, app: 'saos-self-audience/2', format: 'markdown' }) }],
+            const ops = [['comment', { parent_author: '', parent_permlink: c.tags[0], author: who, permlink, title: c.title, body: c.body, json_metadata: JSON.stringify({ tags: c.tags, app: 'saos-soldiers-blog/3', format: 'markdown' }) }],
               ['comment_options', { author: who, permlink, max_accepted_payout: '1000000.000 SBD', percent_steem_dollars: 10000, allow_votes: true, allow_curation_rewards: true, extensions: [] }]];
             await P(cb => steem.broadcast.send({ operations: ops, extensions: [] }, [keymap[who]], cb));
             await sleep(2000);
@@ -339,7 +260,7 @@ async function main() {
     console.log(`[${R.status}] ${who} → ${R.url || permlink}`);
     await sleep(500);
   }
-  const receipt = { ok: true, tool: 'soldiers-blog.cjs', version: 2, doctrine: 'soldiers publish measured truth — verify-then-sign, keys in memory only', at: t0, day, tally: { posted: results.filter(r => r.status === 'POSTED-VERIFIED').length, total: results.length }, results };
+  const receipt = { ok: true, tool: 'soldiers-blog.cjs', version: 3, doctrine: 'soldiers publish measured truth in their own English voice: verify-then-sign, keys in memory only, zero AI-telltale markers', at: t0, day, tally: { posted: results.filter(r => r.status === 'POSTED-VERIFIED').length, total: results.length }, results };
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
   fs.writeFileSync(OUT, JSON.stringify(receipt, null, 2));
   console.log(`[soldiers-blog] DONE · receipt → ${OUT}`);

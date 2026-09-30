@@ -82,6 +82,15 @@ jobs:
           RECEIPT_OUT: agents/receipts/self-audience-receipt.json
         run: node agents/self-audience.cjs
 
+      - name: fleet social (substantive comments + follow-graph + reblog — mutual support)
+        env:
+          SA_FLEET_KEYS: ${{ secrets.SA_FLEET_KEYS }}
+          RECEIPT_OUT: agents/receipts/fleet-social-receipt.json
+        run: node agents/fleet-social.cjs
+
+      - name: learning loop (external engagement ledger — keyless)
+        run: node agents/measure-learn.cjs
+
       - name: fleet doctor (keyless self-diagnosis)
         run: node agents/fleet-doctor.cjs
 
@@ -90,7 +99,7 @@ jobs:
           git config user.name "saos-self-audience"
           git config user.email "self-audience@saos.local"
           mkdir -p agents/receipts
-          for p in agents/receipts/*.json agent/state-report.json agents/state-report.json; do [ -e "$p" ] && git add "$p" || true; done
+          for p in agents/receipts/*.json agent/state-report.json agents/state-report.json agents/learning-ledger.json agents/learning-summary.json; do [ -e "$p" ] && git add "$p" || true; done
           for p in STATE-REPORT-*.md; do [ -e "$p" ] && git add "$p" || true; done
           if git diff --cached --quiet; then
             echo "no receipt changes"
