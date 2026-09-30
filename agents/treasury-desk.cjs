@@ -263,7 +263,7 @@ async function headCurate(headWif, ownNames) {
       log.push({ op: ok ? 'VOTED-VERIFIED' : 'VOTED-READBACK-PENDING', author: c.author, permlink: c.permlink.slice(0, 40), tag: c.tag, ageMin: c.ageMin, rep: reps[c.author] });
       voted++;
     } catch (e) { log.push({ op: 'ERR', author: c.author, msg: String(e.message || e).slice(0, 80) }); }
-    await sleep(600);
+    await sleep(12500); // STEEM_MIN_VOTE_INTERVAL is 10s — respect the lockout with margin
   }
   log.push({ op: 'SUMMARY', voted, candidates: candidates.length, vpBefore: vp / 100 });
   return log;
