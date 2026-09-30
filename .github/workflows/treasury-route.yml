@@ -15,6 +15,10 @@ on:
     paths:
       - 'agents/treasury-desk.cjs'
       - 'agents/route-desk.cjs'
+      - 'agents/capability-matrix.cjs'
+      - 'agents/dex-book.cjs'
+      - 'agents/bridge-desk.cjs'
+      - 'agents/blurt-curate.cjs'
       - '.github/workflows/treasury-route.yml'
   schedule:
     - cron: '20 16 * * *'   # 16:20 UTC — אחרי tri-bridge (15:05), סוגר-את-מחזור-הערך היומי
@@ -70,12 +74,33 @@ jobs:
           ROUTES_JSON: agents/routes.json
         run: node agents/route-desk.cjs
 
+      - name: capability matrix (usage verification book, read-only)
+        env:
+          SA_FLEET_KEYS: ${{ secrets.SA_FLEET_KEYS }}
+          SA_HEAD_POSTING: ${{ secrets.SA_HEAD_POSTING }}
+          STEEM_REPO_DIR: steem-repo
+        run: node agents/capability-matrix.cjs
+
+      - name: dex depth book (steem orderbook + HE depth, read-only)
+        run: node agents/dex-book.cjs
+
+      - name: bridge desk (no-account exchanger sweep, read-only)
+        run: node agents/bridge-desk.cjs
+
+      - name: blurt curation (idle 8,727 BP activation, VP-gated, verify-then-sign)
+        env:
+          SA_FLEET_KEYS: ${{ secrets.SA_FLEET_KEYS }}
+          SA_HEAD_POSTING: ${{ secrets.SA_HEAD_POSTING }}
+          STEEM_REPO_DIR: steem-repo
+          RECEIPT_OUT: agents/receipts/blurt-curate-receipt.json
+        run: node agents/blurt-curate.cjs
+
       - name: commit ledger + routes + receipts (secretless)
         run: |
           git config user.name "saos-treasury"
           git config user.email "treasury@saos.local"
           mkdir -p agents/receipts
-          for p in agents/money-ledger.json agents/routes.json agents/routes.md agents/receipts/treasury-desk-receipt.json; do
+          for p in agents/money-ledger.json agents/routes.json agents/routes.md agents/receipts/treasury-desk-receipt.json agents/capability-matrix.json agents/capability-matrix.md agents/dex-book.json agents/dex-book.md agents/bridge-book.json agents/bridge-book.md agents/receipts/blurt-curate-receipt.json; do
             [ -e "$p" ] && git add "$p" || true
           done
           if git diff --cached --quiet; then
