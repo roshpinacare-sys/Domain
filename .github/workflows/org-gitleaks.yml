@@ -64,6 +64,9 @@ jobs:
         env:
           REPO: ${{ matrix.repo }}
         run: |
+          set +e          # GitHub injects `bash -e` into run steps — neutralize it:
+                          # we capture the gitleaks RC ourselves so a findings-failure
+                          # still writes its leg status (counts) for the receipts job
           set -uo pipefail
           curl -sSL -o /tmp/gl.tgz https://github.com/gitleaks/gitleaks/releases/download/v8.24.3/gitleaks_8.24.3_linux_x64.tar.gz
           tar -xzf /tmp/gl.tgz -C /tmp gitleaks
