@@ -1,4 +1,4 @@
-# ORG-GITLEAKS (Task 13-b) — סריקת-הסודות של כל-הארגון, מהבית-הציבורי
+# ORG-GITLEAKS (Task 13-b, upgraded 13-d2) — סריקת-הסודות של כל-הארגון, מהבית-הציבורי
 #
 # האבחנה: כל-ה-Actions של הריפואים הפרטיים אדומים מאז 2026-09-20 (מכסת-הדקות
 # אזלה, תיקון-ה-billing בבעלות-המפעיל — והמפעיל אישר שה-billing לא יתוקן).
@@ -7,9 +7,18 @@
 # Domain (דקות-Actions חינמיות ובלי-הגבלה לריפואים ציבוריים):
 #   - checkout דרך ZIP_PAT (התבנית המוכחת — foundry-mesh-tests / sovereign-selftests)
 #   - fetch-depth: 0 (היסטוריה מלאה — בדיוק כמו הסריקה הפרטית לכל-ריפו)
-#   - gitleaks v8.24.3 pinned direct binary: curl from gitleaks releases,
-#     `detect --source . --redact --no-banner` (התבנית מ-.github/workflows/gitleaks.yml
-#     של כל ריפו — task 11-f / 11 סופי)
+#   - gitleaks v8.24.3 pinned direct binary: curl from gitleaks releases
+#
+# שדרוג 13-d2 — פסק-דין כפול (history + HEAD):
+#   - רגל א' (history): `detect --source .` על ההיסטוריה המלאה — ה-.gitleaksignore
+#     של הריפו (triage 13-d2: false-positive / historical, owner-blocked rotation)
+#     מוחל אוטומטית; מה שנשאר אחריו = ממצא היסטורי לא-מטופל (untriaged).
+#   - רגל ב' (HEAD): `detect --no-git --source .` על עץ-ה-checkout בלבד —
+#     חומר חי ב-HEAD היום. גם כאן ה-.gitleaksignore מוחל (טביעות-אצבע
+#     בפורמט file:rule:line עבור ממצאי-ה-false-positive שקיימים ב-HEAD כרגיל-מעצב).
+#   - סטטוס-רגל: {"findingsHistory", "findingsHead", "conclusion"} —
+#     conclusion = failure אם ורק אם findingsHead>0 או findingsHistory>0
+#     (היסטוריה לא-מטופלת אחרי ה-ignore). ירוק-כן רק כש-HEAD נקי וההיסטוריה מטופלת.
 #   - ריפו עם ממצאים = הרגל שלו נכשלת (אדום-כן) בלי להפיל את שאר הרגליים
 #     (fail-fast: false — המטריצה עושה זאת מעצמה)
 # קבלות: אחרי המטריצה, receipts (if: always()) ממזג את סטטוסי-הרגליים לתוך
@@ -48,7 +57,7 @@ jobs:
           REPO: ${{ matrix.repo }}
         run: |
           mkdir -p /tmp/gl-status
-          python3 -c 'import json,sys; json.dump({"repo":sys.argv[1],"findings":None,"conclusion":"pending"}, open(f"/tmp/gl-status/{sys.argv[1]}.json","w"))' "$REPO"
+          python3 -c 'import json,sys; json.dump({"repo":sys.argv[1],"findingsHistory":None,"findingsHead":None,"conclusion":"pending"}, open(f"/tmp/gl-status/{sys.argv[1]}.json","w"))' "$REPO"
 
       - name: Checkout ${{ matrix.repo }} (full history)
         uses: actions/checkout@v4
@@ -59,39 +68,53 @@ jobs:
           fetch-depth: 0
           path: scan
 
-      - name: gitleaks (direct pinned binary v8.24.3)
+      - name: gitleaks dual verdict (direct pinned binary v8.24.3)
         id: scan
         env:
           REPO: ${{ matrix.repo }}
         run: |
           set +e          # GitHub injects `bash -e` into run steps — neutralize it:
-                          # we capture the gitleaks RC ourselves so a findings-failure
+                          # we capture the gitleaks RCs ourselves so a findings-failure
                           # still writes its leg status (counts) for the receipts job
           set -uo pipefail
           curl -sSL -o /tmp/gl.tgz https://github.com/gitleaks/gitleaks/releases/download/v8.24.3/gitleaks_8.24.3_linux_x64.tar.gz
           tar -xzf /tmp/gl.tgz -C /tmp gitleaks
-          ( cd scan && /tmp/gitleaks detect --source . --report-format json --report-path /tmp/gl-report.json --redact --no-banner --log-level error )
-          RC=$?
-          COUNT=$(python3 -c "import json;print(len(json.load(open('/tmp/gl-report.json'))))" 2>/dev/null || echo "0")
-          echo "gitleaks findings: ${COUNT}"
-          if [ "${COUNT}" != "0" ]; then
+
+          ( cd scan && /tmp/gitleaks detect --source . --report-format json --report-path /tmp/gl-history.json --redact --no-banner --log-level error )
+          RC_HISTORY=$?
+          ( cd scan && /tmp/gitleaks detect --no-git --source . --report-format json --report-path /tmp/gl-head.json --redact --no-banner --log-level error )
+          RC_HEAD=$?
+
+          count_of() { python3 -c "import json,sys;print(len(json.load(open(sys.argv[1]))))" "$1" 2>/dev/null || echo "-1"; }
+          COUNT_HISTORY=$(count_of /tmp/gl-history.json)
+          COUNT_HEAD=$(count_of /tmp/gl-head.json)
+          echo "gitleaks findings (history, post-.gitleaksignore): ${COUNT_HISTORY}"
+          echo "gitleaks findings (HEAD-only): ${COUNT_HEAD}"
+          if [ "${COUNT_HISTORY}" != "0" ] || [ "${COUNT_HEAD}" != "0" ]; then
             # shapes only (rule id + file path) — no secret material ever
             python3 - <<'SHAPEEOF'
           import json
-          rows = sorted({(f.get('RuleID'), f.get('File'), f.get('StartLine')) for f in json.load(open('/tmp/gl-report.json'))})
-          for rule, path, line in rows:
-              print(f'shape: rule={rule} file={path}:{line}')
+          for tag, path in (("history", "/tmp/gl-history.json"), ("head", "/tmp/gl-head.json")):
+              try:
+                  rows = sorted({(f.get('RuleID'), f.get('File'), f.get('StartLine')) for f in json.load(open(path))})
+              except Exception:
+                  continue
+              for rule, f, line in rows:
+                  print(f'shape[{tag}]: rule={rule} file={f}:{line}')
           SHAPEEOF
           fi
           CONCLUSION=success
-          if [ "$RC" -ne 0 ]; then CONCLUSION=failure; fi
-          python3 - "$REPO" "$COUNT" "$CONCLUSION" <<'PYEOF'
+          if [ "$RC_HISTORY" -ne 0 ] || [ "$RC_HEAD" -ne 0 ] || [ "${COUNT_HISTORY}" = "-1" ] || [ "${COUNT_HEAD}" = "-1" ]; then CONCLUSION=failure; fi
+          python3 - "$REPO" "$COUNT_HISTORY" "$COUNT_HEAD" "$CONCLUSION" <<'PYEOF'
           import json, sys
-          repo, count, conclusion = sys.argv[1], int(sys.argv[2]), sys.argv[3]
+          repo, hist, head, conclusion = sys.argv[1], int(sys.argv[2]), int(sys.argv[3]), sys.argv[4]
           with open(f"/tmp/gl-status/{repo}.json", "w") as fh:
-              json.dump({"repo": repo, "findings": count, "conclusion": conclusion}, fh)
+              json.dump({"repo": repo, "findingsHistory": hist, "findingsHead": head, "conclusion": conclusion}, fh)
           PYEOF
-          exit $RC
+          # כנות: קוד-היציאה של הרגלה = הראשון-מבין-השניים שנכשל — גם היסטוריה
+          # לא-מטופלת וגם HEAD מלוכלך מאדימים את הרגלה (מעבר ל-conclusion בסטטוס).
+          if [ "$RC_HISTORY" -ne 0 ]; then exit "$RC_HISTORY"; fi
+          exit "$RC_HEAD"
 
       - name: Upload leg status
         if: always()
@@ -139,15 +162,17 @@ jobs:
           repos, missing = {}, []
           for r in REPOS:
               d = found.get(r)
-              if d and d.get("conclusion") in ("success", "failure") and isinstance(d.get("findings"), int):
-                  repos[r] = {"findings": d["findings"], "conclusion": d["conclusion"]}
+              if d and d.get("conclusion") in ("success", "failure") \
+                 and isinstance(d.get("findingsHistory"), int) and isinstance(d.get("findingsHead"), int):
+                  repos[r] = {"findingsHistory": d["findingsHistory"], "findingsHead": d["findingsHead"], "conclusion": d["conclusion"]}
               else:
-                  repos[r] = {"findings": None, "conclusion": "missing"}
+                  repos[r] = {"findingsHistory": None, "findingsHead": None, "conclusion": "missing"}
                   missing.append(r)
 
           out = {
               "generatedAt": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
               "workflow": "org-gitleaks",
+              "verdict": "dual history+HEAD (13-d2); history counts are post-.gitleaksignore (triaged)",
               "repos": dict(sorted(repos.items())),
           }
           os.makedirs("receipts/gitleaks", exist_ok=True)
@@ -155,11 +180,12 @@ jobs:
               json.dump(out, fh, indent=2, ensure_ascii=False)
               fh.write("\n")
 
-          total = sum(r["findings"] or 0 for r in repos.values())
-          print(f"repos={len(REPOS)} missing={len(missing)} findings_total={total}")
+          hist_total = sum(r["findingsHistory"] or 0 for r in repos.values())
+          head_total = sum(r["findingsHead"] or 0 for r in repos.values())
+          print(f"repos={len(REPOS)} missing={len(missing)} history_total={hist_total} head_total={head_total}")
           for r, v in repos.items():
-              print(f"  {r}: findings={v['findings']} conclusion={v['conclusion']}")
-          open("/tmp/receipt-summary.txt", "w").write(f"{len(REPOS)} repos \u00b7 {total} findings")
+              print(f"  {r}: history={v['findingsHistory']} head={v['findingsHead']} conclusion={v['conclusion']}")
+          open("/tmp/receipt-summary.txt", "w").write(f"16 repos \u00b7 head={head_total} \u00b7 history={hist_total}")
           open("/tmp/receipt-missing.txt", "w").write(",".join(missing))
           PYEOF
           python3 /tmp/merge_receipts.py
