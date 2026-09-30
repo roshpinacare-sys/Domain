@@ -1,15 +1,17 @@
 name: foundry-mesh-tests
 
-# B-2 (R130) twin: the mesh contract test gate runs HERE (public repo,
+# B-2 twin: the mesh contract test gate runs HERE (public repo,
 # free Actions minutes) because the private platform repo's Actions quota
 # is exhausted (BlobNotFound signature — known since 2026-09-20).
-# Proves the audit-fix v5 regression law on
-# saos-sovereign-platform@fleet/r130:
+# fleet/r130 is merged into main (platform 42b5f35); suite = 78 test fns
+# (46 B-2 + 32 R132) incl. HARDEN v6 exchange law + SealGate/RelayBatch suites
+# on saos-sovereign-platform@main:
 #   - SAOSLedger: MINT_CAP fail-closed, attributed transfers, 2-step ownership
 #   - SAOSExchange: harvest debit-then-credit (no phantom supply),
-#     deposit attribution (wrap race closed)
+#     deposit attribution (wrap race closed) + HARDEN v6 law
 #   - SAOSBridge: monotonic, evidence-backed anchors
-# 46 tests. Red here = the economy's law is broken = BLOCKS the ladder.
+#   - SAOSSealGate + SAOSRelayBatch suites
+# Red here = the economy's law is broken = BLOCKS the ladder.
 
 on:
   push:
@@ -26,11 +28,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: Checkout platform repo (fleet/r130)
+      - name: Checkout platform repo (main)
         uses: actions/checkout@v4
         with:
           repository: roshpinacare-sys/saos-sovereign-platform
-          ref: fleet/r130
+          ref: main
           token: ${{ secrets.ZIP_PAT }}
           fetch-depth: 1
 
