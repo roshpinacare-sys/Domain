@@ -1,28 +1,28 @@
 {
  "ok": true,
  "format": "moment-watch-v1",
- "publishedAt": "2026-10-01T10:52:07.556Z",
+ "publishedAt": "2026-10-01T11:24:11.773Z",
  "engine": "Domain/agents/moment-watch · R62 sovereign moment",
  "role": "reads the live moment every 30 minutes (market regime, our parity line vs the live internal book, fuel runway, measured anomalies) and records a deterministic directional call that is only ever scored after its horizon has passed - training as measurement, never as promise",
  "market": {
-  "steemUsd": 0.063367,
-  "steem24h": -1.0501035381565589,
-  "sbdUsd": 0.631253,
-  "btcUsd": 83913,
-  "btc24h": 0.04152714798849447,
+  "steemUsd": 0.06303,
+  "steem24h": -2.996485029264543,
+  "sbdUsd": 0.633431,
+  "btcUsd": 83779,
+  "btc24h": 0.003222862329826285,
   "fearGreed": {
    "value": 74,
    "label": "Greed"
   }
  },
- "paritySbdPerSteem": 0.10038288926943716,
+ "paritySbdPerSteem": 0.09950570780400708,
  "liveBook": {
   "bestBid": 0.100002002002002,
   "bestAsk": 0.10428616122640526,
-  "bidsDepthSbd": 2918.84,
+  "bidsDepthSbd": 2913.15,
   "asksDepthSteem": 2162.31,
-  "levels": 14,
-  "bidSurplusBps": -38
+  "levels": 13,
+  "bidSurplusBps": 50
  },
  "regime": {
   "label": "RISK_ON",
@@ -40,11 +40,11 @@
  },
  "runway": {
   "active": true,
-  "weeklySp": 475.80514989084185,
+  "weeklySp": 475.8058387042621,
   "nextPayment": "2026-10-03T02:01:27",
-  "remainingSp": 1903.220599562128,
-  "weeklyUsd": 30.15,
-  "treasuryUsd": 263.91
+  "remainingSp": 1903.2233548158088,
+  "weeklyUsd": 29.99,
+  "treasuryUsd": 262.51
  },
  "grid": {
   "verdict": "ARMED-LIVE",
@@ -71,9 +71,9 @@
  },
  "call": "FLAT",
  "callStats": {
-  "resolved": 92,
+  "resolved": 91,
   "hits": 40,
-  "hitRatePct": 43,
+  "hitRatePct": 44,
   "horizonH": 6,
   "thresholdPct": 3
  },
@@ -81,8 +81,8 @@
  "insights": [
   {
    "kind": "parity-edge",
-   "tone": "good",
-   "text": "עומק-קנייה חי 38bps מתחת לקו-הזהות (bid 0.1000 מול parity 0.1004) — עודף מדוד לגריד."
+   "tone": "warn",
+   "text": "הספר החי 50bps מעל קו-הזהות — אין עודף-קנייה כרגע; הגריד ממתין."
   },
   {
    "kind": "sbd-inventory",
@@ -92,7 +92,7 @@
   {
    "kind": "fuel",
    "tone": "info",
-   "text": "דלק נוחת 2026-10-03 — ≈476 SP ≈ 30.2$ בסימון חי."
+   "text": "דלק נוחת 2026-10-03 — ≈476 SP ≈ 30.0$ בסימון חי."
   },
   {
    "kind": "deposits",
