@@ -1,6 +1,16 @@
-'use strict';
+#!/usr/bin/env node
 /**
- * fleet-social.cjs — MUTUAL SUPPORT ENGINE (Z-24 steem base · Z-25 English pivot).
+ * fleet-social.cjs — MUTUAL SUPPORT ENGINE (Z-24 steem base · Z-25 English pivot · r145-c v3).
+ *
+ * r145-c (content-truth wave): the engine now consults the cross-account dedupe layer
+ * (agents/social-dedupe.cjs — CommonJS port of the home daemon's curation/dedupe.ts):
+ *   · every comment body is built through the speaker's OWN voice profile and quote-line
+ *     (11 distinct profiles — the shared v2 template measured 19.2% fingerprint match,
+ *     two near-dup pairs at 4.1% pair-level; those are the numbers this kills);
+ *   · before ANY broadcast the body crosses gateCast(): content-Jaccard vs the last
+ *     comments of ALL our accounts from the live chain (threshold 0.6) — near-dup ⇒ SKIP,
+ *     logged in the receipt, never signed;
+ *   · support votes, follow graph and reblogs flow exactly as before (untouched).
  *
  * Z-25 changes: comments in ENGLISH ONLY, quoting a cleaned real fragment from the
  * target post (numbers survive any language). Added support votes: every commenting
@@ -21,6 +31,7 @@
 const steem = require('steem');
 const fs = require('fs');
 const path = require('path');
+const dedupe = require('./social-dedupe.cjs');
 
 steem.api.setOptions({ url: 'https://api.steemit.com' });
 const ROOT = path.resolve(__dirname, '..');
@@ -92,7 +103,7 @@ async function alreadyReblogged(who, author, permlink) {
 (async () => {
   const t0 = new Date().toISOString();
   const day = new Date().toISOString().slice(0, 10);
-  const receipt = { at: t0, tool: 'fleet-social.cjs', version: 2, day, comments: [], votes: [], follows: [], reblogs: [], tally: {} };
+  const receipt = { at: t0, tool: 'fleet-social.cjs', version: 3, day, dedupe: { enabled: true, threshold: dedupe.NEAR_DUP_THRESHOLD }, comments: [], votes: [], follows: [], reblogs: [], tally: {} };
   const keys = loadKeys();
   if (!keys) { receipt.error = 'SA_FLEET_KEYS missing — fail-soft'; fs.mkdirSync(path.dirname(OUT), { recursive: true }); fs.writeFileSync(OUT, JSON.stringify(receipt, null, 1)); console.log(JSON.stringify({ state: 'no-keys' })); process.exit(0); }
 
@@ -106,16 +117,14 @@ async function alreadyReblogged(who, author, permlink) {
   receipt.fleetPostsToday = todays.map(t => t.who);
 
   // 2) Substantive comments: each soldier on one sibling post. English only, a real
-  //    fragment quoted, one related insight, one open question. Comment then a modest
-  //    support vote on the same post (VP-gated, idempotent against active_votes).
-  const CLOSERS = [
-    'How are you tracking that number on your side?',
-    'Would be curious how this looks a week from now.',
-    'The chain keeps the score either way.',
-    'Did anything in the data surprise you this week?',
-    'Where do you take this next?',
-  ];
+  //    fragment quoted IN THE SPEAKER'S OWN PHRASING (voice profile), one related
+  //    insight, one per-account closer. Before anything signs: gateCast() checks the
+  //    body against the last comments of all our accounts (cross-account Jaccard
+  //    ≥ 0.6 ⇒ SKIP — logged, never broadcast). Comment then a modest support vote
+  //    on the same post (VP-gated, idempotent against active_votes).
   const doy = Math.floor((Date.now() - Date.UTC(new Date().getUTCFullYear(), 0, 0)) / 864e5);
+  let memory = [];
+  try { memory = await dedupe.buildMemory(false); receipt.dedupe.memory = memory.length; } catch (e) { receipt.dedupe.memoryError = String(e.message || e).slice(0, 80); }
   for (const src of ROTATION) {
     const wif = keys[src];
     if (!wif) continue;
@@ -131,21 +140,25 @@ async function alreadyReblogged(who, author, permlink) {
         const frag = realFragment(target.body);
         const fragEn = frag && !HEB.test(frag) ? frag : null; // a Hebrew quote inside an English comment reads mechanical, drop it
         const ins = relatedInsight(src, target.who);
-        const titleBit = target.title && !HEB.test(target.title) ? `Your piece "${clean(target.title)}"` : 'Your post today';
-        const body = [
-          `${titleBit} stopped me${fragEn ? `, specifically the part with ${fragEn}` : ''}.`,
-          ins ? clean(ins) : '',
-          CLOSERS[(doy + ROTATION.indexOf(src)) % CLOSERS.length],
-        ].filter(Boolean).join('\n\n');
-        const ops = [['comment', { parent_author: target.who, parent_permlink: target.permlink, author: src, permlink: cPermlink, title: '', body, json_metadata: JSON.stringify({ tags: ['blog'], app: 'saos-fleet-social/2' }) }]];
-        await P(cb => steem.broadcast.send({ operations: ops, extensions: [] }, [wif], cb));
-        await sleep(1800 + Math.floor(Math.random() * 1200)); // human pacing
-        const back = await getContent(src, cPermlink);
-        R.status = (back && back.author === src && back.body === body) ? 'COMMENTED-VERIFIED' : 'COMMENTED-READBACK-PENDING';
+        const titleBit = target.title && !HEB.test(target.title) ? clean(target.title) : 'today\'s post';
+        const body = dedupe.buildComment({ account: src, slot: ROTATION.indexOf(src), targetTitle: titleBit, fragment: fragEn, insight: ins });
+        if (!body) { R.status = 'SKIP-NO-VOICE'; }
+        else {
+          const gate = dedupe.gateCast(src, body, memory, ROTATION.indexOf(src));
+          R.gate = { verdict: gate.verdict, bestSim: gate.bestSim, partner: gate.partner ? gate.partner.author : null, reason: gate.reason };
+          if (gate.verdict === 'SKIP') { R.status = 'SKIP-DUP-GATE'; }
+          else {
+            const ops = [['comment', { parent_author: target.who, parent_permlink: target.permlink, author: src, permlink: cPermlink, title: '', body, json_metadata: JSON.stringify({ tags: ['blog'], app: 'saos-fleet-social/3' }) }]];
+            await P(cb => steem.broadcast.send({ operations: ops, extensions: [] }, [wif], cb));
+            await sleep(1800 + Math.floor(Math.random() * 1200)); // human pacing
+            const back = await getContent(src, cPermlink);
+            R.status = (back && back.author === src && back.body === body) ? 'COMMENTED-VERIFIED' : 'COMMENTED-READBACK-PENDING';
+          }
+        }
       }
     } catch (e) { R.status = 'ERR'; R.msg = String(e.message || e).slice(0, 90); }
     receipt.comments.push(R);
-    console.log(`[${R.status}] ${src} → @${target.who}`);
+    console.log(`[${R.status}] ${src} → @${target.who}${R.gate ? ` (sim ${R.gate.bestSim})` : ''}`);
 
     // support vote on the same post (comment + vote is how a reader behaves)
     if (R.status === 'COMMENTED-VERIFIED' || R.status === 'ALREADY') {
