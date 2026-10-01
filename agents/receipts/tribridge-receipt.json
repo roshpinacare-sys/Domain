@@ -1,5 +1,5 @@
 {
- "at": "2026-09-30T16:44:38.158Z",
+ "at": "2026-10-01T15:24:34.647Z",
  "agent": "tribridge",
  "chains": [
   "hive",
@@ -8,13 +8,27 @@
  "results": [
   {
    "who": "cashmachine",
-   "op": "SKIP-NO-SOURCE",
-   "note": "no steem post today"
+   "chain": "hive",
+   "op": "SKIP-RC-GATE",
+   "rcPct": 2
+  },
+  {
+   "who": "cashmachine",
+   "chain": "blurt",
+   "op": "PUBLISHED-READBACK-PENDING",
+   "permlink": "saos-cashmachine-20261001"
   },
   {
    "who": "haran",
-   "op": "SKIP-NO-SOURCE",
-   "note": "no steem post today"
+   "chain": "hive",
+   "op": "SKIP-RC-GATE",
+   "rcPct": 0.1
+  },
+  {
+   "who": "haran",
+   "chain": "blurt",
+   "op": "SKIP-CADENCE",
+   "note": "1-in-3 rotation (fuel economy)"
   },
   {
    "who": "israelnews",
@@ -30,18 +44,38 @@
   },
   {
    "who": "lsa",
-   "op": "SKIP-NO-SOURCE",
-   "note": "no steem post today"
+   "chain": "hive",
+   "op": "SKIP-RC-GATE",
+   "rcPct": 0
+  },
+  {
+   "who": "lsa",
+   "chain": "blurt",
+   "op": "PUBLISHED-VERIFIED",
+   "permlink": "saos-lsa-20261001"
   },
   {
    "who": "macrame",
-   "op": "SKIP-NO-SOURCE",
-   "note": "no steem post today"
+   "chain": "hive",
+   "op": "SKIP-RC-GATE",
+   "rcPct": 0
+  },
+  {
+   "who": "macrame",
+   "chain": "blurt",
+   "op": "SKIP-CADENCE",
+   "note": "1-in-3 rotation (fuel economy)"
   },
   {
    "who": "siq",
    "chain": "hive",
-   "op": "ALREADY"
+   "op": "LEO-SUBSCRIBE-SENT"
+  },
+  {
+   "who": "siq",
+   "chain": "hive",
+   "op": "ERR",
+   "msg": "payer has not enough RC mana for transaction:has_mana: Account: siq has 1253824788 RC, needs 1445791"
   },
   {
    "who": "siq",
@@ -58,23 +92,44 @@
   {
    "who": "tov",
    "chain": "blurt",
+   "op": "PUBLISHED-READBACK-PENDING",
+   "permlink": "saos-tov-20261001"
+  },
+  {
+   "who": "wic",
+   "chain": "hive",
+   "op": "SKIP-RC-GATE",
+   "rcPct": 0.1
+  },
+  {
+   "who": "wic",
+   "chain": "blurt",
    "op": "SKIP-CADENCE",
    "note": "1-in-3 rotation (fuel economy)"
   },
   {
-   "who": "wic",
-   "op": "SKIP-NO-SOURCE",
-   "note": "no steem post today"
+   "who": "wog",
+   "chain": "hive",
+   "op": "SKIP-RC-GATE",
+   "rcPct": 0
   },
   {
    "who": "wog",
-   "op": "SKIP-NO-SOURCE",
-   "note": "no steem post today"
+   "chain": "blurt",
+   "op": "SKIP-CADENCE",
+   "note": "1-in-3 rotation (fuel economy)"
   },
   {
    "who": "woq",
-   "op": "SKIP-NO-SOURCE",
-   "note": "no steem post today"
+   "chain": "hive",
+   "op": "SKIP-RC-GATE",
+   "rcPct": 0.4
+  },
+  {
+   "who": "woq",
+   "chain": "blurt",
+   "op": "PUBLISHED-READBACK-PENDING",
+   "permlink": "saos-woq-20261001"
   }
  ],
  "fuel": [
@@ -86,14 +141,17 @@
  ],
  "summary": {
   "tally": {
-   "SKIP-NO-SOURCE": 7,
-   "SKIP-RC-GATE": 1,
-   "SKIP-CADENCE": 3,
-   "ALREADY": 1,
-   "SKIP-KEY-UNVERIFIED": 1
+   "SKIP-RC-GATE": 8,
+   "PUBLISHED-READBACK-PENDING": 3,
+   "SKIP-CADENCE": 6,
+   "PUBLISHED-VERIFIED": 1,
+   "LEO-SUBSCRIBE-SENT": 1,
+   "ERR": 1,
+   "SKIP-KEY-UNVERIFIED": 1,
+   "VOTE-VOTED-READBACK-PENDING": 2
   },
   "fuelTransfers": 0,
-  "ms": 812
+  "ms": 42604
  },
  "roster": [
   "cashmachine",
@@ -106,5 +164,21 @@
   "wic",
   "wog",
   "woq"
+ ],
+ "votes": [
+  {
+   "voter": "cashmachine",
+   "on": "lsa",
+   "chain": "blurt",
+   "weightPct": 25,
+   "status": "VOTED-READBACK-PENDING"
+  },
+  {
+   "voter": "haran",
+   "on": "lsa",
+   "chain": "blurt",
+   "weightPct": 25,
+   "status": "VOTED-READBACK-PENDING"
+  }
  ]
 }
