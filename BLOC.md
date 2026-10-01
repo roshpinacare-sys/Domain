@@ -6,7 +6,7 @@
 
 **Console = operator truth center.** Everything the machine must *measure and prove*: operator keys (`key-verify`), proof & ledger pipeline, sovereign anchor, the witness beacon (`console-publish`), the truth gate that grades the live site, the fleet census (`agents-watch` → `agents/registry.json` + `dex/world.json`), the money sentinel (`money-watch`), the treasury-door scan (`dex-watch`), the live SAOS fold (`saos-live.json`). 10 workflows.
 
-**Domain = public face.** Everything the world must *read and find*: SEO surfaces, the hub content library, market/, research/, moment/, econ-desk, daily digests, and its own public-face self-verification (`agent-verify` measures the Domain site itself). Site-identity copy (canonical/og, nav) stays Domain's own. 29 workflows (after r144-h twin dedup).
+**Domain = public face.** Everything the world must *read and find*: SEO surfaces, the hub content library, market/, research/, moment/, econ-desk, daily digests, and its own public-face self-verification (`agent-verify` measures the Domain site itself). Site-identity copy (canonical/og, nav) stays Domain's own. 32 workflows (measured 2026-10-01: 31 after the r144-h twin dedup, +1 `content-reviewer` in r144-i2).
 
 ## The 8 twin workflows — ownership (measured 2026-10-01, last-run evidence from the Actions API)
 
@@ -32,6 +32,10 @@ Deviation note (honest): the provisional r144-h assignment suggested agents-watc
 ## Triple saos-state (open, operator gate)
 
 `Console/saos-live.json` (cloud fold) · `sovereign/saos-live-state.json` (local) · `sovereign/saosnet-snapshot.json` (v0 archive) disagree on which treasury address is *the* authority (saos1CKtm… live fold vs saos14wWGY… genesis). Two different treasuries = potentially two different authorities — **UNRESOLVED by design**, operator-gated. Facts: `sovereign/bloc/saos-state-map.json` in the platform repo.
+
+## Public-content watchdog (r144-i2)
+
+`content-reviewer` (daily 05:07 UTC + dispatch, **Domain**) — duplication + staleness watchdog on the community accounts' public comments/posts. Pulls the last 24h public items via the keyless Steem API, runs the same cross-account duplication math as the home curation daemon's dedupe layer (normalized token-overlap, near-duplicate threshold 0.6), writes `content-review/report-YYYY-MM-DD.json`, and opens an issue `content-review: duplication X%` when duplication > 30%. Not a twin: the home daemon (port 3040) keeps the per-account voice profiles + the pre-cast dedupe memory and gates casting; this flow only *measures the public result* once a day and escalates. Measured first run (local pre-flight, 2026-10-01): 24 public items in the window, 1 near-duplicate pair (0.4% of cross-account pairs, 8.3% of items touched), zero silent accounts — gate not tripped.
 
 ## Rule for every future capability
 
