@@ -1,33 +1,33 @@
 {
  "ok": true,
  "format": "moment-watch-v1",
- "publishedAt": "2026-10-01T13:28:45.211Z",
+ "publishedAt": "2026-10-01T13:53:06.298Z",
  "engine": "Domain/agents/moment-watch · R62 sovereign moment",
  "role": "reads the live moment every 30 minutes (market regime, our parity line vs the live internal book, fuel runway, measured anomalies) and records a deterministic directional call that is only ever scored after its horizon has passed - training as measurement, never as promise",
  "market": {
-  "steemUsd": 0.062556,
-  "steem24h": -5.089032951379058,
-  "sbdUsd": 0.635538,
-  "btcUsd": 83460,
-  "btc24h": -2.0901431089542575,
+  "steemUsd": 0.062703,
+  "steem24h": -4.076057994905747,
+  "sbdUsd": 0.635529,
+  "btcUsd": 83783,
+  "btc24h": -0.939299573883634,
   "fearGreed": {
    "value": 74,
    "label": "Greed"
   }
  },
- "paritySbdPerSteem": 0.09842999159767,
+ "paritySbdPerSteem": 0.09866268887808423,
  "liveBook": {
   "bestBid": 0.10000106142994594,
   "bestAsk": 0.10428616122640526,
   "bidsDepthSbd": 2794.09,
   "asksDepthSteem": 2162.31,
   "levels": 12,
-  "bidSurplusBps": 160
+  "bidSurplusBps": 136
  },
  "regime": {
   "label": "RISK_ON",
   "drivers": [
-   "BTC -2.1%",
+   "BTC -0.9%",
    "F&G 74"
   ],
   "thresholds": {
@@ -40,11 +40,11 @@
  },
  "runway": {
   "active": true,
-  "weeklySp": 475.8086337113871,
+  "weeklySp": 475.80918106902806,
   "nextPayment": "2026-10-03T02:01:27",
-  "remainingSp": 1903.2345348443087,
-  "weeklyUsd": 29.76,
-  "treasuryUsd": 260.54
+  "remainingSp": 1903.2367242748728,
+  "weeklyUsd": 29.83,
+  "treasuryUsd": 261.15
  },
  "grid": {
   "verdict": "ARMED-LIVE",
@@ -71,9 +71,9 @@
  },
  "call": "DOWN",
  "callStats": {
-  "resolved": 87,
+  "resolved": 86,
   "hits": 40,
-  "hitRatePct": 46,
+  "hitRatePct": 47,
   "horizonH": 6,
   "thresholdPct": 3
  },
@@ -82,17 +82,12 @@
   {
    "kind": "parity-edge",
    "tone": "warn",
-   "text": "הספר החי 160bps מעל קו-הזהות — אין עודף-קנייה כרגע; הגריד ממתין."
+   "text": "הספר החי 136bps מעל קו-הזהות — אין עודף-קנייה כרגע; הגריד ממתין."
   },
   {
    "kind": "sbd-inventory",
    "tone": "warn",
    "text": "צוואר-הקנייה של הגריד: buy-side waiting for SBD inventory: 0.075 SBD commitable < 0.15 needed"
-  },
-  {
-   "kind": "steem-move",
-   "tone": "info",
-   "text": "STEEM -5.1% ביממה — סימוני-הגריד ייגזרו מחדש בפעימה הבאה; תוכניות-עבר עלולות לא-רלוונטיות."
   },
   {
    "kind": "fuel",
