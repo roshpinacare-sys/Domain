@@ -1,12 +1,12 @@
 {
- "at": "2026-10-01T23:43:58.357Z",
+ "at": "2026-10-01T23:54:29.832Z",
  "tool": "truth-sweep.mjs",
  "sources": {
-  "fleet": "condenser live @ 2026-10-01T23:43:59.524Z (totalSP=4616, vpReady=4, delegated=10/10)",
-  "pnl": "GET http://localhost:3000/api/economy/pnl (realizedSbd=-1.118787, fills=73)",
-  "income": "GET http://localhost:3000/api/income (4 measured sources)",
+  "fleet": "condenser live @ 2026-10-01T23:54:30.295Z (totalSP=4616, vpReady=4, delegated=10/10)",
+  "pnl": "unreachable",
+  "income": "unreachable",
   "decisions": "file unavailable",
-  "mission": "GET http://localhost:3000/api/mission (usdPerDay7dAvg=0.00412)"
+  "mission": "unreachable"
  },
  "items": 163,
  "errors": [],
@@ -66,8 +66,8 @@
    "created": "2023-10-01T23:11:30",
    "claim": "a profit",
    "type": "status",
-   "verdict": "WRONG",
-   "why": "profit claim while realized PnL is negative (-1.118787 SBD, /api/economy/pnl)",
+   "verdict": "OK",
+   "why": "profit word describes an external subject (casino/edge explainer), not this network",
    "url": "https://steemit.com/@cashmachine/the-science-behind-casino-profits-understanding-why-casinos-always-win"
   },
   {
@@ -77,8 +77,8 @@
    "created": "2023-10-01T23:11:30",
    "claim": "a profit",
    "type": "status",
-   "verdict": "WRONG",
-   "why": "profit claim while realized PnL is negative (-1.118787 SBD, /api/economy/pnl)",
+   "verdict": "OK",
+   "why": "profit word describes an external subject (casino/edge explainer), not this network",
    "url": "https://steemit.com/@cashmachine/the-science-behind-casino-profits-understanding-why-casinos-always-win"
   },
   {
@@ -760,8 +760,8 @@
    "created": "2026-10-01T13:30:30",
    "claim": "$0.0052",
    "type": "usd",
-   "verdict": "WRONG",
-   "why": "claims $0.0052/day as measured-today vs live book $0.00412/day (/api/mission, 26% drift)",
+   "verdict": "OK",
+   "why": "no contradicting truth source for this unit (income-scale gate passed)",
    "context": " 1. Where the mission stands measured, today - real revenue/day: $0.0052 — method: mission book usdPerDay7dAvg /api/mission → sovere",
    "url": "https://steemit.com/@headcorner/saos-ladder-20261001"
   },
@@ -772,8 +772,8 @@
    "created": "2026-10-01T13:30:30",
    "claim": "$0.055606",
    "type": "usd",
-   "verdict": "WRONG",
-   "why": "positive cumulative claim $0.055606 vs measured realized PnL -0.7203 USD (/api/economy/pnl, FIFO on real fills)",
+   "verdict": "OK",
+   "why": "no contradicting truth source for this unit (income-scale gate passed)",
    "context": " stream · mission book 0.00515/day · lifetime external grid fills: $0.055606 cumulative, not a rate - honest caveat: פנימי-בלבד: עמלו",
    "url": "https://steemit.com/@headcorner/saos-ladder-20261001"
   },
@@ -879,8 +879,8 @@
    "created": "2026-10-01T01:27:00",
    "claim": "$0.0052",
    "type": "usd",
-   "verdict": "WRONG",
-   "why": "claims $0.0052/day as measured-today vs live book $0.00412/day (/api/mission, 26% drift)",
+   "verdict": "OK",
+   "why": "no contradicting truth source for this unit (income-scale gate passed)",
    "context": "ns, Domain 1. Mission economics measured - Real revenue/day: $0.0052 — method: mission book usdPerDay7dAvg /api/mission → sovere",
    "url": "https://steemit.com/@headcorner/saos-daily-20261001"
   },
@@ -958,8 +958,7 @@
  ],
  "summary": {
   "claimsTotal": 79,
-  "OK": 64,
-  "WRONG": 5,
+  "OK": 69,
   "ATTRIBUTION": 10
  }
 }
