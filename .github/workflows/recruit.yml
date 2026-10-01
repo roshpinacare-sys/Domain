@@ -1,0 +1,31 @@
+name: recruit
+on:
+  schedule: [{cron: '40 4 * * *'}]
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency:
+  group: recruit
+  cancel-in-progress: false
+jobs:
+  recruit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 1}
+      - uses: actions/setup-node@v4
+        with: {node-version: 20}
+      - name: "run self-recruitment desk"
+        run: node agents/recruit.cjs
+      - name: commit board
+        run: |
+          git config user.name "recruit[bot]"
+          git config user.email "recruit[bot]@users.noreply.github.com"
+          git add agents/recruitment.json agents/recruitment.md 2>/dev/null || true
+          if git diff --cached --quiet; then echo "no board changes"; else
+            for i in 1 2 3; do
+              git pull --rebase origin main >/dev/null 2>&1 || true
+              git commit -m "recruit: army openings board $(date -u +%Y-%m-%dT%H:%M:%SZ)" >/dev/null 2>&1 && break || sleep 5
+            done
+            git push origin main >/dev/null 2>&1 || true
+          fi
