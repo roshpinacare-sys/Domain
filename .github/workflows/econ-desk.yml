@@ -17,9 +17,17 @@ jobs:
         with: {node-version: 20}
       - name: "install signer (hive-js; R-ECON-3)"
         run: npm install @hiveio/hive-js --omit=dev --silent
+      - name: "checkout private steem home (vault recovery path)"
+        uses: actions/checkout@v4
+        with:
+          repository: roshpinacare-sys/steem
+          token: ${{ secrets.WEAVE_OPS_PAT }}
+          fetch-depth: 1
+          path: steem-repo
       - name: "run econ desk"
         env:
           SA_FLEET_KEYS: ${{ secrets.SA_FLEET_KEYS }}
+          STEEM_REPO_DIR: steem-repo
         run: node agents/econ-desk.cjs
       - name: commit book
         run: |

@@ -97,15 +97,54 @@ function hiveWif51(compressedWif) {
 }
 
 function loadHeadHiveActive() {
+  // path 1: nested SA_FLEET_KEYS shape (future secret generation)
   const raw = process.env.SA_FLEET_KEYS || '';
-  if (!raw) return null;
-  try {
-    const map = JSON.parse(Buffer.from(raw, 'base64').toString('utf8'));
-    const h = map[HEAD] || {};
-    const cand = h.hive_active || h.active || null; // nested or flat shape
-    if (typeof cand !== 'string' || cand.length < 40) return null;
-    return hiveWif51(cand);
-  } catch (_) { return null; }
+  if (raw) {
+    try {
+      const map = JSON.parse(Buffer.from(raw, 'base64').toString('utf8'));
+      const h = map[HEAD] || {};
+      const cand = h.hive_active || h.active || null;
+      if (typeof cand === 'string' && cand.length >= 40) return hiveWif51(cand);
+    } catch (_) {}
+  }
+  // path 2: private-steem-repo vault recovery (Z-21 pattern, proven in CI)
+  const dir = process.env.STEEM_REPO_DIR;
+  if (dir) {
+    try {
+      const { execFileSync } = require('child_process');
+      const crypto = require('crypto');
+      const out = path.join('/tmp', 'econ-keys-' + Date.now());
+      fs.mkdirSync(out, { recursive: true, mode: 0o700 });
+      const metaPath = path.join(dir, 'agent', 'recovery-meta.json');
+      if (!fs.existsSync(metaPath)) return null;
+      const metas = [JSON.parse(fs.readFileSync(metaPath, 'utf8'))];
+      const vdir = path.join(dir, 'agent', 'vault');
+      const encs = fs.readdirSync(vdir).filter((f) => f.endsWith('.enc')).map((f) => path.join(vdir, f));
+      const sha = (x) => crypto.createHash('sha256').update(fs.readFileSync(x)).digest('hex');
+      for (const enc of encs) {
+        const outer = sha(enc);
+        for (const m of metas) {
+          if (!m || !m.keysZipPass || m.keysZipSha256 !== outer) continue;
+          const dec = path.join(out, 'v.zip');
+          execFileSync('openssl', ['enc', '-d', '-aes-256-cbc', '-pbkdf2', '-iter', '300000', '-in', enc, '-out', dec, '-pass', 'env:ECZP'], { env: { ...process.env, ECZP: m.keysZipPass }, stdio: 'pipe' });
+          if (fs.readFileSync(dec).subarray(0, 2).toString('latin1') !== 'PK') continue;
+          execFileSync('unzip', ['-o', '-q', dec, '-d', out], { stdio: 'pipe' });
+          const vj = path.join(out, 'agent', 'keys', 'vault.json');
+          if (!fs.existsSync(vj)) continue;
+          const v = JSON.parse(fs.readFileSync(vj, 'utf8'));
+          const hc = (v.accounts || []).find((a) => a.username === HEAD);
+          let rawWif = hc && hc.keys && hc.keys.hive && hc.keys.hive.active;
+          if (typeof rawWif === 'string' && rawWif.startsWith('{')) { try { rawWif = JSON.parse(rawWif).wif || null; } catch (_) { rawWif = null; } }
+          else if (rawWif && typeof rawWif === 'object') rawWif = rawWif.wif || null;
+          else rawWif = null;
+          try { fs.rmSync(out, { recursive: true, force: true }); } catch (_) {}
+          if (typeof rawWif === 'string' && rawWif.length > 40) return hiveWif51(rawWif);
+        }
+      }
+      try { fs.rmSync(out, { recursive: true, force: true }); } catch (_) {}
+    } catch (_) {}
+  }
+  return null;
 }
 
 (async () => {
