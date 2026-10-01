@@ -1,0 +1,36 @@
+name: econ-desk
+on:
+  schedule: [{cron: '10 17 * * *'}]
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency:
+  group: econ-desk
+  cancel-in-progress: false
+jobs:
+  econ:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 1}
+      - uses: actions/setup-node@v4
+        with: {node-version: 20}
+      - name: install signer (@hiveio/hive-js — R-ECON-3: steem.js cannot sign hive asset ops)
+        run: npm install @hiveio/hive-js --omit=dev --silent
+      - name: run econ desk
+        env:
+          SA_FLEET_KEYS: ${{ secrets.SA_FLEET_KEYS }}
+        run: node agents/econ-desk.cjs
+      - name: commit book
+        run: |
+          git config user.name "econ-desk[bot]"
+          git config user.email "econ-desk[bot]@users.noreply.github.com"
+          git add agents/econ-book.json agents/econ-book.md 2>/dev/null || true
+          if git diff --cached --quiet; then echo "no book changes"; else
+            for i in 1 2 3; do
+              git pull --rebase origin main >/dev/null 2>&1 || true
+              git commit -m "econ-desk: real-economy book $(date -u +%Y-%m-%dT%H:%M:%SZ)" >/dev/null 2>&1 && break || sleep 5
+            done
+            for i in 1 2 3; do git push origin main >/dev/null 2>&1 && break || sleep 5; done
+          fi
+        continue-on-error: true

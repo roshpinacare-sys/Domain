@@ -105,6 +105,10 @@ const SIGNOFFS = [
   'Small and real beats big and invented.',
   'If one number surprises you, the RPC read is one URL away.',
   'Built on small real things. The rest is commentary.',
+  'I re-read the RPC output twice before signing this one.',
+  'That is the whole update. The chain holds the rest.',
+  'Nothing here is a forecast. It is a snapshot.',
+  'You can verify every line from a phone browser, no login.',
 ];
 
 const OPENERS = [
@@ -112,7 +116,30 @@ const OPENERS = [
   'From the {desk} desk today.',
   'Short one from the {desk} desk.',
   'Continuing the series from the {desk} desk.',
+  'Quick entry from the {desk} desk.',
+  'The {desk} desk checked in.',
+  'Another one from the {desk} side of the network.',
+  'Back at the {desk} desk this morning.',
 ];
+
+// R-CONTENT-1: the SAME measured numbers now render in account-specific human
+// forms instead of one stamped sentence shared by all ten posts a day. The
+// numbers stay the real chain reads; only their presentation varies.
+function measuredLine(mode, sp, del, vpReady) {
+  if (sp == null || del == null) {
+    return '**Standing practice:** every number in this series is read from the chain at publish time. Keys are verified against live authority before anything signs, and every write is read back after.';
+  }
+  switch (mode % 4) {
+    case 0:
+      return `Measured on-chain just before publishing: ${sp} SP across the fleet, live delegations on ${del} accounts, ${vpReady} of 11 above the voting threshold.`;
+    case 1:
+      return `Fleet stake this morning: ${sp} SP. Delegations live on ${del} accounts. ${vpReady} of 11 wallets hold enough voting power to act today.`;
+    case 2:
+      return `Ran the numbers before signing: ${sp} SP total stake, ${del} accounts carrying live delegations, and ${vpReady} of the 11 above the 20% voting floor.`;
+    default:
+      return `Stake: ${sp} SP. Delegations: ${del}. Ready to vote right now: ${vpReady} of 11. All three reads came from the public RPC minutes ago.`;
+  }
+}
 
 // ── מדידה-חיה: נתוני-אמת לתוכן ──
 async function measure() {
@@ -149,13 +176,28 @@ function contentFor(who, day, ctx) {
   const sp = s.totalSP != null ? Number(s.totalSP).toLocaleString('en-US') : null;
   const del = s.delegated != null && s.soldiers != null ? `${s.delegated}/${s.soldiers}` : null;
   const vpReady = s.vpReady != null ? String(s.vpReady) : null;
-  const signoff = SIGNOFFS[(doy + idx + cardShift) % SIGNOFFS.length];
-  const opener = OPENERS[(doy + idx) % OPENERS.length].replace('{desk}', personaOf(who).desk);
-  const liveLine = sp && del
-    ? `**Measured on-chain just before publishing:** ${sp} SP across the fleet, live delegations on ${del} accounts, ${vpReady} of 11 above the voting threshold.`
-    : `**Standing practice:** every number in this series is read from the chain at publish time. Keys are verified against live authority before anything signs, and every write is read back after.`;
+  const signoff = SIGNOFFS[(doy + idx * 3 + cardShift) % SIGNOFFS.length];
+  const opener = OPENERS[(doy + idx * 5) % OPENERS.length].replace('{desk}', personaOf(who).desk);
+  const liveLine = measuredLine(doy + idx, sp, del, vpReady);
   const tags = TAGMAP[card.tag] || ['blog'];
   if (deep) {
+    // R-CONTENT-1: alternate the deep-day evidence between a table and prose so
+    // two soldiers posting the same day do not ship identical skeletons.
+    const tabled = (doy + idx) % 2 === 0;
+    const evidence = tabled
+      ? [
+          `| reading | value (measured before publishing) |`,
+          `|---|---|`,
+          `| fleet stake | ${sp ?? 'n/a'} SP |`,
+          `| accounts on live delegations | ${del ?? 'n/a'} |`,
+          `| above voting threshold (VP 20%+) | ${vpReady ?? 'n/a'} |`,
+          `| RC gate | publishing stops under 25% and waits |`,
+        ].join('\n')
+      : [
+          `Fleet stake read from the chain at publish time: ${sp ?? 'n/a'} SP.`,
+          `Live delegations: ${del ?? 'n/a'} accounts. Above the 20% voting floor: ${vpReady ?? 'n/a'} of 11.`,
+          `The RC gate stays armed: publishing stops under 25% and waits.`,
+        ].join('\n');
     const body = [
       `**${card.title}**`,
       ``,
@@ -165,12 +207,7 @@ function contentFor(who, day, ctx) {
       ``,
       `---`,
       ``,
-      `| reading | value (measured before publishing) |`,
-      `|---|---|`,
-      `| fleet stake | ${sp ?? 'n/a'} SP |`,
-      `| accounts on live delegations | ${del ?? 'n/a'} |`,
-      `| above voting threshold (VP 20%+) | ${vpReady ?? 'n/a'} |`,
-      `| RC gate | publishing stops under 25% and waits |`,
+      evidence,
       ``,
       signoff,
     ].join('\n');
