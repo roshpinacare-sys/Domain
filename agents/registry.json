@@ -1,6 +1,6 @@
 {
  "ok": true,
- "generatedAt": "2026-10-01T18:52:18Z",
+ "generatedAt": "2026-10-01T19:46:58Z",
  "source": "github-actions-api",
  "reposTotal": 16,
  "reposWithAgents": [
@@ -121,10 +121,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 21.6
+    "avgDurS": 21.5
    },
    "lastRun": {
-    "at": "2026-10-01T17:02:07Z",
+    "at": "2026-10-01T19:00:46Z",
     "conclusion": "success"
    }
   },
@@ -156,45 +156,10 @@
     "failure": 1,
     "other": 0,
     "successRate": 99,
-    "avgDurS": 137.8
+    "avgDurS": 138.7
    },
    "lastRun": {
-    "at": "2026-10-01T17:51:42Z",
-    "conclusion": "success"
-   }
-  },
-  {
-   "id": "console-console-publish",
-   "name": "console-publish",
-   "repo": "Console",
-   "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 45 * * * * + manual dispatch",
-   "schedule": "schedule 45 * * * * + manual dispatch",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "Publishes the public console pages - validates and ships every change to the site the world sees.",
-    "he": "מפרסם את דפי הקונסולה הציבוריים - מאמת ומשטח כל שינוי לאתר שהעולם רואה."
-   },
-   "input": {
-    "en": "push to main",
-    "he": "דחיפה ל-main"
-   },
-   "output": {
-    "en": "live console pages",
-    "he": "דפי קונסולה חיים"
-   },
-   "state": "live",
-   "stats": {
-    "runs_sampled": 100,
-    "success": 71,
-    "failure": 29,
-    "other": 0,
-    "successRate": 71,
-    "avgDurS": 14.9
-   },
-   "lastRun": {
-    "at": "2026-10-01T17:58:06Z",
+    "at": "2026-10-01T18:53:10Z",
     "conclusion": "success"
    }
   },
@@ -226,10 +191,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 13.8
+    "avgDurS": 13.6
    },
    "lastRun": {
-    "at": "2026-10-01T18:44:20Z",
+    "at": "2026-10-01T19:35:57Z",
     "conclusion": "success"
    }
   },
@@ -269,6 +234,41 @@
    }
   },
   {
+   "id": "console-money-watch",
+   "name": "money-watch",
+   "repo": "Console",
+   "visibility": "public",
+   "rail": "public",
+   "trigger": "schedule 2,17,32,47 * * * * + manual dispatch",
+   "schedule": "schedule 2,17,32,47 * * * * + manual dispatch",
+   "layer": "MONEY-PATH",
+   "role": {
+    "en": "Money path sentinel - watches the two chokepoints of the real money path: detects the weekly powerdown landing within minutes and dispatches the external grid immediately (instead of waiting for the daily run), and rules SEND-NOW/WAIT on the redemption outbox versus the measured TRON broadcast cost.",
+    "he": "צופה נתיב הכסף - קולט את נחיתת ה-powerdown השבועית בתוך דקות ומזניק את הגריד החוץ מיד (במקום להמתין לריצה היומית), ופוסק SEND-NOW/WAIT על תיבת הפדיון מול עלות השידור הנמדדת ב-TRON."
+   },
+   "input": {
+    "en": "Steem public RPC (account+powerdown) + world.json + trongrid + CoinGecko",
+    "he": "RPC ציבורי של Steem (חשבון+powerdown) + world.json + trongrid + CoinGecko"
+   },
+   "output": {
+    "en": "dex/money.json + immediate dex-grid dispatch on landing",
+    "he": "dex/money.json + הזנקת dex-grid מיידית בנחיתה"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 100,
+    "success": 98,
+    "failure": 2,
+    "other": 0,
+    "successRate": 98,
+    "avgDurS": 16.5
+   },
+   "lastRun": {
+    "at": "2026-10-01T19:19:18Z",
+    "conclusion": "success"
+   }
+  },
+  {
    "id": "console-trigger-mesh",
    "name": "trigger-mesh",
    "repo": "Console",
@@ -291,15 +291,15 @@
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 82,
-    "success": 82,
+    "runs_sampled": 83,
+    "success": 83,
     "failure": 0,
     "other": 0,
     "successRate": 100,
     "avgDurS": 11.9
    },
    "lastRun": {
-    "at": "2026-10-01T18:40:07Z",
+    "at": "2026-10-01T19:34:21Z",
     "conclusion": "success"
    }
   },
@@ -331,10 +331,10 @@
     "failure": 3,
     "other": 0,
     "successRate": 97,
-    "avgDurS": 25.7
+    "avgDurS": 25.9
    },
    "lastRun": {
-    "at": "2026-10-01T18:29:19Z",
+    "at": "2026-10-01T19:24:15Z",
     "conclusion": "success"
    }
   },
@@ -361,15 +361,15 @@
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 62,
-    "success": 4,
+    "runs_sampled": 63,
+    "success": 5,
     "failure": 58,
     "other": 0,
-    "successRate": 6.5,
-    "avgDurS": 6.1
+    "successRate": 7.9,
+    "avgDurS": 6.3
    },
    "lastRun": {
-    "at": "2026-10-01T18:36:36Z",
+    "at": "2026-10-01T19:44:25Z",
     "conclusion": "success"
    }
   },
@@ -401,10 +401,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 19.6
+    "avgDurS": 19.8
    },
    "lastRun": {
-    "at": "2026-10-01T17:07:16Z",
+    "at": "2026-10-01T19:05:44Z",
     "conclusion": "success"
    }
   },
@@ -436,10 +436,10 @@
     "failure": 0,
     "other": 1,
     "successRate": 99,
-    "avgDurS": 142.9
+    "avgDurS": 144.8
    },
    "lastRun": {
-    "at": "2026-10-01T17:46:55Z",
+    "at": "2026-10-01T18:49:30Z",
     "conclusion": "success"
    }
   },
@@ -466,15 +466,15 @@
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 80,
-    "success": 78,
+    "runs_sampled": 81,
+    "success": 79,
     "failure": 2,
     "other": 0,
     "successRate": 97.5,
-    "avgDurS": 17.4
+    "avgDurS": 17.5
    },
    "lastRun": {
-    "at": "2026-10-01T18:05:14Z",
+    "at": "2026-10-01T19:03:30Z",
     "conclusion": "success"
    }
   },
@@ -506,10 +506,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 35.8
+    "avgDurS": 36.4
    },
    "lastRun": {
-    "at": "2026-10-01T18:36:15Z",
+    "at": "2026-10-01T19:30:42Z",
     "conclusion": "success"
    }
   },
@@ -576,10 +576,10 @@
     "failure": 1,
     "other": 0,
     "successRate": 99,
-    "avgDurS": 16.3
+    "avgDurS": 16.4
    },
    "lastRun": {
-    "at": "2026-10-01T17:53:50Z",
+    "at": "2026-10-01T18:54:33Z",
     "conclusion": "success"
    }
   },
@@ -716,10 +716,10 @@
     "failure": 12,
     "other": 0,
     "successRate": 88,
-    "avgDurS": 50
+    "avgDurS": 50.6
    },
    "lastRun": {
-    "at": "2026-10-01T17:02:15Z",
+    "at": "2026-10-01T19:00:48Z",
     "conclusion": "success"
    }
   },
@@ -789,7 +789,7 @@
     "avgDurS": 14.7
    },
    "lastRun": {
-    "at": "2026-10-01T17:58:24Z",
+    "at": "2026-10-01T18:58:47Z",
     "conclusion": "success"
    }
   },
@@ -824,7 +824,7 @@
     "avgDurS": 15.2
    },
    "lastRun": {
-    "at": "2026-10-01T18:46:19Z",
+    "at": "2026-10-01T19:38:24Z",
     "conclusion": "success"
    }
   },
@@ -891,10 +891,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 19.6
+    "avgDurS": 18.8
    },
    "lastRun": {
-    "at": "2026-10-01T18:27:47Z",
+    "at": "2026-10-01T19:22:56Z",
     "conclusion": "success"
    }
   },
@@ -926,10 +926,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 15.9
+    "avgDurS": 16.8
    },
    "lastRun": {
-    "at": "2026-10-01T18:28:50Z",
+    "at": "2026-10-01T19:23:49Z",
     "conclusion": "success"
    }
   },
@@ -961,10 +961,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 16.8
+    "avgDurS": 16.9
    },
    "lastRun": {
-    "at": "2026-10-01T18:47:38Z",
+    "at": "2026-10-01T19:32:53Z",
     "conclusion": "success"
    }
   },
@@ -1209,7 +1209,7 @@
     "avgDurS": 23.8
    },
    "lastRun": {
-    "at": "2026-10-01T18:27:17Z",
+    "at": "2026-10-01T19:22:27Z",
     "conclusion": "success"
    }
   },
@@ -1236,15 +1236,15 @@
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 99,
-    "success": 99,
+    "runs_sampled": 100,
+    "success": 100,
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 16.9
+    "avgDurS": 17
    },
    "lastRun": {
-    "at": "2026-10-01T18:30:53Z",
+    "at": "2026-10-01T19:26:05Z",
     "conclusion": "success"
    }
   },
@@ -1276,10 +1276,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 66.1
+    "avgDurS": 66.3
    },
    "lastRun": {
-    "at": "2026-10-01T18:44:49Z",
+    "at": "2026-10-01T19:24:50Z",
     "conclusion": "success"
    }
   },
@@ -1349,7 +1349,7 @@
     "avgDurS": 36.4
    },
    "lastRun": {
-    "at": "2026-10-01T18:29:29Z",
+    "at": "2026-10-01T19:24:15Z",
     "conclusion": "success"
    }
   },
@@ -1384,7 +1384,7 @@
     "avgDurS": 16.1
    },
    "lastRun": {
-    "at": "2026-10-01T18:02:45Z",
+    "at": "2026-10-01T19:01:29Z",
     "conclusion": "success"
    }
   },
@@ -1416,10 +1416,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 22.8
+    "avgDurS": 22.9
    },
    "lastRun": {
-    "at": "2026-10-01T18:43:23Z",
+    "at": "2026-10-01T19:35:18Z",
     "conclusion": "success"
    }
   },
@@ -1661,10 +1661,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 12.1
+    "avgDurS": 12.3
    },
    "lastRun": {
-    "at": "2026-10-01T18:29:55Z",
+    "at": "2026-10-01T19:24:45Z",
     "conclusion": "success"
    }
   },
@@ -1696,10 +1696,45 @@
     "failure": 0,
     "other": 27,
     "successRate": 73,
-    "avgDurS": 47.4
+    "avgDurS": 48.8
    },
    "lastRun": {
-    "at": "2026-10-01T18:44:29Z",
+    "at": "2026-10-01T19:36:07Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "defi-gitleaks-secret-scan",
+   "name": "gitleaks-secret-scan",
+   "repo": "Defi",
+   "visibility": "public",
+   "rail": "private",
+   "trigger": "on push + on PR + manual dispatch",
+   "schedule": "on push / PR",
+   "layer": "INTEGRITY",
+   "role": {
+    "en": "Secret-scanning gate on every push - runs the gitleaks binary directly (the third-party action fails on private rails); zero findings verified locally on the full history 2026-09-30.",
+    "he": "שער סריקת-סודות בכל דחיפה - מריץ את בינארי ה-gitleaks ישירות (ה-action של צד-ג' נופל על מסילות-פרטיות); אפס ממצאים אומת מקומית על כל ההיסטוריה 2026-09-30."
+   },
+   "input": {
+    "en": "full git history",
+    "he": "כל ההיסטוריה"
+   },
+   "output": {
+    "en": "green gate or honest red with the finding count",
+    "he": "שער ירוק או אדום כן עם מספר הממצאים"
+   },
+   "state": "on-demand",
+   "stats": {
+    "runs_sampled": 100,
+    "success": 3,
+    "failure": 96,
+    "other": 1,
+    "successRate": 3,
+    "avgDurS": 9.4
+   },
+   "lastRun": {
+    "at": "2026-10-01T19:45:32Z",
     "conclusion": "success"
    }
   },
@@ -1726,15 +1761,15 @@
    },
    "state": "on-demand",
    "stats": {
-    "runs_sampled": 4,
-    "success": 1,
+    "runs_sampled": 5,
+    "success": 2,
     "failure": 3,
     "other": 0,
-    "successRate": 25,
-    "avgDurS": 9.3
+    "successRate": 40,
+    "avgDurS": 8.8
    },
    "lastRun": {
-    "at": "2026-09-30T16:32:08Z",
+    "at": "2026-10-01T19:44:41Z",
     "conclusion": "success"
    }
   },
@@ -1797,14 +1832,14 @@
    "state": "on-demand",
    "stats": {
     "runs_sampled": 100,
-    "success": 83,
+    "success": 84,
     "failure": 0,
-    "other": 17,
-    "successRate": 83,
-    "avgDurS": 41.5
+    "other": 16,
+    "successRate": 84,
+    "avgDurS": 43
    },
    "lastRun": {
-    "at": "2026-10-01T18:47:51Z",
+    "at": "2026-10-01T19:38:33Z",
     "conclusion": "success"
    }
   },
@@ -1831,15 +1866,85 @@
    },
    "state": "on-demand",
    "stats": {
-    "runs_sampled": 17,
-    "success": 10,
+    "runs_sampled": 18,
+    "success": 11,
     "failure": 7,
     "other": 0,
-    "successRate": 58.8,
-    "avgDurS": 24.2
+    "successRate": 61.1,
+    "avgDurS": 24.3
    },
    "lastRun": {
-    "at": "2026-10-01T17:03:26Z",
+    "at": "2026-10-01T19:02:02Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "saos-jummper-gitleaks-secret-scan",
+   "name": "gitleaks-secret-scan",
+   "repo": "saos-jummper",
+   "visibility": "public",
+   "rail": "private",
+   "trigger": "on push + on PR + manual dispatch",
+   "schedule": "on push + on PR + manual dispatch",
+   "layer": "PUBLISH",
+   "role": {
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+   },
+   "input": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "output": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "state": "on-demand",
+   "stats": {
+    "runs_sampled": 5,
+    "success": 1,
+    "failure": 4,
+    "other": 0,
+    "successRate": 20,
+    "avgDurS": 5
+   },
+   "lastRun": {
+    "at": "2026-10-01T19:44:34Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "saosmartwallet-gitleaks-secret-scan",
+   "name": "gitleaks-secret-scan",
+   "repo": "Saosmartwallet",
+   "visibility": "public",
+   "rail": "private",
+   "trigger": "on push + on PR + manual dispatch",
+   "schedule": "on push + on PR + manual dispatch",
+   "layer": "PUBLISH",
+   "role": {
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+   },
+   "input": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "output": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "state": "on-demand",
+   "stats": {
+    "runs_sampled": 4,
+    "success": 1,
+    "failure": 3,
+    "other": 0,
+    "successRate": 25,
+    "avgDurS": 9.3
+   },
+   "lastRun": {
+    "at": "2026-10-01T19:45:55Z",
     "conclusion": "success"
    }
   },
@@ -1866,15 +1971,15 @@
    },
    "state": "on-demand",
    "stats": {
-    "runs_sampled": 19,
-    "success": 12,
+    "runs_sampled": 20,
+    "success": 13,
     "failure": 7,
     "other": 0,
-    "successRate": 63.2,
-    "avgDurS": 56.3
+    "successRate": 65,
+    "avgDurS": 58
    },
    "lastRun": {
-    "at": "2026-10-01T17:58:11Z",
+    "at": "2026-10-01T19:31:25Z",
     "conclusion": "success"
    }
   },
@@ -1901,15 +2006,15 @@
    },
    "state": "on-demand",
    "stats": {
-    "runs_sampled": 94,
-    "success": 56,
+    "runs_sampled": 96,
+    "success": 58,
     "failure": 38,
     "other": 0,
-    "successRate": 59.6,
-    "avgDurS": 136.1
+    "successRate": 60.4,
+    "avgDurS": 136
    },
    "lastRun": {
-    "at": "2026-10-01T18:45:51Z",
+    "at": "2026-10-01T19:25:53Z",
     "conclusion": "success"
    }
   },
@@ -1936,15 +2041,264 @@
    },
    "state": "backup",
    "stats": {
-    "runs_sampled": 3,
-    "success": 3,
+    "runs_sampled": 4,
+    "success": 4,
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 20.3
+    "avgDurS": 20.5
    },
    "lastRun": {
-    "at": "2026-09-30T15:32:14Z",
+    "at": "2026-10-01T19:44:43Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "saos-dex-dex-beat",
+   "name": "dex-beat",
+   "repo": "saos-dex",
+   "visibility": "public",
+   "rail": "private",
+   "trigger": "manual dispatch",
+   "schedule": "manual backup (R71) - public twin Domain/dex-beat :53 carries the ticks",
+   "layer": "ALWAYS-UP",
+   "role": {
+    "en": "The exchange's cloud heart - loads the chain snapshot, runs deterministic ticks, verifies deposit claims against the public ledger, credits them, commits and publishes state to the public console.",
+    "he": "הלב הענן של הבורסה - טוען את תמונת-המצב, מריץ טיקים דטרמיניסטיים, מאמת תביעות הפקדה מול הספר הציבורי, מזכה, מבצע commit ומפרסם את המצב לקונסולה הציבורית."
+   },
+   "input": {
+    "en": "chain snapshot + signed deposit claims",
+    "he": "תמונת-מצב שרשרת + תביעות הפקדה חתומות"
+   },
+   "output": {
+    "en": "credits, chain commit, public state publish",
+    "he": "זיכויים, commit לשרשרת, פרסום מצב ציבורי"
+   },
+   "migratedTo": "Domain/dex-beat :53",
+   "state": "backup",
+   "stats": {
+    "runs_sampled": 100,
+    "success": 84,
+    "failure": 16,
+    "other": 0,
+    "successRate": 84,
+    "avgDurS": 30
+   },
+   "lastRun": {
+    "at": "2026-10-01T19:44:47Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "steem-cloud-heart",
+   "name": "cloud-heart",
+   "repo": "steem",
+   "visibility": "public",
+   "rail": "private",
+   "trigger": "manual dispatch",
+   "schedule": "manual backup (R73) - public twin Domain/cloud-heart :17/:47 carries the beats",
+   "layer": "ALWAYS-UP",
+   "role": {
+    "en": "The fleet executor outside the sandbox - reads the living-attest from Steem/Hive over public RPC; fresh attest means sandbox alive (verify only), stale means takeover: key restore, full agent cycle, on-chain leadership marker, push.",
+    "he": "המבצע של הצי מחוץ לסנדבוקס - קורא את אימות-החיים מ-Steem/Hive דרך RPC ציבורי; אימות טרי = סנדבוקס חי (אימות בלבד), אימות בלהות = השתלטות: שחזור מפתח, מחזור סוכן מלא, סמן מנהיגות on-chain, דחיפה."
+   },
+   "input": {
+    "en": "public Steem/Hive RPC + fresh clone",
+    "he": "RPC ציבורי של Steem/Hive + קלון טרי"
+   },
+   "output": {
+    "en": "saosnet beat --live, chain attest, gitkeeper push",
+    "he": "saosnet beat --live, אימות שרשרת, דחיפת gitkeeper"
+   },
+   "migratedTo": "Domain/cloud-heart :17/:47",
+   "state": "backup",
+   "stats": {
+    "runs_sampled": 100,
+    "success": 39,
+    "failure": 61,
+    "other": 0,
+    "successRate": 39,
+    "avgDurS": 6.1
+   },
+   "lastRun": {
+    "at": "2026-10-01T19:44:45Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "zip-weave-brain-restore",
+   "name": "weave-brain-restore",
+   "repo": "Zip",
+   "visibility": "public",
+   "rail": "private",
+   "trigger": "manual dispatch",
+   "schedule": "one-shot (manual)",
+   "layer": "RECOVERY",
+   "role": {
+    "en": "Restored the brain (3 NVIDIA NIM keys) from the fleet vault in the cloud after the sandbox DB was lost - the sovereign home, not a passing environment.",
+    "he": "השיב את המוח (3 מפתחות NVIDIA NIM) מכספת הצי בענן לאחר אובדן ה-DB של הסנדבוקס - הבית הריבוני, לא סביבה חולפת."
+   },
+   "input": {
+    "en": "WEAVE_SEAL_PASSPHRASE + sealed vault",
+    "he": "WEAVE_SEAL_PASSPHRASE + הכספת החתומה"
+   },
+   "output": {
+    "en": "brain keys restored to the sovereign chain",
+    "he": "מפתחות המוח הושבו לשרשרת הריבונית"
+   },
+   "state": "backup",
+   "stats": {
+    "runs_sampled": 4,
+    "success": 2,
+    "failure": 2,
+    "other": 0,
+    "successRate": 50,
+    "avgDurS": 23.3
+   },
+   "lastRun": {
+    "at": "2026-10-01T19:44:39Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "zip-weave-ecosystem",
+   "name": "weave-ecosystem",
+   "repo": "Zip",
+   "visibility": "public",
+   "rail": "private",
+   "trigger": "manual dispatch",
+   "schedule": "daily 05:30",
+   "layer": "ENFORCEMENT",
+   "role": {
+    "en": "Ecosystem unification guard - scans all repos for duplication (target dup<0.2) and enforces the one-source-of-truth doctrine automatically.",
+    "he": "שומר איחוד האקוסיסטם - סורק את כל הריפואים לגילוי כפילויות (יעד dup<0.2) ואוכף את דוקטרינת מקור-האמת האחד אוטומטית."
+   },
+   "input": {
+    "en": "full org scan via contents API",
+    "he": "סריקת ארגון מלאה דרך contents API"
+   },
+   "output": {
+    "en": "ecosystem report commits",
+    "he": "קומיטים של דוח אקוסיסטם"
+   },
+   "migratedTo": "Domain/weave-ecosystem",
+   "state": "backup",
+   "stats": {
+    "runs_sampled": 12,
+    "success": 7,
+    "failure": 5,
+    "other": 0,
+    "successRate": 58.3,
+    "avgDurS": 45.2
+   },
+   "lastRun": {
+    "at": "2026-10-01T19:44:31Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "zip-weave-heart",
+   "name": "weave-heart",
+   "repo": "Zip",
+   "visibility": "public",
+   "rail": "private",
+   "trigger": "manual dispatch",
+   "schedule": "manual backup (R71) - public twin Domain/weave-heart :13 carries the pulse",
+   "layer": "ALWAYS-UP",
+   "role": {
+    "en": "Cloud heart of The Weave - reads the ledger every hour, judges whether the primary runner is alive, verifies only when alive, takes over the full cycle when it is not.",
+    "he": "הלב הענן של The Weave - קורא את הספר כל שעה, פוסק אם הראנר הראשי חי, מאמת בלבד כשחי ומשתלט על המחזור המלא כשלא."
+   },
+   "input": {
+    "en": "fresh clone + ledger.json",
+    "he": "קלון טרי + ledger.json"
+   },
+   "output": {
+    "en": "attestations, checkpoints, heartbeat commits",
+    "he": "אימותים, צ'קפוינטים, קומיטים של פעימה"
+   },
+   "migratedTo": "Domain/weave-heart :13",
+   "state": "backup",
+   "stats": {
+    "runs_sampled": 100,
+    "success": 74,
+    "failure": 26,
+    "other": 0,
+    "successRate": 74,
+    "avgDurS": 18.1
+   },
+   "lastRun": {
+    "at": "2026-10-01T19:44:28Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "zip-web-probe",
+   "name": "web-probe",
+   "repo": "Zip",
+   "visibility": "public",
+   "rail": "private",
+   "trigger": "manual dispatch",
+   "schedule": "manual dispatch",
+   "layer": "PUBLISH",
+   "role": {
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+   },
+   "input": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "output": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "state": "backup",
+   "stats": {
+    "runs_sampled": 4,
+    "success": 2,
+    "failure": 2,
+    "other": 0,
+    "successRate": 50,
+    "avgDurS": 17
+   },
+   "lastRun": {
+    "at": "2026-10-01T19:44:35Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "zip-web-publish",
+   "name": "web-publish",
+   "repo": "Zip",
+   "visibility": "public",
+   "rail": "private",
+   "trigger": "manual dispatch",
+   "schedule": "manual dispatch",
+   "layer": "PUBLISH",
+   "role": {
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+   },
+   "input": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "output": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "state": "backup",
+   "stats": {
+    "runs_sampled": 100,
+    "success": 31,
+    "failure": 69,
+    "other": 0,
+    "successRate": 31,
+    "avgDurS": 4.5
+   },
+   "lastRun": {
+    "at": "2026-10-01T19:44:34Z",
     "conclusion": "success"
    }
   },
@@ -2057,6 +2411,41 @@
    }
   },
   {
+   "id": "console-console-publish",
+   "name": "console-publish",
+   "repo": "Console",
+   "visibility": "public",
+   "rail": "public",
+   "trigger": "schedule 45 * * * * + manual dispatch",
+   "schedule": "schedule 45 * * * * + manual dispatch",
+   "layer": "PUBLISH",
+   "role": {
+    "en": "Publishes the public console pages - validates and ships every change to the site the world sees.",
+    "he": "מפרסם את דפי הקונסולה הציבוריים - מאמת ומשטח כל שינוי לאתר שהעולם רואה."
+   },
+   "input": {
+    "en": "push to main",
+    "he": "דחיפה ל-main"
+   },
+   "output": {
+    "en": "live console pages",
+    "he": "דפי קונסולה חיים"
+   },
+   "state": "degraded",
+   "stats": {
+    "runs_sampled": 100,
+    "success": 71,
+    "failure": 29,
+    "other": 0,
+    "successRate": 71,
+    "avgDurS": 14.9
+   },
+   "lastRun": {
+    "at": "2026-10-01T18:58:49Z",
+    "conclusion": "failure"
+   }
+  },
+  {
    "id": "console-key-verify",
    "name": "key-verify",
    "repo": "Console",
@@ -2088,77 +2477,6 @@
    },
    "lastRun": {
     "at": "2026-09-30T15:32:20Z",
-    "conclusion": "failure"
-   }
-  },
-  {
-   "id": "console-money-watch",
-   "name": "money-watch",
-   "repo": "Console",
-   "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 2,17,32,47 * * * * + manual dispatch",
-   "schedule": "schedule 2,17,32,47 * * * * + manual dispatch",
-   "layer": "MONEY-PATH",
-   "role": {
-    "en": "Money path sentinel - watches the two chokepoints of the real money path: detects the weekly powerdown landing within minutes and dispatches the external grid immediately (instead of waiting for the daily run), and rules SEND-NOW/WAIT on the redemption outbox versus the measured TRON broadcast cost.",
-    "he": "צופה נתיב הכסף - קולט את נחיתת ה-powerdown השבועית בתוך דקות ומזניק את הגריד החוץ מיד (במקום להמתין לריצה היומית), ופוסק SEND-NOW/WAIT על תיבת הפדיון מול עלות השידור הנמדדת ב-TRON."
-   },
-   "input": {
-    "en": "Steem public RPC (account+powerdown) + world.json + trongrid + CoinGecko",
-    "he": "RPC ציבורי של Steem (חשבון+powerdown) + world.json + trongrid + CoinGecko"
-   },
-   "output": {
-    "en": "dex/money.json + immediate dex-grid dispatch on landing",
-    "he": "dex/money.json + הזנקת dex-grid מיידית בנחיתה"
-   },
-   "state": "degraded",
-   "stats": {
-    "runs_sampled": 100,
-    "success": 97,
-    "failure": 2,
-    "other": 1,
-    "successRate": 97,
-    "avgDurS": 16.2
-   },
-   "lastRun": {
-    "at": "2026-10-01T18:25:19Z",
-    "conclusion": "failure"
-   }
-  },
-  {
-   "id": "defi-gitleaks-secret-scan",
-   "name": "gitleaks-secret-scan",
-   "repo": "Defi",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "on push + on PR + manual dispatch",
-   "schedule": "on push / PR",
-   "layer": "INTEGRITY",
-   "role": {
-    "en": "Secret-scanning gate on every push - runs the gitleaks binary directly (the third-party action fails on private rails); zero findings verified locally on the full history 2026-09-30.",
-    "he": "שער סריקת-סודות בכל דחיפה - מריץ את בינארי ה-gitleaks ישירות (ה-action של צד-ג' נופל על מסילות-פרטיות); אפס ממצאים אומת מקומית על כל ההיסטוריה 2026-09-30."
-   },
-   "input": {
-    "en": "full git history",
-    "he": "כל ההיסטוריה"
-   },
-   "output": {
-    "en": "green gate or honest red with the finding count",
-    "he": "שער ירוק או אדום כן עם מספר הממצאים"
-   },
-   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
-   "state": "degraded",
-   "stats": {
-    "runs_sampled": 100,
-    "success": 0,
-    "failure": 100,
-    "other": 0,
-    "successRate": 0,
-    "avgDurS": 8.9
-   },
-   "lastRun": {
-    "at": "2026-09-30T21:48:43Z",
     "conclusion": "failure"
    }
   },
@@ -2341,43 +2659,6 @@
    }
   },
   {
-   "id": "saos-dex-dex-beat",
-   "name": "dex-beat",
-   "repo": "saos-dex",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "manual dispatch",
-   "schedule": "manual backup (R71) - public twin Domain/dex-beat :53 carries the ticks",
-   "layer": "ALWAYS-UP",
-   "role": {
-    "en": "The exchange's cloud heart - loads the chain snapshot, runs deterministic ticks, verifies deposit claims against the public ledger, credits them, commits and publishes state to the public console.",
-    "he": "הלב הענן של הבורסה - טוען את תמונת-המצב, מריץ טיקים דטרמיניסטיים, מאמת תביעות הפקדה מול הספר הציבורי, מזכה, מבצע commit ומפרסם את המצב לקונסולה הציבורית."
-   },
-   "input": {
-    "en": "chain snapshot + signed deposit claims",
-    "he": "תמונת-מצב שרשרת + תביעות הפקדה חתומות"
-   },
-   "output": {
-    "en": "credits, chain commit, public state publish",
-    "he": "זיכויים, commit לשרשרת, פרסום מצב ציבורי"
-   },
-   "migratedTo": "Domain/dex-beat :53",
-   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
-   "state": "degraded",
-   "stats": {
-    "runs_sampled": 99,
-    "success": 83,
-    "failure": 16,
-    "other": 0,
-    "successRate": 83.8,
-    "avgDurS": 29.1
-   },
-   "lastRun": {
-    "at": "2026-09-30T16:26:58Z",
-    "conclusion": "failure"
-   }
-  },
-  {
    "id": "saos-dex-dex-grid",
    "name": "dex-grid",
    "repo": "saos-dex",
@@ -2448,42 +2729,6 @@
    },
    "lastRun": {
     "at": "2026-09-30T15:20:24Z",
-    "conclusion": "failure"
-   }
-  },
-  {
-   "id": "saos-jummper-gitleaks-secret-scan",
-   "name": "gitleaks-secret-scan",
-   "repo": "saos-jummper",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "on push + on PR + manual dispatch",
-   "schedule": "on push + on PR + manual dispatch",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
-   },
-   "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
-   "state": "degraded",
-   "stats": {
-    "runs_sampled": 4,
-    "success": 0,
-    "failure": 4,
-    "other": 0,
-    "successRate": 0,
-    "avgDurS": 3.5
-   },
-   "lastRun": {
-    "at": "2026-09-30T19:47:18Z",
     "conclusion": "failure"
    }
   },
@@ -2632,42 +2877,6 @@
    }
   },
   {
-   "id": "saosmartwallet-gitleaks-secret-scan",
-   "name": "gitleaks-secret-scan",
-   "repo": "Saosmartwallet",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "on push + on PR + manual dispatch",
-   "schedule": "on push + on PR + manual dispatch",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
-   },
-   "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
-   "state": "degraded",
-   "stats": {
-    "runs_sampled": 3,
-    "success": 0,
-    "failure": 3,
-    "other": 0,
-    "successRate": 0,
-    "avgDurS": 3.3
-   },
-   "lastRun": {
-    "at": "2026-09-30T19:46:56Z",
-    "conclusion": "failure"
-   }
-  },
-  {
    "id": "sdk-gitleaks-secret-scan",
    "name": "gitleaks-secret-scan",
    "repo": "Sdk",
@@ -2691,52 +2900,15 @@
    "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
    "state": "degraded",
    "stats": {
-    "runs_sampled": 3,
+    "runs_sampled": 4,
     "success": 0,
     "failure": 3,
-    "other": 0,
+    "other": 1,
     "successRate": 0,
     "avgDurS": 3.3
    },
    "lastRun": {
     "at": "2026-09-30T19:46:59Z",
-    "conclusion": "failure"
-   }
-  },
-  {
-   "id": "steem-cloud-heart",
-   "name": "cloud-heart",
-   "repo": "steem",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "manual dispatch",
-   "schedule": "manual backup (R73) - public twin Domain/cloud-heart :17/:47 carries the beats",
-   "layer": "ALWAYS-UP",
-   "role": {
-    "en": "The fleet executor outside the sandbox - reads the living-attest from Steem/Hive over public RPC; fresh attest means sandbox alive (verify only), stale means takeover: key restore, full agent cycle, on-chain leadership marker, push.",
-    "he": "המבצע של הצי מחוץ לסנדבוקס - קורא את אימות-החיים מ-Steem/Hive דרך RPC ציבורי; אימות טרי = סנדבוקס חי (אימות בלבד), אימות בלהות = השתלטות: שחזור מפתח, מחזור סוכן מלא, סמן מנהיגות on-chain, דחיפה."
-   },
-   "input": {
-    "en": "public Steem/Hive RPC + fresh clone",
-    "he": "RPC ציבורי של Steem/Hive + קלון טרי"
-   },
-   "output": {
-    "en": "saosnet beat --live, chain attest, gitkeeper push",
-    "he": "saosnet beat --live, אימות שרשרת, דחיפת gitkeeper"
-   },
-   "migratedTo": "Domain/cloud-heart :17/:47",
-   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
-   "state": "degraded",
-   "stats": {
-    "runs_sampled": 100,
-    "success": 39,
-    "failure": 61,
-    "other": 0,
-    "successRate": 39,
-    "avgDurS": 4.5
-   },
-   "lastRun": {
-    "at": "2026-09-30T15:32:16Z",
     "conclusion": "failure"
    }
   },
@@ -2803,160 +2975,14 @@
    "state": "degraded",
    "stats": {
     "runs_sampled": 100,
-    "success": 85,
-    "failure": 15,
+    "success": 83,
+    "failure": 17,
     "other": 0,
-    "successRate": 85,
-    "avgDurS": 32.4
+    "successRate": 83,
+    "avgDurS": 32
    },
    "lastRun": {
-    "at": "2026-09-30T15:32:01Z",
-    "conclusion": "failure"
-   }
-  },
-  {
-   "id": "zip-weave-brain-restore",
-   "name": "weave-brain-restore",
-   "repo": "Zip",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "manual dispatch",
-   "schedule": "one-shot (manual)",
-   "layer": "RECOVERY",
-   "role": {
-    "en": "Restored the brain (3 NVIDIA NIM keys) from the fleet vault in the cloud after the sandbox DB was lost - the sovereign home, not a passing environment.",
-    "he": "השיב את המוח (3 מפתחות NVIDIA NIM) מכספת הצי בענן לאחר אובדן ה-DB של הסנדבוקס - הבית הריבוני, לא סביבה חולפת."
-   },
-   "input": {
-    "en": "WEAVE_SEAL_PASSPHRASE + sealed vault",
-    "he": "WEAVE_SEAL_PASSPHRASE + הכספת החתומה"
-   },
-   "output": {
-    "en": "brain keys restored to the sovereign chain",
-    "he": "מפתחות המוח הושבו לשרשרת הריבונית"
-   },
-   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
-   "state": "degraded",
-   "stats": {
-    "runs_sampled": 3,
-    "success": 1,
-    "failure": 2,
-    "other": 0,
-    "successRate": 33.3,
-    "avgDurS": 18
-   },
-   "lastRun": {
-    "at": "2026-09-30T15:32:09Z",
-    "conclusion": "failure"
-   }
-  },
-  {
-   "id": "zip-weave-ecosystem",
-   "name": "weave-ecosystem",
-   "repo": "Zip",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "manual dispatch",
-   "schedule": "daily 05:30",
-   "layer": "ENFORCEMENT",
-   "role": {
-    "en": "Ecosystem unification guard - scans all repos for duplication (target dup<0.2) and enforces the one-source-of-truth doctrine automatically.",
-    "he": "שומר איחוד האקוסיסטם - סורק את כל הריפואים לגילוי כפילויות (יעד dup<0.2) ואוכף את דוקטרינת מקור-האמת האחד אוטומטית."
-   },
-   "input": {
-    "en": "full org scan via contents API",
-    "he": "סריקת ארגון מלאה דרך contents API"
-   },
-   "output": {
-    "en": "ecosystem report commits",
-    "he": "קומיטים של דוח אקוסיסטם"
-   },
-   "migratedTo": "Domain/weave-ecosystem",
-   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
-   "state": "degraded",
-   "stats": {
-    "runs_sampled": 11,
-    "success": 6,
-    "failure": 5,
-    "other": 0,
-    "successRate": 54.5,
-    "avgDurS": 42.1
-   },
-   "lastRun": {
-    "at": "2026-09-30T15:32:03Z",
-    "conclusion": "failure"
-   }
-  },
-  {
-   "id": "zip-weave-heart",
-   "name": "weave-heart",
-   "repo": "Zip",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "manual dispatch",
-   "schedule": "manual backup (R71) - public twin Domain/weave-heart :13 carries the pulse",
-   "layer": "ALWAYS-UP",
-   "role": {
-    "en": "Cloud heart of The Weave - reads the ledger every hour, judges whether the primary runner is alive, verifies only when alive, takes over the full cycle when it is not.",
-    "he": "הלב הענן של The Weave - קורא את הספר כל שעה, פוסק אם הראנר הראשי חי, מאמת בלבד כשחי ומשתלט על המחזור המלא כשלא."
-   },
-   "input": {
-    "en": "fresh clone + ledger.json",
-    "he": "קלון טרי + ledger.json"
-   },
-   "output": {
-    "en": "attestations, checkpoints, heartbeat commits",
-    "he": "אימותים, צ'קפוינטים, קומיטים של פעימה"
-   },
-   "migratedTo": "Domain/weave-heart :13",
-   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
-   "state": "degraded",
-   "stats": {
-    "runs_sampled": 100,
-    "success": 74,
-    "failure": 26,
-    "other": 0,
-    "successRate": 74,
-    "avgDurS": 16.9
-   },
-   "lastRun": {
-    "at": "2026-09-30T15:31:59Z",
-    "conclusion": "failure"
-   }
-  },
-  {
-   "id": "zip-web-probe",
-   "name": "web-probe",
-   "repo": "Zip",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "manual dispatch",
-   "schedule": "manual dispatch",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
-   },
-   "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
-   "state": "degraded",
-   "stats": {
-    "runs_sampled": 3,
-    "success": 1,
-    "failure": 2,
-    "other": 0,
-    "successRate": 33.3,
-    "avgDurS": 12.7
-   },
-   "lastRun": {
-    "at": "2026-09-30T15:32:06Z",
+    "at": "2026-10-01T19:45:43Z",
     "conclusion": "failure"
    }
   },
@@ -2984,51 +3010,15 @@
    "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
    "state": "degraded",
    "stats": {
-    "runs_sampled": 4,
+    "runs_sampled": 5,
     "success": 2,
-    "failure": 2,
+    "failure": 3,
     "other": 0,
-    "successRate": 50,
-    "avgDurS": 17.8
+    "successRate": 40,
+    "avgDurS": 18.6
    },
    "lastRun": {
-    "at": "2026-09-30T15:32:08Z",
-    "conclusion": "failure"
-   }
-  },
-  {
-   "id": "zip-web-publish",
-   "name": "web-publish",
-   "repo": "Zip",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "manual dispatch",
-   "schedule": "manual dispatch",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
-   },
-   "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
-   "state": "degraded",
-   "stats": {
-    "runs_sampled": 100,
-    "success": 31,
-    "failure": 69,
-    "other": 0,
-    "successRate": 31,
-    "avgDurS": 4
-   },
-   "lastRun": {
-    "at": "2026-09-30T15:32:04Z",
+    "at": "2026-10-01T19:44:37Z",
     "conclusion": "failure"
    }
   }
