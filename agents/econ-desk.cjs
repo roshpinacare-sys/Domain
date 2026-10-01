@@ -42,6 +42,12 @@ const SELL_BOOKS = [
 ];
 const DUST_MIN_PROCEEDS = 0.02;   // below this SWAP.HIVE value a sell is dust-noise; honest HOLD
 const ENGINE_FEE = 0.009;         // 0.9% engine market fee (seller side)
+// CONTRACT-ID LAW (Z-30, proven by a live control op @ fucina 23:26Z): the engine
+// contract id is ssc-mainnet-hive. Z-28/29 shipped 'ssc-mainframe-hive' — a typo the
+// engine silently ignores (op mined by the chain, never applied sidechain-side).
+// Any new rail must validate its contract id against an APPLIED third-party op
+// BEFORE its first signature.
+const ENGINE_ID = 'ssc-mainnet-hive';
 
 function rpcNode(node, method, params, timeout = 20000) {
   const payload = JSON.stringify({ jsonrpc: '2.0', method, params, id: 1 });
@@ -59,9 +65,9 @@ function rpcNode(node, method, params, timeout = 20000) {
 }
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-function heFind(contract, table, query, limit = 10, orderBy, descending) {
+function heFind(contract, table, query, limit = 10, indexes) {
   const params = { contract, table, query, limit, offset: 0 };
-  if (orderBy) { params.orderBy = orderBy; params.descending = !!descending; }
+  if (indexes) params.indexes = indexes;
   const payload = JSON.stringify({ jsonrpc: '2.0', method: 'find', params, id: 1 });
   return new Promise((resolve) => {
     const u = new URL('https://api.hive-engine.com/rpc/contracts');
@@ -204,12 +210,13 @@ function loadHeadHiveActive() {
     return b && b[0] ? parseFloat(b[0].balance) : 0;
   };
 
-  // ---- step 1: RAIL HEALTH (Z-29). The engine sidechain can STALL: on 2026-10-01 the
-  // newest applied market state on every probed book froze at 2026-09-05..09-20 while the
-  // hive chain ran live — every custom_json since (ours, the wrapper credit, third parties')
-  // is silently unapplied. NEVER sign into a dead rail; book the evidence instead.
+  // ---- step 1: RAIL HEALTH (Z-29 gate, probe CORRECTED in Z-30). The engine API
+  // 'find' IGNORES orderBy/descending — the only correct descending form is
+  // indexes:[{index:'_id',descending:true}]. The Z-29 "stall" was this query artifact
+  // stacked on the dead contract id below: healthy books read as frozen. The gate
+  // stays (never sign into a rail whose newest applied state is not fresh), measured right.
   const newestOrderTs = async (sym) => {
-    const rows = (await heFind('market', 'sellBook', { symbol: sym }, 1, 'timestamp', true)) || [];
+    const rows = (await heFind('market', 'sellBook', { symbol: sym }, 1, [{ index: '_id', descending: true }])) || [];
     return rows[0] && rows[0].timestamp ? rows[0].timestamp : 0;
   };
   let railNewest = 0;
@@ -224,8 +231,8 @@ function loadHeadHiveActive() {
   const STALL_H = 24;
   if (railAgeH > STALL_H) {
     R({ step: 'rail-health', status: 'ENGINE-STALL', frontierAgeHours: Math.round(railAgeH * 10) / 10, newestAppliedState: railDetail.join(' '), verdict: 'no engine op signed until the frontier is fresh again' });
-    R({ step: 'sell', status: 'PENDING-RAIL-REPLAY', symbol: 'BEE', quantity: '5.49308870', price: '0.54921004', trx: '4d3f27e7d951f181853777ebee4caaae38c24919', note: 'op is on chain (block 110405217) awaiting sidechain replay; treat as unset until it lands' });
-    R({ step: 'wrapper-poll', swapHive: (await swapBalNow()).toFixed(8), note: 'hiveswap credit for 0.310 HIVE (trx 875404ff2d16f418bd8a86b5cffa6d4e6503e3c1) is also blocked by the same stall' });
+    R({ step: 'sell', status: 'VOID-DEAD-ID', symbol: 'BEE', quantity: '5.49308870', price: '0.54921004', trx: '4d3f27e7d951f181853777ebee4caaae38c24919', note: 'Z-29 op carried the dead contract id ssc-mainframe-hive; the engine ignores it forever. Superseded by the corrected-id ops (see FILLED/PARTIAL rows). Z-29 stall verdict retracted.' });
+    R({ step: 'wrapper-poll', swapHive: (await swapBalNow()).toFixed(8), note: 'hiveswap credit for 0.310 HIVE (trx 875404ff2d16f418bd8a86b5cffa6d4e6503e3c1) remains separately open — deposit method unverified, not the dead-id issue' });
     book.summary = { rows: book.rows.length, executed: 0, ms: Date.now() - t0 };
     fs.writeFileSync(OUT_JSON, JSON.stringify(book, null, 1));
     const mdStall = [
@@ -270,10 +277,13 @@ function loadHeadHiveActive() {
       const price = bid.toFixed(8);
       const q = qty.toFixed(8);
       const before = Date.now();
-      await bcast((cb) => hivejs.broadcast.customJson(wif, [HEAD], [], 'ssc-mainframe-hive', JSON.stringify({ contractName: 'market', contractAction: 'sell', contractPayload: { symbol: sym, quantity: q, price } }), cb));
-      const ev = await findOp('custom_json', (b) => b.id === 'ssc-mainframe-hive' && String(b.json || '').includes('"contractAction":"sell"') && String(b.json || '').includes(sym), before);
+      await bcast((cb) => hivejs.broadcast.customJson(wif, [HEAD], [], ENGINE_ID, JSON.stringify({ contractName: 'market', contractAction: 'sell', contractPayload: { symbol: sym, quantity: q, price } }), cb));
+      const ev = await findOp('custom_json', (b) => b.id === ENGINE_ID && String(b.json || '').includes('"contractAction":"sell"') && String(b.json || '').includes(sym), before);
       let settled = { swapAfter: await swapBalNow(), openOrders: ((await heFind('market', 'sellBook', { account: HEAD, symbol: sym }, 5)) || []).length };
-      R({ step: 'sell', status: settled.openOrders > 0 ? 'ORDER-OPEN' : (settled.swapAfter > swapHive0 ? 'FILLED' : 'PLACED-UNSETTLED'), symbol: sym, quantity: q, price, estProceeds: proceeds.toFixed(6), onChain: !!ev, ...(ev || {}), ...settled });
+      // partial-fill aware (Z-30): proceeds delta vs open-ask remainder
+      const filledQty = Math.max(0, qty - (settled.openOrders > 0 ? parseFloat(((await heFind('market', 'sellBook', { account: HEAD, symbol: sym }, 5, [{ index: '_id', descending: true }])) || []).map((x) => parseFloat(x.quantity)).reduce((a, b) => a + b, 0).toFixed(8)) : 0));
+      const cls = settled.swapAfter > swapHive0 ? (settled.openOrders > 0 ? 'PARTIAL-FILL+RESTING' : 'FILLED') : (settled.openOrders > 0 ? 'ORDER-OPEN' : 'PLACED-UNSETTLED');
+      R({ step: 'sell', status: cls, symbol: sym, quantity: q, price, filledQty: filledQty.toFixed(8), estProceeds: proceeds.toFixed(6), onChain: !!ev, ...(ev || {}), ...settled });
     } catch (e) {
       R({ step: 'sell', status: 'ERROR', symbol: sym, error: String(e.message).slice(0, 120) });
     }
@@ -307,8 +317,8 @@ function loadHeadHiveActive() {
         if (existing.length) {
           R({ step: 'buy', status: 'ALREADY-OPEN', symbol: sym, openOrders: existing.length });
         } else {
-          await bcast((cb) => hivejs.broadcast.customJson(wif, [HEAD], [], 'ssc-mainframe-hive', JSON.stringify({ contractName: 'market', contractAction: 'buy', contractPayload: { symbol: sym, quantity: q, price } }), cb));
-          const ev = await findOp('custom_json', (b) => b.id === 'ssc-mainframe-hive' && String(b.json || '').includes('"contractAction":"buy"') && String(b.json || '').includes(sym), before);
+          await bcast((cb) => hivejs.broadcast.customJson(wif, [HEAD], [], ENGINE_ID, JSON.stringify({ contractName: 'market', contractAction: 'buy', contractPayload: { symbol: sym, quantity: q, price } }), cb));
+          const ev = await findOp('custom_json', (b) => b.id === ENGINE_ID && String(b.json || '').includes('"contractAction":"buy"') && String(b.json || '').includes(sym), before);
           let settled = { tokenBalance: '0', openOrders: 0 };
           for (let i = 0; i < 5; i++) {
             await sleep(6000);

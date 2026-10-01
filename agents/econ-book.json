@@ -1,5 +1,5 @@
 {
- "at": "2026-10-01T22:37:39.764Z",
+ "at": "2026-10-01T23:32:38.053Z",
  "agent": "econ-desk",
  "chain": "hive",
  "executor": "headcorner",
@@ -7,24 +7,60 @@
  "rows": [
   {
    "step": "rail-health",
-   "status": "ENGINE-STALL",
-   "frontierAgeHours": 342.9,
-   "newestAppliedState": "BEE:2026-09-09 ALIVE:2026-09-17 SWAP.LTC:2026-09-05",
-   "verdict": "no engine op signed until the frontier is fresh again"
-  },
-  {
-   "step": "sell",
-   "status": "PENDING-RAIL-REPLAY",
-   "symbol": "BEE",
-   "quantity": "5.49308870",
-   "price": "0.54921004",
-   "trx": "4d3f27e7d951f181853777ebee4caaae38c24919",
-   "note": "op is on chain (block 110405217) awaiting sidechain replay; treat as unset until it lands"
+   "status": "FRESH",
+   "frontierAgeHours": 0
   },
   {
    "step": "wrapper-poll",
-   "swapHive": "0.00000002",
-   "note": "hiveswap credit for 0.310 HIVE (trx 875404ff2d16f418bd8a86b5cffa6d4e6503e3c1) is also blocked by the same stall"
+   "swapHive": "0.04999962",
+   "hiveLiquid": 0.034
+  },
+  {
+   "step": "sell",
+   "status": "AT-KEEP",
+   "symbol": "BEE",
+   "balance": "1.00000000",
+   "keep": "1.0"
+  },
+  {
+   "step": "sell",
+   "status": "DUST-HELD",
+   "symbol": "VKBT",
+   "quantity": "23.29996200",
+   "bid": "0.00002105",
+   "last": "0.00011050",
+   "estProceeds": "0.000486",
+   "min": 0.02,
+   "note": "honest hold: no live bid worth the order"
+  },
+  {
+   "step": "sell",
+   "status": "DUST-HELD",
+   "symbol": "PAY",
+   "quantity": "0.17406307",
+   "bid": "0.00000290",
+   "last": "0.00000262",
+   "estProceeds": "0.000001",
+   "min": 0.02,
+   "note": "honest hold: no live bid worth the order"
+  },
+  {
+   "step": "sell",
+   "status": "DUST-HELD",
+   "symbol": "BLANK",
+   "quantity": "10.00000000",
+   "bid": "0.00000031",
+   "last": "0.00000031",
+   "estProceeds": "0.000003",
+   "min": 0.02,
+   "note": "honest hold: no live bid worth the order"
+  },
+  {
+   "step": "buy",
+   "status": "SKIP-BELOW-MIN",
+   "swapHive": "0.04999962",
+   "min": 0.25,
+   "note": "waiting for the hiveswap wrapper to credit the verified deposit (trx 875404ff2d16f418bd8a86b5cffa6d4e6503e3c1, 0.310 HIVE, memo was free-text)"
   }
  ],
  "authority": {
@@ -32,16 +68,18 @@
   "livePub": "STM8c9v…"
  },
  "rail": {
-  "frontierAgeHours": 342.9,
+  "frontierAgeHours": 0,
   "newestAppliedState": [
-   "BEE:2026-09-09",
-   "ALIVE:2026-09-17",
-   "SWAP.LTC:2026-09-05"
+   "BEE:2026-10-01",
+   "ALIVE:2026-10-01",
+   "SWAP.LTC:2026-10-01"
   ]
  },
+ "swapHive": 0.04999962,
+ "hiveLiquid": 0.034,
  "summary": {
-  "rows": 3,
+  "rows": 7,
   "executed": 0,
-  "ms": 2561
+  "ms": 4582
  }
 }

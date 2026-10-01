@@ -1,11 +1,11 @@
 {
- "at": "2026-10-01T22:41:08.646Z",
+ "at": "2026-10-01T23:41:04.200Z",
  "agent": "recruit",
  "doctrine": "roles are opened by live fleet gaps and registered only with mechanism evidence; PROPOSED roles carry a contract and wait for implementation, never a claim",
  "signals": {
-  "railFrontierAgeHours": 342.9,
-  "railState": "STALL",
-  "newestReceiptAgeHours": 1.3
+  "railFrontierAgeHours": 0,
+  "railState": "FRESH",
+  "newestReceiptAgeHours": 2.3
  },
  "roles": [
   {
@@ -14,10 +14,10 @@
     "en": "Chain-rail sentinel",
     "he": "סנטינל נתיבי-שרשרת"
    },
-   "openedBy": "a sidechain rail can STALL silently (proven 2026-10-01: hive-engine frontier 342.9h old while the chain ran live — ops signed into it vanish)",
-   "contract": "probe every execution rail before any signature; refuse to sign into a dead rail; book the evidence",
+   "openedBy": "an unverified contract id and an ignored sort parameter made a healthy rail look dead; ops signed blind are mined but never applied (Z-29 lesson, corrected in Z-30 by the research team)",
+   "contract": "validate every rail before any signature: contract id copied character-for-character from an APPLIED third-party op, settlement read from sidechain state, never from a mined trx alone",
    "status": "FILLED",
-   "mechanismEvidence": "agents/econ-desk.cjs rail-health gate"
+   "mechanismEvidence": "agents/econ-desk.cjs contract-id law + rail-health gate"
   },
   {
    "id": "liquidity-cultivator",
@@ -39,7 +39,7 @@
    "openedBy": "broadcast-only presence reads as a press agency, not a community; networks reward dialogue",
    "contract": "daily self-audience pass: read, reply and curate across steem/hive/blurt in per-account voices (support the public, never expose the fleet)",
    "status": "FILLED",
-   "mechanismEvidence": "agents/receipts (newest 1.3h old)"
+   "mechanismEvidence": "agents/receipts (newest 2.3h old)"
   },
   {
    "id": "content-diversity-officer",
@@ -60,8 +60,8 @@
    },
    "openedBy": "several money books were written by different agents and disagreed; a sovereign unit needs one ledger per truth",
    "contract": "single-writer rule per book topic; cross-book reconciliation daily; contradictions tombstoned, not argued",
-   "status": "PROPOSED",
-   "mechanismEvidence": "none yet — role stands open until a mechanism exists (honest board)"
+   "status": "FILLED",
+   "mechanismEvidence": "agents/reconcile.cjs single-writer manifest + live-truth cross-check"
   },
   {
    "id": "workflow-pruner",
@@ -71,8 +71,8 @@
    },
    "openedBy": "30+ workflows spawned by bootstrap commits, twins across Console/Domain burning public-Actions minutes and muddying authorship",
    "contract": "one canonical home per duty; dispatch-only tombstones on the duplicates; the repo reads as one body, not layers",
-   "status": "PROPOSED",
-   "mechanismEvidence": "none yet — role stands open until a mechanism exists (honest board)"
+   "status": "FILLED",
+   "mechanismEvidence": "agents/workflow-audit.cjs twin scan + reviewable prune plan"
   },
   {
    "id": "mobile-steward",
@@ -82,8 +82,8 @@
    },
    "openedBy": "the operator found pages broken on mobile; every public page must hold at 390px with a menu that actually closes",
    "contract": "browser-verify every public page at 390x844 after each UI wave; menus close on route/tap; tables scroll; no horizontal bleed",
-   "status": "PROPOSED",
-   "mechanismEvidence": "none yet — role stands open until a mechanism exists (honest board)"
+   "status": "FILLED",
+   "mechanismEvidence": "agents/page-laws.cjs — all public pages hold the five mobile laws"
   }
  ]
 }
