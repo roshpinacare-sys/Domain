@@ -1,100 +1,100 @@
 {
   "format": "truth-gate-v1",
   "runner": "github-actions",
-  "at": "2026-10-01T03:23:29.622Z",
+  "at": "2026-10-01T04:23:49.320Z",
   "target": "https://roshpinacare-sys.github.io/Domain",
-  "verdict": "ALL-GREEN",
+  "verdict": "1 RED",
   "counts": {
-    "pass": 10,
-    "fail": 0,
+    "pass": 9,
+    "fail": 1,
     "skip": 2
   },
-  "durationMs": 6300,
-  "runUrl": "https://github.com/roshpinacare-sys/Domain/actions/runs/36810263328",
+  "durationMs": 5797,
+  "runUrl": "https://github.com/roshpinacare-sys/Domain/actions/runs/36814901625",
   "results": [
     {
       "gate": "G1-site-up",
       "status": "PASS",
       "measured": "HTTP 200 · 167172 bytes",
       "note": "",
-      "at": "2026-10-01T03:23:23.496Z"
+      "at": "2026-10-01T04:23:43.743Z"
     },
     {
       "gate": "G2-zero-broken-links",
-      "status": "PASS",
-      "measured": "14 pages · 85 links · 0 broken · 5 undetermined",
-      "note": "",
-      "at": "2026-10-01T03:23:29.235Z"
+      "status": "FAIL",
+      "measured": "14 pages · 85 links · 1 broken · 5 undetermined",
+      "note": "hub/index.html: products/api-reference.html: HTTP 503",
+      "at": "2026-10-01T04:23:49.063Z"
     },
     {
       "gate": "G3-witness-freshness",
       "status": "PASS",
-      "measured": "cp#1015 · att 1025 · age 0.4h (threshold 26h)",
+      "measured": "cp#1017 · att 1027 · age 0.4h (threshold 26h)",
       "note": "",
-      "at": "2026-10-01T03:23:29.251Z"
+      "at": "2026-10-01T04:23:49.077Z"
     },
     {
       "gate": "G10-moment-freshness",
       "status": "PASS",
-      "measured": "age 0.54h (threshold 2h) · regime RISK_ON · call FLAT",
+      "measured": "age 0.52h (threshold 2h) · regime RISK_ON · call FLAT",
       "note": "",
-      "at": "2026-10-01T03:23:29.310Z"
+      "at": "2026-10-01T04:23:49.092Z"
     },
     {
       "gate": "G11-mirror-freshness",
       "status": "PASS",
-      "measured": "grid 11.7h · world 2.3h (threshold 26h)",
+      "measured": "grid 1.1h · world 1.4h (threshold 26h)",
       "note": "",
-      "at": "2026-10-01T03:23:29.342Z"
+      "at": "2026-10-01T04:23:49.120Z"
     },
     {
       "gate": "G12-weave-books-freshness",
       "status": "PASS",
       "measured": "mirror 1.0h (lag 0.0h) · saos-live 1.0h (lag 0.0h) · thresholds 26h/2h",
       "note": "",
-      "at": "2026-10-01T03:23:29.454Z"
+      "at": "2026-10-01T04:23:49.210Z"
     },
     {
       "gate": "G5-live-format-consistency",
       "status": "PASS",
       "measured": "public book format=\"saos-live-v1\"",
       "note": "",
-      "at": "2026-10-01T03:23:29.462Z"
+      "at": "2026-10-01T04:23:49.219Z"
     },
     {
       "gate": "G6-bridgehead-sane",
       "status": "PASS",
       "measured": "format=\"agent-bridgehead-state-v1\" · phase task present",
       "note": "",
-      "at": "2026-10-01T03:23:29.487Z"
+      "at": "2026-10-01T04:23:49.239Z"
     },
     {
       "gate": "G8-complete-map",
       "status": "PASS",
       "measured": "9 system pages (min 10000B) · index links 9/9 · sitemap 9/9 · roast stub ok · hub/docs/reports 404 (banned, as required)",
       "note": "",
-      "at": "2026-10-01T03:23:29.620Z"
+      "at": "2026-10-01T04:23:49.318Z"
     },
     {
       "gate": "G4-no-forged-twins",
       "status": "SKIP",
       "measured": "sandbox-only (sovereign machine: scripts/benchmark-truth.cjs)",
       "note": "",
-      "at": "2026-10-01T03:23:29.620Z"
+      "at": "2026-10-01T04:23:49.318Z"
     },
     {
       "gate": "G7-dev-server",
       "status": "SKIP",
       "measured": "sandbox-only (the work server is not public infrastructure)",
       "note": "",
-      "at": "2026-10-01T03:23:29.620Z"
+      "at": "2026-10-01T04:23:49.318Z"
     },
     {
       "gate": "G9-slo-published",
       "status": "PASS",
-      "measured": "5 SLOs · window 30d · 12 day buckets · fill 36.8% · since 2026-09-20",
+      "measured": "5 SLOs · window 30d · 12 day buckets · fill 36.9% · since 2026-09-20",
       "note": "",
-      "at": "2026-10-01T03:23:29.622Z"
+      "at": "2026-10-01T04:23:49.320Z"
     }
   ]
 }
