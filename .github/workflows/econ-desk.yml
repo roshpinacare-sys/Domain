@@ -15,9 +15,9 @@ jobs:
         with: {fetch-depth: 1}
       - uses: actions/setup-node@v4
         with: {node-version: 20}
-      - name: install signer (@hiveio/hive-js — R-ECON-3: steem.js cannot sign hive asset ops)
+      - name: "install signer (hive-js; R-ECON-3)"
         run: npm install @hiveio/hive-js --omit=dev --silent
-      - name: run econ desk
+      - name: "run econ desk"
         env:
           SA_FLEET_KEYS: ${{ secrets.SA_FLEET_KEYS }}
         run: node agents/econ-desk.cjs
