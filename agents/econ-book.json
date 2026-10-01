@@ -1,32 +1,47 @@
 {
- "at": "2026-10-01T21:28:01.046Z",
+ "at": "2026-10-01T22:37:39.764Z",
  "agent": "econ-desk",
  "chain": "hive",
  "executor": "headcorner",
  "signer": "@hiveio/hive-js",
  "rows": [
   {
-   "step": "wrapper-poll",
-   "swapHive": "0.00000002",
-   "hiveLiquid": 0.034
+   "step": "rail-health",
+   "status": "ENGINE-STALL",
+   "frontierAgeHours": 342.9,
+   "newestAppliedState": "BEE:2026-09-09 ALIVE:2026-09-17 SWAP.LTC:2026-09-05",
+   "verdict": "no engine op signed until the frontier is fresh again"
   },
   {
-   "step": "buy",
-   "status": "SKIP-BELOW-MIN",
+   "step": "sell",
+   "status": "PENDING-RAIL-REPLAY",
+   "symbol": "BEE",
+   "quantity": "5.49308870",
+   "price": "0.54921004",
+   "trx": "4d3f27e7d951f181853777ebee4caaae38c24919",
+   "note": "op is on chain (block 110405217) awaiting sidechain replay; treat as unset until it lands"
+  },
+  {
+   "step": "wrapper-poll",
    "swapHive": "0.00000002",
-   "min": 0.25,
-   "note": "waiting for the hiveswap wrapper to credit the verified deposit (trx 875404ff2d16f418bd8a86b5cffa6d4e6503e3c1, 0.310 HIVE)"
+   "note": "hiveswap credit for 0.310 HIVE (trx 875404ff2d16f418bd8a86b5cffa6d4e6503e3c1) is also blocked by the same stall"
   }
  ],
  "authority": {
   "verified": true,
   "livePub": "STM8c9v…"
  },
- "swapHive": 2e-8,
- "hiveLiquid": 0.034,
+ "rail": {
+  "frontierAgeHours": 342.9,
+  "newestAppliedState": [
+   "BEE:2026-09-09",
+   "ALIVE:2026-09-17",
+   "SWAP.LTC:2026-09-05"
+  ]
+ },
  "summary": {
-  "rows": 2,
+  "rows": 3,
   "executed": 0,
-  "ms": 1279
+  "ms": 2561
  }
 }
