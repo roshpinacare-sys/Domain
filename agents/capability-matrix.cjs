@@ -80,7 +80,32 @@ function chainPubkeys(wif) {
 function loadKeys() {
   const raw = process.env.SA_FLEET_KEYS || '';
   if (!raw) return {};
-  try { return JSON.parse(Buffer.from(raw, 'base64').toString('utf8')); } catch (_) { return {}; } // {user: postingWIF}
+  try {
+    const j = JSON.parse(Buffer.from(raw, 'base64').toString('utf8'));
+    // two generations of the fleet-keys shape exist:
+    //   flat:   {user: postingWIF}
+    //   nested: {user: {posting, active, steem_posting, hive_active, ...}}
+    // normalize to nested so every role is verifiable (R-cm-1: the old code fed
+    // OBJECTS into wifToPublic, every derivation failed, and the book then
+    // reported NO-KEY-IN-VAULT for keys we demonstrably sign with — a lie).
+    const out = {};
+    for (const [u, v] of Object.entries(j || {})) {
+      if (typeof v === 'string') out[u] = { posting: v };
+      else if (v && typeof v === 'object') out[u] = v;
+    }
+    return out;
+  } catch (_) { return {}; }
+}
+
+// candidate WIFs for (user, chain, role) across both shape generations
+function wifsFor(entry, chain, role) {
+  if (!entry || typeof entry !== 'object') return typeof entry === 'string' && role === 'posting' ? [entry] : [];
+  const cands = [];
+  const add = (x) => { if (typeof x === 'string' && x.length > 30) cands.push(x); };
+  add(entry[chain + '_' + role]);
+  if (chain === 'blurt') { add(entry[role]); add(entry['steem_' + role]); } // blurt shares the steem-family body (live-verified chain truth)
+  add(entry[role]);                                // flat shape (steem roles)
+  return [...new Set(cands)];
 }
 
 // head posting key: secret first, then the private-steem-repo recovery (Z-21 pattern, proven in CI)
@@ -183,7 +208,7 @@ function idleFlags({ chain, eff, liquid, vp, tally, postingOurs, activeOurs }) {
     const rows = {};
     for (const name of roster) {
       if (chain === 'hive' && HIVE_SKIP.has(name)) { rows[name] = { skip: 'posting-not-ours (byte-verified 09-30)' }; continue; }
-      const pubs = chainPubkeys(keys[name]);
+      const pubs = chainPubkeys(wifsFor(keys[name], chain, 'posting')[0] || wifsFor(keys[name], 'steem', 'posting')[0] || (typeof keys[name] === 'string' ? keys[name] : null));
       try {
         const row = await accountRow(chain, name);
         if (!row) { rows[name] = { skip: 'no-account' }; continue; }
@@ -191,14 +216,23 @@ function idleFlags({ chain, eff, liquid, vp, tally, postingOurs, activeOurs }) {
         const blurtPubs = pubs && pubs.BLT ? [pubs.BLT] : (pubs && pubs.STM ? [pubs.STM] : []);
         const listForChain = chain === 'blurt' ? blurtPubs : (pubs && pubs.STM ? [pubs.STM] : []);
         const po = authorityStatus(listForChain, row.postingKey);
+        // R-cm-2: ACTIVE authority is now verified too — the banking layer
+        // (transfer / limit_order / power ops) is the part with real money rails.
+        let activePubs = [];
+        for (const w of wifsFor(keys[name], chain, 'active')) {
+          const p = chainPubkeys(w);
+          if (p && p.STM) activePubs.push(chain === 'blurt' && p.BLT ? p.BLT : p.STM);
+        }
+        const ao = authorityStatus(activePubs, row.activeKeys);
         let tally = {};
         try { tally = await opTally(chain, name); } catch (e) { tally = { __unavailable: String(e.message || e).slice(0, 40) }; }
         rows[name] = {
           effStake: row.effStake + ' ' + row.stakeSym, liquid: row.liquid, votingPower: row.votingPower,
           posting: po, postingAuthorityCount: (row.postingKey || []).length,
+          active: ao, activeAuthorityCount: (row.activeKeys || []).length,
           recentOps: tally,
         };
-        const flags = idleFlags({ chain, eff: row.effStake, liquid: row.liquid, vp: row.votingPower, tally, postingOurs: po, activeOurs: 'UNKNOWN' });
+        const flags = idleFlags({ chain, eff: row.effStake, liquid: row.liquid, vp: row.votingPower, tally, postingOurs: po, activeOurs: ao });
         for (const fl of flags) receipt.idle.push({ account: name, chain, flag: fl });
       } catch (e) { rows[name] = { error: String(e.message || e).slice(0, 60) }; }
       await sleep(250);
@@ -208,9 +242,14 @@ function idleFlags({ chain, eff, liquid, vp, tally, postingOurs, activeOurs }) {
 
   // summary
   const ours = {};
-  for (const c of Object.keys(receipt.chains)) ours[c] = Object.entries(receipt.chains[c]).filter(([, v]) => v && v.posting === 'OURS').map(([k]) => k);
+  const activeOurs = {};
+  for (const c of Object.keys(receipt.chains)) {
+    ours[c] = Object.entries(receipt.chains[c]).filter(([, v]) => v && v.posting === 'OURS').map(([k]) => k);
+    activeOurs[c] = Object.entries(receipt.chains[c]).filter(([, v]) => v && v.active === 'OURS').map(([k]) => k);
+  }
   receipt.summary = {
     postingOurs: Object.fromEntries(Object.entries(ours).map(([c, l]) => [c, l.length])),
+    activeOurs: Object.fromEntries(Object.entries(activeOurs).map(([c, l]) => [c, l.length])),
     idleFlags: receipt.idle.length,
     ms: Date.now() - t0,
   };
@@ -220,6 +259,8 @@ function idleFlags({ chain, eff, liquid, vp, tally, postingOurs, activeOurs }) {
     'Updated: ' + receipt.at + ' UTC. Read-only; derived from live key_auths + recent account history. Generated by agents/capability-matrix.cjs.', '',
     '## Posting authority: OURS (byte-verified per run)', '',
     ...Object.entries(ours).map(([c, l]) => '- ' + c + ': ' + l.length + ' accounts [' + l.join(', ') + ']'), '',
+    '## Active authority: OURS (banking layer, byte-verified per run)', '',
+    ...Object.entries(activeOurs).map(([c, l]) => '- ' + c + ': ' + l.length + ' accounts [' + l.join(', ') + ']'), '',
     '## Idle capital flags (authority ours + capital above dust + no recent use)', '',
     ...(receipt.idle.length ? receipt.idle.map(i => '- **' + i.account + '@' + i.chain + '** — ' + i.flag) : ['- none detected this run']), '',
     'Recent-history windows may be unavailable on some nodes (marked honestly per account).', '',

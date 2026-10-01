@@ -123,18 +123,50 @@ function normTags(meta) {
 function crossBody(content, who, permlink, chain, dayIdx) {
   const p = personaOf(who);
   const url = 'https://steemit.com/@' + who + '/' + permlink;
-  const pools = chain === 'hive'
-    ? [
-        'Carrying today\'s note over from my Steem journal. ' + p.brief,
-        'Same piece I published on Steem today, shared here with the source attached.',
-        'Today\'s entry from the ' + p.desk + ' desk, mirrored from Steem.',
-      ]
-    : [
-        'Today\'s note, carried over from my Steem journal.',
-        'Reposting today\'s entry from Steem, source link below.',
-      ];
-  const intro = pools[dayIdx % pools.length];
-  return intro + '\n\n' + content.body + '\n\nFirst published on Steem: ' + url;
+  if (chain === 'hive') {
+    // R-CONTENT-2: five intros rotated by (day, account) so two crossposts on
+    // the same day rarely share a wrapper line.
+    const pools = [
+      'Carrying today\'s note over from my Steem journal. ' + p.brief,
+      'Same piece I published on Steem today, shared here with the source attached.',
+      'Today\'s entry from the ' + p.desk + ' desk, mirrored from Steem.',
+      'Crossposting from my Steem journal. Numbers in here were live at publish time.',
+      'This one first ran on Steem this morning. Sharing it here for the ' + p.desk + ' crowd.',
+    ];
+    const shift = (dayIdx + who.length + (who.charCodeAt(0) || 97)) % pools.length;
+    return pools[shift] + '\n\n' + content.body + '\n\nFirst published on Steem: ' + url;
+  }
+  // blurt gets a chain-native summary instead of a verbatim copy: the same
+  // truth, trimmed, with the source link for the full entry.
+  const text = String(content.body || '')
+    .split('\n')
+    .filter((l) => !/^\s*\|/.test(l) && !/^\s*(-{3,}|={3,})\s*$/.test(l)) // drop table/separator lines
+    .join('\n')
+    .replace(/\*\*/g, '')
+    .trim();
+  const paras = text.split(/\n\s*\n/).filter(Boolean);
+  const keep = [];
+  let len = 0;
+  for (const para of paras) {
+    if (len + para.length > 900 && keep.length) break;
+    if (/^First published|^Continued on Steem/i.test(para)) continue;
+    keep.push(para);
+    len += para.length;
+    if (len > 1100) break;
+  }
+  const tails = [
+    'Full entry (with the measured table) on Steem: ' + url,
+    'The whole piece lives on Steem: ' + url,
+    'Continued on Steem, with the numbers: ' + url,
+  ];
+  const tail = tails[(dayIdx + who.length) % tails.length];
+  const intros = [
+    'Short version of today\'s note:',
+    'Condensed from today\'s entry:',
+    'The gist of what I published today:',
+  ];
+  const intro = intros[(dayIdx + (who.charCodeAt(0) || 97)) % intros.length];
+  return [intro, keep.join('\n\n'), tail].filter(Boolean).join('\n\n');
 }
 
 async function publishCross({ who, wif, node, chainId, content, permlink, chain, dayIdx, community }) {
