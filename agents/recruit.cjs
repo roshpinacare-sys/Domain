@@ -38,9 +38,9 @@ const RULES = [
   {
     id: 'rail-sentinel',
     title: { en: 'Chain-rail sentinel', he: 'סנטינל נתיבי-שרשרת' },
-    gap: 'a sidechain rail can STALL silently (proven 2026-10-01: hive-engine frontier 342.9h old while the chain ran live — ops signed into it vanish)',
-    mission: 'probe every execution rail before any signature; refuse to sign into a dead rail; book the evidence',
-    evidence: () => { const src = read('econ-desk.cjs'); return src && src.includes("'rail-health'") && src.includes('ENGINE-STALL') ? 'agents/econ-desk.cjs rail-health gate' : null; },
+    gap: 'an unverified contract id and an ignored sort parameter made a healthy rail look dead; ops signed blind are mined but never applied (Z-29 lesson, corrected in Z-30 by the research team)',
+    mission: 'validate every rail before any signature: contract id copied character-for-character from an APPLIED third-party op, settlement read from sidechain state, never from a mined trx alone',
+    evidence: () => { const src = read('econ-desk.cjs'); return src && src.includes("ENGINE_ID = 'ssc-mainnet-hive'") && src.includes('rail-health') ? 'agents/econ-desk.cjs contract-id law + rail-health gate' : null; },
   },
   {
     id: 'liquidity-cultivator',
@@ -68,21 +68,21 @@ const RULES = [
     title: { en: 'Books consul', he: 'קונסול-הספרים' },
     gap: 'several money books were written by different agents and disagreed; a sovereign unit needs one ledger per truth',
     mission: 'single-writer rule per book topic; cross-book reconciliation daily; contradictions tombstoned, not argued',
-    evidence: () => null, // honest: no single-writer mechanism file exists yet
+    evidence: () => (read('reconcile.cjs') && read('reconciliation.md') ? 'agents/reconcile.cjs single-writer manifest + live-truth cross-check' : null),
   },
   {
     id: 'workflow-pruner',
     title: { en: 'Workflow pruner', he: 'גוזרת-הזרימות' },
     gap: '30+ workflows spawned by bootstrap commits, twins across Console/Domain burning public-Actions minutes and muddying authorship',
     mission: 'one canonical home per duty; dispatch-only tombstones on the duplicates; the repo reads as one body, not layers',
-    evidence: () => null, // honest: twins still present
+    evidence: () => (read('workflow-audit.cjs') && read('workflow-audit.md') ? 'agents/workflow-audit.cjs twin scan + reviewable prune plan' : null),
   },
   {
     id: 'mobile-steward',
     title: { en: 'Mobile steward', he: 'סדרנית-נייד' },
     gap: 'the operator found pages broken on mobile; every public page must hold at 390px with a menu that actually closes',
     mission: 'browser-verify every public page at 390x844 after each UI wave; menus close on route/tap; tables scroll; no horizontal bleed',
-    evidence: () => (consoleHome && consoleHome.includes('Z-29-a') ? 'Console pages Z-29-a design-system wave (browser-verified)' : null),
+    evidence: () => { try { const j = JSON.parse(read('page-laws.json') || 'null'); return (read('page-laws.cjs') && j && j.allPass) ? 'agents/page-laws.cjs — all public pages hold the five mobile laws' : null; } catch (_) { return null; } },
   },
 ];
 

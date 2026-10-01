@@ -15,13 +15,18 @@ jobs:
         with: {fetch-depth: 1}
       - uses: actions/setup-node@v4
         with: {node-version: 20}
+      - name: "run mechanism desks (evidence for the board)"
+        run: |
+          node agents/reconcile.cjs || true
+          node agents/workflow-audit.cjs || true
+          node agents/page-laws.cjs || true
       - name: "run self-recruitment desk"
         run: node agents/recruit.cjs
       - name: commit board
         run: |
           git config user.name "recruit[bot]"
           git config user.email "recruit[bot]@users.noreply.github.com"
-          git add agents/recruitment.json agents/recruitment.md 2>/dev/null || true
+          git add agents/recruitment.json agents/recruitment.md agents/reconciliation.json agents/reconciliation.md agents/workflow-audit.json agents/workflow-audit.md agents/page-laws.json agents/page-laws.md 2>/dev/null || true
           if git diff --cached --quiet; then echo "no board changes"; else
             for i in 1 2 3; do
               git pull --rebase origin main >/dev/null 2>&1 || true
