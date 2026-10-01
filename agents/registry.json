@@ -1,17 +1,17 @@
 {
  "ok": true,
- "generatedAt": "2026-10-01T21:48:58Z",
+ "generatedAt": "2026-10-01T20:53:04Z",
  "source": "github-actions-api",
  "reposTotal": 16,
  "reposWithAgents": [
   "Adsmarket",
   "anchor-baseline",
   "Console",
+  "Defi",
   "Domain",
   "Project-files",
   "roshpina",
   "saos-control-center",
-  "Defi",
   "saos-dex",
   "saos-jummper",
   "saos-sovereign-foundry",
@@ -27,10 +27,8 @@
    "id": "adsmarket-claims-guard",
    "name": "claims-guard",
    "repo": "Adsmarket",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "schedule 11 6 * * * + manual dispatch",
-   "schedule": "schedule 11 6 * * * + manual dispatch",
+   "visibility": "private",
+   "schedule": "daily 06:11 UTC",
    "layer": "INTEGRITY",
    "role": {
     "en": "Marketing truth guard - enforces the repo iron principle: landing pages complete, zero forbidden glyphs per operator policy, live links (a dead link to our own network is a failure), and counts the txid receipts backing the claims.",
@@ -59,13 +57,44 @@
    }
   },
   {
+   "id": "adsmarket-gitleaks-secret-scan",
+   "name": "gitleaks-secret-scan",
+   "repo": "Adsmarket",
+   "visibility": "private",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
+   "role": {
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
+   },
+   "input": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "output": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 4,
+    "success": 1,
+    "failure": 3,
+    "other": 0,
+    "successRate": 25,
+    "avgDurS": 5.8
+   },
+   "lastRun": {
+    "at": "2026-10-01T19:47:33Z",
+    "conclusion": "success"
+   }
+  },
+  {
    "id": "anchor-baseline-baseline-integrity",
    "name": "baseline-integrity",
    "repo": "anchor-baseline",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "schedule 13 7 * * * + manual dispatch",
-   "schedule": "schedule 13 7 * * * + manual dispatch",
+   "visibility": "private",
+   "schedule": "daily 07:13 UTC",
    "layer": "INTEGRITY",
    "role": {
     "en": "Baseline history keeper - builds a SHA-256 manifest of all broadcasts, docs and downloads, compares to the previous manifest, reports additions and changes, and fails when history files are deleted.",
@@ -94,25 +123,56 @@
    }
   },
   {
+   "id": "anchor-baseline-gitleaks-secret-scan",
+   "name": "gitleaks-secret-scan",
+   "repo": "anchor-baseline",
+   "visibility": "private",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
+   "role": {
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
+   },
+   "input": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "output": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 4,
+    "success": 1,
+    "failure": 3,
+    "other": 0,
+    "successRate": 25,
+    "avgDurS": 6
+   },
+   "lastRun": {
+    "at": "2026-10-01T19:52:28Z",
+    "conclusion": "success"
+   }
+  },
+  {
    "id": "console-agent-verify",
    "name": "agent-verify",
    "repo": "Console",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 55 */2 * * * + manual dispatch",
-   "schedule": "schedule 55 */2 * * * + manual dispatch",
-   "layer": "PUBLISH",
+   "schedule": "every 2h at :55",
+   "layer": "QA",
    "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+    "en": "The network verifies the agent - reads the assertions contract beside it, measures the LIVE public site (never the repo) and publishes results.json; exit code is always 0 and every failure is recorded honestly as data.",
+    "he": "הרשת מאמתת את הסוכן - קורא את חוזה-הטענות שלצידו, מודד את האתר החי הציבורי (לא את הריפו) ומפרסם results.json; קוד-היציאה תמיד 0 וכל כשל נרשם בכנות כנתון."
    },
    "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "agent/verify/assertions.json + live site",
+    "he": "agent/verify/assertions.json + האתר החי"
    },
    "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "agent/verify/results.json",
+    "he": "agent/verify/results.json"
    },
    "state": "live",
    "stats": {
@@ -121,10 +181,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 20.4
+    "avgDurS": 21.5
    },
    "lastRun": {
-    "at": "2026-10-01T20:59:40Z",
+    "at": "2026-10-01T19:00:46Z",
     "conclusion": "success"
    }
   },
@@ -133,33 +193,31 @@
    "name": "agents-watch",
    "repo": "Console",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 37 * * * * + manual dispatch",
-   "schedule": "schedule 37 * * * * + manual dispatch",
+   "schedule": "hourly :37",
    "layer": "PUBLISH",
    "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+    "en": "The fleet census - asks the GitHub Actions API for the real state of every workflow in the 16 agent-repos (runs, success rates, durations, last run), merges the canonical role catalog and writes agents/registry.json that the public agents view reads.",
+    "he": "מפקד-האוכלוסין של הצי - שואל את ה-API של גיטהאב את מצבם האמיתי של כל ה-workflows ב-16 הריפואים (ריצות, הצלחות, משכים, ריצה אחרונה), ממזג את קטלוג התפקידים וכותב את agents/registry.json שתצוגת הסוכנים הציבורית קוראת."
    },
    "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "GitHub Actions API (16 repos)",
+    "he": "API של GitHub Actions (16 ריפואים)"
    },
    "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "agents/registry.json + agents/gh-snapshot.json",
+    "he": "agents/registry.json + agents/gh-snapshot.json"
    },
    "state": "live",
    "stats": {
     "runs_sampled": 100,
-    "success": 99,
+    "success": 98,
     "failure": 1,
-    "other": 0,
-    "successRate": 99,
-    "avgDurS": 139.5
+    "other": 1,
+    "successRate": 98,
+    "avgDurS": 136.1
    },
    "lastRun": {
-    "at": "2026-10-01T20:50:53Z",
+    "at": "2026-10-01T19:49:21Z",
     "conclusion": "success"
    }
   },
@@ -168,9 +226,7 @@
    "name": "console-publish",
    "repo": "Console",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 45 * * * * + manual dispatch",
-   "schedule": "schedule 45 * * * * + manual dispatch",
+   "schedule": "on push to main",
    "layer": "PUBLISH",
    "role": {
     "en": "Publishes the public console pages - validates and ships every change to the site the world sees.",
@@ -187,14 +243,14 @@
    "state": "live",
    "stats": {
     "runs_sampled": 100,
-    "success": 73,
-    "failure": 27,
+    "success": 72,
+    "failure": 28,
     "other": 0,
-    "successRate": 73,
-    "avgDurS": 14.7
+    "successRate": 72,
+    "avgDurS": 14.8
    },
    "lastRun": {
-    "at": "2026-10-01T21:21:08Z",
+    "at": "2026-10-01T19:55:42Z",
     "conclusion": "success"
    }
   },
@@ -203,9 +259,7 @@
    "name": "dex-watch",
    "repo": "Console",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 7,27,47 * * * * + manual dispatch",
-   "schedule": "schedule 7,27,47 * * * * + manual dispatch",
+   "schedule": "every 20 min :07/:27/:47",
    "layer": "MIRROR",
    "role": {
     "en": "The public deposits watcher - scans the real deposit addresses (TRON/ETH/SOL/BTC) over public RPC and updates the open deposits ledger the site displays and the DEX verifies against.",
@@ -226,10 +280,43 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 13.9
+    "avgDurS": 13.7
    },
    "lastRun": {
-    "at": "2026-10-01T21:37:03Z",
+    "at": "2026-10-01T20:38:26Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "console-gitleaks-secret-scan",
+   "name": "gitleaks-secret-scan",
+   "repo": "Console",
+   "visibility": "public",
+   "schedule": "on push / PR",
+   "layer": "INTEGRITY",
+   "role": {
+    "en": "Secret scanner on every push and PR - gitleaks over the full history; a finding stops the push. Part of PHASE-0 key hygiene.",
+    "he": "סורק-סודות על כל push ו-PR - gitleaks על כל ההיסטוריה; ממצא עוצר את הדחיפה. חלק מהיגיינת-המפתחות של PHASE-0."
+   },
+   "input": {
+    "en": "full git history (fetch-depth 0)",
+    "he": "היסטוריית גיט מלאה"
+   },
+   "output": {
+    "en": "scan verdict (block or pass)",
+    "he": "פסק סריקה (חסימה או מעבר)"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 100,
+    "success": 100,
+    "failure": 0,
+    "other": 0,
+    "successRate": 100,
+    "avgDurS": 12.7
+   },
+   "lastRun": {
+    "at": "2026-10-01T20:25:43Z",
     "conclusion": "success"
    }
   },
@@ -238,21 +325,19 @@
    "name": "grid-pulse",
    "repo": "Console",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 7 3,15 * * * + manual dispatch",
-   "schedule": "schedule 7 3,15 * * * + manual dispatch",
-   "layer": "PUBLISH",
+   "schedule": "twice daily 03:07 / 15:07 UTC",
+   "layer": "MIRROR",
    "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+    "en": "The sovereign grid pulse - a keyless measurement mirror on the public repo: reads what the grid engine published to the public chain and re-publishes dex/grid.json twice a day, immune to private-runner minute-quota outages.",
+    "he": "פעימת הגריד הריבונית - מראת-מדידה חסרת-מפתחות על הריפו הציבורי: קורא מהשרשרת הציבורית את מה שמנוע-הגריד פרסם ומפרסם dex/grid.json פעמיים ביום, חסינה למכסת-הדקות של הראנר הפרטי."
    },
    "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "public chain publications",
+    "he": "פרסומים ציבוריים בשרשרת"
    },
    "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "dex/grid.json keyless mirror",
+    "he": "מראת dex/grid.json חסרת-מפתחות"
    },
    "state": "live",
    "stats": {
@@ -273,9 +358,7 @@
    "name": "money-watch",
    "repo": "Console",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 2,17,32,47 * * * * + manual dispatch",
-   "schedule": "schedule 2,17,32,47 * * * * + manual dispatch",
+   "schedule": "every 15 min :02/:17/:32/:47",
    "layer": "MONEY-PATH",
    "role": {
     "en": "Money path sentinel - watches the two chokepoints of the real money path: detects the weekly powerdown landing within minutes and dispatches the external grid immediately (instead of waiting for the daily run), and rules SEND-NOW/WAIT on the redemption outbox versus the measured TRON broadcast cost.",
@@ -296,10 +379,43 @@
     "failure": 3,
     "other": 0,
     "successRate": 97,
-    "avgDurS": 16.6
+    "avgDurS": 16.7
    },
    "lastRun": {
-    "at": "2026-10-01T21:17:59Z",
+    "at": "2026-10-01T20:47:24Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "console-pages-build-deployment",
+   "name": "pages-build-deployment",
+   "repo": "Console",
+   "visibility": "public",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
+   "role": {
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
+   },
+   "input": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "output": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 100,
+    "success": 69,
+    "failure": 0,
+    "other": 31,
+    "successRate": 69,
+    "avgDurS": 29.8
+   },
+   "lastRun": {
+    "at": "2026-10-01T20:47:37Z",
     "conclusion": "success"
    }
   },
@@ -308,33 +424,31 @@
    "name": "trigger-mesh",
    "repo": "Console",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 23 * * * * + manual dispatch",
-   "schedule": "schedule 23 * * * * + manual dispatch",
-   "layer": "PUBLISH",
+   "schedule": "hourly :23",
+   "layer": "MIRROR",
    "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+    "en": "The thing-drags-thing engine - a keyless agent that reads the network's own public publications (dex/*.json, ledger books) and derives the next triggers, publishing the trigger book the whole system runs on.",
+    "he": "מנוע דבר-גורר-דבר - סוכן חסר-מפתחות שקורא את הפרסומים הציבוריים של הרשת עצמה וגוזר מהם את הטריגרים הבאים, ומפרסם את ספר-הטריגרים שכל-המערכת רצה עליו."
    },
    "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "public publications (dex/*.json, books)",
+    "he": "פרסומים ציבוריים (dex/*.json, ספרים)"
    },
    "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "triggers/registry.json + current.json + log.jsonl",
+    "he": "triggers/registry.json + current.json + log.jsonl"
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 85,
-    "success": 85,
+    "runs_sampled": 84,
+    "success": 84,
     "failure": 0,
     "other": 0,
     "successRate": 100,
     "avgDurS": 11.9
    },
    "lastRun": {
-    "at": "2026-10-01T21:33:56Z",
+    "at": "2026-10-01T20:36:22Z",
     "conclusion": "success"
    }
   },
@@ -343,21 +457,19 @@
    "name": "truth-gate",
    "repo": "Console",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 7 * * * * + manual dispatch",
-   "schedule": "schedule 7 * * * * + manual dispatch",
-   "layer": "PUBLISH",
+   "schedule": "hourly :07",
+   "layer": "QA",
    "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+    "en": "The truth machine - measures the LIVE deployed site from Actions (site-up, zero broken links, witness freshness, live-format, bridgehead sanity, complete-map, SLO published) and commits the verdict publicly; any FAIL turns the run red in public.",
+    "he": "מכונת האמת - מודדת מ-Actions את האתר החי הפרוס (אתר-עולה, אפס קישורים שבורים, טריות-עד, פורמט-חי, תקינות-ראש-גשר, מפה-מלאה, SLO מפורסם) וקומיטת את פסק-הדין בפומבי; כל FAIL מאדים את הריצה לעין כל."
    },
    "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "live deployed site (never the repo)",
+    "he": "האתר הפרוס החי (לעולם לא הריפו)"
    },
    "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "truth/latest.json + history.json + slo.json",
+    "he": "truth/latest.json + history.json + slo.json"
    },
    "state": "live",
    "stats": {
@@ -366,10 +478,10 @@
     "failure": 3,
     "other": 0,
     "successRate": 97,
-    "avgDurS": 25.9
+    "avgDurS": 26
    },
    "lastRun": {
-    "at": "2026-10-01T21:23:28Z",
+    "at": "2026-10-01T20:25:14Z",
     "conclusion": "success"
    }
   },
@@ -377,22 +489,20 @@
    "id": "defi-canary",
    "name": "canary",
    "repo": "Defi",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "schedule 17 */6 * * * + manual dispatch",
-   "schedule": "schedule 17 */6 * * * + manual dispatch",
-   "layer": "INTEGRITY",
+   "visibility": "private",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "The hunter's canary - a one-second gate probe that answers a single question: are private Actions minutes flowing again? Its honest red IS the measurement while the free-plan cap is exhausted.",
-    "he": "הקנרית של הצייד - בדיקת-שער של שנייה אחת שעונה על שאלה אחת: האם דקות-ה-Actions הפרטיות זרמו בחזרה? האדום הכן שלה הוא המדידה כל-עוד המכסה החודשית אזולה."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "nothing (pure liveness probe)",
-    "he": "כלום (חיישן-חיים טהור)"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "green = minutes flowing / red = cap exhausted",
-    "he": "ירוק = דקות זורמות / אדום = מכסה אזולה"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "state": "live",
    "stats": {
@@ -409,25 +519,56 @@
    }
   },
   {
+   "id": "defi-gitleaks-secret-scan",
+   "name": "gitleaks-secret-scan",
+   "repo": "Defi",
+   "visibility": "private",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
+   "role": {
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
+   },
+   "input": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "output": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 100,
+    "success": 6,
+    "failure": 94,
+    "other": 0,
+    "successRate": 6,
+    "avgDurS": 9.9
+   },
+   "lastRun": {
+    "at": "2026-10-01T20:48:07Z",
+    "conclusion": "success"
+   }
+  },
+  {
    "id": "domain-agent-verify",
    "name": "agent-verify",
    "repo": "Domain",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 55 */2 * * * + manual dispatch",
-   "schedule": "schedule 55 */2 * * * + manual dispatch",
-   "layer": "TRUTH",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "The network verifies the agent - measures 48 assertions against the live site and publishes the results as data. Pre-live (Pages not yet enabled): all assertions honestly suspended with the operator instruction.",
-    "he": "הרשת מאמתת את הסוכן - מודדת 48 קביעות מול האתר החי ומפרסמת את התוצאות כנתונים. במצב טרום-עלייה (Pages לא הופעל): כל הקביעות מושהות בכנות עם הוראת המפעיל."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "assertions.json + the live site",
-    "he": "assertions.json + האתר החי"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "agent/verify/results.json",
-    "he": "agent/verify/results.json"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "state": "live",
    "stats": {
@@ -436,10 +577,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 19.6
+    "avgDurS": 19.8
    },
    "lastRun": {
-    "at": "2026-10-01T21:04:31Z",
+    "at": "2026-10-01T19:05:44Z",
     "conclusion": "success"
    }
   },
@@ -448,30 +589,28 @@
    "name": "agents-watch",
    "repo": "Domain",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 37 * * * * + manual dispatch",
-   "schedule": "schedule 37 * * * * + manual dispatch",
-   "layer": "REGISTRY",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "The agents registry of the new home - asks the GitHub API for the true state of every agent in all 15 repos (this one included) and refreshes the registry the console reads. The token lives only in the Actions secret vault.",
-    "he": "רישום הסוכנים של הבית החדש - שואל את ה-API של גיטהאב את מצבם האמיתי של כל הסוכנים בכל 15 הריפואים (כולל הזה) ומרענן את הרישום שהקונסולה קוראת. הטוקן חי בכספת הסודות של Actions בלבד."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "AGENTS_WATCH_TOKEN (Actions secret, never in code)",
-    "he": "AGENTS_WATCH_TOKEN (סוד Actions, לעולם לא בקוד)"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "agents/registry.json + gh-snapshot.json",
-    "he": "agents/registry.json + gh-snapshot.json"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "state": "live",
    "stats": {
     "runs_sampled": 100,
-    "success": 99,
+    "success": 100,
     "failure": 0,
-    "other": 1,
-    "successRate": 99,
-    "avgDurS": 146.8
+    "other": 0,
+    "successRate": 100,
+    "avgDurS": 149.5
    },
    "lastRun": {
     "at": "2026-10-01T20:46:37Z",
@@ -483,33 +622,64 @@
    "name": "anchor-execute",
    "repo": "Domain",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 55 * * * * + manual dispatch",
-   "schedule": "schedule 55 * * * * + manual dispatch",
-   "layer": "PUBLISH",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 83,
-    "success": 81,
+    "runs_sampled": 82,
+    "success": 80,
     "failure": 2,
     "other": 0,
     "successRate": 97.6,
-    "avgDurS": 17.5
+    "avgDurS": 17.6
    },
    "lastRun": {
-    "at": "2026-10-01T21:02:17Z",
+    "at": "2026-10-01T20:02:38Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "domain-bootstrap-pages",
+   "name": "bootstrap-pages",
+   "repo": "Domain",
+   "visibility": "public",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
+   "role": {
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
+   },
+   "input": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "output": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 5,
+    "success": 2,
+    "failure": 3,
+    "other": 0,
+    "successRate": 40,
+    "avgDurS": 8.8
+   },
+   "lastRun": {
+    "at": "2026-10-01T19:44:41Z",
     "conclusion": "success"
    }
   },
@@ -518,21 +688,19 @@
    "name": "cloud-heart",
    "repo": "Domain",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 17,47 * * * * + manual dispatch",
-   "schedule": "schedule 17,47 * * * * + manual dispatch",
-   "layer": "PUBLISH",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "state": "live",
    "stats": {
@@ -541,10 +709,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 37
+    "avgDurS": 36.8
    },
    "lastRun": {
-    "at": "2026-10-01T21:30:07Z",
+    "at": "2026-10-01T20:32:49Z",
     "conclusion": "success"
    }
   },
@@ -553,21 +721,19 @@
    "name": "cloud-pulse",
    "repo": "Domain",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 35 0 * * * + manual dispatch",
-   "schedule": "schedule 35 0 * * * + manual dispatch",
-   "layer": "PUBLISH",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "state": "live",
    "stats": {
@@ -588,21 +754,19 @@
    "name": "console-publish",
    "repo": "Domain",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 45 * * * * + manual dispatch",
-   "schedule": "schedule 45 * * * * + manual dispatch",
-   "layer": "PUBLISH",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "Publishes the new public home - validates and ships every change to the site the world will see.",
-    "he": "מפרסם את הבית הציבורי החדש - מאמת ומשטח כל שינוי לאתר שהעולם יראה."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "push to main",
-    "he": "דחיפה ל-main"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "live home pages",
-    "he": "דפי הבית החיים"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "state": "live",
    "stats": {
@@ -611,10 +775,10 @@
     "failure": 1,
     "other": 0,
     "successRate": 99,
-    "avgDurS": 16.3
+    "avgDurS": 16.5
    },
    "lastRun": {
-    "at": "2026-10-01T20:52:18Z",
+    "at": "2026-10-01T19:51:02Z",
     "conclusion": "success"
    }
   },
@@ -623,21 +787,19 @@
    "name": "content-campaign",
    "repo": "Domain",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 10 13 * * * + manual dispatch",
-   "schedule": "schedule 10 13 * * * + manual dispatch",
-   "layer": "PUBLISH",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "state": "live",
    "stats": {
@@ -658,21 +820,19 @@
    "name": "daily-claim",
    "repo": "Domain",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 37 2 * * * + manual dispatch",
-   "schedule": "schedule 37 2 * * * + manual dispatch",
-   "layer": "PUBLISH",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "state": "live",
    "stats": {
@@ -693,21 +853,19 @@
    "name": "daily-digest",
    "repo": "Domain",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 10 1 * * * + manual dispatch",
-   "schedule": "schedule 10 1 * * * + manual dispatch",
-   "layer": "PUBLISH",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "state": "live",
    "stats": {
@@ -728,21 +886,19 @@
    "name": "dex-beat",
    "repo": "Domain",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 53 */2 * * * + manual dispatch",
-   "schedule": "schedule 53 */2 * * * + manual dispatch",
-   "layer": "PUBLISH",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "state": "live",
    "stats": {
@@ -751,10 +907,10 @@
     "failure": 12,
     "other": 0,
     "successRate": 88,
-    "avgDurS": 50.1
+    "avgDurS": 50.6
    },
    "lastRun": {
-    "at": "2026-10-01T20:59:32Z",
+    "at": "2026-10-01T19:00:48Z",
     "conclusion": "success"
    }
   },
@@ -763,21 +919,19 @@
    "name": "dex-grid",
    "repo": "Domain",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 48 3 * * * + manual dispatch",
-   "schedule": "schedule 48 3 * * * + manual dispatch",
-   "layer": "PUBLISH",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "state": "live",
    "stats": {
@@ -798,21 +952,19 @@
    "name": "dex-mirror",
    "repo": "Domain",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 52 * * * * + manual dispatch",
-   "schedule": "schedule 52 * * * * + manual dispatch",
-   "layer": "MIRROR",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "Live book mirror of the new home - the engine publishes its beats (grid-beat/dex-beat) to the live Console mirror, and this agent re-mirrors the served files (grid, world, state, credits, portfolio) into this repository hourly so the money and defi fronts never serve a frozen book as live. Keyless public read; refuses to mirror a source older than 48h; writes only real changes.",
-    "he": "מראת הספר החי של הבית החדש - המנוע מפרסם את פעימותיו (grid-beat/dex-beat) למראה החיה של Console, והסוכן הזה משקף שעתית את הקבצים המוגשים (grid, world, state, credits, portfolio) לריפו הזה כדי שדפי הכסף וה-defi לעולם לא יגישו ספר קפוא כחי. קריאה ציבורית חסרת-מפתחות; מסרב לשקף מקור מעופש מ-48 שעות; כותב רק שינוי אמיתי."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "the live Console mirror (public URLs)",
-    "he": "המראה החיה של Console (URL-ים ציבוריים)"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "dex/{grid,world,state,credits,portfolio}.json kept honest",
-    "he": "dex/{grid,world,state,credits,portfolio}.json נשמרים כנים"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "state": "live",
    "stats": {
@@ -824,7 +976,7 @@
     "avgDurS": 14.8
    },
    "lastRun": {
-    "at": "2026-10-01T20:56:26Z",
+    "at": "2026-10-01T19:55:21Z",
     "conclusion": "success"
    }
   },
@@ -833,21 +985,19 @@
    "name": "dex-watch",
    "repo": "Domain",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 9,29,49 * * * * + manual dispatch",
-   "schedule": "schedule 9,29,49 * * * * + manual dispatch",
-   "layer": "MIRROR",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "The public deposits watcher of the new home - scans the real deposit addresses (TRON/ETH/SOL/BTC) over public RPC and updates the open deposits ledger the site displays.",
-    "he": "צופה ההפקדות הציבורי של הבית החדש - סורק את כתובות ההפקדה האמיתיות (TRON/ETH/SOL/BTC) ב-RPC ציבורי ומעדכן את ספר ההפקדות הפתוח שהאתר מציג."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "public RPC: TRON / ETH / SOL / BTC",
-    "he": "RPC ציבורי: TRON / ETH / SOL / BTC"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "dex/deposits.json - the open deposits ledger",
-    "he": "dex/deposits.json - ספר ההפקדות הפתוח"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "state": "live",
    "stats": {
@@ -856,45 +1006,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 14.2
+    "avgDurS": 14.3
    },
    "lastRun": {
-    "at": "2026-10-01T21:40:12Z",
-    "conclusion": "success"
-   }
-  },
-  {
-   "id": "domain-econ-desk",
-   "name": "econ-desk",
-   "repo": "Domain",
-   "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 10 17 * * * + manual dispatch",
-   "schedule": "schedule 10 17 * * * + manual dispatch",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
-   },
-   "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "state": "live",
-   "stats": {
-    "runs_sampled": 3,
-    "success": 2,
-    "failure": 1,
-    "other": 0,
-    "successRate": 66.7,
-    "avgDurS": 15
-   },
-   "lastRun": {
-    "at": "2026-10-01T21:27:43Z",
+    "at": "2026-10-01T20:40:30Z",
     "conclusion": "success"
    }
   },
@@ -903,21 +1018,19 @@
    "name": "foundry-mesh-tests",
    "repo": "Domain",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 17 5 * * * + on push + manual dispatch",
-   "schedule": "schedule 17 5 * * * + on push + manual dispatch",
-   "layer": "PUBLISH",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "state": "live",
    "stats": {
@@ -934,25 +1047,56 @@
    }
   },
   {
+   "id": "domain-gitleaks-secret-scan",
+   "name": "gitleaks-secret-scan",
+   "repo": "Domain",
+   "visibility": "public",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
+   "role": {
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
+   },
+   "input": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "output": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 38,
+    "success": 38,
+    "failure": 0,
+    "other": 0,
+    "successRate": 100,
+    "avgDurS": 14.7
+   },
+   "lastRun": {
+    "at": "2026-09-30T20:02:02Z",
+    "conclusion": "success"
+   }
+  },
+  {
    "id": "domain-grid-trigger-twin",
    "name": "grid-trigger-twin",
    "repo": "Domain",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 9,39 * * * * + manual dispatch",
-   "schedule": "schedule 9,39 * * * * + manual dispatch",
-   "layer": "PUBLISH",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "state": "live",
    "stats": {
@@ -964,7 +1108,7 @@
     "avgDurS": 18.9
    },
    "lastRun": {
-    "at": "2026-10-01T21:22:20Z",
+    "at": "2026-10-01T20:49:44Z",
     "conclusion": "success"
    }
   },
@@ -973,21 +1117,19 @@
    "name": "moment-watch",
    "repo": "Domain",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 12,42 * * * * + manual dispatch",
-   "schedule": "schedule 12,42 * * * * + manual dispatch",
-   "layer": "AWARENESS",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "Sovereign moment agent - reads the live moment (market regime via BTC 24h + fear&greed, our parity line vs the live internal Steem book, fuel runway, measured anomalies) and records a deterministic directional call on STEEM that is only ever scored after its 6h horizon has passed, against a live price. Training as measurement, never as promise. Moves no money, signs nothing, dispatches nothing.",
-    "he": "סוכן הבנת-הרגע הריבוני - קורא את הרגע החי (משטר-שוק דרך BTC 24ש' + פחד-ותאווה, קו-הזהות שלנו מול ספר-Steem הפנימי החי, מסלול-הדלק, חריגות שנמדדו) ורושם קריאת-כיוון דטרמיניסטית על STEEM שמוכרעת רק לאחר אופק 6 השעות שלה, מול מחיר חי. אימון כמדידה, לא כהבטחה. לא זז כסף, לא חותם ולא מזניק."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "CoinGecko + alternative.me + Steem public RPC + our live mirrors",
-    "he": "CoinGecko + alternative.me + RPC ציבורי של Steem + המראות החיות שלנו"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "moment/moment.json + moment/history.json (scored calls)",
-    "he": "moment/moment.json + moment/history.json (קריאות מוכרעות)"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "state": "live",
    "stats": {
@@ -999,7 +1141,7 @@
     "avgDurS": 17.1
    },
    "lastRun": {
-    "at": "2026-10-01T21:23:15Z",
+    "at": "2026-10-01T20:50:46Z",
     "conclusion": "success"
    }
   },
@@ -1008,21 +1150,19 @@
    "name": "money-watch",
    "repo": "Domain",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 2,17,32,47 * * * * + manual dispatch",
-   "schedule": "schedule 2,17,32,47 * * * * + manual dispatch",
-   "layer": "MONEY-PATH",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "Money path sentinel of the new home - catches the weekly powerdown landing within minutes and dispatches the external grid immediately, and rules SEND-NOW/WAIT on the redemption outbox versus the measured TRON broadcast cost.",
-    "he": "צופה נתיב הכסף של הבית החדש - קולט את נחיתת ה-powerdown השבועית בתוך דקות ומזניק את הגריד החוץ מיד, ופוסק SEND-NOW/WAIT על תיבת הפדיון מול עלות השידור הנמדדת ב-TRON."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "Steem public RPC (account+powerdown) + trongrid + CoinGecko",
-    "he": "RPC ציבורי של Steem (חשבון+powerdown) + trongrid + CoinGecko"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "dex/money.json + immediate dex-grid dispatch on landing",
-    "he": "dex/money.json + הזנקת dex-grid מיידית בנחיתה"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "state": "live",
    "stats": {
@@ -1031,10 +1171,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 16.6
+    "avgDurS": 16.7
    },
    "lastRun": {
-    "at": "2026-10-01T21:31:07Z",
+    "at": "2026-10-01T20:34:56Z",
     "conclusion": "success"
    }
   },
@@ -1043,21 +1183,19 @@
    "name": "org-selftests",
    "repo": "Domain",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 26 3 * * * + manual dispatch",
-   "schedule": "schedule 26 3 * * * + manual dispatch",
-   "layer": "PUBLISH",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "state": "live",
    "stats": {
@@ -1074,25 +1212,56 @@
    }
   },
   {
+   "id": "domain-pages-build-deployment",
+   "name": "pages-build-deployment",
+   "repo": "Domain",
+   "visibility": "public",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
+   "role": {
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
+   },
+   "input": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "output": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 100,
+    "success": 84,
+    "failure": 0,
+    "other": 16,
+    "successRate": 84,
+    "avgDurS": 41.8
+   },
+   "lastRun": {
+    "at": "2026-10-01T20:51:01Z",
+    "conclusion": "success"
+   }
+  },
+  {
    "id": "domain-proof-pipeline",
    "name": "proof-pipeline",
    "repo": "Domain",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 40 4 * * * + manual dispatch",
-   "schedule": "schedule 40 4 * * * + manual dispatch",
-   "layer": "PUBLISH",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "state": "live",
    "stats": {
@@ -1109,25 +1278,56 @@
    }
   },
   {
+   "id": "domain-seal-adopt",
+   "name": "seal-adopt",
+   "repo": "Domain",
+   "visibility": "public",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
+   "role": {
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
+   },
+   "input": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "output": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 4,
+    "success": 4,
+    "failure": 0,
+    "other": 0,
+    "successRate": 100,
+    "avgDurS": 20.5
+   },
+   "lastRun": {
+    "at": "2026-10-01T19:44:43Z",
+    "conclusion": "success"
+   }
+  },
+  {
    "id": "domain-self-audience",
    "name": "self-audience",
    "repo": "Domain",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 30 14 * * * + manual dispatch",
-   "schedule": "schedule 30 14 * * * + manual dispatch",
-   "layer": "PUBLISH",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "state": "live",
    "stats": {
@@ -1148,21 +1348,19 @@
    "name": "sovereign-selftests",
    "repo": "Domain",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 17 6 * * * + manual dispatch",
-   "schedule": "schedule 17 6 * * * + manual dispatch",
-   "layer": "PUBLISH",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "state": "live",
    "stats": {
@@ -1183,33 +1381,31 @@
    "name": "treasury-route",
    "repo": "Domain",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 20 16 * * * + on push + manual dispatch",
-   "schedule": "schedule 20 16 * * * + on push + manual dispatch",
-   "layer": "PUBLISH",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 7,
-    "success": 6,
+    "runs_sampled": 6,
+    "success": 5,
     "failure": 1,
     "other": 0,
-    "successRate": 85.7,
-    "avgDurS": 112.9
+    "successRate": 83.3,
+    "avgDurS": 101.5
    },
    "lastRun": {
-    "at": "2026-10-01T21:21:02Z",
+    "at": "2026-10-01T16:34:10Z",
     "conclusion": "success"
    }
   },
@@ -1218,33 +1414,31 @@
    "name": "tri-bridge",
    "repo": "Domain",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 5 15 * * * + manual dispatch",
-   "schedule": "schedule 5 15 * * * + manual dispatch",
-   "layer": "PUBLISH",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 3,
-    "success": 3,
+    "runs_sampled": 2,
+    "success": 2,
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 41.7
+    "avgDurS": 42
    },
    "lastRun": {
-    "at": "2026-10-01T21:21:16Z",
+    "at": "2026-10-01T15:24:19Z",
     "conclusion": "success"
    }
   },
@@ -1253,21 +1447,19 @@
    "name": "truth-gate",
    "repo": "Domain",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 7 * * * * + manual dispatch",
-   "schedule": "schedule 7 * * * * + manual dispatch",
-   "layer": "TRUTH",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "The truth machine of the new home - measures the live site every hour and commits the verdict (red included) publicly. Until Pages is enabled it records an honest PRE-LIVE verdict, never a false red.",
-    "he": "מכונת האמת של הבית החדש - מודדת את האתר החי כל שעה ומקמיטת את פסק הדין (כולל אדום) בפומבי. עד הפעלת Pages היא רושמת פסק דין PRE-LIVE כן, לעולם לא אדום שקר."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "the live deployed site",
-    "he": "האתר החי הפרוס"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "truth/latest.json + history + SLO ledger",
-    "he": "truth/latest.json + היסטוריה + ספר SLO"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "state": "live",
    "stats": {
@@ -1276,10 +1468,10 @@
     "failure": 3,
     "other": 0,
     "successRate": 97,
-    "avgDurS": 23.9
+    "avgDurS": 24.1
    },
    "lastRun": {
-    "at": "2026-10-01T21:21:50Z",
+    "at": "2026-10-01T20:23:16Z",
     "conclusion": "success"
    }
   },
@@ -1288,21 +1480,19 @@
    "name": "watchdog",
    "repo": "Domain",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 10 * * * * + manual dispatch",
-   "schedule": "schedule 10 * * * * + manual dispatch",
-   "layer": "PUBLISH",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "state": "live",
    "stats": {
@@ -1314,7 +1504,7 @@
     "avgDurS": 17.1
    },
    "lastRun": {
-    "at": "2026-10-01T21:25:01Z",
+    "at": "2026-10-01T20:27:32Z",
     "conclusion": "success"
    }
   },
@@ -1323,21 +1513,19 @@
    "name": "weave-anchor-lines",
    "repo": "Domain",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 33 */2 * * * + manual dispatch",
-   "schedule": "schedule 33 */2 * * * + manual dispatch",
-   "layer": "PUBLISH",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "state": "live",
    "stats": {
@@ -1346,10 +1534,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 64.3
+    "avgDurS": 64.6
    },
    "lastRun": {
-    "at": "2026-10-01T21:24:00Z",
+    "at": "2026-10-01T20:42:09Z",
     "conclusion": "success"
    }
   },
@@ -1358,21 +1546,19 @@
    "name": "weave-ecosystem",
    "repo": "Domain",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 30 6 * * * + manual dispatch",
-   "schedule": "schedule 30 6 * * * + manual dispatch",
-   "layer": "PUBLISH",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "state": "live",
    "stats": {
@@ -1393,21 +1579,19 @@
    "name": "weave-heart",
    "repo": "Domain",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 13 * * * * + manual dispatch",
-   "schedule": "schedule 13 * * * * + manual dispatch",
-   "layer": "PUBLISH",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "state": "live",
    "stats": {
@@ -1419,7 +1603,7 @@
     "avgDurS": 36.5
    },
    "lastRun": {
-    "at": "2026-10-01T21:23:34Z",
+    "at": "2026-10-01T20:25:18Z",
     "conclusion": "success"
    }
   },
@@ -1428,21 +1612,19 @@
    "name": "weave-mirror",
    "repo": "Domain",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 57 * * * * + manual dispatch",
-   "schedule": "schedule 57 * * * * + manual dispatch",
-   "layer": "PUBLISH",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "state": "live",
    "stats": {
@@ -1451,10 +1633,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 16
+    "avgDurS": 16.1
    },
    "lastRun": {
-    "at": "2026-10-01T21:00:25Z",
+    "at": "2026-10-01T20:00:13Z",
     "conclusion": "success"
    }
   },
@@ -1463,21 +1645,19 @@
    "name": "web-publish",
    "repo": "Domain",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 3,23,43 * * * * + manual dispatch",
-   "schedule": "schedule 3,23,43 * * * * + manual dispatch",
-   "layer": "PUBLISH",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "state": "live",
    "stats": {
@@ -1486,10 +1666,43 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 23.2
+    "avgDurS": 23
    },
    "lastRun": {
-    "at": "2026-10-01T21:35:48Z",
+    "at": "2026-10-01T20:37:26Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "project-files-gitleaks-secret-scan",
+   "name": "gitleaks-secret-scan",
+   "repo": "Project-files",
+   "visibility": "private",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
+   "role": {
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
+   },
+   "input": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "output": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 4,
+    "success": 1,
+    "failure": 3,
+    "other": 0,
+    "successRate": 25,
+    "avgDurS": 7
+   },
+   "lastRun": {
+    "at": "2026-10-01T19:51:36Z",
     "conclusion": "success"
    }
   },
@@ -1497,10 +1710,8 @@
    "id": "roshpina-controls-audit",
    "name": "controls-audit",
    "repo": "roshpina",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "schedule 17 8 * * * + manual dispatch",
-   "schedule": "schedule 17 8 * * * + manual dispatch",
+   "visibility": "private",
+   "schedule": "daily 08:17 UTC",
    "layer": "INTEGRITY",
    "role": {
     "en": "Controls auditor - verifies the controls-that-exist document is present and substantial, every control documented in its own section, the agent briefing and patch specs exist, and counts the broadcasts archive.",
@@ -1529,13 +1740,44 @@
    }
   },
   {
+   "id": "roshpina-gitleaks-secret-scan",
+   "name": "gitleaks-secret-scan",
+   "repo": "roshpina",
+   "visibility": "private",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
+   "role": {
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
+   },
+   "input": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "output": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 5,
+    "success": 1,
+    "failure": 4,
+    "other": 0,
+    "successRate": 20,
+    "avgDurS": 6.6
+   },
+   "lastRun": {
+    "at": "2026-10-01T19:48:30Z",
+    "conclusion": "success"
+   }
+  },
+  {
    "id": "saos-control-center-control-center-build",
    "name": "control-center-build",
    "repo": "saos-control-center",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "schedule 37 12 * * * + manual dispatch",
-   "schedule": "schedule 37 12 * * * + manual dispatch",
+   "visibility": "private",
+   "schedule": "daily 12:37 UTC",
    "layer": "QA",
    "role": {
     "en": "Control center quality gate - installs dependencies from the frozen lockfile, generates the Prisma client, runs a full typecheck and a production build. Every failed step is recorded honestly.",
@@ -1564,13 +1806,143 @@
    }
   },
   {
+   "id": "saos-control-center-gitleaks-secret-scan",
+   "name": "gitleaks-secret-scan",
+   "repo": "saos-control-center",
+   "visibility": "private",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
+   "role": {
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
+   },
+   "input": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "output": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 4,
+    "success": 1,
+    "failure": 3,
+    "other": 0,
+    "successRate": 25,
+    "avgDurS": 5.5
+   },
+   "lastRun": {
+    "at": "2026-10-01T19:49:45Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "saos-dex-dex-beat",
+   "name": "dex-beat",
+   "repo": "saos-dex",
+   "visibility": "private",
+   "schedule": "every 2h :23",
+   "layer": "ALWAYS-UP",
+   "role": {
+    "en": "The exchange's cloud heart - loads the chain snapshot, runs deterministic ticks, verifies deposit claims against the public ledger, credits them, commits and publishes state to the public console.",
+    "he": "הלב הענן של הבורסה - טוען את תמונת-המצב, מריץ טיקים דטרמיניסטיים, מאמת תביעות הפקדה מול הספר הציבורי, מזכה, מבצע commit ומפרסם את המצב לקונסולה הציבורית."
+   },
+   "input": {
+    "en": "chain snapshot + signed deposit claims",
+    "he": "תמונת-מצב שרשרת + תביעות הפקדה חתומות"
+   },
+   "output": {
+    "en": "credits, chain commit, public state publish",
+    "he": "זיכויים, commit לשרשרת, פרסום מצב ציבורי"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 100,
+    "success": 84,
+    "failure": 16,
+    "other": 0,
+    "successRate": 84,
+    "avgDurS": 30
+   },
+   "lastRun": {
+    "at": "2026-10-01T19:44:47Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "saos-dex-gitleaks-secret-scan",
+   "name": "gitleaks-secret-scan",
+   "repo": "saos-dex",
+   "visibility": "private",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
+   "role": {
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
+   },
+   "input": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "output": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 18,
+    "success": 11,
+    "failure": 7,
+    "other": 0,
+    "successRate": 61.1,
+    "avgDurS": 24.3
+   },
+   "lastRun": {
+    "at": "2026-10-01T19:02:02Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "saos-jummper-gitleaks-secret-scan",
+   "name": "gitleaks-secret-scan",
+   "repo": "saos-jummper",
+   "visibility": "private",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
+   "role": {
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
+   },
+   "input": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "output": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 5,
+    "success": 1,
+    "failure": 4,
+    "other": 0,
+    "successRate": 20,
+    "avgDurS": 5
+   },
+   "lastRun": {
+    "at": "2026-10-01T19:44:34Z",
+    "conclusion": "success"
+   }
+  },
+  {
    "id": "saos-jummper-jumpper-tests",
    "name": "jumpper-tests",
    "repo": "saos-jummper",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "schedule 29 10 * * * + manual dispatch",
-   "schedule": "schedule 29 10 * * * + manual dispatch",
+   "visibility": "private",
+   "schedule": "daily 10:29 UTC",
    "layer": "QA",
    "role": {
     "en": "Notary test suite - runs the full unit tests of the cross-chain proof notary (the hard gate), compiles the whole package, and attempts the live read-only witness demo with honest reporting of network failures.",
@@ -1599,13 +1971,110 @@
    }
   },
   {
+   "id": "saos-sovereign-foundry-gitleaks-secret-scan",
+   "name": "gitleaks-secret-scan",
+   "repo": "saos-sovereign-foundry",
+   "visibility": "private",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
+   "role": {
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
+   },
+   "input": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "output": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 10,
+    "success": 1,
+    "failure": 9,
+    "other": 0,
+    "successRate": 10,
+    "avgDurS": 7.4
+   },
+   "lastRun": {
+    "at": "2026-10-01T19:53:42Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "saos-sovereign-platform-foundry-tests",
+   "name": "foundry-tests",
+   "repo": "saos-sovereign-platform",
+   "visibility": "private",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
+   "role": {
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
+   },
+   "input": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "output": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 19,
+    "success": 1,
+    "failure": 18,
+    "other": 0,
+    "successRate": 5.3,
+    "avgDurS": 7.2
+   },
+   "lastRun": {
+    "at": "2026-10-01T19:50:33Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "saos-sovereign-platform-gitleaks-secret-scan",
+   "name": "gitleaks-secret-scan",
+   "repo": "saos-sovereign-platform",
+   "visibility": "private",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
+   "role": {
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
+   },
+   "input": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "output": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 7,
+    "success": 1,
+    "failure": 6,
+    "other": 0,
+    "successRate": 14.3,
+    "avgDurS": 6.1
+   },
+   "lastRun": {
+    "at": "2026-10-01T19:50:33Z",
+    "conclusion": "success"
+   }
+  },
+  {
    "id": "saos-sovereign-platform-platform-selftest",
    "name": "platform-selftest",
    "repo": "saos-sovereign-platform",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "schedule 41 13 * * * + manual dispatch",
-   "schedule": "schedule 41 13 * * * + manual dispatch",
+   "visibility": "private",
+   "schedule": "daily 13:41 UTC",
    "layer": "QA",
    "role": {
     "en": "Edge engine selftest - runs the deterministic selftest of the dual-layer irrigation engine (no network, no randomness) and loads the frozen rule layer. The engine must answer identical answers always - that is the parity promise.",
@@ -1634,13 +2103,44 @@
    }
   },
   {
+   "id": "saosmartwallet-gitleaks-secret-scan",
+   "name": "gitleaks-secret-scan",
+   "repo": "Saosmartwallet",
+   "visibility": "private",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
+   "role": {
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
+   },
+   "input": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "output": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 4,
+    "success": 1,
+    "failure": 3,
+    "other": 0,
+    "successRate": 25,
+    "avgDurS": 9.3
+   },
+   "lastRun": {
+    "at": "2026-10-01T19:45:55Z",
+    "conclusion": "success"
+   }
+  },
+  {
    "id": "saosmartwallet-wallet-verify",
    "name": "wallet-verify",
    "repo": "Saosmartwallet",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "schedule 43 14 * * * + manual dispatch",
-   "schedule": "schedule 43 14 * * * + manual dispatch",
+   "visibility": "private",
+   "schedule": "daily 14:43 UTC",
    "layer": "QA",
    "role": {
     "en": "Wallet quality gate - installs dependencies, generates the Prisma client, runs a full typecheck and a production build of the seven-network wallet, and confirms the system-status reports exist.",
@@ -1669,13 +2169,44 @@
    }
   },
   {
+   "id": "sdk-gitleaks-secret-scan",
+   "name": "gitleaks-secret-scan",
+   "repo": "Sdk",
+   "visibility": "private",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
+   "role": {
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
+   },
+   "input": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "output": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 4,
+    "success": 1,
+    "failure": 3,
+    "other": 0,
+    "successRate": 25,
+    "avgDurS": 5
+   },
+   "lastRun": {
+    "at": "2026-10-01T19:46:29Z",
+    "conclusion": "success"
+   }
+  },
+  {
    "id": "sdk-sdk-verify",
    "name": "sdk-verify",
    "repo": "Sdk",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "schedule 23 9 * * * + manual dispatch",
-   "schedule": "schedule 23 9 * * * + manual dispatch",
+   "visibility": "private",
+   "schedule": "daily 09:23 UTC",
    "layer": "INTEGRITY",
    "role": {
     "en": "SDK content verifier - confirms the docs and broadcasts directories exist and are not empty, builds a SHA-256 manifest and counts the document inventory.",
@@ -1704,784 +2235,11 @@
    }
   },
   {
-   "id": "adsmarket-gitleaks-secret-scan",
-   "name": "gitleaks-secret-scan",
-   "repo": "Adsmarket",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "on push + on PR + manual dispatch",
-   "schedule": "on push + on PR + manual dispatch",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
-   },
-   "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "state": "on-demand",
-   "stats": {
-    "runs_sampled": 4,
-    "success": 1,
-    "failure": 3,
-    "other": 0,
-    "successRate": 25,
-    "avgDurS": 5.8
-   },
-   "lastRun": {
-    "at": "2026-10-01T19:47:33Z",
-    "conclusion": "success"
-   }
-  },
-  {
-   "id": "anchor-baseline-gitleaks-secret-scan",
-   "name": "gitleaks-secret-scan",
-   "repo": "anchor-baseline",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "on push + on PR + manual dispatch",
-   "schedule": "on push + on PR + manual dispatch",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
-   },
-   "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "state": "on-demand",
-   "stats": {
-    "runs_sampled": 4,
-    "success": 1,
-    "failure": 3,
-    "other": 0,
-    "successRate": 25,
-    "avgDurS": 6
-   },
-   "lastRun": {
-    "at": "2026-10-01T19:52:28Z",
-    "conclusion": "success"
-   }
-  },
-  {
-   "id": "console-gitleaks-secret-scan",
-   "name": "gitleaks-secret-scan",
-   "repo": "Console",
-   "visibility": "public",
-   "rail": "public",
-   "trigger": "on push + on PR + manual dispatch",
-   "schedule": "on push + on PR + manual dispatch",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
-   },
-   "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "state": "on-demand",
-   "stats": {
-    "runs_sampled": 100,
-    "success": 100,
-    "failure": 0,
-    "other": 0,
-    "successRate": 100,
-    "avgDurS": 12.6
-   },
-   "lastRun": {
-    "at": "2026-10-01T21:30:29Z",
-    "conclusion": "success"
-   }
-  },
-  {
-   "id": "console-pages-build-deployment",
-   "name": "pages-build-deployment",
-   "repo": "Console",
-   "visibility": "public",
-   "rail": "public",
-   "trigger": "unknown",
-   "schedule": "unknown",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
-   },
-   "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "state": "on-demand",
-   "stats": {
-    "runs_sampled": 100,
-    "success": 69,
-    "failure": 0,
-    "other": 31,
-    "successRate": 69,
-    "avgDurS": 25.5
-   },
-   "lastRun": {
-    "at": "2026-10-01T21:37:13Z",
-    "conclusion": "success"
-   }
-  },
-  {
-   "id": "defi-gitleaks-secret-scan",
-   "name": "gitleaks-secret-scan",
-   "repo": "Defi",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "on push + on PR + manual dispatch",
-   "schedule": "on push / PR",
-   "layer": "INTEGRITY",
-   "role": {
-    "en": "Secret-scanning gate on every push - runs the gitleaks binary directly (the third-party action fails on private rails); zero findings verified locally on the full history 2026-09-30.",
-    "he": "שער סריקת-סודות בכל דחיפה - מריץ את בינארי ה-gitleaks ישירות (ה-action של צד-ג' נופל על מסילות-פרטיות); אפס ממצאים אומת מקומית על כל ההיסטוריה 2026-09-30."
-   },
-   "input": {
-    "en": "full git history",
-    "he": "כל ההיסטוריה"
-   },
-   "output": {
-    "en": "green gate or honest red with the finding count",
-    "he": "שער ירוק או אדום כן עם מספר הממצאים"
-   },
-   "state": "on-demand",
-   "stats": {
-    "runs_sampled": 100,
-    "success": 12,
-    "failure": 88,
-    "other": 0,
-    "successRate": 12,
-    "avgDurS": 10.3
-   },
-   "lastRun": {
-    "at": "2026-10-01T21:44:28Z",
-    "conclusion": "success"
-   }
-  },
-  {
-   "id": "domain-bootstrap-pages",
-   "name": "bootstrap-pages",
-   "repo": "Domain",
-   "visibility": "public",
-   "rail": "public",
-   "trigger": "on push + manual dispatch",
-   "schedule": "manual (retry button)",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "The one-click attempt to enable Pages through the repo token - kept as documented evidence of the measured 403s (PAT lacks Administration) and as a retry button if permissions ever change.",
-    "he": "ניסיון הלחיצה-האחת להפעלת Pages דרך הטוקן של הריפו - נשמר כתיעוד של 403 הנמדדים (ל-PAT אין Administration) וכפתור ניסיון-חוזר אם ההרשאות ישתנו."
-   },
-   "input": {
-    "en": "GITHUB_TOKEN (repo-scoped)",
-    "he": "GITHUB_TOKEN (היקף הריפו)"
-   },
-   "output": {
-    "en": "Pages enabled, or an honest 403 in the run log",
-    "he": "Pages מופעל, או 403 כן בלוג הריצה"
-   },
-   "state": "on-demand",
-   "stats": {
-    "runs_sampled": 5,
-    "success": 2,
-    "failure": 3,
-    "other": 0,
-    "successRate": 40,
-    "avgDurS": 8.8
-   },
-   "lastRun": {
-    "at": "2026-10-01T19:44:41Z",
-    "conclusion": "success"
-   }
-  },
-  {
-   "id": "domain-gitleaks-secret-scan",
-   "name": "gitleaks-secret-scan",
-   "repo": "Domain",
-   "visibility": "public",
-   "rail": "public",
-   "trigger": "on push + on PR + manual dispatch",
-   "schedule": "on push + on PR + manual dispatch",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
-   },
-   "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "state": "on-demand",
-   "stats": {
-    "runs_sampled": 41,
-    "success": 41,
-    "failure": 0,
-    "other": 0,
-    "successRate": 100,
-    "avgDurS": 14.5
-   },
-   "lastRun": {
-    "at": "2026-10-01T21:27:29Z",
-    "conclusion": "success"
-   }
-  },
-  {
-   "id": "domain-pages-build-deployment",
-   "name": "pages-build-deployment",
-   "repo": "Domain",
-   "visibility": "public",
-   "rail": "public",
-   "trigger": "unknown",
-   "schedule": "unknown",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
-   },
-   "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "state": "on-demand",
-   "stats": {
-    "runs_sampled": 100,
-    "success": 85,
-    "failure": 0,
-    "other": 15,
-    "successRate": 85,
-    "avgDurS": 30.5
-   },
-   "lastRun": {
-    "at": "2026-10-01T21:40:22Z",
-    "conclusion": "success"
-   }
-  },
-  {
-   "id": "project-files-gitleaks-secret-scan",
-   "name": "gitleaks-secret-scan",
-   "repo": "Project-files",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "on push + on PR + manual dispatch",
-   "schedule": "on push + on PR + manual dispatch",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
-   },
-   "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "state": "on-demand",
-   "stats": {
-    "runs_sampled": 4,
-    "success": 1,
-    "failure": 3,
-    "other": 0,
-    "successRate": 25,
-    "avgDurS": 7
-   },
-   "lastRun": {
-    "at": "2026-10-01T19:51:36Z",
-    "conclusion": "success"
-   }
-  },
-  {
-   "id": "roshpina-gitleaks-secret-scan",
-   "name": "gitleaks-secret-scan",
-   "repo": "roshpina",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "on push + on PR + manual dispatch",
-   "schedule": "on push + on PR + manual dispatch",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
-   },
-   "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "state": "on-demand",
-   "stats": {
-    "runs_sampled": 5,
-    "success": 1,
-    "failure": 4,
-    "other": 0,
-    "successRate": 20,
-    "avgDurS": 6.6
-   },
-   "lastRun": {
-    "at": "2026-10-01T19:48:30Z",
-    "conclusion": "success"
-   }
-  },
-  {
-   "id": "saos-control-center-gitleaks-secret-scan",
-   "name": "gitleaks-secret-scan",
-   "repo": "saos-control-center",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "on push + on PR + manual dispatch",
-   "schedule": "on push + on PR + manual dispatch",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
-   },
-   "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "state": "on-demand",
-   "stats": {
-    "runs_sampled": 4,
-    "success": 1,
-    "failure": 3,
-    "other": 0,
-    "successRate": 25,
-    "avgDurS": 5.5
-   },
-   "lastRun": {
-    "at": "2026-10-01T19:49:45Z",
-    "conclusion": "success"
-   }
-  },
-  {
-   "id": "saos-dex-gitleaks-secret-scan",
-   "name": "gitleaks-secret-scan",
-   "repo": "saos-dex",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "on push + on PR + manual dispatch",
-   "schedule": "on push + on PR + manual dispatch",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
-   },
-   "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "state": "on-demand",
-   "stats": {
-    "runs_sampled": 18,
-    "success": 11,
-    "failure": 7,
-    "other": 0,
-    "successRate": 61.1,
-    "avgDurS": 24.3
-   },
-   "lastRun": {
-    "at": "2026-10-01T19:02:02Z",
-    "conclusion": "success"
-   }
-  },
-  {
-   "id": "saos-jummper-gitleaks-secret-scan",
-   "name": "gitleaks-secret-scan",
-   "repo": "saos-jummper",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "on push + on PR + manual dispatch",
-   "schedule": "on push + on PR + manual dispatch",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
-   },
-   "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "state": "on-demand",
-   "stats": {
-    "runs_sampled": 5,
-    "success": 1,
-    "failure": 4,
-    "other": 0,
-    "successRate": 20,
-    "avgDurS": 5
-   },
-   "lastRun": {
-    "at": "2026-10-01T19:44:34Z",
-    "conclusion": "success"
-   }
-  },
-  {
-   "id": "saos-sovereign-foundry-gitleaks-secret-scan",
-   "name": "gitleaks-secret-scan",
-   "repo": "saos-sovereign-foundry",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "on push + on PR + manual dispatch",
-   "schedule": "on push + on PR + manual dispatch",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
-   },
-   "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "state": "on-demand",
-   "stats": {
-    "runs_sampled": 10,
-    "success": 1,
-    "failure": 9,
-    "other": 0,
-    "successRate": 10,
-    "avgDurS": 7.4
-   },
-   "lastRun": {
-    "at": "2026-10-01T19:53:42Z",
-    "conclusion": "success"
-   }
-  },
-  {
-   "id": "saos-sovereign-platform-foundry-tests",
-   "name": "foundry-tests",
-   "repo": "saos-sovereign-platform",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "on push + on PR + manual dispatch",
-   "schedule": "on push + on PR + manual dispatch",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
-   },
-   "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "state": "on-demand",
-   "stats": {
-    "runs_sampled": 19,
-    "success": 1,
-    "failure": 18,
-    "other": 0,
-    "successRate": 5.3,
-    "avgDurS": 7.2
-   },
-   "lastRun": {
-    "at": "2026-10-01T19:50:33Z",
-    "conclusion": "success"
-   }
-  },
-  {
-   "id": "saos-sovereign-platform-gitleaks-secret-scan",
-   "name": "gitleaks-secret-scan",
-   "repo": "saos-sovereign-platform",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "on push + on PR + manual dispatch",
-   "schedule": "on push + on PR + manual dispatch",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
-   },
-   "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "state": "on-demand",
-   "stats": {
-    "runs_sampled": 7,
-    "success": 1,
-    "failure": 6,
-    "other": 0,
-    "successRate": 14.3,
-    "avgDurS": 6.1
-   },
-   "lastRun": {
-    "at": "2026-10-01T19:50:33Z",
-    "conclusion": "success"
-   }
-  },
-  {
-   "id": "saosmartwallet-gitleaks-secret-scan",
-   "name": "gitleaks-secret-scan",
-   "repo": "Saosmartwallet",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "on push + on PR + manual dispatch",
-   "schedule": "on push + on PR + manual dispatch",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
-   },
-   "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "state": "on-demand",
-   "stats": {
-    "runs_sampled": 4,
-    "success": 1,
-    "failure": 3,
-    "other": 0,
-    "successRate": 25,
-    "avgDurS": 9.3
-   },
-   "lastRun": {
-    "at": "2026-10-01T19:45:55Z",
-    "conclusion": "success"
-   }
-  },
-  {
-   "id": "sdk-gitleaks-secret-scan",
-   "name": "gitleaks-secret-scan",
-   "repo": "Sdk",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "on push + on PR + manual dispatch",
-   "schedule": "on push + on PR + manual dispatch",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
-   },
-   "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "state": "on-demand",
-   "stats": {
-    "runs_sampled": 4,
-    "success": 1,
-    "failure": 3,
-    "other": 0,
-    "successRate": 25,
-    "avgDurS": 5
-   },
-   "lastRun": {
-    "at": "2026-10-01T19:46:29Z",
-    "conclusion": "success"
-   }
-  },
-  {
-   "id": "steem-gitleaks-secret-scan",
-   "name": "gitleaks-secret-scan",
-   "repo": "steem",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "on push + on PR + manual dispatch",
-   "schedule": "on push + on PR + manual dispatch",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
-   },
-   "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "state": "on-demand",
-   "stats": {
-    "runs_sampled": 21,
-    "success": 14,
-    "failure": 7,
-    "other": 0,
-    "successRate": 66.7,
-    "avgDurS": 59
-   },
-   "lastRun": {
-    "at": "2026-10-01T20:56:49Z",
-    "conclusion": "success"
-   }
-  },
-  {
-   "id": "zip-gitleaks-secret-scan",
-   "name": "gitleaks-secret-scan",
-   "repo": "Zip",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "on push + on PR + manual dispatch",
-   "schedule": "on push + on PR + manual dispatch",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
-   },
-   "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "state": "on-demand",
-   "stats": {
-    "runs_sampled": 100,
-    "success": 70,
-    "failure": 30,
-    "other": 0,
-    "successRate": 70,
-    "avgDurS": 135.5
-   },
-   "lastRun": {
-    "at": "2026-10-01T21:31:21Z",
-    "conclusion": "success"
-   }
-  },
-  {
-   "id": "domain-seal-adopt",
-   "name": "seal-adopt",
-   "repo": "Domain",
-   "visibility": "public",
-   "rail": "public",
-   "trigger": "manual dispatch",
-   "schedule": "manual dispatch",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
-   },
-   "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "state": "backup",
-   "stats": {
-    "runs_sampled": 4,
-    "success": 4,
-    "failure": 0,
-    "other": 0,
-    "successRate": 100,
-    "avgDurS": 20.5
-   },
-   "lastRun": {
-    "at": "2026-10-01T19:44:43Z",
-    "conclusion": "success"
-   }
-  },
-  {
-   "id": "saos-dex-dex-beat",
-   "name": "dex-beat",
-   "repo": "saos-dex",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "manual dispatch",
-   "schedule": "manual backup (R71) - public twin Domain/dex-beat :53 carries the ticks",
-   "layer": "ALWAYS-UP",
-   "role": {
-    "en": "The exchange's cloud heart - loads the chain snapshot, runs deterministic ticks, verifies deposit claims against the public ledger, credits them, commits and publishes state to the public console.",
-    "he": "הלב הענן של הבורסה - טוען את תמונת-המצב, מריץ טיקים דטרמיניסטיים, מאמת תביעות הפקדה מול הספר הציבורי, מזכה, מבצע commit ומפרסם את המצב לקונסולה הציבורית."
-   },
-   "input": {
-    "en": "chain snapshot + signed deposit claims",
-    "he": "תמונת-מצב שרשרת + תביעות הפקדה חתומות"
-   },
-   "output": {
-    "en": "credits, chain commit, public state publish",
-    "he": "זיכויים, commit לשרשרת, פרסום מצב ציבורי"
-   },
-   "migratedTo": "Domain/dex-beat :53",
-   "state": "backup",
-   "stats": {
-    "runs_sampled": 100,
-    "success": 84,
-    "failure": 16,
-    "other": 0,
-    "successRate": 84,
-    "avgDurS": 30
-   },
-   "lastRun": {
-    "at": "2026-10-01T19:44:47Z",
-    "conclusion": "success"
-   }
-  },
-  {
    "id": "steem-cloud-heart",
    "name": "cloud-heart",
    "repo": "steem",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "manual dispatch",
-   "schedule": "manual backup (R73) - public twin Domain/cloud-heart :17/:47 carries the beats",
+   "visibility": "private",
+   "schedule": "every 30 min",
    "layer": "ALWAYS-UP",
    "role": {
     "en": "The fleet executor outside the sandbox - reads the living-attest from Steem/Hive over public RPC; fresh attest means sandbox alive (verify only), stale means takeover: key restore, full agent cycle, on-chain leadership marker, push.",
@@ -2495,8 +2253,7 @@
     "en": "saosnet beat --live, chain attest, gitkeeper push",
     "he": "saosnet beat --live, אימות שרשרת, דחיפת gitkeeper"
    },
-   "migratedTo": "Domain/cloud-heart :17/:47",
-   "state": "backup",
+   "state": "live",
    "stats": {
     "runs_sampled": 100,
     "success": 39,
@@ -2511,12 +2268,76 @@
    }
   },
   {
+   "id": "steem-gitleaks-secret-scan",
+   "name": "gitleaks-secret-scan",
+   "repo": "steem",
+   "visibility": "private",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
+   "role": {
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
+   },
+   "input": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "output": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 20,
+    "success": 13,
+    "failure": 7,
+    "other": 0,
+    "successRate": 65,
+    "avgDurS": 58
+   },
+   "lastRun": {
+    "at": "2026-10-01T19:31:25Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "zip-gitleaks-secret-scan",
+   "name": "gitleaks-secret-scan",
+   "repo": "Zip",
+   "visibility": "private",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
+   "role": {
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
+   },
+   "input": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "output": {
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 100,
+    "success": 63,
+    "failure": 37,
+    "other": 0,
+    "successRate": 63,
+    "avgDurS": 136
+   },
+   "lastRun": {
+    "at": "2026-10-01T20:43:03Z",
+    "conclusion": "success"
+   }
+  },
+  {
    "id": "zip-weave-brain-restore",
    "name": "weave-brain-restore",
    "repo": "Zip",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "manual dispatch",
+   "visibility": "private",
    "schedule": "one-shot (manual)",
    "layer": "RECOVERY",
    "role": {
@@ -2531,7 +2352,7 @@
     "en": "brain keys restored to the sovereign chain",
     "he": "מפתחות המוח הושבו לשרשרת הריבונית"
    },
-   "state": "backup",
+   "state": "live",
    "stats": {
     "runs_sampled": 4,
     "success": 2,
@@ -2549,9 +2370,7 @@
    "id": "zip-weave-ecosystem",
    "name": "weave-ecosystem",
    "repo": "Zip",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "manual dispatch",
+   "visibility": "private",
    "schedule": "daily 05:30",
    "layer": "ENFORCEMENT",
    "role": {
@@ -2566,8 +2385,7 @@
     "en": "ecosystem report commits",
     "he": "קומיטים של דוח אקוסיסטם"
    },
-   "migratedTo": "Domain/weave-ecosystem",
-   "state": "backup",
+   "state": "live",
    "stats": {
     "runs_sampled": 12,
     "success": 7,
@@ -2585,10 +2403,8 @@
    "id": "zip-weave-heart",
    "name": "weave-heart",
    "repo": "Zip",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "manual dispatch",
-   "schedule": "manual backup (R71) - public twin Domain/weave-heart :13 carries the pulse",
+   "visibility": "private",
+   "schedule": "hourly :00",
    "layer": "ALWAYS-UP",
    "role": {
     "en": "Cloud heart of The Weave - reads the ledger every hour, judges whether the primary runner is alive, verifies only when alive, takes over the full cycle when it is not.",
@@ -2602,8 +2418,7 @@
     "en": "attestations, checkpoints, heartbeat commits",
     "he": "אימותים, צ'קפוינטים, קומיטים של פעימה"
    },
-   "migratedTo": "Domain/weave-heart :13",
-   "state": "backup",
+   "state": "live",
    "stats": {
     "runs_sampled": 100,
     "success": 74,
@@ -2621,24 +2436,22 @@
    "id": "zip-web-probe",
    "name": "web-probe",
    "repo": "Zip",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "manual dispatch",
-   "schedule": "manual dispatch",
-   "layer": "PUBLISH",
+   "visibility": "private",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
-   "state": "backup",
+   "state": "live",
    "stats": {
     "runs_sampled": 4,
     "success": 2,
@@ -2656,24 +2469,22 @@
    "id": "zip-web-publish",
    "name": "web-publish",
    "repo": "Zip",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "manual dispatch",
-   "schedule": "manual dispatch",
-   "layer": "PUBLISH",
+   "visibility": "private",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
-   "state": "backup",
+   "state": "live",
    "stats": {
     "runs_sampled": 100,
     "success": 31,
@@ -2688,61 +2499,23 @@
    }
   },
   {
-   "id": "project-files-archive-keeper",
-   "name": "archive-keeper",
-   "repo": "Project-files",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "schedule 31 11 * * 1 + manual dispatch",
-   "schedule": "schedule 31 11 * * 1 + manual dispatch",
-   "layer": "ARCHIVE",
-   "role": {
-    "en": "Archive keeper - opens every canonical zip archive end to end to prove it is not corrupt, builds a SHA-256 manifest and a size catalog. A corrupt archive is a red mark.",
-    "he": "שומר הארכיון - פותח כל ארכיון קנוני מקצה לקצה כדי להוכיח שאינו מושחת, בונה מניפסט SHA-256 וקטלוג גדלים. ארכיון מושחת הוא סימן אדום."
-   },
-   "input": {
-    "en": "canonical zip archives",
-    "he": "ארכיוני zip קנוניים"
-   },
-   "output": {
-    "en": "agent/status.json + archives.sha256",
-    "he": "דוח agent/status.json + מניפסט ארכיונים"
-   },
-   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
-   "state": "stale",
-   "stats": {
-    "runs_sampled": 4,
-    "success": 1,
-    "failure": 3,
-    "other": 0,
-    "successRate": 25,
-    "avgDurS": 6
-   },
-   "lastRun": {
-    "at": "2026-09-28T11:44:08Z",
-    "conclusion": "failure"
-   }
-  },
-  {
    "id": "console-key-verify",
    "name": "key-verify",
    "repo": "Console",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "manual dispatch",
-   "schedule": "manual dispatch",
-   "layer": "PUBLISH",
+   "schedule": "manual (workflow_dispatch)",
+   "layer": "INTEGRITY",
    "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+    "en": "Key proof - derives the active public key from the key material held only as a GitHub Actions secret and compares it against the LIVE chain authorities of the account; an honest no-secret skip when the secret is absent, and a public receipt of the match when it is not. No secret value ever enters the repo or the logs.",
+    "he": "הוכחת-מפתח - גוזר את המפתח-הציבורי מחומר-המפתח שמוחזק אך ורק כ-secret של GitHub Actions ומשווה מול רשויות-המפתח החיות בשרשרת; דילוג כנה כשאין סוד, וקבלה ציבורית של ההתאמה כשיש. ערך-הסוד אף פעם לא נכנס לריפו או ללוגים."
    },
    "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "GitHub Actions secret (memory only) + chain authorities",
+    "he": "secret של GitHub Actions (זיכרון בלבד) + רשויות-שרשרת"
    },
    "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "receipts/key-check.json (public-key match receipt)",
+    "he": "receipts/key-check.json (קבלת התאמת-מפתח-ציבורי)"
    },
    "state": "degraded",
    "stats": {
@@ -2763,21 +2536,19 @@
    "name": "key-verify",
    "repo": "Domain",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "manual dispatch",
-   "schedule": "manual (dormant until HEADCORNER)",
-   "layer": "MONEY-PATH",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "Operator key check - dormant in the new home until the operator adds the HEADCORNER secret to the vault; then it verifies the key against the live chain, seals the WIF into the engine vault and dispatches the grid. Refuses honestly while absent.",
-    "he": "בדיקת מפתח המפעיל - רדום בבית החדש עד שהמפעיל יוסיף את הסוד HEADCORNER לכספת; אז תאמת את המפתח מול השרשרת החיה, תאטום את ה-WIF לכספת המנוע ותזניק את הגריד. מסרבת בכנות כל עוד חסר."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "HEADCORNER secret (operator-added) + live chain",
-    "he": "סוד HEADCORNER (בהוספת המפעיל) + שרשרת חיה"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "receipts/key-check.json (verdict, never the value)",
-    "he": "receipts/key-check.json (פסק דין, לעולם לא הערך)"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "state": "degraded",
    "stats": {
@@ -2798,21 +2569,19 @@
    "name": "org-gitleaks",
    "repo": "Domain",
    "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 44 1,7,13,19 * * * + manual dispatch",
-   "schedule": "schedule 44 1,7,13,19 * * * + manual dispatch",
-   "layer": "PUBLISH",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "state": "degraded",
    "stats": {
@@ -2829,28 +2598,57 @@
    }
   },
   {
+   "id": "project-files-archive-keeper",
+   "name": "archive-keeper",
+   "repo": "Project-files",
+   "visibility": "private",
+   "schedule": "weekly Mon 11:31 UTC",
+   "layer": "ARCHIVE",
+   "role": {
+    "en": "Archive keeper - opens every canonical zip archive end to end to prove it is not corrupt, builds a SHA-256 manifest and a size catalog. A corrupt archive is a red mark.",
+    "he": "שומר הארכיון - פותח כל ארכיון קנוני מקצה לקצה כדי להוכיח שאינו מושחת, בונה מניפסט SHA-256 וקטלוג גדלים. ארכיון מושחת הוא סימן אדום."
+   },
+   "input": {
+    "en": "canonical zip archives",
+    "he": "ארכיוני zip קנוניים"
+   },
+   "output": {
+    "en": "agent/status.json + archives.sha256",
+    "he": "דוח agent/status.json + מניפסט ארכיונים"
+   },
+   "state": "degraded",
+   "stats": {
+    "runs_sampled": 4,
+    "success": 1,
+    "failure": 3,
+    "other": 0,
+    "successRate": 25,
+    "avgDurS": 6
+   },
+   "lastRun": {
+    "at": "2026-09-28T11:44:08Z",
+    "conclusion": "failure"
+   }
+  },
+  {
    "id": "saos-dex-dex-grid",
    "name": "dex-grid",
    "repo": "saos-dex",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "manual dispatch",
-   "schedule": "manual backup (R71) - public twin Domain/dex-grid 03:48 carries the grid",
-   "layer": "PUBLISH",
+   "visibility": "private",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "Exchange grid rail backup - the public twin in Domain carries the scheduled grid.",
-    "he": "גיבוי מסילת-הגריד של הבורסה - התאום הציבורי ב-Domain נושא את הגריד המתוזמן."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "grid state",
-    "he": "מצב גריד"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "grid publish",
-    "he": "פרסום גריד"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
-   "migratedTo": "Domain/dex-grid 03:48",
-   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
    "state": "degraded",
    "stats": {
     "runs_sampled": 17,
@@ -2869,25 +2667,21 @@
    "id": "saos-dex-grid-trigger",
    "name": "grid-trigger",
    "repo": "saos-dex",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "manual dispatch",
-   "schedule": "manual backup (R75) - public twin Domain/grid-trigger-twin :09/:39 carries the mesh",
-   "layer": "TRIGGER",
+   "visibility": "private",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "Trigger-mesh tick of the exchange rail - truth measurement (public RPC + anchor report), deterministic tick, state publish. Keyless by doctrine (R83).",
-    "he": "פעימת רשת-הטריגרים של מסילת הבורסה - מדידת-אמת (RPC ציבורי + דוח-עיגון), טיק דטרמיניסטי, פרסום-מצב. חסר-מפתחות מהיסוד (R83)."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "public RPC + fresh clone",
-    "he": "RPC ציבורי + קלון טרי"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "state commit + measured tick",
-    "he": "קומיט מצב + טיק נמדד"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
-   "migratedTo": "Domain/grid-trigger-twin :09/:39",
-   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
    "state": "degraded",
    "stats": {
     "runs_sampled": 100,
@@ -2906,9 +2700,7 @@
    "id": "saos-sovereign-foundry-ci",
    "name": "CI",
    "repo": "saos-sovereign-foundry",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "on push + on PR",
+   "visibility": "private",
    "schedule": "push / PR",
    "layer": "QA",
    "role": {
@@ -2923,7 +2715,6 @@
     "en": "lint + typecheck + build + api + concurrency verdict",
     "he": "פסק lint + typecheck + build + api + מקביליות"
    },
-   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
    "state": "degraded",
    "stats": {
     "runs_sampled": 100,
@@ -2942,25 +2733,21 @@
    "id": "steem-self-audience",
    "name": "self-audience",
    "repo": "steem",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "manual dispatch",
-   "schedule": "manual backup (R75) - public twin Domain/self-audience daily 14:30 UTC carries the audience",
-   "layer": "PUBLISH",
+   "visibility": "private",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "Original audience rail on the private vault repo - the public twin on Domain (free Actions, secrets-gated) carries the daily audience cycle.",
-    "he": "מסילת-הקהל המקורית על ריפו-הכספת הפרטי - התאום הציבורי ב-Domain (Actions חינם, סודות-משוערים) נושא את מחזור-הקהל היומי."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "SA_FLEET_KEYS + SA_HEAD_ACTIVE (Actions secrets)",
-    "he": "SA_FLEET_KEYS + SA_HEAD_ACTIVE (סודות Actions)"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "posts, votes, receipts",
-    "he": "פוסטים, הצבעות, קבלות"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
-   "migratedTo": "Domain/self-audience daily 14:30 UTC",
-   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
    "state": "degraded",
    "stats": {
     "runs_sampled": 4,
@@ -2979,10 +2766,8 @@
    "id": "zip-weave-anchor-lines",
    "name": "weave-anchor-lines",
    "repo": "Zip",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "manual dispatch",
-   "schedule": "manual backup (R71) - public twin Domain/weave-anchor-lines :33 carries the lines",
+   "visibility": "private",
+   "schedule": "bi-hourly :20 + on every beat",
    "layer": "WITNESS",
    "role": {
     "en": "Sequences both witness lines as one run - anchors the checkpoint root to Steem/Hive, then to Z Chain (zero-gas EVM), then exports and pushes once. Carries the merged anchor function of the two legacy lines (Task 24; their standalone workflows retired 2026-09-16).",
@@ -2996,8 +2781,6 @@
     "en": "anchor txids recorded back into the ledger",
     "he": "מזהי טרנזקציות העיגון חוזרים לספר"
    },
-   "migratedTo": "Domain/weave-anchor-lines :33",
-   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
    "state": "degraded",
    "stats": {
     "runs_sampled": 100,
@@ -3016,24 +2799,21 @@
    "id": "zip-web-probe2",
    "name": "web-probe2",
    "repo": "Zip",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "manual dispatch",
-   "schedule": "manual dispatch",
-   "layer": "PUBLISH",
+   "visibility": "private",
+   "schedule": "measured-from-runs",
+   "layer": "UNCATALOGUED",
    "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+    "en": "Not yet catalogued - the run stats here are measured (GitHub Actions API), but the role description has no catalog entry yet.",
+    "he": "טרם קוטלג - נתוני-הריצות כאן נמדדו (GitHub Actions API), אך לתיאור-התפקיד אין עדיין רשות-קטלוג."
    },
    "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
    "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
+    "en": "not catalogued",
+    "he": "טרם קוטלג"
    },
-   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
    "state": "degraded",
    "stats": {
     "runs_sampled": 5,

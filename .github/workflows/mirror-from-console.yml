@@ -1,0 +1,79 @@
+# MIRROR-FROM-CONSOLE — שיקוף פלטי-האמת מהבלוק האחד (r144-h)
+#
+# החוק (BLOC.md, שני הריפואים): כל קיפול-אמת מחושב פעם אחת, ב-Console
+# (מרכז-אמת-המפעיל). עד r144-h הריצו כאן זרימות-תאומות שחישבו את אותן
+# האמתות פעמיים (agents-watch · money-watch · dex-watch · console-publish
+# · truth-gate · key-verify) — הוסרו מהבית הזה, והפלטים שלהן מגיעים
+# בשיקוף שעתי חסר-מפתחות מהמראה הציבורית החיה של Console.
+#
+# מה משוקף (מלא ב-agents/mirror-from-console.mjs):
+#   DATA  — agents/registry.json · agents/gh-snapshot.json · dex/money.json
+#           dex/deposits.json · dex/watch.json · truth/latest.json ·
+#           truth/history.json · truth/slo.json
+#   HTML  — index.html · truth.html · gate.html · money.html · 404.html
+#           (העתקה מותנית-כנות בהחלפת-כתובת: דריכה-מקומית אמיתית של
+#           Domain נרשמת DRIFT והשיקוף נעצר לאותו משטח — לעולם לא דורך
+#           על תוכן. wallet.html חוץ-רישום: לא נשיקף ולא ניגע.)
+#   דוח   — mirror-report.json (פומבי, בכל ריצה)
+#
+# תזמון: שעתי ב-:15 (מפת-הדקות ב-Domain ללא חפיפה: moment :12/:42 ·
+# dex-mirror :52 · agent-verify :55 דו-שעתי · weave-mirror :57).
+# הזנקה ידנית אפשרית בכל רגע (workflow_dispatch).
+
+name: mirror-from-console
+
+on:
+  schedule:
+    - cron: '15 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mirror-from-console
+  cancel-in-progress: false
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Mirror the truth outputs from Console (keyless public read)
+        run: node agents/mirror-from-console.mjs
+
+      - name: Publish the mirrored surfaces
+        if: always()
+        run: |
+          git config user.name "mirror-from-console"
+          git config user.email "mirror-from-console@users.noreply.github.com"
+          git add agents/registry.json agents/gh-snapshot.json dex/money.json dex/deposits.json dex/watch.json truth/latest.json truth/history.json truth/slo.json index.html truth.html gate.html money.html 404.html mirror-report.json
+          if git diff --cached --quiet; then
+            echo "mirror unchanged - the bloc books are already ours"
+            exit 0
+          fi
+          for attempt in 1 2 3; do
+            git add agents/registry.json agents/gh-snapshot.json dex/money.json dex/deposits.json dex/watch.json truth/latest.json truth/history.json truth/slo.json index.html truth.html gate.html money.html 404.html mirror-report.json
+            git commit -m "mirror-from-console: $(date -u +%Y-%m-%dT%H:%M:%SZ) · truth outputs mirrored from the Console home (one-bloc, keyless)"
+            git pull --rebase origin main
+            if git push; then echo "mirror published (attempt ${attempt})"; exit 0; fi
+            echo "push failed (attempt ${attempt}); resetting to origin and re-mirroring"
+            git checkout -- .
+            git reset --hard origin/main
+            node agents/mirror-from-console.mjs
+            git add agents/registry.json agents/gh-snapshot.json dex/money.json dex/deposits.json dex/watch.json truth/latest.json truth/history.json truth/slo.json index.html truth.html gate.html money.html 404.html mirror-report.json
+            if git diff --cached --quiet; then
+              echo "after re-mirror there is nothing to commit - the bloc books are already ours"
+              exit 0
+            fi
+          done
+          echo "ERROR: could not publish the mirror after 3 attempts"
+          exit 1
