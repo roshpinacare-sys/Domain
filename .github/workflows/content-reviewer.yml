@@ -81,7 +81,7 @@ jobs:
             const fs=require('fs');
             const r=JSON.parse(fs.readFileSync('$LAST','utf8'));
             const d=r.duplication, s=r.staleness;
-            if (!d.gateTripped) { console.log('duplication '+d.pairDuplicationPct+'% <= 30% - no issue'); process.exit(2); }
+            if (!d.gateTripped) { console.log('duplication '+d.pairDuplicationPct+'% <= 30% - no issue'); process.exit(0); }
             const day=r.day;
             const body=[
               'content-review measured '+d.pairDuplicationPct+'% cross-account duplication in the last 24h window (threshold '+d.issueGatePct+'%).','',
@@ -93,8 +93,9 @@ jobs:
             ].join('\n');
             fs.writeFileSync('/tmp/issue.json', JSON.stringify({title:'content-review: duplication '+d.pairDuplicationPct+'%',body,labels:['content-quality']}));
             console.log('gate tripped: duplication '+d.pairDuplicationPct+'%');
+            process.exit(0);
           "
-          GATE=$?; [ "$GATE" = "2" ] && exit 0; [ "$GATE" != "0" ] && exit "$GATE"
+          if [ ! -s /tmp/issue.json ]; then echo "no issue needed"; exit 0; fi
           for TOKEN in "$GH_TOKEN" "$ZIP_PAT"; do
             [ -n "$TOKEN" ] || continue
             CODE=$(curl -s -o /tmp/issue-res.json -w '%{http_code}' -X POST \
