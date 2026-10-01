@@ -1,6 +1,6 @@
 {
  "ok": true,
- "generatedAt": "2026-10-01T19:46:58Z",
+ "generatedAt": "2026-10-01T20:49:12Z",
  "source": "github-actions-api",
  "reposTotal": 16,
  "reposWithAgents": [
@@ -156,10 +156,45 @@
     "failure": 1,
     "other": 0,
     "successRate": 99,
-    "avgDurS": 138.7
+    "avgDurS": 139.1
    },
    "lastRun": {
-    "at": "2026-10-01T18:53:10Z",
+    "at": "2026-10-01T19:49:21Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "console-console-publish",
+   "name": "console-publish",
+   "repo": "Console",
+   "visibility": "public",
+   "rail": "public",
+   "trigger": "schedule 45 * * * * + manual dispatch",
+   "schedule": "schedule 45 * * * * + manual dispatch",
+   "layer": "PUBLISH",
+   "role": {
+    "en": "Publishes the public console pages - validates and ships every change to the site the world sees.",
+    "he": "מפרסם את דפי הקונסולה הציבוריים - מאמת ומשטח כל שינוי לאתר שהעולם רואה."
+   },
+   "input": {
+    "en": "push to main",
+    "he": "דחיפה ל-main"
+   },
+   "output": {
+    "en": "live console pages",
+    "he": "דפי קונסולה חיים"
+   },
+   "state": "live",
+   "stats": {
+    "runs_sampled": 100,
+    "success": 72,
+    "failure": 28,
+    "other": 0,
+    "successRate": 72,
+    "avgDurS": 14.8
+   },
+   "lastRun": {
+    "at": "2026-10-01T19:55:42Z",
     "conclusion": "success"
    }
   },
@@ -191,10 +226,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 13.6
+    "avgDurS": 13.7
    },
    "lastRun": {
-    "at": "2026-10-01T19:35:57Z",
+    "at": "2026-10-01T20:38:26Z",
     "conclusion": "success"
    }
   },
@@ -234,41 +269,6 @@
    }
   },
   {
-   "id": "console-money-watch",
-   "name": "money-watch",
-   "repo": "Console",
-   "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 2,17,32,47 * * * * + manual dispatch",
-   "schedule": "schedule 2,17,32,47 * * * * + manual dispatch",
-   "layer": "MONEY-PATH",
-   "role": {
-    "en": "Money path sentinel - watches the two chokepoints of the real money path: detects the weekly powerdown landing within minutes and dispatches the external grid immediately (instead of waiting for the daily run), and rules SEND-NOW/WAIT on the redemption outbox versus the measured TRON broadcast cost.",
-    "he": "צופה נתיב הכסף - קולט את נחיתת ה-powerdown השבועית בתוך דקות ומזניק את הגריד החוץ מיד (במקום להמתין לריצה היומית), ופוסק SEND-NOW/WAIT על תיבת הפדיון מול עלות השידור הנמדדת ב-TRON."
-   },
-   "input": {
-    "en": "Steem public RPC (account+powerdown) + world.json + trongrid + CoinGecko",
-    "he": "RPC ציבורי של Steem (חשבון+powerdown) + world.json + trongrid + CoinGecko"
-   },
-   "output": {
-    "en": "dex/money.json + immediate dex-grid dispatch on landing",
-    "he": "dex/money.json + הזנקת dex-grid מיידית בנחיתה"
-   },
-   "state": "live",
-   "stats": {
-    "runs_sampled": 100,
-    "success": 98,
-    "failure": 2,
-    "other": 0,
-    "successRate": 98,
-    "avgDurS": 16.5
-   },
-   "lastRun": {
-    "at": "2026-10-01T19:19:18Z",
-    "conclusion": "success"
-   }
-  },
-  {
    "id": "console-trigger-mesh",
    "name": "trigger-mesh",
    "repo": "Console",
@@ -291,15 +291,15 @@
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 83,
-    "success": 83,
+    "runs_sampled": 84,
+    "success": 84,
     "failure": 0,
     "other": 0,
     "successRate": 100,
     "avgDurS": 11.9
    },
    "lastRun": {
-    "at": "2026-10-01T19:34:21Z",
+    "at": "2026-10-01T20:36:22Z",
     "conclusion": "success"
    }
   },
@@ -331,10 +331,10 @@
     "failure": 3,
     "other": 0,
     "successRate": 97,
-    "avgDurS": 25.9
+    "avgDurS": 26
    },
    "lastRun": {
-    "at": "2026-10-01T19:24:15Z",
+    "at": "2026-10-01T20:25:14Z",
     "conclusion": "success"
    }
   },
@@ -436,10 +436,10 @@
     "failure": 0,
     "other": 1,
     "successRate": 99,
-    "avgDurS": 144.8
+    "avgDurS": 145.5
    },
    "lastRun": {
-    "at": "2026-10-01T18:49:30Z",
+    "at": "2026-10-01T19:44:33Z",
     "conclusion": "success"
    }
   },
@@ -466,15 +466,15 @@
    },
    "state": "live",
    "stats": {
-    "runs_sampled": 81,
-    "success": 79,
+    "runs_sampled": 82,
+    "success": 80,
     "failure": 2,
     "other": 0,
-    "successRate": 97.5,
-    "avgDurS": 17.5
+    "successRate": 97.6,
+    "avgDurS": 17.6
    },
    "lastRun": {
-    "at": "2026-10-01T19:03:30Z",
+    "at": "2026-10-01T20:02:38Z",
     "conclusion": "success"
    }
   },
@@ -506,10 +506,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 36.4
+    "avgDurS": 36.8
    },
    "lastRun": {
-    "at": "2026-10-01T19:30:42Z",
+    "at": "2026-10-01T20:32:49Z",
     "conclusion": "success"
    }
   },
@@ -576,10 +576,10 @@
     "failure": 1,
     "other": 0,
     "successRate": 99,
-    "avgDurS": 16.4
+    "avgDurS": 16.5
    },
    "lastRun": {
-    "at": "2026-10-01T18:54:33Z",
+    "at": "2026-10-01T19:51:02Z",
     "conclusion": "success"
    }
   },
@@ -786,10 +786,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 14.7
+    "avgDurS": 14.8
    },
    "lastRun": {
-    "at": "2026-10-01T18:58:47Z",
+    "at": "2026-10-01T19:55:21Z",
     "conclusion": "success"
    }
   },
@@ -821,10 +821,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 15.2
+    "avgDurS": 14.3
    },
    "lastRun": {
-    "at": "2026-10-01T19:38:24Z",
+    "at": "2026-10-01T20:40:30Z",
     "conclusion": "success"
    }
   },
@@ -891,10 +891,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 18.8
+    "avgDurS": 19
    },
    "lastRun": {
-    "at": "2026-10-01T19:22:56Z",
+    "at": "2026-10-01T20:24:04Z",
     "conclusion": "success"
    }
   },
@@ -926,10 +926,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 16.8
+    "avgDurS": 17
    },
    "lastRun": {
-    "at": "2026-10-01T19:23:49Z",
+    "at": "2026-10-01T20:25:04Z",
     "conclusion": "success"
    }
   },
@@ -961,10 +961,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 16.9
+    "avgDurS": 16.7
    },
    "lastRun": {
-    "at": "2026-10-01T19:32:53Z",
+    "at": "2026-10-01T20:34:56Z",
     "conclusion": "success"
    }
   },
@@ -1206,10 +1206,10 @@
     "failure": 3,
     "other": 0,
     "successRate": 97,
-    "avgDurS": 23.8
+    "avgDurS": 24.1
    },
    "lastRun": {
-    "at": "2026-10-01T19:22:27Z",
+    "at": "2026-10-01T20:23:16Z",
     "conclusion": "success"
    }
   },
@@ -1241,10 +1241,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 17
+    "avgDurS": 17.1
    },
    "lastRun": {
-    "at": "2026-10-01T19:26:05Z",
+    "at": "2026-10-01T20:27:32Z",
     "conclusion": "success"
    }
   },
@@ -1276,10 +1276,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 66.3
+    "avgDurS": 64.6
    },
    "lastRun": {
-    "at": "2026-10-01T19:24:50Z",
+    "at": "2026-10-01T20:42:09Z",
     "conclusion": "success"
    }
   },
@@ -1346,10 +1346,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 36.4
+    "avgDurS": 36.5
    },
    "lastRun": {
-    "at": "2026-10-01T19:24:15Z",
+    "at": "2026-10-01T20:25:18Z",
     "conclusion": "success"
    }
   },
@@ -1384,7 +1384,7 @@
     "avgDurS": 16.1
    },
    "lastRun": {
-    "at": "2026-10-01T19:01:29Z",
+    "at": "2026-10-01T20:00:13Z",
     "conclusion": "success"
    }
   },
@@ -1416,10 +1416,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 22.9
+    "avgDurS": 23
    },
    "lastRun": {
-    "at": "2026-10-01T19:35:18Z",
+    "at": "2026-10-01T20:37:26Z",
     "conclusion": "success"
    }
   },
@@ -1634,6 +1634,76 @@
    }
   },
   {
+   "id": "adsmarket-gitleaks-secret-scan",
+   "name": "gitleaks-secret-scan",
+   "repo": "Adsmarket",
+   "visibility": "public",
+   "rail": "private",
+   "trigger": "on push + on PR + manual dispatch",
+   "schedule": "on push + on PR + manual dispatch",
+   "layer": "PUBLISH",
+   "role": {
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+   },
+   "input": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "output": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "state": "on-demand",
+   "stats": {
+    "runs_sampled": 4,
+    "success": 1,
+    "failure": 3,
+    "other": 0,
+    "successRate": 25,
+    "avgDurS": 5.8
+   },
+   "lastRun": {
+    "at": "2026-10-01T19:47:33Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "anchor-baseline-gitleaks-secret-scan",
+   "name": "gitleaks-secret-scan",
+   "repo": "anchor-baseline",
+   "visibility": "public",
+   "rail": "private",
+   "trigger": "on push + on PR + manual dispatch",
+   "schedule": "on push + on PR + manual dispatch",
+   "layer": "PUBLISH",
+   "role": {
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+   },
+   "input": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "output": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "state": "on-demand",
+   "stats": {
+    "runs_sampled": 4,
+    "success": 1,
+    "failure": 3,
+    "other": 0,
+    "successRate": 25,
+    "avgDurS": 6
+   },
+   "lastRun": {
+    "at": "2026-10-01T19:52:28Z",
+    "conclusion": "success"
+   }
+  },
+  {
    "id": "console-gitleaks-secret-scan",
    "name": "gitleaks-secret-scan",
    "repo": "Console",
@@ -1661,10 +1731,10 @@
     "failure": 0,
     "other": 0,
     "successRate": 100,
-    "avgDurS": 12.3
+    "avgDurS": 12.7
    },
    "lastRun": {
-    "at": "2026-10-01T19:24:45Z",
+    "at": "2026-10-01T20:25:43Z",
     "conclusion": "success"
    }
   },
@@ -1692,14 +1762,14 @@
    "state": "on-demand",
    "stats": {
     "runs_sampled": 100,
-    "success": 73,
+    "success": 69,
     "failure": 0,
-    "other": 27,
-    "successRate": 73,
-    "avgDurS": 48.8
+    "other": 31,
+    "successRate": 69,
+    "avgDurS": 30.1
    },
    "lastRun": {
-    "at": "2026-10-01T19:36:07Z",
+    "at": "2026-10-01T20:38:38Z",
     "conclusion": "success"
    }
   },
@@ -1727,14 +1797,14 @@
    "state": "on-demand",
    "stats": {
     "runs_sampled": 100,
-    "success": 3,
-    "failure": 96,
-    "other": 1,
-    "successRate": 3,
-    "avgDurS": 9.4
+    "success": 6,
+    "failure": 94,
+    "other": 0,
+    "successRate": 6,
+    "avgDurS": 9.9
    },
    "lastRun": {
-    "at": "2026-10-01T19:45:32Z",
+    "at": "2026-10-01T20:48:07Z",
     "conclusion": "success"
    }
   },
@@ -1836,10 +1906,115 @@
     "failure": 0,
     "other": 16,
     "successRate": 84,
-    "avgDurS": 43
+    "avgDurS": 42
    },
    "lastRun": {
-    "at": "2026-10-01T19:38:33Z",
+    "at": "2026-10-01T20:40:41Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "project-files-gitleaks-secret-scan",
+   "name": "gitleaks-secret-scan",
+   "repo": "Project-files",
+   "visibility": "public",
+   "rail": "private",
+   "trigger": "on push + on PR + manual dispatch",
+   "schedule": "on push + on PR + manual dispatch",
+   "layer": "PUBLISH",
+   "role": {
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+   },
+   "input": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "output": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "state": "on-demand",
+   "stats": {
+    "runs_sampled": 4,
+    "success": 1,
+    "failure": 3,
+    "other": 0,
+    "successRate": 25,
+    "avgDurS": 7
+   },
+   "lastRun": {
+    "at": "2026-10-01T19:51:36Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "roshpina-gitleaks-secret-scan",
+   "name": "gitleaks-secret-scan",
+   "repo": "roshpina",
+   "visibility": "public",
+   "rail": "private",
+   "trigger": "on push + on PR + manual dispatch",
+   "schedule": "on push + on PR + manual dispatch",
+   "layer": "PUBLISH",
+   "role": {
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+   },
+   "input": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "output": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "state": "on-demand",
+   "stats": {
+    "runs_sampled": 5,
+    "success": 1,
+    "failure": 4,
+    "other": 0,
+    "successRate": 20,
+    "avgDurS": 6.6
+   },
+   "lastRun": {
+    "at": "2026-10-01T19:48:30Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "saos-control-center-gitleaks-secret-scan",
+   "name": "gitleaks-secret-scan",
+   "repo": "saos-control-center",
+   "visibility": "public",
+   "rail": "private",
+   "trigger": "on push + on PR + manual dispatch",
+   "schedule": "on push + on PR + manual dispatch",
+   "layer": "PUBLISH",
+   "role": {
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+   },
+   "input": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "output": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "state": "on-demand",
+   "stats": {
+    "runs_sampled": 4,
+    "success": 1,
+    "failure": 3,
+    "other": 0,
+    "successRate": 25,
+    "avgDurS": 5.5
+   },
+   "lastRun": {
+    "at": "2026-10-01T19:49:45Z",
     "conclusion": "success"
    }
   },
@@ -1914,6 +2089,111 @@
    }
   },
   {
+   "id": "saos-sovereign-foundry-gitleaks-secret-scan",
+   "name": "gitleaks-secret-scan",
+   "repo": "saos-sovereign-foundry",
+   "visibility": "public",
+   "rail": "private",
+   "trigger": "on push + on PR + manual dispatch",
+   "schedule": "on push + on PR + manual dispatch",
+   "layer": "PUBLISH",
+   "role": {
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+   },
+   "input": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "output": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "state": "on-demand",
+   "stats": {
+    "runs_sampled": 10,
+    "success": 1,
+    "failure": 9,
+    "other": 0,
+    "successRate": 10,
+    "avgDurS": 7.4
+   },
+   "lastRun": {
+    "at": "2026-10-01T19:53:42Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "saos-sovereign-platform-foundry-tests",
+   "name": "foundry-tests",
+   "repo": "saos-sovereign-platform",
+   "visibility": "public",
+   "rail": "private",
+   "trigger": "on push + on PR + manual dispatch",
+   "schedule": "on push + on PR + manual dispatch",
+   "layer": "PUBLISH",
+   "role": {
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+   },
+   "input": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "output": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "state": "on-demand",
+   "stats": {
+    "runs_sampled": 19,
+    "success": 1,
+    "failure": 18,
+    "other": 0,
+    "successRate": 5.3,
+    "avgDurS": 7.2
+   },
+   "lastRun": {
+    "at": "2026-10-01T19:50:33Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "saos-sovereign-platform-gitleaks-secret-scan",
+   "name": "gitleaks-secret-scan",
+   "repo": "saos-sovereign-platform",
+   "visibility": "public",
+   "rail": "private",
+   "trigger": "on push + on PR + manual dispatch",
+   "schedule": "on push + on PR + manual dispatch",
+   "layer": "PUBLISH",
+   "role": {
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+   },
+   "input": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "output": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "state": "on-demand",
+   "stats": {
+    "runs_sampled": 7,
+    "success": 1,
+    "failure": 6,
+    "other": 0,
+    "successRate": 14.3,
+    "avgDurS": 6.1
+   },
+   "lastRun": {
+    "at": "2026-10-01T19:50:33Z",
+    "conclusion": "success"
+   }
+  },
+  {
    "id": "saosmartwallet-gitleaks-secret-scan",
    "name": "gitleaks-secret-scan",
    "repo": "Saosmartwallet",
@@ -1945,6 +2225,41 @@
    },
    "lastRun": {
     "at": "2026-10-01T19:45:55Z",
+    "conclusion": "success"
+   }
+  },
+  {
+   "id": "sdk-gitleaks-secret-scan",
+   "name": "gitleaks-secret-scan",
+   "repo": "Sdk",
+   "visibility": "public",
+   "rail": "private",
+   "trigger": "on push + on PR + manual dispatch",
+   "schedule": "on push + on PR + manual dispatch",
+   "layer": "PUBLISH",
+   "role": {
+    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
+    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
+   },
+   "input": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "output": {
+    "en": "per workflow definition",
+    "he": "לפי הגדרת ה-workflow"
+   },
+   "state": "on-demand",
+   "stats": {
+    "runs_sampled": 4,
+    "success": 1,
+    "failure": 3,
+    "other": 0,
+    "successRate": 25,
+    "avgDurS": 5
+   },
+   "lastRun": {
+    "at": "2026-10-01T19:46:29Z",
     "conclusion": "success"
    }
   },
@@ -2006,15 +2321,15 @@
    },
    "state": "on-demand",
    "stats": {
-    "runs_sampled": 96,
-    "success": 58,
-    "failure": 38,
+    "runs_sampled": 100,
+    "success": 63,
+    "failure": 37,
     "other": 0,
-    "successRate": 60.4,
+    "successRate": 63,
     "avgDurS": 136
    },
    "lastRun": {
-    "at": "2026-10-01T19:25:53Z",
+    "at": "2026-10-01T20:43:03Z",
     "conclusion": "success"
    }
   },
@@ -2339,113 +2654,6 @@
    }
   },
   {
-   "id": "adsmarket-gitleaks-secret-scan",
-   "name": "gitleaks-secret-scan",
-   "repo": "Adsmarket",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "on push + on PR + manual dispatch",
-   "schedule": "on push + on PR + manual dispatch",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
-   },
-   "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
-   "state": "degraded",
-   "stats": {
-    "runs_sampled": 3,
-    "success": 0,
-    "failure": 3,
-    "other": 0,
-    "successRate": 0,
-    "avgDurS": 4
-   },
-   "lastRun": {
-    "at": "2026-09-30T19:46:48Z",
-    "conclusion": "failure"
-   }
-  },
-  {
-   "id": "anchor-baseline-gitleaks-secret-scan",
-   "name": "gitleaks-secret-scan",
-   "repo": "anchor-baseline",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "on push + on PR + manual dispatch",
-   "schedule": "on push + on PR + manual dispatch",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
-   },
-   "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
-   "state": "degraded",
-   "stats": {
-    "runs_sampled": 3,
-    "success": 0,
-    "failure": 3,
-    "other": 0,
-    "successRate": 0,
-    "avgDurS": 4.7
-   },
-   "lastRun": {
-    "at": "2026-09-30T19:47:05Z",
-    "conclusion": "failure"
-   }
-  },
-  {
-   "id": "console-console-publish",
-   "name": "console-publish",
-   "repo": "Console",
-   "visibility": "public",
-   "rail": "public",
-   "trigger": "schedule 45 * * * * + manual dispatch",
-   "schedule": "schedule 45 * * * * + manual dispatch",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "Publishes the public console pages - validates and ships every change to the site the world sees.",
-    "he": "מפרסם את דפי הקונסולה הציבוריים - מאמת ומשטח כל שינוי לאתר שהעולם רואה."
-   },
-   "input": {
-    "en": "push to main",
-    "he": "דחיפה ל-main"
-   },
-   "output": {
-    "en": "live console pages",
-    "he": "דפי קונסולה חיים"
-   },
-   "state": "degraded",
-   "stats": {
-    "runs_sampled": 100,
-    "success": 71,
-    "failure": 29,
-    "other": 0,
-    "successRate": 71,
-    "avgDurS": 14.9
-   },
-   "lastRun": {
-    "at": "2026-10-01T18:58:49Z",
-    "conclusion": "failure"
-   }
-  },
-  {
    "id": "console-key-verify",
    "name": "key-verify",
    "repo": "Console",
@@ -2477,6 +2685,41 @@
    },
    "lastRun": {
     "at": "2026-09-30T15:32:20Z",
+    "conclusion": "failure"
+   }
+  },
+  {
+   "id": "console-money-watch",
+   "name": "money-watch",
+   "repo": "Console",
+   "visibility": "public",
+   "rail": "public",
+   "trigger": "schedule 2,17,32,47 * * * * + manual dispatch",
+   "schedule": "schedule 2,17,32,47 * * * * + manual dispatch",
+   "layer": "MONEY-PATH",
+   "role": {
+    "en": "Money path sentinel - watches the two chokepoints of the real money path: detects the weekly powerdown landing within minutes and dispatches the external grid immediately (instead of waiting for the daily run), and rules SEND-NOW/WAIT on the redemption outbox versus the measured TRON broadcast cost.",
+    "he": "צופה נתיב הכסף - קולט את נחיתת ה-powerdown השבועית בתוך דקות ומזניק את הגריד החוץ מיד (במקום להמתין לריצה היומית), ופוסק SEND-NOW/WAIT על תיבת הפדיון מול עלות השידור הנמדדת ב-TRON."
+   },
+   "input": {
+    "en": "Steem public RPC (account+powerdown) + world.json + trongrid + CoinGecko",
+    "he": "RPC ציבורי של Steem (חשבון+powerdown) + world.json + trongrid + CoinGecko"
+   },
+   "output": {
+    "en": "dex/money.json + immediate dex-grid dispatch on landing",
+    "he": "dex/money.json + הזנקת dex-grid מיידית בנחיתה"
+   },
+   "state": "degraded",
+   "stats": {
+    "runs_sampled": 100,
+    "success": 97,
+    "failure": 3,
+    "other": 0,
+    "successRate": 97,
+    "avgDurS": 16.7
+   },
+   "lastRun": {
+    "at": "2026-10-01T20:20:24Z",
     "conclusion": "failure"
    }
   },
@@ -2538,123 +2781,15 @@
    },
    "state": "degraded",
    "stats": {
-    "runs_sampled": 9,
+    "runs_sampled": 10,
     "success": 3,
-    "failure": 6,
+    "failure": 7,
     "other": 0,
-    "successRate": 33.3,
-    "avgDurS": 96.2
+    "successRate": 30,
+    "avgDurS": 93.2
    },
    "lastRun": {
-    "at": "2026-10-01T13:59:00Z",
-    "conclusion": "failure"
-   }
-  },
-  {
-   "id": "project-files-gitleaks-secret-scan",
-   "name": "gitleaks-secret-scan",
-   "repo": "Project-files",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "on push + on PR + manual dispatch",
-   "schedule": "on push + on PR + manual dispatch",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
-   },
-   "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
-   "state": "degraded",
-   "stats": {
-    "runs_sampled": 3,
-    "success": 0,
-    "failure": 3,
-    "other": 0,
-    "successRate": 0,
-    "avgDurS": 4
-   },
-   "lastRun": {
-    "at": "2026-09-30T19:46:54Z",
-    "conclusion": "failure"
-   }
-  },
-  {
-   "id": "roshpina-gitleaks-secret-scan",
-   "name": "gitleaks-secret-scan",
-   "repo": "roshpina",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "on push + on PR + manual dispatch",
-   "schedule": "on push + on PR + manual dispatch",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
-   },
-   "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
-   "state": "degraded",
-   "stats": {
-    "runs_sampled": 4,
-    "success": 0,
-    "failure": 4,
-    "other": 0,
-    "successRate": 0,
-    "avgDurS": 5
-   },
-   "lastRun": {
-    "at": "2026-09-30T19:47:09Z",
-    "conclusion": "failure"
-   }
-  },
-  {
-   "id": "saos-control-center-gitleaks-secret-scan",
-   "name": "gitleaks-secret-scan",
-   "repo": "saos-control-center",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "on push + on PR + manual dispatch",
-   "schedule": "on push + on PR + manual dispatch",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
-   },
-   "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
-   "state": "degraded",
-   "stats": {
-    "runs_sampled": 3,
-    "success": 0,
-    "failure": 3,
-    "other": 0,
-    "successRate": 0,
-    "avgDurS": 3.7
-   },
-   "lastRun": {
-    "at": "2026-09-30T19:47:12Z",
+    "at": "2026-10-01T19:54:51Z",
     "conclusion": "failure"
    }
   },
@@ -2761,154 +2896,10 @@
     "failure": 99,
     "other": 0,
     "successRate": 1,
-    "avgDurS": 101.5
+    "avgDurS": 102.9
    },
    "lastRun": {
-    "at": "2026-09-30T19:47:20Z",
-    "conclusion": "failure"
-   }
-  },
-  {
-   "id": "saos-sovereign-foundry-gitleaks-secret-scan",
-   "name": "gitleaks-secret-scan",
-   "repo": "saos-sovereign-foundry",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "on push + on PR + manual dispatch",
-   "schedule": "on push + on PR + manual dispatch",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
-   },
-   "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
-   "state": "degraded",
-   "stats": {
-    "runs_sampled": 9,
-    "success": 0,
-    "failure": 9,
-    "other": 0,
-    "successRate": 0,
-    "avgDurS": 6.8
-   },
-   "lastRun": {
-    "at": "2026-09-30T19:47:20Z",
-    "conclusion": "failure"
-   }
-  },
-  {
-   "id": "saos-sovereign-platform-foundry-tests",
-   "name": "foundry-tests",
-   "repo": "saos-sovereign-platform",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "on push + on PR + manual dispatch",
-   "schedule": "on push + on PR + manual dispatch",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
-   },
-   "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
-   "state": "degraded",
-   "stats": {
-    "runs_sampled": 18,
-    "success": 0,
-    "failure": 18,
-    "other": 0,
-    "successRate": 0,
-    "avgDurS": 6.1
-   },
-   "lastRun": {
-    "at": "2026-09-30T19:52:00Z",
-    "conclusion": "failure"
-   }
-  },
-  {
-   "id": "saos-sovereign-platform-gitleaks-secret-scan",
-   "name": "gitleaks-secret-scan",
-   "repo": "saos-sovereign-platform",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "on push + on PR + manual dispatch",
-   "schedule": "on push + on PR + manual dispatch",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
-   },
-   "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
-   "state": "degraded",
-   "stats": {
-    "runs_sampled": 6,
-    "success": 0,
-    "failure": 6,
-    "other": 0,
-    "successRate": 0,
-    "avgDurS": 4.2
-   },
-   "lastRun": {
-    "at": "2026-09-30T19:52:00Z",
-    "conclusion": "failure"
-   }
-  },
-  {
-   "id": "sdk-gitleaks-secret-scan",
-   "name": "gitleaks-secret-scan",
-   "repo": "Sdk",
-   "visibility": "public",
-   "rail": "private",
-   "trigger": "on push + on PR + manual dispatch",
-   "schedule": "on push + on PR + manual dispatch",
-   "layer": "PUBLISH",
-   "role": {
-    "en": "Workflow without a catalog entry - its true trigger and state are parsed live from the workflow file itself.",
-    "he": "Workflow ללא רישום בקטלוג - הטריגר והמצב האמיתיים שלו נקראים חיים מקובץ ה-workflow עצמו."
-   },
-   "input": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "output": {
-    "en": "per workflow definition",
-    "he": "לפי הגדרת ה-workflow"
-   },
-   "stateNote": "private rail - free-plan monthly Actions minutes; the public twin on Domain carries the schedule",
-   "state": "degraded",
-   "stats": {
-    "runs_sampled": 4,
-    "success": 0,
-    "failure": 3,
-    "other": 1,
-    "successRate": 0,
-    "avgDurS": 3.3
-   },
-   "lastRun": {
-    "at": "2026-09-30T19:46:59Z",
+    "at": "2026-10-01T19:53:42Z",
     "conclusion": "failure"
    }
   },
