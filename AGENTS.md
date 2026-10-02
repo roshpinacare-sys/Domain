@@ -28,7 +28,12 @@
 - **Parallel runtimes are real.** `git pull --rebase` before push; conflicts in
   measurement books resolve to the freshest census; never double-run another
   runtime's lane (DELEGATION-SELECTION LAW).
-- **Mechanical override** (Z-38, study: destructive_command_guard): destructive commands are refused by code before execution (`agents/command-guard.cjs`), not by after-the-fact regret. The rebase law stays whitelisted; every decision is booked in `agents/command-guard.json`.
+- **Destructive ops are tier-C, mechanically enforced** (Z-37, adopted from
+  Dicklesworthstone/destructive_command_guard): `scripts/command-guard.sh` blocks
+  force-push, `reset --hard`, `clean -x`, estate-path `rm -rf`, `DROP TABLE`, and
+  `migrate reset` BEFORE they run — with the doctrine reason and the safer tip.
+  Patterns in data position (grep/echo) stay free; `STRICT=1` also blocks
+  `curl|bash`. Every lane that pushes or mutates estate state passes through it.
 - **Evals are runnable expectations, not hopes** (`agents/evals/run-evals.cjs`, Z-36):
   pure functions get white-box evals, desk processes get black-box fresh-process
   evals; a new failure class becomes an eval within one wave of discovery.

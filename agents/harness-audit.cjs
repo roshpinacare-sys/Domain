@@ -135,6 +135,11 @@ const freshCount = bookStates.filter((b) => b.exists && b.fresh).length;
   // the Z-37 charter registry (role-registry.csv + sovereignty.md), whose
   // sovereignty checks below are the governing superset)
 
+  // ---- (Task 21: my interim bash guard check retired — SUPERSEDED-BY the Z-38
+  // fleet-native agents/command-guard.cjs whose integrity + evals (E7-E9) the
+  // sovereignty subsystem checks below; the workflow shape-scan remains covered
+  // by the guard's own scan mode)
+
   // ---- loop primitives (L13): the six primitives must have fleet instances
   const wfDir = path.join(ROOT, '.github', 'workflows');
   const wfCount = (function () { try { return fs.readdirSync(wfDir).filter((f) => f.endsWith('.yml')).length; } catch (_) { return 0; } })();

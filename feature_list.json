@@ -6,7 +6,7 @@
    "description": "Daily on-chain curation + self-votes + claims across steem/hive/blurt, keyless in Domain, seal opened only in-runner, receipts as proof",
    "dependencies": [],
    "status": "done",
-   "evidence": "economy-engine.yml + scripts/economy-engine.mjs; real runs 37009336549/37067532580 SUCCESS with chain txid read-back (cbb4bc69… block 110099406)"
+   "evidence": "economy-engine.yml + scripts/economy-engine.mjs; real runs 37009336549/37067532580 SUCCESS with chain txid read-back (cbb4bc69\u2026 block 110099406)"
   },
   {
    "id": "feat-002",
@@ -14,7 +14,7 @@
    "description": "Fresh-context checker node auditing instructions/state/verification/scope/lifecycle + anchors, on a schedule, fail-soft",
    "dependencies": [],
    "status": "done",
-   "evidence": "agents/harness-audit.cjs → harness-audit.json/md; adopted from walkinglabs/learn-harness-engineering (Z-35), extended Task 19 (role→worker wiring + loop primitives)"
+   "evidence": "agents/harness-audit.cjs \u2192 harness-audit.json/md; adopted from walkinglabs/learn-harness-engineering (Z-35), extended Task 19 (role\u2192worker wiring + loop primitives)"
   },
   {
    "id": "feat-003",
@@ -36,13 +36,13 @@
   },
   {
    "id": "feat-005",
-   "name": "Army role→worker wiring (audited)",
+   "name": "Army role\u2192worker wiring (audited)",
    "description": "Every FILLED role in recruitment.json must name a worker artifact that exists on disk; the judge node measures the hands",
    "dependencies": [
     "feat-002"
    ],
    "status": "done",
-   "evidence": "harness-audit.cjs graph check 'every FILLED role names a reachable worker artifact' — Task 19"
+   "evidence": "harness-audit.cjs graph check 'every FILLED role names a reachable worker artifact' \u2014 Task 19"
   },
   {
    "id": "feat-006",
@@ -53,7 +53,7 @@
     "feat-003"
    ],
    "status": "done",
-   "evidence": "Task 19 — validator run on this repo post-adoption; scores recorded in the Task 19 worklog section"
+   "evidence": "Task 19 \u2014 validator run on this repo post-adoption; scores recorded in the Task 19 worklog section"
   },
   {
    "id": "feat-007",
@@ -63,7 +63,7 @@
     "feat-001"
    ],
    "status": "open",
-   "evidence": "v3 engine run-rate 0.02–0.06 SBD/day maturing over 7 days; needs days of receipts to show realized >1¢ — SP compounding + daily quality posts are the levers"
+   "evidence": "v3 engine run-rate 0.02\u20130.06 SBD/day maturing over 7 days; needs days of receipts to show realized >1\u00a2 \u2014 SP compounding + daily quality posts are the levers"
   },
   {
    "id": "feat-008",
@@ -74,7 +74,18 @@
     "feat-005"
    ],
    "status": "done",
-   "evidence": "ADOPTION LANDED VIA THE PARALLEL Z-37 CHARTER REGISTRY (superset): agents/role-registry.csv (act,file,ci,mission,signs,tier,books,owner,status — roles-as-data with enforcement) + sovereignty.md (tier A/B/C + CR flow) + harness-audit v1.2.0 sovereignty checks. My interim role-prompts.csv/cjs (prompts.chat raw schema + ${Var} loader) retired SUPERSEDED-BY; the loader pattern + FILLED-roles completeness idea live on in the charter registry checks."
+   "evidence": "ADOPTION LANDED VIA THE PARALLEL Z-37 CHARTER REGISTRY (superset): agents/role-registry.csv (act,file,ci,mission,signs,tier,books,owner,status \u2014 roles-as-data with enforcement) + sovereignty.md (tier A/B/C + CR flow) + harness-audit v1.2.0 sovereignty checks. My interim role-prompts.csv/cjs (prompts.chat raw schema + ${Var} loader) retired SUPERSEDED-BY; the loader pattern + FILLED-roles completeness idea live on in the charter registry checks."
+  },
+  {
+   "id": "feat-009",
+   "name": "Destructive-command guard (dcg adoption)",
+   "description": "Mechanical tier-C enforcement adopted from Dicklesworthstone/destructive_command_guard: banned shapes (force-push, reset --hard, clean -x, estate rm -rf, DROP, migrate reset) blocked pre-execution with doctrine reasons + safer tips; data-position context detection; heredoc scanning; STRICT mode for supply-chain; 13-case selftest wired into init.sh + harness-audit",
+   "dependencies": [
+    "feat-002",
+    "feat-008"
+   ],
+   "status": "done",
+   "evidence": "ADOPTION LANDED VIA THE PARALLEL Z-38 FLEET-NATIVE GUARD (superset): agents/command-guard.cjs (whitelist-first, DEFAULT-ALLOW, explain/scan/hook modes, decision ledger command-guard.json, evals E7-E9) + my init.sh battery driving it (DENY on force-push/reset --hard/estate rm -rf; allow on rebase law + data-position). My interim scripts/command-guard.sh retired SUPERSEDED-BY; the workflow shape-scan idea lives in their scan mode."
   }
  ]
 }
