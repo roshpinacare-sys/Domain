@@ -327,7 +327,7 @@ function loadHeadHiveActive() {
       const balRows = await heFind('tokens', 'balances', { account: HEAD, symbol: sym }, 1);
       const bal = balRows && balRows[0] ? parseFloat(balRows[0].balance) : 0;
       const qty = Math.max(0, bal - keep);
-      if (qty <= 0) { R({ step: 'sell', status: 'AT-KEEP', symbol: sym, balance: balRows[0] ? balRows[0].balance : '0', keep: keep.toFixed(1), note: 'holding ' + (balRows[0] ? balRows[0].balance : '0') + ' · keep reserve ' + keep.toFixed(1) }); continue; }
+      if (qty <= 0) { const balStr = balRows && balRows[0] ? balRows[0].balance : '0'; R({ step: 'sell', status: 'AT-KEEP', symbol: sym, balance: balStr, keep: keep.toFixed(1), note: 'holding ' + balStr + ' · keep reserve ' + keep.toFixed(1) }); continue; } // Z-34: heFind resolves null on node hiccup — unguarded balRows[0] here was the live sell/ERROR (SWAP.DOGE 2026-10-02)
 
       const mRows = await heFind('market', 'metrics', { symbol: sym }, 1);
       const m = mRows && mRows[0];

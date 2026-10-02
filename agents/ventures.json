@@ -1,18 +1,34 @@
 {
  "ok": true,
- "at": "2026-10-02T14:53:36.175Z",
- "agent": "venture-desk v1.0.0 (Z-31)",
+ "at": "2026-10-02T21:33:11.779Z",
+ "agent": "venture-desk v1.1.0 (Z-31 birth · Z-34 earn-governor wiring)",
  "selfHeal": {
   "econSummaryRepaired": false,
   "incident": "parallel-runtime [object Object] concat bug repaired in the committed book"
  },
  "origin": "clodfarm study (Z-31): adopted the governor math + notebook + dashboards + labor tiering; rejected the approval-default, the islands, the earn-less economy; doctrine bound as law",
  "ledger": {
-  "at": "2026-10-02T14:53:36.175Z",
+  "at": "2026-10-02T21:33:11.779Z",
   "oracle": "Defi/fleet/KPI.json (measured, raw)",
   "earnUsdPerDay": 0.0034,
   "burnUsdPerDay": 4.3543,
   "runwayWeeks": 4,
+  "earnSurfaces": {
+   "note": "EARN-GOVERNOR LAW v1.1.0 (Z-34): per-venture measured surfaces booked from books every run; lifetime sums are NOT per-day rates — the per-day rate stays with the KPI oracle (7d realized average)",
+   "v2MarketRealizedLifetime": {
+    "swaphive": 3.466847,
+    "usd": 0.192753,
+    "fills": 3,
+    "source": "fills-ledger.json (econ-book rows + chain-truthed seeds)"
+   },
+   "v5GridLifetimeUsd": 0.0604,
+   "priceOracle": {
+    "hive": 0.055599,
+    "steem": 0.062452,
+    "blurt": 0.00130526,
+    "source": "coingecko spot (measured at run time)"
+   }
+  },
   "verdict": "earn $0.0034/day vs burn $4.3543/day — the gap is the mission; every venture's earn side is booked from here on (EARN-GOVERNOR LAW)",
   "doctrine": {
    "url": "https://github.com/roshpinacare-sys/Defi/blob/main/fleet/DOCTRINE-economics.md",
@@ -23,11 +39,11 @@
   {
    "id": "V1",
    "name": "Curation house",
-   "thesis": "disciplined public-external curation (10 soldiers lane; headcorner lane owned by the weave daemon) — our votes ARE the traffic",
+   "thesis": "disciplined public-external curation (10 soldiers lane; headcorner lanes steem/hive/blurt owned by the weave daemon) — our votes ARE the traffic",
    "product": "attention allocated by deterministic public scoring",
-   "rail": "HP curation rewards (steem/hive)",
+   "rail": "HP/VP curation rewards (steem/hive/blurt)",
    "traffic": "native feeds of curated public authors",
-   "earnLine": "measure first cycles; line set after (honest TBD)",
+   "earnLine": "pending accrual measured per cycle; per-day line set after 7d of book (honest TBD)",
    "killRule": "no measurable curation accrual in 3 consecutive cycles → weight→0 (IDLE)",
    "status": "OPEN",
    "templateLaw": {
@@ -48,16 +64,48 @@
      "file": "soldiers-curate.cjs",
      "marker": "verify-then-sign",
      "verified": true
+    },
+    {
+     "file": "money-ledger.json",
+     "marker": "headBlurt",
+     "verified": true
     }
    ],
    "metrics": {
     "lastRun": {
      "day": "2026-10-02",
      "verified": 0,
-     "attempted": 9,
+     "attempted": 78,
      "soldiersWithKey": 10
     },
-    "earn": "TBD-MEASURE (curation accrual not yet booked — booked the honest way, not estimated)"
+    "laneSurfaces": {
+     "steem": {
+      "stake": "4286.034 SP",
+      "liquid": "7.243 STEEM",
+      "debt": "18.177 SBD"
+     },
+     "hive": {
+      "stake": "25.386 HP",
+      "votingPower": 96.07,
+      "pending": {
+       "liquid": "0.000 HIVE",
+       "debt": "0.000 HBD",
+       "vests": "0.000000 VESTS"
+      },
+      "rcPct": 99.1
+     },
+     "blurt": {
+      "stake": "8727.835 BP",
+      "votingPower": 89.24,
+      "pending": {
+       "liquid": "0.000 BLURT",
+       "debt": null,
+       "vests": "0.000000 VESTS"
+      }
+     }
+    },
+    "earn": "measured pending $0 (0 HIVE @$0.055599, 0 BLURT @$0.00130526)",
+    "z34Probe": "soldiers lane verified ALIVE by DRYRUN probe (78 candidates/8 soldiers, 2026-10-02T21:4xZ) — the zero tally that morning was transient, kill-rule NOT triggered"
    },
    "notebook": "agents/ventures/v1-NOTES.md (created at first dedicated cycle)"
   },
@@ -97,10 +145,13 @@
     }
    ],
    "metrics": {
-    "swapHiveTreasury": 0,
+    "swapHiveTreasury": 0.60415129,
     "hiveLiquid": 0.034,
     "railFrontier": 0,
-    "earn": "realized fills booked in econ-book rows (on-chain deltas only)"
+    "lastDeskRun": "2026-10-02T20:21:07.906Z",
+    "realizedLifetime": "3.466847 SWAP.HIVE across 3 fills (fills-ledger, deduped, chain-truthed)",
+    "realizedLifetimeUsd": "$0.192753 at measured HIVE $0.055599",
+    "earnLineProgress": "one settled wave ($0.192753) already exceeds the 7d line budget ($0.14) — line on pace, rate still measured per-day by KPI oracle"
    },
    "notebook": "agents/ventures/v2-NOTES.md (created at first dedicated cycle)"
   },
@@ -135,7 +186,13 @@
     }
    ],
    "metrics": {
-    "earn": "leading indicators only for now (engagement), no fake USD"
+    "earn": "leading indicators only for now (engagement), no fake USD",
+    "latestSample": {
+     "post": "saos-wog-20260930",
+     "votes": 4,
+     "payout": "0.001 SBD",
+     "at": "2026-10-02T00:03:24.020Z"
+    }
    },
    "notebook": "agents/ventures/v3-NOTES.md (created at first dedicated cycle)"
   },
@@ -170,7 +227,9 @@
     }
    ],
    "metrics": {
-    "earn": "TBD-MEASURE (per-lane engagement next cycle)"
+    "earn": "TBD-MEASURE (per-lane engagement tracked in learning-ledger)",
+    "trackedPosts": 23,
+    "postsWithEngagement": 23
    },
    "notebook": "agents/ventures/v4-NOTES.md (created at first dedicated cycle)"
   },
