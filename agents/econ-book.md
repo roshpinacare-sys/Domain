@@ -17,3 +17,10 @@ Updated: 2026-10-02T11:01:07.624Z UTC. Executor: headcorner (active authority, b
 | sell | AT-KEEP | SWAP.DOGE · holding 0.00000000 · keep reserve 0.0 |
 | open-orders |  | SWAP.LTC · bids 1 @ 1202.66202505 · asks 0 · locked 1.11366504 SWAP.HIVE · maker presence live on the book |
 | buy | SKIP-BELOW-MIN | SWAP.HIVE=0.05814915 · waiting for the hiveswap wrapper to credit the verified deposit (trx 875404ff2d16f418bd8a86b5cffa6d4e6503e3c1, 0.310 HIVE, memo was free-text) |
+
+## Z-30-c reconciliation (2026-10-02 ~12:05Z, probe2 full op-replay)
+- Full replay of headcorner ops 10:02-10:57Z from account_history: every SWAP.HIVE delta accounted to the cent (no missing funds — the quick-probe gap was the Z-30-b LTC taker buy itself).
+- WAIV remainder 0.11843238 @ 0.19749: FILLED on chain. LTC maker bid: 0.0007116 filled, position 0.0039016 exact match, 0.00021440 resting (escrow 0.2579).
+- CENT top bid 0.00098810 → 1.848 CENT ≈ 0.0018 SWAP.HIVE = honest DUST-HELD. SWAP.LTC position: HOLD (selling into bid 1197 vs cost ~1204 would realize a loss).
+- Rails FRESH (BEE/WAIV/DOGE/LTC frontiers minutes-old). hiveswap 0.310 credit still uncredited. BEE 1.853 EXP-UNRESOLVED stands.
+- Treasury: 0.0581 SWAP.HIVE liquid + 0.2579 escrow + 0.0039 LTC.

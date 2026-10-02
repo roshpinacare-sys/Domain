@@ -1,142 +1,185 @@
 {
- "at": "2026-10-02T11:01:07.624Z",
- "agent": "econ-desk",
- "chain": "hive",
- "executor": "headcorner",
- "signer": "@hiveio/hive-js",
- "rows": [
-  {
-   "step": "rail-health",
-   "status": "FRESH",
-   "frontierAgeHours": 0
+  "at": "2026-10-02T12:05:00Z",
+  "agent": "econ-desk",
+  "chain": "hive",
+  "executor": "headcorner",
+  "signer": "@hiveio/hive-js",
+  "rows": [
+    {
+      "step": "rail-health",
+      "status": "FRESH",
+      "frontierAgeHours": 0
+    },
+    {
+      "step": "evidence",
+      "status": "EXP-UNRESOLVED",
+      "symbol": "BEE",
+      "missing": "1.85308870",
+      "trx": "0c3bc5b7835fc1ef8167f16e26affdd5b19dd450",
+      "note": "Z-30 ask remainder vanished from sellBook (window 10-01T23:3x→10-02T09:0x): no cancel, no transfer, no fill proceeds. Precaution: every market op now carries explicit expiration."
+    },
+    {
+      "step": "evidence",
+      "status": "SETTLED-HISTORY",
+      "at": "2026-10-02",
+      "rows": [
+        "WAIV 10.00000109 sold @ 0.19749 → +1.95151099 SWAP.HIVE (9.88156871 filled by d7connect, 0.11843238 ask re-listed; balance-verified)",
+        "SWAP.DOGE 0.572191 sold @ 1.69399599 → +0.96933383 SWAP.HIVE realized (position bought ~1.66 in Z-30; exit on konvik-doge mm revival; balance-verified)",
+        "SWAP.LTC 0.00319000 bought @ 1204.33100999 → taker fill on crossing (trx 8961b2b4…, balance-verified 0.00319 held)",
+        "SWAP.LTC 0.00092600 bid resting @ 1202.66202505, 1.11366504 SWAP.HIVE locked (trx 788b68f1…, top of bid side)",
+        "ghost-book law enforcement: 2 stale DOGE bids (3.91820258 SWAP.HIVE) cancelled with read-back (trx f58427d4…, c12d4ea0…)"
+      ]
+    },
+    {
+      "step": "wrapper-poll",
+      "swapHive": "0.05814915",
+      "hiveLiquid": 0.034
+    },
+    {
+      "step": "sell",
+      "status": "AT-KEEP",
+      "symbol": "BEE",
+      "balance": "1.00000000",
+      "keep": "1.0",
+      "note": "holding 1.00000000 · keep reserve 1.0"
+    },
+    {
+      "step": "sell",
+      "status": "DUST-HELD",
+      "symbol": "VKBT",
+      "quantity": "23.29996200",
+      "bid": "0.00002105",
+      "price": "0.00002105",
+      "last": "0.00011045",
+      "estProceeds": "0.000486",
+      "min": 0.02,
+      "note": "honest hold: no live bid worth the order"
+    },
+    {
+      "step": "sell",
+      "status": "DUST-HELD",
+      "symbol": "PAY",
+      "quantity": "0.17406307",
+      "bid": "0.00000290",
+      "price": "0.00000290",
+      "last": "0.00000290",
+      "estProceeds": "0.000001",
+      "min": 0.02,
+      "note": "honest hold: no live bid worth the order"
+    },
+    {
+      "step": "sell",
+      "status": "DUST-HELD",
+      "symbol": "BLANK",
+      "quantity": "10.00000000",
+      "bid": "0.00000031",
+      "price": "0.00000031",
+      "last": "0.00000031",
+      "estProceeds": "0.000003",
+      "min": 0.02,
+      "note": "honest hold: no live bid worth the order"
+    },
+    {
+      "step": "sell",
+      "status": "AT-KEEP",
+      "symbol": "WAIV",
+      "balance": "0.00000000",
+      "keep": "0.0",
+      "note": "holding 0.00000000 · keep reserve 0.0"
+    },
+    {
+      "step": "sell",
+      "status": "DUST-HELD",
+      "symbol": "CENT",
+      "quantity": "1.84849594",
+      "bid": "0.00098810",
+      "price": "0.00098810",
+      "last": "0.00099120",
+      "estProceeds": "0.001810",
+      "min": 0.02,
+      "note": "honest hold: no live bid worth the order"
+    },
+    {
+      "step": "sell",
+      "status": "AT-KEEP",
+      "symbol": "SWAP.DOGE",
+      "balance": "0.00000000",
+      "keep": "0.0",
+      "note": "holding 0.00000000 · keep reserve 0.0"
+    },
+    {
+      "step": "open-orders",
+      "symbol": "SWAP.LTC",
+      "note": "bids 1 @ 1202.66202505 · asks 0 · locked 1.11366504 SWAP.HIVE · maker presence live on the book"
+    },
+    {
+      "step": "buy",
+      "status": "SKIP-BELOW-MIN",
+      "swapHive": "0.05814915",
+      "min": 0.25,
+      "note": "waiting for the hiveswap wrapper to credit the verified deposit (trx 875404ff2d16f418bd8a86b5cffa6d4e6503e3c1, 0.310 HIVE, memo was free-text)"
+    },
+    {
+      "step": "z30c-recon",
+      "status": "RECONCILED",
+      "symbol": "WAIV",
+      "note": "Z-30-b remainder ask 0.11843238 @ 0.19749 filled on chain (sellBook empty, balance 0) — no cancel op, no transfer: fill is the only explanation consistent with state; +0.02339 SWAP.HIVE gross"
+    },
+    {
+      "step": "z30c-recon",
+      "status": "RECONCILED",
+      "symbol": "SWAP.LTC",
+      "note": "Z-30-b maker bid 0.000926 @ 1202.66202505 (trx 788b68f1) partially filled 0.0007116 → position 0.00319+0.0007116=0.0039016 EXACT on-chain match; remainder 0.00021440 still resting (escrow 0.25786)"
+    },
+    {
+      "step": "z30c-recon",
+      "status": "FULL-TRACE",
+      "symbol": "SWAP.HIVE",
+      "note": "Z-30-c probe2 replayed every headcorner op 10:02-10:57Z from account_history: 5.0136 liquid after Z-30-b = +1.9515 WAIV -3.8418 LTC taker (trx 8961b2b4, the Z-30-b position buy) +0.9606 DOGE close -1.1137 LTC maker escrow; treasury now 0.05814915 liquid + 0.2579 escrow + 0.0039016 LTC; every delta accounted to the cent"
+    },
+    {
+      "step": "z30c-scan",
+      "status": "DUST-HELD",
+      "symbol": "CENT",
+      "note": "CENT top bid 0.00098810 (clifftrade) → 1.84849594 CENT ≈ 0.0018 SWAP.HIVE proceeds — far below the 0.02 dust line; honest HOLD confirmed against the live book"
+    },
+    {
+      "step": "z30c-scan",
+      "status": "HOLD-POSITION",
+      "symbol": "SWAP.LTC",
+      "note": "position cost ~1204, current top bid 1197 (hannahjames710, fresh) — selling would realize a loss; the desk holds (position, not inventory); konvik mm still absent from the bid side"
+    },
+    {
+      "step": "z30c-scan",
+      "status": "FRESH-RAILS",
+      "note": "BEE/WAIV/SWAP.DOGE/SWAP.LTC book frontiers minutes-old (sonntags 11:24, pjansen 10:49, konvik 11:23, hannahjames710 11:25) — rails alive; Z-29 stall verdict stays retired"
+    },
+    {
+      "step": "z30c-watch",
+      "status": "OPEN",
+      "symbol": "BEE",
+      "note": "EXP-UNRESOLVED stands: BEE 1.0 (keep) only — the vanished 1.853 ask-remainder has not returned; bid 0.5471 would pay ~1.01 if it ever does"
+    },
+    {
+      "step": "z30c-watch",
+      "status": "OPEN",
+      "symbol": "SWAP.HIVE",
+      "note": "hiveswap wrapper credit still uncredited (SWAP.HIVE @hiveswap = 0 at 11:19Z probe); 0.310 HIVE deposit remains PENDING until UI-verified"
+    }
+  ],
+  "authority": {
+    "verified": true,
+    "livePub": "STM8c9v…"
   },
-  {
-   "step": "evidence",
-   "status": "EXP-UNRESOLVED",
-   "symbol": "BEE",
-   "missing": "1.85308870",
-   "trx": "0c3bc5b7835fc1ef8167f16e26affdd5b19dd450",
-   "note": "Z-30 ask remainder vanished from sellBook (window 10-01T23:3x→10-02T09:0x): no cancel, no transfer, no fill proceeds. Precaution: every market op now carries explicit expiration."
+  "rail": {
+    "frontierAgeHours": 0,
+    "newestAppliedState": [
+      "BEE:2026-10-02",
+      "ALIVE:2026-10-02",
+      "SWAP.LTC:2026-10-02"
+    ]
   },
-  {
-   "step": "evidence",
-   "status": "SETTLED-HISTORY",
-   "at": "2026-10-02",
-   "rows": [
-    "WAIV 10.00000109 sold @ 0.19749 → +1.95151099 SWAP.HIVE (9.88156871 filled by d7connect, 0.11843238 ask re-listed; balance-verified)",
-    "SWAP.DOGE 0.572191 sold @ 1.69399599 → +0.96933383 SWAP.HIVE realized (position bought ~1.66 in Z-30; exit on konvik-doge mm revival; balance-verified)",
-    "SWAP.LTC 0.00319000 bought @ 1204.33100999 → taker fill on crossing (trx 8961b2b4…, balance-verified 0.00319 held)",
-    "SWAP.LTC 0.00092600 bid resting @ 1202.66202505, 1.11366504 SWAP.HIVE locked (trx 788b68f1…, top of bid side)",
-    "ghost-book law enforcement: 2 stale DOGE bids (3.91820258 SWAP.HIVE) cancelled with read-back (trx f58427d4…, c12d4ea0…)"
-   ]
-  },
-  {
-   "step": "wrapper-poll",
-   "swapHive": "0.05814915",
-   "hiveLiquid": 0.034
-  },
-  {
-   "step": "sell",
-   "status": "AT-KEEP",
-   "symbol": "BEE",
-   "balance": "1.00000000",
-   "keep": "1.0",
-   "note": "holding 1.00000000 · keep reserve 1.0"
-  },
-  {
-   "step": "sell",
-   "status": "DUST-HELD",
-   "symbol": "VKBT",
-   "quantity": "23.29996200",
-   "bid": "0.00002105",
-   "price": "0.00002105",
-   "last": "0.00011045",
-   "estProceeds": "0.000486",
-   "min": 0.02,
-   "note": "honest hold: no live bid worth the order"
-  },
-  {
-   "step": "sell",
-   "status": "DUST-HELD",
-   "symbol": "PAY",
-   "quantity": "0.17406307",
-   "bid": "0.00000290",
-   "price": "0.00000290",
-   "last": "0.00000290",
-   "estProceeds": "0.000001",
-   "min": 0.02,
-   "note": "honest hold: no live bid worth the order"
-  },
-  {
-   "step": "sell",
-   "status": "DUST-HELD",
-   "symbol": "BLANK",
-   "quantity": "10.00000000",
-   "bid": "0.00000031",
-   "price": "0.00000031",
-   "last": "0.00000031",
-   "estProceeds": "0.000003",
-   "min": 0.02,
-   "note": "honest hold: no live bid worth the order"
-  },
-  {
-   "step": "sell",
-   "status": "AT-KEEP",
-   "symbol": "WAIV",
-   "balance": "0.00000000",
-   "keep": "0.0",
-   "note": "holding 0.00000000 · keep reserve 0.0"
-  },
-  {
-   "step": "sell",
-   "status": "DUST-HELD",
-   "symbol": "CENT",
-   "quantity": "1.84849594",
-   "bid": "0.00098810",
-   "price": "0.00098810",
-   "last": "0.00099120",
-   "estProceeds": "0.001810",
-   "min": 0.02,
-   "note": "honest hold: no live bid worth the order"
-  },
-  {
-   "step": "sell",
-   "status": "AT-KEEP",
-   "symbol": "SWAP.DOGE",
-   "balance": "0.00000000",
-   "keep": "0.0",
-   "note": "holding 0.00000000 · keep reserve 0.0"
-  },
-  {
-   "step": "open-orders",
-   "symbol": "SWAP.LTC",
-   "note": "bids 1 @ 1202.66202505 · asks 0 · locked 1.11366504 SWAP.HIVE · maker presence live on the book"
-  },
-  {
-   "step": "buy",
-   "status": "SKIP-BELOW-MIN",
-   "swapHive": "0.05814915",
-   "min": 0.25,
-   "note": "waiting for the hiveswap wrapper to credit the verified deposit (trx 875404ff2d16f418bd8a86b5cffa6d4e6503e3c1, 0.310 HIVE, memo was free-text)"
-  }
- ],
- "authority": {
-  "verified": true,
-  "livePub": "STM8c9v…"
- },
- "rail": {
-  "frontierAgeHours": 0,
-  "newestAppliedState": [
-   "BEE:2026-10-02",
-   "ALIVE:2026-10-02",
-   "SWAP.LTC:2026-10-02"
-  ]
- },
- "swapHive": 0.05814915,
- "hiveLiquid": 0.034,
- "summary": {
-  "rows": 13,
-  "executed": 0,
-  "ms": 10565
- }
+  "swapHive": 0.05814915,
+  "hiveLiquid": 0.034,
+  "summary": "[object Object] | Z-30-c: full op-replay reconciliation clean (no missing funds), WAIV remainder + LTC partial fill booked, CENT dust-hold re-verified on live book, rails fresh."
 }
