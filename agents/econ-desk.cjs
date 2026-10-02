@@ -32,6 +32,7 @@ const OUT_JSON = process.env.ECON_JSON || path.join(__dirname, 'econ-book.json')
 const OUT_MD = path.join(__dirname, 'econ-book.md');
 const BUY_TARGETS = ['SWAP.DOGE', 'SWAP.LTC'];       // cheapest routable wrapped books
 const MIN_ORDER_HIVE = 0.25;                          // smallest value worth placing
+const BOOK_STALE_H = 48;                              // Z-30-a ghost-book gate: no bid into a book whose newest resting order is older than this
 // ---- Z-29 sell side: inventory the desk is allowed to harvest ----
 // keep = reserve held back on chain (BEE is the engine utility token: keep 1 for ops).
 const SELL_BOOKS = [
@@ -240,7 +241,7 @@ function loadHeadHiveActive() {
       'Updated: ' + new Date().toISOString() + ' UTC. RAIL VERDICT: **hive-engine contract state STALLED** — newest applied market state: ' + railDetail.join(', ') + ' (frontier age ' + Math.round(railAgeH * 10) / 10 + 'h). No engine op is signed into a dead rail.', '',
       '| step | status | detail |',
       '|---|---|---|',
-      ...book.rows.map((r) => '| ' + r.step + ' | ' + (r.status || '') + ' | ' + [r.symbol && (r.symbol + ' qty=' + r.quantity + ' @ ' + r.price), r.newestAppliedState, r.verdict, r.note, r.trx && ('trx ' + r.trx)].filter(Boolean).join(' · ').replace(/\|/g, '/') + ' |'),
+      ...book.rows.map((r) => '| ' + r.step + ' | ' + (r.status || '') + ' | ' + [r.symbol && (r.quantity !== undefined && r.price !== undefined ? (r.symbol + ' qty=' + r.quantity + ' @ ' + r.price) : (r.quantity !== undefined && r.bid !== undefined ? (r.symbol + ' qty=' + r.quantity + ' bid=' + r.bid) : r.symbol)), r.newestAppliedState, r.verdict, r.note, r.trx && ('trx ' + r.trx)].filter(Boolean).join(' · ').replace(/\|/g, '/') + ' |'),
       '',
     ].join('\n');
     fs.writeFileSync(OUT_MD, mdStall);
@@ -260,7 +261,7 @@ function loadHeadHiveActive() {
       const balRows = await heFind('tokens', 'balances', { account: HEAD, symbol: sym }, 1);
       const bal = balRows && balRows[0] ? parseFloat(balRows[0].balance) : 0;
       const qty = Math.max(0, bal - keep);
-      if (qty <= 0) { R({ step: 'sell', status: 'AT-KEEP', symbol: sym, balance: balRows[0] ? balRows[0].balance : '0', keep: keep.toFixed(1) }); continue; }
+      if (qty <= 0) { R({ step: 'sell', status: 'AT-KEEP', symbol: sym, balance: balRows[0] ? balRows[0].balance : '0', keep: keep.toFixed(1), note: 'holding ' + (balRows[0] ? balRows[0].balance : '0') + ' · keep reserve ' + keep.toFixed(1) }); continue; }
 
       const mRows = await heFind('market', 'metrics', { symbol: sym }, 1);
       const m = mRows && mRows[0];
@@ -268,7 +269,7 @@ function loadHeadHiveActive() {
       const last = m ? parseFloat(m.lastPrice) : 0;
       const proceeds = bid > 0 ? qty * bid * (1 - ENGINE_FEE) : 0;
       if (bid <= 0 || proceeds < DUST_MIN_PROCEEDS) {
-        R({ step: 'sell', status: 'DUST-HELD', symbol: sym, quantity: qty.toFixed(8), bid: bid.toFixed(8), last: last.toFixed(8), estProceeds: proceeds.toFixed(6), min: DUST_MIN_PROCEEDS, note: 'honest hold: no live bid worth the order' });
+        R({ step: 'sell', status: 'DUST-HELD', symbol: sym, quantity: qty.toFixed(8), bid: bid.toFixed(8), price: bid.toFixed(8), last: last.toFixed(8), estProceeds: proceeds.toFixed(6), min: DUST_MIN_PROCEEDS, note: 'honest hold: no live bid worth the order' });
         continue;
       }
       const existing = (await heFind('market', 'sellBook', { account: HEAD, symbol: sym }, 5)) || [];
@@ -294,13 +295,44 @@ function loadHeadHiveActive() {
   book.swapHive = swapHive;
   book.hiveLiquid = hiveBal;
 
+  // ---- step 3b: resting orders always visible (Z-30-a) — a resting maker bid
+  // below the MIN_ORDER_HIVE capital line would otherwise be invisible in the book
+  try {
+    for (const sym of BUY_TARGETS.concat(SELL_BOOKS.map((s) => s.sym))) {
+      const bb = (await heFind('market', 'buyBook', { account: HEAD, symbol: sym }, 5)) || [];
+      const sb = (await heFind('market', 'sellBook', { account: HEAD, symbol: sym }, 5)) || [];
+      if (bb.length || sb.length) {
+        const lockedH = bb.map((x) => parseFloat(x.tokensLocked || 0)).reduce((a, c) => a + c, 0);
+        const bTop = bb.slice().sort((x, y) => parseFloat(y.price) - parseFloat(x.price))[0];
+        const sTop = sb.slice().sort((x, y) => parseFloat(x.price) - parseFloat(y.price))[0];
+        R({ step: 'open-orders', symbol: sym, note: 'bids ' + bb.length + (bTop ? ' @ ' + bTop.price : '') + ' · asks ' + sb.length + (sTop ? ' @ ' + sTop.price : '') + ' · locked ' + lockedH.toFixed(8) + ' SWAP.HIVE · maker presence live on the book' });
+      }
+    }
+  } catch (e) { R({ step: 'open-orders', status: 'POLL-ERROR', error: String(e.message).slice(0, 100) }); }
+
   // ---- step 4: place ONE market buy if capital is in place ----
   if (swapHive >= MIN_ORDER_HIVE) {
-    // pick the target book by live depth (volume), fall back in order
+    // Z-30-a ghost-book gate: a book whose newest resting order is older than
+    // BOOK_STALE_H has no live counterparties — parking capital there freezes it
+    // (SWAP.DOGE lesson: newest resting order was ~13 days old; our fill was the
+    // only trade in weeks, and the position has no liquid exit). Maker presence
+    // does not reliably revive a dead book; capital stays in SWAP.HIVE until a
+    // live book exists.
+    const bookNewestAgeH = async (sym) => {
+      let newest = 0;
+      for (const table of ['buyBook', 'sellBook']) {
+        const rows = (await heFind('market', table, { symbol: sym }, 1, [{ index: '_id', descending: true }])) || [];
+        if (rows[0] && rows[0].timestamp && rows[0].timestamp > newest) newest = rows[0].timestamp;
+      }
+      return newest ? (Date.now() / 1000 - newest) / 3600 : Infinity;
+    };
     let picked = null;
     for (const sym of BUY_TARGETS) {
       const m = (await heFind('market', 'metrics', { symbol: sym }, 1))[0];
-      if (m && parseFloat(m.lowestAsk) > 0) { picked = { sym, m }; break; }
+      if (!m || parseFloat(m.lowestAsk) <= 0) continue;
+      const ageH = await bookNewestAgeH(sym);
+      if (ageH > BOOK_STALE_H) { R({ step: 'buy', status: 'SKIP-GHOST-BOOK', symbol: sym, newestOrderAgeHours: Math.round(ageH * 10) / 10, max: BOOK_STALE_H, note: 'no live counterparty recent enough; capital stays in SWAP.HIVE until a live book exists' }); continue; }
+      picked = { sym, m }; break;
     }
     if (!picked) R({ step: 'buy', status: 'NO-LIVE-BOOK', note: swapHive < swapHive0 ? stuckNote : undefined });
     else {
@@ -317,17 +349,27 @@ function loadHeadHiveActive() {
         if (existing.length) {
           R({ step: 'buy', status: 'ALREADY-OPEN', symbol: sym, openOrders: existing.length });
         } else {
+          // Z-30-a DELTA-SETTLEMENT LAW: classify from before/after deltas only.
+          // The account already holds prior inventory, so "balance > 0" proves
+          // nothing (the Z-30 false-FILLED: old 0.572 DOGE read as a fresh fill
+          // while the order was merely resting). Sell side already does this
+          // right (swapAfter vs swapHive0); buy side now matches it.
+          const preRows = await heFind('tokens', 'balances', { account: HEAD, symbol: sym }, 1);
+          const preBal = preRows && preRows[0] ? parseFloat(preRows[0].balance) : 0;
           await bcast((cb) => hivejs.broadcast.customJson(wif, [HEAD], [], ENGINE_ID, JSON.stringify({ contractName: 'market', contractAction: 'buy', contractPayload: { symbol: sym, quantity: q, price } }), cb));
           const ev = await findOp('custom_json', (b) => b.id === ENGINE_ID && String(b.json || '').includes('"contractAction":"buy"') && String(b.json || '').includes(sym), before);
-          let settled = { tokenBalance: '0', openOrders: 0 };
+          let settled = { tokenBalance: preBal.toFixed(8), openOrders: 0, tokensLocked: '0' };
           for (let i = 0; i < 5; i++) {
             await sleep(6000);
             const b = await heFind('tokens', 'balances', { account: HEAD, symbol: sym }, 1);
-            const bk = await heFind('market', 'buyBook', { account: HEAD, symbol: sym }, 5);
-            settled = { tokenBalance: b && b[0] ? b[0].balance : '0', openOrders: (bk || []).length };
-            if (parseFloat(settled.tokenBalance) > 0 || settled.openOrders > 0) break;
+            const bk = (await heFind('market', 'buyBook', { account: HEAD, symbol: sym }, 5)) || [];
+            const locked = bk.filter((x) => x.account === HEAD).map((x) => parseFloat(x.tokensLocked || 0)).reduce((a, c) => a + c, 0);
+            settled = { tokenBalance: b && b[0] ? b[0].balance : '0', openOrders: bk.filter((x) => x.account === HEAD).length, tokensLocked: locked.toFixed(8) };
+            if (parseFloat(settled.tokenBalance) > preBal || settled.openOrders > 0) break;
           }
-          R({ step: 'buy', status: parseFloat(settled.tokenBalance) > 0 ? 'FILLED' : (settled.openOrders > 0 ? 'ORDER-OPEN' : 'PLACED-UNSETTLED'), symbol: sym, quantity: q, price, ask, onChain: !!ev, ...(ev || {}), ...settled });
+          const deltaBal = parseFloat(settled.tokenBalance) - preBal;
+          const cls = deltaBal > 0 ? (settled.openOrders > 0 ? 'PARTIAL-FILL+RESTING' : 'FILLED') : (settled.openOrders > 0 ? 'ORDER-OPEN' : 'PLACED-UNSETTLED');
+          R({ step: 'buy', status: cls, symbol: sym, quantity: q, price, ask, deltaBalance: Math.max(0, deltaBal).toFixed(8), tokensLocked: settled.tokensLocked, onChain: !!ev, ...(ev || {}), ...settled });
         }
       } catch (e) {
         R({ step: 'buy', status: 'ERROR', symbol: sym, error: String(e.message).slice(0, 120) });
@@ -344,7 +386,7 @@ function loadHeadHiveActive() {
     'Updated: ' + book.at + ' UTC. Executor: ' + HEAD + ' (active authority, byte-verified per run). Signer: @hiveio/hive-js (steem.js cannot sign hive asset ops, R-ECON-3). Sell side harvests engine inventory above keep-reserve; dust is honestly held. Buy side places maker orders in routable wrapped books. Generated by agents/econ-desk.cjs.', '',
     '| step | status | detail |',
     '|---|---|---|',
-    ...book.rows.map((r) => '| ' + r.step + ' | ' + (r.status || r.move || '') + ' | ' + [r.symbol && (r.symbol + ' qty=' + r.quantity + ' @ ' + r.price), r.swapHive && ('SWAP.HIVE=' + r.swapHive), r.estProceeds && ('est=' + r.estProceeds), r.note, r.error, r.trx && ('trx ' + r.trx)].filter(Boolean).join(' · ').replace(/\|/g, '/') + ' |'),
+    ...book.rows.map((r) => '| ' + r.step + ' | ' + (r.status || r.move || '') + ' | ' + [r.symbol && (r.quantity !== undefined && r.price !== undefined ? (r.symbol + ' qty=' + r.quantity + ' @ ' + r.price) : (r.quantity !== undefined && r.bid !== undefined ? (r.symbol + ' qty=' + r.quantity + ' bid=' + r.bid) : r.symbol)), r.swapHive && ('SWAP.HIVE=' + r.swapHive), r.estProceeds && ('est=' + r.estProceeds), r.note, r.error, r.trx && ('trx ' + r.trx)].filter(Boolean).join(' · ').replace(/\|/g, '/') + ' |'),
     '',
   ].join('\n');
   fs.writeFileSync(OUT_MD, md);
