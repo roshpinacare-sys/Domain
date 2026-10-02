@@ -1,8 +1,8 @@
 {
  "ok": true,
- "at": "2026-10-02T23:17:41.269Z",
- "agent": "run-evals v1.3.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13, superset merge)",
- "origin": "learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense adoptions",
+ "at": "2026-10-02T23:33:15.828Z",
+ "agent": "run-evals v1.3.0 (Z-36 + Z-38 guard evals + Z-39 rail evals E10-E12 + Z-40 collapse drill E13)",
+ "origin": "learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + emergence.ai adoptions",
  "counts": {
   "pass": 13,
   "fail": 0
@@ -17,7 +17,7 @@
     "second pass adds 0 (idempotent)"
    ],
    "note": "entries=3 added=0 reAdded=0",
-   "at": "2026-10-02T23:17:36.749Z"
+   "at": "2026-10-02T23:33:12.655Z"
   },
   {
    "id": "E2",
@@ -27,7 +27,7 @@
     "seed text is a prefix of the book-row text — identity must still match"
    ],
    "note": "identity sample: WAIV 10.00000109|1.95151099",
-   "at": "2026-10-02T23:17:36.749Z"
+   "at": "2026-10-02T23:33:12.655Z"
   },
   {
    "id": "E3",
@@ -39,7 +39,7 @@
     "5 ventures present with statuses"
    ],
    "note": "exit=0 open=5",
-   "at": "2026-10-02T23:17:37.631Z"
+   "at": "2026-10-02T23:33:13.537Z"
   },
   {
    "id": "E4",
@@ -51,7 +51,7 @@
     "counts arithmetic consistent (pass+warn+fail == checks)"
    ],
    "note": "exit=0 pass=23 warn=0 fail=9",
-   "at": "2026-10-02T23:17:37.672Z"
+   "at": "2026-10-02T23:33:13.581Z"
   },
   {
    "id": "E5",
@@ -62,7 +62,7 @@
     "canonical num() coercion keeps the sum under the cap"
    ],
    "note": "wrong=\"74488519347811969\" right=1000000000",
-   "at": "2026-10-02T23:17:37.672Z"
+   "at": "2026-10-02T23:33:13.581Z"
   },
   {
    "id": "E6",
@@ -73,7 +73,7 @@
     "the audit surfaces a timestamp-hygiene check (WARN until owners stamp)"
    ],
    "note": "unstamped-but-fresh=0 hygieneCheck=true",
-   "at": "2026-10-02T23:17:37.673Z"
+   "at": "2026-10-02T23:33:13.581Z"
   },
   {
    "id": "E7",
@@ -84,7 +84,7 @@
     "git pull --rebase + plain push → ALLOW (the fleet rebase law must never be blocked)"
    ],
    "note": "denies=core.git:reset-hard,core.git:push-force,fs:rm-rf allows=core.git:rebase-law,core.git:rebase-law",
-   "at": "2026-10-02T23:17:37.805Z"
+   "at": "2026-10-02T23:33:13.706Z"
   },
   {
    "id": "E8",
@@ -95,7 +95,7 @@
     "the same reset in an agent-session context has no retry-loop alibi → DENY"
    ],
    "note": "data=data-context session=core.git:reset-hard",
-   "at": "2026-10-02T23:17:37.855Z"
+   "at": "2026-10-02T23:33:13.756Z"
   },
   {
    "id": "E9",
@@ -107,7 +107,7 @@
     "ledger stamped (BOOKS-STAMP law)"
    ],
    "note": "denies=0 syncIdiom=11 stamped=true",
-   "at": "2026-10-02T23:17:37.887Z"
+   "at": "2026-10-02T23:33:13.790Z"
   },
   {
    "id": "E10",
@@ -119,7 +119,7 @@
     "keyed rails are all tier C (operator gate) — zero keyedNotTierC"
    ],
    "note": "total=15 live=2 dormant=11 never=1 neverLive=0",
-   "at": "2026-10-02T23:17:37.916Z"
+   "at": "2026-10-02T23:33:13.815Z"
   },
   {
    "id": "E11",
@@ -131,7 +131,7 @@
     "rail-ledger.json stamped (BOOKS-STAMP law)"
    ],
    "note": "live probes booked=7",
-   "at": "2026-10-02T23:17:40.030Z"
+   "at": "2026-10-02T23:33:15.799Z"
   },
   {
    "id": "E12",
@@ -142,21 +142,20 @@
     "the policy gate is mechanical, not prose (same lesson as Z-38: a law that lives only in prose is advisory)"
    ],
    "note": "reason=row 'cohere': FORBIDDEN tos must be status NEVER · row 'cohere': LIVE/CATALOG rail cannot be keyed ·",
-   "at": "2026-10-02T23:17:40.060Z"
+   "at": "2026-10-02T23:33:15.828Z"
   },
   {
    "id": "E13",
-   "name": "fate-defense: FWI scorecard computes 9 artifact-sourced indicators + STASIS armed",
+   "name": "collapse drill: containment PROVEN on a fresh run",
    "status": "PASS",
    "expectations": [
-    "fleet-indicators.cjs runs in a fresh process (exit 0, fail-soft)",
-    "exactly 9 indicators booked",
-    "every indicator names a mechanical evidence source (ANTI-GOODHART)",
-    "FWI book stamped fresh (<1h)",
-    "STASIS.json parseable with boolean active flag"
+    "receipt verdict CONTAINMENT-PROVEN with a green baseline (no false credit — BASELINE-RED would refuse attribution)",
+    "every injected fault class caught: faults_caught === faults_total >= 4 (registry corruption, guard neutered, book stamps stripped, forbidden rail LIVE)",
+    "receipts fresh < 168h — the drill runs on the CI schedule, containment proof is not a one-time trophy",
+    "CI summary ledger agrees (collapse-drill.json stamped)"
    ],
-   "note": "verdict=THRIVING indicators=9 sourced=true stasisArmed=true",
-   "at": "2026-10-02T23:17:41.269Z"
+   "note": "caught=4/4 ageH=0 head=c77d26df6760",
+   "at": "2026-10-02T23:33:15.828Z"
   }
  ],
  "verdict": "evals green: 13/13 expectations hold"
