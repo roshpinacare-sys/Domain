@@ -1,6 +1,6 @@
 # Desk Evals — runnable expectations (fresh-process judge, Z-36)
 
-_run-evals v1.3.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13, superset merge) · 2026-10-02T23:17:41.269Z_
+_run-evals v1.3.0 (Z-36 + Z-38 guard evals + Z-39 rail evals E10-E12 + Z-40 collapse drill E13) · 2026-10-02T23:33:15.828Z_
 
 **evals green: 13/13 expectations hold**
 
@@ -68,12 +68,11 @@ _run-evals v1.3.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense 
 - the policy gate is mechanical, not prose (same lesson as Z-38: a law that lives only in prose is advisory)
 - _measured: reason=row 'cohere': FORBIDDEN tos must be status NEVER · row 'cohere': LIVE/CATALOG rail cannot be keyed ·_
 
-## E13 · fate-defense: FWI scorecard computes 9 artifact-sourced indicators + STASIS armed — PASS
-- fleet-indicators.cjs runs in a fresh process (exit 0, fail-soft)
-- exactly 9 indicators booked
-- every indicator names a mechanical evidence source (ANTI-GOODHART)
-- FWI book stamped fresh (<1h)
-- STASIS.json parseable with boolean active flag
-- _measured: verdict=THRIVING indicators=9 sourced=true stasisArmed=true_
+## E13 · collapse drill: containment PROVEN on a fresh run — PASS
+- receipt verdict CONTAINMENT-PROVEN with a green baseline (no false credit — BASELINE-RED would refuse attribution)
+- every injected fault class caught: faults_caught === faults_total >= 4 (registry corruption, guard neutered, book stamps stripped, forbidden rail LIVE)
+- receipts fresh < 168h — the drill runs on the CI schedule, containment proof is not a one-time trophy
+- CI summary ledger agrees (collapse-drill.json stamped)
+- _measured: caught=4/4 ageH=0 head=c77d26df6760_
 
 _Eval discipline adopted from learn-harness-engineering (Z-36): an eval is a runnable expectation, not a hope. Pure functions = white-box; desk processes = black-box fresh processes._

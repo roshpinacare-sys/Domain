@@ -22,6 +22,7 @@
  *   E11 rail probe          — keyless probes classify honestly, fail-soft on a ghost row (Z-39)
  *   E12 rail policy gate    — a FORBIDDEN row enabled as LIVE fails validation (Z-39)
  *   E13 fate-defense FWI    — the Emergence-World scorecard runs fresh, 9 indicators, every one artifact-sourced (Task 22; renumbered from my interim E10 — Z-39's rail evals landed first on main, supersession visible here)
+ *   E14 collapse drill      — containment PROVEN on a fresh run: 4 fault classes, 4 REDs (Z-40, emergence.ai; renumbered from my interim E13 — Task 22's fate-defense landed on main first, parallel-convergence supersedes)
  *
  * Fail-soft: exit 0 always; FAILs are booked honestly (HARNESS-AUDIT MANDATE:
  * green-washing the evals is a doctrine breach).
@@ -188,9 +189,18 @@ function accumulateInMemory(bookRows, seed) {
       `verdict=${fwi.verdict} indicators=${inds.length} sourced=${sourced} stasisArmed=${!stasis.active}`);
   } catch (e) { evalr('E13', 'fate-defense FWI', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
+  // ---- E14: collapse-drill receipts — containment proven on a fresh run (Z-40, emergence.ai adoption; renumbered from my interim E13 — Task 22's fate-defense landed on main first)
+  try {
+    const rec = JSON.parse(fs.readFileSync(path.join(AG, 'receipts', 'collapse-drill-receipt.json'), 'utf8'));
+    const ageH = (Date.now() - Date.parse(rec.at)) / 3600000;
+    const led = JSON.parse(fs.readFileSync(path.join(AG, 'collapse-drill.json'), 'utf8'));
+    evalr('E14', 'collapse drill: containment PROVEN on a fresh run', rec.verdict === 'CONTAINMENT-PROVEN' && rec.baseline && rec.baseline.green === true && rec.faults_caught === rec.faults_total && rec.faults_total >= 4 && ageH < 168 && led.verdict === 'CONTAINMENT-PROVEN',
+      ['receipt verdict CONTAINMENT-PROVEN with a green baseline (no false credit — BASELINE-RED would refuse attribution)', 'every injected fault class caught: faults_caught === faults_total >= 4 (registry corruption, guard neutered, book stamps stripped, forbidden rail LIVE)', 'receipts fresh < 168h — the drill runs on the CI schedule, containment proof is not a one-time trophy', 'CI summary ledger agrees (collapse-drill.json stamped)'], `caught=${rec.faults_caught}/${rec.faults_total} ageH=${Math.round(ageH)} head=${rec.head}`);
+  } catch (e) { evalr('E14', 'collapse drill receipts', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.3.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13, superset merge)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense adoptions', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.4.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill adoptions (Task 22 + Z-40, deduped by renumbering — the same operator wave landed on the same study from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];

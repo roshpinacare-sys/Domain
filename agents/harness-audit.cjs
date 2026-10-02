@@ -245,6 +245,23 @@ const freshCount = bookStates.filter((b) => b.exists && b.fresh).length;
     fwi ? `FWI ${fwi.verdict || '?'} ${fwiFresh ? 'fresh' : 'stale'} · ${fwiInds.length} indicators · sources ${fwiAllSources ? 'all named' : 'INCOMPLETE'} · stasis armed=${stasisFile ? stasisFile.active : 'missing'} · engine gate=${stasisGateInCode}` : 'fleet-indicators.json missing',
     'Task 22 (study: world.emergence.ai, arXiv 2606.08367 + 2609.17320): their worlds died with no warning shot — ours carries a mechanical brake the engine obeys before any seal/broadcast, and a 9-indicator scorecard computed from artifacts, never from self-reports (ANTI-GOODHART); docs: FATE-DEFENSE.md');
 
+  // Z-40: collapse drill — containment proof receipts (emergence.ai adoption, CR-0004).
+  // The study's hardest finding: "detection did not ensure containment ... acting on it up to
+  // 46 hours later" + "collapse has no warning shot". Our answer: four mechanical faults
+  // injected into throwaway git-archive trees; the fresh-process judge must catch every one
+  // inside the same run. The receipts here are that proof, audited on schedule.
+  let drillOk = false, drillEvidence = 'drill receipts missing';
+  try {
+    const rec = readJson(path.join(AG, 'receipts', 'collapse-drill-receipt.json'));
+    const drillScript = read(path.join(AG, 'collapse-drill.cjs'));
+    const drillAgeH = rec && rec.at ? r1(ago(rec.at)) : null;
+    const drillFresh = drillAgeH != null && drillAgeH < 168;
+    drillOk = !!(drillScript && drillScript.includes('CONTAINMENT-PROVEN') && rec && rec.ok && drillFresh && rec.verdict === 'CONTAINMENT-PROVEN' && rec.baseline && rec.baseline.green === true && rec.faults_caught === rec.faults_total && rec.faults_total >= 4);
+    drillEvidence = rec ? `verdict ${rec.verdict} · caught ${rec.faults_caught}/${rec.faults_total} · baseline green=${rec.baseline ? rec.baseline.green : '?'} · age ${drillAgeH}h · head ${rec.head || '?'}` : 'missing';
+  } catch (_) {}
+  check('sovereignty', 'collapse drill containment-proof: 4 fault classes injected into throwaway trees, judge caught every one on a fresh run', drillOk,
+    drillEvidence, 'Z-40 (study: emergence.ai Emergence World, CR-0004): detection without containment is theater — the drill proves the warning shot is mechanical');
+
   // ---- silent-costs watch (L13) — booked as standing observations, honestly
   const silentCosts = {
     verificationDebt: 'selftests cover past incidents; every NEW failure mode (concat family ×3, null-deref, dedupe) becomes a check within one wave of discovery',
@@ -259,8 +276,8 @@ const freshCount = bookStates.filter((b) => b.exists && b.fresh).length;
     fail: checks.filter((c) => c.status === 'FAIL').length
   };
   const out = {
-    ok: true, at, agent: 'harness-audit v1.5.0 (Z-35 + Task 19 + Z-37 sovereignty + Z-38 override + Z-39 cognitive rail + Task 22 fate-defense, superset merge)',
-    origin: 'walkinglabs/learn-harness-engineering study (Z-35): five subsystems + loop/graph engineering mapped to the fleet; Z-37 adds f/prompts.chat governance adoption (roles-as-data + decision ladder + change-requests + override protocol); Z-38 adds Dicklesworthstone/destructive_command_guard adoption (mechanical override gate + evals E7-E9); Z-39 adds tashfeenahmed/freellmapi adoption (cognitive-rail registry + keyless probes + evals E10-E12); Task 22 adds world.emergence.ai fate-defense adoption (STASIS circuit breaker + FWI scorecard + three laws, FATE-DEFENSE.md); the audit itself is the adopted artifact — a fresh-context checker node on a schedule',
+    ok: true, at, agent: 'harness-audit v1.6.0 (Z-35 + Task 19 + Z-37 sovereignty + Z-38 override + Z-39 cognitive rail + Task 22 fate-defense + Z-40 collapse drill, parallel-convergence superset deduped)',
+    origin: 'walkinglabs/learn-harness-engineering study (Z-35): five subsystems + loop/graph engineering mapped to the fleet; Z-37 adds f/prompts.chat governance adoption (roles-as-data + decision ladder + change-requests + override protocol); Z-38 adds Dicklesworthstone/destructive_command_guard adoption (mechanical override gate + evals E7-E9); Z-39 adds tashfeenahmed/freellmapi adoption (cognitive-rail registry + keyless probes + evals E10-E12); Task 22 adds world.emergence.ai fate-defense adoption (STASIS circuit breaker + FWI scorecard + three laws, FATE-DEFENSE.md); Z-40 adds the emergence.ai collapse-drill containment proof (CR-0004, E14); two runtimes landed the same operator wave on the same study — merged, renumbered, deduped; the audit itself is the adopted artifact — a fresh-context checker node on a schedule',
     fiveSubsystems: {
       instructions: 'AGENTS.md + DOCTRINE.md + FLEET-NOTE.md + agent headers',
       state: 'books (external state primitive) + CLAIMS + worklog',

@@ -28,17 +28,32 @@
 - **Parallel runtimes are real.** `git pull --rebase` before push; conflicts in
   measurement books resolve to the freshest census; never double-run another
   runtime's lane (DELEGATION-SELECTION LAW).
-- **Destructive ops are tier-C, mechanically enforced** (Z-37, adopted from
-  Dicklesworthstone/destructive_command_guard): `scripts/command-guard.sh` blocks
-  force-push, `reset --hard`, `clean -x`, estate-path `rm -rf`, `DROP TABLE`, and
-  `migrate reset` BEFORE they run — with the doctrine reason and the safer tip.
-  Patterns in data position (grep/echo) stay free; `STRICT=1` also blocks
-  `curl|bash`. Every lane that pushes or mutates estate state passes through it.
+- **Destructive ops are tier-C, mechanically enforced** (Z-38, adopted from
+  Dicklesworthstone/destructive_command_guard): `agents/command-guard.cjs` v1.0.0 —
+  the governing gate (CR-0002) — classifies commands BEFORE they run:
+  whitelist-first (the fleet's `pull --rebase` rebase law is pinned un-blockable
+  by eval E7), default-allow for unknown commands, strictest templates on books/
+  `agents/`/repo history (`reset --hard`, `push --force`, `rm -rf`, `stash drop`),
+  context-aware (a destructive string in grep/echo is DATA, not execution), and
+  every decision booked in `command-guard.json` (check #27 + E7-E9 pin it).
+  CI executable surfaces are scanned (`scan .github/workflows agents`) — zero
+  unbooked DENY is the law. Every lane that pushes or mutates estate state
+  passes through it.
 - **Evals are runnable expectations, not hopes** (`agents/evals/run-evals.cjs`, Z-36):
   pure functions get white-box evals, desk processes get black-box fresh-process
   evals; a new failure class becomes an eval within one wave of discovery.
   The fleet's real workflow is drawn in `agents/fleet-graph.md` — read it before
   adding a node, and update it when you add one.
+- **Detection without containment is theater** (Z-40, adopted from world.emergence.ai
+  — their S2 finding: "detection did not ensure containment ... acting on it up to
+  46 hours later"). `agents/collapse-drill.cjs` injects four mechanical fault classes
+  (registry corruption, guard neutered, book stamps stripped, forbidden rail LIVE)
+  into throwaway `git archive HEAD` trees; the fresh-process judge must catch every
+  one in the SAME run — receipts prove it (E14 + audit #29 pin it; CI runs it on
+  schedule). Content never enters a book or decision without provenance
+  (MEMORY-IMMUNITY); disagreement is bookable, never silently conformed
+  (ANTI-CONFORMITY); the proof surface is chain state, never observer perception
+  (OBSERVER-FLIP).
 - **Books must stamp themselves** (`at`/`updated` ISO) — freshness is audited
   (`agents/harness-audit.cjs` runs on schedule; its FAILs are next work, not noise).
 - **Role voice is data, not code** (Z-37, adopted from f/prompts.chat): every
