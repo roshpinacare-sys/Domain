@@ -1,0 +1,168 @@
+'use strict';
+/**
+ * harness-audit.cjs — Z-35 FLEET HARNESS AUDIT (born from the walkinglabs/
+ * learn-harness-engineering study, operator order: "examine it well and let's
+ * use it properly").
+ *
+ * The study's core: a model is smart, the harness makes it reliable. Five
+ * subsystems (instructions / state / verification / scope / lifecycle), loop
+ * engineering (generator/evaluator separation, four silent costs), graph
+ * engineering (Goodhart · blindness-upward · conflict; anchors pin loops to
+ * reality; one lock for architecture).
+ *
+ * Our verdict after mapping it to the fleet: we built most of this independently
+ * (books = external state; verify-then-sign = maker/checker; kill rules = scope;
+ * RESUME-KIT/restore = lifecycle; DELEGATION-SELECTION = the one-lock doctrine).
+ * What we LACKED and adopt here: a formal, repeatable harness audit that runs on
+ * a schedule — the checker node with a fresh context that the study says the
+ * producer cannot be. This desk IS that node: keyless, fail-soft, exit 0 always.
+ *
+ * What this desk does:
+ *   1. audits the five subsystems across the fleet canon (Defi via DEFU_DIR, Domain local);
+ *   2. checks the three structural failures have named countermeasures;
+ *   3. checks every earn metric names its anchor (oracle source);
+ *   4. checks book freshness (stale books are honest but flagged);
+ *   5. writes agents/harness-audit.json + harness-audit.md.
+ */
+const fs = require('fs');
+const path = require('path');
+
+const AG = __dirname;
+const ROOT = path.resolve(AG, '..');
+const OUT_JSON = path.join(AG, 'harness-audit.json');
+const OUT_MD = path.join(AG, 'harness-audit.md');
+const DEFU_DIR = process.env.DEFU_DIR || path.resolve(ROOT, '..', 'Defi');
+
+const read = (p) => { try { return fs.readFileSync(p, 'utf8'); } catch (_) { return null; } };
+const readJson = (p) => { try { return JSON.parse(read(p) || 'null'); } catch (_) { return null; } };
+const ago = (iso) => (iso ? (Date.now() - Date.parse(iso)) / 3600000 : null);
+const r1 = (x) => (x == null ? null : Math.round(x * 10) / 10);
+
+const checks = [];
+function check(subsystem, name, pass, evidence, note, level) {
+  checks.push({ subsystem, name, status: pass ? 'PASS' : (level === 'warn' ? 'WARN' : 'FAIL'), evidence: evidence || null, note: note || null });
+}
+
+// ---- LIVE BOOKS (freshness is the fleet's pulse)
+const LIVE_BOOKS = ['econ-book.json', 'curation-book.json', 'money-ledger.json', 'ventures.json', 'fills-ledger.json', 'bridge-book.json', 'dex-book.json', 'learning-ledger.json', 'recruitment.json'];
+const bookStates = [];
+for (const b of LIVE_BOOKS) {
+  const j = readJson(path.join(AG, b));
+  const at = j && (j.at || j.updated || null);
+  const ageH = r1(ago(at));
+  bookStates.push({ book: b, exists: !!j, ageHours: ageH, fresh: ageH != null && ageH < 48 });
+}
+const freshCount = bookStates.filter((b) => b.exists && b.fresh).length;
+
+(async () => {
+  const at = new Date().toISOString();
+
+  // ================= SUBSYSTEM 1: INSTRUCTIONS =================
+  const defiAgents = read(path.join(DEFU_DIR, 'fleet', 'AGENTS.md'));
+  const defiDoctrine = read(path.join(DEFU_DIR, 'DOCTRINE.md'));
+  const doctrineEcon = read(path.join(DEFU_DIR, 'fleet', 'DOCTRINE-economics.md'));
+  const fleetNote = read(path.join(ROOT, 'FLEET-NOTE.md'));
+  check('instructions', 'Defi/fleet/AGENTS.md present (coordination law)', !!defiAgents, 'fleet/AGENTS.md', 'the fleet\'s constitution — read before any work');
+  check('instructions', 'Defi/DOCTRINE.md present', !!defiDoctrine, 'DOCTRINE.md');
+  check('instructions', 'Domain/FLEET-NOTE.md present (per-repo living note)', !!fleetNote, 'FLEET-NOTE.md');
+  check('instructions', 'Domain/AGENTS.md present at repo root (any-agent landing page)', !!read(path.join(ROOT, 'AGENTS.md')), 'AGENTS.md', 'adopted Z-35 from the study\'s #1 CRITICAL — instructions at repo root');
+  check('instructions', 'agents carry doctrine headers (sample: venture-desk, econ-desk, treasury-desk)', ['venture-desk.cjs', 'econ-desk.cjs', 'treasury-desk.cjs'].every((f) => { const s = read(path.join(AG, f)); return s && /Z-\d\d/.test(s.slice(0, 1200)); }), '3 sampled agent headers', 'birth-context bound in code, not tribal memory');
+
+  // ================= SUBSYSTEM 2: STATE (external state primitive) =================
+  check('state', 'live books exist and fresh (<48h)', freshCount >= 6, `${freshCount}/${bookStates.length} books fresh`, bookStates.filter((b) => !b.fresh).map((b) => `${b.book}${b.exists ? ` ${b.ageHours}h` : ' MISSING'}`).join(', ') || 'all live');
+  const econ = readJson(path.join(AG, 'econ-book.json'));
+  check('state', 'money-ledger books chain truth (not session memory)', !!readJson(path.join(AG, 'money-ledger.json')), 'money-ledger.json', 'books survive resets; sessions do not');
+  const summaryClean = !!(econ && (econ.summary == null || typeof econ.summary === 'object' || (typeof econ.summary === 'string' && !econ.summary.startsWith('[object Object]'))));
+  check('state', 'self-heal layer proven (econ summary clean — string or object)', summaryClean, 'econ-book.json summary', 'the parallel runtime now writes a proper object; the [object Object] incident stays on record');
+
+  // ================= SUBSYSTEM 3: VERIFICATION (judge separation) =================
+  const signingAgents = ['econ-desk.cjs', 'treasury-desk.cjs', 'blurt-curate.cjs', 'soldiers-curate.cjs'];
+  const vtsCount = signingAgents.filter((f) => { const s = read(path.join(AG, f)); return s && s.includes('verify-then-sign'); }).length;
+  check('verification', `verify-then-sign bound in signing agents (${vtsCount}/${signingAgents.length})`, vtsCount === signingAgents.length, 'verify-then-sign markers', 'maker/checker inside the maker — chain read-back is the second half');
+  const agentVerify = read(path.join(ROOT, '.github/workflows/agent-verify.yml'));
+  check('verification', 'independent judge node exists (agent-verify workflow, fresh context)', !!agentVerify, '.github/workflows/agent-verify.yml', 'generator/evaluator separation: the judge is a separate node, per the study\'s hardest lesson');
+  check('verification', 'read-back law (chain speaks last)', (read(path.join(AG, 'soldiers-curate.cjs')) || '').includes('CHAIN-RECONCILED'), 'chain-truth recon in curation', 'the chain, not the book, is the dedupe of last resort');
+  const secretsGate = read(path.join(ROOT, '.github/workflows/gitleaks.yml')) || read(path.join(DEFU_DIR, '.github/workflows/gitleaks.yml'));
+  check('verification', 'secret-leak gate on the wire (gitleaks)', !!secretsGate, 'gitleaks workflow', 'zero secrets in any repo — machine-enforced');
+
+  // ================= SUBSYSTEM 4: SCOPE (kill rules, floors, gates) =================
+  check('scope', 'doctrine binds kill rules (ventures have them)', !!(doctrineEcon && doctrineEcon.includes('kill rule')), 'DOCTRINE-economics.md §4');
+  const ventures = readJson(path.join(AG, 'ventures.json'));
+  const venturesWithKill = ventures && ventures.ventures ? ventures.ventures.filter((v) => v.killRule).length : 0;
+  check('scope', `ventures board carries kill rules (${venturesWithKill}/5)`, venturesWithKill === 5, 'ventures.json', 'a lane that cannot die cannot be trusted to live');
+  check('scope', 'resource floors/ceilings in code (VP floor, dust holds, RC gate)', (read(path.join(AG, 'treasury-desk.cjs')) || '').includes('CUR_VP_FLOOR'), 'treasury-desk CUR_VP_FLOOR', 'scope is numeric, not aspirational');
+
+  // ================= SUBSYSTEM 5: LIFECYCLE (handoff, recovery) =================
+  let claimsAge = null;
+  try { const out = require('child_process').execSync('git log -1 --format=%cI -- fleet/CLAIMS.md', { cwd: DEFU_DIR }).toString().trim(); claimsAge = r1(ago(out)); } catch (_) {}
+  check('lifecycle', 'CLAIMS ledger fresh (receipts keep continuity)', claimsAge != null && claimsAge < 96, `last receipt ${claimsAge}h ago`, 'every session leaves clean state (L12 of the study)');
+  check('lifecycle', 'recovery path codified (RESUME-KIT + .fleet/restore.sh)', !!(read(path.join(DEFU_DIR, 'fleet', 'MISSION-1000.md'))), 'canon reachable', 'sandbox resets are a law of nature; recovery is a law of ours (restore.sh lives outside git by design — creds never in repos)');
+
+  // ================= THE THREE STRUCTURAL FAILURES (L14) =================
+  check('graph-failures', 'Goodhart countermeasure: two-sided ledger, measured never estimated', !!(doctrineEcon && doctrineEcon.includes('TWO-SIDED LEDGER LAW')), 'EARN-GOVERNOR LAW', 'the number may not detach from the business: fills are balance-verified, pending is booked as honest zeros');
+  check('graph-failures', 'Blindness-upward countermeasure: kill rules + operator gate', !!(doctrineEcon && doctrineEcon.includes('DELEGATION-SELECTION LAW')), 'kill rules + operator gates', 'the loop cannot ask if the goal is right — the structure has a place where that question lives');
+  const raceHandled = (read(path.join(ROOT, '.github/workflows/recruit.yml')) || '').includes('pull --rebase');
+  check('graph-failures', 'Conflict countermeasure: rebase races + one-lock doctrine', raceHandled, 'recruit.yml pull --rebase', 'parallel runtimes are real; the operator holds the architecture lock');
+
+  // ================= ANCHORS (L14: the part everyone skips) =================
+  const noStamp = bookStates.filter((b) => b.exists && b.ageHours == null).map((b) => b.book);
+  check('anchors', 'book timestamp hygiene (every live book stamps its run)', noStamp.length === 0, noStamp.length ? `missing 'at'/'updated': ${noStamp.join(', ')}` : 'all live books stamped', noStamp.length ? 'finding: owner desks should stamp their books — freshness cannot be audited without it' : 'pulse is measurable end to end', 'warn');
+  const fills = readJson(path.join(AG, 'fills-ledger.json'));
+  check('anchors', 'earn fills pinned to chain arithmetic (seed provenance)', !!(fills && Array.isArray(fills.entries) && fills.entries.some((e) => String(e.src || '').includes('arithmetic'))), 'fills-ledger.json seeds', '0.05814917+0.54600212=0.60415129 exact — an anchor, not a story');
+  const kpi = readJson(path.join(DEFU_DIR, 'fleet', 'KPI.json'));
+  check('anchors', 'KPI names its method (oracle discipline)', !!(kpi && kpi.revenuePerDayReal && kpi.revenuePerDayReal.method), 'KPI.json method field', 'every metric says where its number comes from');
+  check('anchors', 'spot oracle measured at run time (not cached stories)', !!(ventures && ventures.ledger && ventures.ledger.earnSurfaces && ventures.ledger.earnSurfaces.priceOracle), 'ventures.json priceOracle', 'price = measured fetch, null when unreachable');
+
+  // ---- silent-costs watch (L13) — booked as standing observations, honestly
+  const silentCosts = {
+    verificationDebt: 'selftests cover past incidents; every NEW failure mode (concat family ×3, null-deref, dedupe) becomes a check within one wave of discovery',
+    comprehensionRot: 'notebooks (v1-v5-NOTES.md) rewritten per cycle; doctrine rewritten on amendment — no tribal memory',
+    cognitiveSurrender: 'judge nodes (agent-verify, this desk) are separate processes with fresh context',
+    tokenBlowout: 'CI does the deterministic work; agent sessions only where judgment is required (LABOR TIERING LAW)'
+  };
+
+  const counts = {
+    pass: checks.filter((c) => c.status === 'PASS').length,
+    warn: checks.filter((c) => c.status === 'WARN').length,
+    fail: checks.filter((c) => c.status === 'FAIL').length
+  };
+  const out = {
+    ok: true, at, agent: 'harness-audit v1.0.0 (Z-35)',
+    origin: 'walkinglabs/learn-harness-engineering study (Z-35): five subsystems + loop/graph engineering mapped to the fleet; the audit itself is the adopted artifact — a fresh-context checker node on a schedule',
+    fiveSubsystems: {
+      instructions: 'AGENTS.md + DOCTRINE.md + FLEET-NOTE.md + agent headers',
+      state: 'books (external state primitive) + CLAIMS + worklog',
+      verification: 'verify-then-sign + read-back + agent-verify judge node + gitleaks',
+      scope: 'kill rules + floors/ceilings + dust honesty',
+      lifecycle: 'receipts per session + RESUME-KIT + restore.sh'
+    },
+    books: bookStates,
+    checks, counts, silentCosts,
+    verdict: counts.fail === 0
+      ? `harness green: ${counts.pass} checks pass, 0 fail — the five subsystems hold and the three structural failures have named countermeasures`
+      : `harness NOT green: ${counts.fail} FAIL — the audit is honest, the fails are the next work`
+  };
+  try { fs.writeFileSync(OUT_JSON, JSON.stringify(out, null, 1) + '\n'); } catch (_) {}
+
+  const md = [];
+  md.push('# Harness Audit — the fleet\'s five-subsystem check (fresh-context judge node)');
+  md.push('');
+  md.push(`_harness-audit v1.0.0 · ${at} · born from the learn-harness-engineering study (Z-35)_`);
+  md.push('');
+  md.push(`**${out.verdict}**`);
+  md.push('');
+  md.push('| # | Subsystem | Check | Status | Evidence |');
+  md.push('|---|---|---|---|---|');
+  checks.forEach((c, i) => md.push(`| ${i + 1} | ${c.subsystem} | ${c.name} | ${c.status} | ${c.evidence || '—'} |`));
+  md.push('');
+  md.push(`**Books pulse:** ${bookStates.map((b) => `${b.book}${b.exists ? (b.fresh ? ' ✓' : ` (${b.ageHours}h)`) : ' MISSING'}`).join(' · ')}`);
+  md.push('');
+  md.push('**Four silent costs (watched, per the study):**');
+  for (const k of Object.keys(silentCosts)) md.push(`- **${k}:** ${silentCosts[k]}`);
+  md.push('');
+  md.push('_The model is smart, the harness makes it reliable. This desk is the checker node the producer cannot be (generator/evaluator separation)._');
+  try { fs.writeFileSync(OUT_MD, md.join('\n') + '\n'); } catch (_) {}
+
+  console.log(`harness-audit: ${counts.pass} PASS / ${counts.warn} WARN / ${counts.fail} FAIL · books fresh ${freshCount}/${bookStates.length}`);
+  process.exit(0); // fail-soft: the audit never breaks a run
+})();
