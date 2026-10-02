@@ -1,0 +1,92 @@
+# LADDER-REFRESH (Task 16-b) — רגל-הסולם של הבורסה הפנימית, על דקות-Actions ציבוריות
+#
+# הבעלים: "אני לא רוצה לחכות — הרבה-יותר-מהר, הרבה-יותר; עוד-מסחרים, עוד-דרכים-להזרים-נזילות."
+# הזרימה הזאת היא התשובה-הממושמעת: רענון-סולם @headcorner בשוק-הפנימי STEEM/SBD —
+# ביטול+פריסה-מחדש של פקודות-מיושנות בלבד. אנחנו מתמחרים-מחדש נזילות-קיימת —
+# לעולם לא מזרימים-הון-חדש, לעולם לא נוגעים ברצפה (2 המכירות-הנמוכות + 2 הקניות-הגבוהות),
+# לעולם לא מרוקנים את-הסולם, לעולם לא יותר מ-3 זוגות-ביטול+פריסה לריצה.
+#
+# ארכיטקטורה (אותו-דבר שהוכח ב-economy-engine 15-c, עתה לשוק-הפנימי):
+#   - checkout Domain (הבית-הציבורי) — לוגיקה-בלבד, אפס-חומר-מפתח
+#   - checkout פרטי של steem עם ZIP_PAT — כאן חי-החותם
+#   - החותם נפתח בתוך-הראנר (keys_zip_v2: AES-256-CBC pbkdf2-300k + שערי-sha חוץ-ופנים)
+#   - מפתח-ה-active של @headcorner נשלף מהכספת ומאומת-חי מול-הרשאה-על-השרשרת
+#   - הרצת אותו-מבצע בדיוק (steem/agent/ladder_refresh.cjs — מקור-האמת-היחיד למכסות:
+#     ≤3 זוגות/ריצה · מיושנות >7d AND >2% מה-mid · פריסה-מחדש ב-mid±1.5% בתוך פס-±2% ·
+#     רצפה-בלתי-נגישה · ≥4 פקודות-עומדות · בסיס-זהה-בכל-החלפה · עצירה-על-שגיאה ·
+#     הדפסת-תוכנית-לפני-שידור · אישורים-מ-account-history · קבלה-JSON)
+#   - הקבלה נדחפת ל-steem (pull --rebase תחילה — לעולם לא force)
+#   - כל-כשל = הראן נכשל בכנות (exit nonzero → אדום)
+#
+# מכסות-בקוד-ובריצה-גם-יחד — המכסות מנצחות את התיאבון.
+# DRY: dispatch ברירת-מחדל arm=false (תוכנית-בלבד); ריצות-מתוכננות (cron) חמושות —
+# הריצה-החמושה עדיין מחויבת בכל-המכסות ובשערי-המבצע, וכשהסולם בריא היא מדווחת no-op בכנות.
+
+name: ladder-refresh
+
+on:
+  schedule:
+    - cron: '33 */6 * * *'  # כל-6 שעות :33 UTC (Task 16-b — קצב-מוגבר; מקוזז מהפעימות-העגולות ומה-economy-engine :17)
+  workflow_dispatch:
+    inputs:
+      arm:
+        description: 'arm real broadcast? true = allow executor to broadcast under its caps, false = plan-only'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ladder-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: checkout Domain (public home — logic only)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: checkout private steem (seal custody lives here) — proven org-gitleaks pattern
+        uses: actions/checkout@v4
+        with:
+          repository: roshpinacare-sys/steem
+          ref: main
+          token: ${{ secrets.ZIP_PAT }}
+          path: steem
+          fetch-depth: 0  # full history so the receipt push can pull --rebase safely
+
+      - name: git identity for the steem receipt commit
+        run: |
+          git config --global user.name "ladder-refresh[bot]"
+          git config --global user.email "ladder-refresh[bot]@users.noreply.github.com"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: install signer lib (steem@0.7.11 — pinned, 14-c doctrine)
+        run: npm install --prefix /tmp/steemjs steem@0.7.11 --omit=dev --no-audit --no-fund --loglevel=error
+
+      - name: run the ladder-refresh cycle (seal → active-key live-verify → executor caps → receipt)
+        env:
+          STEEM_DIR: ${{ github.workspace }}/steem
+          STEEMJS_DIR: /tmp/steemjs
+          PUSH_RECEIPT: 'true'
+          # scheduled runs are ARMED by design (the executor's hard caps are the protection);
+          # dispatches default to plan-only (opt-in to real).
+          # COERCION TRAP (15-c fix): type:boolean inputs are real booleans, and GitHub coerces
+          # mixed-type == to numbers (false→0, 'false'→NaN ⇒ never equal) — format('{0}', …)
+          # stringifies before comparing (observed live: economy-engine run 37009080091).
+          LADDER_ARM: ${{ github.event_name == 'schedule' && '1' || (format('{0}', inputs.arm) == 'true' && '1' || '0') }}
+        run: node scripts/ladder-refresh.mjs
+
+      - name: prove the receipt landed in steem (API-verified head is asserted by the caller wave)
+        if: always()
+        run: |
+          echo "steem local HEAD after ladder-refresh: $(git -C steem rev-parse HEAD)"
+          git -C steem log -1 --format='%H %s' || true
