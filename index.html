@@ -1427,7 +1427,7 @@ function renderAgents(){
       const dotCls = (st==="live"||st==="on-demand"||st==="auto")?"live":(st==="degraded"?"degraded":(st==="backup"||st==="stale"?"aging":"dormant"));
       const lr = a.lastRun||{};
       const runUrl = lr.url?(" href='"+esc(lr.url)+"' target='_blank' rel='noopener'"):"";
-      const mig = a.migratedTo ? ('<div style="margin-top:5px;font-size:11.5px;color:var(--amber)">consolidated → '+esc(a.migratedTo)+'</div>') : "";
+      const mig = a.migratedTo ? ('<div style="margin-top:5px;font-size:11.5px;color:var(--amber)">consolidated to '+esc(a.migratedTo)+'</div>') : "";
       const note = a.stateNote ? ('<div style="margin-top:5px;font-size:11.5px;color:var(--dim)">'+esc(a.stateNote)+'</div>') : "";
       return '<a class="card hov" style="display:block"'+runUrl+'>'+
         '<div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start;margin-bottom:8px">'+

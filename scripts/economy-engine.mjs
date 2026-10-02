@@ -18,7 +18,9 @@
  *       Sha gates: outer == keysZipSha256, inner == keysZipInnerSha256.
  *   (c) verify every account's posting authority LIVE against the chain before any broadcast
  *   (d) deterministically pick up to N quality candidate posts (niche allowlist, min length,
- *       likes/comment ratio, exclude our fleet + already-voted + recent-vote cooldown)
+ *       likes/comment ratio, exclude our fleet + already-voted + recent-vote cooldown + Task 18
+ *       AUTHORITATIVE voter-list dedupe: the candidate's own active_votes beats the ~100-op
+ *       account-history window — an aged-out vote can no longer produce a doomed broadcast)
  *   (e) broadcast ONE 100% curation vote per account (curation = zero principal at risk;
  *       no funds move)
  *   (e2) CLAIM pending rewards for every verified account (posting-authorized op; dust
@@ -38,9 +40,12 @@
  *     broadcast + account-history read-back confirmed on ≥2 nodes
  *   · blurt: node-serialized canonical-ECDSA signing (anchor.cjs recipe, proven live 2026-09-06)
  *     + get_ops_in_block confirmation (rc_api absent on blurt — honest)
- *   · per-chain caps (≤5 votes/run/chain, 1/account, 20h cooldown, already-voted skip),
+ *   · per-chain caps (≤12 votes/run/chain, 1/account, 10h cooldown, already-voted skip),
  *     per-chain roster gates (hive: 9/12 keyed rows; blurt: 11 economic rows, ynet retired),
  *     per-chain NEVER_TOUCH (ynet* everywhere, tov-hive blocked-no-key on hive)
+ *   · Task 18 dedupe doctrine (live-proven 2026-10-02): pre-broadcast get_content gate +
+ *     chain-as-gate identical-vote skip — a dedupe skip is a healthy no-op receipt row
+ *     ('skipped-*'), never a run failure; only REAL broadcast failures fail the run
  *   · per-chain receipt: agent/receipts/<date>-economy-engine-{hive|blurt}[-dryrun].json
  *   · any leg failure = the run fails honestly (exit nonzero → red) AFTER both legs attempted
  *
@@ -439,6 +444,11 @@ async function fetchCandidatePool() {
     const av = Array.isArray(p.active_votes) ? p.active_votes : [];
     const posVotes = av.filter((v) => Number(v.percent) > 0).length;
     const netVotes = Number.isFinite(Number(p.net_votes)) ? Number(p.net_votes) : posVotes;
+    // Task 18: carry the post's OWN voter list — the authoritative already-voted truth at plan
+    // time (account-history gates read the last ~100 ops and can age out older votes → the chain
+    // then rejects an identical re-vote: Assert itr->vote_percent != o.weight, seen live 18:34Z +
+    // 20:28Z 2026-10-02). Zero extra RPC — av is already in hand.
+    const voters = new Set(av.map((v) => (v.voter || '').toLowerCase()));
     if (netVotes < MIN_NET_VOTES) continue;
     const children = Number(p.children || 0);
     if (children > MAX_CHILDREN) continue;
@@ -456,6 +466,7 @@ async function fetchCandidatePool() {
       netVotes,
       children,
       bodyChars,
+      voters,
     });
   }
   // deterministic order: underserved quality first (fewest effective likes), then freshest, then permlink asc
@@ -591,6 +602,8 @@ async function fetchCandidatePoolAt(nodes, tags, gates) {
     const av = Array.isArray(p.active_votes) ? p.active_votes : [];
     const posVotes = av.filter((v) => Number(v.percent) > 0).length;
     const netVotes = Number.isFinite(Number(p.net_votes)) ? Number(p.net_votes) : posVotes;
+    // Task 18: same authoritative voter set as the steem pool (see note there)
+    const voters = new Set(av.map((v) => (v.voter || '').toLowerCase()));
     if (netVotes < (gates.minNetVotes ?? MIN_NET_VOTES)) continue;
     const children = Number(p.children || 0);
     if (children > MAX_CHILDREN) continue;
@@ -602,7 +615,7 @@ async function fetchCandidatePoolAt(nodes, tags, gates) {
       author: p.author, permlink: p.permlink, authorperm,
       titleShape: (p.title || '').slice(0, 60) + ((p.title || '').length > 60 ? '…' : ''),
       niche: p.category || '', ageDays: Math.round(ageDays * 10) / 10,
-      netVotes, children, bodyChars,
+      netVotes, children, bodyChars, voters,
     });
   }
   pool.sort((x, y) => (x.netVotes - y.netVotes) || (y.ageDays - x.ageDays) || (x.authorperm < y.authorperm ? -1 : 1));
@@ -924,6 +937,9 @@ async function curationLeg(cfg) {
     let pick = null;
     for (const c of pool) {
       if (used.has(c.authorperm) || alreadyVoted.has(c.authorperm.toLowerCase())) continue;
+      // Task 18: authoritative live dedupe — the candidate's own active_votes beats the ~100-op
+      // history window (older votes age out of history, never out of the post's voter list)
+      if (c.voters && c.voters.has(v.account.toLowerCase())) continue;
       if (usedAuthors.has(c.author.toLowerCase()) || rejectedAuthors.has(c.author.toLowerCase())) continue;
       if (cadenceProbes < 12) {
         cadenceProbes++;
@@ -1019,6 +1035,22 @@ async function curationLeg(cfg) {
         const chainAuths = ((acc.posting || {}).key_auths || []).map((k) => k[0]);
         const resolved = resolvePostingWif(p.account, seal, chain === 'hive' ? chainAuths : chainAuths.map((k) => 'STM' + String(k).slice(3)));
         if (!resolved) throw new Error('posting key stopped matching live auth — refusing to broadcast');
+        // Task 18: final live gate right before signing — get_content is the zero-lag truth;
+        // if the account already voted (any weight) this plan is a no-op, never a broadcast
+        // (the chain rejects identical re-votes: Assert itr->vote_percent != o.weight)
+        try {
+          const cur = await condAt(nodes, 'get_content', [p.vote.author, p.vote.permlink]);
+          const prev = (cur && Array.isArray(cur.active_votes) ? cur.active_votes : []).find((x) => (x.voter || '').toLowerCase() === p.account.toLowerCase());
+          if (prev) {
+            legReceipt.results.push({
+              account: p.account, author: p.vote.author, permlink: p.vote.permlink, weight: WEIGHT,
+              broadcast: 'skipped-already-voted-live', txid: null, confirmedBy: null,
+              priorPercent: Number(prev.percent), note: 'live active_votes gate — chain truth beats the account-history window',
+            });
+            log('[' + chain + '] SKIP ' + p.account + ' → @' + p.vote.author + '/' + p.vote.permlink.slice(0, 28) + '… (already voted live at ' + Number(prev.percent) / 100 + '% — no broadcast)');
+            continue;
+          }
+        } catch (_) { /* gate probe failed — proceed; the chain itself remains the final gate */ }
         const bc = await broadcastVote(resolved.wif, p.account, p.vote.author, p.vote.permlink);
         const rb = await readBackLeg(chain, nodes, p.account, p.vote.author, p.vote.permlink, bc.txid, bc.block);
         legReceipt.results.push({
@@ -1029,15 +1061,28 @@ async function curationLeg(cfg) {
         });
         log('[' + chain + '] VOTED ' + p.account + ' → @' + p.vote.author + '/' + p.vote.permlink.slice(0, 28) + '… txid=' + (rb.txid || 'PENDING'));
       } catch (e) {
+        const msg = String(e && e.message);
+        // Task 18: chain-as-gate — an identical re-vote is not a failure, it is the chain telling
+        // us the vote is already on chain with the same weight (no new tx exists, so no read-back;
+        // history gates can age a vote out of their ~100-op window, the post's active_votes cannot)
+        if (/identical to this vote/i.test(msg)) {
+          legReceipt.results.push({
+            account: p.account, author: p.vote.author, permlink: p.vote.permlink,
+            broadcast: 'skipped-identical-vote', txid: null, confirmedBy: null,
+            errorShape: msg.slice(0, 160), note: 'chain-as-gate: vote already on chain with identical weight — no new tx, not a failure',
+          });
+          log('[' + chain + '] SKIP-IDENTICAL ' + p.account + ' → @' + p.vote.author + '/' + p.vote.permlink.slice(0, 28) + '… (chain: identical vote already cast — no new tx)');
+          continue;
+        }
         // the tx may have landed even if the relaying node errored — read back before declaring failure
         const rb = await readBackLeg(chain, nodes, p.account, p.vote.author, p.vote.permlink, null, null);
         legReceipt.results.push({
           account: p.account, author: p.vote.author, permlink: p.vote.permlink,
           broadcast: rb.txid ? 'ok-after-error' : 'FAILED',
           txid: rb.txid || null, txidBlock: rb.block || null, confirmedBy: rb.confirmedBy || null,
-          errorShape: String(e && e.message).slice(0, 160),
+          errorShape: msg.slice(0, 160),
         });
-        log('[' + chain + '] BROADCAST ' + (rb.txid ? 'landed despite node error' : 'FAILED') + ' for ' + p.account + ': ' + String(e && e.message).slice(0, 120));
+        log('[' + chain + '] BROADCAST ' + (rb.txid ? 'landed despite node error' : 'FAILED') + ' for ' + p.account + ': ' + msg.slice(0, 120));
       }
     }
     // Task 17 author-support broadcasts (do NOT count toward the vote-success gate)
@@ -1052,8 +1097,16 @@ async function curationLeg(cfg) {
         s.broadcast = 'ok'; s.txid = bc.txid || (cf.confirmed ? 'confirmed-in-active-votes' : null); s.txidBlock = bc.block || null; s.confirmedBy = cf.confirmed ? 'active-votes-percent-' + cf.percent : null; s.rshares = cf.rshares || undefined;
         log('[' + chain + '] AUTHOR-SUPPORT ' + s.account + ' → own post ' + s.permlink.slice(0, 28) + '… txid=' + (s.txid || 'PENDING') + (cf.confirmed ? ' CONFIRMED ' + cf.percent / 100 + '%' : ''));
       } catch (e) {
-        s.broadcast = 'FAILED'; s.errorShape = String(e && e.message).slice(0, 160);
-        log('[' + chain + '] AUTHOR-SUPPORT FAILED for ' + s.account + ': ' + String(e && e.message).slice(0, 120));
+        const msg = String(e && e.message);
+        if (/identical to this vote/i.test(msg)) {
+          // Task 18: chain-as-gate — the self-vote is already on chain (no new tx, not a failure)
+          s.broadcast = 'skipped-identical-vote'; s.errorShape = msg.slice(0, 160);
+          s.note = 'chain-as-gate: identical self-vote already cast — no new tx';
+          log('[' + chain + '] AUTHOR-SUPPORT SKIP-IDENTICAL for ' + s.account + ' (already voted own post — no new tx)');
+        } else {
+          s.broadcast = 'FAILED'; s.errorShape = msg.slice(0, 160);
+          log('[' + chain + '] AUTHOR-SUPPORT FAILED for ' + s.account + ': ' + msg.slice(0, 120));
+        }
       }
     }
     const ok = legReceipt.results.filter((r) => r.broadcast === 'ok' || r.broadcast === 'ok-after-error');
@@ -1061,7 +1114,14 @@ async function curationLeg(cfg) {
     if (plans.length === 0) {
       log('[' + chain + '] real cycle: zero PLANNED votes (cooldown/dedupe/history gates) — honest no-op cycle, not a failure');
     } else if (ok.length === 0) {
-      throw new Error('zero ' + chain + ' votes succeeded in a REAL run with ' + plans.length + ' plans — failing honestly');
+      // Task 18: dedupe skips (live gate / chain-as-gate identical) are healthy no-ops — only a
+      // REAL broadcast failure fails the run (fail-honest preserved, false alarms eliminated)
+      const failed = legReceipt.results.filter((r) => r.broadcast === 'FAILED').length;
+      const skipped = legReceipt.results.filter((r) => r.broadcast === 'skipped-already-voted-live' || r.broadcast === 'skipped-identical-vote').length;
+      if (failed > 0) {
+        throw new Error('zero ' + chain + ' votes succeeded in a REAL run with ' + plans.length + ' plans (' + failed + ' broadcast failure(s)) — failing honestly (check accounts/RC/keys)');
+      }
+      log('[' + chain + '] real cycle: all ' + plans.length + ' plan(s) were dedupe skips (' + skipped + ' already-voted) — honest no-op cycle, not a failure');
     }
   } else {
     // dry-run: record claim plans (no broadcast) + keep author-support as plan-only
@@ -1184,6 +1244,9 @@ for (const v of healthy) {
   let pick = null;
   for (const c of pool) {
     if (used.has(c.authorperm) || alreadyVoted.has(c.authorperm.toLowerCase())) continue;
+    // Task 18: authoritative live dedupe — the candidate's own active_votes beats the ~100-op
+    // history window (an aged-out vote can no longer produce a doomed identical re-vote)
+    if (c.voters && c.voters.has(v.account.toLowerCase())) continue;
     if (usedAuthors.has(c.author.toLowerCase()) || rejectedAuthors.has(c.author.toLowerCase())) continue;
     if (cadenceProbes < 12) {
       cadenceProbes++;
@@ -1271,11 +1334,39 @@ if (!DRY_RUN) {
     try {
       const wif = resolvePostingWif(p.account, seal, (await condenser('get_accounts', [[p.account]]))[0].posting.key_auths.map((k) => k[0]));
       if (!wif) throw new Error('posting key stopped matching live auth — refusing to broadcast');
+      // Task 18: final live gate right before signing — get_content is the zero-lag truth;
+      // an already-voted plan is a no-op skip, never a doomed broadcast (the chain rejects
+      // identical re-votes: Assert itr->vote_percent != o.weight, seen live 2026-10-02)
+      try {
+        const cur = (await condenser('get_content', [p.vote.author, p.vote.permlink]));
+        const prev = (cur && Array.isArray(cur.active_votes) ? cur.active_votes : []).find((x) => (x.voter || '').toLowerCase() === p.account.toLowerCase());
+        if (prev) {
+          receipt.results.push({
+            account: p.account, author: p.vote.author, permlink: p.vote.permlink, weight: WEIGHT,
+            broadcast: 'skipped-already-voted-live', txid: null, txidBlock: null,
+            priorPercent: Number(prev.percent), note: 'live active_votes gate — chain truth beats the account-history window',
+          });
+          log('SKIP ' + p.account + ' → @' + p.vote.author + '/' + p.vote.permlink.slice(0, 28) + '… (already voted live at ' + Number(prev.percent) / 100 + '% — no broadcast)');
+          continue;
+        }
+      } catch (_) { /* gate probe failed — proceed; the chain itself remains the final gate */ }
       await broadcastVote(wif.wif, p.account, p.vote.author, p.vote.permlink, WEIGHT);
       const rb = await readBackTxid(p.account, p.vote.author, p.vote.permlink);
       receipt.results.push({ account: p.account, author: p.vote.author, permlink: p.vote.permlink, weight: WEIGHT, broadcast: 'ok', txid: rb ? rb.txid : null, txidBlock: rb ? rb.block : null, readBack: rb ? 'account-history' : 'pending-not-found-in-50-latest-ops' });
       log('VOTED ' + p.account + ' → @' + p.vote.author + '/' + p.vote.permlink.slice(0, 28) + '… txid=' + (rb ? rb.txid : 'PENDING'));
     } catch (e) {
+      const msg = String(e && e.message);
+      // Task 18: chain-as-gate — an identical re-vote is the chain confirming the vote is already
+      // on chain (no new tx exists → no read-back; not a failure, a skip receipt row)
+      if (/identical to this vote/i.test(msg)) {
+        receipt.results.push({
+          account: p.account, author: p.vote.author, permlink: p.vote.permlink,
+          broadcast: 'skipped-identical-vote', txid: null, txidBlock: null,
+          errorShape: msg.slice(0, 160), note: 'chain-as-gate: vote already on chain with identical weight — no new tx, not a failure',
+        });
+        log('SKIP-IDENTICAL ' + p.account + ' → @' + p.vote.author + '/' + p.vote.permlink.slice(0, 28) + '… (chain: identical vote already cast — no new tx)');
+        continue;
+      }
       // the tx may have landed even if the relaying node errored — read back before declaring failure
       const rb = await readBackTxid(p.account, p.vote.author, p.vote.permlink);
       receipt.results.push({
@@ -1283,9 +1374,9 @@ if (!DRY_RUN) {
         broadcast: rb ? 'ok-after-error' : 'FAILED',
         txid: rb ? rb.txid : null, txidBlock: rb ? rb.block : null,
         readBack: rb ? 'account-history' : null,
-        errorShape: String(e && e.message).slice(0, 160),
+        errorShape: msg.slice(0, 160),
       });
-      log('BROADCAST ' + (rb ? 'landed despite node error' : 'FAILED') + ' for ' + p.account + ': ' + String(e && e.message).slice(0, 120));
+      log('BROADCAST ' + (rb ? 'landed despite node error' : 'FAILED') + ' for ' + p.account + ': ' + msg.slice(0, 120));
     }
   }
   // Task 17 author-support broadcasts (do NOT count toward the vote-success gate)
@@ -1298,8 +1389,16 @@ if (!DRY_RUN) {
       s.broadcast = 'ok'; s.txid = cf.confirmed ? 'confirmed-in-active-votes' : null; s.confirmedBy = cf.confirmed ? 'active-votes-percent-' + cf.percent : null; s.rshares = cf.rshares || undefined;
       log('AUTHOR-SUPPORT ' + s.account + ' → own post ' + s.permlink.slice(0, 28) + '… ' + (cf.confirmed ? 'CONFIRMED ' + cf.percent / 100 + '% rshares=' + cf.rshares : 'broadcast ok, confirmation pending'));
     } catch (e) {
-      s.broadcast = 'FAILED'; s.errorShape = String(e && e.message).slice(0, 160);
-      log('AUTHOR-SUPPORT FAILED for ' + s.account + ': ' + String(e && e.message).slice(0, 120));
+      const msg = String(e && e.message);
+      if (/identical to this vote/i.test(msg)) {
+        // Task 18: chain-as-gate — the self-vote is already on chain (no new tx, not a failure)
+        s.broadcast = 'skipped-identical-vote'; s.errorShape = msg.slice(0, 160);
+        s.note = 'chain-as-gate: identical self-vote already cast — no new tx';
+        log('AUTHOR-SUPPORT SKIP-IDENTICAL for ' + s.account + ' (already voted own post — no new tx)');
+      } else {
+        s.broadcast = 'FAILED'; s.errorShape = msg.slice(0, 160);
+        log('AUTHOR-SUPPORT FAILED for ' + s.account + ': ' + msg.slice(0, 120));
+      }
     }
   }
   const ok = receipt.results.filter((r) => r.broadcast === 'ok' || r.broadcast === 'ok-after-error');
@@ -1307,7 +1406,14 @@ if (!DRY_RUN) {
   if (plans.length === 0) {
     log('real cycle: zero PLANNED votes (cooldown/dedupe/history gates) — honest no-op cycle, not a failure');
   } else if (ok.length === 0) {
-    die('zero votes succeeded in a REAL run with ' + plans.length + ' plans — failing honestly (check accounts/RC/keys)');
+    // Task 18: dedupe skips (live gate / chain-as-gate identical) are healthy no-ops — only a
+    // REAL broadcast failure fails the run (fail-honest preserved, false alarms eliminated)
+    const failed = receipt.results.filter((r) => r.broadcast === 'FAILED').length;
+    const skipped = receipt.results.filter((r) => r.broadcast === 'skipped-already-voted-live' || r.broadcast === 'skipped-identical-vote').length;
+    if (failed > 0) {
+      die('zero votes succeeded in a REAL run with ' + plans.length + ' plans (' + failed + ' broadcast failure(s)) — failing honestly (check accounts/RC/keys)');
+    }
+    log('real cycle: all ' + plans.length + ' plan(s) were dedupe skips (' + skipped + ' already-voted) — honest no-op cycle, not a failure');
   }
 } else {
   // dry-run: record claim plans (no broadcast) + keep author-support as plan-only
@@ -1331,7 +1437,8 @@ if (PUSH_RECEIPT) {
   const nVotes = receipt.results.filter((r) => r.broadcast === 'ok' || r.broadcast === 'ok-after-error').length;
   const nClaims = receipt.claims.filter((c) => c.claimed).length;
   const nSelf = authorSupport.filter((s) => s.broadcast === 'ok').length;
-  const msg = 'economy-engine: ' + nowIso() + ' · ' + (DRY_RUN ? 'dry-run plan' : nVotes + ' votes · ' + nClaims + ' claims · ' + nSelf + ' self-votes') + ' · txids inside';
+  const nSkips = receipt.results.filter((r) => String(r.broadcast || '').startsWith('skipped')).length;
+  const msg = 'economy-engine: ' + nowIso() + ' · ' + (DRY_RUN ? 'dry-run plan' : nVotes + ' votes · ' + nClaims + ' claims · ' + nSelf + ' self-votes' + (nSkips ? ' · ' + nSkips + ' dedupe-skips' : '')) + ' · txids inside';
   try {
     pushReceipt(receiptPath, msg);
     log('receipt pushed to steem (pull --rebase first, no force)');
