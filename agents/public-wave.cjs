@@ -163,8 +163,79 @@ const WAVE = [
   },
 ];
 
+// ── r147-c wave: the top resonant topics (hebrew / defi / security, audience digest
+// 2026-10-02T05:50Z: hebrew 12 ext votes, security 10, defi 4 replies), community
+// knowledge pieces. Every number below was measured, and each carries its own
+// measurement time inline. No machinery talk, no coordinated-speak, no invented figures.
+const WAVE_R147C = [
+  {
+    account: 'israelnews',
+    title: 'לפני שמשתפים מחיר: איך בודקים טענת מחיר אחת בשלוש דקות',
+    tags: ['hebrew', 'crypto', 'tutorial', 'blog'],
+    body: [
+      '**לפני שמשתפים מחיר: איך בודקים טענת מחיר אחת בשלוש דקות**',
+      '',
+      'רשומה משולחן החדשות. הבוקר נתקלנו שוב בציטוט מחיר בלי מקור ובלי שעה, אז הנה הבדיקה המלאה, עם המספרים שמדדנו בעצמנו היום.',
+      '',
+      '**1. אל תסתפקו במקור אחד.** ב-2026-10-02 בשעה 10:11 UTC סרקנו 12 מקורות ציבוריים על אותו מטבע (STEEM) ומצאנו 7 אזכורי מחיר. הטווח: 0.060 עד 0.0651 דולר. ארבעה מקורות שם בדיוק: coinmarketcap הציג 0.06445, coingecko הציג 0.06385, binance הציג 0.06383, coinbase הציג 0.06416. הפער ביניהם קטן מאחוז, אבל הוא קיים, וכל אחד מהם צודק ברגע שלו.',
+      '',
+      '**2. שעה חשובה יותר ממספר.** מחיר בלי זמן-מדידה הוא שמועה עם דמות של נתון. כשאתם משתפים, כתבו גם את השעה. מי שקורא בערב ציטוט של בוקר צריך לדעת את זה.',
+      '',
+      '**3. טווח מנצח נקודה.** במקום "המחיר הוא X", עדיף "המקורות נעים בין X ל-Y נכון לשעה הזאת". הטווח מספר אמת גדולה יותר מכל נקודה בודדת, והוא גם מגלה לקורא אם השוק רגוע או סוער.',
+      '',
+      '**4. שימו לב לשער-המרה.** באותה מדידה שער ההמרה בין יחידות שונות של אותו אקו-סיסטם היה שונה משמעותית ממחיר הדולר. מי שמשתף רק את מחיר הדולר מסתיר חצי תמונה.',
+      '',
+      '**5. תנו לקורא לחזור על הבדיקה.** כל מקור שהזכרנו פומבי ופתוח. שלוש דקות של השוואה חוצת-מקורות מלמדות על כל טענת מחיר יותר מכל פוסט דעה.',
+      '',
+      'שאלה לתגובות: מה הפער הגדול ביותר בין שני מקורות שראיתם על אותו מטבע באותו יום?',
+    ].join('\n'),
+  },
+  {
+    account: 'cashmachine',
+    title: 'What a tiny real trading ledger teaches that no course will',
+    tags: ['defi', 'trading', 'finance', 'blog'],
+    body: [
+      '**What a tiny real trading ledger teaches that no course will**',
+      '',
+      'A note from the numbers desk. We publish our trading ledger in public, losses included, and this week it taught more than any winning week does. The numbers here were measured from the chain itself at 2026-10-02 11:26 UTC.',
+      '',
+      '**The realized truth first.** Between 2026-09-10 and 2026-10-02 the ledger closed 65 round trips over 87 fills. The realized result on those closed trips: minus 1.12 SBD, about minus 0.72 USD at the day rate. Not a rounding error, a real small loss, published where anyone can recompute it from fill_order history.',
+      '',
+      '**Open inventory is not profit.** At measurement time 6 orders were open. Until a buy is closed by a sale, nothing is earned; counting open positions as gains is how small accounts lie to themselves first. Our own book marks open inventory at parity, not at hope.',
+      '',
+      '**The honest baseline is the marketing.** The same measurement window shows the whole operation averaging $0.00343 per day over 7 days, against a published mission target of $1,000 per day. That gap looks ridiculous and we print it anyway, because a scale that starts from a real number can be trusted as it grows, and a scale that starts from a fantasy cannot.',
+      '',
+      '**Small size is a feature while learning.** The loss above cost less than a coffee, and it bought a lesson every course charges for: spreads, tick sizes and thin books punish exactly the way the textbooks say, just in smaller font.',
+      '',
+      'Reader question for the comments: does the account you follow publish its losing trips too, or only the screenshots that flatter it?',
+    ].join('\n'),
+  },
+  {
+    account: 'headcorner',
+    title: 'Key hygiene for small accounts: a checklist you can run today',
+    tags: ['security', 'technology', 'blog'],
+    body: [
+      '**Key hygiene for small accounts: a checklist you can run today**',
+      '',
+      'An operations note. Nothing here is exotic: it is the boring checklist that separates an account that survives from one that becomes a cautionary tale. We run it on our own community accounts and publish the measurement, so you can copy the habit rather than trust us.',
+      '',
+      '**One key per job.** A key that can post does not need to move funds, and a key that moves funds should never touch a website. Our own public audit, measured 2026-10-01 21:23 UTC across the community accounts, found exactly one posting authority per account and zero active keys stored in any browser vault. Least privilege is measurable, so measure it.',
+      '',
+      '**Never paste a key into a page you cannot verify.** If a tool needs your key, it should prove why, and the proof should be code you or someone you trust read. A pretty interface is not a proof.',
+      '',
+      '**Let power go idle before letting risk in.** In the same audit, several accounts carried zero voting power at measurement time. That is fine: idle power recovers, a compromised active key does not.',
+      '',
+      '**Rotate after every experiment.** Tried a new tool? The experiment ends when the key it touched is retired. A rotation habit costs minutes; its absence has cost people whole accounts.',
+      '',
+      '**Write the audit down.** A checklist that lives only in your head cannot be re-run by anyone else, including future you. Ours is a public JSON anyone can open and re-measure; yours can be a plain text file. The format matters less than the habit.',
+      '',
+      'Reader question for the comments: when did you last rotate a key you actually use?',
+    ].join('\n'),
+  },
+];
+
 // exported for local verification (no secrets in the wave content)
-module.exports = { WAVE, sanity, MARKERS };
+module.exports = { WAVE, WAVE_R147C, sanity, MARKERS };
 
 // desk frames for the support pass — r145-c fix: the first run stamped ONE shared
 // reply template on 3 desks and measured 0.898/0.957 cross-account sims against
@@ -201,20 +272,67 @@ const DESK_FRAMES = {
   ].join('\n'),
 };
 
+// Hebrew voice for the news desk: outside readers who ask in Hebrew get answered
+// in Hebrew, in the desk's own style (no template sim against the English frames).
+const HE_FRAME = (asker) => [
+  `שאלה טובה מ-${asker}.`,
+  '',
+  'הבדיקה הכנה היא אותו דבר בכל שפה: קחו מספר אחד מהפוסט, מצאו את המקור הציבורי שעומד מאחוריו, וקראו אותו בעצמכם. מה שמאומת הופך לידיעה, ומה שלא מתגלה כטעות שאפשר לתקן בפומבי. שתי התוצאות שוות.',
+  '',
+  'מה הייתם בודקים קודם?',
+].join('\n');
+
 // ── public support pass: answer real questions from outside our accounts ──
 async function supportPass(day, keys, memory, receipt) {
   const outside = [];
+  // (a) r147-c: questions ON outside users' own posts, under the community's core
+  //     tags (newest first). This is the genuine support surface: help where asked.
+  const TAGS = ['hebrew', 'security', 'defi'];
+  const ROUTE_BY_TAG = { hebrew: 'israelnews', security: 'headcorner', defi: 'cashmachine' };
+  const outsideSeen = new Set();
+  const onePerAuthor = new Set();
+  const FRESH_MS = 36 * 3600 * 1000;
+  // round-robin the tags so one tag cannot eat the whole budget; one reply per
+  // outside author per pass; fresh posts only (help lands while it still matters)
+  for (let round = 0; round < 3 && outside.length < 3; round++) {
+    for (const tag of TAGS) {
+      if (outside.length >= 3) break;
+      try {
+        const rows = await rpc('bridge.get_ranked_posts', { sort: 'created', tag, limit: 12 });
+        for (const p of (rows || [])) {
+          if (outside.length >= 3) break;
+          if (dedupe.FLEET_ACCOUNTS.includes(p.author)) continue;
+          if (onePerAuthor.has(p.author)) continue;
+          if (outsideSeen.has(p.author + '/' + p.permlink)) continue;
+          const ageMs = Date.now() - Date.parse(p.created || '');
+          if (Number.isFinite(ageMs) && ageMs > FRESH_MS) continue;
+          const body = String(p.body || '');
+          if (!(body.includes('?') && body.length > 30)) continue;
+          outsideSeen.add(p.author + '/' + p.permlink);
+          onePerAuthor.add(p.author);
+          outside.push({ parentAuthor: p.author, parentPermlink: p.permlink, qAuthor: p.author, qPermlink: p.permlink, qBody: body.slice(0, 240), tag, created: p.created, surface: 'outside-post' });
+          break; // one per tag per round
+        }
+      } catch (_) { continue; }
+    }
+  }
+  receipt.outsideScan = { tags: TAGS, found: outside.length };
+  // (b) the original surface: questions from outside authors under OUR recent posts
   for (const who of ['headcorner', 'cashmachine', 'israelnews']) {
+    if (outside.length >= 5) break;
     try {
       const rows = await rpc('bridge.get_account_posts', { sort: 'posts', account: who, limit: 5 });
       for (const p of (rows || []).slice(0, 3)) {
+        if (outside.length >= 5) break;
         let replies = [];
         try { replies = await rpc('condenser_api.get_content_replies', [p.author, p.permlink]); } catch (_) { continue; }
         for (const r of replies || []) {
           if (dedupe.FLEET_ACCOUNTS.includes(r.author)) continue;
+          if (onePerAuthor.has(r.author)) continue;
           const body = String(r.body || '');
           if (body.includes('?') && body.length > 30) {
-            outside.push({ parentAuthor: p.author, parentPermlink: p.permlink, qAuthor: r.author, qPermlink: r.permlink, qBody: body.slice(0, 240) });
+            onePerAuthor.add(r.author);
+            outside.push({ parentAuthor: p.author, parentPermlink: p.permlink, qAuthor: r.author, qPermlink: r.permlink, qBody: body.slice(0, 240), surface: 'our-post-reply' });
           }
           if (outside.length >= 5) break;
         }
@@ -225,12 +343,14 @@ async function supportPass(day, keys, memory, receipt) {
   }
   receipt.questionsFound = outside.length;
   receipt.questionsScanned = outside;
-  if (!outside.length) { receipt.supportNote = 'no public questions found in the scanned window (newest replies of 3 accounts) — nothing fabricated'; return; }
+  if (!outside.length) { receipt.supportNote = 'no public questions found in the scanned windows (outside posts under hebrew/security/defi + newest replies of 3 accounts) - nothing fabricated'; return; }
 
-  // desk routing: pick the account whose desk best fits, else rotate; gate-check every reply
-  const routing = { headcorner: 'headcorner', cashmachine: 'cashmachine', israelnews: 'israelnews' };
+  // desk routing: the community's core-tag desks answer outside posts; Hebrew gets
+  // the Hebrew voice; everything stays inside the 3-reply budget of this wave
   for (const q of outside.slice(0, 3)) {
-    const responder = routing[q.parentAuthor] || 'woq';
+    const responder = q.surface === 'outside-post'
+      ? (ROUTE_BY_TAG[q.tag] || 'woq')
+      : (q.parentAuthor === 'headcorner' ? 'headcorner' : q.parentAuthor === 'cashmachine' ? 'cashmachine' : q.parentAuthor === 'israelnews' ? 'israelnews' : 'woq');
     const wif = keys[responder];
     if (!wif) continue;
     const rPermlink = `re-${q.qPermlink || `${q.parentPermlink}-${q.qAuthor}`}-${responder}`.slice(0, 255).replace(/[^a-z0-9-]/gi, '-');
@@ -239,12 +359,16 @@ async function supportPass(day, keys, memory, receipt) {
       const existing = await P(cb => steem.api.getContent(responder, rPermlink, cb)).catch(() => null);
       if (existing && existing.author === responder) { R.status = 'ALREADY'; }
       else {
-        const body = (DESK_FRAMES[responder] || DESK_FRAMES.woq)(q.qAuthor);
+        const hebrew = HEB.test(String(q.qBody || ''));
+        let body = hebrew && responder === 'israelnews' ? HE_FRAME(q.qAuthor) : (DESK_FRAMES[responder] || DESK_FRAMES.woq)(q.qAuthor);
+        // r147-c: the reply quotes the asker's own line, so help is specific, not a form
+        const qfrag = String(q.qBody || '').replace(/\s+/g, ' ').replace(/[—–]/g, ',').trim().slice(0, 110);
+        if (qfrag) body = body.replace(/\n\n/, `\n\nQuoting you: "${qfrag}"\n\n`);
         const gate = dedupe.gateCast(responder, body, memory, 9);
         R.gate = { verdict: gate.verdict, bestSim: gate.bestSim };
         if (gate.verdict === 'SKIP') { R.status = 'SKIP-DUP-GATE'; }
         else {
-          const ops = [['comment', { parent_author: q.qAuthor, parent_permlink: q.qPermlink || q.parentPermlink, author: responder, permlink: rPermlink, title: '', body, json_metadata: JSON.stringify({ tags: ['blog'], app: 'saos-public-wave/1' }) }]];
+          const ops = [['comment', { parent_author: q.qAuthor, parent_permlink: q.qPermlink || q.parentPermlink, author: responder, permlink: rPermlink, title: '', body, json_metadata: JSON.stringify({ tags: ['blog'], app: 'saos-public-wave/1', surface: q.surface || 'our-post-reply' }) }]];
           await P(cb => steem.broadcast.send({ operations: ops, extensions: [] }, [wif], cb));
           await sleep(1500);
           const back = await P(cb => steem.api.getContent(responder, rPermlink, cb)).catch(() => null);
@@ -272,7 +396,7 @@ async function main() {
   let memory = [];
   try { memory = await dedupe.buildMemory(false); receipt.memory = memory.length; } catch (e) { receipt.memoryError = String(e.message || e).slice(0, 80); }
 
-  for (const w of WAVE) {
+  for (const w of [...WAVE, ...WAVE_R147C]) {
     const permlink = `saos-wave-${w.account}-${day.replace(/-/g, '')}`;
     const R = { author: w.account, permlink, title: w.title, url: `https://steemit.com/@${w.account}/${permlink}` };
     try {

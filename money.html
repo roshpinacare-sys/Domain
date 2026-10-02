@@ -128,7 +128,13 @@ footer .wrap{font-size:12px;color:var(--dim);display:flex;justify-content:space-
       <div class="pcard"><div class="v">$318B</div><div class="l">נפח מסחר 30 יום בדקסים · תמונת 17/09</div></div>
     </div>
 
-    <section class="card">
+          <section class="card" id="pulse-desk">
+        <h2>פולס האמת הציבורי <span class="en">Public Pulse Desk · רק כאן</span></h2>
+        <p class="src">המדד החי של הרשת: מספרים מדודים מהספרים הציבוריים, וכל מספר נושא את זמן-המדידה שלו. המקור הקנוני הוא מסילת-האמת של הבית (GET /api/public/pulse, חסרת-מפתחות) והספר המקומי public/pulse.json מתרענן יומית בענן. השולחן הזה קיים רק בפנים הציבוריות האלה, בדיוק כדי שלכל דף תהיה תפקיד משלו.</p>
+        <div id="pulseBody" class="inst"><div class="irow"><div class="what">טוען את הספר החי (public/pulse.json)…</div></div></div>
+      </section>
+
+<section class="card">
       <h2>אנציקלופדיית המכשירים <span class="en">The Instrument Map · מה עושה מה</span></h2>
       <div class="inst">
 
@@ -465,6 +471,26 @@ footer .wrap{font-size:12px;color:var(--dim);display:flex;justify-content:space-
   });
   ts();
 })();
+</script>
+<script>
+  (function(){
+    function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];});}
+    function row(label, value, src){return '<div class="irow"><div class="hd"><span class="nm">'+esc(label)+'</span></div><div class="what"><b>'+esc(value)+'</b>'+(src?' <span class="mono" style="font-size:11px">['+esc(src)+']</span>':'')+'</div></div>';}
+    fetch("public/pulse.json",{cache:"no-store"}).then(function(r){if(!r.ok)throw 0;return r.json();}).then(function(p){
+      var b=document.getElementById("pulseBody"); if(!b||!p||p.format!=="public-pulse-v1")return;
+      var t=p.truth||{},a=p.audience||{},s=p.scout||{},mo=p.moment||{},out="";
+      out+=row("פנקס ה-PnL הממומש", (t.trips==null?"לא נמדד":(t.trips+" סבבים סגורים · "+t.realizedSbd+" SBD ("+t.realizedUsd+" USD) · "+t.fillsTotal+" מילויים")), "נמדד "+(t.measuredAt||""));
+      out+=row("הסולם הכן אל $1,000/יום", (t.usdPerDay7dAvg==null?"לא נמדד":"בסיס נמדד $"+t.usdPerDay7dAvg+" ליום (ממוצע 7 ימים) — המספר הכן שממנו מתחיל הסולם"), "נמדד "+(t.measuredAt||""));
+      out+=row("רזוננס הקהל (חלון 48 שעות)", (a.postsMeasured?(a.postsMeasured+" פוסטים נמדדו · "+a.externalVotesTotal+" הצבעות-חוץ · "+a.repliesTotal+" תגובות מ-"+a.externalRepliersTotal+" מגיבי-חוץ · נושא-ראשי: "+esc(a.topTopic)):"לא נמדד"), "דיג'סט "+(a.runAt||""));
+      out+=row("עיני הסייר מחוץ לרשת", (s.at?("שבוע "+esc(s.week||"")+" · "+(s.tracks||[]).map(function(x){return x.id+" "+x.status+" ("+x.sources+" מקורות)";}).join(" · ")):"לא נמדד"), "נמדד "+(s.at||""));
+      if(s.steemQuotes) out+=row("מחיר STEEM חוצה-מקורות", ("$"+s.steemQuotes.quoteMin+" עד $"+s.steemQuotes.quoteMax+" ("+s.steemQuotes.quoteMentions+" אזכורים ב-"+s.steemQuotes.sources+" מקורות ציבוריים)"), "נמדד "+(s.at||""));
+      if(mo&&mo.steemUsd) out+=row("שער חי (moment-watch)", ("STEEM=$"+mo.steemUsd), "פורסם "+(mo.publishedAt||""));
+      b.innerHTML=out;
+      var meta=document.createElement("p"); meta.className="src";
+      meta.textContent="רענון: "+(p.refresh&&p.refresh.policy?p.refresh.policy:"")+" · סטטוס מסילה חיה: "+((p.refresh&&p.refresh.liveFeed&&p.refresh.liveFeed.status)||"");
+      b.appendChild(meta);
+    }).catch(function(){var b=document.getElementById("pulseBody");if(b)b.innerHTML='<div class="irow"><div class="what">הספר החי לא נטען כרגע — מציג בכנות, בלי להמציא מספרים.</div></div>';});
+  })();
 </script>
 </body>
 </html>
