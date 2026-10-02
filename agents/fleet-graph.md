@@ -77,6 +77,7 @@ flowchart TD
 | operator lock | scope | DELEGATION-SELECTION | the operator's orders |
 | role-registry.csv | instructions | SOVEREIGNTY LAW (roles-as-data) | every row's file exists on disk |
 | change-requests/ | judge | SOVEREIGNTY LAW tier B (judged self-modification) | CR verdict + judged_at in-file |
+| command-guard.cjs | scope | SOVEREIGNTY LAW §4.1 (mechanical override) | command-guard.json stamp + evals E7-E9 |
 
 ## The three structural failures, located (L14)
 

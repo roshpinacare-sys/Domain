@@ -15,6 +15,9 @@
  *   E4 audit fail-soft      — the judge node itself must survive a missing canon
  *   E5 concat-family        — string manabar + number = giant (third-time incident family)
  *   E6 stamp hygiene        — a book without a timestamp can never count as fresh
+ *   E7 guard deny/allow     — destructive commands DENY, the fleet's rebase law stays ALLOW (Z-38)
+ *   E8 guard context        — data-context ALLOW, session-context sync-idiom DENY (Z-38)
+ *   E9 guard scan CI        — executable surfaces carry zero unbooked DENY (Z-38)
  *
  * Fail-soft: exit 0 always; FAILs are booked honestly (HARNESS-AUDIT MANDATE:
  * green-washing the evals is a doctrine breach).
@@ -99,9 +102,41 @@ function accumulateInMemory(bookRows, seed) {
       ['every book with exists=true and ageHours==null must NOT carry fresh=true', 'the audit surfaces a timestamp-hygiene check (WARN until owners stamp)'], `unstamped-but-fresh=${unstampedFresh.length} hygieneCheck=${warned}`);
   } catch (e) { evalr('E6', 'stamp hygiene', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
+  // ---- E7: command-guard core contract (black-box, fresh process) — DCG adoption Z-38
+  try {
+    const run = (c) => { const r = spawnSync(process.execPath, [path.join(AG, 'command-guard.cjs'), 'explain', c], { cwd: AG, timeout: 30000, encoding: 'utf8' }); return JSON.parse((r.stdout || '{}').split('\n')[0]); };
+    const d1 = run('git reset --hard HEAD~1');
+    const d2 = run('git push --force origin main');
+    const d3 = run('rm -rf agents/');
+    const a1 = run('git pull --rebase origin main');
+    const a2 = run('git push origin main');
+    evalr('E7', 'guard core: destructive DENY, rebase-law ALLOW', d1.decision === 'DENY' && d2.decision === 'DENY' && d3.decision === 'DENY' && a1.decision === 'ALLOW' && a2.decision === 'ALLOW',
+      ['git reset --hard / push --force / rm -rf agents/ → DENY with named rule', 'git pull --rebase + plain push → ALLOW (the fleet rebase law must never be blocked)'], `denies=${d1.rule},${d2.rule},${d3.rule} allows=${a1.rule},${a2.rule}`);
+  } catch (e) { evalr('E7', 'guard core', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
+  // ---- E8: command-guard context detection (DCG principle: data vs execution)
+  try {
+    const run = (c) => { const r = spawnSync(process.execPath, [path.join(AG, 'command-guard.cjs'), 'explain', c], { cwd: AG, timeout: 30000, encoding: 'utf8' }); return JSON.parse((r.stdout || '{}').split('\n')[0]); };
+    const data = run('grep "rm -rf" README.md');
+    const session = run('git reset --hard origin/main');
+    evalr('E8', 'guard context: data ALLOW, session sync-idiom DENY', data.decision === 'ALLOW' && session.decision === 'DENY',
+      ['a destructive string inside grep/echo is DATA — never blocked (no false positives)', 'the same reset in an agent-session context has no retry-loop alibi → DENY'], `data=${data.rule} session=${session.rule}`);
+  } catch (e) { evalr('E8', 'guard context', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
+  // ---- E9: guard scan on real CI surfaces — zero unbooked destructive drift
+  try {
+    const r = spawnSync(process.execPath, [path.join(AG, 'command-guard.cjs'), 'scan', '.github/workflows'], { cwd: AG, timeout: 60000, encoding: 'utf8' });
+    const led = JSON.parse(fs.readFileSync(path.join(AG, 'command-guard.json'), 'utf8'));
+    const denies = led.denies || 0;
+    const sync = led.fleetSyncIdiomAllowed || 0;
+    const stamped = !!led.at;
+    evalr('E9', 'guard scan: CI executable surfaces clean or booked', denies === 0 && sync >= 10 && stamped,
+      ['0 DENY rows in .github/workflows (no destructive drift entered CI)', 'the known mirror-bot sync idiom appears as booked allow-with-reason (≥10 rows), never silent', 'ledger stamped (BOOKS-STAMP law)'], `denies=${denies} syncIdiom=${sync} stamped=${stamped}`);
+  } catch (e) { evalr('E9', 'guard scan', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.0.0 (Z-36)', origin: 'learn-harness-engineering eval discipline, adopted', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.1.0 (Z-36 + Z-38: +guard evals E7-E9)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard adoption', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];

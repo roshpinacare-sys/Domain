@@ -36,12 +36,14 @@ jobs:
         env: {DEFU_DIR: ${{ github.workspace }}/canon-defi}
       - name: "run desk evals (runnable expectations, Z-36)"
         run: node agents/evals/run-evals.cjs
+      - name: "run command guard scan (mechanical override, Z-38)"
+        run: node agents/command-guard.cjs scan .github/workflows agents
         env: {DEFU_DIR: ${{ github.workspace }}/canon-defi}
       - name: commit board
         run: |
           git config user.name "recruit[bot]"
           git config user.email "recruit[bot]@users.noreply.github.com"
-          git add agents/recruitment.json agents/recruitment.md agents/ventures.json agents/ventures.md agents/fills-ledger.json agents/harness-audit.json agents/harness-audit.md agents/evals/eval-results.json agents/evals/eval-results.md agents/reconciliation.json agents/reconciliation.md agents/workflow-audit.json agents/workflow-audit.md agents/page-laws.json agents/page-laws.md agents/change-requests 2>/dev/null || true
+          git add agents/recruitment.json agents/recruitment.md agents/ventures.json agents/ventures.md agents/fills-ledger.json agents/harness-audit.json agents/harness-audit.md agents/evals/eval-results.json agents/evals/eval-results.md agents/reconciliation.json agents/reconciliation.md agents/workflow-audit.json agents/workflow-audit.md agents/page-laws.json agents/page-laws.md agents/change-requests agents/command-guard.json 2>/dev/null || true
           if git diff --cached --quiet; then echo "no board changes"; else
             for i in 1 2 3; do
               git pull --rebase origin main >/dev/null 2>&1 || true
