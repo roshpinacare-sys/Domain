@@ -1,13 +1,13 @@
 {
  "ok": true,
- "publishedAt": "2026-10-01T23:00:03.043Z",
- "version": 100350,
+ "publishedAt": "2026-10-02T00:15:02.164Z",
+ "version": 101310,
  "state": {
-  "height": 100350,
-  "tps": 1,
-  "stateRoot": "795b9d0cf69e016077918d48ec4314080e6dba7f292a7f6fc593c85c41db7076",
-  "gasUsed": 25032455,
-  "opsTotal": 654848,
+  "height": 101310,
+  "tps": 0,
+  "stateRoot": "f66b1a03f605ff3d45109793811539167750d3eaebc7c356589ea5243bdd5473",
+  "gasUsed": 25099665,
+  "opsTotal": 656540,
   "fills": 16661,
   "swaps": 10568,
   "ladders": 32,
@@ -21,22 +21,22 @@
    "lastLiftHeight": 21844,
    "spentMu": 256000
   },
-  "liveOrders": 18,
-  "buildMs": 70,
-  "uptimeSec": 50,
-  "lastBlockAgoMs": 2134,
+  "liveOrders": 15,
+  "buildMs": 83,
+  "uptimeSec": 57,
+  "lastBlockAgoMs": 5196,
   "dbOk": true,
   "halted": false,
   "haltReason": null,
   "rejectedLast": {
-   "h": 100349,
-   "count": 7,
+   "h": 101309,
+   "count": 10,
    "sample": [
-    "pool_swap(bot-b):bad-quote",
+    "order(soldier-1):replay-rejected",
+    "order(soldier-1):replay-rejected",
     "cancel(soldier-2):replay-rejected",
     "order(soldier-2):replay-rejected",
-    "cancel(soldier-4):replay-rejected",
-    "cancel(soldier-4):replay-rejected"
+    "cancel(soldier-3):replay-rejected"
    ]
   },
   "replayNote": "deterministic-from-ops+builder-ticks; price-evidence ring & process counters are off-state (documented)",
@@ -66,62 +66,62 @@
     "listed": 0
    },
    "WSBD": {
-    "refPrice": 643,
+    "refPrice": 644,
     "listed": 0
    },
    "PHIVE": {
-    "refPrice": 56,
+    "refPrice": 57,
     "listed": 0
    },
    "WTRX": {
-    "refPrice": 335,
+    "refPrice": 334,
     "listed": 21496
    }
   },
   "oracle": {
    "WTRX": {
-    "mu": 335110,
-    "atH": 99869,
+    "mu": 334361,
+    "atH": 100830,
     "src": "median(WTRX×2,WSOL×2,WSTEEM×2,PHIVE×2)"
    },
    "WSOL": {
-    "mu": 118184220,
-    "atH": 99869,
+    "mu": 118389832,
+    "atH": 100830,
     "src": "median(WTRX×2,WSOL×2,WSTEEM×2,PHIVE×2)"
    },
    "WSTEEM": {
-    "mu": 63732,
-    "atH": 99869,
+    "mu": 63846,
+    "atH": 100830,
     "src": "median(WTRX×2,WSOL×2,WSTEEM×2,PHIVE×2)"
    },
    "HIVE": {
-    "mu": 56427,
-    "atH": 99869,
+    "mu": 57227,
+    "atH": 100830,
     "src": "median(WTRX×2,WSOL×2,WSTEEM×2,PHIVE×2)"
    },
    "WBLURT": {
     "mu": 1305,
-    "atH": 1,
-    "src": "median(WTRX×3,WSOL×3,WSTEEM×3,HIVE×3)"
+    "atH": 100830,
+    "src": "median(WTRX×2,WSOL×2,WSTEEM×2,PHIVE×2)"
    },
    "ETH": {
-    "mu": 2702286623,
-    "atH": 99869,
+    "mu": 2703464762,
+    "atH": 100830,
     "src": "median(WTRX×2,WSOL×2,WSTEEM×2,PHIVE×2)"
    },
    "BTC": {
-    "mu": 84703047468,
-    "atH": 99869,
+    "mu": 84771177032,
+    "atH": 100830,
     "src": "median(WTRX×2,WSOL×2,WSTEEM×2,PHIVE×2)"
    },
    "PHIVE": {
-    "mu": 56427,
-    "atH": 99869,
+    "mu": 57227,
+    "atH": 100830,
     "src": "median(WTRX×2,WSOL×2,WSTEEM×2,PHIVE×2)"
    },
    "WSBD": {
-    "mu": 644205,
-    "atH": 99869,
+    "mu": 644005,
+    "atH": 100830,
     "src": "median(WTRX×2,WSOL×2,WSTEEM×2,PHIVE×2)"
    }
   },
@@ -413,7 +413,7 @@
    "potMu": 1,
    "positions": 2,
    "votes": 2,
-   "epoch": 83,
+   "epoch": 84,
    "fundedMu": 21096,
    "paidOutMu": 21095,
    "detail": [
@@ -442,9 +442,9 @@
   },
   "engine": {
    "cow": {
-    "matched": 11920000,
-    "batches": 596,
-    "surplusMu": 85760,
+    "matched": 11960000,
+    "batches": 598,
+    "surplusMu": 86040,
     "fallbackPool": 0,
     "fallbackBook": 0
    },
@@ -466,7 +466,7 @@
    "feesSpentMu": 52747,
    "ve": {
     "positions": 2,
-    "epoch": 83
+    "epoch": 84
    },
    "auto": {
     "dcaActive": 0,
@@ -475,6 +475,20 @@
     "trigTotal": 49
    },
    "feed": [
+    {
+     "h": 101041,
+     "s": "cow",
+     "a": "cow_match",
+     "p": 140,
+     "n": "SAOS/USDS: matched 20000µ @ p*=1322 (buys 1 · sells 1) · surplus 140µ לסוחרים"
+    },
+    {
+     "h": 100521,
+     "s": "cow",
+     "a": "cow_match",
+     "p": 140,
+     "n": "SAOS/USDS: matched 20000µ @ p*=1322 (buys 1 · sells 1) · surplus 140µ לסוחרים"
+    },
     {
      "h": 100188,
      "s": "trig",
@@ -509,27 +523,6 @@
      "a": "cow_match",
      "p": 140,
      "n": "SAOS/USDS: matched 20000µ @ p*=1322 (buys 1 · sells 1) · surplus 140µ לסוחרים"
-    },
-    {
-     "h": 99720,
-     "s": "cow",
-     "a": "cow_match",
-     "p": 140,
-     "n": "SAOS/USDS: matched 20000µ @ p*=1322 (buys 1 · sells 1) · surplus 140µ לסוחרים"
-    },
-    {
-     "h": 99680,
-     "s": "cow",
-     "a": "cow_match",
-     "p": 140,
-     "n": "SAOS/USDS: matched 20000µ @ p*=1322 (buys 1 · sells 1) · surplus 140µ לסוחרים"
-    },
-    {
-     "h": 99160,
-     "s": "cow",
-     "a": "cow_match",
-     "p": 140,
-     "n": "SAOS/USDS: matched 20000µ @ p*=1322 (buys 1 · sells 1) · surplus 140µ לסוחרים"
     }
    ]
   }
@@ -546,7 +539,7 @@
    "poolMid": 1324,
    "refPrice": 1320,
    "twap": 1322,
-   "twapSamples": 3,
+   "twapSamples": 1,
    "twapDevBps": 15,
    "bids": [
     {
@@ -584,15 +577,7 @@
    ],
    "chart": [
     {
-     "t": 1790895557448,
-     "p": 1322
-    },
-    {
-     "t": 1790895560876,
-     "p": 1322
-    },
-    {
-     "t": 1790895564241,
+     "t": 1790900068973,
      "p": 1322
     }
    ]
@@ -613,15 +598,15 @@
    "bids": [
     {
      "price": 63,
-     "total": 320000,
-     "orders": 4
+     "total": 240000,
+     "orders": 3
     }
    ],
    "asks": [
     {
      "price": 65,
-     "total": 360000,
-     "orders": 3
+     "total": 120000,
+     "orders": 1
     }
    ],
    "chart": []
@@ -719,7 +704,7 @@
   },
   {
    "name": "operator",
-   "credits": 2976728,
+   "credits": 2936608,
    "balances": {
     "SAOS": 1800000,
     "USDS": 4515179,
@@ -730,7 +715,7 @@
   },
   {
    "name": "arena",
-   "credits": 10000,
+   "credits": 30000,
    "balances": {
     "USDS": 5106958,
     "SAOS": 6637780,
@@ -743,21 +728,21 @@
   },
   {
    "name": "soldier-1",
-   "credits": 28475,
+   "credits": 13195,
    "balances": {
     "SAOS": 239055,
     "USDS": 4690768,
     "WSTEEM": 160723
    },
    "locked": {
-    "USDS": 321840,
+    "USDS": 316800,
     "SAOS": 160000,
-    "WSTEEM": 120000
+    "WSTEEM": 0
    }
   },
   {
    "name": "soldier-2",
-   "credits": 24990,
+   "credits": 12515,
    "balances": {
     "SAOS": 94333,
     "USDS": 5125707,
@@ -771,7 +756,7 @@
   },
   {
    "name": "soldier-3",
-   "credits": 17990,
+   "credits": 17415,
    "balances": {
     "SAOS": 12408,
     "USDS": 5017969,
@@ -785,7 +770,7 @@
   },
   {
    "name": "soldier-4",
-   "credits": 28695,
+   "credits": 10055,
    "balances": {
     "SAOS": 14611,
     "USDS": 4830074,
@@ -794,7 +779,7 @@
    "locked": {
     "USDS": 322000,
     "SAOS": 0,
-    "WSTEEM": 120000
+    "WSTEEM": 0
    }
   },
   {
@@ -869,7 +854,7 @@
   },
   {
    "name": "bot-e",
-   "credits": 27720,
+   "credits": 27600,
    "balances": {
     "USDS": 511980,
     "SAOS": 412978
@@ -934,11 +919,11 @@
     "usds": 4690768,
     "equity": 5007037,
     "pnl": -992963,
-    "liveQuotes": 6,
+    "liveQuotes": 4,
     "locked": {
-     "USDS": 321840,
+     "USDS": 316800,
      "SAOS": 160000,
-     "WSTEEM": 120000
+     "WSTEEM": 0
     }
    },
    {
@@ -973,112 +958,112 @@
     "usds": 4830074,
     "equity": 4849404,
     "pnl": -1150596,
-    "liveQuotes": 4,
+    "liveQuotes": 3,
     "locked": {
      "USDS": 322000,
      "SAOS": 0,
-     "WSTEEM": 120000
+     "WSTEEM": 0
     }
    }
   ],
   "journal": [
    {
-    "h": 100349,
-    "t": 1790895600835,
-    "soldier": "treasury",
-    "action": "wrap_mint_ext",
-    "note": "external-backed mint 50231µ WSBD (sbd:headcorner:100349:50231)"
-   },
-   {
-    "h": 100344,
-    "t": 1790895595808,
+    "h": 101304,
+    "t": 1790900096428,
     "soldier": "soldier-4",
     "action": "attest",
-    "note": "eee553b7a508afde"
+    "note": "79023c7990abf821"
    },
    {
-    "h": 100344,
-    "t": 1790895595808,
+    "h": 101304,
+    "t": 1790900096428,
     "soldier": "soldier-3",
     "action": "attest",
-    "note": "eee553b7a508afde"
+    "note": "79023c7990abf821"
    },
    {
-    "h": 100344,
-    "t": 1790895595808,
+    "h": 101304,
+    "t": 1790900096428,
     "soldier": "soldier-2",
     "action": "attest",
-    "note": "eee553b7a508afde"
+    "note": "79023c7990abf821"
    },
    {
-    "h": 100344,
-    "t": 1790895595808,
+    "h": 101304,
+    "t": 1790900096428,
     "soldier": "soldier-1",
     "action": "attest",
-    "note": "eee553b7a508afde"
+    "note": "79023c7990abf821"
    },
    {
-    "h": 100332,
-    "t": 1790895594809,
-    "soldier": "operator",
-    "action": "refuel",
-    "note": "→soldier-1 20275µ credits"
-   },
-   {
-    "h": 100332,
-    "t": 1790895594809,
+    "h": 101292,
+    "t": 1790900095224,
     "soldier": "soldier-4",
     "action": "attest",
-    "note": "e38194294b8f61fe"
+    "note": "e51f5c04cff4288e"
    },
    {
-    "h": 100332,
-    "t": 1790895594809,
+    "h": 101292,
+    "t": 1790900095224,
     "soldier": "soldier-3",
     "action": "attest",
-    "note": "e38194294b8f61fe"
+    "note": "e51f5c04cff4288e"
    },
    {
-    "h": 100332,
-    "t": 1790895594809,
+    "h": 101292,
+    "t": 1790900095224,
     "soldier": "soldier-2",
     "action": "attest",
-    "note": "e38194294b8f61fe"
+    "note": "e51f5c04cff4288e"
    },
    {
-    "h": 100332,
-    "t": 1790895594809,
+    "h": 101292,
+    "t": 1790900095224,
     "soldier": "soldier-1",
     "action": "attest",
-    "note": "e38194294b8f61fe"
+    "note": "e51f5c04cff4288e"
    },
    {
-    "h": 100320,
-    "t": 1790895593806,
+    "h": 101280,
+    "t": 1790900094033,
     "soldier": "soldier-4",
     "action": "attest",
-    "note": "9121b2a3fb7271be"
+    "note": "c123bf2f1ba830eb"
    },
    {
-    "h": 100320,
-    "t": 1790895593806,
+    "h": 101280,
+    "t": 1790900094033,
     "soldier": "soldier-3",
     "action": "attest",
-    "note": "9121b2a3fb7271be"
+    "note": "c123bf2f1ba830eb"
    },
    {
-    "h": 100320,
-    "t": 1790895593806,
+    "h": 101280,
+    "t": 1790900094033,
     "soldier": "soldier-2",
     "action": "attest",
-    "note": "9121b2a3fb7271be"
+    "note": "c123bf2f1ba830eb"
    },
    {
-    "h": 100320,
-    "t": 1790895593806,
+    "h": 101280,
+    "t": 1790900094033,
     "soldier": "soldier-1",
     "action": "attest",
-    "note": "9121b2a3fb7271be"
+    "note": "c123bf2f1ba830eb"
+   },
+   {
+    "h": 101268,
+    "t": 1790900092831,
+    "soldier": "soldier-4",
+    "action": "attest",
+    "note": "3cf19cdc1d148079"
+   },
+   {
+    "h": 101268,
+    "t": 1790900092831,
+    "soldier": "soldier-3",
+    "action": "attest",
+    "note": "3cf19cdc1d148079"
    }
   ],
   "mempool": 0
@@ -1086,240 +1071,240 @@
  "proofs": {
   "seals": [
    {
-    "fromHeight": 100333,
-    "toHeight": 100344,
-    "root": "eee553b7a508afdefdb7dd710bf21fb04488fd4d6d9a1659d1e1b51b5eb88752",
-    "stateRoot": "9f6cefeb43d95b58987070b5a04cfb8886bb02365df2c7eb5dc78f37a117d4e6",
+    "fromHeight": 101293,
+    "toHeight": 101304,
+    "root": "79023c7990abf821aa2445f95debab6d426858e2d6c57bffab7a1754db1131cb",
+    "stateRoot": "f60169c97ba40fb46934a28d86240be152aafda71561c171abc2f21d24307e62",
     "leaves": 12,
-    "at": 1790895595801,
-    "digest": "3d3147b7e731077f8a2251d87d1d6f1f6b7996ddce20c0237ec0f6d121d1066d",
+    "at": 1790900096416,
+    "digest": "7d3cc18164de0c984331354ff2df1cfb0a939f527fd2df6455d180bf90572156",
     "blockHashes": [
-     "22daed5ba3758e78720e0c4b41f36e69a13530138b6a598a8ac299cba0bc0cc9",
-     "bfd97397450f61c8c1ca8f436d986cdd765360791dbb254a84f8b93a3a554d8d",
-     "11fdad601fb282e179dd9cf2373240da18e8cc60e09601eef2975504b0a64cff",
-     "333a0ad0f54d0655bb6c8765e4cdee7ae09900a8e20886ae61782bd615678150",
-     "e79d448dba2520c151410ea792ab858e4168213a596e2c0bf799bc27320fd00c",
-     "d10a2ce1995f69c61bcfdd292712d8309c39aacb891b5f4fa058ccc85b12aaec",
-     "4cbc090236e21106998b16a1b8e22e2e769b41681f423d5b90f4d9365b7ca1d3",
-     "d21efdf22ebab7cd9001f8c82444c7d71ea1565b066543678accd0d1135fc5aa",
-     "d08616227fc3cfe18af60b1a18a5b3d58042b008d9d046bc73e8a96a63276087",
-     "5b210f35d862d43cdaccd3fc8a6340c56d67dc7c204ff971e48579e6c4fa09fb",
-     "607e3b3b016e425abe11b24b8c7de3d4d7dfb0edc0f40de0d2e80cd85dca25e8",
-     "f68aa738dea131a91d0152cfa0dca9dbc1670f4878936fb01aaf83e2454b8982"
+     "4c4bbc2217ccd4b444e9efe9d783174df1bba319295a232a6c26f31c790ae752",
+     "eb4f06794817688e1b5fbb458fa07e52788bb28547d1e9b44a82f8d017987516",
+     "9517c35770b77542a4461717257a4806c78dd3de6e716c231523943f2ca5801c",
+     "0d9f5b7eb8aa8493514aefc0b4dbb3158998777780855e3eb515acd02e5158f2",
+     "8cd44b931a768aeee76efe27cc8e4a244f00c4d902a441d7e7505645dce18aa5",
+     "7947b81b5f27d9786c666ec7757ab75535680bdd7da4d2df62106f9bdeed3417",
+     "ff8d6609feae295be3f57f2a705dbb57781aede94a9c650aa5c89f078aa817bd",
+     "f1bf6b5d465d50b954e6a441519e84fd58a170aff819160af582e9fd6262d547",
+     "f8970a2bee9e6e5194d56dd8a043b586700ff4450bbc91832f6d08b12345a4de",
+     "6afcc9b94613be8cd294644ccd9d6bd0b19df537a1290b776a372291cf45f4e6",
+     "76cc4d463e427434be70cd65b4415dd6380d9646b973ba517d2de46b5736c6f3",
+     "702195b112802e0ddd6cb64592737affc628a09da36ae2cfc261672ed46ecf4c"
     ]
    },
    {
-    "fromHeight": 100321,
-    "toHeight": 100332,
-    "root": "e38194294b8f61fe52cbc45ee33431cf0cdf9cc17e50547aa6e553d13f46f643",
-    "stateRoot": "277ca094657eb3d1bd5893bc8fc2a5d19dc56d5a72420afb37e8321be9c3c042",
+    "fromHeight": 101281,
+    "toHeight": 101292,
+    "root": "e51f5c04cff4288e0a7feb0dec14da50fb3c5318fb935269db95aa18cc3aee3b",
+    "stateRoot": "3a042b903fdc7db1022df70b81359a99a893c2f1f0854455ffd32bd830b712cc",
     "leaves": 12,
-    "at": 1790895594801,
-    "digest": "d46b654d6383187e012cba31937a38ef218f80f5400896f35c40f33eaad89348",
+    "at": 1790900095212,
+    "digest": "f4ab04232f6264dbe082a9f49ba3131a4605c47f4e576db59aa641ac9e607882",
     "blockHashes": [
-     "1e9520c06e095b7bd4d0c8f9b728f90fc4260ab784aba9bccc1f7a8d5db86044",
-     "db15fb69b56e0917ae60b5185bf614f2b964a5b667ea7e780cabf69491c2a80f",
-     "637246475c122f875036204a8310fea4d538d044e6e43d1aa6a51f3239fdbb6d",
-     "599afe52b7d641641dd0d2eadc7606c998be20269c86e88ddc0afc010ec16ab7",
-     "2db1a2a08ebff0d30b2f2c027833ed580030a2bfac0a0aba0041bf14d9b223e4",
-     "9ed37e2d9fb0bcc09d596a6c27134497e85026f53c23705c2f6b03d412ecdb00",
-     "bcd68933ddad12804afbfd24e4ec5d1c64844a88650a780282972f86e1cd6c77",
-     "18c1281c62ce8598a3b3b119211d10bc81c31013605541b842baa957416819b3",
-     "badec7c73ce0b460b7bc788cd38c89e84ade48604b995689a12a89e6bf0f4d5a",
-     "4f3d0eabb0c741041e3de89888de3c31401f1b6538195e631f7863bd13e85211",
-     "a737ad52aed1beee90d19d05809e6573e6e87a470b5635c3c12c6425a800336b",
-     "57fcfabff73173ca4861af240dc103edd7fe4f3fc9dc7e330dbfffba8d81194f"
+     "bf5649ed177a64922141ad8499d0fff0de923796ac85f2443d62aac800481bb4",
+     "1cd5d205c7e6819faa4bddfe53d3c9cce85f310d6cc30c865c5ab0172afcd928",
+     "541b10dc03a73e0db1f80a7ec53ca43dbe431f1596f3702f19abf4cce2f12701",
+     "127ff4396cc8baded1192772ac22856c618e1b9308155bb5a77192a6d2259c66",
+     "ee1b586361ee6d3a6962e4d1cd98f1920aa66822dd32a2917ae30ab95a72e6fc",
+     "cb1a22e7c4cca94767c33807fccc0b173086142d139a8a0caaae5c0710546513",
+     "3a429bf651de6963eeb0cf3480b7b100b9a5c928467530ca67d4cf71ae031711",
+     "451775ca6f8f0c7d63fa7d1019a1419b628cbd17b462486cfab2cf44f9b44e5c",
+     "bb91a714a681a69c8ec15ac8a562e1c963fe9f7f2c7220048514970e3b44d62b",
+     "787d7f0e85b9854b84245e571123b72b6e189e10c72009e6d01d34d3671f357b",
+     "1994284c2e81e19a671c46c5cc7e5ff02e24d7db70e35fa1c5b2aeed7bd87c60",
+     "db96a5935b18d96c3c4e3cf83e05add49b65fa5e4c1200c07f05ed03f468796a"
     ]
    },
    {
-    "fromHeight": 100309,
-    "toHeight": 100320,
-    "root": "9121b2a3fb7271beefee32f24d8c217e966cd54bce74f88d8b698a1a5f9d15ad",
-    "stateRoot": "1fecc4e9737d2ef5474bdeec8a789c0a8e6a73ca5a7c1b4d1acf8cdc31e883ac",
+    "fromHeight": 101269,
+    "toHeight": 101280,
+    "root": "c123bf2f1ba830ebcf2967e5e4c8c033f3c01b509f8aec82bb5bcd684cee5c6c",
+    "stateRoot": "3b3aeef7a9345fea5903fd065c6321d8a04a069a79c2b322ba7cab897ec370c4",
     "leaves": 12,
-    "at": 1790895593798,
-    "digest": "2a0eb94623118c4be03a949a491bd71215d1904673932ae1baa3690071f9ef15",
+    "at": 1790900094021,
+    "digest": "e8c2efa9afc0ba4af7164a9b7481632b052c9c6aafa4901c910edd0337fdd98a",
     "blockHashes": [
-     "eb4b53f949d015e72b7e6704c7bf770d1ada21dc929eb8b6eddc837d39286d6f",
-     "fb4113bba6e38dcd5b06632f2b95e618c1c5f376feed2346ff83ae5cb56255b1",
-     "b42fb76f2edf40764b5f29250e7025e547a3a8371e4bf3202275d8878b403d7d",
-     "216916b9e1643ede025eb0c030e7e611de7c2b8e2f095fe74784939127a40e95",
-     "3c3ed4f0fb9af8c1d331f727572b60119149768689220f3445847c1f2e2455da",
-     "d512feebf8fc27d8324427f48ccf0f9d3979ea2b86402f1cc4d4fbabf552319d",
-     "06af062934e4ff4613457b55719b90d4ec3c52af89dc0bee509f3799a6ef0010",
-     "c02727d7723bd54765ee5d7186b94cab05166524bf8e76dfd5a943d8eb5eb849",
-     "ab7138865b7b2c525c575f51f353cfe209de77dce4ab85a1bae50ebbb98395b4",
-     "6ada07ceff9308c4a63c4315ad98dd015a271897b20b2bab48d10a4081fae6ad",
-     "d760b4c761c2d247b42b58195988eb3f7b93caa7d4064782b568ef9829ddd3a0",
-     "320a3c1937ece3b5a758a00776328d2a188aed4fd9c495be69137fbf5882353d"
+     "9d60c914881a07fd0934c3a7b7a559b5860f67a6b1909c4b3f9233b822384eb8",
+     "a38d9db4a11d77b1957bdbde89f6fbc8ec3fa99a58e382ab0a38e5d9350f0b5d",
+     "35768a5064639d47b61f3cd7b92adc93a66740dc2ff604b0a46e4140d5d90da9",
+     "8252510671ec5c8f63139a6793153e1af5b5ee427729ed0339d59a7ee7ca1c54",
+     "56facf4e6e5a3ffc81487bd2e916ac9aff398692c9f8cd075d8451cdcc6d8ef1",
+     "9dab9bfb10bbdd8359854f206a71f22068242663fac0364b3a342e6db35dceae",
+     "74083da92276b5439b093ece90d07446cf23e974f2f380672be98db9b3dd67eb",
+     "c128a13a330303a30a98677efd0ca4380d5ca634b9f824ca850a4549fadd6646",
+     "2bc3fce2f6bd65484d1a10adb44b0ebf56c2235facd164ac377878b01f3ea82a",
+     "15ca0f9592c81e1a024833b5adc9396e04a7696066d07149e36002f3369bea09",
+     "01fa79909b04870e5cc705a64518f9917f7a701e3249bcfd8f9c330c14505a03",
+     "7c88a2369fa2c2b36aaf29732dadd9b6c6247ffc064dbb708ec81081e55c2d11"
     ]
    },
    {
-    "fromHeight": 100297,
-    "toHeight": 100308,
-    "root": "9f6765baec2a55a0f530efff8a130bef21957e92137767dee09ef9bb22c0ad9a",
-    "stateRoot": "77f826bc1584b397ceb9498d42e2048a35910281a823a51e72691bdfe116f1b3",
+    "fromHeight": 101257,
+    "toHeight": 101268,
+    "root": "3cf19cdc1d14807957ab27403e2e333f6b78e12401a5f09cc6beabcd90b9c375",
+    "stateRoot": "112012919552e2909df4d65f22bafc8a2ffff31e49cb56798dd4eb0ab406c046",
     "leaves": 12,
-    "at": 1790895592786,
-    "digest": "4327369bb127aa4e8562b979961944b05b8677508a882781f209088c76cea6f7",
+    "at": 1790900092826,
+    "digest": "4cc794fe6c2036075dda24be7fd15e249bae06403f8ce3be25a95385606b8865",
     "blockHashes": [
-     "f1ceb1cab1de22af5e1c22891775b734df1be63b11a098271c7f0babb28d3c70",
-     "48b436be1b1d468a6355742522fba00f85dd881962832f397d1b13271ab9c1ac",
-     "69b0507152dd8a7f4d0246a524a614d03764671319ddf24f72b4986b394432be",
-     "0c8614e76806f727d3736f1b54f0a5bde3afe511978d9fc1479127a70e65b4a9",
-     "65c377075b9e73ee14230c0a13280af4f539f3d72d767788e85204a60db85c68",
-     "97c91954eb4822b6a6e91f17117a131f3a5337aebd87245a63ec1421a3eead9a",
-     "6de199e402da19a999a5cc757f6e0228905ac91027127f4fe426dfd6b7c3680c",
-     "b7c4b4659e6882c5e9bf3ddfbfdf21921b459fc4d79f4fd9b1195661fb243192",
-     "f4f0cfa08a4a181ee50d862ae1f02234ec782ca49fcdd222cd3511bb7c0dc22f",
-     "aada079181f0ab6d8ae52167c0dd4431bae0d51022619c3db381a459b6581a50",
-     "8931ab75a427ffc8adda7e2ef9cdb8d4f58e50b0061efccd8fb305c2a2efad41",
-     "88a674f912acca326132a7d7fb910f67b106f852fa4548e696ee6afb3fe3a12e"
+     "a869090d3ede8c1c3f2bdf2366c066e871ef9a8dd584cb13d6598d8edc5a3dfa",
+     "c804806bef570e9b5715558a94fc55b06feea1999417f1a91edc633be5e5417c",
+     "a8470e916b7ce6e8ac5b7134bf9789c05ddbd415f158b4f606b116e054d0aa39",
+     "4ca90e7b3c82a757778d5227ed25d5383e37ce6d2f1bad1a71092c04b12c4ed6",
+     "4818f51f5e53f78fc54167f11b4a1eabed76997833bc544e4d4de55113ae94e4",
+     "9b2f41b8d244b59ccf7940a46137844db573a87d14172b4fd22e8fb203b99899",
+     "73339a8c3c970fe0561f89d750de45ab127cac78c30be1e4552afab8a3692ae5",
+     "a4b9e0af284d7de558fc893d0d8b8f5e0bdd1588d732c1fedac4ab92dc15ff7c",
+     "9d8842dbbb30d0cdb044e5295caac6e5b93aa0d238448d499ab45bddbba68b7e",
+     "cdd74b92079e29aa8672fd9e634d7253b42ed8a7a327d4b05a5dbce9d9afeb99",
+     "ab453b4590dfd99899ab8fca41aa3d7651ceb62d9fa3230bd95c95b74dd9e324",
+     "fdf917a6211e88fe32c8b90d60e2a789b4655f4558de5c95c9d87df6494c997d"
     ]
    },
    {
-    "fromHeight": 100285,
-    "toHeight": 100296,
-    "root": "ded512b7c92a26d94e8fffcf6e5f0e817f3178fa70bcb82411b76c0052a4f933",
-    "stateRoot": "6f494f00c03e9e5bfe17c1cf0661138134e26d31cd458ccf5669ceb4242fd549",
+    "fromHeight": 101245,
+    "toHeight": 101256,
+    "root": "6492ebe4855c51dedd46ea33ce0b5b927d582be5c8f44935b3d1ea5e34bcedfa",
+    "stateRoot": "12537cf78a1331b6a439c445c2f2ee843e28b9a96d76e0b6ae68a655f3376962",
     "leaves": 12,
-    "at": 1790895591787,
-    "digest": "e29a1005ae52799c3154c69e1b1a0f4ec01f27b303aab98fc3024a15a09703bc",
+    "at": 1790900091632,
+    "digest": "b0703ede175f8e2212dad32b3c24669cd44c3be09ce1bbf5090f3e7ee31d31f1",
     "blockHashes": [
-     "b73e02d36b0510f918b2141fc3dd0876eef23548b6b9af779e22666e728e3e1b",
-     "250bda0f4e5c5e8ae196b9033962c75d15207d34fb3bb2f8c64632cb29f8ca5c",
-     "e5b8e30ff77322ff8a17296d4f1cdccc9ae307a8461386be7a3ad58c049c7d10",
-     "cbc067d15f401955ccf02588bade8a2adccacf897e995edf562b3b660940cbb1",
-     "6ced28ca91aebd83f396c3617c10cd6d2995e27d5c823f4b51a8a01d51be7ef8",
-     "e0a9c5176dc3b5545d4fa1a749860a5db1c9c3aee20a460dc369deb000dc509a",
-     "2ed76c9916b7e152c6275498028550538c3edb08146492b78fdf451c6b4d2d9b",
-     "66bcd777dba94fe81402ab91dee998f66cff60db79ccbc3636022d4bef721a96",
-     "d683f2c3b3c60fd54288ff7cd28f0026aa9b13acb5a5c41800eadbeb4a2a2122",
-     "1366dbb5fc18368715f91d7d9082daf6540529ad1420f891c1843888d94e58a7",
-     "0f3cb289cdc8a48768e23e7343450ea3317b799f57d49b6327ffb5880385000d",
-     "483f69d400eac6a8fd69231a5c6ddc48381a2361c9f33245d7bfd6ad928d3aa3"
+     "8f6805c81f332c9b8e7613a9a1d63346a5f05a17a53b77c877c793ef85a244c1",
+     "2ed74429c1c67b46c875d7b2c24f52a5e757a5d1be57445683282ffad5129dc9",
+     "60bee75922aae2c06ded2ddd357a33eb6a97708a6d0138d8cd806438c43bae7c",
+     "c85708f19aecebbcc3f17659b52adb438a3601cd1c610389303ca1564a7a2546",
+     "42a081c0681de04109a5f0dc9a2b6f92787f76fdb0dc16a6d33dc6ab78a6cfdb",
+     "09af0962b1b11c9276c8eb1ace047972663917eef8f5c27d19ee3a9395ec7c20",
+     "1a145843e5f3e298af08f4e91bd64367b8a6b6cbb00d6bc6d24dc9aca3e3f6c8",
+     "d92dce7619f0f907f859af8c15f94ea48128c6dcfbe436284ac15a8625063bf0",
+     "549669d3134e1dbcf8b333b86713e43f83de9e752cd1652762ad6c463fb368b3",
+     "ec159babeb2fdaebae6cd7a930736896eb6f60d8abe3b6cb6194062e73c368b0",
+     "a1b37e2e2b01f6b70b3c334116d3d624b904899ca4599d74159c71da705ef2b1",
+     "7d7e54d7c728b96031794ae52445e4e71188304d1d6d1d40890ebfb7e7d1f114"
     ]
    },
    {
-    "fromHeight": 100273,
-    "toHeight": 100284,
-    "root": "2c746308532e4bddfa773ebf201e337f72d12d49f5e864bff3f01ec3b2f4d1c1",
-    "stateRoot": "6f90f8b8ad80a2a651d5ffabdc17cb37f33248b98d4d96feda8019ed5dd15700",
+    "fromHeight": 101233,
+    "toHeight": 101244,
+    "root": "5813e0c864b37e0bb6720fd91022ef6dd04fccc70339e0359a7b68f816d8798a",
+    "stateRoot": "adce609df7f0f115c61292972f853b35df06300cae1984a93ad87106792501b7",
     "leaves": 12,
-    "at": 1790895590780,
-    "digest": "5716aaa81706a4ca02c2969f685c03b4d5f1ffb33eba70cb4464a782e2f50d0d",
+    "at": 1790900090447,
+    "digest": "0d627788d9919b494f516458f0b4cd5297df2592597d5af69ec512f4945406dd",
     "blockHashes": [
-     "ddf07ba850a34527d6e9a48a145450d89ea4939290887ab8ad2a660634e4bc7e",
-     "a747f167bf7c1e11e9ace8471d9820af11e8e7492f37d77f74aa2afefff3c0e2",
-     "88c19eb1c3f567a3868c472a14df53907c8506cedf76dbd557a07e6c4c2f0045",
-     "b065b832a663328cc5eae16787acc02b9482e308eb5670365c680f9556c12064",
-     "bcbca553441d43f896aca2ac65e9566a32bfca21c4c60c4afecdeae46b754c04",
-     "96c14d091203aedc1c3d2eb4a8587cda2898538443b60744c24dc20abb9a3945",
-     "207c8bce6970b8f8d1c8c3250673783d571a5e78c2a91925caa6ed856f74f888",
-     "5d7f5b9fea7df66be69fccbb144aadb39d5d77802433d2f715f846a643f89f38",
-     "8602505f6fd02f8daeeb373946bfbe1e980150355d923982a4e730011d77dfbd",
-     "af1106ede49227c4b0200202abdfa1e1357d15c9eda3d96ec5afb5fe51ea1db3",
-     "27a748984db3fedd13f36910f9428e233b064d2acc52c14989daae7415773a12",
-     "1815ba3c71345b86c7f37d48acf346ec3f44062eb2ef6a206f7e8803bb5edfbe"
+     "a683f8a347836eb8942c5f137447be2863bf25d73d3d5e248c8d8c166b5de44a",
+     "8e9a4ecfd1e83793f6656a1fc3df90e58978059c48fc9aa2814f5f62de022894",
+     "008dd3c9823402c86f47e2b9e95752d628087a8b046e2060d4de8b9a76da8d87",
+     "7e760dae30395f36b501b4f39e4dd45faec67d59967c21135b223366ce7d115b",
+     "cc3aab9ce3575fb10232623ea04536702999e0ae1110cf119057f869018b3ec2",
+     "92b9d58133e4821d523ad43b5037c737824e33fb83dd214a52890fc3cb27e6e8",
+     "ab8f4ee833dccda33226e1cc975b3eaf850a5e6b564d7173049f83f91799d970",
+     "d23ff40b5379f82a0953753c5df4edf15fb6d820a593a47d32d58bcf93eb139d",
+     "5246273fad9d62f5f6ab18f8b1bcfc91dcdaf6c4efe765fab9ee1e4d8e98c619",
+     "55fe188fd5ce119fcc8a51a669c06da25a73848980564497c01e70ca675f5267",
+     "feca6197fb17165f9bf497783f66758982dff4ac9fdf27b73bffe45787ab99cb",
+     "6f5a22e450db10a7069e11917e6b892b8b745e45b69fade45a84a6d4c9eacf32"
     ]
    },
    {
-    "fromHeight": 100261,
-    "toHeight": 100272,
-    "root": "78fa2dec14de7708957dfa6b35cc37590bdda1a02ef78c7fde1c2bb94ada39b1",
-    "stateRoot": "71e6004f9c8a445f4fe0c52c3f8d1ee7424ccfeb8913e84a709064576b8e4a9a",
+    "fromHeight": 101221,
+    "toHeight": 101232,
+    "root": "bf049db749850b323a1d6b2dc587ff8274348f0032d5ac0f0285b3cd8bf0a3ac",
+    "stateRoot": "44c9ecd504430dbcb9cd0ee0e056f9fe6f7e2c418d6c6d5a7efd880c21b3bf54",
     "leaves": 12,
-    "at": 1790895589807,
-    "digest": "3dd0c82103b301480819a12d95a479f0ea053783bbb5cc65e9a65d99dfe2a2c1",
+    "at": 1790900089317,
+    "digest": "2cc5708237643e392693c81ce8ce87640bbbea46ed93fa3f83667ce09ccae73b",
     "blockHashes": [
-     "92f510d60646950e576110ad26d072e888b5ff94ebbaffd50967500b369ef2ec",
-     "1fb8938006479f26917eb80cae396387f61e2020506a7f8fa737fbb14e76c1d7",
-     "ad6bb9707a38b493213e8ce5ef411c5f9888a4947e6ccfec88d46af92dd25360",
-     "574541b30c8f036e9ae425477c9521c55499b49dc71331151db1b0d11a5d948c",
-     "2a12f7cde9bbc18c37acd210a22962c3bba37898a841957ce42459dc4261c6e9",
-     "73abd6179bc3bcd0a28f965851266ebfc783f8ca2cf72b9d6a44ab4e0b5497b6",
-     "84f9207c53840ffec296a18686e9976c147452880d8438768e94bbbce67993e1",
-     "e5a4124c4c46606172b486908286d4f64827d80ce771ba947d10a79871b713bd",
-     "76de0215aad6bfc9643300b0662f190b9b63e9e6cccf56715fe54f4b536ea827",
-     "a27394d6553f734ad487dc88427b17a1a96421d761bc5f6e13533b8e11412a6a",
-     "8ed96dfa3337d943395e23ecfb9cc883dd2de9b8c0e518abbaf10a83fe46daf4",
-     "e07628c796d64b35675f3936cf11904d4706c543c1af03ffc2374e9f2abb7f46"
+     "22d14d4be285439652fff0ca4c19dd85ecb199b93c84e62afe5e78bb68bed004",
+     "58dcb6fab59d62eaa5b607ec3711db3c4a32def24eea670f8e88b0b4abd46497",
+     "84989cc925644909609d1320a334508bcea2476de4e41fa5163e70a733432ea7",
+     "ed0f1843dd570f4d532602d73f3be9d9636edb23d1bacb4334d3fad8931d20ca",
+     "ecfa1fa627e0415ed74502eb602ad94e013aa36924b6f2ca65889c3c7f95ef90",
+     "59ec3a65c4beb039248626a5eac6a9c45a079b591e3388534c4eccd55a9ea617",
+     "004e029b4397c90a601b753789e9f8490bec8b49f408b5808725b2f883137389",
+     "3dbee44ba5cea5d7e80aa247aefd804c2b7aab1a5dcf7c8e36a7f15f1b1d6aec",
+     "778e1a23c3a2762b1d3b4aa999b3c354c8ff76e1392c64dcd3e44eeb28dedc8c",
+     "c53925bc130990422c0cc9f355743cef41fed31e4fad2000e69069d2981c64f5",
+     "7ab57f75667c1f4e56c077acec48d2b74456078dadf4f795508d6b5c69c8308d",
+     "31728454f603c8ec7697d9221a69fca9db692ad02e3f867d9c972e59e2731d62"
     ]
    },
    {
-    "fromHeight": 100249,
-    "toHeight": 100260,
-    "root": "5adb257770052e93c6349c9db30f4c2bc247c3cdc3bab30664ddb1283c713596",
-    "stateRoot": "377fe5ec913be64d74f08996d74fea021174ff1b02f06131b99587943c7c9e5b",
+    "fromHeight": 101209,
+    "toHeight": 101220,
+    "root": "dc8f6718585605b6eae8e7e302fe940e92629ef9b2fdc1f800033d6df9de42c3",
+    "stateRoot": "0017c03c6772241cdf087c01e8fabfc70b19b1e9b5d97511bc783ab6b2a0e436",
     "leaves": 12,
-    "at": 1790895588813,
-    "digest": "a52852617a5ef3ff9278f5819fa42fc56a0b0f8dec8357cd670c8b5ce15336a6",
+    "at": 1790900088143,
+    "digest": "6a35c944b02a6ef940a0a631bfd320906bbc428c75e6b62d20e1bc4fa1f99d12",
     "blockHashes": [
-     "f4eec2c12578f1de62529087052a5b0e004f625bacf4b4192923704eb3f33aa0",
-     "d2b4669ed2a10aaa4dc8e918c1537f89e61df41343bd85c550b506171fe6ab59",
-     "77215e5c44955ecbac14b174b727baf97ec60903fc731dc89355b59d783d6e27",
-     "73af73842cb3d3e5bc071687432120ad14da83eb29402e6c8a18d65a8897623e",
-     "498727613ea542389335ca961d8e699b36864b4c53b114917dff1fab5355912e",
-     "f6f1f29c6ed15090bb63d3c4d895b8b705a93dd0128b32541f2055c30a1a9cc2",
-     "3cd0355094fc92ea3e1fbffaafc4c4c420640fa695678c13dd5225d6cc922963",
-     "1c3c0e88513ad19d834db987ea5844c807bd5608051edb1af4eb2c9107196adc",
-     "c6360e18fe8a6515941799847438809a4823eb60cf208370ce0d4f2e40dd9ed8",
-     "2511fafb3feba8f0882ef69dab30a5ca0a2f0d05648acb8167619ba33259bfd5",
-     "455c2cff0cae76dc3d9971bf276f78136b66ec4ef0cb2b28b9b08b076e066e77",
-     "ef2a0240e435149b101684c2623b3836ed5868c8e0d26eb66b69bda3c46cf321"
+     "062d82581cb7491ebf2783436233030b9b953ea7e3dcd32b05a1a25b5e29c73b",
+     "21f39aa4aa915f2a7647142d998dab662d746ea9b2338d45ecbea58bd62c07b7",
+     "a2d9985aba2c6a5cf2532df27ce645e03437fa0325f73e748dab7675faed77fe",
+     "2f615942d28d597c5e5f25d6b18629415dc315c74457cf46e9a12642688543d5",
+     "e62df592d4a9fa8284db4cfac986de15ab6c5b0c24b67ecf3a6d3b01af7e1118",
+     "e8b17d3ad14c6da32dba95b1ed99d6b9387ed7ca72c264872148a5efd0f0eed5",
+     "70ee870bd7c6f0710ba59e12e5b8c1a3e87c1a3721e76eb1d3ca91cbe2ed8311",
+     "379825f84ceab38be395caef29ead51b32020d34e10d8241c5669f1370b769bc",
+     "c91324a388a25375dbcfa806dd673b0d9e463f0ba5ffb67a3fe40be90554c2ee",
+     "7602cf272f4416051ff9fb54558c177128f6ce0bd26972726bff927da362d1ab",
+     "9db63b62c261d059422443f09e7660396614434bbcd389b64d14f9e7bc02ccce",
+     "dc43d999cd895056dce446efd912072fc4de4c5b174519ec7fcc468e25e24507"
     ]
    }
   ],
   "receipts": [
    {
     "kind": "seal",
-    "digest": "908541d4a9e4ed9f4761d8294ed38b73d8db16b8d1a680de0706f6d02254fbae",
-    "at": 1790895595801
+    "digest": "da023786dcd42a696f0a8dd6d5d1fefd89e2de71a387dab393bdb5a5675bb62b",
+    "at": 1790900096417
    },
    {
     "kind": "seal",
-    "digest": "812eea8cc14d59118a204d2067e4f1c751a91366e9698b039f9f31a4295485b3",
-    "at": 1790895594801
+    "digest": "fc09c277184bd7af16458c51384033e51eeb8a124c32f312272de28302ceef40",
+    "at": 1790900095213
    },
    {
     "kind": "seal",
-    "digest": "967966c1bfb14502f29359d728cb13d3836b85937ba317fe56a670a5e700e115",
-    "at": 1790895593798
+    "digest": "2a5192f0a472078720c89a164c90dfaf544fc2551566fad7e14ad143643efef4",
+    "at": 1790900094022
    },
    {
     "kind": "seal",
-    "digest": "eb325114619d65944614ad9a00f411ad034d7d0b26e51a09471e346a8bf6101a",
-    "at": 1790895592787
+    "digest": "9f135678c121757bee3c26725e41b8c76c86c9532f8e2e3b7e8a71f345da5163",
+    "at": 1790900092826
    },
    {
     "kind": "seal",
-    "digest": "1d6712e539040f7ee3366753f1340768a8945371a1c38db21e724d9999812681",
-    "at": 1790895591787
+    "digest": "0bcd3ad9f75bb255d5d9fccebe866af67704e98227b600772ab14e92e7c814e5",
+    "at": 1790900091633
    },
    {
     "kind": "seal",
-    "digest": "591d153a098a2cadf98b763bccb32b777d1e5171c2e6ab66f1fd324e8016b644",
-    "at": 1790895590780
+    "digest": "ea586e121f6395b3ed5c3163df8320a6aeffea2136425552b9c44e0bd5d007a6",
+    "at": 1790900090448
    },
    {
     "kind": "seal",
-    "digest": "3ada895e79ff8aadd048d819cb67de0eae05ca4c44c4aa4b516fcbea13ba9f0a",
-    "at": 1790895589807
+    "digest": "3355e0ed610a07e83a898b3f2256ea28491623202c260db5010d121292f50a60",
+    "at": 1790900089317
    },
    {
     "kind": "seal",
-    "digest": "44a712d73f52e7f0acd626951dd3fb31750b39d6413964786cab0cf8d2f38e30",
-    "at": 1790895588813
+    "digest": "efa3709e264e787e9c3b07e258161c7eebdc1229c1ffe66831afc489dfb57cb7",
+    "at": 1790900088144
    },
    {
     "kind": "seal",
-    "digest": "b4002c8ba7110eaf1020fb237ed7cb8fd3b39033fd04c3653bbbd5ea0f2e5bf3",
-    "at": 1790895587812
+    "digest": "2963a6695daf540ccaf8cd25b8e8605791227a3bafae8fbc681abc712d0eaf64",
+    "at": 1790900086989
    },
    {
-    "kind": "seal",
-    "digest": "0b9be907947c91abef7e81a0e14aa64de8a3b457f950ebcc16cca45f3b210a07",
-    "at": 1790895586821
+    "kind": "price-seal",
+    "digest": "20f3e87e626778ba78059f130c12907eefc77dcd257d95e9495ebfc9a41c55ba",
+    "at": 1790900086211
    }
   ],
   "blockWindow": 6
@@ -1333,31 +1318,9 @@
    "amountMu": 20000,
    "taker": "bot-e",
    "maker": "arena",
-   "at": 1790895564241,
-   "h": 100000
-  },
-  {
-   "kind": "fill",
-   "base": "SAOS",
-   "quote": "USDS",
-   "price": 1322,
-   "amountMu": 20000,
-   "taker": "arena",
-   "maker": "bot-e",
-   "at": 1790895560876,
-   "h": 99960
-  },
-  {
-   "kind": "fill",
-   "base": "SAOS",
-   "quote": "USDS",
-   "price": 1322,
-   "amountMu": 20000,
-   "taker": "bot-e",
-   "maker": "arena",
-   "at": 1790895557448,
-   "h": 99920
+   "at": 1790900068973,
+   "h": 101041
   }
  ],
- "tick": 481
+ "tick": 480
 }
