@@ -59,19 +59,37 @@ function rpc(node, method, params, timeout = 20000) {
 const num = (s) => parseFloat(String(s || '0'));
 const r6 = (x) => (x == null ? null : Math.round(x * 1e6) / 1e6);
 
-// VP from manabar with legacy fallback (standard regen math, Z-30-r corrected form)
-function vpPct(acc) {
+// VP from chain-canonical fields — Z-33 incident fixed:
+// (1) voting_manabar.current_mana arrives as a STRING in condenser → `cur + regen`
+//     was string-concatenating ("7448851934" + 7811969) → every manabar account read
+//     VP=100%. num() coercion everywhere now. (Third concat-class incident on record.)
+// (2) steem's manabar is NOT in vests×1e6 scale (62.8% there vs 70.68% legacy truth),
+//     so steem reads the legacy voting_power field + regen — steem-canonical.
+// (3) hive+blurt manabar scales are exact (blurt: a 100% weight vote burned exactly
+//     2% of vests×1e6 — verified on chain 2026-10-02); beblurt's legacy field is
+//     lazily stale (read 0 then 9799 minutes apart), manabar is the truth there.
+function vpPct(chain, acc) {
   try {
     const vests = num(acc.vesting_shares) + num(acc.received_vesting_shares) - num(acc.delegated_vesting_shares);
     const max = vests * 1e6;
     const nowSec = Date.now() / 1000;
-    let cur = acc.voting_manabar ? acc.voting_manabar.current_mana : null;
-    if (cur == null) cur = max * (num(acc.voting_power) || 0) / 10000; // legacy 0..10000
-    const elapsed = Math.max(0, nowSec - (acc.last_vote_time ? (new Date(acc.last_vote_time + 'Z').getTime() / 1000) : nowSec));
-    const regen = max * Math.min(elapsed, VESTS_PER_DAY) / VESTS_PER_DAY;
-    const mana = Math.min(max, cur + regen);
-    return { vp: max > 0 ? r6(100 * mana / max) : 0, vests: r6(vests), sp: r6(vests * 1) };
-  } catch (_) { return { vp: null, vests: null, sp: null }; }
+    const lastSec = acc.last_vote_time ? (new Date(acc.last_vote_time + 'Z').getTime() / 1000) : nowSec;
+    const elapsed = Math.max(0, nowSec - lastSec);
+    const regenFrac = Math.min(elapsed, VESTS_PER_DAY) / VESTS_PER_DAY; // fraction of full regen
+    let mana = null;
+    if (chain === 'steem') {
+      // steem-canonical: legacy 0..10000 field is what steem's own vote math uses
+      const legacy = num(acc.voting_power);
+      mana = (legacy / 10000 + regenFrac);
+      return { vp: r6(Math.min(100, mana * 100)), vests: r6(vests) };
+    }
+    if (acc.voting_manabar && acc.voting_manabar.current_mana != null && max > 0) {
+      mana = Math.min(max, num(acc.voting_manabar.current_mana) + regenFrac * max);
+      return { vp: max > 0 ? r6(100 * mana / max) : 0, vests: r6(vests) };
+    }
+    // last resort: legacy field without regen
+    return { vp: r6(num(acc.voting_power) / 100), vests: r6(vests) };
+  } catch (_) { return { vp: null, vests: null }; }
 }
 
 async function chainBook(chain, names) {
@@ -81,7 +99,7 @@ async function chainBook(chain, names) {
     return names.map((n) => {
       const a = accs.find((x) => x && x.name === n);
       if (!a) return { name: n, chain, exists: false };
-      const { vp, vests } = vpPct(a);
+      const { vp, vests } = vpPct(chain, a);
       const p = a.reward_steem_balance || a.reward_hive_balance || a.reward_blurt_balance || '0 ' + cfg.symbol;
       const pd = a.reward_sbd_balance || a.reward_hbd_balance || ('0 ' + (chain === 'hive' ? 'HBD' : cfg.debt));
       const pv = a.reward_vesting_balance || '0.000000 VESTS';

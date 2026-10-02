@@ -25,6 +25,12 @@ const HIVE_NODE = 'https://api.hive.blog';
 const BLURT_NODE = 'https://rpc.beblurt.com';
 const HIVE_CHAIN_ID = 'beeab0de00000000000000000000000000000000000000000000000000000000';
 const BLURT_CHAIN_ID = 'cd8d90f29ae273abec3eaa7731e25934c63eb654d55080caff2ebb7f5df6381f';
+// Z-33: hive head lane — VP found idle at 100% (25.4 HP manabar-verified); hive serves
+// reputation on condenser (unlike blurt), so the steem repScore gate works as-is.
+const HIVE_TAGS = ['life', 'blog', 'photography', 'food', 'travel', 'story', 'nature', 'health', 'writing', 'hive'];
+const CUR_VOTE_MAX_HIVE = 2;
+const HIVE_MIN_REP = 40;   // Z-33 calibrated: the hive 'created' feed is small-account heavy; 55 zeroed all 20 candidates. 40 still requires raw rep ≥ ~4.6e10.
+const HIVE_MAX_AGE_MIN = 480;
 const RETIRED = new Set(['ynet']);
 const HEAD = 'headcorner';
 const TRON_CUSTODY = 'TYVwwuvdDmfy3shxT3cb3RKLrRCshaZxTy';
@@ -90,6 +96,45 @@ function recoverHeadPosting() {
         const v = JSON.parse(fs.readFileSync(vj, 'utf8'));
         const hc = (v.accounts || []).find(a => a.username === HEAD);
         const wif = hc && hc.keys && hc.keys.steem && hc.keys.steem.posting && hc.keys.steem.posting.wif;
+        try { fs.rmSync(out, { recursive: true, force: true }); } catch (_) {}
+        return typeof wif === 'string' && wif.length > 40 ? wif : null;
+      }
+    }
+  } catch (_) {}
+  try { fs.rmSync(out, { recursive: true, force: true }); } catch (_) {}
+  return null;
+}
+
+// Z-33: headcorner's HIVE posting key — same private-vault pattern as recoverHeadPosting.
+// The hive key is DISTINCT from steem's (verified vault-side) and matches the on-chain
+// posting authority (STM6u99… — verified 2026-10-02 before first hive-lane run).
+function recoverHeadHive() {
+  const dir = process.env.STEEM_REPO_DIR;
+  if (!dir) return null;
+  const { execFileSync } = require('child_process');
+  const crypto = require('crypto');
+  const out = path.join('/tmp', 'td-keys-h-' + Date.now());
+  try {
+    fs.mkdirSync(out, { recursive: true, mode: 0o700 });
+    const metaPath = path.join(dir, 'agent', 'recovery-meta.json');
+    if (!fs.existsSync(metaPath)) return null;
+    const metas = [JSON.parse(fs.readFileSync(metaPath, 'utf8'))];
+    const vdir = path.join(dir, 'agent', 'vault');
+    const encs = fs.readdirSync(vdir).filter(f => f.endsWith('.enc')).map(f => path.join(vdir, f));
+    const sha = (f) => crypto.createHash('sha256').update(fs.readFileSync(f)).digest('hex');
+    for (const enc of encs) {
+      const outer = sha(enc);
+      for (const m of metas) {
+        if (!m || !m.keysZipPass || m.keysZipSha256 !== outer) continue;
+        const dec = path.join(out, 'v.zip');
+        execFileSync('openssl', ['enc', '-d', '-aes-256-cbc', '-pbkdf2', '-iter', '300000', '-in', enc, '-out', dec, '-pass', 'env:TDZP'], { env: { ...process.env, TDZP: m.keysZipPass }, stdio: 'pipe' });
+        if (fs.readFileSync(dec).subarray(0, 2).toString('latin1') !== 'PK') continue;
+        execFileSync('unzip', ['-o', '-q', dec, '-d', out], { stdio: 'pipe' });
+        const vj = path.join(out, 'agent', 'keys', 'vault.json');
+        if (!fs.existsSync(vj)) continue;
+        const v = JSON.parse(fs.readFileSync(vj, 'utf8'));
+        const hc = (v.accounts || []).find(a => a.username === HEAD);
+        const wif = hc && hc.keys && hc.keys.hive && hc.keys.hive.posting && hc.keys.hive.posting.wif;
         try { fs.rmSync(out, { recursive: true, force: true }); } catch (_) {}
         return typeof wif === 'string' && wif.length > 40 ? wif : null;
       }
@@ -274,6 +319,75 @@ async function headCurate(headWif, ownNames) {
   return log;
 }
 
+// ---- HEAD CURATION (hive lane; Z-33: 25.4 HP manabar-verified 100% VP — idle surface)
+async function headCurateHive(headWif) {
+  const log = [];
+  if (!headWif) { log.push({ op: 'SKIP-NO-HEAD-POSTING' }); return log; }
+  const headAcc = (await rpcNode(HIVE_NODE, 'condenser_api.get_accounts', [[HEAD]]))[0];
+  if (!headAcc) { log.push({ op: 'SKIP-NO-ACCOUNT', chain: 'hive' }); return log; }
+  const hp = f(headAcc.vesting_shares) + f(headAcc.received_vesting_shares) - f(headAcc.delegated_vesting_shares);
+  // hive manabar scale verified exact: mana == vests×1e6 at full (Z-33 probe)
+  let vp = f(headAcc.voting_power);
+  if (headAcc.voting_manabar && headAcc.voting_manabar.current_mana != null && hp > 0) {
+    const maxMana = hp * 1e6;
+    const nowSec = Math.floor(Date.now() / 1000);
+    const elapsed = Math.max(0, nowSec - (headAcc.voting_manabar.last_update_time || nowSec));
+    const regen = maxMana * Math.min(elapsed, 432000) / 432000;
+    vp = Math.min(10000, 10000 * Math.min(maxMana, f(headAcc.voting_manabar.current_mana) + regen) / maxMana);
+  }
+  if (vp < CUR_VP_FLOOR) { log.push({ op: 'SKIP-VP-FLOOR', chain: 'hive', vp: vp / 100, hp: r3(hp) }); return log; }
+  const seenAuthors = new Set();
+  const candidates = [];
+  for (const tag of HIVE_TAGS) {
+    let disc = [];
+    try { disc = await rpcNode(HIVE_NODE, 'condenser_api.get_discussions_by_created', [{ tag, limit: 20 }]); } catch (_) { continue; }
+    for (const p of disc) {
+      const author = p.author;
+      if (!author || seenAuthors.has(author)) continue;
+      const ageMin = (Date.now() - new Date(p.created + 'Z').getTime()) / 60000;
+      if (ageMin < CUR_MIN_AGE_MIN || ageMin > HIVE_MAX_AGE_MIN) continue;
+      if ((p.active_votes || []).some(v => v.voter === HEAD)) continue;
+      seenAuthors.add(author);
+      candidates.push({ author, permlink: p.permlink, tag, ageMin: Math.round(ageMin) });
+      if (candidates.length >= 20) break;
+    }
+    if (candidates.length >= 20) break;
+    await sleep(250);
+  }
+  const reps = {};
+  for (let i = 0; i < candidates.length; i += 30) {
+    const chunk = [...new Set(candidates.slice(i, i + 30).map(c => c.author))];
+    try {
+      const rows = await rpcNode(HIVE_NODE, 'condenser_api.get_accounts', [chunk]);
+      for (const r0 of rows) {
+        // Z-33 second calibration: api.hive.blog serves reputation=0 across the fresh
+        // 'created' feed (measured: 5/5 authors at 0) — repScore zeroed all candidates.
+        // Same measured substitute as blurt: age ≥ 30d AND post_count ≥ 10 → 50.
+        if (f(r0.reputation) > 0) { reps[r0.name] = repScore(r0.reputation); continue; }
+        const ageDays = r0.created ? (Date.now() - new Date(r0.created + 'Z').getTime()) / 864e5 : 0;
+        reps[r0.name] = (ageDays >= 30 && f(r0.post_count) >= 10) ? 50 : 0;
+      }
+    } catch (_) {}
+    await sleep(250);
+  }
+  let voted = 0;
+  for (const c of candidates) {
+    if (voted >= CUR_VOTE_MAX_HIVE) break;
+    if ((reps[c.author] || 0) < HIVE_MIN_REP) continue;
+    try {
+      await signAndBroadcast({ node: HIVE_NODE, chainId: HIVE_CHAIN_ID, wif: headWif, ops: [['vote', { voter: HEAD, author: c.author, permlink: c.permlink, weight: CUR_WEIGHT }]] });
+      await sleep(1500);
+      const back = await rpcNode(HIVE_NODE, 'condenser_api.get_content', [c.author, c.permlink]);
+      const ok = back && (back.active_votes || []).some(v => v.voter === HEAD);
+      log.push({ op: ok ? 'VOTED-VERIFIED' : 'VOTED-READBACK-PENDING', chain: 'hive', author: c.author, permlink: c.permlink.slice(0, 40), tag: c.tag, ageMin: c.ageMin, rep: reps[c.author] });
+      voted++;
+    } catch (e) { log.push({ op: 'ERR', chain: 'hive', author: c.author, msg: String(e.message || e).slice(0, 80) }); }
+    await sleep(12500); // vote lockout margin
+  }
+  log.push({ op: 'SUMMARY', chain: 'hive', voted, candidates: candidates.length, vpBefore: vp / 100, vestsRaw: r3(hp) });
+  return log;
+}
+
 // ---- HEAD CURATION (blurt lane; Z-32: 8727 BP idle — same doctrine, blurt chain)
 async function headCurateBlurt(headWif) {
   const log = [];
@@ -281,7 +395,16 @@ async function headCurateBlurt(headWif) {
   const headAcc = (await rpcNode(BLURT_NODE, 'condenser_api.get_accounts', [[HEAD]]))[0];
   if (!headAcc) { log.push({ op: 'SKIP-NO-ACCOUNT', chain: 'blurt' }); return log; }
   const bp = f(headAcc.vesting_shares) + f(headAcc.received_vesting_shares) - f(headAcc.delegated_vesting_shares);
-  const vp = f(headAcc.voting_power);
+  // Z-33: beblurt's legacy voting_power field is broken (always 0) — the manabar is
+  // the chain truth (probe 2026-10-02: manabar 100.00% vs legacy 0). Standard regen math.
+  let vp = f(headAcc.voting_power);
+  if (headAcc.voting_manabar && headAcc.voting_manabar.current_mana != null && bp > 0) {
+    const maxMana = bp * 1e6;
+    const nowSec = Math.floor(Date.now() / 1000);
+    const elapsed = Math.max(0, nowSec - (headAcc.voting_manabar.last_update_time || nowSec));
+    const regen = maxMana * Math.min(elapsed, 432000) / 432000;
+    vp = Math.min(10000, 10000 * Math.min(maxMana, f(headAcc.voting_manabar.current_mana) + regen) / maxMana);
+  }
   if (vp < CUR_VP_FLOOR) { log.push({ op: 'SKIP-VP-FLOOR', chain: 'blurt', vp: vp / 100, bp: r3(bp) }); return log; }
   const seenAuthors = new Set();
   const candidates = [];
@@ -304,7 +427,18 @@ async function headCurateBlurt(headWif) {
   const reps = {};
   for (let i = 0; i < candidates.length; i += 30) {
     const chunk = [...new Set(candidates.slice(i, i + 30).map(c => c.author))];
-    try { const rows = await rpcNode(BLURT_NODE, 'condenser_api.get_accounts', [chunk]); for (const r0 of rows) reps[r0.name] = repScore(r0.reputation); } catch (_) {}
+    try {
+      const rows = await rpcNode(BLURT_NODE, 'condenser_api.get_accounts', [chunk]);
+      for (const r0 of rows) {
+        // Z-33: blurt nodes serve no reputation field (verified on both live nodes) —
+        // the steem repScore silently zeroed every candidate and the lane starved.
+        // Substitute measured gate: account age ≥ 30d AND post_count ≥ 10 → 50 (passes
+        // BLURT_MIN_REP=40); otherwise 0. Anti-spam floor from data that blurt DOES serve.
+        if (r0.reputation != null) { reps[r0.name] = repScore(r0.reputation); continue; }
+        const ageDays = r0.created ? (Date.now() - new Date(r0.created + 'Z').getTime()) / 864e5 : 0;
+        reps[r0.name] = (ageDays >= 30 && f(r0.post_count) >= 10) ? 50 : 0;
+      }
+    } catch (_) {}
     await sleep(250);
   }
   let voted = 0;
@@ -350,6 +484,8 @@ async function headCurateBlurt(headWif) {
   catch (e) { receipt.curation = [{ op: 'ERR', msg: String(e.message || e).slice(0, 100) }]; }
   try { receipt.curationBlurt = await headCurateBlurt(headPosting); }
   catch (e) { receipt.curationBlurt = [{ op: 'ERR', msg: String(e.message || e).slice(0, 100) }]; }
+  try { receipt.curationHive = await headCurateHive(process.env.SA_HEAD_HIVE_POSTING || recoverHeadHive() || headPosting); }
+  catch (e) { receipt.curationHive = [{ op: 'ERR', msg: String(e.message || e).slice(0, 100) }]; }
 
   // ---- ARMED RAIL (holstered) ----
   receipt.rail.note = EXEC_ENABLED

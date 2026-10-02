@@ -1,12 +1,11 @@
 # Ventures — the fleet's public business board (two-sided ledger)
 
-_venture-desk v1.0.0 · 2026-10-02T12:21:12.712Z · doctrine: verified live (TWO-SIDED LEDGER LAW present)_
+_venture-desk v1.0.0 · 2026-10-02T14:53:36.175Z · doctrine: verified live (TWO-SIDED LEDGER LAW present)_
 
 Born from the clodfarm study (Z-31): they built the best stop-spending governor we have seen and no earn side at all. We adopt the governor math and bind the missing half as law. Standing truth:
 
 **earn $0.0034/day vs burn $4.3543/day — the gap is the mission; every venture's earn side is booked from here on (EARN-GOVERNOR LAW)**
 
-> self-heal: econ-book.json summary had the parallel runtime's `[object Object] |` concat bug — repaired in place this run (layers must not corrupt each other).
 ## V1 · Curation house — OPEN
 - **Thesis:** disciplined public-external curation (10 soldiers lane; headcorner lane owned by the weave daemon) — our votes ARE the traffic
 - **Product → rail → traffic:** attention allocated by deterministic public scoring → HP curation rewards (steem/hive) → native feeds of curated public authors
@@ -22,7 +21,7 @@ Born from the clodfarm study (Z-31): they built the best stop-spending governor 
 - **Earn line:** realized spreads ≥ $0.02/day within 7d of live rails
 - **Kill rule:** RAIL-HEALTH stall >24h → zero signing; no fills in 14d → capital→escrow (HARVEST)
 - **Evidence:** econ-desk.cjs (marker "rail-health") ✓ · econ-desk.cjs (marker "verify-then-sign") ✓ · econ-book.json (marker "rail-health") ✓ → mechanism PROVEN in-repo
-- **swapHiveTreasury:** 0.05814915
+- **swapHiveTreasury:** 0
 - **hiveLiquid:** 0.034
 - **railFrontier:** 0
 - **earn:** realized fills booked in econ-book rows (on-chain deltas only)
