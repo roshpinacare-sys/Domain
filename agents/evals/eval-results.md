@@ -1,6 +1,6 @@
 # Desk Evals — runnable expectations (fresh-process judge, Z-36)
 
-_run-evals v1.1.0 (Z-36 + Z-38: +guard evals E7-E9) · 2026-10-02T22:44:13.682Z_
+_run-evals v1.1.0 (Z-36 + Z-38: +guard evals E7-E9) · 2026-10-02T22:48:14.552Z_
 
 **evals green: 9/9 expectations hold**
 

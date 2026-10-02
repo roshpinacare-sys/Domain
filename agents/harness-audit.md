@@ -1,6 +1,6 @@
 # Harness Audit — the fleet's five-subsystem check (fresh-context judge node)
 
-_harness-audit v1.0.0 · 2026-10-02T22:46:32.204Z · born from the learn-harness-engineering study (Z-35, extended Task 19)_
+_harness-audit v1.0.0 · 2026-10-02T22:48:15.891Z · born from the learn-harness-engineering study (Z-35, extended Task 19)_
 
 **harness green: 30 checks pass, 0 fail — the five subsystems hold and the three structural failures have named countermeasures**
 
@@ -32,10 +32,10 @@ _harness-audit v1.0.0 · 2026-10-02T22:46:32.204Z · born from the learn-harness
 | 24 | anchors | KPI names its method (oracle discipline) | PASS | KPI.json method field |
 | 25 | anchors | spot oracle measured at run time (not cached stories) | PASS | ventures.json priceOracle |
 | 26 | graph | every FILLED role names a reachable worker artifact (role→worker wiring) | PASS | 7 FILLED roles · 7 wired |
-| 27 | verification | destructive-command guard live (dcg adoption): selftest + workflow shape-scan | PASS | selftest 13/13 · workflows scanned: 0 hits |
-| 28 | loop | all six loop primitives have live fleet instances (automations/worktrees/skills/connectors/sub-agents/external state) | PASS | workflows:41 desks:46 receipts:true books:9 claims:true |
-| 29 | sovereignty | role-registry integrity: every charter row names a real file (roles-as-data, no invented agents) | PASS | 47 rows · cols 9 · dupes 0 · missing files 0 |
-| 30 | sovereignty | change-request ledger integrity: every CR well-formed, no PENDING abandoned >7d | PASS | 1 CRs · malformed 0 · stale-pending 0 |
+| 27 | loop | all six loop primitives have live fleet instances (automations/worktrees/skills/connectors/sub-agents/external state) | PASS | workflows:41 desks:47 receipts:true books:9 claims:true |
+| 28 | sovereignty | role-registry integrity: every charter row names a real file (roles-as-data, no invented agents) | PASS | 48 rows · cols 9 · dupes 0 · missing files 0 |
+| 29 | sovereignty | change-request ledger integrity: every CR well-formed, no PENDING abandoned >7d | PASS | 2 CRs · malformed 0 · stale-pending 0 |
+| 30 | sovereignty | mechanical override live: destructive-command guard stamped, evals E7-E9 pin it | PASS | ledger at 2026-10-02T22:48:15.858Z · scan denies 3 · guardEvals green |
 
 **Books pulse:** econ-book.json ✓ · curation-book.json ✓ · money-ledger.json ✓ · ventures.json ✓ · fills-ledger.json ✓ · bridge-book.json ✓ · dex-book.json ✓ · learning-ledger.json ✓ · recruitment.json ✓
 
