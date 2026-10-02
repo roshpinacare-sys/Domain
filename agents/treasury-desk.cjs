@@ -494,6 +494,7 @@ async function headCurateBlurt(headWif) {
 
   // ---- LEDGER (committed, keyless) ----
   const book = {
+    executor: 'headcorner', // Task 18: the ledger names the account it describes — the reconcile cross-check (references executor account) reads this identity
     headSteemLiquid: receipt.book.steem && receipt.book.steem.head ? receipt.book.steem.head.liquid : null,
     headSteemDebt: receipt.book.steem && receipt.book.steem.head ? receipt.book.steem.head.debt : null,
     headSteemStake: receipt.book.steem && receipt.book.steem.head ? receipt.book.steem.head.effStake : null,
