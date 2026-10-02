@@ -1,6 +1,6 @@
 # Harness Audit — the fleet's five-subsystem check (fresh-context judge node)
 
-_harness-audit v1.0.0 · 2026-10-02T22:43:23.686Z · born from the learn-harness-engineering study (Z-35, extended Task 19)_
+_harness-audit v1.0.0 · 2026-10-02T22:44:13.453Z · born from the learn-harness-engineering study (Z-35, extended Task 19)_
 
 **harness NOT green: 9 FAIL — the audit is honest, the fails are the next work**
 
@@ -35,7 +35,7 @@ _harness-audit v1.0.0 · 2026-10-02T22:43:23.686Z · born from the learn-harness
 | 27 | loop | all six loop primitives have live fleet instances (automations/worktrees/skills/connectors/sub-agents/external state) | FAIL | workflows:41 desks:47 receipts:true books:9 claims:false |
 | 28 | sovereignty | role-registry integrity: every charter row names a real file (roles-as-data, no invented agents) | PASS | 48 rows · cols 9 · dupes 0 · missing files 0 |
 | 29 | sovereignty | change-request ledger integrity: every CR well-formed, no PENDING abandoned >7d | PASS | 2 CRs · malformed 0 · stale-pending 0 |
-| 30 | sovereignty | mechanical override live: destructive-command guard stamped, evals E7-E9 pin it | PASS | ledger at 2026-10-02T22:43:01.924Z · scan denies 0 · guardEvals green |
+| 30 | sovereignty | mechanical override live: destructive-command guard stamped, evals E7-E9 pin it | PASS | ledger at 2026-10-02T22:44:12.471Z · scan denies 0 · guardEvals green |
 
 **Books pulse:** econ-book.json ✓ · curation-book.json ✓ · money-ledger.json ✓ · ventures.json ✓ · fills-ledger.json ✓ · bridge-book.json ✓ · dex-book.json ✓ · learning-ledger.json ✓ · recruitment.json ✓
 
