@@ -203,6 +203,16 @@ const freshCount = bookStates.filter((b) => b.exists && b.fresh).length;
   check('sovereignty', 'change-request ledger integrity: every CR well-formed, no PENDING abandoned >7d', crVerdict.pass,
     crVerdict.evidence, 'self-modification is never silent: scope changes flow through judged CRs (prompts.chat changeRequests, fleet-hardened)');
 
+  // Z-38: mechanical override — the destructive-command gate exists, is stamped, and evals pin it
+  const guardLedger = readJson(path.join(AG, 'command-guard.json'));
+  const guardScript = read(path.join(AG, 'command-guard.cjs'));
+  const guardEvals = readJson(path.join(AG, 'evals', 'eval-results.json'));
+  const guardEvalsGreen = !!(guardEvals && (guardEvals.evals || []).filter((e) => ['E7', 'E8', 'E9'].includes(e.id)).every((e) => e.status === 'PASS'));
+  const guardOkReal = !!(guardScript && guardLedger && guardLedger.at && guardEvalsGreen && guardScript.includes('DEFAULT-ALLOW'));
+  check('sovereignty', 'mechanical override live: destructive-command guard stamped, evals E7-E9 pin it', guardOkReal,
+    guardScript ? `ledger at ${guardLedger.at || 'never'} · scan denies ${guardLedger.denies == null ? 'n/a' : guardLedger.denies} · guardEvals ${guardEvalsGreen ? 'green' : 'red'}` : 'missing',
+    'Z-38 (study: destructive_command_guard): the override protocol is code before execution, not prose after it');
+
   // ---- silent-costs watch (L13) — booked as standing observations, honestly
   const silentCosts = {
     verificationDebt: 'selftests cover past incidents; every NEW failure mode (concat family ×3, null-deref, dedupe) becomes a check within one wave of discovery',
@@ -217,15 +227,15 @@ const freshCount = bookStates.filter((b) => b.exists && b.fresh).length;
     fail: checks.filter((c) => c.status === 'FAIL').length
   };
   const out = {
-    ok: true, at, agent: 'harness-audit v1.2.0 (Z-35 + Task 19 + Z-37: +sovereignty subsystem — role-registry integrity, change-request ledger)',
-    origin: 'walkinglabs/learn-harness-engineering study (Z-35): five subsystems + loop/graph engineering mapped to the fleet; Z-37 adds f/prompts.chat governance adoption (roles-as-data + decision ladder + change-requests + override protocol) as the sovereignty subsystem; the audit itself is the adopted artifact — a fresh-context checker node on a schedule',
+    ok: true, at, agent: 'harness-audit v1.3.0 (Z-35 + Task 19 + Z-37 sovereignty + Z-38 mechanical override)',
+    origin: 'walkinglabs/learn-harness-engineering study (Z-35): five subsystems + loop/graph engineering mapped to the fleet; Z-37 adds f/prompts.chat governance adoption (roles-as-data + decision ladder + change-requests + override protocol); Z-38 adds Dicklesworthstone/destructive_command_guard adoption (mechanical override gate + evals E7-E9); the audit itself is the adopted artifact — a fresh-context checker node on a schedule',
     fiveSubsystems: {
       instructions: 'AGENTS.md + DOCTRINE.md + FLEET-NOTE.md + agent headers',
       state: 'books (external state primitive) + CLAIMS + worklog',
       verification: 'verify-then-sign + read-back + agent-verify judge node + gitleaks',
       scope: 'kill rules + floors/ceilings + dust honesty',
       lifecycle: 'receipts per session + RESUME-KIT + restore.sh',
-      sovereignty: 'role-registry.csv (roles-as-data) + change-requests/ (judged self-modification) + sovereignty.md (decision ladder + override protocol)'
+      sovereignty: 'role-registry.csv (roles-as-data) + change-requests/ (judged self-modification) + sovereignty.md (decision ladder + override protocol) + command-guard.cjs (mechanical override, Z-38)'
     },
     books: bookStates,
     checks, counts, silentCosts,

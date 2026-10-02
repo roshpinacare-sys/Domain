@@ -28,6 +28,7 @@
 - **Parallel runtimes are real.** `git pull --rebase` before push; conflicts in
   measurement books resolve to the freshest census; never double-run another
   runtime's lane (DELEGATION-SELECTION LAW).
+- **Mechanical override** (Z-38, study: destructive_command_guard): destructive commands are refused by code before execution (`agents/command-guard.cjs`), not by after-the-fact regret. The rebase law stays whitelisted; every decision is booked in `agents/command-guard.json`.
 - **Evals are runnable expectations, not hopes** (`agents/evals/run-evals.cjs`, Z-36):
   pure functions get white-box evals, desk processes get black-box fresh-process
   evals; a new failure class becomes an eval within one wave of discovery.

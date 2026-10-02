@@ -1,0 +1,99 @@
+{
+ "at": "2026-10-02T22:43:31.982Z",
+ "agent": "command-guard v1.0.0 (Z-38, study: Dicklesworthstone/destructive_command_guard)",
+ "mode": "scan",
+ "scanned": 41,
+ "findings": 11,
+ "denies": 0,
+ "fleetSyncIdiomAllowed": 11,
+ "rows": [
+  {
+   "file": ".github/workflows/agent-verify.yml",
+   "line": 63,
+   "cmd": "git checkout -- .",
+   "decision": "ALLOW",
+   "rule": "fleet-sync-idiom",
+   "reason": "CI push-retry loop re-syncs a throwaway checkout; content regenerable — booked, not silent"
+  },
+  {
+   "file": ".github/workflows/agent-verify.yml",
+   "line": 64,
+   "cmd": "git reset --hard origin/main",
+   "decision": "ALLOW",
+   "rule": "fleet-sync-idiom",
+   "reason": "CI push-retry loop re-syncs a throwaway checkout; content regenerable — booked, not silent"
+  },
+  {
+   "file": ".github/workflows/dex-mirror.yml",
+   "line": 62,
+   "cmd": "git checkout -- .",
+   "decision": "ALLOW",
+   "rule": "fleet-sync-idiom",
+   "reason": "CI push-retry loop re-syncs a throwaway checkout; content regenerable — booked, not silent"
+  },
+  {
+   "file": ".github/workflows/dex-mirror.yml",
+   "line": 63,
+   "cmd": "git reset --hard origin/main",
+   "decision": "ALLOW",
+   "rule": "fleet-sync-idiom",
+   "reason": "CI push-retry loop re-syncs a throwaway checkout; content regenerable — booked, not silent"
+  },
+  {
+   "file": ".github/workflows/mirror-from-console.yml",
+   "line": 69,
+   "cmd": "git checkout -- .",
+   "decision": "ALLOW",
+   "rule": "fleet-sync-idiom",
+   "reason": "CI push-retry loop re-syncs a throwaway checkout; content regenerable — booked, not silent"
+  },
+  {
+   "file": ".github/workflows/mirror-from-console.yml",
+   "line": 70,
+   "cmd": "git reset --hard origin/main",
+   "decision": "ALLOW",
+   "rule": "fleet-sync-idiom",
+   "reason": "CI push-retry loop re-syncs a throwaway checkout; content regenerable — booked, not silent"
+  },
+  {
+   "file": ".github/workflows/moment-watch.yml",
+   "line": 59,
+   "cmd": "git checkout -- .",
+   "decision": "ALLOW",
+   "rule": "fleet-sync-idiom",
+   "reason": "CI push-retry loop re-syncs a throwaway checkout; content regenerable — booked, not silent"
+  },
+  {
+   "file": ".github/workflows/moment-watch.yml",
+   "line": 60,
+   "cmd": "git reset --hard origin/main",
+   "decision": "ALLOW",
+   "rule": "fleet-sync-idiom",
+   "reason": "CI push-retry loop re-syncs a throwaway checkout; content regenerable — booked, not silent"
+  },
+  {
+   "file": ".github/workflows/org-gitleaks.yml",
+   "line": 208,
+   "cmd": "git reset --hard origin/main",
+   "decision": "ALLOW",
+   "rule": "fleet-sync-idiom",
+   "reason": "CI push-retry loop re-syncs a throwaway checkout; content regenerable — booked, not silent"
+  },
+  {
+   "file": ".github/workflows/weave-mirror.yml",
+   "line": 61,
+   "cmd": "git checkout -- .",
+   "decision": "ALLOW",
+   "rule": "fleet-sync-idiom",
+   "reason": "CI push-retry loop re-syncs a throwaway checkout; content regenerable — booked, not silent"
+  },
+  {
+   "file": ".github/workflows/weave-mirror.yml",
+   "line": 62,
+   "cmd": "git reset --hard origin/main",
+   "decision": "ALLOW",
+   "rule": "fleet-sync-idiom",
+   "reason": "CI push-retry loop re-syncs a throwaway checkout; content regenerable — booked, not silent"
+  }
+ ]
+}
