@@ -375,3 +375,14 @@ estimated):
   overflow; root fronts (gate/net/money/truth/wallet/about/index)
   re-verified unchanged. VLM visual check of mobile menu / article /
   desktop hub: clean.
+- **Completion pass (same wave, re-verified)**: `tabular-nums` now
+  aligns digits in every `.sop` table cell (repo-wide scan: no `.sop`
+  page sets `font-variant-numeric`, so zero conflict — confirmed live
+  on `receipts/` cells); 4px spacing steps and a 6-step type scale ship
+  as opt-in `--sop-s*`/`--sop-fs-*` tokens (hub pages own their h1/h2
+  sizes — measured — so the scale changes nothing until a page adopts
+  it); the `hub/explainer/index.html` redirector's canonical was made
+  absolute (RFC 3986) still pointing at `explainer/en.html`. Re-swept
+  9 hub/tree pages at 390×844 (scrollWidth 390, burger 44×44, menu
+  open/8×44px links/close on Escape+outside-tap+link-tap) and 6 pages
+  at 1280×900; root fronts re-measured clean at both sizes.
