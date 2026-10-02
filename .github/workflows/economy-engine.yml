@@ -1,0 +1,90 @@
+# ECONOMY-ENGINE (Task 15-c) — המנוע-הכלכלי-היומי האוטונומי (רגל-האצירה של steem)
+#
+# הבעלים: "המשק-המדומה חייב להיות אמיתי — יותר-מסחרים, יותר-דרכים-להזרים-נזילות,
+# הכל ריבוני/אוטונומי/אוטומטי". הפעימה-היומית הזו היא רגל-הערך-הראשונה: אצירה-אמיתית.
+#
+# ארכיטקטורה (אותו-דבר שהוכח 14-c, עתה אוטומטי):
+#   - checkout Domain (הבית-הציבורי — דקות-Actions ללא-הגבלה) — לוגיקה-בלבד, אפס-חומר-מפתח
+#   - checkout פרטי של steem עם ZIP_PAT (התבנית-המוכחת של org-gitleaks.yml) — כאן חי-החותם
+#   - החותם נפתח בתוך-הראנר (keys_zip_v2: AES-256-CBC pbkdf2-300k + שערי-sha) — החומר
+#     לעולם לא יוצא מהראנר ולא נכנס ל-Domain (אפס-סודות-בצד-הציבורי)
+#   - אימות-חי מול-השרשרת של הרשאת-הפרסום לכל-חשבון → בחירת-מועמדים דטרמיניסטית
+#     (רשימת-תגים, אורך-מינימום, יחס-מעורבות, הוצאת-הצי-עצמו + כבר-הצבעה + שער-קצב-חווה)
+#   - ≤5 הצבעות-אצירה 100% מ-≤5 חשבונות-מפתח שונים (אחת לכל-אחד) — אפס-קרן-בסיכון
+#   - קריאת-txid חזרה מ-account-history (steem-js לא חושף txid — דוקטרינת 14-c)
+#   - קבלה-JSON נדחפת ל-steem (pull --rebase תחילה — לעולם לא force) + סיכום SHAPE-ONLY
+#   - כל-כשל = הראן נכשל בכנות (exit nonzero → אדום)
+#
+# כנות: אין-תגובות-באוטומציה, אין-שידורי-שוק, אין-ynet*/tov-hive/owner-only.
+# DRY_RUN ברירת-מחדל true ל-dispatch; ריצות-מתוכננות (cron) אמיתיות — זהו-הריבון.
+
+name: economy-engine
+
+on:
+  schedule:
+    - cron: '40 4 * * *'  # יומי 04:40 UTC — מקוזז משאר-הפעימות
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'dry-run (plan only, no broadcast)? true = dry, false = REAL votes'
+        type: boolean
+        default: true
+      cooldown_hours:
+        description: 'min hours between an account votes (default 20 — daily-safe)'
+        type: string
+        default: '20'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: economy-engine
+  cancel-in-progress: false
+
+jobs:
+  cycle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: checkout Domain (public home — logic only)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: checkout private steem (seal custody lives here) — proven org-gitleaks pattern
+        uses: actions/checkout@v4
+        with:
+          repository: roshpinacare-sys/steem
+          ref: main
+          token: ${{ secrets.ZIP_PAT }}
+          path: steem
+          fetch-depth: 0  # full history so the receipt push can pull --rebase safely
+
+      - name: git identity for the steem receipt commit
+        run: |
+          git config --global user.name "economy-engine[bot]"
+          git config --global user.email "economy-engine[bot]@users.noreply.github.com"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: install signer lib (steem@0.7.11 — pinned, 14-c doctrine)
+        run: npm install --prefix /tmp/steemjs steem@0.7.11 --omit=dev --no-audit --no-fund --loglevel=error
+
+      - name: run the economy engine cycle (seal → auths → candidates → votes → txids → receipt)
+        env:
+          STEEM_DIR: ${{ github.workspace }}/steem
+          STEEMJS_DIR: /tmp/steemjs
+          # scheduled runs are REAL by design; dispatches default to dry-run (opt-in to real)
+          DRY_RUN: ${{ inputs.dry_run == 'false' && 'false' || (github.event_name == 'schedule' && 'false' || 'true') }}
+          PUSH_RECEIPT: 'true'
+          ENGINE_MAX_VOTES: '5'
+          ENGINE_MIN_HOURS_BETWEEN_VOTES: ${{ inputs.cooldown_hours || '20' }}
+        run: node scripts/economy-engine.mjs
+
+      - name: prove the receipt landed in steem (API-verified head is asserted by the caller wave)
+        if: always()
+        run: |
+          echo "steem local HEAD after engine: $(git -C steem rev-parse HEAD)"
+          git -C steem log -1 --format='%H %s' || true
