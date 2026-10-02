@@ -737,7 +737,10 @@ async function pendingShapeAt(chain, nodes, name) {
 
 /** The account's own top-level post younger than AUTHOR_SUPPORT_MAX_AGE_H with ≤
  *  AUTHOR_SUPPORT_MAX_NET_VOTES net votes (steem nodes may omit net_votes → active_votes
- *  fallback, same as the candidate pool). null = nothing supportable (or probe failed). */
+ *  fallback, same as the candidate pool). DEDUPE: the post's own active_votes list is the
+ *  authoritative already-voted source (account-history can lag across queued runs — observed
+ *  14:41Z run 37019584988 sibling: chain rejected an identical re-vote). null = nothing
+ *  supportable (or probe failed). */
 async function latestSupportableOwnPostAt(nodes, account) {
   try {
     const blog = await condAt(nodes, 'get_discussions_by_blog', [{ tag: account, limit: 5 }]);
@@ -747,12 +750,24 @@ async function latestSupportableOwnPostAt(nodes, account) {
       const ageH = (Date.now() - created) / 3600000;
       if (!(ageH >= 0 && ageH <= AUTHOR_SUPPORT_MAX_AGE_H)) continue;
       const av = Array.isArray(p.active_votes) ? p.active_votes : [];
+      if (av.some((v) => (v.voter || '').toLowerCase() === account)) return null; // already voted (authoritative)
       const netVotes = Number.isFinite(Number(p.net_votes)) ? Number(p.net_votes) : av.filter((x) => Number(x.percent) > 0).length;
       if (netVotes > AUTHOR_SUPPORT_MAX_NET_VOTES) return null; // already has traction
       return { permlink: p.permlink, netVotes, ageHours: Math.round(ageH * 10) / 10 };
     }
   } catch (_) { /* fail-honest */ }
   return null;
+}
+
+/** Instant self-vote confirmation from the post's own active_votes (authoritative — no
+ *  account-history lag; replaces the 105s probe loop for author-support results). */
+async function confirmSelfVoteAt(nodes, author, permlink, voter) {
+  try {
+    const p = await condAt(nodes, 'get_content', [author, permlink]);
+    const v = (p && Array.isArray(p.active_votes) ? p.active_votes : []).find((x) => (x.voter || '').toLowerCase() === voter);
+    if (v) return { confirmed: true, percent: Number(v.percent), rshares: String(v.rshares) };
+  } catch (_) { /* honest null */ }
+  return { confirmed: false };
 }
 
 /** txid read-back per chain. hive: account-history probes + confirmation across ≥2 nodes.
@@ -1033,9 +1048,9 @@ async function curationLeg(cfg) {
         const resolved = resolvePostingWif(s.account, seal, chain === 'hive' ? chainAuths : chainAuths.map((k) => 'STM' + String(k).slice(3)));
         if (!resolved) throw new Error('posting key stopped matching live auth — refusing to broadcast');
         const bc = await broadcastVote(resolved.wif, s.account, s.author, s.permlink);
-        const rb = await readBackLeg(chain, nodes, s.account, s.author, s.permlink, bc.txid, bc.block);
-        s.broadcast = 'ok'; s.txid = rb.txid; s.txidBlock = rb.block; s.confirmedBy = rb.confirmedBy;
-        log('[' + chain + '] AUTHOR-SUPPORT ' + s.account + ' → own post ' + s.permlink.slice(0, 28) + '… txid=' + (rb.txid || 'PENDING'));
+        const cf = await confirmSelfVoteAt(nodes, s.author, s.permlink, s.account);
+        s.broadcast = 'ok'; s.txid = bc.txid || (cf.confirmed ? 'confirmed-in-active-votes' : null); s.txidBlock = bc.block || null; s.confirmedBy = cf.confirmed ? 'active-votes-percent-' + cf.percent : null; s.rshares = cf.rshares || undefined;
+        log('[' + chain + '] AUTHOR-SUPPORT ' + s.account + ' → own post ' + s.permlink.slice(0, 28) + '… txid=' + (s.txid || 'PENDING') + (cf.confirmed ? ' CONFIRMED ' + cf.percent / 100 + '%' : ''));
       } catch (e) {
         s.broadcast = 'FAILED'; s.errorShape = String(e && e.message).slice(0, 160);
         log('[' + chain + '] AUTHOR-SUPPORT FAILED for ' + s.account + ': ' + String(e && e.message).slice(0, 120));
@@ -1279,9 +1294,9 @@ if (!DRY_RUN) {
       const wif = resolvePostingWif(s.account, seal, (await condenser('get_accounts', [[s.account]]))[0].posting.key_auths.map((k) => k[0]));
       if (!wif) throw new Error('posting key stopped matching live auth — refusing to broadcast');
       await broadcastVote(wif.wif, s.account, s.author, s.permlink, WEIGHT);
-      const rb = await readBackTxid(s.account, s.author, s.permlink);
-      s.broadcast = 'ok'; s.txid = rb ? rb.txid : null; s.txidBlock = rb ? rb.block : null;
-      log('AUTHOR-SUPPORT ' + s.account + ' → own post ' + s.permlink.slice(0, 28) + '… txid=' + (s.txid || 'PENDING'));
+      const cf = await confirmSelfVoteAt(RPCS, s.author, s.permlink, s.account);
+      s.broadcast = 'ok'; s.txid = cf.confirmed ? 'confirmed-in-active-votes' : null; s.confirmedBy = cf.confirmed ? 'active-votes-percent-' + cf.percent : null; s.rshares = cf.rshares || undefined;
+      log('AUTHOR-SUPPORT ' + s.account + ' → own post ' + s.permlink.slice(0, 28) + '… ' + (cf.confirmed ? 'CONFIRMED ' + cf.percent / 100 + '% rshares=' + cf.rshares : 'broadcast ok, confirmation pending'));
     } catch (e) {
       s.broadcast = 'FAILED'; s.errorShape = String(e && e.message).slice(0, 160);
       log('AUTHOR-SUPPORT FAILED for ' + s.account + ': ' + String(e && e.message).slice(0, 120));
