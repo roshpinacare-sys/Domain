@@ -1,14 +1,15 @@
 {
  "ok": true,
- "at": "2026-10-02T22:37:10.173Z",
- "agent": "harness-audit v1.1.0 (Z-35 + Task 19: role→worker wiring + loop-primitive checks)",
- "origin": "walkinglabs/learn-harness-engineering study (Z-35): five subsystems + loop/graph engineering mapped to the fleet; the audit itself is the adopted artifact — a fresh-context checker node on a schedule",
+ "at": "2026-10-02T22:39:02.491Z",
+ "agent": "harness-audit v1.2.0 (Z-35 + Task 19 + Z-37: +sovereignty subsystem — role-registry integrity, change-request ledger)",
+ "origin": "walkinglabs/learn-harness-engineering study (Z-35): five subsystems + loop/graph engineering mapped to the fleet; Z-37 adds f/prompts.chat governance adoption (roles-as-data + decision ladder + change-requests + override protocol) as the sovereignty subsystem; the audit itself is the adopted artifact — a fresh-context checker node on a schedule",
  "fiveSubsystems": {
   "instructions": "AGENTS.md + DOCTRINE.md + FLEET-NOTE.md + agent headers",
   "state": "books (external state primitive) + CLAIMS + worklog",
   "verification": "verify-then-sign + read-back + agent-verify judge node + gitleaks",
   "scope": "kill rules + floors/ceilings + dust honesty",
-  "lifecycle": "receipts per session + RESUME-KIT + restore.sh"
+  "lifecycle": "receipts per session + RESUME-KIT + restore.sh",
+  "sovereignty": "role-registry.csv (roles-as-data) + change-requests/ (judged self-modification) + sovereignty.md (decision ladder + override protocol)"
  },
  "books": [
   {
@@ -56,13 +57,13 @@
   {
    "book": "learning-ledger.json",
    "exists": true,
-   "ageHours": 0.4,
+   "ageHours": 0.5,
    "fresh": true
   },
   {
    "book": "recruitment.json",
    "exists": true,
-   "ageHours": 17.7,
+   "ageHours": 17.8,
    "fresh": true
   }
  ],
@@ -70,14 +71,14 @@
   {
    "subsystem": "instructions",
    "name": "Defi/fleet/AGENTS.md present (coordination law)",
-   "status": "PASS",
+   "status": "FAIL",
    "evidence": "fleet/AGENTS.md",
    "note": "the fleet's constitution — read before any work"
   },
   {
    "subsystem": "instructions",
    "name": "Defi/DOCTRINE.md present",
-   "status": "PASS",
+   "status": "FAIL",
    "evidence": "DOCTRINE.md",
    "note": null
   },
@@ -161,7 +162,7 @@
   {
    "subsystem": "scope",
    "name": "doctrine binds kill rules (ventures have them)",
-   "status": "PASS",
+   "status": "FAIL",
    "evidence": "DOCTRINE-economics.md §4",
    "note": null
   },
@@ -182,28 +183,28 @@
   {
    "subsystem": "lifecycle",
    "name": "CLAIMS ledger fresh (receipts keep continuity)",
-   "status": "PASS",
-   "evidence": "last receipt 0.5h ago",
+   "status": "FAIL",
+   "evidence": "last receipt nullh ago",
    "note": "every session leaves clean state (L12 of the study)"
   },
   {
    "subsystem": "lifecycle",
    "name": "recovery path codified (RESUME-KIT + .fleet/restore.sh)",
-   "status": "PASS",
+   "status": "FAIL",
    "evidence": "canon reachable",
    "note": "sandbox resets are a law of nature; recovery is a law of ours (restore.sh lives outside git by design — creds never in repos)"
   },
   {
    "subsystem": "graph-failures",
    "name": "Goodhart countermeasure: two-sided ledger, measured never estimated",
-   "status": "PASS",
+   "status": "FAIL",
    "evidence": "EARN-GOVERNOR LAW",
    "note": "the number may not detach from the business: fills are balance-verified, pending is booked as honest zeros"
   },
   {
    "subsystem": "graph-failures",
    "name": "Blindness-upward countermeasure: kill rules + operator gate",
-   "status": "PASS",
+   "status": "FAIL",
    "evidence": "kill rules + operator gates",
    "note": "the loop cannot ask if the goal is right — the structure has a place where that question lives"
   },
@@ -231,7 +232,7 @@
   {
    "subsystem": "anchors",
    "name": "KPI names its method (oracle discipline)",
-   "status": "PASS",
+   "status": "FAIL",
    "evidence": "KPI.json method field",
    "note": "every metric says where its number comes from"
   },
@@ -250,24 +251,31 @@
    "note": "every claimed role has a file or workflow that runs it — the army is hands-on, not titles"
   },
   {
-   "subsystem": "graph",
-   "name": "role-prompt registry live (prompts.chat schema) — every FILLED role has an act-prompt",
-   "status": "PASS",
-   "evidence": "12 acts · 7 FILLED roles covered",
-   "note": "role voice is versioned data (act,prompt,for_devs,type,contributor) — a fresh worker adopts a fleet role by loading one row; prompts.chat ${Var:default} binding kept"
-  },
-  {
    "subsystem": "loop",
    "name": "all six loop primitives have live fleet instances (automations/worktrees/skills/connectors/sub-agents/external state)",
-   "status": "PASS",
-   "evidence": "workflows:41 desks:47 receipts:true books:9 claims:true",
+   "status": "FAIL",
+   "evidence": "workflows:41 desks:46 receipts:true books:9 claims:false",
    "note": "loop engineering mapped to the fleet per the LHE study — worktrees is the rebase-first runtime lane discipline"
+  },
+  {
+   "subsystem": "sovereignty",
+   "name": "role-registry integrity: every charter row names a real file (roles-as-data, no invented agents)",
+   "status": "PASS",
+   "evidence": "47 rows · cols 9 · dupes 0 · missing files 0",
+   "note": "prompts.chat pattern: every persona is a CSV row (Z-37); a registry detached from disk is a story, not a mandate"
+  },
+  {
+   "subsystem": "sovereignty",
+   "name": "change-request ledger integrity: every CR well-formed, no PENDING abandoned >7d",
+   "status": "PASS",
+   "evidence": "1 CRs · malformed 0 · stale-pending 0",
+   "note": "self-modification is never silent: scope changes flow through judged CRs (prompts.chat changeRequests, fleet-hardened)"
   }
  ],
  "counts": {
-  "pass": 28,
+  "pass": 20,
   "warn": 0,
-  "fail": 0
+  "fail": 9
  },
  "silentCosts": {
   "verificationDebt": "selftests cover past incidents; every NEW failure mode (concat family ×3, null-deref, dedupe) becomes a check within one wave of discovery",
@@ -275,5 +283,5 @@
   "cognitiveSurrender": "judge nodes (agent-verify, this desk) are separate processes with fresh context",
   "tokenBlowout": "CI does the deterministic work; agent sessions only where judgment is required (LABOR TIERING LAW)"
  },
- "verdict": "harness green: 28 checks pass, 0 fail — the five subsystems hold and the three structural failures have named countermeasures"
+ "verdict": "harness NOT green: 9 FAIL — the audit is honest, the fails are the next work"
 }
