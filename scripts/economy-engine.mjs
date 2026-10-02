@@ -20,7 +20,12 @@
  *   (d) deterministically pick up to N quality candidate posts (niche allowlist, min length,
  *       likes/comment ratio, exclude our fleet + already-voted + recent-vote cooldown)
  *   (e) broadcast ONE 100% curation vote per account (curation = zero principal at risk;
- *       no funds move; this is the only broadcast op this engine is allowed)
+ *       no funds move)
+ *   (e2) CLAIM pending rewards for every verified account (posting-authorized op; dust
+ *       threshold 0.001; nothing compounds unclaimed) — Task 17 revenue wave
+ *   (e3) AUTHOR-SUPPORT: each verified account self-votes its own young low-traction post
+ *       (≤24h old, ≤3 net votes, alreadyVoted gate, ≤1/account/run) at 100% — author rewards
+ *       are the second income stream (Task 17; ENGINE_AUTHOR_SUPPORT=true by default)
  *   (f) read back the real txids from account history (steem-js exposes no txid — 14-c doctrine)
  *   (g) write a receipt JSON into the steem checkout (agent/receipts/)
  *   (h) optionally push the receipt (PUSH_RECEIPT=true; pull --rebase first, NEVER force)
@@ -43,15 +48,19 @@
  *   STEEM_DIR      path to private steem checkout           (default: <cwd>/steem)
  *   STEEMJS_DIR    dir whose node_modules has steem@0.7.11  (default: <script dir>)
  *   DRY_RUN        'true' (default) = no broadcast, plan-only receipt
- *   ENGINE_MAX_VOTES     max accounts to vote this run     (default 5)
- *   ENGINE_ACCOUNTS      comma override of account order   (default: deterministic daily rotation)
- *   ENGINE_MIN_HOURS_BETWEEN_VOTES  account cooldown       (default 20 — makes daily runs safe)
+ *   ENGINE_MAX_VOTES     max accounts to vote this run     (default 12 — every healthy account)
+ *   ENGINE_ACCOUNTS      comma override of account order   (default: rotation, then SP-weighted:
+ *                        accounts sorted by EFFECTIVE vesting desc — the whale votes first)
+ *   ENGINE_MIN_HOURS_BETWEEN_VOTES  account cooldown       (default 10 — 2h cadence safe; ~2.4 votes/day/account)
+ *   ENGINE_AUTHOR_SUPPORT  'true' (default) = self-vote own young low-traction post, ≤1/account
  *   ENGINE_TAGS    comma override of niche tag allowlist
  *   PUSH_RECEIPT   'true' = git commit+push receipt into the steem repo
  *
  * HARD DISCIPLINE: never touch ynet* / tov-hive / owner-only rows (roster control flags are
  * enforced); never print or log any private material (public-key fingerprints only); no market
- * or broadcast ops except votes (the ladder report is a separate read-only tool).
+ * ops, no transfers, no comments — broadcast ops limited to VOTES, CLAIMS, AUTHOR-SUPPORT
+ * self-votes (all posting-authorized, zero principal at risk; the ladder executor is a
+ * separate tool with its own hard caps).
  */
 'use strict';
 
@@ -67,8 +76,12 @@ const STEEM_DIR = process.env.STEEM_DIR || path.join(process.cwd(), 'steem');
 const STEEMJS_DIR = process.env.STEEMJS_DIR || SCRIPT_DIR;
 const DRY_RUN = String(process.env.DRY_RUN || 'true').toLowerCase() === 'true';
 const PUSH_RECEIPT = String(process.env.PUSH_RECEIPT || 'false').toLowerCase() === 'true';
-const MAX_VOTES = Math.max(1, Math.min(5, parseInt(process.env.ENGINE_MAX_VOTES || '5', 10)));
-const MIN_HOURS_BETWEEN_VOTES = parseFloat(process.env.ENGINE_MIN_HOURS_BETWEEN_VOTES || '20');
+const MAX_VOTES = Math.max(1, Math.min(12, parseInt(process.env.ENGINE_MAX_VOTES || '12', 10)));
+const MIN_HOURS_BETWEEN_VOTES = parseFloat(process.env.ENGINE_MIN_HOURS_BETWEEN_VOTES || '10');
+const AUTHOR_SUPPORT = String(process.env.ENGINE_AUTHOR_SUPPORT || 'true').toLowerCase() === 'true';
+const AUTHOR_SUPPORT_MAX_AGE_H = 24;   // self-vote only the account's own post younger than this
+const AUTHOR_SUPPORT_MAX_NET_VOTES = 3; // ...and only while it still has ≤3 net votes
+const CLAIM_MIN = 0.001;               // claim when ANY pending component ≥ this (dust floor)
 const ACCOUNTS_OVERRIDE = (process.env.ENGINE_ACCOUNTS || '').split(',').map((s) => s.trim().toLowerCase()).filter(Boolean);
 const TAG_OVERRIDE = (process.env.ENGINE_TAGS || '').split(',').map((s) => s.trim().toLowerCase()).filter(Boolean);
 
@@ -81,7 +94,7 @@ const RPCS = (process.env.ENGINE_RPC || 'https://api.steemit.com,https://api.jus
 
 /** Accounts we never touch, by name pattern (belt-and-braces on top of roster flags). */
 const NEVER_TOUCH = [/^ynet/, /^tov-hive/];
-const WEIGHT = 10000; // 100% — curation only, per doctrine
+const WEIGHT = 10000; // 100% — curation + author-support only, per doctrine
 const MIN_BODY_CHARS = 500;
 const MIN_TITLE_CHARS = 10;
 const MIN_NET_VOTES = 3;
@@ -340,6 +353,10 @@ async function verifyAccounts(candidates) {
     const elapsed = Math.max(0, headTime / 1000 - Number(vm.last_update_time || 0));
     const vpMana = Math.min(maxMana, Number(vm.current_mana || 0) + maxMana * (elapsed / 432000));
     const vpPct = maxMana > 0 ? (vpMana / maxMana) * 100 : 0;
+    const effVests =
+      parseFloat(acc.vesting_shares) -
+      parseFloat(acc.delegated_vesting_shares || '0') +
+      parseFloat(acc.received_vesting_shares || '0');
     out.push({
       account: name,
       verdict: 'ok',
@@ -347,6 +364,7 @@ async function verifyAccounts(candidates) {
       keySource: resolved.source,
       vpPct: Math.round(vpPct * 100) / 100,
       rep: repFromRaw(acc.reputation),
+      effVests: Math.round(effVests), // Task 17: whale-first ordering weight
     });
   }
   return out;
@@ -452,6 +470,28 @@ function broadcastVote(wif, voter, author, permlink, weight) {
       if (err) reject(err); else resolve(result);
     });
   });
+}
+
+/** STEEM claim_reward_balance — posting-authorized (op schema probed live 2026-10-02:
+ *  {account, reward_steem, reward_sbd, reward_vesting_shares}). */
+function broadcastClaimSteem(wif, account, r) {
+  return new Promise((resolve, reject) => {
+    steem.broadcast.claimRewardBalance(wif, account, r.liquid, r.debt, r.vesting, (err, result) => {
+      if (err) reject(err); else resolve(result);
+    });
+  });
+}
+
+/** Best-effort steem claim read-back (account-history; indexing lag = honest null). */
+async function readBackClaim(account) {
+  try {
+    const hist = await condenser('get_account_history', [account, -1, 50]);
+    for (let i = (hist || []).length - 1; i >= 0; i--) {
+      const ev = hist[i] && hist[i][1];
+      if (ev && ev.op && ev.op[0] === 'claim_reward_balance') return { txid: ev.trx_id, block: ev.block };
+    }
+  } catch (_) { /* honest null */ }
+  return null;
 }
 
 // ─────────────────────────── (f) txid read-back from account history ───────────────────────────
@@ -569,15 +609,15 @@ async function fetchCandidatePoolAt(nodes, tags, gates) {
   return pool;
 }
 
-/** HIVE broadcast: graphene tx build + steem-js signTransaction under the HIVE chain_id
- *  (anchor.cjs grapheneBroadcast recipe — proven live) + synchronous broadcast for the id. */
-async function broadcastVoteHive(wif, voter, author, permlink) {
+/** HIVE broadcast (generic ops): graphene tx build + steem-js signTransaction under the HIVE
+ *  chain_id (anchor.cjs grapheneBroadcast recipe — proven live) + synchronous broadcast. */
+async function broadcastHiveOps(wif, operations) {
   const dgp = await condAt(HIVE_RPCS, 'get_dynamic_global_properties', []);
   const tx = {
     ref_block_num: dgp.head_block_number & 0xffff,
     ref_block_prefix: Buffer.from(dgp.head_block_id, 'hex').readUInt32LE(4),
     expiration: new Date(new Date(dgp.time + (dgp.time.endsWith('Z') ? '' : 'Z')).getTime() + 60000).toISOString().slice(0, 19),
-    operations: [['vote', { voter, author, permlink, weight: WEIGHT }]],
+    operations,
     extensions: [],
   };
   const prev = steem.config.get('chain_id');
@@ -588,16 +628,26 @@ async function broadcastVoteHive(wif, voter, author, permlink) {
   return { txid: (res && (res.id || res.trx_id)) || null, block: (res && res.block_num) || null, method: 'condenser_api.broadcast_transaction_synchronous (steem-js signTransaction, hive chain_id)' };
 }
 
-/** BLURT broadcast: node-serialized + manually signed (anchor.cjs blurtBroadcast recipe —
- *  blurt renumbers ops vs steem-js, so the NODE serializes; digest = sha256(chain_id ‖ bytes);
- *  canonical low-s ECDSA with header = 31 + recid; self-verify by recovery before broadcast). */
-async function broadcastVoteBlurt(wif, voter, author, permlink) {
+function broadcastVoteHive(wif, voter, author, permlink) {
+  return broadcastHiveOps(wif, [['vote', { voter, author, permlink, weight: WEIGHT }]]);
+}
+
+/** HIVE claim — op schema {account, reward_hive, reward_hbd, reward_vesting_shares}
+ *  (probed live 2026-10-02 via get_transaction_hex serialization). */
+function broadcastHiveClaim(wif, account, r) {
+  return broadcastHiveOps(wif, [['claim_reward_balance', { account, reward_hive: r.liquid, reward_hbd: r.debt, reward_vesting_shares: r.vesting }]]);
+}
+
+/** BLURT broadcast (generic ops): node-serialized + manually signed (anchor.cjs blurtBroadcast
+ *  recipe — blurt renumbers ops vs steem-js, so the NODE serializes; digest = sha256(chain_id ‖
+ *  bytes); canonical low-s ECDSA with header = 31 + recid; self-verify by recovery first). */
+async function broadcastBlurtOps(wif, operations) {
   const dgp = await condAt(BLURT_RPCS, 'get_dynamic_global_properties', []);
   const tx = {
     ref_block_num: dgp.head_block_number & 0xffff,
     ref_block_prefix: Buffer.from(dgp.head_block_id, 'hex').readUInt32LE(4),
     expiration: new Date(new Date(dgp.time + (dgp.time.endsWith('Z') ? '' : 'Z')).getTime() + 60000).toISOString().slice(0, 19),
-    operations: [['vote', { voter, author, permlink, weight: WEIGHT }]],
+    operations,
     extensions: [],
   };
   const nodeHex = await condAt(BLURT_RPCS, 'get_transaction_hex', [tx]);
@@ -621,6 +671,88 @@ async function broadcastVoteBlurt(wif, voter, author, permlink) {
   const sigHex = Buffer.concat([Buffer.from([31 + sig.recid]), sig.r.toBuffer(32), sig.s.toBuffer(32)]).toString('hex');
   const res = await condAt(BLURT_RPCS, 'broadcast_transaction_synchronous', [{ ...tx, signatures: [sigHex] }]);
   return { txid: (res && (res.id || res.trx_id)) || null, block: (res && (res.block_num || res.trx_block_num)) || null, method: 'node-serialized canonical-ECDSA + condenser_api.broadcast_transaction_synchronous (anchor.cjs recipe, proven 2026-09-06)' };
+}
+
+function broadcastVoteBlurt(wif, voter, author, permlink) {
+  return broadcastBlurtOps(wif, [['vote', { voter, author, permlink, weight: WEIGHT }]]);
+}
+
+/** BLURT claim — op schema {account, reward_blurt, reward_vesting_shares} (NO debt asset on
+ *  blurt; probed live 2026-10-02: 3-field steem-style op REJECTED, 2-field op serializes). */
+function broadcastBlurtClaim(wif, account, r) {
+  return broadcastBlurtOps(wif, [['claim_reward_balance', { account, reward_blurt: r.liquid, reward_vesting_shares: r.vesting }]]);
+}
+
+// ─────────────────── Task 17 revenue wave: claims + author-support (all chains) ───────────────────
+/** Pending-reward shape from a condenser account row (per-chain field names verified live
+ *  2026-10-02: steem reward_steem_balance/reward_sbd_balance/reward_vesting_shares;
+ *  hive reward_hive_balance/reward_hbd_balance/reward_vesting_balance; blurt
+ *  reward_blurt_balance/reward_vesting_balance — no debt asset). Op fields differ from the
+ *  account-row fields; the broadcast wrappers own that mapping. */
+function pendingRewards(chain, acc) {
+  if (chain === 'steem') {
+    return {
+      liquid: parseFloat(acc.reward_steem_balance) > 0 ? String(acc.reward_steem_balance) : '0.000 STEEM',
+      debt: parseFloat(acc.reward_sbd_balance) > 0 ? String(acc.reward_sbd_balance) : '0.000 SBD',
+      vesting: parseFloat(acc.reward_vesting_shares) > 0 ? String(acc.reward_vesting_shares) : '0.000000 VESTS',
+    };
+  }
+  if (chain === 'hive') {
+    return {
+      liquid: parseFloat(acc.reward_hive_balance) > 0 ? String(acc.reward_hive_balance) : '0.000 HIVE',
+      debt: parseFloat(acc.reward_hbd_balance) > 0 ? String(acc.reward_hbd_balance) : '0.000 HBD',
+      vesting: parseFloat(acc.reward_vesting_balance) > 0 ? String(acc.reward_vesting_balance) : '0.000000 VESTS',
+    };
+  }
+  return { // blurt — no debt asset
+    liquid: parseFloat(acc.reward_blurt_balance) > 0 ? String(acc.reward_blurt_balance) : '0.000 BLURT',
+    debt: null,
+    vesting: parseFloat(acc.reward_vesting_balance) > 0 ? String(acc.reward_vesting_balance) : '0.000000 VESTS',
+  };
+}
+
+function hasPending(r) {
+  const n = (s) => parseFloat(s) || 0;
+  return !!r && (n(r.liquid) >= CLAIM_MIN || n(r.debt || '0') >= CLAIM_MIN || n(r.vesting) >= CLAIM_MIN);
+}
+
+/** Per-chain claim broadcast dispatch (steem reads its txid back from account-history). */
+const CHAIN_CLAIM = {
+  steem: async (wif, account, r) => {
+    await broadcastClaimSteem(wif, account, r);
+    const rb = await readBackClaim(account);
+    return { txid: rb ? rb.txid : null, block: rb ? rb.block : null, method: 'steem.broadcast.claimRewardBalance + account-history read-back' };
+  },
+  hive: (wif, account, r) => broadcastHiveClaim(wif, account, r),
+  blurt: (wif, account, r) => broadcastBlurtClaim(wif, account, r),
+};
+
+/** Read the pending shape for one account on one chain (no broadcast — plan/dry-safe). */
+async function pendingShapeAt(chain, nodes, name) {
+  const acc = (await condAt(nodes, 'get_accounts', [[name]]))[0];
+  if (!acc) return null;
+  const r = pendingRewards(chain, acc);
+  return { liquid: r.liquid, debt: r.debt, vesting: r.vesting, pending: hasPending(r) };
+}
+
+/** The account's own top-level post younger than AUTHOR_SUPPORT_MAX_AGE_H with ≤
+ *  AUTHOR_SUPPORT_MAX_NET_VOTES net votes (steem nodes may omit net_votes → active_votes
+ *  fallback, same as the candidate pool). null = nothing supportable (or probe failed). */
+async function latestSupportableOwnPostAt(nodes, account) {
+  try {
+    const blog = await condAt(nodes, 'get_discussions_by_blog', [{ tag: account, limit: 5 }]);
+    for (const p of blog || []) {
+      if ((p.author || '').toLowerCase() !== account || p.depth !== 0) continue;
+      const created = Date.parse(p.created + (p.created && p.created.endsWith('Z') ? '' : 'Z'));
+      const ageH = (Date.now() - created) / 3600000;
+      if (!(ageH >= 0 && ageH <= AUTHOR_SUPPORT_MAX_AGE_H)) continue;
+      const av = Array.isArray(p.active_votes) ? p.active_votes : [];
+      const netVotes = Number.isFinite(Number(p.net_votes)) ? Number(p.net_votes) : av.filter((x) => Number(x.percent) > 0).length;
+      if (netVotes > AUTHOR_SUPPORT_MAX_NET_VOTES) return null; // already has traction
+      return { permlink: p.permlink, netVotes, ageHours: Math.round(ageH * 10) / 10 };
+    }
+  } catch (_) { /* fail-honest */ }
+  return null;
 }
 
 /** txid read-back per chain. hive: account-history probes + confirmation across ≥2 nodes.
@@ -732,12 +864,17 @@ async function curationLeg(cfg) {
       const headSec = Date.parse(dgp.time + (dgp.time.endsWith('Z') ? '' : 'Z')) / 1000;
       const elapsed = Math.max(0, headSec - Number(vm.last_update_time || 0));
       const vpPct = maxMana > 0 ? (Math.min(maxMana, Number(vm.current_mana || 0) + maxMana * (elapsed / 432000)) / maxMana) * 100 : 0;
-      verified.push({ account: name, verdict: 'ok', pubFp: fp(resolved.pub), keySource: resolved.source, vpPct: Math.round(vpPct * 100) / 100 });
+      const effVests =
+        parseFloat(acc.vesting_shares) -
+        parseFloat(acc.delegated_vesting_shares || '0') +
+        parseFloat(acc.received_vesting_shares || '0');
+      verified.push({ account: name, verdict: 'ok', pubFp: fp(resolved.pub), keySource: resolved.source, vpPct: Math.round(vpPct * 100) / 100, effVests: Math.round(effVests) });
     } catch (e) {
       verified.push({ account: name, verdict: 'skip-verification-error', errorShape: String(e && e.message).slice(0, 120) });
     }
   }
-  const healthy = verified.filter((v) => v.verdict === 'ok' && v.vpPct >= 5);
+  // Task 17: whale-first — order by EFFECTIVE vesting desc (delegations-out subtracted)
+  const healthy = verified.filter((v) => v.verdict === 'ok' && v.vpPct >= 5).sort((a, b) => (b.effVests || 0) - (a.effVests || 0));
   for (const v of verified) {
     if (v.verdict !== 'ok') log('[' + chain + '] account ' + v.account + ': ' + v.verdict);
     else log('[' + chain + '] account ' + v.account + ': verified ' + v.keySource + ' pub=' + v.pubFp + ' vp=' + v.vpPct + '%');
@@ -791,6 +928,22 @@ async function curationLeg(cfg) {
     plans.push({ account: v.account, pubFp: v.pubFp, keySource: v.keySource, vote: pick });
   }
 
+  // Task 17 author-support plan: ≤1 self-vote/run on the account's own young low-traction post
+  const authorSupport = [];
+  if (AUTHOR_SUPPORT) {
+    for (const v of healthy) {
+      if (historyDead.has(v.account)) continue;
+      const hist = voteHistories.get(v.account) || [];
+      const alreadyVoted = new Set(hist.filter((x) => Number(x.weight) > 0).map((x) => x.authorperm.toLowerCase()));
+      try {
+        const post = await latestSupportableOwnPostAt(nodes, v.account);
+        if (!post) continue;
+        if (alreadyVoted.has((v.account + '/' + post.permlink).toLowerCase())) continue;
+        authorSupport.push({ account: v.account, pubFp: v.pubFp, author: v.account, permlink: post.permlink, netVotes: post.netVotes, ageHours: post.ageHours });
+      } catch (_) { /* fail-honest: skip this account's author-support */ }
+    }
+  }
+
   // receipt (collision-safe naming per chain)
   let receiptName = utcDate + '-economy-engine-' + chain + (DRY_RUN ? '-dryrun' : '') + '.json';
   for (let n = 2; fs.existsSync(path.join(STEEM_DIR, 'agent', 'receipts', receiptName)); n++) {
@@ -798,7 +951,7 @@ async function curationLeg(cfg) {
   }
   const legReceiptPath = path.join(STEEM_DIR, 'agent', 'receipts', receiptName);
   const legReceipt = {
-    engine: 'economy-engine v2 (Task 16-a) — ' + chain + ' leg',
+    engine: 'economy-engine v3 (Task 17 revenue wave) — ' + chain + ' leg',
     at: nowIso(),
     mode: DRY_RUN ? 'dry-run' : 'real-votes',
     chain,
@@ -817,12 +970,33 @@ async function curationLeg(cfg) {
     })),
     skips, candidateRejects,
     results: [],
-    costs: { principalAtRisk: 0, liquidSpent: 0, orders: 0, note: 'curation votes only — zero principal at risk; no comments, no transfers, no market ops' },
+    claims: [],        // Task 17: claim_reward_balance receipts (per account)
+    authorSupport,     // Task 17: planned self-votes on own posts (results filled below in real mode)
+    costs: { principalAtRisk: 0, liquidSpent: 0, orders: 0, note: 'curation votes + claims + author-support self-votes only — zero principal at risk; no comments, no transfers, no market ops' },
     chainNote,
     dryRunState: { DRY_RUN: DRY_RUN, note: DRY_RUN ? 'no broadcast performed' : 'votes broadcast with verified posting keys only' },
   };
 
   if (!DRY_RUN) {
+    // Task 17 claims first (independent of candidate gates — every verified account, dust floor)
+    for (const v of verified) {
+      if (v.verdict !== 'ok') continue;
+      try {
+        const acc = (await condAt(nodes, 'get_accounts', [[v.account]]))[0];
+        const chainAuths = ((acc.posting || {}).key_auths || []).map((k) => k[0]);
+        const resolved = resolvePostingWif(v.account, seal, chain === 'hive' ? chainAuths : chainAuths.map((k) => 'STM' + String(k).slice(3)));
+        if (!resolved) { legReceipt.claims.push({ account: v.account, claimed: false, reason: 'no-matching-key' }); continue; }
+        const shape = await pendingShapeAt(chain, nodes, v.account);
+        if (!shape || !shape.pending) { legReceipt.claims.push({ account: v.account, claimed: false, reason: 'nothing-pending-above-dust', pendingShape: shape ? { liquid: shape.liquid, debt: shape.debt, vesting: shape.vesting } : null }); continue; }
+        const r = { liquid: shape.liquid, debt: shape.debt, vesting: shape.vesting };
+        const bc = await CHAIN_CLAIM[chain](resolved.wif, v.account, r);
+        legReceipt.claims.push({ account: v.account, claimed: true, rewards: { liquid: r.liquid, debt: r.debt || undefined, vesting: r.vesting }, txid: bc.txid || null, block: bc.block || null, method: bc.method });
+        log('[' + chain + '] CLAIMED ' + v.account + ': ' + r.liquid + (r.debt ? ' + ' + r.debt : '') + ' + ' + r.vesting + ' txid=' + (bc.txid || 'PENDING'));
+      } catch (e) {
+        legReceipt.claims.push({ account: v.account, claimed: false, errorShape: String(e && e.message).slice(0, 160) });
+        log('[' + chain + '] CLAIM FAILED for ' + v.account + ': ' + String(e && e.message).slice(0, 120));
+      }
+    }
     for (const p of plans) {
       try {
         // re-verify the live auth immediately before signing (never sign on a stale match)
@@ -851,15 +1025,41 @@ async function curationLeg(cfg) {
         log('[' + chain + '] BROADCAST ' + (rb.txid ? 'landed despite node error' : 'FAILED') + ' for ' + p.account + ': ' + String(e && e.message).slice(0, 120));
       }
     }
+    // Task 17 author-support broadcasts (do NOT count toward the vote-success gate)
+    for (const s of authorSupport) {
+      try {
+        const acc = (await condAt(nodes, 'get_accounts', [[s.account]]))[0];
+        const chainAuths = ((acc.posting || {}).key_auths || []).map((k) => k[0]);
+        const resolved = resolvePostingWif(s.account, seal, chain === 'hive' ? chainAuths : chainAuths.map((k) => 'STM' + String(k).slice(3)));
+        if (!resolved) throw new Error('posting key stopped matching live auth — refusing to broadcast');
+        const bc = await broadcastVote(resolved.wif, s.account, s.author, s.permlink);
+        const rb = await readBackLeg(chain, nodes, s.account, s.author, s.permlink, bc.txid, bc.block);
+        s.broadcast = 'ok'; s.txid = rb.txid; s.txidBlock = rb.block; s.confirmedBy = rb.confirmedBy;
+        log('[' + chain + '] AUTHOR-SUPPORT ' + s.account + ' → own post ' + s.permlink.slice(0, 28) + '… txid=' + (rb.txid || 'PENDING'));
+      } catch (e) {
+        s.broadcast = 'FAILED'; s.errorShape = String(e && e.message).slice(0, 160);
+        log('[' + chain + '] AUTHOR-SUPPORT FAILED for ' + s.account + ': ' + String(e && e.message).slice(0, 120));
+      }
+    }
     const ok = legReceipt.results.filter((r) => r.broadcast === 'ok' || r.broadcast === 'ok-after-error');
-    log('[' + chain + '] real cycle done: broadcast ok=' + ok.length + '/' + plans.length + ' · txids read back=' + ok.filter((r) => r.txid).length);
+    log('[' + chain + '] real cycle done: broadcast ok=' + ok.length + '/' + plans.length + ' · claims=' + legReceipt.claims.filter((c) => c.claimed).length + ' · authorSupport=' + authorSupport.filter((s) => s.broadcast === 'ok').length + '/' + authorSupport.length + ' · txids read back=' + ok.filter((r) => r.txid).length);
     if (plans.length === 0) {
       log('[' + chain + '] real cycle: zero PLANNED votes (cooldown/dedupe/history gates) — honest no-op cycle, not a failure');
     } else if (ok.length === 0) {
       throw new Error('zero ' + chain + ' votes succeeded in a REAL run with ' + plans.length + ' plans — failing honestly');
     }
   } else {
-    log('[' + chain + '] dry-run: ' + plans.length + ' planned votes, none broadcast');
+    // dry-run: record claim plans (no broadcast) + keep author-support as plan-only
+    for (const v of verified) {
+      if (v.verdict !== 'ok') continue;
+      try {
+        const shape = await pendingShapeAt(chain, nodes, v.account);
+        legReceipt.claims.push({ account: v.account, claimed: false, reason: shape && shape.pending ? 'dry-run-plan' : 'nothing-pending-above-dust', pendingShape: shape ? { liquid: shape.liquid, debt: shape.debt, vesting: shape.vesting } : null });
+      } catch (e) {
+        legReceipt.claims.push({ account: v.account, claimed: false, errorShape: String(e && e.message).slice(0, 160) });
+      }
+    }
+    log('[' + chain + '] dry-run: ' + plans.length + ' planned votes · ' + legReceipt.claims.filter((c) => c.reason === 'dry-run-plan').length + ' claim plans · ' + authorSupport.length + ' author-support plans, none broadcast');
   }
 
   fs.mkdirSync(path.dirname(legReceiptPath), { recursive: true });
@@ -867,7 +1067,9 @@ async function curationLeg(cfg) {
   log('[' + chain + '] receipt written: agent/receipts/' + receiptName);
   if (PUSH_RECEIPT) {
     const nVotes = legReceipt.results.filter((r) => r.broadcast === 'ok' || r.broadcast === 'ok-after-error').length;
-    pushReceipt(legReceiptPath, 'economy-engine[' + chain + ']: ' + nowIso() + ' · ' + (DRY_RUN ? 'dry-run plan' : nVotes + ' votes') + ' · txids inside');
+    const nClaims = legReceipt.claims.filter((c) => c.claimed).length;
+    const nSelf = authorSupport.filter((s) => s.broadcast === 'ok').length;
+    pushReceipt(legReceiptPath, 'economy-engine[' + chain + ']: ' + nowIso() + ' · ' + (DRY_RUN ? 'dry-run plan' : nVotes + ' votes · ' + nClaims + ' claims · ' + nSelf + ' self-votes') + ' · txids inside');
     log('[' + chain + '] receipt pushed to steem (pull --rebase first, no force)');
   }
   return {
@@ -875,6 +1077,8 @@ async function curationLeg(cfg) {
     receipt: 'agent/receipts/' + receiptName,
     plans: plans.length,
     voted: legReceipt.results.filter((r) => r.broadcast === 'ok' || r.broadcast === 'ok-after-error').map((r) => ({ account: r.account, txid: r.txid, confirmedBy: r.confirmedBy || null })),
+    claims: legReceipt.claims.filter((c) => c.claimed).map((c) => ({ account: c.account, txid: c.txid })),
+    authorSupport: authorSupport.filter((s) => s.broadcast === 'ok').map((s) => ({ account: s.account, permlink: s.permlink, txid: s.txid })),
     skipped: skips.length,
     candidatePool: pool.length,
   };
@@ -893,7 +1097,7 @@ const LEGS = [
     gates: { minNetVotes: MIN_NET_VOTES, repGate: true },
     eligibleRows: HIVE_ROWS,
     broadcastVote: broadcastVoteHive,
-    chainNote: 'hive chain_id ' + HIVE_CHAIN_ID.slice(0, 8) + '… (anchor.cjs, proven live); STM pubkeys; ≤5 votes/run, 1/account, 20h cooldown; NEVER_TOUCH incl. tov-hive (blocked-no-key)',
+    chainNote: 'hive chain_id ' + HIVE_CHAIN_ID.slice(0, 8) + '… (anchor.cjs, proven live); STM pubkeys; ≤12 votes/run, 1/account, 10h cooldown + claims + author-support self-votes (Task 17); NEVER_TOUCH incl. tov-hive (blocked-no-key)',
   },
   {
     chain: 'blurt', nodes: BLURT_RPCS,
@@ -901,7 +1105,7 @@ const LEGS = [
     gates: BLURT_GATES,
     eligibleRows: BLURT_ROWS,
     broadcastVote: broadcastVoteBlurt,
-    chainNote: 'blurt chain_id ' + BLURT_CHAIN_ID.slice(0, 8) + '… (blurtjs config; anchor.cjs recipe proven live 2026-09-06); BLT pubkeys, same WIF body; rc_api ABSENT (no RC budgeting — honest); blurt discussion objects omit net_votes/author_reputation → netVotes from active_votes, rep gate skipped; ynet-blurt retired (economicUse false) — never touched',
+    chainNote: 'blurt chain_id ' + BLURT_CHAIN_ID.slice(0, 8) + '… (blurtjs config; anchor.cjs recipe proven live 2026-09-06); BLT pubkeys, same WIF body; rc_api ABSENT (no RC budgeting — honest); ≤12 votes/run, 1/account, 10h cooldown + claims (blurt op has NO debt asset) + author-support self-votes (Task 17); blurt discussion objects omit net_votes/author_reputation → netVotes from active_votes, rep gate skipped; ynet-blurt retired (economicUse false) — never touched',
   },
 ];
 
@@ -926,7 +1130,8 @@ log('mode=' + (DRY_RUN ? 'DRY-RUN (no broadcast)' : 'REAL (votes will be broadca
 
 // (c) live verification first — we only keep accounts that verify + are healthy
 const verified = await verifyAccounts(accountOrder.slice(0, MAX_VOTES * 2));
-const healthy = verified.filter((v) => v.verdict === 'ok' && v.vpPct >= 5);
+// Task 17: whale-first — order by EFFECTIVE vesting desc (delegations-out subtracted)
+const healthy = verified.filter((v) => v.verdict === 'ok' && v.vpPct >= 5).sort((a, b) => (b.effVests || 0) - (a.effVests || 0));
 for (const v of verified) {
   if (v.verdict !== 'ok') log('account ' + v.account + ': ' + v.verdict);
   else log('account ' + v.account + ': verified ' + v.keySource + ' pub=' + v.pubFp + ' vp=' + v.vpPct + '% rep=' + v.rep);
@@ -983,8 +1188,24 @@ for (const v of healthy) {
   plans.push({ account: v.account, pubFp: v.pubFp, keySource: v.keySource, vote: pick });
 }
 
+// Task 17 author-support plan: ≤1 self-vote/run on the account's own young low-traction post
+const authorSupport = [];
+if (AUTHOR_SUPPORT) {
+  for (const v of healthy) {
+    if (historyDead.has(v.account)) continue;
+    const hist = voteHistories.get(v.account) || [];
+    const alreadyVoted = new Set(hist.filter((x) => Number(x.weight) > 0).map((x) => x.authorperm.toLowerCase()));
+    try {
+      const post = await latestSupportableOwnPostAt(RPCS, v.account);
+      if (!post) continue;
+      if (alreadyVoted.has((v.account + '/' + post.permlink).toLowerCase())) continue;
+      authorSupport.push({ account: v.account, pubFp: v.pubFp, author: v.account, permlink: post.permlink, netVotes: post.netVotes, ageHours: post.ageHours });
+    } catch (_) { /* fail-honest: skip this account's author-support */ }
+  }
+}
+
 const receipt = {
-  engine: 'economy-engine v1 (Task 15-c)',
+  engine: 'economy-engine v3 (Task 17 revenue wave) — steem leg',
   at: nowIso(),
   mode: DRY_RUN ? 'dry-run' : 'real-votes',
   chain: 'steem',
@@ -1008,11 +1229,29 @@ const receipt = {
   skips,
   candidateRejects,
   results: [],
-  costs: { principalAtRisk: 0, liquidSpent: 0, orders: 0, note: 'curation votes only — zero principal at risk; no market ops' },
+  claims: [],        // Task 17: claim_reward_balance receipts (per account)
+  authorSupport,     // Task 17: planned self-votes on own posts (results filled below in real mode)
+  costs: { principalAtRisk: 0, liquidSpent: 0, orders: 0, note: 'curation votes + claims + author-support self-votes only — zero principal at risk; no market ops' },
   dryRunState: { DRY_RUN: DRY_RUN, note: DRY_RUN ? 'no broadcast performed' : 'votes broadcast with verified posting keys only' },
 };
 
 if (!DRY_RUN) {
+  // Task 17 claims first (independent of candidate gates — every verified account, dust floor)
+  for (const v of verified) {
+    if (v.verdict !== 'ok') continue;
+    try {
+      const wif = resolvePostingWif(v.account, seal, (await condenser('get_accounts', [[v.account]]))[0].posting.key_auths.map((k) => k[0]));
+      if (!wif) { receipt.claims.push({ account: v.account, claimed: false, reason: 'no-matching-key' }); continue; }
+      const shape = await pendingShapeAt('steem', RPCS, v.account);
+      if (!shape || !shape.pending) { receipt.claims.push({ account: v.account, claimed: false, reason: 'nothing-pending-above-dust', pendingShape: shape ? { liquid: shape.liquid, debt: shape.debt, vesting: shape.vesting } : null }); continue; }
+      const bc = await CHAIN_CLAIM.steem(wif.wif, v.account, { liquid: shape.liquid, debt: shape.debt, vesting: shape.vesting });
+      receipt.claims.push({ account: v.account, claimed: true, rewards: { liquid: shape.liquid, debt: shape.debt, vesting: shape.vesting }, txid: bc.txid || null, block: bc.block || null, method: bc.method });
+      log('CLAIMED ' + v.account + ': ' + shape.liquid + ' + ' + shape.debt + ' + ' + shape.vesting + ' txid=' + (bc.txid || 'PENDING'));
+    } catch (e) {
+      receipt.claims.push({ account: v.account, claimed: false, errorShape: String(e && e.message).slice(0, 160) });
+      log('CLAIM FAILED for ' + v.account + ': ' + String(e && e.message).slice(0, 120));
+    }
+  }
   for (const p of plans) {
     try {
       const wif = resolvePostingWif(p.account, seal, (await condenser('get_accounts', [[p.account]]))[0].posting.key_auths.map((k) => k[0]));
@@ -1034,15 +1273,39 @@ if (!DRY_RUN) {
       log('BROADCAST ' + (rb ? 'landed despite node error' : 'FAILED') + ' for ' + p.account + ': ' + String(e && e.message).slice(0, 120));
     }
   }
+  // Task 17 author-support broadcasts (do NOT count toward the vote-success gate)
+  for (const s of authorSupport) {
+    try {
+      const wif = resolvePostingWif(s.account, seal, (await condenser('get_accounts', [[s.account]]))[0].posting.key_auths.map((k) => k[0]));
+      if (!wif) throw new Error('posting key stopped matching live auth — refusing to broadcast');
+      await broadcastVote(wif.wif, s.account, s.author, s.permlink, WEIGHT);
+      const rb = await readBackTxid(s.account, s.author, s.permlink);
+      s.broadcast = 'ok'; s.txid = rb ? rb.txid : null; s.txidBlock = rb ? rb.block : null;
+      log('AUTHOR-SUPPORT ' + s.account + ' → own post ' + s.permlink.slice(0, 28) + '… txid=' + (s.txid || 'PENDING'));
+    } catch (e) {
+      s.broadcast = 'FAILED'; s.errorShape = String(e && e.message).slice(0, 160);
+      log('AUTHOR-SUPPORT FAILED for ' + s.account + ': ' + String(e && e.message).slice(0, 120));
+    }
+  }
   const ok = receipt.results.filter((r) => r.broadcast === 'ok' || r.broadcast === 'ok-after-error');
-  log('real cycle done: broadcast ok=' + ok.length + '/' + plans.length + ' · txids read back=' + ok.filter((r) => r.txid).length);
+  log('real cycle done: broadcast ok=' + ok.length + '/' + plans.length + ' · claims=' + receipt.claims.filter((c) => c.claimed).length + ' · authorSupport=' + authorSupport.filter((s) => s.broadcast === 'ok').length + '/' + authorSupport.length + ' · txids read back=' + ok.filter((r) => r.txid).length);
   if (plans.length === 0) {
     log('real cycle: zero PLANNED votes (cooldown/dedupe/history gates) — honest no-op cycle, not a failure');
   } else if (ok.length === 0) {
     die('zero votes succeeded in a REAL run with ' + plans.length + ' plans — failing honestly (check accounts/RC/keys)');
   }
 } else {
-  log('dry-run: ' + plans.length + ' planned votes, none broadcast');
+  // dry-run: record claim plans (no broadcast) + keep author-support as plan-only
+  for (const v of verified) {
+    if (v.verdict !== 'ok') continue;
+    try {
+      const shape = await pendingShapeAt('steem', RPCS, v.account);
+      receipt.claims.push({ account: v.account, claimed: false, reason: shape && shape.pending ? 'dry-run-plan' : 'nothing-pending-above-dust', pendingShape: shape ? { liquid: shape.liquid, debt: shape.debt, vesting: shape.vesting } : null });
+    } catch (e) {
+      receipt.claims.push({ account: v.account, claimed: false, errorShape: String(e && e.message).slice(0, 160) });
+    }
+  }
+  log('dry-run: ' + plans.length + ' planned votes · ' + receipt.claims.filter((c) => c.reason === 'dry-run-plan').length + ' claim plans · ' + authorSupport.length + ' author-support plans, none broadcast');
 }
 
 fs.mkdirSync(path.dirname(receiptPath), { recursive: true });
@@ -1051,7 +1314,9 @@ log('receipt written: agent/receipts/' + receiptName);
 
 if (PUSH_RECEIPT) {
   const nVotes = receipt.results.filter((r) => r.broadcast === 'ok' || r.broadcast === 'ok-after-error').length;
-  const msg = 'economy-engine: ' + nowIso() + ' · ' + (DRY_RUN ? 'dry-run plan' : nVotes + ' votes') + ' · txids inside';
+  const nClaims = receipt.claims.filter((c) => c.claimed).length;
+  const nSelf = authorSupport.filter((s) => s.broadcast === 'ok').length;
+  const msg = 'economy-engine: ' + nowIso() + ' · ' + (DRY_RUN ? 'dry-run plan' : nVotes + ' votes · ' + nClaims + ' claims · ' + nSelf + ' self-votes') + ' · txids inside';
   try {
     pushReceipt(receiptPath, msg);
     log('receipt pushed to steem (pull --rebase first, no force)');
@@ -1079,6 +1344,8 @@ if (legFailures.length) {
 // (i) SHAPE-ONLY summary — accounts, counts, txids. No keys, no secret-shaped strings.
 console.log('SUMMARY ' + JSON.stringify({
   mode: receipt.mode, accounts: receipt.plans.map((p) => p.account), voted: receipt.results.filter((r) => r.broadcast === 'ok' || r.broadcast === 'ok-after-error').map((r) => ({ account: r.account, txid: r.txid })),
+  claims: receipt.claims.filter((c) => c.claimed).map((c) => ({ account: c.account, txid: c.txid })),
+  authorSupport: authorSupport.filter((s) => s.broadcast === 'ok').map((s) => ({ account: s.account, permlink: s.permlink.slice(0, 40), txid: s.txid })),
   skipped: skips.length, candidatePool: pool.length, receipt: 'agent/receipts/' + receiptName, pushed: PUSH_RECEIPT,
   legs: legSummaries,
 }));
