@@ -10,7 +10,9 @@
 #     לעולם לא יוצא מהראנר ולא נכנס ל-Domain (אפס-סודות-בצד-הציבורי)
 #   - אימות-חי מול-השרשרת של הרשאת-הפרסום לכל-חשבון → בחירת-מועמדים דטרמיניסטית
 #     (רשימת-תגים, אורך-מינימום, יחס-מעורבות, הוצאת-הצי-עצמו + כבר-הצבעה + שער-קצב-חווה)
-#   - ≤5 הצבעות-אצירה 100% מ-≤5 חשבונות-מפתח שונים (אחת לכל-אחד) — אפס-קרן-בסיכון
+#   - ≤12 הצבעות-אצירה 100% מחשבונות-מפתח שונים (אחת לכל-אחד, ממוינים לפי-SP אפקטיבי —
+#     הלווייתן מצביע-ראשון) + claim-פרסים-ממתינים לכל-חשבון + self-vote תמיכה-עצמית
+#     מוגבל (≤1/חשבון/ריצה, פוסט-צעיר-מתחת-ל-3-הצבעות) — אפס-קרן-בסיכון (Task 17)
 #   - קריאת-txid חזרה מ-account-history (steem-js לא חושף txid — דוקטרינת 14-c)
 #   - קבלה-JSON נדחפת ל-steem (pull --rebase תחילה — לעולם לא force) + סיכום SHAPE-ONLY
 #   - כל-כשל = הראן נכשל בכנות (exit nonzero → אדום)
@@ -30,9 +32,9 @@ on:
         type: boolean
         default: true
       cooldown_hours:
-        description: 'min hours between an account votes (default 20 — daily-safe)'
+        description: 'min hours between an account votes (default 10 — Task 17 faster cadence)'
         type: string
-        default: '20'
+        default: '10'
 
 permissions:
   contents: read
@@ -44,7 +46,7 @@ concurrency:
 jobs:
   cycle:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - name: checkout Domain (public home — logic only)
         uses: actions/checkout@v4
@@ -83,8 +85,9 @@ jobs:
           # (observed live: run 37009080091). format('{0}', …) stringifies before comparing.
           DRY_RUN: ${{ github.event_name == 'schedule' && 'false' || (format('{0}', inputs.dry_run) == 'false' && 'false' || 'true') }}
           PUSH_RECEIPT: 'true'
-          ENGINE_MAX_VOTES: '5'
-          ENGINE_MIN_HOURS_BETWEEN_VOTES: ${{ inputs.cooldown_hours || '20' }}
+          ENGINE_MAX_VOTES: '12'
+          ENGINE_MIN_HOURS_BETWEEN_VOTES: ${{ inputs.cooldown_hours || '10' }}
+          ENGINE_AUTHOR_SUPPORT: 'true'
         run: node scripts/economy-engine.mjs
 
       - name: prove the receipt landed in steem (API-verified head is asserted by the caller wave)
