@@ -1351,8 +1351,15 @@ if (!DRY_RUN) {
         }
       } catch (_) { /* gate probe failed — proceed; the chain itself remains the final gate */ }
       await broadcastVote(wif.wif, p.account, p.vote.author, p.vote.permlink, WEIGHT);
-      const rb = await readBackTxid(p.account, p.vote.author, p.vote.permlink);
-      receipt.results.push({ account: p.account, author: p.vote.author, permlink: p.vote.permlink, weight: WEIGHT, broadcast: 'ok', txid: rb ? rb.txid : null, txidBlock: rb ? rb.block : null, readBack: rb ? 'account-history' : 'pending-not-found-in-50-latest-ops' });
+      let rb = await readBackTxid(p.account, p.vote.author, p.vote.permlink);
+      let readBackNote = rb ? 'account-history' : 'pending-not-found-in-100-latest-ops';
+      if (!rb) {
+        // Task 18 fallback: the post's own active_votes is the zero-lag authoritative
+        // confirmation (account-history on some nodes lags minutes behind the head)
+        const cf = await confirmSelfVoteAt(RPCS, p.vote.author, p.vote.permlink, p.account).catch(() => ({ confirmed: false }));
+        if (cf.confirmed) { rb = { txid: null, block: null, confirmedInActiveVotes: true }; readBackNote = 'active-votes-percent-' + cf.percent + ' (history lagged, vote proven on the post itself)'; }
+      }
+      receipt.results.push({ account: p.account, author: p.vote.author, permlink: p.vote.permlink, weight: WEIGHT, broadcast: 'ok', txid: rb ? rb.txid : null, txidBlock: rb ? rb.block : null, readBack: readBackNote });
       log('VOTED ' + p.account + ' → @' + p.vote.author + '/' + p.vote.permlink.slice(0, 28) + '… txid=' + (rb ? rb.txid : 'PENDING'));
     } catch (e) {
       const msg = String(e && e.message);
