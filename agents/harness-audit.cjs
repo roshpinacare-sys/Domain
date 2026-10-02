@@ -232,6 +232,19 @@ const freshCount = bookStates.filter((b) => b.exists && b.fresh).length;
   check('sovereignty', 'cognitive rail governed: provider registry valid, forbidden rails never enabled, keyless probes booked, E10-E12 pin it', railOk,
     'agents/inference-providers.csv + rail-ledger.json', railEvidence);
 
+  // Task 22: FATE-DEFENSE — the Emergence World study adoption: FWI scorecard live + STASIS breaker armed
+  const fwi = readJson(path.join(AG, 'fleet-indicators.json'));
+  const fwiFresh = !!(fwi && fwi.at && (Date.now() - Date.parse(fwi.at)) / 3600000 < 48);
+  const fwiInds = (fwi && Array.isArray(fwi.indicators)) ? fwi.indicators : [];
+  const fwiAllSources = fwiInds.length === 9 && fwiInds.every((i) => i.evidenceSource && String(i.evidenceSource).length > 3);
+  const stasisFile = readJson(path.join(AG, 'STASIS.json'));
+  const engineSrc = read(path.join(ROOT, 'scripts', 'economy-engine.mjs'));
+  const stasisGateInCode = !!engineSrc && engineSrc.includes('STASIS-HALT');
+  const fwiOk = !!(fwi && fwiFresh && fwiAllSources && stasisFile && typeof stasisFile.active === 'boolean' && stasisGateInCode);
+  check('fate-defense', 'Emergence-World adoption: FWI scorecard fresh (9 indicators, each with a mechanical evidence source) + STASIS breaker armed + engine obeys it', fwiOk,
+    fwi ? `FWI ${fwi.verdict || '?'} ${fwiFresh ? 'fresh' : 'stale'} · ${fwiInds.length} indicators · sources ${fwiAllSources ? 'all named' : 'INCOMPLETE'} · stasis armed=${stasisFile ? stasisFile.active : 'missing'} · engine gate=${stasisGateInCode}` : 'fleet-indicators.json missing',
+    'Task 22 (study: world.emergence.ai, arXiv 2606.08367 + 2609.17320): their worlds died with no warning shot — ours carries a mechanical brake the engine obeys before any seal/broadcast, and a 9-indicator scorecard computed from artifacts, never from self-reports (ANTI-GOODHART); docs: FATE-DEFENSE.md');
+
   // ---- silent-costs watch (L13) — booked as standing observations, honestly
   const silentCosts = {
     verificationDebt: 'selftests cover past incidents; every NEW failure mode (concat family ×3, null-deref, dedupe) becomes a check within one wave of discovery',
@@ -246,15 +259,16 @@ const freshCount = bookStates.filter((b) => b.exists && b.fresh).length;
     fail: checks.filter((c) => c.status === 'FAIL').length
   };
   const out = {
-    ok: true, at, agent: 'harness-audit v1.4.0 (Z-35 + Task 19 + Z-37 sovereignty + Z-38 mechanical override + Z-39 cognitive rail)',
-    origin: 'walkinglabs/learn-harness-engineering study (Z-35): five subsystems + loop/graph engineering mapped to the fleet; Z-37 adds f/prompts.chat governance adoption (roles-as-data + decision ladder + change-requests + override protocol); Z-38 adds Dicklesworthstone/destructive_command_guard adoption (mechanical override gate + evals E7-E9); Z-39 adds tashfeenahmed/freellmapi adoption (cognitive-rail registry + keyless probes + evals E10-E12); the audit itself is the adopted artifact — a fresh-context checker node on a schedule',
+    ok: true, at, agent: 'harness-audit v1.5.0 (Z-35 + Task 19 + Z-37 sovereignty + Z-38 override + Z-39 cognitive rail + Task 22 fate-defense, superset merge)',
+    origin: 'walkinglabs/learn-harness-engineering study (Z-35): five subsystems + loop/graph engineering mapped to the fleet; Z-37 adds f/prompts.chat governance adoption (roles-as-data + decision ladder + change-requests + override protocol); Z-38 adds Dicklesworthstone/destructive_command_guard adoption (mechanical override gate + evals E7-E9); Z-39 adds tashfeenahmed/freellmapi adoption (cognitive-rail registry + keyless probes + evals E10-E12); Task 22 adds world.emergence.ai fate-defense adoption (STASIS circuit breaker + FWI scorecard + three laws, FATE-DEFENSE.md); the audit itself is the adopted artifact — a fresh-context checker node on a schedule',
     fiveSubsystems: {
       instructions: 'AGENTS.md + DOCTRINE.md + FLEET-NOTE.md + agent headers',
       state: 'books (external state primitive) + CLAIMS + worklog',
       verification: 'verify-then-sign + read-back + agent-verify judge node + gitleaks',
       scope: 'kill rules + floors/ceilings + dust honesty',
       lifecycle: 'receipts per session + RESUME-KIT + restore.sh',
-      sovereignty: 'role-registry.csv (roles-as-data) + change-requests/ (judged self-modification) + sovereignty.md (decision ladder + override protocol) + command-guard.cjs (mechanical override, Z-38) + cognitive-rail.cjs + inference-providers.csv (governed inference rails, Z-39)'
+      sovereignty: 'role-registry.csv (roles-as-data) + change-requests/ (judged self-modification) + sovereignty.md (decision ladder + override protocol) + command-guard.cjs (mechanical override, Z-38) + cognitive-rail.cjs + inference-providers.csv (governed inference rails, Z-39)',
+      fateDefense: 'STASIS.json circuit breaker (engine obeys pre-seal) + fleet-indicators.cjs FWI scorecard (9 indicators, artifact-sourced) + FATE-DEFENSE.md (Emergence World roast + three laws, Task 22)'
     },
     books: bookStates,
     checks, counts, silentCosts,

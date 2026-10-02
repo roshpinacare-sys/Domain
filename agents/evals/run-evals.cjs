@@ -21,6 +21,7 @@
  *   E10 rail catalog        — the inference registry is valid; FORBIDDEN rails never enabled (Z-39)
  *   E11 rail probe          — keyless probes classify honestly, fail-soft on a ghost row (Z-39)
  *   E12 rail policy gate    — a FORBIDDEN row enabled as LIVE fails validation (Z-39)
+ *   E13 fate-defense FWI    — the Emergence-World scorecard runs fresh, 9 indicators, every one artifact-sourced (Task 22; renumbered from my interim E10 — Z-39's rail evals landed first on main, supersession visible here)
  *
  * Fail-soft: exit 0 always; FAILs are booked honestly (HARNESS-AUDIT MANDATE:
  * green-washing the evals is a doctrine breach).
@@ -172,9 +173,24 @@ function accumulateInMemory(bookRows, seed) {
       ['a catalog where cohere (ToS FORBIDDEN) is flipped to LIVE is rejected — ok:false with the FORBIDDEN reason named', 'the policy gate is mechanical, not prose (same lesson as Z-38: a law that lives only in prose is advisory)'], `reason=${String(verdict.reason || '').slice(0, 100)}`);
   } catch (e) { evalr('E12', 'rail policy gate', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
+  // ---- E13: fate-defense — the FWI scorecard (Emergence World adoption) is live, fresh, and artifact-sourced (Task 22)
+  try {
+    const r = spawnSync(process.execPath, [path.join(AG, 'fleet-indicators.cjs')], { cwd: AG, timeout: 120000, encoding: 'utf8' });
+    const fwi = JSON.parse(fs.readFileSync(path.join(AG, 'fleet-indicators.json'), 'utf8'));
+    const inds = Array.isArray(fwi.indicators) ? fwi.indicators : [];
+    const nine = inds.length === 9;
+    const sourced = inds.every((i) => i.evidenceSource && String(i.evidenceSource).length > 3);
+    const fresh = fwi.at && (Date.now() - Date.parse(fwi.at)) / 3600000 < 1;
+    const stasis = JSON.parse(fs.readFileSync(path.join(AG, 'STASIS.json'), 'utf8'));
+    evalr('E13', 'fate-defense: FWI scorecard computes 9 artifact-sourced indicators + STASIS armed',
+      r.status === 0 && nine && sourced && fresh && typeof stasis.active === 'boolean',
+      ['fleet-indicators.cjs runs in a fresh process (exit 0, fail-soft)', 'exactly 9 indicators booked', 'every indicator names a mechanical evidence source (ANTI-GOODHART)', 'FWI book stamped fresh (<1h)', 'STASIS.json parseable with boolean active flag'],
+      `verdict=${fwi.verdict} indicators=${inds.length} sourced=${sourced} stasisArmed=${!stasis.active}`);
+  } catch (e) { evalr('E13', 'fate-defense FWI', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.2.0 (Z-36 + Z-38 guard evals + Z-39 rail evals E10-E12)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi adoptions', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.3.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13, superset merge)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense adoptions', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];
