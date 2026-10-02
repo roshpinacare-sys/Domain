@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * economy-engine.mjs — Task 15-c: the autonomous daily economy engine (steem curation leg).
+ * economy-engine.mjs — Task 15-c + 16-a: the autonomous economy engine (steem + HIVE + BLURT
+ * curation legs).
  *
  * Owner directive: "the simulated economy must become REAL step by step — many more trades,
  * many ways to inject liquidity, the network devices must run sovereign/autonomous/AUTOMATIC".
@@ -24,6 +25,19 @@
  *   (g) write a receipt JSON into the steem checkout (agent/receipts/)
  *   (h) optionally push the receipt (PUSH_RECEIPT=true; pull --rebase first, NEVER force)
  *   (i) print a SHAPE-ONLY summary (accounts, txids, counts — never any key material)
+ *
+ * Task 16-a — HIVE + BLURT legs (after the steem receipt, same run, same seal):
+ *   · key path proven live 2026-10-02 (receipt steem:agent/receipts/2026-10-02-hive-blurt-first.json):
+ *     ONE vault.json role-WIF body rules all three graphene chains (STM/STM/BLT pubkey prefix)
+ *   · hive: steem-js signTransaction under the hive chain_id (anchor.cjs recipe) + synchronous
+ *     broadcast + account-history read-back confirmed on ≥2 nodes
+ *   · blurt: node-serialized canonical-ECDSA signing (anchor.cjs recipe, proven live 2026-09-06)
+ *     + get_ops_in_block confirmation (rc_api absent on blurt — honest)
+ *   · per-chain caps (≤5 votes/run/chain, 1/account, 20h cooldown, already-voted skip),
+ *     per-chain roster gates (hive: 9/12 keyed rows; blurt: 11 economic rows, ynet retired),
+ *     per-chain NEVER_TOUCH (ynet* everywhere, tov-hive blocked-no-key on hive)
+ *   · per-chain receipt: agent/receipts/<date>-economy-engine-{hive|blurt}[-dryrun].json
+ *   · any leg failure = the run fails honestly (exit nonzero → red) AFTER both legs attempted
  *
  * Env knobs (all optional unless noted):
  *   STEEM_DIR      path to private steem checkout           (default: <cwd>/steem)
@@ -131,6 +145,104 @@ async function rpc(body) {
   throw new Error('all RPC nodes failed (' + (lastErr && lastErr.message) + ')');
 }
 const condenser = (method, params) => rpc({ jsonrpc: '2.0', id: 1, method: 'condenser_api.' + method, params });
+
+// ─────────────────────────── Task 16-a: HIVE + BLURT legs — shared chain plumbing ───────────────────────────
+// Key path (proven live 2026-10-02, receipt steem:agent/receipts/2026-10-02-hive-blurt-first.json):
+// ONE vault.json role-WIF body rules all three graphene chains — steem/hive use the STM pubkey
+// prefix, blurt uses BLT; the base58 body (and therefore every signature) is identical. The same
+// seal → resolvePostingWif material therefore signs votes on all three chains, after a per-chain
+// LIVE posting-authority match.
+const HIVE_RPCS = (process.env.ENGINE_HIVE_RPC || 'https://api.hive.blog,https://api.openhive.network,https://api.deathwing.me,https://anyx.io')
+  .split(',').map((s) => s.trim().replace(/\/$/, '')).filter(Boolean);
+const BLURT_RPCS = (process.env.ENGINE_BLURT_RPC || 'https://rpc.beblurt.com,https://rpc.blurt.blog')
+  .split(',').map((s) => s.trim().replace(/\/$/, '')).filter(Boolean);
+const HIVE_CHAIN_ID = 'beeab0de00000000000000000000000000000000000000000000000000000000';
+const BLURT_CHAIN_ID = 'cd8d90f29ae273abec3eaa7731e25934c63eb654d55080caff2ebb7f5df6381f'; // @blurtfoundation/blurtjs config.json (anchor.cjs recipe, proven live 2026-09-06)
+const HIVE_TAGS = (process.env.ENGINE_TAGS_HIVE || '').split(',').map((s) => s.trim().toLowerCase()).filter(Boolean);
+const BLURT_TAGS = (process.env.ENGINE_TAGS_BLURT || '').split(',').map((s) => s.trim().toLowerCase()).filter(Boolean);
+const DEFAULT_HIVE_TAGS = ['opensource', 'linux', 'ubuntu', 'debian', 'python', 'programming', 'javascript', 'technology', 'science', 'education', 'tutorial', 'software'];
+const DEFAULT_BLURT_TAGS = ['life', 'photography', 'nature', 'story', 'blog', 'food'];
+// blurt calibration (measured 2026-10-02): discussion objects omit net_votes + author_reputation
+// and rc_api is ABSENT on blurt nodes → netVotes derives from active_votes, the rep gate is
+// skipped, ≥1 positive upvote still required, RC budgeting is not possible (honestly documented).
+const BLURT_GATES = { minNetVotes: 1, repGate: false };
+
+/** Generic rotating-node JSON-RPC (same shape as rpc() above, parameterized by node list). */
+async function rpcAt(nodes, body) {
+  let lastErr = null;
+  for (let attempt = 0; attempt < nodes.length * 2; attempt++) {
+    const url = nodes[attempt % nodes.length];
+    try {
+      const res = await fetch(url, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body), signal: AbortSignal.timeout(15000),
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const j = await res.json();
+      if (j.error) throw new Error('rpc-error: ' + (j.error.message || JSON.stringify(j.error)).slice(0, 120));
+      return j.result;
+    } catch (e) { lastErr = e; }
+  }
+  throw new Error('all RPC nodes failed (' + (lastErr && lastErr.message) + ')');
+}
+const condAt = (nodes, method, params) => rpcAt(nodes, { jsonrpc: '2.0', id: 1, method: 'condenser_api.' + method, params });
+
+// ECDSA for blurt (ecurve/bigi ship inside steem@0.7.11 deps — resolved from the same base).
+// Math ported verbatim from steem:agent/identity.cjs (proven live: the 2026-09-06 blurt anchor).
+const reqChain = createRequire(path.join(STEEMJS_DIR, 'engine-require-base.js'));
+let ecurve = null, bigi = null;
+try { ecurve = reqChain('ecurve'); bigi = reqChain('bigi'); } catch (_) { /* blurt leg dies honestly if reached without these */ }
+const SECP = ecurve ? ecurve.getCurveByName('secp256k1') : null;
+const B58_ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+function wifToScalar(wif) {
+  let num = bigi.ZERO;
+  for (const ch of wif) {
+    const idx = B58_ALPHABET.indexOf(ch);
+    if (idx < 0) throw new Error('bad base58 char');
+    num = num.multiply(bigi.valueOf(58)).add(bigi.valueOf(idx));
+  }
+  let hex = num.toString(16);
+  if (hex.length % 2) hex = '0' + hex;
+  let raw = Buffer.from(hex, 'hex');
+  let pad = 0;
+  for (const ch of wif) { if (ch === '1') pad++; else break; }
+  raw = Buffer.concat([Buffer.alloc(pad), raw]);
+  const bodyBuf = raw.subarray(0, raw.length - 4);
+  const expect = crypto.createHash('sha256').update(crypto.createHash('sha256').update(bodyBuf).digest()).digest().subarray(0, 4);
+  if (!raw.subarray(raw.length - 4).equals(expect)) throw new Error('WIF checksum mismatch');
+  if (bodyBuf[0] !== 0x80) throw new Error('not a mainnet WIF prefix');
+  return bigi.fromBuffer(bodyBuf.subarray(1, 33));
+}
+function ecdsaSignLowS(h, dBig) {
+  const N = SECP.n;
+  const hB = h instanceof bigi ? h : bigi.fromBuffer(h);
+  for (let t = 0; t < 64; t++) {
+    const k = bigi.fromBuffer(crypto.randomBytes(32)).mod(N);
+    if (k.signum() === 0) continue;
+    const R = SECP.G.multiply(k);
+    const r = R.affineX.mod(N);
+    if (r.signum() === 0) continue;
+    let s = k.modInverse(N).multiply(hB.add(r.multiply(dBig))).mod(N);
+    if (s.signum() === 0) continue;
+    let recid = (R.affineY.testBit(0) ? 1 : 0) | (R.affineX.compareTo(N) >= 0 ? 2 : 0);
+    if (s.compareTo(N.shiftRight(1)) > 0) { s = N.subtract(s); recid ^= 1; }
+    return { r, s, recid };
+  }
+  throw new Error('ecdsa sign failed after 64 tries');
+}
+function ecdsaRecover(h, rBig, sBig, recid) {
+  const N = SECP.n;
+  const hB = h instanceof bigi ? h : bigi.fromBuffer(h);
+  const x = rBig.add(N.multiply(bigi.valueOf(recid >> 1)));
+  if (x.compareTo(SECP.p) >= 0) return null;
+  const alpha = x.multiply(x).multiply(x).add(SECP.a.multiply(x)).add(SECP.b).mod(SECP.p);
+  let beta = alpha.modPow(SECP.p.add(bigi.ONE).divide(bigi.valueOf(4)), SECP.p);
+  if (beta.testBit(0) !== ((recid & 1) === 1)) beta = SECP.p.subtract(beta);
+  const R = new ecurve.Point(SECP, x, beta, bigi.ONE);
+  const rInv = rBig.modInverse(N);
+  const hNeg = N.subtract(hB.mod(N)).mod(N);
+  return R.multiply(sBig).add(SECP.G.multiply(hNeg)).multiply(rInv);
+}
 
 // ─────────────────────────── (b) seal → posting keys (in-runner only) ───────────────────────────
 /** Opens the committed key seal inside a 0700 temp dir. Returns { wifByAccount, materialDir, openedAt }. */
@@ -372,6 +484,427 @@ function pushReceipt(receiptPath, commitMsg) {
   execFileSync('git', ['push', 'origin', 'main'], { cwd: STEEM_DIR, stdio: 'pipe' });
 }
 
+// ═══════════════════════ Task 16-a: the generic curation leg (hive / blurt) ═══════════════════════
+// Same discipline as the steem leg, per chain: live-auth verify → deterministic quality
+// candidates (niche tags, min length, engagement, fleet+already-voted+cooldown+farm-cadence
+// gates) → ≤5 votes of 100% from distinct keyed accounts → txid read-back → receipt pushed
+// rebase-first. Per-chain caps and per-chain NEVER_TOUCH lists. Fail-honest at every step.
+
+/** Vote history via get_account_history on a given node list (same gates/fail-honest as steem). */
+async function accountVoteHistoryAt(nodes, name) {
+  let lastErr = null;
+  for (const size of [100, 200, 500]) {
+    try {
+      const hist = await condAt(nodes, 'get_account_history', [name, -1, size]);
+      if (!Array.isArray(hist)) throw new Error('non-array account history');
+      const votes = [];
+      for (const entry of hist) {
+        const ev = entry && entry[1];
+        if (!ev || !ev.op || ev.op[0] !== 'vote') continue;
+        const v = ev.op[1] || {};
+        if ((v.voter || '').toLowerCase() !== name) continue;
+        votes.push({ authorperm: (v.author || '').toLowerCase() + '/' + v.permlink, weight: Number(v.weight), time: ev.timestamp });
+      }
+      return votes;
+    } catch (e) { lastErr = e; }
+  }
+  throw new Error('account history unreadable on all nodes (' + (lastErr && lastErr.message) + ')');
+}
+
+/** Content-farm detector on a given node list (≥4 own posts in 96h = production line). */
+async function authorRecentPostCountAt(nodes, author) {
+  try {
+    const blog = await condAt(nodes, 'get_discussions_by_blog', [{ tag: author, limit: 10 }]);
+    const own = (blog || []).filter((x) => (x.author || '').toLowerCase() === author.toLowerCase());
+    return own.filter((x) => Date.parse(x.created + (x.created && x.created.endsWith('Z') ? '' : 'Z')) > Date.now() - 96 * 3600 * 1000).length;
+  } catch (_) { return -1; }
+}
+
+/** Candidate pool on a given node list + per-chain gates. */
+async function fetchCandidatePoolAt(nodes, tags, gates) {
+  const dgp = await condAt(nodes, 'get_dynamic_global_properties', []);
+  const headMs = Date.parse(dgp.time + (dgp.time.endsWith('Z') ? '' : 'Z'));
+  const seen = new Map();
+  for (const tag of tags) {
+    for (const sort of ['get_discussions_by_created', 'get_discussions_by_hot']) {
+      try {
+        const posts = await condAt(nodes, sort, [{ tag, limit: 20 }]);
+        for (const p of posts || []) {
+          if (!p || seen.has(p.author + '/' + p.permlink)) continue;
+          seen.set(p.author + '/' + p.permlink, p);
+        }
+      } catch (_) { /* a niche tag failing on one node must not kill the cycle */ }
+    }
+  }
+  const fleetSet = new Set(fleet.accounts.map((a) => a.toLowerCase()));
+  const pool = [];
+  for (const [authorperm, p] of seen) {
+    if (p.depth !== 0) continue;
+    const author = (p.author || '').toLowerCase();
+    if (fleetSet.has(author)) continue;
+    if (NEVER_TOUCH.some((re) => re.test(author))) continue;
+    const ageDays = (headMs - Date.parse(p.created + (p.created && p.created.endsWith('Z') ? '' : 'Z'))) / 86400000;
+    if (!(ageDays >= 0 && ageDays <= MAX_POST_AGE_DAYS)) continue;
+    if ((p.title || '').length < MIN_TITLE_CHARS) continue;
+    const bodyChars = Number(p.body_length || (p.body || '').length);
+    if (bodyChars < MIN_BODY_CHARS) continue;
+    const av = Array.isArray(p.active_votes) ? p.active_votes : [];
+    const posVotes = av.filter((v) => Number(v.percent) > 0).length;
+    const netVotes = Number.isFinite(Number(p.net_votes)) ? Number(p.net_votes) : posVotes;
+    if (netVotes < (gates.minNetVotes ?? MIN_NET_VOTES)) continue;
+    const children = Number(p.children || 0);
+    if (children > MAX_CHILDREN) continue;
+    if (netVotes / Math.max(children, 1) < MIN_LIKES_PER_COMMENT) continue;
+    if (gates.repGate !== false && repFromRaw(p.author_reputation) < MIN_AUTHOR_REP) continue;
+    const payoutAt = Date.parse(p.cashout_time || p.created);
+    if (!(payoutAt > headMs + 12 * 3600 * 1000)) continue;
+    pool.push({
+      author: p.author, permlink: p.permlink, authorperm,
+      titleShape: (p.title || '').slice(0, 60) + ((p.title || '').length > 60 ? '…' : ''),
+      niche: p.category || '', ageDays: Math.round(ageDays * 10) / 10,
+      netVotes, children, bodyChars,
+    });
+  }
+  pool.sort((x, y) => (x.netVotes - y.netVotes) || (y.ageDays - x.ageDays) || (x.authorperm < y.authorperm ? -1 : 1));
+  return pool;
+}
+
+/** HIVE broadcast: graphene tx build + steem-js signTransaction under the HIVE chain_id
+ *  (anchor.cjs grapheneBroadcast recipe — proven live) + synchronous broadcast for the id. */
+async function broadcastVoteHive(wif, voter, author, permlink) {
+  const dgp = await condAt(HIVE_RPCS, 'get_dynamic_global_properties', []);
+  const tx = {
+    ref_block_num: dgp.head_block_number & 0xffff,
+    ref_block_prefix: Buffer.from(dgp.head_block_id, 'hex').readUInt32LE(4),
+    expiration: new Date(new Date(dgp.time + (dgp.time.endsWith('Z') ? '' : 'Z')).getTime() + 60000).toISOString().slice(0, 19),
+    operations: [['vote', { voter, author, permlink, weight: WEIGHT }]],
+    extensions: [],
+  };
+  const prev = steem.config.get('chain_id');
+  steem.config.set('chain_id', HIVE_CHAIN_ID);
+  let signed;
+  try { signed = steem.auth.signTransaction(tx, [wif]); } finally { steem.config.set('chain_id', prev); }
+  const res = await condAt(HIVE_RPCS, 'broadcast_transaction_synchronous', [signed]);
+  return { txid: (res && (res.id || res.trx_id)) || null, block: (res && res.block_num) || null, method: 'condenser_api.broadcast_transaction_synchronous (steem-js signTransaction, hive chain_id)' };
+}
+
+/** BLURT broadcast: node-serialized + manually signed (anchor.cjs blurtBroadcast recipe —
+ *  blurt renumbers ops vs steem-js, so the NODE serializes; digest = sha256(chain_id ‖ bytes);
+ *  canonical low-s ECDSA with header = 31 + recid; self-verify by recovery before broadcast). */
+async function broadcastVoteBlurt(wif, voter, author, permlink) {
+  const dgp = await condAt(BLURT_RPCS, 'get_dynamic_global_properties', []);
+  const tx = {
+    ref_block_num: dgp.head_block_number & 0xffff,
+    ref_block_prefix: Buffer.from(dgp.head_block_id, 'hex').readUInt32LE(4),
+    expiration: new Date(new Date(dgp.time + (dgp.time.endsWith('Z') ? '' : 'Z')).getTime() + 60000).toISOString().slice(0, 19),
+    operations: [['vote', { voter, author, permlink, weight: WEIGHT }]],
+    extensions: [],
+  };
+  const nodeHex = await condAt(BLURT_RPCS, 'get_transaction_hex', [tx]);
+  const nb = Buffer.from(nodeHex, 'hex');
+  if (nb[nb.length - 1] !== 0x00 || nb[nb.length - 2] !== 0x00) throw new Error('unexpected node serialization tail');
+  const txBytes = nb.subarray(0, nb.length - 1); // strip trailing signatures-vector count (unsigned)
+  const digest = crypto.createHash('sha256').update(Buffer.concat([Buffer.from(BLURT_CHAIN_ID, 'hex'), txBytes])).digest();
+  const d = wifToScalar(wif);
+  let sig = null;
+  for (let i = 0; i < 64; i++) {
+    const cand = ecdsaSignLowS(digest, d);
+    const rb = cand.r.toBuffer(32), sb = cand.s.toBuffer(32);
+    if (rb[0] !== 0x00 && rb[0] < 0x80 && sb[0] !== 0x00 && sb[0] < 0x80) { sig = cand; break; }
+  }
+  if (!sig) throw new Error('blurt canonical signature not found in 64 tries');
+  const point = SECP.G.multiply(d);
+  const rec = ecdsaRecover(digest, sig.r, sig.s, sig.recid);
+  if (!rec || rec.getEncoded(true).toString('hex') !== point.getEncoded(true).toString('hex')) {
+    throw new Error('blurt self-verify failed — not broadcasting');
+  }
+  const sigHex = Buffer.concat([Buffer.from([31 + sig.recid]), sig.r.toBuffer(32), sig.s.toBuffer(32)]).toString('hex');
+  const res = await condAt(BLURT_RPCS, 'broadcast_transaction_synchronous', [{ ...tx, signatures: [sigHex] }]);
+  return { txid: (res && (res.id || res.trx_id)) || null, block: (res && (res.block_num || res.trx_block_num)) || null, method: 'node-serialized canonical-ECDSA + condenser_api.broadcast_transaction_synchronous (anchor.cjs recipe, proven 2026-09-06)' };
+}
+
+/** txid read-back per chain. hive: account-history probes + confirmation across ≥2 nodes.
+ *  blurt: synchronous-broadcast id is primary; get_ops_in_block(syncBlock) + account-history
+ *  best-effort (rc_api absent on blurt — documented). */
+async function readBackLeg(chain, nodes, voter, author, permlink, syncId, syncBlock) {
+  if (chain === 'blurt' && syncId) {
+    let opsInBlock = null;
+    if (syncBlock) {
+      try {
+        const ops = await condAt(nodes, 'get_ops_in_block', [syncBlock, false]);
+        for (const rec of ops || []) {
+          const [t, v] = rec.op || [];
+          if (t !== 'vote') continue;
+          if ((v.voter || '').toLowerCase() === voter && (v.author || '').toLowerCase() === author.toLowerCase() && v.permlink === permlink) {
+            opsInBlock = { txid: rec.trx_id || syncId, block: syncBlock, match: true };
+            break;
+          }
+        }
+      } catch (_) { /* best-effort */ }
+    }
+    let histTxid = null;
+    for (const attempt of [1, 2, 3]) {
+      try {
+        const hist = await condAt(nodes, 'get_account_history', [voter, -1, 100]);
+        for (let i = (hist || []).length - 1; i >= 0; i--) {
+          const ev = hist[i] && hist[i][1];
+          if (!ev || !ev.op || ev.op[0] !== 'vote') continue;
+          const v = ev.op[1] || {};
+          if ((v.voter || '').toLowerCase() === voter && (v.author || '').toLowerCase() === author.toLowerCase() && v.permlink === permlink) { histTxid = ev.trx_id; break; }
+        }
+        if (histTxid) break;
+      } catch (_) { /* rotate implicitly */ }
+      await new Promise((r) => setTimeout(r, attempt * 4000));
+    }
+    return { confirmedBy: opsInBlock ? 'get_ops_in_block' : (histTxid ? 'account-history' : 'sync-broadcast-id-only'), txid: (opsInBlock && opsInBlock.txid) || histTxid || syncId, block: syncBlock || (opsInBlock && opsInBlock.block) || null, histTxid, opsInBlock: !!opsInBlock, note: 'rc_api absent on blurt — RC not budgeted; account-history indexing can lag, ops-in-block is the on-chain proof' };
+  }
+  // hive: keep probing account history (indexing lag), then confirm on every reachable node
+  let found = null;
+  for (const attempt of [1, 2, 3, 4, 5, 6]) {
+    try {
+      const hist = await condAt(nodes, 'get_account_history', [voter, -1, 100]);
+      for (let i = (hist || []).length - 1; i >= 0; i--) {
+        const ev = hist[i] && hist[i][1];
+        if (!ev || !ev.op || ev.op[0] !== 'vote') continue;
+        const v = ev.op[1] || {};
+        if ((v.voter || '').toLowerCase() === voter && (v.author || '').toLowerCase() === author.toLowerCase() && v.permlink === permlink) { found = { txid: ev.trx_id, block: ev.block }; break; }
+      }
+      if (found) break;
+    } catch (_) { /* rotate implicitly */ }
+    await new Promise((r) => setTimeout(r, attempt * 4000));
+  }
+  if (!found) return { confirmedBy: 'pending-not-found-in-latest-ops', txid: syncId || null, block: syncBlock || null, confirmNodes: [] };
+  const confirmNodes = [];
+  for (const node of nodes) {
+    try {
+      const hist = await condAt([node], 'get_account_history', [voter, -1, 100]);
+      let hit = false;
+      for (const entry of hist || []) {
+        const ev = entry && entry[1];
+        if (!ev || !ev.op || ev.op[0] !== 'vote') continue;
+        const v = ev.op[1] || {};
+        if ((v.voter || '').toLowerCase() === voter && (v.author || '').toLowerCase() === author.toLowerCase() && v.permlink === permlink) { hit = true; break; }
+      }
+      if (hit) confirmNodes.push(node.replace('https://', ''));
+    } catch (_) { /* node down — honest count only */ }
+  }
+  return { confirmedBy: 'account-history', txid: found.txid, block: found.block, confirmNodes };
+}
+
+/** ONE full curation leg for a non-steem graphene chain. Returns a summary object; throws on
+ *  hard failure (fail-honest — the caller records the failure and the run goes red). */
+async function curationLeg(cfg) {
+  const { chain, nodes, tags, gates, eligibleRows, broadcastVote, chainNote } = cfg;
+  const allowed = new Set(eligibleRows.map((r) => r.account.toLowerCase()));
+  if (allowed.size === 0) throw new Error('roster grants zero ' + chain + ' rows — refusing to operate');
+
+  // account order: deterministic daily rotation over eligible roster order
+  let order = [...allowed];
+  const day = Math.floor(Date.parse(new Date().toISOString().slice(0, 10) + 'T00:00:00Z') / 86400000);
+  const off = day % order.length;
+  order = order.slice(off).concat(order.slice(0, off));
+  log('[' + chain + '] mode=' + (DRY_RUN ? 'DRY-RUN' : 'REAL') + ' · maxVotes=' + MAX_VOTES + ' · accountOrder=' + order.slice(0, MAX_VOTES).join(','));
+
+  // live verification + VP health (per-chain auth semantics)
+  const verified = [];
+  for (const name of order.slice(0, MAX_VOTES * 2)) {
+    if (NEVER_TOUCH.some((re) => re.test(name))) { verified.push({ account: name, verdict: 'skip-never-touch' }); continue; }
+    if (!allowed.has(name)) { verified.push({ account: name, verdict: 'skip-roster-not-full-control' }); continue; }
+    try {
+      const acc = (await condAt(nodes, 'get_accounts', [[name]]))[0];
+      if (!acc) { verified.push({ account: name, verdict: 'skip-account-missing' }); continue; }
+      const chainAuths = ((acc.posting || {}).key_auths || []).map((k) => k[0]);
+      const vaultWif = seal.wifByAccount[name];
+      let resolved = null;
+      if (vaultWif) {
+        const pub = steem.auth.wifToPublic(vaultWif);
+        const hit = chain === 'hive'
+          ? chainAuths.some((k) => k === pub) // hive keeps the STM prefix
+          : chainAuths.some((k) => String(k).slice(3) === String(pub).slice(3) && String(k).slice(0, 3) === 'BLT');
+        if (hit) resolved = { wif: vaultWif, source: 'vault', pub };
+      }
+      if (!resolved) { verified.push({ account: name, verdict: 'skip-no-posting-key-matches-live-auth', chainPubFps: chainAuths.map(fp) }); continue; }
+      // voting manabar (10 × vests-micros max, 5-day regen — same graphene semantics)
+      const vestsMicros = Math.round(parseFloat(acc.vesting_shares) * 1e6);
+      const maxMana = 10 * vestsMicros;
+      const vm = acc.voting_manabar || { current_mana: 0, last_update_time: 0 };
+      const dgp = await condAt(nodes, 'get_dynamic_global_properties', []);
+      const headSec = Date.parse(dgp.time + (dgp.time.endsWith('Z') ? '' : 'Z')) / 1000;
+      const elapsed = Math.max(0, headSec - Number(vm.last_update_time || 0));
+      const vpPct = maxMana > 0 ? (Math.min(maxMana, Number(vm.current_mana || 0) + maxMana * (elapsed / 432000)) / maxMana) * 100 : 0;
+      verified.push({ account: name, verdict: 'ok', pubFp: fp(resolved.pub), keySource: resolved.source, vpPct: Math.round(vpPct * 100) / 100 });
+    } catch (e) {
+      verified.push({ account: name, verdict: 'skip-verification-error', errorShape: String(e && e.message).slice(0, 120) });
+    }
+  }
+  const healthy = verified.filter((v) => v.verdict === 'ok' && v.vpPct >= 5);
+  for (const v of verified) {
+    if (v.verdict !== 'ok') log('[' + chain + '] account ' + v.account + ': ' + v.verdict);
+    else log('[' + chain + '] account ' + v.account + ': verified ' + v.keySource + ' pub=' + v.pubFp + ' vp=' + v.vpPct + '%');
+  }
+
+  // vote-history gates (fail-honest: unreadable history = no broadcast for that account)
+  const voteHistories = new Map();
+  const historyDead = new Set();
+  for (const v of healthy) {
+    try { voteHistories.set(v.account, await accountVoteHistoryAt(nodes, v.account)); }
+    catch (e) { historyDead.add(v.account); log('[' + chain + '] account ' + v.account + ': vote-history unreadable — excluded this run (' + String(e.message).slice(0, 100) + ')'); }
+  }
+
+  const pool = await fetchCandidatePoolAt(nodes, tags, gates);
+  log('[' + chain + '] candidate pool: ' + pool.length + ' posts passed the deterministic quality gate (' + tags.length + ' niche tags)');
+
+  const used = new Set();
+  const usedAuthors = new Set();
+  const rejectedAuthors = new Set();
+  const plans = [];
+  const skips = [];
+  const candidateRejects = [];
+  let cadenceProbes = 0;
+  for (const v of healthy) {
+    if (plans.length >= MAX_VOTES) break;
+    if (historyDead.has(v.account)) { skips.push({ account: v.account, reason: 'vote-history-unavailable-no-broadcast-allowed' }); continue; }
+    const hist = voteHistories.get(v.account) || [];
+    const lastVoteAt = hist.reduce((acc, x) => (x.time && Date.parse(x.time) > acc ? Date.parse(x.time) : acc), 0);
+    const hoursSince = lastVoteAt ? (Date.now() - lastVoteAt) / 3600000 : Infinity;
+    if (hoursSince < MIN_HOURS_BETWEEN_VOTES) { skips.push({ account: v.account, reason: 'cooldown-last-vote-' + Math.round(hoursSince * 10) / 10 + 'h-ago' }); continue; }
+    const alreadyVoted = new Set(hist.filter((x) => Number(x.weight) > 0).map((x) => x.authorperm.toLowerCase()));
+    let pick = null;
+    for (const c of pool) {
+      if (used.has(c.authorperm) || alreadyVoted.has(c.authorperm.toLowerCase())) continue;
+      if (usedAuthors.has(c.author.toLowerCase()) || rejectedAuthors.has(c.author.toLowerCase())) continue;
+      if (cadenceProbes < 12) {
+        cadenceProbes++;
+        const recent = await authorRecentPostCountAt(nodes, c.author);
+        if (recent >= 4) {
+          rejectedAuthors.add(c.author.toLowerCase());
+          candidateRejects.push({ author: c.author, authorperm: c.authorperm, reason: 'content-farm-cadence-' + recent + '-posts-in-96h' });
+          continue;
+        }
+      }
+      pick = c;
+      break;
+    }
+    if (!pick) { skips.push({ account: v.account, reason: 'no-fresh-candidate-not-already-voted' }); continue; }
+    used.add(pick.authorperm);
+    usedAuthors.add(pick.author.toLowerCase());
+    plans.push({ account: v.account, pubFp: v.pubFp, keySource: v.keySource, vote: pick });
+  }
+
+  // receipt (collision-safe naming per chain)
+  let receiptName = utcDate + '-economy-engine-' + chain + (DRY_RUN ? '-dryrun' : '') + '.json';
+  for (let n = 2; fs.existsSync(path.join(STEEM_DIR, 'agent', 'receipts', receiptName)); n++) {
+    receiptName = utcDate + '-economy-engine-' + chain + (DRY_RUN ? '-dryrun' : '') + '-r' + n + '.json';
+  }
+  const legReceiptPath = path.join(STEEM_DIR, 'agent', 'receipts', receiptName);
+  const legReceipt = {
+    engine: 'economy-engine v2 (Task 16-a) — ' + chain + ' leg',
+    at: nowIso(),
+    mode: DRY_RUN ? 'dry-run' : 'real-votes',
+    chain,
+    fleetTruth: { source: fleet.source, activeFleet: fleet.activeFleet, rows: eligibleRows.map((r) => ({ account: r.account, control: r.control, economicUse: r.economicUse })) },
+    seal: {
+      opened: true, outerShaGate: 'ok', innerShaGate: 'ok', openedAt: seal.openedAt,
+      note: 'same in-runner seal as the steem leg; ONE vault WIF body rules steem/hive/blurt (STM/STM/BLT prefix) — proven live 2026-10-02 (receipt 2026-10-02-hive-blurt-first.json)',
+    },
+    nicheTags: tags,
+    candidatePoolSize: pool.length,
+    verifiedAccounts: verified.map((v) => ({ account: v.account, verdict: v.verdict, pubFp: v.pubFp || null, keySource: v.keySource || null, vpPct: v.vpPct ?? null })),
+    plans: plans.map((p) => ({
+      account: p.account, voterPubFp: p.pubFp, keySource: p.keySource, weight: WEIGHT,
+      author: p.vote.author, permlink: p.vote.permlink,
+      candidateShape: { niche: p.vote.niche, ageDays: p.vote.ageDays, netVotes: p.vote.netVotes, children: p.vote.children, bodyChars: p.vote.bodyChars, titleShape: p.vote.titleShape },
+    })),
+    skips, candidateRejects,
+    results: [],
+    costs: { principalAtRisk: 0, liquidSpent: 0, orders: 0, note: 'curation votes only — zero principal at risk; no comments, no transfers, no market ops' },
+    chainNote,
+    dryRunState: { DRY_RUN: DRY_RUN, note: DRY_RUN ? 'no broadcast performed' : 'votes broadcast with verified posting keys only' },
+  };
+
+  if (!DRY_RUN) {
+    for (const p of plans) {
+      try {
+        // re-verify the live auth immediately before signing (never sign on a stale match)
+        const acc = (await condAt(nodes, 'get_accounts', [[p.account]]))[0];
+        const chainAuths = ((acc.posting || {}).key_auths || []).map((k) => k[0]);
+        const resolved = resolvePostingWif(p.account, seal, chain === 'hive' ? chainAuths : chainAuths.map((k) => 'STM' + String(k).slice(3)));
+        if (!resolved) throw new Error('posting key stopped matching live auth — refusing to broadcast');
+        const bc = await broadcastVote(resolved.wif, p.account, p.vote.author, p.vote.permlink);
+        const rb = await readBackLeg(chain, nodes, p.account, p.vote.author, p.vote.permlink, bc.txid, bc.block);
+        legReceipt.results.push({
+          account: p.account, author: p.vote.author, permlink: p.vote.permlink, weight: WEIGHT,
+          broadcast: 'ok', broadcastMethod: bc.method,
+          txid: rb.txid, txidBlock: rb.block, confirmedBy: rb.confirmedBy,
+          confirmNodes: rb.confirmNodes || undefined, opsInBlock: rb.opsInBlock, readBackNote: rb.note || undefined,
+        });
+        log('[' + chain + '] VOTED ' + p.account + ' → @' + p.vote.author + '/' + p.vote.permlink.slice(0, 28) + '… txid=' + (rb.txid || 'PENDING'));
+      } catch (e) {
+        // the tx may have landed even if the relaying node errored — read back before declaring failure
+        const rb = await readBackLeg(chain, nodes, p.account, p.vote.author, p.vote.permlink, null, null);
+        legReceipt.results.push({
+          account: p.account, author: p.vote.author, permlink: p.vote.permlink,
+          broadcast: rb.txid ? 'ok-after-error' : 'FAILED',
+          txid: rb.txid || null, txidBlock: rb.block || null, confirmedBy: rb.confirmedBy || null,
+          errorShape: String(e && e.message).slice(0, 160),
+        });
+        log('[' + chain + '] BROADCAST ' + (rb.txid ? 'landed despite node error' : 'FAILED') + ' for ' + p.account + ': ' + String(e && e.message).slice(0, 120));
+      }
+    }
+    const ok = legReceipt.results.filter((r) => r.broadcast === 'ok' || r.broadcast === 'ok-after-error');
+    log('[' + chain + '] real cycle done: broadcast ok=' + ok.length + '/' + plans.length + ' · txids read back=' + ok.filter((r) => r.txid).length);
+    if (plans.length === 0) {
+      log('[' + chain + '] real cycle: zero PLANNED votes (cooldown/dedupe/history gates) — honest no-op cycle, not a failure');
+    } else if (ok.length === 0) {
+      throw new Error('zero ' + chain + ' votes succeeded in a REAL run with ' + plans.length + ' plans — failing honestly');
+    }
+  } else {
+    log('[' + chain + '] dry-run: ' + plans.length + ' planned votes, none broadcast');
+  }
+
+  fs.mkdirSync(path.dirname(legReceiptPath), { recursive: true });
+  fs.writeFileSync(legReceiptPath, JSON.stringify(legReceipt, null, 2) + '\n');
+  log('[' + chain + '] receipt written: agent/receipts/' + receiptName);
+  if (PUSH_RECEIPT) {
+    const nVotes = legReceipt.results.filter((r) => r.broadcast === 'ok' || r.broadcast === 'ok-after-error').length;
+    pushReceipt(legReceiptPath, 'economy-engine[' + chain + ']: ' + nowIso() + ' · ' + (DRY_RUN ? 'dry-run plan' : nVotes + ' votes') + ' · txids inside');
+    log('[' + chain + '] receipt pushed to steem (pull --rebase first, no force)');
+  }
+  return {
+    chain,
+    receipt: 'agent/receipts/' + receiptName,
+    plans: plans.length,
+    voted: legReceipt.results.filter((r) => r.broadcast === 'ok' || r.broadcast === 'ok-after-error').map((r) => ({ account: r.account, txid: r.txid, confirmedBy: r.confirmedBy || null })),
+    skipped: skips.length,
+    candidatePool: pool.length,
+  };
+}
+
+// roster rows per chain + per-chain NEVER_TOUCH (belt-and-braces on top of roster flags)
+const rowsAll = rosterMod.rows();
+const HIVE_ROWS = rowsAll.filter((r) => r.chain === 'hive' && r.control === 'full' && r.economicUse === true && !r.retired);
+const BLURT_ROWS = rowsAll.filter((r) => r.chain === 'blurt' && r.control === 'full' && r.economicUse === true && !r.retired);
+// tov-hive is blocked-no-key (owner-confirmed) and can never appear in HIVE_ROWS; the pattern
+// list below additionally forbids it (and ynet*) as voter OR author on every leg.
+const LEGS = [
+  {
+    chain: 'hive', nodes: HIVE_RPCS,
+    tags: HIVE_TAGS.length ? HIVE_TAGS : DEFAULT_HIVE_TAGS,
+    gates: { minNetVotes: MIN_NET_VOTES, repGate: true },
+    eligibleRows: HIVE_ROWS,
+    broadcastVote: broadcastVoteHive,
+    chainNote: 'hive chain_id ' + HIVE_CHAIN_ID.slice(0, 8) + '… (anchor.cjs, proven live); STM pubkeys; ≤5 votes/run, 1/account, 20h cooldown; NEVER_TOUCH incl. tov-hive (blocked-no-key)',
+  },
+  {
+    chain: 'blurt', nodes: BLURT_RPCS,
+    tags: BLURT_TAGS.length ? BLURT_TAGS : DEFAULT_BLURT_TAGS,
+    gates: BLURT_GATES,
+    eligibleRows: BLURT_ROWS,
+    broadcastVote: broadcastVoteBlurt,
+    chainNote: 'blurt chain_id ' + BLURT_CHAIN_ID.slice(0, 8) + '… (blurtjs config; anchor.cjs recipe proven live 2026-09-06); BLT pubkeys, same WIF body; rc_api ABSENT (no RC budgeting — honest); blurt discussion objects omit net_votes/author_reputation → netVotes from active_votes, rep gate skipped; ynet-blurt retired (economicUse false) — never touched',
+  },
+];
+
 // ═══════════════════════════════ MAIN ═══════════════════════════════
 const seal = openSeal();
 const utcDate = new Date().toISOString().slice(0, 10);
@@ -527,8 +1060,25 @@ if (PUSH_RECEIPT) {
   }
 }
 
+// ═══════════════════════ Task 16-a: HIVE + BLURT legs ═══════════════════════════════
+// The steem leg above is untouched in behavior; its receipt is already written/pushed.
+// Both remaining legs now run with the identical discipline (per-chain caps + NEVER_TOUCH).
+const legSummaries = [];
+const legFailures = [];
+for (const leg of LEGS) {
+  try { legSummaries.push(await curationLeg(leg)); }
+  catch (e) {
+    legFailures.push({ chain: leg.chain, error: String(e && e.message).slice(0, 200) });
+    log('LEG ' + leg.chain + ' FAILED: ' + String(e && e.message).slice(0, 160));
+  }
+}
+if (legFailures.length) {
+  die('leg failure(s) [' + legFailures.map((f) => f.chain).join(',') + '] — failing honestly: ' + legFailures.map((f) => f.error).join(' | '));
+}
+
 // (i) SHAPE-ONLY summary — accounts, counts, txids. No keys, no secret-shaped strings.
 console.log('SUMMARY ' + JSON.stringify({
   mode: receipt.mode, accounts: receipt.plans.map((p) => p.account), voted: receipt.results.filter((r) => r.broadcast === 'ok' || r.broadcast === 'ok-after-error').map((r) => ({ account: r.account, txid: r.txid })),
   skipped: skips.length, candidatePool: pool.length, receipt: 'agent/receipts/' + receiptName, pushed: PUSH_RECEIPT,
+  legs: legSummaries,
 }));
