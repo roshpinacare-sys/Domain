@@ -1,6 +1,6 @@
 # Desk Evals — runnable expectations (fresh-process judge, Z-36)
 
-_run-evals v1.0.0 (Z-36) · 2026-10-02T22:30:00.780Z_
+_run-evals v1.0.0 (Z-36) · 2026-10-02T22:37:08.933Z_
 
 **evals green: 6/6 expectations hold**
 
@@ -23,7 +23,7 @@ _run-evals v1.0.0 (Z-36) · 2026-10-02T22:30:00.780Z_
 - exit code 0 even when DEFU_DIR is bogus
 - missing canon = honest FAILs, never a crash, never green-washed
 - counts arithmetic consistent (pass+warn+fail == checks)
-- _measured: exit=0 pass=20 warn=0 fail=9_
+- _measured: exit=0 pass=19 warn=0 fail=9_
 
 ## E5 · concat-family regression: manabar coerced before arithmetic — PASS
 - string+number concatenates ("74488519347811969") — the Z-33 third-incident family

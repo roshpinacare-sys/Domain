@@ -131,6 +131,10 @@ const freshCount = bookStates.filter((b) => b.exists && b.fresh).length;
     `${filledRoles.length} FILLED roles · ${filledRoles.length - unwired.length} wired`,
     unwired.length ? `role claims a mechanism no file backs: ${unwired.map((r) => r.id).join(', ')}` : 'every claimed role has a file or workflow that runs it — the army is hands-on, not titles');
 
+  // ---- (Task 20: my interim role-prompts registry check retired — SUPERSEDED-BY
+  // the Z-37 charter registry (role-registry.csv + sovereignty.md), whose
+  // sovereignty checks below are the governing superset)
+
   // ---- loop primitives (L13): the six primitives must have fleet instances
   const wfDir = path.join(ROOT, '.github', 'workflows');
   const wfCount = (function () { try { return fs.readdirSync(wfDir).filter((f) => f.endsWith('.yml')).length; } catch (_) { return 0; } })();

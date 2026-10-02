@@ -1,60 +1,80 @@
 {
-  "features": [
-    {
-      "id": "feat-001",
-      "name": "Autonomous economy engine",
-      "description": "Daily on-chain curation + self-votes + claims across steem/hive/blurt, keyless in Domain, seal opened only in-runner, receipts as proof",
-      "dependencies": [],
-      "status": "done",
-      "evidence": "economy-engine.yml + scripts/economy-engine.mjs; real runs 37009336549/37067532580 SUCCESS with chain txid read-back (cbb4bc69… block 110099406)"
-    },
-    {
-      "id": "feat-002",
-      "name": "Harness judge node (five subsystems)",
-      "description": "Fresh-context checker node auditing instructions/state/verification/scope/lifecycle + anchors, on a schedule, fail-soft",
-      "dependencies": [],
-      "status": "done",
-      "evidence": "agents/harness-audit.cjs → harness-audit.json/md; adopted from walkinglabs/learn-harness-engineering (Z-35), extended Task 19 (role→worker wiring + loop primitives)"
-    },
-    {
-      "id": "feat-003",
-      "name": "Books pulse (machine state layer)",
-      "description": "Live measurement books stamp themselves (at/updated) and stay fresh <48h; freshness audited by the judge node",
-      "dependencies": ["feat-002"],
-      "status": "done",
-      "evidence": "9/9 live books exist; learning-ledger stamping fixed in Task 19 (measure-learn.cjs now stamps at/updated)"
-    },
-    {
-      "id": "feat-004",
-      "name": "Weave core anchor cadence",
-      "description": "Hourly anchor ping (sandbox-independent) + anchor-execute lines keep saos.weave.core.v1 on chain",
-      "dependencies": [],
-      "status": "done",
-      "evidence": "weave-anchor-ping.yml hourly + weave-anchor-lines.yml; core trx 9b377210393fdec1 2026-10-02T21:42Z"
-    },
-    {
-      "id": "feat-005",
-      "name": "Army role→worker wiring (audited)",
-      "description": "Every FILLED role in recruitment.json must name a worker artifact that exists on disk; the judge node measures the hands",
-      "dependencies": ["feat-002"],
-      "status": "done",
-      "evidence": "harness-audit.cjs graph check 'every FILLED role names a reachable worker artifact' — Task 19"
-    },
-    {
-      "id": "feat-006",
-      "name": "LHE harness protocol adoption (this repo)",
-      "description": "walkinglabs/learn-harness-engineering minimal harness: AGENTS.md protocol + feature_list.json + progress.md + session-handoff.md + init.sh",
-      "dependencies": ["feat-002", "feat-003"],
-      "status": "done",
-      "evidence": "Task 19 — validator run on this repo post-adoption; scores recorded in the Task 19 worklog section"
-    },
-    {
-      "id": "feat-007",
-      "name": "Daily revenue > 1 cent (owner KPI)",
-      "description": "Realized chain income (curation + author + claims) maturing above $0.01/day, receipts-provable",
-      "dependencies": ["feat-001"],
-      "status": "open",
-      "evidence": "v3 engine run-rate 0.02–0.06 SBD/day maturing over 7 days; needs days of receipts to show realized >1¢ — SP compounding + daily quality posts are the levers"
-    }
-  ]
+ "features": [
+  {
+   "id": "feat-001",
+   "name": "Autonomous economy engine",
+   "description": "Daily on-chain curation + self-votes + claims across steem/hive/blurt, keyless in Domain, seal opened only in-runner, receipts as proof",
+   "dependencies": [],
+   "status": "done",
+   "evidence": "economy-engine.yml + scripts/economy-engine.mjs; real runs 37009336549/37067532580 SUCCESS with chain txid read-back (cbb4bc69… block 110099406)"
+  },
+  {
+   "id": "feat-002",
+   "name": "Harness judge node (five subsystems)",
+   "description": "Fresh-context checker node auditing instructions/state/verification/scope/lifecycle + anchors, on a schedule, fail-soft",
+   "dependencies": [],
+   "status": "done",
+   "evidence": "agents/harness-audit.cjs → harness-audit.json/md; adopted from walkinglabs/learn-harness-engineering (Z-35), extended Task 19 (role→worker wiring + loop primitives)"
+  },
+  {
+   "id": "feat-003",
+   "name": "Books pulse (machine state layer)",
+   "description": "Live measurement books stamp themselves (at/updated) and stay fresh <48h; freshness audited by the judge node",
+   "dependencies": [
+    "feat-002"
+   ],
+   "status": "done",
+   "evidence": "9/9 live books exist; learning-ledger stamping fixed in Task 19 (measure-learn.cjs now stamps at/updated)"
+  },
+  {
+   "id": "feat-004",
+   "name": "Weave core anchor cadence",
+   "description": "Hourly anchor ping (sandbox-independent) + anchor-execute lines keep saos.weave.core.v1 on chain",
+   "dependencies": [],
+   "status": "done",
+   "evidence": "weave-anchor-ping.yml hourly + weave-anchor-lines.yml; core trx 9b377210393fdec1 2026-10-02T21:42Z"
+  },
+  {
+   "id": "feat-005",
+   "name": "Army role→worker wiring (audited)",
+   "description": "Every FILLED role in recruitment.json must name a worker artifact that exists on disk; the judge node measures the hands",
+   "dependencies": [
+    "feat-002"
+   ],
+   "status": "done",
+   "evidence": "harness-audit.cjs graph check 'every FILLED role names a reachable worker artifact' — Task 19"
+  },
+  {
+   "id": "feat-006",
+   "name": "LHE harness protocol adoption (this repo)",
+   "description": "walkinglabs/learn-harness-engineering minimal harness: AGENTS.md protocol + feature_list.json + progress.md + session-handoff.md + init.sh",
+   "dependencies": [
+    "feat-002",
+    "feat-003"
+   ],
+   "status": "done",
+   "evidence": "Task 19 — validator run on this repo post-adoption; scores recorded in the Task 19 worklog section"
+  },
+  {
+   "id": "feat-007",
+   "name": "Daily revenue > 1 cent (owner KPI)",
+   "description": "Realized chain income (curation + author + claims) maturing above $0.01/day, receipts-provable",
+   "dependencies": [
+    "feat-001"
+   ],
+   "status": "open",
+   "evidence": "v3 engine run-rate 0.02–0.06 SBD/day maturing over 7 days; needs days of receipts to show realized >1¢ — SP compounding + daily quality posts are the levers"
+  },
+  {
+   "id": "feat-008",
+   "name": "Role-prompt registry (prompts.chat adoption)",
+   "description": "Declarative role-voice registry in prompts.chat CSV schema (act,prompt,for_devs,type,contributor) + ${Var:default} binding + loader role-prompts.cjs; sovereignty: role behavior is versioned data, a fresh worker adopts a fleet role by loading one row",
+   "dependencies": [
+    "feat-002",
+    "feat-005"
+   ],
+   "status": "done",
+   "evidence": "ADOPTION LANDED VIA THE PARALLEL Z-37 CHARTER REGISTRY (superset): agents/role-registry.csv (act,file,ci,mission,signs,tier,books,owner,status — roles-as-data with enforcement) + sovereignty.md (tier A/B/C + CR flow) + harness-audit v1.2.0 sovereignty checks. My interim role-prompts.csv/cjs (prompts.chat raw schema + ${Var} loader) retired SUPERSEDED-BY; the loader pattern + FILLED-roles completeness idea live on in the charter registry checks."
+  }
+ ]
 }
