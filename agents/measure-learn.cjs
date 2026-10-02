@@ -105,6 +105,9 @@ function cardIdFromTitle(title) {
     if ((r.lastExternal || 0) > 0) b.postsWithExternal++;
   }
   const summary = { at: now, note: 'external engagement per knowledge-card (last-sample per post) — feeds future content priorities', byCard };
+  // Task 19 (harness-audit check 21): every live book stamps itself — freshness is auditable
+  ledger.at = now;
+  ledger.updated = now;
   fs.mkdirSync(path.dirname(OUT_LEDGER), { recursive: true });
   fs.writeFileSync(OUT_LEDGER, JSON.stringify(ledger, null, 1));
   fs.writeFileSync(OUT_SUMMARY, JSON.stringify(summary, null, 1));

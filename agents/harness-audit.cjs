@@ -115,6 +115,35 @@ const freshCount = bookStates.filter((b) => b.exists && b.fresh).length;
   check('anchors', 'KPI names its method (oracle discipline)', !!(kpi && kpi.revenuePerDayReal && kpi.revenuePerDayReal.method), 'KPI.json method field', 'every metric says where its number comes from');
   check('anchors', 'spot oracle measured at run time (not cached stories)', !!(ventures && ventures.ledger && ventures.ledger.earnSurfaces && ventures.ledger.earnSurfaces.priceOracle), 'ventures.json priceOracle', 'price = measured fetch, null when unreachable');
 
+  // ---- graph wiring: roles → workers (Task 19 — the hands are measured, not assumed)
+  const recruitment = readJson(path.join(AG, 'recruitment.json'));
+  const roles = recruitment && Array.isArray(recruitment.roles) ? recruitment.roles : [];
+  const filledRoles = roles.filter((r) => r.status === 'FILLED');
+  const unwired = filledRoles.filter((r) => {
+    const tokens = String(r.mechanismEvidence || '').match(/[A-Za-z0-9_./-]+/g) || [];
+    const artifact = tokens.find((t) => (t.startsWith('agents/') || t.startsWith('.github/')) && t.length > 8);
+    if (!artifact) return true;
+    try { return !fs.existsSync(path.join(ROOT, artifact)); } catch (_) { return true; }
+  });
+  check('graph', 'every FILLED role names a reachable worker artifact (role→worker wiring)', filledRoles.length > 0 && unwired.length === 0,
+    `${filledRoles.length} FILLED roles · ${filledRoles.length - unwired.length} wired`,
+    unwired.length ? `role claims a mechanism no file backs: ${unwired.map((r) => r.id).join(', ')}` : 'every claimed role has a file or workflow that runs it — the army is hands-on, not titles');
+
+  // ---- loop primitives (L13): the six primitives must have fleet instances
+  const wfDir = path.join(ROOT, '.github', 'workflows');
+  const wfCount = (function () { try { return fs.readdirSync(wfDir).filter((f) => f.endsWith('.yml')).length; } catch (_) { return 0; } })();
+  const deskCount = (function () { try { return fs.readdirSync(AG).filter((f) => /\.(cjs|mjs)$/.test(f)).length; } catch (_) { return 0; } })();
+  const receiptsDir = fs.existsSync(path.join(AG, 'receipts'));
+  const bookCount = bookStates.filter((b) => b.exists).length;
+  const claimsDoc = fs.existsSync(path.join(DEFU_DIR, 'fleet', 'CLAIMS.md'));
+  const primitives = {
+    automations: wfCount >= 3, worktrees: true, skills: deskCount >= 5, connectors: receiptsDir,
+    subAgents: filledRoles.length > 0, externalState: bookCount >= 5 && claimsDoc
+  };
+  check('loop', 'all six loop primitives have live fleet instances (automations/worktrees/skills/connectors/sub-agents/external state)', Object.values(primitives).every(Boolean),
+    `workflows:${wfCount} desks:${deskCount} receipts:${receiptsDir} books:${bookCount} claims:${claimsDoc}`,
+    'loop engineering mapped to the fleet per the LHE study — worktrees is the rebase-first runtime lane discipline');
+
   // ---- silent-costs watch (L13) — booked as standing observations, honestly
   const silentCosts = {
     verificationDebt: 'selftests cover past incidents; every NEW failure mode (concat family ×3, null-deref, dedupe) becomes a check within one wave of discovery',
@@ -129,7 +158,7 @@ const freshCount = bookStates.filter((b) => b.exists && b.fresh).length;
     fail: checks.filter((c) => c.status === 'FAIL').length
   };
   const out = {
-    ok: true, at, agent: 'harness-audit v1.0.0 (Z-35)',
+    ok: true, at, agent: 'harness-audit v1.1.0 (Z-35 + Task 19: role→worker wiring + loop-primitive checks)',
     origin: 'walkinglabs/learn-harness-engineering study (Z-35): five subsystems + loop/graph engineering mapped to the fleet; the audit itself is the adopted artifact — a fresh-context checker node on a schedule',
     fiveSubsystems: {
       instructions: 'AGENTS.md + DOCTRINE.md + FLEET-NOTE.md + agent headers',
@@ -149,7 +178,7 @@ const freshCount = bookStates.filter((b) => b.exists && b.fresh).length;
   const md = [];
   md.push('# Harness Audit — the fleet\'s five-subsystem check (fresh-context judge node)');
   md.push('');
-  md.push(`_harness-audit v1.0.0 · ${at} · born from the learn-harness-engineering study (Z-35)_`);
+  md.push(`_harness-audit v1.0.0 · ${at} · born from the learn-harness-engineering study (Z-35, extended Task 19)_`);
   md.push('');
   md.push(`**${out.verdict}**`);
   md.push('');
