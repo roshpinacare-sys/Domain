@@ -1,33 +1,33 @@
 {
  "ok": true,
  "format": "moment-watch-v1",
- "publishedAt": "2026-10-02T13:52:51.138Z",
+ "publishedAt": "2026-10-02T14:26:34.695Z",
  "engine": "Domain/agents/moment-watch · R62 sovereign moment",
  "role": "reads the live moment every 30 minutes (market regime, our parity line vs the live internal book, fuel runway, measured anomalies) and records a deterministic directional call that is only ever scored after its horizon has passed - training as measurement, never as promise",
  "market": {
-  "steemUsd": 0.064983,
-  "steem24h": 3.5002613772153017,
-  "sbdUsd": 0.648179,
-  "btcUsd": 86725,
-  "btc24h": 3.483022057365412,
+  "steemUsd": 0.064844,
+  "steem24h": 3.283831367261848,
+  "sbdUsd": 0.647505,
+  "btcUsd": 86546,
+  "btc24h": 3.030776909962584,
   "fearGreed": {
    "value": 72,
    "label": "Greed"
   }
  },
- "paritySbdPerSteem": 0.10025471358991885,
+ "paritySbdPerSteem": 0.10014440042934031,
  "liveBook": {
-  "bestBid": 0.10040160642570281,
-  "bestAsk": 0.1042358803986711,
-  "bidsDepthSbd": 1594.65,
-  "asksDepthSteem": 1367.78,
+  "bestBid": 0.10009255226480836,
+  "bestAsk": 0.10424267695194413,
+  "bidsDepthSbd": 1594.19,
+  "asksDepthSteem": 1346.84,
   "levels": 21,
-  "bidSurplusBps": 15
+  "bidSurplusBps": -5
  },
  "regime": {
   "label": "RISK_ON",
   "drivers": [
-   "BTC +3.5%",
+   "BTC +3.0%",
    "F&G 72"
   ],
   "thresholds": {
@@ -40,11 +40,11 @@
  },
  "runway": {
   "active": true,
-  "weeklySp": 475.84149289184035,
+  "weeklySp": 475.8422470400299,
   "nextPayment": "2026-10-03T02:01:27",
-  "remainingSp": 1903.3659715661217,
-  "weeklyUsd": 30.92,
-  "treasuryUsd": 263.41
+  "remainingSp": 1903.36898815888,
+  "weeklyUsd": 30.86,
+  "treasuryUsd": 263.17
  },
  "grid": {
   "verdict": "ARMED-LIVE",
@@ -81,8 +81,8 @@
  "insights": [
   {
    "kind": "parity-edge",
-   "tone": "warn",
-   "text": "הספר החי 15bps מעל קו-הזהות — אין עודף-קנייה כרגע; הגריד ממתין."
+   "tone": "good",
+   "text": "עומק-קנייה חי 5bps מתחת לקו-הזהות (bid 0.1001 מול parity 0.1001) — עודף מדוד לגריד."
   },
   {
    "kind": "fuel",
