@@ -1,45 +1,45 @@
 {
  "ok": true,
- "at": "2026-10-02T22:46:32.204Z",
- "agent": "harness-audit v1.2.0 (Z-35 + Task 19 + Z-37: +sovereignty subsystem — role-registry integrity, change-request ledger)",
- "origin": "walkinglabs/learn-harness-engineering study (Z-35): five subsystems + loop/graph engineering mapped to the fleet; Z-37 adds f/prompts.chat governance adoption (roles-as-data + decision ladder + change-requests + override protocol) as the sovereignty subsystem; the audit itself is the adopted artifact — a fresh-context checker node on a schedule",
+ "at": "2026-10-02T22:48:15.891Z",
+ "agent": "harness-audit v1.3.0 (Z-35 + Task 19 + Z-37 sovereignty + Z-38 mechanical override)",
+ "origin": "walkinglabs/learn-harness-engineering study (Z-35): five subsystems + loop/graph engineering mapped to the fleet; Z-37 adds f/prompts.chat governance adoption (roles-as-data + decision ladder + change-requests + override protocol); Z-38 adds Dicklesworthstone/destructive_command_guard adoption (mechanical override gate + evals E7-E9); the audit itself is the adopted artifact — a fresh-context checker node on a schedule",
  "fiveSubsystems": {
   "instructions": "AGENTS.md + DOCTRINE.md + FLEET-NOTE.md + agent headers",
   "state": "books (external state primitive) + CLAIMS + worklog",
   "verification": "verify-then-sign + read-back + agent-verify judge node + gitleaks",
   "scope": "kill rules + floors/ceilings + dust honesty",
   "lifecycle": "receipts per session + RESUME-KIT + restore.sh",
-  "sovereignty": "role-registry.csv (roles-as-data) + change-requests/ (judged self-modification) + sovereignty.md (decision ladder + override protocol)"
+  "sovereignty": "role-registry.csv (roles-as-data) + change-requests/ (judged self-modification) + sovereignty.md (decision ladder + override protocol) + command-guard.cjs (mechanical override, Z-38)"
  },
  "books": [
   {
    "book": "econ-book.json",
    "exists": true,
-   "ageHours": 2.4,
+   "ageHours": 2.5,
    "fresh": true
   },
   {
    "book": "curation-book.json",
    "exists": true,
-   "ageHours": 10.8,
+   "ageHours": 10.9,
    "fresh": true
   },
   {
    "book": "money-ledger.json",
    "exists": true,
-   "ageHours": 0.9,
+   "ageHours": 1,
    "fresh": true
   },
   {
    "book": "ventures.json",
    "exists": true,
-   "ageHours": 0.1,
+   "ageHours": 0,
    "fresh": true
   },
   {
    "book": "fills-ledger.json",
    "exists": true,
-   "ageHours": 0.1,
+   "ageHours": 0,
    "fresh": true
   },
   {
@@ -251,32 +251,32 @@
    "note": "every claimed role has a file or workflow that runs it — the army is hands-on, not titles"
   },
   {
-   "subsystem": "verification",
-   "name": "destructive-command guard live (dcg adoption): selftest + workflow shape-scan",
-   "status": "PASS",
-   "evidence": "selftest 13/13 · workflows scanned: 0 hits",
-   "note": "tier-C is mechanical: force-push / reset --hard / clean -x / estate rm -rf / DROP blocked with doctrine tips; data-position patterns stay free; the fetch+reset-origin mirror idiom is the one reviewed exception"
-  },
-  {
    "subsystem": "loop",
    "name": "all six loop primitives have live fleet instances (automations/worktrees/skills/connectors/sub-agents/external state)",
    "status": "PASS",
-   "evidence": "workflows:41 desks:46 receipts:true books:9 claims:true",
+   "evidence": "workflows:41 desks:47 receipts:true books:9 claims:true",
    "note": "loop engineering mapped to the fleet per the LHE study — worktrees is the rebase-first runtime lane discipline"
   },
   {
    "subsystem": "sovereignty",
    "name": "role-registry integrity: every charter row names a real file (roles-as-data, no invented agents)",
    "status": "PASS",
-   "evidence": "47 rows · cols 9 · dupes 0 · missing files 0",
+   "evidence": "48 rows · cols 9 · dupes 0 · missing files 0",
    "note": "prompts.chat pattern: every persona is a CSV row (Z-37); a registry detached from disk is a story, not a mandate"
   },
   {
    "subsystem": "sovereignty",
    "name": "change-request ledger integrity: every CR well-formed, no PENDING abandoned >7d",
    "status": "PASS",
-   "evidence": "1 CRs · malformed 0 · stale-pending 0",
+   "evidence": "2 CRs · malformed 0 · stale-pending 0",
    "note": "self-modification is never silent: scope changes flow through judged CRs (prompts.chat changeRequests, fleet-hardened)"
+  },
+  {
+   "subsystem": "sovereignty",
+   "name": "mechanical override live: destructive-command guard stamped, evals E7-E9 pin it",
+   "status": "PASS",
+   "evidence": "ledger at 2026-10-02T22:48:15.858Z · scan denies 3 · guardEvals green",
+   "note": "Z-38 (study: destructive_command_guard): the override protocol is code before execution, not prose after it"
   }
  ],
  "counts": {
