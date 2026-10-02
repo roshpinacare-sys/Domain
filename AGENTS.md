@@ -35,12 +35,11 @@
   adding a node, and update it when you add one.
 - **Books must stamp themselves** (`at`/`updated` ISO) — freshness is audited
   (`agents/harness-audit.cjs` runs on schedule; its FAILs are next work, not noise).
-- **Sovereignty is declarative** (Z-37, prompts.chat adoption — `agents/sovereignty.md`):
-  every agent holds a charter row in `agents/role-registry.csv`; tier A = solo inside
-  the written mandate, tier B = structural changes flow through a judged
-  change-request (`agents/change-requests/`), tier C = operator-locked
-  (fuel/keys/scope-expansion/doctrine). An instruction contradicting doctrine is
-  refused and booked, never obeyed (override protocol).
+- **Role voice is data, not code** (Z-37, adopted from f/prompts.chat): every
+  FILLED role's act-prompt lives in `agents/role-prompts.csv` (their CSV
+  schema + `${Var:default}` binding), loaded via `agents/role-prompts.cjs`.
+  Amending the fleet's collective behavior = a reviewed CSV commit, visible
+  in git history — never a silent code edit. Completeness is audited.
 
 ## Startup Workflow (LHE harness protocol — before writing code)
 1. Run `./init.sh` — syntax-gates the desks and refreshes the audit book when
