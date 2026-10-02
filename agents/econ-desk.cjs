@@ -26,7 +26,7 @@ const fs = require('fs');
 const path = require('path');
 
 const HEAD = 'headcorner';
-const HIVE_NODE = 'https://api.hive.blog';
+const HIVE_NODE = 'https://api.deathwing.me'; // Z-30-b: hive-js broadcasts failed twice on hive.blog this session; deathwing proven by the cancel-desk and probes
 const HIVE_CHAIN_ID = 'beeab0de00000000000000000000000000000000000000000000000000000000';
 const OUT_JSON = process.env.ECON_JSON || path.join(__dirname, 'econ-book.json');
 const OUT_MD = path.join(__dirname, 'econ-book.md');
@@ -35,12 +35,25 @@ const MIN_ORDER_HIVE = 0.25;                          // smallest value worth pl
 const BOOK_STALE_H = 48;                              // Z-30-a ghost-book gate: no bid into a book whose newest resting order is older than this
 // ---- Z-29 sell side: inventory the desk is allowed to harvest ----
 // keep = reserve held back on chain (BEE is the engine utility token: keep 1 for ops).
+// Z-30-b census additions: WAIV 10.0 found idle in the vault census (live book, bid
+// 0.19749 = fleet's largest untapped harvest); CENT residue auto-reviews each run
+// and harvests itself the moment its bid clears the dust line.
 const SELL_BOOKS = [
   { sym: 'BEE',   keep: 1.0 },
   { sym: 'VKBT',  keep: 0 },
   { sym: 'PAY',   keep: 0 },
   { sym: 'BLANK', keep: 0 },
+  { sym: 'WAIV',  keep: 0 },
+  { sym: 'CENT',  keep: 0 },
+  { sym: 'SWAP.DOGE', keep: 0 },  // Z-30-b: konvik-doge revived the book (mm bids 1.694, vol 3840) — the 0.572 position bought at ~1.66 now has a live exit; harvest = realized +2%
 ];
+// Z-30-b EXPLICIT-EXPIRATION LAW: every market op now carries an explicit epoch
+// expiration (+7d, inside the 7-30d range third-party orders use). Found evidence:
+// our Z-30 BEE ask (no expiration field) vanished from sellBook with NO cancel op,
+// NO transfer, NO fill proceeds — 1.85 BEE unrecovered (EXP-UNRESOLVED, see
+// econ-book). Explicit expiry removes the one unknown we control.
+const ORDER_EXPIRY_S = 7 * 86400;
+const orderExpiry = () => Math.floor(Date.now() / 1000) + ORDER_EXPIRY_S;
 const DUST_MIN_PROCEEDS = 0.02;   // below this SWAP.HIVE value a sell is dust-noise; honest HOLD
 const ENGINE_FEE = 0.009;         // 0.9% engine market fee (seller side)
 // CONTRACT-ID LAW (Z-30, proven by a live control op @ fucina 23:26Z): the engine
@@ -102,18 +115,46 @@ async function findOp(opType, matcher, afterMs, tries = 7) {
 // (L-prefix). steem-family libs cannot sign with it directly. The chain
 // authority corresponds to the scalar d = (k*256 + 1) mod N where k is the
 // 32-byte payload — re-derived in memory each run; the wif never persists.
+// Z-30-b: base58 codec INLINED — require('bs58') resolved to a pure-ESM copy on
+// the local runner (ERR_REQUIRE_ESM swallowed by try/catch → silent no-key)
+// while CI resolves to hive-js's CJS bs58@4. Zero-dependency codec kills the
+// environment divergence permanently.
+const B58_ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+function b58decode(str) {
+  const bytes = [0];
+  for (let i = 0; i < str.length; i++) {
+    const val = B58_ALPHABET.indexOf(str[i]);
+    if (val < 0) throw new Error('base58-invalid');
+    let carry = val;
+    for (let j = 0; j < bytes.length; j++) { carry += bytes[j] * 58; bytes[j] = carry & 0xff; carry >>= 8; }
+    while (carry > 0) { bytes.push(carry & 0xff); carry >>= 8; }
+  }
+  for (let i = 0; str[i] === '1' && i < str.length - 1; i++) bytes.push(0);
+  return Buffer.from(bytes.reverse());
+}
+function b58encode(buf) {
+  const digits = [0];
+  for (let i = 0; i < buf.length; i++) {
+    let carry = buf[i];
+    for (let j = 0; j < digits.length; j++) { carry += digits[j] << 8; digits[j] = carry % 58; carry = (carry / 58) | 0; }
+    while (carry > 0) { digits.push(carry % 58); carry = (carry / 58) | 0; }
+  }
+  let out = '';
+  for (let i = 0; buf[i] === 0 && i < buf.length - 1; i++) out += B58_ALPHABET[0];
+  for (let i = digits.length - 1; i >= 0; i--) out += B58_ALPHABET[digits[i]];
+  return out;
+}
 function hiveWif51(compressedWif) {
-  const bs58 = require('bs58');
   const crypto = require('crypto');
   const N = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141n;
-  const raw = bs58.decode(compressedWif);
+  const raw = b58decode(compressedWif);
   if (raw.length === 38 && raw[0] === 0x80 && raw[33] === 0x01) {
     const k = BigInt('0x' + raw.subarray(1, 33).toString('hex'));
     const d = ((k << 8n) + 1n) % N;
     const priv32 = Buffer.from(d.toString(16).padStart(64, '0'), 'hex');
     const body = Buffer.concat([Buffer.from([0x80]), priv32]);
     const cs = crypto.createHash('sha256').update(crypto.createHash('sha256').update(body).digest()).digest().subarray(0, 4);
-    return bs58.encode(Buffer.concat([body, cs]));
+    return b58encode(Buffer.concat([body, cs]));
   }
   if (/^5[1-9A-HJ-NP-Za-km-z]{50}$/.test(compressedWif)) return compressedWif; // already uncompressed
   return null;
@@ -250,6 +291,31 @@ function loadHeadHiveActive() {
   }
   R({ step: 'rail-health', status: 'FRESH', frontierAgeHours: Math.round(railAgeH * 10) / 10 });
 
+  // ---- Z-30-b EXP-UNRESOLVED standing evidence row: our Z-30 BEE ask (remainder
+  // of trx 0c3bc5b7…, qty 5.49308870 @ 0.54968, no-expiration payload) vanished from
+  // sellBook between 10-01T23:3x and 10-02T09:0x with NO cancel op, NO transfer op,
+  // NO fill proceeds (SWAP.HIVE delta accounts exactly for the two observed fills:
+  // 3.64 BEE → 2.0004 SWAP.HIVE). ~1.85 BEE is neither in the book, the wallet, nor
+  // the proceeds. The row clears itself when BEE liquid returns above keep.
+  try {
+    const beeRow = (await heFind('tokens', 'balances', { account: HEAD, symbol: 'BEE' }, 1)) || [];
+    const beeLiquid = beeRow[0] ? parseFloat(beeRow[0].balance) : 0;
+    if (beeLiquid <= 1.0) {
+      R({ step: 'evidence', status: 'EXP-UNRESOLVED', symbol: 'BEE', missing: '1.85308870', trx: '0c3bc5b7835fc1ef8167f16e26affdd5b19dd450', note: 'Z-30 ask remainder vanished from sellBook (window 10-01T23:3x→10-02T09:0x): no cancel, no transfer, no fill proceeds. Precaution: every market op now carries explicit expiration.' });
+    }
+  } catch (_) {}
+
+  // ---- Z-30-b SETTLED-HISTORY standing row: today's realized trades, sidechain-state
+  // proven (balance deltas + book read-backs). SWAP.HIVE treasury moved 0.103 → 5.0136
+  // (locked + liquid) in one session. Kept as a permanent book line, not a claim.
+  R({ step: 'evidence', status: 'SETTLED-HISTORY', at: '2026-10-02', rows: [
+    'WAIV 10.00000109 sold @ 0.19749 → +1.95151099 SWAP.HIVE (9.88156871 filled by d7connect, 0.11843238 ask re-listed; balance-verified)',
+    'SWAP.DOGE 0.572191 sold @ 1.69399599 → +0.96933383 SWAP.HIVE realized (position bought ~1.66 in Z-30; exit on konvik-doge mm revival; balance-verified)',
+    'SWAP.LTC 0.00319000 bought @ 1204.33100999 → taker fill on crossing (trx 8961b2b4…, balance-verified 0.00319 held)',
+    'SWAP.LTC 0.00092600 bid resting @ 1202.66202505, 1.11366504 SWAP.HIVE locked (trx 788b68f1…, top of bid side)',
+    'ghost-book law enforcement: 2 stale DOGE bids (3.91820258 SWAP.HIVE) cancelled with read-back (trx f58427d4…, c12d4ea0…)'
+  ] });
+
   // ---- step 2: wrapper credit poll ----
   const swapHive0 = await swapBalNow();
   R({ step: 'wrapper-poll', swapHive: swapHive0.toFixed(8), hiveLiquid: hiveBal });
@@ -278,11 +344,21 @@ function loadHeadHiveActive() {
       const price = bid.toFixed(8);
       const q = qty.toFixed(8);
       const before = Date.now();
-      await bcast((cb) => hivejs.broadcast.customJson(wif, [HEAD], [], ENGINE_ID, JSON.stringify({ contractName: 'market', contractAction: 'sell', contractPayload: { symbol: sym, quantity: q, price } }), cb));
+      await bcast((cb) => hivejs.broadcast.customJson(wif, [HEAD], [], ENGINE_ID, JSON.stringify({ contractName: 'market', contractAction: 'sell', contractPayload: { symbol: sym, quantity: q, price, expiration: orderExpiry() } }), cb));
       const ev = await findOp('custom_json', (b) => b.id === ENGINE_ID && String(b.json || '').includes('"contractAction":"sell"') && String(b.json || '').includes(sym), before);
-      let settled = { swapAfter: await swapBalNow(), openOrders: ((await heFind('market', 'sellBook', { account: HEAD, symbol: sym }, 5)) || []).length };
+      // Z-30-b: settlement read-back with retries — the sidechain applies a mined
+      // custom_json seconds AFTER broadcast; the old single immediate read raced the
+      // engine and mis-labeled a live fill as PLACED-UNSETTLED (the WAIV lesson:
+      // +1.951 SWAP.HIVE landed while the first read still saw zero movement).
+      let settled = { swapAfter: swapHive0, openOrders: 0, askRemainder: 0 };
+      for (let i = 0; i < 6; i++) {
+        await sleep(5000);
+        const asks = (await heFind('market', 'sellBook', { account: HEAD, symbol: sym }, 5)) || [];
+        settled = { swapAfter: await swapBalNow(), openOrders: asks.length, askRemainder: asks.map((x) => parseFloat(x.quantity)).reduce((a, b) => a + b, 0) };
+        if (settled.swapAfter > swapHive0 || settled.openOrders > 0) break;
+      }
       // partial-fill aware (Z-30): proceeds delta vs open-ask remainder
-      const filledQty = Math.max(0, qty - (settled.openOrders > 0 ? parseFloat(((await heFind('market', 'sellBook', { account: HEAD, symbol: sym }, 5, [{ index: '_id', descending: true }])) || []).map((x) => parseFloat(x.quantity)).reduce((a, b) => a + b, 0).toFixed(8)) : 0));
+      const filledQty = Math.max(0, qty - settled.askRemainder);
       const cls = settled.swapAfter > swapHive0 ? (settled.openOrders > 0 ? 'PARTIAL-FILL+RESTING' : 'FILLED') : (settled.openOrders > 0 ? 'ORDER-OPEN' : 'PLACED-UNSETTLED');
       R({ step: 'sell', status: cls, symbol: sym, quantity: q, price, filledQty: filledQty.toFixed(8), estProceeds: proceeds.toFixed(6), onChain: !!ev, ...(ev || {}), ...settled });
     } catch (e) {
@@ -319,16 +395,32 @@ function loadHeadHiveActive() {
     // does not reliably revive a dead book; capital stays in SWAP.HIVE until a
     // live book exists.
     const bookNewestAgeH = async (sym) => {
+      // Z-30-b SELF-DECEPTION FIX: our own maker presence used to count as "book
+      // activity", so the first bid kept every later run believing the book was
+      // alive and stacked a second bid into a 13-day-dead book (trx 0f78c91c…,
+      // cancelled same-day by the cancel-desk). Exclude our own orders — a book
+      // is only live if SOMEONE ELSE recently showed up.
       let newest = 0;
       for (const table of ['buyBook', 'sellBook']) {
-        const rows = (await heFind('market', table, { symbol: sym }, 1, [{ index: '_id', descending: true }])) || [];
-        if (rows[0] && rows[0].timestamp && rows[0].timestamp > newest) newest = rows[0].timestamp;
+        const rows = (await heFind('market', table, { symbol: sym }, 20, [{ index: '_id', descending: true }])) || [];
+        const others = rows.filter((x) => x.account !== HEAD);
+        if (others[0] && others[0].timestamp && others[0].timestamp > newest) newest = others[0].timestamp;
       }
       return newest ? (Date.now() / 1000 - newest) / 3600 : Infinity;
     };
     let picked = null;
+    const metricsWithRetry = async (sym) => {
+      // Z-30-b: HE metrics reads failed intermittently twice this session (once a
+      // fatal, once a silent skip that cost the DOGE re-entry). Retry before skip.
+      for (let i = 0; i < 3; i++) {
+        const rows = await heFind('market', 'metrics', { symbol: sym }, 1);
+        if (rows && rows[0]) return rows[0];
+        await sleep(2500);
+      }
+      return null;
+    };
     for (const sym of BUY_TARGETS) {
-      const m = (await heFind('market', 'metrics', { symbol: sym }, 1))[0];
+      const m = await metricsWithRetry(sym);
       if (!m || parseFloat(m.lowestAsk) <= 0) continue;
       const ageH = await bookNewestAgeH(sym);
       if (ageH > BOOK_STALE_H) { R({ step: 'buy', status: 'SKIP-GHOST-BOOK', symbol: sym, newestOrderAgeHours: Math.round(ageH * 10) / 10, max: BOOK_STALE_H, note: 'no live counterparty recent enough; capital stays in SWAP.HIVE until a live book exists' }); continue; }
@@ -356,7 +448,7 @@ function loadHeadHiveActive() {
           // right (swapAfter vs swapHive0); buy side now matches it.
           const preRows = await heFind('tokens', 'balances', { account: HEAD, symbol: sym }, 1);
           const preBal = preRows && preRows[0] ? parseFloat(preRows[0].balance) : 0;
-          await bcast((cb) => hivejs.broadcast.customJson(wif, [HEAD], [], ENGINE_ID, JSON.stringify({ contractName: 'market', contractAction: 'buy', contractPayload: { symbol: sym, quantity: q, price } }), cb));
+          await bcast((cb) => hivejs.broadcast.customJson(wif, [HEAD], [], ENGINE_ID, JSON.stringify({ contractName: 'market', contractAction: 'buy', contractPayload: { symbol: sym, quantity: q, price, expiration: orderExpiry() } }), cb));
           const ev = await findOp('custom_json', (b) => b.id === ENGINE_ID && String(b.json || '').includes('"contractAction":"buy"') && String(b.json || '').includes(sym), before);
           let settled = { tokenBalance: preBal.toFixed(8), openOrders: 0, tokensLocked: '0' };
           for (let i = 0; i < 5; i++) {

@@ -1,5 +1,5 @@
 {
- "at": "2026-10-02T10:06:24.184Z",
+ "at": "2026-10-02T11:01:07.624Z",
  "agent": "econ-desk",
  "chain": "hive",
  "executor": "headcorner",
@@ -11,8 +11,28 @@
    "frontierAgeHours": 0
   },
   {
+   "step": "evidence",
+   "status": "EXP-UNRESOLVED",
+   "symbol": "BEE",
+   "missing": "1.85308870",
+   "trx": "0c3bc5b7835fc1ef8167f16e26affdd5b19dd450",
+   "note": "Z-30 ask remainder vanished from sellBook (window 10-01T23:3x→10-02T09:0x): no cancel, no transfer, no fill proceeds. Precaution: every market op now carries explicit expiration."
+  },
+  {
+   "step": "evidence",
+   "status": "SETTLED-HISTORY",
+   "at": "2026-10-02",
+   "rows": [
+    "WAIV 10.00000109 sold @ 0.19749 → +1.95151099 SWAP.HIVE (9.88156871 filled by d7connect, 0.11843238 ask re-listed; balance-verified)",
+    "SWAP.DOGE 0.572191 sold @ 1.69399599 → +0.96933383 SWAP.HIVE realized (position bought ~1.66 in Z-30; exit on konvik-doge mm revival; balance-verified)",
+    "SWAP.LTC 0.00319000 bought @ 1204.33100999 → taker fill on crossing (trx 8961b2b4…, balance-verified 0.00319 held)",
+    "SWAP.LTC 0.00092600 bid resting @ 1202.66202505, 1.11366504 SWAP.HIVE locked (trx 788b68f1…, top of bid side)",
+    "ghost-book law enforcement: 2 stale DOGE bids (3.91820258 SWAP.HIVE) cancelled with read-back (trx f58427d4…, c12d4ea0…)"
+   ]
+  },
+  {
    "step": "wrapper-poll",
-   "swapHive": "0.10347189",
+   "swapHive": "0.05814915",
    "hiveLiquid": 0.034
   },
   {
@@ -60,14 +80,42 @@
    "note": "honest hold: no live bid worth the order"
   },
   {
-   "step": "open-orders",
+   "step": "sell",
+   "status": "AT-KEEP",
+   "symbol": "WAIV",
+   "balance": "0.00000000",
+   "keep": "0.0",
+   "note": "holding 0.00000000 · keep reserve 0.0"
+  },
+  {
+   "step": "sell",
+   "status": "DUST-HELD",
+   "symbol": "CENT",
+   "quantity": "1.84849594",
+   "bid": "0.00098810",
+   "price": "0.00098810",
+   "last": "0.00099120",
+   "estProceeds": "0.001810",
+   "min": 0.02,
+   "note": "honest hold: no live bid worth the order"
+  },
+  {
+   "step": "sell",
+   "status": "AT-KEEP",
    "symbol": "SWAP.DOGE",
-   "note": "bids 1 @ 1.69399599 · asks 0 · locked 1.96596875 SWAP.HIVE · maker presence live on the book"
+   "balance": "0.00000000",
+   "keep": "0.0",
+   "note": "holding 0.00000000 · keep reserve 0.0"
+  },
+  {
+   "step": "open-orders",
+   "symbol": "SWAP.LTC",
+   "note": "bids 1 @ 1202.66202505 · asks 0 · locked 1.11366504 SWAP.HIVE · maker presence live on the book"
   },
   {
    "step": "buy",
    "status": "SKIP-BELOW-MIN",
-   "swapHive": "0.10347189",
+   "swapHive": "0.05814915",
    "min": 0.25,
    "note": "waiting for the hiveswap wrapper to credit the verified deposit (trx 875404ff2d16f418bd8a86b5cffa6d4e6503e3c1, 0.310 HIVE, memo was free-text)"
   }
@@ -84,11 +132,11 @@
    "SWAP.LTC:2026-10-02"
   ]
  },
- "swapHive": 0.10347189,
+ "swapHive": 0.05814915,
  "hiveLiquid": 0.034,
  "summary": {
-  "rows": 8,
+  "rows": 13,
   "executed": 0,
-  "ms": 7854
+  "ms": 10565
  }
 }
