@@ -18,6 +18,15 @@ for f in agents/*.cjs agents/*.mjs scripts/*.mjs scripts/*.cjs; do
   echo "  ok $f"
 done
 
+echo "[domain-init] destructive-command guard battery (dcg adoption, tier-C law — fleet-native guard)"
+gv() { node agents/command-guard.cjs explain "$1" 2>/dev/null | node -e "let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{try{const j=JSON.parse(d);console.log(j.decision||j.verdict||j.action||'unknown')}catch(e){console.log('unknown')}})"; }
+[ "$(gv 'git push --force origin main')" = "DENY" ] || { echo "FAIL: guard allows force-push"; exit 1; }
+[ "$(gv 'git reset --hard HEAD~5')" = "DENY" ] || { echo "FAIL: guard allows reset --hard"; exit 1; }
+[ "$(gv 'rm -rf agents/')" = "DENY" ] || { echo "FAIL: guard allows estate rm -rf"; exit 1; }
+[ "$(gv 'git pull --rebase origin main')" != "DENY" ] || { echo "FAIL: guard blocks the rebase law"; exit 1; }
+[ "$(gv 'grep "rm -rf" docs/x.md')" != "DENY" ] || { echo "FAIL: guard blocks data-position"; exit 1; }
+echo "  guard battery ok (DENY on destruction, allow on law+data)"
+
 echo "[domain-init] judge node (fail-soft, refreshes the audit book)"
 if [ -d "${DEFU_DIR:-../Defi}" ]; then
   node agents/harness-audit.cjs || true
