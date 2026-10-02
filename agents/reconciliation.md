@@ -1,16 +1,16 @@
 # Reconciliation Book (Z-30 books-consul desk)
 
-Updated: 2026-10-01T23:36:59.876Z UTC. Single-writer law: one desk owns each topic. Every capital claim is cross-checked against LIVE chain state per run.
+Updated: 2026-10-02T04:52:23.429Z UTC. Single-writer law: one desk owns each topic. Every capital claim is cross-checked against LIVE chain state per run.
 
 | topic | canonical book | writer | exists | age h |
 |---|---|---|---|---|
-| capital-balances | money-ledger.json | money-watch | true | 2.2 |
-| engine-executions | econ-book.json | econ-desk | true | 0.1 |
-| dex-depth | dex-book.json | dex-book | true | 2.2 |
-| bridge-verdicts | bridge-book.json | bridge-desk | true | 2.2 |
-| key-authority | capability-matrix.json | capability-matrix | true | 2.2 |
+| capital-balances | money-ledger.json | money-watch | true | 0 |
+| engine-executions | econ-book.json | econ-desk | true | 0 |
+| dex-depth | dex-book.json | dex-book | true | 0 |
+| bridge-verdicts | bridge-book.json | bridge-desk | true | 0 |
+| key-authority | capability-matrix.json | capability-matrix | true | 0 |
 
-Live truth: steem null + 0MV · hive 0.034 · HBD 0.003 · BEE 1 · SWAP.HIVE 1.04999963
+Live truth: steem null + 0MV · hive 0.034 · HBD 0.003 · BEE 1 · SWAP.HIVE 2.06944064
 
 Checks: money-ledger.json/references executor account=NO-EXECUTOR-REF · econ-book.json/references executor account=OK · econ-book.json/swapHive vs live=DRIFT
 
