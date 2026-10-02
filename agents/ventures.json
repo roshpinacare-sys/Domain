@@ -1,0 +1,218 @@
+{
+ "ok": true,
+ "at": "2026-10-02T12:21:12.712Z",
+ "agent": "venture-desk v1.0.0 (Z-31)",
+ "selfHeal": {
+  "econSummaryRepaired": true,
+  "incident": "parallel-runtime [object Object] concat bug repaired in the committed book"
+ },
+ "origin": "clodfarm study (Z-31): adopted the governor math + notebook + dashboards + labor tiering; rejected the approval-default, the islands, the earn-less economy; doctrine bound as law",
+ "ledger": {
+  "at": "2026-10-02T12:21:12.712Z",
+  "oracle": "Defi/fleet/KPI.json (measured, raw)",
+  "earnUsdPerDay": 0.0034,
+  "burnUsdPerDay": 4.3543,
+  "runwayWeeks": 4,
+  "verdict": "earn $0.0034/day vs burn $4.3543/day — the gap is the mission; every venture's earn side is booked from here on (EARN-GOVERNOR LAW)",
+  "doctrine": {
+   "url": "https://github.com/roshpinacare-sys/Defi/blob/main/fleet/DOCTRINE-economics.md",
+   "verified": true
+  }
+ },
+ "ventures": [
+  {
+   "id": "V1",
+   "name": "Curation house",
+   "thesis": "disciplined public-external curation (10 soldiers lane; headcorner lane owned by the weave daemon) — our votes ARE the traffic",
+   "product": "attention allocated by deterministic public scoring",
+   "rail": "HP curation rewards (steem/hive)",
+   "traffic": "native feeds of curated public authors",
+   "earnLine": "measure first cycles; line set after (honest TBD)",
+   "killRule": "no measurable curation accrual in 3 consecutive cycles → weight→0 (IDLE)",
+   "status": "OPEN",
+   "templateLaw": {
+    "product": true,
+    "rail": true,
+    "traffic": true,
+    "kpiBook": true,
+    "ledger": true,
+    "killRule": true
+   },
+   "evidence": [
+    {
+     "file": "curation-book.json",
+     "marker": "soldiers lane of the fleet curation",
+     "verified": true
+    },
+    {
+     "file": "soldiers-curate.cjs",
+     "marker": "verify-then-sign",
+     "verified": true
+    }
+   ],
+   "metrics": {
+    "lastRun": {
+     "day": "2026-10-02",
+     "verified": 0,
+     "attempted": 9,
+     "soldiersWithKey": 10
+    },
+    "earn": "TBD-MEASURE (curation accrual not yet booked — booked the honest way, not estimated)"
+   },
+   "notebook": "agents/ventures/v1-NOTES.md (created at first dedicated cycle)"
+  },
+  {
+   "id": "V2",
+   "name": "Market desk",
+   "thesis": "dual-side hive-engine trading: harvest idle tokens, maker buys into live books, dust honesty",
+   "product": "liquidity + realized spreads",
+   "rail": "hive-engine order books",
+   "traffic": "the books' own flow (ghost-book gate refuses dead books)",
+   "earnLine": "realized spreads ≥ $0.02/day within 7d of live rails",
+   "killRule": "RAIL-HEALTH stall >24h → zero signing; no fills in 14d → capital→escrow (HARVEST)",
+   "status": "OPEN",
+   "templateLaw": {
+    "product": true,
+    "rail": true,
+    "traffic": true,
+    "kpiBook": true,
+    "ledger": true,
+    "killRule": true
+   },
+   "evidence": [
+    {
+     "file": "econ-desk.cjs",
+     "marker": "rail-health",
+     "verified": true
+    },
+    {
+     "file": "econ-desk.cjs",
+     "marker": "verify-then-sign",
+     "verified": true
+    },
+    {
+     "file": "econ-book.json",
+     "marker": "rail-health",
+     "verified": true
+    }
+   ],
+   "metrics": {
+    "swapHiveTreasury": 0.05814915,
+    "hiveLiquid": 0.034,
+    "railFrontier": 0,
+    "earn": "realized fills booked in econ-book rows (on-chain deltas only)"
+   },
+   "notebook": "agents/ventures/v2-NOTES.md (created at first dedicated cycle)"
+  },
+  {
+   "id": "V3",
+   "name": "Knowledge house",
+   "thesis": "public verified playbooks (rail-health, verify-then-sign, delta-settlement, the two-sided ledger itself) as the authority funnel",
+   "product": "open doctrine + field-test reports (natural voice, EN, public)",
+   "rail": "steem/hive/blurt posts (tri-bridge canon)",
+   "traffic": "SEO + native feeds; authority compounds",
+   "earnLine": "leading: views/votes per playbook; 3 playbooks × 0 engagement → retitle/re-lane",
+   "killRule": "3 consecutive playbooks with zero engagement → PIVOT lane",
+   "status": "OPEN",
+   "templateLaw": {
+    "product": true,
+    "rail": true,
+    "traffic": true,
+    "kpiBook": true,
+    "ledger": true,
+    "killRule": true
+   },
+   "evidence": [
+    {
+     "file": "knowledge-cards-en.json",
+     "marker": "(presence)",
+     "verified": true
+    },
+    {
+     "file": "public-wave.cjs",
+     "marker": "(presence)",
+     "verified": true
+    }
+   ],
+   "metrics": {
+    "earn": "leading indicators only for now (engagement), no fake USD"
+   },
+   "notebook": "agents/ventures/v3-NOTES.md (created at first dedicated cycle)"
+  },
+  {
+   "id": "V4",
+   "name": "Content house",
+   "thesis": "per-persona expert lanes, zero AI-smell, English public content — support the public, never the echo",
+   "product": "expert long-form posts under fleet personas",
+   "rail": "steem/hive/blurt",
+   "traffic": "followers/feeds + curation discovery",
+   "earnLine": "leading: engagement per lane; lane with 0 engagement in 14d → merge lane",
+   "killRule": "14d zero-engagement lane → merged (IDLE) — the lane list shrinks honestly",
+   "status": "OPEN",
+   "templateLaw": {
+    "product": true,
+    "rail": true,
+    "traffic": true,
+    "kpiBook": true,
+    "ledger": true,
+    "killRule": true
+   },
+   "evidence": [
+    {
+     "file": "personas.json",
+     "marker": "(presence)",
+     "verified": true
+    },
+    {
+     "file": "soldiers-blog.cjs",
+     "marker": "(presence)",
+     "verified": true
+    }
+   ],
+   "metrics": {
+    "earn": "TBD-MEASURE (per-lane engagement next cycle)"
+   },
+   "notebook": "agents/ventures/v4-NOTES.md (created at first dedicated cycle)"
+  },
+  {
+   "id": "V5",
+   "name": "Fuel grid",
+   "thesis": "external fills on the fuel grid — the only currently-measured external USD inflow",
+   "product": "grid liquidity",
+   "rail": "grid external flow",
+   "traffic": "external traders",
+   "earnLine": "measured $0.0604 lifetime (KPI) — keep only if fills continue",
+   "killRule": "no external fill in 21d → freeze grid spend (IDLE)",
+   "status": "OPEN",
+   "templateLaw": {
+    "product": true,
+    "rail": true,
+    "traffic": true,
+    "kpiBook": true,
+    "ledger": true,
+    "killRule": true
+   },
+   "evidence": [
+    {
+     "file": "routes.json",
+     "marker": "(presence)",
+     "verified": true
+    },
+    {
+     "file": "route-desk.cjs",
+     "marker": "(presence)",
+     "verified": true
+    }
+   ],
+   "metrics": {
+    "lifetimeUsd": 0.0604,
+    "earn": "measured lifetime $0.0604"
+   },
+   "notebook": "agents/ventures/v5-NOTES.md (created at first dedicated cycle)"
+  }
+ ],
+ "counts": {
+  "open": 5,
+  "proposed": 0
+ }
+}
