@@ -214,7 +214,12 @@ async function claimChain({ chain, node, chainId, names, keys }) {
 }
 
 // ---- HEAD CURATION (steem; real income lever: 4279 SP effective) ----
+const CUR_VOTE_MAX_BLURT = 2;      // blurt lane: 8727 BP idle surface (Z-32 discovery)
+const BLURT_TAGS = ['life', 'blog', 'photography', 'story', 'nature', 'poetry', 'health', 'food', 'travel', 'blurt'];
+const BLURT_MIN_REP = 40;          // blurt reps run lower than steem
+const BLURT_MAX_AGE_MIN = 720;     // blurt is thinner — widen the window, keep the floor
 const repScore = (raw) => { const r = f(String(raw).replace(/[^0-9.\-]/g, '')); if (r <= 0) return 0; return Math.round((Math.log10(r) - 9) * 9 + 25); };
+const r3 = (x) => Math.round(x * 1000) / 1000;
 async function headCurate(headWif, ownNames) {
   const log = [];
   if (!headWif) { log.push({ op: 'SKIP-NO-HEAD-POSTING', note: 'set SA_HEAD_POSTING secret' }); return log; }
@@ -269,6 +274,57 @@ async function headCurate(headWif, ownNames) {
   return log;
 }
 
+// ---- HEAD CURATION (blurt lane; Z-32: 8727 BP idle — same doctrine, blurt chain)
+async function headCurateBlurt(headWif) {
+  const log = [];
+  if (!headWif) { log.push({ op: 'SKIP-NO-HEAD-POSTING' }); return log; }
+  const headAcc = (await rpcNode(BLURT_NODE, 'condenser_api.get_accounts', [[HEAD]]))[0];
+  if (!headAcc) { log.push({ op: 'SKIP-NO-ACCOUNT', chain: 'blurt' }); return log; }
+  const bp = f(headAcc.vesting_shares) + f(headAcc.received_vesting_shares) - f(headAcc.delegated_vesting_shares);
+  const vp = f(headAcc.voting_power);
+  if (vp < CUR_VP_FLOOR) { log.push({ op: 'SKIP-VP-FLOOR', chain: 'blurt', vp: vp / 100, bp: r3(bp) }); return log; }
+  const seenAuthors = new Set();
+  const candidates = [];
+  for (const tag of BLURT_TAGS) {
+    let disc = [];
+    try { disc = await rpcNode(BLURT_NODE, 'condenser_api.get_discussions_by_created', [{ tag, limit: 20 }]); } catch (_) { continue; }
+    for (const p of disc) {
+      const author = p.author;
+      if (!author || seenAuthors.has(author)) continue;
+      const ageMin = (Date.now() - new Date(p.created + 'Z').getTime()) / 60000;
+      if (ageMin < CUR_MIN_AGE_MIN || ageMin > BLURT_MAX_AGE_MIN) continue;
+      if ((p.active_votes || []).some(v => v.voter === HEAD)) continue;
+      seenAuthors.add(author);
+      candidates.push({ author, permlink: p.permlink, tag, ageMin: Math.round(ageMin) });
+      if (candidates.length >= 20) break;
+    }
+    if (candidates.length >= 20) break;
+    await sleep(250);
+  }
+  const reps = {};
+  for (let i = 0; i < candidates.length; i += 30) {
+    const chunk = [...new Set(candidates.slice(i, i + 30).map(c => c.author))];
+    try { const rows = await rpcNode(BLURT_NODE, 'condenser_api.get_accounts', [chunk]); for (const r0 of rows) reps[r0.name] = repScore(r0.reputation); } catch (_) {}
+    await sleep(250);
+  }
+  let voted = 0;
+  for (const c of candidates) {
+    if (voted >= CUR_VOTE_MAX_BLURT) break;
+    if ((reps[c.author] || 0) < BLURT_MIN_REP) continue;
+    try {
+      await signAndBroadcast({ node: BLURT_NODE, chainId: BLURT_CHAIN_ID, wif: headWif, ops: [['vote', { voter: HEAD, author: c.author, permlink: c.permlink, weight: CUR_WEIGHT }]] });
+      await sleep(1500);
+      const back = await rpcNode(BLURT_NODE, 'condenser_api.get_content', [c.author, c.permlink]);
+      const ok = back && (back.active_votes || []).some(v => v.voter === HEAD);
+      log.push({ op: ok ? 'VOTED-VERIFIED' : 'VOTED-READBACK-PENDING', chain: 'blurt', author: c.author, permlink: c.permlink.slice(0, 40), tag: c.tag, ageMin: c.ageMin, rep: reps[c.author] });
+      voted++;
+    } catch (e) { log.push({ op: 'ERR', chain: 'blurt', author: c.author, msg: String(e.message || e).slice(0, 80) }); }
+    await sleep(12500);
+  }
+  log.push({ op: 'SUMMARY', chain: 'blurt', voted, candidates: candidates.length, vpBefore: vp / 100, bp: r3(bp) });
+  return log;
+}
+
 (async () => {
   const t0 = Date.now();
   let keys = loadKeys();
@@ -292,6 +348,8 @@ async function headCurate(headWif, ownNames) {
   // ---- HEAD CURATION (steem) ----
   try { receipt.curation = await headCurate(headPosting, new Set([HEAD, ...soldiers, 'ynet', 'tov'])); }
   catch (e) { receipt.curation = [{ op: 'ERR', msg: String(e.message || e).slice(0, 100) }]; }
+  try { receipt.curationBlurt = await headCurateBlurt(headPosting); }
+  catch (e) { receipt.curationBlurt = [{ op: 'ERR', msg: String(e.message || e).slice(0, 100) }]; }
 
   // ---- ARMED RAIL (holstered) ----
   receipt.rail.note = EXEC_ENABLED
