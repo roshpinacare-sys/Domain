@@ -1,6 +1,6 @@
 {
   "protocol": "SAOS-FATE-DEFENSE-FWI/1",
-  "at": "2026-10-02T23:12:54.417Z",
+  "at": "2026-10-02T23:17:41.299Z",
   "agent": "fleet-indicators v1.0.0 (Task 22, study: Emergence World arXiv 2606.08367 + 2609.17320)",
   "verdict": "THRIVING",
   "counts": {
@@ -22,7 +22,7 @@
       "name": "Safety & Public Order",
       "measures": "destructive attempts mechanically refused (guard denies = incidents PREVENTED, not committed) + guard evals green + STASIS breaker armed",
       "evidenceSource": "agents/command-guard.json .denies + agents/STASIS.json .active + evals/eval-results.json E7-E9",
-      "value": "denies=3 evals=PASS stasis=armed",
+      "value": "denies=0 evals=PASS stasis=armed",
       "breakEven": "evals PASS + stasis armed",
       "status": "GROW",
       "note": "their worlds: coercion cascades killed populations; our guard refuses before execution, our engine obeys STASIS before any seal/broadcast"
@@ -32,7 +32,7 @@
       "name": "Capability Exploration",
       "measures": "executable tool surface (syntax-valid agent scripts) — proxy for functional curiosity without narrow loops",
       "evidenceSource": "node --check over agents/*.cjs|*.mjs + scripts/*.mjs",
-      "value": "50/50",
+      "value": "51/51",
       "breakEven": "100%",
       "status": "GROW",
       "note": "every desk ships as runnable code, not as a memory blob"
@@ -42,7 +42,7 @@
       "name": "Governance Conformity",
       "measures": "judged change-requests (100% must carry a verdict — dissent is ledgered, never silenced) + role-registry coverage",
       "evidenceSource": "agents/change-requests/*.json verdict fields + role-registry.csv row count",
-      "value": "2/2 CRs judged · registry 48 rows (44 LIVE)",
+      "value": "3/3 CRs judged · registry 49 rows (45 LIVE)",
       "breakEven": "100% judged + ≥20 rows",
       "status": "GROW",
       "note": "their worlds: herd voting; our law: every CR judged in the open, supersession visible in git"
@@ -62,7 +62,7 @@
       "name": "Social Fabric & Diversity",
       "measures": "structural relationship diversity — distinct trust tiers, CI lanes, and owned books across the charter",
       "evidenceSource": "role-registry.csv columns tier(7)/ci(3)/books(7) distinct counts",
-      "value": "tiers=3 lanes=23 ownedBooks=19",
+      "value": "tiers=3 lanes=23 ownedBooks=20",
       "breakEven": "≥2 tiers · ≥5 lanes · ≥5 books",
       "status": "GROW",
       "note": "their mixed world proved diversity is load-bearing; ours is charter-measurable, not vibe-measurable"
@@ -72,7 +72,7 @@
       "name": "Economic Vitality & Equity",
       "measures": "real chain balances (liquid + effective SP) in an executor-identified ledger — equity via identity: one executor, one writer, no hoarding ambiguity",
       "evidenceSource": "agents/money-ledger.json .book{executor,headSteemLiquid,headSteemStake} fresh <48h",
-      "value": "headcorner: 10.031 STEEM liquid · 4286.098 SP · book 1.4h old",
+      "value": "headcorner: 10.031 STEEM liquid · 4286.098 SP · book 1.5h old",
       "breakEven": "ledger fresh + executor-identified",
       "status": "GROW",
       "note": "their economy was 1-CC billboards; ours is signed chain state with a named executor"
@@ -82,7 +82,7 @@
       "name": "Constitutional Growth",
       "measures": "versioned law + honest feature ledger + weekly commit motion — the constitution is AMENDED, not just recited",
       "evidenceSource": "agents/sovereignty.md version + feature_list.json status counts + git rev-list 7d",
-      "value": "law v1.0.1 · features 8/9 done · 2031 commits/7d",
+      "value": "law v1.0.2 · features 9/10 done · 2036 commits/7d",
       "breakEven": "law versioned + ≤2 open features + ≥20 commits/7d",
       "status": "GROW",
       "note": "their static-constitution worlds died passive; ours has version history in git"
@@ -92,7 +92,7 @@
       "name": "Sovereign Autonomy",
       "measures": "self-run cadence receipts: scheduled dispatches that landed in git in the last 7 days (verify ALL_PASS, economy, anchors) — autonomy measured by artifacts, not by permission slips",
       "evidenceSource": "git log --grep receipts (agent-verify/econ/anchor), last 7 days",
-      "value": "verify ALL_PASS=4 · econ receipts=107 · anchors=227 → score 14",
+      "value": "verify ALL_PASS=5 · econ receipts=107 · anchors=227 → score 15",
       "breakEven": "≥5 receipts / 7d",
       "status": "GROW",
       "note": "the estate runs on schedules it owns; nobody presses its buttons"
@@ -108,13 +108,13 @@
     {
       "book": "curation-book.json",
       "exists": true,
-      "ageHours": 11.3,
+      "ageHours": 11.4,
       "fresh": true
     },
     {
       "book": "money-ledger.json",
       "exists": true,
-      "ageHours": 1.4,
+      "ageHours": 1.5,
       "fresh": true
     },
     {
@@ -132,7 +132,7 @@
     {
       "book": "bridge-book.json",
       "exists": true,
-      "ageHours": 1.3,
+      "ageHours": 1.4,
       "fresh": true
     },
     {
@@ -144,13 +144,13 @@
     {
       "book": "learning-ledger.json",
       "exists": true,
-      "ageHours": 1,
+      "ageHours": 1.1,
       "fresh": true
     },
     {
       "book": "recruitment.json",
       "exists": true,
-      "ageHours": 18.3,
+      "ageHours": 18.4,
       "fresh": true
     }
   ]
