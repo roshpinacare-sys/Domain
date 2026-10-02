@@ -1,6 +1,6 @@
 {
  "ok": true,
- "at": "2026-10-02T22:17:13.142Z",
+ "at": "2026-10-02T22:17:19.562Z",
  "agent": "harness-audit v1.1.0 (Z-35 + Task 19: role→worker wiring + loop-primitive checks)",
  "origin": "walkinglabs/learn-harness-engineering study (Z-35): five subsystems + loop/graph engineering mapped to the fleet; the audit itself is the adopted artifact — a fresh-context checker node on a schedule",
  "fiveSubsystems": {
@@ -32,13 +32,13 @@
   {
    "book": "ventures.json",
    "exists": true,
-   "ageHours": 0.1,
+   "ageHours": 0,
    "fresh": true
   },
   {
    "book": "fills-ledger.json",
    "exists": true,
-   "ageHours": 0.1,
+   "ageHours": 0,
    "fresh": true
   },
   {
@@ -70,14 +70,14 @@
   {
    "subsystem": "instructions",
    "name": "Defi/fleet/AGENTS.md present (coordination law)",
-   "status": "PASS",
+   "status": "FAIL",
    "evidence": "fleet/AGENTS.md",
    "note": "the fleet's constitution — read before any work"
   },
   {
    "subsystem": "instructions",
    "name": "Defi/DOCTRINE.md present",
-   "status": "PASS",
+   "status": "FAIL",
    "evidence": "DOCTRINE.md",
    "note": null
   },
@@ -161,7 +161,7 @@
   {
    "subsystem": "scope",
    "name": "doctrine binds kill rules (ventures have them)",
-   "status": "PASS",
+   "status": "FAIL",
    "evidence": "DOCTRINE-economics.md §4",
    "note": null
   },
@@ -182,28 +182,28 @@
   {
    "subsystem": "lifecycle",
    "name": "CLAIMS ledger fresh (receipts keep continuity)",
-   "status": "PASS",
-   "evidence": "last receipt 0.3h ago",
+   "status": "FAIL",
+   "evidence": "last receipt nullh ago",
    "note": "every session leaves clean state (L12 of the study)"
   },
   {
    "subsystem": "lifecycle",
    "name": "recovery path codified (RESUME-KIT + .fleet/restore.sh)",
-   "status": "PASS",
+   "status": "FAIL",
    "evidence": "canon reachable",
    "note": "sandbox resets are a law of nature; recovery is a law of ours (restore.sh lives outside git by design — creds never in repos)"
   },
   {
    "subsystem": "graph-failures",
    "name": "Goodhart countermeasure: two-sided ledger, measured never estimated",
-   "status": "PASS",
+   "status": "FAIL",
    "evidence": "EARN-GOVERNOR LAW",
    "note": "the number may not detach from the business: fills are balance-verified, pending is booked as honest zeros"
   },
   {
    "subsystem": "graph-failures",
    "name": "Blindness-upward countermeasure: kill rules + operator gate",
-   "status": "PASS",
+   "status": "FAIL",
    "evidence": "kill rules + operator gates",
    "note": "the loop cannot ask if the goal is right — the structure has a place where that question lives"
   },
@@ -231,7 +231,7 @@
   {
    "subsystem": "anchors",
    "name": "KPI names its method (oracle discipline)",
-   "status": "PASS",
+   "status": "FAIL",
    "evidence": "KPI.json method field",
    "note": "every metric says where its number comes from"
   },
@@ -252,15 +252,15 @@
   {
    "subsystem": "loop",
    "name": "all six loop primitives have live fleet instances (automations/worktrees/skills/connectors/sub-agents/external state)",
-   "status": "PASS",
-   "evidence": "workflows:41 desks:46 receipts:true books:9 claims:true",
+   "status": "FAIL",
+   "evidence": "workflows:41 desks:46 receipts:true books:9 claims:false",
    "note": "loop engineering mapped to the fleet per the LHE study — worktrees is the rebase-first runtime lane discipline"
   }
  ],
  "counts": {
-  "pass": 27,
+  "pass": 18,
   "warn": 0,
-  "fail": 0
+  "fail": 9
  },
  "silentCosts": {
   "verificationDebt": "selftests cover past incidents; every NEW failure mode (concat family ×3, null-deref, dedupe) becomes a check within one wave of discovery",
@@ -268,5 +268,5 @@
   "cognitiveSurrender": "judge nodes (agent-verify, this desk) are separate processes with fresh context",
   "tokenBlowout": "CI does the deterministic work; agent sessions only where judgment is required (LABOR TIERING LAW)"
  },
- "verdict": "harness green: 27 checks pass, 0 fail — the five subsystems hold and the three structural failures have named countermeasures"
+ "verdict": "harness NOT green: 9 FAIL — the audit is honest, the fails are the next work"
 }
