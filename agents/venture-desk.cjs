@@ -213,7 +213,7 @@ const VENTURES = [
     evidence: [marker('knowledge-cards-en.json', ''), marker('public-wave.cjs', '')],
     metricsFrom: (books) => {
       const ll = books.learning || null;
-      const entries = ll ? Object.entries(ll) : [];
+      const entries = ll ? Object.entries(ll).filter(([, e]) => e && typeof e === 'object' && !Array.isArray(e)) : [];
       let latest = null;
       for (const [id, e] of entries) {
         const s = Array.isArray(e.samples) && e.samples.length ? e.samples[e.samples.length - 1] : null;
@@ -231,7 +231,7 @@ const VENTURES = [
     evidence: [marker('personas.json', ''), marker('soldiers-blog.cjs', '')],
     metricsFrom: (books) => {
       const ll = books.learning || null;
-      const entries = ll ? Object.entries(ll) : [];
+      const entries = ll ? Object.entries(ll).filter(([, e]) => e && typeof e === 'object' && !Array.isArray(e)) : [];
       const engaged = entries.filter(([, e]) => Array.isArray(e.samples) && e.samples.some((s) => (s.votes || 0) > 0)).length;
       return { earn: 'TBD-MEASURE (per-lane engagement tracked in learning-ledger)', trackedPosts: entries.length, postsWithEngagement: engaged };
     }
