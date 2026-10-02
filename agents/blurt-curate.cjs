@@ -137,7 +137,19 @@ const repScore = (raw) => { const r = f(String(raw).replace(/[^0-9.\-]/g, '')); 
   receipt.keyCheck = { derivedPrefix: pub ? pub.slice(0, 8) : null, authorityMatch: !!ours, postingAuthCount: (acc.posting.key_auths || []).length };
   if (!ours) { receipt.fatal = 'BLT public key does not match headcorner posting authority — ABORT (nothing signed)'; fs.mkdirSync(path.dirname(OUT), { recursive: true }); fs.writeFileSync(OUT, JSON.stringify(receipt, null, 1)); console.log(JSON.stringify({ state: 'key-mismatch', failSoft: true })); process.exit(0); }
 
-  const vp = f(acc.voting_power);
+  // Z-34: manabar-first canon — Z-33 proved beblurt's legacy voting_power field is
+  // lazily stale (0 at 14:05Z, 9799 at 14:08Z); treasury-desk got the permanent fix,
+  // this lane was missed. Standard regen math, blurt scale vests×1e6 (verified exact).
+  const bp = f(acc.vesting_shares) + f(acc.received_vesting_shares) - f(acc.delegated_vesting_shares);
+  let vp = f(acc.voting_power);
+  if (acc.voting_manabar && acc.voting_manabar.current_mana != null && bp > 0) {
+    const maxMana = bp * 1e6;
+    const nowSec = Math.floor(Date.now() / 1000);
+    const elapsed = Math.max(0, nowSec - (acc.voting_manabar.last_update_time || nowSec));
+    const regen = maxMana * Math.min(elapsed, 432000) / 432000;
+    vp = Math.min(10000, 10000 * Math.min(maxMana, f(acc.voting_manabar.current_mana) + regen) / maxMana);
+  }
+  receipt.vpMethod = (acc.voting_manabar && acc.voting_manabar.current_mana != null && bp > 0) ? 'manabar+regen' : 'legacy-fallback';
   receipt.vpBefore = +(vp / 100).toFixed(2);
   if (vp < VP_FLOOR) { receipt.summary = { op: 'SKIP-VP-FLOOR', vp: receipt.vpBefore }; fs.mkdirSync(path.dirname(OUT), { recursive: true }); fs.writeFileSync(OUT, JSON.stringify(receipt, null, 1)); console.log(JSON.stringify({ state: 'skip-vp', vp: receipt.vpBefore })); process.exit(0); }
 
