@@ -69,8 +69,8 @@ jobs:
         with:
           node-version: 20
 
-      - name: install signer lib (steem@0.7.11 — pinned, 14-c doctrine)
-        run: npm install --prefix /tmp/steemjs steem@0.7.11 --omit=dev --no-audit --no-fund --loglevel=error
+      - name: install signer lib (steem@0.7.11 — pinned, 14-c doctrine; ecurve/bigi for the blurt leg, Task 16-a)
+        run: npm install --prefix /tmp/steemjs steem@0.7.11 ecurve@1.0.9 bigi@1.4.2 --omit=dev --no-audit --no-fund --loglevel=error
 
       - name: run the economy engine cycle (seal → auths → candidates → votes → txids → receipt)
         env:
