@@ -73,12 +73,18 @@ jobs:
           RECEIPT_OUT: agents/receipts/public-wave-receipt.json
         run: node agents/public-wave.cjs
 
+      - name: dedup corrections (past near-dup pairs rewritten in each account own voice)
+        env:
+          SA_FLEET_KEYS: ${{ secrets.SA_FLEET_KEYS }}
+          RECEIPT_OUT: agents/receipts/dedup-corrections-receipt.json
+        run: node agents/dedup-corrections.cjs
+
       - name: commit receipts (secretless)
         run: |
           git config user.name "saos-content-truth"
           git config user.email "content-truth@saos.local"
           mkdir -p agents/receipts
-          for p in agents/receipts/truth-sweep-receipt.json agents/receipts/truth-fix-receipt.json agents/receipts/public-wave-receipt.json agents/social-memory-cache.json; do [ -e "$p" ] && git add "$p" || true; done
+          for p in agents/receipts/truth-sweep-receipt.json agents/receipts/truth-fix-receipt.json agents/receipts/public-wave-receipt.json agents/receipts/dedup-corrections-receipt.json agents/social-memory-cache.json; do [ -e "$p" ] && git add "$p" || true; done
           if git diff --cached --quiet; then
             echo "no receipt changes"
           else

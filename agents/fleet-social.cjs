@@ -153,6 +153,9 @@ async function alreadyReblogged(who, author, permlink) {
             await sleep(1800 + Math.floor(Math.random() * 1200)); // human pacing
             const back = await getContent(src, cPermlink);
             R.status = (back && back.author === src && back.body === body) ? 'COMMENTED-VERIFIED' : 'COMMENTED-READBACK-PENDING';
+            // r145-c: a freshly cast comment joins the memory so the NEXT comment in
+            // this run is gated against it, not only against the pre-run snapshot
+            if (R.status === 'COMMENTED-VERIFIED') memory.push({ author: src, permlink: cPermlink, created: new Date().toISOString(), body, source: 'fleet-social' });
           }
         }
       }
