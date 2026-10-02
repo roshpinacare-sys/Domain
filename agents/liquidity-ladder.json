@@ -1,0 +1,600 @@
+{
+ "ok": true,
+ "at": "2026-10-02T12:55:55.142Z",
+ "agent": "liquidity-desk v1.0.0 (Z-32 bridge wave)",
+ "ms": 3647,
+ "law": "read-only census; execution stays in the signing desks (separation of census from signature)",
+ "totals": {
+  "steem": {
+   "accountsAlive": 11,
+   "liquid": 5.927,
+   "debt": 1.073,
+   "pendingLiquid": 0,
+   "pendingDebt": 0,
+   "pendingVests": 0,
+   "vpMean": 100
+  },
+  "hive": {
+   "accountsAlive": 11,
+   "liquid": 0.035,
+   "debt": 0.003,
+   "pendingLiquid": 0,
+   "pendingDebt": 0,
+   "pendingVests": 0,
+   "vpMean": 100
+  },
+  "blurt": {
+   "accountsAlive": 11,
+   "liquid": 84.279,
+   "debt": 0,
+   "pendingLiquid": 0,
+   "pendingDebt": 0,
+   "pendingVests": 0,
+   "vpMean": 100
+  }
+ },
+ "ladder": [
+  {
+   "rung": "R1-CLAIMS",
+   "what": "pending rewards → liquid/SP (chain rule, posting-only, idempotent)",
+   "certainty": "DETERMINISTIC",
+   "executors": "fleet-claim.cjs (steem, daily CI) + treasury-desk.cjs (hive+blurt)",
+   "now": {
+    "steemPendingVests": 0,
+    "hivePendingVests": 0,
+    "blurtPendingVests": 0
+   }
+  },
+  {
+   "rung": "R2-CURATION",
+   "what": "idle VP × effective SP cast by public policy (soldiers desk 2x/day + head desk)",
+   "certainty": "DETERMINISTIC accrual, USD measured at next claim delta",
+   "executors": "soldiers-curate.cjs + treasury-desk.cjs curation lane",
+   "now": {
+    "steemVpMean": 100,
+    "hiveVpMean": 100
+   }
+  },
+  {
+   "rung": "R3-DEBT-CONVERT",
+   "what": "SBD/HBD via internal market when premium ≥ fees",
+   "certainty": "CONDITIONAL (premium gate)",
+   "executors": "treasury-desk armed rail (EXEC_ENABLED=1)",
+   "now": {
+    "steemDebt": 1.073,
+    "hiveDebt": 0.003
+   }
+  },
+  {
+   "rung": "R4-HE-BOOKS",
+   "what": "idle HE tokens into live books above keep-law",
+   "certainty": "GATED (RAIL-HEALTH + GHOST-BOOK)",
+   "executors": "econ-desk.cjs 4h CI",
+   "now": {}
+  },
+  {
+   "rung": "R5-FUEL-PACE",
+   "what": "powerdown pacing: extend runway while earn side proves",
+   "certainty": "DETERMINISTIC math, op needs active key (operator-gated option)",
+   "executors": "OPTIONS ONLY this wave",
+   "now": {
+    "weeklySp": 475.828133,
+    "remainingSp": 1903.312533,
+    "remainingWeeks": 4,
+    "nextPayout": "2026-10-03T02:01:27"
+   }
+  }
+ ],
+ "accounts": {
+  "steem": [
+   {
+    "name": "headcorner",
+    "chain": "steem",
+    "exists": true,
+    "liquid": 5.386,
+    "debt": 1.068,
+    "vestsTotal": 6914861.749621,
+    "effectiveSp": 6914861.749621,
+    "vp": 100,
+    "pending": {
+     "liquid": 0,
+     "debt": 0,
+     "vests": 0
+    }
+   },
+   {
+    "name": "cashmachine",
+    "chain": "steem",
+    "exists": true,
+    "liquid": 0.01,
+    "debt": 0.005,
+    "vestsTotal": 48741.866571,
+    "effectiveSp": 48741.866571,
+    "vp": 100,
+    "pending": {
+     "liquid": 0,
+     "debt": 0,
+     "vests": 0
+    }
+   },
+   {
+    "name": "haran",
+    "chain": "steem",
+    "exists": true,
+    "liquid": 0.01,
+    "debt": 0,
+    "vestsTotal": 53796.801969,
+    "effectiveSp": 53796.801969,
+    "vp": 100,
+    "pending": {
+     "liquid": 0,
+     "debt": 0,
+     "vests": 0
+    }
+   },
+   {
+    "name": "israelnews",
+    "chain": "steem",
+    "exists": true,
+    "liquid": 0.012,
+    "debt": 0,
+    "vestsTotal": 78616.293349,
+    "effectiveSp": 78616.293349,
+    "vp": 100,
+    "pending": {
+     "liquid": 0,
+     "debt": 0,
+     "vests": 0
+    }
+   },
+   {
+    "name": "lsa",
+    "chain": "steem",
+    "exists": true,
+    "liquid": 0.01,
+    "debt": 0,
+    "vestsTotal": 56129.134326,
+    "effectiveSp": 56129.134326,
+    "vp": 100,
+    "pending": {
+     "liquid": 0,
+     "debt": 0,
+     "vests": 0
+    }
+   },
+   {
+    "name": "macrame",
+    "chain": "steem",
+    "exists": true,
+    "liquid": 0.01,
+    "debt": 0,
+    "vestsTotal": 48588.639018,
+    "effectiveSp": 48588.639018,
+    "vp": 100,
+    "pending": {
+     "liquid": 0,
+     "debt": 0,
+     "vests": 0
+    }
+   },
+   {
+    "name": "siq",
+    "chain": "steem",
+    "exists": true,
+    "liquid": 0.01,
+    "debt": 0,
+    "vestsTotal": 50231.312209,
+    "effectiveSp": 50231.312209,
+    "vp": 100,
+    "pending": {
+     "liquid": 0,
+     "debt": 0,
+     "vests": 0
+    }
+   },
+   {
+    "name": "tov",
+    "chain": "steem",
+    "exists": true,
+    "liquid": 0.449,
+    "debt": 0,
+    "vestsTotal": 50298.984951,
+    "effectiveSp": 50298.984951,
+    "vp": 100,
+    "pending": {
+     "liquid": 0,
+     "debt": 0,
+     "vests": 0
+    }
+   },
+   {
+    "name": "wic",
+    "chain": "steem",
+    "exists": true,
+    "liquid": 0.01,
+    "debt": 0,
+    "vestsTotal": 52670.16722,
+    "effectiveSp": 52670.16722,
+    "vp": 100,
+    "pending": {
+     "liquid": 0,
+     "debt": 0,
+     "vests": 0
+    }
+   },
+   {
+    "name": "wog",
+    "chain": "steem",
+    "exists": true,
+    "liquid": 0.01,
+    "debt": 0,
+    "vestsTotal": 50305.237234,
+    "effectiveSp": 50305.237234,
+    "vp": 100,
+    "pending": {
+     "liquid": 0,
+     "debt": 0,
+     "vests": 0
+    }
+   },
+   {
+    "name": "woq",
+    "chain": "steem",
+    "exists": true,
+    "liquid": 0.01,
+    "debt": 0,
+    "vestsTotal": 54123.808635,
+    "effectiveSp": 54123.808635,
+    "vp": 100,
+    "pending": {
+     "liquid": 0,
+     "debt": 0,
+     "vests": 0
+    }
+   }
+  ],
+  "hive": [
+   {
+    "name": "headcorner",
+    "chain": "hive",
+    "exists": true,
+    "liquid": 0.034,
+    "debt": 0.003,
+    "vestsTotal": 40827.815425,
+    "effectiveSp": 40827.815425,
+    "vp": 100,
+    "pending": {
+     "liquid": 0,
+     "debt": 0,
+     "vests": 0
+    }
+   },
+   {
+    "name": "cashmachine",
+    "chain": "hive",
+    "exists": true,
+    "liquid": 0.001,
+    "debt": 0,
+    "vestsTotal": 83.936552,
+    "effectiveSp": 83.936552,
+    "vp": 100,
+    "pending": {
+     "liquid": 0,
+     "debt": 0,
+     "vests": 0
+    }
+   },
+   {
+    "name": "haran",
+    "chain": "hive",
+    "exists": true,
+    "liquid": 0,
+    "debt": 0,
+    "vestsTotal": 244.537626,
+    "effectiveSp": 244.537626,
+    "vp": 100,
+    "pending": {
+     "liquid": 0,
+     "debt": 0,
+     "vests": 0
+    }
+   },
+   {
+    "name": "israelnews",
+    "chain": "hive",
+    "exists": true,
+    "liquid": 0,
+    "debt": 0,
+    "vestsTotal": 206.19746,
+    "effectiveSp": 206.19746,
+    "vp": 100,
+    "pending": {
+     "liquid": 0,
+     "debt": 0,
+     "vests": 0
+    }
+   },
+   {
+    "name": "lsa",
+    "chain": "hive",
+    "exists": true,
+    "liquid": 0,
+    "debt": 0,
+    "vestsTotal": 1870.13915,
+    "effectiveSp": 1870.13915,
+    "vp": 100,
+    "pending": {
+     "liquid": 0,
+     "debt": 0,
+     "vests": 0
+    }
+   },
+   {
+    "name": "macrame",
+    "chain": "hive",
+    "exists": true,
+    "liquid": 0,
+    "debt": 0,
+    "vestsTotal": 2156.959384,
+    "effectiveSp": 2156.959384,
+    "vp": 100,
+    "pending": {
+     "liquid": 0,
+     "debt": 0,
+     "vests": 0
+    }
+   },
+   {
+    "name": "siq",
+    "chain": "hive",
+    "exists": true,
+    "liquid": 0,
+    "debt": 0,
+    "vestsTotal": 268.794562,
+    "effectiveSp": 268.794562,
+    "vp": 100,
+    "pending": {
+     "liquid": 0,
+     "debt": 0,
+     "vests": 0
+    }
+   },
+   {
+    "name": "tov",
+    "chain": "hive",
+    "exists": true,
+    "liquid": 0,
+    "debt": 0,
+    "vestsTotal": 6105.792147,
+    "effectiveSp": 6105.792147,
+    "vp": 100,
+    "pending": {
+     "liquid": 0,
+     "debt": 0,
+     "vests": 0
+    }
+   },
+   {
+    "name": "wic",
+    "chain": "hive",
+    "exists": true,
+    "liquid": 0,
+    "debt": 0,
+    "vestsTotal": 1065.011187,
+    "effectiveSp": 1065.011187,
+    "vp": 100,
+    "pending": {
+     "liquid": 0,
+     "debt": 0,
+     "vests": 0
+    }
+   },
+   {
+    "name": "wog",
+    "chain": "hive",
+    "exists": true,
+    "liquid": 0,
+    "debt": 0,
+    "vestsTotal": 1252.614307,
+    "effectiveSp": 1252.614307,
+    "vp": 100,
+    "pending": {
+     "liquid": 0,
+     "debt": 0,
+     "vests": 0
+    }
+   },
+   {
+    "name": "woq",
+    "chain": "hive",
+    "exists": true,
+    "liquid": 0,
+    "debt": 0,
+    "vestsTotal": 252.454809,
+    "effectiveSp": 252.454809,
+    "vp": 100,
+    "pending": {
+     "liquid": 0,
+     "debt": 0,
+     "vests": 0
+    }
+   }
+  ],
+  "blurt": [
+   {
+    "name": "headcorner",
+    "chain": "blurt",
+    "exists": true,
+    "liquid": 72.162,
+    "debt": 0,
+    "vestsTotal": 7600.869321,
+    "effectiveSp": 7600.869321,
+    "vp": 100,
+    "pending": {
+     "liquid": 0,
+     "debt": 0,
+     "vests": 0
+    }
+   },
+   {
+    "name": "cashmachine",
+    "chain": "blurt",
+    "exists": true,
+    "liquid": 0.944,
+    "debt": 0,
+    "vestsTotal": 1.716,
+    "effectiveSp": 1.716,
+    "vp": 100,
+    "pending": {
+     "liquid": 0,
+     "debt": 0,
+     "vests": 0
+    }
+   },
+   {
+    "name": "haran",
+    "chain": "blurt",
+    "exists": true,
+    "liquid": 0.865,
+    "debt": 0,
+    "vestsTotal": 0.125,
+    "effectiveSp": 0.125,
+    "vp": 100,
+    "pending": {
+     "liquid": 0,
+     "debt": 0,
+     "vests": 0
+    }
+   },
+   {
+    "name": "israelnews",
+    "chain": "blurt",
+    "exists": true,
+    "liquid": 1.211,
+    "debt": 0,
+    "vestsTotal": 0.105,
+    "effectiveSp": 0.105,
+    "vp": 100,
+    "pending": {
+     "liquid": 0,
+     "debt": 0,
+     "vests": 0
+    }
+   },
+   {
+    "name": "lsa",
+    "chain": "blurt",
+    "exists": true,
+    "liquid": 1.225,
+    "debt": 0,
+    "vestsTotal": 0.24,
+    "effectiveSp": 0.24,
+    "vp": 100,
+    "pending": {
+     "liquid": 0,
+     "debt": 0,
+     "vests": 0
+    }
+   },
+   {
+    "name": "macrame",
+    "chain": "blurt",
+    "exists": true,
+    "liquid": 1.199,
+    "debt": 0,
+    "vestsTotal": 0.636,
+    "effectiveSp": 0.636,
+    "vp": 100,
+    "pending": {
+     "liquid": 0,
+     "debt": 0,
+     "vests": 0
+    }
+   },
+   {
+    "name": "siq",
+    "chain": "blurt",
+    "exists": true,
+    "liquid": 1.743,
+    "debt": 0,
+    "vestsTotal": 0.126,
+    "effectiveSp": 0.126,
+    "vp": 100,
+    "pending": {
+     "liquid": 0,
+     "debt": 0,
+     "vests": 0
+    }
+   },
+   {
+    "name": "tov",
+    "chain": "blurt",
+    "exists": true,
+    "liquid": 0.941,
+    "debt": 0,
+    "vestsTotal": 0.254,
+    "effectiveSp": 0.254,
+    "vp": 100,
+    "pending": {
+     "liquid": 0,
+     "debt": 0,
+     "vests": 0
+    }
+   },
+   {
+    "name": "wic",
+    "chain": "blurt",
+    "exists": true,
+    "liquid": 1.226,
+    "debt": 0,
+    "vestsTotal": 0.545,
+    "effectiveSp": 0.545,
+    "vp": 100,
+    "pending": {
+     "liquid": 0,
+     "debt": 0,
+     "vests": 0
+    }
+   },
+   {
+    "name": "wog",
+    "chain": "blurt",
+    "exists": true,
+    "liquid": 1.551,
+    "debt": 0,
+    "vestsTotal": 0.641,
+    "effectiveSp": 0.641,
+    "vp": 100,
+    "pending": {
+     "liquid": 0,
+     "debt": 0,
+     "vests": 0
+    }
+   },
+   {
+    "name": "woq",
+    "chain": "blurt",
+    "exists": true,
+    "liquid": 1.212,
+    "debt": 0,
+    "vestsTotal": 0.129,
+    "effectiveSp": 0.129,
+    "vp": 100,
+    "pending": {
+     "liquid": 0,
+     "debt": 0,
+     "vests": 0
+    }
+   }
+  ]
+ },
+ "gapFrame": {
+  "burnPerDayUsdNote": "fuel powerdown = capital conversion booked honestly; pacing options below change RUNWAY, not income",
+  "options": [
+   "as-is: SP runs out in ~4w",
+   "pace 50%: draw 237.914067 SP/wk → runway ~8w (RC/capital needs reviewed first)",
+   "pace 25%: draw 118.957033 SP/wk → runway ~16w"
+  ]
+ },
+ "doctrine": "TWO-SIDED LEDGER LAW + EARN-GOVERNOR LAW (Defi/fleet/DOCTRINE-economics.md)"
+}
