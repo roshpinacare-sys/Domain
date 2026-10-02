@@ -1,8 +1,8 @@
 # Harness Audit — the fleet's five-subsystem check (fresh-context judge node)
 
-_harness-audit v1.0.0 · 2026-10-02T23:13:42.238Z · born from the learn-harness-engineering study (Z-35, extended Task 19)_
+_harness-audit v1.0.0 · 2026-10-02T23:17:42.505Z · born from the learn-harness-engineering study (Z-35, extended Task 19)_
 
-**harness green: 31 checks pass, 0 fail — the five subsystems hold and the three structural failures have named countermeasures**
+**harness green: 32 checks pass, 0 fail — the five subsystems hold and the three structural failures have named countermeasures**
 
 | # | Subsystem | Check | Status | Evidence |
 |---|---|---|---|---|
@@ -32,11 +32,12 @@ _harness-audit v1.0.0 · 2026-10-02T23:13:42.238Z · born from the learn-harness
 | 24 | anchors | KPI names its method (oracle discipline) | PASS | KPI.json method field |
 | 25 | anchors | spot oracle measured at run time (not cached stories) | PASS | ventures.json priceOracle |
 | 26 | graph | every FILLED role names a reachable worker artifact (role→worker wiring) | PASS | 7 FILLED roles · 7 wired |
-| 27 | loop | all six loop primitives have live fleet instances (automations/worktrees/skills/connectors/sub-agents/external state) | PASS | workflows:41 desks:48 receipts:true books:9 claims:true |
-| 28 | sovereignty | role-registry integrity: every charter row names a real file (roles-as-data, no invented agents) | PASS | 48 rows · cols 9 · dupes 0 · missing files 0 |
-| 29 | sovereignty | change-request ledger integrity: every CR well-formed, no PENDING abandoned >7d | PASS | 2 CRs · malformed 0 · stale-pending 0 |
-| 30 | sovereignty | mechanical override live: destructive-command guard stamped, evals E7-E9 pin it | PASS | ledger at 2026-10-02T23:12:54.383Z · scan denies 3 · guardEvals green |
-| 31 | fate-defense | Emergence-World adoption: FWI scorecard fresh (9 indicators, each with a mechanical evidence source) + STASIS breaker armed + engine obeys it | PASS | FWI THRIVING fresh · 9 indicators · sources all named · stasis armed=false · engine gate=true |
+| 27 | loop | all six loop primitives have live fleet instances (automations/worktrees/skills/connectors/sub-agents/external state) | PASS | workflows:41 desks:49 receipts:true books:9 claims:true |
+| 28 | sovereignty | role-registry integrity: every charter row names a real file (roles-as-data, no invented agents) | PASS | 49 rows · cols 9 · dupes 0 · missing files 0 |
+| 29 | sovereignty | change-request ledger integrity: every CR well-formed, no PENDING abandoned >7d | PASS | 3 CRs · malformed 0 · stale-pending 0 |
+| 30 | sovereignty | mechanical override live: destructive-command guard stamped, evals E7-E9 pin it | PASS | ledger at 2026-10-02T23:17:37.881Z · scan denies 0 · guardEvals green |
+| 31 | sovereignty | cognitive rail governed: provider registry valid, forbidden rails never enabled, keyless probes booked, E10-E12 pin it | PASS | agents/inference-providers.csv + rail-ledger.json |
+| 32 | fate-defense | Emergence-World adoption: FWI scorecard fresh (9 indicators, each with a mechanical evidence source) + STASIS breaker armed + engine obeys it | PASS | FWI THRIVING fresh · 9 indicators · sources all named · stasis armed=false · engine gate=true |
 
 **Books pulse:** econ-book.json ✓ · curation-book.json ✓ · money-ledger.json ✓ · ventures.json ✓ · fills-ledger.json ✓ · bridge-book.json ✓ · dex-book.json ✓ · learning-ledger.json ✓ · recruitment.json ✓
 

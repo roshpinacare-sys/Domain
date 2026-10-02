@@ -1,15 +1,15 @@
 {
  "ok": true,
- "at": "2026-10-02T23:13:42.238Z",
- "agent": "harness-audit v1.4.0 (Z-35 + Task 19 + Z-37 sovereignty + Z-38 mechanical override + Task 22 fate-defense)",
- "origin": "walkinglabs/learn-harness-engineering study (Z-35): five subsystems + loop/graph engineering mapped to the fleet; Z-37 adds f/prompts.chat governance adoption (roles-as-data + decision ladder + change-requests + override protocol); Z-38 adds Dicklesworthstone/destructive_command_guard adoption (mechanical override gate + evals E7-E9); Task 22 adds world.emergence.ai fate-defense adoption (STASIS circuit breaker + FWI scorecard + three laws, FATE-DEFENSE.md); the audit itself is the adopted artifact — a fresh-context checker node on a schedule",
+ "at": "2026-10-02T23:17:42.505Z",
+ "agent": "harness-audit v1.5.0 (Z-35 + Task 19 + Z-37 sovereignty + Z-38 override + Z-39 cognitive rail + Task 22 fate-defense, superset merge)",
+ "origin": "walkinglabs/learn-harness-engineering study (Z-35): five subsystems + loop/graph engineering mapped to the fleet; Z-37 adds f/prompts.chat governance adoption (roles-as-data + decision ladder + change-requests + override protocol); Z-38 adds Dicklesworthstone/destructive_command_guard adoption (mechanical override gate + evals E7-E9); Z-39 adds tashfeenahmed/freellmapi adoption (cognitive-rail registry + keyless probes + evals E10-E12); Task 22 adds world.emergence.ai fate-defense adoption (STASIS circuit breaker + FWI scorecard + three laws, FATE-DEFENSE.md); the audit itself is the adopted artifact — a fresh-context checker node on a schedule",
  "fiveSubsystems": {
   "instructions": "AGENTS.md + DOCTRINE.md + FLEET-NOTE.md + agent headers",
   "state": "books (external state primitive) + CLAIMS + worklog",
   "verification": "verify-then-sign + read-back + agent-verify judge node + gitleaks",
   "scope": "kill rules + floors/ceilings + dust honesty",
   "lifecycle": "receipts per session + RESUME-KIT + restore.sh",
-  "sovereignty": "role-registry.csv (roles-as-data) + change-requests/ (judged self-modification) + sovereignty.md (decision ladder + override protocol) + command-guard.cjs (mechanical override, Z-38)",
+  "sovereignty": "role-registry.csv (roles-as-data) + change-requests/ (judged self-modification) + sovereignty.md (decision ladder + override protocol) + command-guard.cjs (mechanical override, Z-38) + cognitive-rail.cjs + inference-providers.csv (governed inference rails, Z-39)",
   "fateDefense": "STASIS.json circuit breaker (engine obeys pre-seal) + fleet-indicators.cjs FWI scorecard (9 indicators, artifact-sourced) + FATE-DEFENSE.md (Emergence World roast + three laws, Task 22)"
  },
  "books": [
@@ -22,13 +22,13 @@
   {
    "book": "curation-book.json",
    "exists": true,
-   "ageHours": 11.3,
+   "ageHours": 11.4,
    "fresh": true
   },
   {
    "book": "money-ledger.json",
    "exists": true,
-   "ageHours": 1.4,
+   "ageHours": 1.5,
    "fresh": true
   },
   {
@@ -58,7 +58,7 @@
   {
    "book": "learning-ledger.json",
    "exists": true,
-   "ageHours": 1,
+   "ageHours": 1.1,
    "fresh": true
   },
   {
@@ -255,29 +255,36 @@
    "subsystem": "loop",
    "name": "all six loop primitives have live fleet instances (automations/worktrees/skills/connectors/sub-agents/external state)",
    "status": "PASS",
-   "evidence": "workflows:41 desks:48 receipts:true books:9 claims:true",
+   "evidence": "workflows:41 desks:49 receipts:true books:9 claims:true",
    "note": "loop engineering mapped to the fleet per the LHE study — worktrees is the rebase-first runtime lane discipline"
   },
   {
    "subsystem": "sovereignty",
    "name": "role-registry integrity: every charter row names a real file (roles-as-data, no invented agents)",
    "status": "PASS",
-   "evidence": "48 rows · cols 9 · dupes 0 · missing files 0",
+   "evidence": "49 rows · cols 9 · dupes 0 · missing files 0",
    "note": "prompts.chat pattern: every persona is a CSV row (Z-37); a registry detached from disk is a story, not a mandate"
   },
   {
    "subsystem": "sovereignty",
    "name": "change-request ledger integrity: every CR well-formed, no PENDING abandoned >7d",
    "status": "PASS",
-   "evidence": "2 CRs · malformed 0 · stale-pending 0",
+   "evidence": "3 CRs · malformed 0 · stale-pending 0",
    "note": "self-modification is never silent: scope changes flow through judged CRs (prompts.chat changeRequests, fleet-hardened)"
   },
   {
    "subsystem": "sovereignty",
    "name": "mechanical override live: destructive-command guard stamped, evals E7-E9 pin it",
    "status": "PASS",
-   "evidence": "ledger at 2026-10-02T23:12:54.383Z · scan denies 3 · guardEvals green",
+   "evidence": "ledger at 2026-10-02T23:17:37.881Z · scan denies 0 · guardEvals green",
    "note": "Z-38 (study: destructive_command_guard): the override protocol is code before execution, not prose after it"
+  },
+  {
+   "subsystem": "sovereignty",
+   "name": "cognitive rail governed: provider registry valid, forbidden rails never enabled, keyless probes booked, E10-E12 pin it",
+   "status": "PASS",
+   "evidence": "agents/inference-providers.csv + rail-ledger.json",
+   "note": "15 rows · neverLive=0 · keyedNotTierC=0 · live probe runs booked=7 · railEvals green"
   },
   {
    "subsystem": "fate-defense",
@@ -288,7 +295,7 @@
   }
  ],
  "counts": {
-  "pass": 31,
+  "pass": 32,
   "warn": 0,
   "fail": 0
  },
@@ -298,5 +305,5 @@
   "cognitiveSurrender": "judge nodes (agent-verify, this desk) are separate processes with fresh context",
   "tokenBlowout": "CI does the deterministic work; agent sessions only where judgment is required (LABOR TIERING LAW)"
  },
- "verdict": "harness green: 31 checks pass, 0 fail — the five subsystems hold and the three structural failures have named countermeasures"
+ "verdict": "harness green: 32 checks pass, 0 fail — the five subsystems hold and the three structural failures have named countermeasures"
 }

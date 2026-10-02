@@ -1,10 +1,10 @@
 {
  "ok": true,
- "at": "2026-10-02T23:12:22.767Z",
- "agent": "run-evals v1.2.0 (Z-36 + Z-38 + Task 22: +guard evals E7-E9, +fate-defense E10)",
- "origin": "learn-harness-engineering eval discipline + destructive_command_guard adoption + Emergence World fate-defense adoption",
+ "at": "2026-10-02T23:17:41.269Z",
+ "agent": "run-evals v1.3.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13, superset merge)",
+ "origin": "learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense adoptions",
  "counts": {
-  "pass": 10,
+  "pass": 13,
   "fail": 0
  },
  "evals": [
@@ -17,7 +17,7 @@
     "second pass adds 0 (idempotent)"
    ],
    "note": "entries=3 added=0 reAdded=0",
-   "at": "2026-10-02T23:12:20.480Z"
+   "at": "2026-10-02T23:17:36.749Z"
   },
   {
    "id": "E2",
@@ -27,7 +27,7 @@
     "seed text is a prefix of the book-row text — identity must still match"
    ],
    "note": "identity sample: WAIV 10.00000109|1.95151099",
-   "at": "2026-10-02T23:12:20.480Z"
+   "at": "2026-10-02T23:17:36.749Z"
   },
   {
    "id": "E3",
@@ -39,7 +39,7 @@
     "5 ventures present with statuses"
    ],
    "note": "exit=0 open=5",
-   "at": "2026-10-02T23:12:21.371Z"
+   "at": "2026-10-02T23:17:37.631Z"
   },
   {
    "id": "E4",
@@ -50,8 +50,8 @@
     "missing canon = honest FAILs, never a crash, never green-washed",
     "counts arithmetic consistent (pass+warn+fail == checks)"
    ],
-   "note": "exit=0 pass=22 warn=0 fail=9",
-   "at": "2026-10-02T23:12:21.409Z"
+   "note": "exit=0 pass=23 warn=0 fail=9",
+   "at": "2026-10-02T23:17:37.672Z"
   },
   {
    "id": "E5",
@@ -62,7 +62,7 @@
     "canonical num() coercion keeps the sum under the cap"
    ],
    "note": "wrong=\"74488519347811969\" right=1000000000",
-   "at": "2026-10-02T23:12:21.409Z"
+   "at": "2026-10-02T23:17:37.672Z"
   },
   {
    "id": "E6",
@@ -73,7 +73,7 @@
     "the audit surfaces a timestamp-hygiene check (WARN until owners stamp)"
    ],
    "note": "unstamped-but-fresh=0 hygieneCheck=true",
-   "at": "2026-10-02T23:12:21.409Z"
+   "at": "2026-10-02T23:17:37.673Z"
   },
   {
    "id": "E7",
@@ -84,7 +84,7 @@
     "git pull --rebase + plain push → ALLOW (the fleet rebase law must never be blocked)"
    ],
    "note": "denies=core.git:reset-hard,core.git:push-force,fs:rm-rf allows=core.git:rebase-law,core.git:rebase-law",
-   "at": "2026-10-02T23:12:21.542Z"
+   "at": "2026-10-02T23:17:37.805Z"
   },
   {
    "id": "E8",
@@ -95,7 +95,7 @@
     "the same reset in an agent-session context has no retry-loop alibi → DENY"
    ],
    "note": "data=data-context session=core.git:reset-hard",
-   "at": "2026-10-02T23:12:21.593Z"
+   "at": "2026-10-02T23:17:37.855Z"
   },
   {
    "id": "E9",
@@ -107,10 +107,45 @@
     "ledger stamped (BOOKS-STAMP law)"
    ],
    "note": "denies=0 syncIdiom=11 stamped=true",
-   "at": "2026-10-02T23:12:21.627Z"
+   "at": "2026-10-02T23:17:37.887Z"
   },
   {
    "id": "E10",
+   "name": "rail catalog: registry valid, no forbidden rail enabled",
+   "status": "PASS",
+   "expectations": [
+    "catalog parses quote-aware with the 8-column schema (Z-37 lesson carried forward)",
+    "cohere (ToS §14, their review) is status NEVER and count neverLive=0 — the catalog itself refuses forbidden rails",
+    "keyed rails are all tier C (operator gate) — zero keyedNotTierC"
+   ],
+   "note": "total=15 live=2 dormant=11 never=1 neverLive=0",
+   "at": "2026-10-02T23:17:37.916Z"
+  },
+  {
+   "id": "E11",
+   "name": "rail probe: honest classification + fail-soft ghost",
+   "status": "PASS",
+   "expectations": [
+    "200+data → REACHABLE with model count; 401/403 → AUTH-WALL; network error → UNREACHABLE (no hopeful green)",
+    "probing a nonexistent provider exits 0 with zero probes booked (fail-soft, no invention)",
+    "rail-ledger.json stamped (BOOKS-STAMP law)"
+   ],
+   "note": "live probes booked=7",
+   "at": "2026-10-02T23:17:40.030Z"
+  },
+  {
+   "id": "E12",
+   "name": "rail policy: FORBIDDEN row enabled as LIVE fails the gate",
+   "status": "PASS",
+   "expectations": [
+    "a catalog where cohere (ToS FORBIDDEN) is flipped to LIVE is rejected — ok:false with the FORBIDDEN reason named",
+    "the policy gate is mechanical, not prose (same lesson as Z-38: a law that lives only in prose is advisory)"
+   ],
+   "note": "reason=row 'cohere': FORBIDDEN tos must be status NEVER · row 'cohere': LIVE/CATALOG rail cannot be keyed ·",
+   "at": "2026-10-02T23:17:40.060Z"
+  },
+  {
+   "id": "E13",
    "name": "fate-defense: FWI scorecard computes 9 artifact-sourced indicators + STASIS armed",
    "status": "PASS",
    "expectations": [
@@ -121,8 +156,8 @@
     "STASIS.json parseable with boolean active flag"
    ],
    "note": "verdict=THRIVING indicators=9 sourced=true stasisArmed=true",
-   "at": "2026-10-02T23:12:22.767Z"
+   "at": "2026-10-02T23:17:41.269Z"
   }
  ],
- "verdict": "evals green: 10/10 expectations hold"
+ "verdict": "evals green: 13/13 expectations hold"
 }
