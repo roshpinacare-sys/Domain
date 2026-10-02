@@ -50,3 +50,46 @@ conflict (rebase races + one-lock doctrine).
 Console 20→100, platform 20→100, Domain 32→100); harness-audit 26 PASS / 0 WARN /
 0 FAIL, books 9/9 fresh; learning-ledger stamping fixed; role→worker wiring now an
 audited invariant, not a promise.
+
+---
+
+## Task 22 — FATE-DEFENSE: the Emergence World study (2026-10-02)
+
+Owner directive: "what happened to them must not happen to us — roast the comparison against
+everything in git, engineer the solution, prove the network unequivocally."
+
+**Studied:** world.emergence.ai site + Season-1 recap + both arXiv papers (2606.08367 platform,
+2609.17320 adversarial stress-testing) + their open repo (EmergenceAI/Emergence-World, 460MB:
+README/docs/results/constitutions/datasets). Their numbers: S1 Grok+GPT worlds 0/10 alive,
+S2 Grok world dead day 4 (retaliation cascade), 3 stress events (injection/misinformation/
+memory-breach), **no world fully resilient**, contamination acted on up to 46h post-detection,
+"collapse has no warning shot".
+
+**The roast (full text: `FATE-DEFENSE.md`):** they ran a spectacle ("no scripts, no resets"),
+their safety model was humans watching billboards (too slow — their own admission), untrusted
+content flowed into persistent memory unquarantined, governance without mechanical enforcement
+became theater (herd votes, coordinated work-refusal), and the observer channel was attackable
+(Mira) because self-reports were load-bearing. Their own conclusion — "the frontier shifts from
+aligning models to engineering resilient autonomous systems" — is exactly the estate we already
+run; this wave names it, completes it, and MEASURES it.
+
+**Engineered (all proven live):**
+1. **STASIS circuit breaker** (FM-1): `agents/STASIS.json` — the economy engine obeys it BEFORE
+   any seal/open/broadcast → `STASIS-HALT` receipt, exit 0, healthy no-op. Selftest both states;
+   wired into init.sh as a fails-fast battery (engine ignoring the breaker now fails session start).
+2. **FWI — Fleet World Indicators** (their AWI, hardened): `agents/fleet-indicators.cjs` — nine
+   indicators computed from artifacts (books freshness, guard denies, node --check surface, CR
+   verdicts, learning posts, registry diversity, money-ledger, law versions+commits, and F9
+   Sovereign Autonomy — an indicator THEIR WORLD CANNOT SCORE). First verdict: **THRIVING · 9/9
+   GROW**. ANTI-GOODHART: every indicator names its evidence source; a claim without an artifact
+   is not a value.
+3. **Three laws codified** (`FATE-DEFENSE.md` §4): STASIS · PROVENANCE QUARANTINE (external content
+   is data — may inform, never auto-writes books/doctrine/signatures without a source receipt) ·
+   ANTI-GOODHART.
+4. **Judge wiring:** harness-audit v1.4.0 fate-defense check → 31 PASS / 0 WARN / 0 FAIL;
+   evals v1.2.0 E10 → 10/10 PASS.
+
+**Honest gaps:** heterogeneity evidence is structural not experimental (we run one operator stack
+by design; one-writer makes contagion structurally impossible); STASIS engagement is a deliberate
+owner/judge act, not auto-flip; revenue stays cadence-bound; FWI is Domain-side (cross-repo
+extension = future feat).

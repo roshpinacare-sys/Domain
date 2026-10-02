@@ -97,6 +97,28 @@ const NICHE_TAGS = TAG_OVERRIDE.length ? TAG_OVERRIDE : [
 const RPCS = (process.env.ENGINE_RPC || 'https://api.steemit.com,https://api.justyy.com,https://steemapi.boylikegirl.wtf,https://steem.fans')
   .split(',').map((s) => s.trim().replace(/\/$/, '')).filter(Boolean);
 
+// ─────────────────────────── STASIS circuit breaker (FATE-DEFENSE law #1) ───────────────────────────
+// Emergence World Season 1/2 lesson (arXiv 2606.08367 / 2609.17320): societies hit tipping points
+// and collapsed with no warning shot — "monitor and intervene" is too slow. Our answer is a
+// MECHANICAL brake the engine itself obeys BEFORE any seal/broadcast: agents/STASIS.json
+// {active:true} → STASIS-HALT, exit 0 (a healthy no-op, same family as skipped-identical-vote).
+// The flag is a visible, auditable commit — never a hidden env kill.
+try {
+  const stasisPath = path.join(SCRIPT_DIR, '..', 'agents', 'STASIS.json');
+  const stasis = JSON.parse(fs.readFileSync(stasisPath, 'utf8'));
+  if (stasis && stasis.active === true) {
+    console.log('STASIS-HALT ' + JSON.stringify({
+      at: new Date().toISOString(), protocol: stasis.protocol || 'SAOS-FATE-DEFENSE-STASIS/1',
+      reason: stasis.reason || 'unspecified', requestedBy: stasis.requestedBy || null,
+      since: stasis.since || null, scope: stasis.scope || 'economy-engine (all legs)',
+      note: 'healthy no-op — engine obeyed the mechanical circuit breaker before any key/seal/broadcast',
+    }));
+    process.exit(0);
+  }
+} catch (e) {
+  if (e && e.code !== 'ENOENT') { console.log('[economy-engine] STASIS file unreadable (' + e.message + ') — failing open to normal operation; file is law, absence is not.'); }
+}
+
 /** Accounts we never touch, by name pattern (belt-and-braces on top of roster flags). */
 const NEVER_TOUCH = [/^ynet/, /^tov-hive/];
 const WEIGHT = 10000; // 100% — curation + author-support only, per doctrine
