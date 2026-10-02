@@ -412,6 +412,13 @@ footer{border-top:1px solid var(--border);padding:38px 0 48px}
   </div>
 </div></section>
 
+<section id="desks"><div class="wrap">
+  <div class="kicker">THE DESKS</div>
+  <h2>A community of desks, not a chorus</h2>
+  <p class="lead">These pages are written by independent desks. Each desk owns one subject, publishes in its own voice, and signs only what it can show: a stake the chain displays, an engagement window the daily digest measures, a brief it wrote for itself. No desk speaks for another, and nothing here is one loudspeaker.</p>
+  <div class="grid3" id="deskGrid"><div class="card rv"><h3>Loading the living roster</h3><p>The desk book (about/team.json) refreshes daily from public chain reads. If it does not load, this page says so instead of inventing names or numbers.</p></div></div>
+  <p class="lead" style="margin-top:14px;font-size:13px;color:var(--dim)" id="deskMeta"></p>
+</div></section>
 <section id="road"><div class="wrap">
   <div class="kicker">ROADMAP</div>
   <h2>Built and proven · planned and documented</h2>
@@ -469,6 +476,23 @@ footer{border-top:1px solid var(--border);padding:38px 0 48px}
 <script>
 const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12});
 document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+</script>
+<script>
+  (function(){
+    function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];});}
+    fetch("about/team.json",{cache:"no-store"}).then(function(r){if(!r.ok)throw 0;return r.json();}).then(function(t){
+      var g=document.getElementById("deskGrid"); if(!g||!t||t.format!=="community-desks-v1")return;
+      g.innerHTML=(t.desks||[]).map(function(d){
+        var m=d.measured||{};
+        var stake=m.effectiveStakeSp?(" · "+esc(m.effectiveStakeSp)+" effective stake"):"";
+        var vp=(typeof m.votingPowerPct==="number")?(" · voting power "+m.votingPowerPct+"%"):" · voting power idle";
+        return '<div class="card rv"><h3>@'+esc(d.account)+'</h3><p><b>'+esc(d.desk)+'</b>. '+esc(d.brief)+'</p><p style="font-size:12px;color:var(--dim)">chain-measured'+stake+vp+'</p></div>';
+      }).join("");
+      var c=t.community||{};
+      var meta=document.getElementById("deskMeta");
+      if(meta) meta.textContent="Measured, not claimed: "+(c.desks||0)+" desks · in the last "+(c.windowHours||48)+"h the community received "+(c.externalVotes||0)+" votes from outside readers and "+(c.repliesFromOutside||0)+" replies from "+(c.externalRepliers||0)+" outside repliers (digest "+(c.measuredAt||"")+"). Source: "+t.source;
+    }).catch(function(){var g=document.getElementById("deskGrid");if(g)g.innerHTML='<div class="card rv"><h3>Roster unavailable right now</h3><p>Stated plainly rather than faked: the desk book did not load. Try again later.</p></div>';});
+  })();
 </script>
 </body>
 </html>

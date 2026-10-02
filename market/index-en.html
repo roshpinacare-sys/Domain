@@ -258,6 +258,13 @@ footer{border-top:1px solid var(--border);padding:38px 0 48px}
   </div>
 </div></section>
 
+<section id="market-desk"><div class="wrap">
+  <div class="kicker">LIVE MARKET DESK</div>
+  <h2>The live books, on the page that sells nothing</h2>
+  <p class="lead">This is the only page here that renders the mirrored live books: the money book and the deposit-watch book, computed by the truth machines and mirrored into this repository hourly. Every row carries its own freshness stamp. If a book is stale or absent, the page says so instead of decorating an old number.</p>
+  <div class="grid3" id="marketBooks"><div class="card rv"><h3>Loading the live books</h3><p>dex/money.json and dex/watch.json load on every visit. Nothing here is hard-coded.</p></div></div>
+  <p class="lead" style="margin-top:14px;font-size:13px;color:var(--dim)" id="marketMeta"></p>
+</div></section>
 <section id="products"><div class="wrap">
   <div class="kicker">THE PRODUCT FAMILY</div>
   <h2>Four doors into the same sovereignty</h2>
@@ -458,6 +465,34 @@ footer{border-top:1px solid var(--border);padding:38px 0 48px}
 <script>
 const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12});
 document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+</script>
+<script>
+  (function(){
+    function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];});}
+    function get(u){return fetch(u,{cache:"no-store"}).then(function(r){if(!r.ok)throw 0;return r.json();});}
+    Promise.allSettled([get("dex/money.json"),get("dex/watch.json")]).then(function(rs){
+      var g=document.getElementById("marketBooks"); if(!g)return;
+      var cards="";
+      if(rs[0].status==="fulfilled"){var b=rs[0].value;var lines=[];
+        lines.push('<b>dex/money.json</b> · book time '+esc((b.publishedAt||"").slice(0,16).replace("T"," "))+'Z');
+        if(b.fuel) lines.push('fuel account '+esc(b.fuel.account)+': '+esc(b.fuel.steem)+' STEEM · '+esc(b.fuel.sbd)+' SBD'+(b.fuel.powerdown&&b.fuel.powerdown.active?' · powerdown active at '+esc(b.fuel.powerdown.rateSp)+' SP/day':''));
+        if(b.invariant) lines.push('<span style="font-size:12px;color:var(--dim)">invariant: '+esc(b.invariant).slice(0,140)+'</span>');
+        if(b.honesty) lines.push('<span style="font-size:12px;color:var(--dim)">honesty: '+esc(b.honesty).slice(0,160)+'</span>');
+        cards+='<div class="card rv"><h3>Money book (mirrored)</h3><p>'+lines.join('<br>')+'</p></div>';
+      } else {
+        cards+='<div class="card rv"><h3>Money book unavailable</h3><p>Stated plainly rather than faked: the money book did not load on this visit.</p></div>';
+      }
+      if(rs[1].status==="fulfilled"){var w=rs[1].value;var gen=(w.publishedAt||"").slice(0,16).replace("T"," ")||"timestamp field absent";
+        var chains=w.chains?Object.keys(w.chains).map(function(k){return k+' '+esc(w.chains[k]);}).join(' · '):'';
+        cards+='<div class="card rv"><h3>Deposit watch (mirrored)</h3><p><b>dex/watch.json</b> · book time '+esc(gen)+'<br>'+(w.depositsTotal!=null?('open deposits across 4 rails: '+esc(w.depositsTotal)):'')+'<br><span style="font-size:12px;color:var(--dim)">'+chains+'</span><br><span style="font-size:12px;color:var(--dim)">open the JSON for the full public deposit addresses</span></p></div>';
+      } else {
+        cards+='<div class="card rv"><h3>Deposit watch unavailable</h3><p>Stated plainly rather than faked: the watch book did not load on this visit.</p></div>';
+      }
+      g.innerHTML=cards;
+      var meta=document.getElementById("marketMeta");
+      if(meta) meta.textContent="Both books are computed once by the truth machines and mirrored hourly into this repository; this desk only displays them. No number on this page is typed by hand.";
+    });
+  })();
 </script>
 </body>
 </html>

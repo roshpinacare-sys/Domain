@@ -40,3 +40,17 @@ Deviation note (honest): the provisional r144-h assignment suggested agents-watc
 ## Rule for every future capability
 
 **New capability lands in exactly one repo.** Truth computation / keys / proof / ledger / anchor → Console. Audience-facing content / SEO / research / market → Domain. A Domain page that needs a truth number mirrors the file; it never recomputes it. If you find yourself editing the same capability in both repos, stop — one owner, one mirror line.
+
+## r147-c — domain differentiation law (measured 2026-10-02)
+
+The operator's standing complaint, measured live on 2026-10-02 (5-gram text Jaccard of the served pages, `agents/twin-audit.mjs` method): **12 Console↔Domain page pairs served IDENTICAL text (1.0)**, index 0.9956, wallet 0.994, truth 0.9588; inside Domain itself, `about/index.html` ≈ `market/index-en.html` at **0.981** (same title, same headings) and `onepager/index.html` ≈ `market/onepager-en.html` at **0.9575**. Distinct names, near-identical use — exactly what the operator called out.
+
+**The r147-c rule: a shared page is allowed only if each side carries ONE distinct real function the other does not.** Registered in `agents/twin-registry.json`, measured daily by `twin-audit.yml` (06:19 UTC), issue-gated on unknown near-dup pairs or lost capability evidence:
+
+| pair (baseline Jaccard) | side A distinct function | side B distinct function |
+|---|---|---|
+| Console/money.html ↔ Domain/money.html (1.0) | Console: operator ops center (BLOC r144-h law; Console-repo work, honest boundary) | **Domain: PUBLIC PULSE DESK** — the only side rendering `public/pulse.json` (measured truth / audience / scout books, each number with its own measuredAt; canonical feed: home `GET /api/public/pulse`, keyless; refreshed daily by `public-pulse.yml` 06:04 UTC) |
+| Domain/about/index.html ↔ Domain/market/index-en.html (0.981) | **about = THE DESKS** — renders `about/team.json`: 11 independent desks, own briefs, chain-measured stake/voting-power, 48h external engagement (measured, not claimed) | **market/index-en = LIVE MARKET DESK** — renders the mirrored `dex/money.json` + `dex/watch.json` books with honest staleness stamps (both pages loaded zero JSON before 2026-10-02, measured) |
+| Domain/market/onepager-en.html ↔ Domain/onepager/index.html (0.9575) | REGISTERED-PENDING — tracked daily in the registry, differentiated in a later wave | |
+
+The scout-market digests (previously home-only) are now publicly served from this repo (`agents/scout-latest.json`, verbatim public copy of the home digest, public URLs only) and surfaced in the pulse desk. New capability landed in exactly one repo per the one-bloc law: the pulse books + desks + twin-audit here, the `/api/public/pulse` feed in the home repo (Zip).

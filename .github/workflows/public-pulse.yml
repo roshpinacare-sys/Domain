@@ -1,0 +1,63 @@
+# PUBLIC-PULSE (r147-c) — refreshes the public pulse books (public/pulse.json +
+# about/team.json) that only the Domain faces serve. Keyless: composes from the
+# committed books of this repository (audience/latest.json, agents/scout-latest.json,
+# agents/truth-baseline.json, moment/moment.json, agents/capability-matrix.json).
+#
+# If the home platform's public feed (GET /api/public/pulse) is ever declared via the
+# PULSE_URL secret/env, the agent refreshes from it first and says so in the book;
+# otherwise the snapshot stays labeled with the committed books' own measurement
+# times. Honesty over freshness-faking, every run.
+
+name: public-pulse
+
+on:
+  schedule:
+    - cron: '4 6 * * *'    # daily 06:04 UTC — before twin-audit (06:19) so the books it checks are fresh
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: public-pulse
+  cancel-in-progress: false
+
+jobs:
+  pulse:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.ZIP_PAT }}
+          fetch-depth: 1
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Compose the pulse books (keyless, fail-soft)
+        env:
+          PULSE_URL: ${{ secrets.PULSE_URL }}
+        run: node agents/public-pulse.cjs
+
+      - name: Publish the books
+        if: always()
+        run: |
+          git config user.name "public-pulse"
+          git config user.email "public-pulse@users.noreply.github.com"
+          git add public/pulse.json about/team.json agents/receipts/public-pulse-receipt.json
+          if git diff --cached --quiet; then
+            echo "books unchanged"
+            exit 0
+          fi
+          git commit -m "public-pulse: refresh public pulse books $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          for attempt in 1 2 3; do
+            git pull --rebase origin main && git push origin HEAD:main && { echo "books published (attempt ${attempt})"; exit 0; }
+            echo "push failed (attempt ${attempt})"
+            sleep 5
+          done
+          echo "could not publish the books after 3 attempts"
+          exit 1
