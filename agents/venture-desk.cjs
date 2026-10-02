@@ -104,16 +104,19 @@ const FILLS_SEED = [
   { at: '2026-10-02', src: 'seed: econ-book SETTLED-HISTORY (balance-verified, Z-32/33)', raw: 'SWAP.DOGE 0.572191 sold @ 1.69399599 → +0.96933383 SWAP.HIVE realized', credit: 0.96933383 },
   { at: '2026-10-02T14:5xZ', src: 'seed: Z-33 FILLED-VERIFIED — treasury arithmetic 0.05814917+0.54600212=0.60415129 exact', raw: 'BEE 1.0 sold @ live top bid 0.54600212 → +0.54600212 SWAP.HIVE', credit: 0.54600212 }
 ];
+// identity = leading token+quantity + exact credit amount (Z-34 fix: raw-prefix
+// dedupe double-counted the seeds — seed text is shorter than the book row text)
+// Z-36: hoisted to module scope for white-box evals
+const fillKey = (raw, credit) => {
+  const lead = (String(raw).match(/^[A-Za-z.]+ [0-9.]+/) || [String(raw).slice(0, 40)])[0];
+  return lead + '|' + credit;
+};
 function updateFillsLedger(econ) {
   let ledger = null;
   try { ledger = JSON.parse(fs.readFileSync(FILLS_LEDGER, 'utf8')); } catch (_) { ledger = null; }
   if (!ledger || !Array.isArray(ledger.entries)) ledger = { ok: true, agent: 'venture-desk fills-ledger v1.1.0', entries: FILLS_SEED.slice() };
   // identity = leading token+quantity + exact credit amount (Z-34 fix: raw-prefix
   // dedupe double-counted the seeds — seed text is shorter than the book row text)
-  const fillKey = (raw, credit) => {
-    const lead = (String(raw).match(/^[A-Za-z.]+ [0-9.]+/) || [String(raw).slice(0, 40)])[0];
-    return lead + '|' + credit;
-  };
   const seen = new Set(ledger.entries.map((e) => fillKey(e.raw, e.credit)));
   let added = 0;
   for (const c of harvestFills(econ)) {
@@ -133,6 +136,8 @@ const tokenOf = (s) => { const m = typeof s === 'string' ? s.match(/^([0-9.]+)\s
 
 // ---- venture registry: the VENTURE TEMPLATE LAW as data (product→rail→traffic→
 // book→ledger→kill rule). earnLine values are contract targets, kill rules bind.
+// Z-36: harvestFills/fillKey exported for white-box evals (agents/evals/) — pure
+// functions get white-box tests, desk processes get black-box evals (judge separation).
 const VENTURES = [
   {
     id: 'V1', name: 'Curation house',
@@ -242,7 +247,13 @@ const VENTURES = [
   }
 ];
 
-(async () => {
+// Z-36: exports for white-box evals (agents/evals/) — pure functions only; the
+// desk process itself is evaluated black-box (fresh process = judge separation)
+module.exports = { harvestFills, fillKey, updateFillsLedger, FILLS_SEED, tokenOf };
+
+// Z-36 gate: requiring the module (white-box evals) must NOT run the desk —
+// only direct invocation does. The desk keeps its own fail-soft exit.
+if (require.main === module) (async () => {
   const at = new Date().toISOString();
   // ---- live books (+ self-heal of the [object Object] summary incident)
   const econ0 = readJson('econ-book.json');

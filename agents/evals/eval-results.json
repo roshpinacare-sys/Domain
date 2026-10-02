@@ -1,0 +1,80 @@
+{
+ "ok": true,
+ "at": "2026-10-02T22:08:59.949Z",
+ "agent": "run-evals v1.0.0 (Z-36)",
+ "origin": "learn-harness-engineering eval discipline, adopted",
+ "counts": {
+  "pass": 6,
+  "fail": 0
+ },
+ "evals": [
+  {
+   "id": "E1",
+   "name": "dedupe identity is stable across repeat harvest",
+   "status": "PASS",
+   "expectations": [
+    "seed(3) + econ rows carrying the same two fills → exactly 3 entries",
+    "second pass adds 0 (idempotent)"
+   ],
+   "note": "entries=3 added=0 reAdded=0",
+   "at": "2026-10-02T22:08:59.035Z"
+  },
+  {
+   "id": "E2",
+   "name": "seeds never double-counted against longer book-row text",
+   "status": "PASS",
+   "expectations": [
+    "seed text is a prefix of the book-row text — identity must still match"
+   ],
+   "note": "identity sample: WAIV 10.00000109|1.95151099",
+   "at": "2026-10-02T22:08:59.035Z"
+  },
+  {
+   "id": "E3",
+   "name": "venture-desk exits 0 with unreachable canon (fail-soft)",
+   "status": "PASS",
+   "expectations": [
+    "exit code 0 even when DEFU_DIR is bogus",
+    "board still written, honest nulls where the oracle is unreachable",
+    "5 ventures present with statuses"
+   ],
+   "note": "exit=0 open=5",
+   "at": "2026-10-02T22:08:59.914Z"
+  },
+  {
+   "id": "E4",
+   "name": "harness-audit exits 0 with missing canon and keeps counts honest",
+   "status": "PASS",
+   "expectations": [
+    "exit code 0 even when DEFU_DIR is bogus",
+    "missing canon = honest FAILs, never a crash, never green-washed",
+    "counts arithmetic consistent (pass+warn+fail == checks)"
+   ],
+   "note": "exit=0 pass=16 warn=1 fail=8",
+   "at": "2026-10-02T22:08:59.948Z"
+  },
+  {
+   "id": "E5",
+   "name": "concat-family regression: manabar coerced before arithmetic",
+   "status": "PASS",
+   "expectations": [
+    "string+number concatenates (\"74488519347811969\") — the Z-33 third-incident family",
+    "canonical num() coercion keeps the sum under the cap"
+   ],
+   "note": "wrong=\"74488519347811969\" right=1000000000",
+   "at": "2026-10-02T22:08:59.948Z"
+  },
+  {
+   "id": "E6",
+   "name": "stamp hygiene: unstamped books flagged, never fresh",
+   "status": "PASS",
+   "expectations": [
+    "every book with exists=true and ageHours==null must NOT carry fresh=true",
+    "the audit surfaces a timestamp-hygiene check (WARN until owners stamp)"
+   ],
+   "note": "unstamped-but-fresh=0 hygieneCheck=true",
+   "at": "2026-10-02T22:08:59.949Z"
+  }
+ ],
+ "verdict": "evals green: 6/6 expectations hold"
+}
