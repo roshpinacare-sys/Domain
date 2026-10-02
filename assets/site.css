@@ -220,3 +220,20 @@ nav.nhead { padding-top: env(safe-area-inset-top); }
     display: none !important;
   }
 }
+
+/* ═══ Task 15-a completion: numerics + opt-in scale/rhythm tokens ═══
+   tabular-nums: repo-wide measurement shows NO body.sop page sets
+   font-variant-numeric (only the root fronts, which carry no .sop), so
+   this rule cannot collide — receipt hashes and money digits align in
+   every table column instead of jittering.
+   The 4px spacing steps and the 6-step type scale ship as opt-in
+   tokens: hub pages style their own h1/h2 font-sizes directly
+   (measured), so sizes stay page-owned — a page adopts a token only
+   when it chooses to; zero rendering change until then. */
+:where(body.sop) :is(td, th) { font-variant-numeric: tabular-nums; }
+:root {
+  --sop-s1: 4px; --sop-s2: 8px; --sop-s3: 12px; --sop-s4: 16px;
+  --sop-s6: 24px; --sop-s8: 32px; /* 4px spacing rhythm */
+  --sop-fs-xs: 12px; --sop-fs-sm: 13px; --sop-fs-md: 15px;
+  --sop-fs-lg: 18px; --sop-fs-xl: 22px; --sop-fs-2xl: 28px; /* type scale */
+}
