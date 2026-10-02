@@ -26,6 +26,11 @@
 - **Parallel runtimes are real.** `git pull --rebase` before push; conflicts in
   measurement books resolve to the freshest census; never double-run another
   runtime's lane (DELEGATION-SELECTION LAW).
+- **Evals are runnable expectations, not hopes** (`agents/evals/run-evals.cjs`, Z-36):
+  pure functions get white-box evals, desk processes get black-box fresh-process
+  evals; a new failure class becomes an eval within one wave of discovery.
+  The fleet's real workflow is drawn in `agents/fleet-graph.md` — read it before
+  adding a node, and update it when you add one.
 - **Books must stamp themselves** (`at`/`updated` ISO) — freshness is audited
   (`agents/harness-audit.cjs` runs on schedule; its FAILs are next work, not noise).
 

@@ -84,6 +84,8 @@ const freshCount = bookStates.filter((b) => b.exists && b.fresh).length;
   check('verification', 'read-back law (chain speaks last)', (read(path.join(AG, 'soldiers-curate.cjs')) || '').includes('CHAIN-RECONCILED'), 'chain-truth recon in curation', 'the chain, not the book, is the dedupe of last resort');
   const secretsGate = read(path.join(ROOT, '.github/workflows/gitleaks.yml')) || read(path.join(DEFU_DIR, '.github/workflows/gitleaks.yml'));
   check('verification', 'secret-leak gate on the wire (gitleaks)', !!secretsGate, 'gitleaks workflow', 'zero secrets in any repo — machine-enforced');
+  const evalsPresent = fs.existsSync(path.join(AG, 'evals', 'run-evals.cjs')) && fs.existsSync(path.join(AG, 'evals', 'eval-results.json'));
+  check('verification', 'eval discipline live (runnable expectations, E1-E6)', evalsPresent, 'agents/evals/', 'an eval is a runnable expectation, not a hope (Z-36, study adoption)');
 
   // ================= SUBSYSTEM 4: SCOPE (kill rules, floors, gates) =================
   check('scope', 'doctrine binds kill rules (ventures have them)', !!(doctrineEcon && doctrineEcon.includes('kill rule')), 'DOCTRINE-economics.md §4');
