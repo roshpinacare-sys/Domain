@@ -20,7 +20,19 @@
   var doc = document;
   doc.documentElement.classList.add('js');
 
-  /* shared cross-site links for fronts that ship without a nav row */
+  /* shared cross-site links for fronts that ship without a nav row.
+     Depth-aware (Task 15-a): hub/ inner pages and market/ resolve back
+     to the site root; at the root the prefix is empty → identical
+     hrefs to the ones the root fronts always used. */
+  var BASE = (function () {
+    var path = location.pathname;
+    var seg = path.split('/').filter(Boolean);
+    var i = seg.indexOf('Domain'); /* GitHub Pages project-path home */
+    var isDir = path.slice(-1) === '/'; /* /Domain/hub/ must count its dir */
+    var depth = (i >= 0) ? (seg.length - i - (isDir ? 1 : 2))
+                         : (seg.length - (isDir ? 0 : 1));
+    return depth > 0 ? '../'.repeat(depth) : '';
+  })();
   var SHARED_LINKS = [
     { href: 'index.html',  label: 'הקונסולה · Console' },
     { href: 'truth.html',  label: 'שער האמת · Truth' },
@@ -28,8 +40,11 @@
     { href: 'money.html',  label: 'נתיב הכסף · Money' },
     { href: 'wallet.html', label: 'ארנק · Wallet' },
     { href: 'reports.html',label: 'דוחות מצב · Reports' },
+    { href: 'hub/index.html', label: 'מרכז התוכן · Content Hub' },
     { href: 'about/',      label: 'אודות · About' }
-  ];
+  ].map(function (item) {
+    return { href: BASE + item.href, label: item.label };
+  });
 
   function el(tag, cls, html) {
     var n = doc.createElement(tag);
@@ -136,7 +151,9 @@
   function init() {
     /* index.html owns its SPA menu (#burger + #mobnav) — never double-wire */
     if (doc.getElementById('burger')) return;
-    var nhead = doc.querySelector('header.nhead');
+    /* Task 15-a: nav.nhead = the market/ fixed bars (same contract,
+       different element); hub/ pages carry header.nhead already */
+    var nhead = doc.querySelector('header.nhead, nav.nhead');
     if (nhead) { enhanceNhead(nhead); return; }
     var gateHead = doc.querySelector('header.gate-head');
     if (gateHead) { enhanceGateHead(gateHead); return; }
