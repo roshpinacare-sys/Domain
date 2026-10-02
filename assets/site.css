@@ -1,0 +1,119 @@
+/* ═══════════════════════════════════════════════════════════════════
+   SAOS · Domain — shared site layer (Task 14-b, mobile revolution)
+   One mobile-nav discipline for every front of this home:
+   - 44px minimum touch targets (Apple HIG / Material)
+   - burger dropdown for the .nhead fronts, built from each page's own
+     .links (progressive enhancement: no JS → no hiding)
+   - wallet .tabs wrap instead of hiding tabs beyond the edge
+   - safe-area insets for notched phones, focus-visible rings,
+     no horizontal scroll, zinc+gold palette (no indigo, no blue)
+   Loaded AFTER each page's inline styles, so these rules win ties.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── injected burger button (all viewports, hidden on wide screens) ── */
+.sitenav-btn {
+  display: none;
+  margin-inline-start: auto;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, .05);
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 10px;
+  color: inherit;
+  cursor: pointer;
+  padding: 0;
+  flex: 0 0 auto;
+}
+.sitenav-btn svg { width: 20px; height: 20px; pointer-events: none; }
+.sitenav-btn:focus-visible { outline: 2px solid #d4af37; outline-offset: 2px; }
+
+/* ── dropdown panel (hidden by default; opened by .nav-open on header) ── */
+.sitenav-panel { display: none; }
+
+@media (max-width: 760px) {
+  /* JS is present → collapse the inline row into the burger panel */
+  html.js .nhead .sitenav-btn { display: flex; }
+  html.js .nhead .links { display: none; }
+  html.js .nav-open .sitenav-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    flex-basis: 100%;
+    padding: 6px 0 10px;
+    border-top: 1px solid rgba(255, 255, 255, .09);
+    margin-top: 10px;
+  }
+  .sitenav-panel a {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 15px;
+    color: var(--mut, #a1a1aa);
+    text-decoration: none;
+    border: 1px solid transparent;
+  }
+  .sitenav-panel a:hover, .sitenav-panel a[aria-current="page"] {
+    color: var(--gold, #d4af37);
+    background: rgba(212, 175, 55, .08);
+  }
+  .nhead .wrap { flex-wrap: wrap; }
+
+  /* wallet: never hide tabs beyond the edge — wrap them, 44px targets
+     (nav.tabs matches the page's own higher-specificity rule; this file
+     loads after the inline styles, so the tie breaks our way) */
+  nav.tabs, .tabs { flex-wrap: wrap; gap: 6px; }
+  .tabs a, .tabs button {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* keep header controls thumb-sized (truth.langbtn, backlinks) */
+  header .langbtn, header .backlink, header a[class] {
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* inputs never trigger the iOS focus zoom */
+  input, select, textarea { font-size: max(16px, 1em); }
+
+  /* table cells keep enough air on phones */
+  table { font-size: 12.5px; }
+}
+
+/* ── safe-area insets (notched phones) ── */
+header.nhead, header.gate-head, header.site {
+  padding-top: max(14px, env(safe-area-inset-top));
+}
+body > footer, footer {
+  padding-bottom: calc(14px + env(safe-area-inset-bottom));
+}
+
+/* ── accessibility: visible focus everywhere, no scroll bleed ── */
+a:focus-visible, button:focus-visible, [tabindex]:focus-visible {
+  outline: 2px solid #d4af37;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+html { overflow-x: clip; }
+
+/* ── quiet scrollbars for scrollable rails (desktop browsers) ── */
+.tabs, .mobilenav { scrollbar-width: thin; scrollbar-color: #3f3f46 transparent; }
+.tabs::-webkit-scrollbar, .mobilenav::-webkit-scrollbar { height: 6px; }
+.tabs::-webkit-scrollbar-thumb, .mobilenav::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
+
+/* ── the SPA front (index.html): bring its own burger to 44px ── */
+#burger { width: 44px; height: 44px; }
+#mobnav a { min-height: 44px; display: flex; align-items: center; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+}

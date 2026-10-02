@@ -24,6 +24,58 @@ site's own language contract), the roast stub now redirecting directly to
 the living truth gate, and the honest restart of the truth machines'
 history (this home's streak begins here - no imported verdicts).
 
+## Domain × Console — the split of roles (2026-10-02, Task 14-b)
+
+Until 2026-10-02 the two homes served near-identical pages. Measured
+decision (owner directive, "de-duplicate Console vs Domain"):
+
+- **Domain = the public sovereign face**: SEO-bearing pages, the content
+  hub, the research fronts (money / defi / deposits / versus / readiness /
+  sovereign / acid), the audience and market materials, the daily
+  STATE-REPORTs (`reports.html` is their index), and the mobile-first
+  interface layer (`assets/site.css` + `assets/site.js` — one shared
+  44px-touch menu discipline for every front).
+- **Console = the operator's ops center**: the truth machines compute
+  there once; Domain displays the outputs.
+- **`mirror-from-console` reconfigured accordingly** (was the duplication
+  engine): the HTML surfaces (index/truth/gate/money/404) were removed
+  from the mirror — Domain now edits every one of its pages in its own
+  home and the mirror no longer copies Console pages here. What keeps
+  flowing is the **DATA whitelist only** (registry, gh-snapshot, dex
+  books, truth outputs) — genuinely shared machine outputs, computed
+  once in Console, never recomputed twice. The honest DRIFT guard stays
+  dormant in `agents/mirror-from-console.mjs` as protection, not policy.
+- The sibling counterpart lives on the Console side (canonical links →
+  Domain on shared surfaces).
+
+### Data files: one writer each, honest readers (dedup map, measured 2026-10-02)
+
+No root JSON is a dead copy — each has one writer and live readers.
+Nothing was deleted or renamed (every listed file is written hourly by a
+running bot; breaking a writer mid-write is forbidden). The alleged
+`mirror.json` vs `mirror-report.json` duplication is FALSE: different
+schemas, different roles (book vs diagnostic).
+
+| file | writer (workflow → script) | readers (measured greps) | verdict |
+|---|---|---|---|
+| `mirror.json` | `weave-mirror` :57 → `agents/weave-mirror.mjs` (keyless pull from the live Console home) | index, net, truth, wallet, acid + cloud-pulse / content-campaign / daily-digest | KEEP — the network-state book (attestations, checkpoints, anchor lines, market, brain) |
+| `saos-live.json` | `weave-mirror` :57 (same pull) | index, gate, wallet | KEEP — the live SAOS book (stateRoot, ops, relay, verify) |
+| `status.json` | `weave-mirror` :57 (joined the set in R75; regenerated on the Console home by its render agent) | index, gate, truth | KEEP — witness freshness status |
+| `mirror-report.json` | `mirror-from-console` :15 → `agents/mirror-from-console.mjs` | no page readers — bot diagnostic receipt (public per-run report) | KEEP — diagnostic, not a book |
+| `agents/registry.json`, `agents/gh-snapshot.json`, `dex/money.json`, `dex/deposits.json`, `dex/watch.json`, `truth/latest.json`, `truth/history.json`, `truth/slo.json` | `mirror-from-console` :15 (DATA whitelist) | index, truth, versus + money-watch / moment-watch / watch | KEEP — one-bloc law: computed once in Console, displayed here |
+
+Consolidation rule recorded for the future: single source per fact +
+thin generators (`render.mjs`) — a file a bot writes stays until its
+writer is retired by name, in a dated commit.
+
+### Correction to the section below (measured 2026-10-02)
+
+`console-publish`, `truth-gate` and `dex-watch` no longer run in this
+repository — they were removed with the twin flows in r144-h (the
+one-bloc law, BLOC.md: truth is computed once, in Console). `status.json`
+keeps arriving via `weave-mirror` (above). The bullet list below is kept
+as lineage history; the live workflow list is `.github/workflows/`.
+
 ## What is live here (measured, zero secrets)
 
 Four workflows run inside this repository on its own GITHUB_TOKEN:
