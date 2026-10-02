@@ -22,7 +22,9 @@
  *   2. checks the three structural failures have named countermeasures;
  *   3. checks every earn metric names its anchor (oracle source);
  *   4. checks book freshness (stale books are honest but flagged);
- *   5. writes agents/harness-audit.json + harness-audit.md.
+ *   5. checks the sovereignty subsystem (Z-37, prompts.chat adoption): role-registry
+ *      integrity + change-request ledger integrity;
+ *   6. writes agents/harness-audit.json + harness-audit.md.
  */
 const fs = require('fs');
 const path = require('path');
@@ -144,6 +146,59 @@ const freshCount = bookStates.filter((b) => b.exists && b.fresh).length;
     `workflows:${wfCount} desks:${deskCount} receipts:${receiptsDir} books:${bookCount} claims:${claimsDoc}`,
     'loop engineering mapped to the fleet per the LHE study — worktrees is the rebase-first runtime lane discipline');
 
+  // ---- sovereignty (Z-37, prompts.chat adoption): roles-as-data + change-requests
+  const registryRaw = read(path.join(AG, 'role-registry.csv'));
+  let registryVerdict = { pass: false, evidence: 'missing', badRows: [] };
+  if (registryRaw) {
+    try {
+      // quote-aware CSV parse (missions contain commas inside quotes)
+      const parseCSV = (text) => {
+        const rows = []; let row = [], field = '', inQ = false;
+        for (let i = 0; i < text.length; i++) {
+          const ch = text[i];
+          if (inQ) { if (ch === '"') { if (text[i + 1] === '"') { field += '"'; i++; } else inQ = false; } else field += ch; }
+          else if (ch === '"') inQ = true;
+          else if (ch === ',') { row.push(field); field = ''; }
+          else if (ch === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
+          else if (ch !== '\r') field += ch;
+        }
+        if (field !== '' || row.length) { row.push(field); rows.push(row); }
+        return rows;
+      };
+      const rows = parseCSV(registryRaw);
+      const hdr = rows[0];
+      const data = rows.slice(1).filter((r) => r.length === hdr.length);
+      const malformed = rows.slice(1).filter((r) => r.length !== hdr.length).length;
+      const acts = new Set(data.map((r) => r[0]));
+      const dupes = data.length - acts.size;
+      const missingFiles = data.filter((r) => r[1] && r[1].startsWith('agents/')).filter((r) => !fs.existsSync(path.join(ROOT, r[1]))).map((r) => r[0]);
+      registryVerdict.pass = hdr.length === 9 && data.length >= 40 && malformed === 0 && dupes === 0 && missingFiles.length === 0;
+      registryVerdict.evidence = `${data.length} rows · cols ${hdr.length} · dupes ${dupes} · missing files ${missingFiles.length}`;
+      registryVerdict.badRows = { malformed, dupes, missingFiles };
+    } catch (_) { registryVerdict.evidence = 'parse-error'; }
+  }
+  check('sovereignty', 'role-registry integrity: every charter row names a real file (roles-as-data, no invented agents)', registryVerdict.pass,
+    registryVerdict.evidence, 'prompts.chat pattern: every persona is a CSV row (Z-37); a registry detached from disk is a story, not a mandate');
+
+  const crDir = path.join(AG, 'change-requests');
+  let crVerdict = { pass: false, evidence: 'missing' };
+  try {
+    const crFiles = fs.readdirSync(crDir).filter((f) => f.endsWith('.json'));
+    const req = ['id', 'from', 'tier', 'proposes', 'verdict', 'opened_at'];
+    const malformed = [];
+    const stale = [];
+    for (const f of crFiles) {
+      const j = readJson(path.join(crDir, f));
+      if (!j || req.some((k) => j[k] == null || j[k] === '')) malformed.push(f);
+      else if (j.verdict === 'PENDING' && j.judged_at == null && j.opened_at && (Date.now() - Date.parse(j.opened_at)) / 3600000 > 168) stale.push(j.id);
+    }
+    crVerdict.pass = crFiles.length >= 1 && malformed.length === 0 && stale.length === 0;
+    crVerdict.evidence = `${crFiles.length} CRs · malformed ${malformed.length} · stale-pending ${stale.length}`;
+    if (malformed.length || stale.length) crVerdict.detail = { malformed, stale };
+  } catch (_) { /* dir absent = fail honest */ }
+  check('sovereignty', 'change-request ledger integrity: every CR well-formed, no PENDING abandoned >7d', crVerdict.pass,
+    crVerdict.evidence, 'self-modification is never silent: scope changes flow through judged CRs (prompts.chat changeRequests, fleet-hardened)');
+
   // ---- silent-costs watch (L13) — booked as standing observations, honestly
   const silentCosts = {
     verificationDebt: 'selftests cover past incidents; every NEW failure mode (concat family ×3, null-deref, dedupe) becomes a check within one wave of discovery',
@@ -158,14 +213,15 @@ const freshCount = bookStates.filter((b) => b.exists && b.fresh).length;
     fail: checks.filter((c) => c.status === 'FAIL').length
   };
   const out = {
-    ok: true, at, agent: 'harness-audit v1.1.0 (Z-35 + Task 19: role→worker wiring + loop-primitive checks)',
-    origin: 'walkinglabs/learn-harness-engineering study (Z-35): five subsystems + loop/graph engineering mapped to the fleet; the audit itself is the adopted artifact — a fresh-context checker node on a schedule',
+    ok: true, at, agent: 'harness-audit v1.2.0 (Z-35 + Task 19 + Z-37: +sovereignty subsystem — role-registry integrity, change-request ledger)',
+    origin: 'walkinglabs/learn-harness-engineering study (Z-35): five subsystems + loop/graph engineering mapped to the fleet; Z-37 adds f/prompts.chat governance adoption (roles-as-data + decision ladder + change-requests + override protocol) as the sovereignty subsystem; the audit itself is the adopted artifact — a fresh-context checker node on a schedule',
     fiveSubsystems: {
       instructions: 'AGENTS.md + DOCTRINE.md + FLEET-NOTE.md + agent headers',
       state: 'books (external state primitive) + CLAIMS + worklog',
       verification: 'verify-then-sign + read-back + agent-verify judge node + gitleaks',
       scope: 'kill rules + floors/ceilings + dust honesty',
-      lifecycle: 'receipts per session + RESUME-KIT + restore.sh'
+      lifecycle: 'receipts per session + RESUME-KIT + restore.sh',
+      sovereignty: 'role-registry.csv (roles-as-data) + change-requests/ (judged self-modification) + sovereignty.md (decision ladder + override protocol)'
     },
     books: bookStates,
     checks, counts, silentCosts,

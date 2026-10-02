@@ -17,7 +17,7 @@ flowchart TD
     subgraph CENSUS["CENSUS — read-only, keyless (CENSUS→SIGN SEPARATION LAW)"]
         LU["liquidity-desk.cjs<br/>3-chain census + ladder"]
         KA["kpi-scribe<br/>KPI.json oracle"]
-        HA["harness-audit.cjs<br/>five-subsystem judge"]
+        HA["harness-audit.cjs<br/>26 checks incl. sovereignty (Z-37)"]
     end
 
     subgraph SIGN["SIGN — keyed, verify-then-sign + read-back"]
@@ -40,6 +40,7 @@ flowchart TD
         AV["agent-verify.yml<br/>53 checks"]
         GL["gitleaks"]
         EV["evals/run-evals.cjs<br/>E1-E6"]
+        CR["change-requests/<br/>judged self-modification (tier B)"]
     end
 
     OP[["OPERATOR LOCK<br/>fuel pacing · key rotation · L2 capital · doctrine amendments"]]
@@ -74,6 +75,8 @@ flowchart TD
 | KPI.json | state | estimation forbidden | `method` field names its oracle |
 | CLAIMS.md | lifecycle | receipts per wave | commit hashes |
 | operator lock | scope | DELEGATION-SELECTION | the operator's orders |
+| role-registry.csv | instructions | SOVEREIGNTY LAW (roles-as-data) | every row's file exists on disk |
+| change-requests/ | judge | SOVEREIGNTY LAW tier B (judged self-modification) | CR verdict + judged_at in-file |
 
 ## The three structural failures, located (L14)
 
