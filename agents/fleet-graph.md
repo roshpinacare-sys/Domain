@@ -86,6 +86,7 @@ flowchart TD
 | **Goodhart** — number detaches from business | earn metrics could be gamed by estimating | TWO-SIDED LEDGER LAW: measured-or-null; E1/E2 evals pin the dedupe; fantasy-arb debunk is the standing example |
 | **Blindness upward** — loop can't ask if the goal is right | a lane grinding at a dead goal | kill rules per venture (V1-V5) + operator gate (X-1/X-2, fuel pacing) — the graph has a node where that question lives |
 | **Conflict** — independent loops undermine each other | parallel runtimes + concurrent pushes + shared books | rebase race handling in every workflow · DELEGATION-SELECTION (never double-run a lane) · freshest-census conflict rule |
+| **Fuel monoculture** — one cognitive rail, no documented fallback | agent cognition depends on a single operator-gated vendor; a rail outage mutes drafting/summarizing desks | COGNITIVE-RAIL LAW (Z-39): inference flows through the governed registry `inference-providers.csv` (ToS-gated; cohere=NEVER), keyless probes book honest liveness (AI Horde/OVH REACHABLE), keyed rails stay tier C, rail output is advisory-only — never a verify-then-sign substitute |
 
 ## Anchors (the part everyone skips)
 

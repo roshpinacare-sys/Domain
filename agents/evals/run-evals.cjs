@@ -18,6 +18,9 @@
  *   E7 guard deny/allow     — destructive commands DENY, the fleet's rebase law stays ALLOW (Z-38)
  *   E8 guard context        — data-context ALLOW, session-context sync-idiom DENY (Z-38)
  *   E9 guard scan CI        — executable surfaces carry zero unbooked DENY (Z-38)
+ *   E10 rail catalog        — the inference registry is valid; FORBIDDEN rails never enabled (Z-39)
+ *   E11 rail probe          — keyless probes classify honestly, fail-soft on a ghost row (Z-39)
+ *   E12 rail policy gate    — a FORBIDDEN row enabled as LIVE fails validation (Z-39)
  *
  * Fail-soft: exit 0 always; FAILs are booked honestly (HARNESS-AUDIT MANDATE:
  * green-washing the evals is a doctrine breach).
@@ -134,9 +137,44 @@ function accumulateInMemory(bookRows, seed) {
       ['0 DENY rows in .github/workflows (no destructive drift entered CI)', 'the known mirror-bot sync idiom appears as booked allow-with-reason (≥10 rows), never silent', 'ledger stamped (BOOKS-STAMP law)'], `denies=${denies} syncIdiom=${sync} stamped=${stamped}`);
   } catch (e) { evalr('E9', 'guard scan', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
+  // ---- E10: cognitive-rail catalog integrity — the registry is valid, forbidden rails never enabled (Z-39)
+  try {
+    const r = spawnSync(process.execPath, [path.join(AG, 'cognitive-rail.cjs'), 'catalog'], { cwd: AG, timeout: 30000, encoding: 'utf8' });
+    const verdict = JSON.parse(r.stdout || '{}');
+    const c = verdict.counts || {};
+    evalr('E10', 'rail catalog: registry valid, no forbidden rail enabled', verdict.ok === true && c.total >= 15 && c.never === 1 && c.neverLive === 0 && c.keyedNotTierC === 0,
+      ['catalog parses quote-aware with the 8-column schema (Z-37 lesson carried forward)', 'cohere (ToS §14, their review) is status NEVER and count neverLive=0 — the catalog itself refuses forbidden rails', 'keyed rails are all tier C (operator gate) — zero keyedNotTierC'], `total=${c.total} live=${c.live} dormant=${c.dormant} never=${c.never} neverLive=${c.neverLive}`);
+  } catch (e) { evalr('E10', 'rail catalog', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
+  // ---- E11: cognitive-rail probe honesty — classification + fail-soft ghost row (Z-39)
+  try {
+    const rail = require(path.join(AG, 'cognitive-rail.cjs'));
+    const c200 = rail.classifyProbe(200, JSON.stringify({ data: [{ id: 'm1' }, { id: 'm2' }] }), null);
+    const c401 = rail.classifyProbe(401, '', null);
+    const cErr = rail.classifyProbe(0, null, new Error('getaddrinfo ENOTFOUND'));
+    const ghost = spawnSync(process.execPath, [path.join(AG, 'cognitive-rail.cjs'), 'probe', '--only=__ghost-provider__'], { cwd: AG, timeout: 30000, encoding: 'utf8' });
+    const led = JSON.parse(fs.readFileSync(path.join(AG, 'rail-ledger.json'), 'utf8'));
+    evalr('E11', 'rail probe: honest classification + fail-soft ghost', c200.verdict === 'REACHABLE' && c200.models === 2 && c401.verdict === 'AUTH-WALL' && cErr.verdict === 'UNREACHABLE' && ghost.status === 0 && led.at,
+      ['200+data → REACHABLE with model count; 401/403 → AUTH-WALL; network error → UNREACHABLE (no hopeful green)', 'probing a nonexistent provider exits 0 with zero probes booked (fail-soft, no invention)', 'rail-ledger.json stamped (BOOKS-STAMP law)'], `live probes booked=${(led.runs || []).filter((r) => r.mode === 'probe' && r.summary.probed > 0).length}`);
+  } catch (e) { evalr('E11', 'rail probe', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
+  // ---- E12: cognitive-rail policy gate — enabling a FORBIDDEN rail must fail validation (Z-39)
+  try {
+    const fsx = require('fs');
+    const os = require('os');
+    const tmp = path.join(os.tmpdir(), `rail-fixture-z39-${process.pid}.csv`);
+    const base = fsx.readFileSync(path.join(AG, 'inference-providers.csv'), 'utf8').replace('C,none,NEVER', 'C,public-only,LIVE');
+    fsx.writeFileSync(tmp, base);
+    const r = spawnSync(process.execPath, [path.join(AG, 'cognitive-rail.cjs'), 'catalog', '--file', tmp], { cwd: AG, timeout: 30000, encoding: 'utf8' });
+    const verdict = JSON.parse(r.stdout || '{}');
+    fsx.unlinkSync(tmp);
+    evalr('E12', 'rail policy: FORBIDDEN row enabled as LIVE fails the gate', verdict.ok === false && /FORBIDDEN/.test(verdict.reason || ''),
+      ['a catalog where cohere (ToS FORBIDDEN) is flipped to LIVE is rejected — ok:false with the FORBIDDEN reason named', 'the policy gate is mechanical, not prose (same lesson as Z-38: a law that lives only in prose is advisory)'], `reason=${String(verdict.reason || '').slice(0, 100)}`);
+  } catch (e) { evalr('E12', 'rail policy gate', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.1.0 (Z-36 + Z-38: +guard evals E7-E9)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard adoption', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.2.0 (Z-36 + Z-38 guard evals + Z-39 rail evals E10-E12)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi adoptions', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];
