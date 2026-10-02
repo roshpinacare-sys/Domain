@@ -39,9 +39,12 @@ const DATA = [
   { path: "truth/slo.json", ts: (d) => d.generatedAt },
 ];
 
-// HTML: משטחי-התנועה הכפולים (top-5 לפי תפקיד-תנועה, wallet.html חוץ-רישום —
-// שייך לסוכן מקביל ולא נגענו בו). כל משטח: העתקה רק כשהכלל-כנות מחזיק.
-const HTML = ["index.html", "truth.html", "gate.html", "money.html", "404.html"];
+// HTML: שטחי-התנועה הכפולים — הוסרו מהשיקוף ב-Task 14-b (2026-10-02):
+// Domain הוא עתה החזית הציבורית הריבונית (SEO משלו, נייד משלו, דוחות משלו)
+// ו-Console הוא מרכז-ההפעלה. כל שטח-HTML של Domain נערך בבית הזה בלבד —
+// השיקוף השאיר את המנגנון (DRIFT → עצירה-כנה) כהגנה רדומה, אך אינו מעתיק
+// עוד דפים. הפיצול מתועד ב-README.md (§ Domain × Console — פיצול התפקידים).
+const HTML = [];
 
 function swapToDomain(text) {
   return text
