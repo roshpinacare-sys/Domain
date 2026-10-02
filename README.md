@@ -318,3 +318,60 @@ Keys, tokens, passphrases, wallet balances, treasury maps, internal
 documents, or personal information. The renderer runs a secret gate on
 every publish and refuses to commit anything matching key or token
 patterns.
+
+## Truth · 2026-10-02 · Task 15-a — the hub tree joined the shared layer
+
+Measured facts from this wave (every number below was re-measured, not
+estimated):
+
+- **Shared mobile layer now governs 51 more pages**: all 42 live pages of
+  `hub/`, the 4 `market/` pages, `receipts/` and the 4 marketing decks
+  (`pitch/`, `pitch/en`, `deck/`, `onepager/`) each load
+  `assets/site.css` + `assets/site.js` (depth-correct paths). Two pages
+  were deliberately left out: `hub/explainer/index.html` and `roast.html`
+  — both are 0-second meta-refresh redirectors with a canonical already
+  pointing at their target; wiring them would be dead markup.
+- **Canonicals**: 34 hub pages had a copy-paste canonical pointing at
+  `hub/` (or `hub/api/`, `hub/ads/`) instead of themselves — all replaced
+  with their own real Pages URL; 6 pages had none and got one; the 7
+  article pages were already self-canonical. Every content page in
+  `hub/ market/ pitch/ deck/ onepager/ receipts/` now carries exactly one
+  canonical matching its sitemap entry (verified by scan).
+- **OG/Twitter**: og:title / og:description derived ONLY from each page's
+  own `<title>` and `<meta name="description">` (zero invented copy),
+  plus og:url / og:site_name / og:type / og:locale (from the page's own
+  `lang`) / twitter:card on every page that lacked them; 8 relative
+  `og:image` references normalized to the absolute Pages URL (same file).
+- **Sitemap**: 66 URLs before, 66 after — all 43 hub URLs and all market
+  URLs were already listed; the `lastmod` of the 52 changed URLs was
+  refreshed to 2026-10-02.
+- **Design tokens via the shared layer** (`body.sop` scope): one zinc+gold
+  token block (--sop-*), sticky-footer discipline (`min-height:100svh` +
+  footer margin-top:auto), unified motion speed, line-height/balance
+  rhythm, scroll-margin under sticky bars, overflow guards, print rules,
+  44px touch discipline, safe-area insets. No indigo, no blue, no
+  framework, zero JS dependencies — unchanged doctrine.
+- **Bugs found by measurement and fixed in the layer**:
+  (1) `receipts/` dragged 548px wide at 390px viewport (long receipt
+  hashes set the table's min-content width) → cells now wrap
+  (`overflow-wrap:anywhere`), page measures 390;
+  (2) the two A4 one-pagers are fixed 210mm (~794px) print sheets → they
+  now scale to the phone via layout-aware `zoom` (engines without
+  `:has`/zoom keep the old behavior, pure enhancement);
+  (3) the market pages hide their own link row at ≤900px but the shared
+  burger appeared only ≤760px, leaving 761–900px viewport band navless —
+  the burger now shows in exactly that band, and the panel open-state
+  rules moved out of the ≤760px media (they can only trigger when a
+  burger is visible, so verified root fronts are unaffected — re-verified).
+- **site.js**: shared menu links are now depth-aware (hub/articles/en/*
+  resolve back to the site root) and the enhancer also accepts
+  `nav.nhead` (the market fixed bars); one "Content Hub" entry was added
+  to the shared cross-site menu. `node --check` passes.
+- **Browser verification (agent-browser)**: 60 pages swept at 390×844 —
+  zero horizontal scroll anywhere (`scrollWidth == 390`), burger present
+  on all 51 newly wired pages, menu opens with 8 depth-correct links at
+  44px row height, closes on Escape / outside tap / link tap;
+  12 pages re-swept at 1280×900 — burger hidden, rows intact, no
+  overflow; root fronts (gate/net/money/truth/wallet/about/index)
+  re-verified unchanged. VLM visual check of mobile menu / article /
+  desktop hub: clean.
