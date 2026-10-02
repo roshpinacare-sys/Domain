@@ -218,6 +218,20 @@ const freshCount = bookStates.filter((b) => b.exists && b.fresh).length;
     guardScript ? `ledger at ${guardLedger.at || 'never'} · scan denies ${guardLedger.denies == null ? 'n/a' : guardLedger.denies} · guardEvals ${guardEvalsGreen ? 'green' : 'red'}` : 'missing',
     'Z-38 (study: destructive_command_guard): the override protocol is code before execution, not prose after it');
 
+  // Z-39: cognitive rail — the inference registry is governed (ToS-gated, keyless-only probes, ledger stamped)
+  let railOk = false, railEvidence = 'registry missing';
+  try {
+    const rail = require(path.join(AG, 'cognitive-rail.cjs')); // require-main gated: requiring never runs the desk
+    const v = rail.validateCatalog(rail.CATALOG_PATH);
+    const railLedger = readJson(path.join(AG, 'rail-ledger.json'));
+    const railEvals = (guardEvals && (guardEvals.evals || []).filter((e) => ['E10', 'E11', 'E12'].includes(e.id)).every((e) => e.status === 'PASS'));
+    railOk = !!(v.ok && v.counts && v.counts.neverLive === 0 && v.counts.keyedNotTierC === 0 && railLedger && railLedger.at && railEvals);
+    const s = (railLedger && railLedger.runs || []).filter((r) => r.mode === 'probe' && r.summary && r.summary.probed > 0).length;
+    railEvidence = `${v.counts ? v.counts.total : 0} rows · neverLive=${v.counts ? v.counts.neverLive : '?'} · keyedNotTierC=${v.counts ? v.counts.keyedNotTierC : '?'} · live probe runs booked=${s} · railEvals ${railEvals ? 'green' : 'red'}`;
+  } catch (e) { railEvidence = 'rail desk error: ' + String(e.message || e).slice(0, 90); }
+  check('sovereignty', 'cognitive rail governed: provider registry valid, forbidden rails never enabled, keyless probes booked, E10-E12 pin it', railOk,
+    'agents/inference-providers.csv + rail-ledger.json', railEvidence);
+
   // ---- silent-costs watch (L13) — booked as standing observations, honestly
   const silentCosts = {
     verificationDebt: 'selftests cover past incidents; every NEW failure mode (concat family ×3, null-deref, dedupe) becomes a check within one wave of discovery',
@@ -232,15 +246,15 @@ const freshCount = bookStates.filter((b) => b.exists && b.fresh).length;
     fail: checks.filter((c) => c.status === 'FAIL').length
   };
   const out = {
-    ok: true, at, agent: 'harness-audit v1.3.0 (Z-35 + Task 19 + Z-37 sovereignty + Z-38 mechanical override)',
-    origin: 'walkinglabs/learn-harness-engineering study (Z-35): five subsystems + loop/graph engineering mapped to the fleet; Z-37 adds f/prompts.chat governance adoption (roles-as-data + decision ladder + change-requests + override protocol); Z-38 adds Dicklesworthstone/destructive_command_guard adoption (mechanical override gate + evals E7-E9); the audit itself is the adopted artifact — a fresh-context checker node on a schedule',
+    ok: true, at, agent: 'harness-audit v1.4.0 (Z-35 + Task 19 + Z-37 sovereignty + Z-38 mechanical override + Z-39 cognitive rail)',
+    origin: 'walkinglabs/learn-harness-engineering study (Z-35): five subsystems + loop/graph engineering mapped to the fleet; Z-37 adds f/prompts.chat governance adoption (roles-as-data + decision ladder + change-requests + override protocol); Z-38 adds Dicklesworthstone/destructive_command_guard adoption (mechanical override gate + evals E7-E9); Z-39 adds tashfeenahmed/freellmapi adoption (cognitive-rail registry + keyless probes + evals E10-E12); the audit itself is the adopted artifact — a fresh-context checker node on a schedule',
     fiveSubsystems: {
       instructions: 'AGENTS.md + DOCTRINE.md + FLEET-NOTE.md + agent headers',
       state: 'books (external state primitive) + CLAIMS + worklog',
       verification: 'verify-then-sign + read-back + agent-verify judge node + gitleaks',
       scope: 'kill rules + floors/ceilings + dust honesty',
       lifecycle: 'receipts per session + RESUME-KIT + restore.sh',
-      sovereignty: 'role-registry.csv (roles-as-data) + change-requests/ (judged self-modification) + sovereignty.md (decision ladder + override protocol) + command-guard.cjs (mechanical override, Z-38)'
+      sovereignty: 'role-registry.csv (roles-as-data) + change-requests/ (judged self-modification) + sovereignty.md (decision ladder + override protocol) + command-guard.cjs (mechanical override, Z-38) + cognitive-rail.cjs + inference-providers.csv (governed inference rails, Z-39)'
     },
     books: bookStates,
     checks, counts, silentCosts,
