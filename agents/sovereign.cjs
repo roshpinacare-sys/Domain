@@ -158,6 +158,18 @@ function decideSovereign(input) {
   if ((state.consecutive_loss_fills || 0) >= L.max_consecutive_loss_fills) {
     return g('SKIP', `BREAKER-CONSEC-LOSS: ${state.consecutive_loss_fills} consecutive losing fills >= ${L.max_consecutive_loss_fills} — the tape said stop`);
   }
+  // BUY-PREMIUM BREAKER (Z-69, CR-0047): the ledger's realized edge is the authority.
+  // If the window's buy VWAP exceeds the sell VWAP beyond the policy floor, the hands
+  // route DRY (the executor's VWAP-capped plan composes as a receipt, zero signatures)
+  // until the ledger heals — measured leak 2026-10-03: buys 0.1022 vs sells 0.1001.
+  const V = input.vwap || null;
+  const premiumPct = L.max_buy_premium_vs_sell_vwap_pct != null ? L.max_buy_premium_vs_sell_vwap_pct : 0.3;
+  if (V && (V.buys || 0) >= 3 && V.buy_vwap != null && V.sell_vwap != null && V.sell_vwap > 0) {
+    const premium = (V.buy_vwap - V.sell_vwap) / V.sell_vwap * 100;
+    if (premium > premiumPct) {
+      return g('PLAN-DRY', `BUY-PREMIUM-BREAKER: ledger edge ${premium.toFixed(4)}% (buy ${V.buy_vwap} > sell ${V.sell_vwap} x ${1 + premiumPct / 100}) over ${V.buys} buys — the hands compose VWAP-capped plans as receipts until the ledger heals; LIVE resumes on a clean window`);
+    }
+  }
   const liq = liquid || { steem: 0, sbd: 0 };
   if (liq.steem < L.min_liquid_keep_steem && liq.sbd < L.min_liquid_keep_sbd) {
     return g('SKIP', `FUEL-FLOOR: liquid ${(+liq.steem).toFixed(3)} STEEM / ${(+liq.sbd).toFixed(3)} SBD both below keep floors (${L.min_liquid_keep_steem}/${L.min_liquid_keep_sbd}) — sovereignty preserves the seed`);

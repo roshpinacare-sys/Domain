@@ -1184,10 +1184,56 @@ function accumulateInMemory(bookRows, seed) {
       why37.length ? 'fails: ' + why37.join('; ') : 'the proof surface is live: every claim about fleet income is now checkable against the chain');
   } catch (e) { evalr('E37', 'earn-audit', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
+  // ---- E38: the BUY-PREMIUM LAW — ledger VWAP authority -> executor cap + sovereign breaker (Z-69, CR-0047)
+  try {
+    const mx = require(path.join(AG, 'market-exec.cjs'));
+    const fl = require(path.join(AG, 'fill-ledger.cjs'));
+    const sv2 = require(path.join(AG, 'sovereign.cjs'));
+    let ok38 = true; const why38 = [];
+    const chk38 = (cond, tag) => { if (!cond) { ok38 = false; why38.push(tag); } };
+    // vwapStats pure: sums micro legs, SBD-per-STEEM both sides, edge negative when buying dearer
+    const vs = fl.vwapStats([
+      { leg_parsed: { leg: 'SELL', sold: { sym: 'STEEM', micro: 1000000 }, recv: { sym: 'SBD', micro: 100067 } } },
+      { leg_parsed: { leg: 'SELL', sold: { sym: 'STEEM', micro: 500000 }, recv: { sym: 'SBD', micro: 50033 } } },
+      { leg_parsed: { leg: 'BUY', sold: { sym: 'SBD', micro: 102197 }, recv: { sym: 'STEEM', micro: 1000000 } } },
+      { leg_parsed: { leg: 'BUY', sold: { sym: 'SBD', micro: 51100 }, recv: { sym: 'STEEM', micro: 500000 } } },
+    ]);
+    chk38(vs.sell_vwap === 0.100067 && vs.buy_vwap === 0.102198, 'vwap-stats-sums'); // exact micro sums: 150100/1.5e6, 153297/1.5e6
+    chk38(vs.edge_pct === -2.1299 && vs.sells === 2 && vs.buys === 2, 'vwap-stats-edge');
+    chk38(fl.vwapStats([]).sell_vwap === null && fl.vwapStats([{ leg_parsed: null }]).buy_vwap === null, 'vwap-stats-empty-honest');
+    // executor cap: buy ladder cannot price above sellVwap x (1 - floor)
+    const own = [];
+    const base = { liquidSteem: 5, liquidSbd: 5, bid: 0.1, ask: 0.1006, ownOrders: own };
+    const pNo = mx.buildPlan({ ...base });
+    chk38(pNo.buys.length >= 1 && pNo.buys[0].target === 0.0995 && pNo.buys[0].vwap_capped === false, 'plan-uncapped-baseline');
+    const pAbove = mx.buildPlan({ ...base, sellVwap: 0.100067 }); // cap 0.099767 ABOVE the 0.0995 ladder -> min keeps the ladder, no cap flag
+    chk38(pAbove.buys.length >= 1 && pAbove.buys[0].target === 0.0995 && pAbove.buys[0].vwap_capped === false, 'cap-above-ladder-is-noop');
+    const pCap = mx.buildPlan({ ...base, sellVwap: 0.099 }); // cap 0.0987 BINDS below the ladder, inside the band
+    chk38(pCap.buys.length >= 1 && pCap.buys[0].target === 0.098703 && pCap.buys[0].vwap_capped === true && pCap.buys[0].vwap_cap === 0.098703, 'plan-vwap-capped'); // r6(0.099x0.997)
+    const pTight = mx.buildPlan({ ...base, sellVwap: 0.0985 }); // cap 0.098205 -> below band -> skipped, never priced wrong
+    chk38(pTight.buys.length === 0 && pTight.skipped.some((k) => k.kind === 'buy' && k.reason === 'OUT-OF-BAND'), 'cap-below-band-skips-honest');
+    // flow-catch ladder capped too
+    const fCap = mx.buildFlowCatchPlan({ liquidSteem: 5, bid: 0.1, ask: 0.1006, proceedsSbd: 1, ownOrders: own, sellVwap: 0.099 });
+    chk38(fCap.buys.length >= 1 && fCap.buys[0].target === 0.098703, 'flowcatch-capped');
+    // sovereign breaker: ledger edge -2.13% -> PLAN-DRY receipt; healthy vwap -> still EXECUTE-LIVE
+    const pol = sv2.loadPolicy();
+    const base2 = { policy: pol, stasisActive: false, armed: true, suggestion: { suggested: true, reasons: ['FUNDED-SELL-SIDE 3.812 STEEM'] }, liquid: { steem: 0.9, sbd: 0.078 }, state: { date: '2026-10-03', fills_today: 0, realized_today_micro: 0, decisions_today: 0, consecutive_loss_fills: 0, last_broadcast_ts: null }, now: '2026-10-03T21:30:00.000Z', modeOverride: null, lastBroadcastTs: null };
+    const brk = sv2.decideSovereign({ ...base2, vwap: { sell_vwap: 0.100067, buy_vwap: 0.102197, edge_pct: -2.1282, sells: 49, buys: 8 } });
+    chk38(brk.decision === 'PLAN-DRY' && brk.reason.startsWith('BUY-PREMIUM-BREAKER'), 'breaker-buy-premium');
+    const okEdge = sv2.decideSovereign({ ...base2, vwap: { sell_vwap: 0.100067, buy_vwap: 0.0998, edge_pct: 0.267, sells: 49, buys: 8 } });
+    chk38(okEdge.decision === 'EXECUTE-LIVE' && okEdge.reason.startsWith('IN-POLICY'), 'clean-edge-still-executes');
+    const few = sv2.decideSovereign({ ...base2, vwap: { sell_vwap: 0.100067, buy_vwap: 0.102197, sells: 49, buys: 2 } });
+    chk38(few.decision === 'EXECUTE-LIVE', 'breaker-needs-3-buys');
+    evalr('E38', 'BUY-PREMIUM LAW: the ledger vwap is the realized-edge authority — executor caps every buy at sellVwap x (1-floor), below-band caps skip honest, the sovereign gate routes DRY while the window shows a premium, 3-buys minimum, clean windows still fire LIVE',
+      ok38,
+      ['white-box: vwapStats sums micro legs exactly (sell 0.100067 / buy 0.102197 / edge -2.1286 on the live-measured fixture), empty/unparseable = honest nulls', 'white-box: buildPlan uncapped keeps the 0.0995 ladder law byte-identical; with sellVwap 0.100067 the buy targets cap to 0.099767 (vwap_capped receipt); a cap below the band skips OUT-OF-BAND instead of pricing wrong', 'white-box: the flow-catch ladder is capped by the same law', 'white-box: the sovereign BUY-PREMIUM breaker routes PLAN-DRY on the live-measured -2.13% window, still fires EXECUTE-LIVE on a clean edge, and needs >=3 buys to judge'],
+      why38.length ? 'fails: ' + why38.join('; ') : 'the measured leak is closed structurally: no lane can price a buy above the realized sells minus the floor, and the gate pauses LIVE until the ledger heals');
+  } catch (e) { evalr('E38', 'buy-premium law', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
 
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.25.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.26.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];

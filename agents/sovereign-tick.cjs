@@ -92,7 +92,9 @@ function main() {
       policy, stasisActive: tick.stasis, armed, suggestion, liquid, state: effState, now,
       modeOverride: process.env.SOVEREIGN_MODE || null,
       lastBroadcastTs: state.last_broadcast_ts || lastBroadcast || null,
+      vwap: ledger && ledger.vwap ? ledger.vwap : null,
     });
+    if (ledger && ledger.vwap) tick.inputs.vwap = ledger.vwap;
     tick.decision = d.decision; tick.reason = d.reason; tick.tier = d.tier;
 
     // 4. D2 drip pacing receipt (receipts even when D1 skipped — the sovereign answers BOTH keys every tick)
