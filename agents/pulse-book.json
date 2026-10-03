@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "at": "2026-10-03T18:07:46.240Z",
+  "at": "2026-10-03T18:21:20.260Z",
   "since": "2026-10-02T16:40:20.950Z",
   "windowSince": "2026-10-02T16:40:20.950Z",
   "agent": "pulse v1.2.0 (CR-0009 loop, Rung 1; CR-0028 consumes the laya advisory triage; CR-0033 consumes the scheduled evolution-window evidence — Z-48/Z-49/Z-60/Z-62)",
@@ -8,6 +8,26 @@
     "since": "2026-10-02T16:40:20.950Z",
     "count": 40,
     "commits": [
+      {
+        "sha": "9bdf169",
+        "subject": "lane books: Rung 12 cross-layer run on the MERGED tree (sibling 650a6e8 market-exec CR-0036 absorbed, ninth collision renumber CR-0037/feat-031) — judge 41/0/0, evals 28/28 (merged suite: this lane's 27 + sibling E28), gate 14/0, DOMAIN-INIT-OK, ONE-BLOC 16/16 tokenReach 14"
+      },
+      {
+        "sha": "63bb44c",
+        "subject": "CR-0037 (PASS, tier B): fleet Rung 12 CROSS-LAYER CONVERGENCE PASS — agents/cross-layer.cjs reads the REAL sources of all four grid/market layers from the 16/16-local estate (L0 Domain market-grid observer / L1 saos-dex kernel+amm+mm+grid-beat+grid-ledger / L2 steem he_ladder+live_gate / L3 platform SAOSExchange+SAOSLedger+5 .t.sol), hashes every artifact (15 sha256 receipts) and runs 7 mechanical checks with MEASURED numbers: FEE DOCTRINE DRIFT (kernel 30bps vs SAOSExchange 20bps — same fleet, two prices), MIGRATION LAW (market-grid 40bps floor < 60bps marginal DEX round trip; measured 90bps @0.1%-of-depth, 445bps @1% with the kernel's OWN integer-floor x*y=k semantics — real post-trade reserves fed back), DUST-FLOOR LAW (0.005%-of-depth = 400bps from integer rounding, fee floors to 0 below ~333 units — minimum viable DEX rung is depth-scale), GEOMETRY LADDER nests 20<40<50<200bps across layers, GATE PARITY 3/3 (owner-gated/honest-disarm/dry-run in ALL layers), LEDGER DISCIPLINE on real rows (60 paper + 2 history + 73 orders/43 fills), EXPIRY parity (27d at the STEEM cap), MAKER/TAKER/OBSERVER triad mechanical (grid-beat maker-only + he_ladder taker 97% + market-grid observer) — First run: CROSS-LAYER-CONVERGENT 7 checks / 6 PASS / 1 DRIFT / 0 FAIL / 2 findings; fail-soft proven live (wrong-estate dev run = 5 honest FAILs, exit 0, no crash); offline, keyless, deterministic — NINTH COLLISION (later-mover law): sibling 650a6e8 landed its signed market executor as CR-0036+feat-030 while this lane was in flight; this lane renumbers CR-0036->CR-0037, feat-030->feat-031 (their feat-031 slot verified free); the two Rung-12 landings COMPOSE — their market-exec is the verify-then-sign taker leg on SBD/STEEM, this desk books the fee/migration/dust laws any cross-venue router must price before capital moves; feat-031"
+      },
+      {
+        "sha": "8d998d7",
+        "subject": "agent-verify: HAS_FAILURES · 50/53 · 0 suspended · 2026-10-03T18:17:40Z"
+      },
+      {
+        "sha": "650a6e8",
+        "subject": "CR-0036 (PASS, tier B): fleet Rung 12 — the SIGNED MARKET EXECUTOR + EVM CONVERGENCE DOCTRINE (owner directive: take the internal markets automatically with agent grids — implement) — agents/market-exec.cjs: the verify-then-sign leg the CR-0034 three-layer composition law left open, over the ONE venue with liquid capital (SBD/STEEM internal market; recon: bot flow ~10 fills/min at 0.100, 0% fee verified from steem_evaluator.cpp, NO minimum order, spread 1.1-1.55%, cross-node delta 0.000%) — LAWS IN CODE: DRY_RUN default (nothing signs without MARKET_EXEC_LIVE=1), authority verify-then-sign (derived active WIF pubkey byte-checked vs on-chain active_key_auths, AUTHORITY-MISMATCH=hard abort), caps (sells<=85% liquid, buys<=liquid SBD, <=6 orders, sizes 0.3-1.25 STEEM/0.25 SBD, in-band ±2% fat-finger ceiling), ADD-ONLY v1 (never cancels what it did not place — sibling lane's 12 standing orders untouched, they die by their own expirations), stack idempotency (own order within 0.35% -> STACK-EXISTS skip), precision scanner (6dp targets realized through 3dp assets, err<=0.018%, no level collapse), WIF never printed, fail-soft exit 0 fail-loud canon — LIVE-FIRE run #7: authority PASS, 6/6 limit_order_create2 broadcast 0 errors, 4 sells 1.196/0.571/0.353/0.586 STEEM @ 0.101171/0.101576/0.101983/0.102389 (L1 = BEST ASK on the book at placement, undercutting droida 0.101328) + 2 buys 0.250 SBD @ 0.099602/0.099206, ALL 6 orderids 1791050734-39 STANDING on-chain (find_limit_orders), liquid moved exactly as planned 4.287->1.581 STEEM / 0.500->0.000 SBD — IDEMPOTENCY PROVEN LIVE (run #8 re-plan skipped 6/6 STACK-EXISTS) — WIRE LAWS booked from dry iterations that caught 3 defects BEFORE any signature existed (runs #4-6: unique orderid — same owner+orderid REPLACES standing order, exchange_rate{base:sell,quote:receive} chain assert, object op payloads on condenser — string form Bad Cast) + readback law (find_limit_orders account-scoped, book-wide list misverified 2/6) — HONEST CORRECTION (anti-goodhart): recon's '+3.2% SBD redemption premium = structural edge' does NOT survive arithmetic (1 SBD redeems 9.606 STEEM vs 9.914 at market = 3.2% LOSS both directions; the only edge is spread capture in a live 0%-fee book) — VENUE VERDICTS booked: Hive internal NO-GO (0.034 HIVE dust vs 2.0 smallest order), HE NO-GO (0.0302 SWAP.HIVE measured vs briefed 0.6042 — consumed; fee unverifiable, treated nonzero) — agents/evm-convergence.md: the state-of-the-art answer OFFICIAL-SOURCES-ONLY (llama 3.5B ETH of 468 chains; l2beat 100 rollups 0.8B, 6x Stage 1; orderbook venues WIN — Hyperliquid $7.13B + Lighter $1.2B = the saos-dex class; Pectra EIP-7600 2025-05-07; ERC-4337/RIP-7212/ERC-7683/x402/ERC-8004 specs quoted; phishing discipline kept — whitelist-only fetches, EigenLayer/Monad/Sei/Near/CCIP marked UNVERIFIED) — OUR EVM STATE honest (SAOSRelay LIVE ETH/OP/Base events-only; mesh suite 46 Foundry tests Anvil-only; ZERO execution layer) + TOP-8 adoptable ranked (x402 machine payments, ERC-8004 registries, ERC-7683 intents, 4337/Safe desk policies — market-exec caps ARE Allowance semantics, blob-anchoring economics, preconf soft-acks, AnyTrust 2-of-N DA over Hive/Steem/Blurt, private-orderflow FCFS) + honest CANNOT list + WHY-SLOW answer (serial rungs -> 3 parallel lanes this session; executor gap -> claimed; capital constraint respected — every rung capital-free, the desk compounds EXISTING liquid) — E28 eval: pure planner verified (mode law, band guard, precision scan, caps, stack idempotency, SBD cap, Z-49 require.main guard); evals 28/28; feat-030; CR-0036"
+      },
+      {
+        "sha": "0f49003",
+        "subject": "r181 (from Zip 3e8622d4): name-binding for the second witness rail — WEAVE_HIVE_WIF || HIVE_POSTING_WIF (in this vault since 2026-09-23, measured). The twin's Steem/Hive line wakes the Hive anchor on the next run; the chain itself judges."
+      },
       {
         "sha": "8c03f62",
         "subject": "lane books: Rung 11 checkout-wave run on tree — judge 41/0/0, evals 27/27, gate 14/0, DOMAIN-INIT-OK, ONE-BLOC 16/16 tokenReach 14"
@@ -147,26 +167,6 @@
       {
         "sha": "6817544",
         "subject": "CR-0019 (PASS): fleet Rung 3 LANDED — parallel mini-swe wave over isolated git worktrees; 2 concurrent mini-swe 2.4.6 instances (pinned sha 04d809c, MIT) on detached Domain worktrees at a1eae51 over the CR-0015 keyless shim, env -i scrubbed, cost limit 0.5 armed, --exit-immediately; receipts: EXIT 0 x2, distinct create/append receipts (RUNG3-WT1-OK / RUNG3-WT2-OK), interleaved keystone log msgs=2,2,4,4, isolation '?? wave/' only x2, worktrees pruned zero-residue; orca pattern QUEUED→LANDED, mini-swe row + Rung 3; sandbox-reset rebuilds booked: shim recreated from CR spec (SHIM-REBUILD-OK + SSE [DONE]), mirror re-cloned at pinned sha, pip -e 2.4.6; feat-020; finding: shared trajectory path → per-instance path booked as next-rung config with command-guard wrap"
-      },
-      {
-        "sha": "bc63c59",
-        "subject": "CR-0019 (PASS, renumbered from CR-0018 per second-mover law): swe-guard — command-guard IN the execution path, deployment condition CLOSED — GuardedLocalEnvironment (104 lines, in-tree so resets cannot erase it): secrets unreadable + mutations scoped /tmp + destructive patterns refused; every deny = JSONL receipt + visible 126; receipts: benign PASS exit 0 / scope-deny (target absent, receipt booked) / secret-deny (creds unreadable, leak-grep 0); post-reset recovery booked: shim rebuilt from verified spec v1.0.1 (dual-stack + run-with-shim.sh self-hosting edge), mini-swe-agent 2.4.6 from pinned sha 04d809c, recovery task exit 0; fresh KPI oracle run: unreachable-null CONFIRMED standing (gap named), v2 lifetime $0.194105 (3 fills), spot prices measured; registry row 58"
-      },
-      {
-        "sha": "a1eae51",
-        "subject": "lane books: Task 36 second-mover re-verification on a fresh reset sandbox — sibling Defi checkout restored (canon L1 leg), evals 26/26 ×2 stable, judge 41/0/0 third reproduction, one-bloc token-mode 16/16 authWall 0, canon CONTENT-SERVED L1=SERVING L2=RAIL-UP; environment root-cause booked: sandbox reset erased ../Defi so E17 read CANON-DARK — local-leg absence, not fleet truth"
-      },
-      {
-        "sha": "9bea765",
-        "subject": "CR-0018 renumber (Task 36 second-mover close): mini-runtime-landing CR-0016→CR-0018 — uncaught parallel-convergence collision (mini lane landed e57dc8c as CR-0016 AFTER the five-repo sweep took CR-0016 via renumber 1c2ec81); later mover renumbers per law; sole external reference (canon PROBE-LANE.md mini-swe row) updated in same commit; zero content changes — receipts/verdict/evidence untouched, renumber_note booked inside the CR"
-      },
-      {
-        "sha": "0845a87",
-        "subject": "agent-verify: ALL_PASS · 53/53 · 0 suspended · 2026-10-03T11:59:21Z"
-      },
-      {
-        "sha": "3c07261",
-        "subject": "weave-mirror: 2026-10-03T11:24:06Z · weave books mirrored from the live Console home (keyless)"
       }
     ]
   },
@@ -604,6 +604,22 @@
       "disposition": "ACCEPTED-TODAY"
     },
     {
+      "id": "CR-0036",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0036-market-exec-signed-grid.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "live on-chain readbacks (find_limit_orders + get_accounts before/after) + cross-",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0037",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0037-cross-layer-convergence-pass.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "live run receipts (cross-layer.json verdict line + per-check measured JSON + sha",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
       "id": "obs:one-bloc-boundary",
       "kind": "tier-c",
       "source": "one-bloc.json",
@@ -624,7 +640,7 @@
       "kind": "observation",
       "source": "evo-windows.json",
       "action": "carry the evolution-window cadence state into the record",
-      "receipt": "19 windows booked, none complete · next due 2026-10-04T12:45:05Z",
+      "receipt": "20 windows booked, none complete · next due 2026-10-04T12:45:05Z",
       "disposition": "BOOKED"
     }
   ],
@@ -632,7 +648,7 @@
     "PROPOSED-CR": 6,
     "GATED-BLOCKED": 2,
     "DEFERRED-TIER-C": 4,
-    "ACCEPTED-TODAY": 36,
+    "ACCEPTED-TODAY": 38,
     "ROLLED-BACK": 0,
     "BOOKED": 2
   },
@@ -645,7 +661,7 @@
     "joined": 7,
     "note": "fresh advisory triage joined by id — lane/urgency hints only, confidence uncalibrated (en checkpoint), dispositions untouched",
     "at": "2026-10-03T15:08:54Z",
-    "age_h": 3
+    "age_h": 3.2
   },
   "evoEvidence": {
     "mode": "CADENCE-ONLY",
