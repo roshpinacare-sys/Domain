@@ -60,6 +60,6 @@ jobs:
             echo "no receipt changes"
           else
             git commit -m "tri-bridge: cross-chain receipts · $(date -u +%Y-%m-%dT%H:%M:%SZ) [skip ci]"
-            git pull --rebase origin main || true
+            git -c rebase.autoStash=true pull --rebase origin main || true
             git push origin HEAD:main
           fi
