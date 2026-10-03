@@ -1,14 +1,14 @@
-# FLEET CENSUS — 2026-10-03T19:18:31.396Z
+# FLEET CENSUS — 2026-10-03T19:23:26.309Z
 
 Offline · keyless · deterministic estate map (CR-0040). Answers: what do we hold, what limits us, how it wires.
 
-## Inventory — מה יש לנו (1/16 lanes present, 1 commits, 16 capability markers)
-- **Domain** [PRESENT] 556d7e5@2026-10-03 · caps(16): marketGrid, marketExec, fillLedger, marketCycle, crossLayer, oneBloc, capabilityMatrix, econDesk, measureLearn, evoWindows, stasis, evals, skillGate, cadenceCron, gridHistory, gridPaper · workflows=44 desks=49
+## Inventory — מה יש לנו (2/16 lanes present, 65 commits, 20 capability markers)
+- **Domain** [PRESENT] 844df83@2026-10-03 · caps(16): marketGrid, marketExec, fillLedger, marketCycle, crossLayer, oneBloc, capabilityMatrix, econDesk, measureLearn, evoWindows, stasis, evals, skillGate, cadenceCron, gridHistory, gridPaper · workflows=45 desks=50
 - **saos-dex** [MISSING] no-git · caps(0): —
 - **steem** [MISSING] no-git · caps(0): —
 - **saos-sovereign-platform** [MISSING] no-git · caps(0): —
 - **Console** [MISSING] no-git · caps(0): —
-- **Defi** [MISSING] no-git · caps(0): —
+- **Defi** [PRESENT] 8dae9d8@2026-10-03 · caps(4): triggerChain, doctrine, fleet, registry · workflows=2
 - **Zip** [MISSING] no-git · caps(0): —
 - **Saosmartwallet** [MISSING] no-git · caps(0): —
 - **Sdk** [MISSING] no-git · caps(0): —
@@ -21,10 +21,10 @@ Offline · keyless · deterministic estate map (CR-0040). Answers: what do we ho
 - **saos-sovereign-foundry** [MISSING] no-git · caps(0): —
 
 ## Sovereignty — ריבונות
-- workflows: 9 keyless / 44 total (35 carry owner secrets)
+- workflows: 10 keyless / 45 total (35 carry owner secrets)
 - STASIS brake: present=true active=false halt-in-code desks=1
 - gated desks (DRY/OWNER-GATED/LIVE env): 5 — cross-layer, fleet-census, market-cycle, market-exec, market-grid
-- offline/keyless desks: 21 — bridge-desk, canon-liveness, capability-matrix, cognitive-rail, cross-layer, dedup-corrections, fleet-census, harness-audit, head-delegate, market-exec, market-grid, one-bloc, page-laws, public-pulse, reconcile, recruit, reef-rung3, route-desk, social-dedupe, venture-desk, workflow-audit
+- offline/keyless desks: 22 — agent-registry, bridge-desk, canon-liveness, capability-matrix, cognitive-rail, cross-layer, dedup-corrections, fleet-census, harness-audit, head-delegate, market-exec, market-grid, one-bloc, page-laws, public-pulse, reconcile, recruit, reef-rung3, route-desk, social-dedupe, venture-desk, workflow-audit
 - vault: keyring=false stdinIntake=false runbook=false · mesh tests=0
 
 ## Blockers — מה חוסם אותנו (open=2, operator=2, laws=1)
@@ -39,7 +39,7 @@ Offline · keyless · deterministic estate map (CR-0040). Answers: what do we ho
 - history rows: 5 {"MARKET-GRID-LIVE":4,"PARTIAL":1} · paper rows: 110
 - HBD/HIVE spread%: n=4 min=0.1322 max=0.1322 last=0.1322
 - SBD/STEEM spread%: n=5 min=0.6565 max=1.3385 last=0.6565
-- dex grid ledger: {"version":null,"orders":null,"fills":null} · fill-ledger rows: 0
+- dex grid ledger: {"version":null,"orders":null,"fills":null} · fill-ledger rows: 10
 
 ## Wiring — חיבור (5/10 WIRED)
 - [WIRED] cadence-cron — keyless Actions cron 23,53 * * * * ticks the grid observer
@@ -51,18 +51,18 @@ Offline · keyless · deterministic estate map (CR-0040). Answers: what do we ho
 - [BROKEN(saos-dex/grid-beat.ts,saos-dex/db/grid-ledger.json)] dex-grid-ledger — saos-dex grid heartbeat writes the DEX-side grid ledger
 - [BROKEN(steem/agent/he_ladder.cjs,steem/agent/gate-state.json)] he-ladder-gate — the HE taker ladder is live-gated
 - [BROKEN(Zip/scripts/vault-keyring.mjs,Zip/sovereign/vault/README.md)] vault-ceremony — owner -> vault -> agents key ceremony with its permanent runbook
-- [BROKEN(saos-dex,steem,saos-sovereign-platform,Console,Defi,Zip,Saosmartwallet,Sdk,Adsmarket,Project-files,anchor-baseline,roshpina,saos-control-center,saos-jummper,saos-sovereign-foundry)] census-map — this census maps all 16 lanes of the estate
+- [BROKEN(saos-dex,steem,saos-sovereign-platform,Console,Zip,Saosmartwallet,Sdk,Adsmarket,Project-files,anchor-baseline,roshpina,saos-control-center,saos-jummper,saos-sovereign-foundry)] census-map — this census maps all 16 lanes of the estate
 
 ## Receipts (sha256-16)
 - Domain/agents/market-grid.cjs 7b9d8bcdbb6541b8
 - Domain/agents/market-grid-history.jsonl 7e0e9b84240f4587
 - Domain/.github/workflows/market-grid-cron.yml 1e4559b3b13cc7ac
-- Domain/agents/market-exec.cjs 23457b54c3a73bec
-- Domain/agents/fill-ledger.cjs 68a33ecb04531ce5
+- Domain/agents/market-exec.cjs b839c8024e83295a
+- Domain/agents/fill-ledger.cjs def0ffa106404d0c
 - Domain/agents/market-cycle.cjs eecb0740cc1f77c3
 - Domain/agents/cross-layer.cjs 347ffa55a680ced0
 - Domain/agents/one-bloc.cjs 534364660df2b421
 - Domain/agents/STASIS.json 5ab24bc6b95aba0b
-- Domain/agents/evals/run-evals.cjs 333e3caa07d8ddab
-- Domain/feature_list.json 9a0b32fb17c198e2
+- Domain/agents/evals/run-evals.cjs 894ee3beb71d6bd6
+- Domain/feature_list.json 084e65999089dd45
 

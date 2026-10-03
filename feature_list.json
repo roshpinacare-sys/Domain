@@ -374,6 +374,35 @@
     "agents/evals/eval-results.json (E32)",
     "agents/change-requests/CR-0041-census-cadence.json"
    ]
+  },
+  {
+   "id": "feat-036",
+   "title": "Fleet Rung 16 lane B: flow-catch taker leg (one-sided-tape breaker, price improvement at the bid, proceeds-funded buy ladder) + fill-ledger condenser wire fix capturing 10 real fills + the eyes cadence cron (CR-0042)",
+   "description": "market-exec gains FLOW-CATCH (default OFF, MARKET_EXEC_FLOWCATCH=1): ONE marketable sell joins the resting bid (min = bid×0.999, ≤50% liquid) and fills AT the bid, proceeds fund a stack-aware buy ladder (90% of proceeds, dust discipline, determinism byte-checked; E33). LIVE-FIRED run #13: taker 0.713 STEEM filled at 0.101083, buy 0.052 SBD→0.517 STEEM standing, balances reconciled to the satoshi. fill-ledger wire fix: account_history_api serves empty op bodies on official nodes (measured) → condenser walk with dual-form asset parsing → 10 REAL FILLS captured (0.508 SBD proceeds; our 0.100694 ask lifted by coin-raffle). fill-ledger-cron.yml wires the eyes every 30min keyless (CR-0038 twin idiom, :17/:47, STASIS twice, dedupe-composable).",
+   "status": "LIVE",
+   "cr": "CR-0042",
+   "landed": "2026-10-03T19:35:00Z",
+   "evidence": [
+    "agents/market-exec.json run #13",
+    "agents/fill-ledger.json run #6 + fills.jsonl (10 rows)",
+    "agents/evals/eval-results.json (E33)",
+    ".github/workflows/fill-ledger-cron.yml",
+    "on-chain orderid 1791054505"
+   ]
+  },
+  {
+   "id": "feat-037",
+   "title": "Fleet Rung 16 lane B: the fleet's ERC-8004-shaped agent registry — identity/reputation/validation derived ONLY from canon evidence with recomputable sha256 hashes + the sovereign-convergence doctrine (CR-0042)",
+   "description": "agents/agent-registry.cjs implements the ERC-8004 trust shape (ethereum/ERCs receipt via Z-65-b) over rails we own: Identity (6 fleet desks with agentURI/metadata/keyMode/alive honesty), Reputation (evidence-ONLY — every value from canon rows, feedbackHash = sha256(counted rows) recomputable by the E34 eval), Validation (desk evals E28/E30/E33 as validationRequest/response). Live on real canons: market-exec 62% clean-run (wire-defect history visible honestly), fill-ledger 10 fills, market-cycle 100% clean. Keyless + offline by construction; on-chain register owner-gated when funded. agents/sovereign-convergence.md books the whole-git answer: differentiated stack, top-10 wires (2 landed), measured blockers (binding chain: capital←edge-proof←fills←positioning←armed-loop), custody proposals (threshold multisig via account_auths, no WIF sharing), all research whitelisted (delegate_rc UNVERIFIED).",
+   "status": "LIVE",
+   "cr": "CR-0042",
+   "landed": "2026-10-03T19:35:00Z",
+   "evidence": [
+    "agents/agent-registry.json",
+    "agents/agent-registry.md",
+    "agents/evals/eval-results.json (E34)",
+    "agents/sovereign-convergence.md"
+   ]
   }
  ]
 }

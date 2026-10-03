@@ -1,0 +1,88 @@
+# FILL-LEDGER CRON (CR-0042, fleet Rung 14) — the EYES cadence, wired as the twin of
+# market-grid-cron.yml (CR-0038). The operator directive of 2026-10-03: "בוא נקדם עכשיו
+# ממש חזק קדימה כל הסוכנים ביחד ... ובסוף צריך לחבר ולחווט הכל" — push all agents together
+# and WIRE everything. The sibling wired the observer (:23/:53); this wires the MEASUREMENT
+# leg: every fill_order of the fleet's trading account is captured, deduped, and replayed
+# into the µ-unit average-cost ledger within 30 minutes of the chain recording it — keyless.
+#
+# LAWS carried here (same family as the twin, mechanically enforced):
+#  · FATE-DEFENSE law #1 — the STASIS breaker is obeyed by the scheduler (healthy no-op on
+#    active) AND by the desks themselves; two independent gates, one law.
+#  · KEYLESS — the fill-ledger is READ-ONLY by construction (CR-0039 law 1): it never signs,
+#    never broadcasts; it reads api.steemit.com public surfaces only. The SIGNED legs stay
+#    session-side, owner-gated (MARKET_CYCLE_LIVE=1 remains a human decision).
+#  · APPEND-ONLY + [skip ci] — the tick commits its own books (fill-ledger.json/.md +
+#    fill-ledger-fills.jsonl, the replay source of truth) with the twin publish idiom;
+#    the composer book (market-cycle.json) is NOT touched here (no cycle runs keyless).
+#  · DEDUPE — the desk's fill registry makes re-runs idempotent: a fill already in
+#    fill-ledger-fills.jsonl is never double-booked, so 30-min ticks compose safely with
+#    lane-side runs into ONE ledger.
+#  · Cadence `17,47 * * * *` — every 30 minutes, offset from every sibling cadence
+#    (market-grid :23/:53, grid-trigger-twin :9/:39, dex-grid :48, saos-dex :00/:30) so
+#    the fleet's Actions minutes never collide.
+
+name: fill-ledger-cron
+
+on:
+  schedule:
+    - cron: '17,47 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fill-ledger-cron
+  cancel-in-progress: false
+
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - name: Checkout this repo (the desk is read-only — official chain surfaces only)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: STASIS brake (FATE-DEFENSE law #1 — the scheduler obeys the breaker too)
+        id: brake
+        run: |
+          ST=$(node -p "JSON.parse(require('fs').readFileSync('agents/STASIS.json','utf8')).active===true")
+          echo "active=$ST" >> "$GITHUB_OUTPUT"
+          if [ "$ST" = "true" ]; then
+            echo "STASIS-HALT fill-ledger-cron · the breaker is active — healthy no-op, nothing measured, nothing committed"
+          fi
+
+      - name: tick (keyless fill measurement + deduped ledger rows)
+        if: steps.brake.outputs.active != 'true'
+        run: node agents/fill-ledger.cjs
+        # The desk is fail-soft by law (CR-0039 law 9): every error lands in the run row
+        # and the process exits 0 — the tick always reaches the publish step, and the
+        # canon carries the honest errors instead of a red X hiding them.
+
+      - name: publish the tick back to the ledger
+        if: steps.brake.outputs.active != 'true'
+        run: |
+          set -u
+          git config user.name "fill-ledger-cron[bot]"
+          git config user.email "fill-ledger-cron[bot]@users.noreply.github.com"
+          git add agents/fill-ledger.json agents/fill-ledger.md agents/fill-ledger-fills.jsonl 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "no ledger change — clean exit"
+          else
+            git commit -m "fill-ledger: tick $(date -u +%FT%TZ) [skip ci]"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+
+      - name: Halt receipt (this shift belongs to the breaker)
+        if: steps.brake.outputs.active == 'true'
+        run: |
+          echo "STASIS-HALT fill-ledger-cron · breaker active — the ledger stands still by law, not by neglect."
+          echo "Resume only after root-cause + judge-node green (see agents/STASIS.json resumePolicy)."
