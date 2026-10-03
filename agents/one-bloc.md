@@ -2,7 +2,7 @@
 
 _one-bloc v1.0.1 (Task 23 convergence — owner directive "מקשה אחת"; binds BLOC-STATE + SOVEREIGN-INDEX + FATE-DEFENSE into one machine map; keyless-first + env-token fallback, stderr redacted)_
 
-Measured: **2026-10-03T14:00:02.195Z** · Verdict: **ONE-BLOC** · REACHED 16/16 (keyless 2 + token 14) · AUTH-WALL 0 · UNKNOWN 0 · local-sync 1/2
+Measured: **2026-10-03T14:02:25.196Z** · Verdict: **ONE-BLOC** · REACHED 16/16 (keyless 2 + token 14) · AUTH-WALL 0 · UNKNOWN 0 · local-sync 1/2
 
 | ריפו | תפקיד | origin/main | מצב | דרך | סנכרון-מקומי |
 |---|---|---|---|---|---|
@@ -19,7 +19,7 @@ Measured: **2026-10-03T14:00:02.195Z** · Verdict: **ONE-BLOC** · REACHED 16/16
 | Adsmarket | הקמפיין הכן — claims-guard | `17683983156e` | REACHED | token | N/A |
 | Defi | הכלכלן — reprices חי fail-closed | `8dae9d842817` | REACHED | token | SYNCED |
 | saos-dex | הבורסה — פעימות dex-beat/grid | `310f47274156` | REACHED | token | N/A |
-| saos-jummper | החוזים בפייתון — signingcontract | `2341f330c1cf` | REACHED | token | N/A |
+| saos-jummper | החוזים בפייתון — signingcontract | `b70df1022f0e` | REACHED | token | N/A |
 | saos-control-center | מרכז הבקרה הפנימי — 12 סקריפטים env-first | `5d25c8c22532` | REACHED | token | N/A |
 | saos-sovereign-foundry | המפעל — key-broker fail-closed | `62c0a7433892` | REACHED | token | N/A |
 
