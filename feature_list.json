@@ -223,6 +223,17 @@
         "feat-021"
       ],
       "evidence": "CR-0022 PASS (14 receipts, 5 findings); telemetry 4-gate audit (source+dist+self-report+queue: nothing queued, identity never minted); graph 686 nodes/1524 edges; ask hit #1 exact; paired runs traj-g5a (7 calls) / traj-g5b (3 calls); deny ledger 2→2; worktree pruned zero-residue; PROBE-LANE Graft row QUEUED→LANDED"
+    },
+    {
+      "id": "feat-024",
+      "title": "Shim v1.1.0 retry/backoff queue — CR-0022 rate-limit law closed, deep concept graph completed over the shim (CR-0026)",
+      "description": "Upgraded the CR-0015 shim with a global upstream gate (max 2 in-flight, FIFO queue), exponential backoff retries (1s..16s cap + jitter, SHIM_MAX_RETRIES env-tunable, default 5) and honest per-event logs; fail-loud preserved on exhaustion. Receipts: 6-burst smoke 6/6 HTTP 200 with queued+retry log lines; mini-swe guarded run Submitted 3 api_calls through the queue; graft deep build over the shim exited rc=0 and the whole-repo concept synthesis that 502'd twice in Rung 5 MATERIALIZED (18 provenance-traced concept nodes; graft ask returns concept-tier hits); 851 transient 429s absorbed across two deep runs; ambient sandbox-IP 429 storm booked as the binding capacity constraint (matches sibling CR-0023 independent finding).",
+      "status": "done",
+      "dependencies": [
+        "feat-020",
+        "feat-022"
+      ],
+      "evidence": "CR-0026 PASS (renumbered from CR-0024 — fourth collision, see renumber_note) (8 receipts, 5 findings); burst 6/6 200 + queued wait_ms=696 + retry backoff_ms=1046; G6-SHIM-QUEUE-OK via mini-swe; deep rc=0 with 18 concept nodes + concept-tier ask hits; retry 8/8 ladder receipt; /health v1.1.0 additive fields; worktree pruned zero-residue"
     }
   ]
 }
