@@ -15,6 +15,7 @@
  *   E4 audit fail-soft      — the judge node itself must survive a missing canon
  *   E28/E29 lineage         — the sibling's planner evals and this lane's STASIS/cadence evals share the suite
  *   E30 fill-ledger + market-cycle — the internal-market measurement leg: fill_order direction law (ours-as-OPEN sells open_pays / ours-as-CURRENT sells current_pays, foreign → null, unclassified booked), µ-unit average-cost P&L exact by hand-check, dedupe keying, recycle thresholds, cycle decision law, fresh-process eval-context black-box with zero network (Z-64, CR-0039)
+ *   E31 fleet-census        — the whole 16-lane estate measured offline: capability markers, sovereignty counters, blockers with live evidence, wiring arcs; deterministic byte-stable + fail-soft empty-estate (R14, CR-0040)
  *   E5 concat-family        — string manabar + number = giant (third-time incident family)
  *   E6 stamp hygiene        — a book without a timestamp can never count as fresh
  *   E7 guard deny/allow     — destructive commands DENY, the fleet's rebase law stays ALLOW (Z-38)
@@ -757,11 +758,57 @@ function accumulateInMemory(bookRows, seed) {
       why30.length ? 'fails: ' + why30.join('; ') : 'measurement leg pure+process-verified; live wire receipt: fill-ledger run #1 (0 fills honest, recycle FUNDED-SELL-SIDE 1.581 STEEM), cycle LIVE run #2 composed executor run #10 broadcast 1/1 orderid 1791052891 readback-matched');
   } catch (e) { evalr('E30', 'fill-ledger + market-cycle', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
+  // ---- E31: fleet-census (R14, CR-0040) — the estate-wide census desk:
+  // capability inventory x sovereignty counters x blockers-with-live-evidence x wiring map,
+  // over the same 16 lanes one-bloc measures for REACH. Deterministic (stable payload
+  // byte-identical for the same tree), fail-soft (empty estate = honest all-MISSING census).
+  try {
+    const fc = require(path.join(AG, 'fleet-census.cjs'));
+    let ok31 = true; const why31 = [];
+    // white-box: spread-series math exact on injected rows (min/max/last over the cron series class)
+    const s1 = fc.spreadSeries([
+      { spreads: [{ market: 'SBD/STEEM (internal steem)', spreadPct: 1.5499 }] },
+      { spreads: [{ market: 'SBD/STEEM (internal steem)', spreadPct: 0.6565 }, { market: 'HBD/HIVE (internal hive)', spreadPct: 0.1322 }] },
+      { verdict: 'PARTIAL', spreads: [] },
+    ], 'SBD/STEEM');
+    if (!(s1.n === 2 && s1.min === 0.6565 && s1.max === 1.5499 && s1.last === 0.6565)) { ok31 = false; why31.push('spreadSeries'); }
+    const s0 = fc.spreadSeries([], 'X/Y');
+    if (!(s0.n === 0 && s0.min === null && s0.max === null && s0.last === null)) { ok31 = false; why31.push('spreadSeries-empty'); }
+    // white-box: extractFirstInt — the fee-doctrine evidence path (30 vs 20 read from REAL sources)
+    if (!(fc.extractFirstInt('uint64 public constant FEE_BPS = 30;', 'FEE_BPS') === 30 && fc.extractFirstInt('no key here', 'FEE_BPS') === null)) { ok31 = false; why31.push('extractFirstInt'); }
+    // white-box: the lane registry is exactly the 16-lane bloc, no duplicates
+    if (!(Array.isArray(fc.LANES) && fc.LANES.length === 16 && new Set(fc.LANES.map((l) => l.id)).size === 16)) { ok31 = false; why31.push('lane-registry'); }
+    // black-box: fresh-process run on the real estate — honest book, four sections, stamped fresh
+    const r1 = spawnSync(process.execPath, [path.join(AG, 'fleet-census.cjs')], { encoding: 'utf8', timeout: 120000 });
+    const b1raw = fs.readFileSync(path.join(AG, 'fleet-census.json'), 'utf8');
+    const b1 = JSON.parse(b1raw);
+    const fresh31 = !!b1.at && (Date.now() - Date.parse(b1.at)) / 60000 < 10;
+    if (!(r1.status === 0 && b1.ok === true && b1.inventory && b1.sovereignty && b1.blockers && b1.wiring && b1.edgeSeries && b1.receipts && fresh31 && b1.inventory.totalLanes === 16 && Object.keys(b1.receipts).length >= 12)) { ok31 = false; why31.push('black-box-real'); }
+    // determinism law: stable payload byte-identical across two fresh runs (`at` stripped)
+    const r2 = spawnSync(process.execPath, [path.join(AG, 'fleet-census.cjs')], { encoding: 'utf8', timeout: 120000 });
+    const b2raw = fs.readFileSync(path.join(AG, 'fleet-census.json'), 'utf8');
+    const strip = (s) => { const j = JSON.parse(s); delete j.at; return JSON.stringify(j); };
+    if (!(r2.status === 0 && strip(b1raw) === strip(b2raw))) { ok31 = false; why31.push('determinism'); }
+    // fail-soft: an empty estate yields an honest all-MISSING census, exit 0, blockers still booked
+    const os31 = require('os');
+    const tmpE = fs.mkdtempSync(path.join(os31.tmpdir(), 'e31-'));
+    const r3 = spawnSync(process.execPath, [path.join(AG, 'fleet-census.cjs')], { env: { ...process.env, FLEET_CENSUS_ESTATE: tmpE }, encoding: 'utf8', timeout: 120000 });
+    let bb3 = false;
+    try { const j = JSON.parse(fs.readFileSync(path.join(AG, 'fleet-census.json'), 'utf8')); bb3 = r3.status === 0 && j.ok === true && j.inventory.presentLanes === 0 && j.inventory.totalLanes === 16 && Array.isArray(j.blockers) && j.blockers.length >= 5; } catch (_) {}
+    if (!bb3) { ok31 = false; why31.push('fail-soft-empty-estate'); }
+    // restore the real-estate book (the sandbox run overwrote the shared book path)
+    spawnSync(process.execPath, [path.join(AG, 'fleet-census.cjs')], { encoding: 'utf8', timeout: 120000 });
+    evalr('E31', 'fleet-census: the whole estate measured offline — capability, sovereignty, blockers, wiring; deterministic byte-stable + fail-soft',
+      ok31,
+      ['white-box: spreadSeries exact — n/min/max/last over injected rows; empty series honest nulls (never 0-valued)', 'white-box: extractFirstInt reads FEE_BPS from source text — the fee-doctrine drift evidence is derived, not assumed', 'white-box: the lane registry is exactly the 16-lane bloc, ids unique', 'black-box: fresh-process census on the real estate — exit 0, book ok, inventory+sovereignty+blockers+wiring+edgeSeries+receipts(>=12), stamped <10min', 'determinism: two fresh runs byte-identical after stripping the `at` stamp (same tree → same bytes)', 'fail-soft: FLEET_CENSUS_ESTATE pointed at an empty dir → exit 0, 0/16 present, all lanes MISSING, blockers still booked with null-safe evidence'],
+      why31.length ? 'fails: ' + why31.join('; ') : `census=${b1.inventory.presentLanes}/16 caps=${b1.summary.capabilities} wiring=${b1.summary.wiringWired}/${b1.summary.wiringArcs} blockers open=${b1.summary.blockersOpen} operator=${b1.summary.blockersOperatorGated} laws=${b1.summary.blockersLawsActive}`);
+  } catch (e) { evalr('E31', 'fleet-census', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
 
 
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.18.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.19.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];
