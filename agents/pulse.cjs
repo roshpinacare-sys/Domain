@@ -1,5 +1,13 @@
 // PULSE — the fleet's daily self-improvement pulse (reef/SkillClaw loop pattern, Rung 1) · CR-0009
 //
+// Z-60 · CR-0028: the pulse now CONSUMES the laya advisory triage book
+// (agents/laya-triage.json, CR-0025) as an input. ADVISORY-ONLY law holds: the join
+// attaches lane/urgency HINTS to proposals by id and never touches dispositions,
+// gates, or the verify-only law. Freshness line (CARRY-LAW family, sharpened for
+// hints): measured NUMBERS carry (venture-desk), HINTS don't — a triage book older
+// than 36h is marked STALE-NOT-JOINED and nothing is attached. Uncalibrated
+// confidence stays flagged on every joined row (CR-0023 serving proof).
+//
 // Study: Human-Agent-Society/reef @ 297af97 (Z-48): "infrastructure for continually
 // self-improving agents" — SkillClaw's loop: day = fixed task list with current skills;
 // night = review sessions → propose changes → evaluate → settle (accept/version or
@@ -93,8 +101,45 @@ try {
   const hb = readJson(path.join(AG, "hands-book.json"));
   if (hb && hb.hands) proposals.push({ id: "obs:hands", kind: "observation", source: "hands-book.json", action: "carry the hands boundary into the daily record", receipt: `hands ${hb.hands.length} · live ${(hb.hands.filter(h => h.verdict === 'LIVE')).length}` });
 
-  // derive dispositions (single source of truth, E21-pinned)
+  // derive dispositions (single source of truth, E23-pinned)
   for (const p of proposals) p.disposition = deriveDisposition(p);
+
+  // ---- ADVISORY: consume the laya triage book (CR-0025 output, CR-0028 input) ----
+  // Join by proposal id. Hints attach AFTER dispositions are derived — the advisory
+  // surface can reorder human attention, never gate the loop (ADVISORY-ONLY law).
+  const advisoryTriag = { mode: "ABSENT", joined: 0, note: "laya-triage.json absent or unreadable — advisory surface honestly empty (no hint invented)" };
+  const tri = readJson(path.join(AG, "laya-triage.json"));
+  if (tri && tri.ok && Array.isArray(tri.rows)) {
+    const ageH = tri.at ? (Date.now() - Date.parse(tri.at)) / 3600000 : NaN;
+    if (!Number.isFinite(ageH)) {
+      advisoryTriag.mode = "UNTIMED-NOT-JOINED";
+      advisoryTriag.note = "triage book carries no parseable timestamp — never joined (a hint without a timestamp can never count as fresh)";
+    } else if (ageH > 36) {
+      advisoryTriag.mode = "STALE-NOT-JOINED";
+      advisoryTriag.at = tri.at;
+      advisoryTriag.age_h = Math.round(ageH * 10) / 10;
+      advisoryTriag.note = "triage book >36h old — hints are ordering hints, not measured numbers; stale hints are never joined (numbers carry, hints don't)";
+    } else {
+      const byId = {};
+      for (const r of tri.rows) if (r && r.status === "TRIAGED" && r.id) byId[r.id] = r;
+      advisoryTriag.mode = "JOINED-FRESH";
+      advisoryTriag.at = tri.at;
+      advisoryTriag.age_h = Math.round(ageH * 10) / 10;
+      advisoryTriag.note = "fresh advisory triage joined by id — lane/urgency hints only, confidence uncalibrated (en checkpoint), dispositions untouched";
+      const deskRow = tri.rows.find((r) => r && r.id === "desk");
+      if (deskRow) advisoryTriag.desk = deskRow.status;
+      for (const p of proposals) {
+        const r = byId[p.id];
+        if (!r) continue;
+        p.advisory = {
+          lane: r.lane, urgency: r.urgency, urgency_label: r.urgency_label,
+          actionable_yes_prob: r.actionable_yes_prob,
+          confidence: "uncalibrated (CR-0023/CR-0025)", source_at: tri.at,
+        };
+        advisoryTriag.joined++;
+      }
+    }
+  }
 
   // ---- GATE: the evaluator IS the judge + evals (SkillClaw evaluate step) ----
   let judge = "unavailable", evals = "unavailable";
@@ -111,11 +156,12 @@ try {
   const counts = {};
   for (const d of DISPOSITIONS) counts[d] = proposals.filter((p) => p.disposition === d).length;
   const book = {
-    ok: true, at, since, agent: "pulse v1.0.0 (CR-0009, reef/SkillClaw loop pattern Rung 1, Z-48/Z-49)",
+    ok: true, at, since, agent: "pulse v1.1.0 (CR-0009 loop, Rung 1; CR-0028 consumes the laya advisory triage — Z-48/Z-49/Z-60)",
     dayLedger: { since, count: commits.length, commits },
     proposals, counts,
     gates: { judge, evals },
-    laws: { verifyOnly: true, noNetwork: true, autoApply: false, note: "application only via judged tier-B CR — the pulse proposes, the CR law disposes" },
+    advisoryTriag,
+    laws: { verifyOnly: true, noNetwork: true, autoApply: false, advisoryGates: false, note: "application only via judged tier-B CR — the pulse proposes, the CR law disposes; advisory triage hints ride along but never gate (CR-0028)" },
   };
   const md = [
     `# Daily Pulse — ${at}`,
@@ -124,11 +170,13 @@ try {
     `- **window:** since ${since} · **commits:** ${commits.length}`,
     `- **gates:** ${judge} · ${evals}`,
     ``,
-    `| # | id | disposition | action |`,
-    `|---|---|---|---|`,
-    ...proposals.map((p, i) => `| ${i + 1} | ${p.id} | ${p.disposition} | ${String(p.action).replace(/\|/g, "/").slice(0, 100)} |`),
+    `| # | id | disposition | advisory (lane/urgency) | action |`,
+    `|---|---|---|---|---|`,
+    ...proposals.map((p, i) => `| ${i + 1} | ${p.id} | ${p.disposition} | ${p.advisory ? `${p.advisory.lane || "—"} / ${p.advisory.urgency_label || "—"} (uncal.)` : "—"} | ${String(p.action).replace(/\|/g, "/").slice(0, 100)} |`),
     ``,
     ...DISPOSITIONS.map((d) => `- ${d}: ${counts[d]}`),
+    ``,
+    `- advisory triage: **${advisoryTriag.mode}** · joined ${advisoryTriag.joined} · ${advisoryTriag.note}`,
     ``,
   ].join("\n");
   fs.writeFileSync(path.join(AG, "pulse-book.json"), JSON.stringify(book, null, 2) + "\n");
