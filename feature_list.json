@@ -1,144 +1,154 @@
 {
-  "features": [
-    {
-      "id": "feat-001",
-      "name": "Autonomous economy engine",
-      "description": "Daily on-chain curation + self-votes + claims across steem/hive/blurt, keyless in Domain, seal opened only in-runner, receipts as proof",
-      "dependencies": [],
-      "status": "done",
-      "evidence": "economy-engine.yml + scripts/economy-engine.mjs; real runs 37009336549/37067532580 SUCCESS with chain txid read-back (cbb4bc69… block 110099406)"
-    },
-    {
-      "id": "feat-002",
-      "name": "Harness judge node (five subsystems)",
-      "description": "Fresh-context checker node auditing instructions/state/verification/scope/lifecycle + anchors, on a schedule, fail-soft",
-      "dependencies": [],
-      "status": "done",
-      "evidence": "agents/harness-audit.cjs → harness-audit.json/md; adopted from walkinglabs/learn-harness-engineering (Z-35), extended Task 19 (role→worker wiring + loop primitives)"
-    },
-    {
-      "id": "feat-003",
-      "name": "Books pulse (machine state layer)",
-      "description": "Live measurement books stamp themselves (at/updated) and stay fresh <48h; freshness audited by the judge node",
-      "dependencies": [
-        "feat-002"
-      ],
-      "status": "done",
-      "evidence": "9/9 live books exist; learning-ledger stamping fixed in Task 19 (measure-learn.cjs now stamps at/updated)"
-    },
-    {
-      "id": "feat-004",
-      "name": "Weave core anchor cadence",
-      "description": "Hourly anchor ping (sandbox-independent) + anchor-execute lines keep saos.weave.core.v1 on chain",
-      "dependencies": [],
-      "status": "done",
-      "evidence": "weave-anchor-ping.yml hourly + weave-anchor-lines.yml; core trx 9b377210393fdec1 2026-10-02T21:42Z"
-    },
-    {
-      "id": "feat-005",
-      "name": "Army role→worker wiring (audited)",
-      "description": "Every FILLED role in recruitment.json must name a worker artifact that exists on disk; the judge node measures the hands",
-      "dependencies": [
-        "feat-002"
-      ],
-      "status": "done",
-      "evidence": "harness-audit.cjs graph check 'every FILLED role names a reachable worker artifact' — Task 19"
-    },
-    {
-      "id": "feat-006",
-      "name": "LHE harness protocol adoption (this repo)",
-      "description": "walkinglabs/learn-harness-engineering minimal harness: AGENTS.md protocol + feature_list.json + progress.md + session-handoff.md + init.sh",
-      "dependencies": [
-        "feat-002",
-        "feat-003"
-      ],
-      "status": "done",
-      "evidence": "Task 19 — validator run on this repo post-adoption; scores recorded in the Task 19 worklog section"
-    },
-    {
-      "id": "feat-007",
-      "name": "Daily revenue > 1 cent (owner KPI)",
-      "description": "Realized chain income (curation + author + claims) maturing above $0.01/day, receipts-provable",
-      "dependencies": [
-        "feat-001"
-      ],
-      "status": "open",
-      "evidence": "v3 engine run-rate 0.02–0.06 SBD/day maturing over 7 days; needs days of receipts to show realized >1¢ — SP compounding + daily quality posts are the levers"
-    },
-    {
-      "id": "feat-008",
-      "name": "Role-prompt registry (prompts.chat adoption)",
-      "description": "Declarative role-voice registry in prompts.chat CSV schema (act,prompt,for_devs,type,contributor) + ${Var:default} binding + loader role-prompts.cjs; sovereignty: role behavior is versioned data, a fresh worker adopts a fleet role by loading one row",
-      "dependencies": [
-        "feat-002",
-        "feat-005"
-      ],
-      "status": "done",
-      "evidence": "ADOPTION LANDED VIA THE PARALLEL Z-37 CHARTER REGISTRY (superset): agents/role-registry.csv (act,file,ci,mission,signs,tier,books,owner,status — roles-as-data with enforcement) + sovereignty.md (tier A/B/C + CR flow) + harness-audit v1.2.0 sovereignty checks. My interim role-prompts.csv/cjs (prompts.chat raw schema + ${Var} loader) retired SUPERSEDED-BY; the loader pattern + FILLED-roles completeness idea live on in the charter registry checks."
-    },
-    {
-      "id": "feat-009",
-      "name": "Destructive-command guard (dcg adoption)",
-      "description": "Mechanical tier-C enforcement adopted from Dicklesworthstone/destructive_command_guard: banned shapes (force-push, reset --hard, clean -x, estate rm -rf, DROP, migrate reset) blocked pre-execution with doctrine reasons + safer tips; data-position context detection; heredoc scanning; STRICT mode for supply-chain; 13-case selftest wired into init.sh + harness-audit",
-      "dependencies": [
-        "feat-002",
-        "feat-008"
-      ],
-      "status": "done",
-      "evidence": "ADOPTION LANDED VIA THE PARALLEL Z-38 FLEET-NATIVE GUARD (superset): agents/command-guard.cjs (whitelist-first, DEFAULT-ALLOW, explain/scan/hook modes, decision ledger command-guard.json, evals E7-E9) + my init.sh battery driving it (DENY on force-push/reset --hard/estate rm -rf; allow on rebase law + data-position). My interim scripts/command-guard.sh retired SUPERSEDED-BY; the workflow shape-scan idea lives in their scan mode."
-    },
-    {
-      "id": "feat-010",
-      "name": "FATE-DEFENSE (Emergence World adoption)",
-      "description": "Owner directive: study what happened to world.emergence.ai (arXiv 2606.08367 platform + 2609.17320 stress-testing; 5+8 agent worlds, total collapses, injection/misinformation/memory-breach events, 'collapse has no warning shot') and engineer+prove the defenses. Delivered: (1) STASIS mechanical circuit breaker — economy engine obeys agents/STASIS.json BEFORE any seal/broadcast (STASIS-HALT healthy no-op, exit 0; selftest-proven both states, wired into init.sh fails-fast battery); (2) FWI scorecard agents/fleet-indicators.cjs — nine sovereign indicators (our AWI mirror) each COMPUTED from a named artifact (ANTI-GOODHART law), first verdict THRIVING 9/9 GROW; (3) three laws codified in FATE-DEFENSE.md: STASIS + PROVENANCE QUARANTINE (external content is data, never auto-doctrine) + ANTI-GOODHART (claim without artifact is not a value); (4) judge-node wiring: harness-audit v1.4.0 fate-defense check (31 PASS/0 WARN/0 FAIL) + eval E10 (10/10).",
-      "dependencies": [
-        "feat-001",
-        "feat-008",
-        "feat-009"
-      ],
-      "status": "done",
-      "evidence": "FATE-DEFENSE.md + agents/fleet-indicators.{cjs,json,md} + agents/STASIS.json + scripts/economy-engine.mjs stasis gate + harness-audit 31/0/0 + evals E10 10/10 + init.sh STASIS-HALT proof"
-    },
-    {
-      "id": "feat-011",
-      "name": "Skill library (claude-skills adoption, Task 20 residual closed)",
-      "description": "Owner directive lineage: Task 20 asked for a prompts.chat prompt library (recruitment roles / desk system / mini-services); Task 25 evaluated owner-pointed alirezarezvani/claude-skills (MIT, 27.3k stars) as the format backbone; Task 27 landed it. agents/skill-library/ = SKILL-AUTHORING-STANDARD.md adapted from upstream and house-hardened (Evidence Artifact mandatory per ANTI-GOODHART, tier declaration per SOVEREIGNTY LAW, no silent scope, renumbering doctrine, bilingual header) + THIRD-PARTY-NOTICES.md pinning mirror sha 19392f7a + 6 packages (fleet-push-protocol, fleet-desk-operator, recruitment-interviewer, mini-services-engineer, worker-onboarding, fleet-skill-author). Mechanical enforcement: agents/skill-library-gate.cjs v1.0.0 (zero-dep, require-safe, books skill-library.json/md) + harness-audit verification check (v1.11.0) + eval E19 (run-evals v1.9.0) + role-registry row + CR-0006 (tier B, PASS).",
-      "dependencies": [
-        "feat-008",
-        "feat-009"
-      ],
-      "status": "done",
-      "evidence": "agents/skill-library/{SKILL-AUTHORING-STANDARD.md,THIRD-PARTY-NOTICES.md,skills/*/SKILL.md x6} + agents/skill-library-gate.cjs GREEN 6/0 + agents/skill-library.{json,md} + harness-audit check + evals E19 + agents/role-registry.csv row + CR-0006 + /home/z/reference-mirrors/claude-skills @19392f7a"
-    },
-    {
-      "id": "feat-012",
-      "name": "Authority Map doctrine + strix security lineage (Task 29)",
-      "description": "Owner constitutional statement (2026-10-03) encoded: 'we have sovereignty — everything is subject to the sovereignty's decision; only for the wallet am I an authority.' Encoded as the Authority Map in fleet-desk-operator v1.1.0 (wallet=owner authority / everything else=sovereignty-decided / owner-held possessions=possession-gated, not authority-gated) + SKILL-AUTHORING-STANDARD.md tier-C redefinition (C = WALLET-OR-POSSESSION-LOCK, exists only for those two domains). Same wave adopts the usestrix/strix security lineage (Apache-2.0, 66.2k stars, eval Task 28): house package skills/security-strix-operator (authorization boundary: estate assets only; honest feasibility — no Docker in sandbox, cloud=wallet) + THIRD-PARTY-NOTICES.md section 3 + skill-library-gate.cjs v1.1.0 second lineage pin (strix sha 99c0711 + Apache-2.0 mechanically enforced) + eval E21 + judge v1.13.0 doctrine-anchor check + CR-0008 (tier B, PASS).",
-      "dependencies": [
-        "feat-011"
-      ],
-      "status": "done",
-      "evidence": "agents/skill-library/skills/desk-operator/SKILL.md (Authority Map, v1.1.0) + agents/skill-library/SKILL-AUTHORING-STANDARD.md (tier-C rewrite) + agents/skill-library/skills/security-strix-operator/SKILL.md + THIRD-PARTY-NOTICES.md section 3 + agents/skill-library-gate.cjs v1.1.0 GREEN 7/0 + agents/skill-library.{json,md} + evals E21 (run-evals v1.11.0, 21/21) + harness-audit v1.13.0 doctrine-anchor check + CR-0008 + /home/z/reference-mirrors/strix @99c0711"
-    },
-    {
-      "id": "feat-013",
-      "name": "Agentic-orchestration lineage: google/ax (Task 31)",
-      "description": "Owner directive 'תבחן את זה גם ויישם מה שניתן וראוי' (https://github.com/google/ax) executed as an evaluation + same-wave adoption under the Authority Map (wallet=owner, rest=sovereignty). google/ax = Google's open agentic orchestration runtime (Apache-2.0, Go, 12,921 stars, created 2026-03-30, push 2026-09-27; Task/Workspace/Model manifests on Agent Substrate over K8s). Feasibility booked honestly: control plane needs K8s cluster + Agent Substrate + ko + registry -> BLOCKED in this sandbox (no Docker/K8s) and any cluster = paid infra = wallet/possession domain (owner). Adopted at zero cost: house package skills/orchestration-ax-operator (feasibility table + doctrine-parallel table mapping AX mechanics to estate laws: immutability->append-only ledgers, up-front RFC1123 validation->PR-time gates, WorkspaceReady->Ready conditions->MEASURABLE-to-DASHBOARD, requests/limits->budget guards, suspend/resume->honest checkpoints, secretKey refs->PAT law, skills.registries->the skill library itself) + THIRD-PARTY-NOTICES.md section 4 + skill-library-gate.cjs v1.2.0 third lineage pin (ax sha ac23328 mechanically enforced) + evals E22 strip-restore + judge v1.14.0 dual-lineage doctrine anchor + CR-0010.",
-      "dependencies": [
-        "feat-012"
-      ],
-      "status": "done",
-      "evidence": "agents/skill-library/skills/orchestration-ax-operator/SKILL.md + THIRD-PARTY-NOTICES.md section 4 (sha ac23328, full API sha ac2332829f22360ff97b0ba34d94dd0dd782f17e) + agents/skill-library-gate.cjs v1.2.0 GREEN 8/0 + agents/skill-library.{json,md} + evals E22 (run-evals v1.12.0, 22/22) + harness-audit v1.14.0 doctrine anchor (strix+ax) + CR-0010 + /home/z/reference-mirrors/ax @ac23328"
-    },
-    {
-      "id": "feat-014",
-      "name": "Applied-AI pattern reference, consult-only (Task 32)",
-      "description": "Owner directive 'תראה זה יכול לעזור' (Sumanth077/Hands-On-AI-Engineering, 3,832 stars) executed as evaluation + consult-only adoption under the Authority Map. HONESTY FINDING: upstream claims MIT (badge + section) but LICENSE file is 404 / API null at mirror sha da0091d6 → treated as ALL RIGHTS RESERVED, zero-copy posture, ideas only. Crown finding: upstream's nl_data_analyst_agent implements Jev three-point decision review (input clarity; pre-execution relevance with runtime-bound authoritative inputs — the model under review cannot rewrite what is reviewed; post-answer grounding → unverified-draft flag) with the estate's own honesty rules as working code: fail-open WITH visible reviewer notes, reviewer-only (never grants authority), inconclusive ≠ blocking, approval denied → no retry. Adopted: house package skills/applied-ai-patterns-operator (Jev gate → laya-decision reviewer wiring per Task 30's candidate wave + pattern catalog mapped to estate lanes + feasibility table routing paid-API legs to the zero-marginal stack with the wallet stop) + THIRD-PARTY-NOTICES.md section 5 (license-mismatch finding + why no gate pin) + bare-blobless mirror @ da0091d6 (184K, disk-honest). Gate stays v1.2.0; evals 23/23; judge v1.14.0.",
-      "dependencies": [
-        "feat-013"
-      ],
-      "status": "done",
-      "evidence": "agents/skill-library/skills/applied-ai-patterns-operator/SKILL.md + THIRD-PARTY-NOTICES.md section 5 + CR-0011 + /home/z/reference-mirrors/hae-mirror.git @ da0091d6452e18dae9fd3119a194019f35306d27 (bare-blobless 184K) + LICENSE-404 proof (contents API 404, 2026-10-03) + gate GREEN 9/0 + evals 23/23 unique + judge 40/1/0"
-    }
-  ]
+ "features": [
+  {
+   "id": "feat-001",
+   "name": "Autonomous economy engine",
+   "description": "Daily on-chain curation + self-votes + claims across steem/hive/blurt, keyless in Domain, seal opened only in-runner, receipts as proof",
+   "dependencies": [],
+   "status": "done",
+   "evidence": "economy-engine.yml + scripts/economy-engine.mjs; real runs 37009336549/37067532580 SUCCESS with chain txid read-back (cbb4bc69… block 110099406)"
+  },
+  {
+   "id": "feat-002",
+   "name": "Harness judge node (five subsystems)",
+   "description": "Fresh-context checker node auditing instructions/state/verification/scope/lifecycle + anchors, on a schedule, fail-soft",
+   "dependencies": [],
+   "status": "done",
+   "evidence": "agents/harness-audit.cjs → harness-audit.json/md; adopted from walkinglabs/learn-harness-engineering (Z-35), extended Task 19 (role→worker wiring + loop primitives)"
+  },
+  {
+   "id": "feat-003",
+   "name": "Books pulse (machine state layer)",
+   "description": "Live measurement books stamp themselves (at/updated) and stay fresh <48h; freshness audited by the judge node",
+   "dependencies": [
+    "feat-002"
+   ],
+   "status": "done",
+   "evidence": "9/9 live books exist; learning-ledger stamping fixed in Task 19 (measure-learn.cjs now stamps at/updated)"
+  },
+  {
+   "id": "feat-004",
+   "name": "Weave core anchor cadence",
+   "description": "Hourly anchor ping (sandbox-independent) + anchor-execute lines keep saos.weave.core.v1 on chain",
+   "dependencies": [],
+   "status": "done",
+   "evidence": "weave-anchor-ping.yml hourly + weave-anchor-lines.yml; core trx 9b377210393fdec1 2026-10-02T21:42Z"
+  },
+  {
+   "id": "feat-005",
+   "name": "Army role→worker wiring (audited)",
+   "description": "Every FILLED role in recruitment.json must name a worker artifact that exists on disk; the judge node measures the hands",
+   "dependencies": [
+    "feat-002"
+   ],
+   "status": "done",
+   "evidence": "harness-audit.cjs graph check 'every FILLED role names a reachable worker artifact' — Task 19"
+  },
+  {
+   "id": "feat-006",
+   "name": "LHE harness protocol adoption (this repo)",
+   "description": "walkinglabs/learn-harness-engineering minimal harness: AGENTS.md protocol + feature_list.json + progress.md + session-handoff.md + init.sh",
+   "dependencies": [
+    "feat-002",
+    "feat-003"
+   ],
+   "status": "done",
+   "evidence": "Task 19 — validator run on this repo post-adoption; scores recorded in the Task 19 worklog section"
+  },
+  {
+   "id": "feat-007",
+   "name": "Daily revenue > 1 cent (owner KPI)",
+   "description": "Realized chain income (curation + author + claims) maturing above $0.01/day, receipts-provable",
+   "dependencies": [
+    "feat-001"
+   ],
+   "status": "open",
+   "evidence": "v3 engine run-rate 0.02–0.06 SBD/day maturing over 7 days; needs days of receipts to show realized >1¢ — SP compounding + daily quality posts are the levers"
+  },
+  {
+   "id": "feat-008",
+   "name": "Role-prompt registry (prompts.chat adoption)",
+   "description": "Declarative role-voice registry in prompts.chat CSV schema (act,prompt,for_devs,type,contributor) + ${Var:default} binding + loader role-prompts.cjs; sovereignty: role behavior is versioned data, a fresh worker adopts a fleet role by loading one row",
+   "dependencies": [
+    "feat-002",
+    "feat-005"
+   ],
+   "status": "done",
+   "evidence": "ADOPTION LANDED VIA THE PARALLEL Z-37 CHARTER REGISTRY (superset): agents/role-registry.csv (act,file,ci,mission,signs,tier,books,owner,status — roles-as-data with enforcement) + sovereignty.md (tier A/B/C + CR flow) + harness-audit v1.2.0 sovereignty checks. My interim role-prompts.csv/cjs (prompts.chat raw schema + ${Var} loader) retired SUPERSEDED-BY; the loader pattern + FILLED-roles completeness idea live on in the charter registry checks."
+  },
+  {
+   "id": "feat-009",
+   "name": "Destructive-command guard (dcg adoption)",
+   "description": "Mechanical tier-C enforcement adopted from Dicklesworthstone/destructive_command_guard: banned shapes (force-push, reset --hard, clean -x, estate rm -rf, DROP, migrate reset) blocked pre-execution with doctrine reasons + safer tips; data-position context detection; heredoc scanning; STRICT mode for supply-chain; 13-case selftest wired into init.sh + harness-audit",
+   "dependencies": [
+    "feat-002",
+    "feat-008"
+   ],
+   "status": "done",
+   "evidence": "ADOPTION LANDED VIA THE PARALLEL Z-38 FLEET-NATIVE GUARD (superset): agents/command-guard.cjs (whitelist-first, DEFAULT-ALLOW, explain/scan/hook modes, decision ledger command-guard.json, evals E7-E9) + my init.sh battery driving it (DENY on force-push/reset --hard/estate rm -rf; allow on rebase law + data-position). My interim scripts/command-guard.sh retired SUPERSEDED-BY; the workflow shape-scan idea lives in their scan mode."
+  },
+  {
+   "id": "feat-010",
+   "name": "FATE-DEFENSE (Emergence World adoption)",
+   "description": "Owner directive: study what happened to world.emergence.ai (arXiv 2606.08367 platform + 2609.17320 stress-testing; 5+8 agent worlds, total collapses, injection/misinformation/memory-breach events, 'collapse has no warning shot') and engineer+prove the defenses. Delivered: (1) STASIS mechanical circuit breaker — economy engine obeys agents/STASIS.json BEFORE any seal/broadcast (STASIS-HALT healthy no-op, exit 0; selftest-proven both states, wired into init.sh fails-fast battery); (2) FWI scorecard agents/fleet-indicators.cjs — nine sovereign indicators (our AWI mirror) each COMPUTED from a named artifact (ANTI-GOODHART law), first verdict THRIVING 9/9 GROW; (3) three laws codified in FATE-DEFENSE.md: STASIS + PROVENANCE QUARANTINE (external content is data, never auto-doctrine) + ANTI-GOODHART (claim without artifact is not a value); (4) judge-node wiring: harness-audit v1.4.0 fate-defense check (31 PASS/0 WARN/0 FAIL) + eval E10 (10/10).",
+   "dependencies": [
+    "feat-001",
+    "feat-008",
+    "feat-009"
+   ],
+   "status": "done",
+   "evidence": "FATE-DEFENSE.md + agents/fleet-indicators.{cjs,json,md} + agents/STASIS.json + scripts/economy-engine.mjs stasis gate + harness-audit 31/0/0 + evals E10 10/10 + init.sh STASIS-HALT proof"
+  },
+  {
+   "id": "feat-011",
+   "name": "Skill library (claude-skills adoption, Task 20 residual closed)",
+   "description": "Owner directive lineage: Task 20 asked for a prompts.chat prompt library (recruitment roles / desk system / mini-services); Task 25 evaluated owner-pointed alirezarezvani/claude-skills (MIT, 27.3k stars) as the format backbone; Task 27 landed it. agents/skill-library/ = SKILL-AUTHORING-STANDARD.md adapted from upstream and house-hardened (Evidence Artifact mandatory per ANTI-GOODHART, tier declaration per SOVEREIGNTY LAW, no silent scope, renumbering doctrine, bilingual header) + THIRD-PARTY-NOTICES.md pinning mirror sha 19392f7a + 6 packages (fleet-push-protocol, fleet-desk-operator, recruitment-interviewer, mini-services-engineer, worker-onboarding, fleet-skill-author). Mechanical enforcement: agents/skill-library-gate.cjs v1.0.0 (zero-dep, require-safe, books skill-library.json/md) + harness-audit verification check (v1.11.0) + eval E19 (run-evals v1.9.0) + role-registry row + CR-0006 (tier B, PASS).",
+   "dependencies": [
+    "feat-008",
+    "feat-009"
+   ],
+   "status": "done",
+   "evidence": "agents/skill-library/{SKILL-AUTHORING-STANDARD.md,THIRD-PARTY-NOTICES.md,skills/*/SKILL.md x6} + agents/skill-library-gate.cjs GREEN 6/0 + agents/skill-library.{json,md} + harness-audit check + evals E19 + agents/role-registry.csv row + CR-0006 + /home/z/reference-mirrors/claude-skills @19392f7a"
+  },
+  {
+   "id": "feat-012",
+   "name": "Authority Map doctrine + strix security lineage (Task 29)",
+   "description": "Owner constitutional statement (2026-10-03) encoded: 'we have sovereignty — everything is subject to the sovereignty's decision; only for the wallet am I an authority.' Encoded as the Authority Map in fleet-desk-operator v1.1.0 (wallet=owner authority / everything else=sovereignty-decided / owner-held possessions=possession-gated, not authority-gated) + SKILL-AUTHORING-STANDARD.md tier-C redefinition (C = WALLET-OR-POSSESSION-LOCK, exists only for those two domains). Same wave adopts the usestrix/strix security lineage (Apache-2.0, 66.2k stars, eval Task 28): house package skills/security-strix-operator (authorization boundary: estate assets only; honest feasibility — no Docker in sandbox, cloud=wallet) + THIRD-PARTY-NOTICES.md section 3 + skill-library-gate.cjs v1.1.0 second lineage pin (strix sha 99c0711 + Apache-2.0 mechanically enforced) + eval E21 + judge v1.13.0 doctrine-anchor check + CR-0008 (tier B, PASS).",
+   "dependencies": [
+    "feat-011"
+   ],
+   "status": "done",
+   "evidence": "agents/skill-library/skills/desk-operator/SKILL.md (Authority Map, v1.1.0) + agents/skill-library/SKILL-AUTHORING-STANDARD.md (tier-C rewrite) + agents/skill-library/skills/security-strix-operator/SKILL.md + THIRD-PARTY-NOTICES.md section 3 + agents/skill-library-gate.cjs v1.1.0 GREEN 7/0 + agents/skill-library.{json,md} + evals E21 (run-evals v1.11.0, 21/21) + harness-audit v1.13.0 doctrine-anchor check + CR-0008 + /home/z/reference-mirrors/strix @99c0711"
+  },
+  {
+   "id": "feat-013",
+   "name": "Agentic-orchestration lineage: google/ax (Task 31)",
+   "description": "Owner directive 'תבחן את זה גם ויישם מה שניתן וראוי' (https://github.com/google/ax) executed as an evaluation + same-wave adoption under the Authority Map (wallet=owner, rest=sovereignty). google/ax = Google's open agentic orchestration runtime (Apache-2.0, Go, 12,921 stars, created 2026-03-30, push 2026-09-27; Task/Workspace/Model manifests on Agent Substrate over K8s). Feasibility booked honestly: control plane needs K8s cluster + Agent Substrate + ko + registry -> BLOCKED in this sandbox (no Docker/K8s) and any cluster = paid infra = wallet/possession domain (owner). Adopted at zero cost: house package skills/orchestration-ax-operator (feasibility table + doctrine-parallel table mapping AX mechanics to estate laws: immutability->append-only ledgers, up-front RFC1123 validation->PR-time gates, WorkspaceReady->Ready conditions->MEASURABLE-to-DASHBOARD, requests/limits->budget guards, suspend/resume->honest checkpoints, secretKey refs->PAT law, skills.registries->the skill library itself) + THIRD-PARTY-NOTICES.md section 4 + skill-library-gate.cjs v1.2.0 third lineage pin (ax sha ac23328 mechanically enforced) + evals E22 strip-restore + judge v1.14.0 dual-lineage doctrine anchor + CR-0010.",
+   "dependencies": [
+    "feat-012"
+   ],
+   "status": "done",
+   "evidence": "agents/skill-library/skills/orchestration-ax-operator/SKILL.md + THIRD-PARTY-NOTICES.md section 4 (sha ac23328, full API sha ac2332829f22360ff97b0ba34d94dd0dd782f17e) + agents/skill-library-gate.cjs v1.2.0 GREEN 8/0 + agents/skill-library.{json,md} + evals E22 (run-evals v1.12.0, 22/22) + harness-audit v1.14.0 doctrine anchor (strix+ax) + CR-0010 + /home/z/reference-mirrors/ax @ac23328"
+  },
+  {
+   "id": "feat-014",
+   "name": "Applied-AI pattern reference, consult-only (Task 32)",
+   "description": "Owner directive 'תראה זה יכול לעזור' (Sumanth077/Hands-On-AI-Engineering, 3,832 stars) executed as evaluation + consult-only adoption under the Authority Map. HONESTY FINDING: upstream claims MIT (badge + section) but LICENSE file is 404 / API null at mirror sha da0091d6 → treated as ALL RIGHTS RESERVED, zero-copy posture, ideas only. Crown finding: upstream's nl_data_analyst_agent implements Jev three-point decision review (input clarity; pre-execution relevance with runtime-bound authoritative inputs — the model under review cannot rewrite what is reviewed; post-answer grounding → unverified-draft flag) with the estate's own honesty rules as working code: fail-open WITH visible reviewer notes, reviewer-only (never grants authority), inconclusive ≠ blocking, approval denied → no retry. Adopted: house package skills/applied-ai-patterns-operator (Jev gate → laya-decision reviewer wiring per Task 30's candidate wave + pattern catalog mapped to estate lanes + feasibility table routing paid-API legs to the zero-marginal stack with the wallet stop) + THIRD-PARTY-NOTICES.md section 5 (license-mismatch finding + why no gate pin) + bare-blobless mirror @ da0091d6 (184K, disk-honest). Gate stays v1.2.0; evals 23/23; judge v1.14.0.",
+   "dependencies": [
+    "feat-013"
+   ],
+   "status": "done",
+   "evidence": "agents/skill-library/skills/applied-ai-patterns-operator/SKILL.md + THIRD-PARTY-NOTICES.md section 5 + CR-0011 + /home/z/reference-mirrors/hae-mirror.git @ da0091d6452e18dae9fd3119a194019f35306d27 (bare-blobless 184K) + LICENSE-404 proof (contents API 404, 2026-10-03) + gate GREEN 9/0 + evals 23/23 unique + judge 40/1/0"
+  },
+  {
+   "id": "feat-015",
+   "name": "Minimal-agent doctrine lineage: SWE-agent/mini-swe-agent (Task 33)",
+   "description": "Owner directive 'תראה מה עם זה' (https://github.com/swe-agent/mini-swe-agent, 8,165 stars) executed as evaluation + same-wave adoption under the Authority Map. MIT verified IN-FILE at mirror sha 04d809c (Copyright (c) 2025 Kilian A. Lieret and Carlos E. Jimenez) — full pin ceremony unlike Task 32's consult-only. Adopted doctrine as reference in house package #10 swe-mini-operator: bash-as-the-only-tool, stateless per-action execution (process-group kill on timeout), linear append-only history (trajectory == messages), exceptions-as-control-flow carrying messages (never swallowed), hard step/cost/wall-time limits as first-class config (upstream default cost_limit=3.0), format-error circuit breaker with billed-cost honesty, StrictUndefined templates, explicit submit signal, save-every-step checkpoints, AGENTS.md test law (no unasked mocking; every test targets a failure point) — third-party validation of ANTI-GOODHART. NOT taken: upstream runtime (litellm paid keys = wallet) and containerized env legs = wallet/possession. Headline metrics booked as upstream claims.",
+   "dependencies": [
+    "feat-014"
+   ],
+   "status": "done",
+   "evidence": "CR-0012 PASS; mirror /home/z/reference-mirrors/mini-swe-agent @ 04d809ceab9df28f9adaed044884180159172930; skill-library-gate.cjs v1.3.0 fourth lineage pin GREEN (10 packages / 0 offenders); evals v1.13.0 E24 strip-restore; harness-audit v1.15.0 quad-lineage doctrine anchor; THIRD-PARTY-NOTICES.md §6 MIT attribution; init.sh DOMAIN-INIT-OK"
+  }
+ ]
 }
