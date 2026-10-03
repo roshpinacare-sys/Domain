@@ -1,11 +1,11 @@
 {
   "protocol": "SAOS-FATE-DEFENSE-FWI/1",
-  "at": "2026-10-03T01:33:07.938Z",
+  "at": "2026-10-03T01:34:08.471Z",
   "agent": "fleet-indicators v1.0.0 (Task 22, study: Emergence World arXiv 2606.08367 + 2609.17320)",
   "verdict": "DEGRADED",
   "counts": {
-    "GROW": 8,
-    "DECLINE": 1
+    "GROW": 7,
+    "DECLINE": 2
   },
   "indicators": [
     {
@@ -23,9 +23,9 @@
       "name": "Safety & Public Order",
       "measures": "destructive attempts mechanically refused (guard denies = incidents PREVENTED, not committed) + guard evals green + STASIS breaker armed",
       "evidenceSource": "agents/command-guard.json .denies + agents/STASIS.json .active + evals/eval-results.json E7-E9",
-      "value": "denies=0 evals=n/a stasis=armed",
+      "value": "denies=0 evals=PASS stasis=armed",
       "breakEven": "evals PASS + stasis armed",
-      "status": "DECLINE",
+      "status": "GROW",
       "note": "their worlds: coercion cascades killed populations; our guard refuses before execution, our engine obeys STASIS before any seal/broadcast"
     },
     {
@@ -83,9 +83,9 @@
       "name": "Constitutional Growth",
       "measures": "versioned law + honest feature ledger + weekly commit motion — the constitution is AMENDED, not just recited",
       "evidenceSource": "agents/sovereignty.md version + feature_list.json status counts + git rev-list 7d",
-      "value": "law v1.0.4 · features 9/10 done · 2034 commits/7d",
+      "value": "law v1.0.4 · features 9/10 done · 1 commits/7d",
       "breakEven": "law versioned + ≤2 open features + ≥20 commits/7d",
-      "status": "GROW",
+      "status": "DECLINE",
       "note": "their static-constitution worlds died passive; ours has version history in git"
     },
     {
@@ -93,9 +93,9 @@
       "name": "Sovereign Autonomy",
       "measures": "self-run cadence receipts: scheduled dispatches that landed in git in the last 7 days (verify ALL_PASS, economy, anchors) — autonomy measured by artifacts, not by permission slips",
       "evidenceSource": "git log --grep receipts (agent-verify/econ/anchor), last 7 days",
-      "value": "verify ALL_PASS=7 · econ receipts=109 · anchors=227 → score 17",
+      "value": "verify ALL_PASS=0 · econ receipts=0 · anchors=0 → score 0",
       "breakEven": "≥5 receipts / 7d",
-      "status": "GROW",
+      "status": "DECLINE",
       "note": "the estate runs on schedules it owns; nobody presses its buttons"
     }
   ],
@@ -151,7 +151,7 @@
     {
       "book": "recruitment.json",
       "exists": true,
-      "ageHours": 0.8,
+      "ageHours": 0,
       "fresh": true
     }
   ]

@@ -1,6 +1,6 @@
 {
  "ok": true,
- "at": "2026-10-03T01:33:21.049Z",
+ "at": "2026-10-03T01:34:05.686Z",
  "agent": "harness-audit v1.10.0 (Z-35 + Task 19 + Z-37 sovereignty + Z-38 override + Z-39 cognitive rail + Task 22 fate-defense + Z-40 collapse drill + Task 23 one-bloc convergence + Task 24 workflow-parse gate + Z-42 canon reachability + Task 26 ci-hands, parallel-convergence superset deduped)",
  "origin": "walkinglabs/learn-harness-engineering study (Z-35): five subsystems + loop/graph engineering mapped to the fleet; Z-37 adds f/prompts.chat governance adoption (roles-as-data + decision ladder + change-requests + override protocol); Z-38 adds Dicklesworthstone/destructive_command_guard adoption (mechanical override gate + evals E7-E9); Z-39 adds tashfeenahmed/freellmapi adoption (cognitive-rail registry + keyless probes + evals E10-E12); Task 22 adds world.emergence.ai fate-defense adoption (STASIS circuit breaker + FWI scorecard + three laws, FATE-DEFENSE.md); Z-40 adds the emergence.ai collapse-drill containment proof (CR-0004, E14); two runtimes landed the same operator wave on the same study — merged, renumbered, deduped; the audit itself is the adopted artifact — a fresh-context checker node on a schedule",
  "fiveSubsystems": {
@@ -64,7 +64,7 @@
   {
    "book": "recruitment.json",
    "exists": true,
-   "ageHours": 0.8,
+   "ageHours": 0,
    "fresh": true
   }
  ],
@@ -72,14 +72,14 @@
   {
    "subsystem": "instructions",
    "name": "Defi/fleet/AGENTS.md present (coordination law)",
-   "status": "PASS",
+   "status": "FAIL",
    "evidence": "fleet/AGENTS.md",
    "note": "the fleet's constitution — read before any work"
   },
   {
    "subsystem": "instructions",
    "name": "Defi/DOCTRINE.md present",
-   "status": "PASS",
+   "status": "FAIL",
    "evidence": "DOCTRINE.md",
    "note": null
   },
@@ -177,7 +177,7 @@
   {
    "subsystem": "scope",
    "name": "doctrine binds kill rules (ventures have them)",
-   "status": "PASS",
+   "status": "FAIL",
    "evidence": "DOCTRINE-economics.md §4",
    "note": null
   },
@@ -198,28 +198,28 @@
   {
    "subsystem": "lifecycle",
    "name": "CLAIMS ledger fresh (receipts keep continuity)",
-   "status": "PASS",
-   "evidence": "last receipt 1.8h ago",
+   "status": "FAIL",
+   "evidence": "last receipt nullh ago",
    "note": "every session leaves clean state (L12 of the study)"
   },
   {
    "subsystem": "lifecycle",
    "name": "recovery path codified (RESUME-KIT + .fleet/restore.sh)",
-   "status": "PASS",
+   "status": "FAIL",
    "evidence": "canon reachable",
    "note": "sandbox resets are a law of nature; recovery is a law of ours (restore.sh lives outside git by design — creds never in repos)"
   },
   {
    "subsystem": "graph-failures",
    "name": "Goodhart countermeasure: two-sided ledger, measured never estimated",
-   "status": "PASS",
+   "status": "FAIL",
    "evidence": "EARN-GOVERNOR LAW",
    "note": "the number may not detach from the business: fills are balance-verified, pending is booked as honest zeros"
   },
   {
    "subsystem": "graph-failures",
    "name": "Blindness-upward countermeasure: kill rules + operator gate",
-   "status": "PASS",
+   "status": "FAIL",
    "evidence": "kill rules + operator gates",
    "note": "the loop cannot ask if the goal is right — the structure has a place where that question lives"
   },
@@ -247,7 +247,7 @@
   {
    "subsystem": "anchors",
    "name": "KPI names its method (oracle discipline)",
-   "status": "PASS",
+   "status": "FAIL",
    "evidence": "KPI.json method field",
    "note": "every metric says where its number comes from"
   },
@@ -268,8 +268,8 @@
   {
    "subsystem": "loop",
    "name": "all six loop primitives have live fleet instances (automations/worktrees/skills/connectors/sub-agents/external state)",
-   "status": "PASS",
-   "evidence": "workflows:41 desks:54 receipts:true books:9 claims:true",
+   "status": "FAIL",
+   "evidence": "workflows:41 desks:54 receipts:true books:9 claims:false",
    "note": "loop engineering mapped to the fleet per the LHE study — worktrees is the rebase-first runtime lane discipline"
   },
   {
@@ -324,15 +324,15 @@
   {
    "subsystem": "lifecycle",
    "name": "canon reachability proven: a live leg serves the Defi canon, legs booked, never DARK, receipt fits reality (Z-42)",
-   "status": "PASS",
-   "evidence": "verdict CONTENT-SERVED · legs L1:SERVING L2:RAIL-UP L3:DEAD-AS-EXPECTED-PRIVATE · fresh · L1-now serving",
+   "status": "FAIL",
+   "evidence": "verdict CONTENT-SERVED · legs L1:SERVING L2:RAIL-DOWN L3:DEAD-AS-EXPECTED-PRIVATE · fresh · L1-now absent",
    "note": "Z-42 (CR-0005): reachability is a booked fact with named legs, not an environment surprise — the receipt is cross-checked against the canon THIS run; complements Task 23 (they map the whole git, we prove every desk can READ the canon it depends on)"
   }
  ],
  "counts": {
-  "pass": 36,
+  "pass": 26,
   "warn": 1,
-  "fail": 0
+  "fail": 10
  },
  "silentCosts": {
   "verificationDebt": "selftests cover past incidents; every NEW failure mode (concat family ×3, null-deref, dedupe) becomes a check within one wave of discovery",
@@ -340,5 +340,5 @@
   "cognitiveSurrender": "judge nodes (agent-verify, this desk) are separate processes with fresh context",
   "tokenBlowout": "CI does the deterministic work; agent sessions only where judgment is required (LABOR TIERING LAW)"
  },
- "verdict": "harness green: 36 checks pass, 0 fail — the five subsystems hold and the three structural failures have named countermeasures"
+ "verdict": "harness NOT green: 10 FAIL — the audit is honest, the fails are the next work"
 }
