@@ -1,6 +1,6 @@
 # Cross-Layer Convergence Pass — the fleet's grid/market stack, four layers, one audit (CR-0037)
 
-_cross-layer desk (Rung 12) · 2026-10-03T18:21:20.350Z · estate: /home/z/git-audit_
+_cross-layer desk (Rung 12) · 2026-10-03T19:05:09.380Z · estate: /home/z/git-audit_
 
 **verdict: CROSS-LAYER-CONVERGENT — 6/7 PASS, 1 DRIFT, 0 FAIL · 2 findings**
 
@@ -17,8 +17,8 @@ _cross-layer desk (Rung 12) · 2026-10-03T18:21:20.350Z · estate: /home/z/git-a
 - _measured: [{"layer":"L0 market-grid (Domain)","found":true,"readable":true,"expect":"previews stamped owner-gated, never broadcast"},{"layer":"L1 grid-beat (saos-dex)","found":true,"readable":true,"expect":"honest disarm without WIF + maker-only (never crosses the book)"},{"layer":"L2 he_ladder (steem)","foun_
 
 ## C4 · ledger discipline parity (append-only books in every layer) — PASS
-- L0 paper ledger 60 rows + history 2 rows (labeled, never laundered into realized) · L1 grid-ledger v2 73 orders / 43 fills (statused open|filled|cancelled) · L2 he_ladder result {orders,fills,skip} written per run — all three books are append-only and status-labeled
-- _measured: {"paperRows":60,"historyRows":2,"dexLedgerVersion":2,"dexOrders":73,"dexFills":43}_
+- L0 paper ledger 110 rows + history 5 rows (labeled, never laundered into realized) · L1 grid-ledger v2 73 orders / 43 fills (statused open|filled|cancelled) · L2 he_ladder result {orders,fills,skip} written per run — all three books are append-only and status-labeled
+- _measured: {"paperRows":110,"historyRows":5,"dexLedgerVersion":2,"dexOrders":73,"dexFills":43}_
 
 ## C5 · platform contract receipt (static, solc-free) — PASS
 - SAOSExchange.sol: FEE_BPS=20, POT_SHARE_BPS=10, SWAP_CAP_BPS=500 (max 5% of output reserve per swap) · SAOSLedger.sol zero-fee rail marker=true, 8 events · 5 test contracts, 78 function-test surface (static count — the forge run remains the platform's own CI receipt)
@@ -37,9 +37,9 @@ _cross-layer desk (Rung 12) · 2026-10-03T18:21:20.350Z · estate: /home/z/git-a
 2. MIGRATION LAW measured: market-grid's spacing floor (40bps round-trip) UNDER-COVERS even the MARGINAL fee-only DEX round trip (60bps at 30bps/swap) — measured 90bps at 0.1%-of-depth and 445bps at 1% (price impact dominates with size; integer-floor x·y=k, real reserves fed back). The floor is honest for the CHAINS (internal Hive/Steem markets charge zero trade fee) but any market-grid->DEX bridge must raise spacing to >= 60bps + impact at its rung size, or route maker-only (book orders pay no AMM fee). Booked as the cross-layer migration law, not a bug.
 
 ## Receipts (artifact hashes)
-- marketGrid: sha256:4217beec9eb91dae (13762B)
-- paperLedger: sha256:be78745fba8e9f56 (11453B)
-- history: sha256:55919908eff267e1 (720B)
+- marketGrid: sha256:7b9d8bcdbb6541b8 (15089B)
+- paperLedger: sha256:7c5cf4dcb140f968 (21007B)
+- history: sha256:7e0e9b84240f4587 (1701B)
 - kernel: sha256:97e5c4a719ddfd0a (25474B)
 - amm: sha256:91d876f699e18a05 (5961B)
 - mm: sha256:3fee8d551f037e4e (19744B)
