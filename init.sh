@@ -41,6 +41,15 @@ echo "  guard battery ok (DENY on destruction, allow on law+data)"
 
 echo "[domain-init] judge node (fail-soft, refreshes the audit book)"
 node agents/fleet-indicators.cjs || true   # fate-defense FWI scorecard (Task 22) — fail-soft, refreshes the book
+# CR-0017 (tier B PASS, Task 37): token-mode for the one-bloc lane — the
+# credential is read into the environment ONLY, never printed, never
+# committed; keyless-first preserved (token is the retry leg one-bloc
+# already implements). Rollback = delete this if-block (judge returns to
+# the standing keyless-reach WARN).
+if [ -f /home/z/my-project/upload/pat.env ]; then
+  ONE_BLOC_TOKEN="$(tr -d '\n\r ' < /home/z/my-project/upload/pat.env)"
+  export ONE_BLOC_TOKEN
+fi
 node agents/one-bloc.cjs || true           # one-bloc whole-git convergence map (Task 23) — keyless-first, env-token fallback, fail-soft
 if [ -d "${DEFU_DIR:-../Defi}" ]; then
   node agents/harness-audit.cjs || true
