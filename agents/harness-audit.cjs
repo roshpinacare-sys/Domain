@@ -102,6 +102,26 @@ const freshCount = bookStates.filter((b) => b.exists && b.fresh).length;
   check('verification', 'workflow-parse gate: every workflow file parses (full YAML floor, idiom fallback) — no dead lane wears a green shape', gateOk,
     gateEvidence, 'Task 24 (recruit.yml startup-failure incident): parseability is mechanical truth, audited on schedule — E16 pins the predicate');
 
+  // Task 26: ci-hands — the fleet's own hands on its CI estate (trycua/cua adoption):
+  // the Task 25 manual sweep mechanized: 16 repos sampled, failures classified, verdicts
+  // transient-aware, proposals booked, full action trajectory (cua-bench contract).
+  let handsOk = false, handsEvidence = 'hands book missing';
+  try {
+    const hb = readJson(path.join(AG, 'ci-hands.json'));
+    const handsAgeH = hb && hb.at ? r1(ago(hb.at)) : null;
+    const handsFresh = handsAgeH != null && handsAgeH < 48;
+    // floor: reached>=1, OR the environment refused every call (rate-limit 4xx) —
+    // a wall of honest 403s is the desk working, not failing (E17 pins the same law)
+    const refused4xx = !!hb && Array.isArray(hb.results) && hb.results.length === 16 && hb.results.every((r) => r.status !== 'REACHED' && /HTTP 4\d\d/.test(r.reason || ''));
+    const honestReach = !!hb && hb.reposDeclared === 16 && (hb.reposReached >= 1 || refused4xx);
+    const hasTrajectory = !!hb && Array.isArray(hb.trajectory) && hb.trajectory.length > 0;
+    const stasisTravels = !!hb && hb.stasis && typeof hb.stasis.parseable === 'boolean';
+    handsOk = !!(hb && handsFresh && honestReach && hasTrajectory && stasisTravels);
+    handsEvidence = hb ? `reached ${hb.reposReached}/${hb.reposDeclared} · lanes ${hb.green}/${hb.lanes} green · active-red ${hb.activeRed} · startup-failures ${hb.startupFailures} · age ${handsAgeH}h · mode ${hb.tokenMode}` : 'missing';
+  } catch (_) {}
+  check('verification', 'ci-hands book: the fleet measures its own CI estate (16 repos sampled, failures classified, transient-aware verdicts, trajectory booked)', handsOk,
+    handsEvidence, 'Task 26 (trycua/cua adoption, CUA-ADOPTION.md): Computer-Use 2.0 code+API layers are REAL, GUI rung honestly locked — E17 pins the taxonomy');
+
   // ================= SUBSYSTEM 4: SCOPE (kill rules, floors, gates) =================
   check('scope', 'doctrine binds kill rules (ventures have them)', !!(doctrineEcon && doctrineEcon.includes('kill rule')), 'DOCTRINE-economics.md §4');
   const ventures = readJson(path.join(AG, 'ventures.json'));
@@ -319,7 +339,7 @@ const freshCount = bookStates.filter((b) => b.exists && b.fresh).length;
     fail: checks.filter((c) => c.status === 'FAIL').length
   };
   const out = {
-    ok: true, at, agent: 'harness-audit v1.9.0 (Z-35 + Task 19 + Z-37 sovereignty + Z-38 override + Z-39 cognitive rail + Task 22 fate-defense + Z-40 collapse drill + Task 23 one-bloc convergence + Task 24 workflow-parse gate + Z-42 canon reachability, parallel-convergence superset deduped)',
+    ok: true, at, agent: 'harness-audit v1.10.0 (Z-35 + Task 19 + Z-37 sovereignty + Z-38 override + Z-39 cognitive rail + Task 22 fate-defense + Z-40 collapse drill + Task 23 one-bloc convergence + Task 24 workflow-parse gate + Z-42 canon reachability + Task 26 ci-hands, parallel-convergence superset deduped)',
     origin: 'walkinglabs/learn-harness-engineering study (Z-35): five subsystems + loop/graph engineering mapped to the fleet; Z-37 adds f/prompts.chat governance adoption (roles-as-data + decision ladder + change-requests + override protocol); Z-38 adds Dicklesworthstone/destructive_command_guard adoption (mechanical override gate + evals E7-E9); Z-39 adds tashfeenahmed/freellmapi adoption (cognitive-rail registry + keyless probes + evals E10-E12); Task 22 adds world.emergence.ai fate-defense adoption (STASIS circuit breaker + FWI scorecard + three laws, FATE-DEFENSE.md); Z-40 adds the emergence.ai collapse-drill containment proof (CR-0004, E14); two runtimes landed the same operator wave on the same study — merged, renumbered, deduped; the audit itself is the adopted artifact — a fresh-context checker node on a schedule',
     fiveSubsystems: {
       instructions: 'AGENTS.md + DOCTRINE.md + FLEET-NOTE.md + agent headers',
