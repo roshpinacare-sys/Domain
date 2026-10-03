@@ -2,7 +2,7 @@
 
 _one-bloc v1.0.1 (Task 23 convergence — owner directive "מקשה אחת"; binds BLOC-STATE + SOVEREIGN-INDEX + FATE-DEFENSE into one machine map; keyless-first + env-token fallback, stderr redacted)_
 
-Measured: **2026-10-03T17:36:56.381Z** · Verdict: **ONE-BLOC** · REACHED 16/16 (keyless 2 + token 14) · AUTH-WALL 0 · UNKNOWN 0 · local-sync 1/2
+Measured: **2026-10-03T17:40:24.327Z** · Verdict: **ONE-BLOC** · REACHED 16/16 (keyless 2 + token 14) · AUTH-WALL 0 · UNKNOWN 0 · local-sync 1/2
 
 | ריפו | תפקיד | origin/main | מצב | דרך | סנכרון-מקומי |
 |---|---|---|---|---|---|

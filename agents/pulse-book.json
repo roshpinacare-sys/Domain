@@ -1,12 +1,33 @@
 {
   "ok": true,
-  "at": "2026-10-03T17:36:53.068Z",
-  "since": "2026-10-03T17:06:42.324Z",
-  "agent": "pulse v1.1.0 (CR-0009 loop, Rung 1; CR-0028 consumes the laya advisory triage — Z-48/Z-49/Z-60)",
+  "at": "2026-10-03T17:40:20.950Z",
+  "since": "2026-10-02T16:40:20.950Z",
+  "windowSince": "2026-10-02T16:40:20.950Z",
+  "agent": "pulse v1.2.0 (CR-0009 loop, Rung 1; CR-0028 consumes the laya advisory triage; CR-0033 consumes the scheduled evolution-window evidence — Z-48/Z-49/Z-60/Z-62)",
   "dayLedger": {
-    "since": "2026-10-03T17:06:42.324Z",
-    "count": 2,
+    "since": "2026-10-02T16:40:20.950Z",
+    "count": 40,
     "commits": [
+      {
+        "sha": "0ab691a",
+        "subject": "CR-0033 -> CR-0034 renumber (EIGHTH collision, later-mover law): sibling b53f741 renumbered its scheduled-evolution-windows desk to CR-0033 while this lane's market-grid landing was in flight — this lane is the later mover, renumbers; git mv + id + renumber_note + feat-028 references; zero content changes; their feat-031 exists only in their commit message (the #6 precedent) — file ledger contiguous, no feat conflict; the two landings COMPOSE (their scheduler respects this lane's :3041 mcp-host via SHIM_EVO_PORT=3052 port-partition)"
+      },
+      {
+        "sha": "850375f",
+        "subject": "lane books: Rung 10 convergence run on tree — judge 41/0/0, evals 26/26, gate 14/0, DOMAIN-INIT-OK, ONE-BLOC 16/16 tokenReach 14"
+      },
+      {
+        "sha": "0b05bb7",
+        "subject": "CR-0033 (PASS, tier B): fleet Rung 10 CONVERGENCE — the market-grid desk LANDS (owner directive: take the internal markets automatically with agent grids) — agents/market-grid.cjs keyless over the OFFICIAL chain surfaces (api.hive.blog + api.steemit.com condenser_api, api.hive-engine.com JSON-RPC): real orderbooks/tickers/tape in, REAL grids out (band clamped from 24h, spacing >= 0.4% round-trip floor, per-token feasibility), PAPER fills in a labeled append-only ledger (never laundered into realized book), 20 prebuilt limit_order_create payloads ALL stamped OWNER-GATED-NOT-BROADCAST (wallet authority stays the owner's — doctrine 1:1); first run MARKET-GRID-LIVE 3 markets / 5 grids / 0 errors; MEASURED EDGE: SBD/STEEM internal spread 1.5499% ≈ 6x HBD/HIVE 0.2598% (thin-market law), SWAP.DOGE 2.07% + CENT 3.04% grid-feasible, BEE/SWAP.LTC honestly infeasible below floor; pure grid math exported for future evals; THE CONVERGENCE AUDIT booked in-CR: 2/16 repos local, Defi layer LIVE (8 daemons 3033-3040, trigger mesh 47/47 chainRuns/24h, money-mover v1.9.0 BID-ONLY NO-FUEL 12/12 ops), fills-ledger 3.466847 SWAP.HIVE ≈ $0.19 lifetime, KPI L0 revenue $0.0029/day vs burn $4.2757/day (powerdown runway ~4 weeks), phase0Done=false (X-1 = the security ceiling, operator-hands-only), EVM state (SAOSLedger/SAOSExchange 46 Foundry tests + one OP anchor bit-verified + saos-jummper notary design; ZERO TVM code — TRON exit = code+capital+authority), vetted SOTA digest (official domains ONLY — non-official hits discarded unread; phishing discipline obeyed), WHY-SLOW answer: binding constraint = capital+authority, not code; feat-028"
+      },
+      {
+        "sha": "07fa9df",
+        "subject": "lane books: Z-62 CR-0033 refresh run on merged tree (sibling CR-0032/61844de Rung 9 + Rung-9 books absorbed; rebase book conflicts resolved freshest-then-refresh — every judge-read book re-measured on the merged tree: evals 27/27 (E23 superset + E27 new), judge 40 PASS / 1 WARN / 0 FAIL (WARN = ambient-storm one-bloc transient), pulse real-gated with the windowSince law live (legacy-transition snapshot books both lanes' 25h CR set honestly; next window clean))"
+      },
+      {
+        "sha": "b53f741",
+        "subject": "CR-0033 (PASS, renumbered from CR-0032 — SEVENTH collision, later-mover law; sibling 61844de took CR-0032 for fleet Rung 9 host-consumer wiring; renumber_note in-file, zero content changes): Z-62 — scheduled evolution windows + the pulse evidence surface — NEW DESK agents/evo-windows.cjs: a PULLED-SCHEDULE (no daemon; one decision + one appended row per invocation, append-only history per the STASIS audit-trail law) over the CR-0030 evo desk; decision table E27-pinned (FORCE→RUN/FORCED · EVO_WINDOWS_SKIP_RUN=1→SKIPPED-EVAL-CONTEXT off-budget law · fresh-history→SKIPPED-TOO-SOON with nextDueAt keyed off the last MEASURED/SEEDED row, never off skips · stale→RUN/CADENCE · no-history+fresh-book→BOOTSTRAP-SEEDED (a manual run counts; double-running = redundant measurement) · no-history+no-book→RUN/FIRST-WINDOW · no-runtime→SKIPPED-NO-DESK-RUNTIME); PORT-PARTITION: scheduler passes SHIM_EVO_PORT=3052 (sibling CR-0031 mcp-host claimed :3041, the evo desk's in-file default — adapt at the call site, never rewrite a receipted artifact); VERIFY-ONLY: challenger win = ADOPTION-PENDING-CR, never adoption — pulse v1.2.0 consumes agents/evo-windows.json as EVIDENCE (CARRY-LAW sharpened: HINTS expire 36h, MEASURED NUMBERS CARRY at any age with age_h booked; incumbent-retained→observation, challenger→new kind evo-adoption-pending→PROPOSED-CR, original seven disposition kinds byte-identical — E23 superset) — TWO EVO-DESK DEFECTS CAUGHT LIVE BY THE FIRST SCHEDULED WINDOWS (the measurement discipline working: reproduction attempts are now routine): [v1.0.1] incumbentHarness() anchored on 'return (' matching NOTHING in the runner (harness lives in 'SYSTEM = (') — the committed CR-0030 pair could not reproduce its own committed Z-61 book (pre-commit working-tree variant made the Z-61 run); first FORCED window booked INCUMBENT-UNREADABLE in 3.6s with both serve-windows verified dead; FIX proven BYTE-IDENTICAL (689 chars) to Z-61's preserved pool seed /tmp/reef-rung3/harness-0.txt — [v1.0.2] the 'env-tunable storm ladder' was NOT env-tunable (Z-61 hardcoded the values into the child env; scrubEnv merges extra OVER base, process.env never reaches the child); caught live when the second FORCED window's 6-attempt ladder exhausted against the shared-IP 429 storm (fail-loud 502s correctly booked NON-ATTEMPTs, selection honest NO-ATTEMPTS, windows verified dead in 97s); FIX: ladder reads process.env.SHIM_RETRY_* with canonical Z-61 defaults — MEASURED WINNER HONESTLY DEFERRED TO CADENCE: post-window probes 502 ×5 across 3min (shared-IP storm from the sibling's deep run); shared-IP etiquette defers the measured batch to a future window rather than out-shouting the sibling — the scheduler exists precisely for this deferral — LAUNCH-CONTEXT LAW booked from two silent deaths: long serve-window desks cannot survive the sandbox tool-call boundary detached (nohup AND setsid died silently between tool calls, zero strays zero book rows; the append-only history exposed both non-events) — windows run in the FOREGROUND of an operator call with an explicit budget — PULSE LAWS LANDED FROM LIVE CATCHES: verdict prefix-match /^PASS\\b/ (the CR schema carries rich verdicts 'PASS — …', CR-0031 precedent; exact === misread every rich verdict as FAIL→ROLLED-BACK, caught on CR-0033 the first rich verdict in a pulse window) + windowSince (the observation window advances ONLY on real gated runs — eval-context book writes inside the gates used to advance the since marker and strand judgments forever; legacy books transition on the judge's 25h horizon, one honest snapshot) + every proposal typed (the judge caught the first build pushing evo rows after the derive loop — a type hole, pinned in E23 forever) — EVALS v1.16.0: E23 superset (eight input kinds + enum-type pin) + NEW E27 evo-windows scheduler (decide() 7/7, classifyOutcome() 4/4 incl. LEAK-DETECTED never silenced, fresh-process append-only +1 row under SKIP_RUN); evals 27/27; judge 40 PASS / 1 WARN / 0 FAIL (WARN = ambient-storm one-bloc DEGRADED 2/16, shared-IP transient); CR-0033; feat-031"
+      },
       {
         "sha": "4b3a9d1",
         "subject": "lane books: Rung 9 host-consumer wiring run on tree — judge 41/0/0, evals 26/26, gate 14/0, DOMAIN-INIT-OK, ONE-BLOC 16/16 tokenReach 14"
@@ -14,6 +35,138 @@
       {
         "sha": "61844de",
         "subject": "CR-0032 (PASS, tier B): fleet Rung 9 — host-consumer wiring, the CR-0031 consumer-contract finding made real — agents/cmmq/cmmq.sh (the ONE client shape: curl-only, fail-loud, reads-only; policy+deny receipts stay in ONE place at the host); receipts: wrapper hits exact (search_graph GuardedLocalEnvironment 45ms incl HTTP+parse; project-scoping first-call trap documented in help), deny battery through the wrapper rc=1 + JSONL line #4, freshness at consumption time (detect_changes caught the rung's own uncommitted wrapper — merge_base 3d65c7b); HONEST paired matrix inside guarded mini-swe episodes (booked shape verbatim): pair 1 single-symbol A raw 6 calls / B wired 7 calls both CORRECT (answer-a/b.txt guard_env.py:61; B host receipts list_projects 22.9ms + search_graph 7.1ms); pair 2 semantic discovery C raw 14 calls RIGHT-file-imprecise-span (63-85 vs truth 68-78) 27.1s / D wired 16 calls WRONG file 265.3s (key-verify.mjs decoy — 8x search_graph 10-18ms + outline 7.4ms = ~0.1s host time for 9 queries, ~49.5s one-shot-CLI equivalent); remedy E2 wired+pre-confirmed 8 calls 15.1s RIGHT file WRONG span (top-rank rpc@46-59 neighborhood vs contract chainPubkeys@68-78); NEW LAWS: rank-is-not-contract (ladder gains MANDATORY confirmation rung: query -> confirm against the question's contract -> read only to confirm), turn economy TASK-SHAPE BOUNDED (honest bound on R5/R7 multipliers — proven economies are latency + governance, not turns), freshness-at-consumption-time discipline (reindex stays owner-gated), episode scope = capacity decision (unbounded E outlasted 540s storm window; narrowed retry 15.1s); feat-027; PROBE-LANE cmm row updated"
+      },
+      {
+        "sha": "3d65c7b",
+        "subject": "lane books: Rung 8 fleet MCP host run on merged tree (sibling reef Rung 4 CR-0030 absorbed; this lane renumbered CR-0031) — judge 41/0/0, evals 26/26, gate 14/0, DOMAIN-INIT-OK, ONE-BLOC 16/16 tokenReach 14"
+      },
+      {
+        "sha": "004c7c3",
+        "subject": "CR-0030 -> CR-0031 renumber (SIXTH collision, later-mover law): sibling 8e14c6b renumbered its reef Rung 4 to CR-0030 while this lane's fleet MCP host landing was in flight — this lane is the later mover, renumbers; git mv + id + renumber_note + references (feat-026, feat-023 evidence, PROBE-LANE) + host /health cr field updated live to CR-0031 (bun --hot); zero content changes"
+      },
+      {
+        "sha": "d82382f",
+        "subject": "CR-0030 (PASS, tier B): fleet Rung 8 — the fleet MCP host LANDED (the full-host item CR-0029 answered only hostless) — mini-services/mcp-host (bun :3041, bun --hot, own package.json) governing the codebase-memory-mcp engine; laws IN CODE: defense in depth (host analysis-profile belt = 13 read-only tools, faithful to engine registry mcp.c:914 + engine child spawned with --tool-profile braces + CBM_ALLOWED_ROOT), owner-gated config surfaces (install/uninstall never run), deny receipts (JSONL swe-guard pattern), fail-loud JSON-RPC, DO_NOT_TRACK=1; receipts: /health full payload · tools/list exactly 13 (write/admin quartet invisible) · initialize handshake · tools/call search_graph hit 'Class guard_env.py 61-104' (third independent pass on the same fact after R5 Graft + R7 cli) · amortization post-fix: cold 1.807s once then 7.5-8.6ms per call INCLUDING HTTP with zero re-spawns · deny battery 3/3 receipted (manage_adr; index_repository with /etc path never reached the engine; resources/list) · gateway path-preserving XTransformPort proven end-to-end (tools/call hit one-bloc.cjs:47 through :81) · bun --hot survived two live fixes; NEW LAWS: Bun Promise-truth gotcha (proc.exited always truthy -> spawned a child per call — liveness must be an explicit flag), per-stream buffer law (shared buffer interleaves engine stderr into JSON-RPC), stderr-drain law (undrained pipe can deadlock the child); BOOKKEEPING PASS: feat-023 hole closed (restored from CR-0023's own text, marked restored) — ledger contiguous feat-022..feat-026; feat-026; PROBE-LANE cmm row updated; full chain GREEN: gate 14/0 · evals 26/26 · judge 41/0/0 · ONE-BLOC 16/16 tokenReach 14 · DOMAIN-INIT-OK"
+      },
+      {
+        "sha": "8e14c6b",
+        "subject": "CR-0030 (PASS, renumbered from CR-0029 — fifth collision, later-mover law; sibling f4929d6 took CR-0029 for codebase-memory-mcp; renumber_note in-file): reef Rung 4 — GEPA-class harness evolution over the CR-0027 guarded executor — reef-harness-evo.cjs: model reflects on booked failure classes (reef-receipted inference) → proposes harness variants → every variant measured on fresh-integer episodes (per-episode seeds, deterministic verifier, receipts end-to-end) → MEASURED-SELECTION (attempts-only mean reward, turns tie-break, incumbent primacy) → VERIFY-ONLY (adoption only via judged CR); MEASURED OUTCOME: INCUMBENT RETAINED (v1 2/2 rewards mean 1.0 @ 4.0 turns; strict-scope-enforcement 2/2 @ 6.0 turns loses the tie-break; 2 weaker variants non-attempt class) — rung4-harness-evolution ledger 70 rows (2 receipted reflections, per-episode harness labels + statuses + corrupt_inputs via declared score contract); lessons landed: Z-49 require-guard re-proven on THIS desk (bare require() during a syntax check executed the whole first measured batch — receipts stand as history), status-aware honesty (UPSTREAM-FAIL/VERIFIER-FAIL are NON-ATTEMPTS, never reward-0), corruption-blocking verifier (corrupt task files booked, reward 1 requires clean inputs — anti-goodhart), storm ladder (ambient 429 storm outlasted the 3×400-2000ms default — classifier PROVEN against the real SDK string, patience was the gap; evo shim runs env-tunable 6×1s-16s, live :3040 untouched, SERVE-WINDOW ×2 verified dead after every run) — runner parameterized (RUNG3_SYSTEM/SEED/SCENARIO/HARNESS, canonical defaults unchanged); evals 26/26; feat-030"
+      },
+      {
+        "sha": "f01064d",
+        "subject": "lane books: Rung 7 codebase-memory-mcp run on merged tree (sibling CR-0027/0028 absorbed, this lane renumbered CR-0029) — judge 41/0/0, evals 26/26, gate 14/0, DOMAIN-INIT-OK, ONE-BLOC 16/16 tokenReach 14"
+      },
+      {
+        "sha": "f4929d6",
+        "subject": "CR-0029 (PASS, tier B, renumbered from CR-0027 — FIFTH collision, later-mover law; sibling 10159ba took CR-0027+CR-0028 for reef Rung 3 + pulse advisory; renumber_note booked inside): fleet Rung 7 — codebase-memory-mcp runtime-candidate LANDED, the MCP-host-gap item answered hostless — built FROM SOURCE at the constitution pin 96c3f41c (300MB ELF, 162 grammars, zero runtime deps; installer REFUSED: writes 45 agent-config surfaces — fleet law booked); Domain graph 7437 nodes/11265 edges/15 edge types in 9.3s $0 keyless, DB in ~/.cache, persistence=false default = zero repo residue (git status 0/0/0); search_graph hit #1 EXACT guard_env.py:61-104 == Graft's Rung 5 hit (instrument convergence); latency ladder honest: one-shot 5.5s -> daemon CLI 2.0s -> warm stdio session 12-15ms (upstream '<1ms' booked as internal claim); MCP surface proven hostless via scripted stdio JSON-RPC — exactly 17 tools live; paired multiplier (CR-0022 pattern verbatim): baseline 6 vs cmm-context 3 api_calls (-50% model turns, same correct receipt, N=1 honest); cross-rung: Graft 7->3 (-57%) — both instruments halve exploration; exploration instrument ladder booked: structural first, LLM summaries second, raw reads last; allow-root human-only enrollment doctrine maps onto owner-authority law; feat-025 (exclusively ours — sibling CR-0027/0028 claim no feat ids); PROBE-LANE row QUEUED->LANDED; books conflict resolved --theirs (tools-are-truth); full chain GREEN on merged tree: gate 14/0 · evals 26/26 · judge 41/0/0 · ONE-BLOC 16/16 tokenReach 14 · DOMAIN-INIT-OK"
+      },
+      {
+        "sha": "10159ba",
+        "subject": "CR-0027 + CR-0028 (PASS): reef Rung 3 guarded agent episode + pulse advisory consumption — CR-0027: the CR-0023 booked condition landed (agent bash ONLY through the CR-0019 in-tree GuardedLocalEnvironment inside the reef record→verify→reward loop): rung3-stack.yaml (external-provider → CR-0015 shim, agent-record ledger SHARED with Rung 2 — hash(scenario) sibling store beside basic-arithmetic), rung3_guarded_episode.py (multi-turn ≤6, per-turn inference_with_record receipts, deterministic fixture sum 493, verifier recomputes truth from disk, report references = ALL turn receipts, per-run guard liveness selftest + scoped deny log), reef-rung3.cjs desk (SERVE-WINDOW: detached process-group kill verified 0 strays, reuse-over-duplicate, shim preflight, scrubbed allowlist env + Z-58 user-local git-lfs PATH, honest skips) — LIVE-FIRE PASS: 4 turns / 3 guarded bash / 0 denies / file 493 == truth 493, ledger read-back report seq-25 score=1.0 refs 4-receipt chain; honest attempt curve 0/0/0/1 booked (runs 2-3 = model protocol variance: lazy FINAL, fenced-FINAL riding commands — PARSER LAW: fenced content is command text, FINAL only in fence-free remainder, extras suppressed+counted); upstream wire discovery booked: report canonicalizes to score/feedback/references/metadata (Z-58 'reward' key was silently dropped — now declared-contract score+metadata); CR-0028: pulse v1.1.0 consumes the laya advisory triage by id (non-gating advisory field, JOINED-FRESH 7/8 hints live-fire, STALE/UNTIMED/ABSENT honest modes, dispositions byte-identical, E23 green) — RENUMBER receipt: CR-0026→CR-0028 fourth collision, sibling took CR-0026 first (later-mover law, renumber_note in-file); environment: E17 L1 leg restored at canonical adjacent path (canon-liveness CONTENT-SERVED, L2 RAIL-UP) — evals 26/26; feat-027 feat-028"
+      },
+      {
+        "sha": "d8ecbc0",
+        "subject": "lane books: Rung 6 shim-queue run on merged tree (sibling CR-0024/0025 absorbed) — judge 41/0/0, evals 26/26, gate 14/0, DOMAIN-INIT-OK, ONE-BLOC 16/16"
+      },
+      {
+        "sha": "4b3c9a1",
+        "subject": "CR-0026 (PASS, renumbered from CR-0024 — fourth collision, later-mover law; sibling 1e4921c took CR-0024+CR-0025): shim v1.1.0 retry/backoff queue LANDED — global upstream gate (max 2 in-flight, FIFO) + exp backoff 1s..16s + jitter (SHIM_MAX_RETRIES env-tunable) + honest logs, fail-loud preserved; closes the CR-0022 rate-limit law (sibling CR-0023 absorbed the finding, sibling CR-0024 books the conservative bounded-ladder variant — fifth parallel convergence, dual implementations complementary); receipts: 6-burst smoke 6/6 HTTP 200 with queued wait_ms=696 + retry backoff_ms=1046 log lines; mini-swe guarded run Submitted 3 api_calls through the queue (G6-SHIM-QUEUE-OK); graft deep over the shim rc=0 — the whole-repo concept synthesis that 502'd twice in Rung 5 COMPLETED (18 provenance-traced concept nodes, concept-tier ask hits); 851 transient 429s absorbed across two deep runs; ambient sandbox-IP 429 storm booked as binding capacity constraint; shim-log counting law booked (FAILED lines double-count naive greps); feat-024"
+      },
+      {
+        "sha": "1e4921c",
+        "subject": "CR-0024 + CR-0025 (PASS): shim v1.1.0 retry/backoff queue + carry law + laya advisory triage — CR-0024: zai-openai-shim v1.1.0 implements CR-0022's booked shim-side retry/backoff (transient-classifier bounded queue 3 attempts 400-2000ms, retries complete before first byte so SSE safe, one-shot SHIM_SELFTEST_429 hook, SHIM_PORT for parallel test instances, 502 fail-loud unchanged byte-identical, tier B untouched) — live-fire: retry path 784ms end-to-end with exact backoff log, one-shot consumed, final-failure path unchanged, live :3040 v1.0.1 untouched (activates next natural start); CR-0025: (1) venture-desk CARRY LAW — measured flip-flop root-caused (CI measured L1 04:52Z green, local lane runs re-nulled the public board 10-14Z), fix: legless runs CARRY the committed book's ledger when fresh ≤36h and measured (attributed 'CARRIED…never estimated'), stale→honest null, principled line: numbers carry, existence checks don't; verified legless run carries 0.0029/4.2757/runway-4; (2) laya-triage desk — advisory-only typed triage of pulse proposals over the CR-0023 serving proof: SERVE-WINDOW (finally-kill, 0 processes after), ENGLISH-ONLY, UNCALIBRATED-CONFIDENCE (en ckpt invalid temperatures — every row flags it), ADVISORY-ONLY (no gate mutation); 8/8 triaged 1841-2154ms, skip path honest; CI intentionally off-budget (2GB+500MB/run) booked in-artifact"
+      },
+      {
+        "sha": "e0b61b2",
+        "subject": "econ-desk: real-economy book 2026-10-03T15:01:42Z"
+      },
+      {
+        "sha": "3df9098",
+        "subject": "weave-mirror: 2026-10-03T14:49:43Z · weave books mirrored from the live Console home (keyless)"
+      },
+      {
+        "sha": "ab3e45f",
+        "subject": "dex-mirror: 2026-10-03T14:48:50Z · live engine book mirrored from the live Console mirror (keyless)"
+      },
+      {
+        "sha": "cabf827",
+        "subject": "CR renumber (third collision, later mover law): rung2-triple-oracle-restore CR-0021→CR-0023 — sibling ba2c7a7 took CR-0021 (Rung 4 guarded parallel waves) before this CR pushed; file renamed, id + renumber_note booked inside, PROBE-LANE references relabelled (reef/laya/Graft-cross-check rows); zero content changes; 0023 free at rename time"
+      },
+      {
+        "sha": "368dbe6",
+        "subject": "CR-0021 (PASS): reef Rung 2 + laya serving + KPI oracle restore — second-mover Graft cross-check — reef runtime deployed locally (PyPI reef-infra/client, external-provider recipe → CR-0015 shim, SQLite-first, no GPU/Docker): full record→verify→reward loop closed live (receipt 38aa9b36…, answer 391, reward 1 reported, agent_record 2 rows with references_json causal link read back); laya.serve HTTP live keyless (root-caused serve death: default preloads all checkpoints incl. multilingual OOM → LAYA_MODELS=english; /v1/systemone 1312ms warm on real fleet triage, Jev receipts; honest: en ckpt ships invalid temperatures → confidence uncalibrated, RSS 2.08GB → advisory-only serve-windows law, not resident); KPI oracle RESTORED (two stacked defects root-caused: coingecko 429 from shared IP + paprika comma-URL 404 — second ladder rung never worked; fixed per-ticker loop 200, added binance rung 3 200; per-day leg via canon Defi checkout DEFU_DIR → canonLeg L1 served, ledger earn $0.0029/d vs burn $4.2757/d, runway 4w, books rewritten); graft = independent npm-path cross-check of sibling CR-0022 (DO_NOT_TRACK before install, nothing queued post-commands, ask line-precise) — primacy deferred per second-mover law, their measured -57% turns stands; absorbed: shim-consumer rate-limit finding (sandbox IP 429s across providers) — next rung shim-side retry/backoff already booked by CR-0022; guard condition for reef Rung 3 booked (agent-bash recipes must ride CR-0019 guard); PROBE-LANE rows updated ×3; feat-023"
+      },
+      {
+        "sha": "c0d01f2",
+        "subject": "lane books: Rung 5 Graft multiplier run — judge 41/0/0 seventh reproduction, evals 26/26, gate 14/0, DOMAIN-INIT-OK, ONE-BLOC 16/16 tokenReach 14"
+      },
+      {
+        "sha": "5c01767",
+        "subject": "CR-0022 (PASS): fleet Rung 5 LANDED — Graft context-economy multiplier adopted from SOURCE at pin fe30ead (telemetry dark by FOUR gates: source audit postinstall-early-return, dist BAKED_KEY empty, tool self-report 'nothing can be sent', queue 'nothing queued' + identity never minted; DO_NOT_TRACK=1 before first run) — base graph 686 nodes/1524 edges over 69 files in 2.97s $0; graft ask hit #1 EXACT on the fleet's own GuardedLocalEnvironment (guard_env.py:L61-L104, python parse OK); PAIRED guarded mini-swe runs over the CR-0015 shim: baseline 7 api_calls vs graft-context 3 (-57% model turns, same correct receipt, deny ledger 2→2, per-instance trajectories, worktree pruned zero-residue); deep pass over the shim partial: 65 per-file summaries served $0, whole-repo synthesis blocked by z-ai 429 → shim consumers rate-limit law booked (shim 502 fail-loud held, GRAFT_LLM_RETRIES honored), next rung = shim-side retry/backoff queue; operator-error receipt booked (booked command shape must be copied verbatim); upstream claims stay upstream claims; feat-022"
+      },
+      {
+        "sha": "b6fb4b4",
+        "subject": "mirror-from-console: 2026-10-03T14:37:27Z · truth outputs mirrored from the Console home (one-bloc, keyless)"
+      },
+      {
+        "sha": "2ea82ed",
+        "subject": "moment-watch: RISK_ON · steem-edge 310bps · 2026-10-03T14:23:34Z"
+      },
+      {
+        "sha": "1cf3305",
+        "subject": "lane books: Rung 4 guarded-wave run — judge 41/0/0 sixth reproduction, evals 26/26, gate 14/0, DOMAIN-INIT-OK"
+      },
+      {
+        "sha": "ba2c7a7",
+        "subject": "CR-0021 (PASS): fleet Rung 4 LANDED — GUARDED parallel waves (swe-guard in execution path × CR-0020 wave shape); 2 concurrent GuardedLocalEnvironment instances per wave ×2 waves over the CR-0015 shim, per-instance trajectories via -o (CR-0020 overwrite finding closed), deny ledger unchanged on benign traffic (guard screened every command), guard smoke receipts 0/126/126 + JSONL ×2, interleave msgs=2,2/4,4/6,6, worktrees pruned zero-residue; findings booked: -c agent.output_path does not merge (use -o), wave tasks must be idempotent; deployment condition closed end-to-end; feat-021"
+      },
+      {
+        "sha": "5cbbbb4",
+        "subject": "lane books: merged-tree rerun after bc63c59 absorption — judge 41/0/0 fifth reproduction, evals 26/26, gate 14/0, DOMAIN-INIT-OK"
+      },
+      {
+        "sha": "50f1777",
+        "subject": "CR-0020 renumber (later mover law) + registry row hygiene: parallel-worktree-wave CR-0019→CR-0020 — third numbering collision absorbed (sibling swe-guard took CR-0019 as bc63c59, itself renumbered from CR-0018); role-registry swe-guard row file-column restored to a PURE path (annotation had broken the mechanical existsSync judge check → judge was 40/0/1, now 41/0/0); references updated (PROBE-LANE ×2, feat-020 evidence); renumber_note booked inside the CR"
+      },
+      {
+        "sha": "472a649",
+        "subject": "lane books: Rung 3 wave run — judge 41/0/0 fourth reproduction, evals 26/26, gate 14/0, one-bloc token-mode green, canon CONTENT-SERVED; books fresh 10/10"
+      },
+      {
+        "sha": "6817544",
+        "subject": "CR-0019 (PASS): fleet Rung 3 LANDED — parallel mini-swe wave over isolated git worktrees; 2 concurrent mini-swe 2.4.6 instances (pinned sha 04d809c, MIT) on detached Domain worktrees at a1eae51 over the CR-0015 keyless shim, env -i scrubbed, cost limit 0.5 armed, --exit-immediately; receipts: EXIT 0 x2, distinct create/append receipts (RUNG3-WT1-OK / RUNG3-WT2-OK), interleaved keystone log msgs=2,2,4,4, isolation '?? wave/' only x2, worktrees pruned zero-residue; orca pattern QUEUED→LANDED, mini-swe row + Rung 3; sandbox-reset rebuilds booked: shim recreated from CR spec (SHIM-REBUILD-OK + SSE [DONE]), mirror re-cloned at pinned sha, pip -e 2.4.6; feat-020; finding: shared trajectory path → per-instance path booked as next-rung config with command-guard wrap"
+      },
+      {
+        "sha": "bc63c59",
+        "subject": "CR-0019 (PASS, renumbered from CR-0018 per second-mover law): swe-guard — command-guard IN the execution path, deployment condition CLOSED — GuardedLocalEnvironment (104 lines, in-tree so resets cannot erase it): secrets unreadable + mutations scoped /tmp + destructive patterns refused; every deny = JSONL receipt + visible 126; receipts: benign PASS exit 0 / scope-deny (target absent, receipt booked) / secret-deny (creds unreadable, leak-grep 0); post-reset recovery booked: shim rebuilt from verified spec v1.0.1 (dual-stack + run-with-shim.sh self-hosting edge), mini-swe-agent 2.4.6 from pinned sha 04d809c, recovery task exit 0; fresh KPI oracle run: unreachable-null CONFIRMED standing (gap named), v2 lifetime $0.194105 (3 fills), spot prices measured; registry row 58"
+      },
+      {
+        "sha": "a1eae51",
+        "subject": "lane books: Task 36 second-mover re-verification on a fresh reset sandbox — sibling Defi checkout restored (canon L1 leg), evals 26/26 ×2 stable, judge 41/0/0 third reproduction, one-bloc token-mode 16/16 authWall 0, canon CONTENT-SERVED L1=SERVING L2=RAIL-UP; environment root-cause booked: sandbox reset erased ../Defi so E17 read CANON-DARK — local-leg absence, not fleet truth"
+      },
+      {
+        "sha": "9bea765",
+        "subject": "CR-0018 renumber (Task 36 second-mover close): mini-runtime-landing CR-0016→CR-0018 — uncaught parallel-convergence collision (mini lane landed e57dc8c as CR-0016 AFTER the five-repo sweep took CR-0016 via renumber 1c2ec81); later mover renumbers per law; sole external reference (canon PROBE-LANE.md mini-swe row) updated in same commit; zero content changes — receipts/verdict/evidence untouched, renumber_note booked inside the CR"
+      },
+      {
+        "sha": "0845a87",
+        "subject": "agent-verify: ALL_PASS · 53/53 · 0 suspended · 2026-10-03T11:59:21Z"
+      },
+      {
+        "sha": "3c07261",
+        "subject": "weave-mirror: 2026-10-03T11:24:06Z · weave books mirrored from the live Console home (keyless)"
+      },
+      {
+        "sha": "36c2e40",
+        "subject": "moment-watch: RISK_ON · steem-edge 547bps · 2026-10-03T11:07:13Z"
+      },
+      {
+        "sha": "4431504",
+        "subject": "mirror-from-console: 2026-10-03T10:27:31Z · truth outputs mirrored from the Console home (one-bloc, keyless)"
+      },
+      {
+        "sha": "1f3019f",
+        "subject": "moment-watch: RISK_ON · steem-edge 327bps · 2026-10-03T10:22:28Z"
       }
     ]
   },
@@ -163,20 +316,284 @@
       "disposition": "GATED-BLOCKED"
     },
     {
+      "id": "CR-0001",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0001-role-registry-audit-wiring.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "harness-audit v1.2.0 (fresh-process run 2026-10-02: 29 PASS / 0 WARN / 0 FAIL; c",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0002",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0002-command-guard-wiring.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "harness-audit v1.3.0 (fresh-process run 2026-10-02: 30 PASS / 0 WARN / 0 FAIL; c",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0003",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0003-cognitive-rail-governance.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "harness-audit v1.4.0 (fresh-process run 2026-10-02: 31 PASS / 0 WARN / 0 FAIL; c",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0004",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0004-collapse-resilience-drill.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "harness-audit v1.6.0 (fresh-process run on the PARALLEL-CONVERGED tree 2026-10-0",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0005",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0005-canon-reachability.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "harness-audit v1.7.0 (fresh-process run 2026-10-03: 34 PASS / 0 WARN / 0 FAIL; c",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0006",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0006-hands-expansion.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "harness-audit v1.10.0 (fresh-process run 2026-10-03T01:3xZ: 37 PASS / 0 WARN / 0",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0007",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0007-skill-library-gate.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "harness-audit",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0008",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0008-security-audit-doctrine.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "harness-audit v1.11.0 fresh-process run (38 PASS / 0 WARN / 0 FAIL on the post-C",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0008",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0008-security-strix-doctrine.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "harness-audit",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0009",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0009-daily-pulse.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "harness-audit v1.13.0 fresh-process: 39 checks — 39 PASS / 1 WARN / 0 FAIL (the ",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0010",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0010-agentic-orchestration-ax.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "harness-audit",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0011",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0011-applied-ai-patterns-consult.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "harness-audit",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0012",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0012-swe-mini-doctrine.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "harness-audit v1.15.0 + evals v1.13.0 + skill-library-gate v1.3.0",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0013",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0013-ai-review-consult.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "harness-audit v1.15.0 + evals v1.13.0 + skill-library-gate v1.3.0",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0014",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0014-fcc-frugal-routing.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "harness-audit v1.16.0 (fresh-process judge) + skill-library-gate v1.4.0 + evals ",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0015",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0015-zai-openai-shim.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "harness-audit v1.15.0 + evals v1.13.0 (25/25) + live curl receipts",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0016",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0016-five-repo-sweep.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "harness-audit v1.17.0 (fresh-process judge) + skill-library-gate v1.5.0 + evals ",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0017",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0017-one-bloc-token-mode.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "harness-audit v1.17.0 (fresh-process judge, 41/0/0 against the token-mode measur",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0018",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0018-mini-runtime-landing.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "live run receipts (exit codes + proof file + shim log) + harness-audit v1.17.0 +",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0019",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0019-command-guard-runtime.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "live run receipts (3 classes: pass + scope-deny + secret-deny, JSONL + exit code",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0020",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0020-parallel-worktree-wave.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "live run receipts (exit codes + receipt files + shim interleave log + isolation ",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0021",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0021-guarded-parallel-waves.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "live run receipts (exit codes + receipt files + deny-ledger delta + distinct tra",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0022",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0022-graft-context-multiplier.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "live run receipts (exit codes + trajectory JSONs + receipt files + deny-ledger d",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0023",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0023-rung2-triple-oracle-restore.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "live receipts (SQLite read-back, HTTP probes with timings, telemetry debug outpu",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0024",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0024-shim-retry-backoff.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "live-fire receipts (health JSON, retry log line with exact backoff, 200 response",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0025",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0025-carry-law-laya-triage.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "live receipts (venture-desk legless-run output with carried ledger + attribution",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0026",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0026-shim-retry-backoff-queue.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "live run receipts (HTTP codes + response bodies + shim log line-sliced counters ",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0027",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0027-reef-rung3-guarded-episode.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "receipts mechanical: ledger seq-25 score=1.0 with 4-receipt chain read back from",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0028",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0028-pulse-advisory-consumption.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "operator-ordered landing per Z-59 stage summary booking; receipts mechanical (E2",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0029",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0029-codebase-memory-mcp-runtime.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "live run receipts (build log + ELF size + cli exit codes + MCP stdio transcript ",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0030",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0030-reef-rung4-harness-evolution.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "receipts mechanical: selection is computed from attempts-only means in-book; led",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0031",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0031-fleet-mcp-host.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "live run receipts (curl exit codes + full JSON-RPC payloads + deny-ledger JSONL ",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
       "id": "CR-0032",
-      "kind": "cr-fail",
+      "kind": "cr-pass",
       "source": "change-requests/CR-0032-host-consumer-wiring.json",
-      "action": "rollback path (judged FAIL)",
+      "action": "accepted version already shipped (judged)",
       "receipt": "live run receipts (trajectory JSONs api_calls + answer files + episode consoles ",
-      "disposition": "ROLLED-BACK"
+      "disposition": "ACCEPTED-TODAY"
     },
     {
       "id": "CR-0033",
-      "kind": "cr-fail",
-      "source": "change-requests/CR-0033-market-grid-desk.json",
-      "action": "rollback path (judged FAIL)",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0033-scheduled-evolution-windows.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "sovereign desk self-judgment per fleet law (evidence bundle: live-fire rows + by",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0034",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0034-market-grid-desk.json",
+      "action": "accepted version already shipped (judged)",
       "receipt": "live run receipts (MARKET-GRID-LIVE verdict with 0 errors; per-market ms latenci",
-      "disposition": "ROLLED-BACK"
+      "disposition": "ACCEPTED-TODAY"
     },
     {
       "id": "obs:one-bloc-boundary",
@@ -193,15 +610,23 @@
       "action": "carry the hands boundary into the daily record",
       "receipt": "hands 6 · live 4",
       "disposition": "BOOKED"
+    },
+    {
+      "id": "evo:harness-window",
+      "kind": "observation",
+      "source": "evo-windows.json",
+      "action": "carry the evolution-window cadence state into the record",
+      "receipt": "16 windows booked, none complete · next due 2026-10-04T12:45:05Z",
+      "disposition": "BOOKED"
     }
   ],
   "counts": {
     "PROPOSED-CR": 6,
     "GATED-BLOCKED": 2,
     "DEFERRED-TIER-C": 4,
-    "ACCEPTED-TODAY": 0,
-    "ROLLED-BACK": 2,
-    "BOOKED": 1
+    "ACCEPTED-TODAY": 35,
+    "ROLLED-BACK": 0,
+    "BOOKED": 2
   },
   "gates": {
     "judge": "skipped (PULSE_SKIP_GATES recursion guard — real gates proven in standalone runs)",
@@ -214,11 +639,16 @@
     "at": "2026-10-03T15:08:54Z",
     "age_h": 2.5
   },
+  "evoEvidence": {
+    "mode": "CADENCE-ONLY",
+    "note": "windows booked but none measured complete yet — cadence state carried as evidence",
+    "nextDueAt": "2026-10-04T12:45:05Z"
+  },
   "laws": {
     "verifyOnly": true,
     "noNetwork": true,
     "autoApply": false,
     "advisoryGates": false,
-    "note": "application only via judged tier-B CR — the pulse proposes, the CR law disposes; advisory triage hints ride along but never gate (CR-0028)"
+    "note": "application only via judged tier-B CR — the pulse proposes, the CR law disposes; advisory triage hints ride along but never gate (CR-0028); measured window evidence carries at any age and a challenger win is still only a PROPOSAL (CR-0033)"
   }
 }
