@@ -1,4 +1,4 @@
-# Daily Pulse — 2026-10-03T17:40:20.950Z
+# Daily Pulse — 2026-10-03T17:50:20.766Z
 
 - **loop:** reef/SkillClaw Rung 1 (day → review → propose → gate → settle) · **verify-only:** proposals never auto-applied
 - **window:** since 2026-10-02T16:40:20.950Z · **commits:** 40
@@ -52,14 +52,15 @@
 | 44 | CR-0032 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
 | 45 | CR-0033 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
 | 46 | CR-0034 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
-| 47 | obs:one-bloc-boundary | DEFERRED-TIER-C | — | restore cross-repo credential (operator, tier C) — 2/16 reached; the len-93 token is gone from remot |
-| 48 | obs:hands | BOOKED | — | carry the hands boundary into the daily record |
-| 49 | evo:harness-window | BOOKED | — | carry the evolution-window cadence state into the record |
+| 47 | CR-0035 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
+| 48 | obs:one-bloc-boundary | DEFERRED-TIER-C | — | restore cross-repo credential (operator, tier C) — 2/16 reached; the len-93 token is gone from remot |
+| 49 | obs:hands | BOOKED | — | carry the hands boundary into the daily record |
+| 50 | evo:harness-window | BOOKED | — | carry the evolution-window cadence state into the record |
 
 - PROPOSED-CR: 6
 - GATED-BLOCKED: 2
 - DEFERRED-TIER-C: 4
-- ACCEPTED-TODAY: 35
+- ACCEPTED-TODAY: 36
 - ROLLED-BACK: 0
 - BOOKED: 2
 
