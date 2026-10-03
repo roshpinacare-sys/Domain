@@ -8,6 +8,14 @@
 // than 36h is marked STALE-NOT-JOINED and nothing is attached. Uncalibrated
 // confidence stays flagged on every joined row (CR-0023 serving proof).
 //
+// Z-62 · CR-0033: the pulse consumes the scheduled-evolution-window book
+// (agents/evo-windows.json) as an EVIDENCE input. The carry-law sharpens here:
+// HINTS expire (36h, above), MEASURED NUMBERS CARRY — the last WINDOW-COMPLETE row
+// is joined at ANY age with age_h booked honestly (a measured reward never expires;
+// a hint does). A challenger harness win books evo-adoption-pending → PROPOSED-CR
+// (verify-only: adoption via a judged tier-B CR); an incumbent-retained win books a
+// plain observation. Skips/seeds book as cadence-state evidence. Nothing gates.
+//
 // Study: Human-Agent-Society/reef @ 297af97 (Z-48): "infrastructure for continually
 // self-improving agents" — SkillClaw's loop: day = fixed task list with current skills;
 // night = review sessions → propose changes → evaluate → settle (accept/version or
@@ -46,6 +54,7 @@ function deriveDisposition(item) {
     case "cr-fail": return "ROLLED-BACK";               // judged FAIL → rollback path
     case "observation": return "BOOKED";                // measured state carried into the record
     case "tier-c": return "DEFERRED-TIER-C";            // fuel/keys/creds/domain — operator-owned
+    case "evo-adoption-pending": return "PROPOSED-CR";  // challenger harness ahead on measured evidence (CR-0033) — verify-only: adoption via judged CR
     default: return "BOOKED";
   }
 }
@@ -54,7 +63,21 @@ function main() {
 try {
   const at = new Date().toISOString();
   const prev = readJson(path.join(AG, "pulse-book.json"));
-  const since = prev && prev.at ? prev.at : new Date(Date.now() - 24 * 3600 * 1000).toISOString();
+  // Z-62 (windowSince): `since` used to key on prev.at — but EVERY book write
+  // advances at, including the eval-context writes inside the gates (E23's black-box
+  // runs the pulse on every evals pass). A CR judged between two such writes fell
+  // out of every future window (caught live: CR-0033 judged 17:02 was never booked).
+  // The observation window now advances ONLY on real (gated) runs; eval-context
+  // writes carry it forward unchanged — the book is still a fresh snapshot either way.
+  const prevSince = prev && prev.windowSince
+    ? prev.windowSince
+    // legacy books (pre-windowSince) transition on the judge's own 25h freshness
+    // horizon — one honest snapshot books everything judged within it, then the
+    // window advances on real runs only (Z-62 CR-0033 judged 17:02 was otherwise
+    // stranded between eval-context book writes forever)
+    : (prev && prev.at ? new Date(Math.min(Date.parse(prev.at), Date.now() - 25 * 3600 * 1000)).toISOString() : new Date(Date.now() - 24 * 3600 * 1000).toISOString());
+  const since = prevSince; // the observation window START (always) — joins and the day ledger read this
+  const windowSince = SKIP_GATES ? prevSince : at; // the persisted advance: real (gated) runs only
 
   // ---- DAY: what did the bloc actually do since the last pulse ----
   let commits = [];
@@ -89,7 +112,12 @@ try {
     const cr = readJson(path.join(AG, "change-requests", f));
     if (!cr || !cr.verdict || !cr.judged_at) continue;
     if (Date.parse(cr.judged_at) >= Date.parse(since)) {
-      proposals.push({ id: cr.id, kind: cr.verdict === "PASS" ? "cr-pass" : "cr-fail", source: `change-requests/${f}`, action: cr.verdict === "PASS" ? "accepted version already shipped (judged)" : "rollback path (judged FAIL)", receipt: (cr.judged_by || "").slice(0, 80) });
+      // Z-62: verdict prefix-match — the CR schema carries rich verdict strings
+      // ("PASS — LIVE receipts …", CR-0031 precedent); exact === "PASS" misread
+      // every rich verdict as FAIL → ROLLED-BACK (caught live on CR-0033, the first
+      // rich verdict inside a pulse window: ROLLED-BACK booked for a PASSed CR)
+      const pass = /^PASS\b/.test(String(cr.verdict).trim());
+      proposals.push({ id: cr.id, kind: pass ? "cr-pass" : "cr-fail", source: `change-requests/${f}`, action: pass ? "accepted version already shipped (judged)" : "rollback path (judged FAIL)", receipt: (cr.judged_by || "").slice(0, 80) });
     }
   }
   // live observations — the one-bloc boundary (wiped cross-repo creds, tier C restore)
@@ -100,6 +128,37 @@ try {
   }
   const hb = readJson(path.join(AG, "hands-book.json"));
   if (hb && hb.hands) proposals.push({ id: "obs:hands", kind: "observation", source: "hands-book.json", action: "carry the hands boundary into the daily record", receipt: `hands ${hb.hands.length} · live ${(hb.hands.filter(h => h.verdict === 'LIVE')).length}` });
+
+  // ---- EVIDENCE: consume the scheduled evolution windows (CR-0033, Z-62) ----
+  // Placed BEFORE disposition derivation (the judge caught the first build pushing
+  // these rows after the derive loop — a proposal without a disposition is a type
+  // hole, not an honest state). CARRY-LAW, second half: HINTS expire (below),
+  // MEASURED NUMBERS CARRY — the last WINDOW-COMPLETE row joins at any age (age_h
+  // booked). The window row is never gated, never renamed: incumbent-retained =
+  // observation; challenger-ahead = evo-adoption-pending → PROPOSED-CR (the CR law
+  // disposes, never the desk).
+  const evoEvidence = { mode: "ABSENT", note: "evo-windows book absent — evidence surface honestly empty (nothing invented)" };
+  const ewb = readJson(path.join(AG, "evo-windows.json"));
+  if (ewb && ewb.ok && Array.isArray(ewb.windows) && ewb.windows.length) {
+    const lastComplete = [...ewb.windows].reverse().find((r) => r.status === "WINDOW-COMPLETE") || null;
+    if (lastComplete) {
+      const ageH = lastComplete.at ? (Date.now() - Date.parse(lastComplete.at)) / 3600000 : NaN;
+      evoEvidence.mode = "CARRIED-COMPLETE";
+      evoEvidence.windowAt = lastComplete.at;
+      evoEvidence.age_h = Number.isFinite(ageH) ? Math.round(ageH * 10) / 10 : null;
+      evoEvidence.note = "measured window outcome carried (numbers carry, hints expire — a measured reward never goes stale; age booked, never gated)";
+      if (lastComplete.incumbentRetained === true) {
+        proposals.push({ id: "evo:harness-window", kind: "observation", source: "evo-windows.json", action: "carry the measured harness-evolution outcome into the daily record (incumbent retained — evidence, no CR needed)", receipt: `winner ${lastComplete.winner} · meanReward ${lastComplete.meanReward} · leak ${lastComplete.leakCheck || "—"}` });
+      } else {
+        proposals.push({ id: "evo:harness-adoption", kind: "evo-adoption-pending", source: "evo-windows.json", action: "challenger harness ahead on measured evidence — draft tier-B CR adopting the preserved winner prompt (winnerPromptFile); verify-only: adoption via judged CR", receipt: `winner ${lastComplete.winner} · meanReward ${lastComplete.meanReward} · leak ${lastComplete.leakCheck || "—"}` });
+      }
+    } else {
+      evoEvidence.mode = "CADENCE-ONLY";
+      evoEvidence.nextDueAt = ewb.nextDueAt || null;
+      evoEvidence.note = "windows booked but none measured complete yet — cadence state carried as evidence";
+      proposals.push({ id: "evo:harness-window", kind: "observation", source: "evo-windows.json", action: "carry the evolution-window cadence state into the record", receipt: `${ewb.windowCount} windows booked, none complete · next due ${ewb.nextDueAt || "—"}` });
+    }
+  }
 
   // derive dispositions (single source of truth, E23-pinned)
   for (const p of proposals) p.disposition = deriveDisposition(p);
@@ -156,12 +215,13 @@ try {
   const counts = {};
   for (const d of DISPOSITIONS) counts[d] = proposals.filter((p) => p.disposition === d).length;
   const book = {
-    ok: true, at, since, agent: "pulse v1.1.0 (CR-0009 loop, Rung 1; CR-0028 consumes the laya advisory triage — Z-48/Z-49/Z-60)",
+    ok: true, at, since, windowSince, agent: "pulse v1.2.0 (CR-0009 loop, Rung 1; CR-0028 consumes the laya advisory triage; CR-0033 consumes the scheduled evolution-window evidence — Z-48/Z-49/Z-60/Z-62)",
     dayLedger: { since, count: commits.length, commits },
     proposals, counts,
     gates: { judge, evals },
     advisoryTriag,
-    laws: { verifyOnly: true, noNetwork: true, autoApply: false, advisoryGates: false, note: "application only via judged tier-B CR — the pulse proposes, the CR law disposes; advisory triage hints ride along but never gate (CR-0028)" },
+    evoEvidence,
+    laws: { verifyOnly: true, noNetwork: true, autoApply: false, advisoryGates: false, note: "application only via judged tier-B CR — the pulse proposes, the CR law disposes; advisory triage hints ride along but never gate (CR-0028); measured window evidence carries at any age and a challenger win is still only a PROPOSAL (CR-0033)" },
   };
   const md = [
     `# Daily Pulse — ${at}`,
@@ -177,6 +237,7 @@ try {
     ...DISPOSITIONS.map((d) => `- ${d}: ${counts[d]}`),
     ``,
     `- advisory triage: **${advisoryTriag.mode}** · joined ${advisoryTriag.joined} · ${advisoryTriag.note}`,
+    `- evolution-window evidence: **${evoEvidence.mode}** · ${evoEvidence.note}${evoEvidence.age_h != null ? ` (age ${evoEvidence.age_h}h — numbers carry)` : ""}`,
     ``,
   ].join("\n");
   fs.writeFileSync(path.join(AG, "pulse-book.json"), JSON.stringify(book, null, 2) + "\n");

@@ -1,7 +1,7 @@
 {
   "ok": true,
-  "at": "2026-10-03T16:10:00Z",
-  "agent": "reef-harness-evo v1.0.0 (Z-61, CR-0029 — GEPA-class harness evolution over the CR-0027 guarded executor)",
+  "at": "2026-10-03T16:54:35Z",
+  "agent": "reef-harness-evo v1.0.1 (Z-61 CR-0030 [renumbered from CR-0029]; Z-62 v1.0.1 incumbent-anchor fix, CR-0032 — GEPA-class harness evolution over the CR-0027 guarded executor)",
   "laws": [
     "VERIFY-ONLY (the desk measures and books; adoption only via a judged tier-B CR)",
     "SERVE-WINDOW ×2 (shim v1.1.0 TEST instance + reef, killed in finally, verified dead; live :3040 untouched)",
@@ -9,31 +9,12 @@
     "FRESH-FIXTURE (distinct integer seeds per episode; verifier recomputes truth from disk)",
     "MEASURED-SELECTION (best mean reward; tie → fewer mean turns; final tie → incumbent)"
   ],
-  "reflection": {
-    "receipt": "6e61becc21c84ec7a489f87c692912c4",
-    "proposed": 3,
-    "raw_chars": 2746
-  },
+  "reflection": null,
   "pool": [
     {
       "label": "v1-incumbent",
       "rationale": "seed (CR-0027 canonical harness, read from the runner source)",
       "chars": 689
-    },
-    {
-      "label": "strict-scope-enforcement",
-      "rationale": "Mandate full file inventory before summing to prevent WRONG SCOPE.",
-      "chars": 765
-    },
-    {
-      "label": "turn-economy-optimization",
-      "rationale": "Eliminate lazy finishes by forcing initial file inspection.",
-      "chars": 753
-    },
-    {
-      "label": "final-gate-enforcement",
-      "rationale": "Prevent premature FINAL by gating it behind a file write check.",
-      "chars": 748
     }
   ],
   "evaluations": [
@@ -43,110 +24,13 @@
       "eps": [
         {
           "seed": "11,29,391,7,101",
-          "attempt": true,
-          "reward": 1,
-          "turns": 4,
-          "bash": 3,
-          "denies": 0,
-          "file": 539,
-          "expected": 539,
-          "receiptCount": 4,
-          "ms": 2375
+          "attempt": false,
+          "reward": null,
+          "status": "UPSTREAM-FAIL",
+          "note": "non-attempt (never counted as reward 0)"
         },
         {
           "seed": "14,40,408,21,124",
-          "attempt": true,
-          "reward": 1,
-          "turns": 4,
-          "bash": 3,
-          "denies": 0,
-          "file": 607,
-          "expected": 607,
-          "receiptCount": 4,
-          "ms": 2655
-        }
-      ],
-      "attempts": 2,
-      "meanReward": 1,
-      "meanTurns": 4,
-      "denies": 0
-    },
-    {
-      "label": "strict-scope-enforcement",
-      "rationale": "Mandate full file inventory before summing to prevent WRONG SCOPE.",
-      "eps": [
-        {
-          "seed": "18,34,392,14,114",
-          "attempt": true,
-          "reward": 1,
-          "turns": 6,
-          "bash": 3,
-          "denies": 0,
-          "file": 572,
-          "expected": 572,
-          "receiptCount": 6,
-          "ms": 5050
-        },
-        {
-          "seed": "21,45,409,28,137",
-          "attempt": true,
-          "reward": 1,
-          "turns": 6,
-          "bash": 2,
-          "denies": 0,
-          "file": 640,
-          "expected": 640,
-          "receiptCount": 6,
-          "ms": 4125
-        }
-      ],
-      "attempts": 2,
-      "meanReward": 1,
-      "meanTurns": 6,
-      "denies": 0
-    },
-    {
-      "label": "turn-economy-optimization",
-      "rationale": "Eliminate lazy finishes by forcing initial file inspection.",
-      "eps": [
-        {
-          "seed": "25,39,393,21,127",
-          "attempt": true,
-          "reward": 0,
-          "turns": 6,
-          "bash": 6,
-          "denies": 0,
-          "file": null,
-          "expected": 605,
-          "receiptCount": 6,
-          "ms": 4005
-        },
-        {
-          "seed": "28,50,410,35,150",
-          "attempt": false,
-          "reward": null,
-          "status": "UPSTREAM-FAIL",
-          "note": "non-attempt (never counted as reward 0)"
-        }
-      ],
-      "attempts": 1,
-      "meanReward": 0,
-      "meanTurns": 6,
-      "denies": 0
-    },
-    {
-      "label": "final-gate-enforcement",
-      "rationale": "Prevent premature FINAL by gating it behind a file write check.",
-      "eps": [
-        {
-          "seed": "32,44,394,28,140",
-          "attempt": false,
-          "reward": null,
-          "status": "UPSTREAM-FAIL",
-          "note": "non-attempt (never counted as reward 0)"
-        },
-        {
-          "seed": "35,55,411,42,163",
           "attempt": false,
           "reward": null,
           "status": "UPSTREAM-FAIL",
@@ -159,22 +43,18 @@
       "denies": 0
     }
   ],
-  "winner": {
-    "label": "v1-incumbent",
-    "meanReward": 1,
-    "meanTurns": 4
-  },
-  "winnerPromptFile": "/tmp/reef-rung3/harness-0.txt",
+  "winner": null,
+  "winnerPromptFile": null,
   "serve_windows": {
     "shim": {
       "started": true,
-      "pid": 14830,
+      "pid": 18849,
       "killed": true,
       "verified_dead": true
     },
     "reef": {
       "started": true,
-      "pid": 14836,
+      "pid": 18855,
       "killed": true,
       "verified_dead": true
     }
@@ -183,62 +63,33 @@
     {
       "id": "shim",
       "status": "TEST-INSTANCE-UP",
-      "detail": "v1.1.0 queue instance on 3041 (retry/backoff for the measured batch; live :3040 untouched)"
+      "detail": "v1.1.0 queue instance on 3052 (retry/backoff for the measured batch; live :3040 untouched)"
     },
     {
       "id": "reef",
       "status": "SERVE-UP",
-      "detail": "reef on 8900 upstreaming to the 3041 test instance"
+      "detail": "reef on 8900 upstreaming to the 3052 test instance"
     },
     {
       "id": "reflection",
-      "status": "PROPOSED",
-      "detail": "receipt 6e61becc… · 3 variants accepted of 3 requested"
+      "status": "REFLECTION-FAIL",
+      "detail": "no parseable reflection output (exit 1)",
+      "stderr_tail": "nference provider returned 502: {\"error\":{\"message\":\"upstream_error\",\"type\":\"upstream_error\",\"detail\":\"API request failed with status 429: {\\\"error\\\":\\\"Too many requests, please try again later\\\"}\"}}\n"
     },
     {
       "id": "ep:v1-incumbent#0",
-      "status": "REWARD-1",
-      "detail": "turns=4 bash=3 file=539 truth=539"
-    },
-    {
-      "id": "ep:v1-incumbent#1",
-      "status": "REWARD-1",
-      "detail": "turns=4 bash=3 file=607 truth=607"
-    },
-    {
-      "id": "ep:strict-scope-enforcement#0",
-      "status": "REWARD-1",
-      "detail": "turns=6 bash=3 file=572 truth=572"
-    },
-    {
-      "id": "ep:strict-scope-enforcement#1",
-      "status": "REWARD-1",
-      "detail": "turns=6 bash=2 file=640 truth=640"
-    },
-    {
-      "id": "ep:turn-economy-optimization#0",
-      "status": "REWARD-0",
-      "detail": "turns=6 bash=6 file=null truth=605"
-    },
-    {
-      "id": "ep:turn-economy-optimization#1",
-      "status": "NON-ATTEMPT",
-      "detail": "status=UPSTREAM-FAIL upstream_fail=turn 2: ReefClientError: Reef service returned 502: inference provider returned "
-    },
-    {
-      "id": "ep:final-gate-enforcement#0",
       "status": "NON-ATTEMPT",
       "detail": "status=UPSTREAM-FAIL upstream_fail=turn 1: ReefClientError: Reef service returned 502: inference provider returned "
     },
     {
-      "id": "ep:final-gate-enforcement#1",
+      "id": "ep:v1-incumbent#1",
       "status": "NON-ATTEMPT",
       "detail": "status=UPSTREAM-FAIL upstream_fail=turn 1: ReefClientError: Reef service returned 502: inference provider returned "
     },
     {
       "id": "selection",
-      "status": "MEASURED",
-      "detail": "winner=v1-incumbent meanReward=1 attempts=2/2 (incumbent mean=1)"
+      "status": "NO-ATTEMPTS",
+      "detail": "no variant completed a measurable attempt — honest null, nothing selected"
     },
     {
       "id": "shim",

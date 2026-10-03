@@ -35,6 +35,7 @@
  *   E24 mini-swe lineage pin — same strip-restore predicate for the SWE-agent/mini-swe-agent MIT mirror sha 04d809c (Task 33, minimal-agent lineage)
  *   E25 fcc lineage pin      — same strip-restore predicate for the Alishahryar1/free-claude-code AGPL-3.0-only mirror sha 03aca36 (Task 35, frugal-routing lineage, license verified in-file)
  *   E26 sweep lineage pins   — one strip-restore pass over the FIVE Task 36 pins (Graft fe30ead / agency-agents d3f71c4 / codebase-memory 96c3f41c / OpenMontage 08e2151 / orca 843607b1): stripping any one yields a (library) offender naming it; restoring clears (Task 36 five-repo sweep)
+ *   E27 evo-windows scheduler — scheduled evolution windows: the pulled-schedule decision is exact (force/skip/bootstrap/first-window/cadence/no-runtime), window outcomes classify honestly (incumbent-retained vs ADOPTION-PENDING-CR, serve-window leak check), fresh-process books append-only rows without spawning the measured batch (Z-62, CR-0033)
  *
  * Fail-soft: exit 0 always; FAILs are booked honestly (HARNESS-AUDIT MANDATE:
  * green-washing the evals is a doctrine breach).
@@ -367,6 +368,7 @@ function accumulateInMemory(bookRows, seed) {
       [{ kind: 'probe-queued' }, 'PROPOSED-CR'], [{ kind: 'probe-parked' }, 'DEFERRED-TIER-C'],
       [{ kind: 'needs-validation' }, 'GATED-BLOCKED'], [{ kind: 'cr-pass' }, 'ACCEPTED-TODAY'],
       [{ kind: 'cr-fail' }, 'ROLLED-BACK'], [{ kind: 'tier-c' }, 'DEFERRED-TIER-C'], [{ kind: 'observation' }, 'BOOKED'],
+      [{ kind: 'evo-adoption-pending' }, 'PROPOSED-CR'], // Z-62 CR-0033: challenger harness ahead on measured evidence — still only a proposal (superset pin: the original seven are unchanged)
     ];
     const w1 = cases.every(([i, want]) => pulse.deriveDisposition(i) === want);
     const w2 = Array.isArray(pulse.DISPOSITIONS) && pulse.DISPOSITIONS.length === 6;
@@ -375,10 +377,11 @@ function accumulateInMemory(bookRows, seed) {
     const pb = JSON.parse(fs.readFileSync(path.join(AG, 'pulse-book.json'), 'utf8'));
     const fresh = !!pb.at && (Date.now() - Date.parse(pb.at)) / 60000 < 30;
     const skippedHonest = !!(pb.gates && pb.gates.judge && pb.gates.judge.includes('PULSE_SKIP_GATES')); // the guarded book marks the skip, never fakes a verdict
+    const pbEnum = Array.isArray(pb.proposals) && pb.proposals.length > 0 && pb.proposals.every((p) => pulse.DISPOSITIONS.includes(p.disposition)); // Z-62: the judge caught an evo row pushed after the derive loop — a proposal without a disposition is a type hole; every row must be typed
     evalr('E23', 'daily pulse: typed proposals + real gates + verify-only (the loop closed under law)',
-      w1 && w2 && rr.status === 0 && pb.ok === true && pb.laws.verifyOnly === true && pb.laws.autoApply === false && Array.isArray(pb.proposals) && pb.proposals.length >= 2 && skippedHonest && fresh,
-      ['white-box: disposition derivation exact for all seven input kinds (queued→PROPOSED-CR, parked/tier-c→DEFERRED-TIER-C, needs-validation→GATED-BLOCKED, cr-pass→ACCEPTED-TODAY, cr-fail→ROLLED-BACK, observation→BOOKED)', 'black-box: fresh-process pulse exits 0 (fail-soft), ≥2 proposals booked', 'gates: in the eval-harness context the recursion guard skips gates and marks it HONESTLY (no faked verdicts); real gate runs are proven standalone and pinned by the judge check', 'laws: verifyOnly=true, autoApply=false — the pulse never overrides the CR law', 'book fresh (<30min)'],
-      `proposals=${pb.proposals.length} w1=${w1} guard=${skippedHonest} verifyOnly=${pb.laws.verifyOnly}`);
+      w1 && w2 && rr.status === 0 && pb.ok === true && pb.laws.verifyOnly === true && pb.laws.autoApply === false && Array.isArray(pb.proposals) && pb.proposals.length >= 2 && skippedHonest && fresh && pbEnum,
+      ['white-box: disposition derivation exact for all eight input kinds (queued→PROPOSED-CR, parked/tier-c→DEFERRED-TIER-C, needs-validation→GATED-BLOCKED, cr-pass→ACCEPTED-TODAY, cr-fail→ROLLED-BACK, observation→BOOKED, evo-adoption-pending→PROPOSED-CR [Z-62 superset — original seven unchanged])', 'black-box: fresh-process pulse exits 0 (fail-soft), ≥2 proposals booked', 'black-box (Z-62): EVERY booked proposal carries a disposition from the enum — evidence rows pushed by any consumer surface are typed too (the judge-caught type hole, pinned forever)', 'gates: in the eval-harness context the recursion guard skips gates and marks it HONESTLY (no faked verdicts); real gate runs are proven standalone and pinned by the judge check', 'laws: verifyOnly=true, autoApply=false — the pulse never overrides the CR law', 'book fresh (<30min)'],
+      `proposals=${pb.proposals.length} w1=${w1} guard=${skippedHonest} verifyOnly=${pb.laws.verifyOnly} enum=${pbEnum} evoEvidence=${pb.evoEvidence ? pb.evoEvidence.mode : 'n/a'}`);
   } catch (e) { evalr('E23', 'daily pulse', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
   // ---- E21: strix lineage pin (Task 29) — a rule not enforced in code is not a rule.
@@ -546,9 +549,52 @@ function accumulateInMemory(bookRows, seed) {
   } catch (e) { evalr('E26', 'sweep lineage pins', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
 
+  // ---- E27: evo-windows scheduler (Z-62, CR-0033) — scheduled evolution windows over
+  // the CR-0030 evo desk, with the outcome carried into the pulse as EVIDENCE. The
+  // pulled-schedule decision must be exact (no daemon, one appended row per
+  // invocation); the outcome classification must be honest (incumbent-retained is
+  // evidence, a challenger win is ONLY a PROPOSED-CR — verify-only; a serve-window
+  // leak is never silenced). The black-box runs under EVO_WINDOWS_SKIP_RUN=1: the
+  // measured batch is off-budget in eval contexts (the CR-0030 CI law mirrored
+  // upstream of the spawn) — the desk must prove that gate in the fresh process.
+  try {
+    const ew = require(path.join(AG, 'evo-windows.cjs'));
+    // white-box: the pulled-schedule decision, all seven classes exact
+    const now = Date.now();
+    const iso = (msAgo) => new Date(now - msAgo).toISOString();
+    const d1 = ew.decide({ force: true, skipRun: false, historyLast: { at: iso(0) }, evoBookFresh: true, hasDeskRuntime: true });
+    const d2 = ew.decide({ force: false, skipRun: true, historyLast: { at: iso(100 * 3600000) }, evoBookFresh: false, hasDeskRuntime: true });
+    const d3 = ew.decide({ force: false, skipRun: false, historyLast: null, evoBookFresh: true, hasDeskRuntime: true });
+    const d4 = ew.decide({ force: false, skipRun: false, historyLast: null, evoBookFresh: false, hasDeskRuntime: true });
+    const d5 = ew.decide({ force: false, skipRun: false, historyLast: { at: iso(2 * 3600000) }, evoBookFresh: false, hasDeskRuntime: true });
+    const d6 = ew.decide({ force: false, skipRun: false, historyLast: { at: iso(21 * 3600000) }, evoBookFresh: false, hasDeskRuntime: true });
+    const d7 = ew.decide({ force: false, skipRun: false, historyLast: null, evoBookFresh: false, hasDeskRuntime: false });
+    const wdec = d1.kind === 'RUN' && d1.mode === 'FORCED' && d2.kind === 'SKIPPED-EVAL-CONTEXT' && d3.kind === 'BOOTSTRAP-SEEDED' && d4.kind === 'RUN' && d4.mode === 'FIRST-WINDOW' && d5.kind === 'SKIPPED-TOO-SOON' && !!d5.nextDueAt && d6.kind === 'RUN' && d6.mode === 'CADENCE' && d7.kind === 'SKIPPED-NO-DESK-RUNTIME';
+    // white-box: outcome classification is honest (verify-only + leak check)
+    const o1 = ew.classifyOutcome({ winner: { label: 'v1-incumbent', meanReward: 1, meanTurns: 4 }, serve_windows: { shim: { verified_dead: true }, reef: { verified_dead: true } }, rows: [], at: iso(0) });
+    const o2 = ew.classifyOutcome({ winner: { label: 'challenger-x', meanReward: 1 }, serve_windows: { shim: { verified_dead: true }, reef: { verified_dead: true } }, rows: [], at: iso(0) });
+    const o3 = ew.classifyOutcome({ winner: { label: 'v1-incumbent' }, serve_windows: { shim: { verified_dead: true }, reef: { verified_dead: false } }, rows: [], at: iso(0) });
+    const o4 = ew.classifyOutcome(null);
+    const wcls = o1.status === 'INCUMBENT-RETAINED' && o1.leakCheck === 'PASS' && o2.status === 'ADOPTION-PENDING-CR' && o3.leakCheck === 'LEAK-DETECTED' && o4.status === 'WINDOW-NO-WINNER';
+    // black-box: fresh-process desk under SKIP_RUN — exits 0, appends EXACTLY ONE row,
+    // never spawns the measured batch (the decision class is a non-run class)
+    const prevBook27 = JSON.parse(fs.readFileSync(path.join(AG, 'evo-windows.json'), 'utf8'));
+    const before27 = Array.isArray(prevBook27.windows) ? prevBook27.windows.length : 0;
+    const rr27 = spawnSync(process.execPath, [path.join(AG, 'evo-windows.cjs')], { cwd: AG, timeout: 60000, encoding: 'utf8', env: { ...process.env, EVO_WINDOWS_SKIP_RUN: '1' } });
+    const book27 = JSON.parse(fs.readFileSync(path.join(AG, 'evo-windows.json'), 'utf8'));
+    const appended27 = Array.isArray(book27.windows) && book27.windows.length === before27 + 1; // append-only, one row per invocation
+    const fresh27 = !!book27.at && (now - Date.parse(book27.at)) / 60000 < 30;
+    const nonRun27 = book27.decision && !String(book27.decision.status).startsWith('WINDOW-COMPLETE') && book27.decision.status !== 'WINDOW-RUN-TIMEOUT'; // no measured batch in the eval context
+    evalr('E27', 'evo-windows scheduler: pulled-schedule exact, verify-only outcomes, append-only history, off-budget gate',
+      wdec && wcls && rr27.status === 0 && appended27 && fresh27 && nonRun27 && book27.ok === true && book27.laws && book27.laws.verifyOnly,
+      ['white-box: decide() exact for all seven classes (FORCE→RUN/FORCED, SKIP_RUN→SKIPPED-EVAL-CONTEXT, fresh-book bootstrap→BOOTSTRAP-SEEDED, no-history→RUN/FIRST-WINDOW, fresh-history→SKIPPED-TOO-SOON with nextDueAt, stale-history→RUN/CADENCE, no-runtime→SKIPPED-NO-DESK-RUNTIME)', 'white-box: classifyOutcome() honest — incumbent-retained=INCUMBENT-RETAINED, challenger=ADOPTION-PENDING-CR (verify-only), reef-alive=LEAK-DETECTED (a leak is never silenced), no-book=WINDOW-NO-WINNER', 'black-box: fresh-process desk exits 0 under EVO_WINDOWS_SKIP_RUN=1, appends exactly ONE row (append-only history), never spawns the measured batch (off-budget law)', 'laws: verifyOnly booked in the book laws map'],
+      `wdec=${wdec} wcls=${wcls} appended=${appended27} decision=${book27.decision && book27.decision.status} windows=${book27.windows && book27.windows.length}`);
+  } catch (e) { evalr('E27', 'evo-windows scheduler', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
+
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.15.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.16.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];
