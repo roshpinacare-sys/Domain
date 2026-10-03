@@ -1,315 +1,325 @@
 {
- "features": [
-  {
-   "id": "feat-001",
-   "name": "Autonomous economy engine",
-   "description": "Daily on-chain curation + self-votes + claims across steem/hive/blurt, keyless in Domain, seal opened only in-runner, receipts as proof",
-   "dependencies": [],
-   "status": "done",
-   "evidence": "economy-engine.yml + scripts/economy-engine.mjs; real runs 37009336549/37067532580 SUCCESS with chain txid read-back (cbb4bc69… block 110099406)"
-  },
-  {
-   "id": "feat-002",
-   "name": "Harness judge node (five subsystems)",
-   "description": "Fresh-context checker node auditing instructions/state/verification/scope/lifecycle + anchors, on a schedule, fail-soft",
-   "dependencies": [],
-   "status": "done",
-   "evidence": "agents/harness-audit.cjs → harness-audit.json/md; adopted from walkinglabs/learn-harness-engineering (Z-35), extended Task 19 (role→worker wiring + loop primitives)"
-  },
-  {
-   "id": "feat-003",
-   "name": "Books pulse (machine state layer)",
-   "description": "Live measurement books stamp themselves (at/updated) and stay fresh <48h; freshness audited by the judge node",
-   "dependencies": [
-    "feat-002"
-   ],
-   "status": "done",
-   "evidence": "9/9 live books exist; learning-ledger stamping fixed in Task 19 (measure-learn.cjs now stamps at/updated)"
-  },
-  {
-   "id": "feat-004",
-   "name": "Weave core anchor cadence",
-   "description": "Hourly anchor ping (sandbox-independent) + anchor-execute lines keep saos.weave.core.v1 on chain",
-   "dependencies": [],
-   "status": "done",
-   "evidence": "weave-anchor-ping.yml hourly + weave-anchor-lines.yml; core trx 9b377210393fdec1 2026-10-02T21:42Z"
-  },
-  {
-   "id": "feat-005",
-   "name": "Army role→worker wiring (audited)",
-   "description": "Every FILLED role in recruitment.json must name a worker artifact that exists on disk; the judge node measures the hands",
-   "dependencies": [
-    "feat-002"
-   ],
-   "status": "done",
-   "evidence": "harness-audit.cjs graph check 'every FILLED role names a reachable worker artifact' — Task 19"
-  },
-  {
-   "id": "feat-006",
-   "name": "LHE harness protocol adoption (this repo)",
-   "description": "walkinglabs/learn-harness-engineering minimal harness: AGENTS.md protocol + feature_list.json + progress.md + session-handoff.md + init.sh",
-   "dependencies": [
-    "feat-002",
-    "feat-003"
-   ],
-   "status": "done",
-   "evidence": "Task 19 — validator run on this repo post-adoption; scores recorded in the Task 19 worklog section"
-  },
-  {
-   "id": "feat-007",
-   "name": "Daily revenue > 1 cent (owner KPI)",
-   "description": "Realized chain income (curation + author + claims) maturing above $0.01/day, receipts-provable",
-   "dependencies": [
-    "feat-001"
-   ],
-   "status": "open",
-   "evidence": "v3 engine run-rate 0.02–0.06 SBD/day maturing over 7 days; needs days of receipts to show realized >1¢ — SP compounding + daily quality posts are the levers"
-  },
-  {
-   "id": "feat-008",
-   "name": "Role-prompt registry (prompts.chat adoption)",
-   "description": "Declarative role-voice registry in prompts.chat CSV schema (act,prompt,for_devs,type,contributor) + ${Var:default} binding + loader role-prompts.cjs; sovereignty: role behavior is versioned data, a fresh worker adopts a fleet role by loading one row",
-   "dependencies": [
-    "feat-002",
-    "feat-005"
-   ],
-   "status": "done",
-   "evidence": "ADOPTION LANDED VIA THE PARALLEL Z-37 CHARTER REGISTRY (superset): agents/role-registry.csv (act,file,ci,mission,signs,tier,books,owner,status — roles-as-data with enforcement) + sovereignty.md (tier A/B/C + CR flow) + harness-audit v1.2.0 sovereignty checks. My interim role-prompts.csv/cjs (prompts.chat raw schema + ${Var} loader) retired SUPERSEDED-BY; the loader pattern + FILLED-roles completeness idea live on in the charter registry checks."
-  },
-  {
-   "id": "feat-009",
-   "name": "Destructive-command guard (dcg adoption)",
-   "description": "Mechanical tier-C enforcement adopted from Dicklesworthstone/destructive_command_guard: banned shapes (force-push, reset --hard, clean -x, estate rm -rf, DROP, migrate reset) blocked pre-execution with doctrine reasons + safer tips; data-position context detection; heredoc scanning; STRICT mode for supply-chain; 13-case selftest wired into init.sh + harness-audit",
-   "dependencies": [
-    "feat-002",
-    "feat-008"
-   ],
-   "status": "done",
-   "evidence": "ADOPTION LANDED VIA THE PARALLEL Z-38 FLEET-NATIVE GUARD (superset): agents/command-guard.cjs (whitelist-first, DEFAULT-ALLOW, explain/scan/hook modes, decision ledger command-guard.json, evals E7-E9) + my init.sh battery driving it (DENY on force-push/reset --hard/estate rm -rf; allow on rebase law + data-position). My interim scripts/command-guard.sh retired SUPERSEDED-BY; the workflow shape-scan idea lives in their scan mode."
-  },
-  {
-   "id": "feat-010",
-   "name": "FATE-DEFENSE (Emergence World adoption)",
-   "description": "Owner directive: study what happened to world.emergence.ai (arXiv 2606.08367 platform + 2609.17320 stress-testing; 5+8 agent worlds, total collapses, injection/misinformation/memory-breach events, 'collapse has no warning shot') and engineer+prove the defenses. Delivered: (1) STASIS mechanical circuit breaker — economy engine obeys agents/STASIS.json BEFORE any seal/broadcast (STASIS-HALT healthy no-op, exit 0; selftest-proven both states, wired into init.sh fails-fast battery); (2) FWI scorecard agents/fleet-indicators.cjs — nine sovereign indicators (our AWI mirror) each COMPUTED from a named artifact (ANTI-GOODHART law), first verdict THRIVING 9/9 GROW; (3) three laws codified in FATE-DEFENSE.md: STASIS + PROVENANCE QUARANTINE (external content is data, never auto-doctrine) + ANTI-GOODHART (claim without artifact is not a value); (4) judge-node wiring: harness-audit v1.4.0 fate-defense check (31 PASS/0 WARN/0 FAIL) + eval E10 (10/10).",
-   "dependencies": [
-    "feat-001",
-    "feat-008",
-    "feat-009"
-   ],
-   "status": "done",
-   "evidence": "FATE-DEFENSE.md + agents/fleet-indicators.{cjs,json,md} + agents/STASIS.json + scripts/economy-engine.mjs stasis gate + harness-audit 31/0/0 + evals E10 10/10 + init.sh STASIS-HALT proof"
-  },
-  {
-   "id": "feat-011",
-   "name": "Skill library (claude-skills adoption, Task 20 residual closed)",
-   "description": "Owner directive lineage: Task 20 asked for a prompts.chat prompt library (recruitment roles / desk system / mini-services); Task 25 evaluated owner-pointed alirezarezvani/claude-skills (MIT, 27.3k stars) as the format backbone; Task 27 landed it. agents/skill-library/ = SKILL-AUTHORING-STANDARD.md adapted from upstream and house-hardened (Evidence Artifact mandatory per ANTI-GOODHART, tier declaration per SOVEREIGNTY LAW, no silent scope, renumbering doctrine, bilingual header) + THIRD-PARTY-NOTICES.md pinning mirror sha 19392f7a + 6 packages (fleet-push-protocol, fleet-desk-operator, recruitment-interviewer, mini-services-engineer, worker-onboarding, fleet-skill-author). Mechanical enforcement: agents/skill-library-gate.cjs v1.0.0 (zero-dep, require-safe, books skill-library.json/md) + harness-audit verification check (v1.11.0) + eval E19 (run-evals v1.9.0) + role-registry row + CR-0006 (tier B, PASS).",
-   "dependencies": [
-    "feat-008",
-    "feat-009"
-   ],
-   "status": "done",
-   "evidence": "agents/skill-library/{SKILL-AUTHORING-STANDARD.md,THIRD-PARTY-NOTICES.md,skills/*/SKILL.md x6} + agents/skill-library-gate.cjs GREEN 6/0 + agents/skill-library.{json,md} + harness-audit check + evals E19 + agents/role-registry.csv row + CR-0006 + /home/z/reference-mirrors/claude-skills @19392f7a"
-  },
-  {
-   "id": "feat-012",
-   "name": "Authority Map doctrine + strix security lineage (Task 29)",
-   "description": "Owner constitutional statement (2026-10-03) encoded: 'we have sovereignty — everything is subject to the sovereignty's decision; only for the wallet am I an authority.' Encoded as the Authority Map in fleet-desk-operator v1.1.0 (wallet=owner authority / everything else=sovereignty-decided / owner-held possessions=possession-gated, not authority-gated) + SKILL-AUTHORING-STANDARD.md tier-C redefinition (C = WALLET-OR-POSSESSION-LOCK, exists only for those two domains). Same wave adopts the usestrix/strix security lineage (Apache-2.0, 66.2k stars, eval Task 28): house package skills/security-strix-operator (authorization boundary: estate assets only; honest feasibility — no Docker in sandbox, cloud=wallet) + THIRD-PARTY-NOTICES.md section 3 + skill-library-gate.cjs v1.1.0 second lineage pin (strix sha 99c0711 + Apache-2.0 mechanically enforced) + eval E21 + judge v1.13.0 doctrine-anchor check + CR-0008 (tier B, PASS).",
-   "dependencies": [
-    "feat-011"
-   ],
-   "status": "done",
-   "evidence": "agents/skill-library/skills/desk-operator/SKILL.md (Authority Map, v1.1.0) + agents/skill-library/SKILL-AUTHORING-STANDARD.md (tier-C rewrite) + agents/skill-library/skills/security-strix-operator/SKILL.md + THIRD-PARTY-NOTICES.md section 3 + agents/skill-library-gate.cjs v1.1.0 GREEN 7/0 + agents/skill-library.{json,md} + evals E21 (run-evals v1.11.0, 21/21) + harness-audit v1.13.0 doctrine-anchor check + CR-0008 + /home/z/reference-mirrors/strix @99c0711"
-  },
-  {
-   "id": "feat-013",
-   "name": "Agentic-orchestration lineage: google/ax (Task 31)",
-   "description": "Owner directive 'תבחן את זה גם ויישם מה שניתן וראוי' (https://github.com/google/ax) executed as an evaluation + same-wave adoption under the Authority Map (wallet=owner, rest=sovereignty). google/ax = Google's open agentic orchestration runtime (Apache-2.0, Go, 12,921 stars, created 2026-03-30, push 2026-09-27; Task/Workspace/Model manifests on Agent Substrate over K8s). Feasibility booked honestly: control plane needs K8s cluster + Agent Substrate + ko + registry -> BLOCKED in this sandbox (no Docker/K8s) and any cluster = paid infra = wallet/possession domain (owner). Adopted at zero cost: house package skills/orchestration-ax-operator (feasibility table + doctrine-parallel table mapping AX mechanics to estate laws: immutability->append-only ledgers, up-front RFC1123 validation->PR-time gates, WorkspaceReady->Ready conditions->MEASURABLE-to-DASHBOARD, requests/limits->budget guards, suspend/resume->honest checkpoints, secretKey refs->PAT law, skills.registries->the skill library itself) + THIRD-PARTY-NOTICES.md section 4 + skill-library-gate.cjs v1.2.0 third lineage pin (ax sha ac23328 mechanically enforced) + evals E22 strip-restore + judge v1.14.0 dual-lineage doctrine anchor + CR-0010.",
-   "dependencies": [
-    "feat-012"
-   ],
-   "status": "done",
-   "evidence": "agents/skill-library/skills/orchestration-ax-operator/SKILL.md + THIRD-PARTY-NOTICES.md section 4 (sha ac23328, full API sha ac2332829f22360ff97b0ba34d94dd0dd782f17e) + agents/skill-library-gate.cjs v1.2.0 GREEN 8/0 + agents/skill-library.{json,md} + evals E22 (run-evals v1.12.0, 22/22) + harness-audit v1.14.0 doctrine anchor (strix+ax) + CR-0010 + /home/z/reference-mirrors/ax @ac23328"
-  },
-  {
-   "id": "feat-014",
-   "name": "Applied-AI pattern reference, consult-only (Task 32)",
-   "description": "Owner directive 'תראה זה יכול לעזור' (Sumanth077/Hands-On-AI-Engineering, 3,832 stars) executed as evaluation + consult-only adoption under the Authority Map. HONESTY FINDING: upstream claims MIT (badge + section) but LICENSE file is 404 / API null at mirror sha da0091d6 → treated as ALL RIGHTS RESERVED, zero-copy posture, ideas only. Crown finding: upstream's nl_data_analyst_agent implements Jev three-point decision review (input clarity; pre-execution relevance with runtime-bound authoritative inputs — the model under review cannot rewrite what is reviewed; post-answer grounding → unverified-draft flag) with the estate's own honesty rules as working code: fail-open WITH visible reviewer notes, reviewer-only (never grants authority), inconclusive ≠ blocking, approval denied → no retry. Adopted: house package skills/applied-ai-patterns-operator (Jev gate → laya-decision reviewer wiring per Task 30's candidate wave + pattern catalog mapped to estate lanes + feasibility table routing paid-API legs to the zero-marginal stack with the wallet stop) + THIRD-PARTY-NOTICES.md section 5 (license-mismatch finding + why no gate pin) + bare-blobless mirror @ da0091d6 (184K, disk-honest). Gate stays v1.2.0; evals 23/23; judge v1.14.0.",
-   "dependencies": [
-    "feat-013"
-   ],
-   "status": "done",
-   "evidence": "agents/skill-library/skills/applied-ai-patterns-operator/SKILL.md + THIRD-PARTY-NOTICES.md section 5 + CR-0011 + /home/z/reference-mirrors/hae-mirror.git @ da0091d6452e18dae9fd3119a194019f35306d27 (bare-blobless 184K) + LICENSE-404 proof (contents API 404, 2026-10-03) + gate GREEN 9/0 + evals 23/23 unique + judge 40/1/0"
-  },
-  {
-   "id": "feat-015",
-   "name": "Minimal-agent doctrine lineage: SWE-agent/mini-swe-agent (Task 33)",
-   "description": "Owner directive 'תראה מה עם זה' (https://github.com/swe-agent/mini-swe-agent, 8,165 stars) executed as evaluation + same-wave adoption under the Authority Map. MIT verified IN-FILE at mirror sha 04d809c (Copyright (c) 2025 Kilian A. Lieret and Carlos E. Jimenez) — full pin ceremony unlike Task 32's consult-only. Adopted doctrine as reference in house package #10 swe-mini-operator: bash-as-the-only-tool, stateless per-action execution (process-group kill on timeout), linear append-only history (trajectory == messages), exceptions-as-control-flow carrying messages (never swallowed), hard step/cost/wall-time limits as first-class config (upstream default cost_limit=3.0), format-error circuit breaker with billed-cost honesty, StrictUndefined templates, explicit submit signal, save-every-step checkpoints, AGENTS.md test law (no unasked mocking; every test targets a failure point) — third-party validation of ANTI-GOODHART. NOT taken: upstream runtime (litellm paid keys = wallet) and containerized env legs = wallet/possession. Headline metrics booked as upstream claims.",
-   "dependencies": [
-    "feat-014"
-   ],
-   "status": "done",
-   "evidence": "CR-0012 PASS; mirror /home/z/reference-mirrors/mini-swe-agent @ 04d809ceab9df28f9adaed044884180159172930; skill-library-gate.cjs v1.3.0 fourth lineage pin GREEN (10 packages / 0 offenders); evals v1.13.0 E24 strip-restore; harness-audit v1.15.0 quad-lineage doctrine anchor; THIRD-PARTY-NOTICES.md §6 MIT attribution; init.sh DOMAIN-INIT-OK"
-  },
-  {
-   "id": "feat-016",
-   "name": "AI-review-surface doctrine, consult-only (Task 34)",
-   "description": "Owner directive 'מה לגבי זה' (https://github.com/vercel-labs/openreview, 1,697 stars — self-hosted AI code review bot by Vercel Labs) executed as evaluation + consult-only adoption under the Authority Map. LICENSE-MISMATCH FINDING (second occurrence of the Task 32 pattern): README claims MIT but NO LICENSE file exists (API license: null) at mirror sha 672deb2 → ALL RIGHTS RESERVED, zero-copy, no gate pin. Dormancy booked: last push 2026-03-06 (7 months), beta disclaimer. Crown doctrine restated originally in house package #11 ai-review-operator: authority pre-flight before any push with named refusal reasons (archived/permissions/branch-restrictions — the Authority Map as working code); reviewer-only separation of powers (reaction-gated application); the autonomy gradient (mechanical fixes auto, judgment = suggestion); on-demand @mention triggers; uncommitted-changes honesty before commit-and-push; progressive skill loading (descriptions as router, body on demand); per-skill skills-lock.json hash pattern (booked as zero-cost candidate: hash lockbook for our packages via a future judged CR). Wallet legs (Vercel Sandbox/Workflow, Upstash, Anthropic key, GitHub App private key) named and left at the line.",
-   "dependencies": [
-    "feat-015"
-   ],
-   "status": "done",
-   "evidence": "CR-0013 PASS; mirror /home/z/reference-mirrors/openreview @ 672deb21e70e471e0536d5ad7a67c14b8359e97e; skill-library-gate.cjs v1.3.0 GREEN 11 packages / 0 offenders (no pin — consult-only); evals v1.13.0 24/24; judge v1.15.0 40/1/0; THIRD-PARTY-NOTICES.md §7; init.sh DOMAIN-INIT-OK"
-  },
-  {
-   "id": "feat-017",
-   "name": "Frugal-routing doctrine lineage, AGPL pinned (Task 35)",
-   "description": "Owner directive 'תראה מה עם זה' (https://github.com/Alishahryar1/free-claude-code, 56,409 stars — local proxy connecting coding agents to OpenAI-compatible providers, 59 provider integrations / 11 harnesses, Python 3.14, 392 files / 67,669 LOC) executed as evaluation + same-wave doctrine adoption under the Authority Map. LICENSE VERIFIED IN-FILE: AGPL-3.0-only (34,108-byte standard AGPL v3 text, SPDX header, Copyright (c) 2026 Ali Khokhar) — repo API NOASSERTION overridden by reading the file (Task 33 rule: the file is the truth), unlike Task 34's unbacked MIT claim → full pin ritual. FIRST NON-PERMISSIVE LINEAGE PIN: sha 03aca36 certifies STUDY PROVENANCE, zero-copy only; code incorporation = AGPL §13 obligations = owner-gated. Crown doctrine in house package #12 frugal-router-operator: never spend a model call on mechanical work (optimization_handlers.py local fast-paths: quota probes/prefix/titles/suggestions/filepaths + RTK terminal-output filtering); StrictSlidingWindowLimiter guarantee stated in docstring; admission budgets independent of client lifetime, one protection budget per provider; classified failures with named remedies; authorized request/stream recovery from history; SSRF egress guard with DNS-rebinding pinning; reviewable installers; exact pins (==3.14.7, ==1.0.14); harness capability preservation; ToS-friendliness as enforced design. Security sweep clean: 0 suspicious patterns, 0 own telemetry. Wallet legs named and left at the line: running FCC needs user-supplied provider keys (possession = OWNER) and is redundant (desk model leg = z-ai SDK); headline claims booked as upstream claims.",
-   "dependencies": [
-    "feat-016"
-   ],
-   "status": "done",
-   "evidence": "CR-0014 PASS; mirror /home/z/reference-mirrors/free-claude-code @ 03aca36eb3b9f2bf07805b1c39ec4d61f6f740c1; skill-library-gate.cjs v1.4.0 GREEN 12 packages / 0 offenders (fifth pin + AGPL check); evals v1.14.0 25/25 (E25 strip-restore); judge v1.16.0 40/1/0 (five-lineage anchor); THIRD-PARTY-NOTICES.md §8; init.sh DOMAIN-INIT-OK"
-  },
-  {
-   "id": "feat-018",
-   "name": "Five-repo sweep: lineage constitution five→ten pins (Task 36)",
-   "description": "Owner five-repo listicle directive evaluated repo-by-repo under the Authority Map: trailhq/Graft (MIT in-file; owner link NanoNets/Graft redirects — org move booked; doctrine: hook-over-note, correction→persistent-rule memory, blast-radius-before-action → frugal-router-operator v1.1.0), msitarzewski/agency-agents (MIT in-file; roles-as-data at scale + catalog-as-machine-checked-source-of-truth with CI build failure on catalog-vs-disk drift → new house package #14 agency-catalog-operator; mirror shows 319 division-level agent files vs README's 232 — counts drift, sha is the truth), DeusData/codebase-memory-mcp (MIT in-file; index-once-query-forever, query-the-book-not-the-files, pure-C no-runtime-no-key, VirusTotal/SLSA3 supply chain → new house package #13 codebase-graph-operator), calesthio/OpenMontage (AGPL-3.0 in-file; stage-gated creative pipeline doctrine; pinned reference, no house package — scope discipline), stablyai/orca (MIT in-file; worktree-per-agent isolation + lineage pruning + one tracking surface → pinned reference booking). Library grows 11→14 packages; gate v1.5.0 enforces ten lineage pins; evals v1.15.0 E26 strip-restores all five new pins; judge v1.17.0 anchors the ten-lineage constitution. ALL five upstream runtimes UNINSTALLED: doctrine-only adoption, zero upstream code copied; runtime legs (npm install, native binary + MCP config writes, agent-dir bulk install, GPU render + video keys, Electron desktop) named and left at the line as possession/wallet-gated. Headline metrics (4x cheaper, 120x fewer tokens, 232 agents, 100x builders) booked as upstream claims. Disk-honesty: wave freed 1.6GB regenerable caches (huggingface/node-gyp) after 'No space left on device' to complete keyless depth-50 mirrors.",
-   "dependencies": [
-    "feat-017"
-   ],
-   "status": "done",
-   "evidence": "CR-0016 PASS; mirrors @ fe30ead/d3f71c4/96c3f41c/08e2151/843607b1 (all in-file license verified); gate v1.5.0 GREEN 14/0 (ten pins); evals v1.15.0 26/26 (E26 ×5 strip-restore); judge v1.17.0 40/1/0 (nine anchors true); notices §9-§13; init.sh DOMAIN-INIT-OK"
-  },
-  {
-   "id": "feat-019",
-   "name": "Ground-truth audit + one-bloc token-mode proposal (Task 37)",
-   "description": "Owner directive: measure git ground truth without trusting prior claims. FRESH MEASUREMENTS (all live, Task 37): authenticated API sweep 16/16 repos reachable (the standing 'authWall 14' is a keyless-probe artifact — one-bloc.cjs reads token from process.env only while the credential lives in a file, so tokenReach was structurally always 0); post-pull local==remote 16/16 (zero divergence, zero loss); 0 open PRs; Domain CI 11,316 runs all recent success; sovereignty: single user account (no org), collaborators = owner only, PAT lacks Administration scope (branch protection unverifiable by desk = owner-gated); one-shot token-mode one-bloc run: reached=16/16 authWall=0 tokenReach=14 synced=15/16; judge re-run: 41 PASS / 0 WARN / 0 FAIL — first fully-clean verdict in estate history, the sole delta being the reach WARN. DELIVERABLE: CR-0017 (tier B PASS) proposing the permanent init.sh export wiring (token into env only, never printed/committed, keyless-first preserved, rollback = one line). Implementable potentials booked in worklog: branch-protection verification (owner action), PAT rotation cadence (owner), skills-lock hash lockbook (CR candidate), zai-openai-shim integration legs (parallel CR-0015 already landed), disk housekeeping (91%).",
-   "dependencies": [
-    "feat-018"
-   ],
-   "status": "done",
-   "evidence": "CR-0017 PASS; fresh sweep receipts in worklog Task 37; one-bloc token-mode one-shot JSON at 2026-10-03T05:36:36Z; judge 41/0/0 measured; init.sh DOMAIN-INIT-OK"
-  },
-  {
-   "id": "feat-020",
-   "title": "Fleet Rung 3: parallel mini-swe wave over isolated git worktrees (CR-0020)",
-   "description": "orca's N agents x N worktrees x 1 tracker pattern landed live: 2 concurrent mini-swe-agent 2.4.6 instances on detached Domain worktrees over the CR-0015 keyless shim, env -i scrubbed, cost-limit armed, both exit 0 with distinct create/append receipts, interleaved keystone log, isolation proven ('?? wave/' only), worktrees pruned zero-residue. Sandbox-reset rebuilds booked: shim service recreated from CR spec, mirror re-cloned at pinned sha 04d809c, pip install -e 2.4.6.",
-   "status": "done",
-   "dependencies": [
-    "feat-018",
-    "feat-019"
-   ],
-   "evidence": "CR-0020 PASS (renumbered from CR-0019 — collision with the sibling swe-guard CR-0019, bc63c59; later mover renumbers); live receipts (EXIT1=0 EXIT2=0; RUNG3-WT1-OK / RUNG3-WT2-OK; shim interleave msgs=2,2,4,4; git status ?? wave/ only x2); rebuild receipts (shim from CR spec, mirror sha 04d809c == notices §6, mini 2.4.6); PROBE-LANE orca row QUEUED→LANDED + mini row Rung 3"
-  },
-  {
-   "id": "feat-021",
-   "title": "Fleet Rung 4: guarded parallel waves — swe-guard in the execution path × wave shape (CR-0021)",
-   "description": "Composed sibling CR-0019 (GuardedLocalEnvironment in execution path) with CR-0020 (parallel worktree wave): 2 concurrent guarded mini-swe 2.4.6 instances per wave, 2 waves, exits 0 ×4, per-instance trajectories via -o (CR-0020 overwrite finding closed), deny ledger unchanged on benign traffic, guard smoke receipts (allow 0 / scope-deny 126 / secret-deny 126), worktrees pruned zero-residue. Findings booked: -c agent.output_path does not merge (use -o); wave tasks must be idempotent or wave-scoped.",
-   "status": "done",
-   "dependencies": [
-    "feat-018",
-    "feat-019",
-    "feat-020"
-   ],
-   "evidence": "CR-0021 PASS; guard smoke (rc 0/126/126 + JSONL x2); waves: exits 0 ×2 ×2, RUNG4-WT1-OK / RUNG4-WT2-OK ×2; trajectories traj-gwt1.json + traj-gwt2.json distinct; deny ledger 2→2; PROBE-LANE mini row + Rung 4"
-  },
-  {
-   "id": "feat-022",
-   "title": "Fleet Rung 5: Graft context-economy multiplier — telemetry dark by four gates, paired multiplier measured (CR-0022)",
-   "description": "Adopted NanoNets/Graft @ pin fe30ead (MIT, already in the ten-pin constitution) built FROM SOURCE (BAKED_KEY empty → telemetry module inert) + DO_NOT_TRACK=1 before first run. Base graph on Domain worktree: 69 files, 686 nodes, 1524 edges, 2.97s, $0. graft ask hit #1 exact on the fleet's own GuardedLocalEnvironment (guard_env.py:L61-L104). Paired mini-swe guarded runs over the CR-0015 shim: baseline 7 api_calls vs graft-context 3 api_calls (-57% model turns, same correct receipt). Deep pass over the shim partial: 65 per-file summaries served at $0; whole-repo synthesis blocked by z-ai upstream 429 → shim consumers rate-limit law booked (shim 502 fail-loud held; GRAFT_LLM_RETRIES honored); next rung: shim-side retry/backoff queue.",
-   "status": "done",
-   "dependencies": [
-    "feat-020",
-    "feat-021"
-   ],
-   "evidence": "CR-0022 PASS (14 receipts, 5 findings); telemetry 4-gate audit (source+dist+self-report+queue: nothing queued, identity never minted); graph 686 nodes/1524 edges; ask hit #1 exact; paired runs traj-g5a (7 calls) / traj-g5b (3 calls); deny ledger 2→2; worktree pruned zero-residue; PROBE-LANE Graft row QUEUED→LANDED"
-  },
-  {
-   "id": "feat-023",
-   "title": "Fleet Rung 2.5 (RESTORED ROW): real reef runtime deployed locally + laya serving proven + KPI triple-oracle restore (CR-0023)",
-   "description": "RESTORED BOOKKEEPING ROW — CR-0023 (sibling lane, renumbered from CR-0021 — third collision) claimed feat-023 in its text but the ledger row was never written; the hole stood through the R6 worklog note and CR-0029 finding #3, and was restored by this lane's bookkeeping pass in CR-0031. Row content restored in substance from the CR text: real reef runtime deployed locally (reef-infra+reef-client from PyPI, reef serve external-provider recipe → the CR-0015 shim, SQLite-first, agent_record rows read back, no GPU/Docker), full record→verify→reward loop closed live; laya serve proven keyless (LAYA_MODELS=english root-cause fix, /v1/systemone 1312ms warm on a real fleet triage, advisory-only: confidence uncalibrated + RSS 2.08GB); KPI triple-oracle restore; independent Graft cross-check confirming CR-0022's -57% paired multiplier.",
-   "status": "done",
-   "dependencies": [
-    "feat-022"
-   ],
-   "evidence": "CR-0023 PASS (sibling lane); row missing from ledger despite being claimed in CR text (hole noted R6, re-noted CR-0029 finding #3); restored by CR-0030 bookkeeping pass with restore marking; PROBE-LANE reef + laya rows carry the full landing detail"
-  },
-  {
-   "id": "feat-024",
-   "title": "Shim v1.1.0 retry/backoff queue — CR-0022 rate-limit law closed, deep concept graph completed over the shim (CR-0026)",
-   "description": "Upgraded the CR-0015 shim with a global upstream gate (max 2 in-flight, FIFO queue), exponential backoff retries (1s..16s cap + jitter, SHIM_MAX_RETRIES env-tunable, default 5) and honest per-event logs; fail-loud preserved on exhaustion. Receipts: 6-burst smoke 6/6 HTTP 200 with queued+retry log lines; mini-swe guarded run Submitted 3 api_calls through the queue; graft deep build over the shim exited rc=0 and the whole-repo concept synthesis that 502'd twice in Rung 5 MATERIALIZED (18 provenance-traced concept nodes; graft ask returns concept-tier hits); 851 transient 429s absorbed across two deep runs; ambient sandbox-IP 429 storm booked as the binding capacity constraint (matches sibling CR-0023 independent finding).",
-   "status": "done",
-   "dependencies": [
-    "feat-020",
-    "feat-022"
-   ],
-   "evidence": "CR-0026 PASS (renumbered from CR-0024 — fourth collision, see renumber_note) (8 receipts, 5 findings); burst 6/6 200 + queued wait_ms=696 + retry backoff_ms=1046; G6-SHIM-QUEUE-OK via mini-swe; deep rc=0 with 18 concept nodes + concept-tier ask hits; retry 8/8 ladder receipt; /health v1.1.0 additive fields; worktree pruned zero-residue"
-  },
-  {
-   "id": "feat-025",
-   "title": "Fleet Rung 7: codebase-memory-mcp structural code intelligence — built from source at the constitution pin, MCP surface proven hostless, paired multiplier -50% (CR-0029)",
-   "description": "Adopted DeusData/codebase-memory-mcp @ pin 96c3f41c (MIT, already in the ten-pin constitution — no new pin, gate stays v1.5.0) built FROM SOURCE (300MB ELF, 162 tree-sitter grammars embedded, zero runtime deps; NO release binary, NO installer — install/uninstall writes 45 agent-config surfaces, refused and booked as a fleet law). Domain knowledge graph: 7437 nodes / 11265 edges / 15 edge types in 9.3s, $0, keyless, DB in ~/.cache (persistence=false default -> zero repo residue). Hit #1 EXACT on the fleet's own GuardedLocalEnvironment (guard_env.py:61-104) — identical fact to Graft's Rung 5 hit (instrument convergence). MCP-host gap answered HOSTLESS: scripted stdio JSON-RPC session lists and serves exactly 17 tools; latency ladder measured honest (one-shot 5.5s -> daemon CLI 2.0s -> warm session 12-15ms; upstream '<1ms' booked as internal claim). Paired mini-swe guarded runs (CR-0022 pattern, booked command shape verbatim): baseline 6 api_calls vs cmm-context 3 (-50% model turns, same correct receipt, N=1 honest); cross-rung: Graft 7->3 (-57%) — both instruments halve exploration; positioning: structural layer first, LLM summary layer second, raw reads last.",
-   "status": "done",
-   "dependencies": [
-    "feat-022",
-    "feat-024"
-   ],
-   "evidence": "CR-0029 PASS (renumbered from CR-0027 — fifth collision, see renumber_note) (14 receipts, 6 findings); source build at pin 96c3f41c (make -f Makefile.cbm cbm); telemetry clean by source audit + DO_NOT_TRACK=1; index 9.3s rc=0, graph census 7437/11265; search_graph hit #1 exact guard_env.py 61-104; stdio MCP 17-tools transcript; latency ladder 5.5s/2.0s/12-15ms; paired runs traj-g7a (6 calls) / traj-g7b (3 calls); deny ledger 2->2; mirror diff -q identical; git status 0/0/0 (zero residue); PROBE-LANE codebase-memory-mcp row QUEUED->LANDED"
-  },
-  {
-   "id": "feat-026",
-   "title": "Fleet Rung 8: fleet MCP host — policy-enforcing HTTP↔stdio bridge over the structural engine, amortized warm calls 7.5-8.6ms, gateway-proven (CR-0031)",
-   "description": "New fleet mini-service mini-services/mcp-host (bun, :3041, bun --hot, own package.json) governing the codebase-memory-mcp engine (Rung 7 / CR-0029 source build). Laws IN CODE: defense in depth (host allowlist belt = faithful analysis-profile copy, 13 read-only tools; engine child spawned with --tool-profile braces), owner-gated config surfaces (install/uninstall never run), human-only boundary widening (CBM_ALLOWED_ROOT on child), deny receipts (JSONL swe-guard pattern), fail-loud JSON-RPC errors, DO_NOT_TRACK=1 propagated. Receipts: /health full payload; tools/list = exactly 13 (write/admin quartet invisible); initialize handshake; tools/call search_graph hit 'Class guard_env.py 61-104' (third independent pass on the same fleet fact after R5 Graft and R7 cli); amortization post-fix: cold 1.807s once, then 7.5-8.6ms per call INCLUDING HTTP with zero re-spawns; deny battery 3/3 receipted (manage_adr, index_repository with /etc path — never reached the engine, resources/list); gateway path-preserving XTransformPort proven end-to-end (tools/call hit one-bloc.cjs:47 through :81); bun --hot survived two live fixes; feat-023 ledger hole closed by the same bookkeeping pass.",
-   "status": "done",
-   "dependencies": [
-    "feat-025",
-    "feat-023"
-   ],
-   "evidence": "CR-0031 PASS (renumbered from CR-0030 — sixth collision, see renumber_note) (10 receipts, 6 findings); deny ledger /tmp/mcp-host-denies.jsonl 3 lines; gateway receipts via :81 XTransformPort; Bun Promise-truth law + per-stream buffer law + stderr-drain law booked; ledger now contiguous feat-022..feat-026"
-  },
-  {
-   "id": "feat-027",
-   "title": "Fleet Rung 9: host-consumer wiring — the fleet consumer contract (agents/cmmq) rides the governed MCP host; policy+receipts in one place; rank-is-not-contract law + mandatory confirmation rung (CR-0032)",
-   "description": "agents/cmmq/cmmq.sh: the in-tree consumer wrapper (curl-only, fail-loud, reads-only) — the ONE client shape for desk scripts and guarded episodes to reach the governed structural layer (CR-0031 host). Proven: episode-internal consumption receipted host-side per call (mini-swe booked-shape episodes, tool-calls at 7-23ms through HTTP); deny battery through the wrapper (rc=1 + JSONL line #4); freshness measured at consumption time (detect_changes caught the rung's own uncommitted wrapper). HONEST paired matrix (N=2 pairs + remedy): turn economy is TASK-SHAPE BOUNDED (single-symbol 6->7, discovery 14->16 — the R5/R7 multipliers bound to large-surface tasks); proven economies = latency (9 structural queries ~0.1s vs ~49.5s one-shot-CLI equivalent) and governance; NEW LAW rank-is-not-contract (semantic hits decoyed one episode to a wrong file, one to the top-ranked span) -> the exploration ladder gains a MANDATORY confirmation rung: query -> confirm against the question's contract -> read only to confirm.",
-   "status": "done",
-   "dependencies": [
-    "feat-026"
-   ],
-   "evidence": "CR-0032; /tmp/g9-traj trajectories + answer files + consoles; host log 55 receipted calls; /tmp/mcp-host-denies.jsonl line #4"
-  },
-  {
-   "id": "feat-028",
-   "title": "Fleet Rung 10 (convergence): market-grid desk — live keyless instrument over the official internal markets (HBD/HIVE, SBD/STEEM, Hive-Engine), measured edge (SBD/STEEM 1.55% ≈ 6x Hive), paper-before-capital law, owner-gated executor preview (CR-0034)",
-   "description": "agents/market-grid.cjs: reads the REAL orderbooks/tickers/tape from the chains' OWN official APIs (api.hive.blog, api.steemit.com condenser_api; api.hive-engine.com JSON-RPC), computes REAL grids (band clamped from 24h change, spacing ≥ 0.4% round-trip floor, feasibility marked per token), records PAPER fills in a labeled append-only ledger, emits 20 prebuilt limit_order_create payloads ALL stamped OWNER-GATED-NOT-BROADCAST (wallet authority stays the owner's). First run: MARKET-GRID-LIVE, 3 markets, 0 errors. Books the full-fleet convergence audit: 2/16 repos local, Defi layer LIVE (8 daemons, trigger mesh 47/47), revenue /bin/bash.0029/day vs burn .2757/day (L0 behind X-1 key-rotation + X-2 capital owner gates), EVM state (SAOSLedger/SAOSExchange 46 tests + one OP anchor proven; ZERO TVM code), vetted SOTA digest (official domains only), and the WHY-SLOW answer: the binding constraint is capital+authority, not code.",
-   "status": "done",
-   "dependencies": [
-    "feat-027"
-   ],
-   "evidence": "CR-0034; agents/market-grid.json/.md + market-grid-paper.jsonl; Defi fleet KPI.json; fills-ledger.json; vetted-source digest in CR-0034 receipts"
-  },
-  {
-   "id": "feat-029",
-   "title": "Fleet Rung 11 (convergence unblock): checkout wave 16/16 repos local, first TRON keyless receipts (2.000002 TRX live via trongrid), grid time-series with measured minute-scale edge drift (CR-0035)",
-   "description": "The REPO-PROXIMITY GAP closed: all 14 missing org repos cloned into the local estate (~880MB, metadata-only receipts, no secret material echoed) — saos-dex grid-heartbeat + platform Foundry contracts + Zip key vault + steem HE ladder now inspectable offline. THREE-LAYER COMPOSITION LAW booked: market-grid (keyless official-surface observer) / saos-dex grid-beat (DEX-side ledger) / steem he_ladder (HE-side executor). market-grid gains an append-only per-invocation history row (pulled-schedule pattern per the LAUNCH-CONTEXT law — no daemons): 2 rows landed, drift measured SBD/STEEM 1.55%->1.34% in ~3 minutes. TRON: observation layer starts (official trongrid read-only, custody box 2.000002 TRX live-confirmed); TVM code honestly still ABSENT (gates on X-1+X-2).",
-   "status": "done",
-   "dependencies": [
-    "feat-028"
-   ],
-   "evidence": "CR-0035; agents/market-grid-history.jsonl; local estate table (16/16); trongrid read-back; saos-dex/platform/Zip/steem head receipts"
-  },
-  {
-   "id": "feat-030",
-   "title": "Fleet Rung 12: SIGNED market executor — first live orderbook trades (6/6 orders standing on the SBD/STEEM internal market, best-ask at placement, idempotency proven live) + EVM convergence doctrine (CR-0036)",
-   "description": "CR-0034 built the keyless grid observer; the operator directive opened the owner gate and this rung claims the signing leg: agents/market-exec.cjs verify-then-sign (derived active WIF byte-checked vs on-chain active_key_auths, DRY_RUN default, caps in code, add-only, stack-idempotent) broadcast 6 limit_order_create2 ops — 4 sells 0.101171-0.102389 (L1 = best ask at placement) + 2 buys 0.099602/0.099206, realized err <= 0.018%, all orderids 1791050734-39 standing via find_limit_orders, liquid moved exactly as planned (4.287->1.581 STEEM, 0.5->0.0 SBD). Wire laws booked: unique orderid (same owner+orderid REPLACES), exchange_rate{base:sell,quote:receive}, object op payloads, find_limit_orders readback. Recon: steem internal market ALIVE (bot ~10 fills/min, 0% fee, no minimum); Hive/HE NO-GO honestly. Doctrine artifact agents/evm-convergence.md: official-sources-only world state (llama/l2beat/EIP-ERC-Safe-x402), top-8 adoptable ideas, honest CANNOT list, anti-goodhart correction of the recon premium claim, why-slow analysis. Evals 28/28 (E28 planner).",
-   "status": "done",
-   "cr": "CR-0036",
-   "landed": "2026-10-03",
-   "evidence": [
-    "agents/market-exec.json run#7",
-    "agents/market-exec.md",
-    "agents/evm-convergence.md",
-    "evals E28"
-   ]
-  }
- ]
+  "features": [
+    {
+      "id": "feat-001",
+      "name": "Autonomous economy engine",
+      "description": "Daily on-chain curation + self-votes + claims across steem/hive/blurt, keyless in Domain, seal opened only in-runner, receipts as proof",
+      "dependencies": [],
+      "status": "done",
+      "evidence": "economy-engine.yml + scripts/economy-engine.mjs; real runs 37009336549/37067532580 SUCCESS with chain txid read-back (cbb4bc69… block 110099406)"
+    },
+    {
+      "id": "feat-002",
+      "name": "Harness judge node (five subsystems)",
+      "description": "Fresh-context checker node auditing instructions/state/verification/scope/lifecycle + anchors, on a schedule, fail-soft",
+      "dependencies": [],
+      "status": "done",
+      "evidence": "agents/harness-audit.cjs → harness-audit.json/md; adopted from walkinglabs/learn-harness-engineering (Z-35), extended Task 19 (role→worker wiring + loop primitives)"
+    },
+    {
+      "id": "feat-003",
+      "name": "Books pulse (machine state layer)",
+      "description": "Live measurement books stamp themselves (at/updated) and stay fresh <48h; freshness audited by the judge node",
+      "dependencies": [
+        "feat-002"
+      ],
+      "status": "done",
+      "evidence": "9/9 live books exist; learning-ledger stamping fixed in Task 19 (measure-learn.cjs now stamps at/updated)"
+    },
+    {
+      "id": "feat-004",
+      "name": "Weave core anchor cadence",
+      "description": "Hourly anchor ping (sandbox-independent) + anchor-execute lines keep saos.weave.core.v1 on chain",
+      "dependencies": [],
+      "status": "done",
+      "evidence": "weave-anchor-ping.yml hourly + weave-anchor-lines.yml; core trx 9b377210393fdec1 2026-10-02T21:42Z"
+    },
+    {
+      "id": "feat-005",
+      "name": "Army role→worker wiring (audited)",
+      "description": "Every FILLED role in recruitment.json must name a worker artifact that exists on disk; the judge node measures the hands",
+      "dependencies": [
+        "feat-002"
+      ],
+      "status": "done",
+      "evidence": "harness-audit.cjs graph check 'every FILLED role names a reachable worker artifact' — Task 19"
+    },
+    {
+      "id": "feat-006",
+      "name": "LHE harness protocol adoption (this repo)",
+      "description": "walkinglabs/learn-harness-engineering minimal harness: AGENTS.md protocol + feature_list.json + progress.md + session-handoff.md + init.sh",
+      "dependencies": [
+        "feat-002",
+        "feat-003"
+      ],
+      "status": "done",
+      "evidence": "Task 19 — validator run on this repo post-adoption; scores recorded in the Task 19 worklog section"
+    },
+    {
+      "id": "feat-007",
+      "name": "Daily revenue > 1 cent (owner KPI)",
+      "description": "Realized chain income (curation + author + claims) maturing above $0.01/day, receipts-provable",
+      "dependencies": [
+        "feat-001"
+      ],
+      "status": "open",
+      "evidence": "v3 engine run-rate 0.02–0.06 SBD/day maturing over 7 days; needs days of receipts to show realized >1¢ — SP compounding + daily quality posts are the levers"
+    },
+    {
+      "id": "feat-008",
+      "name": "Role-prompt registry (prompts.chat adoption)",
+      "description": "Declarative role-voice registry in prompts.chat CSV schema (act,prompt,for_devs,type,contributor) + ${Var:default} binding + loader role-prompts.cjs; sovereignty: role behavior is versioned data, a fresh worker adopts a fleet role by loading one row",
+      "dependencies": [
+        "feat-002",
+        "feat-005"
+      ],
+      "status": "done",
+      "evidence": "ADOPTION LANDED VIA THE PARALLEL Z-37 CHARTER REGISTRY (superset): agents/role-registry.csv (act,file,ci,mission,signs,tier,books,owner,status — roles-as-data with enforcement) + sovereignty.md (tier A/B/C + CR flow) + harness-audit v1.2.0 sovereignty checks. My interim role-prompts.csv/cjs (prompts.chat raw schema + ${Var} loader) retired SUPERSEDED-BY; the loader pattern + FILLED-roles completeness idea live on in the charter registry checks."
+    },
+    {
+      "id": "feat-009",
+      "name": "Destructive-command guard (dcg adoption)",
+      "description": "Mechanical tier-C enforcement adopted from Dicklesworthstone/destructive_command_guard: banned shapes (force-push, reset --hard, clean -x, estate rm -rf, DROP, migrate reset) blocked pre-execution with doctrine reasons + safer tips; data-position context detection; heredoc scanning; STRICT mode for supply-chain; 13-case selftest wired into init.sh + harness-audit",
+      "dependencies": [
+        "feat-002",
+        "feat-008"
+      ],
+      "status": "done",
+      "evidence": "ADOPTION LANDED VIA THE PARALLEL Z-38 FLEET-NATIVE GUARD (superset): agents/command-guard.cjs (whitelist-first, DEFAULT-ALLOW, explain/scan/hook modes, decision ledger command-guard.json, evals E7-E9) + my init.sh battery driving it (DENY on force-push/reset --hard/estate rm -rf; allow on rebase law + data-position). My interim scripts/command-guard.sh retired SUPERSEDED-BY; the workflow shape-scan idea lives in their scan mode."
+    },
+    {
+      "id": "feat-010",
+      "name": "FATE-DEFENSE (Emergence World adoption)",
+      "description": "Owner directive: study what happened to world.emergence.ai (arXiv 2606.08367 platform + 2609.17320 stress-testing; 5+8 agent worlds, total collapses, injection/misinformation/memory-breach events, 'collapse has no warning shot') and engineer+prove the defenses. Delivered: (1) STASIS mechanical circuit breaker — economy engine obeys agents/STASIS.json BEFORE any seal/broadcast (STASIS-HALT healthy no-op, exit 0; selftest-proven both states, wired into init.sh fails-fast battery); (2) FWI scorecard agents/fleet-indicators.cjs — nine sovereign indicators (our AWI mirror) each COMPUTED from a named artifact (ANTI-GOODHART law), first verdict THRIVING 9/9 GROW; (3) three laws codified in FATE-DEFENSE.md: STASIS + PROVENANCE QUARANTINE (external content is data, never auto-doctrine) + ANTI-GOODHART (claim without artifact is not a value); (4) judge-node wiring: harness-audit v1.4.0 fate-defense check (31 PASS/0 WARN/0 FAIL) + eval E10 (10/10).",
+      "dependencies": [
+        "feat-001",
+        "feat-008",
+        "feat-009"
+      ],
+      "status": "done",
+      "evidence": "FATE-DEFENSE.md + agents/fleet-indicators.{cjs,json,md} + agents/STASIS.json + scripts/economy-engine.mjs stasis gate + harness-audit 31/0/0 + evals E10 10/10 + init.sh STASIS-HALT proof"
+    },
+    {
+      "id": "feat-011",
+      "name": "Skill library (claude-skills adoption, Task 20 residual closed)",
+      "description": "Owner directive lineage: Task 20 asked for a prompts.chat prompt library (recruitment roles / desk system / mini-services); Task 25 evaluated owner-pointed alirezarezvani/claude-skills (MIT, 27.3k stars) as the format backbone; Task 27 landed it. agents/skill-library/ = SKILL-AUTHORING-STANDARD.md adapted from upstream and house-hardened (Evidence Artifact mandatory per ANTI-GOODHART, tier declaration per SOVEREIGNTY LAW, no silent scope, renumbering doctrine, bilingual header) + THIRD-PARTY-NOTICES.md pinning mirror sha 19392f7a + 6 packages (fleet-push-protocol, fleet-desk-operator, recruitment-interviewer, mini-services-engineer, worker-onboarding, fleet-skill-author). Mechanical enforcement: agents/skill-library-gate.cjs v1.0.0 (zero-dep, require-safe, books skill-library.json/md) + harness-audit verification check (v1.11.0) + eval E19 (run-evals v1.9.0) + role-registry row + CR-0006 (tier B, PASS).",
+      "dependencies": [
+        "feat-008",
+        "feat-009"
+      ],
+      "status": "done",
+      "evidence": "agents/skill-library/{SKILL-AUTHORING-STANDARD.md,THIRD-PARTY-NOTICES.md,skills/*/SKILL.md x6} + agents/skill-library-gate.cjs GREEN 6/0 + agents/skill-library.{json,md} + harness-audit check + evals E19 + agents/role-registry.csv row + CR-0006 + /home/z/reference-mirrors/claude-skills @19392f7a"
+    },
+    {
+      "id": "feat-012",
+      "name": "Authority Map doctrine + strix security lineage (Task 29)",
+      "description": "Owner constitutional statement (2026-10-03) encoded: 'we have sovereignty — everything is subject to the sovereignty's decision; only for the wallet am I an authority.' Encoded as the Authority Map in fleet-desk-operator v1.1.0 (wallet=owner authority / everything else=sovereignty-decided / owner-held possessions=possession-gated, not authority-gated) + SKILL-AUTHORING-STANDARD.md tier-C redefinition (C = WALLET-OR-POSSESSION-LOCK, exists only for those two domains). Same wave adopts the usestrix/strix security lineage (Apache-2.0, 66.2k stars, eval Task 28): house package skills/security-strix-operator (authorization boundary: estate assets only; honest feasibility — no Docker in sandbox, cloud=wallet) + THIRD-PARTY-NOTICES.md section 3 + skill-library-gate.cjs v1.1.0 second lineage pin (strix sha 99c0711 + Apache-2.0 mechanically enforced) + eval E21 + judge v1.13.0 doctrine-anchor check + CR-0008 (tier B, PASS).",
+      "dependencies": [
+        "feat-011"
+      ],
+      "status": "done",
+      "evidence": "agents/skill-library/skills/desk-operator/SKILL.md (Authority Map, v1.1.0) + agents/skill-library/SKILL-AUTHORING-STANDARD.md (tier-C rewrite) + agents/skill-library/skills/security-strix-operator/SKILL.md + THIRD-PARTY-NOTICES.md section 3 + agents/skill-library-gate.cjs v1.1.0 GREEN 7/0 + agents/skill-library.{json,md} + evals E21 (run-evals v1.11.0, 21/21) + harness-audit v1.13.0 doctrine-anchor check + CR-0008 + /home/z/reference-mirrors/strix @99c0711"
+    },
+    {
+      "id": "feat-013",
+      "name": "Agentic-orchestration lineage: google/ax (Task 31)",
+      "description": "Owner directive 'תבחן את זה גם ויישם מה שניתן וראוי' (https://github.com/google/ax) executed as an evaluation + same-wave adoption under the Authority Map (wallet=owner, rest=sovereignty). google/ax = Google's open agentic orchestration runtime (Apache-2.0, Go, 12,921 stars, created 2026-03-30, push 2026-09-27; Task/Workspace/Model manifests on Agent Substrate over K8s). Feasibility booked honestly: control plane needs K8s cluster + Agent Substrate + ko + registry -> BLOCKED in this sandbox (no Docker/K8s) and any cluster = paid infra = wallet/possession domain (owner). Adopted at zero cost: house package skills/orchestration-ax-operator (feasibility table + doctrine-parallel table mapping AX mechanics to estate laws: immutability->append-only ledgers, up-front RFC1123 validation->PR-time gates, WorkspaceReady->Ready conditions->MEASURABLE-to-DASHBOARD, requests/limits->budget guards, suspend/resume->honest checkpoints, secretKey refs->PAT law, skills.registries->the skill library itself) + THIRD-PARTY-NOTICES.md section 4 + skill-library-gate.cjs v1.2.0 third lineage pin (ax sha ac23328 mechanically enforced) + evals E22 strip-restore + judge v1.14.0 dual-lineage doctrine anchor + CR-0010.",
+      "dependencies": [
+        "feat-012"
+      ],
+      "status": "done",
+      "evidence": "agents/skill-library/skills/orchestration-ax-operator/SKILL.md + THIRD-PARTY-NOTICES.md section 4 (sha ac23328, full API sha ac2332829f22360ff97b0ba34d94dd0dd782f17e) + agents/skill-library-gate.cjs v1.2.0 GREEN 8/0 + agents/skill-library.{json,md} + evals E22 (run-evals v1.12.0, 22/22) + harness-audit v1.14.0 doctrine anchor (strix+ax) + CR-0010 + /home/z/reference-mirrors/ax @ac23328"
+    },
+    {
+      "id": "feat-014",
+      "name": "Applied-AI pattern reference, consult-only (Task 32)",
+      "description": "Owner directive 'תראה זה יכול לעזור' (Sumanth077/Hands-On-AI-Engineering, 3,832 stars) executed as evaluation + consult-only adoption under the Authority Map. HONESTY FINDING: upstream claims MIT (badge + section) but LICENSE file is 404 / API null at mirror sha da0091d6 → treated as ALL RIGHTS RESERVED, zero-copy posture, ideas only. Crown finding: upstream's nl_data_analyst_agent implements Jev three-point decision review (input clarity; pre-execution relevance with runtime-bound authoritative inputs — the model under review cannot rewrite what is reviewed; post-answer grounding → unverified-draft flag) with the estate's own honesty rules as working code: fail-open WITH visible reviewer notes, reviewer-only (never grants authority), inconclusive ≠ blocking, approval denied → no retry. Adopted: house package skills/applied-ai-patterns-operator (Jev gate → laya-decision reviewer wiring per Task 30's candidate wave + pattern catalog mapped to estate lanes + feasibility table routing paid-API legs to the zero-marginal stack with the wallet stop) + THIRD-PARTY-NOTICES.md section 5 (license-mismatch finding + why no gate pin) + bare-blobless mirror @ da0091d6 (184K, disk-honest). Gate stays v1.2.0; evals 23/23; judge v1.14.0.",
+      "dependencies": [
+        "feat-013"
+      ],
+      "status": "done",
+      "evidence": "agents/skill-library/skills/applied-ai-patterns-operator/SKILL.md + THIRD-PARTY-NOTICES.md section 5 + CR-0011 + /home/z/reference-mirrors/hae-mirror.git @ da0091d6452e18dae9fd3119a194019f35306d27 (bare-blobless 184K) + LICENSE-404 proof (contents API 404, 2026-10-03) + gate GREEN 9/0 + evals 23/23 unique + judge 40/1/0"
+    },
+    {
+      "id": "feat-015",
+      "name": "Minimal-agent doctrine lineage: SWE-agent/mini-swe-agent (Task 33)",
+      "description": "Owner directive 'תראה מה עם זה' (https://github.com/swe-agent/mini-swe-agent, 8,165 stars) executed as evaluation + same-wave adoption under the Authority Map. MIT verified IN-FILE at mirror sha 04d809c (Copyright (c) 2025 Kilian A. Lieret and Carlos E. Jimenez) — full pin ceremony unlike Task 32's consult-only. Adopted doctrine as reference in house package #10 swe-mini-operator: bash-as-the-only-tool, stateless per-action execution (process-group kill on timeout), linear append-only history (trajectory == messages), exceptions-as-control-flow carrying messages (never swallowed), hard step/cost/wall-time limits as first-class config (upstream default cost_limit=3.0), format-error circuit breaker with billed-cost honesty, StrictUndefined templates, explicit submit signal, save-every-step checkpoints, AGENTS.md test law (no unasked mocking; every test targets a failure point) — third-party validation of ANTI-GOODHART. NOT taken: upstream runtime (litellm paid keys = wallet) and containerized env legs = wallet/possession. Headline metrics booked as upstream claims.",
+      "dependencies": [
+        "feat-014"
+      ],
+      "status": "done",
+      "evidence": "CR-0012 PASS; mirror /home/z/reference-mirrors/mini-swe-agent @ 04d809ceab9df28f9adaed044884180159172930; skill-library-gate.cjs v1.3.0 fourth lineage pin GREEN (10 packages / 0 offenders); evals v1.13.0 E24 strip-restore; harness-audit v1.15.0 quad-lineage doctrine anchor; THIRD-PARTY-NOTICES.md §6 MIT attribution; init.sh DOMAIN-INIT-OK"
+    },
+    {
+      "id": "feat-016",
+      "name": "AI-review-surface doctrine, consult-only (Task 34)",
+      "description": "Owner directive 'מה לגבי זה' (https://github.com/vercel-labs/openreview, 1,697 stars — self-hosted AI code review bot by Vercel Labs) executed as evaluation + consult-only adoption under the Authority Map. LICENSE-MISMATCH FINDING (second occurrence of the Task 32 pattern): README claims MIT but NO LICENSE file exists (API license: null) at mirror sha 672deb2 → ALL RIGHTS RESERVED, zero-copy, no gate pin. Dormancy booked: last push 2026-03-06 (7 months), beta disclaimer. Crown doctrine restated originally in house package #11 ai-review-operator: authority pre-flight before any push with named refusal reasons (archived/permissions/branch-restrictions — the Authority Map as working code); reviewer-only separation of powers (reaction-gated application); the autonomy gradient (mechanical fixes auto, judgment = suggestion); on-demand @mention triggers; uncommitted-changes honesty before commit-and-push; progressive skill loading (descriptions as router, body on demand); per-skill skills-lock.json hash pattern (booked as zero-cost candidate: hash lockbook for our packages via a future judged CR). Wallet legs (Vercel Sandbox/Workflow, Upstash, Anthropic key, GitHub App private key) named and left at the line.",
+      "dependencies": [
+        "feat-015"
+      ],
+      "status": "done",
+      "evidence": "CR-0013 PASS; mirror /home/z/reference-mirrors/openreview @ 672deb21e70e471e0536d5ad7a67c14b8359e97e; skill-library-gate.cjs v1.3.0 GREEN 11 packages / 0 offenders (no pin — consult-only); evals v1.13.0 24/24; judge v1.15.0 40/1/0; THIRD-PARTY-NOTICES.md §7; init.sh DOMAIN-INIT-OK"
+    },
+    {
+      "id": "feat-017",
+      "name": "Frugal-routing doctrine lineage, AGPL pinned (Task 35)",
+      "description": "Owner directive 'תראה מה עם זה' (https://github.com/Alishahryar1/free-claude-code, 56,409 stars — local proxy connecting coding agents to OpenAI-compatible providers, 59 provider integrations / 11 harnesses, Python 3.14, 392 files / 67,669 LOC) executed as evaluation + same-wave doctrine adoption under the Authority Map. LICENSE VERIFIED IN-FILE: AGPL-3.0-only (34,108-byte standard AGPL v3 text, SPDX header, Copyright (c) 2026 Ali Khokhar) — repo API NOASSERTION overridden by reading the file (Task 33 rule: the file is the truth), unlike Task 34's unbacked MIT claim → full pin ritual. FIRST NON-PERMISSIVE LINEAGE PIN: sha 03aca36 certifies STUDY PROVENANCE, zero-copy only; code incorporation = AGPL §13 obligations = owner-gated. Crown doctrine in house package #12 frugal-router-operator: never spend a model call on mechanical work (optimization_handlers.py local fast-paths: quota probes/prefix/titles/suggestions/filepaths + RTK terminal-output filtering); StrictSlidingWindowLimiter guarantee stated in docstring; admission budgets independent of client lifetime, one protection budget per provider; classified failures with named remedies; authorized request/stream recovery from history; SSRF egress guard with DNS-rebinding pinning; reviewable installers; exact pins (==3.14.7, ==1.0.14); harness capability preservation; ToS-friendliness as enforced design. Security sweep clean: 0 suspicious patterns, 0 own telemetry. Wallet legs named and left at the line: running FCC needs user-supplied provider keys (possession = OWNER) and is redundant (desk model leg = z-ai SDK); headline claims booked as upstream claims.",
+      "dependencies": [
+        "feat-016"
+      ],
+      "status": "done",
+      "evidence": "CR-0014 PASS; mirror /home/z/reference-mirrors/free-claude-code @ 03aca36eb3b9f2bf07805b1c39ec4d61f6f740c1; skill-library-gate.cjs v1.4.0 GREEN 12 packages / 0 offenders (fifth pin + AGPL check); evals v1.14.0 25/25 (E25 strip-restore); judge v1.16.0 40/1/0 (five-lineage anchor); THIRD-PARTY-NOTICES.md §8; init.sh DOMAIN-INIT-OK"
+    },
+    {
+      "id": "feat-018",
+      "name": "Five-repo sweep: lineage constitution five→ten pins (Task 36)",
+      "description": "Owner five-repo listicle directive evaluated repo-by-repo under the Authority Map: trailhq/Graft (MIT in-file; owner link NanoNets/Graft redirects — org move booked; doctrine: hook-over-note, correction→persistent-rule memory, blast-radius-before-action → frugal-router-operator v1.1.0), msitarzewski/agency-agents (MIT in-file; roles-as-data at scale + catalog-as-machine-checked-source-of-truth with CI build failure on catalog-vs-disk drift → new house package #14 agency-catalog-operator; mirror shows 319 division-level agent files vs README's 232 — counts drift, sha is the truth), DeusData/codebase-memory-mcp (MIT in-file; index-once-query-forever, query-the-book-not-the-files, pure-C no-runtime-no-key, VirusTotal/SLSA3 supply chain → new house package #13 codebase-graph-operator), calesthio/OpenMontage (AGPL-3.0 in-file; stage-gated creative pipeline doctrine; pinned reference, no house package — scope discipline), stablyai/orca (MIT in-file; worktree-per-agent isolation + lineage pruning + one tracking surface → pinned reference booking). Library grows 11→14 packages; gate v1.5.0 enforces ten lineage pins; evals v1.15.0 E26 strip-restores all five new pins; judge v1.17.0 anchors the ten-lineage constitution. ALL five upstream runtimes UNINSTALLED: doctrine-only adoption, zero upstream code copied; runtime legs (npm install, native binary + MCP config writes, agent-dir bulk install, GPU render + video keys, Electron desktop) named and left at the line as possession/wallet-gated. Headline metrics (4x cheaper, 120x fewer tokens, 232 agents, 100x builders) booked as upstream claims. Disk-honesty: wave freed 1.6GB regenerable caches (huggingface/node-gyp) after 'No space left on device' to complete keyless depth-50 mirrors.",
+      "dependencies": [
+        "feat-017"
+      ],
+      "status": "done",
+      "evidence": "CR-0016 PASS; mirrors @ fe30ead/d3f71c4/96c3f41c/08e2151/843607b1 (all in-file license verified); gate v1.5.0 GREEN 14/0 (ten pins); evals v1.15.0 26/26 (E26 ×5 strip-restore); judge v1.17.0 40/1/0 (nine anchors true); notices §9-§13; init.sh DOMAIN-INIT-OK"
+    },
+    {
+      "id": "feat-019",
+      "name": "Ground-truth audit + one-bloc token-mode proposal (Task 37)",
+      "description": "Owner directive: measure git ground truth without trusting prior claims. FRESH MEASUREMENTS (all live, Task 37): authenticated API sweep 16/16 repos reachable (the standing 'authWall 14' is a keyless-probe artifact — one-bloc.cjs reads token from process.env only while the credential lives in a file, so tokenReach was structurally always 0); post-pull local==remote 16/16 (zero divergence, zero loss); 0 open PRs; Domain CI 11,316 runs all recent success; sovereignty: single user account (no org), collaborators = owner only, PAT lacks Administration scope (branch protection unverifiable by desk = owner-gated); one-shot token-mode one-bloc run: reached=16/16 authWall=0 tokenReach=14 synced=15/16; judge re-run: 41 PASS / 0 WARN / 0 FAIL — first fully-clean verdict in estate history, the sole delta being the reach WARN. DELIVERABLE: CR-0017 (tier B PASS) proposing the permanent init.sh export wiring (token into env only, never printed/committed, keyless-first preserved, rollback = one line). Implementable potentials booked in worklog: branch-protection verification (owner action), PAT rotation cadence (owner), skills-lock hash lockbook (CR candidate), zai-openai-shim integration legs (parallel CR-0015 already landed), disk housekeeping (91%).",
+      "dependencies": [
+        "feat-018"
+      ],
+      "status": "done",
+      "evidence": "CR-0017 PASS; fresh sweep receipts in worklog Task 37; one-bloc token-mode one-shot JSON at 2026-10-03T05:36:36Z; judge 41/0/0 measured; init.sh DOMAIN-INIT-OK"
+    },
+    {
+      "id": "feat-020",
+      "title": "Fleet Rung 3: parallel mini-swe wave over isolated git worktrees (CR-0020)",
+      "description": "orca's N agents x N worktrees x 1 tracker pattern landed live: 2 concurrent mini-swe-agent 2.4.6 instances on detached Domain worktrees over the CR-0015 keyless shim, env -i scrubbed, cost-limit armed, both exit 0 with distinct create/append receipts, interleaved keystone log, isolation proven ('?? wave/' only), worktrees pruned zero-residue. Sandbox-reset rebuilds booked: shim service recreated from CR spec, mirror re-cloned at pinned sha 04d809c, pip install -e 2.4.6.",
+      "status": "done",
+      "dependencies": [
+        "feat-018",
+        "feat-019"
+      ],
+      "evidence": "CR-0020 PASS (renumbered from CR-0019 — collision with the sibling swe-guard CR-0019, bc63c59; later mover renumbers); live receipts (EXIT1=0 EXIT2=0; RUNG3-WT1-OK / RUNG3-WT2-OK; shim interleave msgs=2,2,4,4; git status ?? wave/ only x2); rebuild receipts (shim from CR spec, mirror sha 04d809c == notices §6, mini 2.4.6); PROBE-LANE orca row QUEUED→LANDED + mini row Rung 3"
+    },
+    {
+      "id": "feat-021",
+      "title": "Fleet Rung 4: guarded parallel waves — swe-guard in the execution path × wave shape (CR-0021)",
+      "description": "Composed sibling CR-0019 (GuardedLocalEnvironment in execution path) with CR-0020 (parallel worktree wave): 2 concurrent guarded mini-swe 2.4.6 instances per wave, 2 waves, exits 0 ×4, per-instance trajectories via -o (CR-0020 overwrite finding closed), deny ledger unchanged on benign traffic, guard smoke receipts (allow 0 / scope-deny 126 / secret-deny 126), worktrees pruned zero-residue. Findings booked: -c agent.output_path does not merge (use -o); wave tasks must be idempotent or wave-scoped.",
+      "status": "done",
+      "dependencies": [
+        "feat-018",
+        "feat-019",
+        "feat-020"
+      ],
+      "evidence": "CR-0021 PASS; guard smoke (rc 0/126/126 + JSONL x2); waves: exits 0 ×2 ×2, RUNG4-WT1-OK / RUNG4-WT2-OK ×2; trajectories traj-gwt1.json + traj-gwt2.json distinct; deny ledger 2→2; PROBE-LANE mini row + Rung 4"
+    },
+    {
+      "id": "feat-022",
+      "title": "Fleet Rung 5: Graft context-economy multiplier — telemetry dark by four gates, paired multiplier measured (CR-0022)",
+      "description": "Adopted NanoNets/Graft @ pin fe30ead (MIT, already in the ten-pin constitution) built FROM SOURCE (BAKED_KEY empty → telemetry module inert) + DO_NOT_TRACK=1 before first run. Base graph on Domain worktree: 69 files, 686 nodes, 1524 edges, 2.97s, $0. graft ask hit #1 exact on the fleet's own GuardedLocalEnvironment (guard_env.py:L61-L104). Paired mini-swe guarded runs over the CR-0015 shim: baseline 7 api_calls vs graft-context 3 api_calls (-57% model turns, same correct receipt). Deep pass over the shim partial: 65 per-file summaries served at $0; whole-repo synthesis blocked by z-ai upstream 429 → shim consumers rate-limit law booked (shim 502 fail-loud held; GRAFT_LLM_RETRIES honored); next rung: shim-side retry/backoff queue.",
+      "status": "done",
+      "dependencies": [
+        "feat-020",
+        "feat-021"
+      ],
+      "evidence": "CR-0022 PASS (14 receipts, 5 findings); telemetry 4-gate audit (source+dist+self-report+queue: nothing queued, identity never minted); graph 686 nodes/1524 edges; ask hit #1 exact; paired runs traj-g5a (7 calls) / traj-g5b (3 calls); deny ledger 2→2; worktree pruned zero-residue; PROBE-LANE Graft row QUEUED→LANDED"
+    },
+    {
+      "id": "feat-023",
+      "title": "Fleet Rung 2.5 (RESTORED ROW): real reef runtime deployed locally + laya serving proven + KPI triple-oracle restore (CR-0023)",
+      "description": "RESTORED BOOKKEEPING ROW — CR-0023 (sibling lane, renumbered from CR-0021 — third collision) claimed feat-023 in its text but the ledger row was never written; the hole stood through the R6 worklog note and CR-0029 finding #3, and was restored by this lane's bookkeeping pass in CR-0031. Row content restored in substance from the CR text: real reef runtime deployed locally (reef-infra+reef-client from PyPI, reef serve external-provider recipe → the CR-0015 shim, SQLite-first, agent_record rows read back, no GPU/Docker), full record→verify→reward loop closed live; laya serve proven keyless (LAYA_MODELS=english root-cause fix, /v1/systemone 1312ms warm on a real fleet triage, advisory-only: confidence uncalibrated + RSS 2.08GB); KPI triple-oracle restore; independent Graft cross-check confirming CR-0022's -57% paired multiplier.",
+      "status": "done",
+      "dependencies": [
+        "feat-022"
+      ],
+      "evidence": "CR-0023 PASS (sibling lane); row missing from ledger despite being claimed in CR text (hole noted R6, re-noted CR-0029 finding #3); restored by CR-0030 bookkeeping pass with restore marking; PROBE-LANE reef + laya rows carry the full landing detail"
+    },
+    {
+      "id": "feat-024",
+      "title": "Shim v1.1.0 retry/backoff queue — CR-0022 rate-limit law closed, deep concept graph completed over the shim (CR-0026)",
+      "description": "Upgraded the CR-0015 shim with a global upstream gate (max 2 in-flight, FIFO queue), exponential backoff retries (1s..16s cap + jitter, SHIM_MAX_RETRIES env-tunable, default 5) and honest per-event logs; fail-loud preserved on exhaustion. Receipts: 6-burst smoke 6/6 HTTP 200 with queued+retry log lines; mini-swe guarded run Submitted 3 api_calls through the queue; graft deep build over the shim exited rc=0 and the whole-repo concept synthesis that 502'd twice in Rung 5 MATERIALIZED (18 provenance-traced concept nodes; graft ask returns concept-tier hits); 851 transient 429s absorbed across two deep runs; ambient sandbox-IP 429 storm booked as the binding capacity constraint (matches sibling CR-0023 independent finding).",
+      "status": "done",
+      "dependencies": [
+        "feat-020",
+        "feat-022"
+      ],
+      "evidence": "CR-0026 PASS (renumbered from CR-0024 — fourth collision, see renumber_note) (8 receipts, 5 findings); burst 6/6 200 + queued wait_ms=696 + retry backoff_ms=1046; G6-SHIM-QUEUE-OK via mini-swe; deep rc=0 with 18 concept nodes + concept-tier ask hits; retry 8/8 ladder receipt; /health v1.1.0 additive fields; worktree pruned zero-residue"
+    },
+    {
+      "id": "feat-025",
+      "title": "Fleet Rung 7: codebase-memory-mcp structural code intelligence — built from source at the constitution pin, MCP surface proven hostless, paired multiplier -50% (CR-0029)",
+      "description": "Adopted DeusData/codebase-memory-mcp @ pin 96c3f41c (MIT, already in the ten-pin constitution — no new pin, gate stays v1.5.0) built FROM SOURCE (300MB ELF, 162 tree-sitter grammars embedded, zero runtime deps; NO release binary, NO installer — install/uninstall writes 45 agent-config surfaces, refused and booked as a fleet law). Domain knowledge graph: 7437 nodes / 11265 edges / 15 edge types in 9.3s, $0, keyless, DB in ~/.cache (persistence=false default -> zero repo residue). Hit #1 EXACT on the fleet's own GuardedLocalEnvironment (guard_env.py:61-104) — identical fact to Graft's Rung 5 hit (instrument convergence). MCP-host gap answered HOSTLESS: scripted stdio JSON-RPC session lists and serves exactly 17 tools; latency ladder measured honest (one-shot 5.5s -> daemon CLI 2.0s -> warm session 12-15ms; upstream '<1ms' booked as internal claim). Paired mini-swe guarded runs (CR-0022 pattern, booked command shape verbatim): baseline 6 api_calls vs cmm-context 3 (-50% model turns, same correct receipt, N=1 honest); cross-rung: Graft 7->3 (-57%) — both instruments halve exploration; positioning: structural layer first, LLM summary layer second, raw reads last.",
+      "status": "done",
+      "dependencies": [
+        "feat-022",
+        "feat-024"
+      ],
+      "evidence": "CR-0029 PASS (renumbered from CR-0027 — fifth collision, see renumber_note) (14 receipts, 6 findings); source build at pin 96c3f41c (make -f Makefile.cbm cbm); telemetry clean by source audit + DO_NOT_TRACK=1; index 9.3s rc=0, graph census 7437/11265; search_graph hit #1 exact guard_env.py 61-104; stdio MCP 17-tools transcript; latency ladder 5.5s/2.0s/12-15ms; paired runs traj-g7a (6 calls) / traj-g7b (3 calls); deny ledger 2->2; mirror diff -q identical; git status 0/0/0 (zero residue); PROBE-LANE codebase-memory-mcp row QUEUED->LANDED"
+    },
+    {
+      "id": "feat-026",
+      "title": "Fleet Rung 8: fleet MCP host — policy-enforcing HTTP↔stdio bridge over the structural engine, amortized warm calls 7.5-8.6ms, gateway-proven (CR-0031)",
+      "description": "New fleet mini-service mini-services/mcp-host (bun, :3041, bun --hot, own package.json) governing the codebase-memory-mcp engine (Rung 7 / CR-0029 source build). Laws IN CODE: defense in depth (host allowlist belt = faithful analysis-profile copy, 13 read-only tools; engine child spawned with --tool-profile braces), owner-gated config surfaces (install/uninstall never run), human-only boundary widening (CBM_ALLOWED_ROOT on child), deny receipts (JSONL swe-guard pattern), fail-loud JSON-RPC errors, DO_NOT_TRACK=1 propagated. Receipts: /health full payload; tools/list = exactly 13 (write/admin quartet invisible); initialize handshake; tools/call search_graph hit 'Class guard_env.py 61-104' (third independent pass on the same fleet fact after R5 Graft and R7 cli); amortization post-fix: cold 1.807s once, then 7.5-8.6ms per call INCLUDING HTTP with zero re-spawns; deny battery 3/3 receipted (manage_adr, index_repository with /etc path — never reached the engine, resources/list); gateway path-preserving XTransformPort proven end-to-end (tools/call hit one-bloc.cjs:47 through :81); bun --hot survived two live fixes; feat-023 ledger hole closed by the same bookkeeping pass.",
+      "status": "done",
+      "dependencies": [
+        "feat-025",
+        "feat-023"
+      ],
+      "evidence": "CR-0031 PASS (renumbered from CR-0030 — sixth collision, see renumber_note) (10 receipts, 6 findings); deny ledger /tmp/mcp-host-denies.jsonl 3 lines; gateway receipts via :81 XTransformPort; Bun Promise-truth law + per-stream buffer law + stderr-drain law booked; ledger now contiguous feat-022..feat-026"
+    },
+    {
+      "id": "feat-027",
+      "title": "Fleet Rung 9: host-consumer wiring — the fleet consumer contract (agents/cmmq) rides the governed MCP host; policy+receipts in one place; rank-is-not-contract law + mandatory confirmation rung (CR-0032)",
+      "description": "agents/cmmq/cmmq.sh: the in-tree consumer wrapper (curl-only, fail-loud, reads-only) — the ONE client shape for desk scripts and guarded episodes to reach the governed structural layer (CR-0031 host). Proven: episode-internal consumption receipted host-side per call (mini-swe booked-shape episodes, tool-calls at 7-23ms through HTTP); deny battery through the wrapper (rc=1 + JSONL line #4); freshness measured at consumption time (detect_changes caught the rung's own uncommitted wrapper). HONEST paired matrix (N=2 pairs + remedy): turn economy is TASK-SHAPE BOUNDED (single-symbol 6->7, discovery 14->16 — the R5/R7 multipliers bound to large-surface tasks); proven economies = latency (9 structural queries ~0.1s vs ~49.5s one-shot-CLI equivalent) and governance; NEW LAW rank-is-not-contract (semantic hits decoyed one episode to a wrong file, one to the top-ranked span) -> the exploration ladder gains a MANDATORY confirmation rung: query -> confirm against the question's contract -> read only to confirm.",
+      "status": "done",
+      "dependencies": [
+        "feat-026"
+      ],
+      "evidence": "CR-0032; /tmp/g9-traj trajectories + answer files + consoles; host log 55 receipted calls; /tmp/mcp-host-denies.jsonl line #4"
+    },
+    {
+      "id": "feat-028",
+      "title": "Fleet Rung 10 (convergence): market-grid desk — live keyless instrument over the official internal markets (HBD/HIVE, SBD/STEEM, Hive-Engine), measured edge (SBD/STEEM 1.55% ≈ 6x Hive), paper-before-capital law, owner-gated executor preview (CR-0034)",
+      "description": "agents/market-grid.cjs: reads the REAL orderbooks/tickers/tape from the chains' OWN official APIs (api.hive.blog, api.steemit.com condenser_api; api.hive-engine.com JSON-RPC), computes REAL grids (band clamped from 24h change, spacing ≥ 0.4% round-trip floor, feasibility marked per token), records PAPER fills in a labeled append-only ledger, emits 20 prebuilt limit_order_create payloads ALL stamped OWNER-GATED-NOT-BROADCAST (wallet authority stays the owner's). First run: MARKET-GRID-LIVE, 3 markets, 0 errors. Books the full-fleet convergence audit: 2/16 repos local, Defi layer LIVE (8 daemons, trigger mesh 47/47), revenue /bin/bash.0029/day vs burn .2757/day (L0 behind X-1 key-rotation + X-2 capital owner gates), EVM state (SAOSLedger/SAOSExchange 46 tests + one OP anchor proven; ZERO TVM code), vetted SOTA digest (official domains only), and the WHY-SLOW answer: the binding constraint is capital+authority, not code.",
+      "status": "done",
+      "dependencies": [
+        "feat-027"
+      ],
+      "evidence": "CR-0034; agents/market-grid.json/.md + market-grid-paper.jsonl; Defi fleet KPI.json; fills-ledger.json; vetted-source digest in CR-0034 receipts"
+    },
+    {
+      "id": "feat-029",
+      "title": "Fleet Rung 11 (convergence unblock): checkout wave 16/16 repos local, first TRON keyless receipts (2.000002 TRX live via trongrid), grid time-series with measured minute-scale edge drift (CR-0035)",
+      "description": "The REPO-PROXIMITY GAP closed: all 14 missing org repos cloned into the local estate (~880MB, metadata-only receipts, no secret material echoed) — saos-dex grid-heartbeat + platform Foundry contracts + Zip key vault + steem HE ladder now inspectable offline. THREE-LAYER COMPOSITION LAW booked: market-grid (keyless official-surface observer) / saos-dex grid-beat (DEX-side ledger) / steem he_ladder (HE-side executor). market-grid gains an append-only per-invocation history row (pulled-schedule pattern per the LAUNCH-CONTEXT law — no daemons): 2 rows landed, drift measured SBD/STEEM 1.55%->1.34% in ~3 minutes. TRON: observation layer starts (official trongrid read-only, custody box 2.000002 TRX live-confirmed); TVM code honestly still ABSENT (gates on X-1+X-2).",
+      "status": "done",
+      "dependencies": [
+        "feat-028"
+      ],
+      "evidence": "CR-0035; agents/market-grid-history.jsonl; local estate table (16/16); trongrid read-back; saos-dex/platform/Zip/steem head receipts"
+    },
+    {
+      "id": "feat-030",
+      "title": "Fleet Rung 12: SIGNED market executor — first live orderbook trades (6/6 orders standing on the SBD/STEEM internal market, best-ask at placement, idempotency proven live) + EVM convergence doctrine (CR-0036)",
+      "description": "CR-0034 built the keyless grid observer; the operator directive opened the owner gate and this rung claims the signing leg: agents/market-exec.cjs verify-then-sign (derived active WIF byte-checked vs on-chain active_key_auths, DRY_RUN default, caps in code, add-only, stack-idempotent) broadcast 6 limit_order_create2 ops — 4 sells 0.101171-0.102389 (L1 = best ask at placement) + 2 buys 0.099602/0.099206, realized err <= 0.018%, all orderids 1791050734-39 standing via find_limit_orders, liquid moved exactly as planned (4.287->1.581 STEEM, 0.5->0.0 SBD). Wire laws booked: unique orderid (same owner+orderid REPLACES), exchange_rate{base:sell,quote:receive}, object op payloads, find_limit_orders readback. Recon: steem internal market ALIVE (bot ~10 fills/min, 0% fee, no minimum); Hive/HE NO-GO honestly. Doctrine artifact agents/evm-convergence.md: official-sources-only world state (llama/l2beat/EIP-ERC-Safe-x402), top-8 adoptable ideas, honest CANNOT list, anti-goodhart correction of the recon premium claim, why-slow analysis. Evals 28/28 (E28 planner).",
+      "status": "done",
+      "cr": "CR-0036",
+      "landed": "2026-10-03",
+      "evidence": [
+        "agents/market-exec.json run#7",
+        "agents/market-exec.md",
+        "agents/evm-convergence.md",
+        "evals E28"
+      ]
+    },
+    {
+      "id": "feat-031",
+      "title": "Fleet Rung 12 (cross-layer convergence pass): mechanical offline audit across the four grid/market layers — fee-doctrine drift measured (DEX kernel 30bps vs SAOSExchange 20bps), migration law measured (market-grid 40bps floor < 60bps marginal DEX round trip), dust-floor law, geometry ladder, gate/ledger parity, maker-taker-observer triad (CR-0037)",
+      "description": "agents/cross-layer.cjs reads the REAL sources of all four layers from the 16/16-local estate (L0 Domain market-grid.cjs, L1 saos-dex kernel/amm/mm/grid-beat + grid-ledger.json, L2 steem he_ladder.cjs + live_gate, L3 platform SAOSExchange.sol/SAOSLedger.sol + 5 .t.sol), hashes every artifact (sha256 receipts), and runs 7 mechanical checks: C1 fee-model cross-check with REAL integer-floor x*y=k round-trip simulation per size (0.1%/1%/marginal), C2 grid-geometry ladder (20<40<50<200bps nesting), C3 owner-gate parity (owner-gated/honest-disarm/dry-run markers in ALL layers), C4 ledger discipline on real rows (60 paper + 2 history + 73 orders/43 fills), C5 contract receipt (fee/pot/swap-cap constants, zero-fee rail, 78 function-test surface), C6 expiry parity (27d vs STEEM 27d cap), C7 maker/taker/observer triad. Fail-soft, offline, keyless, deterministic. First run: CROSS-LAYER-CONVERGENT 7 checks / 6 PASS / 1 DRIFT / 0 FAIL / 2 findings / 15 receipts.",
+      "status": "done",
+      "dependencies": [
+        "feat-029"
+      ],
+      "evidence": "CR-0037; agents/cross-layer.json/.md"
+    }
+  ]
 }
