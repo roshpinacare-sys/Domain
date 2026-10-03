@@ -1,6 +1,6 @@
 # Harness Audit — the fleet's five-subsystem check (fresh-context judge node)
 
-_harness-audit v1.0.0 · 2026-10-03T05:58:55.256Z · born from the learn-harness-engineering study (Z-35, extended Task 19)_
+_harness-audit v1.0.0 · 2026-10-03T13:42:36.145Z · born from the learn-harness-engineering study (Z-35, extended Task 19)_
 
 **harness green: 41 checks pass, 0 fail — the five subsystems hold and the three structural failures have named countermeasures**
 
@@ -22,11 +22,11 @@ _harness-audit v1.0.0 · 2026-10-03T05:58:55.256Z · born from the learn-harness
 | 14 | verification | workflow-parse gate: every workflow file parses (full YAML floor, idiom fallback) — no dead lane wears a green shape | PASS | 41 workflows · mode full · offenders 0 |
 | 15 | verification | skill-library gate: every skill package passes the authoring standard (namespaced name, Use-when triggers, proactive triggers, Evidence Artifact, tier & scope, MIT provenance pinned to the mirror sha) | PASS | 14 skill packages · offenders 0 |
 | 16 | verification | doctrine anchor: the Authority Map (owner-confirmed 2026-10-03) lives in fleet-desk-operator and all NINE lineage pins (strix security Apache-2.0 + ax orchestration Apache-2.0 + mini-swe-agent MIT + free-claude-code AGPL-3.0-only + Graft MIT + agency-agents MIT + codebase-memory-mcp MIT + OpenMontage AGPL-3.0 + orca MIT) are pinned in the notices | PASS | authority-map=true (wallet=owner / sovereignty=desk / possession rows) · strix=true · ax=true · mini-swe=true · fcc=true (AGPL in-file) · graft=true · agency=true · cbmem=true · montage=true (AGPL in-file) · orca=true — nine anchors checked here (+ claude-skills MIT via the gate's authoring-standard check) = the ten-lineage constitution |
-| 17 | verification | ci-hands book: the fleet measures its own CI estate (16 repos sampled, failures classified, transient-aware verdicts, trajectory booked) | PASS | reached 2/16 · lanes 22/22 green · active-red 0 · startup-failures 0 · age 1.1h · mode env-token (redacted) |
+| 17 | verification | ci-hands book: the fleet measures its own CI estate (16 repos sampled, failures classified, transient-aware verdicts, trajectory booked) | PASS | reached 0/16 · lanes 0/0 green · active-red 0 · startup-failures 0 · age 0h · mode keyless |
 | 18 | scope | doctrine binds kill rules (ventures have them) | PASS | DOCTRINE-economics.md §4 |
 | 19 | scope | ventures board carries kill rules (5/5) | PASS | ventures.json |
 | 20 | scope | resource floors/ceilings in code (VP floor, dust holds, RC gate) | PASS | treasury-desk CUR_VP_FLOOR |
-| 21 | lifecycle | CLAIMS ledger fresh (receipts keep continuity) | PASS | last receipt 4.4h ago |
+| 21 | lifecycle | CLAIMS ledger fresh (receipts keep continuity) | PASS | last receipt 1.7h ago |
 | 22 | lifecycle | recovery path codified (RESUME-KIT + .fleet/restore.sh) | PASS | canon reachable |
 | 23 | graph-failures | Goodhart countermeasure: two-sided ledger, measured never estimated | PASS | EARN-GOVERNOR LAW |
 | 24 | graph-failures | Blindness-upward countermeasure: kill rules + operator gate | PASS | kill rules + operator gates |
@@ -37,16 +37,16 @@ _harness-audit v1.0.0 · 2026-10-03T05:58:55.256Z · born from the learn-harness
 | 29 | anchors | spot oracle measured at run time (not cached stories) | PASS | ventures.json priceOracle |
 | 30 | graph | every FILLED role names a reachable worker artifact (role→worker wiring) | PASS | 7 FILLED roles · 7 wired |
 | 31 | loop | all six loop primitives have live fleet instances (automations/worktrees/skills/connectors/sub-agents/external state) | PASS | workflows:41 desks:57 receipts:true books:10 claims:true |
-| 32 | sovereignty | role-registry integrity: every charter row names a real file (roles-as-data, no invented agents) | PASS | 55 rows · cols 9 · dupes 0 · missing files 0 |
-| 33 | sovereignty | change-request ledger integrity: every CR well-formed, no PENDING abandoned >7d | PASS | 18 CRs · malformed 0 · stale-pending 0 |
-| 34 | sovereignty | mechanical override live: destructive-command guard stamped, evals E7-E9 pin it | PASS | ledger at 2026-10-03T05:57:26.757Z · scan denies 3 · guardEvals green |
+| 32 | sovereignty | role-registry integrity: every charter row names a real file (roles-as-data, no invented agents) | PASS | 56 rows · cols 9 · dupes 0 · missing files 0 |
+| 33 | sovereignty | change-request ledger integrity: every CR well-formed, no PENDING abandoned >7d | PASS | 19 CRs · malformed 0 · stale-pending 0 |
+| 34 | sovereignty | mechanical override live: destructive-command guard stamped, evals E7-E9 pin it | PASS | ledger at 2026-10-03T13:42:15.842Z · scan denies 3 · guardEvals green |
 | 35 | sovereignty | cognitive rail governed: provider registry valid, forbidden rails never enabled, keyless probes booked, E10-E12 pin it | PASS | agents/inference-providers.csv + rail-ledger.json |
 | 36 | fate-defense | Emergence-World adoption: FWI scorecard fresh (9 indicators, each with a mechanical evidence source) + STASIS breaker armed + engine obeys it | PASS | FWI THRIVING fresh · 9 indicators · sources all named · stasis armed=false · engine gate=true |
-| 37 | sovereignty | collapse drill containment-proof: 4 fault classes injected into throwaway trees, judge caught every one on a fresh run | PASS | verdict CONTAINMENT-PROVEN · caught 4/4 · baseline green=true · age 1.1h · head 025aaa2233c1 |
+| 37 | sovereignty | collapse drill containment-proof: 4 fault classes injected into throwaway trees, judge caught every one on a fresh run | PASS | verdict CONTAINMENT-PROVEN · caught 4/4 · baseline green=true · age 8.8h · head 025aaa2233c1 |
 | 38 | sovereignty | one-bloc convergence book: the whole git (16 repos) measured mechanically into ONE map — roles, HEADs, honest statuses, laws armed | PASS | verdict ONE-BLOC · reached 16/16 · keyless 2 · age 0h · maps bound 3 |
 | 39 | lifecycle | canon reachability proven: a live leg serves the Defi canon, legs booked, never DARK, receipt fits reality (Z-42) | PASS | verdict CONTENT-SERVED · legs L1:SERVING L2:RAIL-UP L3:DEAD-AS-EXPECTED-PRIVATE · fresh · L1-now serving |
-| 40 | sovereignty | hands book: execution surfaces probed, never claimed — every LIVE hand receipted, ABSENT honest, tier-C locks named, zero hopeful greens (Z-43) | PASS | hands 6 · LIVE 3 (receipted all) · ABSENT 1 · locks 3 · fresh |
-| 41 | sovereignty | daily pulse book: the self-improvement loop closed under law — day ledger, typed proposals, judge+evals gates recorded, verify-only (Z-48/Z-49) | PASS | proposals 11 · PROPOSED-CR:5 GATED-BLOCKED:2 DEFERRED-TIER-C:2 ROLLED-BACK:1 BOOKED:1 · fresh · verifyOnly true |
+| 40 | sovereignty | hands book: execution surfaces probed, never claimed — every LIVE hand receipted, ABSENT honest, tier-C locks named, zero hopeful greens (Z-43) | PASS | hands 6 · LIVE 4 (receipted all) · ABSENT 1 · locks 3 · fresh |
+| 41 | sovereignty | daily pulse book: the self-improvement loop closed under law — day ledger, typed proposals, judge+evals gates recorded, verify-only (Z-48/Z-49) | PASS | proposals 15 · PROPOSED-CR:9 GATED-BLOCKED:2 DEFERRED-TIER-C:3 BOOKED:1 · fresh · verifyOnly true |
 
 **Books pulse:** econ-book.json ✓ · curation-book.json ✓ · money-ledger.json ✓ · ventures.json ✓ · fills-ledger.json ✓ · bridge-book.json ✓ · dex-book.json ✓ · learning-ledger.json ✓ · recruitment.json ✓ · hands-book.json ✓
 
