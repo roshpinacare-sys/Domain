@@ -1,6 +1,6 @@
 # Probe Lane — candidate repos assessed for sovereignty expansion (single canon)
 
-Operator lane opened 2026-10-03 ("מה לגבי זה …"). One canon per candidate; verdicts below are the fleet's record. Detail lives in worklog Z-43..Z-51.
+Operator lane opened 2026-10-03 ("מה לגבי זה …"). One canon per candidate; verdicts below are the fleet's record. Detail lives in worklog Z-43..Z-52.
 
 | Candidate | Head (at probe) | What it is | Verdict | Where recorded |
 |---|---|---|---|---|
@@ -11,6 +11,7 @@ Operator lane opened 2026-10-03 ("מה לגבי זה …"). One canon per candid
 | Human-Agent-Society/reef | `297af97` (2026-10-02) | Infra for continually self-improving agents; SkillClaw day/night harness evolution | **ADOPTED** — Rung 1 landed as the daily pulse (day ledger → typed proposals → real gates → judged accept/rollback); Rung 2 (runtime deploy, SQLite-first, no GPU) deferred pending a z-ai OpenAI-compatible adapter (build item) | CR-0009, worklog Z-48/Z-49 |
 | NandhaKishorM/laya | `fa9a2a7` (2026-10-02) | System-1 typed decision engine (multilingual, non-autoregressive, RL-trained) | **PROBE-PASS, QUEUED** — runs locally keyless (proven live, zero cloud); adoption candidate = advisory-only triage desk feeding the pulse; multilingual checkpoint needs_validation (sandbox RAM OOM); en accuracy 0.820 per their own benchmarks | worklog Z-50 |
 | Sumanth077/Hands-On-AI-Engineering | `da0091d` (2026-10-01) | ~50-project agent patterns showcase (newsletter gallery; 666MB, mostly demo GIFs) | **QUEUED as patterns-menu** — 3 named tier-B adoptables: (1) ExpeL polarity insight-distillation (accepted reinforces / rejected = what-not-to-flag) onto the pulse; (2) skill frontmatter declared-requirements (requires.env/bins/trigger) for the skill-library gate; (3) 92-source RSS corpus + LLM score schema (relevance/novelty/impact) for the intel digest. VENDORING BLOCKED: MIT badge but no LICENSE file, CONTRIBUTING grants nothing. Runtime adoptables tier C keys. Stock agents (YFinance) off-domain | worklog Z-51 |
+| swe-agent/mini-swe-agent | `04d809c` (2026-09-03, = main tip) | Minimal autonomous coding agent by the SWE-bench/SWE-agent authors (~559-line core: agent 190 + local-env 92 + litellm model 164); >74% SWE-bench verified; used by Meta/NVIDIA/IBM | **ADOPTED as doctrine (Rung 1) + strongest runtime candidate since reef (Rung 2, CR-0012 candidate)** — Rung 1 patterns: one-action-per-turn format contract with auto-rejection, output elision (5k head + 5k tail), fresh-subshell per action, first-class cost/call limits (`MSWEA_GLOBAL_COST_LIMIT`), prompts-as-versioned-YAML. Rung 2 bundle: vendor (MIT, real LICENSE) + OpenAI-compatible adapter over z-ai SDK (**the convergent build item — same adapter unlocks mini-swe-agent runtime, reef Rung 2, and laya serving**) + guard-wrapped LocalEnvironment with task allowlist. Deployment condition (strix lesson): bash exec only through command-guard, no HIVE/Blurt keys in its env, ever. Telemetry zero hits (measured). Deps minimal: pyyaml/requests/jinja2 | worklog Z-52 |
 
 ## Lane law
 
