@@ -2,15 +2,15 @@
 
 _one-bloc v1.0.1 (Task 23 convergence — owner directive "מקשה אחת"; binds BLOC-STATE + SOVEREIGN-INDEX + FATE-DEFENSE into one machine map; keyless-first + env-token fallback, stderr redacted)_
 
-Measured: **2026-10-03T14:11:40.914Z** · Verdict: **ONE-BLOC** · REACHED 16/16 (keyless 2 + token 14) · AUTH-WALL 0 · UNKNOWN 0 · local-sync 2/2
+Measured: **2026-10-03T14:41:18.940Z** · Verdict: **ONE-BLOC** · REACHED 16/16 (keyless 2 + token 14) · AUTH-WALL 0 · UNKNOWN 0 · local-sync 1/2
 
 | ריפו | תפקיד | origin/main | מצב | דרך | סנכרון-מקומי |
 |---|---|---|---|---|---|
 | saos-sovereign-platform | המוח הריבוני — צבא מגייס-עצמו וסולם כלכלת-אמת | `360bb250198d` | REACHED | token | N/A |
 | steem | המפתחות הקנוניים + הזרוע החיה על-השרשרת | `09fe82af635f` | REACHED | token | N/A |
-| Domain | הפנים הציבוריות + רכזת ה-CI האורגנית | `5cbbbb4b79fd` | REACHED | keyless | SYNCED |
-| Console | מרכז-ההפעלה — אמת נמדדת פעם-אחת | `7407d8f48caa` | REACHED | keyless | N/A |
-| Zip | המחסן החתום — עוגני אמת על שרשרת-אפו | `739660bc583f` | REACHED | token | N/A |
+| Domain | הפנים הציבוריות + רכזת ה-CI האורגנית | `b6fb4b4180d3` | REACHED | keyless | BEHIND |
+| Console | מרכז-ההפעלה — אמת נמדדת פעם-אחת | `b48da9453a73` | REACHED | keyless | N/A |
+| Zip | המחסן החתום — עוגני אמת על שרשרת-אפו | `6b02a1c89206` | REACHED | token | N/A |
 | roshpina | הגרעין + מבקר השליטה העצמית | `e1c6eeb2994c` | REACHED | token | N/A |
 | anchor-baseline | שומר העוגן — בוט שלמות Merkle | `098a302a381d` | REACHED | token | N/A |
 | Saosmartwallet | הארנק — זרימת רישום כנה | `743d1f0fd632` | REACHED | token | N/A |
@@ -18,7 +18,7 @@ Measured: **2026-10-03T14:11:40.914Z** · Verdict: **ONE-BLOC** · REACHED 16/16
 | Project-files | הארכיון הפיזי — keeper ארכיונים | `c8d8a92b4a22` | REACHED | token | N/A |
 | Adsmarket | הקמפיין הכן — claims-guard | `17683983156e` | REACHED | token | N/A |
 | Defi | הכלכלן — reprices חי fail-closed | `8dae9d842817` | REACHED | token | SYNCED |
-| saos-dex | הבורסה — פעימות dex-beat/grid | `310f47274156` | REACHED | token | N/A |
+| saos-dex | הבורסה — פעימות dex-beat/grid | `2bbd033c5f87` | REACHED | token | N/A |
 | saos-jummper | החוזים בפייתון — signingcontract | `b70df1022f0e` | REACHED | token | N/A |
 | saos-control-center | מרכז הבקרה הפנימי — 12 סקריפטים env-first | `5d25c8c22532` | REACHED | token | N/A |
 | saos-sovereign-foundry | המפעל — key-broker fail-closed | `62c0a7433892` | REACHED | token | N/A |
