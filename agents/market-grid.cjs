@@ -199,6 +199,18 @@ function executorPreview(internalRows) {
     verdict: internal.length === 2 && out.hiveEngine ? 'MARKET-GRID-LIVE' : 'PARTIAL',
   };
 
+  // pulled-schedule history (the evo-windows pattern: NO daemon — one decision +
+  // one appended row per invocation, append-only audit trail per STASIS law).
+  // Each invocation = one measured snapshot row; time-series of the edge.
+  const HISTORY = path.join(ROOT, 'agents', 'market-grid-history.jsonl');
+  const row = {
+    at: out.at, verdict: out.summary.verdict,
+    spreads: internal.map((r) => ({ market: r.market, spreadPct: r.spreadPct, pct24h: r.pct24h, tapeCrossed: r.paperFills })),
+    heFeasible: out.hiveEngine ? out.hiveEngine.rows.filter((r) => r.gridFeasible).map((r) => `${r.symbol}:${r.spreadPct}%`) : [],
+    grids: out.summary.gridsComputed, paper: paperRows.length, preview: out.executorPreviewCount, errors: out.errors.length,
+  };
+  try { fs.appendFileSync(HISTORY, JSON.stringify(row) + '\n'); } catch (e) { out.errors.push({ market: 'history', error: String(e.message) }); }
+
   fs.writeFileSync(OUT_JSON, JSON.stringify(out, null, 1));
   const md = [
     `# market-grid — internal-market sovereignty instrument (Z-60+)`,
