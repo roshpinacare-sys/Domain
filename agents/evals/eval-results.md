@@ -1,6 +1,6 @@
 # Desk Evals — runnable expectations (fresh-process judge, Z-36)
 
-_run-evals v1.13.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24, parallel-convergence superset) · 2026-10-03T04:30:37.649Z_
+_run-evals v1.13.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24, parallel-convergence superset) · 2026-10-03T04:39:53.273Z_
 
 **evals green: 24/24 expectations hold**
 
@@ -117,14 +117,14 @@ _run-evals v1.13.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - black-box: fresh-process desk exits 0 (fail-soft), ≥5 hands booked, ≥2 LIVE in any healthy context
 - every LIVE hand carries evidence+probeAt — a capability claimed without a receipt is a story
 - verdict enum closed (LIVE/ABSENT/UNREACHABLE/REF/LOCKED-TIER-C) — no hopeful greens possible
-- _measured: hands=6 live=4 receipted=true at=2026-10-03T04:30:35.501Z_
+- _measured: hands=6 live=4 receipted=true at=2026-10-03T04:39:50.758Z_
 
 ## E20 · skill-library gate: expertise as governed data with a mandatory Evidence Artifact — PASS
 - white-box: the predicate flags a bare built-in name (help), a missing Evidence Artifact section, and short/no-trigger descriptions — and PASSES the legal package
 - library floor: a missing authoring standard or unpinned mirror sha is an (library) offender — provenance is mechanical
 - black-box: fresh-process gate on the real library exits 0
 - book: skill-library.json GREEN, scanned >= 6, offenders [], stamped fresh (<30min)
-- _measured: scanned=10 offenders=0 legal=true caught(builtin,artifact)=true,true_
+- _measured: scanned=11 offenders=0 legal=true caught(builtin,artifact)=true,true_
 
 ## E23 · daily pulse: typed proposals + real gates + verify-only (the loop closed under law) — PASS
 - white-box: disposition derivation exact for all seven input kinds (queued→PROPOSED-CR, parked/tier-c→DEFERRED-TIER-C, needs-validation→GATED-BLOCKED, cr-pass→ACCEPTED-TODAY, cr-fail→ROLLED-BACK, observation→BOOKED)
@@ -132,7 +132,7 @@ _run-evals v1.13.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - gates: in the eval-harness context the recursion guard skips gates and marks it HONESTLY (no faked verdicts); real gate runs are proven standalone and pinned by the judge check
 - laws: verifyOnly=true, autoApply=false — the pulse never overrides the CR law
 - book fresh (<30min)
-- _measured: proposals=7 w1=true guard=true verifyOnly=true_
+- _measured: proposals=10 w1=true guard=true verifyOnly=true_
 
 ## E21 · strix lineage pin: Apache-2.0 attribution mechanically retained (gate v1.1.0) — PASS
 - white-box: stripping the strix sha 99c0711 from a notices copy yields a (library) offender naming the strix mirror sha
