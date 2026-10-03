@@ -1,6 +1,6 @@
 # Desk Evals — runnable expectations (fresh-process judge, Z-36)
 
-_run-evals v1.6.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16, parallel-convergence superset) · 2026-10-03T00:42:13.949Z_
+_run-evals v1.6.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16, parallel-convergence superset) · 2026-10-03T00:44:00.696Z_
 
 **evals green: 16/16 expectations hold**
 
@@ -74,7 +74,7 @@ _run-evals v1.6.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense 
 - every indicator names a mechanical evidence source (ANTI-GOODHART)
 - FWI book stamped fresh (<1h)
 - STASIS.json parseable with boolean active flag
-- _measured: verdict=THRIVING indicators=9 sourced=true stasisArmed=true_
+- _measured: verdict=DEGRADED indicators=9 sourced=true stasisArmed=true_
 
 ## E14 · collapse drill: containment PROVEN on a fresh run — PASS
 - receipt verdict CONTAINMENT-PROVEN with a green baseline (no false credit — BASELINE-RED would refuse attribution)
@@ -89,7 +89,7 @@ _run-evals v1.6.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense 
 - every repo lands REACHED or an honest AUTH-WALL/UNKNOWN — no invented reach (KEYLESS-FIRST law)
 - keyless floor holds: >=2 public repos reachable with zero credentials (env-independent)
 - book stamped fresh (<1h) + STASIS law parseable + 3 truth-maps bound (dedup: one map, not three)
-- _measured: verdict=DEGRADED reached=2/16 keyless=2 authWall=14_
+- _measured: verdict=DEGRADED reached=2/16 keyless=2 authWall=0_
 
 ## E16 · workflow-parse gate: no dead lane wears a green shape — PASS
 - predicate catches `${{ }}` inside flow collections (the recruit.yml incident class)
