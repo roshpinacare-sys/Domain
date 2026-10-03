@@ -1,9 +1,9 @@
-# FLEET CENSUS — 2026-10-03T19:05:09.556Z
+# FLEET CENSUS — 2026-10-03T19:06:41.604Z
 
 Offline · keyless · deterministic estate map (CR-0040). Answers: what do we hold, what limits us, how it wires.
 
-## Inventory — מה יש לנו (16/16 lanes present, 11415 commits, 61 capability markers)
-- **Domain** [PRESENT] 2f6ab75@2026-10-03 · caps(16): marketGrid, marketExec, fillLedger, marketCycle, crossLayer, oneBloc, capabilityMatrix, econDesk, measureLearn, evoWindows, stasis, evals, skillGate, cadenceCron, gridHistory, gridPaper · workflows=43 desks=49
+## Inventory — מה יש לנו (16/16 lanes present, 11418 commits, 61 capability markers)
+- **Domain** [PRESENT] fbd46df@2026-10-03 · caps(16): marketGrid, marketExec, fillLedger, marketCycle, crossLayer, oneBloc, capabilityMatrix, econDesk, measureLearn, evoWindows, stasis, evals, skillGate, cadenceCron, gridHistory, gridPaper · workflows=43 desks=49
 - **saos-dex** [PRESENT] 2bbd033@2026-10-03 · caps(8): kernel, amm, mm, gridBeat, gridLedger, dexCredits, dexGridCron, gridTrigger · workflows=4
 - **steem** [PRESENT] 33c541d6@2026-10-03 · caps(5): heLadder, liveGate, ladderRefresh, anchor, chainAttest · chainAgents=144 workflows=3
 - **saos-sovereign-platform** [PRESENT] e36529c@2026-10-03 · caps(5): exchange, ledger, bridge, meshHub, identity · meshContracts=11 meshTests=5 workflows=3
