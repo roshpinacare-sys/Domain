@@ -403,6 +403,21 @@
     "agents/evals/eval-results.json (E34)",
     "agents/sovereign-convergence.md"
    ]
+  },
+  {
+   "id": "feat-038",
+   "title": "Fleet Rung 16: the census-delta reader — map-vs-map drift record as the third measurement surface, plus the two live-found perspective laws (single-lane-workspace quarantine + no cross-estate diffs) (CR-0043; renumbered from feat-036 after the eleventh-collision — lane B took feat-036/037 with the wiring wave)",
+   "description": "agents/fleet-delta.cjs diffs two census stable payloads (reusing censusStable/stasisHalt by require) into a structured transition record: lanes/status/caps, sovereignty leaves, blocker (id,status) transitions with live evidence excluded, wiring status, edge growth, from/to fingerprints, estate perspective stamped. Event-ledger law: rows book ONLY on FIRST-DELTA/DRIFT; NO-DRIFT/SKIP days book nothing (composes with the no-noise publish law). Its first live run exposed the R15 CI tick as a 1/16-lane perspective flip (49 fake transitions proven live); fixed by the SINGLE-LANE-WORKSPACE law (CI checkout quarantined to fleet-census.artifact.json, canonical map untouched) and the PERSPECTIVE law (SKIP on cross-estate diffs); the cron delta step now diffs artifact-vs-artifact. E35 in run-evals v1.22.0; evals 35/35 on the merged tree.",
+   "status": "LIVE",
+   "cr": "CR-0043",
+   "landed": "2026-10-03T19:55:00Z",
+   "evidence": [
+    "agents/fleet-delta.cjs",
+    "agents/fleet-census.cjs (single-lane-workspace law)",
+    ".github/workflows/fleet-census-cron.yml (delta step)",
+    "agents/evals/eval-results.json (E35)",
+    "agents/change-requests/CR-0043-census-delta.json"
+   ]
   }
  ]
 }
