@@ -15,7 +15,7 @@
  *     Related Skills / Evidence Artifact (house ANTI-GOODHART law) / Tier & Scope (house law)
  *   - library-level: authoring standard present + credits the source, THIRD-PARTY-NOTICES
  *     present + pins ALL lineage mirror shas (claude-skills MIT + strix Apache-2.0 +
- *     google/ax Apache-2.0), >= 6 packages
+ *     google/ax Apache-2.0 + mini-swe-agent MIT), >= 6 packages
  *
  * VERDICT: exit 0 = library green (offenders []), exit 1 = offenders booked.
  * v1.0.1: the bare-built-in shadow reason now outranks the generic namespacing reason
@@ -26,6 +26,9 @@
  * v1.2.0 (Task 31): third lineage pin — the notices must retain the google/ax
  *          Apache-2.0 mirror sha ac23328 (agentic-orchestration lineage, Task 31
  *          evaluation → same-wave adoption).
+ * v1.3.0 (Task 33): fourth lineage pin — the notices must retain the
+ *          SWE-agent/mini-swe-agent MIT mirror sha 04d809c (minimal-agent
+ *          doctrine lineage, Task 33 evaluation → same-wave adoption).
  * Books: agents/skill-library.json + agents/skill-library.md (single writer: this gate).
  * Zero dependencies. require()-safe: scanDir runs only under require.main === module CLI.
  */
@@ -41,6 +44,7 @@ const REQUIRED_SECTIONS = ['## When to use', '## Proactive Triggers', '## Output
 const MIRROR_SHA = '19392f7a';
 const STRIX_MIRROR_SHA = '99c0711';
 const AX_MIRROR_SHA = 'ac23328';
+const MINI_SWE_MIRROR_SHA = '04d809c';
 
 function parseFrontmatter(text) {
   const m = /^\uFEFF?---\r?\n([\s\S]*?)\r?\n---\r?\n/.exec(text);
@@ -93,6 +97,7 @@ function scanDir(root) {
     if (!notices.includes('MIT')) offenders.push({ skill: '(library)', why: 'notices lack the MIT license reference' });
     if (!notices.includes(STRIX_MIRROR_SHA)) offenders.push({ skill: '(library)', why: `notices do not pin the strix mirror sha ${STRIX_MIRROR_SHA} (Apache-2.0 lineage, Task 29)` });
     if (!notices.includes(AX_MIRROR_SHA)) offenders.push({ skill: '(library)', why: `notices do not pin the ax mirror sha ${AX_MIRROR_SHA} (Apache-2.0 lineage, Task 31)` });
+    if (!notices.includes(MINI_SWE_MIRROR_SHA)) offenders.push({ skill: '(library)', why: `notices do not pin the mini-swe mirror sha ${MINI_SWE_MIRROR_SHA} (MIT lineage, Task 33)` });
     if (!notices.includes('Apache-2.0')) offenders.push({ skill: '(library)', why: 'notices lack the Apache-2.0 license reference (strix + ax lineage)' });
   }
 
@@ -117,14 +122,14 @@ function writeBooks(root, res, at) {
   const AG = path.dirname(__filename);
   const jsonPath = path.join(AG, 'skill-library.json');
   const mdPath = path.join(AG, 'skill-library.md');
-  const book = { ok: res.ok, at, gate: 'skill-library-gate.cjs v1.2.0 (Task 27+29+31, study: alirezarezvani/claude-skills MIT sha 19392f7a + usestrix/strix Apache-2.0 sha 99c0711 + google/ax Apache-2.0 sha ac23328)', scanned: res.scanned, skills: res.skills, offenders: res.offenders };
+  const book = { ok: res.ok, at, gate: 'skill-library-gate.cjs v1.3.0 (Task 27+29+31+33, study: alirezarezvani/claude-skills MIT sha 19392f7a + usestrix/strix Apache-2.0 sha 99c0711 + google/ax Apache-2.0 sha ac23328 + SWE-agent/mini-swe-agent MIT sha 04d809c)', scanned: res.scanned, skills: res.skills, offenders: res.offenders };
   fs.writeFileSync(jsonPath, JSON.stringify(book, null, 2) + '\n');
   const md = [];
-  md.push('# skill-library gate — role expertise as governed portable data (Task 27+29+31)');
+  md.push('# skill-library gate — role expertise as governed portable data (Task 27+29+31+33)');
   md.push('');
   md.push(`**verdict: ${res.ok ? 'GREEN' : 'RED'}** · ${res.scanned} packages · ${res.offenders.length} offenders · ${at}`);
   md.push('');
-  md.push('_Authoring standard adapted from alirezarezvani/claude-skills (MIT, mirror sha 19392f7a); security lineage: usestrix/strix (Apache-2.0, mirror sha 99c0711, Task 29); orchestration lineage: google/ax (Apache-2.0, mirror sha ac23328, Task 31). House-hardened: Evidence Artifact mandatory (ANTI-GOODHART), tier declaration, no silent scope. Provenance: skill-library/THIRD-PARTY-NOTICES.md_');
+  md.push('_Authoring standard adapted from alirezarezvani/claude-skills (MIT, mirror sha 19392f7a); security lineage: usestrix/strix (Apache-2.0, mirror sha 99c0711, Task 29); orchestration lineage: google/ax (Apache-2.0, mirror sha ac23328, Task 31); minimal-agent lineage: SWE-agent/mini-swe-agent (MIT, mirror sha 04d809c, Task 33). House-hardened: Evidence Artifact mandatory (ANTI-GOODHART), tier declaration, no silent scope. Provenance: skill-library/THIRD-PARTY-NOTICES.md_');
   md.push('');
   md.push('| package | verdict |');
   md.push('|---|---|');
@@ -138,7 +143,7 @@ function writeBooks(root, res, at) {
   return book;
 }
 
-module.exports = { scanDir, parseFrontmatter, checkSkill, BARE_BUILTINS, MIRROR_SHA, STRIX_MIRROR_SHA, AX_MIRROR_SHA };
+module.exports = { scanDir, parseFrontmatter, checkSkill, BARE_BUILTINS, MIRROR_SHA, STRIX_MIRROR_SHA, AX_MIRROR_SHA, MINI_SWE_MIRROR_SHA };
 
 if (require.main === module) {
   const AG = path.dirname(__filename);

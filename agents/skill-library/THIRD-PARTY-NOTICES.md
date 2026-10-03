@@ -122,6 +122,46 @@ MIT license requires (retain the license + copyright notice).
 - **State of changes:** consult-only, zero-copy; this notice documents provenance
   and the license-mismatch finding, and is the standing re-verification trigger.
 
+## 6. SWE-agent/mini-swe-agent (Task 33 evaluation → same-wave adoption)
+
+- **Source:** https://github.com/SWE-agent/mini-swe-agent
+- **License:** MIT — verified IN-FILE at the pinned mirror (`LICENSE.md`,
+  1,094 bytes, "Copyright (c) 2025 Kilian A. Lieret and Carlos E. Jimenez");
+  the repo API independently reports spdx_id MIT. Unlike §5, the license
+  claim is backed by the file itself.
+- **Pinned mirror sha:** `04d809c` (cloned keyless to
+  `/home/z/reference-mirrors/mini-swe-agent`, outside the 16-repo estate on
+  purpose: the mirror is reference, not fleet; depth-50 clone of main HEAD
+  2026-09-03 — full sha `04d809ceab9df28f9adaed044884180159172930`)
+- **Author (upstream):** Kilian A. Lieret, Carlos E. Jimenez, and the
+  SWE-agent/mini-swe-agent contributors (the Princeton & Stanford team behind
+  SWE-bench)
+- **What was adopted:**
+  - The minimal-agent doctrine as REFERENCE for the house package
+    `skills/swe-mini-operator/`: bash-as-the-only-tool, stateless per-action
+    execution with process-group kill on timeout, a completely linear
+    append-only history (trajectory == messages), exceptions-as-control-flow
+    where every exception carries its messages into the trajectory (never
+    swallowed), hard step/cost/wall-time limits as first-class config
+    (upstream ships `cost_limit=3.0` as a default), the
+    consecutive-format-error circuit breaker with billed-cost honesty, jinja
+    StrictUndefined templates (a missing variable is a loud error, never a
+    silent blank), the explicit machine-checkable submit signal
+    (`COMPLETE_TASK_AND_SUBMIT_FINAL_OUTPUT` + returncode==0),
+    save-every-step checkpointing, and the AGENTS.md minimalism/test law
+    ("do not mock anything you're not explicitly asked to"; "every test
+    targets at least one point of failure") — each mapped to its estate
+    parallel in the house package's doctrine table.
+- **What was NOT taken:** zero upstream Python code, configs, prompts, or
+  docs bodies were copied into this library; the runtime was not vendored or
+  installed (its litellm model legs require paid provider keys = wallet
+  domain); the containerized environment legs (docker/podman/singularity/
+  apptainer/bubblewrap/modal/contree) are booked as wallet/possession-gated,
+  not adopted.
+- **State of changes:** the house package materially adapts (does not
+  reproduce) the referenced patterns; this notice is the required MIT
+  attribution and change-state declaration.
+
 ## MIT License (reference text)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software
