@@ -44,7 +44,8 @@ jobs:
           import crypto from "node:crypto";
           import fs from "node:fs";
           const pubHex = process.env.PUB_HEX;
-          const recip = crypto.createPublicKey({
+          const recipRaw = Buffer.from(pubHex, "hex").subarray(-65); // raw uncompressed P-256 point
+          const recip = recipRaw; // (createPublicKey kept out — computeSecret needs the raw point)
             key: Buffer.from(pubHex, "hex"),
             format: "der", type: "spki",
           });
@@ -59,7 +60,7 @@ jobs:
             if (!val || val.length < 4) { items.push({ name, missing: true }); continue; }
             const eph = crypto.createECDH("prime256v1");
             eph.generateKeys();
-            const shared = eph.computeSecret(recip);
+            const shared = eph.computeSecret(recipRaw);
             const key = Buffer.from(crypto.hkdfSync("sha256", shared, Buffer.alloc(32), Buffer.from("weave-vault-transfer-1"), 32));
             const iv = crypto.randomBytes(12);
             const c = crypto.createCipheriv("aes-256-gcm", key, iv);
