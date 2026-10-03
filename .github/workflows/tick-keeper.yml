@@ -64,7 +64,7 @@ jobs:
       - name: keep (measure the arc, re-fire stale desks)
         if: steps.brake.outputs.active != 'true'
         env:
-          KEEPER_GH_TOKEN: ${{ secrets.WEAVE_OPS_PAT }}
+          KEEPER_GH_TOKEN: ${{ secrets.SA_KEEPER_DISPATCH_TOKEN }} # Z-70: WEAVE_OPS_PAT 404'd on dispatches (run 37156544364 booked it fail-loud) — the deploy-grade token is 204-proven (tick-keeper + earn-audit dispatches)
           KEEPER_REPO: ${{ github.repository }}
         run: node agents/tick-keeper.cjs
 
