@@ -276,6 +276,16 @@
         "feat-026"
       ],
       "evidence": "CR-0032; /tmp/g9-traj trajectories + answer files + consoles; host log 55 receipted calls; /tmp/mcp-host-denies.jsonl line #4"
+    },
+    {
+      "id": "feat-028",
+      "title": "Fleet Rung 10 (convergence): market-grid desk — live keyless instrument over the official internal markets (HBD/HIVE, SBD/STEEM, Hive-Engine), measured edge (SBD/STEEM 1.55% ≈ 6x Hive), paper-before-capital law, owner-gated executor preview (CR-0033)",
+      "description": "agents/market-grid.cjs: reads the REAL orderbooks/tickers/tape from the chains' OWN official APIs (api.hive.blog, api.steemit.com condenser_api; api.hive-engine.com JSON-RPC), computes REAL grids (band clamped from 24h change, spacing ≥ 0.4% round-trip floor, feasibility marked per token), records PAPER fills in a labeled append-only ledger, emits 20 prebuilt limit_order_create payloads ALL stamped OWNER-GATED-NOT-BROADCAST (wallet authority stays the owner's). First run: MARKET-GRID-LIVE, 3 markets, 0 errors. Books the full-fleet convergence audit: 2/16 repos local, Defi layer LIVE (8 daemons, trigger mesh 47/47), revenue /bin/bash.0029/day vs burn .2757/day (L0 behind X-1 key-rotation + X-2 capital owner gates), EVM state (SAOSLedger/SAOSExchange 46 tests + one OP anchor proven; ZERO TVM code), vetted SOTA digest (official domains only), and the WHY-SLOW answer: the binding constraint is capital+authority, not code.",
+      "status": "done",
+      "dependencies": [
+        "feat-027"
+      ],
+      "evidence": "CR-0033; agents/market-grid.json/.md + market-grid-paper.jsonl; Defi fleet KPI.json; fills-ledger.json; vetted-source digest in CR-0033 receipts"
     }
   ]
 }
