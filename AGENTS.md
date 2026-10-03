@@ -82,6 +82,12 @@
 - `bash /home/z/.fleet-restore/restore.sh check` — local sandbox legs + one-command
   re-clone (Z-42 re-codification; creds live OUTSIDE repos in a 600-perm file,
   never printed, never committed — sandbox resets are a law of nature)
+- `node agents/hands-book.cjs` — the hands desk (Z-43, CR-0006): the sovereignty's
+  execution surfaces PROBED fresh (shell · git rail · browser computer-use ·
+  keyless web · vm-stack · inference-rail cross-ref) — every LIVE row carries a
+  receipt, ABSENT is an honest answer, tier-C locks are policy and policy beats
+  probe. A capability claimed without a receipt is a story (cua-pattern adoption:
+  probe-before-trust, permission-at-launch, action ladder)
 - `bash -n <script>` / `node --check <script>` — per-change static lint gate
   (full-tree lint/build/type checks run in CI: org-selftests + agent-verify)
 - gitleaks + agent-verify run in CI on schedule (16/16 repos, head=0 law)

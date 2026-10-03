@@ -27,6 +27,7 @@
  *   E16 workflow-parse gate  — every workflow parses: predicate catches `${{ }}` in flow maps, legal idioms stay ALLOW, fresh-process gate GREEN (Task 24, recruit.yml startup-failure incident)
  *   E17 canon-liveness       — reachability is a booked fact with named legs; verdict derivation honest; receipt fits reality (Z-42, CR-0005; renumbered from my interim E15 — Task 23/24's one-bloc + parse-gate landed first on main, parallel-convergence supersedes)
  *   E18 ci-hands             — the fleet's hands on its own CI estate: classifiers pin the failure taxonomy (startup/job-startup/step + transient-aware verdicts), fresh-process run books trajectory + honest reach (Task 26, trycua/cua adoption; renumbered from my interim E17 — Z-42's canon-liveness claimed E17 first on main, supersession visible here)
+ *   E19 hands book           — the sovereignty's execution surfaces probed, never claimed: policy beats probe, every LIVE row carries a receipt, ABSENT is an honest answer (Z-43, CR-0006, trycua/cua adoption; renumbered from my interim E18 — Task 26's ci-hands claimed E18 first on main, parallel-convergence supersedes)
  *
  * Fail-soft: exit 0 always; FAILs are booked honestly (HARNESS-AUDIT MANDATE:
  * green-washing the evals is a doctrine breach).
@@ -283,9 +284,32 @@ function accumulateInMemory(bookRows, seed) {
   } catch (e) { evalr('E18', 'ci-hands', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
 
+
+  // ---- E19: hands book — execution surfaces probed, never claimed (Z-43, CR-0006, cua adoption; renumbered from my interim E18 — Task 26's ci-hands claimed E18 first on main, parallel-convergence supersedes)
+  try {
+    const hbk = require(path.join(AG, 'hands-book.cjs'));
+    // white-box: the pure verdict derivation — policy beats probe (cua permission-at-launch)
+    const w1 = hbk.deriveVerdict({ ok: true });
+    const w2 = hbk.deriveVerdict({ absent: true });
+    const w3 = hbk.deriveVerdict({ ok: true }, { locked: true });
+    const w4 = hbk.deriveVerdict({ ref: true });
+    const w5 = hbk.deriveVerdict({ ok: false });
+    // black-box: fresh process, closed verdict enum, receipts on every LIVE row
+    const r = spawnSync(process.execPath, [path.join(AG, 'hands-book.cjs')], { cwd: AG, timeout: 240000, encoding: 'utf8' });
+    const b = JSON.parse(fs.readFileSync(path.join(AG, 'hands-book.json'), 'utf8'));
+    const hs = Array.isArray(b.hands) ? b.hands : [];
+    const live = hs.filter((h) => h.verdict === 'LIVE');
+    const receipted = live.every((h) => h.evidence && String(h.evidence).length > 3 && !!h.probeAt);
+    const enums = hs.every((h) => ['LIVE', 'ABSENT', 'UNREACHABLE', 'REF', 'LOCKED-TIER-C'].includes(h.verdict));
+    evalr('E19', 'hands book: honest verdict derivation + fresh receipts, zero hopeful greens',
+      w1 === 'LIVE' && w2 === 'ABSENT' && w3 === 'LOCKED-TIER-C' && w4 === 'REF' && w5 === 'UNREACHABLE' && r.status === 0 && b.ok === true && hs.length >= 5 && live.length >= 2 && receipted && enums && !!b.at,
+      ['white-box: probe-ok → LIVE; absent → ABSENT; POLICY LOCK BEATS A GREEN PROBE → LOCKED-TIER-C (the cua permission-at-launch lesson); cross-ref → REF; probe-fail → UNREACHABLE', 'black-box: fresh-process desk exits 0 (fail-soft), ≥5 hands booked, ≥2 LIVE in any healthy context', 'every LIVE hand carries evidence+probeAt — a capability claimed without a receipt is a story', 'verdict enum closed (LIVE/ABSENT/UNREACHABLE/REF/LOCKED-TIER-C) — no hopeful greens possible'],
+      `hands=${hs.length} live=${live.length} receipted=${receipted} at=${b.at}`);
+  } catch (e) { evalr('E19', 'hands book', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.8.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.9.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];

@@ -46,7 +46,7 @@ function check(subsystem, name, pass, evidence, note, level) {
 }
 
 // ---- LIVE BOOKS (freshness is the fleet's pulse)
-const LIVE_BOOKS = ['econ-book.json', 'curation-book.json', 'money-ledger.json', 'ventures.json', 'fills-ledger.json', 'bridge-book.json', 'dex-book.json', 'learning-ledger.json', 'recruitment.json'];
+const LIVE_BOOKS = ['econ-book.json', 'curation-book.json', 'money-ledger.json', 'ventures.json', 'fills-ledger.json', 'bridge-book.json', 'dex-book.json', 'learning-ledger.json', 'recruitment.json', 'hands-book.json'];
 const bookStates = [];
 for (const b of LIVE_BOOKS) {
   const j = readJson(path.join(AG, b));
@@ -325,6 +325,22 @@ const freshCount = bookStates.filter((b) => b.exists && b.fresh).length;
     cl ? `verdict ${cl.verdict} · legs ${clLegs.map((l) => `${l.id}:${l.verdict}`).join(' ')} · ${clFresh ? 'fresh' : 'STALE'} · L1-now ${l1Now ? 'serving' : 'absent'}` : 'canon-liveness.json missing',
     'Z-42 (CR-0005): reachability is a booked fact with named legs, not an environment surprise — the receipt is cross-checked against the canon THIS run; complements Task 23 (they map the whole git, we prove every desk can READ the canon it depends on)');
 
+  // Z-43: hands book — the sovereignty's execution surfaces, probed not claimed
+  // (CR-0006, trycua/cua adoption). cua's lesson: an agent's power is exactly its
+  // probed surfaces — everything else is theater. A capability claimed without a
+  // receipt is a story; ABSENT is an honest answer; tier-C locks are POLICY and
+  // policy beats any green probe (permission-at-launch).
+  const hb = readJson(path.join(AG, 'hands-book.json'));
+  const hbFresh = !!(hb && hb.at && (Date.now() - Date.parse(hb.at)) / 3600000 < 25);
+  const hbHands = hb && Array.isArray(hb.hands) ? hb.hands : [];
+  const hbLive = hbHands.filter((h) => h.verdict === 'LIVE');
+  const hbReceipted = hbLive.every((h) => h.evidence && String(h.evidence).length > 3 && !!h.probeAt);
+  const hbEnum = hbHands.every((h) => ['LIVE', 'ABSENT', 'UNREACHABLE', 'REF', 'LOCKED-TIER-C'].includes(h.verdict));
+  const hbOk = !!(hb && hb.ok && hbFresh && hbHands.length >= 5 && hbLive.length >= 2 && hbReceipted && hbEnum && Array.isArray(hb.locked) && hb.locked.length >= 3);
+  check('sovereignty', 'hands book: execution surfaces probed, never claimed — every LIVE hand receipted, ABSENT honest, tier-C locks named, zero hopeful greens (Z-43)', hbOk,
+    hb ? `hands ${hbHands.length} · LIVE ${hbLive.length} (receipted ${hbReceipted ? 'all' : 'NO'}) · ABSENT ${hb.counts ? hb.counts.absent : '?'} · locks ${(hb.locked || []).length} · ${hbFresh ? 'fresh' : 'STALE'}` : 'hands-book.json missing',
+    'Z-43 (CR-0006, study: trycua/cua): "give agents computers" — we adopt probe-before-trust, permission-at-launch and the action ladder on native surfaces; the VM/container runtime class is measured ABSENT here and the cloud fleet is tier C — the book is the boundary between power and story');
+
   // ---- silent-costs watch (L13) — booked as standing observations, honestly
   const silentCosts = {
     verificationDebt: 'selftests cover past incidents; every NEW failure mode (concat family ×3, null-deref, dedupe) becomes a check within one wave of discovery',
@@ -339,7 +355,7 @@ const freshCount = bookStates.filter((b) => b.exists && b.fresh).length;
     fail: checks.filter((c) => c.status === 'FAIL').length
   };
   const out = {
-    ok: true, at, agent: 'harness-audit v1.10.0 (Z-35 + Task 19 + Z-37 sovereignty + Z-38 override + Z-39 cognitive rail + Task 22 fate-defense + Z-40 collapse drill + Task 23 one-bloc convergence + Task 24 workflow-parse gate + Z-42 canon reachability + Task 26 ci-hands, parallel-convergence superset deduped)',
+    ok: true, at, agent: 'harness-audit v1.11.0 (Z-35 + Task 19 + Z-37 sovereignty + Z-38 override + Z-39 cognitive rail + Task 22 fate-defense + Z-40 collapse drill + Task 23 one-bloc convergence + Task 24 workflow-parse gate + Z-42 canon reachability + Task 26 ci-hands + Z-43 hands book, parallel-convergence superset deduped)',
     origin: 'walkinglabs/learn-harness-engineering study (Z-35): five subsystems + loop/graph engineering mapped to the fleet; Z-37 adds f/prompts.chat governance adoption (roles-as-data + decision ladder + change-requests + override protocol); Z-38 adds Dicklesworthstone/destructive_command_guard adoption (mechanical override gate + evals E7-E9); Z-39 adds tashfeenahmed/freellmapi adoption (cognitive-rail registry + keyless probes + evals E10-E12); Task 22 adds world.emergence.ai fate-defense adoption (STASIS circuit breaker + FWI scorecard + three laws, FATE-DEFENSE.md); Z-40 adds the emergence.ai collapse-drill containment proof (CR-0004, E14); two runtimes landed the same operator wave on the same study — merged, renumbered, deduped; the audit itself is the adopted artifact — a fresh-context checker node on a schedule',
     fiveSubsystems: {
       instructions: 'AGENTS.md + DOCTRINE.md + FLEET-NOTE.md + agent headers',
@@ -347,7 +363,7 @@ const freshCount = bookStates.filter((b) => b.exists && b.fresh).length;
       verification: 'verify-then-sign + read-back + agent-verify judge node + gitleaks',
       scope: 'kill rules + floors/ceilings + dust honesty',
       lifecycle: 'receipts per session + RESUME-KIT + restore.sh',
-      sovereignty: 'role-registry.csv (roles-as-data) + change-requests/ (judged self-modification) + sovereignty.md (decision ladder + override protocol) + command-guard.cjs (mechanical override, Z-38) + cognitive-rail.cjs + inference-providers.csv (governed inference rails, Z-39) + canon-liveness.cjs (named reachability legs, Z-42)',
+      sovereignty: 'role-registry.csv (roles-as-data) + change-requests/ (judged self-modification) + sovereignty.md (decision ladder + override protocol) + command-guard.cjs (mechanical override, Z-38) + cognitive-rail.cjs + inference-providers.csv (governed inference rails, Z-39) + canon-liveness.cjs (named reachability legs, Z-42) + hands-book.cjs (probed execution surfaces, Z-43)',
       fateDefense: 'STASIS.json circuit breaker (engine obeys pre-seal) + fleet-indicators.cjs FWI scorecard (9 indicators, artifact-sourced) + FATE-DEFENSE.md (Emergence World roast + three laws, Task 22)'
     },
     books: bookStates,
