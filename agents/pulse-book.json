@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "at": "2026-10-03T19:56:08.953Z",
+  "at": "2026-10-03T20:17:18.808Z",
   "since": "2026-10-02T16:40:20.950Z",
   "windowSince": "2026-10-02T16:40:20.950Z",
   "agent": "pulse v1.2.0 (CR-0009 loop, Rung 1; CR-0028 consumes the laya advisory triage; CR-0033 consumes the scheduled evolution-window evidence — Z-48/Z-49/Z-60/Z-62)",
@@ -8,6 +8,26 @@
     "since": "2026-10-02T16:40:20.950Z",
     "count": 40,
     "commits": [
+      {
+        "sha": "56965be",
+        "subject": "local books: desk receipts since Z-66 (canon-liveness, ci-hands, hands-book, pulse-book, one-bloc, census, ventures, parse-gate, fills)"
+      },
+      {
+        "sha": "660b67d",
+        "subject": "econ-desk: real-economy book 2026-10-03T20:05:59Z"
+      },
+      {
+        "sha": "7291d24",
+        "subject": "sovereign-tick receipts on the merged tree: tick #5 GAP-PACING at 678s (pacing law live), DRY cycle composed exec run #17 — 5 decisions booked, 1 EXECUTE-LIVE (orderid 1791056833 readback matched), 0 unresolved errors"
+      },
+      {
+        "sha": "1311811",
+        "subject": "CR-0044 receipt precision: merged-tree eval count 34/36 (E36 sovereign + E35 census-delta both green on v1.23.0)"
+      },
+      {
+        "sha": "52fad6f",
+        "subject": "CR-0044 (PASS, tier B): fleet Rung 17 — THE SOVEREIGN TRANSFER (operator directive: 'תן לריבונות להחליט החלטות שהשארת לי תעביר לריבונות הכל ... צריך גם ללא וגם כולל השער שלי ... יש לנו את כל המפתחות ... הכל צריך להיפתח ולהתייעל למקסימום ... ריבונות אוטונומית ללא תלות') — the last two operator-held decisions (D1 live-fire, D2 drip pacing) moved into policy-gated sovereignty: (1) agents/sovereign-policy.json THE CONSTITUTION (delegation receipt verbatim; gate modes sovereign|operator with the operator overlay ALWAYS armed — STASIS halt-before-read, Tier-E escalation mailbox sovereign-pending.json, SOVEREIGN_MODE=operator; limits: 900s broadcast gap, 24 fills/day, 48 decisions/day, 0.05 SBD daily-loss stop, 3 consecutive-loss stop, Tier-S ≤1.25 STEEM, fuel keep-floors; drip steady-4w with allow_authority_ops:false) — market-exec MODE LAW untouched: verify-then-sign + caps + band + ADD-ONLY still bind at fire time (defense in depth); (2) agents/sovereign.cjs pure core (E35): decideSovereign gate-ORDER law (STASIS-HALT → mode → arming-presence → suggestion → GAP-PACING → day-caps → BREAKER-DAILY-LOSS → BREAKER-CONSEC-LOSS → FUEL-FLOOR → TIER-E-SIZE → EXECUTE-LIVE, every gate a reason code, never silent), dripPacing (absent canon = honest RECEIPT, runway ≥ reserve = STEADY, thin = Tier-E RECOMMENDATION), applyReceipt rollover, arming PRESENCE-ONLY (key material never read/logged — the DISARMED-NO-KEY honesty law); (3) agents/sovereign-tick.cjs fresh-child orchestrator (no-daemon law): STASIS first → measure LOCAL canon (zero network, day-book truth = the LEDGER single source) → decide → route (LIVE → market-cycle armed; DRY → market-cycle; ESCALATE → pending mailbox; SKIP → receipt) → append-only sovereign-decisions.jsonl + sovereign-state.json; (4) .github/workflows/sovereign-tick-cron.yml 24/7 at :12/:42 off the whole org minute map, STASIS-braked twice, keyless default books honest DRY receipts, armed path = STEEM_ACTIVE_WIF secret → vault presence-only, append-only publish [skip ci] + rebase-push twin; (5) FIRST FULLY SOVEREIGN CYCLE receipted end-to-end: tick #1 EXECUTE-LIVE ('IN-POLICY: recycle suggested, breakers green, gap ok, fuel above floors') → cycle #3 LIVE → market-exec run #14 placed L1 sell 0.388 STEEM→0.039 SBD @ 0.100515 orderid 1791056833, readback found/price_match/matched TRUE, txid 1f536f130d…, 0 errors; ticks #2/#4 GAP-PACING honored (30s/179s < 900s), tick #2's DRY route composed exec run #15 (planning receipt, zero signatures) — tick→cycle→exec composition live; (6) fail-loud book proof: tick #3 scope defect ('ledger is not defined') → ERROR receipt kept as audit trail → fix in-session → tick #4 green with ledger-truth day-book (fills_today 12 — the grid is filling); (7) E36 in run-evals v1.22.0→v1.23.0: white-box gate-order + drip triple + rollover, black-box ×3 (keyless DRY zero-network, operator-overlay ESCALATE, STASIS halt-before-read proven with a GARBAGE ledger) — evals 33 PASS / 2 environment-bound (sibling E31/E32 estate clones lost to reset, their CI green); (8) key census (names only): STEEM_ACTIVE_WIF/SA_FLEET_KEYS/SA_HEAD_ACTIVE/… live in 37 workflows + local vault presence-only PASS — the operator's 'יש לנו את כל המפתחות' measured TRUE; (9) sovereign-convergence.md §6 THE TRANSFER + feat-039 (39 rows) — the blocker table's operator column is now empty at rung level"
+      },
       {
         "sha": "871a75c",
         "subject": "fleet-census(ci): artifact+delta 2026-10-03T19:51:25Z [skip ci]"
@@ -147,26 +167,6 @@
       {
         "sha": "07fa9df",
         "subject": "lane books: Z-62 CR-0033 refresh run on merged tree (sibling CR-0032/61844de Rung 9 + Rung-9 books absorbed; rebase book conflicts resolved freshest-then-refresh — every judge-read book re-measured on the merged tree: evals 27/27 (E23 superset + E27 new), judge 40 PASS / 1 WARN / 0 FAIL (WARN = ambient-storm one-bloc transient), pulse real-gated with the windowSince law live (legacy-transition snapshot books both lanes' 25h CR set honestly; next window clean))"
-      },
-      {
-        "sha": "b53f741",
-        "subject": "CR-0033 (PASS, renumbered from CR-0032 — SEVENTH collision, later-mover law; sibling 61844de took CR-0032 for fleet Rung 9 host-consumer wiring; renumber_note in-file, zero content changes): Z-62 — scheduled evolution windows + the pulse evidence surface — NEW DESK agents/evo-windows.cjs: a PULLED-SCHEDULE (no daemon; one decision + one appended row per invocation, append-only history per the STASIS audit-trail law) over the CR-0030 evo desk; decision table E27-pinned (FORCE→RUN/FORCED · EVO_WINDOWS_SKIP_RUN=1→SKIPPED-EVAL-CONTEXT off-budget law · fresh-history→SKIPPED-TOO-SOON with nextDueAt keyed off the last MEASURED/SEEDED row, never off skips · stale→RUN/CADENCE · no-history+fresh-book→BOOTSTRAP-SEEDED (a manual run counts; double-running = redundant measurement) · no-history+no-book→RUN/FIRST-WINDOW · no-runtime→SKIPPED-NO-DESK-RUNTIME); PORT-PARTITION: scheduler passes SHIM_EVO_PORT=3052 (sibling CR-0031 mcp-host claimed :3041, the evo desk's in-file default — adapt at the call site, never rewrite a receipted artifact); VERIFY-ONLY: challenger win = ADOPTION-PENDING-CR, never adoption — pulse v1.2.0 consumes agents/evo-windows.json as EVIDENCE (CARRY-LAW sharpened: HINTS expire 36h, MEASURED NUMBERS CARRY at any age with age_h booked; incumbent-retained→observation, challenger→new kind evo-adoption-pending→PROPOSED-CR, original seven disposition kinds byte-identical — E23 superset) — TWO EVO-DESK DEFECTS CAUGHT LIVE BY THE FIRST SCHEDULED WINDOWS (the measurement discipline working: reproduction attempts are now routine): [v1.0.1] incumbentHarness() anchored on 'return (' matching NOTHING in the runner (harness lives in 'SYSTEM = (') — the committed CR-0030 pair could not reproduce its own committed Z-61 book (pre-commit working-tree variant made the Z-61 run); first FORCED window booked INCUMBENT-UNREADABLE in 3.6s with both serve-windows verified dead; FIX proven BYTE-IDENTICAL (689 chars) to Z-61's preserved pool seed /tmp/reef-rung3/harness-0.txt — [v1.0.2] the 'env-tunable storm ladder' was NOT env-tunable (Z-61 hardcoded the values into the child env; scrubEnv merges extra OVER base, process.env never reaches the child); caught live when the second FORCED window's 6-attempt ladder exhausted against the shared-IP 429 storm (fail-loud 502s correctly booked NON-ATTEMPTs, selection honest NO-ATTEMPTS, windows verified dead in 97s); FIX: ladder reads process.env.SHIM_RETRY_* with canonical Z-61 defaults — MEASURED WINNER HONESTLY DEFERRED TO CADENCE: post-window probes 502 ×5 across 3min (shared-IP storm from the sibling's deep run); shared-IP etiquette defers the measured batch to a future window rather than out-shouting the sibling — the scheduler exists precisely for this deferral — LAUNCH-CONTEXT LAW booked from two silent deaths: long serve-window desks cannot survive the sandbox tool-call boundary detached (nohup AND setsid died silently between tool calls, zero strays zero book rows; the append-only history exposed both non-events) — windows run in the FOREGROUND of an operator call with an explicit budget — PULSE LAWS LANDED FROM LIVE CATCHES: verdict prefix-match /^PASS\\b/ (the CR schema carries rich verdicts 'PASS — …', CR-0031 precedent; exact === misread every rich verdict as FAIL→ROLLED-BACK, caught on CR-0033 the first rich verdict in a pulse window) + windowSince (the observation window advances ONLY on real gated runs — eval-context book writes inside the gates used to advance the since marker and strand judgments forever; legacy books transition on the judge's 25h horizon, one honest snapshot) + every proposal typed (the judge caught the first build pushing evo rows after the derive loop — a type hole, pinned in E23 forever) — EVALS v1.16.0: E23 superset (eight input kinds + enum-type pin) + NEW E27 evo-windows scheduler (decide() 7/7, classifyOutcome() 4/4 incl. LEAK-DETECTED never silenced, fresh-process append-only +1 row under SKIP_RUN); evals 27/27; judge 40 PASS / 1 WARN / 0 FAIL (WARN = ambient-storm one-bloc DEGRADED 2/16, shared-IP transient); CR-0033; feat-031"
-      },
-      {
-        "sha": "4b3a9d1",
-        "subject": "lane books: Rung 9 host-consumer wiring run on tree — judge 41/0/0, evals 26/26, gate 14/0, DOMAIN-INIT-OK, ONE-BLOC 16/16 tokenReach 14"
-      },
-      {
-        "sha": "61844de",
-        "subject": "CR-0032 (PASS, tier B): fleet Rung 9 — host-consumer wiring, the CR-0031 consumer-contract finding made real — agents/cmmq/cmmq.sh (the ONE client shape: curl-only, fail-loud, reads-only; policy+deny receipts stay in ONE place at the host); receipts: wrapper hits exact (search_graph GuardedLocalEnvironment 45ms incl HTTP+parse; project-scoping first-call trap documented in help), deny battery through the wrapper rc=1 + JSONL line #4, freshness at consumption time (detect_changes caught the rung's own uncommitted wrapper — merge_base 3d65c7b); HONEST paired matrix inside guarded mini-swe episodes (booked shape verbatim): pair 1 single-symbol A raw 6 calls / B wired 7 calls both CORRECT (answer-a/b.txt guard_env.py:61; B host receipts list_projects 22.9ms + search_graph 7.1ms); pair 2 semantic discovery C raw 14 calls RIGHT-file-imprecise-span (63-85 vs truth 68-78) 27.1s / D wired 16 calls WRONG file 265.3s (key-verify.mjs decoy — 8x search_graph 10-18ms + outline 7.4ms = ~0.1s host time for 9 queries, ~49.5s one-shot-CLI equivalent); remedy E2 wired+pre-confirmed 8 calls 15.1s RIGHT file WRONG span (top-rank rpc@46-59 neighborhood vs contract chainPubkeys@68-78); NEW LAWS: rank-is-not-contract (ladder gains MANDATORY confirmation rung: query -> confirm against the question's contract -> read only to confirm), turn economy TASK-SHAPE BOUNDED (honest bound on R5/R7 multipliers — proven economies are latency + governance, not turns), freshness-at-consumption-time discipline (reindex stays owner-gated), episode scope = capacity decision (unbounded E outlasted 540s storm window; narrowed retry 15.1s); feat-027; PROBE-LANE cmm row updated"
-      },
-      {
-        "sha": "3d65c7b",
-        "subject": "lane books: Rung 8 fleet MCP host run on merged tree (sibling reef Rung 4 CR-0030 absorbed; this lane renumbered CR-0031) — judge 41/0/0, evals 26/26, gate 14/0, DOMAIN-INIT-OK, ONE-BLOC 16/16 tokenReach 14"
-      },
-      {
-        "sha": "004c7c3",
-        "subject": "CR-0030 -> CR-0031 renumber (SIXTH collision, later-mover law): sibling 8e14c6b renumbered its reef Rung 4 to CR-0030 while this lane's fleet MCP host landing was in flight — this lane is the later mover, renumbers; git mv + id + renumber_note + references (feat-026, feat-023 evidence, PROBE-LANE) + host /health cr field updated live to CR-0031 (bun --hot); zero content changes"
       }
     ]
   },
@@ -696,7 +696,7 @@
       "kind": "observation",
       "source": "evo-windows.json",
       "action": "carry the evolution-window cadence state into the record",
-      "receipt": "35 windows booked, none complete · next due 2026-10-04T12:45:05Z",
+      "receipt": "38 windows booked, none complete · next due 2026-10-04T12:45:05Z",
       "disposition": "BOOKED"
     }
   ],
@@ -717,7 +717,7 @@
     "joined": 7,
     "note": "fresh advisory triage joined by id — lane/urgency hints only, confidence uncalibrated (en checkpoint), dispositions untouched",
     "at": "2026-10-03T15:08:54Z",
-    "age_h": 4.8
+    "age_h": 5.1
   },
   "evoEvidence": {
     "mode": "CADENCE-ONLY",
