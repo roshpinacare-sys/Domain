@@ -91,6 +91,37 @@ MIT license requires (retain the license + copyright notice).
   referenced patterns; this notice is the required Apache-2.0 attribution and
   change-state declaration.
 
+## 5. Sumanth077/Hands-On-AI-Engineering (Task 32 evaluation → consult-only reference)
+
+- **Source:** https://github.com/Sumanth077/Hands-On-AI-Engineering
+- **License status (honesty finding):** the upstream README badge and License
+  section claim **MIT**, but the LICENSE file **does not exist** (contents API
+  returns 404; repo API reports license: null) as of mirror sha `da0091d6`
+  (2026-10-01). Until a real LICENSE file lands upstream, the repository is
+  treated as **ALL RIGHTS RESERVED**.
+- **Mirror:** bare-blobless clone (184K, blobs on demand) at
+  `/home/z/reference-mirrors/hae-mirror.git` @ `da0091d6452e18dae9fd3119a194019f35306d27`
+  — outside the 16-repo estate on purpose: the mirror is reference, not fleet.
+  A full working-tree mirror was attempted and discarded (315 MB) in favor of the
+  treeless form — disk-honest at 719 MB free.
+- **Author (upstream):** Sumanth077 and the Hands-On-AI-Engineering community.
+- **What was adopted:** NOTHING was copied — no upstream code, prompts, README
+  bodies, or project text. The house package `skills/applied-ai-patterns-operator`
+  references only the PATTERN SHAPES (ideas), restated originally: the Jev
+  three-point decision-review-gate architecture with its fail-open-with-notes /
+  reviewer-only / no-silent-retry honesty rules (from `ai_agents/nl_data_analyst_agent`),
+  self-grading agentic RAG, multi-agent loops with a critic, typed query routing
+  with fallback, digest pipelines, document structuring, and the CONTRIBUTING
+  project-hygiene standard — each mapped to an estate lane in the house package.
+- **Why no gate pin (unlike sections 3 and 4):** the lineage pins enforced by
+  skill-library-gate.cjs exist because Apache-2.0/MIT attributions are REQUIRED
+  for adopted material from licensed sources. Here nothing is copied or adapted,
+  so no attribution obligation exists; the consult-only posture and the LICENSE
+  -404 finding are documented here instead. If upstream ships a verified LICENSE
+  file, this section is updated and a pin may be added at that point.
+- **State of changes:** consult-only, zero-copy; this notice documents provenance
+  and the license-mismatch finding, and is the standing re-verification trigger.
+
 ## MIT License (reference text)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software
