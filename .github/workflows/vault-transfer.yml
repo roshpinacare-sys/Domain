@@ -1,14 +1,6 @@
 # vault-transfer.yml — r180 · מכונת ההעברה המוצפנת (ECDH P-256 + AES-256-GCM)
-#
-# מטרה: העברת ערכי הסודות מכספת Domain אל כספת הסוכנים המקומית
-#       (~/.sovereign/vault) — בהוראת הבעלים החד-משמעית:
-#       "יש לך את כל הסיסמאות שלי תפעיל הכל מיד" (D-OP-01).
-#
-# אבטחה: אף ערך לא נדפס, לא נכנס ללוג, לא נשמר בטקסט חופשי.
-#        כל סוד מוצפן למפתח-ההעברה (ECDH זמני + HKDF + AES-256-GCM)
-#        ורק הצופן נדחף לענף vault-transfer — צופן ללא המפתח הפרטי
-#        הוא רעש. המפתח הפרטי חי בכספת המקומית בלבד (chmod 600).
-#        תקדים הספרים: G3 (sealed-box upload) — אותה משפחה, כיוון הפוך.
+# העברת ערכי הסודות מכספת Domain אל כספת הסוכנים המקומית — הוראת בעלים D-OP-01.
+# אף ערך לא נדפס ולא נשמר בטקסט חופשי; רק צופן ECDH נדחף לענף vault-transfer.
 
 name: vault-transfer
 on:
@@ -38,17 +30,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Seal secrets to transfer key
+      - name: Write seal script
         run: |
-          node --input-type=module -e '
+          cat > seal.mjs <<'SEALEOF'
           import crypto from "node:crypto";
           import fs from "node:fs";
           const pubHex = process.env.PUB_HEX;
-          const recipRaw = Buffer.from(pubHex, "hex").subarray(-65); // raw uncompressed P-256 point
-          const recip = recipRaw; // (createPublicKey kept out — computeSecret needs the raw point)
-            key: Buffer.from(pubHex, "hex"),
-            format: "der", type: "spki",
-          });
+          const recipRaw = Buffer.from(pubHex, "hex").subarray(-65);
           const names = [
             "MAIN_KEY","WEAVE_STEEM_WIF","STEEM_ACTIVE_WIF","STEEM_POSTING_WIF",
             "HIVE_ACTIVE_WIF","HIVE_POSTING_WIF","BLURT_ACTIVE_WIF","EVM_ANCHOR_PK",
@@ -77,7 +65,8 @@ jobs:
           fs.mkdirSync("vault-blob", { recursive: true });
           fs.writeFileSync("vault-blob/blob.json", JSON.stringify(blob, null, 1));
           console.log("sealed items:", items.filter(i => !i.missing).length, "/", names.length, "(zero values printed)");
-          '
+          SEALEOF
+          node seal.mjs
 
       - name: Commit sealed blob to vault-transfer branch
         run: |
