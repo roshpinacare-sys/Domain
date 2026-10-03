@@ -1,26 +1,26 @@
 # CI Hands — the fleet's hands on its own CI estate (trycua/cua adoption)
 
-_ci-hands v1.0.0 · 2026-10-03T19:48:58.250Z · env-token (redacted) · stasis armed/free_
+_ci-hands v1.0.0 · 2026-10-03T19:55:54.704Z · keyless · stasis armed/free_
 
-**CI-HANDS REACHED 16/16 · lanes 33/52 green (63%) · 0 active-red · 1 startup-failures**
+**CI-HANDS keyless floor: 0/16 reached — the rest booked UNREACHABLE (never invented)**
 
 | repo | lanes | green | active-red | self-healed | history-transient | verdict |
 |---|---|---|---|---|---|---|
-| saos-sovereign-platform | 3 | 3 | 0 | 0 | 0 | measured |
-| steem | 1 | 1 | 0 | 0 | 0 | measured |
-| Domain | 12 | 11 | 0 | 1 | 0 | measured |
-| Console | 10 | 10 | 0 | 0 | 0 | measured |
-| Zip | 3 | 3 | 0 | 0 | 0 | measured |
-| roshpina | 2 | 0 | 0 | 0 | 2 | measured |
-| anchor-baseline | 2 | 0 | 0 | 0 | 2 | measured |
-| Saosmartwallet | 2 | 0 | 0 | 0 | 2 | measured |
-| Sdk | 2 | 0 | 0 | 0 | 2 | measured |
-| Project-files | 2 | 0 | 0 | 0 | 2 | measured |
-| Adsmarket | 2 | 0 | 0 | 0 | 2 | measured |
-| Defi | 2 | 2 | 0 | 0 | 0 | measured |
-| saos-dex | 3 | 3 | 0 | 0 | 0 | measured |
-| saos-jummper | 2 | 0 | 0 | 0 | 2 | measured |
-| saos-control-center | 2 | 0 | 0 | 0 | 2 | measured |
-| saos-sovereign-foundry | 2 | 0 | 0 | 0 | 1 | measured |
+| saos-sovereign-platform | — | — | — | — | — | UNREACHABLE (HTTP 403) |
+| steem | — | — | — | — | — | UNREACHABLE (HTTP 403) |
+| Domain | — | — | — | — | — | UNREACHABLE (HTTP 403) |
+| Console | — | — | — | — | — | UNREACHABLE (HTTP 403) |
+| Zip | — | — | — | — | — | UNREACHABLE (HTTP 403) |
+| roshpina | — | — | — | — | — | UNREACHABLE (HTTP 403) |
+| anchor-baseline | — | — | — | — | — | UNREACHABLE (HTTP 403) |
+| Saosmartwallet | — | — | — | — | — | UNREACHABLE (HTTP 403) |
+| Sdk | — | — | — | — | — | UNREACHABLE (HTTP 403) |
+| Project-files | — | — | — | — | — | UNREACHABLE (HTTP 403) |
+| Adsmarket | — | — | — | — | — | UNREACHABLE (HTTP 403) |
+| Defi | — | — | — | — | — | UNREACHABLE (HTTP 403) |
+| saos-dex | — | — | — | — | — | UNREACHABLE (HTTP 403) |
+| saos-jummper | — | — | — | — | — | UNREACHABLE (HTTP 403) |
+| saos-control-center | — | — | — | — | — | UNREACHABLE (HTTP 403) |
+| saos-sovereign-foundry | — | — | — | — | — | UNREACHABLE (HTTP 403) |
 
 _cua-bench contract adopted: this book IS the summary.json; results + trajectory are in ci-hands.json. GUI layer = future tier-C rung (CUA-ADOPTION.md)._

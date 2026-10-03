@@ -2,32 +2,32 @@
 
 _one-bloc v1.0.1 (Task 23 convergence — owner directive "מקשה אחת"; binds BLOC-STATE + SOVEREIGN-INDEX + FATE-DEFENSE into one machine map; keyless-first + env-token fallback, stderr redacted)_
 
-Measured: **2026-10-03T19:48:35.989Z** · Verdict: **ONE-BLOC** · REACHED 16/16 (keyless 2 + token 14) · AUTH-WALL 0 · UNKNOWN 0 · local-sync 9/16
+Measured: **2026-10-03T19:55:45.068Z** · Verdict: **DEGRADED** · REACHED 2/16 (keyless 2 + token 0) · AUTH-WALL 14 · UNKNOWN 0 · local-sync 1/2
 
 | ריפו | תפקיד | origin/main | מצב | דרך | סנכרון-מקומי |
 |---|---|---|---|---|---|
-| saos-sovereign-platform | המוח הריבוני — צבא מגייס-עצמו וסולם כלכלת-אמת | `fd1b63e388f6` | REACHED | token | BEHIND |
-| steem | המפתחות הקנוניים + הזרוע החיה על-השרשרת | `d4786b353d79` | REACHED | token | BEHIND |
-| Domain | הפנים הציבוריות + רכזת ה-CI האורגנית | `b6568270524f` | REACHED | keyless | BEHIND |
-| Console | מרכז-ההפעלה — אמת נמדדת פעם-אחת | `868d3a173788` | REACHED | keyless | BEHIND |
-| Zip | המחסן החתום — עוגני אמת על שרשרת-אפו | `ee8f37f99a1e` | REACHED | token | BEHIND |
-| roshpina | הגרעין + מבקר השליטה העצמית | `e1c6eeb2994c` | REACHED | token | SYNCED |
-| anchor-baseline | שומר העוגן — בוט שלמות Merkle | `098a302a381d` | REACHED | token | SYNCED |
-| Saosmartwallet | הארנק — זרימת רישום כנה | `7ed6ca812d69` | REACHED | token | BEHIND |
-| Sdk | המנשר — ללא SDK חיצוני בהכרה | `8437ae60d705` | REACHED | token | SYNCED |
-| Project-files | הארכיון הפיזי — keeper ארכיונים | `c8d8a92b4a22` | REACHED | token | SYNCED |
-| Adsmarket | הקמפיין הכן — claims-guard | `17683983156e` | REACHED | token | SYNCED |
-| Defi | הכלכלן — reprices חי fail-closed | `8dae9d842817` | REACHED | token | SYNCED |
-| saos-dex | הבורסה — פעימות dex-beat/grid | `1bb6ae6da857` | REACHED | token | BEHIND |
-| saos-jummper | החוזים בפייתון — signingcontract | `b70df1022f0e` | REACHED | token | SYNCED |
-| saos-control-center | מרכז הבקרה הפנימי — 12 סקריפטים env-first | `2ef1b78a152e` | REACHED | token | SYNCED |
-| saos-sovereign-foundry | המפעל — key-broker fail-closed | `62c0a7433892` | REACHED | token | SYNCED |
+| saos-sovereign-platform | המוח הריבוני — צבא מגייס-עצמו וסולם כלכלת-אמת | `—` | AUTH-WALL | — | N/A |
+| steem | המפתחות הקנוניים + הזרוע החיה על-השרשרת | `—` | AUTH-WALL | — | N/A |
+| Domain | הפנים הציבוריות + רכזת ה-CI האורגנית | `871a75ca4bd6` | REACHED | keyless | SYNCED |
+| Console | מרכז-ההפעלה — אמת נמדדת פעם-אחת | `868d3a173788` | REACHED | keyless | N/A |
+| Zip | המחסן החתום — עוגני אמת על שרשרת-אפו | `—` | AUTH-WALL | — | N/A |
+| roshpina | הגרעין + מבקר השליטה העצמית | `—` | AUTH-WALL | — | N/A |
+| anchor-baseline | שומר העוגן — בוט שלמות Merkle | `—` | AUTH-WALL | — | N/A |
+| Saosmartwallet | הארנק — זרימת רישום כנה | `—` | AUTH-WALL | — | N/A |
+| Sdk | המנשר — ללא SDK חיצוני בהכרה | `—` | AUTH-WALL | — | N/A |
+| Project-files | הארכיון הפיזי — keeper ארכיונים | `—` | AUTH-WALL | — | N/A |
+| Adsmarket | הקמפיין הכן — claims-guard | `—` | AUTH-WALL | — | N/A |
+| Defi | הכלכלן — reprices חי fail-closed | `—` | AUTH-WALL | — | UNKNOWN-ORIGIN |
+| saos-dex | הבורסה — פעימות dex-beat/grid | `—` | AUTH-WALL | — | N/A |
+| saos-jummper | החוזים בפייתון — signingcontract | `—` | AUTH-WALL | — | N/A |
+| saos-control-center | מרכז הבקרה הפנימי — 12 סקריפטים env-first | `—` | AUTH-WALL | — | N/A |
+| saos-sovereign-foundry | המפעל — key-broker fail-closed | `—` | AUTH-WALL | — | N/A |
 
 Laws armed: STASIS breaker ✔ parseable, engine free (active=false) · FWI book present, age 0h, verdict DEGRADED · FATE-DEFENSE canon present
 
 Bound maps (dedup — one truth, no more re-derivation):
 - FATE-DEFENSE → Domain#FATE-DEFENSE.md · VERIFIED
-- BLOC-STATE → saos-sovereign-platform#docs/BLOC-STATE-2026-10-02.md · VERIFIED
-- SOVEREIGN-INDEX → Zip#SOVEREIGN-INDEX.md · VERIFIED
+- BLOC-STATE → saos-sovereign-platform#docs/BLOC-STATE-2026-10-02.md · DECLARED (sibling not checked out)
+- SOVEREIGN-INDEX → Zip#SOVEREIGN-INDEX.md · DECLARED (sibling not checked out)
 
 > KEYLESS-FIRST law (Z-39, measured live): Domain+Console answer keyless (public); the rest are private and answer AUTH-WALL — retried once with the env token when present (never printed, stderr redacted), else booked honestly. UNKNOWN/AUTH-WALL is booked as such, never invented. This table supersedes the hand-written role tables in the bound maps; regenerate with `node agents/one-bloc.cjs`, never edit by hand.
