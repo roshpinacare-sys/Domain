@@ -1,13 +1,13 @@
 {
-  "at": "2026-10-03T22:04:09.302Z",
+  "at": "2026-10-03T22:42:09.453Z",
   "verdict": "CROSS-LAYER-CONVERGENT",
   "estate": "/home/z/git-audit",
   "counts": {
     "checks": 7,
     "pass": 6,
-    "drift": 1,
+    "drift": 0,
     "fail": 0,
-    "findings": 2,
+    "findings": 1,
     "receipts": 15
   },
   "layers": {
@@ -18,13 +18,13 @@
     },
     "paperLedger": {
       "ok": true,
-      "sha": "7c5cf4dcb140f968",
-      "bytes": 21007
+      "sha": "2c29699be864d45b",
+      "bytes": 24827
     },
     "history": {
       "ok": true,
-      "sha": "7e0e9b84240f4587",
-      "bytes": 1701
+      "sha": "5e6a63adfa5c1319",
+      "bytes": 2044
     },
     "kernel": {
       "ok": true,
@@ -76,8 +76,8 @@
     {
       "id": "C1",
       "name": "fee-model cross-check (DEX kernel vs SAOSExchange vs market-grid floor)",
-      "verdict": "DRIFT",
-      "evidence": "saos-dex kernel.ts FEE_BPS=30 (treasury cut 30%) vs SAOSExchange.sol FEE_BPS=20 (pot 10bps, swap-cap 500bps) — measured round trips on identical synthetic pools (integer-floor x·y=k, real post-trade reserves fed back): DEX doctrine 60bps marginal-fee / 90bps @0.1%-of-depth / 445bps @1%; exchange doctrine 40/70/426bps at the same sizes; market-grid FEE_FLOOR_PCT=0.4pts=40bps",
+      "verdict": "PASS-ARBITRATED",
+      "evidence": "saos-dex kernel.ts FEE_BPS=30 (treasury cut 30%) vs SAOSExchange.sol FEE_BPS=20 (pot 10bps, swap-cap 500bps) — measured round trips on identical synthetic pools (integer-floor x·y=k, real post-trade reserves fed back): DEX doctrine 60bps marginal-fee / 90bps @0.1%-of-depth / 445bps @1%; exchange doctrine 40/70/426bps at the same sizes; market-grid FEE_FLOOR_PCT=0.4pts=40bps — registered: per-venue pricing by agents/fee-doctrine.json",
       "measured": {
         "dexFeeBps": 30,
         "exchFeeBps": 20,
@@ -92,7 +92,8 @@
           "at1": 426
         },
         "floorBps": 40,
-        "dustFloorBps": 400
+        "dustFloorBps": 400,
+        "arbitration": "registered: per-venue pricing by agents/fee-doctrine.json"
       }
     },
     {
@@ -160,10 +161,10 @@
       "id": "C4",
       "name": "ledger discipline parity (append-only books in every layer)",
       "verdict": "PASS",
-      "evidence": "L0 paper ledger 110 rows + history 5 rows (labeled, never laundered into realized) · L1 grid-ledger v2 73 orders / 43 fills (statused open|filled|cancelled) · L2 he_ladder result {orders,fills,skip} written per run — all three books are append-only and status-labeled",
+      "evidence": "L0 paper ledger 130 rows + history 6 rows (labeled, never laundered into realized) · L1 grid-ledger v2 73 orders / 43 fills (statused open|filled|cancelled) · L2 he_ladder result {orders,fills,skip} written per run — all three books are append-only and status-labeled",
       "measured": {
-        "paperRows": 110,
-        "historyRows": 5,
+        "paperRows": 130,
+        "historyRows": 6,
         "dexLedgerVersion": 2,
         "dexOrders": 73,
         "dexFills": 43
@@ -232,13 +233,12 @@
     }
   ],
   "findings": [
-    "FEE DOCTRINE DRIFT measured across layers: saos-dex kernel charges 30bps/swap while SAOSExchange.sol (the EVM hub) charges 20bps/swap — two fee doctrines for the same fleet. Same fleet, two prices: any cross-venue routing (internal HE ladder -> DEX -> EVM exchange) must price each venue by ITS OWN doctrine, and the convergence law should pin one doctrine or document the arbitration rule.",
     "MIGRATION LAW measured: market-grid's spacing floor (40bps round-trip) UNDER-COVERS even the MARGINAL fee-only DEX round trip (60bps at 30bps/swap) — measured 90bps at 0.1%-of-depth and 445bps at 1% (price impact dominates with size; integer-floor x·y=k, real reserves fed back). The floor is honest for the CHAINS (internal Hive/Steem markets charge zero trade fee) but any market-grid->DEX bridge must raise spacing to >= 60bps + impact at its rung size, or route maker-only (book orders pay no AMM fee). Booked as the cross-layer migration law, not a bug."
   ],
   "receipts": [
     "marketGrid: sha256:7b9d8bcdbb6541b8 (15089B)",
-    "paperLedger: sha256:7c5cf4dcb140f968 (21007B)",
-    "history: sha256:7e0e9b84240f4587 (1701B)",
+    "paperLedger: sha256:2c29699be864d45b (24827B)",
+    "history: sha256:5e6a63adfa5c1319 (2044B)",
     "kernel: sha256:97e5c4a719ddfd0a (25474B)",
     "amm: sha256:91d876f699e18a05 (5961B)",
     "mm: sha256:3fee8d551f037e4e (19744B)",

@@ -1,12 +1,12 @@
 # Cross-Layer Convergence Pass — the fleet's grid/market stack, four layers, one audit (CR-0037)
 
-_cross-layer desk (Rung 12) · 2026-10-03T22:04:09.302Z · estate: /home/z/git-audit_
+_cross-layer desk (Rung 12) · 2026-10-03T22:42:09.453Z · estate: /home/z/git-audit_
 
-**verdict: CROSS-LAYER-CONVERGENT — 6/7 PASS, 1 DRIFT, 0 FAIL · 2 findings**
+**verdict: CROSS-LAYER-CONVERGENT — 6/7 PASS, 0 DRIFT, 0 FAIL · 1 findings**
 
-## C1 · fee-model cross-check (DEX kernel vs SAOSExchange vs market-grid floor) — DRIFT
-- saos-dex kernel.ts FEE_BPS=30 (treasury cut 30%) vs SAOSExchange.sol FEE_BPS=20 (pot 10bps, swap-cap 500bps) — measured round trips on identical synthetic pools (integer-floor x·y=k, real post-trade reserves fed back): DEX doctrine 60bps marginal-fee / 90bps @0.1%-of-depth / 445bps @1%; exchange doctrine 40/70/426bps at the same sizes; market-grid FEE_FLOOR_PCT=0.4pts=40bps
-- _measured: {"dexFeeBps":30,"exchFeeBps":20,"dexRoundTripBps":{"marginalFeeOnly":60,"at01":90,"at1":445},"exchangeRoundTripBps":{"marginalFeeOnly":40,"at01":70,"at1":426},"floorBps":40,"dustFloorBps":400}_
+## C1 · fee-model cross-check (DEX kernel vs SAOSExchange vs market-grid floor) — PASS-ARBITRATED
+- saos-dex kernel.ts FEE_BPS=30 (treasury cut 30%) vs SAOSExchange.sol FEE_BPS=20 (pot 10bps, swap-cap 500bps) — measured round trips on identical synthetic pools (integer-floor x·y=k, real post-trade reserves fed back): DEX doctrine 60bps marginal-fee / 90bps @0.1%-of-depth / 445bps @1%; exchange doctrine 40/70/426bps at the same sizes; market-grid FEE_FLOOR_PCT=0.4pts=40bps — registered: per-venue pricing by agents/fee-doctrine.json
+- _measured: {"dexFeeBps":30,"exchFeeBps":20,"dexRoundTripBps":{"marginalFeeOnly":60,"at01":90,"at1":445},"exchangeRoundTripBps":{"marginalFeeOnly":40,"at01":70,"at1":426},"floorBps":40,"dustFloorBps":400,"arbitration":"registered: per-venue pricing by agents/fee-doctrine.json"}_
 
 ## C2 · grid geometry ladder (all layers, bps, sorted) — PASS
 - L1 saos-dex mm.ts maker step=20bps < L0 market-grid spacing floor=40bps < L1 grid-beat ask step=50bps < L1 grid-beat bid step=200bps — 4/4 rows at-or-above the DEX maker step (20bps); grid-beat deploys 3 bid levels × 200bps + 3 ask levels × 50bps; market-grid deploys 5 rungs/side ≥ floor
@@ -17,8 +17,8 @@ _cross-layer desk (Rung 12) · 2026-10-03T22:04:09.302Z · estate: /home/z/git-a
 - _measured: [{"layer":"L0 market-grid (Domain)","found":true,"readable":true,"expect":"previews stamped owner-gated, never broadcast"},{"layer":"L1 grid-beat (saos-dex)","found":true,"readable":true,"expect":"honest disarm without WIF + maker-only (never crosses the book)"},{"layer":"L2 he_ladder (steem)","foun_
 
 ## C4 · ledger discipline parity (append-only books in every layer) — PASS
-- L0 paper ledger 110 rows + history 5 rows (labeled, never laundered into realized) · L1 grid-ledger v2 73 orders / 43 fills (statused open|filled|cancelled) · L2 he_ladder result {orders,fills,skip} written per run — all three books are append-only and status-labeled
-- _measured: {"paperRows":110,"historyRows":5,"dexLedgerVersion":2,"dexOrders":73,"dexFills":43}_
+- L0 paper ledger 130 rows + history 6 rows (labeled, never laundered into realized) · L1 grid-ledger v2 73 orders / 43 fills (statused open|filled|cancelled) · L2 he_ladder result {orders,fills,skip} written per run — all three books are append-only and status-labeled
+- _measured: {"paperRows":130,"historyRows":6,"dexLedgerVersion":2,"dexOrders":73,"dexFills":43}_
 
 ## C5 · platform contract receipt (static, solc-free) — PASS
 - SAOSExchange.sol: FEE_BPS=20, POT_SHARE_BPS=10, SWAP_CAP_BPS=500 (max 5% of output reserve per swap) · SAOSLedger.sol zero-fee rail marker=true, 8 events · 5 test contracts, 78 function-test surface (static count — the forge run remains the platform's own CI receipt)
@@ -33,13 +33,12 @@ _cross-layer desk (Rung 12) · 2026-10-03T22:04:09.302Z · estate: /home/z/git-a
 - _measured: {"crossPct":0.97,"makerOnly":true}_
 
 ## Findings (measured, each carrying its receipt)
-1. FEE DOCTRINE DRIFT measured across layers: saos-dex kernel charges 30bps/swap while SAOSExchange.sol (the EVM hub) charges 20bps/swap — two fee doctrines for the same fleet. Same fleet, two prices: any cross-venue routing (internal HE ladder -> DEX -> EVM exchange) must price each venue by ITS OWN doctrine, and the convergence law should pin one doctrine or document the arbitration rule.
-2. MIGRATION LAW measured: market-grid's spacing floor (40bps round-trip) UNDER-COVERS even the MARGINAL fee-only DEX round trip (60bps at 30bps/swap) — measured 90bps at 0.1%-of-depth and 445bps at 1% (price impact dominates with size; integer-floor x·y=k, real reserves fed back). The floor is honest for the CHAINS (internal Hive/Steem markets charge zero trade fee) but any market-grid->DEX bridge must raise spacing to >= 60bps + impact at its rung size, or route maker-only (book orders pay no AMM fee). Booked as the cross-layer migration law, not a bug.
+1. MIGRATION LAW measured: market-grid's spacing floor (40bps round-trip) UNDER-COVERS even the MARGINAL fee-only DEX round trip (60bps at 30bps/swap) — measured 90bps at 0.1%-of-depth and 445bps at 1% (price impact dominates with size; integer-floor x·y=k, real reserves fed back). The floor is honest for the CHAINS (internal Hive/Steem markets charge zero trade fee) but any market-grid->DEX bridge must raise spacing to >= 60bps + impact at its rung size, or route maker-only (book orders pay no AMM fee). Booked as the cross-layer migration law, not a bug.
 
 ## Receipts (artifact hashes)
 - marketGrid: sha256:7b9d8bcdbb6541b8 (15089B)
-- paperLedger: sha256:7c5cf4dcb140f968 (21007B)
-- history: sha256:7e0e9b84240f4587 (1701B)
+- paperLedger: sha256:2c29699be864d45b (24827B)
+- history: sha256:5e6a63adfa5c1319 (2044B)
 - kernel: sha256:97e5c4a719ddfd0a (25474B)
 - amm: sha256:91d876f699e18a05 (5961B)
 - mm: sha256:3fee8d551f037e4e (19744B)

@@ -65,39 +65,15 @@ jobs:
           echo "could not publish the report after 3 attempts"
           exit 1
 
+      # R22 (CR-0052): the old inline-bash gate DIED on its first fire — backticks inside
+      # the double-quoted node -e JS were executed by bash as command substitution
+      # (`syntax error near unexpected token 'done'`), so the watchdog's alarm was silent
+      # since day one. The gate is now agents/twin-issue-gate.cjs — a Node desk, no
+      # quoting tricks, fail-loud on a corrupt marker, honest exit 0 when both tokens fail.
       - name: Issue gate (unknown near-dup pair, or lost capability evidence)
         if: always()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ZIP_PAT: ${{ secrets.ZIP_PAT }}
-        run: |
-          if [ ! -f /tmp/twin-issue.json ]; then echo "no gate marker"; exit 0; fi
-          FIRE=$(node -e "const m=JSON.parse(require('fs').readFileSync('/tmp/twin-issue.json','utf8'));console.log(m.fire?'yes':'no')")
-          if [ "$FIRE" != "yes" ]; then
-            node -e "const m=JSON.parse(require('fs').readFileSync('/tmp/twin-issue.json','utf8'));console.log('gate clean - no issue ('+(m.unknownNearDups||[]).length+' unknown near-dups, lostEvidence '+(m.lostEvidence||[]).length+')')"
-            exit 0
-          fi
-          node -e "
-            const m=JSON.parse(require('fs').readFileSync('/tmp/twin-issue.json','utf8'));
-            const fs=require('fs');
-            const lines=[];
-            for (const u of (m.unknownNearDups||[])) lines.push('- UNKNOWN near-dup pair: `'+u.page+'` at Jaccard '+u.jaccard5);
-            for (const l of (m.lostEvidence||[])) lines.push('- DIFFERENTIATED pair lost its capability evidence: `'+l+'`');
-            fs.writeFileSync('/tmp/twin-body.md','twin-audit $(date -u +%Y-%m-%d)\n\n'+lines.join('\n')+'\n\nRegistry: agents/twin-registry.json. Fix = give each side one distinct real function, then register it.\n');
-          "
-          for TOKEN in "$GH_TOKEN" "$ZIP_PAT"; do
-            [ -n "$TOKEN" ] || continue
-            CODE=$(curl -s -o /tmp/issue-resp.json -w "%{http_code}" -X POST \
-              -H "Authorization: token $TOKEN" -H "Accept: application/vnd.github+json" \
-              "https://api.github.com/repos/${GITHUB_REPOSITORY}/issues" \
-              --data-binary @<(node -e "
-                const fs=require('fs');
-                fs.writeFileSync('/dev/stderr','building issue payload\n');
-                const body=fs.readFileSync('/tmp/twin-body.md','utf8');
-                process.stdout.write(JSON.stringify({title:'twin-audit: near-duplication detected '+new Date().toISOString().slice(0,10), body}));
-              )")
-            if [ "$CODE" = "201" ]; then echo "issue opened"; exit 0; fi
-            echo "issue attempt failed (HTTP ${CODE})"
-          done
-          echo "could not open the issue with either token - recorded honestly here"
-          exit 0
+          TWIN_ISSUE_MARKER: /tmp/twin-issue.json
+        run: node agents/twin-issue-gate.cjs
