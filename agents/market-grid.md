@@ -1,13 +1,13 @@
 # market-grid — internal-market sovereignty instrument (Z-60+)
 
-At: 2026-10-03T18:41:15.465Z · Verdict: **MARKET-GRID-LIVE** · Markets read: 3 · Errors: 0
+At: 2026-10-03T22:24:58.208Z · Verdict: **MARKET-GRID-LIVE** · Markets read: 3 · Errors: 0
 
 | Market | Bid | Ask | Spread% | 24h% | Grid rungs | Step | Paper fills (snapshot) |
 |---|---|---|---|---|---|---|---|
-| HBD/HIVE (internal hive) | 0.05615180453182497 | 0.05622610390584002 | 0.1322 | 0.673 | 10 | 0.00022476 | 5 |
-| SBD/STEEM (internal steem) | 0.100087 | 0.10074626865671642 | 0.6565 | 0 | 10 | 0.00040167 | 5 |
+| HBD/HIVE (internal hive) | 0.0561957519289995 | 0.05629685157421289 | 0.1797 | 1.192 | 10 | 0.00022499 | 5 |
+| SBD/STEEM (internal steem) | 0.10009476427386875 | 0.10297323483105245 | 2.835 | 0 | 10 | 0.00040614 | 5 |
 
-Hive-Engine basket (keyless RPC): BEE spread 0.2384% thin · SWAP.LTC spread 0.2664% thin · SWAP.DOGE spread 2.0692% FEASIBLE · CENT spread 3.0436% FEASIBLE · WAIV spread 0.5216% FEASIBLE
+Hive-Engine basket (keyless RPC): BEE spread 0.1201% thin · SWAP.LTC spread 0.2111% thin · SWAP.DOGE spread 3.0741% FEASIBLE · CENT spread 3.0426% FEASIBLE · WAIV spread 0.2738% thin
 
 Laws: official sources only (chain nodes + sidechain RPC) · keyless: reads only, executor = owner-gated preview, never broadcast · paper is paper (labeled ledger, never laundered into realized book) · fail-loud per market · single canon (market-grid.json/.md)
 
