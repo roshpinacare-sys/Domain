@@ -1,6 +1,6 @@
 # Ventures — the fleet's public business board (two-sided ledger)
 
-_venture-desk v1.2.0 · 2026-10-03T01:33:21.866Z · doctrine: check failed this run (honest) · leg: not readable in this context (canon-liveness names the legs)_
+_venture-desk v1.2.0 · 2026-10-03T01:44:11.288Z · doctrine: check failed this run (honest) · leg: not readable in this context (canon-liveness names the legs)_
 
 Born from the clodfarm study (Z-31): they built the best stop-spending governor we have seen and no earn side at all. We adopt the governor math and bind the missing half as law. Standing truth:
 
