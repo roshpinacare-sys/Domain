@@ -427,6 +427,24 @@
    "evidence": "agents/sovereign-policy.json · agents/sovereign.cjs · agents/sovereign-tick.cjs · agents/sovereign-state.json · agents/sovereign-decisions.jsonl · agents/sovereign-pending.json (Tier-E mailbox) · .github/workflows/sovereign-tick-cron.yml · market-exec run #14 orderid 1791056833 readback matched · E35 evals 33 PASS / 2 environment-bound (E31/E32 census estate clones lost to the sandbox reset, lane/CI green)",
    "cr": "CR-0044",
    "landed_at": "2026-10-03T19:50:38.369Z"
+  },
+  {
+   "id": "feat-040",
+   "title": "Fleet Rung 18: THE ACQUISITION — 24/7 cron ARMED (repo secret STEEM_ACTIVE_WIF set via sealed-box API, zero transcript exposure), D2 fuel canon on-chain (drip-canon.cjs mixed-unit law), estate re-cloned 16/16, suite 36/36 (CR-0045)",
+   "description": "Operator directive 2026-10-03 (\"אוקי אז תשיג מה שצריך קדימה תמשיך\") — acquire what is needed: (1) ARMING: the repository secret STEEM_ACTIVE_WIF was created/updated (HTTP 204) by encrypting the local derived-keys vault active WIF with the repo public key (libsodium sealed box, token piped, no material ever on transcript or disk logs); the :12/:42 sovereign-tick cron now materializes the vault presence-only and fires LIVE per sovereign-policy.json — verify-then-sign + caps + band + ADD-ONLY still bind at fire time; secret census verified names-only (13 secrets incl. STEEM/HIVE/BLURT WIFs, EVM_ANCHOR_PK, MAIN_KEY). (2) D2 FUEL CANON: agents/drip-canon.cjs reads the powerdown state keylessly from the chain (condenser primary + justyy cross, 0.5% split-brain guard, atomic write, DRIP_CANON_SKIP eval off-switch) — THE MIXED-UNIT LAW caught and coded: condenser to_withdraw is GESTS (µ-VESTS ÷1e6) while vesting_withdraw_rate is VESTS (live-measured twice: 1903.529118 SP remaining, 475.88228 SP/wk); canon agents/sovereign-drip.json wired into the tick via SOVEREIGN_DRIP_JSON (workflow step + env + publish list) — drip verdict upgraded from NO-DRIP-CANON receipt to measured STEADY (runway 28d >= 14d reserve). (3) ESTATE RESTORED: all 14 lanes lost to the sandbox reset re-cloned (saos-dex, steem, saos-sovereign-platform, Console, Zip, Saosmartwallet, Sdk, Adsmarket, Project-files, anchor-baseline, roshpina, saos-control-center, saos-jummper, saos-sovereign-foundry) — the census is whole again. (4) E36 EXT: mixed-unit white-box fixture at 1 VESTS=1e-4 SP + unit-clamp refuse; suite v1.24.0 — 36/36 GREEN (first fully green suite since the reset; the 2 environment-bound census evals HEALED by the re-clone). (5) LIVE receipts: sovereign tick #6 EXECUTE-LIVE (IN-POLICY, FUNDED-SELL-SIDE 0.921 STEEM, drip STEADY) → market-exec run #18 LIVE authority_ok:true, 6/6 STACK-EXISTS idempotent (zero duplicate orders, fuel held by ADD-ONLY law).",
+   "status": "LIVE",
+   "cr": "CR-0045",
+   "evidence": {
+    "secret_put": 204,
+    "secrets_census": 13,
+    "drip_canon": "agents/sovereign-drip.json",
+    "runway_days": 28,
+    "estate_lanes": 16,
+    "evals": "36/36 v1.24.0",
+    "tick6": "EXECUTE-LIVE drip=STEADY",
+    "exec18": "authority_ok TRUE, 6x STACK-EXISTS, 0 errors"
+   },
+   "at": "2026-10-03T20:20:30.309Z"
   }
  ]
 }

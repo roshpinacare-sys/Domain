@@ -70,11 +70,16 @@ jobs:
           npm install --prefix /tmp/steemjs steem@0.7.11 --omit=dev --no-audit --no-fund --loglevel=error
           NODE_PATH=/tmp/steemjs/node_modules node -e "require('steem'); console.log('steem-js OK')"
 
+      - name: drip canon (D2 fuel readback — keyless on-chain powerdown state; Z-67, CR-0045)
+        if: steps.stasis.outputs.active != 'true'
+        run: node agents/drip-canon.cjs
+
       - name: sovereign tick (keyless = DRY receipts · armed = LIVE per policy · STASIS = halt)
         if: steps.stasis.outputs.active != 'true'
         env:
           STEEM_ACTIVE_WIF: ${{ secrets.STEEM_ACTIVE_WIF }}
           HC_DERIVED: ${{ github.workspace }}/.fleet/headcorner-derived.json
+          SOVEREIGN_DRIP_JSON: ${{ github.workspace }}/agents/sovereign-drip.json
         run: |
           if [ -n "$STEEM_ACTIVE_WIF" ] && [ "${#STEEM_ACTIVE_WIF}" -ge 40 ]; then
             mkdir -p .fleet
@@ -104,7 +109,7 @@ jobs:
         run: |
           git config user.name "saos-sovereign"
           git config user.email "sovereign@saos.local"
-          for p in agents/sovereign-decisions.jsonl agents/sovereign-state.json agents/sovereign-pending.json agents/fill-ledger.json agents/fill-ledger-fills.jsonl agents/market-cycle.json agents/market-exec.json; do
+          for p in agents/sovereign-decisions.jsonl agents/sovereign-state.json agents/sovereign-pending.json agents/sovereign-drip.json agents/fill-ledger.json agents/fill-ledger-fills.jsonl agents/market-cycle.json agents/market-exec.json; do
             [ -e "$p" ] && git add "$p" || true
           done
           if git diff --cached --quiet; then
