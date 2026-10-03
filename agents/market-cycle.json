@@ -84,5 +84,136 @@
       }
     },
     "duration_ms": 8406
+  },
+  {
+    "ts": "2026-10-03T19:47:07.549Z",
+    "mode": "LIVE",
+    "skip_fetch": false,
+    "fill_ledger": {
+      "script": "fill-ledger.cjs",
+      "status": 0,
+      "error": null,
+      "stdout_tail": "[fill-ledger] mode=READ-ONLY new=1 total=12 realized_sbd=0.000000 recycle=FUNDED-SELL-SIDE 1.309 STEEM|FILLS-1 errors=0 in 2928ms | [fill-ledger] canon: agents/fill-ledger.json (run #9)",
+      "stderr_tail": ""
+    },
+    "suggestion": {
+      "suggested": true,
+      "reasons": [
+        "FUNDED-SELL-SIDE 1.309 STEEM",
+        "FILLS-1"
+      ]
+    },
+    "decision": {
+      "executorMode": "LIVE",
+      "reason": "RECYCLE-SUGGESTED: FUNDED-SELL-SIDE 1.309 STEEM · FILLS-1"
+    },
+    "executor": {
+      "script": "market-exec.cjs",
+      "status": 0,
+      "error": null,
+      "stdout_tail": "[market-exec] mode=LIVE planned=1 skipped=5 errors=0 verify=1/1 in 5597ms | [market-exec] canon: agents/market-exec.json (run #14)",
+      "stderr_tail": ""
+    },
+    "errors": [],
+    "run_index": 3,
+    "fill_ledger_row": {
+      "run_index": 9,
+      "new_fills": 1,
+      "realized_sbd": 0,
+      "recycle": {
+        "suggested": true,
+        "reasons": [
+          "FUNDED-SELL-SIDE 1.309 STEEM",
+          "FILLS-1"
+        ]
+      }
+    },
+    "duration_ms": 8608
+  },
+  {
+    "ts": "2026-10-03T19:47:37.146Z",
+    "mode": "DRY",
+    "skip_fetch": false,
+    "fill_ledger": {
+      "script": "fill-ledger.cjs",
+      "status": 0,
+      "error": null,
+      "stdout_tail": "[fill-ledger] mode=READ-ONLY new=0 total=12 realized_sbd=0.000000 recycle=FUNDED-SELL-SIDE 0.921 STEEM errors=0 in 3065ms | [fill-ledger] canon: agents/fill-ledger.json (run #10)",
+      "stderr_tail": ""
+    },
+    "suggestion": {
+      "suggested": true,
+      "reasons": [
+        "FUNDED-SELL-SIDE 0.921 STEEM"
+      ]
+    },
+    "decision": {
+      "executorMode": "DRY",
+      "reason": "MODE-DRY: planning receipt only, zero signatures"
+    },
+    "executor": {
+      "script": "market-exec.cjs",
+      "status": 0,
+      "error": null,
+      "stdout_tail": "[market-exec] mode=DRY_RUN planned=0 skipped=6 errors=0 verify=0/0 in 1772ms | [market-exec] canon: agents/market-exec.json (run #15)",
+      "stderr_tail": ""
+    },
+    "errors": [],
+    "run_index": 4,
+    "fill_ledger_row": {
+      "run_index": 10,
+      "new_fills": 0,
+      "realized_sbd": 0,
+      "recycle": {
+        "suggested": true,
+        "reasons": [
+          "FUNDED-SELL-SIDE 0.921 STEEM"
+        ]
+      }
+    },
+    "duration_ms": 4916
+  },
+  {
+    "ts": "2026-10-03T19:50:06.295Z",
+    "mode": "DRY",
+    "skip_fetch": false,
+    "fill_ledger": {
+      "script": "fill-ledger.cjs",
+      "status": 0,
+      "error": null,
+      "stdout_tail": "[fill-ledger] mode=READ-ONLY new=0 total=12 realized_sbd=0.000000 recycle=FUNDED-SELL-SIDE 0.921 STEEM errors=0 in 2679ms | [fill-ledger] canon: agents/fill-ledger.json (run #11)",
+      "stderr_tail": ""
+    },
+    "suggestion": {
+      "suggested": true,
+      "reasons": [
+        "FUNDED-SELL-SIDE 0.921 STEEM"
+      ]
+    },
+    "decision": {
+      "executorMode": "DRY",
+      "reason": "MODE-DRY: planning receipt only, zero signatures"
+    },
+    "executor": {
+      "script": "market-exec.cjs",
+      "status": 0,
+      "error": null,
+      "stdout_tail": "[market-exec] mode=DRY_RUN planned=0 skipped=6 errors=0 verify=0/0 in 1578ms | [market-exec] canon: agents/market-exec.json (run #16)",
+      "stderr_tail": ""
+    },
+    "errors": [],
+    "run_index": 5,
+    "fill_ledger_row": {
+      "run_index": 11,
+      "new_fills": 0,
+      "realized_sbd": 0,
+      "recycle": {
+        "suggested": true,
+        "reasons": [
+          "FUNDED-SELL-SIDE 0.921 STEEM"
+        ]
+      }
+    },
+    "duration_ms": 4333
   }
 ]

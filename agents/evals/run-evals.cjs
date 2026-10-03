@@ -20,6 +20,7 @@
  *   E33 flow-catch planner — the one-sided-tape breaker: marketable sell joins the resting bid with price improvement, proceeds fund the buy ladder; caps, floor law, anti self-cross stack, dust discipline, determinism (Z-65, CR-0042)
  *   E34 agent-registry — the fleet's ERC-8004-shaped trust surface: identity/reputation/validation entries derived ONLY from canon evidence, feedbackHash = sha256(evidence rows) recomputed by the eval, offline black-box (Z-65, CR-0042)
  *   E35 census-delta        — map-vs-map: the drift record between two census snapshots (event-ledger law, determinism as the diff instrument, PERSPECTIVE law, STASIS halt-before-read, zero-writes on halt) (R16, CR-0043)
+ *   E36 sovereign layer — the operator-delegated decision transfer (Z-66, CR-0044): D1 live-fire + D2 drip pacing decided by policy with the DUAL GATE (sovereign auto-path AND operator overlay: STASIS halt-before-read, Tier-E escalation mailbox, mode override); breakers every one a reason code; arming honesty presence-only; fresh-process tick receipts zero-network (renumbered from my interim E35 — the census-delta lane claimed E35 first on main, later-mover law)
  *   E5 concat-family        — string manabar + number = giant (third-time incident family)
  *   E6 stamp hygiene        — a book without a timestamp can never count as fresh
  *   E7 guard deny/allow     — destructive commands DENY, the fleet's rebase law stays ALLOW (Z-38)
@@ -1046,9 +1047,96 @@ function accumulateInMemory(bookRows, seed) {
 
 
 
+  // ---- E36: sovereign layer (Z-66, CR-0043) — the delegated decision transfer with the
+  // dual gate: sovereign auto-executes in-policy; operator overlay = STASIS + Tier-E + mode.
+  try {
+    const sv = require(path.join(AG, 'sovereign.cjs'));
+    let ok33 = true; const why33 = [];
+    const policy = sv.loadPolicy();
+    const L = policy.limits;
+    const NOW = '2026-10-03T20:00:00.000Z';
+    const SUG = { suggested: true, reasons: ['FUNDED-SELL-SIDE 0.792 STEEM'] };
+    const LIQ = { steem: 0.792, sbd: 0.078 };
+    const base = { policy, stasisActive: false, armed: true, suggestion: SUG, liquid: LIQ, state: { date: '2026-10-03', fills_today: 0, realized_today_micro: 0, decisions_today: 0, consecutive_loss_fills: 0, last_broadcast_ts: null }, now: NOW, modeOverride: null, lastBroadcastTs: null };
+    const chk = (cond, tag) => { if (!cond) { ok33 = false; why33.push(tag); } };
+    // gate order law — every breaker is a reason code, never a silent pass
+    chk(sv.decideSovereign({ ...base, stasisActive: true }).decision === 'SKIP' && sv.decideSovereign({ ...base, stasisActive: true }).reason.startsWith('STASIS-HALT'), 'stasis-first');
+    const op = sv.decideSovereign({ ...base, modeOverride: 'operator' });
+    chk(op.decision === 'ESCALATE' && op.tier === 'E' && op.reason.startsWith('OPERATOR-GATE'), 'operator-gate-escalate');
+    chk(sv.decideSovereign({ ...base, modeOverride: 'operator', suggestion: null }).decision === 'PLAN-DRY', 'operator-gate-dry');
+    chk(sv.decideSovereign({ ...base, armed: false }).reason.startsWith('NOT-ARMED'), 'arming-honesty');
+    chk(sv.decideSovereign({ ...base, suggestion: null }).decision === 'PLAN-DRY' && sv.decideSovereign({ ...base, suggestion: null }).reason.startsWith('NO-RECYCLE'), 'no-suggestion');
+    chk(sv.decideSovereign({ ...base, lastBroadcastTs: '2026-10-03T19:59:00.000Z' }).reason.startsWith('GAP-PACING'), 'gap-pacing');
+    chk(sv.decideSovereign({ ...base, state: { ...base.state, fills_today: L.max_fills_per_day } }).reason.startsWith('DAY-CAPS'), 'day-caps');
+    chk(sv.decideSovereign({ ...base, state: { ...base.state, realized_today_micro: -Math.round(L.daily_realized_loss_stop_sbd * 1e6) } }).decision === 'SKIP' && sv.decideSovereign({ ...base, state: { ...base.state, realized_today_micro: -Math.round(L.daily_realized_loss_stop_sbd * 1e6) } }).reason.startsWith('BREAKER-DAILY-LOSS'), 'daily-loss-stop');
+    chk(sv.decideSovereign({ ...base, state: { ...base.state, consecutive_loss_fills: L.max_consecutive_loss_fills } }).reason.startsWith('BREAKER-CONSEC-LOSS'), 'consec-loss-stop');
+    chk(sv.decideSovereign({ ...base, liquid: { steem: 0.05, sbd: 0.01 } }).reason.startsWith('FUEL-FLOOR'), 'fuel-floor');
+    const te = sv.decideSovereign({ ...base, liquid: { steem: L.max_tier_s_steem + 0.3, sbd: 0.5 } });
+    chk(te.decision === 'ESCALATE' && te.tier === 'E' && te.reason.startsWith('TIER-E-SIZE'), 'tier-e-size');
+    const go = sv.decideSovereign({ ...base });
+    chk(go.decision === 'EXECUTE-LIVE' && go.tier === 'S' && go.reason.startsWith('IN-POLICY'), 'sovereign-execute');
+    // D2 drip pacing: absent canon → honest receipt; healthy runway → STEADY; thin → Tier-E recommendation
+    chk(sv.dripPacing(policy, null, NOW).decision === 'RECEIPT', 'drip-absent-receipt');
+    chk(sv.dripPacing(policy, { remaining_sp: 1903, daily_sp: 68 }, NOW).decision === 'STEADY', 'drip-steady');
+    const thin = sv.dripPacing(policy, { remaining_sp: 100, daily_sp: 475 }, NOW);
+    chk(thin.decision === 'ESCALATE' && thin.tier === 'E' && thin.reason.includes('RECOMMENDATION'), 'drip-runway-thin');
+    // state advance: counters, broadcast pacing, daily rollover keeps consecutive-loss
+    const s1 = sv.applyReceipt(sv.freshState(NOW), { now: NOW, decision: 'EXECUTE-LIVE', fillsDelta: 2, realizedDeltaMicro: 72000, broadcast: false });
+    chk(s1.decisions_today === 1 && s1.fills_today === 2 && s1.realized_today_micro === 72000 && s1.last_broadcast_ts === NOW, 'apply-receipt');
+    const s2 = sv.applyReceipt(s1, { now: '2026-10-04T00:00:01.000Z', decision: 'PLAN-DRY' });
+    chk(s2.date === '2026-10-04' && s2.fills_today === 0 && s2.realized_today_micro === 0 && s2.consecutive_loss_fills === 0 && s2.decisions_today === 1, 'daily-rollover');
+    // black-box A: keyless fresh tick — NOT-ARMED → PLAN-DRY routes a DRY cycle (SKIPPED-EVAL-CONTEXT, zero network), receipts booked
+    const os = require('os');
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'e35-'));
+    fs.writeFileSync(path.join(tmp, 'ledger.json'), JSON.stringify([{ ts: NOW, recycle: SUG, liquid: { steem: '0.792 STEEM', sbd: '0.078 SBD' } }]));
+    const envA = { ...process.env, SKIP_FETCH: '1', SOVEREIGN_MODE: 'sovereign', HC_DERIVED: path.join(tmp, 'absent-vault.json'), FILL_LEDGER_JSON: path.join(tmp, 'ledger.json'), MARKET_CYCLE_JSON: path.join(tmp, 'cycle.json'), MARKET_EXEC_JSON: path.join(tmp, 'exec.json'), SOVEREIGN_STATE_JSON: path.join(tmp, 'state.json'), SOVEREIGN_DECISIONS_JSONL: path.join(tmp, 'decisions.jsonl'), SOVEREIGN_PENDING_JSON: path.join(tmp, 'pending.json'), STASIS_JSON: path.join(tmp, 'stasis-absent.json') };
+    const pA = spawnSync(process.execPath, [path.join(AG, 'sovereign-tick.cjs')], { env: envA, encoding: 'utf8', timeout: 120000 });
+    let bbA = pA.status === 0;
+    try {
+      const dec = fs.readFileSync(envA.SOVEREIGN_DECISIONS_JSONL, 'utf8').trim().split('\n').map((l) => JSON.parse(l));
+      const cyc = JSON.parse(fs.readFileSync(envA.MARKET_CYCLE_JSON, 'utf8'));
+      const st = JSON.parse(fs.readFileSync(envA.SOVEREIGN_STATE_JSON, 'utf8'));
+      const lastCycle = cyc[cyc.length - 1];
+      bbA = bbA && dec.length === 1 && dec[0].decision === 'PLAN-DRY' && dec[0].reason.startsWith('NOT-ARMED')
+        && lastCycle.mode === 'DRY' && lastCycle.skip_fetch === true && lastCycle.decision.executorMode === 'SKIP'
+        && st.decisions_today === 1 && st.fills_today === 0;
+    } catch (_) { bbA = false; }
+    if (!bbA) { ok33 = false; why33.push('black-box-keyless'); }
+    // black-box B: operator overlay — suggested intent ESCALATES to the pending mailbox, nothing executes
+    const tmpB = fs.mkdtempSync(path.join(os.tmpdir(), 'e35b-'));
+    fs.writeFileSync(path.join(tmpB, 'ledger.json'), JSON.stringify([{ ts: NOW, recycle: SUG, liquid: { steem: '0.792 STEEM', sbd: '0.078 SBD' } }]));
+    const envB = { ...process.env, SKIP_FETCH: '1', SOVEREIGN_MODE: 'operator', HC_DERIVED: path.join(tmpB, 'absent.json'), FILL_LEDGER_JSON: path.join(tmpB, 'ledger.json'), MARKET_CYCLE_JSON: path.join(tmpB, 'cycle.json'), SOVEREIGN_STATE_JSON: path.join(tmpB, 'state.json'), SOVEREIGN_DECISIONS_JSONL: path.join(tmpB, 'decisions.jsonl'), SOVEREIGN_PENDING_JSON: path.join(tmpB, 'pending.json'), STASIS_JSON: path.join(tmpB, 'stasis-absent.json') };
+    const pB = spawnSync(process.execPath, [path.join(AG, 'sovereign-tick.cjs')], { env: envB, encoding: 'utf8', timeout: 60000 });
+    let bbB = pB.status === 0;
+    try {
+      const pend = JSON.parse(fs.readFileSync(envB.SOVEREIGN_PENDING_JSON, 'utf8'));
+      const dec = JSON.parse(fs.readFileSync(envB.SOVEREIGN_DECISIONS_JSONL, 'utf8').trim().split('\n').pop());
+      bbB = bbB && pend.decision === 'ESCALATE' && pend.tier === 'E' && pend.operator_note && dec.decision === 'ESCALATE' && !fs.existsSync(envB.MARKET_CYCLE_JSON);
+    } catch (_) { bbB = false; }
+    if (!bbB) { ok33 = false; why33.push('black-box-operator-overlay'); }
+    // black-box C: STASIS active → halt-before-read structurally (the ledger fixture is GARBAGE — reading it would error the tick)
+    const tmpC = fs.mkdtempSync(path.join(os.tmpdir(), 'e35c-'));
+    fs.writeFileSync(path.join(tmpC, 'garbage-ledger.json'), 'THIS IS NOT JSON{{{');
+    fs.writeFileSync(path.join(tmpC, 'stasis.json'), JSON.stringify({ active: true, reason: 'eval-drill' }));
+    const envC = { ...process.env, SKIP_FETCH: '1', FILL_LEDGER_JSON: path.join(tmpC, 'garbage-ledger.json'), MARKET_CYCLE_JSON: path.join(tmpC, 'cycle.json'), SOVEREIGN_STATE_JSON: path.join(tmpC, 'state.json'), SOVEREIGN_DECISIONS_JSONL: path.join(tmpC, 'decisions.jsonl'), SOVEREIGN_PENDING_JSON: path.join(tmpC, 'pending.json'), STASIS_JSON: path.join(tmpC, 'stasis.json') };
+    const pC = spawnSync(process.execPath, [path.join(AG, 'sovereign-tick.cjs')], { env: envC, encoding: 'utf8', timeout: 60000 });
+    let bbC = pC.status === 0;
+    try {
+      const dec = JSON.parse(fs.readFileSync(envC.SOVEREIGN_DECISIONS_JSONL, 'utf8').trim().split('\n').pop());
+      bbC = bbC && dec.decision === 'SKIP' && dec.reason.startsWith('STASIS-HALT') && !fs.existsSync(envC.MARKET_CYCLE_JSON) && !fs.existsSync(envC.SOVEREIGN_PENDING_JSON);
+    } catch (_) { bbC = false; }
+    if (!bbC) { ok33 = false; why33.push('black-box-stasis-halt'); }
+    evalr('E36', 'sovereign layer: delegated D1/D2 decisions under the dual gate (sovereign auto + operator overlay), breakers as reason codes, arming honesty, drip pacing receipts, append-only tick receipts',
+      ok33,
+      ['white-box: gate order law — STASIS-HALT before any read; operator mode escalates a suggested intent (Tier E) and plans DRY without one', 'white-box: arming honesty is presence-only (NOT-ARMED books keyless DRY sovereignty and names what arms it)', 'white-box: breakers each return a reason code — GAP-PACING, DAY-CAPS, BREAKER-DAILY-LOSS, BREAKER-CONSEC-LOSS, FUEL-FLOOR; Tier-E size parks in the mailbox; the green path fires EXECUTE-LIVE', 'white-box: D2 drip pacing — absent canon = honest RECEIPT, healthy runway = STEADY, thin runway = Tier-E RECOMMENDATION with authority ops disabled', 'white-box: applyReceipt advances counters + paces the broadcast attempt; daily rollover resets the day book', 'black-box A: keyless fresh tick (SKIP_FETCH) — NOT-ARMED PLAN-DRY routes a DRY cycle booking SKIPPED-EVAL-CONTEXT, decision receipt + state advanced, zero network', 'black-box B: SOVEREIGN_MODE=operator — suggested intent lands in sovereign-pending.json, no cycle child, Tier-E receipt', 'black-box C: STASIS active — halt-before-read proven with a garbage ledger (exit 0, STASIS-HALT receipt, no reads past the breaker)'],
+      why33.length ? 'fails: ' + why33.join('; ') : 'the transfer is live: local sovereign ticks fire per policy; the cron books keyless receipts 24/7 and arms on the vault secret');
+  } catch (e) { evalr('E36', 'sovereign layer', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
+
+
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.22.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.23.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];

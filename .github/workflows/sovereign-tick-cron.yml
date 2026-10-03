@@ -1,0 +1,122 @@
+# SOVEREIGN-TICK-CRON — 24/7 SOVEREIGNTY (Z-66, CR-0044)
+#
+# The operator directive transferred the last two operator-held decisions to
+# sovereignty ("תן לריבונות להחליט החלטות שהשארת לי ... ריבונות אוטונומית ללא
+# תלות") and fixed the gate law: the gate exists BOTH WITHOUT and WITH the
+# operator ("צריך גם ללא וגם כולל השער שלי").
+#
+# This workflow is that law, 24/7:
+#   KEYLESS (the default here): every :12/:42 the sovereign tick reads the
+#     local canon, decides by agents/sovereign-policy.json, routes a DRY cycle,
+#     and books append-only decision receipts. Honest, zero signatures.
+#   ARMED (dual-gate's "with the key" path): if STEEM_ACTIVE_WIF is present in
+#     this repository's vault, the tick materializes the derived-keys vault
+#     (presence-only check, content never logged) and the SAME receipt path
+#     fires LIVE — verify-then-sign + caps + band + ADD-ONLY still bind inside
+#     market-exec at fire time. One secret, no code change.
+#   OPERATOR OVERLAY (always armed): agents/STASIS.json active=true halts the
+#     tick BEFORE any read; SOVEREIGN_MODE=operator routes every LIVE intent
+#     to sovereign-pending.json instead of executing. One file flip, no code.
+#
+# Cadence law: :12/:42 sits OFF the whole org minute map (:00/:30 dex pulse,
+# :09/:39 twins, :17/:47 fill-ledger, :23/:53 market grid, 02:11 census,
+# 03:48 dex-grid, 16:20 treasury). STASIS-braked twice (step-gate + in-code
+# halt-before-read). Append-only publish, [skip ci], rebase-push twin idiom.
+
+name: sovereign-tick-cron
+
+on:
+  schedule:
+    - cron: '12,42 * * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sovereign-tick
+  cancel-in-progress: false
+
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    env:
+      NODE_PATH: /tmp/steemjs/node_modules
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: STASIS gate (mechanical, FATE-DEFENSE law #1)
+        id: stasis
+        run: |
+          ACTIVE=$(node -e "try{console.log(JSON.parse(require('fs').readFileSync('agents/STASIS.json','utf8')).active)}catch(e){console.log('false')}")
+          echo "active=${ACTIVE}" >> "$GITHUB_OUTPUT"
+          if [ "$ACTIVE" = "true" ]; then
+            echo "STASIS is ACTIVE — the sovereign tick halts before any read (healthy no-op receipt below)"
+          fi
+
+      - name: Node 20
+        if: steps.stasis.outputs.active != 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: steem client (steem@0.7.11 — the fleet signer, needed only by an ARMED LIVE leg)
+        if: steps.stasis.outputs.active != 'true'
+        run: |
+          npm install --prefix /tmp/steemjs steem@0.7.11 --omit=dev --no-audit --no-fund --loglevel=error
+          NODE_PATH=/tmp/steemjs/node_modules node -e "require('steem'); console.log('steem-js OK')"
+
+      - name: sovereign tick (keyless = DRY receipts · armed = LIVE per policy · STASIS = halt)
+        if: steps.stasis.outputs.active != 'true'
+        env:
+          STEEM_ACTIVE_WIF: ${{ secrets.STEEM_ACTIVE_WIF }}
+          HC_DERIVED: ${{ github.workspace }}/.fleet/headcorner-derived.json
+        run: |
+          if [ -n "$STEEM_ACTIVE_WIF" ] && [ "${#STEEM_ACTIVE_WIF}" -ge 40 ]; then
+            mkdir -p .fleet
+            node -e "
+              const fs=require('fs');
+              fs.writeFileSync(process.env.HC_DERIVED, JSON.stringify({steem:{active:process.env.STEEM_ACTIVE_WIF}}));
+              console.log('vault materialized from the repository secret (presence-only; content never logged)');
+            "
+            echo "SOVEREIGN-ARMED: the dual-gate 'with the key' path is live; verify-then-sign still binds in market-exec"
+          else
+            echo "SOVEREIGN-KEYLESS: STEEM_ACTIVE_WIF absent in this repository vault — honest DRY sovereignty 24/7."
+            echo "ARMING (one step, no code): set the secret to the same active key the operator armed runs #9-#13 with."
+          fi
+          node agents/sovereign-tick.cjs
+
+      - name: STASIS healthy no-op receipt (booked even when halted — the file is the audit trail)
+        if: steps.stasis.outputs.active == 'true'
+        run: |
+          mkdir -p agents
+          TS=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          echo "{\"ts\":\"$TS\",\"decision\":\"SKIP\",\"reason\":\"STASIS-HALT: breaker active — cron tick halted before any read\",\"tier\":\"S\",\"gate\":\"cron-stasis\"}" >> agents/sovereign-decisions.jsonl
+          echo "$TS STASIS-HALT receipt booked"
+
+      - name: publish receipts (append-only, [skip ci], rebase-push twin idiom)
+        if: always()
+        continue-on-error: true
+        run: |
+          git config user.name "saos-sovereign"
+          git config user.email "sovereign@saos.local"
+          for p in agents/sovereign-decisions.jsonl agents/sovereign-state.json agents/sovereign-pending.json agents/fill-ledger.json agents/fill-ledger-fills.jsonl agents/market-cycle.json agents/market-exec.json; do
+            [ -e "$p" ] && git add "$p" || true
+          done
+          if git diff --cached --quiet; then
+            echo "no sovereign changes"
+          else
+            git commit -m "sovereign-tick: decision receipts [skip ci]"
+            ok=0
+            for i in 1 2 3; do
+              if git pull --rebase origin main && git push origin HEAD:main; then ok=1; break; fi
+              echo "push attempt $i failed (concurrent commits on main) — re-pulling"
+              git rebase --abort 2>/dev/null || true
+              sleep 10
+            done
+            [ "$ok" = "1" ] && echo "sovereign receipts pushed" || echo "receipts landed locally; next tick re-attempts (fail-soft)"
+          fi
