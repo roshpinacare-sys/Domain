@@ -53,7 +53,12 @@ Every run of this skill books a named artifact. A claim without an artifact is n
 
 ## Tier & Scope                      # house law
 Which SOVEREIGNTY LAW ladder this skill's operations live on (A SOLO / B JUDGE-REVIEW /
-C OPERATOR-LOCK). A skill NEVER grants signing scope — scope is a `role-registry.csv` fact.
+C WALLET-OR-POSSESSION-LOCK). A skill NEVER grants signing scope — scope is a
+`role-registry.csv` fact. Tier C exists ONLY for the two lock domains the Authority Map
+(fleet-desk-operator v1.1.0, owner-confirmed 2026-10-03) reserves: the WALLET (spend,
+paid keys, credits — owner's sole authority) and owner-held POSSESSIONS (secrets/keys
+only the owner can create). Everything else is sovereignty-decided — a skill that
+defers a non-wallet decision to the owner violates the Authority Map.
 
 ## Output Artifacts                  # MUST section (gate-checked)
 | When you ask for... | You get... | Format |
