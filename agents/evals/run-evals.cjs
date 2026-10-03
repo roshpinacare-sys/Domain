@@ -28,6 +28,7 @@
  *   E17 canon-liveness       — reachability is a booked fact with named legs; verdict derivation honest; receipt fits reality (Z-42, CR-0005; renumbered from my interim E15 — Task 23/24's one-bloc + parse-gate landed first on main, parallel-convergence supersedes)
  *   E18 ci-hands             — the fleet's hands on its own CI estate: classifiers pin the failure taxonomy (startup/job-startup/step + transient-aware verdicts), fresh-process run books trajectory + honest reach (Task 26, trycua/cua adoption; renumbered from my interim E17 — Z-42's canon-liveness claimed E17 first on main, supersession visible here)
  *   E19 hands book           — the sovereignty's execution surfaces probed, never claimed: policy beats probe, every LIVE row carries a receipt, ABSENT is an honest answer (Z-43, CR-0006, trycua/cua adoption; renumbered from my interim E18 — Task 26's ci-hands claimed E18 first on main, parallel-convergence supersedes)
+ *   E20 skill-library gate   — role expertise as governed data: the offender predicate catches bare built-in names + missing Evidence Artifact sections, the library floor pins standard+notices+mirror sha, fresh-process gate GREEN (renumbered from my interim E19 — Z-43's hands book claimed E19 first on main, parallel-convergence supersedes) (Task 27, alirezarezvani/claude-skills MIT adoption)
  *
  * Fail-soft: exit 0 always; FAILs are booked honestly (HARNESS-AUDIT MANDATE:
  * green-washing the evals is a doctrine breach).
@@ -306,10 +307,52 @@ function accumulateInMemory(bookRows, seed) {
       ['white-box: probe-ok → LIVE; absent → ABSENT; POLICY LOCK BEATS A GREEN PROBE → LOCKED-TIER-C (the cua permission-at-launch lesson); cross-ref → REF; probe-fail → UNREACHABLE', 'black-box: fresh-process desk exits 0 (fail-soft), ≥5 hands booked, ≥2 LIVE in any healthy context', 'every LIVE hand carries evidence+probeAt — a capability claimed without a receipt is a story', 'verdict enum closed (LIVE/ABSENT/UNREACHABLE/REF/LOCKED-TIER-C) — no hopeful greens possible'],
       `hands=${hs.length} live=${live.length} receipted=${receipted} at=${b.at}`);
   } catch (e) { evalr('E19', 'hands book', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+  // ---- E20: skill-library gate (renumbered from my interim E19 — Z-43's hands book claimed E19 first on main, parallel-convergence supersedes) — role expertise as governed portable data (Task 27)
+  // Study: alirezarezvani/claude-skills (MIT, mirror sha 19392f7a) authoring standard,
+  // house-hardened: the Evidence Artifact mandate is the ANTI-GOODHART line — a skill
+  // that cannot name what a run writes down is a story, and the gate refuses it.
+  try {
+    const slg = require(path.join(AG, 'skill-library-gate.cjs'));
+    const os = require('os');
+    // white-box: the offender predicate is exact (fresh synthetic library in tmp)
+    const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'e19-skills-'));
+    fs.mkdirSync(path.join(tmpRoot, 'skills', 'legal-skill'), { recursive: true });
+    fs.mkdirSync(path.join(tmpRoot, 'skills', 'help'), { recursive: true });            // bare built-in name
+    fs.mkdirSync(path.join(tmpRoot, 'skills', 'no-evidence'), { recursive: true });     // missing Evidence Artifact section
+    const legal = [
+      '---', 'name: legal-skill', 'description: "Use when the fleet must exercise this procedure end to end with receipts and a named artifact."', 'version: 1.0.0', 'license: MIT', '---', '',
+      '# legal-skill', '', '## When to use', '- trigger', '', '## Proactive Triggers', '- flag', '',
+      '## Output Artifacts', '| ask | get |', '|---|---|', '', '## Related Skills', '- other: Use when x. NOT for y.', '',
+      '## Evidence Artifact', '| Artifact | Path | Written by |', '|---|---|---|', '', '## Tier & Scope', 'Tier A; grants no scope.', ''
+    ].join('\n');
+    fs.writeFileSync(path.join(tmpRoot, 'skills', 'legal-skill', 'SKILL.md'), legal);
+    fs.writeFileSync(path.join(tmpRoot, 'skills', 'help', 'SKILL.md'), legal.replace('name: legal-skill', 'name: help'));
+    fs.writeFileSync(path.join(tmpRoot, 'skills', 'no-evidence', 'SKILL.md'), legal.replace('## Evidence Artifact', '## Stories'));
+    const wb = slg.scanDir(tmpRoot);
+    const caught = (whyPart) => wb.offenders.some((o) => (o.skill === 'help' || o.skill === 'no-evidence') && o.why.includes(whyPart));
+    const w1 = !wb.ok && wb.offenders.length >= 3;                       // both illegal packages flagged
+    const w2 = caught('shadows a bare built-in');                        // issue #885 lesson, enforced
+    const w3 = caught('required section "## Evidence Artifact" missing'); // ANTI-GOODHART line
+    const legalPass = slg.checkSkill('legal-skill', legal).length === 0;  // the legal package passes
+    // library floor: the standard + notices with the pinned sha are part of the contract
+    fs.mkdirSync(path.join(tmpRoot, 'x'), { recursive: true });
+    const floorRes = slg.scanDir(tmpRoot);
+    const w4 = floorRes.offenders.some((o) => o.skill === '(library)' && o.why.includes('SKILL-AUTHORING-STANDARD.md missing'));
+    fs.rmSync(tmpRoot, { recursive: true, force: true });
+    // black-box: fresh process runs the gate on the REAL library — exit 0, book fresh
+    const rr = spawnSync(process.execPath, [path.join(AG, 'skill-library-gate.cjs')], { cwd: AG, timeout: 60000, encoding: 'utf8' });
+    const sb = JSON.parse(fs.readFileSync(path.join(AG, 'skill-library.json'), 'utf8'));
+    const freshBook = !!sb.at && (Date.now() - Date.parse(sb.at)) / 60000 < 30;
+    evalr('E20', 'skill-library gate: expertise as governed data with a mandatory Evidence Artifact',
+      w1 && w2 && w3 && legalPass && w4 && rr.status === 0 && sb.ok === true && sb.scanned >= 6 && sb.offenders.length === 0 && freshBook,
+      ['white-box: the predicate flags a bare built-in name (help), a missing Evidence Artifact section, and short/no-trigger descriptions — and PASSES the legal package', 'library floor: a missing authoring standard or unpinned mirror sha is an (library) offender — provenance is mechanical', 'black-box: fresh-process gate on the real library exits 0', 'book: skill-library.json GREEN, scanned >= 6, offenders [], stamped fresh (<30min)'],
+      `scanned=${sb.scanned} offenders=${sb.offenders.length} legal=${legalPass} caught(builtin,artifact)=${w2},${w3}`);
+  } catch (e) { evalr('E20', 'skill-library gate', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
 
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.9.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.10.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];

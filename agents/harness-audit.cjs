@@ -102,6 +102,21 @@ const freshCount = bookStates.filter((b) => b.exists && b.fresh).length;
   check('verification', 'workflow-parse gate: every workflow file parses (full YAML floor, idiom fallback) — no dead lane wears a green shape', gateOk,
     gateEvidence, 'Task 24 (recruit.yml startup-failure incident): parseability is mechanical truth, audited on schedule — E16 pins the predicate');
 
+  // Task 27: skill-library gate — role expertise as governed portable data.
+  // Study: alirezarezvani/claude-skills (MIT, mirror sha 19392f7a) — their authoring
+  // standard + gate-as-merge-authority adapted; house-hardened with the Evidence
+  // Artifact mandate (ANTI-GOODHART: a skill that names no artifact is a story),
+  // tier declaration, no-silent-scope. Provenance: skill-library/THIRD-PARTY-NOTICES.md.
+  let slGateOk = false, slGateEvidence = 'gate module missing';
+  try {
+    const slg = require(path.join(AG, 'skill-library-gate.cjs'));
+    const slRes = slg.scanDir(path.join(AG, 'skill-library'));
+    slGateOk = slRes.ok && slRes.scanned >= 6;
+    slGateEvidence = `${slRes.scanned} skill packages · offenders ${slRes.offenders.length}${slRes.offenders.length ? ' → ' + slRes.offenders.slice(0, 3).map((o) => `${o.skill}: ${o.why}`).join(' | ') : ''}`;
+  } catch (e) { slGateEvidence = 'skill-library gate error: ' + String(e.message || e).slice(0, 90); }
+  check('verification', 'skill-library gate: every skill package passes the authoring standard (namespaced name, Use-when triggers, proactive triggers, Evidence Artifact, tier & scope, MIT provenance pinned to the mirror sha)', slGateOk,
+    slGateEvidence, 'Task 27 (study: alirezarezvani/claude-skills, MIT sha 19392f7a): expertise as governed DATA closes the Task 20 residual (recruitment/desk/mini-services packages) — E19 pins the predicate');
+
   // Task 26: ci-hands — the fleet's own hands on its CI estate (trycua/cua adoption):
   // the Task 25 manual sweep mechanized: 16 repos sampled, failures classified, verdicts
   // transient-aware, proposals booked, full action trajectory (cua-bench contract).
@@ -355,7 +370,7 @@ const freshCount = bookStates.filter((b) => b.exists && b.fresh).length;
     fail: checks.filter((c) => c.status === 'FAIL').length
   };
   const out = {
-    ok: true, at, agent: 'harness-audit v1.11.0 (Z-35 + Task 19 + Z-37 sovereignty + Z-38 override + Z-39 cognitive rail + Task 22 fate-defense + Z-40 collapse drill + Task 23 one-bloc convergence + Task 24 workflow-parse gate + Z-42 canon reachability + Task 26 ci-hands + Z-43 hands book, parallel-convergence superset deduped)',
+    ok: true, at, agent: 'harness-audit v1.12.0 (Z-35 + Task 19 + Z-37 sovereignty + Z-38 override + Z-39 cognitive rail + Task 22 fate-defense + Z-40 collapse drill + Task 23 one-bloc convergence + Task 24 workflow-parse gate + Z-42 canon reachability + Task 26 ci-hands + Z-43 hands book + Task 27 skill-library gate, parallel-convergence superset deduped)',
     origin: 'walkinglabs/learn-harness-engineering study (Z-35): five subsystems + loop/graph engineering mapped to the fleet; Z-37 adds f/prompts.chat governance adoption (roles-as-data + decision ladder + change-requests + override protocol); Z-38 adds Dicklesworthstone/destructive_command_guard adoption (mechanical override gate + evals E7-E9); Z-39 adds tashfeenahmed/freellmapi adoption (cognitive-rail registry + keyless probes + evals E10-E12); Task 22 adds world.emergence.ai fate-defense adoption (STASIS circuit breaker + FWI scorecard + three laws, FATE-DEFENSE.md); Z-40 adds the emergence.ai collapse-drill containment proof (CR-0004, E14); two runtimes landed the same operator wave on the same study — merged, renumbered, deduped; the audit itself is the adopted artifact — a fresh-context checker node on a schedule',
     fiveSubsystems: {
       instructions: 'AGENTS.md + DOCTRINE.md + FLEET-NOTE.md + agent headers',

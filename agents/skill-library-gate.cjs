@@ -1,0 +1,141 @@
+#!/usr/bin/env node
+/**
+ * skill-library-gate.cjs — Task 27 SKILL-LIBRARY GATE (adoption wave)
+ *
+ * Study lineage: alirezarezvani/claude-skills (MIT, pinned mirror sha 19392f7a,
+ * 27.3k stars) — their SKILL-AUTHORING-STANDARD.md + gate-as-merge-authority
+ * discipline (scripts/check_skill_names.py upstream) adapted and house-hardened.
+ * Provenance: agents/skill-library/THIRD-PARTY-NOTICES.md (MIT notice retained).
+ *
+ * WHAT IT ENFORCES (every MUST in the authoring standard, mechanically):
+ *   - frontmatter: namespaced name (kebab-case WITH hyphen, never a bare built-in
+ *     command word — upstream issue #885 lesson), "Use when" description >= 60 chars,
+ *     semver version, license: MIT
+ *   - body sections: When to use / Proactive Triggers / Output Artifacts /
+ *     Related Skills / Evidence Artifact (house ANTI-GOODHART law) / Tier & Scope (house law)
+ *   - library-level: authoring standard present + credits the source, THIRD-PARTY-NOTICES
+ *     present + pins the mirror sha, >= 6 packages
+ *
+ * VERDICT: exit 0 = library green (offenders []), exit 1 = offenders booked.
+ * v1.0.1: the bare-built-in shadow reason now outranks the generic namespacing reason
+ *          (E19 white-box caught the else-if chain reporting the duller verdict first).
+ * Books: agents/skill-library.json + agents/skill-library.md (single writer: this gate).
+ * Zero dependencies. require()-safe: scanDir runs only under require.main === module CLI.
+ */
+'use strict';
+const fs = require('fs');
+const path = require('path');
+
+const LIB_REL = 'skill-library';
+const BARE_BUILTINS = new Set(['status', 'review', 'init', 'resume', 'config', 'help',
+  'doctor', 'login', 'logout', 'install', 'uninstall', 'run', 'test', 'doctor']);
+const REQUIRED_SECTIONS = ['## When to use', '## Proactive Triggers', '## Output Artifacts',
+  '## Related Skills', '## Evidence Artifact', '## Tier & Scope'];
+const MIRROR_SHA = '19392f7a';
+
+function parseFrontmatter(text) {
+  const m = /^\uFEFF?---\r?\n([\s\S]*?)\r?\n---\r?\n/.exec(text);
+  if (!m) return null;
+  const fm = {};
+  for (const line of m[1].split(/\r?\n/)) {
+    const kv = /^([A-Za-z_][A-Za-z0-9_-]*):\s*(.*)$/.exec(line);
+    if (kv) fm[kv[1]] = kv[2].trim().replace(/^["']|["']$/g, '');
+  }
+  return fm;
+}
+
+function checkSkill(dirName, text) {
+  const offenders = [];
+  const fm = parseFrontmatter(text);
+  if (!fm) { offenders.push({ skill: dirName, why: 'frontmatter block (--- ... ---) missing or malformed' }); return offenders; }
+  if (!fm.name) offenders.push({ skill: dirName, why: 'frontmatter.name missing' });
+  else if (BARE_BUILTINS.has(fm.name)) offenders.push({ skill: dirName, why: `name "${fm.name}" shadows a bare built-in command word (upstream issue #885 lesson)` });
+  else if (!/^[a-z][a-z0-9]*(-[a-z0-9]+)+$/.test(fm.name)) offenders.push({ skill: dirName, why: `name "${fm.name}" not namespaced kebab-case (must contain a hyphen)` });
+  if (!fm.description) offenders.push({ skill: dirName, why: 'frontmatter.description missing' });
+  else {
+    if (fm.description.length < 60) offenders.push({ skill: dirName, why: `description too short (${fm.description.length} < 60) to carry real triggers` });
+    if (!/use when/i.test(fm.description)) offenders.push({ skill: dirName, why: 'description lacks "Use when" trigger phrasing' });
+  }
+  if (!fm.version || !/^\d+\.\d+\.\d+$/.test(fm.version)) offenders.push({ skill: dirName, why: `version "${fm.version || ''}" missing or not semver` });
+  if (!fm.license || fm.license !== 'MIT') offenders.push({ skill: dirName, why: `license "${fm.license || ''}" must be MIT` });
+  for (const sec of REQUIRED_SECTIONS) {
+    if (!text.includes(sec)) offenders.push({ skill: dirName, why: `required section "${sec}" missing` });
+  }
+  return offenders;
+}
+
+function scanDir(root) {
+  const offenders = [];
+  const skills = [];
+  let scanned = 0;
+  const skillsDir = path.join(root, 'skills');
+  const standardPath = path.join(root, 'SKILL-AUTHORING-STANDARD.md');
+  const noticesPath = path.join(root, 'THIRD-PARTY-NOTICES.md');
+
+  if (!fs.existsSync(standardPath)) offenders.push({ skill: '(library)', why: 'SKILL-AUTHORING-STANDARD.md missing' });
+  else {
+    const std = fs.readFileSync(standardPath, 'utf8');
+    if (!std.includes('alirezarezvani/claude-skills') || !std.includes('MIT')) offenders.push({ skill: '(library)', why: 'standard does not credit the MIT source repo' });
+  }
+  if (!fs.existsSync(noticesPath)) offenders.push({ skill: '(library)', why: 'THIRD-PARTY-NOTICES.md missing (MIT notice retention)' });
+  else {
+    const notices = fs.readFileSync(noticesPath, 'utf8');
+    if (!notices.includes(MIRROR_SHA)) offenders.push({ skill: '(library)', why: `notices do not pin the mirror sha ${MIRROR_SHA}` });
+    if (!notices.includes('MIT')) offenders.push({ skill: '(library)', why: 'notices lack the MIT license reference' });
+  }
+
+  if (!fs.existsSync(skillsDir)) {
+    offenders.push({ skill: '(library)', why: 'skills/ directory missing' });
+    return { ok: false, scanned: 0, skills, offenders };
+  }
+  for (const d of fs.readdirSync(skillsDir).sort()) {
+    const dir = path.join(skillsDir, d);
+    if (!fs.statSync(dir).isDirectory()) continue;
+    const p = path.join(dir, 'SKILL.md');
+    if (!fs.existsSync(p)) { offenders.push({ skill: d, why: 'SKILL.md missing in package dir' }); continue; }
+    scanned++;
+    skills.push(d);
+    offenders.push(...checkSkill(d, fs.readFileSync(p, 'utf8')));
+  }
+  if (scanned < 6) offenders.push({ skill: '(library)', why: `only ${scanned} packages scanned (< 6) — the library is thinner than booked` });
+  return { ok: offenders.length === 0, scanned, skills, offenders };
+}
+
+function writeBooks(root, res, at) {
+  const AG = path.dirname(__filename);
+  const jsonPath = path.join(AG, 'skill-library.json');
+  const mdPath = path.join(AG, 'skill-library.md');
+  const book = { ok: res.ok, at, gate: 'skill-library-gate.cjs v1.0.1 (Task 27, study: alirezarezvani/claude-skills MIT sha 19392f7a)', scanned: res.scanned, skills: res.skills, offenders: res.offenders };
+  fs.writeFileSync(jsonPath, JSON.stringify(book, null, 2) + '\n');
+  const md = [];
+  md.push('# skill-library gate — role expertise as governed portable data (Task 27)');
+  md.push('');
+  md.push(`**verdict: ${res.ok ? 'GREEN' : 'RED'}** · ${res.scanned} packages · ${res.offenders.length} offenders · ${at}`);
+  md.push('');
+  md.push('_Authoring standard adapted from alirezarezvani/claude-skills (MIT, mirror sha 19392f7a); house-hardened: Evidence Artifact mandatory (ANTI-GOODHART), tier declaration, no silent scope. Provenance: skill-library/THIRD-PARTY-NOTICES.md_');
+  md.push('');
+  md.push('| package | verdict |');
+  md.push('|---|---|');
+  for (const s of res.skills) {
+    const bad = res.offenders.filter((o) => o.skill === s);
+    md.push(`| ${s} | ${bad.length ? 'RED: ' + bad.map((b) => b.why).join('; ') : 'GREEN'} |`);
+  }
+  for (const o of res.offenders.filter((x) => x.skill === '(library)')) md.push(`| (library) | RED: ${o.why} |`);
+  md.push('');
+  fs.writeFileSync(mdPath, md.join('\n') + '\n');
+  return book;
+}
+
+module.exports = { scanDir, parseFrontmatter, checkSkill, BARE_BUILTINS, MIRROR_SHA };
+
+if (require.main === module) {
+  const AG = path.dirname(__filename);
+  const root = path.join(AG, LIB_REL);
+  const at = new Date().toISOString();
+  const res = scanDir(root);
+  writeBooks(root, res, at);
+  const line = `skill-library-gate: ${res.ok ? 'GREEN' : 'RED'} · ${res.scanned} packages · offenders ${res.offenders.length}` +
+    (res.offenders.length ? ' :: ' + res.offenders.slice(0, 5).map((o) => `${o.skill}: ${o.why}`).join(' | ') : '');
+  console.log(line);
+  process.exitCode = res.ok ? 0 : 1;
+}
