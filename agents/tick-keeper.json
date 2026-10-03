@@ -1,6 +1,6 @@
 {
  "protocol": "SAOS-TICK-KEEPER/1",
- "at": "2026-10-03T21:36:39.076Z",
+ "at": "2026-10-03T21:53:13.174Z",
  "repo": "roshpinacare-sys/Domain",
  "stasis": false,
  "arc": {
@@ -16,27 +16,38 @@
   },
   "fill-ledger-cron": {
    "receipt": "agents/fill-ledger.json",
-   "last_ts": "2026-10-03T21:35:25.188Z",
+   "last_ts": "2026-10-03T21:52:35.139Z",
    "max_gap_min": 45
   }
  },
- "decided": [],
- "dispatched": [],
+ "decided": [
+  {
+   "desk": "earn-audit-cron",
+   "stale_min": 49.7,
+   "reason": "book stale 49.7m > 45m"
+  }
+ ],
+ "dispatched": [
+  {
+   "desk": "earn-audit-cron",
+   "http_status": 404,
+   "ok": false,
+   "error": null
+  }
+ ],
  "skipped": [
   {
    "desk": "sovereign-tick-cron",
-   "reason": "fresh 1.2m <= 20m"
-  },
-  {
-   "desk": "earn-audit-cron",
-   "reason": "fresh 33.1m <= 45m"
+   "reason": "fresh 17.8m <= 20m"
   },
   {
    "desk": "fill-ledger-cron",
-   "reason": "fresh 1.2m <= 45m"
+   "reason": "fresh 0.6m <= 45m"
   }
  ],
  "errors": [],
- "duration_ms": 1,
- "cooldown_book": {}
+ "duration_ms": 231,
+ "cooldown_book": {
+  "earn-audit-cron": "2026-10-03T21:53:13.174Z"
+ }
 }
