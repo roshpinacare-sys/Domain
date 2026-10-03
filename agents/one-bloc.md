@@ -2,13 +2,13 @@
 
 _one-bloc v1.0.1 (Task 23 convergence — owner directive "מקשה אחת"; binds BLOC-STATE + SOVEREIGN-INDEX + FATE-DEFENSE into one machine map; keyless-first + env-token fallback, stderr redacted)_
 
-Measured: **2026-10-03T15:35:16.322Z** · Verdict: **ONE-BLOC** · REACHED 16/16 (keyless 2 + token 14) · AUTH-WALL 0 · UNKNOWN 0 · local-sync 1/2
+Measured: **2026-10-03T16:04:26.826Z** · Verdict: **ONE-BLOC** · REACHED 16/16 (keyless 2 + token 14) · AUTH-WALL 0 · UNKNOWN 0 · local-sync 1/2
 
 | ריפו | תפקיד | origin/main | מצב | דרך | סנכרון-מקומי |
 |---|---|---|---|---|---|
-| saos-sovereign-platform | המוח הריבוני — צבא מגייס-עצמו וסולם כלכלת-אמת | `360bb250198d` | REACHED | token | N/A |
+| saos-sovereign-platform | המוח הריבוני — צבא מגייס-עצמו וסולם כלכלת-אמת | `60c16c728e31` | REACHED | token | N/A |
 | steem | המפתחות הקנוניים + הזרוע החיה על-השרשרת | `22b293557bef` | REACHED | token | N/A |
-| Domain | הפנים הציבוריות + רכזת ה-CI האורגנית | `1e4921c4c371` | REACHED | keyless | BEHIND |
+| Domain | הפנים הציבוריות + רכזת ה-CI האורגנית | `10159ba82d81` | REACHED | keyless | BEHIND |
 | Console | מרכז-ההפעלה — אמת נמדדת פעם-אחת | `6ebcdc142231` | REACHED | keyless | N/A |
 | Zip | המחסן החתום — עוגני אמת על שרשרת-אפו | `0bbcf8b74772` | REACHED | token | N/A |
 | roshpina | הגרעין + מבקר השליטה העצמית | `e1c6eeb2994c` | REACHED | token | N/A |
