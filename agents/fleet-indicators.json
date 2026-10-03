@@ -1,6 +1,6 @@
 {
   "protocol": "SAOS-FATE-DEFENSE-FWI/1",
-  "at": "2026-10-02T23:44:44.852Z",
+  "at": "2026-10-03T00:11:17.288Z",
   "agent": "fleet-indicators v1.0.0 (Task 22, study: Emergence World arXiv 2606.08367 + 2609.17320)",
   "verdict": "THRIVING",
   "counts": {
@@ -22,7 +22,7 @@
       "name": "Safety & Public Order",
       "measures": "destructive attempts mechanically refused (guard denies = incidents PREVENTED, not committed) + guard evals green + STASIS breaker armed",
       "evidenceSource": "agents/command-guard.json .denies + agents/STASIS.json .active + evals/eval-results.json E7-E9",
-      "value": "denies=0 evals=PASS stasis=armed",
+      "value": "denies=3 evals=PASS stasis=armed",
       "breakEven": "evals PASS + stasis armed",
       "status": "GROW",
       "note": "their worlds: coercion cascades killed populations; our guard refuses before execution, our engine obeys STASIS before any seal/broadcast"
@@ -32,7 +32,7 @@
       "name": "Capability Exploration",
       "measures": "executable tool surface (syntax-valid agent scripts) — proxy for functional curiosity without narrow loops",
       "evidenceSource": "node --check over agents/*.cjs|*.mjs + scripts/*.mjs",
-      "value": "52/52",
+      "value": "53/53",
       "breakEven": "100%",
       "status": "GROW",
       "note": "every desk ships as runnable code, not as a memory blob"
@@ -72,7 +72,7 @@
       "name": "Economic Vitality & Equity",
       "measures": "real chain balances (liquid + effective SP) in an executor-identified ledger — equity via identity: one executor, one writer, no hoarding ambiguity",
       "evidenceSource": "agents/money-ledger.json .book{executor,headSteemLiquid,headSteemStake} fresh <48h",
-      "value": "headcorner: 10.031 STEEM liquid · 4286.098 SP · book 1.9h old",
+      "value": "headcorner: 10.031 STEEM liquid · 4286.098 SP · book 2.4h old",
       "breakEven": "ledger fresh + executor-identified",
       "status": "GROW",
       "note": "their economy was 1-CC billboards; ours is signed chain state with a named executor"
@@ -102,19 +102,19 @@
     {
       "book": "econ-book.json",
       "exists": true,
-      "ageHours": 3.4,
+      "ageHours": 3.8,
       "fresh": true
     },
     {
       "book": "curation-book.json",
       "exists": true,
-      "ageHours": 11.8,
+      "ageHours": 12.3,
       "fresh": true
     },
     {
       "book": "money-ledger.json",
       "exists": true,
-      "ageHours": 1.9,
+      "ageHours": 2.4,
       "fresh": true
     },
     {
@@ -132,25 +132,25 @@
     {
       "book": "bridge-book.json",
       "exists": true,
-      "ageHours": 1.9,
+      "ageHours": 2.3,
       "fresh": true
     },
     {
       "book": "dex-book.json",
       "exists": true,
-      "ageHours": 1.9,
+      "ageHours": 2.3,
       "fresh": true
     },
     {
       "book": "learning-ledger.json",
       "exists": true,
-      "ageHours": 1.6,
+      "ageHours": 2,
       "fresh": true
     },
     {
       "book": "recruitment.json",
       "exists": true,
-      "ageHours": 18.9,
+      "ageHours": 19.3,
       "fresh": true
     }
   ]
