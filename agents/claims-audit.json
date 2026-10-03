@@ -1,0 +1,53 @@
+{
+ "at": "2026-10-03T22:04:15.363Z",
+ "ok": true,
+ "agent": "claims-audit v1.0.0 (R21, CR-0049 — the anti-claims instrument)",
+ "verdict": "WARN",
+ "ownerLanguage": "he",
+ "ownerLanguageRule": "owner-facing replies: עברית (Hebrew) — the owner reads Hebrew; repo/CI artifacts stay English",
+ "counts": {
+  "feats": 45,
+  "featsWithCr": 13,
+  "evidenceChecked": 65,
+  "evidenceResolved": 62,
+  "offenders": 0,
+  "warns": 4
+ },
+ "offenders": [],
+ "warns": [
+  {
+   "kind": "ALLOWED-CLAIM",
+   "feat": "feat-021",
+   "claimed": "traj-gwt2.json",
+   "reason": "ephemeral drill artifact: worktree-wave trajectory file written at runtime and never committed by design (feat-021; CR-0049)"
+  },
+  {
+   "kind": "ALLOWED-CLAIM",
+   "feat": "feat-036",
+   "claimed": "fills.jsonl",
+   "reason": "ledger shorthand: the token means agents/fill-ledger-fills.jsonl, which exists — the shorthand itself is not a path (feat-036; CR-0049)"
+  },
+  {
+   "kind": "ALLOWED-CLAIM",
+   "feat": "feat-039",
+   "claimed": "agents/sovereign-pending.json",
+   "reason": "runtime surface: the Tier-E mailbox is created by sovereign.cjs on first parking; cited in feat-039 as the designed surface (CR-0049)"
+  },
+  {
+   "kind": "DUPLICATE-SLOT",
+   "cr": "CR-0008",
+   "files": [
+    "CR-0008-security-audit-doctrine.json",
+    "CR-0008-security-strix-doctrine.json"
+   ],
+   "note": "historical slot reuse kept by the immutability law (documented in CR-0049)"
+  }
+ ],
+ "suite": {
+  "srcVersion": "v1.29.0",
+  "resVersion": "v1.29.0",
+  "srcEvals": 42,
+  "resEvals": 42,
+  "verdict": "MATCH"
+ }
+}
