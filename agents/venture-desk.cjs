@@ -36,7 +36,10 @@ const OUT_JSON = path.join(AG, 'ventures.json');
 const OUT_MD = path.join(AG, 'ventures.md');
 const FILLS_LEDGER = path.join(AG, 'fills-ledger.json');
 // sibling canon checkout: local sandbox has the fleet side-by-side; CI gets a
-// Defi checkout step (WEAVE_OPS_PAT) — oracle data always readable, raw fetch only fallback.
+// Defi checkout step (WEAVE_OPS_PAT). Z-42 (CR-0005): the old anonymous
+// raw.githubusercontent fallback was PROVEN structurally dead (private canon →
+// anonymous 404 forever) and removed — leg attribution + honest nulls instead,
+// with agents/canon-liveness.json naming which legs exist in this context.
 const DEFU_DIR = process.env.DEFU_DIR || path.resolve(AG, '..', '..', 'Defi');
 const read = (f) => { try { return fs.readFileSync(path.join(AG, f), 'utf8'); } catch (_) { return null; } };
 const readCanon = (rel) => { try { return fs.readFileSync(path.join(DEFU_DIR, rel), 'utf8'); } catch (_) { return null; } };
@@ -284,11 +287,20 @@ if (require.main === module) (async () => {
     routes: readJson('routes.json'),
     fills, prices
   };
-  // ---- measured fleet ledger (oracle: sibling/canon Defi checkout, raw fetch fallback) — estimation forbidden
+  // ---- measured fleet ledger (oracle: sibling/canon checkout) — estimation forbidden.
+  // Z-42: leg attribution — when L1 is absent in this context, the honest null is
+  // EXPLAINED from the canon-liveness receipt (if adjacent); the dead anonymous
+  // fallback is gone, not retried.
   let kpiRaw = null;
   const kpiLocal = readCanon('fleet/KPI.json');
   if (kpiLocal) { try { kpiRaw = JSON.parse(kpiLocal); } catch (_) {} }
-  if (!kpiRaw) kpiRaw = await fetchJson('https://raw.githubusercontent.com/roshpinacare-sys/Defi/main/fleet/KPI.json');
+  let canonLeg = kpiRaw ? 'L1 sibling/CI checkout (content served)' : null;
+  if (!kpiRaw) {
+    const cl = readJson('canon-liveness.json');
+    canonLeg = cl && cl.verdict
+      ? `none this context — canon-liveness verdict ${cl.verdict} (content honestly null, never estimated)`
+      : 'none this context — no canon leg adjacent (content honestly null, never estimated)';
+  }
   let kpi = null;
   if (kpiRaw && kpiRaw.revenuePerDayReal) {
     kpi = {
@@ -301,10 +313,11 @@ if (require.main === module) (async () => {
       greenStreakDays: kpiRaw.ladder ? kpiRaw.ladder.consecutiveGreenDays : null
     };
   }
-  // ---- doctrine existence check (the law this desk enforces must itself exist)
+  // ---- doctrine existence check (the law this desk enforces must itself exist).
+  // Z-42: L1 only — the anonymous raw fallback was dead by construction (private canon).
   const docLocal = readCanon('fleet/DOCTRINE-economics.md');
-  const doctrineVerified = !!(docLocal && docLocal.includes('TWO-SIDED LEDGER LAW')) ||
-    await (async () => { const d = await httpsGet('https://raw.githubusercontent.com/roshpinacare-sys/Defi/main/fleet/DOCTRINE-economics.md'); return !!(d && d.status === 200 && d.body.includes('TWO-SIDED LEDGER LAW')); })();
+  const doctrineVerified = !!(docLocal && docLocal.includes('TWO-SIDED LEDGER LAW'));
+  const doctrineLeg = doctrineVerified ? 'L1 sibling/CI checkout' : 'not readable in this context (canon-liveness names the legs)';
 
   // ---- ventures with evidence-gated status
   const ventures = VENTURES.map(v => {
@@ -324,6 +337,7 @@ if (require.main === module) (async () => {
     ? f6(fills.totalRealizedSwaphive * books.prices.hive) : null;
   const ledger = {
     at, oracle: kpi ? 'Defi/fleet/KPI.json (measured, raw)' : 'unreachable this run (honest null, no estimation)',
+    canonLeg,
     earnUsdPerDay: kpi ? kpi.earnUsdPerDay : null,
     burnUsdPerDay: kpi ? kpi.fuelBurnUsdPerDay : null,
     runwayWeeks: kpi ? kpi.runwayWeeks : null,
@@ -336,11 +350,11 @@ if (require.main === module) (async () => {
     verdict: (kpi && kpi.earnUsdPerDay != null && kpi.fuelBurnUsdPerDay != null)
       ? `earn $${kpi.earnUsdPerDay}/day vs burn $${kpi.fuelBurnUsdPerDay}/day — the gap is the mission; every venture's earn side is booked from here on (EARN-GOVERNOR LAW)`
       : 'measured ledger unreachable this run — booked as null, never estimated',
-    doctrine: { url: 'https://github.com/roshpinacare-sys/Defi/blob/main/fleet/DOCTRINE-economics.md', verified: doctrineVerified }
+    doctrine: { url: 'https://github.com/roshpinacare-sys/Defi/blob/main/fleet/DOCTRINE-economics.md', verified: doctrineVerified, leg: doctrineLeg }
   };
 
   const out = {
-    ok: true, at, agent: 'venture-desk v1.1.0 (Z-31 birth · Z-34 earn-governor wiring)',
+    ok: true, at, agent: 'venture-desk v1.2.0 (Z-31 birth · Z-34 earn-governor wiring · Z-42 canon leg attribution — dead anonymous fallback removed)',
     selfHeal: { econSummaryRepaired: heal.healed, incident: 'parallel-runtime [object Object] concat bug repaired in the committed book' },
     origin: 'clodfarm study (Z-31): adopted the governor math + notebook + dashboards + labor tiering; rejected the approval-default, the islands, the earn-less economy; doctrine bound as law',
     ledger, ventures,
@@ -352,7 +366,7 @@ if (require.main === module) (async () => {
   const md = [];
   md.push('# Ventures — the fleet\'s public business board (two-sided ledger)');
   md.push('');
-  md.push(`_venture-desk v1.1.0 · ${at} · doctrine: ${doctrineVerified ? 'verified live (TWO-SIDED LEDGER LAW present)' : 'doctrine check failed this run (honest)'}_`);
+  md.push(`_venture-desk v1.2.0 · ${at} · doctrine: ${doctrineVerified ? 'verified live (TWO-SIDED LEDGER LAW present)' : `check failed this run (honest) · leg: ${doctrineLeg}`}_`);
   md.push('');
   md.push('Born from the clodfarm study (Z-31): they built the best stop-spending governor we have seen and no earn side at all. We adopt the governor math and bind the missing half as law. Standing truth:');
   md.push('');
@@ -383,6 +397,6 @@ if (require.main === module) (async () => {
   md.push('_Laws binding this board: GOVERNOR LAW · TWO-SIDED LEDGER LAW · EARN-GOVERNOR LAW · NOTEBOOK LAW · MEASURABLE→DASHBOARD LAW · LABOR TIERING LAW · VENTURE TEMPLATE LAW · DELEGATION-SELECTION LAW (Defi/fleet/DOCTRINE-economics.md)._');
   try { fs.writeFileSync(OUT_MD, md.join('\n') + '\n'); } catch (_) {}
 
-  console.log(`venture-desk: ${out.counts.open} OPEN / ${out.counts.proposed} PROPOSED · ledger ${ledger.earnUsdPerDay != null ? `$${ledger.earnUsdPerDay}/d earn` : 'null'} vs ${ledger.burnUsdPerDay != null ? `$${ledger.burnUsdPerDay}/d burn` : 'null'} · realized ${fills ? `${fills.totalRealizedSwaphive} SWAP.HIVE` : 'null'} · doctrine ${doctrineVerified ? 'verified' : 'unverified'}`);
+  console.log(`venture-desk: ${out.counts.open} OPEN / ${out.counts.proposed} PROPOSED · ledger ${ledger.earnUsdPerDay != null ? `$${ledger.earnUsdPerDay}/d earn` : 'null'} vs ${ledger.burnUsdPerDay != null ? `$${ledger.burnUsdPerDay}/d burn` : 'null'} · realized ${fills ? `${fills.totalRealizedSwaphive} SWAP.HIVE` : 'null'} · doctrine ${doctrineVerified ? 'verified' : 'unverified'} · canonLeg ${canonLeg ? canonLeg.slice(0, 60) : 'none'}`);
   process.exit(0); // fail-soft: the board never breaks a run
 })();

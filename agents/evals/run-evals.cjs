@@ -25,6 +25,7 @@
  *   E14 collapse drill      — containment PROVEN on a fresh run: 4 fault classes, 4 REDs (Z-40, emergence.ai; renumbered from my interim E13 — Task 22's fate-defense landed on main first, parallel-convergence supersedes)
  *   E15 one-bloc convergence — the whole git is measured mechanically: 16 roles, honest statuses, no invented reach (Task 23, owner directive "מקשה אחת")
  *   E16 workflow-parse gate  — every workflow parses: predicate catches `${{ }}` in flow maps, legal idioms stay ALLOW, fresh-process gate GREEN (Task 24, recruit.yml startup-failure incident)
+ *   E17 canon-liveness       — reachability is a booked fact with named legs; verdict derivation honest; receipt fits reality (Z-42, CR-0005; renumbered from my interim E15 — Task 23/24's one-bloc + parse-gate landed first on main, parallel-convergence supersedes)
  *
  * Fail-soft: exit 0 always; FAILs are booked honestly (HARNESS-AUDIT MANDATE:
  * green-washing the evals is a doctrine breach).
@@ -236,9 +237,22 @@ function accumulateInMemory(bookRows, seed) {
       `scanned=${gb.scanned} mode=${gb.mode} offenders=${gb.offenders.length}`);
   } catch (e) { evalr('E16', 'workflow-parse gate', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
+  // ---- E17: canon-liveness — reachability is a booked fact, never a hope (Z-42, CR-0005; renumbered from my interim E15 — Task 23/24 landed first on main)
+  try {
+    const clv = require(path.join(AG, 'canon-liveness.cjs'));
+    const vServed = clv.verdictFromLegs({ content: true }, { reachable: true });
+    const vRail = clv.verdictFromLegs({ content: false }, { reachable: true });
+    const vDark = clv.verdictFromLegs({ content: false }, { reachable: false });
+    const r = spawnSync(process.execPath, [path.join(AG, 'canon-liveness.cjs')], { cwd: AG, timeout: 90000, encoding: 'utf8' });
+    const rec = JSON.parse(fs.readFileSync(path.join(AG, 'canon-liveness.json'), 'utf8'));
+    evalr('E17', 'canon-liveness: honest verdict derivation + fresh receipt with named legs',
+      vServed === 'CONTENT-SERVED' && vRail === 'RAIL-REACHABLE' && vDark === 'CANON-DARK' && r.status === 0 && rec.ok === true && !!rec.at && rec.verdict === vServed && Array.isArray(rec.legs) && rec.legs.length >= 3,
+      ['white-box: L1 content → CONTENT-SERVED; L1 absent + L2 rail → RAIL-REACHABLE; both absent → CANON-DARK (zero hopeful greens)', 'black-box: fresh-process run exits 0 (fail-soft), receipt stamped with ≥3 named legs', 'the receipt verdict matches the derivation for this context — no environment drift between book and reality (Z-42 root cause: the dead anonymous fallback leg, private canon 404)'], `verdict=${rec.verdict} legs=${(rec.legs || []).map((l) => l.id + ':' + l.verdict).join(',')}`);
+  } catch (e) { evalr('E17', 'canon-liveness', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.6.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate adoptions (Task 22 + Z-40 + Task 23 + Task 24, deduped by renumbering — the same operator wave landed on the same study from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.7.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];

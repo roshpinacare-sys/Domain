@@ -76,6 +76,12 @@
 ## Verification Commands
 - `./init.sh` — the standard entrypoint (syntax + audit-book refresh)
 - `node agents/harness-audit.cjs` — the fresh-context judge node (fail-soft)
+- `node agents/canon-liveness.cjs` — the canon reachability legs (Z-42, CR-0005):
+  L1 sibling content · L2 authenticated rail · L3 anonymous-raw standing probe.
+  Cross-repo desks name their leg; CANON-DARK is a stop condition, not a vibe.
+- `bash /home/z/.fleet-restore/restore.sh check` — local sandbox legs + one-command
+  re-clone (Z-42 re-codification; creds live OUTSIDE repos in a 600-perm file,
+  never printed, never committed — sandbox resets are a law of nature)
 - `bash -n <script>` / `node --check <script>` — per-change static lint gate
   (full-tree lint/build/type checks run in CI: org-selftests + agent-verify)
 - gitleaks + agent-verify run in CI on schedule (16/16 repos, head=0 law)
