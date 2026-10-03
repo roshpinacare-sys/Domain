@@ -165,6 +165,23 @@ function executorPreview(internalRows) {
 
 // ── main ────────────────────────────────────────────────────────────────────
 (async () => {
+  // FATE-DEFENSE law #1 (the STASIS breaker, Task 22 lineage): the desk obeys the brake
+  // BEFORE any read or write. active=true halts as a healthy no-op — exit 0, an honest
+  // STASIS-HALT receipt line, one labeled history row, zero network, zero paper writes.
+  // The file itself is the audit trail (never delete history, flip the flag).
+  try {
+    const st = JSON.parse(fs.readFileSync(path.join(__dirname, 'STASIS.json'), 'utf8'));
+    if (st && st.active === true) {
+      const at = new Date().toISOString();
+      try {
+        fs.appendFileSync(path.join(ROOT, 'agents', 'market-grid-history.jsonl'),
+          JSON.stringify({ at, verdict: 'MARKET-GRID-HALTED-STASIS', halted: true, scope: st.scope || null, reason: st.reason || null }) + '\n');
+      } catch (_) { /* the halt must not itself crash — the receipt line below is the primary record */ }
+      fs.writeFileSync(OUT_JSON, JSON.stringify({ at, agent: 'market-grid v1.0.0', verdict: 'MARKET-GRID-HALTED-STASIS', halted: true, reason: st.reason || null, scope: st.scope || null, markets: [], errors: [] }, null, 1));
+      console.log(`STASIS-HALT market-grid · ${at}`);
+      return;
+    }
+  } catch (_) { /* no brake declared (missing/unreadable STASIS.json) → run normally; the tracked file + init's STASIS proof are the integrity layer */ }
   const out = { at: new Date().toISOString(), agent: 'market-grid v1.0.0 (Z-60+ internal-market sovereignty instrument)', laws: null, markets: [], hiveEngine: null, paperLedger: PAPER_LEDGER, executorPreviewCount: 0, errors: [], summary: {} };
   out.laws = ['official sources only (chain nodes + sidechain RPC)', 'keyless: reads only, executor = owner-gated preview, never broadcast', 'paper is paper (labeled ledger, never laundered into realized book)', 'fail-loud per market', 'single canon (market-grid.json/.md)'];
 

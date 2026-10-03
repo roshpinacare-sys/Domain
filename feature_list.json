@@ -320,6 +320,16 @@
         "feat-029"
       ],
       "evidence": "CR-0037; agents/cross-layer.json/.md"
+    },
+    {
+      "id": "feat-032",
+      "title": "Fleet Rung 13 (cadence wired): market-grid history time-series on Actions cron (23,53 every 30min, keyless, append-only publish with [skip ci]) + STASIS double-gate (scheduler step + desk halts in code BEFORE any read, fresh-process proven) + E29 in the merged suite at 29/29 (CR-0038)",
+      "description": ".github/workflows/market-grid-cron.yml turns the market-grid desk from a hand-run snapshot instrument into a scheduled ~48-rows/day time-series at zero capital/zero secrets/zero authority: the twin publish idiom (add -> diff --cached --quiet -> commit [skip ci] -> pull --rebase -> push HEAD:main, built-in GITHUB_TOKEN), cadence offset from every sibling pulse. STASIS obeyed twice: the scheduler gates tick+publish on agents/STASIS.json, and market-grid.cjs now halts in code before any network byte (exit 0, STASIS-HALT stdout, one labeled MARKET-GRID-HALTED-STASIS history row) — the FATE-DEFENSE law #1 gap closed. The tick step carries continue-on-error because the desk is fail-loud by design (PARTIAL -> exit 1) while a time-series values every honest row. Live: brake proven in fresh process (E29) AND live (flip/restore byte-checked); live ticks PARTIAL (hive transient) + MARKET-GRID-LIVE (3 markets/5 grids/0 errors); drift continues SBD/STEEM 1.5499->1.3385->0.7548 under the sibling live market-exec quoting.",
+      "status": "done",
+      "dependencies": [
+        "feat-031"
+      ],
+      "evidence": "CR-0038; .github/workflows/market-grid-cron.yml; agents/market-grid.cjs STASIS brake; agents/market-grid-history.jsonl 4 rows; run-evals v1.17.0 E29; evals 29/29"
     }
   ]
 }
