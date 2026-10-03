@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "at": "2026-10-03T19:49:55.551Z",
+  "at": "2026-10-03T19:56:08.953Z",
   "since": "2026-10-02T16:40:20.950Z",
   "windowSince": "2026-10-02T16:40:20.950Z",
   "agent": "pulse v1.2.0 (CR-0009 loop, Rung 1; CR-0028 consumes the laya advisory triage; CR-0033 consumes the scheduled evolution-window evidence — Z-48/Z-49/Z-60/Z-62)",
@@ -9,8 +9,12 @@
     "count": 40,
     "commits": [
       {
-        "sha": "68303fc",
-        "subject": "lane books: Rung 16 census-delta run on tree — judge 41/0/0, evals 33/33 (E33 census-delta), gate, cross-layer 7 checks 6 PASS 1 DRIFT, census 16/16 caps=61 wiring=10/10, parse-gate 44 workflows 0 offenders, ONE-BLOC 16/16 tokenReach 14, canonical map self-healed (the CI-downgraded 1/16 book restored to full-estate), fleet-delta SKIP-PERSPECTIVE live proof recorded"
+        "sha": "871a75c",
+        "subject": "fleet-census(ci): artifact+delta 2026-10-03T19:51:25Z [skip ci]"
+      },
+      {
+        "sha": "0c3e196",
+        "subject": "lane books: Rung 16 census-delta run on the MERGED tree (rebase over lane B's wiring wave 528126f/b656827) — judge 41/0/0, evals 35/35 (E35 census-delta appended after their E33 flow-catch + E34 agent-registry; their 2 environment-bound FAILs healed here — the estate is intact on this tree), cross-layer 7 checks 6 PASS 1 DRIFT, census 16/16 caps=61 wiring=10/10, parse-gate GREEN 45 workflows 0 offenders, ONE-BLOC 16/16 tokenReach 14, canonical map self-healed TWICE (the CI-downgraded 1/16 book AND the sibling's estate-degraded /home/z/fleet book — both perspective flips refused by the PERSPECTIVE law with SKIP-PERSPECTIVE live proofs)"
       },
       {
         "sha": "7c880b9",
@@ -163,10 +167,6 @@
       {
         "sha": "004c7c3",
         "subject": "CR-0030 -> CR-0031 renumber (SIXTH collision, later-mover law): sibling 8e14c6b renumbered its reef Rung 4 to CR-0030 while this lane's fleet MCP host landing was in flight — this lane is the later mover, renumbers; git mv + id + renumber_note + references (feat-026, feat-023 evidence, PROBE-LANE) + host /health cr field updated live to CR-0031 (bun --hot); zero content changes"
-      },
-      {
-        "sha": "d82382f",
-        "subject": "CR-0030 (PASS, tier B): fleet Rung 8 — the fleet MCP host LANDED (the full-host item CR-0029 answered only hostless) — mini-services/mcp-host (bun :3041, bun --hot, own package.json) governing the codebase-memory-mcp engine; laws IN CODE: defense in depth (host analysis-profile belt = 13 read-only tools, faithful to engine registry mcp.c:914 + engine child spawned with --tool-profile braces + CBM_ALLOWED_ROOT), owner-gated config surfaces (install/uninstall never run), deny receipts (JSONL swe-guard pattern), fail-loud JSON-RPC, DO_NOT_TRACK=1; receipts: /health full payload · tools/list exactly 13 (write/admin quartet invisible) · initialize handshake · tools/call search_graph hit 'Class guard_env.py 61-104' (third independent pass on the same fact after R5 Graft + R7 cli) · amortization post-fix: cold 1.807s once then 7.5-8.6ms per call INCLUDING HTTP with zero re-spawns · deny battery 3/3 receipted (manage_adr; index_repository with /etc path never reached the engine; resources/list) · gateway path-preserving XTransformPort proven end-to-end (tools/call hit one-bloc.cjs:47 through :81) · bun --hot survived two live fixes; NEW LAWS: Bun Promise-truth gotcha (proc.exited always truthy -> spawned a child per call — liveness must be an explicit flag), per-stream buffer law (shared buffer interleaves engine stderr into JSON-RPC), stderr-drain law (undrained pipe can deadlock the child); BOOKKEEPING PASS: feat-023 hole closed (restored from CR-0023's own text, marked restored) — ledger contiguous feat-022..feat-026; feat-026; PROBE-LANE cmm row updated; full chain GREEN: gate 14/0 · evals 26/26 · judge 41/0/0 · ONE-BLOC 16/16 tokenReach 14 · DOMAIN-INIT-OK"
       }
     ]
   },
@@ -668,6 +668,22 @@
       "disposition": "ACCEPTED-TODAY"
     },
     {
+      "id": "CR-0044",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0044-sovereign-transfer.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "self (tier B desk landing; E35 fresh-process judge; live on-chain receipts order",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "obs:one-bloc-boundary",
+      "kind": "tier-c",
+      "source": "one-bloc.json",
+      "action": "restore cross-repo credential (operator, tier C) — 2/16 reached; the len-93 token is gone from remotes; restore.sh rebuild is the convergence leftover",
+      "receipt": "verdict DEGRADED · reached 2/16 · tokenReach 0",
+      "disposition": "DEFERRED-TIER-C"
+    },
+    {
       "id": "obs:hands",
       "kind": "observation",
       "source": "hands-book.json",
@@ -680,15 +696,15 @@
       "kind": "observation",
       "source": "evo-windows.json",
       "action": "carry the evolution-window cadence state into the record",
-      "receipt": "34 windows booked, none complete · next due 2026-10-04T12:45:05Z",
+      "receipt": "35 windows booked, none complete · next due 2026-10-04T12:45:05Z",
       "disposition": "BOOKED"
     }
   ],
   "counts": {
     "PROPOSED-CR": 6,
     "GATED-BLOCKED": 2,
-    "DEFERRED-TIER-C": 3,
-    "ACCEPTED-TODAY": 44,
+    "DEFERRED-TIER-C": 4,
+    "ACCEPTED-TODAY": 45,
     "ROLLED-BACK": 0,
     "BOOKED": 2
   },
@@ -701,7 +717,7 @@
     "joined": 7,
     "note": "fresh advisory triage joined by id — lane/urgency hints only, confidence uncalibrated (en checkpoint), dispositions untouched",
     "at": "2026-10-03T15:08:54Z",
-    "age_h": 4.7
+    "age_h": 4.8
   },
   "evoEvidence": {
     "mode": "CADENCE-ONLY",
