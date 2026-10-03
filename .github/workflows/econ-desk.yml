@@ -37,7 +37,7 @@ jobs:
           if git diff --cached --quiet; then echo "no book changes"; else
             for i in 1 2 3; do
               git pull --rebase origin main >/dev/null 2>&1 || true
-              git commit -m "econ-desk: real-economy book $(date -u +%Y-%m-%dT%H:%M:%SZ)" >/dev/null 2>&1 && break || sleep 5
+              git commit -m "econ-desk: real-economy book $(date -u +%Y-%m-%dT%H:%M:%SZ) [skip ci]" >/dev/null 2>&1 && break || sleep 5
             done
             for i in 1 2 3; do git push origin main >/dev/null 2>&1 && break || sleep 5; done
           fi

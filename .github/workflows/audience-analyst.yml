@@ -64,7 +64,7 @@ jobs:
             echo "digest unchanged"
             exit 0
           fi
-          git commit -m "audience: digest $(date -u +%Y-%m-%d) - $(node -e "const fs=require('fs');const f=fs.readdirSync('audience').filter(f=>f.startsWith('digest-2')).sort().pop();const d=JSON.parse(fs.readFileSync('audience/'+f,'utf8'));console.log(d.totals.postsMeasured+' posts · '+d.totals.externalVotes+' ext votes · '+d.totals.replies+' replies')")"
+          git commit -m "audience: digest $(date -u +%Y-%m-%d) - $(node -e "const fs=require('fs');const f=fs.readdirSync('audience').filter(f=>f.startsWith('digest-2')).sort().pop();const d=JSON.parse(fs.readFileSync('audience/'+f,'utf8'));console.log(d.totals.postsMeasured+' posts · '+d.totals.externalVotes+' ext votes · '+d.totals.replies+' replies')") [skip ci]"
           for attempt in 1 2 3; do
             git pull --rebase origin main && git push origin HEAD:main && { echo "digest published (attempt ${attempt})"; exit 0; }
             echo "push failed (attempt ${attempt})"

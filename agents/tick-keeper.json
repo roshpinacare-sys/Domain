@@ -1,6 +1,6 @@
 {
  "protocol": "SAOS-TICK-KEEPER/1",
- "at": "2026-10-03T21:53:13.174Z",
+ "at": "2026-10-03T21:58:51.868Z",
  "repo": "roshpinacare-sys/Domain",
  "stasis": false,
  "arc": {
@@ -11,7 +11,7 @@
   },
   "earn-audit-cron": {
    "receipt": "agents/earn-audit.json",
-   "last_ts": "2026-10-03T21:03:31.182Z",
+   "last_ts": "2026-10-03T21:55:45.550Z",
    "max_gap_min": 45
   },
   "fill-ledger-cron": {
@@ -22,31 +22,26 @@
  },
  "decided": [
   {
-   "desk": "earn-audit-cron",
-   "stale_min": 49.7,
-   "reason": "book stale 49.7m > 45m"
+   "desk": "sovereign-tick-cron",
+   "stale_min": 23.4,
+   "reason": "book stale 23.4m > 20m"
   }
  ],
- "dispatched": [
-  {
-   "desk": "earn-audit-cron",
-   "http_status": 404,
-   "ok": false,
-   "error": null
-  }
- ],
+ "dispatched": [],
  "skipped": [
   {
-   "desk": "sovereign-tick-cron",
-   "reason": "fresh 17.8m <= 20m"
+   "desk": "earn-audit-cron",
+   "reason": "cooldown: dispatched 5m ago < 20m"
   },
   {
    "desk": "fill-ledger-cron",
-   "reason": "fresh 0.6m <= 45m"
+   "reason": "fresh 6.3m <= 45m"
   }
  ],
- "errors": [],
- "duration_ms": 231,
+ "errors": [
+  "no token in env — stale desks NOT re-fired (fail-loud book)"
+ ],
+ "duration_ms": 2,
  "cooldown_book": {
   "earn-audit-cron": "2026-10-03T21:53:13.174Z"
  }

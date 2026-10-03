@@ -38,6 +38,18 @@ jobs:
     env:
       NODE_PATH: /tmp/steemjs/node_modules
     steps:
+      - name: STASIS gate (mechanical, FATE-DEFENSE law #1 — Z-71 deep-audit F7)
+        id: brake
+        run: |
+          if [ -f agents/STASIS.json ]; then
+            ST=$(node -p "JSON.parse(require('fs').readFileSync('agents/STASIS.json','utf8')).active===true")
+          else
+            ST=false
+          fi
+          echo "active=$ST" >> "$GITHUB_OUTPUT"
+          if [ "$ST" = "true" ]; then
+            echo "STASIS-HALT treasury-route · the breaker is active — capital lanes obey"
+          fi
       - name: checkout
         uses: actions/checkout@v4
         with:
@@ -107,7 +119,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "no ledger changes"
           else
-            git commit -m "treasury-route: capital book + router mirror · $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            git commit -m "treasury-route: capital book + router mirror · $(date -u +%Y-%m-%dT%H:%M:%SZ) [skip ci]"
             ok=0
             for i in 1 2 3; do
               if git pull --rebase origin main && git push origin HEAD:main; then ok=1; break; fi

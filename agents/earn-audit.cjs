@@ -57,7 +57,7 @@ const num = (s) => parseFloat(s) || 0;
 
 // ── pure tally (exported for E37) ────────────────────────────────────────────
 function freshTally() {
-  return { author_sbd: 0, author_steem: 0, author_vests: 0, curation_vests: 0, claimed_steem: 0, claimed_sbd: 0, claimed_vests: 0, drip_arrived_steem: 0, transfer_in_steem: 0, transfer_in_sbd: 0, transfer_out_steem: 0, sold_steem: 0, recv_sbd: 0, bought_steem: 0, spent_sbd: 0, fills: 0, votes: 0, posts: 0, converts_sbd: 0, ops: 0 };
+  return { author_sbd: 0, author_steem: 0, author_vests: 0, curation_vests: 0, claimed_steem: 0, claimed_sbd: 0, claimed_vests: 0, drip_arrived_steem: 0, transfer_in_steem: 0, transfer_in_sbd: 0, transfer_out_steem: 0, sold_steem: 0, recv_sbd: 0, bought_steem: 0, spent_sbd: 0, fills: 0, votes: 0, posts: 0, converts_sbd: 0, ops: 0, convert_maturities: [], convert_fills: [] }; // Z-71 CR-0050: the sensor keeps the maturity SCHEDULE, not just the SBD sum — the convert-canon composes its pending book from this memory
 }
 function tallyOp(t, op) {
   const [kind, b] = op;
@@ -66,7 +66,8 @@ function tallyOp(t, op) {
   else if (kind === 'curation_reward') t.curation_vests += num(b.reward);
   else if (kind === 'claim_reward_balance') { t.claimed_steem += num(b.reward_steem); t.claimed_sbd += num(b.reward_sbd); t.claimed_vests += num(b.reward_vesting_balance); }
   else if (kind === 'fill_vesting_withdraw') t.drip_arrived_steem += num(b.deposited);
-  else if (kind === 'convert') t.converts_sbd += num(b.amount);
+  else if (kind === 'convert') { t.converts_sbd += num(b.amount); t.convert_maturities.push({ requestid: b.requestid, amount_sbd: num(b.amount), conversion_date: b.conversion_date }); }
+  else if (kind === 'fill_convert_request') t.convert_fills.push({ requestid: b.requestid }); // the closure — the schedule needs it to know what is still pending
   else if (kind === 'transfer') {
     const incoming = b.to === b.__account;
     if (String(b.amount).endsWith('STEEM')) { if (incoming) t.transfer_in_steem += num(b.amount); else t.transfer_out_steem += num(b.amount); }
