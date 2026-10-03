@@ -1,0 +1,62 @@
+# EARN-AUDIT-CRON — THE FROM-NOTHING PROOF SURFACE (Z-68, CR-0046)
+#
+# Operator directive: "אל תסמוך על הטענות שלך נסה להגיע להישגים ולהוכיח ... זרימה"
+# — every claim about fleet income is now checked against THE CHAIN itself,
+# twice an hour, keyless (read-only account_history walks + feed/global props).
+#
+# Cadence law: :07/:37 sits off the whole org minute map (:00/:30 dex pulse,
+# :09/:39 twins, :12/:42 sovereign tick, :17/:47 fill-ledger, :23/:53 grid,
+# 02:11 census, 03:48 dex-grid, 16:20 treasury).
+
+name: earn-audit-cron
+
+on:
+  schedule:
+    - cron: '7,37 * * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: earn-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: earn audit (keyless chain-truth — direction-law tallies from account_history)
+        run: node agents/earn-audit.cjs
+
+      - name: publish proof (append-only, [skip ci], rebase-push twin idiom)
+        if: always()
+        continue-on-error: true
+        run: |
+          git config user.name "saos-earn-audit"
+          git config user.email "audit@saos.local"
+          git add agents/earn-audit.json agents/earn-audit.md
+          if git diff --cached --quiet; then
+            echo "no audit changes"
+          else
+            git commit -m "earn-audit: chain-truth income proof [skip ci]"
+            ok=0
+            for i in 1 2 3; do
+              if git pull --rebase origin main && git push origin HEAD:main; then ok=1; break; fi
+              echo "push attempt $i failed (concurrent commits on main) — re-pulling"
+              git rebase --abort 2>/dev/null || true
+              sleep 10
+            done
+            [ "$ok" = "1" ] && echo "audit proof pushed" || echo "audit landed locally; next tick re-attempts (fail-soft)"
+          fi
