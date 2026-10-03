@@ -33,6 +33,7 @@
  *   E22 ax lineage pin       — same strip-restore predicate for the google/ax Apache-2.0 mirror sha ac23328 (Task 31, agentic-orchestration lineage)
  *   E23 daily pulse          — typed proposals + real gates + verify-only, the loop closed under law (Z-49, CR-0009; renumbered from their interim E21 — strix E21 landed on main first in Task 29 and ax claimed E22 in Task 31, second-mover law, supersession visible here)
  *   E24 mini-swe lineage pin — same strip-restore predicate for the SWE-agent/mini-swe-agent MIT mirror sha 04d809c (Task 33, minimal-agent lineage)
+ *   E25 fcc lineage pin      — same strip-restore predicate for the Alishahryar1/free-claude-code AGPL-3.0-only mirror sha 03aca36 (Task 35, frugal-routing lineage, license verified in-file)
  *
  * Fail-soft: exit 0 always; FAILs are booked honestly (HARNESS-AUDIT MANDATE:
  * green-washing the evals is a doctrine breach).
@@ -471,10 +472,41 @@ function accumulateInMemory(bookRows, seed) {
       `strip-caught=${m1} restore-clean=${m2} sha=${slg4.MINI_SWE_MIRROR_SHA}`);
   } catch (e) { evalr('E24', 'mini-swe lineage pin', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
+  // ---- E25: fcc lineage pin (Task 35) — the E21/E22/E24 predicate, fourth proof.
+  // The AGPL-3.0-only attribution (Alishahryar1/free-claude-code, mirror sha
+  // 03aca36, license verified IN-FILE) must be mechanically retained: gate
+  // v1.4.0 refuses notices that lose the frugal-routing lineage sha.
+  try {
+    const slg5 = require(path.join(AG, 'skill-library-gate.cjs'));
+    const os5 = require('os');
+    const tmpRoot5 = fs.mkdtempSync(path.join(os5.tmpdir(), 'e25-fcc-'));
+    fs.mkdirSync(path.join(tmpRoot5, 'skills', 'legal-skill'), { recursive: true });
+    const legal5 = [
+      '---', 'name: legal-skill', 'description: "Use when the fleet must exercise this procedure end to end with receipts and a named artifact."', 'version: 1.0.0', 'license: MIT', '---', '',
+      '# legal-skill', '', '## When to use', '- trigger', '', '## Proactive Triggers', '- flag', '',
+      '## Output Artifacts', '| ask | get |', '|---|---|', '', '## Related Skills', '- other: Use when x. NOT for y.', '',
+      '## Evidence Artifact', '| Artifact | Path | Written by |', '|---|---|---|', '', '## Tier & Scope', 'Tier A; grants no scope.', ''
+    ].join('\n');
+    fs.writeFileSync(path.join(tmpRoot5, 'skills', 'legal-skill', 'SKILL.md'), legal5);
+    fs.copyFileSync(path.join(AG, 'skill-library', 'SKILL-AUTHORING-STANDARD.md'), path.join(tmpRoot5, 'SKILL-AUTHORING-STANDARD.md'));
+    const realNotices5 = fs.readFileSync(path.join(AG, 'skill-library', 'THIRD-PARTY-NOTICES.md'), 'utf8');
+    fs.writeFileSync(path.join(tmpRoot5, 'THIRD-PARTY-NOTICES.md'), realNotices5.split(slg5.FCC_MIRROR_SHA).join('PINSTRIPPED'));
+    const stripped5 = slg5.scanDir(tmpRoot5);
+    const f1 = stripped5.offenders.some((o) => o.skill === '(library)' && o.why.includes('free-claude-code mirror sha')); // strip caught
+    fs.writeFileSync(path.join(tmpRoot5, 'THIRD-PARTY-NOTICES.md'), realNotices5);
+    const restored5 = slg5.scanDir(tmpRoot5);
+    const f2 = !restored5.offenders.some((o) => o.skill === '(library)' && o.why.includes('free-claude-code mirror sha')); // restored clears
+    fs.rmSync(tmpRoot5, { recursive: true, force: true });
+    evalr('E25', 'fcc lineage pin: Alishahryar1/free-claude-code AGPL-3.0-only attribution mechanically retained (gate v1.4.0)',
+      f1 && f2,
+      ['white-box: stripping the fcc sha 03aca36 from a notices copy yields a (library) offender naming the free-claude-code mirror sha', 'white-box: with the real notices restored, the fcc-sha offender is absent', 'the gate export exposes FCC_MIRROR_SHA so the pin is a code fact, not a doc hope'],
+      `strip-caught=${f1} restore-clean=${f2} sha=${slg5.FCC_MIRROR_SHA}`);
+  } catch (e) { evalr('E25', 'fcc lineage pin', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
 
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.13.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.14.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];

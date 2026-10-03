@@ -29,6 +29,10 @@
  * v1.3.0 (Task 33): fourth lineage pin — the notices must retain the
  *          SWE-agent/mini-swe-agent MIT mirror sha 04d809c (minimal-agent
  *          doctrine lineage, Task 33 evaluation → same-wave adoption).
+ * v1.4.0 (Task 35): fifth lineage pin — the notices must retain the
+ *          Alishahryar1/free-claude-code AGPL-3.0-only mirror sha 03aca36
+ *          (frugal-routing doctrine lineage, license verified IN-FILE; first
+ *          non-permissive pin: it certifies STUDY PROVENANCE, zero-copy only).
  * Books: agents/skill-library.json + agents/skill-library.md (single writer: this gate).
  * Zero dependencies. require()-safe: scanDir runs only under require.main === module CLI.
  */
@@ -45,6 +49,7 @@ const MIRROR_SHA = '19392f7a';
 const STRIX_MIRROR_SHA = '99c0711';
 const AX_MIRROR_SHA = 'ac23328';
 const MINI_SWE_MIRROR_SHA = '04d809c';
+const FCC_MIRROR_SHA = '03aca36';
 
 function parseFrontmatter(text) {
   const m = /^\uFEFF?---\r?\n([\s\S]*?)\r?\n---\r?\n/.exec(text);
@@ -98,6 +103,8 @@ function scanDir(root) {
     if (!notices.includes(STRIX_MIRROR_SHA)) offenders.push({ skill: '(library)', why: `notices do not pin the strix mirror sha ${STRIX_MIRROR_SHA} (Apache-2.0 lineage, Task 29)` });
     if (!notices.includes(AX_MIRROR_SHA)) offenders.push({ skill: '(library)', why: `notices do not pin the ax mirror sha ${AX_MIRROR_SHA} (Apache-2.0 lineage, Task 31)` });
     if (!notices.includes(MINI_SWE_MIRROR_SHA)) offenders.push({ skill: '(library)', why: `notices do not pin the mini-swe mirror sha ${MINI_SWE_MIRROR_SHA} (MIT lineage, Task 33)` });
+    if (!notices.includes(FCC_MIRROR_SHA)) offenders.push({ skill: '(library)', why: `notices do not pin the free-claude-code mirror sha ${FCC_MIRROR_SHA} (AGPL-3.0-only lineage verified in-file, Task 35)` });
+    if (!notices.includes('AGPL-3.0')) offenders.push({ skill: '(library)', why: 'notices lack the AGPL-3.0 license reference (free-claude-code lineage, Task 35)' });
     if (!notices.includes('Apache-2.0')) offenders.push({ skill: '(library)', why: 'notices lack the Apache-2.0 license reference (strix + ax lineage)' });
   }
 
@@ -122,14 +129,14 @@ function writeBooks(root, res, at) {
   const AG = path.dirname(__filename);
   const jsonPath = path.join(AG, 'skill-library.json');
   const mdPath = path.join(AG, 'skill-library.md');
-  const book = { ok: res.ok, at, gate: 'skill-library-gate.cjs v1.3.0 (Task 27+29+31+33, study: alirezarezvani/claude-skills MIT sha 19392f7a + usestrix/strix Apache-2.0 sha 99c0711 + google/ax Apache-2.0 sha ac23328 + SWE-agent/mini-swe-agent MIT sha 04d809c)', scanned: res.scanned, skills: res.skills, offenders: res.offenders };
+  const book = { ok: res.ok, at, gate: 'skill-library-gate.cjs v1.4.0 (Task 27+29+31+33+35, study: alirezarezvani/claude-skills MIT sha 19392f7a + usestrix/strix Apache-2.0 sha 99c0711 + google/ax Apache-2.0 sha ac23328 + SWE-agent/mini-swe-agent MIT sha 04d809c + Alishahryar1/free-claude-code AGPL-3.0-only sha 03aca36 zero-copy study)', scanned: res.scanned, skills: res.skills, offenders: res.offenders };
   fs.writeFileSync(jsonPath, JSON.stringify(book, null, 2) + '\n');
   const md = [];
-  md.push('# skill-library gate — role expertise as governed portable data (Task 27+29+31+33)');
+  md.push('# skill-library gate — role expertise as governed portable data (Task 27+29+31+33+35)');
   md.push('');
   md.push(`**verdict: ${res.ok ? 'GREEN' : 'RED'}** · ${res.scanned} packages · ${res.offenders.length} offenders · ${at}`);
   md.push('');
-  md.push('_Authoring standard adapted from alirezarezvani/claude-skills (MIT, mirror sha 19392f7a); security lineage: usestrix/strix (Apache-2.0, mirror sha 99c0711, Task 29); orchestration lineage: google/ax (Apache-2.0, mirror sha ac23328, Task 31); minimal-agent lineage: SWE-agent/mini-swe-agent (MIT, mirror sha 04d809c, Task 33). House-hardened: Evidence Artifact mandatory (ANTI-GOODHART), tier declaration, no silent scope. Provenance: skill-library/THIRD-PARTY-NOTICES.md_');
+  md.push('_Authoring standard adapted from alirezarezvani/claude-skills (MIT, mirror sha 19392f7a); security lineage: usestrix/strix (Apache-2.0, mirror sha 99c0711, Task 29); orchestration lineage: google/ax (Apache-2.0, mirror sha ac23328, Task 31); minimal-agent lineage: SWE-agent/mini-swe-agent (MIT, mirror sha 04d809c, Task 33); frugal-routing lineage: Alishahryar1/free-claude-code (AGPL-3.0-only verified in-file, mirror sha 03aca36, Task 35 — study provenance, zero-copy). House-hardened: Evidence Artifact mandatory (ANTI-GOODHART), tier declaration, no silent scope. Provenance: skill-library/THIRD-PARTY-NOTICES.md_');
   md.push('');
   md.push('| package | verdict |');
   md.push('|---|---|');
@@ -143,7 +150,7 @@ function writeBooks(root, res, at) {
   return book;
 }
 
-module.exports = { scanDir, parseFrontmatter, checkSkill, BARE_BUILTINS, MIRROR_SHA, STRIX_MIRROR_SHA, AX_MIRROR_SHA, MINI_SWE_MIRROR_SHA };
+module.exports = { scanDir, parseFrontmatter, checkSkill, BARE_BUILTINS, MIRROR_SHA, STRIX_MIRROR_SHA, AX_MIRROR_SHA, MINI_SWE_MIRROR_SHA, FCC_MIRROR_SHA };
 
 if (require.main === module) {
   const AG = path.dirname(__filename);
