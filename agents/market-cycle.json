@@ -1,0 +1,88 @@
+[
+  {
+    "ts": "2026-10-03T18:38:29.430Z",
+    "mode": "DRY",
+    "skip_fetch": false,
+    "fill_ledger": {
+      "script": "fill-ledger.cjs",
+      "status": 0,
+      "error": null,
+      "stdout_tail": "[fill-ledger] mode=READ-ONLY new=0 total=0 realized_sbd=0.000000 recycle=FUNDED-SELL-SIDE 1.581 STEEM errors=0 in 2649ms | [fill-ledger] canon: agents/fill-ledger.json (run #2)",
+      "stderr_tail": ""
+    },
+    "suggestion": {
+      "suggested": true,
+      "reasons": [
+        "FUNDED-SELL-SIDE 1.581 STEEM"
+      ]
+    },
+    "decision": {
+      "executorMode": "DRY",
+      "reason": "MODE-DRY: planning receipt only, zero signatures"
+    },
+    "executor": {
+      "script": "market-exec.cjs",
+      "status": 0,
+      "error": null,
+      "stdout_tail": "[market-exec] mode=DRY_RUN planned=1 skipped=5 errors=0 verify=0/0 in 2021ms | [market-exec] canon: agents/market-exec.json (run #9)",
+      "stderr_tail": ""
+    },
+    "errors": [],
+    "run_index": 1,
+    "fill_ledger_row": {
+      "run_index": 2,
+      "new_fills": 0,
+      "realized_sbd": 0,
+      "recycle": {
+        "suggested": true,
+        "reasons": [
+          "FUNDED-SELL-SIDE 1.581 STEEM"
+        ]
+      }
+    },
+    "duration_ms": 4751
+  },
+  {
+    "ts": "2026-10-03T18:41:25.683Z",
+    "mode": "LIVE",
+    "skip_fetch": false,
+    "fill_ledger": {
+      "script": "fill-ledger.cjs",
+      "status": 0,
+      "error": null,
+      "stdout_tail": "[fill-ledger] mode=READ-ONLY new=0 total=0 realized_sbd=0.000000 recycle=FUNDED-SELL-SIDE 1.581 STEEM errors=0 in 2722ms | [fill-ledger] canon: agents/fill-ledger.json (run #3)",
+      "stderr_tail": ""
+    },
+    "suggestion": {
+      "suggested": true,
+      "reasons": [
+        "FUNDED-SELL-SIDE 1.581 STEEM"
+      ]
+    },
+    "decision": {
+      "executorMode": "LIVE",
+      "reason": "RECYCLE-SUGGESTED: FUNDED-SELL-SIDE 1.581 STEEM"
+    },
+    "executor": {
+      "script": "market-exec.cjs",
+      "status": 0,
+      "error": null,
+      "stdout_tail": "[market-exec] mode=LIVE planned=1 skipped=5 errors=0 verify=1/1 in 5607ms | [market-exec] canon: agents/market-exec.json (run #10)",
+      "stderr_tail": ""
+    },
+    "errors": [],
+    "run_index": 2,
+    "fill_ledger_row": {
+      "run_index": 3,
+      "new_fills": 0,
+      "realized_sbd": 0,
+      "recycle": {
+        "suggested": true,
+        "reasons": [
+          "FUNDED-SELL-SIDE 1.581 STEEM"
+        ]
+      }
+    },
+    "duration_ms": 8406
+  }
+]

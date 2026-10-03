@@ -14,6 +14,7 @@
  *   E3 venture fail-soft    — a desk must never break CI when the oracle is unreachable
  *   E4 audit fail-soft      — the judge node itself must survive a missing canon
  *   E28/E29 lineage         — the sibling's planner evals and this lane's STASIS/cadence evals share the suite
+ *   E30 fill-ledger + market-cycle — the internal-market measurement leg: fill_order direction law (ours-as-OPEN sells open_pays / ours-as-CURRENT sells current_pays, foreign → null, unclassified booked), µ-unit average-cost P&L exact by hand-check, dedupe keying, recycle thresholds, cycle decision law, fresh-process eval-context black-box with zero network (Z-64, CR-0039)
  *   E5 concat-family        — string manabar + number = giant (third-time incident family)
  *   E6 stamp hygiene        — a book without a timestamp can never count as fresh
  *   E7 guard deny/allow     — destructive commands DENY, the fleet's rebase law stays ALLOW (Z-38)
@@ -686,10 +687,81 @@ function accumulateInMemory(bookRows, seed) {
       why29.length ? 'fails: ' + why29.join('; ') : 'brake proven in a fresh process; the cadence is wired (CR-0038)');
   } catch (e) { evalr('E29', 'market-grid STASIS/cadence', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
+  // ---- E30: fill-ledger + market-cycle (Z-64, CR-0039) — the fill measurement leg:
+  // direction law, µ-unit average-cost P&L, dedupe, recycle suggestion, cycle decision.
+  // White-box pure functions + black-box fresh-process eval-context runs (zero network).
+  try {
+    const fl = require(path.join(AG, 'fill-ledger.cjs'));
+    const mc = require(path.join(AG, 'market-cycle.cjs'));
+    let ok30 = true; const why30 = [];
+    // asset-form tolerance (law 3): string + NAI + unknown symbol
+    const a1 = fl.assetInfo('0.121 SBD'), a2 = fl.assetInfo({ amount: '2510', precision: 3, nai: fl.NAI.STEEM }), a3 = fl.assetInfo('1.0 BTC'), a4 = fl.assetInfo('garbage');
+    if (!(a1 && a1.sym === 'SBD' && a1.micro === 121000 && a2 && a2.sym === 'STEEM' && a2.micro === 2510000 && a3 === null && a4 === null)) { ok30 = false; why30.push('assetInfo'); }
+    // direction law (law 2): ours-as-OPEN sells open_pays; ours-as-CURRENT sells current_pays
+    const sOpen = fl.parseFill({ open_owner: 'headcorner', open_orderid: 7, open_pays: '1.500 STEEM', current_owner: 'btsx', current_orderid: 9, current_pays: '0.157 SBD' });
+    const bCur = fl.parseFill({ open_owner: 'btsx', open_orderid: 9, open_pays: '2.510 STEEM', current_owner: 'headcorner', current_orderid: 7, current_pays: '0.250 SBD' });
+    const foreign = fl.parseFill({ open_owner: 'x', open_orderid: 1, open_pays: '1.000 STEEM', current_owner: 'y', current_orderid: 2, current_pays: '0.100 SBD' });
+    const unclass = fl.parseFill({ open_owner: 'headcorner', open_orderid: 7, open_pays: '1.000 STEEM', current_owner: 'y', current_orderid: 2, current_pays: '1.000 STEEM' });
+    if (!(sOpen && sOpen.leg === 'SELL' && sOpen.sold.sym === 'STEEM' && sOpen.recv.sym === 'SBD' && sOpen.price === 0.104667)) { ok30 = false; why30.push('dir-OPEN'); }
+    if (!(bCur && bCur.leg === 'BUY' && bCur.sold.sym === 'SBD' && bCur.recv.sym === 'STEEM' && Math.abs(bCur.price - 0.099602) < 1e-6)) { ok30 = false; why30.push('dir-CURRENT'); }
+    if (foreign !== null) { ok30 = false; why30.push('foreign-not-null'); }
+    if (!(unclass && unclass.leg === null && /UNCLASSIFIED/.test(unclass.reason))) { ok30 = false; why30.push('unclassified'); }
+    // µ-unit average-cost arithmetic (law 4): hand-computed, exact
+    let inv = { qty: 0, cost: 0, realized: 0, n_fills: 0, n_unclassified: 0 };
+    inv = fl.applyFill(inv, { leg: 'BUY', sold: { sym: 'SBD', micro: 200000 }, recv: { sym: 'STEEM', micro: 2000000 } });   // 2.0 STEEM @ 0.100
+    inv = fl.applyFill(inv, { leg: 'BUY', sold: { sym: 'SBD', micro: 105000 }, recv: { sym: 'STEEM', micro: 1000000 } });   // 1.0 STEEM @ 0.105 → avg 0.101667
+    inv = fl.applyFill(inv, { leg: 'SELL', sold: { sym: 'STEEM', micro: 1500000 }, recv: { sym: 'SBD', micro: 157500 } });  // 1.5 STEEM @ 0.105 → +0.005
+    inv = fl.applyFill(inv, { leg: 'SELL', sold: { sym: 'STEEM', micro: 1500000 }, recv: { sym: 'SBD', micro: 150000 } });  // 1.5 STEEM @ 0.100 → −0.0025
+    if (!(inv.qty === 0 && inv.cost === 0 && Math.abs(inv.realized - 2500) <= 2 && inv.n_unclassified === 0)) { ok30 = false; why30.push('pnl realized=' + inv.realized); }
+    // over-inventory sell guard: never guessed into P&L
+    const invOver = fl.applyFill({ qty: 0, cost: 0, realized: 0, n_fills: 0, n_unclassified: 0 }, { leg: 'SELL', sold: { sym: 'STEEM', micro: 1000000 }, recv: { sym: 'SBD', micro: 105000 } });
+    if (!(invOver.n_unclassified === 1 && invOver.realized === 0)) { ok30 = false; why30.push('over-inv-guard'); }
+    // dedupe keying: stable + distinct
+    const fr = { seq: 5, block: 110123300, timestamp: '2026-10-03T18:20:00Z', leg_parsed: sOpen };
+    const fr2 = { seq: 6, block: 110123300, timestamp: '2026-10-03T18:20:00Z', leg_parsed: sOpen };
+    if (!(fl.dedupeKey(fr) === fl.dedupeKey({ ...fr }) && fl.dedupeKey(fr) !== fl.dedupeKey(fr2))) { ok30 = false; why30.push('dedupeKey'); }
+    // recycle suggestion thresholds
+    const rNone = fl.recycleSuggestion({ liquidSteem: '0.1', liquidSbd: '0.0', fillsNew: 0 });
+    const rSell = fl.recycleSuggestion({ liquidSteem: '1.581', liquidSbd: '0.0', fillsNew: 0 });
+    const rBuy = fl.recycleSuggestion({ liquidSteem: '0.0', liquidSbd: '0.30', fillsNew: 2 });
+    if (!(rNone.suggested === false && rNone.reasons[0] === 'NO-FUNDS')) { ok30 = false; why30.push('recycle-none'); }
+    if (!(rSell.suggested === true && rSell.reasons.some((r) => /FUNDED-SELL-SIDE/.test(r)))) { ok30 = false; why30.push('recycle-sell'); }
+    if (!(rBuy.suggested === true && rBuy.reasons.some((r) => /FUNDED-BUY-SIDE/.test(r)) && rBuy.reasons.some((r) => r === 'FILLS-2'))) { ok30 = false; why30.push('recycle-buy'); }
+    // cycle decision law: eval-skip / DRY / LIVE-armed / LIVE-declined
+    const d1 = mc.decideCycle({ suggestion: rSell, mode: 'DRY', skipFetch: true });
+    const d2 = mc.decideCycle({ suggestion: rSell, mode: 'DRY', skipFetch: false });
+    const d3 = mc.decideCycle({ suggestion: rSell, mode: 'LIVE', skipFetch: false });
+    const d4 = mc.decideCycle({ suggestion: rNone, mode: 'LIVE', skipFetch: false });
+    if (!(d1.executorMode === 'SKIP' && /EVAL-CONTEXT/.test(d1.reason))) { ok30 = false; why30.push('decide-skip'); }
+    if (d2.executorMode !== 'DRY') { ok30 = false; why30.push('decide-dry'); }
+    if (d3.executorMode !== 'LIVE') { ok30 = false; why30.push('decide-live'); }
+    if (!(d4.executorMode === 'SKIP' && /NO-RECYCLE/.test(d4.reason))) { ok30 = false; why30.push('decide-decline'); }
+    // black-box: fresh-process eval-context runs, zero network (CR-0033 CI-safety law)
+    const os = require('os');
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'e30-'));
+    const env = {
+      FILL_LEDGER_JSON: path.join(tmp, 'fl.json'), FILL_LEDGER_FILLS: path.join(tmp, 'fl.jsonl'),
+      MARKET_CYCLE_JSON: path.join(tmp, 'mc.json'), FILL_LEDGER_SKIP_FETCH: '1', MARKET_CYCLE_SKIP_FETCH: '1',
+    };
+    const p1 = spawnSync(process.execPath, [path.join(AG, 'fill-ledger.cjs')], { env, encoding: 'utf8', timeout: 30000 });
+    let bb1 = p1.status === 0;
+    try { const j = JSON.parse(fs.readFileSync(env.FILL_LEDGER_JSON, 'utf8')); const r = (j.rows || j)[0]; bb1 = bb1 && r && /SKIPPED-EVAL-CONTEXT/.test(r.skipped || '') && r.mode === 'READ-ONLY' && r.errors.length === 0; } catch (_) { bb1 = false; }
+    if (!bb1) { ok30 = false; why30.push('black-box-fill-ledger'); }
+    const p2 = spawnSync(process.execPath, [path.join(AG, 'market-cycle.cjs')], { env, encoding: 'utf8', timeout: 30000 });
+    let bb2 = p2.status === 0;
+    try { const j = JSON.parse(fs.readFileSync(env.MARKET_CYCLE_JSON, 'utf8')); const r = (j.rows || j)[0]; bb2 = bb2 && r && r.decision && r.decision.executorMode === 'SKIP' && r.executor && !!r.executor.skipped && r.errors.length === 0; } catch (_) { bb2 = false; }
+    if (!bb2) { ok30 = false; why30.push('black-box-cycle'); }
+    evalr('E30', 'fill-ledger + market-cycle: direction law, µ-unit average-cost P&L, dedupe, recycle thresholds, cycle decision, eval-context black-box',
+      ok30,
+      ['white-box: asset-form tolerance — string and NAI assets resolve by nai/symbol, unknown → null (never by position)', 'white-box: direction law — ours-as-OPEN sells open_pays, ours-as-CURRENT sells current_pays; foreign fill → null; unclassified pair booked, never guessed', 'white-box: µ-unit average-cost arithmetic exact — 2 buys @ 0.100/0.105 then 2 sells @ 0.105/0.100 realize +0.0025 SBD (±2 µSBD); over-inventory sell blocked', 'white-box: dedupeKey stable per fill, distinct across fills', 'white-box: recycle thresholds — NO-FUNDS / FUNDED-SELL-SIDE ≥ 0.5 STEEM / FUNDED-BUY-SIDE ≥ 0.25 SBD / FILLS-N', 'white-box: decideCycle — eval-skip SKIP · DRY mode DRY · LIVE+suggested LIVE · LIVE+declined SKIP', 'black-box: fresh-process fill-ledger + market-cycle in eval-context book honest rows with zero network'],
+      why30.length ? 'fails: ' + why30.join('; ') : 'measurement leg pure+process-verified; live wire receipt: fill-ledger run #1 (0 fills honest, recycle FUNDED-SELL-SIDE 1.581 STEEM), cycle LIVE run #2 composed executor run #10 broadcast 1/1 orderid 1791052891 readback-matched');
+  } catch (e) { evalr('E30', 'fill-ledger + market-cycle', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
+
 
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.17.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.18.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];

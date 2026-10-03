@@ -1,8 +1,8 @@
 # Desk Evals — runnable expectations (fresh-process judge, Z-36)
 
-_run-evals v1.17.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29, parallel-convergence superset) · 2026-10-03T18:39:41.495Z_
+_run-evals v1.18.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30, parallel-convergence superset) · 2026-10-03T18:46:25.576Z_
 
-**evals green: 29/29 expectations hold**
+**evals green: 30/30 expectations hold**
 
 ## E1 · dedupe identity is stable across repeat harvest — PASS
 - seed(3) + econ rows carrying the same two fills → exactly 3 entries
@@ -23,7 +23,7 @@ _run-evals v1.17.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - exit code 0 even when DEFU_DIR is bogus
 - missing canon = honest FAILs, never a crash, never green-washed
 - counts arithmetic consistent (pass+warn+fail == checks)
-- _measured: exit=0 pass=31 warn=0 fail=10_
+- _measured: exit=0 pass=30 warn=1 fail=10_
 
 ## E5 · concat-family regression: manabar coerced before arithmetic — PASS
 - string+number concatenates ("74488519347811969") — the Z-33 third-incident family
@@ -117,7 +117,7 @@ _run-evals v1.17.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - black-box: fresh-process desk exits 0 (fail-soft), ≥5 hands booked, ≥2 LIVE in any healthy context
 - every LIVE hand carries evidence+probeAt — a capability claimed without a receipt is a story
 - verdict enum closed (LIVE/ABSENT/UNREACHABLE/REF/LOCKED-TIER-C) — no hopeful greens possible
-- _measured: hands=6 live=4 receipted=true at=2026-10-03T18:39:39.143Z_
+- _measured: hands=6 live=4 receipted=true at=2026-10-03T18:46:14.012Z_
 
 ## E20 · skill-library gate: expertise as governed data with a mandatory Evidence Artifact — PASS
 - white-box: the predicate flags a bare built-in name (help), a missing Evidence Artifact section, and short/no-trigger descriptions — and PASSES the legal package
@@ -133,7 +133,7 @@ _run-evals v1.17.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - gates: in the eval-harness context the recursion guard skips gates and marks it HONESTLY (no faked verdicts); real gate runs are proven standalone and pinned by the judge check
 - laws: verifyOnly=true, autoApply=false — the pulse never overrides the CR law
 - book fresh (<30min)
-- _measured: proposals=53 w1=true guard=true verifyOnly=true enum=true evoEvidence=CADENCE-ONLY_
+- _measured: proposals=54 w1=true guard=true verifyOnly=true enum=true evoEvidence=CADENCE-ONLY_
 
 ## E21 · strix lineage pin: Apache-2.0 attribution mechanically retained (gate v1.1.0) — PASS
 - white-box: stripping the strix sha 99c0711 from a notices copy yields a (library) offender naming the strix mirror sha
@@ -187,5 +187,15 @@ _run-evals v1.17.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - workflow market-grid-cron.yml: 30-min offset cadence 23,53, STASIS gate before the tick, keyless desk invocation, append-only publish with [skip ci], concurrency guard
 - YAML parseability + the broken-idiom predicate (E16 lineage) holds line-by-line
 - _measured: brake proven in a fresh process; the cadence is wired (CR-0038)_
+
+## E30 · fill-ledger + market-cycle: direction law, µ-unit average-cost P&L, dedupe, recycle thresholds, cycle decision, eval-context black-box — PASS
+- white-box: asset-form tolerance — string and NAI assets resolve by nai/symbol, unknown → null (never by position)
+- white-box: direction law — ours-as-OPEN sells open_pays, ours-as-CURRENT sells current_pays; foreign fill → null; unclassified pair booked, never guessed
+- white-box: µ-unit average-cost arithmetic exact — 2 buys @ 0.100/0.105 then 2 sells @ 0.105/0.100 realize +0.0025 SBD (±2 µSBD); over-inventory sell blocked
+- white-box: dedupeKey stable per fill, distinct across fills
+- white-box: recycle thresholds — NO-FUNDS / FUNDED-SELL-SIDE ≥ 0.5 STEEM / FUNDED-BUY-SIDE ≥ 0.25 SBD / FILLS-N
+- white-box: decideCycle — eval-skip SKIP · DRY mode DRY · LIVE+suggested LIVE · LIVE+declined SKIP
+- black-box: fresh-process fill-ledger + market-cycle in eval-context book honest rows with zero network
+- _measured: measurement leg pure+process-verified; live wire receipt: fill-ledger run #1 (0 fills honest, recycle FUNDED-SELL-SIDE 1.581 STEEM), cycle LIVE run #2 composed executor run #10 broadcast 1/1 orderid 1791052891 readback-matched_
 
 _Eval discipline adopted from learn-harness-engineering (Z-36): an eval is a runnable expectation, not a hope. Pure functions = white-box; desk processes = black-box fresh processes._
