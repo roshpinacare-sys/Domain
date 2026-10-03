@@ -162,6 +162,45 @@ MIT license requires (retain the license + copyright notice).
   reproduce) the referenced patterns; this notice is the required MIT
   attribution and change-state declaration.
 
+## 7. vercel-labs/openreview (Task 34 evaluation → consult-only reference)
+
+- **Source:** https://github.com/vercel-labs/openreview — "An open-source,
+  self-hosted AI code review bot powered by Vercel." 1,697 stars, TypeScript.
+- **License status (honesty finding, second occurrence of the Task 32
+  pattern):** the upstream README states "## License — MIT", but NO LICENSE
+  file exists in the repository (repo API reports license: null) at mirror
+  sha `672deb2` (HEAD 2026-03-06, full sha
+  `672deb21e70e471e0536d5ad7a67c14b8359e97e`). Unbacked MIT claim → the
+  repository is treated as **ALL RIGHTS RESERVED** → consult-only,
+  zero-copy.
+- **Mirror:** shallow clone at `/home/z/reference-mirrors/openreview`
+  (outside the 16-repo estate on purpose: the mirror is reference, not
+  fleet). Depth-50 clone of HEAD 2026-03-06 — the repo has been DORMANT for
+  seven months and its README declares beta ("built as an internal project
+  to help the Vercel team test their technologies together").
+- **Author (upstream):** Vercel Labs and openreview contributors.
+- **What was adopted:** NOTHING was copied — no upstream code, configs,
+  prompts, README bodies, or text. The house package
+  `skills/ai-review-operator/` references only the PATTERN SHAPES (ideas),
+  restated originally: the authority pre-flight before any push (archived /
+  installation-permissions / branch-restrictions checks, each refusal with a
+  named reason), reviewer-only separation of powers (suggestions applied by
+  human reaction, 👍/❤️ vs 👎/😕), the autonomy gradient (auto-push for
+  mechanical fixes only, judgment-shaped findings as suggestions), on-demand
+  @mention triggers, the uncommitted-changes honesty check before
+  commit-and-push, progressive skill loading (names + descriptions as the
+  routing surface, full body loaded on demand), and the per-skill
+  `skills-lock.json` hash pattern (skills as pinned dependencies).
+- **Why no gate pin (unlike sections 3, 4, and 6):** pins exist because
+  license attribution is REQUIRED for adopted material from licensed
+  sources. Here the license claim is unbacked and nothing is copied, so no
+  attribution obligation exists; the consult-only posture and the
+  LICENSE-missing finding are documented here instead. If upstream ships a
+  real LICENSE file, this section is updated and a pin may be added.
+- **State of changes:** consult-only, zero-copy; this notice documents
+  provenance and the license-mismatch finding, and is the standing
+  re-verification trigger.
+
 ## MIT License (reference text)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software
