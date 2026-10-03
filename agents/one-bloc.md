@@ -2,13 +2,13 @@
 
 _one-bloc v1.0.1 (Task 23 convergence — owner directive "מקשה אחת"; binds BLOC-STATE + SOVEREIGN-INDEX + FATE-DEFENSE into one machine map; keyless-first + env-token fallback, stderr redacted)_
 
-Measured: **2026-10-03T22:42:16.526Z** · Verdict: **DEGRADED** · REACHED 2/16 (keyless 2 + token 0) · AUTH-WALL 14 · UNKNOWN 0 · local-sync 0/16
+Measured: **2026-10-03T23:51:05.175Z** · Verdict: **DEGRADED** · REACHED 2/16 (keyless 2 + token 0) · AUTH-WALL 14 · UNKNOWN 0 · local-sync 1/16
 
 | ריפו | תפקיד | origin/main | מצב | דרך | סנכרון-מקומי |
 |---|---|---|---|---|---|
 | saos-sovereign-platform | המוח הריבוני — צבא מגייס-עצמו וסולם כלכלת-אמת | `—` | AUTH-WALL | — | UNKNOWN-ORIGIN |
 | steem | המפתחות הקנוניים + הזרוע החיה על-השרשרת | `—` | AUTH-WALL | — | UNKNOWN-ORIGIN |
-| Domain | הפנים הציבוריות + רכזת ה-CI האורגנית | `5be3d3e0e413` | REACHED | keyless | BEHIND |
+| Domain | הפנים הציבוריות + רכזת ה-CI האורגנית | `62f2f550109c` | REACHED | keyless | SYNCED |
 | Console | מרכז-ההפעלה — אמת נמדדת פעם-אחת | `aac258a62587` | REACHED | keyless | BEHIND |
 | Zip | המחסן החתום — עוגני אמת על שרשרת-אפו | `—` | AUTH-WALL | — | UNKNOWN-ORIGIN |
 | roshpina | הגרעין + מבקר השליטה העצמית | `—` | AUTH-WALL | — | UNKNOWN-ORIGIN |

@@ -1,15 +1,12 @@
-# Scheduled evolution windows — 2026-10-03T22:42:31Z
+# Scheduled evolution windows — 2026-10-03T23:51:20Z
 
 CR-0033: the CR-0030 GEPA-class harness evolution runs on a pulled cadence (no daemon); outcomes land here as evidence the pulse carries (verify-only: adoption via judged CR).
 
 - **decision this invocation:** SKIPPED-EVAL-CONTEXT — EVO_WINDOWS_SKIP_RUN=1 — the measured batch is off-budget in eval/CI contexts (the CR-0030 CI law, mirrored upstream of the spawn)
-- **cadence:** 20h · **next due:** 2026-10-04T12:45:05Z · **windows:** 55 (0 complete)
+- **cadence:** 20h · **next due:** 2026-10-04T12:45:05Z · **windows:** 58 (0 complete)
 
 | at | mode | status | detail |
 |---|---|---|---|
-| 2026-10-03T19:56:09Z | — | SKIPPED-EVAL-CONTEXT | EVO_WINDOWS_SKIP_RUN=1 — the measured batch is off-budget in eval/CI contexts (the CR-0030 CI law, mirrored up |
-| 2026-10-03T20:14:55Z | — | SKIPPED-EVAL-CONTEXT | EVO_WINDOWS_SKIP_RUN=1 — the measured batch is off-budget in eval/CI contexts (the CR-0030 CI law, mirrored up |
-| 2026-10-03T20:15:33Z | — | SKIPPED-EVAL-CONTEXT | EVO_WINDOWS_SKIP_RUN=1 — the measured batch is off-budget in eval/CI contexts (the CR-0030 CI law, mirrored up |
 | 2026-10-03T20:17:18Z | — | SKIPPED-EVAL-CONTEXT | EVO_WINDOWS_SKIP_RUN=1 — the measured batch is off-budget in eval/CI contexts (the CR-0030 CI law, mirrored up |
 | 2026-10-03T20:59:46Z | — | SKIPPED-EVAL-CONTEXT | EVO_WINDOWS_SKIP_RUN=1 — the measured batch is off-budget in eval/CI contexts (the CR-0030 CI law, mirrored up |
 | 2026-10-03T21:00:49Z | — | SKIPPED-EVAL-CONTEXT | EVO_WINDOWS_SKIP_RUN=1 — the measured batch is off-budget in eval/CI contexts (the CR-0030 CI law, mirrored up |
@@ -27,3 +24,6 @@ CR-0033: the CR-0030 GEPA-class harness evolution runs on a pulled cadence (no d
 | 2026-10-03T22:33:14Z | — | SKIPPED-EVAL-CONTEXT | EVO_WINDOWS_SKIP_RUN=1 — the measured batch is off-budget in eval/CI contexts (the CR-0030 CI law, mirrored up |
 | 2026-10-03T22:35:04Z | — | SKIPPED-EVAL-CONTEXT | EVO_WINDOWS_SKIP_RUN=1 — the measured batch is off-budget in eval/CI contexts (the CR-0030 CI law, mirrored up |
 | 2026-10-03T22:42:31Z | — | SKIPPED-EVAL-CONTEXT | EVO_WINDOWS_SKIP_RUN=1 — the measured batch is off-budget in eval/CI contexts (the CR-0030 CI law, mirrored up |
+| 2026-10-03T23:49:41Z | — | SKIPPED-EVAL-CONTEXT | EVO_WINDOWS_SKIP_RUN=1 — the measured batch is off-budget in eval/CI contexts (the CR-0030 CI law, mirrored up |
+| 2026-10-03T23:50:21Z | — | SKIPPED-EVAL-CONTEXT | EVO_WINDOWS_SKIP_RUN=1 — the measured batch is off-budget in eval/CI contexts (the CR-0030 CI law, mirrored up |
+| 2026-10-03T23:51:20Z | — | SKIPPED-EVAL-CONTEXT | EVO_WINDOWS_SKIP_RUN=1 — the measured batch is off-budget in eval/CI contexts (the CR-0030 CI law, mirrored up |

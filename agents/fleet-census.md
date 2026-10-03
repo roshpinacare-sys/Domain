@@ -1,9 +1,9 @@
-# FLEET CENSUS — 2026-10-03T23:23:37.910Z
+# FLEET CENSUS — 2026-10-03T23:52:16.418Z
 
 Offline · keyless · deterministic estate map (CR-0040). Answers: what do we hold, what limits us, how it wires.
 
-## Inventory — מה יש לנו (16/16 lanes present, 11468 commits, 61 capability markers)
-- **Domain** [PRESENT] 04dafa5@2026-10-03 · caps(16): marketGrid, marketExec, fillLedger, marketCycle, crossLayer, oneBloc, capabilityMatrix, econDesk, measureLearn, evoWindows, stasis, evals, skillGate, cadenceCron, gridHistory, gridPaper · workflows=48 desks=64
+## Inventory — מה יש לנו (16/16 lanes present, 11470 commits, 61 capability markers)
+- **Domain** [PRESENT] 62f2f55@2026-10-03 · caps(16): marketGrid, marketExec, fillLedger, marketCycle, crossLayer, oneBloc, capabilityMatrix, econDesk, measureLearn, evoWindows, stasis, evals, skillGate, cadenceCron, gridHistory, gridPaper · workflows=48 desks=65
 - **saos-dex** [PRESENT] 2bbd033@2026-10-03 · caps(8): kernel, amm, mm, gridBeat, gridLedger, dexCredits, dexGridCron, gridTrigger · workflows=4
 - **steem** [PRESENT] 33c541d6@2026-10-03 · caps(5): heLadder, liveGate, ladderRefresh, anchor, chainAttest · chainAgents=144 workflows=3
 - **saos-sovereign-platform** [PRESENT] e36529c@2026-10-03 · caps(5): exchange, ledger, bridge, meshHub, identity · meshContracts=11 meshTests=5 workflows=3
@@ -24,7 +24,7 @@ Offline · keyless · deterministic estate map (CR-0040). Answers: what do we ho
 - workflows: 11 keyless / 48 total (37 carry owner secrets)
 - STASIS brake: present=true active=false halt-in-code desks=1
 - gated desks (DRY/OWNER-GATED/LIVE env): 6 — cross-layer, fleet-census, market-cycle, market-exec, market-grid, sovereign-tick
-- offline/keyless desks: 31 — agent-registry, bridge-desk, canon-liveness, capability-matrix, claims-audit, cognitive-rail, convert-canon, coord-bus, coord-lease, cross-layer, dedup-corrections, drip-canon, earn-audit, fleet-census, fleet-delta, harness-audit, head-delegate, market-exec, market-grid, one-bloc, owner-proof, page-laws, public-pulse, reconcile, recruit, reef-rung3, route-desk, social-dedupe, tick-keeper, venture-desk, workflow-audit
+- offline/keyless desks: 32 — agent-registry, bridge-desk, cadence-week, canon-liveness, capability-matrix, claims-audit, cognitive-rail, convert-canon, coord-bus, coord-lease, cross-layer, dedup-corrections, drip-canon, earn-audit, fleet-census, fleet-delta, harness-audit, head-delegate, market-exec, market-grid, one-bloc, owner-proof, page-laws, public-pulse, reconcile, recruit, reef-rung3, route-desk, social-dedupe, tick-keeper, venture-desk, workflow-audit
 - vault: keyring=true stdinIntake=true runbook=true · mesh tests=5
 
 ## Blockers — מה חוסם אותנו (open=2, operator=2, laws=1)
@@ -63,8 +63,8 @@ Offline · keyless · deterministic estate map (CR-0040). Answers: what do we ho
 - Domain/agents/cross-layer.cjs 0502753f50833acb
 - Domain/agents/one-bloc.cjs 534364660df2b421
 - Domain/agents/STASIS.json 5ab24bc6b95aba0b
-- Domain/agents/evals/run-evals.cjs 394c6fca36915b84
-- Domain/feature_list.json aef6acf126701fe1
+- Domain/agents/evals/run-evals.cjs fb51893224de7aa5
+- Domain/feature_list.json d2f2788c69e9716b
 - saos-dex/audit-package/src/kernel.ts 97e5c4a719ddfd0a
 - saos-dex/audit-package/src/amm.ts 91d876f699e18a05
 - saos-dex/db/grid-ledger.json 4476b1cd03fb9038

@@ -1,6 +1,6 @@
 # Harness Audit — the fleet's five-subsystem check (fresh-context judge node)
 
-_harness-audit v1.0.0 · 2026-10-03T22:42:10.483Z · born from the learn-harness-engineering study (Z-35, extended Task 19)_
+_harness-audit v1.0.0 · 2026-10-03T23:50:58.880Z · born from the learn-harness-engineering study (Z-35, extended Task 19)_
 
 **harness NOT green: 12 FAIL — the audit is honest, the fails are the next work**
 
@@ -22,7 +22,7 @@ _harness-audit v1.0.0 · 2026-10-03T22:42:10.483Z · born from the learn-harness
 | 14 | verification | workflow-parse gate: every workflow file parses (full YAML floor, idiom fallback) — no dead lane wears a green shape | PASS | 48 workflows · mode full · offenders 0 |
 | 15 | verification | skill-library gate: every skill package passes the authoring standard (namespaced name, Use-when triggers, proactive triggers, Evidence Artifact, tier & scope, MIT provenance pinned to the mirror sha) | PASS | 14 skill packages · offenders 0 |
 | 16 | verification | doctrine anchor: the Authority Map (owner-confirmed 2026-10-03) lives in fleet-desk-operator and all NINE lineage pins (strix security Apache-2.0 + ax orchestration Apache-2.0 + mini-swe-agent MIT + free-claude-code AGPL-3.0-only + Graft MIT + agency-agents MIT + codebase-memory-mcp MIT + OpenMontage AGPL-3.0 + orca MIT) are pinned in the notices | PASS | authority-map=true (wallet=owner / sovereignty=desk / possession rows) · strix=true · ax=true · mini-swe=true · fcc=true (AGPL in-file) · graft=true · agency=true · cbmem=true · montage=true (AGPL in-file) · orca=true — nine anchors checked here (+ claude-skills MIT via the gate's authoring-standard check) = the ten-lineage constitution |
-| 17 | verification | ci-hands book: the fleet measures its own CI estate (16 repos sampled, failures classified, transient-aware verdicts, trajectory booked) | PASS | reached 0/16 · lanes 0/0 green · active-red 0 · startup-failures 0 · age 0.1h · mode keyless |
+| 17 | verification | ci-hands book: the fleet measures its own CI estate (16 repos sampled, failures classified, transient-aware verdicts, trajectory booked) | PASS | reached 0/16 · lanes 0/0 green · active-red 0 · startup-failures 0 · age 0h · mode keyless |
 | 18 | scope | doctrine binds kill rules (ventures have them) | FAIL | DOCTRINE-economics.md §4 |
 | 19 | scope | ventures board carries kill rules (5/5) | PASS | ventures.json |
 | 20 | scope | resource floors/ceilings in code (VP floor, dust holds, RC gate) | PASS | treasury-desk CUR_VP_FLOOR |
@@ -36,14 +36,14 @@ _harness-audit v1.0.0 · 2026-10-03T22:42:10.483Z · born from the learn-harness
 | 28 | anchors | KPI names its method (oracle discipline) | FAIL | KPI.json method field |
 | 29 | anchors | spot oracle measured at run time (not cached stories) | PASS | ventures.json priceOracle |
 | 30 | graph | every FILLED role names a reachable worker artifact (role→worker wiring) | PASS | 7 FILLED roles · 7 wired |
-| 31 | loop | all six loop primitives have live fleet instances (automations/worktrees/skills/connectors/sub-agents/external state) | FAIL | workflows:48 desks:82 receipts:true books:10 claims:false |
+| 31 | loop | all six loop primitives have live fleet instances (automations/worktrees/skills/connectors/sub-agents/external state) | FAIL | workflows:48 desks:83 receipts:true books:10 claims:false |
 | 32 | sovereignty | role-registry integrity: every charter row names a real file (roles-as-data, no invented agents) | FAIL | 57 rows · cols 9 · dupes 0 · missing files 1 |
 | 33 | sovereignty | change-request ledger integrity: every CR well-formed, no PENDING abandoned >7d | FAIL | 53 CRs · malformed 3 · stale-pending 0 |
-| 34 | sovereignty | mechanical override live: destructive-command guard stamped, evals E7-E9 pin it | PASS | ledger at 2026-10-03T22:34:45.249Z · scan denies 0 · guardEvals green |
+| 34 | sovereignty | mechanical override live: destructive-command guard stamped, evals E7-E9 pin it | PASS | ledger at 2026-10-03T23:50:01.428Z · scan denies 0 · guardEvals green |
 | 35 | sovereignty | cognitive rail governed: provider registry valid, forbidden rails never enabled, keyless probes booked, E10-E12 pin it | PASS | agents/inference-providers.csv + rail-ledger.json |
 | 36 | fate-defense | Emergence-World adoption: FWI scorecard fresh (9 indicators, each with a mechanical evidence source) + STASIS breaker armed + engine obeys it | PASS | FWI DEGRADED fresh · 9 indicators · sources all named · stasis armed=false · engine gate=true |
-| 37 | sovereignty | collapse drill containment-proof: 4 fault classes injected into throwaway trees, judge caught every one on a fresh run | PASS | verdict CONTAINMENT-PROVEN · caught 4/4 · baseline green=true · age 17.8h · head 025aaa2233c1 |
-| 38 | sovereignty | one-bloc convergence book: the whole git (16 repos) measured mechanically into ONE map — roles, HEADs, honest statuses, laws armed | WARN | verdict DEGRADED · reached 2/16 · keyless 2 · age 0.1h · maps bound 3 |
+| 37 | sovereignty | collapse drill containment-proof: 4 fault classes injected into throwaway trees, judge caught every one on a fresh run | PASS | verdict CONTAINMENT-PROVEN · caught 4/4 · baseline green=true · age 19h · head 025aaa2233c1 |
+| 38 | sovereignty | one-bloc convergence book: the whole git (16 repos) measured mechanically into ONE map — roles, HEADs, honest statuses, laws armed | WARN | verdict DEGRADED · reached 2/16 · keyless 2 · age 0h · maps bound 3 |
 | 39 | lifecycle | canon reachability proven: a live leg serves the Defi canon, legs booked, never DARK, receipt fits reality (Z-42) | FAIL | verdict CONTENT-SERVED · legs L1:SERVING L2:RAIL-UP L3:DEAD-AS-EXPECTED-PRIVATE · fresh · L1-now absent |
 | 40 | sovereignty | hands book: execution surfaces probed, never claimed — every LIVE hand receipted, ABSENT honest, tier-C locks named, zero hopeful greens (Z-43) | PASS | hands 6 · LIVE 4 (receipted all) · ABSENT 1 · locks 3 · fresh |
 | 41 | sovereignty | daily pulse book: the self-improvement loop closed under law — day ledger, typed proposals, judge+evals gates recorded, verify-only (Z-48/Z-49) | PASS | proposals 64 · PROPOSED-CR:6 GATED-BLOCKED:2 DEFERRED-TIER-C:4 ACCEPTED-TODAY:50 BOOKED:2 · fresh · verifyOnly true |
