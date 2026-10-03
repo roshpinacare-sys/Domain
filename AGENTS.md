@@ -83,6 +83,7 @@
   re-clone (Z-42 re-codification; creds live OUTSIDE repos in a 600-perm file,
   never printed, never committed — sandbox resets are a law of nature)
 - `node agents/hands-book.cjs` — the hands desk (Z-43, CR-0006): the sovereignty's
+- **daily pulse (agents/pulse.cjs, CR-0009)**: the self-improvement loop closed under law — day ledger → typed proposals (PROPOSED-CR / GATED-BLOCKED / DEFERRED-TIER-C / ACCEPTED-TODAY / ROLLED-BACK / BOOKED) → judge+evals gates booked verbatim → settle; verify-only: the pulse proposes, the CR law disposes, nothing auto-applies (reef/SkillClaw Rung 1, Z-48/Z-49).
   execution surfaces PROBED fresh (shell · git rail · browser computer-use ·
   keyless web · vm-stack · inference-rail cross-ref) — every LIVE row carries a
   receipt, ABSENT is an honest answer, tier-C locks are policy and policy beats
