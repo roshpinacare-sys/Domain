@@ -1,23 +1,23 @@
 {
  "ok": true,
- "publishedAt": "2026-10-03T09:03:39.715Z",
+ "publishedAt": "2026-10-03T11:24:45.633Z",
  "beat": {
   "engine": "saos-dex/1.19 cloud-beat · R23 live-anchor",
-  "runAt": "2026-10-03T09:03:39.715Z",
+  "runAt": "2026-10-03T11:24:45.633Z",
   "ticks": 480,
-  "fromHeight": 108031,
-  "toHeight": 108511,
+  "fromHeight": 108511,
+  "toHeight": 108991,
   "cadenceMin": 120,
   "nextEtaMin": 120,
   "creditsThisRun": 0,
   "relayLabel": "cloud relayer — treasury-signed credits, all documented in the live book"
  },
  "state": {
-  "height": 108511,
-  "tps": 2,
-  "stateRoot": "04c76bf4106a589c732566375bca4ec81f89f153bc9afec6b1cb50011c24b491",
-  "gasUsed": 25701460,
-  "opsTotal": 671808,
+  "height": 108991,
+  "tps": 0,
+  "stateRoot": "1870470e260c4f142050a4242c169829ba605b08b54fdb83a75a678db4168a5b",
+  "gasUsed": 25739775,
+  "opsTotal": 672782,
   "fills": 16661,
   "swaps": 10572,
   "ladders": 32,
@@ -31,19 +31,22 @@
    "lastLiftHeight": 21844,
    "spentMu": 256000
   },
-  "liveOrders": 16,
-  "buildMs": 70,
+  "liveOrders": 11,
+  "buildMs": 76,
   "uptimeSec": 50,
-  "lastBlockAgoMs": 6124,
+  "lastBlockAgoMs": 6740,
   "dbOk": true,
   "halted": false,
   "haltReason": null,
   "rejectedLast": {
-   "h": 108510,
-   "count": 2,
+   "h": 108990,
+   "count": 7,
    "sample": [
+    "order(soldier-1):replay-rejected",
+    "order(soldier-1):replay-rejected",
     "order(soldier-2):replay-rejected",
-    "order(soldier-4):replay-rejected"
+    "order(soldier-3):replay-rejected",
+    "order(soldier-3):replay-rejected"
    ]
   },
   "replayNote": "deterministic-from-ops+builder-ticks; price-evidence ring & process counters are off-state (documented)",
@@ -65,7 +68,7 @@
     "listed": 0
    },
    "WSTEEM": {
-    "refPrice": 62,
+    "refPrice": 63,
     "listed": 0
    },
    "ENERGY": {
@@ -81,29 +84,29 @@
     "listed": 0
    },
    "WTRX": {
-    "refPrice": 336,
+    "refPrice": 337,
     "listed": 21496
    }
   },
   "oracle": {
    "WTRX": {
-    "mu": 335538,
-    "atH": 108031,
+    "mu": 337250,
+    "atH": 108511,
     "src": "median(WTRX×2,WSOL×2,WSTEEM×2,PHIVE×2)"
    },
    "WSOL": {
-    "mu": 119284116,
-    "atH": 108031,
+    "mu": 119327795,
+    "atH": 108511,
     "src": "median(WTRX×2,WSOL×2,WSTEEM×2,PHIVE×2)"
    },
    "WSTEEM": {
-    "mu": 62390,
-    "atH": 108031,
+    "mu": 62544,
+    "atH": 108511,
     "src": "median(WTRX×2,WSOL×2,WSTEEM×2,PHIVE×2)"
    },
    "HIVE": {
-    "mu": 56139,
-    "atH": 108031,
+    "mu": 56043,
+    "atH": 108511,
     "src": "median(WTRX×2,WSOL×2,WSTEEM×2,PHIVE×2)"
    },
    "WBLURT": {
@@ -112,23 +115,23 @@
     "src": "median(WTRX×2,WSOL×2,WSTEEM×2,PHIVE×2)"
    },
    "ETH": {
-    "mu": 2683433351,
-    "atH": 108031,
+    "mu": 2682726592,
+    "atH": 108511,
     "src": "median(WTRX×2,WSOL×2,WSTEEM×2,PHIVE×2)"
    },
    "BTC": {
-    "mu": 84614699151,
-    "atH": 108031,
+    "mu": 84626673420,
+    "atH": 108511,
     "src": "median(WTRX×2,WSOL×2,WSTEEM×2,PHIVE×2)"
    },
    "PHIVE": {
-    "mu": 56139,
-    "atH": 108031,
+    "mu": 56043,
+    "atH": 108511,
     "src": "median(WTRX×2,WSOL×2,WSTEEM×2,PHIVE×2)"
    },
    "WSBD": {
-    "mu": 645686,
-    "atH": 108031,
+    "mu": 645584,
+    "atH": 108511,
     "src": "median(WTRX×2,WSOL×2,WSTEEM×2,PHIVE×2)"
    }
   },
@@ -159,8 +162,8 @@
      "id": "wsteem",
      "pair": "USDS/WSTEEM",
      "mid": 62,
-     "anchor": 62,
-     "premBps": 0,
+     "anchor": 63,
+     "premBps": -159,
      "active": false
     },
     {
@@ -356,7 +359,7 @@
        "debtMu": 8979
       }
      ],
-     "hf": 3370
+     "hf": 3371
     },
     {
      "who": "soldier-3",
@@ -376,7 +379,7 @@
        "debtMu": 2840
       }
      ],
-     "hf": 291
+     "hf": 296
     }
    ],
    "totals": {
@@ -449,9 +452,9 @@
   },
   "engine": {
    "cow": {
-    "matched": 12500000,
-    "batches": 625,
-    "surplusMu": 89820,
+    "matched": 12580000,
+    "batches": 629,
+    "surplusMu": 90380,
     "fallbackPool": 0,
     "fallbackBook": 0
    },
@@ -478,10 +481,38 @@
    "auto": {
     "dcaActive": 0,
     "dcaTotal": 8,
-    "trigActive": 0,
-    "trigTotal": 51
+    "trigActive": 1,
+    "trigTotal": 52
    },
    "feed": [
+    {
+     "h": 108842,
+     "s": "cow",
+     "a": "cow_match",
+     "p": 140,
+     "n": "SAOS/USDS: matched 20000µ @ p*=1322 (buys 1 · sells 1) · surplus 140µ לסוחרים"
+    },
+    {
+     "h": 108802,
+     "s": "cow",
+     "a": "cow_match",
+     "p": 140,
+     "n": "SAOS/USDS: matched 20000µ @ p*=1322 (buys 1 · sells 1) · surplus 140µ לסוחרים"
+    },
+    {
+     "h": 108762,
+     "s": "cow",
+     "a": "cow_match",
+     "p": 140,
+     "n": "SAOS/USDS: matched 20000µ @ p*=1322 (buys 1 · sells 1) · surplus 140µ לסוחרים"
+    },
+    {
+     "h": 108562,
+     "s": "cow",
+     "a": "cow_match",
+     "p": 140,
+     "n": "SAOS/USDS: matched 20000µ @ p*=1322 (buys 1 · sells 1) · surplus 140µ לסוחרים"
+    },
     {
      "h": 108482,
      "s": "cow",
@@ -491,20 +522,6 @@
     },
     {
      "h": 108442,
-     "s": "cow",
-     "a": "cow_match",
-     "p": 140,
-     "n": "SAOS/USDS: matched 20000µ @ p*=1322 (buys 1 · sells 1) · surplus 140µ לסוחרים"
-    },
-    {
-     "h": 107282,
-     "s": "cow",
-     "a": "cow_match",
-     "p": 140,
-     "n": "SAOS/USDS: matched 20000µ @ p*=1322 (buys 1 · sells 1) · surplus 140µ לסוחרים"
-    },
-    {
-     "h": 107082,
      "s": "cow",
      "a": "cow_match",
      "p": 140,
@@ -525,7 +542,7 @@
    "poolMid": 1324,
    "refPrice": 1320,
    "twap": 1322,
-   "twapSamples": 2,
+   "twapSamples": 4,
    "twapDevBps": 15,
    "bids": [
     {
@@ -563,11 +580,19 @@
    ],
    "chart": [
     {
-     "t": 1791018207562,
+     "t": 1791026639375,
      "p": 1322
     },
     {
-     "t": 1791018211043,
+     "t": 1791026656317,
+     "p": 1322
+    },
+    {
+     "t": 1791026660266,
+     "p": 1322
+    },
+    {
+     "t": 1791026663744,
      "p": 1322
     }
    ]
@@ -576,29 +601,17 @@
    "base": "WSTEEM",
    "quote": "USDS",
    "key": "USDS/WSTEEM",
-   "fair": 62,
-   "bestBid": 61,
-   "bestAsk": 63,
-   "spreadBps": 322,
+   "fair": 63,
+   "bestBid": 0,
+   "bestAsk": 0,
+   "spreadBps": 0,
    "poolMid": 62,
-   "refPrice": 62,
+   "refPrice": 63,
    "twap": 0,
    "twapSamples": 0,
    "twapDevBps": 0,
-   "bids": [
-    {
-     "price": 61,
-     "total": 240000,
-     "orders": 3
-    }
-   ],
-   "asks": [
-    {
-     "price": 63,
-     "total": 240000,
-     "orders": 2
-    }
-   ],
+   "bids": [],
+   "asks": [],
    "chart": []
   }
  ],
@@ -694,7 +707,7 @@
   },
   {
    "name": "operator",
-   "credits": 2333473,
+   "credits": 2273128,
    "balances": {
     "SAOS": 1800000,
     "USDS": 4515179,
@@ -705,7 +718,7 @@
   },
   {
    "name": "arena",
-   "credits": 29940,
+   "credits": 10000,
    "balances": {
     "USDS": 5085429,
     "SAOS": 6657780,
@@ -718,21 +731,21 @@
   },
   {
    "name": "soldier-1",
-   "credits": 11025,
+   "credits": 21210,
    "balances": {
     "SAOS": 239055,
     "USDS": 4689896,
     "WSTEEM": 208723
    },
    "locked": {
-    "USDS": 321680,
+    "USDS": 316800,
     "SAOS": 160000,
-    "WSTEEM": 120000
+    "WSTEEM": 0
    }
   },
   {
    "name": "soldier-2",
-   "credits": 11380,
+   "credits": 24205,
    "balances": {
     "SAOS": 94333,
     "USDS": 5130399,
@@ -746,28 +759,28 @@
   },
   {
    "name": "soldier-3",
-   "credits": 16225,
+   "credits": 23920,
    "balances": {
     "SAOS": 12408,
     "USDS": 5017277,
     "WSTEEM": 247956
    },
    "locked": {
-    "USDS": 321840,
+    "USDS": 316960,
     "SAOS": 0,
-    "WSTEEM": 120000
+    "WSTEEM": 0
    }
   },
   {
    "name": "soldier-4",
-   "credits": 17690,
+   "credits": 29255,
    "balances": {
     "SAOS": 14611,
     "USDS": 4834765,
     "WSTEEM": 350675
    },
    "locked": {
-    "USDS": 321840,
+    "USDS": 316960,
     "SAOS": 0,
     "WSTEEM": 0
    }
@@ -844,14 +857,14 @@
   },
   {
    "name": "bot-e",
-   "credits": 25860,
+   "credits": 25560,
    "balances": {
     "USDS": 538420,
     "SAOS": 392978
    },
    "locked": {
     "USDS": 0,
-    "SAOS": 0
+    "SAOS": 15000
    }
   },
   {
@@ -1054,81 +1067,6 @@
    "nonce": "soldier-4:a1740",
    "at": 1790369936903,
    "lockMu": 211200
-  },
-  {
-   "seq": 285896,
-   "id": 285896,
-   "owner": "soldier-1",
-   "base": "WSTEEM",
-   "quote": "USDS",
-   "side": "buy",
-   "price": 61,
-   "amount": 80000,
-   "filled": 0,
-   "live": true,
-   "nonce": "soldier-1:a1439",
-   "at": 1791018213518,
-   "lockMu": 4880
-  },
-  {
-   "seq": 285897,
-   "id": 285897,
-   "owner": "soldier-1",
-   "base": "WSTEEM",
-   "quote": "USDS",
-   "side": "sell",
-   "price": 63,
-   "amount": 120000,
-   "filled": 0,
-   "live": true,
-   "nonce": "soldier-1:a1440",
-   "at": 1791018213518,
-   "lockMu": 120000
-  },
-  {
-   "seq": 285898,
-   "id": 285898,
-   "owner": "soldier-3",
-   "base": "WSTEEM",
-   "quote": "USDS",
-   "side": "buy",
-   "price": 61,
-   "amount": 80000,
-   "filled": 0,
-   "live": true,
-   "nonce": "soldier-3:a1485",
-   "at": 1791018213518,
-   "lockMu": 4880
-  },
-  {
-   "seq": 285899,
-   "id": 285899,
-   "owner": "soldier-3",
-   "base": "WSTEEM",
-   "quote": "USDS",
-   "side": "sell",
-   "price": 63,
-   "amount": 120000,
-   "filled": 0,
-   "live": true,
-   "nonce": "soldier-3:a1486",
-   "at": 1791018213518,
-   "lockMu": 120000
-  },
-  {
-   "seq": 285900,
-   "id": 285900,
-   "owner": "soldier-4",
-   "base": "WSTEEM",
-   "quote": "USDS",
-   "side": "buy",
-   "price": 61,
-   "amount": 80000,
-   "filled": 0,
-   "live": true,
-   "nonce": "soldier-4:a1547",
-   "at": 1791018213518,
-   "lockMu": 4880
   }
  ],
  "tape": [
@@ -1138,10 +1076,21 @@
    "quote": "USDS",
    "price": 1322,
    "amountMu": 20000,
+   "taker": "arena",
+   "maker": "bot-e",
+   "at": 1791026663744,
+   "h": 108842
+  },
+  {
+   "kind": "fill",
+   "base": "SAOS",
+   "quote": "USDS",
+   "price": 1322,
+   "amountMu": 20000,
    "taker": "bot-e",
    "maker": "arena",
-   "at": 1791018211043,
-   "h": 108482
+   "at": 1791026660266,
+   "h": 108802
   },
   {
    "kind": "fill",
@@ -1151,31 +1100,42 @@
    "amountMu": 20000,
    "taker": "arena",
    "maker": "bot-e",
-   "at": 1791018207562,
-   "h": 108442
+   "at": 1791026656317,
+   "h": 108762
+  },
+  {
+   "kind": "fill",
+   "base": "SAOS",
+   "quote": "USDS",
+   "price": 1322,
+   "amountMu": 20000,
+   "taker": "bot-e",
+   "maker": "arena",
+   "at": 1791026639375,
+   "h": 108562
   }
  ],
  "seal": {
-  "fromHeight": 108493,
-  "toHeight": 108504,
-  "root": "c94e081bcb8ef3b781e2c5e216a9721f11790fa601e589cfff8417dc34639573",
-  "stateRoot": "26a6d59cd7a80bfa40120c429649babdeb6e90017376ed3b954e72e68beaa59e",
+  "fromHeight": 108973,
+  "toHeight": 108984,
+  "root": "f91ceaaec4bf91a89143aad1cb5472ce4794598de7dd32a074eea96a1f65ecaf",
+  "stateRoot": "f5196f94093219cf2a6f35782b167cf2617e381ecda55090b8b7cddfb38e7de6",
   "leaves": 12,
-  "at": 1791018213039,
-  "digest": "af67774fdfcb6fa299452d1f02723382ccf272a457dd5bb66ffd3bccb7a0914d",
+  "at": 1791026678317,
+  "digest": "80f10c61b6b13901554990551c1da1bf47b4cca39570ba0f76ecbf859b3126e6",
   "blockHashes": [
-   "7d14d662d49134da66b1a28e8c32a01704d82f63ba61fe4d5c8511f6826c7b21",
-   "6ca769d644bedd2fd7095b53dc8be1943fb78835f2de9c864baed2815b1c9154",
-   "18e2359d4d94e8b3bb0bca4caa461f46195f3b6921a6e6d225d5c985e2b8a277",
-   "eaf4140cfca2ac0ac7068afca40babc4c889d4a37f0f23119de8682fd7c3ea30",
-   "c60b612cb2349f0c3b87b563c990c0eae9bb4b1f1cb9cba848bd613cd99b6f1f",
-   "af407c08ce440f988f57bf7a53ab215614435f212e69c58765529d1c780debdd",
-   "3852267b949c4c6d50ca36187e15fc939e583f4c523db3b281a307ca2369a3b2",
-   "fad370c46786c97ca1f0065900bd4496c4be004790e20de51871412fd74d4b0f",
-   "12007ea3455fa35857e75f375e7bb3d926fac1370eac1e6baf574cb627ed75f6",
-   "5aa8b197acb3f9d042a22d3f939138e458bd1d88895ebb63bbe212306452b7df",
-   "4cc3cd98e43264a895328c8212e120f30b4ea08d224585cef0e28dfc1c9e3849",
-   "f0cba58a9cbec45789e6981739c6a35e88ebad15ad982eedda9b8d01a9e1c945"
+   "e14bc2d2741474741ac80a57c737789abe01bb79c665d5363e95d243ba463f09",
+   "4d4e3a77d318c9e08f48546e74018b68f85618d6cb72c0f0f83caa02f2e792b9",
+   "436e93d571b91e3c9b4672da4bac5ca1f743379f1aacbffd90842bf57be0ed95",
+   "962ff260c1f919b2ecdcb231fb67269cf67c90d544d86e584eed586eb7db2deb",
+   "bd411eb851d62f0d6c7a4e8d344bec67209c3aae73a5a11810a8d2b6b10b1d43",
+   "44f12797712dfe58724126cb30c693653a720c7e5135ff6b48337d8640a2399d",
+   "93ce8596ef8b2ca990f4a26aeba86132b31bc42d82b31ffc8a891bc96e7d0257",
+   "39622beadd35660104fb9fbf9e49bc25fd768b45ea4f4e7fe79aff6ab9ec28d3",
+   "c7cd6793ffe5e0420581e2dd4a92f7976d3c6009c3244d3431b5c6901f0da7c6",
+   "a2aefe1763dad33735e451bd8e6ba5ff0fda5d8167bd269a0f2d6d875aa8c0a8",
+   "c289fa3acf0643fe4e38998ff4df540c958984750c96c9b6cd922c85ec1413bb",
+   "19f9bea5d5b45c220f1136b486a5a0790a4a327cd44f8da5bd9c0a3a9a4b47d1"
   ]
  },
  "credits": [],
