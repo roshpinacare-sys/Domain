@@ -31,6 +31,25 @@ const AG = path.join(ROOT, 'agents');
 const OUT_JSON = path.join(AG, 'fleet-census.json');
 const OUT_MD = path.join(AG, 'fleet-census.md');
 
+/** FATE-DEFENSE law #1 — the breaker file: estate Domain lane first, then this repo. */
+function stasisSource() {
+  for (const p of [path.join(ESTATE, 'Domain', 'agents', 'STASIS.json'), path.join(ROOT, 'agents', 'STASIS.json')]) {
+    if (exists(p)) return p;
+  }
+  return null;
+}
+
+/** the desk-side brake: an ACTIVE breaker halts the census BEFORE any lane read (E32-proven). */
+function stasisHalt() {
+  const src = stasisSource();
+  if (!src) return { active: false, source: null };
+  try {
+    const active = JSON.parse(readSafe(src) || 'null');
+    if (active && active.active === true) return { active: true, source: path.relative(ROOT, src) || src };
+  } catch (_) {}
+  return { active: false, source: path.relative(ROOT, src) || src };
+}
+
 // ---------- pure helpers (E31 white-box surface) ----------
 
 /** spread series over history rows for one market label prefix: exact n/min/max/last. */
@@ -400,9 +419,19 @@ function renderMd(c, at) {
 }
 
 function main() {
+  // FATE-DEFENSE law #1 — the desk-side gate: an ACTIVE STASIS halts in code BEFORE any
+  // lane scan (zero reads beyond the breaker file itself), books the halt honestly, exit 0.
+  const halt = stasisHalt();
+  const at = new Date().toISOString();
+  if (halt.active) {
+    try {
+      fs.writeFileSync(OUT_JSON, JSON.stringify({ protocol: 'SAOS-FLEET-CENSUS/1', agent: 'fleet-census', verdict: 'STASIS-HALT', stasis: halt, ok: true, at }, null, 2) + '\n');
+    } catch (_) {}
+    console.log('STASIS-HALT fleet-census · breaker active (' + halt.source + ') — the map stands still by law, not by neglect.');
+    process.exit(0);
+  }
   try {
     const stable = censusStable();
-    const at = new Date().toISOString();
     const book = { ...stable, at, ok: true };
     fs.writeFileSync(OUT_JSON, JSON.stringify(book, null, 2) + '\n');
     fs.writeFileSync(OUT_MD, renderMd(stable, at));
@@ -415,4 +444,4 @@ function main() {
 }
 
 if (require.main === module) main();
-module.exports = { spreadSeries, extractFirstInt, censusStable, LANES };
+module.exports = { spreadSeries, extractFirstInt, censusStable, LANES, stasisHalt };

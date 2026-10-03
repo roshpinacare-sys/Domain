@@ -360,6 +360,20 @@
     "agents/evals/eval-results.json (E31)",
     "agents/change-requests/CR-0040-fleet-census.json"
    ]
+  },
+  {
+   "id": "feat-035",
+   "title": "Fleet Rung 15: the estate map joins the cadence — fleet-census-cron.yml (daily keyless cron, deterministic publish, STASIS double-gate) + the desk-side halt-before-read brake (CR-0041)",
+   "description": ".github/workflows/fleet-census-cron.yml refreshes the CR-0040 fleet census daily at 02:11 UTC, keyless, off the org minute map; publish is deterministic (clean exit on no-drift) with the twin commit idiom; STASIS obeyed twice (scheduler gate + desk-side stasisHalt() halting in code BEFORE any lane read, E32-proven fresh-process). E32 in run-evals v1.20.0 canonizes nine workflow laws + the halt; evals 32/32; parse-gate 44 workflows 0 offenders.",
+   "status": "LIVE",
+   "cr": "CR-0041",
+   "landed": "2026-10-03T19:16:17Z",
+   "evidence": [
+    ".github/workflows/fleet-census-cron.yml",
+    "agents/fleet-census.cjs",
+    "agents/evals/eval-results.json (E32)",
+    "agents/change-requests/CR-0041-census-cadence.json"
+   ]
   }
  ]
 }
