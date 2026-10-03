@@ -1,17 +1,17 @@
 {
   "protocol": "SAOS-FLEET-CENSUS/1",
   "agent": "fleet-census",
-  "estate": "/home/z/fleet",
+  "estate": "~/git-audit (16 lanes)",
   "inventory": {
     "lanes": [
       {
         "id": "Domain",
         "role": "L0 observer + convergence hub: desks, evals, cron cadence, judge/pulse books",
         "status": "PRESENT",
-        "head": "528126f",
-        "at": "2026-10-03T19:20:57Z",
-        "subject": "CR-0042 (PASS, tier B): fleet Rung 16 lane B — THE WIRING WAVE (operator directive: push all agents together, wire everything, 'בצע') — ELEV",
-        "commits": 65,
+        "head": "68303fc",
+        "at": "2026-10-03T19:43:52Z",
+        "subject": "lane books: Rung 16 census-delta run on tree — judge 41/0/0, evals 33/33 (E33 census-delta), gate, cross-layer 7 checks 6 PASS 1 DRIFT, cens",
+        "commits": 125,
         "capabilities": [
           "marketGrid",
           "marketExec",
@@ -33,52 +33,92 @@
         "capabilityCount": 16,
         "extras": {
           "workflows": 45,
-          "desks": 50
+          "desks": 51
         }
       },
       {
         "id": "saos-dex",
         "role": "L1 DEX kernel: integer-floor AMM + maker grid + ledger",
-        "status": "MISSING",
-        "head": null,
-        "commits": null,
-        "subject": null,
-        "capabilities": [],
-        "capabilityCount": 0,
-        "extras": {}
+        "status": "PRESENT",
+        "head": "2bbd033",
+        "at": "2026-10-03T14:32:17Z",
+        "subject": "grid-heartbeat(twin): tick 2026-10-03T14:32:17Z [skip ci]",
+        "commits": 766,
+        "capabilities": [
+          "kernel",
+          "amm",
+          "mm",
+          "gridBeat",
+          "gridLedger",
+          "dexCredits",
+          "dexGridCron",
+          "gridTrigger"
+        ],
+        "capabilityCount": 8,
+        "extras": {
+          "workflows": 4
+        }
       },
       {
         "id": "steem",
         "role": "L2 chain agents + HE executor ladder (taker)",
-        "status": "MISSING",
-        "head": null,
-        "commits": null,
-        "subject": null,
-        "capabilities": [],
-        "capabilityCount": 0,
-        "extras": {}
+        "status": "PRESENT",
+        "head": "33c541d6",
+        "at": "2026-10-03T16:39:04Z",
+        "subject": "ladder-refresh: 2026-10-03T16:39:04.454Z · armed · ladder-healthy-no-ops · caps enforced",
+        "commits": 1062,
+        "capabilities": [
+          "heLadder",
+          "liveGate",
+          "ladderRefresh",
+          "anchor",
+          "chainAttest"
+        ],
+        "capabilityCount": 5,
+        "extras": {
+          "chainAgents": 144,
+          "workflows": 3
+        }
       },
       {
         "id": "saos-sovereign-platform",
         "role": "L3 EVM mesh contracts + red-team suite",
-        "status": "MISSING",
-        "head": null,
-        "commits": null,
-        "subject": null,
-        "capabilities": [],
-        "capabilityCount": 0,
-        "extras": {}
+        "status": "PRESENT",
+        "head": "e36529c",
+        "at": "2026-10-03T16:34:03Z",
+        "subject": "v111.0.0 rebuild — RED TEAM (strix): re-materialized after rollback (recovery-v110): silent subagent built engine (894-line redteam.ts: 7 pr",
+        "commits": 289,
+        "capabilities": [
+          "exchange",
+          "ledger",
+          "bridge",
+          "meshHub",
+          "identity"
+        ],
+        "capabilityCount": 5,
+        "extras": {
+          "meshContracts": 11,
+          "meshTests": 5,
+          "workflows": 3
+        }
       },
       {
         "id": "Console",
         "role": "witness mirror + keyless chain read (weave console)",
-        "status": "MISSING",
-        "head": null,
-        "commits": null,
-        "subject": null,
-        "capabilities": [],
-        "capabilityCount": 0,
-        "extras": {}
+        "status": "PRESENT",
+        "head": "6ebcdc14",
+        "at": "2026-10-03T14:48:52Z",
+        "subject": "weave-console: 2026-10-03T14:48:52Z · cp#1237 · witness age 0.3h · keyless read from public chain",
+        "commits": 4932,
+        "capabilities": [
+          "acidEngine",
+          "fleetLog",
+          "agentDir"
+        ],
+        "capabilityCount": 3,
+        "extras": {
+          "workflows": 10
+        }
       },
       {
         "id": "Defi",
@@ -87,7 +127,7 @@
         "head": "8dae9d8",
         "at": "2026-10-03T16:39:57+03:00",
         "subject": "keeper: fleet supervision receipt 2026-10-03T13:39:56.750Z",
-        "commits": 1,
+        "commits": 5,
         "capabilities": [
           "triggerChain",
           "doctrine",
@@ -102,117 +142,177 @@
       {
         "id": "Zip",
         "role": "sovereign key vault (r180 ECDH sealed transfer) + anchors",
-        "status": "MISSING",
-        "head": null,
-        "commits": null,
-        "subject": null,
-        "capabilities": [],
-        "capabilityCount": 0,
-        "extras": {}
+        "status": "PRESENT",
+        "head": "b4fad714",
+        "at": "2026-10-03T17:34:03Z",
+        "subject": "r180: sovereign key vault — permanent owner→vault→agents ceremony (vault-keyring.mjs: stdin-only intake, gate-time crypto validation, house ",
+        "commits": 1962,
+        "capabilities": [
+          "vaultKeyring",
+          "vaultRunbook",
+          "weaveAnchor",
+          "networkEvolution"
+        ],
+        "capabilityCount": 4,
+        "extras": {
+          "workflows": 12
+        }
       },
       {
         "id": "Saosmartwallet",
         "role": "smart-wallet controls + fleet health",
-        "status": "MISSING",
-        "head": null,
-        "commits": null,
-        "subject": null,
-        "capabilities": [],
-        "capabilityCount": 0,
-        "extras": {}
+        "status": "PRESENT",
+        "head": "743d1f0",
+        "at": "2026-10-02T22:48:03Z",
+        "subject": "wallet-verify: PASS at 2026-10-02T22:48:03Z",
+        "commits": 350,
+        "capabilities": [
+          "controls",
+          "fleetHealth"
+        ],
+        "capabilityCount": 2,
+        "extras": {
+          "workflows": 2
+        }
       },
       {
         "id": "Sdk",
         "role": "SDK surface",
-        "status": "MISSING",
-        "head": null,
-        "commits": null,
-        "subject": null,
-        "capabilities": [],
-        "capabilityCount": 0,
-        "extras": {}
+        "status": "PRESENT",
+        "head": "8437ae6",
+        "at": "2026-10-03T09:35:36Z",
+        "subject": "sdk-verify: PASS at 2026-10-03T09:35:35Z",
+        "commits": 111,
+        "capabilities": [
+          "readme"
+        ],
+        "capabilityCount": 1,
+        "extras": {
+          "workflows": 2
+        }
       },
       {
         "id": "Adsmarket",
         "role": "ads/claims lane",
-        "status": "MISSING",
-        "head": null,
-        "commits": null,
-        "subject": null,
-        "capabilities": [],
-        "capabilityCount": 0,
-        "extras": {}
+        "status": "PRESENT",
+        "head": "1768398",
+        "at": "2026-10-03T06:32:23Z",
+        "subject": "claims-guard: PASS at 2026-10-03T06:32:23Z",
+        "commits": 566,
+        "capabilities": [
+          "claimsAudit",
+          "agentDir"
+        ],
+        "capabilityCount": 2,
+        "extras": {
+          "workflows": 2
+        }
       },
       {
         "id": "Project-files",
         "role": "archive keeper",
-        "status": "MISSING",
-        "head": null,
-        "commits": null,
-        "subject": null,
-        "capabilities": [],
-        "capabilityCount": 0,
-        "extras": {}
+        "status": "PRESENT",
+        "head": "c8d8a92",
+        "at": "2026-10-03T01:07:47Z",
+        "subject": "archive-keeper: PASS at 2026-10-03T01:07:46Z",
+        "commits": 109,
+        "capabilities": [
+          "readme"
+        ],
+        "capabilityCount": 1,
+        "extras": {
+          "workflows": 2
+        }
       },
       {
         "id": "anchor-baseline",
         "role": "baseline integrity",
-        "status": "MISSING",
-        "head": null,
-        "commits": null,
-        "subject": null,
-        "capabilities": [],
-        "capabilityCount": 0,
-        "extras": {}
+        "status": "PRESENT",
+        "head": "098a302",
+        "at": "2026-10-03T07:28:09Z",
+        "subject": "baseline-integrity: PASS at 2026-10-03T07:28:09Z",
+        "commits": 114,
+        "capabilities": [
+          "readme"
+        ],
+        "capabilityCount": 1,
+        "extras": {
+          "workflows": 2
+        }
       },
       {
         "id": "roshpina",
         "role": "controls audit lane",
-        "status": "MISSING",
-        "head": null,
-        "commits": null,
-        "subject": null,
-        "capabilities": [],
-        "capabilityCount": 0,
-        "extras": {}
+        "status": "PRESENT",
+        "head": "e1c6eeb",
+        "at": "2026-10-03T08:32:40Z",
+        "subject": "controls-audit: PASS at 2026-10-03T08:32:40Z",
+        "commits": 120,
+        "capabilities": [
+          "controls",
+          "briefing"
+        ],
+        "capabilityCount": 2,
+        "extras": {
+          "workflows": 2
+        }
       },
       {
         "id": "saos-control-center",
         "role": "control center build + caddy edge",
-        "status": "MISSING",
-        "head": null,
-        "commits": null,
-        "subject": null,
-        "capabilities": [],
-        "capabilityCount": 0,
-        "extras": {}
+        "status": "PRESENT",
+        "head": "2ef1b78",
+        "at": "2026-10-03T16:44:28Z",
+        "subject": "control-center-build: PASS at 2026-10-03T16:43:37Z",
+        "commits": 236,
+        "capabilities": [
+          "caddy",
+          "fleetNote"
+        ],
+        "capabilityCount": 2,
+        "extras": {
+          "workflows": 2
+        }
       },
       {
         "id": "saos-jummper",
         "role": "notary/jumpper tests",
-        "status": "MISSING",
-        "head": null,
-        "commits": null,
-        "subject": null,
-        "capabilities": [],
-        "capabilityCount": 0,
-        "extras": {}
+        "status": "PRESENT",
+        "head": "b70df10",
+        "at": "2026-10-03T14:01:37Z",
+        "subject": "jumpper-tests: PASS at 2026-10-03T14:01:37Z",
+        "commits": 419,
+        "capabilities": [
+          "readme"
+        ],
+        "capabilityCount": 1,
+        "extras": {
+          "workflows": 2
+        }
       },
       {
         "id": "saos-sovereign-foundry",
         "role": "foundry ops (port law :3100)",
-        "status": "MISSING",
-        "head": null,
-        "commits": null,
-        "subject": null,
-        "capabilities": [],
-        "capabilityCount": 0,
-        "extras": {}
+        "status": "PRESENT",
+        "head": "62c0a74",
+        "at": "2026-10-03T01:03:27Z",
+        "subject": "ci: health poll aligned to :3100 port law (Task 10) — poll hit :3000 while dev/start/api-check/concurrency all speak :3100, so the gate neve",
+        "commits": 261,
+        "capabilities": [
+          "briefing",
+          "controls",
+          "broadcasts",
+          "agentDir"
+        ],
+        "capabilityCount": 4,
+        "extras": {
+          "workflows": 2
+        }
       }
     ],
-    "presentLanes": 2,
+    "presentLanes": 16,
     "totalLanes": 16,
-    "estateCommits": 66
+    "estateCommits": 11427
   },
   "sovereignty": {
     "workflowsTotal": 45,
@@ -231,7 +331,7 @@
       "market-exec",
       "market-grid"
     ],
-    "offlineDesks": 22,
+    "offlineDesks": 23,
     "offlineNames": [
       "agent-registry",
       "bridge-desk",
@@ -241,6 +341,7 @@
       "cross-layer",
       "dedup-corrections",
       "fleet-census",
+      "fleet-delta",
       "harness-audit",
       "head-delegate",
       "market-exec",
@@ -257,11 +358,11 @@
       "workflow-audit"
     ],
     "vault": {
-      "keyring": false,
-      "stdinIntake": false,
-      "runbook": false
+      "keyring": true,
+      "stdinIntake": true,
+      "runbook": true
     },
-    "meshTests": 0
+    "meshTests": 5
   },
   "blockers": [
     {
@@ -270,8 +371,8 @@
       "status": "OPEN",
       "ownerGate": false,
       "evidence": {
-        "kernelBps": null,
-        "exchangeBps": null
+        "kernelBps": 30,
+        "exchangeBps": 20
       }
     },
     {
@@ -303,7 +404,7 @@
       "status": "OPERATOR-GATED",
       "ownerGate": true,
       "evidence": {
-        "tvmContractMarkers": null
+        "tvmContractMarkers": 1
       }
     },
     {
@@ -347,12 +448,12 @@
       "PARTIAL": 1
     },
     "paperRows": 110,
-    "fillLedgerRows": 10,
+    "fillLedgerRows": 11,
     "fillLedgerParsed": true,
     "dexGridLedger": {
-      "version": null,
-      "orders": null,
-      "fills": null
+      "version": 2,
+      "orders": 73,
+      "fills": 43
     }
   },
   "wiring": [
@@ -409,7 +510,7 @@
         "saos-dex/audit-package/src/kernel.ts",
         "saos-sovereign-platform/contracts/mesh/SAOSExchange.sol"
       ],
-      "status": "BROKEN(saos-dex/audit-package/src/kernel.ts,saos-sovereign-platform/contracts/mesh/SAOSExchange.sol)"
+      "status": "WIRED"
     },
     {
       "id": "dex-grid-ledger",
@@ -418,7 +519,7 @@
       "to": [
         "saos-dex/db/grid-ledger.json"
       ],
-      "status": "BROKEN(saos-dex/grid-beat.ts,saos-dex/db/grid-ledger.json)"
+      "status": "WIRED"
     },
     {
       "id": "he-ladder-gate",
@@ -427,7 +528,7 @@
       "to": [
         "steem/agent/gate-state.json"
       ],
-      "status": "BROKEN(steem/agent/he_ladder.cjs,steem/agent/gate-state.json)"
+      "status": "WIRED"
     },
     {
       "id": "vault-ceremony",
@@ -436,7 +537,7 @@
       "to": [
         "Zip/sovereign/vault/README.md"
       ],
-      "status": "BROKEN(Zip/scripts/vault-keyring.mjs,Zip/sovereign/vault/README.md)"
+      "status": "WIRED"
     },
     {
       "id": "census-map",
@@ -460,7 +561,7 @@
         "saos-jummper",
         "saos-sovereign-foundry"
       ],
-      "status": "BROKEN(saos-dex,steem,saos-sovereign-platform,Console,Zip,Saosmartwallet,Sdk,Adsmarket,Project-files,anchor-baseline,roshpina,saos-control-center,saos-jummper,saos-sovereign-foundry)"
+      "status": "WIRED"
     }
   ],
   "receipts": {
@@ -473,17 +574,24 @@
     "Domain/agents/cross-layer.cjs": "347ffa55a680ced0",
     "Domain/agents/one-bloc.cjs": "534364660df2b421",
     "Domain/agents/STASIS.json": "5ab24bc6b95aba0b",
-    "Domain/agents/evals/run-evals.cjs": "894ee3beb71d6bd6",
-    "Domain/feature_list.json": "084e65999089dd45"
+    "Domain/agents/evals/run-evals.cjs": "f60cd5002c434b52",
+    "Domain/feature_list.json": "a3039925e025ea64",
+    "saos-dex/audit-package/src/kernel.ts": "97e5c4a719ddfd0a",
+    "saos-dex/audit-package/src/amm.ts": "91d876f699e18a05",
+    "saos-dex/db/grid-ledger.json": "4476b1cd03fb9038",
+    "steem/agent/he_ladder.cjs": "c2ffabe5def2f5b1",
+    "saos-sovereign-platform/contracts/mesh/SAOSExchange.sol": "4b0c0aad18cf0c51",
+    "saos-sovereign-platform/contracts/mesh/SAOSLedger.sol": "4a6f3da0b4bb4b96",
+    "Zip/scripts/vault-keyring.mjs": "1786ec3c304996eb"
   },
   "summary": {
-    "capabilities": 20,
-    "wiringWired": 5,
+    "capabilities": 61,
+    "wiringWired": 10,
     "wiringArcs": 10,
     "blockersOpen": 2,
     "blockersOperatorGated": 2,
     "blockersLawsActive": 1
   },
-  "at": "2026-10-03T19:24:07.912Z",
+  "at": "2026-10-03T19:49:56.775Z",
   "ok": true
 }
