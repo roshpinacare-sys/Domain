@@ -33,9 +33,19 @@
 #    delta step diffs artifact-vs-artifact (git HEAD), so the CI-perspective drift series
 #    is honest and the perspective flip (CI book over full-estate book) can never
 #    masquerade as estate drift again — the delta desk refuses cross-estate diffs by law.
-#  · Cadence `11 2 * * *` — daily 02:11 UTC, off the whole org minute map (the :00/:30
+#  · Cadence `14 2 * * *` — daily 02:14 UTC, off the whole org minute map (the :00/:30
 #    dex pulse, :9/:39 twins, :23/:53 grid ticks, the 03:xx/04:xx/05:xx/06:xx daily block)
-#    so the fleet's Actions minutes never collide.
+#    so the fleet's Actions minutes never collide (reslotted by the minute-map law, R21).
+#  · CLAIMS-AUDIT leg (CR-0050, R21) — claims-audit.cjs rides this cadence: every
+#    feature_list evidence path must resolve on the tree, the CR-slot law, the suite
+#    version/count invariant — the anti-claims instrument the owner demanded ("בדוק את
+#    כל הטענות שלך"). The OWNER-LANGUAGE LAW (owner-facing replies = עברית) is encoded
+#    in the desk as data and printed on every run.
+#  · NO-NOISE COMPARATOR (CR-0050) — the published books carry a moving `at` freshness
+#    stamp; the publish step compares STABLE payloads (at stripped) against HEAD and
+#    books a clean exit when only stamps moved. The R21 roast caught the latent defect:
+#    the old plain `git diff --cached --quiet` would have committed daily timestamp
+#    noise, making the "clean exit" claim above a lie — now it is true.
 
 name: fleet-census-cron
 
@@ -83,17 +93,36 @@ jobs:
         if: steps.brake.outputs.active != 'true'
         run: node agents/fleet-delta.cjs --from-git=agents/fleet-census.artifact.json --to=agents/fleet-census.artifact.json --out=agents/fleet-delta.jsonl
 
+      - name: claims audit (CR-0050 — every ledger claim must resolve on the tree)
+        if: steps.brake.outputs.active != 'true'
+        run: node agents/claims-audit.cjs
+
       - name: publish the map back to the book
         if: steps.brake.outputs.active != 'true'
         run: |
           set -u
           git config user.name "fleet-census-cron[bot]"
           git config user.email "fleet-census-cron[bot]@users.noreply.github.com"
-          git add agents/fleet-census.artifact.json agents/fleet-delta.jsonl 2>/dev/null || true
-          if git diff --cached --quiet; then
-            echo "no CI-perspective drift — the determinism law held; clean exit, no noise commit"
+          git add agents/fleet-census.artifact.json agents/fleet-delta.jsonl agents/claims-audit.json agents/claims-audit.md 2>/dev/null || true
+          NODRIFT=$(node -e '
+            const fs=require("fs"),cp=require("child_process");
+            const strip=(s)=>{try{const o=JSON.parse(s);delete o.at;return JSON.stringify(o);}catch(e){return "UNPARSEABLE";}};
+            const staged=cp.execSync("git diff --cached --name-only",{encoding:"utf8"}).split("\n").filter(Boolean);
+            const volatile=["agents/fleet-census.artifact.json","agents/claims-audit.json"];
+            const real=staged.filter((f)=>!volatile.includes(f));
+            let stableSame=true;
+            for(const f of volatile){
+              if(!staged.includes(f))continue;
+              let head=null;
+              try{head=cp.execSync("git show HEAD:"+f,{encoding:"utf8"});}catch(e){head=null;}
+              if(head===null||strip(head)!==strip(fs.readFileSync(f,"utf8")))stableSame=false;
+            }
+            console.log((stableSame&&real.length===0)?"no-drift":"drift");
+          ')
+          if [ "$NODRIFT" = "no-drift" ]; then
+            echo "stable payloads identical (only the at-stamps moved) — clean exit, no noise commit"
           else
-            git commit -m "fleet-census(ci): artifact+delta $(date -u +%FT%TZ) [skip ci]"
+            git commit -m "fleet-census(ci): artifact+delta+claims $(date -u +%FT%TZ) [skip ci]"
             git pull --rebase origin main
             git push origin HEAD:main
           fi

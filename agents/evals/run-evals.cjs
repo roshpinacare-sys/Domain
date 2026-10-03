@@ -1445,17 +1445,61 @@ function accumulateInMemory(bookRows, seed) {
       why40b.length ? 'fails: ' + why40b.join('; ') : 'the reflex arc now holds its own pulse: measured starvation (zero schedule events) is answered by a keeper that re-fires from receipts');
   } catch (e) { evalr('E40b', 'keeper decide', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
+  // ---- E41: the claims audit (R21, CR-0050; renumbered from E40/CR-0049 after the FIFTEENTH collision — the self-healing-pulse lane took CR-0049/feat-044/E40a/b) — every ledger claim mechanically checked
+  try {
+    const ca = require(path.join(AG, 'claims-audit.cjs'));
+    let ok41 = true; const why41 = [];
+    const c41 = (cond, tag) => { if (!cond) { ok41 = false; why41.push(tag); } };
+    // white-box: the evidence resolution law (as-given -> agents/ -> .github/workflows/ -> basename)
+    const idx41 = ca.buildFileIndex();
+    c41(idx41.size > 50, 'file-index-nonempty');
+    c41(ca.resolveEvidencePath('fleet-census.cjs', idx41) === 'agents/fleet-census.cjs', 'resolve-agents-fallback');
+    c41(ca.resolveEvidencePath('economy-engine.yml', idx41) === '.github/workflows/economy-engine.yml', 'resolve-workflows-fallback');
+    c41(ca.resolveEvidencePath('THIRD-PARTY-NOTICES.md', idx41) === 'agents/skill-library/THIRD-PARTY-NOTICES.md', 'resolve-basename-fallback');
+    c41(ca.resolveEvidencePath('no-such-thing-xyz.cjs', idx41) === null, 'resolve-miss-null');
+    // white-box: evidence collectors accept all three ledger shapes
+    c41(ca.collectEvidencePaths(['agents/one-bloc.cjs']).some((t) => t.rel === 'agents/one-bloc.cjs'), 'collect-array');
+    c41(ca.collectEvidencePaths('agents/one-bloc.cjs · agents/page-laws.json').length === 2, 'collect-string');
+    c41(ca.collectEvidencePaths({ suite: '42/42 v1.29.0', book: 'agents/claims-audit.json' }).some((t) => t.rel === 'agents/claims-audit.json'), 'collect-object');
+    // white-box: the suite-invariant machine (MATCH / LAGGING-BOOK / MISMATCH / SKIP)
+    c41(ca.suiteInvariant('1.29.0', '1.29.0', 42, 42) === 'MATCH', 'suite-match');
+    c41(ca.suiteInvariant('1.29.0', '1.28.0', 42, 41) === 'LAGGING-BOOK', 'suite-lagging');
+    c41(ca.suiteInvariant('1.29.0', '1.29.0', 42, 41) === 'MISMATCH', 'suite-mismatch');
+    c41(ca.suiteInvariant(null, '1.29.0', 42, 41) === 'SKIP', 'suite-skip');
+    // white-box: the real-tree audit — the OWNER-LANGUAGE LAW is data; zero offenders on the ledger
+    const audit41 = ca.auditLedger();
+    c41(ca.OWNER_LANGUAGE === 'he', 'owner-language-law-encoded');
+    c41(audit41.offenders.length === 0, 'real-ledger-zero-offenders:' + JSON.stringify(audit41.offenders).slice(0, 60));
+    c41(['MATCH', 'LAGGING-BOOK'].includes(audit41.suite.verdict), 'suite-honest-state:' + audit41.suite.verdict);
+    c41(audit41.warns.some((w) => w.kind === 'DUPLICATE-SLOT' && w.cr === 'CR-0008'), 'cr-0008-duplicate-warn-documented');
+    c41(audit41.warns.some((w) => w.kind === 'ALLOWED-CLAIM' && w.claimed === 'agents/sovereign-pending.json'), 'allowed-claim-warn-not-offender');
+    c41(Object.keys(ca.KNOWN_EXCEPTIONS).every((k) => typeof ca.KNOWN_EXCEPTIONS[k] === 'string' && ca.KNOWN_EXCEPTIONS[k].length > 20), 'exceptions-reason-stamped');
+    // white-box: determinism — the stable payload is byte-identical across two runs
+    c41(JSON.stringify(ca.claimsStable()) === JSON.stringify(ca.claimsStable()), 'claims-stable-deterministic');
+    // black-box: the REAL desk in a fresh process on the real tree (exit 0, honest verdict, law printed)
+    const bb41 = spawnSync(process.execPath, [path.join(AG, 'claims-audit.cjs')], { encoding: 'utf8', timeout: 60000 });
+    let book41 = null; try { book41 = JSON.parse(fs.readFileSync(path.join(AG, 'claims-audit.json'), 'utf8')); } catch (_) {}
+    c41(bb41.status === 0 && book41 && ['CLEAN', 'WARN'].includes(book41.verdict) && book41.ownerLanguage === 'he', 'black-box-real-tree-desk');
+    evalr('E41', 'claims audit: every feature_list evidence path resolves on the tree (as-given/agents/workflows/basename resolution), CR files exist for every cited CR (duplicate slots warned, never hidden), the suite version/count invariant holds (MATCH/LAGGING-BOOK/MISMATCH — sub-letter ids E40a/b counted), documented exceptions book honest WARNs with reasons, the OWNER-LANGUAGE LAW is encoded as data (owner-facing replies = עברית), and the stable payload is byte-deterministic',
+      ok41,
+      ['white-box: resolution order as-given -> agents/ -> .github/workflows/ -> unique basename (economy-engine.yml found via workflows, THIRD-PARTY-NOTICES.md found via basename, miss=null)', 'white-box: evidence collectors for all three ledger shapes (array/string/object)', 'white-box: suiteInvariant machine — MATCH / LAGGING-BOOK (book lags an in-flight bump, self-heals at lane-books) / MISMATCH (offender) / SKIP', 'white-box: the real ledger audits to ZERO offenders on the MERGED tree; CR-0008 duplicate slot and the three documented exceptions book as reason-stamped WARNs, never fake failures', 'white-box: OWNER_LANGUAGE === "he" — the owner-facing language law is data now (roles-as-data: a rule not encoded is not a rule)', 'white-box: claimsStable byte-identical across two runs (the determinism law, census-style)', 'black-box: the REAL desk fresh-process on the real tree — exit 0, verdict CLEAN|WARN, book written, the law printed in every run'],
+      why41.length ? 'fails: ' + why41.join('; ') : 'the fleet can no longer claim a file that is not on the tree — the anti-claims law the owner demanded is now mechanical');
+  } catch (e) { evalr('E41', 'claims audit', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
 
 
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.28.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.29.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];
   for (const e of evals) { md.push(`## ${e.id} · ${e.name} — ${e.status}`); for (const x of e.expectations) md.push(`- ${x}`); if (e.note) md.push(`- _measured: ${e.note}_`); md.push(''); }
   md.push('_Eval discipline adopted from learn-harness-engineering (Z-36): an eval is a runnable expectation, not a hope. Pure functions = white-box; desk processes = black-box fresh processes._');
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.md'), md.join('\n') + '\n');
+  // refresh the claims-audit book against the JUST-WRITTEN results (R21, CR-0050): the
+  // committed book must reflect the final suite state, not a mid-run LAGGING-BOOK snapshot
+  try { spawnSync(process.execPath, [path.join(AG, 'claims-audit.cjs')], { encoding: 'utf8', timeout: 60000 }); } catch (_) {}
   console.log(`run-evals: ${counts.pass} PASS / ${counts.fail} FAIL`);
   process.exit(0);
 })();
