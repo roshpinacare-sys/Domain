@@ -1,17 +1,17 @@
 {
   "protocol": "SAOS-FLEET-CENSUS/1",
   "agent": "fleet-census",
-  "estate": "/home/runner/work/Domain",
+  "estate": "/home/z/fleet",
   "inventory": {
     "lanes": [
       {
         "id": "Domain",
         "role": "L0 observer + convergence hub: desks, evals, cron cadence, judge/pulse books",
         "status": "PRESENT",
-        "head": "556d7e5",
-        "at": "2026-10-03T19:17:59Z",
-        "subject": "lane books: Rung 15 census-cadence run on tree — judge 41/0/0, evals 32/32 (E32 census-cadence), gate 14/0, cross-layer 7 checks, census 16/",
-        "commits": 1,
+        "head": "844df83",
+        "at": "2026-10-03T19:18:31Z",
+        "subject": "fleet-census(map): refresh 2026-10-03T19:18:31Z [skip ci]",
+        "commits": 64,
         "capabilities": [
           "marketGrid",
           "marketExec",
@@ -32,8 +32,8 @@
         ],
         "capabilityCount": 16,
         "extras": {
-          "workflows": 44,
-          "desks": 49
+          "workflows": 45,
+          "desks": 50
         }
       },
       {
@@ -83,13 +83,21 @@
       {
         "id": "Defi",
         "role": "trigger mesh + fleet supervision keeper",
-        "status": "MISSING",
-        "head": null,
-        "commits": null,
-        "subject": null,
-        "capabilities": [],
-        "capabilityCount": 0,
-        "extras": {}
+        "status": "PRESENT",
+        "head": "8dae9d8",
+        "at": "2026-10-03T16:39:57+03:00",
+        "subject": "keeper: fleet supervision receipt 2026-10-03T13:39:56.750Z",
+        "commits": 1,
+        "capabilities": [
+          "triggerChain",
+          "doctrine",
+          "fleet",
+          "registry"
+        ],
+        "capabilityCount": 4,
+        "extras": {
+          "workflows": 2
+        }
       },
       {
         "id": "Zip",
@@ -202,13 +210,13 @@
         "extras": {}
       }
     ],
-    "presentLanes": 1,
+    "presentLanes": 2,
     "totalLanes": 16,
-    "estateCommits": 1
+    "estateCommits": 65
   },
   "sovereignty": {
-    "workflowsTotal": 44,
-    "workflowsKeyless": 9,
+    "workflowsTotal": 45,
+    "workflowsKeyless": 10,
     "workflowsOwnerSecret": 35,
     "stasis": {
       "present": true,
@@ -223,8 +231,9 @@
       "market-exec",
       "market-grid"
     ],
-    "offlineDesks": 21,
+    "offlineDesks": 22,
     "offlineNames": [
+      "agent-registry",
       "bridge-desk",
       "canon-liveness",
       "capability-matrix",
@@ -338,8 +347,8 @@
       "PARTIAL": 1
     },
     "paperRows": 110,
-    "fillLedgerRows": 0,
-    "fillLedgerParsed": false,
+    "fillLedgerRows": 10,
+    "fillLedgerParsed": true,
     "dexGridLedger": {
       "version": null,
       "orders": null,
@@ -451,30 +460,30 @@
         "saos-jummper",
         "saos-sovereign-foundry"
       ],
-      "status": "BROKEN(saos-dex,steem,saos-sovereign-platform,Console,Defi,Zip,Saosmartwallet,Sdk,Adsmarket,Project-files,anchor-baseline,roshpina,saos-control-center,saos-jummper,saos-sovereign-foundry)"
+      "status": "BROKEN(saos-dex,steem,saos-sovereign-platform,Console,Zip,Saosmartwallet,Sdk,Adsmarket,Project-files,anchor-baseline,roshpina,saos-control-center,saos-jummper,saos-sovereign-foundry)"
     }
   ],
   "receipts": {
     "Domain/agents/market-grid.cjs": "7b9d8bcdbb6541b8",
     "Domain/agents/market-grid-history.jsonl": "7e0e9b84240f4587",
     "Domain/.github/workflows/market-grid-cron.yml": "1e4559b3b13cc7ac",
-    "Domain/agents/market-exec.cjs": "23457b54c3a73bec",
-    "Domain/agents/fill-ledger.cjs": "68a33ecb04531ce5",
+    "Domain/agents/market-exec.cjs": "b839c8024e83295a",
+    "Domain/agents/fill-ledger.cjs": "def0ffa106404d0c",
     "Domain/agents/market-cycle.cjs": "eecb0740cc1f77c3",
     "Domain/agents/cross-layer.cjs": "347ffa55a680ced0",
     "Domain/agents/one-bloc.cjs": "534364660df2b421",
     "Domain/agents/STASIS.json": "5ab24bc6b95aba0b",
-    "Domain/agents/evals/run-evals.cjs": "333e3caa07d8ddab",
-    "Domain/feature_list.json": "9a0b32fb17c198e2"
+    "Domain/agents/evals/run-evals.cjs": "894ee3beb71d6bd6",
+    "Domain/feature_list.json": "084e65999089dd45"
   },
   "summary": {
-    "capabilities": 16,
+    "capabilities": 20,
     "wiringWired": 5,
     "wiringArcs": 10,
     "blockersOpen": 2,
     "blockersOperatorGated": 2,
     "blockersLawsActive": 1
   },
-  "at": "2026-10-03T19:18:31.396Z",
+  "at": "2026-10-03T19:23:26.309Z",
   "ok": true
 }

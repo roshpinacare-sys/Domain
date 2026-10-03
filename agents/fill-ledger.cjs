@@ -91,7 +91,7 @@ function assetInfo(a) {
 // buy  → inventory grows at cost; sell → average-cost basis, realized P&L booked.
 // UNCLASSIFIED legs pass through untouched (law 2: never guessed into P&L).
 function applyFill(inv, leg) {
-  const n = { qty: inv.qty, cost: inv.cost, realized: inv.realized, n_fills: inv.n_fills + 1, n_unclassified: inv.n_unclassified };
+  const n = { qty: inv.qty, cost: inv.cost, realized: inv.realized, proceeds_unbased: (inv.proceeds_unbased || 0), n_fills: inv.n_fills + 1, n_unclassified: inv.n_unclassified };
   if (!leg || !leg.leg) { n.n_unclassified++; return n; }
   if (leg.leg === 'BUY') {
     n.qty += leg.recv.micro;  // STEEM received grows inventory (law 2: BUY = sold SBD, received STEEM)
@@ -99,7 +99,7 @@ function applyFill(inv, leg) {
     return n;
   }
   if (leg.leg === 'SELL') {
-    if (inv.qty <= 0 || leg.sold.micro > inv.qty) { n.n_unclassified++; return n; } // selling without/over inventory: not a guessable cycle
+    if (inv.qty <= 0 || leg.sold.micro > inv.qty) { n.n_unclassified++; n.proceeds_unbased += leg.recv.micro; return n; } // selling pre-ledger STEEM: proceeds booked, basis unknown (honest)
     const basis = Math.round((inv.cost * leg.sold.micro) / inv.qty);
     n.realized += leg.recv.micro - basis;
     n.qty -= leg.sold.micro;
@@ -168,13 +168,17 @@ function rpc(method, params, timeout = 20000) {
   });
 }
 
-// backwards pagination, limit 100 hard cap (measured -32801)
+// backwards pagination, limit 100 hard cap (measured -32801).
+// WIRE LAW (Z-65, measured live): account_history_api serves EMPTY op bodies on both
+// official nodes (bodies arrive as {} — fills unparseable); condenser_api.get_account
+// _history serves full bodies with string assets. The desk therefore walks the
+// CONDENSER form; the asset parser accepts both string and NAI shapes (law 3).
 async function fetchHistoryWindow() {
   const rows = [];
   let start = -1;
   for (let page = 0; page < MAX_PAGES; page++) {
-    const r = await rpc('account_history_api.get_account_history', { account: HEAD, start, limit: 100 });
-    const hist = (r && (r.history || r.items)) || [];
+    const r = await rpc('condenser_api.get_account_history', [HEAD, start, 100]);
+    const hist = (Array.isArray(r) ? r : ((r && (r.history || r.items)) || []));
     if (!hist.length) break;
     let minSeq = Infinity, oldestTs = null;
     for (const [seq, t] of hist) {
@@ -200,7 +204,7 @@ function readCanon() { try { const j = JSON.parse(fs.readFileSync(OUT_JSON, 'utf
 function writeCanon(rows) { fs.writeFileSync(OUT_JSON, JSON.stringify(rows, null, 2) + '\n'); }
 
 function replay(fills) {
-  let inv = { qty: 0, cost: 0, realized: 0, n_fills: 0, n_unclassified: 0 };
+  let inv = { qty: 0, cost: 0, realized: 0, proceeds_unbased: 0, n_fills: 0, n_unclassified: 0 };
   for (const f of fills) inv = applyFill(inv, f.leg_parsed);
   return inv;
 }
@@ -216,7 +220,8 @@ function writeMd(row) {
   L.push(`| new fills this run | ${row.new_fills.length} |`);
   L.push(`| total fills in ledger | ${row.total_fills} |`);
   L.push(`| inventory (µ-units→human) | ${(row.inventory.qty / 1e6).toFixed(3)} STEEM · avg cost ${(row.inventory.qty > 0 ? (row.inventory.cost / row.inventory.qty).toFixed(6) : '—')} SBD/STEEM |`);
-  L.push(`| realized P&L | ${(row.inventory.realized / 1e6).toFixed(6)} SBD |`);
+  L.push(`| realized P&L (costed cycles) | ${(row.inventory.realized / 1e6).toFixed(6)} SBD |`);
+  L.push(`| proceeds from pre-ledger-basis sells | ${(row.inventory.proceeds_unbased / 1e6).toFixed(6)} SBD |`);
   L.push(`| unclassified legs | ${row.inventory.n_unclassified} |`);
   L.push(`| liquid now | ${row.liquid ? row.liquid.steem + ' / ' + row.liquid.sbd : '—'} |`);
   L.push(`| own orders on book | ${row.own_orders != null ? row.own_orders : '—'} |`);

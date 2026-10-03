@@ -66,6 +66,17 @@ const DEFAULTS = {
   BAND_PCT: 2.0, STACK_PCT: 0.35, MIN_REMAINING: 0.5,
   FIRST_SELL_OFFSET: 0.00005, FIRST_BUY_OFFSET: 0.0005,
   EXPIRY_DAYS: 27,
+  // flow-catch (Z-65, CR-0042): one-sided tape breaker — default OFF, armed only
+  // when MARKET_EXEC_FLOWCATCH=1 inside a LIVE run. ONE marketable sell joins the
+  // resting bid (fills AT the bid — price improvement over the floor), proceeds fund
+  // tight buys that catch the same flow one tick lower.
+  FLOW_SELL_CAP_PCT: 0.5,   // taker sell ≤ 50% of liquid STEEM (stricter than maker 85%)
+  FLOW_FLOOR_PCT: 0.001,    // min price ≥ bid×(1−0.1%) — matching fills AT the resting bid
+  FLOW_BUY_PCT: 0.9,        // ≤90% of the SBD received goes to the buy ladder
+  FLOW_BUY_LEVELS: 2,
+  FLOW_BUY_SPACING: 0.996,  // L1 bid−0.1% (just behind the wall), L2 bid−0.4%
+  FLOW_FIRST_BUY_OFFSET: 0.0001,
+  FLOW_MIN_PROCEEDS: 0.01,  // below this the buy ladder would be dust on dust
 };
 
 const mid = (bid, ask) => (bid + ask) / 2;
@@ -153,6 +164,63 @@ function buildPlan({ liquidSteem, liquidSbd, bid, ask, ownOrders, params = DEFAU
     }
   }
   return { mid: +m.toFixed(6), spread_pct: +spreadPct(bid, ask).toFixed(4), sells, buys, skipped, used_steem: +used.toFixed(3), used_sbd: +usedSbd.toFixed(3), sell_cap: +sellCap.toFixed(3) };
+}
+
+// ── flow-catch planner (pure, exported for E31) ─────────────────────────────
+// The measured tape is one-sided (sellers hit the 0.100 bid wall ~6s/fill, Z-63-c
+// recon): a resting ask never fills in that tape and 0 SBD means the buy side sits
+// unfunded. Cheapest path to fill-proof: ONE marketable sell — min price = bid×
+// (1−FLOW_FLOOR_PCT) — the matching engine fills it against the resting bid AT the
+// bid (price improvement over our floor), the proceeds then fund a tight buy ladder
+// positioned to catch the same flow one tick lower (recon conditional-GO: 0.4%
+// spacing near the touch). Spread-capture cycle: sell @bid → buys @bid−0.1%/−0.4%
+// → flow fills them → measured +0.4-0.8% per round trip by fill-ledger.
+function buildFlowCatchPlan({ liquidSteem, bid, ask, proceedsSbd = 0, ownOrders, params = DEFAULTS }) {
+  const m = mid(bid, ask);
+  const sells = [], buys = [], skipped = [];
+  // taker leg: one marketable sell, capped, floor-guarded
+  const cap = liquidSteem * params.FLOW_SELL_CAP_PCT;
+  const minPrice = r6(bid * (1 - params.FLOW_FLOOR_PCT));
+  if (!inBand(minPrice, m)) {
+    skipped.push({ kind: 'flow-taker', target: minPrice, reason: 'OUT-OF-BAND' });
+  } else {
+    const s = scanSellAmount(minPrice, params.SELL_SIZE_MIN, Math.min(params.SELL_SIZE_MAX, cap));
+    if (!s) skipped.push({ kind: 'flow-taker', target: minPrice, reason: 'NO-SCAN-FIT' });
+    else sells.push({
+      level: 1, side: 'flow-taker', op: 'limit_order_create2',
+      amount_to_sell: `${s.amount.toFixed(3)} STEEM`,
+      min_to_receive: `${s.receive.toFixed(3)} SBD`,
+      target: minPrice, floor_price: bid,
+      realized: +s.realized.toFixed(6), err_pct: +(s.err * 100).toFixed(4),
+      note: 'marketable: fills AT the resting bid (price improvement) or rests at floor',
+    });
+  }
+  // maker legs: buy ladder from this run's proceeds (bounded, stack-aware, in-band)
+  let budget = proceedsSbd * params.FLOW_BUY_PCT;
+  if (proceedsSbd < params.FLOW_MIN_PROCEEDS) {
+    if (proceedsSbd > 0) skipped.push({ kind: 'flow-buy', level: 0, target: bid, reason: 'PROCEEDS-DUST' });
+  } else {
+    const firstBuy = r6(bid - params.FLOW_FIRST_BUY_OFFSET);
+    for (let j = 0; j < params.FLOW_BUY_LEVELS; j++) {
+      const target = r6(j === 0 ? firstBuy : firstBuy * Math.pow(params.FLOW_BUY_SPACING, j));
+      const reason = (name) => skipped.push({ kind: 'flow-buy', level: j + 1, target, reason: name });
+      if (!inBand(target, m)) { reason('OUT-OF-BAND'); continue; }
+      if (stacked(target, ownOrders)) { reason('STACK-EXISTS'); continue; }
+      const budgetR = r3(budget); // 3dp asset law: the op must be self-consistent
+      const receive = r3(budgetR / target);
+      if (receive <= 0) { reason('NO-SCAN-FIT'); continue; }
+      buys.push({
+        level: j + 1, side: 'flow-buy', op: 'limit_order_create2',
+        amount_to_sell: `${budgetR.toFixed(3)} SBD`,
+        min_to_receive: `${receive.toFixed(3)} STEEM`,
+        target, realized: +(budget / receive).toFixed(6),
+        err_pct: +(Math.abs(budget / receive - target) / target * 100).toFixed(4),
+      });
+      budget = 0; // both levels share the budget: L1 takes it all unless stack-split
+      break;      // v1: single-level ladder — dust discipline beats ladder ambition
+    }
+  }
+  return { mid: +m.toFixed(6), sells, buys, skipped, floor_price: bid, min_price: minPrice, proceeds_budget: +budget.toFixed(3) };
 }
 
 // ── network ─────────────────────────────────────────────────────────────────
@@ -329,8 +397,14 @@ async function main() {
     row.liquid_before = { steem: acc.balance, sbd: acc.sbd_balance };
     row.own_orders_pre = ownPre.length;
     const liquidSteem = f(acc.balance), liquidSbd = f(acc.sbd_balance);
-    // 3. plan (pure)
-    const plan = buildPlan({ liquidSteem, liquidSbd, bid: book.bid, ask: book.ask, ownOrders: ownPre });
+    // 3. plan (pure) — flow-catch mode replaces the resting-grid plan when armed
+    // (MARKET_EXEC_FLOWCATCH=1): one marketable sell joins the bid, proceeds fund the
+    // buy ladder (Z-65, CR-0042; default OFF — the grid law stays the default).
+    const flowcatch = String(process.env.MARKET_EXEC_FLOWCATCH || '') === '1';
+    row.flowcatch = flowcatch;
+    const plan = flowcatch
+      ? buildFlowCatchPlan({ liquidSteem, bid: book.bid, ask: book.ask, proceedsSbd: liquidSbd, ownOrders: ownPre })
+      : buildPlan({ liquidSteem, liquidSbd, bid: book.bid, ask: book.ask, ownOrders: ownPre });
     row.mid = plan.mid; row.planned = [...plan.sells, ...plan.buys].map((p) => ({ ...p }));
     row.skipped = plan.skipped;
     // 4. authority verify BEFORE any signature
@@ -347,18 +421,50 @@ async function main() {
     const expiry = new Date(Date.now() + DEFAULTS.EXPIRY_DAYS * 864e5).toISOString().slice(0, 19);
     const ops = [];
     const placements = [];
-    for (const p of plan.sells) { placements.push({ ...p, side: 'sell', broadcast: false }); }
+    for (const p of plan.sells) { placements.push({ ...p, side: p.side === 'flow-taker' ? 'flow-taker' : 'sell', broadcast: false }); }
     for (const p of plan.buys) { placements.push({ ...p, side: 'buy', broadcast: false }); }
     if (mode === 'LIVE') {
       // unique orderids: (epoch-seconds mod 2^32) + index — chain law: same (owner, orderid)
       // REPLACES the standing order, so uniqueness is correctness, not cosmetics
       const baseId = Math.floor(Date.now() / 1000) % 4294967000;
       placements.forEach((p, i) => { p.orderid = baseId + i + 1; });
-      for (const p of placements) { ops.push(buildOpFromPlacement(p, expiry, p.orderid)); }
-      if (ops.length) {
-        const res = await signBroadcast(NODE_PRIMARY, steem, wif, ops);
-        row.broadcast = [{ ops: ops.length, ...res }];
-        for (const p of placements) p.broadcast = true;
+      // FLOW-CATCH PHASE A: broadcast the taker sell alone, THEN read the proceeds and
+      // plan the buy ladder from the real filled SBD (two-phase — the buy budget is a
+      // measured number, never an assumption)
+      const takers = placements.filter((p) => p.side === 'flow-taker');
+      const rest = placements.filter((p) => p.side !== 'flow-taker');
+      if (flowcatch && takers.length) {
+        const takerOps = takers.map((p) => buildOpFromPlacement(p, expiry, p.orderid));
+        const res = await signBroadcast(NODE_PRIMARY, steem, wif, takerOps);
+        row.broadcast.push({ phase: 'A-taker', ops: takerOps.length, ...res });
+        for (const p of takers) p.broadcast = true;
+        // phase B: proceeds → buys (single extra level budget, stack-aware)
+        await sleep(6000);
+        const [, accMid] = await Promise.all([
+          rpcNode(NODE_PRIMARY, 'condenser_api.get_feed_history', []),
+          rpcNode(NODE_PRIMARY, 'condenser_api.get_accounts', [[HEAD]]),
+        ]);
+        const proceedsSbd = f(accMid.sbd_balance);
+        row.flow_proceeds_sbd = proceedsSbd;
+        const buyPlan = buildFlowCatchPlan({ liquidSteem: 0, bid: book.bid, ask: book.ask, proceedsSbd, ownOrders: ownPre });
+        for (const b of buyPlan.buys) {
+          const placement = { ...b, side: 'buy', broadcast: false, orderid: Math.floor(Date.now() / 1000) % 4294967000 + placements.length + 1 };
+          ops.length = 0;
+          ops.push(buildOpFromPlacement(placement, expiry, placement.orderid));
+          const resB = await signBroadcast(NODE_PRIMARY, steem, wif, ops);
+          row.broadcast.push({ phase: 'B-buys', ops: 1, ...resB });
+          placement.broadcast = true;
+          placements.push(placement);
+        }
+        row.skipped.push(...buyPlan.skipped);
+        rest.length = 0; // taker+buys IS the run; the grid plan resumes next cycle
+      } else {
+        for (const p of placements) { ops.push(buildOpFromPlacement(p, expiry, p.orderid)); }
+        if (ops.length) {
+          const res = await signBroadcast(NODE_PRIMARY, steem, wif, ops);
+          row.broadcast = [{ ops: ops.length, ...res }];
+          for (const p of placements) p.broadcast = true;
+        }
       }
     }
     row.placed = placements;
@@ -369,8 +475,15 @@ async function main() {
         const ownPost = await fetchOwnOrders(NODE_PRIMARY);
         const byId = new Map(ownPost.map((o) => [o.orderid, o]));
         for (const p of placements) {
+          if (!p.broadcast) continue; // flow-catch clears pre-planned buys — only signed legs verify
           const o = byId.get(p.orderid);
           const priceOk = !!o && Math.abs(o.price - p.realized) / p.realized < 0.005;
+          if (!o && p.side === 'flow-taker') {
+            // marketable leg absent from the book = FILL (orders leave the book when they
+            // fill); confirmation is the proceeds delta booked in row.flow_proceeds_sbd
+            row.verify.push({ level: p.level, side: p.side, orderid: p.orderid, found: false, interpretation: 'FILL-CONFIRMED (marketable leg left the book; proceeds delta is the receipt)', matched: true });
+            continue;
+          }
           row.verify.push({ level: p.level, side: p.side, orderid: p.orderid, found: !!o, price_match: priceOk, matched: !!o && priceOk });
         }
         row.own_orders_post = ownPost.length;
@@ -393,5 +506,5 @@ const f = (s) => parseFloat(String(s || '0'));
 if (require.main === module) {
   main().catch((e) => { console.error('[market-exec] FATAL', String(e.message || e).slice(0, 200)); process.exit(0); });
 } else {
-  module.exports = { mid, spreadPct, inBand, r3, r6, resolveMode, scanSellAmount, stacked, buildPlan, DEFAULTS, HEAD, OUT_JSON };
+  module.exports = { mid, spreadPct, inBand, r3, r6, resolveMode, scanSellAmount, stacked, buildPlan, buildFlowCatchPlan, DEFAULTS, HEAD, OUT_JSON };
 }

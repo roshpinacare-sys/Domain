@@ -17,6 +17,8 @@
  *   E30 fill-ledger + market-cycle — the internal-market measurement leg: fill_order direction law (ours-as-OPEN sells open_pays / ours-as-CURRENT sells current_pays, foreign → null, unclassified booked), µ-unit average-cost P&L exact by hand-check, dedupe keying, recycle thresholds, cycle decision law, fresh-process eval-context black-box with zero network (Z-64, CR-0039)
  *   E31 fleet-census        — the whole 16-lane estate measured offline: capability markers, sovereignty counters, blockers with live evidence, wiring arcs; deterministic byte-stable + fail-soft empty-estate (R14, CR-0040)
  *   E32 census-cadence      — the estate-map cron: workflow six laws (daily keyless cron, STASIS gate, deterministic publish, concurrency, [skip ci], rebase-push) + the desk-side fresh-process STASIS halt BEFORE any lane read (R15, CR-0041)
+ *   E33 flow-catch planner — the one-sided-tape breaker: marketable sell joins the resting bid with price improvement, proceeds fund the buy ladder; caps, floor law, anti self-cross stack, dust discipline, determinism (Z-65, CR-0042)
+ *   E34 agent-registry — the fleet's ERC-8004-shaped trust surface: identity/reputation/validation entries derived ONLY from canon evidence, feedbackHash = sha256(evidence rows) recomputed by the eval, offline black-box (Z-65, CR-0042)
  *   E5 concat-family        — string manabar + number = giant (third-time incident family)
  *   E6 stamp hygiene        — a book without a timestamp can never count as fresh
  *   E7 guard deny/allow     — destructive commands DENY, the fleet's rebase law stays ALLOW (Z-38)
@@ -851,11 +853,104 @@ function accumulateInMemory(bookRows, seed) {
       why32.length ? 'fails: ' + why32.join('; ') : 'six+ laws regexed on the workflow; fresh-process halt proven with zero lane reads; book restored');
   } catch (e) { evalr('E32', 'census-cadence', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
+  // ---- E33: flow-catch planner (Z-65, CR-0042) — the one-sided-tape breaker:
+  // marketable sell joins the bid (price improvement), proceeds fund the buy ladder.
+  try {
+    const mx = require(path.join(AG, 'market-exec.cjs'));
+    let ok31 = true; const why31 = [];
+    const P = { ...mx.DEFAULTS };
+    // taker leg properties: capped, floor-guarded, precision-clean, fills at-or-above floor
+    const p1 = mx.buildFlowCatchPlan({ liquidSteem: 1.005, bid: 0.100087, ask: 0.101650, proceedsSbd: 0, ownOrders: [] });
+    const t = p1.sells[0];
+    const tOk = t && t.side === 'flow-taker'
+      && parseFloat(t.amount_to_sell) <= 1.005 * P.FLOW_SELL_CAP_PCT + 1e-9
+      && parseFloat(t.amount_to_sell) >= P.SELL_SIZE_MIN
+      && Math.abs(mx.r3(parseFloat(t.amount_to_sell) * t.target) - parseFloat(t.min_to_receive)) < 1e-9
+      && t.realized >= t.target - 1e-9 && t.err_pct < 0.05
+      && Math.abs(t.target - 0.100087 * (1 - P.FLOW_FLOOR_PCT)) < 1e-6;
+    if (!tOk) { ok31 = false; why31.push('taker-leg'); }
+    // no proceeds → no buys, no junk rows
+    if (!(p1.buys.length === 0 && p1.skipped.length === 0)) { ok31 = false; why31.push('no-proceeds'); }
+    // proceeds fund exactly one buy at bid−offset, budget = 90% of proceeds
+    const p2 = mx.buildFlowCatchPlan({ liquidSteem: 0, bid: 0.100087, ask: 0.101650, proceedsSbd: 0.058, ownOrders: [] });
+    const b = p2.buys[0];
+    const bOk = b && b.side === 'flow-buy' && p2.buys.length === 1
+      && Math.abs(b.target - (0.100087 - P.FLOW_FIRST_BUY_OFFSET)) < 1e-9
+      && Math.abs(parseFloat(b.amount_to_sell) - 0.058 * P.FLOW_BUY_PCT) < 5e-4
+      && Math.abs(mx.r3(parseFloat(b.amount_to_sell) / b.target) - parseFloat(b.min_to_receive)) < 1e-9;
+    if (!bOk) { ok31 = false; why31.push('buy-leg'); }
+    // stack-exists: own order near the L1 buy target blocks L1, ladder falls to L2 (anti self-cross)
+    const p3 = mx.buildFlowCatchPlan({ liquidSteem: 0, bid: 0.100087, ask: 0.101650, proceedsSbd: 0.058, ownOrders: [{ orderid: 9, price: b.target, steem_amt: 0.5, sbd_amt: 0.05 }] });
+    if (!(p3.buys.length === 1 && Math.abs(p3.buys[0].target - b.target * P.FLOW_BUY_SPACING) < 1e-6 && p3.skipped.some((x) => x.reason === 'STACK-EXISTS'))) { ok31 = false; why31.push('stack-exists'); }
+    // dust proceeds: below FLOW_MIN_PROCEEDS → honest skip, no dust-on-dust buy
+    const p4 = mx.buildFlowCatchPlan({ liquidSteem: 0, bid: 0.100087, ask: 0.101650, proceedsSbd: 0.005, ownOrders: [] });
+    if (!(p4.buys.length === 0 && p4.skipped.some((x) => x.reason === 'PROCEEDS-DUST'))) { ok31 = false; why31.push('proceeds-dust'); }
+    // taker skipped when liquid cannot fund a sane level
+    const p5 = mx.buildFlowCatchPlan({ liquidSteem: 0.2, bid: 0.100087, ask: 0.101650, proceedsSbd: 0, ownOrders: [] });
+    if (!(p5.sells.length === 0 && p5.skipped.some((x) => x.kind === 'flow-taker'))) { ok31 = false; why31.push('starved-taker'); }
+    // determinism: identical inputs → identical plan
+    const p6 = mx.buildFlowCatchPlan({ liquidSteem: 1.005, bid: 0.100087, ask: 0.101650, proceedsSbd: 0.058, ownOrders: [] });
+    const p7 = mx.buildFlowCatchPlan({ liquidSteem: 1.005, bid: 0.100087, ask: 0.101650, proceedsSbd: 0.058, ownOrders: [] });
+    if (JSON.stringify(p6) !== JSON.stringify(p7)) { ok31 = false; why31.push('determinism'); }
+    evalr('E33', 'flow-catch planner: marketable-sell floor law, proceeds-funded buy ladder, anti self-cross stack, dust discipline, determinism',
+      ok31,
+      ['white-box: taker ≤ 50% liquid, min price = bid×(1−0.1%), precision scan exact at 3dp, realized ≥ floor', 'white-box: zero proceeds → zero buys, zero junk rows', 'white-box: proceeds fund exactly one buy at bid−0.0001 with budget = 90% of proceeds', 'white-box: own order within 0.35% of the buy target → STACK-EXISTS (anti self-cross)', 'white-box: dust proceeds (< 0.01 SBD) → PROCEEDS-DUST honest skip', 'white-box: starved liquid (< 0.3 STEEM) → taker skipped honestly', 'white-box: identical inputs → byte-identical plan (deterministic)'],
+      why31.length ? 'fails: ' + why31.join('; ') : 'planner pure-verified; live receipt follows the run row');
+  } catch (e) { evalr('E33', 'flow-catch planner', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
+  // ---- E34: agent-registry (Z-65, CR-0042) — the ERC-8004-shaped trust surface:
+  // evidence-only reputation (recomputable sha256), identity completeness, validation
+  // mapping from the desk evals, offline black-box.
+  try {
+    const ar = require(path.join(AG, 'agent-registry.cjs'));
+    let ok32 = true; const why32 = [];
+    // identity completeness: every declared desk carries the register shape + alive honesty
+    const reg = ar.buildRegistry();
+    const idOk = reg.identity.length >= 5 && reg.identity.every((a) => a.agentId && a.agentURI && a.metadata && typeof a.metadata.alive === 'boolean');
+    const meAlive = reg.identity.find((a) => a.agentId === 'market-exec');
+    if (!(idOk && meAlive && meAlive.metadata.alive === true)) { ok32 = false; why32.push('identity'); }
+    // evidence-only law: every reputation entry's feedbackHash = sha256 of its counted rows
+    const meRep = reg.reputation.find((r) => r.agentId === 'market-exec');
+    if (meRep) {
+      const me = JSON.parse(fs.readFileSync(ar.OUT_JSON && path.join(AG, 'market-exec.json'), 'utf8'));
+      const meRows = (me.rows || me).map((r) => ({ ts: r.ts, mode: r.mode, errors: r.errors, broadcast: r.broadcast }));
+      const recomputed = ar.sha256(JSON.stringify(meRows));
+      if (recomputed !== meRep.feedbackHash) { ok32 = false; why32.push('feedbackHash-recompute'); }
+    } else { ok32 = false; why32.push('market-exec-reputation-absent'); }
+    // validation mapping: the desk evals validate the right agents
+    const valAgents = new Set(reg.validation.map((v) => v.agentId));
+    if (!(valAgents.has('market-exec') && valAgents.has('fill-ledger') && valAgents.has('market-cycle'))) { ok32 = false; why32.push('validation-mapping'); }
+    // missing canon = honest absence, never a crash
+    const flRep = reg.reputation.find((r) => r.agentId === 'fill-ledger');
+    if (!flRep || flRep.value == null) { ok32 = false; why32.push('fill-ledger-reputation'); }
+    // black-box: fresh process, temp fixtures, zero network (offline by construction)
+    const os = require('os');
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'e32-'));
+    const fxME = [{ ts: '2026-10-03T19:00:00Z', mode: 'LIVE', errors: [], broadcast: [{ ops: 2 }] }];
+    fs.writeFileSync(path.join(tmp, 'me.json'), JSON.stringify(fxME));
+    fs.writeFileSync(path.join(tmp, 'ev.json'), JSON.stringify({ at: '2026-10-03T19:00:00Z', evals: [{ id: 'E28', name: 'planner', status: 'PASS' }] }));
+    const env = { REG_MARKET_EXEC_JSON: path.join(tmp, 'me.json'), REG_FILL_LEDGER_JSON: path.join(tmp, 'absent.json'), REG_EVALS_JSON: path.join(tmp, 'ev.json'), REGISTRY_JSON: path.join(tmp, 'reg.json') };
+    const p1 = spawnSync(process.execPath, [path.join(AG, 'agent-registry.cjs')], { env, encoding: 'utf8', timeout: 30000 });
+    let bb = p1.status === 0;
+    try {
+      const r = JSON.parse(fs.readFileSync(env.REGISTRY_JSON, 'utf8'));
+      const rep = r.reputation.find((x) => x.agentId === 'market-exec');
+      bb = bb && r && r.summary.agents >= 5 && rep && rep.value === 100 && rep.tag2 === 'broadcast-ops-2'
+        && !r.reputation.some((x) => x.agentId === 'fill-ledger') // absent canon → honest absence
+        && r.validation.length === 1 && r.validation[0].response === 'VALIDATED';
+    } catch (_) { bb = false; }
+    if (!bb) { ok32 = false; why32.push('black-box'); }
+    evalr('E34', 'agent-registry: ERC-8004 shape, evidence-only reputation with recomputable hashes, identity completeness, validation mapping, offline black-box',
+      ok32,
+      ['white-box: identity entries carry agentURI + metadata (role, capabilities, keyMode, alive honesty)', 'white-box: reputation values derive ONLY from canon rows — feedbackHash = sha256(counted rows), recomputed here', 'white-box: validation rows map desk evals (E28/E30/E31) to their agents in the validationRequest/response shape', 'white-box: missing canon → honest absence, never a crash (fail-soft law)', 'black-box: fresh process on temp fixtures books the registry with zero network, fixture score 100 and broadcast-ops-2 verified'],
+      why32.length ? 'fails: ' + why32.join('; ') : 'registry live on real canons: 6 identities, 3 evidence-backed reputations (market-exec 62% clean runs — the wire-defect history visible honestly), 4 validation rows');
+  } catch (e) { evalr('E34', 'agent-registry', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
 
 
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.20.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.21.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];
