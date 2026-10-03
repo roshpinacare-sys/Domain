@@ -53,7 +53,7 @@ jobs:
             echo "books unchanged"
             exit 0
           fi
-          git commit -m "public-pulse: refresh public pulse books $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          git commit -m "public-pulse: refresh public pulse books $(date -u +%Y-%m-%dT%H:%M:%SZ) [skip ci]"
           for attempt in 1 2 3; do
             git pull --rebase origin main && git push origin HEAD:main && { echo "books published (attempt ${attempt})"; exit 0; }
             echo "push failed (attempt ${attempt})"

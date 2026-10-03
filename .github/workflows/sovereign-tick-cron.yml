@@ -74,6 +74,10 @@ jobs:
         if: steps.stasis.outputs.active != 'true'
         run: node agents/drip-canon.cjs
 
+      - name: convert canon (maturity schedule — sensor memory + fresh walk; Z-71, CR-0050)
+        if: steps.stasis.outputs.active != 'true'
+        run: node agents/convert-canon.cjs
+
       - name: sovereign tick (keyless = DRY receipts · armed = LIVE per policy · STASIS = halt)
         if: steps.stasis.outputs.active != 'true'
         env:
@@ -109,7 +113,7 @@ jobs:
         run: |
           git config user.name "saos-sovereign"
           git config user.email "sovereign@saos.local"
-          for p in agents/sovereign-decisions.jsonl agents/sovereign-state.json agents/sovereign-pending.json agents/sovereign-drip.json agents/fill-ledger.json agents/fill-ledger-fills.jsonl agents/fill-ledger.md agents/market-cycle.json agents/market-cycle.md agents/market-exec.json agents/market-exec.md; do
+          for p in agents/sovereign-decisions.jsonl agents/sovereign-state.json agents/sovereign-pending.json agents/sovereign-drip.json agents/convert-canon.json agents/convert-canon.md agents/fill-ledger.json agents/fill-ledger-fills.jsonl agents/fill-ledger.md agents/market-cycle.json agents/market-cycle.md agents/market-exec.json agents/market-exec.md; do
             [ -e "$p" ] && git add "$p" || true
           done
           if git diff --cached --quiet; then

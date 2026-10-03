@@ -40,6 +40,7 @@ const ARC = {
   'sovereign-tick-cron': { receipt: 'agents/sovereign-decisions.jsonl', max_gap_min: 20 }, // 30-min cadence → stale at 20
   'earn-audit-cron':     { receipt: 'agents/earn-audit.json',              max_gap_min: 45 },
   'fill-ledger-cron':    { receipt: 'agents/fill-ledger.json',             max_gap_min: 45 },
+  'market-grid-cron':    { receipt: 'agents/market-grid.json',             max_gap_min: 120 }, // Z-71: measured 0 schedule events since creation (1 manual run) — the drip-starved capital desk joins the arc; its own gates bind at fire time
 };
 const COOLDOWN_MIN = 20; // per-desk re-dispatch floor — a broken desk is retried, not stormned
 

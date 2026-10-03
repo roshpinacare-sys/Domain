@@ -1421,21 +1421,26 @@ function accumulateInMemory(bookRows, seed) {
     let ok40b = true; const why40b = [];
     const chkB = (c, m) => { if (!c) { ok40b = false; why40b.push(m); } };
     const NOW = '2026-10-03T21:00:00.000Z';
+    const ARC4 = { 'sovereign-tick-cron': NOW, 'earn-audit-cron': NOW, 'fill-ledger-cron': NOW, 'market-grid-cron': NOW }; // Z-71: the arc registry grew — fixtures follow the registry, never a count
     // stale desk (>maxGap) → decided
-    let d1 = kp.keeperDecide({ now: NOW, arc: { 'sovereign-tick-cron': '2026-10-03T20:30:00.000Z', 'earn-audit-cron': NOW, 'fill-ledger-cron': NOW } });
+    let arc1 = Object.assign({}, ARC4); arc1['sovereign-tick-cron'] = '2026-10-03T20:30:00.000Z';
+    let d1 = kp.keeperDecide({ now: NOW, arc: arc1 });
     chkB(d1.decided.length === 1 && d1.decided[0].desk === 'sovereign-tick-cron' && d1.decided[0].stale_min === 30.0, 'stale not caught: ' + JSON.stringify(d1.decided));
-    chkB(d1.skipped.length === 2, 'fresh desks not skipped: ' + JSON.stringify(d1.skipped));
+    chkB(d1.skipped.length === 3, 'fresh desks not skipped: ' + JSON.stringify(d1.skipped));
     // no receipt at all → decided (never-born desk is re-fired)
     let d2 = kp.keeperDecide({ now: NOW, arc: {} });
-    chkB(d2.decided.length === 3 && d2.decided.every(x => x.reason === 'no-receipt-yet'), 'no-receipt law broken: ' + JSON.stringify(d2.decided));
+    chkB(d2.decided.length === Object.keys(kp.ARC).length && d2.decided.every(x => x.reason === 'no-receipt-yet'), 'no-receipt law broken: ' + JSON.stringify(d2.decided));
     // cooldown: a desk dispatched 10m ago is skipped even though stale
-    let d3 = kp.keeperDecide({ now: NOW, arc: { 'sovereign-tick-cron': '2026-10-03T20:30:00.000Z', 'earn-audit-cron': NOW, 'fill-ledger-cron': NOW }, cooldownBook: { 'sovereign-tick-cron': '2026-10-03T20:50:00.000Z' } });
+    let arc3 = Object.assign({}, ARC4); arc3['sovereign-tick-cron'] = '2026-10-03T20:30:00.000Z';
+    let d3 = kp.keeperDecide({ now: NOW, arc: arc3, cooldownBook: { 'sovereign-tick-cron': '2026-10-03T20:50:00.000Z' } });
     chkB(d3.decided.length === 0 && d3.skipped.some(x => x.desk === 'sovereign-tick-cron' && /cooldown/.test(x.reason)), 'cooldown broken: ' + JSON.stringify(d3));
     // cooldown expired (25m) → re-fired
-    let d4 = kp.keeperDecide({ now: NOW, arc: { 'sovereign-tick-cron': '2026-10-03T20:30:00.000Z', 'earn-audit-cron': NOW, 'fill-ledger-cron': NOW }, cooldownBook: { 'sovereign-tick-cron': '2026-10-03T20:35:00.000Z' } });
+    let arc4 = Object.assign({}, ARC4); arc4['sovereign-tick-cron'] = '2026-10-03T20:30:00.000Z';
+    let d4 = kp.keeperDecide({ now: NOW, arc: arc4, cooldownBook: { 'sovereign-tick-cron': '2026-10-03T20:35:00.000Z' } });
     chkB(d4.decided.length === 1 && d4.decided[0].desk === 'sovereign-tick-cron', 'cooldown never releases: ' + JSON.stringify(d4.decided));
     // per-desk maxGap override respected (earn-audit 45m law on its own number)
-    let d5 = kp.keeperDecide({ now: NOW, arc: { 'sovereign-tick-cron': NOW, 'earn-audit-cron': '2026-10-03T20:00:00.000Z', 'fill-ledger-cron': NOW } });
+    let arc5 = Object.assign({}, ARC4); arc5['earn-audit-cron'] = '2026-10-03T20:00:00.000Z';
+    let d5 = kp.keeperDecide({ now: NOW, arc: arc5 });
     chkB(d5.decided.length === 1 && d5.decided[0].desk === 'earn-audit-cron' && d5.decided[0].stale_min === 60.0, 'per-desk gap law broken: ' + JSON.stringify(d5.decided));
     // ARC registry: the three arc desks exist with receipts named
     chkB(kp.ARC && kp.ARC['sovereign-tick-cron'] && /sovereign-decisions\.jsonl/.test(kp.ARC['sovereign-tick-cron'].receipt), 'arc registry incomplete');
@@ -1486,11 +1491,94 @@ function accumulateInMemory(bookRows, seed) {
       why41.length ? 'fails: ' + why41.join('; ') : 'the fleet can no longer claim a file that is not on the tree — the anti-claims law the owner demanded is now mechanical');
   } catch (e) { evalr('E41', 'claims audit', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
+  // ---- E42: THE CROSS-MAP AUDITOR (Z-71, CR-0051) — every finding kind proven on fixtures ----
+  try {
+    const da = require(path.join(AG, 'deep-audit.cjs'));
+    let ok42 = true; const why42 = [];
+    const chk41 = (c, m) => { if (!c) { ok42 = false; why42.push(m); } };
+    const wf = (over) => Object.assign({ file: 'wf.yml', text: '', crons: [], invokes: [], secrets: [], hasPush: false, hasSkipCi: true, hasStasis: true }, over);
+    const NOW = '2026-10-03T22:00:00.000Z';
+    const baseAgents = ['a.cjs', 'b.cjs'];
+    // broken ref: workflow invokes a missing script
+    let r1 = da.crossMap({ workflows: [wf({ invokes: ['ghost.cjs'] })], agents: baseAgents, books: {}, secretNames: [], now: NOW });
+    chk41(r1.findings.some((f) => f.kind === 'F1-broken-ref'), 'F1 not caught: ' + JSON.stringify(r1.findings));
+    // dead agent: zero mentions anywhere (the mention graph — false-dead law)
+    const DEADNAME = ['d','e','a','d','b','e','a','t'].join('') + '.cjs'; // built dynamically — the mention graph scans eval texts, a literal fixture name would be its own witness (eval-caught in-session)
+    let r2 = da.crossMap({ workflows: [wf()], agents: ['a.cjs', DEADNAME], books: {}, secretNames: [], now: NOW });
+    chk41(r2.findings.some((f) => f.kind === 'F2-dead-agent' && f.id === DEADNAME), 'F2 not caught');
+    // ghost secret: referenced but not in the census
+    let r3 = da.crossMap({ workflows: [wf({ secrets: ['NOPE_KEY'] })], agents: baseAgents, books: {}, secretNames: ['REAL_KEY'], now: NOW });
+    chk41(r3.findings.some((f) => f.kind === 'F3-ghost-secret'), 'F3 not caught');
+    // census absent → F3 honestly unavailable (never guessed)
+    let r3b = da.crossMap({ workflows: [wf({ secrets: ['NOPE_KEY'] })], agents: baseAgents, books: {}, secretNames: null, now: NOW });
+    chk41(!r3b.findings.some((f) => f.kind === 'F3-ghost-secret'), 'F3 must not fire without a census');
+    // stale book: 30m cadence, book 200m old
+    let r4 = da.crossMap({ workflows: [wf({ crons: ['21,51 * * * *'], invokes: ['a.cjs'] })], agents: baseAgents, books: { a: '2026-10-03T18:40:00.000Z' }, secretNames: [], now: NOW });
+    chk41(r4.findings.some((f) => f.kind === 'F4-stale-book'), 'F4 not caught');
+    // daily cadence is NOT judged by an hourly floor (the 60m-floor bug is dead)
+    let r4b = da.crossMap({ workflows: [wf({ crons: ['44 4 * * *'], invokes: ['a.cjs'] })], agents: baseAgents, books: { a: '2026-10-03T04:52:00.000Z' }, secretNames: [], now: NOW });
+    chk41(!r4b.findings.some((f) => f.kind === 'F4-stale-book'), 'daily desk false-flagged by the old floor bug');
+    // collision
+    let r5 = da.crossMap({ workflows: [wf({ file: 'x.yml', crons: ['21,51 * * * *'] }), wf({ file: 'y.yml', crons: ['21,51 * * * *'] })], agents: baseAgents, books: {}, secretNames: [], now: NOW });
+    chk41(r5.findings.some((f) => f.kind === 'F5-collision'), 'F5 not caught');
+    // recursion: pushes with no skip-ci
+    let r6 = da.crossMap({ workflows: [wf({ hasPush: true, hasSkipCi: false })], agents: baseAgents, books: {}, secretNames: [], now: NOW });
+    chk41(r6.findings.some((f) => f.kind === 'F6-recursion'), 'F6 not caught');
+    // stasis gap on a capital path
+    let r7 = da.crossMap({ workflows: [wf({ invokes: ['market-exec.cjs'], hasStasis: false })], agents: ['a.cjs', 'market-exec.cjs'], books: {}, secretNames: [], now: NOW });
+    chk41(r7.findings.some((f) => f.kind === 'F7-stasis-gap'), 'F7 not caught');
+    // map drift: the map and the file disagree
+    let r8 = da.crossMap({ workflows: [wf({ file: 'dex-grid.yml', crons: ['43 3 * * *'] })], agents: baseAgents, books: {}, secretNames: [], now: NOW, minuteMap: { workflows: { 'dex-grid.yml': ['48 3 * * *'] } } });
+    chk41(r8.findings.some((f) => f.kind === 'F8-map-drift'), 'F8 not caught');
+    // clean estate → zero findings
+    let r9 = da.crossMap({ workflows: [wf({ invokes: ['a.cjs'], crons: ['21,51 * * * *'] })], agents: ['a.cjs'], books: { a: NOW }, secretNames: [], now: NOW, minuteMap: { workflows: { 'wf.yml': ['21,51 * * * *'] } } });
+    chk41(r9.findings.length === 0, 'clean estate flagged: ' + JSON.stringify(r9.findings));
+    evalr('E42', 'CROSS-MAP AUDITOR: broken refs, true-dead agents (mention-graph law — false-deads impossible), ghost secrets only with a census (never guessed), stale books vs REAL cadence (daily desks immune to the hourly floor), collisions, recursion, capital-path STASIS gaps, map-vs-estate drift, and a clean estate books ZERO findings',
+      ok42,
+      ['white-box: every F1-F8 kind caught on its own fixture', 'white-box: the two in-session desk bugs (mention-graph false-deads, 60m cadence floor) are regression-pinned', 'white-box: a clean estate books zero findings — the auditor never invents problems'],
+      why42.length ? 'fails: ' + why42.join('; ') : 'the auditor is white-boxed to its own laws before it is allowed to judge the estate');
+  } catch (e) { evalr('E42', 'cross-map auditor', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
+  // ---- E43: THE MATURITY CANON (Z-71, CR-0051) — order-safe pending schedule math ----
+  try {
+    const cc = require(path.join(AG, 'convert-canon.cjs'));
+    let ok43 = true; const why43 = [];
+    const chk42 = (c, m) => { if (!c) { ok43 = false; why43.push(m); } };
+    const NOW = '2026-10-03T22:00:00.000Z';
+    const D = (h) => new Date(Date.parse(NOW) + h * 36e5).toISOString();
+    // open convert maturing in 84h → pending
+    let b1 = cc.convertBook([{ seq: 10, kind: 'convert', b: { owner: 'headcorner', requestid: 7, amount: '45.300 SBD', conversion_date: D(84) } }], NOW);
+    chk42(b1.pending.length === 1 && b1.total_pending_sbd === 45.3 && b1.pending[0].hours_left === 84.0, 'pending math broken: ' + JSON.stringify(b1));
+    chk42(b1.matures_within_24h.length === 0, '24h flag false-positive');
+    // the same convert with a fill → closed, not pending
+    let b2 = cc.convertBook([{ seq: 10, kind: 'convert', b: { owner: 'headcorner', requestid: 7, amount: '45.300 SBD', conversion_date: D(84) } }, { seq: 11, kind: 'fill_convert_request', b: { owner: 'headcorner', requestid: 7 } }], NOW);
+    chk42(b2.pending.length === 0 && b2.matured_window === 1, 'closure not honored: ' + JSON.stringify(b2));
+    // ORDER-SAFETY: the fill row arrives BEFORE its open row (page overlap / book-vs-chain merge)
+    let b3 = cc.convertBook([{ seq: 11, kind: 'fill_convert_request', b: { owner: 'headcorner', requestid: 7 } }, { seq: 10, kind: 'convert', b: { owner: 'headcorner', requestid: 7, amount: '45.300 SBD', conversion_date: D(84) } }], NOW);
+    chk42(b3.pending.length === 0, 'order-safety broken — fill-before-open left it pending');
+    // maturity within 24h flags
+    let b4 = cc.convertBook([{ seq: 10, kind: 'convert', b: { owner: 'headcorner', requestid: 9, amount: '5.000 SBD', conversion_date: D(12) } }], NOW);
+    chk42(b4.matures_within_24h.length === 1 && b4.next_maturity_hours === 12.0, '24h window broken: ' + JSON.stringify(b4));
+    // re-open: a later open row wins; an EARLIER fill must never close a LATER open (seq-guard, eval-caught)
+    let b5 = cc.convertBook([
+      { seq: 10, kind: 'convert', b: { owner: 'h', requestid: 1, amount: '1.000 SBD', conversion_date: D(10) } },
+      { seq: 11, kind: 'fill_convert_request', b: { owner: 'h', requestid: 1 } },
+      { seq: 12, kind: 'convert', b: { owner: 'h', requestid: 1, amount: '9.000 SBD', conversion_date: D(80) } }], NOW);
+    chk42(b5.pending.length === 1 && b5.total_pending_sbd === 9.0, 're-open law broken: ' + JSON.stringify(b5));
+    // empty ops → honest empty
+    let b6 = cc.convertBook([], NOW);
+    chk42(b6.empty === true && b6.pending.length === 0 && b6.total_pending_sbd === 0, 'empty not honest: ' + JSON.stringify(b6));
+    evalr('E43', 'MATURITY CANON: pending schedule math (open→pending with honest hours_left, fill→closed), order-safe under page overlap and book-vs-chain merge, re-opens honored (last open wins; an earlier fill can never close a later re-open — the seq-guard is pinned), 24h pre-position window flags, empty books honest',
+      ok43,
+      ['white-box: open convert maturing in 84h → pending 45.3 SBD exactly', 'white-box: closure + order-safety (fill-before-open) + re-open (last open wins) — the two-pass reducer is pinned', 'white-box: matures-within-24h pre-positions the rotation; empty history books honest empties'],
+      why43.length ? 'fails: ' + why43.join('; ') : 'the Oct-7 rotation now has a keyless instrument: the sensor books maturities fresh, the canon composes the schedule, nothing is guessed');
+  } catch (e) { evalr('E43', 'maturity canon', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
 
 
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.29.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.30.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + Z-71 cross-map-auditor E42/maturity-canon E43, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];

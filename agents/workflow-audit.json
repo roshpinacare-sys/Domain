@@ -1,11 +1,23 @@
 {
- "at": "2026-10-03T04:52:14.753Z",
+ "at": "2026-10-03T21:59:28.264Z",
  "agent": "workflow-audit",
  "count": {
-  "domain": 41,
-  "console": 0
+  "domain": 48,
+  "console": 10
  },
  "twins": [],
- "crossRepoDupes": [],
- "plan": []
+ "crossRepoDupes": [
+  {
+   "script": "agents/registry.js,agents/gh-snapshot.js",
+   "domain": "mirror-from-console.yml",
+   "console": "agents-watch.yml"
+  }
+ ],
+ "plan": [
+  {
+   "keep": "Domain/mirror-from-console.yml",
+   "tombstone": "Console/agents-watch.yml",
+   "action": "Domain is the execution home; Console copy goes dispatch-only (Console keeps only its Pages-publish duties)"
+  }
+ ]
 }

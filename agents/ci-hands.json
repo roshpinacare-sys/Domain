@@ -1,15 +1,15 @@
 {
  "ok": true,
- "at": "2026-10-03T22:03:31.206Z",
- "ms": 31446,
+ "at": "2026-10-03T22:17:45.529Z",
+ "ms": 3247,
  "agent": "ci-hands v1.0.0 (Task 26 — trycua/cua adoption: the fleet gets HANDS on its own CI estate; cua-bench contract: trajectory + result + pass-rate; read-only actuator, STASIS-safe, tier law kept)",
  "reposDeclared": 16,
  "reposReached": 1,
  "reposUnreachable": 15,
  "window": 30,
  "sampledRuns": 30,
- "lanes": 7,
- "green": 7,
+ "lanes": 10,
+ "green": 10,
  "activeRed": 0,
  "selfHealed": 0,
  "historyTransient": 0,
@@ -29,7 +29,7 @@
    "sampled": 0,
    "failures": [],
    "lanes": {},
-   "error": "The operation was aborted due to timeout"
+   "reason": "HTTP 403"
   },
   {
    "repo": "steem",
@@ -37,66 +37,98 @@
    "sampled": 0,
    "failures": [],
    "lanes": {},
-   "reason": "HTTP 403"
+   "reason": "HTTP 404"
   },
   {
    "repo": "Domain",
+   "status": "UNREACHABLE",
+   "sampled": 0,
+   "failures": [],
+   "lanes": {},
+   "reason": "HTTP 403"
+  },
+  {
+   "repo": "Console",
    "status": "REACHED",
    "sampled": 30,
    "failures": [],
    "lanes": {
-    ".github/workflows/gitleaks.yml": {
-     "display": "gitleaks-secret-scan",
-     "latest": "success",
-     "latestAt": "2026-10-03T21:56:14Z",
-     "failures": 0,
-     "verdict": "GREEN",
-     "classes": {}
-    },
     "dynamic/pages/pages-build-deployment": {
      "display": "pages build and deployment",
      "latest": "success",
-     "latestAt": "2026-10-03T21:56:14Z",
+     "latestAt": "2026-10-03T20:03:25Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
     },
-    ".github/workflows/earn-audit-cron.yml": {
-     "display": "earn-audit-cron",
+    ".github/workflows/console-publish.yml": {
+     "display": "console-publish",
      "latest": "success",
-     "latestAt": "2026-10-03T21:55:36Z",
+     "latestAt": "2026-10-03T20:03:15Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
     },
-    ".github/workflows/tick-keeper.yml": {
-     "display": "tick-keeper",
+    ".github/workflows/agents-watch.yml": {
+     "display": "agents-watch",
      "latest": "success",
-     "latestAt": "2026-10-03T21:53:03Z",
+     "latestAt": "2026-10-03T19:56:03Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
     },
-    ".github/workflows/foundry-mesh-tests.yml": {
-     "display": "foundry-mesh-tests",
+    ".github/workflows/trigger-mesh.yml": {
+     "display": "trigger-mesh",
      "latest": "success",
-     "latestAt": "2026-10-03T21:52:57Z",
+     "latestAt": "2026-10-03T19:43:52Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
     },
-    ".github/workflows/sovereign-tick-cron.yml": {
-     "display": "sovereign-tick-cron",
+    ".github/workflows/gitleaks.yml": {
+     "display": "gitleaks-secret-scan",
      "latest": "success",
-     "latestAt": "2026-10-03T21:15:04Z",
+     "latestAt": "2026-10-03T19:02:48Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
     },
-    ".github/workflows/weave-anchor-lines.yml": {
-     "display": "weave-anchor-lines",
+    ".github/workflows/truth-gate.yml": {
+     "display": "truth-gate",
      "latest": "success",
-     "latestAt": "2026-10-03T20:38:10Z",
+     "latestAt": "2026-10-03T19:02:27Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/grid-pulse.yml": {
+     "display": "grid-pulse",
+     "latest": "success",
+     "latestAt": "2026-10-03T18:58:16Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/money-watch.yml": {
+     "display": "money-watch",
+     "latest": "success",
+     "latestAt": "2026-10-03T18:43:45Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/dex-watch.yml": {
+     "display": "dex-watch",
+     "latest": "success",
+     "latestAt": "2026-10-03T18:40:59Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/agent-verify.yml": {
+     "display": "agent-verify",
+     "latest": "success",
+     "latestAt": "2026-10-03T17:50:53Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
@@ -104,20 +136,12 @@
    }
   },
   {
-   "repo": "Console",
-   "status": "UNREACHABLE",
-   "sampled": 0,
-   "failures": [],
-   "lanes": {},
-   "reason": "HTTP 403"
-  },
-  {
    "repo": "Zip",
    "status": "UNREACHABLE",
    "sampled": 0,
    "failures": [],
    "lanes": {},
-   "reason": "HTTP 404"
+   "reason": "HTTP 403"
   },
   {
    "repo": "roshpina",
@@ -125,7 +149,7 @@
    "sampled": 0,
    "failures": [],
    "lanes": {},
-   "reason": "HTTP 403"
+   "reason": "HTTP 404"
   },
   {
    "repo": "anchor-baseline",
@@ -141,7 +165,7 @@
    "sampled": 0,
    "failures": [],
    "lanes": {},
-   "reason": "HTTP 403"
+   "reason": "HTTP 404"
   },
   {
    "repo": "Sdk",
@@ -157,7 +181,7 @@
    "sampled": 0,
    "failures": [],
    "lanes": {},
-   "reason": "HTTP 403"
+   "reason": "HTTP 404"
   },
   {
    "repo": "Adsmarket",
@@ -173,7 +197,7 @@
    "sampled": 0,
    "failures": [],
    "lanes": {},
-   "reason": "HTTP 403"
+   "reason": "HTTP 404"
   },
   {
    "repo": "saos-dex",
@@ -189,7 +213,7 @@
    "sampled": 0,
    "failures": [],
    "lanes": {},
-   "reason": "HTTP 403"
+   "reason": "HTTP 404"
   },
   {
    "repo": "saos-control-center",
@@ -205,121 +229,121 @@
    "sampled": 0,
    "failures": [],
    "lanes": {},
-   "reason": "HTTP 403"
+   "reason": "HTTP 404"
   }
  ],
  "trajectory": [
   {
-   "ts": "2026-10-03T22:03:51.210Z",
+   "ts": "2026-10-03T22:17:45.688Z",
    "action": "list-runs",
    "target": "saos-sovereign-platform",
-   "outcome": "error",
-   "ms": 20003
+   "outcome": 403,
+   "ms": 158
   },
   {
-   "ts": "2026-10-03T22:03:59.862Z",
+   "ts": "2026-10-03T22:17:46.042Z",
    "action": "list-runs",
    "target": "steem",
-   "outcome": 403,
-   "ms": 8652
+   "outcome": 404,
+   "ms": 354
   },
   {
-   "ts": "2026-10-03T22:04:01.726Z",
+   "ts": "2026-10-03T22:17:46.081Z",
    "action": "list-runs",
    "target": "Domain",
-   "outcome": 200,
-   "ms": 1864
-  },
-  {
-   "ts": "2026-10-03T22:04:01.875Z",
-   "action": "list-runs",
-   "target": "Console",
-   "outcome": 403,
-   "ms": 111
-  },
-  {
-   "ts": "2026-10-03T22:04:02.227Z",
-   "action": "list-runs",
-   "target": "Zip",
-   "outcome": 404,
-   "ms": 352
-  },
-  {
-   "ts": "2026-10-03T22:04:02.266Z",
-   "action": "list-runs",
-   "target": "roshpina",
    "outcome": 403,
    "ms": 39
   },
   {
-   "ts": "2026-10-03T22:04:02.305Z",
+   "ts": "2026-10-03T22:17:46.823Z",
+   "action": "list-runs",
+   "target": "Console",
+   "outcome": 200,
+   "ms": 742
+  },
+  {
+   "ts": "2026-10-03T22:17:46.898Z",
+   "action": "list-runs",
+   "target": "Zip",
+   "outcome": 403,
+   "ms": 40
+  },
+  {
+   "ts": "2026-10-03T22:17:47.167Z",
+   "action": "list-runs",
+   "target": "roshpina",
+   "outcome": 404,
+   "ms": 269
+  },
+  {
+   "ts": "2026-10-03T22:17:47.206Z",
    "action": "list-runs",
    "target": "anchor-baseline",
    "outcome": 403,
    "ms": 39
   },
   {
-   "ts": "2026-10-03T22:04:02.343Z",
+   "ts": "2026-10-03T22:17:47.499Z",
    "action": "list-runs",
    "target": "Saosmartwallet",
-   "outcome": 403,
-   "ms": 38
+   "outcome": 404,
+   "ms": 293
   },
   {
-   "ts": "2026-10-03T22:04:02.381Z",
+   "ts": "2026-10-03T22:17:47.539Z",
    "action": "list-runs",
    "target": "Sdk",
    "outcome": 403,
-   "ms": 38
+   "ms": 40
   },
   {
-   "ts": "2026-10-03T22:04:02.420Z",
+   "ts": "2026-10-03T22:17:47.817Z",
    "action": "list-runs",
    "target": "Project-files",
-   "outcome": 403,
-   "ms": 39
+   "outcome": 404,
+   "ms": 278
   },
   {
-   "ts": "2026-10-03T22:04:02.459Z",
+   "ts": "2026-10-03T22:17:47.856Z",
    "action": "list-runs",
    "target": "Adsmarket",
    "outcome": 403,
    "ms": 39
   },
   {
-   "ts": "2026-10-03T22:04:02.501Z",
+   "ts": "2026-10-03T22:17:48.132Z",
    "action": "list-runs",
    "target": "Defi",
+   "outcome": 404,
+   "ms": 276
+  },
+  {
+   "ts": "2026-10-03T22:17:48.174Z",
+   "action": "list-runs",
+   "target": "saos-dex",
    "outcome": 403,
    "ms": 42
   },
   {
-   "ts": "2026-10-03T22:04:02.539Z",
-   "action": "list-runs",
-   "target": "saos-dex",
-   "outcome": 403,
-   "ms": 38
-  },
-  {
-   "ts": "2026-10-03T22:04:02.577Z",
+   "ts": "2026-10-03T22:17:48.457Z",
    "action": "list-runs",
    "target": "saos-jummper",
-   "outcome": 403,
-   "ms": 38
+   "outcome": 404,
+   "ms": 283
   },
   {
-   "ts": "2026-10-03T22:04:02.615Z",
+   "ts": "2026-10-03T22:17:48.496Z",
    "action": "list-runs",
    "target": "saos-control-center",
    "outcome": 403,
-   "ms": 38
+   "ms": 39
   },
   {
-   "ts": "2026-10-03T22:04:02.653Z",
+   "ts": "2026-10-03T22:17:48.776Z",
    "action": "list-runs",
    "target": "saos-sovereign-foundry",
-   "outcome": 403,
-   "ms": 38
+   "outcome": 404,
+   "ms": 280
   }
  ],
  "verdict": "CI-HANDS keyless floor: 1/16 reached — the rest booked UNREACHABLE (never invented)"

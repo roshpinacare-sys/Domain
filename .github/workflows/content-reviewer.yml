@@ -60,7 +60,7 @@ jobs:
             exit 0
           fi
           PCT=$(node -e "const d=require('fs').readdirSync('content-review').filter(f=>f.startsWith('report-')).sort().pop();const r=JSON.parse(require('fs').readFileSync('content-review/'+d,'utf8'));console.log(r.duplication.pairDuplicationPct)")
-          git commit -m "content-review: public-content report $(date -u +%Y-%m-%d) - duplication ${PCT}% (24h window)"
+          git commit -m "content-review: public-content report $(date -u +%Y-%m-%d) - duplication ${PCT}% (24h window) [skip ci]"
           for attempt in 1 2 3; do
             git pull --rebase origin main && git push origin HEAD:main && { echo "report published (attempt ${attempt})"; exit 0; }
             echo "push failed (attempt ${attempt})"

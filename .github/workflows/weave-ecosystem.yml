@@ -73,7 +73,7 @@ jobs:
             exit 0
           fi
           DUP=$(jq -r '.totals.dupRatio' sovereign/reports/ecosystem-dup-latest.json)
-          git commit -m "weave-ecosystem: $(date -u +%FT%TZ) · dup=$DUP · G6 daily enforcement · domain-twin"
+          git commit -m "weave-ecosystem: $(date -u +%FT%TZ) · dup=$DUP · G6 daily enforcement · domain-twin [skip ci]"
           for i in 1 2 3; do
             if git push origin main; then echo "pushed ✓"; exit 0; fi
             echo "race with the heart (attempt $i) — rebase and retry"
