@@ -32,6 +32,34 @@ MIT license requires (retain the license + copyright notice).
   `${Var:default}` binding — the skill library sits ON TOP of that adoption
   (`feat-008` → `feat-011` lineage).
 
+## 3. usestrix/strix (Task 28 evaluation → Task 29 adoption)
+
+- **Source:** https://github.com/usestrix/strix
+- **License:** Apache-2.0 — https://github.com/usestrix/strix/blob/main/LICENSE
+  (Apache License, Version 2.0, January 2004; full text preserved at the pinned mirror's
+  `LICENSE` file — a copy ships inside the mirror clone)
+- **Pinned mirror sha:** `99c0711` (cloned keyless to `/home/z/reference-mirrors/strix`,
+  outside the 16-repo estate on purpose: the mirror is reference, not fleet; depth-50
+  clone of HEAD 2026-10-02 — matches API commit 99c0711687)
+- **Author (upstream):** usestrix and strix contributors
+- **What was adopted:**
+  - The honest-engineering patterns as REFERENCE for the house package
+    `skills/security-strix-operator/`: exit-code honesty (`0` = clean in what was
+    analyzed, with documented budget-wrap caveats), `run.json` cost-vs-budget
+    transparency, digest-bound two-step approvals (`--approve-sha256`), unknown-state
+    honesty flags (`launch_outcome_unknown`), decision tables ("choose honestly,
+    do not default"), and the authorization guardrail ("only scan targets the user is
+    authorized to test") — adopted as the estate's scan-boundary law.
+  - The 9 upstream consumer skills (`skills/*` in the mirror) are kept as a pinned
+    REFERENCE family for the security domain — consulted in the mirror, not imported.
+- **What was NOT taken:** zero upstream SKILL.md bodies were copied into this library;
+  no upstream source code, prompts, or tools were vendored. The house package is an
+  original adaptation whose Apache-2.0-derived references are limited to documented
+  patterns and short quoted guardrail phrases, attributed here.
+- **State of changes:** the house package materially adapts (does not reproduce) the
+  referenced patterns; this notice is the required Apache-2.0 attribution and
+  change-state declaration.
+
 ## MIT License (reference text)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software

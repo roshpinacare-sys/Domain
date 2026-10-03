@@ -1,8 +1,8 @@
 # Desk Evals — runnable expectations (fresh-process judge, Z-36)
 
-_run-evals v1.9.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19, parallel-convergence superset) · 2026-10-03T01:44:33.725Z_
+_run-evals v1.11.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21, parallel-convergence superset) · 2026-10-03T03:12:42.990Z_
 
-**evals green: 19/19 expectations hold**
+**evals green: 21/21 expectations hold**
 
 ## E1 · dedupe identity is stable across repeat harvest — PASS
 - seed(3) + econ rows carrying the same two fills → exactly 3 entries
@@ -23,7 +23,7 @@ _run-evals v1.9.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense 
 - exit code 0 even when DEFU_DIR is bogus
 - missing canon = honest FAILs, never a crash, never green-washed
 - counts arithmetic consistent (pass+warn+fail == checks)
-- _measured: exit=0 pass=28 warn=0 fail=10_
+- _measured: exit=0 pass=30 warn=0 fail=10_
 
 ## E5 · concat-family regression: manabar coerced before arithmetic — PASS
 - string+number concatenates ("74488519347811969") — the Z-33 third-incident family
@@ -61,7 +61,7 @@ _run-evals v1.9.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense 
 - 200+data → REACHABLE with model count; 401/403 → AUTH-WALL; network error → UNREACHABLE (no hopeful green)
 - probing a nonexistent provider exits 0 with zero probes booked (fail-soft, no invention)
 - rail-ledger.json stamped (BOOKS-STAMP law)
-- _measured: live probes booked=12_
+- _measured: live probes booked=13_
 
 ## E12 · rail policy: FORBIDDEN row enabled as LIVE fails the gate — PASS
 - a catalog where cohere (ToS FORBIDDEN) is flipped to LIVE is rejected — ok:false with the FORBIDDEN reason named
@@ -81,7 +81,7 @@ _run-evals v1.9.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense 
 - every injected fault class caught: faults_caught === faults_total >= 4 (registry corruption, guard neutered, book stamps stripped, forbidden rail LIVE)
 - receipts fresh < 168h — the drill runs on the CI schedule, containment proof is not a one-time trophy
 - CI summary ledger agrees (collapse-drill.json stamped)
-- _measured: caught=4/4 ageH=0 head=eeeab72e5432_
+- _measured: caught=4/4 ageH=2 head=eeeab72e5432_
 
 ## E15 · one-bloc: whole-git convergence map measured, never invented — PASS
 - one-bloc.cjs runs in a fresh process (exit 0, fail-soft)
@@ -117,6 +117,19 @@ _run-evals v1.9.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense 
 - black-box: fresh-process desk exits 0 (fail-soft), ≥5 hands booked, ≥2 LIVE in any healthy context
 - every LIVE hand carries evidence+probeAt — a capability claimed without a receipt is a story
 - verdict enum closed (LIVE/ABSENT/UNREACHABLE/REF/LOCKED-TIER-C) — no hopeful greens possible
-- _measured: hands=6 live=4 receipted=true at=2026-10-03T01:44:31.596Z_
+- _measured: hands=6 live=4 receipted=true at=2026-10-03T03:12:31.613Z_
+
+## E20 · skill-library gate: expertise as governed data with a mandatory Evidence Artifact — PASS
+- white-box: the predicate flags a bare built-in name (help), a missing Evidence Artifact section, and short/no-trigger descriptions — and PASSES the legal package
+- library floor: a missing authoring standard or unpinned mirror sha is an (library) offender — provenance is mechanical
+- black-box: fresh-process gate on the real library exits 0
+- book: skill-library.json GREEN, scanned >= 6, offenders [], stamped fresh (<30min)
+- _measured: scanned=7 offenders=0 legal=true caught(builtin,artifact)=true,true_
+
+## E21 · strix lineage pin: Apache-2.0 attribution mechanically retained (gate v1.1.0) — PASS
+- white-box: stripping the strix sha 99c0711 from a notices copy yields a (library) offender naming the strix mirror sha
+- white-box: with the real notices restored, the strix-sha and Apache-2.0 offenders are absent
+- the gate export exposes STRIX_MIRROR_SHA so the pin is a code fact, not a doc hope
+- _measured: strip-caught=true restore-clean=true/true sha=99c0711_
 
 _Eval discipline adopted from learn-harness-engineering (Z-36): an eval is a runnable expectation, not a hope. Pure functions = white-box; desk processes = black-box fresh processes._

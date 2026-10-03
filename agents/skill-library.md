@@ -1,8 +1,8 @@
-# skill-library gate — role expertise as governed portable data (Task 27)
+# skill-library gate — role expertise as governed portable data (Task 27+29)
 
-**verdict: GREEN** · 6 packages · 0 offenders · 2026-10-03T02:04:22.244Z
+**verdict: GREEN** · 7 packages · 0 offenders · 2026-10-03T03:12:42.981Z
 
-_Authoring standard adapted from alirezarezvani/claude-skills (MIT, mirror sha 19392f7a); house-hardened: Evidence Artifact mandatory (ANTI-GOODHART), tier declaration, no silent scope. Provenance: skill-library/THIRD-PARTY-NOTICES.md_
+_Authoring standard adapted from alirezarezvani/claude-skills (MIT, mirror sha 19392f7a); security lineage: usestrix/strix (Apache-2.0, mirror sha 99c0711, Task 29). House-hardened: Evidence Artifact mandatory (ANTI-GOODHART), tier declaration, no silent scope. Provenance: skill-library/THIRD-PARTY-NOTICES.md_
 
 | package | verdict |
 |---|---|
@@ -11,5 +11,6 @@ _Authoring standard adapted from alirezarezvani/claude-skills (MIT, mirror sha 1
 | mini-services-engineer | GREEN |
 | push-protocol | GREEN |
 | recruitment-interviewer | GREEN |
+| security-strix-operator | GREEN |
 | worker-onboarding | GREEN |
 

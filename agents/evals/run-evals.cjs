@@ -29,6 +29,7 @@
  *   E18 ci-hands             — the fleet's hands on its own CI estate: classifiers pin the failure taxonomy (startup/job-startup/step + transient-aware verdicts), fresh-process run books trajectory + honest reach (Task 26, trycua/cua adoption; renumbered from my interim E17 — Z-42's canon-liveness claimed E17 first on main, supersession visible here)
  *   E19 hands book           — the sovereignty's execution surfaces probed, never claimed: policy beats probe, every LIVE row carries a receipt, ABSENT is an honest answer (Z-43, CR-0006, trycua/cua adoption; renumbered from my interim E18 — Task 26's ci-hands claimed E18 first on main, parallel-convergence supersedes)
  *   E20 skill-library gate   — role expertise as governed data: the offender predicate catches bare built-in names + missing Evidence Artifact sections, the library floor pins standard+notices+mirror sha, fresh-process gate GREEN (renumbered from my interim E19 — Z-43's hands book claimed E19 first on main, parallel-convergence supersedes) (Task 27, alirezarezvani/claude-skills MIT adoption)
+ *   E21 strix lineage pin    — the Apache-2.0 attribution is mechanically retained: stripping the strix mirror sha from a notices copy produces a (library) offender; restoring it clears (Task 29, usestrix/strix adoption)
  *
  * Fail-soft: exit 0 always; FAILs are booked honestly (HARNESS-AUDIT MANDATE:
  * green-washing the evals is a doctrine breach).
@@ -349,10 +350,41 @@ function accumulateInMemory(bookRows, seed) {
       `scanned=${sb.scanned} offenders=${sb.offenders.length} legal=${legalPass} caught(builtin,artifact)=${w2},${w3}`);
   } catch (e) { evalr('E20', 'skill-library gate', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
+  // ---- E21: strix lineage pin (Task 29) — a rule not enforced in code is not a rule.
+  // The Apache-2.0 attribution (usestrix/strix, mirror sha 99c0711) must be mechanically
+  // retained: gate v1.1.0 refuses notices that lose either lineage sha.
+  try {
+    const slg2 = require(path.join(AG, 'skill-library-gate.cjs'));
+    const os = require('os');
+    const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'e21-strix-'));
+    fs.mkdirSync(path.join(tmpRoot, 'skills', 'legal-skill'), { recursive: true });
+    const legal = [
+      '---', 'name: legal-skill', 'description: "Use when the fleet must exercise this procedure end to end with receipts and a named artifact."', 'version: 1.0.0', 'license: MIT', '---', '',
+      '# legal-skill', '', '## When to use', '- trigger', '', '## Proactive Triggers', '- flag', '',
+      '## Output Artifacts', '| ask | get |', '|---|---|', '', '## Related Skills', '- other: Use when x. NOT for y.', '',
+      '## Evidence Artifact', '| Artifact | Path | Written by |', '|---|---|---|', '', '## Tier & Scope', 'Tier A; grants no scope.', ''
+    ].join('\n');
+    fs.writeFileSync(path.join(tmpRoot, 'skills', 'legal-skill', 'SKILL.md'), legal);
+    fs.copyFileSync(path.join(AG, 'skill-library', 'SKILL-AUTHORING-STANDARD.md'), path.join(tmpRoot, 'SKILL-AUTHORING-STANDARD.md'));
+    const realNotices = fs.readFileSync(path.join(AG, 'skill-library', 'THIRD-PARTY-NOTICES.md'), 'utf8');
+    fs.writeFileSync(path.join(tmpRoot, 'THIRD-PARTY-NOTICES.md'), realNotices.split(slg2.STRIX_MIRROR_SHA).join('PINSTRIPPED'));
+    const stripped = slg2.scanDir(tmpRoot);
+    const s1 = stripped.offenders.some((o) => o.skill === '(library)' && o.why.includes('strix mirror sha')); // strip caught
+    fs.writeFileSync(path.join(tmpRoot, 'THIRD-PARTY-NOTICES.md'), realNotices);
+    const restored = slg2.scanDir(tmpRoot);
+    const s2 = !restored.offenders.some((o) => o.skill === '(library)' && o.why.includes('strix mirror sha')); // restored clears
+    const s3 = !restored.offenders.some((o) => o.skill === '(library)' && o.why.includes('Apache-2.0'));      // license ref intact
+    fs.rmSync(tmpRoot, { recursive: true, force: true });
+    evalr('E21', 'strix lineage pin: Apache-2.0 attribution mechanically retained (gate v1.1.0)',
+      s1 && s2 && s3,
+      ['white-box: stripping the strix sha 99c0711 from a notices copy yields a (library) offender naming the strix mirror sha', 'white-box: with the real notices restored, the strix-sha and Apache-2.0 offenders are absent', 'the gate export exposes STRIX_MIRROR_SHA so the pin is a code fact, not a doc hope'],
+      `strip-caught=${s1} restore-clean=${s2}/${s3} sha=${slg2.STRIX_MIRROR_SHA}`);
+  } catch (e) { evalr('E21', 'strix lineage pin', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
 
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.10.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.11.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];

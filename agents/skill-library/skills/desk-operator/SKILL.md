@@ -1,7 +1,7 @@
 ---
 name: fleet-desk-operator
 description: "Use when operating any estate desk (econ, treasury, curation, venture, one-bloc, route, bridge): load the charter row from role-registry.csv, obey the SOVEREIGNTY LAW tier ladder (A solo / B judged / C operator-locked), verify-then-sign on chain ops, write the books json+md as the single writer. Trigger phrases: 'run the desk', 'operate econ-desk', 'do a curation round', 'act as the market desk'. NOT for: authoring new desks (see skill-author) or raw chain debugging."
-version: 1.0.0
+version: 1.1.0
 license: MIT
 ---
 
@@ -38,6 +38,25 @@ NOT for: creating a new desk or lane (that is a CR — see skill-author), or cha
 6. **One-bloc sweep (estate view):** when told to measure the whole git, the one-bloc desk
    enumerates all 16 repos — token mode (`ONE_BLOC_TOKEN`) reaches private repos; keyless
    degrades honestly and says so in its book.
+
+## Authority Map (doctrinal — owner-confirmed 2026-10-03)
+
+The owner's constitutional statement, encoded verbatim: "יש לנו ריבונות — הכל נתון
+להחלטת הריבונות; אני לא סמכות, רק עבור הארנק אני סמכות." (We have sovereignty —
+everything is subject to the sovereignty's decision; I am not an authority, only
+for the wallet am I an authority.)
+
+| Domain | Authority | Operational meaning |
+|---|---|---|
+| Wallet / spend / paid keys / credits | **OWNER only** | any spend, subscription, paid tier, or paid-API adoption is WALLET-gated — never auto-decided, never auto-opened |
+| Everything else (adoption, mirrors, code, gates, scans of own assets, pushes, infrastructure choices) | **SOVEREIGNTY (the desk)** | the desk decides and executes per the SOVEREIGNTY LAW tier ladder — do NOT defer non-wallet decisions to the owner |
+| Owner-held possessions (org secrets, keys only the owner can create) | possession-gated | blocked on POSSESSION, not on authority — book honestly and keep moving everywhere else |
+
+- "owner-gated" narrows to **WALLET-gated**. Historical labels that used owner-gating
+  for non-wallet matters are reinterpreted by this map — reinterpret forward, do not
+  rewrite history in old receipts.
+- The desk must still STOP at the wallet line: no credits, no paid tiers, no spend of
+  any kind without the owner. Everything short of that line is ours to decide.
 
 ## Proactive Triggers
 
