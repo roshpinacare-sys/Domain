@@ -89,6 +89,19 @@ const freshCount = bookStates.filter((b) => b.exists && b.fresh).length;
   const evalsPresent = fs.existsSync(path.join(AG, 'evals', 'run-evals.cjs')) && fs.existsSync(path.join(AG, 'evals', 'eval-results.json'));
   check('verification', 'eval discipline live (runnable expectations, E1-E6)', evalsPresent, 'agents/evals/', 'an eval is a runnable expectation, not a hope (Z-36, study adoption)');
 
+  // Task 24: workflow-parse gate — a lane that cannot parse is a lane that cannot run.
+  // Real incident: recruit.yml shipped `${{ }}` inside flow mappings → GitHub startup-failure
+  // on every push (0 jobs) and the cron lane never fired once. Nothing else caught it.
+  let gateOk = false, gateEvidence = 'gate module missing';
+  try {
+    const gate = require(path.join(AG, 'workflow-parse-gate.cjs'));
+    const res = gate.scanDir(path.join(ROOT, '.github', 'workflows'));
+    gateOk = res.ok && res.scanned >= 10;
+    gateEvidence = `${res.scanned} workflows · mode ${res.mode} · offenders ${res.offenders.length}${res.offenders.length ? ' → ' + res.offenders.slice(0, 3).map((o) => `${o.file}:${o.line}`).join(', ') : ''}`;
+  } catch (e) { gateEvidence = 'gate error: ' + String(e.message || e).slice(0, 90); }
+  check('verification', 'workflow-parse gate: every workflow file parses (full YAML floor, idiom fallback) — no dead lane wears a green shape', gateOk,
+    gateEvidence, 'Task 24 (recruit.yml startup-failure incident): parseability is mechanical truth, audited on schedule — E16 pins the predicate');
+
   // ================= SUBSYSTEM 4: SCOPE (kill rules, floors, gates) =================
   check('scope', 'doctrine binds kill rules (ventures have them)', !!(doctrineEcon && doctrineEcon.includes('kill rule')), 'DOCTRINE-economics.md §4');
   const ventures = readJson(path.join(AG, 'ventures.json'));
@@ -291,7 +304,7 @@ const freshCount = bookStates.filter((b) => b.exists && b.fresh).length;
     fail: checks.filter((c) => c.status === 'FAIL').length
   };
   const out = {
-    ok: true, at, agent: 'harness-audit v1.7.0 (Z-35 + Task 19 + Z-37 sovereignty + Z-38 override + Z-39 cognitive rail + Task 22 fate-defense + Z-40 collapse drill + Task 23 one-bloc convergence, parallel-convergence superset deduped)',
+    ok: true, at, agent: 'harness-audit v1.8.0 (Z-35 + Task 19 + Z-37 sovereignty + Z-38 override + Z-39 cognitive rail + Task 22 fate-defense + Z-40 collapse drill + Task 23 one-bloc convergence + Task 24 workflow-parse gate, parallel-convergence superset deduped)',
     origin: 'walkinglabs/learn-harness-engineering study (Z-35): five subsystems + loop/graph engineering mapped to the fleet; Z-37 adds f/prompts.chat governance adoption (roles-as-data + decision ladder + change-requests + override protocol); Z-38 adds Dicklesworthstone/destructive_command_guard adoption (mechanical override gate + evals E7-E9); Z-39 adds tashfeenahmed/freellmapi adoption (cognitive-rail registry + keyless probes + evals E10-E12); Task 22 adds world.emergence.ai fate-defense adoption (STASIS circuit breaker + FWI scorecard + three laws, FATE-DEFENSE.md); Z-40 adds the emergence.ai collapse-drill containment proof (CR-0004, E14); two runtimes landed the same operator wave on the same study — merged, renumbered, deduped; the audit itself is the adopted artifact — a fresh-context checker node on a schedule',
     fiveSubsystems: {
       instructions: 'AGENTS.md + DOCTRINE.md + FLEET-NOTE.md + agent headers',

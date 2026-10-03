@@ -24,6 +24,7 @@
  *   E13 fate-defense FWI    — the Emergence-World scorecard runs fresh, 9 indicators, every one artifact-sourced (Task 22; renumbered from my interim E10 — Z-39's rail evals landed first on main, supersession visible here)
  *   E14 collapse drill      — containment PROVEN on a fresh run: 4 fault classes, 4 REDs (Z-40, emergence.ai; renumbered from my interim E13 — Task 22's fate-defense landed on main first, parallel-convergence supersedes)
  *   E15 one-bloc convergence — the whole git is measured mechanically: 16 roles, honest statuses, no invented reach (Task 23, owner directive "מקשה אחת")
+ *   E16 workflow-parse gate  — every workflow parses: predicate catches `${{ }}` in flow maps, legal idioms stay ALLOW, fresh-process gate GREEN (Task 24, recruit.yml startup-failure incident)
  *
  * Fail-soft: exit 0 always; FAILs are booked honestly (HARNESS-AUDIT MANDATE:
  * green-washing the evals is a doctrine breach).
@@ -216,9 +217,28 @@ function accumulateInMemory(bookRows, seed) {
       `verdict=${b.verdict} reached=${b.counts && b.counts.reached}/16 keyless=${b.counts && b.counts.keylessReach} authWall=${b.counts && b.counts.authWall}`);
   } catch (e) { evalr('E15', 'one-bloc convergence', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
+  // ---- E16: workflow-parse gate — a lane that cannot parse is a lane that cannot run (Task 24)
+  try {
+    const gate = require(path.join(AG, 'workflow-parse-gate.cjs'));
+    // white-box: the pure predicate must catch the broken class and stay allow on legal idioms
+    const catch1 = gate.brokenIdiom('        env: {DEFU_DIR: ${{ github.workspace }}/canon-defi}');
+    const catch2 = gate.brokenIdiom('        env: {A: ${{ secrets.A }}, B: ${{ github.workspace }}/x}');
+    const allow1 = gate.brokenIdiom('        with: {fetch-depth: 1}') === false;
+    const allow2 = gate.brokenIdiom('          token: ${{ secrets.WEAVE_OPS_PAT }}') === false;
+    const allow3 = gate.brokenIdiom("  schedule: [{cron: '40 4 * * *'}]") === false;
+    // black-box: fresh process, default dir (Domain workflows), book stamped
+    const rr = spawnSync(process.execPath, [path.join(AG, 'workflow-parse-gate.cjs')], { cwd: AG, timeout: 120000, encoding: 'utf8' });
+    const gb = JSON.parse(fs.readFileSync(path.join(AG, 'workflow-parse-gate.json'), 'utf8'));
+    const fresh = !!gb.at && (Date.now() - Date.parse(gb.at)) / 60000 < 10;
+    evalr('E16', 'workflow-parse gate: no dead lane wears a green shape',
+      catch1 && catch2 && allow1 && allow2 && allow3 && rr.status === 0 && gb.ok === true && gb.scanned >= 20 && gb.offenders.length === 0 && fresh,
+      ['predicate catches `${{ }}` inside flow collections (the recruit.yml incident class)', 'predicate stays ALLOW on legal idioms (block-style expressions, plain flow maps, flow crons)', 'gate desk runs fresh-process exit 0, scans >= 20 workflow files', '0 offenders + book stamped fresh (<10min) — full-YAML floor or honest idiom floor, mode named'],
+      `scanned=${gb.scanned} mode=${gb.mode} offenders=${gb.offenders.length}`);
+  } catch (e) { evalr('E16', 'workflow-parse gate', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.5.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence adoptions (Task 22 + Z-40 + Task 23, deduped by renumbering — the same operator wave landed on the same study from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.6.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate adoptions (Task 22 + Z-40 + Task 23 + Task 24, deduped by renumbering — the same operator wave landed on the same study from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];
