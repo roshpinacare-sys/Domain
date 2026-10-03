@@ -1,0 +1,93 @@
+# MARKET-GRID CRON (CR-0038, fleet Rung 13) — the history cadence, WIRED (CR-0035/R11 booking:
+# "history cadence wiring into Actions cron").
+#
+# The market-grid desk is the KEYLESS cross-market observer layer of the three-layer grid
+# composition law (CR-0034): it reads the chains' OWN official surfaces (api.hive.blog,
+# api.steemit.com condenser_api, api.hive-engine.com JSON-RPC) and appends ONE measured
+# history row per invocation (the evo-windows pulled-schedule pattern — no daemon, per the
+# sibling's LAUNCH-CONTEXT law). Until now the history advanced only when a lane happened
+# to run the desk by hand (2 rows in 3 minutes proved the drift is minute-scale); this
+# workflow turns the snapshot instrument into a SCHEDULED time-series: ~48 rows/day,
+# enough for a real distribution of the internal-market edge.
+#
+# Laws carried here (all pre-existing, now mechanically enforced on the cadence):
+#  · FATE-DEFENSE law #1 — the STASIS breaker is obeyed TWICE: the scheduler checks
+#    agents/STASIS.json before the tick (healthy no-op, nothing measured, nothing
+#    committed), AND the desk itself halts on the same file (E29 proves the fresh-process
+#    halt). Two independent gates, one law.
+#  · KEYLESS — zero operator secrets: the desk reads public chain surfaces only; the
+#    executor stays the OWNER-GATED preview (nothing is ever broadcast here). The push
+#    back to the book rides the built-in GITHUB_TOKEN (contents: write, same repo).
+#  · APPEND-ONLY + [skip ci] — every tick commits its own books (market-grid.json/.md,
+#    paper + history ledgers) exactly like the grid-heartbeat twins commit theirs; no
+#    laundering, no daemon, no cross-repo forks.
+#  · Cadence `23,53 * * * *` — every 30 minutes, offset from every sibling pulse
+#    (grid-trigger-twin :9/:39, dex-grid :48, the saos-dex original :00/:30) so the
+#    fleet's Actions minutes never collide.
+
+name: market-grid-cron
+
+on:
+  schedule:
+    - cron: '23,53 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: market-grid-cron
+  cancel-in-progress: false
+
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - name: Checkout this repo (the desk is keyless — official chain surfaces only)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: STASIS brake (FATE-DEFENSE law #1 — the scheduler obeys the breaker too)
+        id: brake
+        run: |
+          ST=$(node -p "JSON.parse(require('fs').readFileSync('agents/STASIS.json','utf8')).active===true")
+          echo "active=$ST" >> "$GITHUB_OUTPUT"
+          if [ "$ST" = "true" ]; then
+            echo "STASIS-HALT market-grid-cron · the breaker is active — healthy no-op, nothing measured, nothing committed"
+          fi
+
+      - name: tick (keyless measurement + one appended history row)
+        if: steps.brake.outputs.active != 'true'
+        run: node agents/market-grid.cjs
+        # The desk is fail-loud by design (PARTIAL -> exit 1) and the time-series values
+        # every honest row — a PARTIAL measurement (one node flaky) is still a measurement,
+        # its row is still labeled PARTIAL in the ledger, and the tick must still publish.
+        continue-on-error: true
+
+      - name: publish the tick back to the book
+        if: steps.brake.outputs.active != 'true'
+        run: |
+          set -u
+          git config user.name "market-grid-cron[bot]"
+          git config user.email "market-grid-cron[bot]@users.noreply.github.com"
+          git add agents/market-grid.json agents/market-grid.md agents/market-grid-paper.jsonl agents/market-grid-history.jsonl 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "no book change — clean exit"
+          else
+            git commit -m "market-grid(history): tick $(date -u +%FT%TZ) [skip ci]"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+
+      - name: Halt receipt (this shift belongs to the breaker)
+        if: steps.brake.outputs.active == 'true'
+        run: |
+          echo "STASIS-HALT market-grid-cron · breaker active — the book stands still by law, not by neglect."
+          echo "Resume only after root-cause + judge-node green (see agents/STASIS.json resumePolicy)."

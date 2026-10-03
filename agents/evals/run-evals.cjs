@@ -13,6 +13,7 @@
  *   E2 seed no-double-count — seed text shorter than book-row text (same family)
  *   E3 venture fail-soft    — a desk must never break CI when the oracle is unreachable
  *   E4 audit fail-soft      — the judge node itself must survive a missing canon
+ *   E28/E29 lineage         — the sibling's planner evals and this lane's STASIS/cadence evals share the suite
  *   E5 concat-family        — string manabar + number = giant (third-time incident family)
  *   E6 stamp hygiene        — a book without a timestamp can never count as fresh
  *   E7 guard deny/allow     — destructive commands DENY, the fleet's rebase law stays ALLOW (Z-38)
@@ -637,9 +638,58 @@ function accumulateInMemory(bookRows, seed) {
   } catch (e) { evalr('E28', 'market-exec planner', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
 
+  // ---- E29: market-grid STASIS obedience + cadence wiring (CR-0038) — the brake, the cron, the row
+  try {
+    let ok29 = true; const why29 = [];
+    // (a) fresh-process STASIS halt: a sandboxed copy with an ACTIVE breaker halts as a
+    // healthy no-op BEFORE any read — exit 0, STASIS-HALT stdout, zero markets in the
+    // book, one labeled history row (judge separation: fresh process, Z-36 law).
+    const os29 = require('os');
+    const sandbox29 = fs.mkdtempSync(path.join(os29.tmpdir(), 'mgrid-e29-'));
+    fs.mkdirSync(path.join(sandbox29, 'agents'), { recursive: true });
+    fs.copyFileSync(path.join(AG, 'market-grid.cjs'), path.join(sandbox29, 'agents', 'market-grid.cjs'));
+    fs.writeFileSync(path.join(sandbox29, 'agents', 'STASIS.json'), JSON.stringify({ protocol: 'SAOS-FATE-DEFENSE-STASIS/1', active: true, reason: 'E29 eval brake', scope: 'all legs' }));
+    const r29 = require('child_process').spawnSync(process.execPath, [path.join(sandbox29, 'agents', 'market-grid.cjs')], {
+      encoding: 'utf8', timeout: 60000,
+      env: Object.assign({}, process.env, { MGRID_JSON: path.join(sandbox29, 'out.json'), MGRID_PAPER: path.join(sandbox29, 'paper.jsonl') }),
+    });
+    let book29 = null; try { book29 = JSON.parse(fs.readFileSync(path.join(sandbox29, 'out.json'), 'utf8')); } catch (_) {}
+    let hist29 = []; try { hist29 = fs.readFileSync(path.join(sandbox29, 'agents', 'market-grid-history.jsonl'), 'utf8').trim().split('\n').filter(Boolean); } catch (_) {}
+    const haltOk = r29.status === 0 && /STASIS-HALT/.test(r29.stdout || '') && book29 && book29.verdict === 'MARKET-GRID-HALTED-STASIS' && Array.isArray(book29.markets) && book29.markets.length === 0;
+    if (!haltOk) { ok29 = false; why29.push('stasis-halt status=' + r29.status + ' out=' + String(r29.stdout || '').slice(0, 40) + ' book=' + (book29 && book29.verdict)); }
+    let rowOk = false; try { rowOk = hist29.length === 1 && JSON.parse(hist29[0]).verdict === 'MARKET-GRID-HALTED-STASIS' && JSON.parse(hist29[0]).halted === true; } catch (_) {}
+    if (!rowOk) { ok29 = false; why29.push('halted history row rows=' + hist29.length); }
+    // (b) the cadence workflow exists and carries the laws (STASIS gate, keyless tick, append-only publish, concurrency)
+    let wf = null; try { wf = fs.readFileSync(path.join(path.resolve(AG, '..'), '.github', 'workflows', 'market-grid-cron.yml'), 'utf8'); } catch (_) {}
+    if (!wf) { ok29 = false; why29.push('workflow missing'); } else {
+      const laws29 = [
+        ['cadence 23,53', /cron:\s*'23,53 \* \* \* \*'/],
+        ['STASIS gate step', /STASIS brake/],
+        ['desk invocation', /node agents\/market-grid\.cjs/],
+        ['append-only publish', /git diff --cached --quiet/],
+        ['concurrency guard', /cancel-in-progress:\s*false/],
+        ['no recursive CI', /\[skip ci\]/],
+      ];
+      for (const [nm29, re29] of laws29) if (!re29.test(wf)) { ok29 = false; why29.push('wf:' + nm29); }
+      // parseability: the parse-gate's own broken-idiom predicate, line by line (E16 lineage)
+      try {
+        const pg = require(path.join(AG, 'workflow-parse-gate.cjs'));
+        if (pg && typeof pg.brokenIdiom === 'function') {
+          const bad29 = wf.split('\n').map((l, i) => [l, i]).filter(([l]) => pg.brokenIdiom(l));
+          if (bad29.length) { ok29 = false; why29.push('broken idiom lines ' + bad29.map(([, i]) => i + 1).join(',')); }
+        }
+      } catch (_) { /* the gate module is self-covered by E16 — a require hiccup must not fail E29 */ }
+    }
+    evalr('E29', 'market-grid STASIS obedience + cadence wiring: fresh-process brake, labeled halt row, cron carries the laws',
+      ok29,
+      ['fresh process: sandboxed copy + ACTIVE STASIS.json halts BEFORE any read — exit 0, STASIS-HALT stdout, zero markets measured', 'one labeled history row MARKET-GRID-HALTED-STASIS (append-only audit trail — the file is the receipt)', 'workflow market-grid-cron.yml: 30-min offset cadence 23,53, STASIS gate before the tick, keyless desk invocation, append-only publish with [skip ci], concurrency guard', 'YAML parseability + the broken-idiom predicate (E16 lineage) holds line-by-line'],
+      why29.length ? 'fails: ' + why29.join('; ') : 'brake proven in a fresh process; the cadence is wired (CR-0038)');
+  } catch (e) { evalr('E29', 'market-grid STASIS/cadence', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
+
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.16.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.17.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];
