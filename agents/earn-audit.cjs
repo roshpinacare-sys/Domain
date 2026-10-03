@@ -35,7 +35,7 @@ const OUT_MD = OUT_JSON.replace(/\.json$/, '.md');
 const NODE = 'https://api.steemit.com';
 const NODE_CROSS = 'https://api.justyy.com';
 const ROSTER = ['headcorner', 'cashmachine', 'haran', 'israelnews', 'lsa', 'macrame', 'siq', 'tov', 'wic', 'wog', 'woq'];
-const MAX_PAGES = +(process.env.EARN_AUDIT_MAX_PAGES || 4);
+const MAX_PAGES = +(process.env.EARN_AUDIT_MAX_PAGES || 30); // Z-70 CR-0048: 4 pages (400 ops) hid the drip on rotation days — headcorner's 7d window covered only ~404 ops; 30 pages = ~3000 ops/account
 const WINDOW_DAYS = +(process.env.EARN_AUDIT_DAYS || 7);
 
 function rpc(method, params, node = NODE, timeout = 20000) {
@@ -90,10 +90,11 @@ function tallyOp(t, op) {
 
 async function walkAccount(account, sinceTs, gp) {
   const t = freshTally();
-  let start = -1;
+  let start = -1, pagesUsed = 0, oldestScanned = null, reachedFloor = false;
   for (let page = 0; page < MAX_PAGES; page++) {
     const hist = await rpc('condenser_api.get_account_history', [account, start, 100]).catch(() => null);
     if (!hist || !hist.length) break;
+    pagesUsed++;
     let minSeq = Infinity, oldestTs = null;
     for (const [seq, e] of hist) {
       minSeq = Math.min(minSeq, seq);
@@ -102,10 +103,15 @@ async function walkAccount(account, sinceTs, gp) {
       e.op[1] && (e.op[1].__account = account);
       tallyOp(t, e.op);
     }
-    if (oldestTs && oldestTs < sinceTs) break;
-    if (minSeq === Infinity || minSeq <= 0) break;
+    if (oldestTs) oldestScanned = oldestScanned && oldestScanned < oldestTs ? oldestScanned : oldestTs;
+    if (oldestTs && oldestTs < sinceTs) { reachedFloor = true; break; }
+    if (minSeq === Infinity || minSeq <= 0) { reachedFloor = true; break; }
     start = minSeq - 1;
   }
+  // Z-70 WINDOW HONESTY (anti-claims law): a walk that burned every page WITHOUT
+  // reaching the window floor covered LESS than the window — the book must say so,
+  // never present a truncated walk as full 7d coverage.
+  t.__walk = { pages_used: pagesUsed, max_pages: MAX_PAGES, oldest_scanned_ts: oldestScanned, since_ts: sinceTs, truncated: !reachedFloor && pagesUsed >= MAX_PAGES && pagesUsed > 0 };
   return t;
 }
 
@@ -130,7 +136,8 @@ async function main() {
   for (const acc of accounts) {
     const t = await walkAccount(acc, sinceTs, gp).catch((e) => ({ error: String(e.message).slice(0, 90), ops: 0 }));
     const x = usdOf(t, gp, feed);
-    rows.push({ account: acc, window_days: WINDOW_DAYS, ...t, curation_sp: +x.curation_sp.toFixed(6), author_vests_sp: +x.author_vests_sp.toFixed(6), claimed_vests_sp: +x.claimed_vests_sp.toFixed(6), error: t.error || null });
+    const w = t.__walk || {};
+    rows.push({ account: acc, window_days: WINDOW_DAYS, ...(({ __walk, ...rest }) => rest)(t), curation_sp: +x.curation_sp.toFixed(6), author_vests_sp: +x.author_vests_sp.toFixed(6), claimed_vests_sp: +x.claimed_vests_sp.toFixed(6), walk_pages: w.pages_used || 0, oldest_scanned_ts: w.oldest_scanned_ts || null, truncated: !!w.truncated, error: t.error || null });
   }
   const totals = rows.reduce((a, r) => {
     for (const k of Object.keys(r)) if (typeof r[k] === 'number' && k !== 'account' && k !== 'window_days') a[k] = +( (a[k] || 0) + r[k] ).toFixed(6);
@@ -141,13 +148,15 @@ async function main() {
     source: NODE + ' (+cross ' + NODE_CROSS + ')', keyless: true,
     feed: feed ? { base: feed.base, quote: feed.quote, steem_usd_implied: +(num(feed.base) / num(feed.quote)).toFixed(6) } : null,
     per_account: rows, fleet_totals: totals,
+    truncated_accounts: rows.filter((r) => r.truncated).length,
+    window_law: 'truncated: true = the walk burned its page cap before reaching the window floor — this row covers ONLY oldest_scanned_ts..now, never present it as full window coverage (Z-70 anti-claims law)',
     duration_ms: Date.now() - t0,
     law: 'chain-truth: tallied from account_history ops only — a book claiming income the chain does not show is exposed here',
   };
   fs.writeFileSync(OUT_JSON, JSON.stringify(book, null, 1) + '\n');
   const md = [`# Earn audit · ${book.at} (window ${WINDOW_DAYS}d, keyless chain-truth)`, '',
     '| account | author SBD | author STEEM | curation SP | claimed vests SP | drip arrived STEEM | sold STEEM | recv SBD | bought STEEM | spent SBD | converts SBD | fills | votes | posts |', '|---|---|---|---|---|---|---|---|---|---|---|---|---|---|'];
-  for (const r of rows) md.push(`| ${r.account} | ${r.author_sbd} | ${r.author_steem} | ${r.curation_sp} | ${r.claimed_vests_sp} | ${r.drip_arrived_steem} | ${r.sold_steem} | ${r.recv_sbd} | ${r.bought_steem} | ${r.spent_sbd} | ${r.converts_sbd} | ${r.fills} | ${r.votes} | ${r.posts} |`);
+  for (const r of rows) md.push(`| ${r.account}${r.truncated ? ' ⚠TRUNC' : ''} | ${r.author_sbd} | ${r.author_steem} | ${r.curation_sp} | ${r.claimed_vests_sp} | ${r.drip_arrived_steem} | ${r.sold_steem} | ${r.recv_sbd} | ${r.bought_steem} | ${r.spent_sbd} | ${r.converts_sbd} | ${r.fills} | ${r.votes} | ${r.posts} |`);
   md.push('', `**fleet totals:** ${JSON.stringify(totals)}`, '', `_feed: ${JSON.stringify(book.feed)} — every number above is counted from chain ops, not from books_`);
   fs.writeFileSync(OUT_MD, md.join('\n') + '\n');
   console.log(`[earn-audit] booked ${rows.length} accounts · fills ${totals.fills} · sold ${totals.sold_steem} STEEM → ${totals.recv_sbd} SBD · bought ${totals.bought_steem} STEEM for ${totals.spent_sbd} SBD · votes ${totals.votes} · curation ${totals.curation_sp} SP · drip ${totals.drip_arrived_steem} STEEM · converts ${totals.converts_sbd} SBD in ${book.duration_ms}ms`);

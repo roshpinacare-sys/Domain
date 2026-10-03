@@ -1,0 +1,88 @@
+# TICK-KEEPER — הדופק שמרפא את עצמו (Z-70, CR-0048)
+#
+# המדידה (2026-10-03, GitHub API חסר-מפתח): המתזמן של GitHub מרעיב את הריפו הזה —
+# sovereign-tick-cron (:12/:42) ו-earn-audit-cron (:07/:37) נרשמו עם אפס אירועי
+# schedule מאז החימוש (3 ריצות, כולן workflow_dispatch), וריצות מתוזמנות שכן ירדו —
+# באיחור של שעות (treasury-route: חריץ 16:20 ירד 20:09). קצב שאי-אפשר לסמוך עליו —
+# אינו קצב. Dispatch לעומתן מתחיל ב-~15-30 שניות (נמדד: 21:15:04 → החלטה 21:15:22).
+#
+# החוק: השומר מודד את הקבלות העצמיות של קשת-הרפלקס (decisions jsonl / earn-audit /
+# fill-ledger — הדסקים עצמן דוחפות אותן ל-main) ומצית מחדש כל דסק שספרו הזדקן,
+# דרך workflow_dispatch עם PAT (אירועי PAT כן מדליקים workflows — חסימת-הרקורסיה
+# של GITHUB_TOKEN לא חלה כאן).
+#
+#   STASIS קודם (FATE-DEFENSE #1 — גם המרפא מציית לשובר) · cooldown לכל דסק ·
+#   טוקן בסביבה-בלבד, לעולם לא מודפס · כותב-יחיד לשני קבצי הספר שלו בלבד ·
+#   fail-soft exit 0 עם fail-loud book.
+#
+# המשמעות הריבונית: הרשת מחזיקה את עצמה בדופק גם כשהמתזמן החיצוני מתעלם — בלי
+# מפעיל, בלי סשן, בלי תלות בזמינות של GitHub schedule. השער הכפול נשאר שלם:
+# ה-keeper מצית טיקים; הטיק עצמו עדיין כבול למדיניות (caps, band, verify-then-sign).
+
+name: tick-keeper
+
+on:
+  schedule:
+    - cron: '2,32 * * * *'  # כל 30 דק' — דקות נקיות במפת-הדקות (אימות Z-70: אפס התנגשויות)
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tick-keeper
+  cancel-in-progress: false
+
+jobs:
+  keep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: STASIS gate (mechanical, FATE-DEFENSE law #1)
+        id: brake
+        run: |
+          if [ -f agents/STASIS.json ]; then
+            ST=$(node -p "JSON.parse(require('fs').readFileSync('agents/STASIS.json','utf8')).active===true")
+          else
+            ST=false
+          fi
+          echo "active=$ST" >> "$GITHUB_OUTPUT"
+          if [ "$ST" = "true" ]; then
+            echo "STASIS-HALT tick-keeper · the breaker is active — the healer obeys too"
+          fi
+
+      - name: keep (measure the arc, re-fire stale desks)
+        if: steps.brake.outputs.active != 'true'
+        env:
+          KEEPER_GH_TOKEN: ${{ secrets.WEAVE_OPS_PAT }}
+          KEEPER_REPO: ${{ github.repository }}
+        run: node agents/tick-keeper.cjs
+
+      - name: publish receipts (append-only, [skip ci], rebase-push twin idiom)
+        if: always()
+        continue-on-error: true
+        run: |
+          git config user.name "saos-tick-keeper"
+          git config user.email "keeper@saos.local"
+          for p in agents/tick-keeper.json agents/tick-keeper.md; do
+            [ -e "$p" ] && git add "$p" || true
+          done
+          if git diff --cached --quiet; then
+            echo "no keeper changes"
+          else
+            git commit -m "tick-keeper: arc heartbeat [skip ci]" || exit 0
+            for i in 1 2 3; do
+              git pull --rebase --autostash origin main && git push origin HEAD:main && break
+              echo "publish retry $i failed — re-pulling"; sleep 5
+            done
+          fi

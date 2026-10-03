@@ -122,6 +122,21 @@ function saveState(s) { fs.writeFileSync(STATE_JSON, JSON.stringify(s, null, 2) 
 function appendDecision(row) { fs.appendFileSync(DECISIONS_JSONL, JSON.stringify(row) + '\n'); }
 function writePending(p) { fs.writeFileSync(PENDING_JSON, JSON.stringify(p, null, 2) + '\n'); }
 
+// ── Z-70 CR-0048: ledger-first day-truth (pure, exported for E39) ───────────
+// The ledger row IS the day-book (single source). Z-70 MEASURED DEFECT: the old
+// Math.max(state, ledger) fusion swallowed NEGATIVE realized (a losing day read
+// 0.000 SBD forever) — which silently DISARMED BREAKER-DAILY-LOSS (the -0.05 SBD
+// stop could never fire from ledger truth). Ledger wins when present; state is
+// the honest fallback only.
+function ledgerDayTruth(state, ledgerRow) {
+  const fills = (ledgerRow && typeof ledgerRow.total_fills === 'number') ? ledgerRow.total_fills : null;
+  const realized = (ledgerRow && ledgerRow.inventory && typeof ledgerRow.inventory.realized === 'number') ? ledgerRow.inventory.realized : null;
+  return {
+    fills_today: fills != null ? fills : (state && state.fills_today) || 0,
+    realized_today_micro: realized != null ? realized : (state && state.realized_today_micro) || 0,
+  };
+}
+
 // ── THE decision (pure, exported for E36) ───────────────────────────────────
 // Gate order is the law: STASIS → mode → armed → suggestion → gap → day caps →
 // loss breakers → fuel floors → size tier → EXECUTE.
@@ -216,7 +231,7 @@ function applyReceipt(state, opts) {
 module.exports = {
   loadPolicy, readStasisActive, armedCheck, lastLiveBroadcastTs, parseLiquid,
   freshState, loadState, saveState, appendDecision, writePending,
-  decideSovereign, dripPacing, applyReceipt,
+  decideSovereign, dripPacing, applyReceipt, ledgerDayTruth,
   POLICY_JSON, STATE_JSON, DECISIONS_JSONL, PENDING_JSON, STASIS_JSON, HC_DERIVED,
 };
 

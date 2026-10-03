@@ -486,6 +486,22 @@
    "rung": "R19",
    "cr": "CR-0048",
    "landed_at": "2026-10-03T21:23:50.930Z"
+  },
+  {
+   "id": "feat-044",
+   "title": "Self-healing pulse: tick-keeper re-fires starved desks from their own receipts + ledger-first day-truth (negative realized survives, BREAKER-DAILY-LOSS cannot be silently disarmed)",
+   "status": "LIVE",
+   "evidence": [
+    "measured starvation (keyless GitHub API 2026-10-03): sovereign-tick/earn-audit crons = 0 schedule events since arming (all runs workflow_dispatch); scheduled runs arrive hours late (treasury-route 16:20 slot ran 20:09) — dispatch latency measured 15-30s (21:15:04 dispatch -> 21:15:22 decision)",
+    "agents/tick-keeper.cjs: reads arc receipts (decisions jsonl / earn-audit / fill-ledger) -> keeperDecide pure -> dispatches stale desks via PAT workflow_dispatch (PAT events bypass the GITHUB_TOKEN recursion block) -> books tick-keeper.json/.md, single-writer, STASIS-first, 20m cooldown, fail-soft exit 0",
+    ".github/workflows/tick-keeper.yml: 2,32 (clean minutes, verified zero collisions), STASIS gate, WEAVE_OPS_PAT env-only",
+    "agents/minute-map.json: 14 cron collisions reslotted to 0 across 21 workflows (law: one workflow minute = one machine — collisions multiply the starvation surface)",
+    "ledgerDayTruth defect FIXED: old Math.max(state, ledger) fusion swallowed NEGATIVE realized (losing day read 0.000 SBD -> BREAKER-DAILY-LOSS silently disarmed); ledger row is now the day-book, negative truth reaches the gate",
+    "earn-audit depth: MAX_PAGES 4 -> 30 (400 ops hid the drip on rotation days; ~3000 ops/account now walked, pagesUsed booked honestly)",
+    "suite v1.28.0 on the MERGED tree (with the coordination-bus lane R19): E29/E32 stale fixtures healed to the reslot + E40a (negative realized -178154uSBD survives; ledger wins; state fallback; zeros never NaN) + E40b (stale/fresh/no-receipt/cooldown-20m/per-desk-gaps/arc-registry)",
+    "live: tick #9 PLAN-DRY DAY-CAPS (fills 57 >= 24, day booked, receipts continue); keeper book agents/tick-keeper.json at 21:36:39Z (all three desks fresh)"
+   ],
+   "ts": "2026-10-03T21:51:56.074Z"
   }
  ]
 }

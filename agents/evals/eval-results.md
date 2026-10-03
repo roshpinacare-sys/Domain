@@ -1,8 +1,8 @@
 # Desk Evals — runnable expectations (fresh-process judge, Z-36)
 
-_run-evals v1.27.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39, parallel-convergence superset) · 2026-10-03T21:31:25.818Z_
+_run-evals v1.28.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40, parallel-convergence superset) · 2026-10-03T21:52:26.843Z_
 
-**evals green: 39/39 expectations hold**
+**evals green: 41/41 expectations hold**
 
 ## E1 · dedupe identity is stable across repeat harvest — PASS
 - seed(3) + econ rows carrying the same two fills → exactly 3 entries
@@ -23,7 +23,7 @@ _run-evals v1.27.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - exit code 0 even when DEFU_DIR is bogus
 - missing canon = honest FAILs, never a crash, never green-washed
 - counts arithmetic consistent (pass+warn+fail == checks)
-- _measured: exit=0 pass=30 warn=1 fail=10_
+- _measured: exit=0 pass=29 warn=1 fail=11_
 
 ## E5 · concat-family regression: manabar coerced before arithmetic — PASS
 - string+number concatenates ("74488519347811969") — the Z-33 third-incident family
@@ -61,7 +61,7 @@ _run-evals v1.27.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - 200+data → REACHABLE with model count; 401/403 → AUTH-WALL; network error → UNREACHABLE (no hopeful green)
 - probing a nonexistent provider exits 0 with zero probes booked (fail-soft, no invention)
 - rail-ledger.json stamped (BOOKS-STAMP law)
-- _measured: live probes booked=75_
+- _measured: live probes booked=76_
 
 ## E12 · rail policy: FORBIDDEN row enabled as LIVE fails the gate — PASS
 - a catalog where cohere (ToS FORBIDDEN) is flipped to LIVE is rejected — ok:false with the FORBIDDEN reason named
@@ -96,7 +96,7 @@ _run-evals v1.27.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - predicate stays ALLOW on legal idioms (block-style expressions, plain flow maps, flow crons)
 - gate desk runs fresh-process exit 0, scans >= 20 workflow files
 - 0 offenders + book stamped fresh (<10min) — full-YAML floor or honest idiom floor, mode named
-- _measured: scanned=47 mode=full offenders=0_
+- _measured: scanned=48 mode=full offenders=0_
 
 ## E17 · canon-liveness: honest verdict derivation + fresh receipt with named legs — PASS
 - white-box: L1 content → CONTENT-SERVED; L1 absent + L2 rail → RAIL-REACHABLE; both absent → CANON-DARK (zero hopeful greens)
@@ -110,14 +110,14 @@ _run-evals v1.27.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - fresh-process desk run: exit 0 (fail-soft), book stamped fresh (<30min)
 - honest reach floor: 16 repos declared, >=1 reached OR every unreached booked honestly as HTTP 4xx refusal (rate-limit is environment, not defect) — never invented
 - cua-bench contract: trajectory booked (every action logged) + STASIS state travels with the receipt
-- _measured: reached=0/16 lanes=0 green=0 activeRed=0 startup=0 mode=keyless_
+- _measured: reached=2/16 lanes=18 green=18 activeRed=0 startup=0 mode=keyless_
 
 ## E19 · hands book: honest verdict derivation + fresh receipts, zero hopeful greens — PASS
 - white-box: probe-ok → LIVE; absent → ABSENT; POLICY LOCK BEATS A GREEN PROBE → LOCKED-TIER-C (the cua permission-at-launch lesson); cross-ref → REF; probe-fail → UNREACHABLE
 - black-box: fresh-process desk exits 0 (fail-soft), ≥5 hands booked, ≥2 LIVE in any healthy context
 - every LIVE hand carries evidence+probeAt — a capability claimed without a receipt is a story
 - verdict enum closed (LIVE/ABSENT/UNREACHABLE/REF/LOCKED-TIER-C) — no hopeful greens possible
-- _measured: hands=6 live=4 receipted=true at=2026-10-03T21:31:21.933Z_
+- _measured: hands=6 live=4 receipted=true at=2026-10-03T21:52:22.871Z_
 
 ## E20 · skill-library gate: expertise as governed data with a mandatory Evidence Artifact — PASS
 - white-box: the predicate flags a bare built-in name (help), a missing Evidence Artifact section, and short/no-trigger descriptions — and PASSES the legal package
@@ -170,7 +170,7 @@ _run-evals v1.27.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - white-box: classifyOutcome() honest — incumbent-retained=INCUMBENT-RETAINED, challenger=ADOPTION-PENDING-CR (verify-only), reef-alive=LEAK-DETECTED (a leak is never silenced), no-book=WINDOW-NO-WINNER
 - black-box: fresh-process desk exits 0 under EVO_WINDOWS_SKIP_RUN=1, appends exactly ONE row (append-only history), never spawns the measured batch (off-budget law)
 - laws: verifyOnly booked in the book laws map
-- _measured: wdec=true wcls=true appended=true decision=SKIPPED-EVAL-CONTEXT windows=48_
+- _measured: wdec=true wcls=true appended=true decision=SKIPPED-EVAL-CONTEXT windows=49_
 
 ## E28 · market-exec planner: mode law, band guard, precision scan, caps, stack idempotency, SBD cap — PASS
 - white-box: resolveMode defaults DRY_RUN; only MARKET_EXEC_LIVE=1 arms broadcast
@@ -184,7 +184,7 @@ _run-evals v1.27.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 ## E29 · market-grid STASIS obedience + cadence wiring: fresh-process brake, labeled halt row, cron carries the laws — PASS
 - fresh process: sandboxed copy + ACTIVE STASIS.json halts BEFORE any read — exit 0, STASIS-HALT stdout, zero markets measured
 - one labeled history row MARKET-GRID-HALTED-STASIS (append-only audit trail — the file is the receipt)
-- workflow market-grid-cron.yml: 30-min offset cadence 23,53, STASIS gate before the tick, keyless desk invocation, append-only publish with [skip ci], concurrency guard
+- workflow market-grid-cron.yml: 30-min offset cadence 21,51 (Z-70 minute-map reslot), STASIS gate before the tick, keyless desk invocation, append-only publish with [skip ci], concurrency guard
 - YAML parseability + the broken-idiom predicate (E16 lineage) holds line-by-line
 - _measured: brake proven in a fresh process; the cadence is wired (CR-0038)_
 
@@ -287,5 +287,17 @@ _run-evals v1.27.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - white-box reducer: foreign release no-op, holder release clears, stale race row loses to the active lease, resolveLeases deterministic
 - black-box CLI: claim appends exactly one row, foreign claim appends NOTHING (the append law: only grants write), wrong release NOT-YOURS, right release RELEASED, list reports 0 active
 - _measured: the fleet coordination surface is measurable by anyone, anywhere, keyless — and it cannot lie by node, by silence, or by an immortal lease_
+
+## E40a · LEDGER-FIRST DAY-TRUTH: negative realized survives (BREAKER-DAILY-LOSS can never be silently disarmed again), ledger wins when present, state is the honest fallback, zeros never NaN — PASS
+- white-box: realized -178154 µSBD from the ledger reaches the gate untouched (the Math.max fusion regression is dead)
+- ledger counters win when present; malformed/null ledger rows fall back to state without inventing zeros
+- pure function: no fs, no state writes — exported for the gate and the eval alike
+- _measured: a losing day now READS as a losing day — the loss breaker is armed by truth_
+
+## E40b · SELF-HEALING PULSE: keeperDecide fires stale desks, re-fires never-born desks, obeys the 20m cooldown and releases it, respects per-desk gaps, and reads the arc registry it dispatches against — PASS
+- white-box: stale 30m > 20m gap → decided with honest stale_min; fresh desks skipped with receipts
+- white-box: empty arc → all decided no-receipt-yet (a desk that never woke is re-fired, not mourned)
+- white-box: dispatch 10m ago → cooldown skip; 25m ago → re-fired; per-desk maxGaps override the defaults
+- _measured: the reflex arc now holds its own pulse: measured starvation (zero schedule events) is answered by a keeper that re-fires from receipts_
 
 _Eval discipline adopted from learn-harness-engineering (Z-36): an eval is a runnable expectation, not a hope. Pure functions = white-box; desk processes = black-box fresh processes._
