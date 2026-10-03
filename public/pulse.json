@@ -1,13 +1,13 @@
 {
  "format": "public-pulse-v1",
- "generatedAt": "2026-10-03T06:26:37.815Z",
+ "generatedAt": "2026-10-03T21:31:43.795Z",
  "generator": "Domain/agents/public-pulse.cjs (keyless, fail-soft)",
  "refresh": {
   "policy": "daily via public-pulse workflow; live home feed attempted first, committed books otherwise; every number carries its own measuredAt",
   "liveFeed": {
    "requested": null,
    "status": "NO-URL-CONFIGURED",
-   "at": "2026-10-03T06:26:37.815Z"
+   "at": "2026-10-03T21:31:43.795Z"
   }
  },
  "truth": {
@@ -78,12 +78,12 @@
   "source": "agents/scout-latest.json (verbatim public copy of the home scout-market digest; public URLs only)"
  },
  "moment": {
-  "publishedAt": "2026-10-03T05:52:45.356Z",
-  "steemUsd": 0.062931,
+  "publishedAt": "2026-10-03T18:37:39.654Z",
+  "steemUsd": 0.063023,
   "regime": {
    "label": "RISK_ON",
    "drivers": [
-    "BTC -1.7%",
+    "BTC +0.6%",
     "F&G 67"
    ],
    "thresholds": {
@@ -96,5 +96,26 @@
   },
   "source": "moment/moment.json (moment-watch, every 30 minutes)"
  },
- "law": "no secrets, no fabricated numbers: a number without a measurement time is not published here"
+ "law": "no secrets, no fabricated numbers: a number without a measurement time is not published here",
+ "coordination": {
+  "bus": {
+   "namespaces": [
+    "saos.snapshot.v1"
+   ],
+   "messageCount": 1,
+   "fingerprint": "fdc376fcf2741451",
+   "measuredAt": "2026-10-03T21:26:08.539Z",
+   "source": "agents/coord-bus.json (keyless chain read of saos.* custom_json ops, split-brain guarded)"
+  },
+  "leases": {
+   "activeLeases": 0,
+   "resources": [],
+   "measuredAt": "2026-10-03T21:31:43.795Z"
+  },
+  "registry": {
+   "identities": 6,
+   "measuredAt": "2026-10-03T19:24:08.005Z"
+  },
+  "law": "coordination proof page: composed from committed books only, every number stamped with its own measurement time, no keys, no trading amounts"
+ }
 }

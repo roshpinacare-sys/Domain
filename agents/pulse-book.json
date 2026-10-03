@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "at": "2026-10-03T21:13:10.431Z",
+  "at": "2026-10-03T21:31:24.145Z",
   "since": "2026-10-02T16:40:20.950Z",
   "windowSince": "2026-10-02T16:40:20.950Z",
   "agent": "pulse v1.2.0 (CR-0009 loop, Rung 1; CR-0028 consumes the laya advisory triage; CR-0033 consumes the scheduled evolution-window evidence — Z-48/Z-49/Z-60/Z-62)",
@@ -8,6 +8,22 @@
     "since": "2026-10-02T16:40:20.950Z",
     "count": 40,
     "commits": [
+      {
+        "sha": "76cc2da",
+        "subject": "lane books: Rung 19 coordination-bus run on tree — judge separation fresh-process, evals 37/37 (E37 coord-bus+coord-lease, v1.25.0), gate GREEN 46 workflows 0 offenders, cross-layer 7 checks 6 PASS 1 DRIFT, census 16/16 caps=61 wiring=10/10, ONE-BLOC 16/16 tokenReach 14, coord-bus live BUS-READ 37 msgs fp 00e0f7c9 → upgraded head-vector book fp 9466c233 → BUS-UNCHANGED on sliding window (no-noise law live), lease machine 8 verdicts + append law live, coordination proof wire live in public/pulse.json"
+      },
+      {
+        "sha": "3f446b5",
+        "subject": "CR-0046 (PASS, tier B): fleet Rung 19 — THE COORDINATION BUS (owner: תמשיך; booked by sovereign-convergence §4.3) — (1) agents/coord-bus.cjs THE KEYLESS BUS READER: measured live at open, the bus ALREADY CARRIES TRAFFIC (33 saos.weave.core.v1 weave checkpoints + 4 saos.snapshot.v1 platform digests on headcorner, ~every 15-30 min) and the estate measured it NOWHERE — the desk reads saos.* custom_json ops keyless (api.steemit.com primary + api.justyy.com cross) with THE SPLIT-BRAIN GUARD (HEAD-VECTOR fingerprints must match or NOTHING is written — head vectors carry lastSeq/lastAt/headDigest where headDigest=sha16 of the head MESSAGE, so a same-seq content LIE still fails the guard; deeper windows with the same head agree), THE LIMIT-100 LAW (measured live: limit>100 → error -32801; the account_history_api operation_filter is a GHOST — measured live, string/numeric/absent all return UNFILTERED results on BOTH nodes — filtering is CLIENT-side), THE WATERMARK WALK (pages stop when the previous book's lowest namespace head is re-reached — continuous coverage of a HOT account: the head grew 62262→62548 ops in ~15 min of live limit-order churn, which slides a fixed window; the MAX_PAGES cap bounds honesty), THE HEAD-VECTOR FINGERPRINT (bus STATE = per-namespace head, NOT the sliding window — a silent bus books NO noise commit; window bounds stay honest in scan), UNREACHABLE HONESTY (both views dead → we measured NOTHING → write NOTHING — the defect E37 caught BEFORE production: an empty-bus book would clobber a good view and fake fleet-wide silence), namespace whitelist (unknown saos.* kept+flagged known:false, foreign custom_json ignored), STASIS halt-before-read (stasisHalt borrowed from the census desk by require — second-mover law, nothing copied), fail-soft exit 0, single-writer atomic book, COORD_BUS_SKIP + COORD_BUS_FIXTURE eval seams (house idiom: SKIP_FETCH/DRIP_CANON_SKIP family); (2) agents/coord-lease.cjs RESERVATIONS.JSONL COLLISION LEASES: append-only stream, resolveLeases pure reducer (last-claim-wins, foreign release no-op, stale race rows lose to the active lease), claimDecision reason-code machine (GRANT / GRANT-RENEW / TAKEOVER-EXPIRED / REFUSE with holder+expiresAt evidence / REFUSE-NO-TTL / REFUSE missing) — NO IMMORTAL LEASES (no positive finite ttl = refused; a crashed desk cannot lock the fleet forever); CLI claim/release/list; keyless offline fail-soft; (3) WIRED: coord-bus rides fill-ledger-cron :17/:47 as an INDEPENDENT leg with its own no-noise publish ('coord-bus: tick … [skip ci]') — one chain-read cadence, two lenses (fill_order + custom_json), zero extra Actions minutes (התייעל למקסימום); the PUBLIC PULSE page gains the COORDINATION PROOF WIRE (bus health + active lease count + fleet identity count 6, composed from committed books only, every number stamped with its own measurement time, no trading amounts — public-safe); (4) E37 in run-evals v1.24.0 -> v1.25.0: white-box (whitelist, page-walk math, dedupe+sort, split-brain incl. both-empty + head-content-lie + window-depth-agrees, head-vector shape, watermark walk stops at the head, rollup, lease state machine, lease reducer determinism) + black-box fresh-process (A: BUS-READ over the fixture seam; B: SPLIT-BRAIN zero-write; B2: UNREACHABLE zero-write; C: STASIS zero-network halt; D: the real CLI append law — only grants write, 1 claim + 1 release = 2 rows) — 37/37 GREEN; ledger: feat-041 (41 rows), CR-0046"
+      },
+      {
+        "sha": "cf36196",
+        "subject": "sovereign-tick: decision receipts [skip ci]"
+      },
+      {
+        "sha": "293c08d",
+        "subject": "CR-0047 (PASS, tier B): fleet Rung 20 — THE EDGE OPTIMIZATION (operator: 'תמשיך נסה לשפר את זה לייעל משמעותית מאוד') — the measured -2.13% buy premium closed at THREE independent layers: (1) fill-ledger vwapStats (pure µ-leg sums: sell 0.100067 / buy 0.102197 = edge -2.1282% on 49 sells/8 buys) + FILL_LEDGER_MAX_PAGES (default 5, cron 15) — full-day walk run #15: 57 fills total (45 new: the Z-68 reconcile residual was page-window truncation, not missing money), realized -0.178154 SBD costed, proceeds_unbased 46.511 SBD, 28 unclassified legs honest, liquid now 3.812 STEEM/14.706 SBD; (2) market-exec BUY_EDGE_FLOOR_PCT=0.3 — buildPlan AND buildFlowCatchPlan cap EVERY buy at sellVwap x 0.997 with vwap_capped receipts, below-band caps skip honest, ledger read read-only (single-writer law); (3) sovereign BUY-PREMIUM-BREAKER (>=3 buys, premium > 0.3%) routes PLAN-DRY until the ledger heals; policy limits.max_buy_premium_vs_sell_vwap_pct=0.3; (4) E38 nine white-box expectations (vwapStats exact sums, cap-binds/noop/below-band, flowcatch capped, breaker PLAN-DRY/clean-EXECUTE/3-buys-min) — suite v1.26.0 38/38 GREEN; (5) eyes cron walks the full day; (6) tick #7 live: DAY-CAPS paced the hands (57 fills >= 24); tool incident booked: MultiEdit partial-apply corrupted fill-ledger mid-session -> restored from HEAD -> asserted python patch + parse gate (fail-loud on my own tooling); feat-042 (42 rows)"
+      },
       {
         "sha": "803a46c",
         "subject": "earn-audit: chain-truth income proof [skip ci]"
@@ -151,22 +167,6 @@
       {
         "sha": "2db4d43",
         "subject": "lane books: Rung 12 cross-layer run on the MERGED tree (sibling 650a6e8 market-exec CR-0036 absorbed, ninth collision renumber CR-0037/feat-031) — judge 41/0/0, evals 28/28 (merged suite: this lane's 27 + sibling E28), gate 14/0, DOMAIN-INIT-OK, ONE-BLOC 16/16 tokenReach 14"
-      },
-      {
-        "sha": "63bb44c",
-        "subject": "CR-0037 (PASS, tier B): fleet Rung 12 CROSS-LAYER CONVERGENCE PASS — agents/cross-layer.cjs reads the REAL sources of all four grid/market layers from the 16/16-local estate (L0 Domain market-grid observer / L1 saos-dex kernel+amm+mm+grid-beat+grid-ledger / L2 steem he_ladder+live_gate / L3 platform SAOSExchange+SAOSLedger+5 .t.sol), hashes every artifact (15 sha256 receipts) and runs 7 mechanical checks with MEASURED numbers: FEE DOCTRINE DRIFT (kernel 30bps vs SAOSExchange 20bps — same fleet, two prices), MIGRATION LAW (market-grid 40bps floor < 60bps marginal DEX round trip; measured 90bps @0.1%-of-depth, 445bps @1% with the kernel's OWN integer-floor x*y=k semantics — real post-trade reserves fed back), DUST-FLOOR LAW (0.005%-of-depth = 400bps from integer rounding, fee floors to 0 below ~333 units — minimum viable DEX rung is depth-scale), GEOMETRY LADDER nests 20<40<50<200bps across layers, GATE PARITY 3/3 (owner-gated/honest-disarm/dry-run in ALL layers), LEDGER DISCIPLINE on real rows (60 paper + 2 history + 73 orders/43 fills), EXPIRY parity (27d at the STEEM cap), MAKER/TAKER/OBSERVER triad mechanical (grid-beat maker-only + he_ladder taker 97% + market-grid observer) — First run: CROSS-LAYER-CONVERGENT 7 checks / 6 PASS / 1 DRIFT / 0 FAIL / 2 findings; fail-soft proven live (wrong-estate dev run = 5 honest FAILs, exit 0, no crash); offline, keyless, deterministic — NINTH COLLISION (later-mover law): sibling 650a6e8 landed its signed market executor as CR-0036+feat-030 while this lane was in flight; this lane renumbers CR-0036->CR-0037, feat-030->feat-031 (their feat-031 slot verified free); the two Rung-12 landings COMPOSE — their market-exec is the verify-then-sign taker leg on SBD/STEEM, this desk books the fee/migration/dust laws any cross-venue router must price before capital moves; feat-031"
-      },
-      {
-        "sha": "8d998d7",
-        "subject": "agent-verify: HAS_FAILURES · 50/53 · 0 suspended · 2026-10-03T18:17:40Z"
-      },
-      {
-        "sha": "650a6e8",
-        "subject": "CR-0036 (PASS, tier B): fleet Rung 12 — the SIGNED MARKET EXECUTOR + EVM CONVERGENCE DOCTRINE (owner directive: take the internal markets automatically with agent grids — implement) — agents/market-exec.cjs: the verify-then-sign leg the CR-0034 three-layer composition law left open, over the ONE venue with liquid capital (SBD/STEEM internal market; recon: bot flow ~10 fills/min at 0.100, 0% fee verified from steem_evaluator.cpp, NO minimum order, spread 1.1-1.55%, cross-node delta 0.000%) — LAWS IN CODE: DRY_RUN default (nothing signs without MARKET_EXEC_LIVE=1), authority verify-then-sign (derived active WIF pubkey byte-checked vs on-chain active_key_auths, AUTHORITY-MISMATCH=hard abort), caps (sells<=85% liquid, buys<=liquid SBD, <=6 orders, sizes 0.3-1.25 STEEM/0.25 SBD, in-band ±2% fat-finger ceiling), ADD-ONLY v1 (never cancels what it did not place — sibling lane's 12 standing orders untouched, they die by their own expirations), stack idempotency (own order within 0.35% -> STACK-EXISTS skip), precision scanner (6dp targets realized through 3dp assets, err<=0.018%, no level collapse), WIF never printed, fail-soft exit 0 fail-loud canon — LIVE-FIRE run #7: authority PASS, 6/6 limit_order_create2 broadcast 0 errors, 4 sells 1.196/0.571/0.353/0.586 STEEM @ 0.101171/0.101576/0.101983/0.102389 (L1 = BEST ASK on the book at placement, undercutting droida 0.101328) + 2 buys 0.250 SBD @ 0.099602/0.099206, ALL 6 orderids 1791050734-39 STANDING on-chain (find_limit_orders), liquid moved exactly as planned 4.287->1.581 STEEM / 0.500->0.000 SBD — IDEMPOTENCY PROVEN LIVE (run #8 re-plan skipped 6/6 STACK-EXISTS) — WIRE LAWS booked from dry iterations that caught 3 defects BEFORE any signature existed (runs #4-6: unique orderid — same owner+orderid REPLACES standing order, exchange_rate{base:sell,quote:receive} chain assert, object op payloads on condenser — string form Bad Cast) + readback law (find_limit_orders account-scoped, book-wide list misverified 2/6) — HONEST CORRECTION (anti-goodhart): recon's '+3.2% SBD redemption premium = structural edge' does NOT survive arithmetic (1 SBD redeems 9.606 STEEM vs 9.914 at market = 3.2% LOSS both directions; the only edge is spread capture in a live 0%-fee book) — VENUE VERDICTS booked: Hive internal NO-GO (0.034 HIVE dust vs 2.0 smallest order), HE NO-GO (0.0302 SWAP.HIVE measured vs briefed 0.6042 — consumed; fee unverifiable, treated nonzero) — agents/evm-convergence.md: the state-of-the-art answer OFFICIAL-SOURCES-ONLY (llama 3.5B ETH of 468 chains; l2beat 100 rollups 0.8B, 6x Stage 1; orderbook venues WIN — Hyperliquid $7.13B + Lighter $1.2B = the saos-dex class; Pectra EIP-7600 2025-05-07; ERC-4337/RIP-7212/ERC-7683/x402/ERC-8004 specs quoted; phishing discipline kept — whitelist-only fetches, EigenLayer/Monad/Sei/Near/CCIP marked UNVERIFIED) — OUR EVM STATE honest (SAOSRelay LIVE ETH/OP/Base events-only; mesh suite 46 Foundry tests Anvil-only; ZERO execution layer) + TOP-8 adoptable ranked (x402 machine payments, ERC-8004 registries, ERC-7683 intents, 4337/Safe desk policies — market-exec caps ARE Allowance semantics, blob-anchoring economics, preconf soft-acks, AnyTrust 2-of-N DA over Hive/Steem/Blurt, private-orderflow FCFS) + honest CANNOT list + WHY-SLOW answer (serial rungs -> 3 parallel lanes this session; executor gap -> claimed; capital constraint respected — every rung capital-free, the desk compounds EXISTING liquid) — E28 eval: pure planner verified (mode law, band guard, precision scan, caps, stack idempotency, SBD cap, Z-49 require.main guard); evals 28/28; feat-030; CR-0036"
-      },
-      {
-        "sha": "0f49003",
-        "subject": "r181 (from Zip 3e8622d4): name-binding for the second witness rail — WEAVE_HIVE_WIF || HIVE_POSTING_WIF (in this vault since 2026-09-23, measured). The twin's Steem/Hive line wakes the Hive anchor on the next run; the chain itself judges."
       }
     ]
   },
@@ -692,6 +692,22 @@
       "disposition": "ACCEPTED-TODAY"
     },
     {
+      "id": "CR-0047",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0047-edge-optimization.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "run-evals v1.26.0 fresh-process judge (38/38 GREEN) + live full-day ledger walk ",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0048",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0048-coordination-bus.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "run-evals v1.25.0 (37/37 GREEN, E37 fresh-process + white-box) + cross-layer 7 c",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
       "id": "obs:one-bloc-boundary",
       "kind": "tier-c",
       "source": "one-bloc.json",
@@ -712,7 +728,7 @@
       "kind": "observation",
       "source": "evo-windows.json",
       "action": "carry the evolution-window cadence state into the record",
-      "receipt": "42 windows booked, none complete · next due 2026-10-04T12:45:05Z",
+      "receipt": "47 windows booked, none complete · next due 2026-10-04T12:45:05Z",
       "disposition": "BOOKED"
     }
   ],
@@ -720,7 +736,7 @@
     "PROPOSED-CR": 6,
     "GATED-BLOCKED": 2,
     "DEFERRED-TIER-C": 4,
-    "ACCEPTED-TODAY": 47,
+    "ACCEPTED-TODAY": 49,
     "ROLLED-BACK": 0,
     "BOOKED": 2
   },
@@ -733,7 +749,7 @@
     "joined": 7,
     "note": "fresh advisory triage joined by id — lane/urgency hints only, confidence uncalibrated (en checkpoint), dispositions untouched",
     "at": "2026-10-03T15:08:54Z",
-    "age_h": 6.1
+    "age_h": 6.4
   },
   "evoEvidence": {
     "mode": "CADENCE-ONLY",
