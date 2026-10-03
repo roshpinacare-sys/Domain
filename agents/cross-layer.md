@@ -1,6 +1,6 @@
 # Cross-Layer Convergence Pass — the fleet's grid/market stack, four layers, one audit (CR-0037)
 
-_cross-layer desk (Rung 12) · 2026-10-03T22:42:09.453Z · estate: /home/z/git-audit_
+_cross-layer desk (Rung 12) · 2026-10-03T23:52:16.385Z · estate: /home/z/git-audit_
 
 **verdict: CROSS-LAYER-CONVERGENT — 6/7 PASS, 0 DRIFT, 0 FAIL · 1 findings**
 
@@ -17,8 +17,8 @@ _cross-layer desk (Rung 12) · 2026-10-03T22:42:09.453Z · estate: /home/z/git-a
 - _measured: [{"layer":"L0 market-grid (Domain)","found":true,"readable":true,"expect":"previews stamped owner-gated, never broadcast"},{"layer":"L1 grid-beat (saos-dex)","found":true,"readable":true,"expect":"honest disarm without WIF + maker-only (never crosses the book)"},{"layer":"L2 he_ladder (steem)","foun_
 
 ## C4 · ledger discipline parity (append-only books in every layer) — PASS
-- L0 paper ledger 130 rows + history 6 rows (labeled, never laundered into realized) · L1 grid-ledger v2 73 orders / 43 fills (statused open|filled|cancelled) · L2 he_ladder result {orders,fills,skip} written per run — all three books are append-only and status-labeled
-- _measured: {"paperRows":130,"historyRows":6,"dexLedgerVersion":2,"dexOrders":73,"dexFills":43}_
+- L0 paper ledger 150 rows + history 7 rows (labeled, never laundered into realized) · L1 grid-ledger v2 73 orders / 43 fills (statused open|filled|cancelled) · L2 he_ladder result {orders,fills,skip} written per run — all three books are append-only and status-labeled
+- _measured: {"paperRows":150,"historyRows":7,"dexLedgerVersion":2,"dexOrders":73,"dexFills":43}_
 
 ## C5 · platform contract receipt (static, solc-free) — PASS
 - SAOSExchange.sol: FEE_BPS=20, POT_SHARE_BPS=10, SWAP_CAP_BPS=500 (max 5% of output reserve per swap) · SAOSLedger.sol zero-fee rail marker=true, 8 events · 5 test contracts, 78 function-test surface (static count — the forge run remains the platform's own CI receipt)
@@ -37,8 +37,8 @@ _cross-layer desk (Rung 12) · 2026-10-03T22:42:09.453Z · estate: /home/z/git-a
 
 ## Receipts (artifact hashes)
 - marketGrid: sha256:7b9d8bcdbb6541b8 (15089B)
-- paperLedger: sha256:2c29699be864d45b (24827B)
-- history: sha256:5e6a63adfa5c1319 (2044B)
+- paperLedger: sha256:826a549da265a550 (28646B)
+- history: sha256:40767916020f3540 (2388B)
 - kernel: sha256:97e5c4a719ddfd0a (25474B)
 - amm: sha256:91d876f699e18a05 (5961B)
 - mm: sha256:3fee8d551f037e4e (19744B)

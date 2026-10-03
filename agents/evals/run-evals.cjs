@@ -1665,9 +1665,116 @@ function accumulateInMemory(bookRows, seed) {
       why44.length ? 'fails: ' + why44.join('; ') : 'the audit found dead wires and the resurrection pins each fix with a runnable expectation — a revived wire without an eval is a wire waiting to die again');
   } catch (e) { evalr('E44', 'resurrection suite', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
+  // ── E45 · THE CADENCE-WEEK READ (R25, CR-0053) — the fleet's first distributional read of
+  //    its own time series. Until now the series were only ever APPENDED (market-grid ~30-min,
+  //    delta on transition, census daily); a ledger never read back is a diary, not an
+  //    instrument. E45 pins the reducers, the encoded B2 verdict bar, the no-write law below
+  //    the bar, and the artifact-lag honesty number.
+  try {
+    const why45 = [];
+    const c45 = (cond, name) => { if (!cond) why45.push(name); return cond; };
+    const os = require('os');
+    const cw = require(path.join(AG, 'cadence-week.cjs'));
+
+    // (1) parseJsonl — fail-soft corrupt counting
+    const pj45 = cw.parseJsonl('{"a":1}\nnot-json\n\n{"b":2}\n');
+    c45(pj45.rows.length === 2 && pj45.corrupt === 1, 'parsejsonl-corrupt-counted');
+    c45(cw.parseJsonl('').rows.length === 0 && cw.parseJsonl(null).corrupt === 0, 'parsejsonl-empty-fail-soft');
+
+    // (2) gapMinutes — exact min/median/max over known gaps; <2 rows null; bad dates dropped
+    const ts45 = (m) => `2026-10-03T${String(10 + m).padStart(2, '0')}:00:00.000Z`;
+    const g45 = cw.gapMinutes(cw.byAt([{ at: ts45(0) }, { at: ts45(1) }, { at: ts45(1) + 'x' }, { at: ts45(4) }].map((r, i) => ({ at: i === 2 ? 'nope' : r.at }))));
+    c45(g45 && g45.n === 2 && g45.minGapMin === 60 && g45.maxGapMin === 180 && g45.medianGapMin === 120, 'gapminutes-known-gaps:' + JSON.stringify(g45));
+    c45(cw.gapMinutes([{ at: ts45(0) }]) === null, 'gapminutes-single-null');
+    c45(cw.gapMinutes([]) === null && cw.gapMinutes(null) === null, 'gapminutes-empty-null');
+
+    // (3) spreadDistributions — sorted, exact n/min/max/last/mean
+    const sd45 = cw.spreadDistributions([
+      { at: ts45(0), spreads: [{ market: 'B/m', spreadPct: 2 }, { market: 'A/m', spreadPct: 1 }] },
+      { at: ts45(1), spreads: [{ market: 'A/m', spreadPct: 3 }] },
+      { at: ts45(2), spreads: [{ market: 'A/m', spreadPct: 'x' }] }
+    ]);
+    c45(sd45.length === 2 && sd45[0].market === 'A/m' && sd45[1].market === 'B/m', 'spreads-sorted');
+    const a45 = sd45[0];
+    c45(a45.n === 2 && a45.min === 1 && a45.max === 3 && a45.last === 3 && a45.mean === 2, 'spreads-exact:' + JSON.stringify(a45));
+
+    // (4) feasibleRoutes — NAME:pct% parsing, non-pct fallback, lastPct
+    const fr45 = cw.feasibleRoutes([
+      { heFeasible: ['SWAP.DOGE:3.1%', 'CENT:2.0%'] },
+      { heFeasible: ['SWAP.DOGE:3.5%'] },
+      { heFeasible: ['BARE'] }
+    ]);
+    c45(fr45.length === 3 && fr45[0].route === 'BARE' && fr45[1].route === 'CENT', 'routes-sorted');
+    const doge45 = fr45.find((r) => r.route === 'SWAP.DOGE');
+    c45(doge45 && doge45.n === 2 && doge45.lastPct === 3.5, 'routes-last-pct');
+
+    // (5) verdictCounts — sorted keys
+    const vc45 = cw.verdictCounts([{ verdict: 'DRIFT' }, { verdict: 'FIRST-DELTA' }, { verdict: 'DRIFT' }, {}]);
+    c45(JSON.stringify(vc45) === JSON.stringify({ DRIFT: 2, 'FIRST-DELTA': 1, UNVERDICTED: 1 }), 'verdictcounts-sorted');
+
+    // (6) deltaSummary — sovereignty/blocker transitions counted, last estateCommits quoted
+    const ds45 = cw.deltaSummary([
+      { sovereignty: { changed: [{}, {}] }, blockers: { added: [{}], statusChanges: [] } },
+      { sovereignty: { changed: [{}] }, blockers: { missing: [{}], added: [] } }
+    ]);
+    c45(ds45.rows === 2 && ds45.sovereigntyChangePaths === 3 && ds45.blockerTransitions === 2, 'deltasummary-counts');
+    c45(cw.deltaSummary([]).rows === 0 && cw.deltaSummary(null).rows === 0, 'deltasummary-empty');
+
+    // (7) computeVerdict — the encoded B2 bar as data, edge-exact
+    c45(cw.computeVerdict(4, 0) === 'INSUFFICIENT-SERIES' && cw.computeVerdict(5, 0) === 'INSUFFICIENT-SERIES', 'verdict-bar-rows');
+    c45(cw.computeVerdict(5, 1) === 'CADENCE-WEEK-LIVE', 'verdict-bar-live');
+    c45(cw.BAR.marketGridRowsMin === 5 && cw.BAR.deltaRowsMin === 1, 'bar-encoded');
+
+    // (8) artifactLag — honesty number; unreadable artifact -> null section
+    const al45 = cw.artifactLag({ edgeSeries: { historyRows: 6 }, inventory: { presentLanes: 1, totalLanes: 16, estateCommits: 1 } }, 7);
+    c45(al45.artifactLagRows === 1 && al45.historyRowsActual === 7 && al45.totalLanes === 16, 'artifactlag-quoted-vs-actual');
+    c45(cw.artifactLag(null, 7) === null, 'artifactlag-null-fail-soft');
+
+    // (9) byte-determinism — two composes over the REAL series agree to the byte (at stripped)
+    const rd = (p) => { try { return fs.readFileSync(p, 'utf8'); } catch (_) { return null; } };
+    const real45 = () => cw.composeBook({ mg: cw.parseJsonl(rd(path.join(AG, 'market-grid-history.jsonl')) || ''), delta: cw.parseJsonl(rd(path.join(AG, 'fleet-delta.jsonl')) || ''), artifact: (() => { try { return JSON.parse(rd(path.join(AG, 'fleet-census.artifact.json'))); } catch (_) { return null; } })() });
+    const stripAt = (b) => { const c = { ...b }; delete c.at; return JSON.stringify(c); };
+    c45(stripAt(real45()) === stripAt(real45()), 'cadence-byte-deterministic');
+    c45(cw.renderMd(real45()).includes('קריאת הקצב'), 'cadence-hebrew-surface');
+
+    // (10) BLACK-BOX no-write law — fresh process over a THIN fixture dir (1 row market-grid):
+    //      below the encoded bar the desk exits 0 and writes NOTHING into the fixture dir.
+    const fx45 = fs.mkdtempSync(path.join(os.tmpdir(), 'cadence-wk-'));
+    fs.writeFileSync(path.join(fx45, 'market-grid-history.jsonl'), '{"at":"2026-10-03T17:47:32.406Z","verdict":"MARKET-GRID-LIVE","spreads":[{"market":"A/m","spreadPct":1}],"heFeasible":[]}\n');
+    fs.writeFileSync(path.join(fx45, 'fleet-delta.jsonl'), '');
+    const bb45 = spawnSync(process.execPath, [path.join(AG, 'cadence-week.cjs')], { encoding: 'utf8', timeout: 60000, env: { ...process.env, CADENCE_WEEK_DIR: fx45 } });
+    c45(bb45.status === 0, 'cadence-black-box-exit0');
+    c45(!fs.existsSync(path.join(fx45, 'cadence-week.json')) && !fs.existsSync(path.join(fx45, 'cadence-week.md')), 'cadence-nowrite-below-bar');
+    c45((bb45.stdout || '').includes('INSUFFICIENT-SERIES'), 'cadence-black-box-verdict');
+
+    // (11) BLACK-BOX live law — fresh process over a RICH fixture writes both books with the
+    //      exact verdict, and the real-tree books (fresh from the live run above) agree.
+    fs.writeFileSync(path.join(fx45, 'market-grid-history.jsonl'), [
+      '{"at":"2026-10-03T17:00:00.000Z","verdict":"MARKET-GRID-LIVE","spreads":[{"market":"A/m","spreadPct":1,"tapeCrossed":2}],"heFeasible":["CENT:2%"]}',
+      '{"at":"2026-10-03T17:30:00.000Z","verdict":"MARKET-GRID-LIVE","spreads":[{"market":"A/m","spreadPct":3,"tapeCrossed":1}],"heFeasible":["CENT:2.5%"]}',
+      '{"at":"2026-10-03T18:00:00.000Z","verdict":"PARTIAL","spreads":[{"market":"A/m","spreadPct":2,"tapeCrossed":0}],"heFeasible":[]}',
+      '{"at":"2026-10-03T18:30:00.000Z","verdict":"MARKET-GRID-LIVE","spreads":[{"market":"A/m","spreadPct":4,"tapeCrossed":3}],"heFeasible":[]}',
+      '{"at":"2026-10-03T19:00:00.000Z","verdict":"MARKET-GRID-LIVE","spreads":[{"market":"A/m","spreadPct":5,"tapeCrossed":1}],"heFeasible":[]}'
+    ].join('\n') + '\n');
+    fs.writeFileSync(path.join(fx45, 'fleet-delta.jsonl'), '{"at":"2026-10-03T19:00:00.000Z","verdict":"DRIFT","sovereignty":{"changed":[{}]},"blockers":{"added":[],"missing":[],"statusChanges":[]}}\n');
+    const bb45b = spawnSync(process.execPath, [path.join(AG, 'cadence-week.cjs')], { encoding: 'utf8', timeout: 60000, env: { ...process.env, CADENCE_WEEK_DIR: fx45 } });
+    let fxBook45 = null; try { fxBook45 = JSON.parse(fs.readFileSync(path.join(fx45, 'cadence-week.json'), 'utf8')); } catch (_) {}
+    c45(bb45b.status === 0 && fxBook45 && fxBook45.verdict === 'CADENCE-WEEK-LIVE', 'cadence-black-box-live');
+    c45(fxBook45 && fxBook45.sections.marketGrid.rows === 5 && fxBook45.sections.marketGrid.tapeCrossedTotal === 7, 'cadence-black-box-numbers');
+    c45(fxBook45 && fxBook45.sections.marketGrid.gaps.medianGapMin === 30, 'cadence-black-box-gaps');
+    let realBook45 = null; try { realBook45 = JSON.parse(rd(path.join(AG, 'cadence-week.json'))); } catch (_) {}
+    c45(realBook45 && realBook45.verdict === 'CADENCE-WEEK-LIVE' && realBook45.ownerLanguage === 'he', 'cadence-real-tree-book');
+    fs.rmSync(fx45, { recursive: true, force: true });
+
+    evalr('E45', 'the cadence-week read: the fleet reads its own series back — parseJsonl fail-soft, exact gap/spread/route/verdict reducers, the encoded B2 bar (marketGrid>=5 ∧ delta>=1), the artifact-lag honesty number, byte-deterministic stable payload, Hebrew owner surface, and the no-write law below the bar proven fresh-process on a fixture dir',
+      why45.length === 0,
+      ['white-box: parseJsonl counts corrupt lines and survives empty/null streams', 'white-box: gapMinutes exact min/median/max on known gaps, invalid dates dropped, <2 rows null', 'white-box: spreadDistributions sorted with exact n/min/max/last/mean; feasibleRoutes parses NAME:pct% with non-pct fallback; verdictCounts sorted', 'white-box: deltaSummary counts sovereignty paths and blocker transitions; computeVerdict edge-exact on the encoded B2 bar', 'white-box: artifactLag = actual minus quoted (honesty number), null artifact fail-soft; composeBook byte-deterministic on the real series; renderMd Hebrew', 'black-box: thin fixture dir (1 row) → exit 0, INSUFFICIENT-SERIES, ZERO books written (no-noise law); rich fixture (5 rows + delta) → CADENCE-WEEK-LIVE with exact rows/tape/gaps numbers; the real-tree book agrees'],
+      why45.length ? 'fails: ' + why45.join('; ') : 'a ledger that is only appended to is a diary — this eval pins the moment the diary became an instrument: the series are now READ, distributed, and gated by an encoded bar');
+  } catch (e) { evalr('E45', 'cadence-week read', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.31.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.32.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];

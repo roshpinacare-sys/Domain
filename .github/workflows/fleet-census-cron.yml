@@ -97,18 +97,25 @@ jobs:
         if: steps.brake.outputs.active != 'true'
         run: node agents/claims-audit.cjs
 
+      # CADENCE-WEEK leg (CR-0053, R25) — the first distributional read: the fleet reads its
+      # own series back (market-grid gaps/spreads/routes, delta verdicts, artifact-lag honesty
+      # number). Below the encoded B2 bar the desk writes NOTHING (no-noise law, E45-proven).
+      - name: cadence-week read (CR-0053 — the series read back as distributions)
+        if: steps.brake.outputs.active != 'true'
+        run: node agents/cadence-week.cjs
+
       - name: publish the map back to the book
         if: steps.brake.outputs.active != 'true'
         run: |
           set -u
           git config user.name "fleet-census-cron[bot]"
           git config user.email "fleet-census-cron[bot]@users.noreply.github.com"
-          git add agents/fleet-census.artifact.json agents/fleet-delta.jsonl agents/claims-audit.json agents/claims-audit.md 2>/dev/null || true
+          git add agents/fleet-census.artifact.json agents/fleet-delta.jsonl agents/claims-audit.json agents/claims-audit.md agents/cadence-week.json agents/cadence-week.md 2>/dev/null || true
           NODRIFT=$(node -e '
             const fs=require("fs"),cp=require("child_process");
             const strip=(s)=>{try{const o=JSON.parse(s);delete o.at;return JSON.stringify(o);}catch(e){return "UNPARSEABLE";}};
             const staged=cp.execSync("git diff --cached --name-only",{encoding:"utf8"}).split("\n").filter(Boolean);
-            const volatile=["agents/fleet-census.artifact.json","agents/claims-audit.json"];
+            const volatile=["agents/fleet-census.artifact.json","agents/claims-audit.json","agents/cadence-week.json"];
             const real=staged.filter((f)=>!volatile.includes(f));
             let stableSame=true;
             for(const f of volatile){
