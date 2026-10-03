@@ -264,7 +264,12 @@ if (require.main === module) (async () => {
   // ---- EARN-GOVERNOR: fills ledger updated every run (accumulated, deduped)
   const fills = updateFillsLedger(econ0);
   // ---- spot price oracle (MEASURED, fail-soft — null on unreachable, never a guess).
-  // Z-34: 2-source ladder (coingecko → coinpaprika) per Z-14 hardening law; gaps filled, misses stay null.
+  // Z-34: source ladder per Z-14 hardening law; gaps filled, misses stay null.
+  // Z-58 RESTORE (measured): coingecko was persistently 429 (shared-IP rate limit) and the
+  // coinpaprika fallback used a COMMA multi-ticker URL that 404s — the second rung never
+  // worked, which made oracle outages look total. Fix: paprika = per-ticker loop (proven
+  // live); rung 3 = binance keyless ticker (proven live, HIVEUSDT/STEEMUSDT). Ladder:
+  // coingecko → coinpaprika → binance. Blurt has no binance pair — paprika/coingecko cover it.
   const pricesRaw = await fetchJson('https://api.coingecko.com/api/v3/simple/price?ids=hive,steem,blurt&vs_currencies=usd');
   const prices = {
     hive: pricesRaw && pricesRaw.hive && pricesRaw.hive.usd != null ? pricesRaw.hive.usd : null,
@@ -272,11 +277,15 @@ if (require.main === module) (async () => {
     blurt: pricesRaw && pricesRaw.blurt && pricesRaw.blurt.usd != null ? pricesRaw.blurt.usd : null
   };
   if (prices.hive == null || prices.steem == null || prices.blurt == null) {
-    const pk = await fetchJson('https://api.coinpaprika.com/v1/tickers/hive-hive,steem-steem,blurt-blurt');
-    const pick = (arr, id) => { const r = Array.isArray(arr) && arr.find(x => x && x.id === id); return r && r.quotes && r.quotes.USD && r.quotes.USD.price != null ? r.quotes.USD.price : null; };
-    if (prices.hive == null) prices.hive = pick(pk, 'hive-hive');
-    if (prices.steem == null) prices.steem = pick(pk, 'steem-steem');
-    if (prices.blurt == null) prices.blurt = pick(pk, 'blurt-blurt');
+    const pkPick = async (id) => { const j = await fetchJson(`https://api.coinpaprika.com/v1/tickers/${id}`); return j && j.quotes && j.quotes.USD && j.quotes.USD.price != null ? j.quotes.USD.price : null; };
+    if (prices.hive == null) prices.hive = await pkPick('hive-hive');
+    if (prices.steem == null) prices.steem = await pkPick('steem-steem');
+    if (prices.blurt == null) prices.blurt = await pkPick('blurt-blurt');
+  }
+  if (prices.hive == null || prices.steem == null) {
+    const binPick = async (sym) => { const j = await fetchJson(`https://api.binance.com/api/v3/ticker/price?symbol=${sym}`); return j && j.price != null ? parseFloat(j.price) : null; };
+    if (prices.hive == null) prices.hive = await binPick('HIVEUSDT');
+    if (prices.steem == null) prices.steem = await binPick('STEEMUSDT');
   }
   const books = {
     econ: econ0,
