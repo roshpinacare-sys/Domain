@@ -212,6 +212,17 @@
         "feat-020"
       ],
       "evidence": "CR-0021 PASS; guard smoke (rc 0/126/126 + JSONL x2); waves: exits 0 ×2 ×2, RUNG4-WT1-OK / RUNG4-WT2-OK ×2; trajectories traj-gwt1.json + traj-gwt2.json distinct; deny ledger 2→2; PROBE-LANE mini row + Rung 4"
+    },
+    {
+      "id": "feat-022",
+      "title": "Fleet Rung 5: Graft context-economy multiplier — telemetry dark by four gates, paired multiplier measured (CR-0022)",
+      "description": "Adopted NanoNets/Graft @ pin fe30ead (MIT, already in the ten-pin constitution) built FROM SOURCE (BAKED_KEY empty → telemetry module inert) + DO_NOT_TRACK=1 before first run. Base graph on Domain worktree: 69 files, 686 nodes, 1524 edges, 2.97s, $0. graft ask hit #1 exact on the fleet's own GuardedLocalEnvironment (guard_env.py:L61-L104). Paired mini-swe guarded runs over the CR-0015 shim: baseline 7 api_calls vs graft-context 3 api_calls (-57% model turns, same correct receipt). Deep pass over the shim partial: 65 per-file summaries served at $0; whole-repo synthesis blocked by z-ai upstream 429 → shim consumers rate-limit law booked (shim 502 fail-loud held; GRAFT_LLM_RETRIES honored); next rung: shim-side retry/backoff queue.",
+      "status": "done",
+      "dependencies": [
+        "feat-020",
+        "feat-021"
+      ],
+      "evidence": "CR-0022 PASS (14 receipts, 5 findings); telemetry 4-gate audit (source+dist+self-report+queue: nothing queued, identity never minted); graph 686 nodes/1524 edges; ask hit #1 exact; paired runs traj-g5a (7 calls) / traj-g5b (3 calls); deny ledger 2→2; worktree pruned zero-residue; PROBE-LANE Graft row QUEUED→LANDED"
     }
   ]
 }
