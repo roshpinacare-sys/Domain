@@ -192,14 +192,14 @@
     },
     {
       "id": "feat-020",
-      "title": "Fleet Rung 3: parallel mini-swe wave over isolated git worktrees (CR-0019)",
+      "title": "Fleet Rung 3: parallel mini-swe wave over isolated git worktrees (CR-0020)",
       "description": "orca's N agents x N worktrees x 1 tracker pattern landed live: 2 concurrent mini-swe-agent 2.4.6 instances on detached Domain worktrees over the CR-0015 keyless shim, env -i scrubbed, cost-limit armed, both exit 0 with distinct create/append receipts, interleaved keystone log, isolation proven ('?? wave/' only), worktrees pruned zero-residue. Sandbox-reset rebuilds booked: shim service recreated from CR spec, mirror re-cloned at pinned sha 04d809c, pip install -e 2.4.6.",
       "status": "done",
       "dependencies": [
         "feat-018",
         "feat-019"
       ],
-      "evidence": "CR-0019 PASS; live receipts (EXIT1=0 EXIT2=0; RUNG3-WT1-OK / RUNG3-WT2-OK; shim interleave msgs=2,2,4,4; git status ?? wave/ only x2); rebuild receipts (shim from CR spec, mirror sha 04d809c == notices §6, mini 2.4.6); PROBE-LANE orca row QUEUED→LANDED + mini row Rung 3"
+      "evidence": "CR-0020 PASS (renumbered from CR-0019 — collision with the sibling swe-guard CR-0019, bc63c59; later mover renumbers); live receipts (EXIT1=0 EXIT2=0; RUNG3-WT1-OK / RUNG3-WT2-OK; shim interleave msgs=2,2,4,4; git status ?? wave/ only x2); rebuild receipts (shim from CR spec, mirror sha 04d809c == notices §6, mini 2.4.6); PROBE-LANE orca row QUEUED→LANDED + mini row Rung 3"
     }
   ]
 }
