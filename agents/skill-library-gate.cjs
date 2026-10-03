@@ -33,6 +33,11 @@
  *          Alishahryar1/free-claude-code AGPL-3.0-only mirror sha 03aca36
  *          (frugal-routing doctrine lineage, license verified IN-FILE; first
  *          non-permissive pin: it certifies STUDY PROVENANCE, zero-copy only).
+ * v1.5.0 (Task 36): five-repo sweep pins — the notices must retain the mirror
+ *          shas for trailhq/Graft (MIT fe30ead), msitarzewski/agency-agents
+ *          (MIT d3f71c4), DeusData/codebase-memory-mcp (MIT 96c3f41c),
+ *          calesthio/OpenMontage (AGPL-3.0 08e2151), stablyai/orca (MIT
+ *          843607b1) — the lineage constitution grows five→ten pins.
  * Books: agents/skill-library.json + agents/skill-library.md (single writer: this gate).
  * Zero dependencies. require()-safe: scanDir runs only under require.main === module CLI.
  */
@@ -50,6 +55,11 @@ const STRIX_MIRROR_SHA = '99c0711';
 const AX_MIRROR_SHA = 'ac23328';
 const MINI_SWE_MIRROR_SHA = '04d809c';
 const FCC_MIRROR_SHA = '03aca36';
+const GRAFT_MIRROR_SHA = 'fe30ead';
+const AGENCY_MIRROR_SHA = 'd3f71c4';
+const CBMEM_MIRROR_SHA = '96c3f41c';
+const MONTAGE_MIRROR_SHA = '08e2151';
+const ORCA_MIRROR_SHA = '843607b1';
 
 function parseFrontmatter(text) {
   const m = /^\uFEFF?---\r?\n([\s\S]*?)\r?\n---\r?\n/.exec(text);
@@ -105,6 +115,11 @@ function scanDir(root) {
     if (!notices.includes(MINI_SWE_MIRROR_SHA)) offenders.push({ skill: '(library)', why: `notices do not pin the mini-swe mirror sha ${MINI_SWE_MIRROR_SHA} (MIT lineage, Task 33)` });
     if (!notices.includes(FCC_MIRROR_SHA)) offenders.push({ skill: '(library)', why: `notices do not pin the free-claude-code mirror sha ${FCC_MIRROR_SHA} (AGPL-3.0-only lineage verified in-file, Task 35)` });
     if (!notices.includes('AGPL-3.0')) offenders.push({ skill: '(library)', why: 'notices lack the AGPL-3.0 license reference (free-claude-code lineage, Task 35)' });
+    if (!notices.includes(GRAFT_MIRROR_SHA)) offenders.push({ skill: '(library)', why: `notices do not pin the Graft mirror sha ${GRAFT_MIRROR_SHA} (MIT lineage, Task 36)` });
+    if (!notices.includes(AGENCY_MIRROR_SHA)) offenders.push({ skill: '(library)', why: `notices do not pin the agency-agents mirror sha ${AGENCY_MIRROR_SHA} (MIT lineage, Task 36)` });
+    if (!notices.includes(CBMEM_MIRROR_SHA)) offenders.push({ skill: '(library)', why: `notices do not pin the codebase-memory mirror sha ${CBMEM_MIRROR_SHA} (MIT lineage, Task 36)` });
+    if (!notices.includes(MONTAGE_MIRROR_SHA)) offenders.push({ skill: '(library)', why: `notices do not pin the OpenMontage mirror sha ${MONTAGE_MIRROR_SHA} (AGPL-3.0 lineage verified in-file, Task 36)` });
+    if (!notices.includes(ORCA_MIRROR_SHA)) offenders.push({ skill: '(library)', why: `notices do not pin the orca mirror sha ${ORCA_MIRROR_SHA} (MIT lineage, Task 36)` });
     if (!notices.includes('Apache-2.0')) offenders.push({ skill: '(library)', why: 'notices lack the Apache-2.0 license reference (strix + ax lineage)' });
   }
 
@@ -129,14 +144,14 @@ function writeBooks(root, res, at) {
   const AG = path.dirname(__filename);
   const jsonPath = path.join(AG, 'skill-library.json');
   const mdPath = path.join(AG, 'skill-library.md');
-  const book = { ok: res.ok, at, gate: 'skill-library-gate.cjs v1.4.0 (Task 27+29+31+33+35, study: alirezarezvani/claude-skills MIT sha 19392f7a + usestrix/strix Apache-2.0 sha 99c0711 + google/ax Apache-2.0 sha ac23328 + SWE-agent/mini-swe-agent MIT sha 04d809c + Alishahryar1/free-claude-code AGPL-3.0-only sha 03aca36 zero-copy study)', scanned: res.scanned, skills: res.skills, offenders: res.offenders };
+  const book = { ok: res.ok, at, gate: 'skill-library-gate.cjs v1.5.0 (Task 27+29+31+33+35+36, study: alirezarezvani/claude-skills MIT sha 19392f7a + usestrix/strix Apache-2.0 sha 99c0711 + google/ax Apache-2.0 sha ac23328 + SWE-agent/mini-swe-agent MIT sha 04d809c + Alishahryar1/free-claude-code AGPL-3.0-only sha 03aca36 zero-copy study + trailhq/Graft MIT sha fe30ead + msitarzewski/agency-agents MIT sha d3f71c4 + DeusData/codebase-memory-mcp MIT sha 96c3f41c + calesthio/OpenMontage AGPL-3.0 sha 08e2151 + stablyai/orca MIT sha 843607b1, all zero-copy doctrine study)', scanned: res.scanned, skills: res.skills, offenders: res.offenders };
   fs.writeFileSync(jsonPath, JSON.stringify(book, null, 2) + '\n');
   const md = [];
-  md.push('# skill-library gate — role expertise as governed portable data (Task 27+29+31+33+35)');
+  md.push('# skill-library gate — role expertise as governed portable data (Task 27+29+31+33+35+36)');
   md.push('');
   md.push(`**verdict: ${res.ok ? 'GREEN' : 'RED'}** · ${res.scanned} packages · ${res.offenders.length} offenders · ${at}`);
   md.push('');
-  md.push('_Authoring standard adapted from alirezarezvani/claude-skills (MIT, mirror sha 19392f7a); security lineage: usestrix/strix (Apache-2.0, mirror sha 99c0711, Task 29); orchestration lineage: google/ax (Apache-2.0, mirror sha ac23328, Task 31); minimal-agent lineage: SWE-agent/mini-swe-agent (MIT, mirror sha 04d809c, Task 33); frugal-routing lineage: Alishahryar1/free-claude-code (AGPL-3.0-only verified in-file, mirror sha 03aca36, Task 35 — study provenance, zero-copy). House-hardened: Evidence Artifact mandatory (ANTI-GOODHART), tier declaration, no silent scope. Provenance: skill-library/THIRD-PARTY-NOTICES.md_');
+  md.push('_Authoring standard adapted from alirezarezvani/claude-skills (MIT, mirror sha 19392f7a); security lineage: usestrix/strix (Apache-2.0, mirror sha 99c0711, Task 29); orchestration lineage: google/ax (Apache-2.0, mirror sha ac23328, Task 31); minimal-agent lineage: SWE-agent/mini-swe-agent (MIT, mirror sha 04d809c, Task 33); frugal-routing lineage: Alishahryar1/free-claude-code (AGPL-3.0-only verified in-file, mirror sha 03aca36, Task 35 — study provenance, zero-copy); Task 36 five-repo sweep: trailhq/Graft (MIT fe30ead), msitarzewski/agency-agents (MIT d3f71c4), DeusData/codebase-memory-mcp (MIT 96c3f41c), calesthio/OpenMontage (AGPL-3.0 08e2151), stablyai/orca (MIT 843607b1). House-hardened: Evidence Artifact mandatory (ANTI-GOODHART), tier declaration, no silent scope. Provenance: skill-library/THIRD-PARTY-NOTICES.md_');
   md.push('');
   md.push('| package | verdict |');
   md.push('|---|---|');
@@ -150,7 +165,7 @@ function writeBooks(root, res, at) {
   return book;
 }
 
-module.exports = { scanDir, parseFrontmatter, checkSkill, BARE_BUILTINS, MIRROR_SHA, STRIX_MIRROR_SHA, AX_MIRROR_SHA, MINI_SWE_MIRROR_SHA, FCC_MIRROR_SHA };
+module.exports = { scanDir, parseFrontmatter, checkSkill, BARE_BUILTINS, MIRROR_SHA, STRIX_MIRROR_SHA, AX_MIRROR_SHA, MINI_SWE_MIRROR_SHA, FCC_MIRROR_SHA, GRAFT_MIRROR_SHA, AGENCY_MIRROR_SHA, CBMEM_MIRROR_SHA, MONTAGE_MIRROR_SHA, ORCA_MIRROR_SHA };
 
 if (require.main === module) {
   const AG = path.dirname(__filename);

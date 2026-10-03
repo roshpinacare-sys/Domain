@@ -1,8 +1,8 @@
 # Desk Evals — runnable expectations (fresh-process judge, Z-36)
 
-_run-evals v1.14.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25, parallel-convergence superset) · 2026-10-03T04:58:58.664Z_
+_run-evals v1.15.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26, parallel-convergence superset) · 2026-10-03T05:24:33.552Z_
 
-**evals green: 25/25 expectations hold**
+**evals green: 26/26 expectations hold**
 
 ## E1 · dedupe identity is stable across repeat harvest — PASS
 - seed(3) + econ rows carrying the same two fills → exactly 3 entries
@@ -81,7 +81,7 @@ _run-evals v1.14.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - every injected fault class caught: faults_caught === faults_total >= 4 (registry corruption, guard neutered, book stamps stripped, forbidden rail LIVE)
 - receipts fresh < 168h — the drill runs on the CI schedule, containment proof is not a one-time trophy
 - CI summary ledger agrees (collapse-drill.json stamped)
-- _measured: caught=4/4 ageH=0 head=025aaa2233c1_
+- _measured: caught=4/4 ageH=1 head=025aaa2233c1_
 
 ## E15 · one-bloc: whole-git convergence map measured, never invented — PASS
 - one-bloc.cjs runs in a fresh process (exit 0, fail-soft)
@@ -117,14 +117,14 @@ _run-evals v1.14.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - black-box: fresh-process desk exits 0 (fail-soft), ≥5 hands booked, ≥2 LIVE in any healthy context
 - every LIVE hand carries evidence+probeAt — a capability claimed without a receipt is a story
 - verdict enum closed (LIVE/ABSENT/UNREACHABLE/REF/LOCKED-TIER-C) — no hopeful greens possible
-- _measured: hands=6 live=4 receipted=true at=2026-10-03T04:58:47.250Z_
+- _measured: hands=6 live=4 receipted=true at=2026-10-03T05:24:22.005Z_
 
 ## E20 · skill-library gate: expertise as governed data with a mandatory Evidence Artifact — PASS
 - white-box: the predicate flags a bare built-in name (help), a missing Evidence Artifact section, and short/no-trigger descriptions — and PASSES the legal package
 - library floor: a missing authoring standard or unpinned mirror sha is an (library) offender — provenance is mechanical
 - black-box: fresh-process gate on the real library exits 0
 - book: skill-library.json GREEN, scanned >= 6, offenders [], stamped fresh (<30min)
-- _measured: scanned=12 offenders=0 legal=true caught(builtin,artifact)=true,true_
+- _measured: scanned=14 offenders=0 legal=true caught(builtin,artifact)=true,true_
 
 ## E23 · daily pulse: typed proposals + real gates + verify-only (the loop closed under law) — PASS
 - white-box: disposition derivation exact for all seven input kinds (queued→PROPOSED-CR, parked/tier-c→DEFERRED-TIER-C, needs-validation→GATED-BLOCKED, cr-pass→ACCEPTED-TODAY, cr-fail→ROLLED-BACK, observation→BOOKED)
@@ -157,5 +157,11 @@ _run-evals v1.14.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - white-box: with the real notices restored, the fcc-sha offender is absent
 - the gate export exposes FCC_MIRROR_SHA so the pin is a code fact, not a doc hope
 - _measured: strip-caught=true restore-clean=true sha=03aca36_
+
+## E26 · sweep lineage pins: all five Task 36 attributions mechanically retained (gate v1.5.0) — PASS
+- white-box: stripping each of the five shas (fe30ead/d3f71c4/96c3f41c/08e2151/843607b1) yields a (library) offender naming that sha
+- white-box: with the real notices restored, every sweep-sha offender is absent
+- the gate exports expose all five shas so the pins are code facts, not doc hopes
+- _measured: Graft:strip-caught=true,restore-clean=true | agency-agents:strip-caught=true,restore-clean=true | codebase-memory:strip-caught=true,restore-clean=true | OpenMontage:strip-caught=true,restore-clean=true | orca:strip-caught=true,restore-clean=true_
 
 _Eval discipline adopted from learn-harness-engineering (Z-36): an eval is a runnable expectation, not a hope. Pure functions = white-box; desk processes = black-box fresh processes._
