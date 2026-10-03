@@ -59,7 +59,7 @@ const OUT_MD = OUT_JSON.replace(/\.json$/, '.md');
 const HEAD = process.env.FILL_LEDGER_HEAD || 'headcorner';
 const NODE = process.env.FILL_LEDGER_NODE || 'https://api.steemit.com';
 const SINCE = process.env.FILL_LEDGER_SINCE || '2026-10-03T00:00:00Z';
-const MAX_PAGES = 5;
+const MAX_PAGES = +(process.env.FILL_LEDGER_MAX_PAGES || 5);
 
 const DEFAULTS = {
   MIN_SELL_STEEM: 0.5,   // CR-0036 MIN_REMAINING — below this a sell level would misprice
@@ -193,6 +193,30 @@ async function fetchHistoryWindow() {
   return rows;
 }
 
+// vwapStats (pure, Z-69, CR-0047): the realized edge of the window, from the
+// replayed legs only. sellVWAP = SBD received / STEEM sold; buyVWAP = SBD spent /
+// STEEM received. edge_pct > 0 means the fleet sold dearer than it bought.
+// One authority (the ledger) for the sovereign's BUY-PREMIUM breaker AND the
+// executor's buy-pricing cap.
+function vwapStats(fills) {
+  let sellSteem = 0, sellSbd = 0, buySteem = 0, buySbd = 0, nSell = 0, nBuy = 0;
+  for (const f of fills || []) {
+    const p = f.leg_parsed || f;
+    if (!p || !p.leg || !p.sold || !p.recv) continue;
+    if (p.leg === 'SELL' && p.sold.sym === 'STEEM' && p.recv.sym === 'SBD') { sellSteem += p.sold.micro; sellSbd += p.recv.micro; nSell++; }
+    else if (p.leg === 'BUY' && p.sold.sym === 'SBD' && p.recv.sym === 'STEEM') { buySbd += p.sold.micro; buySteem += p.recv.micro; nBuy++; }
+  }
+  const sellVwap = sellSteem > 0 ? sellSbd / sellSteem : null;   // SBD per STEEM
+  const buyVwap = buySteem > 0 ? buySbd / buySteem : null;       // SBD per STEEM
+  const edgePct = sellVwap != null && buyVwap != null ? ((sellVwap - buyVwap) / sellVwap) * 100 : null;
+  return {
+    sell_vwap: sellVwap != null ? +sellVwap.toFixed(6) : null,
+    buy_vwap: buyVwap != null ? +buyVwap.toFixed(6) : null,
+    edge_pct: edgePct != null ? +edgePct.toFixed(4) : null,
+    sells: nSell, buys: nBuy,
+  };
+}
+
 // ── canon (single writer, replay law) ───────────────────────────────────────
 function readFills() {
   try {
@@ -275,6 +299,7 @@ async function main() {
       const all = readFills();
       row.total_fills = all.length;
       row.inventory = replay(all);
+      row.vwap = vwapStats(all);
       // context reads (still read-only): liquid + own orders for the suggestion
       try {
         const [acc, own] = await Promise.all([
@@ -295,12 +320,12 @@ async function main() {
   canon.push(row);
   writeCanon(canon);
   writeMd(row);
-  console.log(`[fill-ledger] mode=${row.mode} new=${row.new_fills.length} total=${row.total_fills} realized_sbd=${(row.inventory.realized / 1e6).toFixed(6)} recycle=${row.recycle.suggested ? row.recycle.reasons.join('|') : 'NO'} errors=${row.errors.length} in ${row.duration_ms}ms`);
+  console.log(`[fill-ledger] mode=${row.mode} new=${row.new_fills.length} total=${row.total_fills} realized_sbd=${(row.inventory.realized / 1e6).toFixed(6)} vwap=${row.vwap ? `sell ${row.vwap.sell_vwap} / buy ${row.vwap.buy_vwap} (edge ${row.vwap.edge_pct}%)` : 'n/a'} recycle=${row.recycle.suggested ? row.recycle.reasons.join('|') : 'NO'} errors=${row.errors.length} in ${row.duration_ms}ms`);
   console.log(`[fill-ledger] canon: ${path.relative(ROOT, OUT_JSON)} (run #${row.run_index})`);
 }
 
 if (require.main === module) {
   main().catch((e) => { console.error('[fill-ledger] FATAL', String(e.message || e).slice(0, 200)); process.exit(0); });
 } else {
-  module.exports = { assetInfo, parseFill, applyFill, dedupeKey, recycleSuggestion, replay, DEFAULTS, HEAD, NAI };
+  module.exports = { assetInfo, parseFill, applyFill, dedupeKey, recycleSuggestion, vwapStats, replay, DEFAULTS, HEAD, NAI };
 }

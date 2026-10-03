@@ -77,6 +77,12 @@ const DEFAULTS = {
   FLOW_BUY_SPACING: 0.996,  // L1 bid−0.1% (just behind the wall), L2 bid−0.4%
   FLOW_FIRST_BUY_OFFSET: 0.0001,
   FLOW_MIN_PROCEEDS: 0.01,  // below this the buy ladder would be dust on dust
+  // BUY-PREMIUM LAW (Z-69, CR-0047): when the ledger's realized sell VWAP is known,
+  // NO buy (maker ladder or flow-catch ladder) may be priced above sellVwap x
+  // (1 - BUY_EDGE_FLOOR_PCT/100). Measured leak: buys 0.1022 vs sells 0.1001 =
+  // -2.13% edge on 2026-10-03 — this cap makes buying above realized sells
+  // structurally impossible, independent of which lane priced the fill history.
+  BUY_EDGE_FLOOR_PCT: 0.3,
 };
 
 const mid = (bid, ask) => (bid + ask) / 2;
@@ -109,7 +115,8 @@ function stacked(target, ownOrders, pct = DEFAULTS.STACK_PCT) {
   return (ownOrders || []).some((o) => Math.abs(o.price - target) / target < pct / 100);
 }
 
-function buildPlan({ liquidSteem, liquidSbd, bid, ask, ownOrders, params = DEFAULTS }) {
+function buildPlan({ liquidSteem, liquidSbd, bid, ask, ownOrders, sellVwap = null, params = DEFAULTS }) {
+  const vwapCap = sellVwap != null ? r6(sellVwap * (1 - params.BUY_EDGE_FLOOR_PCT / 100)) : null;
   const m = mid(bid, ask);
   const sells = [], buys = [], skipped = [];
   const sellCap = liquidSteem * params.SELL_CAP_PCT;
@@ -138,7 +145,9 @@ function buildPlan({ liquidSteem, liquidSbd, bid, ask, ownOrders, params = DEFAU
 
   let usedSbd = 0;
   for (let j = 0; j < params.BUY_LEVELS; j++) {
-    const target = r6(j === 0 ? firstBuy : firstBuy * Math.pow(params.BUY_SPACING, j));
+    const ladderTarget = r6(j === 0 ? firstBuy : firstBuy * Math.pow(params.BUY_SPACING, j));
+    // BUY-PREMIUM LAW: never buy above the realized sell VWAP minus the edge floor
+    const target = vwapCap != null ? Math.min(ladderTarget, vwapCap) : ladderTarget;
     const reason = (name) => skipped.push({ kind: 'buy', level: j + 1, target, reason: name });
     if (!inBand(target, m)) { reason('OUT-OF-BAND'); continue; }
     if (stacked(target, ownOrders)) { reason('STACK-EXISTS'); continue; }
@@ -152,6 +161,8 @@ function buildPlan({ liquidSteem, liquidSbd, bid, ask, ownOrders, params = DEFAU
       min_to_receive: `${receive.toFixed(3)} STEEM`,
       target, realized: +(params.BUY_SBD / receive).toFixed(6),
       err_pct: +(Math.abs(params.BUY_SBD / receive - target) / target * 100).toFixed(4),
+      vwap_capped: vwapCap != null && target < ladderTarget,
+      vwap_cap: vwapCap,
     });
   }
 
@@ -175,8 +186,9 @@ function buildPlan({ liquidSteem, liquidSbd, bid, ask, ownOrders, params = DEFAU
 // positioned to catch the same flow one tick lower (recon conditional-GO: 0.4%
 // spacing near the touch). Spread-capture cycle: sell @bid → buys @bid−0.1%/−0.4%
 // → flow fills them → measured +0.4-0.8% per round trip by fill-ledger.
-function buildFlowCatchPlan({ liquidSteem, bid, ask, proceedsSbd = 0, ownOrders, params = DEFAULTS }) {
+function buildFlowCatchPlan({ liquidSteem, bid, ask, proceedsSbd = 0, ownOrders, sellVwap = null, params = DEFAULTS }) {
   const m = mid(bid, ask);
+  const vwapCap = sellVwap != null ? r6(sellVwap * (1 - params.BUY_EDGE_FLOOR_PCT / 100)) : null;
   const sells = [], buys = [], skipped = [];
   // taker leg: one marketable sell, capped, floor-guarded
   const cap = liquidSteem * params.FLOW_SELL_CAP_PCT;
@@ -200,7 +212,8 @@ function buildFlowCatchPlan({ liquidSteem, bid, ask, proceedsSbd = 0, ownOrders,
   if (proceedsSbd < params.FLOW_MIN_PROCEEDS) {
     if (proceedsSbd > 0) skipped.push({ kind: 'flow-buy', level: 0, target: bid, reason: 'PROCEEDS-DUST' });
   } else {
-    const firstBuy = r6(bid - params.FLOW_FIRST_BUY_OFFSET);
+    const ladderFirst = r6(bid - params.FLOW_FIRST_BUY_OFFSET);
+    const firstBuy = vwapCap != null ? Math.min(ladderFirst, vwapCap) : ladderFirst;
     for (let j = 0; j < params.FLOW_BUY_LEVELS; j++) {
       const target = r6(j === 0 ? firstBuy : firstBuy * Math.pow(params.FLOW_BUY_SPACING, j));
       const reason = (name) => skipped.push({ kind: 'flow-buy', level: j + 1, target, reason: name });
@@ -294,6 +307,16 @@ async function crossCheckBook() {
   const dBid = Math.abs(cbid - bid) / bid * 100, dAsk = Math.abs(cask - ask) / ask * 100;
   if (dBid > 0.5 || dAsk > 0.5) throw new Error(`SPLIT-BRAIN cross-node bid/ask delta ${dBid.toFixed(3)}%/${dAsk.toFixed(3)}% > 0.5%`);
   return { bid, ask, cross: { ok: true, dBid: +dBid.toFixed(4), dAsk: +dAsk.toFixed(4) } };
+}
+
+// BUY-PREMIUM LAW feed (Z-69): last ledger row's realized sell VWAP, read-only.
+function readLedgerSellVwap() {
+  try {
+    const j = JSON.parse(fs.readFileSync(process.env.FILL_LEDGER_JSON || path.join(ROOT, 'agents', 'fill-ledger.json'), 'utf8'));
+    const rows = Array.isArray(j) ? j : (j.rows || []);
+    const v = rows.length ? rows[rows.length - 1].vwap : null;
+    return v && typeof v.sell_vwap === 'number' && v.sell_vwap > 0 ? v.sell_vwap : null;
+  } catch (_) { return null; }
 }
 
 // verify-then-sign: on-chain active authority must match the derived WIF's pubkey
@@ -402,9 +425,13 @@ async function main() {
     // buy ladder (Z-65, CR-0042; default OFF — the grid law stays the default).
     const flowcatch = String(process.env.MARKET_EXEC_FLOWCATCH || '') === '1';
     row.flowcatch = flowcatch;
+    // BUY-PREMIUM LAW feed: the ledger's realized sell VWAP (read-only; the ledger
+    // is the single writer of its own canon). null → the band law alone applies.
+    const sellVwap = readLedgerSellVwap();
+    row.sell_vwap_used = sellVwap;
     const plan = flowcatch
-      ? buildFlowCatchPlan({ liquidSteem, bid: book.bid, ask: book.ask, proceedsSbd: liquidSbd, ownOrders: ownPre })
-      : buildPlan({ liquidSteem, liquidSbd, bid: book.bid, ask: book.ask, ownOrders: ownPre });
+      ? buildFlowCatchPlan({ liquidSteem, bid: book.bid, ask: book.ask, proceedsSbd: liquidSbd, ownOrders: ownPre, sellVwap })
+      : buildPlan({ liquidSteem, liquidSbd, bid: book.bid, ask: book.ask, ownOrders: ownPre, sellVwap });
     row.mid = plan.mid; row.planned = [...plan.sells, ...plan.buys].map((p) => ({ ...p }));
     row.skipped = plan.skipped;
     // 4. authority verify BEFORE any signature
@@ -446,7 +473,7 @@ async function main() {
         ]);
         const proceedsSbd = f(accMid.sbd_balance);
         row.flow_proceeds_sbd = proceedsSbd;
-        const buyPlan = buildFlowCatchPlan({ liquidSteem: 0, bid: book.bid, ask: book.ask, proceedsSbd, ownOrders: ownPre });
+        const buyPlan = buildFlowCatchPlan({ liquidSteem: 0, bid: book.bid, ask: book.ask, proceedsSbd, ownOrders: ownPre, sellVwap });
         for (const b of buyPlan.buys) {
           const placement = { ...b, side: 'buy', broadcast: false, orderid: Math.floor(Date.now() / 1000) % 4294967000 + placements.length + 1 };
           ops.length = 0;

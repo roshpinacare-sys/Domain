@@ -61,6 +61,8 @@ jobs:
 
       - name: tick (keyless fill measurement + deduped ledger rows)
         if: steps.brake.outputs.active != 'true'
+        env:
+          FILL_LEDGER_MAX_PAGES: '15'  # Z-69, CR-0047: walk the FULL day (500-op window was hiding fills — the reconcile residual)
         run: node agents/fill-ledger.cjs
         # The desk is fail-soft by law (CR-0039 law 9): every error lands in the run row
         # and the process exits 0 — the tick always reaches the publish step, and the

@@ -15,7 +15,10 @@
     }
   },
   "gate": {
-    "modes": ["sovereign", "operator"],
+    "modes": [
+      "sovereign",
+      "operator"
+    ],
     "mode": "sovereign",
     "dual_law": "THE GATE EXISTS BOTH WITHOUT AND WITH THE OPERATOR (operator directive: 'צריך גם ללא וגם כולל השער שלי'): in sovereign mode the policy auto-executes in-policy intents with zero human dependency; the operator overlay stays armed AT ALL TIMES — STASIS breaker (one file flip halts everything before any read), escalation tier (out-of-policy intent parks in sovereign-pending.json, never auto-executed), and SOVEREIGN_MODE=operator (routes every LIVE intent to ESCALATE). One flip, no code change.",
     "operator_overlay": {
@@ -33,7 +36,9 @@
     "max_consecutive_loss_fills": 3,
     "max_tier_s_steem": 1.25,
     "min_liquid_keep_steem": 0.1,
-    "min_liquid_keep_sbd": 0.02
+    "min_liquid_keep_sbd": 0.02,
+    "max_buy_premium_vs_sell_vwap_pct": 0.3,
+    "_note_z69": "BUY-PREMIUM BREAKER (CR-0047): the ledger vwap is the realized-edge authority; the gate routes DRY while buy VWAP > sell VWAP x (1+0.3%), and the executor structurally caps every buy at sellVwap x (1-0.3%) — the measured -2.13% leak of 2026-10-03 cannot recur."
   },
   "drip": {
     "posture": "steady-4w",
