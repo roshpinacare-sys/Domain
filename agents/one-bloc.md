@@ -2,15 +2,15 @@
 
 _one-bloc v1.0.1 (Task 23 convergence — owner directive "מקשה אחת"; binds BLOC-STATE + SOVEREIGN-INDEX + FATE-DEFENSE into one machine map; keyless-first + env-token fallback, stderr redacted)_
 
-Measured: **2026-10-03T16:26:44.001Z** · Verdict: **ONE-BLOC** · REACHED 16/16 (keyless 2 + token 14) · AUTH-WALL 0 · UNKNOWN 0 · local-sync 1/2
+Measured: **2026-10-03T17:06:55.986Z** · Verdict: **ONE-BLOC** · REACHED 16/16 (keyless 2 + token 14) · AUTH-WALL 0 · UNKNOWN 0 · local-sync 2/2
 
 | ריפו | תפקיד | origin/main | מצב | דרך | סנכרון-מקומי |
 |---|---|---|---|---|---|
-| saos-sovereign-platform | המוח הריבוני — צבא מגייס-עצמו וסולם כלכלת-אמת | `60c16c728e31` | REACHED | token | N/A |
-| steem | המפתחות הקנוניים + הזרוע החיה על-השרשרת | `22b293557bef` | REACHED | token | N/A |
-| Domain | הפנים הציבוריות + רכזת ה-CI האורגנית | `d82382f1a7c4` | REACHED | keyless | BEHIND |
+| saos-sovereign-platform | המוח הריבוני — צבא מגייס-עצמו וסולם כלכלת-אמת | `e36529ca3c1c` | REACHED | token | N/A |
+| steem | המפתחות הקנוניים + הזרוע החיה על-השרשרת | `33c541d6b635` | REACHED | token | N/A |
+| Domain | הפנים הציבוריות + רכזת ה-CI האורגנית | `3d65c7bda0fc` | REACHED | keyless | SYNCED |
 | Console | מרכז-ההפעלה — אמת נמדדת פעם-אחת | `6ebcdc142231` | REACHED | keyless | N/A |
-| Zip | המחסן החתום — עוגני אמת על שרשרת-אפו | `c7f4ec171eca` | REACHED | token | N/A |
+| Zip | המחסן החתום — עוגני אמת על שרשרת-אפו | `13391738bf4a` | REACHED | token | N/A |
 | roshpina | הגרעין + מבקר השליטה העצמית | `e1c6eeb2994c` | REACHED | token | N/A |
 | anchor-baseline | שומר העוגן — בוט שלמות Merkle | `098a302a381d` | REACHED | token | N/A |
 | Saosmartwallet | הארנק — זרימת רישום כנה | `743d1f0fd632` | REACHED | token | N/A |
@@ -20,7 +20,7 @@ Measured: **2026-10-03T16:26:44.001Z** · Verdict: **ONE-BLOC** · REACHED 16/16
 | Defi | הכלכלן — reprices חי fail-closed | `8dae9d842817` | REACHED | token | SYNCED |
 | saos-dex | הבורסה — פעימות dex-beat/grid | `2bbd033c5f87` | REACHED | token | N/A |
 | saos-jummper | החוזים בפייתון — signingcontract | `b70df1022f0e` | REACHED | token | N/A |
-| saos-control-center | מרכז הבקרה הפנימי — 12 סקריפטים env-first | `5d25c8c22532` | REACHED | token | N/A |
+| saos-control-center | מרכז הבקרה הפנימי — 12 סקריפטים env-first | `2ef1b78a152e` | REACHED | token | N/A |
 | saos-sovereign-foundry | המפעל — key-broker fail-closed | `62c0a7433892` | REACHED | token | N/A |
 
 Laws armed: STASIS breaker ✔ parseable, engine free (active=false) · FWI book present, age 0h, verdict THRIVING · FATE-DEFENSE canon present
