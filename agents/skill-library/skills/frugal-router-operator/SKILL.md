@@ -1,7 +1,7 @@
 ---
 name: frugal-router-operator
-description: "Use when the estate routes AI traffic through a local multi-provider proxy or must decide what deserves a model call at all — frugal fast-paths, strict sliding-window admission, classified failures, and egress guards per the free-claude-code doctrine. Trigger phrases: 'route through a proxy', 'we are burning tokens on nothing', 'the provider is rate-limiting us', 'is this proxy safe'. NOT for: supplying provider API keys (wallet/possession = owner only); NOT for agent-loop shape (see swe-mini-operator); NOT for declarative cluster orchestration (see orchestration-ax-operator)."
-version: 1.0.0
+description: "Use when the estate routes AI traffic through a local multi-provider proxy or must decide what deserves a model call at all — frugal fast-paths, strict sliding-window admission, classified failures, egress guards, and persistent correction-to-rule memory per the free-claude-code + Graft doctrine. Trigger phrases: 'route through a proxy', 'we are burning tokens on nothing', 'the provider is rate-limiting us', 'is this proxy safe', 'the agent keeps forgetting my corrections'. NOT for: supplying provider API keys (wallet/possession = owner only); NOT for agent-loop shape (see swe-mini-operator); NOT for declarative cluster orchestration (see orchestration-ax-operator)."
+version: 1.1.0
 license: MIT
 ---
 
@@ -21,9 +21,13 @@ text with `SPDX-License-Identifier: AGPL-3.0-only`, "Copyright (c) 2026 Ali
 Khokhar"; the repo API reports NOASSERTION — a false negative this estate
 overrode by reading the file, per the Task 33 license-honesty rule) — pinned
 mirror sha `03aca36` at `/home/z/reference-mirrors/free-claude-code` —
-evaluation + adoption wave Task 35. This package is a HOUSE adaptation: zero
-upstream Python code, configs, or docs bodies were copied. AGPL notice and
-copyleft boundary: `skill-library/THIRD-PARTY-NOTICES.md` §8.
+evaluation + adoption wave Task 35. Second study source: trailhq/Graft (MIT,
+verified IN-FILE, "Copyright (c) 2026 Context Graph Engine contributors"),
+pinned mirror sha `fe30ead` at `/home/z/reference-mirrors/Graft` — Task 36
+five-repo sweep (the repo MOVED org NanoNets→trailhq; pin the current
+name). Both are HOUSE adaptations: zero upstream code or docs bodies were
+copied. Notices: `skill-library/THIRD-PARTY-NOTICES.md` §8 (FCC, AGPL
+copyleft boundary) and §9 (Graft, MIT).
 
 ## When to use
 
@@ -63,6 +67,9 @@ orchestration-ax-operator).
 | Exact pins over ranges | `pyproject.toml`: `requires-python ==3.14.7`, `github-copilot-sdk==1.0.14` — exact equality where drift hurts | quad-pinned lineage shas; pins are re-verified against the API, stale pins are stale truths |
 | Harness capabilities preserved | README: "Agent capabilities stay intact — stream responses, use tools, preserve native interleaved thinking"; route at the protocol boundary, never degrade the client | ONE-BLOC: one estate, many desks — routing/normalization must never strip native capability |
 | ToS-friendliness as enforced design | README claim: "FCC follows provider terms and removes integrations if they stop being allowed" (booked as upstream claim; the admission/policy plumbing shows enforcement intent) | license honesty precedent (Task 32 consult-only; Task 34 ALL RIGHTS RESERVED): compliance removal is a feature — an integration that loses its permit loses its place |
+| Hook over note (Graft) | "The ones that can't break get a hook that blocks it, not a note it ignores" — corrections that must never repeat become enforced hooks; prose memory is maintained separately (src/upkeep.ts manages CLAUDE.md/AGENTS.md) | the estate law, independently re-derived at scale: a rule not enforced in code is not a rule — a note is a wish, a hook is a law (gate/evals/judge are the hooks) |
+| Correction → persistent rule (Graft) | "Every correction you make becomes a rule your agent keeps" — session corrections fold back into managed memory instead of evaporating | every owner correction lands in DOCTRINE/worklog/skill prose the same wave — a correction that evaporated was never received |
+| Blast radius before action (Graft) | src/blast: diff → owners → rendered impact (who is touched by this change) before proceeding | rebase-first + one-bloc: measure what the change touches BEFORE pushing; push receipts name the blast radius |
 
 ## Honest limits of the upstream (booked, not hidden)
 
@@ -150,6 +157,8 @@ here.
 - **ai-review-operator**: Use when the boundary work is authority pre-flight
   and named refusals at review time. NOT for token frugality or provider
   admission — this skill owns those.
+- **codebase-graph-operator**: Use when the frugality question is code
+  exploration (index-first vs file-wandering). NOT for provider routing.
 - **fleet-desk-operator**: Use when the Authority Map or tier ladder is needed.
   NOT for routing mechanics.
 - **orchestration-ax-operator**: Use when the workload needs declarative

@@ -34,6 +34,7 @@
  *   E23 daily pulse          — typed proposals + real gates + verify-only, the loop closed under law (Z-49, CR-0009; renumbered from their interim E21 — strix E21 landed on main first in Task 29 and ax claimed E22 in Task 31, second-mover law, supersession visible here)
  *   E24 mini-swe lineage pin — same strip-restore predicate for the SWE-agent/mini-swe-agent MIT mirror sha 04d809c (Task 33, minimal-agent lineage)
  *   E25 fcc lineage pin      — same strip-restore predicate for the Alishahryar1/free-claude-code AGPL-3.0-only mirror sha 03aca36 (Task 35, frugal-routing lineage, license verified in-file)
+ *   E26 sweep lineage pins   — one strip-restore pass over the FIVE Task 36 pins (Graft fe30ead / agency-agents d3f71c4 / codebase-memory 96c3f41c / OpenMontage 08e2151 / orca 843607b1): stripping any one yields a (library) offender naming it; restoring clears (Task 36 five-repo sweep)
  *
  * Fail-soft: exit 0 always; FAILs are booked honestly (HARNESS-AUDIT MANDATE:
  * green-washing the evals is a doctrine breach).
@@ -503,10 +504,51 @@ function accumulateInMemory(bookRows, seed) {
       `strip-caught=${f1} restore-clean=${f2} sha=${slg5.FCC_MIRROR_SHA}`);
   } catch (e) { evalr('E25', 'fcc lineage pin', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
+  // ---- E26: sweep lineage pins (Task 36) — the E21/E22/E24/E25 predicate, fifth proof,
+  // generalized to five pins in one pass. Each of the five Task 36 mirror shas must be
+  // mechanically retained by gate v1.5.0; stripping any one from a notices copy yields
+  // a (library) offender NAMING that lineage; restoring the real notices clears all.
+  try {
+    const slg6 = require(path.join(AG, 'skill-library-gate.cjs'));
+    const os6 = require('os');
+    const sweepPins = [
+      ['Graft', slg6.GRAFT_MIRROR_SHA], ['agency-agents', slg6.AGENCY_MIRROR_SHA],
+      ['codebase-memory', slg6.CBMEM_MIRROR_SHA], ['OpenMontage', slg6.MONTAGE_MIRROR_SHA],
+      ['orca', slg6.ORCA_MIRROR_SHA]
+    ];
+    const realNotices6 = fs.readFileSync(path.join(AG, 'skill-library', 'THIRD-PARTY-NOTICES.md'), 'utf8');
+    const sweepResults = [];
+    for (const [lineage, sha] of sweepPins) {
+      const tmpRoot6 = fs.mkdtempSync(path.join(os6.tmpdir(), 'e26-' + lineage + '-'));
+      fs.mkdirSync(path.join(tmpRoot6, 'skills', 'legal-skill'), { recursive: true });
+      const legal6 = [
+        '---', 'name: legal-skill', 'description: "Use when the fleet must exercise this procedure end to end with receipts and a named artifact."', 'version: 1.0.0', 'license: MIT', '---', '',
+        '# legal-skill', '', '## When to use', '- trigger', '', '## Proactive Triggers', '- flag', '',
+        '## Output Artifacts', '| ask | get |', '|---|---|', '', '## Related Skills', '- other: Use when x. NOT for y.', '',
+        '## Evidence Artifact', '| Artifact | Path | Written by |', '|---|---|---|', '', '## Tier & Scope', 'Tier A; grants no scope.', ''
+      ].join('\n');
+      fs.writeFileSync(path.join(tmpRoot6, 'skills', 'legal-skill', 'SKILL.md'), legal6);
+      fs.copyFileSync(path.join(AG, 'skill-library', 'SKILL-AUTHORING-STANDARD.md'), path.join(tmpRoot6, 'SKILL-AUTHORING-STANDARD.md'));
+      fs.writeFileSync(path.join(tmpRoot6, 'THIRD-PARTY-NOTICES.md'), realNotices6.split(sha).join('PINSTRIPPED'));
+      const stripped6 = slg6.scanDir(tmpRoot6);
+      const caught = stripped6.offenders.some((o) => o.skill === '(library)' && o.why.includes(sha));
+      fs.writeFileSync(path.join(tmpRoot6, 'THIRD-PARTY-NOTICES.md'), realNotices6);
+      const restored6 = slg6.scanDir(tmpRoot6);
+      const clean = !restored6.offenders.some((o) => o.skill === '(library)' && o.why.includes(sha));
+      fs.rmSync(tmpRoot6, { recursive: true, force: true });
+      sweepResults.push(`${lineage}:strip-caught=${caught},restore-clean=${clean}`);
+    }
+    const all6 = sweepResults.every((r) => r.includes('strip-caught=true,restore-clean=true'));
+    evalr('E26', 'sweep lineage pins: all five Task 36 attributions mechanically retained (gate v1.5.0)',
+      all6,
+      ['white-box: stripping each of the five shas (fe30ead/d3f71c4/96c3f41c/08e2151/843607b1) yields a (library) offender naming that sha', 'white-box: with the real notices restored, every sweep-sha offender is absent', 'the gate exports expose all five shas so the pins are code facts, not doc hopes'],
+      sweepResults.join(' | '));
+  } catch (e) { evalr('E26', 'sweep lineage pins', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
 
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.14.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.15.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];

@@ -251,6 +251,162 @@ MIT license requires (retain the license + copyright notice).
   reproduce) the referenced patterns; this notice is the required AGPL-3.0
   attribution and change-state declaration.
 
+## 9. trailhq/Graft (Task 36 five-repo sweep → same-wave adoption)
+
+- **Source:** https://github.com/trailhq/Graft (owner linked
+  https://github.com/NanoNets/Graft — the repo MOVED org NanoNets→trailhq;
+  the pin follows the current canonical name) — "open-source context layer
+  for large codebases": persistent code-graph context + managed
+  CLAUDE.md/AGENTS.md memory for coding agents. 9,512 stars, TypeScript,
+  created 2026-07-03, pushed 2026-10-02.
+- **License:** MIT — verified IN-FILE at the pinned mirror (`LICENSE`,
+  1,090 bytes, "Copyright (c) 2026 Context Graph Engine contributors").
+- **Pinned mirror sha:** `fe30ead` (keyless depth-50 clone at
+  `/home/z/reference-mirrors/Graft`, outside the 16-repo estate; main HEAD
+  2026-09-30).
+- **Author (upstream):** Trail (NanoNets) and Graft contributors.
+- **What was adopted (reference patterns, restated originally into
+  `skills/frugal-router-operator` v1.1.0):** hook-over-note ("the ones that
+  can't break get a hook that blocks it, not a note it ignores" — the
+  estate's "a rule not enforced in code is not a rule" independently
+  re-derived at scale), correction→persistent-rule memory (every correction
+  folds back into managed memory; src/upkeep.ts maintains CLAUDE.md and
+  AGENTS.md), and blast-radius-before-action (src/blast: diff → owners →
+  rendered impact before proceeding).
+- **What was NOT taken:** zero upstream TypeScript code, configs, or docs
+  bodies copied; the npm package (@nanonets/graft) not installed; headline
+  metrics (4× cheaper, 3× faster, +46% tool-call reduction, correctness
+  54%→66% on SWE-bench Verified) booked as upstream claims. The cloud
+  "Trail" service is upstream distribution — not evaluated, not touched.
+- **State of changes:** the house package materially adapts (does not
+  reproduce) the referenced patterns; this notice is the required MIT
+  attribution and change-state declaration.
+
+## 10. msitarzewski/agency-agents (Task 36 five-repo sweep → same-wave adoption)
+
+- **Source:** https://github.com/msitarzewski/agency-agents — "The Agency":
+  a catalog of specialized AI-agent role files (pure markdown) organized in
+  division directories. 155,836 stars, Shell, created 2025-10-13, pushed
+  2026-10-01.
+- **License:** MIT — verified IN-FILE at the pinned mirror (`LICENSE`,
+  1,079 bytes, "Copyright (c) 2025 AgentLand Contributors").
+- **Pinned mirror sha:** `d3f71c4` (keyless depth-50 clone at
+  `/home/z/reference-mirrors/agency-agents`, outside the estate; main HEAD
+  2026-10-01).
+- **Author (upstream):** Michael Sitarzewski and the AgentLand contributors.
+- **What was adopted (reference patterns, restated originally into the new
+  house package `skills/agency-catalog-operator/`):** role-as-single-markdown
+  shape (identity & memory / core mission / critical rules / deliverables /
+  success metrics), catalog-as-machine-checked-source-of-truth
+  (divisions.json is consumed by tooling and scripts/check-divisions.sh
+  FAILS THE BUILD if the catalog disagrees with the directories on disk —
+  catalog-vs-disk drift is a build failure, not a note), named divisions
+  with display metadata, and the multi-harness install surface (one roster,
+  many clients).
+- **What was NOT taken:** zero upstream agent markdown bodies copied (the
+  estate adopts SHAPES and writes roles originally in house voice — 319
+  division-level agent files at the pinned sha remain upstream's); no
+  install into agent config dirs; the companion desktop app and brew cask
+  not evaluated. Count-drift honesty: README-era claims say "232 agents /
+  16 divisions"; the pinned mirror holds 319 division-level agent .md
+  files across 13+ divisions — counts are a pulse, the sha is the truth.
+- **State of changes:** the house package materially adapts (does not
+  reproduce) the referenced patterns; this notice is the required MIT
+  attribution and change-state declaration.
+
+## 11. DeusData/codebase-memory-mcp (Task 36 five-repo sweep → same-wave adoption)
+
+- **Source:** https://github.com/DeusData/codebase-memory-mcp — "codebase
+  memory": a pure-C code-intelligence engine that indexes repositories into
+  a persistent knowledge graph (tree-sitter AST + in-memory SQLite) and
+  serves structural queries over MCP. 45,707 stars, C, created 2026-02-24,
+  pushed 2026-10-02.
+- **License:** MIT — verified IN-FILE at the pinned mirror (`LICENSE`,
+  1,107 bytes, "Copyright (c) 2025 DeusData").
+- **Pinned mirror sha:** `96c3f41c` (keyless depth-50 clone at
+  `/home/z/reference-mirrors/codebase-memory-mcp`, outside the estate;
+  main HEAD 2026-10-02).
+- **Author (upstream):** DeusData and codebase-memory-mcp contributors.
+- **What was adopted (reference patterns, restated originally into the new
+  house package `skills/codebase-graph-operator/`):** index-once-query-
+  forever (tree-sitter AST → persistent graph of functions, classes, call
+  chains, HTTP routes, cross-service links), query-the-book-not-the-files
+  (structural answers instead of grep/read cycles), RAM-first
+  release-after persistence (internal/cbm/sqlite_writer.c; memory released
+  after indexing), honest supply chain (SECURITY.md release policy,
+  VirusTotal-scanned release candidates with pinned SHA-256, SLSA 3, OSSF
+  scorecard), and catalog-as-contract client activation (45 surfaces
+  configured only when documented markers exist).
+- **What was NOT taken:** zero upstream C code or docs bodies copied; the
+  native binary NOT downloaded or executed (the desk reads source, does not
+  self-install binaries); MCP client configuration writes not performed;
+  headline claims (162 languages, Linux kernel in 3 minutes, <1ms answers,
+  120× fewer tokens, 8,050 tests, 83% answer quality across 31 repos per
+  the arXiv preprint) booked as upstream claims.
+- **State of changes:** the house package materially adapts (does not
+  reproduce) the referenced patterns; this notice is the required MIT
+  attribution and change-state declaration.
+
+## 12. calesthio/OpenMontage (Task 36 five-repo sweep → pinned reference, no house package)
+
+- **Source:** https://github.com/calesthio/OpenMontage — "the first
+  open-source, agentic video production system": prompt-driven pipelines
+  (storyboard → script → assets → edit → render) with per-harness context
+  files (AGENTS.md/CLAUDE.md/CODEX.md/COPILOT.md/CURSOR.md), schemas,
+  skills/, PROMPT_GALLERY. 62,496 stars, Python, created 2026-03-29,
+  pushed 2026-09-06.
+- **License:** AGPL-3.0 — verified IN-FILE at the pinned mirror (`LICENSE`,
+  34,523 bytes, standard GNU AGPL v3 text). Copyleft boundary identical to
+  §8: the pin certifies STUDY PROVENANCE; zero upstream code copied; any
+  code incorporation would trigger AGPL §13 obligations estate-wide and is
+  owner-gated.
+- **Pinned mirror sha:** `08e2151` (keyless depth-50 clone at
+  `/home/z/reference-mirrors/OpenMontage`, outside the estate; main HEAD
+  2026-09-05 — the repo's last push, ~4 weeks before the sweep).
+- **Author (upstream):** calesthio and OpenMontage contributors.
+- **What was adopted (reference patterns, booked in CR-0015 — no house
+  package, scope discipline: the estate runs no media pipeline today):**
+  creative pipelines as stage-gated flows where each stage hand-off is
+  schema-checked (schemas/ = parse-gates between creative stages, the
+  workflow-parse-gate parallel), per-harness context files as first-class
+  artifacts, and a prompt gallery as curated regression material. The
+  runnable legs (GPU render requirements, video providers) are
+  possession/wallet-gated and were not provisioned.
+- **What was NOT taken:** zero upstream Python/pipeline code copied; no
+  runtime installed; no video-provider keys touched.
+- **State of changes:** consult-level doctrine booking with pin; this
+  notice is the required AGPL-3.0 attribution and change-state declaration.
+
+## 13. stablyai/orca (Task 36 five-repo sweep → same-wave adoption)
+
+- **Source:** https://github.com/stablyai/orca — "The AI Orchestrator for
+  100x builders": runs Codex/ClaudeCode/OpenCode/Pi side-by-side, each in
+  its own git worktree, tracked in one place, with a mobile companion to
+  monitor and steer. 83,962 stars, TypeScript (Electron), created
+  2026-03-17, pushed 2026-10-03.
+- **License:** MIT — verified IN-FILE at the pinned mirror (`LICENSE`,
+  1,070 bytes, "Copyright (c) 2026 Lovecast Inc.").
+- **Pinned mirror sha:** `843607b1` (keyless depth-50 clone at
+  `/home/z/reference-mirrors/orca`, outside the estate; main HEAD
+  2026-10-02).
+- **Author (upstream):** Stably AI (Lovecast Inc.) and orca contributors.
+- **What was adopted (reference patterns, booked in CR-0015; the parallel
+  surfaces already live in the estate's lane law):** worktree-per-agent
+  isolation (each agent owns a git worktree — lanes never share working
+  state; the fills-ledger/lane parallel), worktree LINEAGE PRUNING
+  (src/main/worktree-lineage-pruning — stale parallel states are reaped,
+  the STASIS/collapse-drill parallel), one tracking surface over many
+  parallel agents (the one-bloc parallel: many lanes, one book), and
+  remote monitor/steer with finish-notifications (the pulse-book
+  parallel). The estate doctrine match: parallel execution is safe only
+  when isolation is real (worktrees, not shared directories) and the
+  tracking surface is single-writer.
+- **What was NOT taken:** zero upstream TypeScript code copied; the desktop
+  app not built or run (Electron GUI — no display on this box); mobile
+  companion/store distribution not evaluated; no cloud legs touched.
+- **State of changes:** consult-level doctrine booking with pin; this
+  notice is the required MIT attribution and change-state declaration.
+
 ## MIT License (reference text)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software
