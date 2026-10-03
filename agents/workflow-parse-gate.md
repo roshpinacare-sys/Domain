@@ -1,8 +1,8 @@
 # Workflow Parse Gate — every lane must be able to run
 
-_workflow-parse-gate v1.0.0 · 2026-10-03T19:04:51.971Z · dir .github/workflows_
+_workflow-parse-gate v1.0.0 · 2026-10-03T19:17:13.034Z · dir .github/workflows_
 
-**PARSE-GATE GREEN: 43 workflows scanned, mode full, 0 offenders**
+**PARSE-GATE GREEN: 44 workflows scanned, mode full, 0 offenders**
 
 - recruit.yml incident (Task 24): `${{ }}` inside flow mappings → GitHub startup-failure on every push, 0 jobs, cron never fired. Caught by the ONE-BLOC desk CI-health review; now mechanically gated here.
 
