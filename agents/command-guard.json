@@ -1,10 +1,10 @@
 {
- "at": "2026-10-03T18:20:58.007Z",
+ "at": "2026-10-03T18:39:43.157Z",
  "agent": "command-guard v1.0.0 (Z-38, study: Dicklesworthstone/destructive_command_guard)",
- "mode": "scan",
- "scanned": 41,
+ "mode": "explain",
+ "scanned": 42,
  "findings": 11,
- "denies": 0,
+ "denies": 3,
  "fleetSyncIdiomAllowed": 11,
  "rows": [
   {
@@ -94,6 +94,24 @@
    "decision": "ALLOW",
    "rule": "fleet-sync-idiom",
    "reason": "CI push-retry loop re-syncs a throwaway checkout; content regenerable — booked, not silent"
+  }
+ ],
+ "explains": 5,
+ "recentDenies": [
+  {
+   "at": "2026-10-03T18:39:43.011Z",
+   "command": "git push --force origin main",
+   "rule": "core.git:push-force"
+  },
+  {
+   "at": "2026-10-03T18:39:43.043Z",
+   "command": "git reset --hard HEAD~5",
+   "rule": "core.git:reset-hard"
+  },
+  {
+   "at": "2026-10-03T18:39:43.081Z",
+   "command": "rm -rf agents/",
+   "rule": "fs:rm-rf"
   }
  ]
 }
