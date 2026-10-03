@@ -30,26 +30,33 @@ jobs:
         run: node agents/recruit.cjs
       - name: "run venture desk (two-sided ledger board, Z-31)"
         run: node agents/venture-desk.cjs
-        env: {DEFU_DIR: ${{ github.workspace }}/canon-defi}
+        env:
+          DEFU_DIR: ${{ github.workspace }}/canon-defi
       - name: "run harness audit (five-subsystem judge node, Z-35)"
         run: node agents/harness-audit.cjs
-        env: {DEFU_DIR: ${{ github.workspace }}/canon-defi}
+        env:
+          DEFU_DIR: ${{ github.workspace }}/canon-defi
       - name: "run desk evals (runnable expectations, Z-36)"
         run: node agents/evals/run-evals.cjs
       - name: "run command guard scan (mechanical override, Z-38)"
         run: node agents/command-guard.cjs scan .github/workflows agents
-        env: {DEFU_DIR: ${{ github.workspace }}/canon-defi}
+        env:
+          DEFU_DIR: ${{ github.workspace }}/canon-defi
       - name: "run cognitive rail (inference registry + keyless probes, Z-39)"
         run: |
           node agents/cognitive-rail.cjs catalog
           node agents/cognitive-rail.cjs probe
-        env: {DEFU_DIR: ${{ github.workspace }}/canon-defi}
+        env:
+          DEFU_DIR: ${{ github.workspace }}/canon-defi
       - name: "run collapse drill (containment proof, Z-40 emergence.ai)"
         run: node agents/collapse-drill.cjs
-        env: {DEFU_DIR: ${{ github.workspace }}/canon-defi}
+        env:
+          DEFU_DIR: ${{ github.workspace }}/canon-defi
       - name: "run one-bloc desk (whole-git convergence map, Task 23)"
         run: node agents/one-bloc.cjs
-        env: {ONE_BLOC_TOKEN: ${{ secrets.ZIP_PAT }}, DEFU_DIR: ${{ github.workspace }}/canon-defi}
+        env:
+          ONE_BLOC_TOKEN: ${{ secrets.ZIP_PAT }}
+          DEFU_DIR: ${{ github.workspace }}/canon-defi
       - name: commit board
         run: |
           git config user.name "recruit[bot]"
