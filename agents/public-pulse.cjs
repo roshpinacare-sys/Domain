@@ -107,6 +107,48 @@ function composePulse(live) {
   };
 }
 
+/**
+ * THE COORDINATION PROOF WIRE (Rung 19, CR-0048 — sovereign-convergence §4.3):
+ * the public page proves the fleet's coordination surface, composed from the
+ * committed books of THIS repository only — keyless, fail-soft, public-safe
+ * (no keys, no authorities, no trading amounts). Every number carries its own
+ * measurement time; honesty over freshness-faking, this page's own law.
+ */
+function composeCoordination() {
+  const nowIsoNow = nowIso();
+  // 1. the keyless coordination bus (chain-read saos.* custom_json ops)
+  const bus = readJson('agents/coord-bus.json');
+  const busSection = bus ? {
+    namespaces: bus.namespaces ? Object.keys(bus.namespaces) : [],
+    messageCount: bus.messageCount || 0,
+    fingerprint: bus.fingerprint || null,
+    measuredAt: bus.at || null,
+    source: 'agents/coord-bus.json (keyless chain read of saos.* custom_json ops, split-brain guarded)',
+  } : { status: 'NO-BUS-BOOK', source: 'agents/coord-bus.json (the bus reader has not booked yet)' };
+  // 2. collision leases (the append-only RESERVATIONS.jsonl stream, resolved state)
+  let leases = { status: 'NO-LEASES-FILE' };
+  try {
+    const cl = require('./coord-lease.cjs');
+    const rows = cl.readRows(path.join(ROOT, 'agents', 'RESERVATIONS.jsonl'));
+    const state = cl.resolveLeases(rows, nowIsoNow);
+    const active = Object.entries(state).filter(([, s]) => cl.isActive(s, nowIsoNow));
+    leases = { activeLeases: active.length, resources: active.map(([r]) => r), measuredAt: nowIsoNow };
+  } catch (_) {}
+  // 3. the fleet identity surface (ERC-8004-shaped registry)
+  let registry = { identities: null, measuredAt: null };
+  try {
+    const reg = readJson('agents/agent-registry.json');
+    const ids = reg && reg.identity ? Object.keys(reg.identity).filter((k) => /^\d+$/.test(k)) : [];
+    registry = { identities: ids.length, measuredAt: (reg && reg.at) || null };
+  } catch (_) {}
+  return {
+    bus: busSection,
+    leases,
+    registry,
+    law: 'coordination proof page: composed from committed books only, every number stamped with its own measurement time, no keys, no trading amounts',
+  };
+}
+
 function composeTeam() {
   const personas = readJson('agents/personas.json') || [];
   const cap = readJson('agents/capability-matrix.json');
@@ -149,6 +191,7 @@ async function main() {
   const live = await fetchLiveFeed();
   receipt.liveFeed = { status: live.status, at: live.at };
   const pulse = composePulse(live);
+  pulse.coordination = composeCoordination();
   const team = composeTeam();
   try {
     fs.mkdirSync(path.join(ROOT, 'public'), { recursive: true });

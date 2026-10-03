@@ -1231,9 +1231,166 @@ function accumulateInMemory(bookRows, seed) {
   } catch (e) { evalr('E38', 'buy-premium law', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
 
+  // ---- E39: the coordination bus (R19, CR-0048) — the keyless fleet-wide coordination
+  // surface: chain-read saos.* custom_json ops (split-brain guarded), RESERVATIONS.jsonl
+  // collision leases, the public coordination proof wire. Booked by convergence §4.3.
+  try {
+    const cb = require(path.join(AG, 'coord-bus.cjs'));
+    const cl = require(path.join(AG, 'coord-lease.cjs'));
+    const os = require('os');
+    let ok39 = true; const why39 = [];
+    const chk = (cond, tag) => { if (!cond) { ok39 = false; why39.push(tag); } };
+    // white-box bus: namespace whitelist law
+    chk(cb.classifyId('saos.weave.core.v1').traffic === true && cb.classifyId('saos.weave.core.v1').known === true, 'classify-known');
+    chk(cb.classifyId('saos.brandnew.v9').traffic === true && cb.classifyId('saos.brandnew.v9').known === false, 'classify-unknown-kept-flagged');
+    chk(cb.classifyId('follow').traffic === false, 'classify-foreign-ignored');
+    // white-box bus: THE LIMIT-100 LAW page-walk math
+    chk(cb.LIMIT === 100, 'limit-100-law');
+    chk(cb.pagePlan(3, 100).length === 3 && cb.pagePlan(3, 100)[0][0] === -1, 'page-plan-first-start-minus-one');
+    chk(cb.nextStart(61960) === 61959 && cb.nextStart(1) === null && cb.nextStart(0) === null, 'next-start-walk');
+    // white-box bus: normalize dedupe on (id,seq) keeps the later block, sorts ascending
+    const mk = (seq, id, block) => ({ seq, id, block, at: '2026-10-03T20:00:0' + (seq % 10) + 'Z', from: 'headcorner', known: true, payload: { seq } });
+    const norm = cb.normalizeRows([mk(3, 'a', 11), mk(1, 'b', 22), mk(3, 'a', 33)]);
+    chk(norm.length === 2 && norm[0].seq === 1 && norm[1].seq === 3 && norm[1].block === 33, 'normalize-dedupe-sort');
+    chk(cb.parsePayload('{"x":1}').x === 1 && cb.parsePayload('NOT-JSON{').raw === 'NOT-JSON{', 'parse-payload-honest-raw');
+    // white-box bus: split-brain guard + fingerprint determinism (byte-identical stable payload)
+    const m1 = [mk(1, 'saos.weave.core.v1', 5)], m2 = [mk(1, 'saos.weave.core.v1', 5)], m3 = [mk(1, 'saos.weave.core.v1', 6)];
+    chk(cb.splitBrain(m1, m2) === false, 'split-brain-agree');
+    chk(cb.splitBrain(m1, m3) === true, 'split-brain-refuse');
+    chk(cb.splitBrain([], []) === false, 'split-brain-both-empty-agree');
+    chk(cb.busFingerprint(m1) === cb.busFingerprint(m2) && /^[0-9a-f]{16}$/.test(cb.busFingerprint(m1)), 'fingerprint-deterministic-16hex');
+    // white-box bus: THE HEAD-VECTOR FINGERPRINT — the bus STATE is the per-namespace
+    // head (with a content digest), not the sliding window: deeper windows with the
+    // same head agree (a hot account's limit-order churn must not book noise), and a
+    // head-content LIE (same seq, different block/payload) still refuses.
+    const mkAt = (seq, id, block, at) => ({ seq, id, block, at, from: 'headcorner', known: true, payload: { seq } });
+    const wA = [mkAt(8, 'saos.weave.core.v1', 1, '2026-10-03T21:00:00Z'), mkAt(10, 'saos.weave.core.v1', 2, '2026-10-03T21:05:00Z')];
+    const wB = [mkAt(10, 'saos.weave.core.v1', 2, '2026-10-03T21:05:00Z')];
+    chk(cb.busFingerprint(wA) === cb.busFingerprint(wB), 'heads-window-stable');
+    chk(cb.splitBrain(wA, wB) === false, 'split-brain-window-depth-agrees');
+    const headLie = [mkAt(10, 'saos.weave.core.v1', 999, '2026-10-03T21:05:00Z')];
+    chk(cb.splitBrain(wB, headLie) === true, 'split-brain-head-content-lie');
+    const hv = cb.namespaceHeads(wA);
+    chk(hv['saos.weave.core.v1'].lastSeq === 10 && /^[0-9a-f]{16}$/.test(hv['saos.weave.core.v1'].headDigest), 'heads-shape');
+    const sA = JSON.stringify(cb.busStable(m1, { pages: 1 })); const sB = JSON.stringify(cb.busStable(m2, { pages: 1 }));
+    chk(sA === sB, 'bus-stable-byte-identical');
+    const roll = cb.namespaceRollup(cb.normalizeRows([mk(1, 'saos.weave.core.v1', 1), mk(2, 'saos.weave.core.v1', 2), mk(3, 'saos.snapshot.v1', 3)]));
+    chk(roll['saos.weave.core.v1'].count === 2 && roll['saos.weave.core.v1'].lastSeq === 2 && roll['saos.snapshot.v1'].count === 1, 'namespace-rollup');
+    // white-box bus: THE WATERMARK WALK — pages stop when the previous book's lowest
+    // head is re-reached (continuous coverage of a hot account, cap still bounds)
+    const pageRange = (hi, lo) => { const rows = []; for (let s = hi; s >= lo; s--) rows.push([s, { block: s, timestamp: '2026-10-03T21:00:00Z', op: s % 7 === 0 ? ['custom_json', { id: 'saos.weave.core.v1', required_auths: ['headcorner'], json: '{"n":' + s + '}' }] : ['vote', { voter: 'x' }]}]); return rows; };
+    cb.setRpcImpl((node, method, params) => (String(params[1]) === '-1' ? pageRange(100, 61) : pageRange(60, 21)));
+    const walk = await cb.fetchBus('https://api.steemit.com/', 'headcorner', 5, 50);
+    chk(walk.scan.pages === 2 && walk.scan.watermarkReached === true && walk.scan.minSeq === 21 && walk.scan.maxSeq === 100, 'watermark-walk-stops');
+    chk(walk.messages.length === 12, 'watermark-walk-captured'); // 6 custom_json ops per page (multiples of 7 in [61,100] and [21,60])
+    cb.setRpcImpl(null);
+    // black-box A/B/B2/C: the REAL desk path in fresh processes over the FIXTURE
+    // transport seam (COORD_BUS_FIXTURE — the house eval idiom; the sandbox forbids
+    // cross-process loopback TCP, so the canned condenser rides the seam instead —
+    // the whole desk flow runs identically, only the transport is canned).
+    const cannedRow = (seq, id, block, json) => [[seq, { block, timestamp: '2026-10-03T20:38:30', op: ['custom_json', { id, required_auths: ['headcorner'], json }] }]];
+    const row1 = cannedRow(62256, 'saos.weave.core.v1', 881001, '{"protocol":"saos-weave-core/v1","checkpoint":1239}');
+    const row2 = cannedRow(62256, 'saos.weave.core.v1', 881001, '{"protocol":"saos-weave-core/v1","checkpoint":9999}');
+    const mkFixture = (obj) => { const p = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'e39f-')), 'fixture.json'); fs.writeFileSync(p, JSON.stringify(obj)); return p; };
+    // A: identical views → BUS-READ book with the message captured
+    const tmpA = fs.mkdtempSync(path.join(os.tmpdir(), 'e39a-'));
+    const envA = { ...process.env, COORD_BUS_JSON: path.join(tmpA, 'coord-bus.json'), COORD_BUS_FIXTURE: mkFixture({ primary: row1, cross: row1 }) };
+    const pA = spawnSync(process.execPath, [path.join(AG, 'coord-bus.cjs')], { env: envA, encoding: 'utf8', timeout: 60000 });
+    let bbA = pA.status === 0;
+    try {
+      const book = JSON.parse(fs.readFileSync(envA.COORD_BUS_JSON, 'utf8'));
+      bbA = bbA && book.verdict === 'BUS-READ' && book.messageCount === 1 && book.namespaces['saos.weave.core.v1'].known === true
+        && book.fingerprint && book.fingerprint.length === 16 && book.scan.pages >= 1;
+    } catch (_) { bbA = false; }
+    if (!bbA) { ok39 = false; why39.push('black-box-bus-read'); }
+    // B: SPLIT-BRAIN — the two views disagree → exit 0 and NOTHING written
+    const tmpB = fs.mkdtempSync(path.join(os.tmpdir(), 'e39b-'));
+    const envB = { ...process.env, COORD_BUS_JSON: path.join(tmpB, 'coord-bus.json'), COORD_BUS_FIXTURE: mkFixture({ primary: row1, cross: row2 }) };
+    const pB = spawnSync(process.execPath, [path.join(AG, 'coord-bus.cjs')], { env: envB, encoding: 'utf8', timeout: 60000 });
+    const bbB = pB.status === 0 && String(pB.stdout || '').includes('SPLIT-BRAIN') && !fs.existsSync(envB.COORD_BUS_JSON);
+    if (!bbB) { ok39 = false; why39.push('black-box-split-brain-no-write'); }
+    // B2: UNREACHABLE — both views fail to load → we measured NOTHING, write NOTHING
+    // (the desk defect E39 caught before production: an empty-bus book would clobber a good view)
+    const tmpB2 = fs.mkdtempSync(path.join(os.tmpdir(), 'e39b2-'));
+    const envB2 = { ...process.env, COORD_BUS_JSON: path.join(tmpB2, 'coord-bus.json'), COORD_BUS_FIXTURE: mkFixture({ primary: { __error: 'timeout api.steemit.com' }, cross: { __error: 'timeout api.justyy.com' } }) };
+    const pB2 = spawnSync(process.execPath, [path.join(AG, 'coord-bus.cjs')], { env: envB2, encoding: 'utf8', timeout: 60000 });
+    const bbB2 = pB2.status === 0 && String(pB2.stdout || '').includes('UNREACHABLE') && !fs.existsSync(envB2.COORD_BUS_JSON);
+    if (!bbB2) { ok39 = false; why39.push('black-box-unreachable-no-write'); }
+    // C: STASIS ACTIVE → halt book, NO messages key, the fixture (would-be network) NEVER consulted
+    const tmpC = fs.mkdtempSync(path.join(os.tmpdir(), 'e39c-'));
+    fs.mkdirSync(path.join(tmpC, 'Domain', 'agents'), { recursive: true });
+    fs.writeFileSync(path.join(tmpC, 'Domain', 'agents', 'STASIS.json'), JSON.stringify({ protocol: 'SAOS-FATE-DEFENSE-STASIS/1', active: true, reason: 'e39-drill' }));
+    const envC = { ...process.env, COORD_BUS_JSON: path.join(tmpC, 'coord-bus.json'), COORD_BUS_FIXTURE: mkFixture({ primary: row1, cross: row1 }), FLEET_CENSUS_ESTATE: tmpC };
+    const pC = spawnSync(process.execPath, [path.join(AG, 'coord-bus.cjs')], { env: envC, encoding: 'utf8', timeout: 60000 });
+    let bbC = pC.status === 0;
+    try {
+      const book = JSON.parse(fs.readFileSync(envC.COORD_BUS_JSON, 'utf8'));
+      bbC = bbC && book.verdict === 'STASIS-HALT' && book.stasis && book.stasis.active === true && book.messages === undefined && book.scan === undefined; // zero reads beyond the breaker
+    } catch (_) { bbC = false; }
+    if (!bbC) { ok39 = false; why39.push('black-box-stasis-zero-network'); }
+
+    // white-box: THE FLOOR CHAIN + TRUNCATION HONESTY — the walk watermark chains the
+    // previous book's lowest SEEN seq (heads ∪ scan floor) so no window has gaps, and
+    // a cap-bound walk refuses to publish a truncated head-vector (receipt only).
+    chk(cb.floorWatermark(null) === null, 'floor-null-safe');
+    chk(cb.floorWatermark({ heads: { a: { lastSeq: 62256 }, b: { lastSeq: 62252 } }, scan: { minSeq: 61960 } }) === 61960, 'floor-min-over-heads-and-scan');
+    chk(cb.floorWatermark({ heads: { a: { lastSeq: 100 } } }) === 100, 'floor-heads-only');
+    chk(cb.floorWatermark({ scan: { minSeq: 50 } }) === 50, 'floor-scan-only');
+    // truncation: a walk whose cap binds BEFORE the floor is INCOMPLETE — the desk books
+    // BUS-TRUNCATED and writes NOTHING (the last complete book stands)
+    const tmpT = fs.mkdtempSync(path.join(os.tmpdir(), 'e39t-'));
+    const prevBook = { at: '2026-10-03T21:00:00Z', fingerprint: 'aaaaaaaaaaaaaaaa', heads: { 'saos.weave.core.v1': { lastSeq: 200, lastAt: 'T', headDigest: 'x' } }, scan: { minSeq: 1 } };
+    fs.writeFileSync(path.join(tmpT, 'coord-bus.json'), JSON.stringify(prevBook));
+    const pT = spawnSync(process.execPath, [path.join(AG, 'coord-bus.cjs')], { env: { ...process.env, COORD_BUS_JSON: path.join(tmpT, 'coord-bus.json'), COORD_BUS_FIXTURE: mkFixture({ primary: cannedRow(150, 'saos.weave.core.v1', 300, '{"n":150}'), cross: cannedRow(150, 'saos.weave.core.v1', 300, '{"n":150}') }), COORD_BUS_MAX_PAGES: '1' }, encoding: 'utf8', timeout: 60000 });
+    const bbT = pT.status === 0 && String(pT.stdout || '').includes('BUS-TRUNCATED') && JSON.parse(fs.readFileSync(path.join(tmpT, 'coord-bus.json'), 'utf8')).fingerprint === 'aaaaaaaaaaaaaaaa'; // the last complete book STANDS
+    if (!bbT) { ok39 = false; why39.push('black-box-truncated-no-write'); }
+    // white-box lease: the collision state machine, every verdict a reason code    // white-box lease: the collision state machine, every verdict a reason code
+    const NOW = '2026-10-03T21:00:00.000Z';
+    const rows0 = [];
+    chk(cl.claimDecision(rows0, 'r1', 'lane-A', NOW, 60000).decision === 'GRANT', 'lease-grant-free');
+    chk(cl.claimDecision(rows0, 'r1', 'lane-A', NOW, 0).decision === 'REFUSE-NO-TTL' && cl.claimDecision(rows0, 'r1', 'lane-A', NOW, Infinity).decision === 'REFUSE-NO-TTL', 'lease-no-immortal');
+    chk(cl.claimDecision(rows0, '', 'lane-A', NOW, 60000).decision === 'REFUSE', 'lease-refuse-missing');
+    const rows1 = [{ kind: 'claim', resource: 'r1', holder: 'lane-A', at: '2026-10-03T20:59:00.000Z', expiresAt: '2026-10-03T21:10:00.000Z' }];
+    const ref = cl.claimDecision(rows1, 'r1', 'lane-B', NOW, 60000);
+    chk(ref.decision === 'REFUSE' && ref.evidence.holder === 'lane-A' && ref.evidence.expiresAt === '2026-10-03T21:10:00.000Z', 'lease-refuse-foreign-active');
+    chk(cl.claimDecision(rows1, 'r1', 'lane-A', NOW, 60000).decision === 'GRANT-RENEW', 'lease-renew-self');
+    const rowsExp = [{ kind: 'claim', resource: 'r1', holder: 'lane-A', at: '2026-10-03T20:00:00.000Z', expiresAt: '2026-10-03T20:30:00.000Z' }];
+    const tk = cl.claimDecision(rowsExp, 'r1', 'lane-B', NOW, 60000);
+    chk(tk.decision === 'TAKEOVER-EXPIRED' && tk.evidence.prevHolder === 'lane-A', 'lease-takeover-expired');
+    // reducer: release clears only for the holder; foreign release is a no-op; stale race row loses to the active lease
+    const st1 = cl.resolveLeases(rows1.concat([{ kind: 'release', resource: 'r1', holder: 'lane-B', at: NOW }]), NOW);
+    chk(st1.r1.releasedAt === null && cl.isActive(st1.r1, NOW) === true, 'reducer-foreign-release-noop');
+    const st2 = cl.resolveLeases(rows1.concat([{ kind: 'release', resource: 'r1', holder: 'lane-A', at: NOW }]), NOW);
+    chk(st2.r1.releasedAt === NOW && cl.isActive(st2.r1, NOW) === false, 'reducer-release-holder');
+    const st3 = cl.resolveLeases(rows1.concat([{ kind: 'claim', resource: 'r1', holder: 'lane-B', at: '2026-10-03T20:59:30.000Z', expiresAt: NOW }]), NOW);
+    chk(st3.r1.holder === 'lane-A', 'reducer-stale-race-loses');
+    chk(JSON.stringify(cl.resolveLeases(rows1, NOW)) === JSON.stringify(cl.resolveLeases(rows1, NOW)), 'reducer-deterministic');
+    // black-box D: the REAL CLI — claim grants + appends, foreign claim REFUSES and appends NOTHING, wrong release NOT-YOURS, right release RELEASED
+    const tmpD = fs.mkdtempSync(path.join(os.tmpdir(), 'e39d-'));
+    const resPath = path.join(tmpD, 'RESERVATIONS.jsonl');
+    const runLease = (...args) => spawnSync(process.execPath, [path.join(AG, 'coord-lease.cjs'), ...args], { env: { ...process.env, RESERVATIONS_JSONL: resPath }, encoding: 'utf8', timeout: 30000 });
+    const g = JSON.parse((runLease('claim', 'census-publish', 'lane-A', '60').stdout || '{}'));
+    const f = JSON.parse((runLease('claim', 'census-publish', 'lane-B', '60').stdout || '{}'));
+    const w = JSON.parse((runLease('release', 'census-publish', 'lane-B').stdout || '{}'));
+    const r = JSON.parse((runLease('release', 'census-publish', 'lane-A').stdout || '{}'));
+    const listAfter = JSON.parse((runLease('list').stdout || '{}'));
+    const lineCount = cl.readRows(resPath).length;
+    // THE APPEND LAW: only grants write — 1 claim + 1 release = 2 rows; a refused claim
+    // and a not-yours release append NOTHING (the audit trail stays honest).
+    const bbD = g.verdict === 'GRANT' && f.verdict === 'REFUSE' && w.verdict === 'NOT-YOURS' && r.verdict === 'RELEASED'
+      && listAfter.activeLeases === 0 && lineCount === 2;
+    if (!bbD) { ok39 = false; why39.push('black-box-cli-lease rows=' + lineCount); }
+    evalr('E39', 'coordination bus: keyless saos.* chain-read with split-brain guard (nothing written on disagreement), LIMIT-100 page-walk, namespace whitelist, RESERVATIONS collision leases (reason-code machine, no immortal leases), STASIS zero-network halt, public proof wire',
+      ok39,
+      ['white-box: namespace whitelist — known saos.* flagged, unknown saos.* kept+flagged known:false, foreign custom_json ignored', 'white-box: THE LIMIT-100 LAW (measured -32801 live) — page plan starts at -1, walk descends minSeq-1, genesis stops', 'white-box: normalize dedupes (id,seq) keeping the later block and sorts ascending; parse failures become honest {raw}', 'white-box: split-brain guard — equal fingerprints agree, differing views refuse, both-empty agrees; fingerprint deterministic 16-hex; busStable byte-identical', 'white-box: THE HEAD-VECTOR FINGERPRINT — window-stable (deeper windows with the same head agree, hot-account churn books no noise) while a head-content lie (same seq, different block/payload) still refuses; heads carry lastSeq/lastAt/headDigest', 'white-box: THE WATERMARK WALK — pages stop when the previous book\'s lowest head is re-reached, capturing only fresh ops, cap bounding honesty', 'white-box: namespace rollup counts + last-seen per id', 'black-box A: the REAL desk path in a fresh process over the COORD_BUS_FIXTURE transport seam (house eval idiom — the sandbox forbids cross-process loopback, the flow runs identically with only the transport canned) — BUS-READ book, message captured, pages walked', 'black-box B: SPLIT-BRAIN — disagreeing views → exit 0, receipt booked, ZERO writes', 'black-box B2: UNREACHABLE — both views fail → we measured NOTHING and write NOTHING (the desk defect E39 caught before production: an empty-bus book would clobber a good view and fake fleet-wide silence)', 'black-box C: STASIS ACTIVE — halt book with stasis.active true, NO messages/scan keys, the would-be network never consulted', 'white-box lease: GRANT free / REFUSE foreign-active with holder+expiresAt evidence / GRANT-RENEW self / TAKEOVER-EXPIRED / REFUSE-NO-TTL (no immortal leases) / REFUSE missing args', 'white-box reducer: foreign release no-op, holder release clears, stale race row loses to the active lease, resolveLeases deterministic', 'black-box CLI: claim appends exactly one row, foreign claim appends NOTHING (the append law: only grants write), wrong release NOT-YOURS, right release RELEASED, list reports 0 active'],
+      why39.length ? 'fails: ' + why39.join('; ') : 'the fleet coordination surface is measurable by anyone, anywhere, keyless — and it cannot lie by node, by silence, or by an immortal lease');
+  } catch (e) { evalr('E39', 'coordination bus', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
+
+
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.26.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.27.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];
