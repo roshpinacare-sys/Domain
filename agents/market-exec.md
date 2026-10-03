@@ -1,24 +1,27 @@
 # market-exec — SIGNED EXECUTOR canon (CR-0036)
 
-Last run: 2026-10-03T19:08:21.289Z · mode **LIVE** · venue **SBD/STEEM internal (steem)** via https://api.steemit.com
+Last run: 2026-10-03T19:50:09.042Z · mode **DRY_RUN** · venue **SBD/STEEM internal (steem)** via https://api.steemit.com
 
 | metric | value |
 |---|---|
-| bid / ask / mid | 0.10108266720631387 / 0.10117056856187291 / 0.101127 |
-| spread | 0.0869% |
+| bid / ask / mid | 0.10008737786956867 / 0.10051546391752578 / 0.100301 |
+| spread | 0.4268% |
 | feed (SBD per STEEM) | 0.1041 |
 | cross-check | {"ok":true,"dBid":0,"dAsk":0} |
-| liquid before | 1.505 STEEM / 0.058 SBD |
-| own orders on book (pre) | 17 |
-| authority check | true |
+| liquid before | 0.921 STEEM / 0.078 SBD |
+| own orders on book (pre) | 18 |
+| authority check | skipped (DRY_RUN) |
 
-## placed (2)
-- L1 sell 0.713 STEEM → 0.072 SBD (target 0.100982, realized 0.100982, err 0.0002%) · broadcast ✓
-- L2 buy 0.052 SBD → 0.517 STEEM (target 0.100579, realized 0.100967, err 0.3859%) · broadcast ✓
+## placed (0)
 
-## skipped (1)
-- flow-buy L1 @ 0.100983: STACK-EXISTS
+## skipped (6)
+- sell L1 @ 0.100465: STACK-EXISTS
+- sell L2 @ 0.100867: STACK-EXISTS
+- sell L3 @ 0.10127: STACK-EXISTS
+- sell L4 @ 0.101675: STACK-EXISTS
+- buy L1 @ 0.099587: STACK-EXISTS
+- buy L2 @ 0.099189: STACK-EXISTS
 
 ## errors (0)
 
-Run history: 13 rows in canon.
+Run history: 16 rows in canon.

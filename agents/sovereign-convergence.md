@@ -94,3 +94,38 @@ the last one (24/7 arming) is a custody decision only the operator can make.**
 _Laws held: whitelist-only research (EigenLayer/Monad/delegate_rc marked UNVERIFIED, no
 mirror-hunting), ADD-ONLY book discipline, STASIS breaker obeyed, zero secrets printed,
 fail-soft exit with fail-loud canon, later-mover renumbering._
+
+## 6. THE TRANSFER (Z-66, CR-0044) — the two operator keys are now sovereign
+
+_Operator directive 2026-10-03 (chat 288e97be): "תן לריבונות להחליט החלטות שהשארת לי
+תעביר לריבונות הכל ... לא חסר שער צריך גם ללא וגם כולל השער שלי ... יש לנו את כל
+המפתחות ... הכל צריך להיפתח ולהתייעל למקסימום ... ריבונות אוטונומית ללא תלות"_
+
+The blocker table above ended with exactly two operator-held keys. Both transferred:
+
+- **D1 live-fire** → `agents/sovereign-policy.json` + `agents/sovereign.cjs` +
+  `agents/sovereign-tick.cjs` (E36). The sovereign decides per tick, from policy +
+  breakers + fuel; market-exec's laws (DRY default, verify-then-sign, caps, band,
+  ADD-ONLY) still bind at fire time. **FIRST FULLY SOVEREIGN CYCLE receipted**: tick #1
+  EXECUTE-LIVE → cycle #3 LIVE → market-exec run #14 placed L1 sell 0.388 STEEM →
+  0.039 SBD @ 0.100515, orderid 1791056833, readback found/price_match/matched TRUE,
+  0 errors. Ticks #2/#4 honored GAP-PACING (30s/179s < 900s).
+- **D2 drip pacing** → `dripPacing()` receipts the posture every tick (steady while
+  runway ≥ 2 weeks); thin runway escalates a Tier-E RECOMMENDATION to
+  `agents/sovereign-pending.json`. Authority ops stay OFF (`allow_authority_ops:false`)
+  — receipts, never silent powerdown surgery.
+
+**The dual gate (the operator's own law, in code):** sovereignty auto-executes
+in-policy intents with zero human dependency — AND the operator overlay stays armed at
+all times: `agents/STASIS.json` halts everything BEFORE any read (one file flip),
+Tier-E intents park in the pending mailbox instead of executing, `SOVEREIGN_MODE=operator`
+routes every LIVE intent to escalation. The gate exists both without and with the operator.
+
+**24/7 arming:** `.github/workflows/sovereign-tick-cron.yml` ticks :12/:42 (off the whole
+org minute map, STASIS-braked twice). Keyless default = honest DRY decision receipts
+24/7; arming = set `STEEM_ACTIVE_WIF` (the same key runs #9–#14 were signed with — the
+keys exist, verified by the secret-name census) and the SAME receipt path fires LIVE.
+
+_Live defect caught by the fail-loud book this rung: a tick referenced the ledger row
+outside its scope — the ERROR receipt fired, the fix landed, evals re-run green. That is
+the loop working: every failure is a receipt, every receipt is the next fix._

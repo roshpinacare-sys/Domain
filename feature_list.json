@@ -418,6 +418,15 @@
     "agents/evals/eval-results.json (E35)",
     "agents/change-requests/CR-0043-census-delta.json"
    ]
+  },
+  {
+   "id": "feat-039",
+   "title": "Fleet Rung 17: THE SOVEREIGN TRANSFER — the last two operator-held decisions (D1 live-fire, D2 drip pacing) moved into policy-gated sovereignty with the DUAL GATE (sovereign auto-path AND operator overlay) + the 24/7 sovereign tick cron (CR-0044)",
+   "description": "Operator directive 2026-10-03 transferred the decisions sovereign-convergence.md named as operator-held: agents/sovereign-policy.json is the written constitution (delegation receipt verbatim, gate modes sovereign|operator, limits: 900s broadcast gap, 24 fills/day, 48 decisions/day, 0.05 SBD daily-loss stop, 3 consecutive-loss stop, Tier-S size ≤1.25 STEEM, fuel keep-floors, drip posture steady-4w with authority ops OFF). agents/sovereign.cjs is the pure decision core (decideSovereign gate-order law: STASIS-HALT → mode → arming-presence → suggestion → gap → day-caps → loss breakers → fuel floors → Tier-E size → EXECUTE-LIVE; dripPacing; applyReceipt daily rollover; arming is PRESENCE-ONLY — key material never read/logged). agents/sovereign-tick.cjs is the fresh-child orchestrator (measure local canon → decide → route market-cycle LIVE/DRY or park Tier-E in sovereign-pending.json → append-only sovereign-decisions.jsonl + daily state; day-book truth = the LEDGER single source). .github/workflows/sovereign-tick-cron.yml arms the loop 24/7 at :12/:42 (off the whole org minute map, STASIS-braked twice, keyless default books honest DRY receipts, arming = one secret, rebase-push publish [skip ci]). FIRST FULLY SOVEREIGN CYCLE receipted: tick #1 EXECUTE-LIVE → cycle #3 LIVE → market-exec run #14 placed L1 sell 0.388 STEEM→0.039 SBD @ 0.100515, orderid 1791056833, readback found/price_match/matched TRUE, 0 errors; tick #2/#4 GAP-PACING honored (30s/179s < 900s); live defect caught by the fail-loud book (ledger scope) and fixed in-session. E35 in run-evals v1.22.0: gate-order law, breakers as reason codes, drip pacing, applyReceipt rollover, 3 fresh-process black-boxes (keyless DRY, operator-overlay ESCALATE to pending mailbox, STASIS halt-before-read with a garbage ledger).",
+   "status": "LIVE",
+   "evidence": "agents/sovereign-policy.json · agents/sovereign.cjs · agents/sovereign-tick.cjs · agents/sovereign-state.json · agents/sovereign-decisions.jsonl · agents/sovereign-pending.json (Tier-E mailbox) · .github/workflows/sovereign-tick-cron.yml · market-exec run #14 orderid 1791056833 readback matched · E35 evals 33 PASS / 2 environment-bound (E31/E32 census estate clones lost to the sandbox reset, lane/CI green)",
+   "cr": "CR-0044",
+   "landed_at": "2026-10-03T19:50:38.369Z"
   }
  ]
 }
