@@ -1,6 +1,6 @@
 {
  "protocol": "SAOS-TICK-KEEPER/1",
- "at": "2026-10-03T21:58:51.868Z",
+ "at": "2026-10-03T22:18:37.142Z",
  "repo": "roshpinacare-sys/Domain",
  "stasis": false,
  "arc": {
@@ -18,31 +18,54 @@
    "receipt": "agents/fill-ledger.json",
    "last_ts": "2026-10-03T21:52:35.139Z",
    "max_gap_min": 45
+  },
+  "market-grid-cron": {
+   "receipt": "agents/market-grid.json",
+   "last_ts": "2026-10-03T18:41:15.465Z",
+   "max_gap_min": 120
   }
  },
  "decided": [
   {
    "desk": "sovereign-tick-cron",
-   "stale_min": 23.4,
-   "reason": "book stale 23.4m > 20m"
+   "stale_min": 43.2,
+   "reason": "book stale 43.2m > 20m"
+  },
+  {
+   "desk": "market-grid-cron",
+   "stale_min": 217.4,
+   "reason": "book stale 217.4m > 120m"
   }
  ],
- "dispatched": [],
+ "dispatched": [
+  {
+   "desk": "sovereign-tick-cron",
+   "http_status": 404,
+   "ok": false,
+   "error": null
+  },
+  {
+   "desk": "market-grid-cron",
+   "http_status": 404,
+   "ok": false,
+   "error": null
+  }
+ ],
  "skipped": [
   {
    "desk": "earn-audit-cron",
-   "reason": "cooldown: dispatched 5m ago < 20m"
+   "reason": "fresh 22.9m <= 45m"
   },
   {
    "desk": "fill-ledger-cron",
-   "reason": "fresh 6.3m <= 45m"
+   "reason": "fresh 26.0m <= 45m"
   }
  ],
- "errors": [
-  "no token in env — stale desks NOT re-fired (fail-loud book)"
- ],
- "duration_ms": 2,
+ "errors": [],
+ "duration_ms": 545,
  "cooldown_book": {
-  "earn-audit-cron": "2026-10-03T21:53:13.174Z"
+  "earn-audit-cron": "2026-10-03T21:53:13.174Z",
+  "sovereign-tick-cron": "2026-10-03T22:18:37.142Z",
+  "market-grid-cron": "2026-10-03T22:18:37.142Z"
  }
 }
