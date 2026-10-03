@@ -1,9 +1,9 @@
-# FLEET CENSUS — 2026-10-03T19:06:41.604Z
+# FLEET CENSUS — 2026-10-03T19:17:11.069Z
 
 Offline · keyless · deterministic estate map (CR-0040). Answers: what do we hold, what limits us, how it wires.
 
 ## Inventory — מה יש לנו (16/16 lanes present, 11418 commits, 61 capability markers)
-- **Domain** [PRESENT] fbd46df@2026-10-03 · caps(16): marketGrid, marketExec, fillLedger, marketCycle, crossLayer, oneBloc, capabilityMatrix, econDesk, measureLearn, evoWindows, stasis, evals, skillGate, cadenceCron, gridHistory, gridPaper · workflows=43 desks=49
+- **Domain** [PRESENT] a1f190a@2026-10-03 · caps(16): marketGrid, marketExec, fillLedger, marketCycle, crossLayer, oneBloc, capabilityMatrix, econDesk, measureLearn, evoWindows, stasis, evals, skillGate, cadenceCron, gridHistory, gridPaper · workflows=44 desks=49
 - **saos-dex** [PRESENT] 2bbd033@2026-10-03 · caps(8): kernel, amm, mm, gridBeat, gridLedger, dexCredits, dexGridCron, gridTrigger · workflows=4
 - **steem** [PRESENT] 33c541d6@2026-10-03 · caps(5): heLadder, liveGate, ladderRefresh, anchor, chainAttest · chainAgents=144 workflows=3
 - **saos-sovereign-platform** [PRESENT] e36529c@2026-10-03 · caps(5): exchange, ledger, bridge, meshHub, identity · meshContracts=11 meshTests=5 workflows=3
@@ -21,7 +21,7 @@ Offline · keyless · deterministic estate map (CR-0040). Answers: what do we ho
 - **saos-sovereign-foundry** [PRESENT] 62c0a74@2026-10-03 · caps(4): briefing, controls, broadcasts, agentDir · workflows=2
 
 ## Sovereignty — ריבונות
-- workflows: 8 keyless / 43 total (35 carry owner secrets)
+- workflows: 9 keyless / 44 total (35 carry owner secrets)
 - STASIS brake: present=true active=false halt-in-code desks=1
 - gated desks (DRY/OWNER-GATED/LIVE env): 5 — cross-layer, fleet-census, market-cycle, market-exec, market-grid
 - offline/keyless desks: 21 — bridge-desk, canon-liveness, capability-matrix, cognitive-rail, cross-layer, dedup-corrections, fleet-census, harness-audit, head-delegate, market-exec, market-grid, one-bloc, page-laws, public-pulse, reconcile, recruit, reef-rung3, route-desk, social-dedupe, venture-desk, workflow-audit
@@ -63,8 +63,8 @@ Offline · keyless · deterministic estate map (CR-0040). Answers: what do we ho
 - Domain/agents/cross-layer.cjs 347ffa55a680ced0
 - Domain/agents/one-bloc.cjs 534364660df2b421
 - Domain/agents/STASIS.json 5ab24bc6b95aba0b
-- Domain/agents/evals/run-evals.cjs d0098c4b7c5d8f9f
-- Domain/feature_list.json f5eae23f9bfe03f7
+- Domain/agents/evals/run-evals.cjs 333e3caa07d8ddab
+- Domain/feature_list.json 9a0b32fb17c198e2
 - saos-dex/audit-package/src/kernel.ts 97e5c4a719ddfd0a
 - saos-dex/audit-package/src/amm.ts 91d876f699e18a05
 - saos-dex/db/grid-ledger.json 4476b1cd03fb9038

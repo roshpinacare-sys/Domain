@@ -16,6 +16,7 @@
  *   E28/E29 lineage         — the sibling's planner evals and this lane's STASIS/cadence evals share the suite
  *   E30 fill-ledger + market-cycle — the internal-market measurement leg: fill_order direction law (ours-as-OPEN sells open_pays / ours-as-CURRENT sells current_pays, foreign → null, unclassified booked), µ-unit average-cost P&L exact by hand-check, dedupe keying, recycle thresholds, cycle decision law, fresh-process eval-context black-box with zero network (Z-64, CR-0039)
  *   E31 fleet-census        — the whole 16-lane estate measured offline: capability markers, sovereignty counters, blockers with live evidence, wiring arcs; deterministic byte-stable + fail-soft empty-estate (R14, CR-0040)
+ *   E32 census-cadence      — the estate-map cron: workflow six laws (daily keyless cron, STASIS gate, deterministic publish, concurrency, [skip ci], rebase-push) + the desk-side fresh-process STASIS halt BEFORE any lane read (R15, CR-0041)
  *   E5 concat-family        — string manabar + number = giant (third-time incident family)
  *   E6 stamp hygiene        — a book without a timestamp can never count as fresh
  *   E7 guard deny/allow     — destructive commands DENY, the fleet's rebase law stays ALLOW (Z-38)
@@ -804,11 +805,57 @@ function accumulateInMemory(bookRows, seed) {
       why31.length ? 'fails: ' + why31.join('; ') : `census=${b1.inventory.presentLanes}/16 caps=${b1.summary.capabilities} wiring=${b1.summary.wiringWired}/${b1.summary.wiringArcs} blockers open=${b1.summary.blockersOpen} operator=${b1.summary.blockersOperatorGated} laws=${b1.summary.blockersLawsActive}`);
   } catch (e) { evalr('E31', 'fleet-census', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
+  // ---- E32: census-cadence (R15, CR-0041) — the estate map joins the Actions cron:
+  // the workflow carries the six laws (E29 lineage on the market-grid cron), and the desk
+  // itself halts in code BEFORE any lane read when STASIS is active (FATE-DEFENSE #1,
+  // two independent gates one law) — proven fresh-process on a sandboxed estate.
+  try {
+    const wfPath = path.join(AG, '..', '.github', 'workflows', 'fleet-census-cron.yml');
+    const wf = fs.readFileSync(wfPath, 'utf8');
+    let ok32 = true; const why32 = [];
+    const law = (name, chk) => { const okc = (chk instanceof RegExp) ? chk.test(wf) : !!chk; if (!okc) { ok32 = false; why32.push(name); } };
+    law('daily-cron', /cron: '\d+ \d+ \* \* \*'/);
+    law('workflow-dispatch', /workflow_dispatch/);
+    law('stasis-gate', /STASIS\.json.*active===true|active===true.*STASIS\.json|JSON\.parse\(require\('fs'\)\.readFileSync\('agents\/STASIS\.json'[\s\S]*active/);
+    law('stasis-gated-steps', /if: steps\.brake\.outputs\.active != 'true'/);
+    law('concurrency-guard', /concurrency:[\s\S]*group: fleet-census-cron/);
+    law('keyless', !/secrets\./.test(wf));
+    law('skip-ci-publish', /\[skip ci\]/);
+    law('rebase-push', /pull --rebase origin main[\s\S]*push origin HEAD:main/);
+    law('timeout', /timeout-minutes: \d+/);
+    // the desk-side brake exists in code (the second independent gate)
+    if (!String(fs.readFileSync(path.join(AG, 'fleet-census.cjs'), 'utf8')).includes('STASIS-HALT fleet-census')) { ok32 = false; why32.push('desk-brake-in-code'); }
+    // white-box: normal-path verdict on the real tree (breaker standing by)
+    const fc32 = require(path.join(AG, 'fleet-census.cjs'));
+    if (fc32.stasisHalt().active !== false) { ok32 = false; why32.push('stasisHalt-normal'); }
+    // black-box: fresh-process sandbox — an ACTIVE breaker halts BEFORE any lane read
+    const os32 = require('os');
+    const tmpS = fs.mkdtempSync(path.join(os32.tmpdir(), 'e32-'));
+    fs.mkdirSync(path.join(tmpS, 'Domain', 'agents'), { recursive: true });
+    fs.writeFileSync(path.join(tmpS, 'Domain', 'agents', 'STASIS.json'), JSON.stringify({ protocol: 'SAOS-FATE-DEFENSE-STASIS/1', active: true, reason: 'e32-fixture' }));
+    const rs = spawnSync(process.execPath, [path.join(AG, 'fleet-census.cjs')], { env: { ...process.env, FLEET_CENSUS_ESTATE: tmpS }, encoding: 'utf8', timeout: 60000 });
+    let bb32 = false;
+    try {
+      const j = JSON.parse(fs.readFileSync(path.join(AG, 'fleet-census.json'), 'utf8'));
+      bb32 = rs.status === 0 && j.verdict === 'STASIS-HALT' && j.stasis && j.stasis.active === true && j.ok === true && !j.inventory; // no lane scan happened
+    } catch (_) {}
+    if (!bb32) { ok32 = false; why32.push('fresh-process-halt'); }
+    // restore the real-estate book (the sandbox run overwrote the shared book path)
+    spawnSync(process.execPath, [path.join(AG, 'fleet-census.cjs')], { encoding: 'utf8', timeout: 120000 });
+    let restored = false;
+    try { const j = JSON.parse(fs.readFileSync(path.join(AG, 'fleet-census.json'), 'utf8')); restored = j.ok === true && j.inventory && j.inventory.presentLanes === 16 && !j.verdict; } catch (_) {}
+    if (!restored) { ok32 = false; why32.push('book-restore'); }
+    evalr('E32', 'census-cadence: the estate map refreshes itself on a keyless daily cron, double-gated by STASIS',
+      ok32,
+      ['workflow: daily cron off the org minute map + workflow_dispatch escape hatch', 'workflow: scheduler STASIS gate reads agents/STASIS.json before tick+publish (healthy no-op when active)', 'workflow: keyless — zero secrets.* references; the publish rides the built-in GITHUB_TOKEN', 'workflow: concurrency guard + timeout + deterministic publish (clean exit on no-drift, no noise commits) + [skip ci] + pull --rebase push idiom', 'desk: STASIS-HALT in code BEFORE any lane read — fresh-process sandbox with an ACTIVE breaker books verdict=STASIS-HALT with NO inventory section (zero reads beyond the breaker file), exit 0', 'desk: the shared book is restored on the real estate after the sandbox run (16/16 lanes, no verdict field)'],
+      why32.length ? 'fails: ' + why32.join('; ') : 'six+ laws regexed on the workflow; fresh-process halt proven with zero lane reads; book restored');
+  } catch (e) { evalr('E32', 'census-cadence', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
 
 
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.19.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.20.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];

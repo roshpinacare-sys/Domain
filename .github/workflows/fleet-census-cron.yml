@@ -1,0 +1,87 @@
+# FLEET-CENSUS CRON (CR-0041, fleet Rung 15) — the estate map cadence, WIRED (CR-0040/R14
+# booking: "census-cron wiring — the census joins the Actions cadence so the estate map
+# self-updates").
+#
+# fleet-census.cjs is the OFFLINE/KEYLESS/DETERMINISTIC estate-wide census (CR-0040):
+# 16 lanes x capability markers, sovereignty counters, blockers with live evidence, wiring
+# map, edge series from our own ledgers, 18 sha256 receipts. Until now the map refreshed
+# only when a lane ran the desk by hand; this workflow makes the map SELF-UPDATING: one
+# honest refresh per day, enough for a sovereignty/blocker drift record that cannot rot.
+#
+# Laws carried here (all pre-existing, now mechanically enforced on the cadence):
+#  · FATE-DEFENSE law #1 — the STASIS breaker is obeyed TWICE: the scheduler checks
+#    agents/STASIS.json before the run (healthy no-op, nothing measured, nothing
+#    committed), AND the desk itself halts in code BEFORE any lane read on the same
+#    file (E32 proves the fresh-process halt). Two independent gates, one law.
+#  · KEYLESS — zero operator secrets: the desk reads the LOCAL estate only (no network,
+#    no keys); the push back to the book rides the built-in GITHUB_TOKEN (contents: write,
+#    same repo). The census never broadcasts, never signs, never touches custody.
+#  · DETERMINISTIC + [skip ci] — the desk's stable payload is byte-identical for the same
+#    tree (E31 determinism law), so the daily commit is a pure freshness stamp: if nothing
+#    drifted, the publish step books a clean exit instead of a noise commit.
+#  · Cadence `11 2 * * *` — daily 02:11 UTC, off the whole org minute map (the :00/:30
+#    dex pulse, :9/:39 twins, :23/:53 grid ticks, the 03:xx/04:xx/05:xx/06:xx daily block)
+#    so the fleet's Actions minutes never collide.
+
+name: fleet-census-cron
+
+on:
+  schedule:
+    - cron: '11 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fleet-census-cron
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - name: Checkout this repo (the desk is offline — the estate map is measured from the tree itself)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: STASIS brake (FATE-DEFENSE law #1 — the scheduler obeys the breaker too)
+        id: brake
+        run: |
+          ST=$(node -p "JSON.parse(require('fs').readFileSync('agents/STASIS.json','utf8')).active===true")
+          echo "active=$ST" >> "$GITHUB_OUTPUT"
+          if [ "$ST" = "true" ]; then
+            echo "STASIS-HALT fleet-census-cron · the breaker is active — healthy no-op, nothing measured, nothing committed"
+          fi
+
+      - name: census refresh (offline, keyless, deterministic — fail-soft exit 0 by design)
+        if: steps.brake.outputs.active != 'true'
+        run: node agents/fleet-census.cjs
+
+      - name: publish the map back to the book
+        if: steps.brake.outputs.active != 'true'
+        run: |
+          set -u
+          git config user.name "fleet-census-cron[bot]"
+          git config user.email "fleet-census-cron[bot]@users.noreply.github.com"
+          git add agents/fleet-census.json agents/fleet-census.md 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "no map drift — the determinism law held; clean exit, no noise commit"
+          else
+            git commit -m "fleet-census(map): refresh $(date -u +%FT%TZ) [skip ci]"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+
+      - name: Halt receipt (this shift belongs to the breaker)
+        if: steps.brake.outputs.active == 'true'
+        run: |
+          echo "STASIS-HALT fleet-census-cron · breaker active — the map stands still by law, not by neglect."
+          echo "Resume only after root-cause + judge-node green (see agents/STASIS.json resumePolicy)."
