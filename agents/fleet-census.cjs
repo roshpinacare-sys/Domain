@@ -30,6 +30,7 @@ const ESTATE = process.env.FLEET_CENSUS_ESTATE || path.resolve(ROOT, '..');
 const AG = path.join(ROOT, 'agents');
 const OUT_JSON = path.join(AG, 'fleet-census.json');
 const OUT_MD = path.join(AG, 'fleet-census.md');
+const OUT_ARTIFACT = path.join(AG, 'fleet-census.artifact.json');
 
 /** FATE-DEFENSE law #1 — the breaker file: estate Domain lane first, then this repo. */
 function stasisSource() {
@@ -429,6 +430,26 @@ function main() {
     } catch (_) {}
     console.log('STASIS-HALT fleet-census · breaker active (' + halt.source + ') — the map stands still by law, not by neglect.');
     process.exit(0);
+  }
+  // SINGLE-LANE-WORKSPACE LAW (R16, CR-0042 — found by the fleet-delta desk on its first
+  // live run): a workspace where exactly ONE lane dir is visible is a CI CHECKOUT ARTIFACT
+  // (actions/checkout brings this repo alone), never a real estate state. The desk books
+  // the honest diminished receipt to agents/fleet-census.artifact.json — which is what the
+  // CI-perspective artifact-vs-artifact delta series feeds on — and leaves the CANONICAL
+  // 16-lane map UNTOUCHED: a partial view must never downgrade the canonical map, and the
+  // perspective flip must never masquerade as estate drift (the no-noise law). A full or
+  // partially-broken estate writes the canonical map as before — a REAL collapse is still
+  // recorded; only the one-lane artifact view is quarantined.
+  const visibleLanes = LANES.filter((l) => exists(path.join(ESTATE, l.id))).length;
+  if (visibleLanes === 1) {
+    try {
+      const stable = censusStable();
+      fs.writeFileSync(OUT_ARTIFACT, JSON.stringify({ ...stable, at, ok: true }, null, 2) + '\n');
+      console.log('FLEET-CENSUS-ARTIFACT single-lane workspace (' + visibleLanes + '/' + LANES.length + ' lanes visible) — canonical map untouched; CI-perspective receipt -> agents/fleet-census.artifact.json');
+    } catch (e) {
+      console.log('FLEET-CENSUS-ARTIFACT-ERROR ' + String(e && e.message).slice(0, 160));
+    }
+    process.exit(0); // fail-soft law
   }
   try {
     const stable = censusStable();

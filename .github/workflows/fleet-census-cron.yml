@@ -19,6 +19,20 @@
 #  · DETERMINISTIC + [skip ci] — the desk's stable payload is byte-identical for the same
 #    tree (E31 determinism law), so the daily commit is a pure freshness stamp: if nothing
 #    drifted, the publish step books a clean exit instead of a noise commit.
+#  · CENSUS-DELTA (CR-0042) — after the refresh, fleet-delta.cjs diffs the just-written
+#    map against the last COMMITTED map of the SAME perspective and books a drift row into
+#    agents/fleet-delta.jsonl ONLY on a real transition (FIRST-DELTA baseline or DRIFT;
+#    NO-DRIFT days book nothing — the event-ledger law composes with the no-noise publish
+#    law). Blocker transitions key on (id, status); live evidence is excluded, so honest
+#    growth (cadence rows) never masquerades as drift. The drift record IS the
+#    sovereignty/blocker transition series — the third measurement surface.
+#  · SINGLE-LANE-WORKSPACE LAW (CR-0042, found live by the delta desk on its first run) —
+#    a checkout of THIS repo alone shows exactly 1/16 lanes: a CI CHECKOUT ARTIFACT, never
+#    a real estate state. The census books that diminished view to
+#    agents/fleet-census.artifact.json and NEVER touches the canonical 16-lane map; the
+#    delta step diffs artifact-vs-artifact (git HEAD), so the CI-perspective drift series
+#    is honest and the perspective flip (CI book over full-estate book) can never
+#    masquerade as estate drift again — the delta desk refuses cross-estate diffs by law.
 #  · Cadence `11 2 * * *` — daily 02:11 UTC, off the whole org minute map (the :00/:30
 #    dex pulse, :9/:39 twins, :23/:53 grid ticks, the 03:xx/04:xx/05:xx/06:xx daily block)
 #    so the fleet's Actions minutes never collide.
@@ -65,17 +79,21 @@ jobs:
         if: steps.brake.outputs.active != 'true'
         run: node agents/fleet-census.cjs
 
+      - name: delta read (artifact-vs-artifact — the CI-perspective drift series)
+        if: steps.brake.outputs.active != 'true'
+        run: node agents/fleet-delta.cjs --from-git=agents/fleet-census.artifact.json --to=agents/fleet-census.artifact.json --out=agents/fleet-delta.jsonl
+
       - name: publish the map back to the book
         if: steps.brake.outputs.active != 'true'
         run: |
           set -u
           git config user.name "fleet-census-cron[bot]"
           git config user.email "fleet-census-cron[bot]@users.noreply.github.com"
-          git add agents/fleet-census.json agents/fleet-census.md 2>/dev/null || true
+          git add agents/fleet-census.artifact.json agents/fleet-delta.jsonl 2>/dev/null || true
           if git diff --cached --quiet; then
-            echo "no map drift — the determinism law held; clean exit, no noise commit"
+            echo "no CI-perspective drift — the determinism law held; clean exit, no noise commit"
           else
-            git commit -m "fleet-census(map): refresh $(date -u +%FT%TZ) [skip ci]"
+            git commit -m "fleet-census(ci): artifact+delta $(date -u +%FT%TZ) [skip ci]"
             git pull --rebase origin main
             git push origin HEAD:main
           fi

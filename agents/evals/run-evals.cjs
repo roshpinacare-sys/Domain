@@ -19,6 +19,7 @@
  *   E32 census-cadence      — the estate-map cron: workflow six laws (daily keyless cron, STASIS gate, deterministic publish, concurrency, [skip ci], rebase-push) + the desk-side fresh-process STASIS halt BEFORE any lane read (R15, CR-0041)
  *   E33 flow-catch planner — the one-sided-tape breaker: marketable sell joins the resting bid with price improvement, proceeds fund the buy ladder; caps, floor law, anti self-cross stack, dust discipline, determinism (Z-65, CR-0042)
  *   E34 agent-registry — the fleet's ERC-8004-shaped trust surface: identity/reputation/validation entries derived ONLY from canon evidence, feedbackHash = sha256(evidence rows) recomputed by the eval, offline black-box (Z-65, CR-0042)
+ *   E35 census-delta        — map-vs-map: the drift record between two census snapshots (event-ledger law, determinism as the diff instrument, PERSPECTIVE law, STASIS halt-before-read, zero-writes on halt) (R16, CR-0043)
  *   E5 concat-family        — string manabar + number = giant (third-time incident family)
  *   E6 stamp hygiene        — a book without a timestamp can never count as fresh
  *   E7 guard deny/allow     — destructive commands DENY, the fleet's rebase law stays ALLOW (Z-38)
@@ -946,11 +947,108 @@ function accumulateInMemory(bookRows, seed) {
       why32.length ? 'fails: ' + why32.join('; ') : 'registry live on real canons: 6 identities, 3 evidence-backed reputations (market-exec 62% clean runs — the wire-defect history visible honestly), 4 validation rows');
   } catch (e) { evalr('E34', 'agent-registry', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
+  // ---- E35: census-delta (R16, CR-0043) — map-vs-map: the drift record between two
+  // census snapshots. The event-ledger law (row ONLY on FIRST-DELTA/DRIFT; NO-DRIFT days
+  // book nothing — composing with the no-noise publish law), blocker transitions keyed on
+  // (id,status) with live evidence excluded, the determinism law as the diff instrument,
+  // the PERSPECTIVE law (books from different estates are never diffed — found live on
+  // the first run: the CI 1-lane book over the full-estate book booked 49 fake
+  // transitions), the SINGLE-LANE-WORKSPACE law (a CI checkout quarantined to
+  // fleet-census.artifact.json, canonical map untouched), the desk-side STASIS halt
+  // BEFORE any read, and the operational ledger left untouched.
+  try {
+    const fd = require(path.join(AG, 'fleet-delta.cjs'));
+    let ok33 = true; const why35 = [];
+    // 1. white-box: synthetic DRIFT with exact structured transitions
+    const mkA = () => ({ protocol: 'SAOS-FLEET-CENSUS/1', agent: 'fleet-census', estate: 'test-estate', inventory: { lanes: [{ id: 'Domain', status: 'PRESENT', capabilityCount: 3 }, { id: 'saos-dex', status: 'PRESENT', capabilityCount: 2 }], presentLanes: 2, totalLanes: 16, estateCommits: 100 }, sovereignty: { workflowsKeyless: 8, gatedDesks: 5, stasis: { present: true, active: false } }, blockers: [{ id: 'B1', status: 'OPEN' }, { id: 'B2', status: 'OPEN' }], wiring: [{ id: 'cadence-cron', status: 'WIRED' }, { id: 'he-ladder-gate', status: 'BROKEN' }], edgeSeries: { historyRows: 5, paperRows: 10, fillLedgerRows: 3 }, receipts: { 'a': 'x' }, summary: { capabilities: 5 } });
+    const mkB = () => { const b = mkA(); b.at = 'later'; b.ok = true; b.inventory.lanes[0].capabilityCount = 4; b.inventory.lanes[1].status = 'MISSING'; b.inventory.lanes.push({ id: 'Zip', status: 'PRESENT', capabilityCount: 1 }); b.sovereignty.workflowsKeyless = 9; b.blockers[0].status = 'RESOLVED'; b.wiring[1].status = 'WIRED'; b.edgeSeries.historyRows = 6; b.receipts.a = 'y'; return b; };
+    const A = mkA();
+    const B = mkB();
+    const d = fd.diffStable(A, B); // RAW books with at/ok — the defensive-normalize contract
+    const wb = d && d.verdict === 'DRIFT'
+      && d.lanes.added.includes('Zip') && d.lanes.missing.length === 0
+      && d.lanes.statusChanges.some((s) => s.id === 'saos-dex' && s.from === 'PRESENT' && s.to === 'MISSING')
+      && d.lanes.capsChanged.some((c) => c.id === 'Domain' && c.from === 3 && c.to === 4)
+      && d.sovereignty.changed.some((s) => s.path === 'workflowsKeyless' && s.from === 8 && s.to === 9)
+      && d.blockers.transitions.some((t) => t.id === 'B1' && t.from === 'OPEN' && t.to === 'RESOLVED')
+      && d.wiring.changes.some((w) => w.id === 'he-ladder-gate' && w.from === 'BROKEN' && w.to === 'WIRED')
+      && d.edges.historyRows && d.edges.historyRows.from === 5 && d.edges.historyRows.to === 6
+      && d.receiptsChanged.includes('a') && d.summary.changes > 0
+      && d.estate === 'test-estate'
+      && d.from.fingerprint && d.to.fingerprint && d.from.fingerprint !== d.to.fingerprint;
+    if (!wb) { ok33 = false; why35.push('white-box-drift'); }
+    // 1b. PERSPECTIVE law: books from different estates are NEVER diffed (the live-found
+    //     defect — a perspective flip must not book 49 fake transitions)
+    const px = fd.diffStable(Object.assign(mkA(), { estate: 'ci-runner-workspace' }), Object.assign(mkA(), { estate: 'full-estate-on-disk' }));
+    if (!(px && px.verdict === 'SKIP-PERSPECTIVE' && px.summary.changes === 0 && px.from.estate === 'ci-runner-workspace' && px.to.estate === 'full-estate-on-disk' && px.to.fingerprint && px.from.fingerprint)) { ok33 = false; why35.push('perspective-law'); }
+    // 2. determinism law as diff instrument: at/ok-only books -> NO-DRIFT, changes=0
+    const n1 = fd.diffStable(mkA(), Object.assign(mkA(), { at: 'zz', ok: true }));
+    if (!(n1 && n1.verdict === 'NO-DRIFT' && n1.summary.changes === 0 && n1.from.fingerprint === n1.to.fingerprint)) { ok33 = false; why35.push('at-only-no-drift'); }
+    // 3. invalid maps: error book / STASIS-HALT book / null -> normalize null; diffStable null-safe
+    if (fd.normalize({ protocol: 'SAOS-FLEET-CENSUS/1', ok: false, error: 'x' }) !== null
+      || fd.normalize({ protocol: 'SAOS-FLEET-CENSUS/1', verdict: 'STASIS-HALT', ok: true }) !== null
+      || fd.normalize(null) !== null || fd.normalize({}) !== null
+      || fd.diffStable(null, mkA()) !== null) { ok33 = false; why35.push('invalid-map-null'); }
+    // 4. byte-determinism: same input pair -> identical record (minus nothing — no `at` inside diffStable)
+    if (JSON.stringify(fd.diffStable(A, B)) !== JSON.stringify(fd.diffStable(mkA(), mkB()))) { ok33 = false; why35.push('byte-determinism'); }
+    // 5. fresh-process black-box on the REAL estate: HEAD book vs working-tree book,
+    //    --out to a temp path (the operational ledger is NEVER touched by the eval);
+    //    verdict must be a well-formed NO-DRIFT/DRIFT/FIRST-DELTA book either way.
+    const ledPath = path.join(AG, 'fleet-delta.jsonl');
+    const sha = (p) => { try { return require('crypto').createHash('sha256').update(fs.readFileSync(p)).digest('hex'); } catch (_) { return null; } };
+    const ledgerShaBefore = sha(ledPath);
+    const os33 = require('os');
+    const tmpOut = path.join(fs.mkdtempSync(path.join(os33.tmpdir(), 'e33-')), 'delta.jsonl');
+    const rp = spawnSync(process.execPath, [path.join(AG, 'fleet-delta.cjs'), '--out=' + tmpOut], { encoding: 'utf8', timeout: 60000 });
+    let bb33 = rp.status === 0 && /FLEET-DELTA (NO-DRIFT|DRIFT|FIRST-DELTA|SKIP-INVALID-TO|SKIP-PERSPECTIVE)/.test(rp.stdout || '');
+    if (bb33 && fs.existsSync(tmpOut)) { // rows exist -> each must be a valid transition record
+      try {
+        const rows = fs.readFileSync(tmpOut, 'utf8').trim().split('\n').map((l) => JSON.parse(l));
+        bb33 = rows.length > 0 && rows.every((r) => r.protocol === 'SAOS-FLEET-DELTA/1' && ['FIRST-DELTA', 'DRIFT'].includes(r.verdict) && r.to && r.to.fingerprint && r.at);
+      } catch (_) { bb33 = false; }
+    }
+    if (!bb33) { ok33 = false; why35.push('fresh-process-real-estate'); }
+    // 6. fresh-process sandbox with an ACTIVE breaker: STASIS-HALT BEFORE any read, ZERO writes
+    const tmpS = fs.mkdtempSync(path.join(os33.tmpdir(), 'e33b-'));
+    fs.mkdirSync(path.join(tmpS, 'Domain', 'agents'), { recursive: true });
+    fs.writeFileSync(path.join(tmpS, 'Domain', 'agents', 'STASIS.json'), JSON.stringify({ protocol: 'SAOS-FATE-DEFENSE-STASIS/1', active: true, reason: 'e33-fixture' }));
+    fs.writeFileSync(path.join(tmpS, 'Domain', 'agents', 'fleet-delta.cjs'), fs.readFileSync(path.join(AG, 'fleet-delta.cjs')));
+    fs.writeFileSync(path.join(tmpS, 'Domain', 'agents', 'fleet-census.cjs'), fs.readFileSync(path.join(AG, 'fleet-census.cjs')));
+    const outB = path.join(tmpS, 'out.jsonl');
+    const rb = spawnSync(process.execPath, [path.join(tmpS, 'Domain', 'agents', 'fleet-delta.cjs'), '--out=' + outB], { env: { ...process.env, FLEET_CENSUS_ESTATE: tmpS }, encoding: 'utf8', timeout: 60000 });
+    if (!(rb.status === 0 && /STASIS-HALT fleet-delta/.test(rb.stdout || '') && !fs.existsSync(outB))) { ok33 = false; why35.push('fresh-process-stasis-halt'); }
+    // 6b. SINGLE-LANE-WORKSPACE law, fresh-process sandbox: a one-lane workspace is a CI
+    //     checkout artifact — the census books agents/fleet-census.artifact.json and the
+    //     CANONICAL fleet-census.json is never written; the artifact book is a valid map
+    //     (presentLanes=1) and the delta series starts on it as FIRST-DELTA (no git in the
+    //     sandbox -> --from-git resolves to nothing), with the estate perspective stamped.
+    const tmpA = fs.mkdtempSync(path.join(os33.tmpdir(), 'e33c-'));
+    fs.mkdirSync(path.join(tmpA, 'Domain', 'agents'), { recursive: true });
+    fs.writeFileSync(path.join(tmpA, 'Domain', 'agents', 'fleet-census.cjs'), fs.readFileSync(path.join(AG, 'fleet-census.cjs')));
+    fs.writeFileSync(path.join(tmpA, 'Domain', 'agents', 'fleet-delta.cjs'), fs.readFileSync(path.join(AG, 'fleet-delta.cjs')));
+    const ra = spawnSync(process.execPath, [path.join(tmpA, 'Domain', 'agents', 'fleet-census.cjs')], { env: { ...process.env, FLEET_CENSUS_ESTATE: tmpA }, encoding: 'utf8', timeout: 120000 });
+    let artOK = ra.status === 0 && /FLEET-CENSUS-ARTIFACT single-lane workspace \(1\/16 lanes visible\)/.test(ra.stdout || '')
+      && fs.existsSync(path.join(tmpA, 'Domain', 'agents', 'fleet-census.artifact.json'))
+      && !fs.existsSync(path.join(tmpA, 'Domain', 'agents', 'fleet-census.json'));
+    if (artOK) { try { const art = JSON.parse(fs.readFileSync(path.join(tmpA, 'Domain', 'agents', 'fleet-census.artifact.json'), 'utf8')); artOK = fd.normalize(art) !== null && art.inventory.presentLanes === 1; } catch (_) { artOK = false; } }
+    const rd = spawnSync(process.execPath, [path.join(tmpA, 'Domain', 'agents', 'fleet-delta.cjs'), '--from-git=agents/fleet-census.artifact.json', '--to=' + path.join(tmpA, 'Domain', 'agents', 'fleet-census.artifact.json'), '--out=' + path.join(tmpA, 'delta.jsonl')], { env: { ...process.env, FLEET_CENSUS_ESTATE: tmpA }, encoding: 'utf8', timeout: 60000 });
+    let fdOK = rd.status === 0 && /FLEET-DELTA FIRST-DELTA/.test(rd.stdout || '');
+    if (fdOK) { try { const row = JSON.parse(fs.readFileSync(path.join(tmpA, 'delta.jsonl'), 'utf8').trim()); fdOK = row.verdict === 'FIRST-DELTA' && typeof row.estate === 'string' && row.to && row.to.fingerprint; } catch (_) { fdOK = false; } }
+    if (!artOK || !fdOK) { ok33 = false; why35.push('artifact-mode'); }
+    // 7. the operational ledger untouched by the whole eval (sha before/after must match —
+    //    the eval's runs write to temp paths only; a null sha means the ledger never existed)
+    if (sha(ledPath) !== ledgerShaBefore) { ok33 = false; why35.push('ledger-touched'); }
+    evalr('E35', 'census-delta: map-vs-map drift record — event-ledger law, determinism as the diff instrument, PERSPECTIVE law, STASIS halt-before-read',
+      ok33,
+      ['white-box: synthetic DRIFT books exact structured transitions (lanes added/status+caps, sovereignty workflowsKeyless 8->9, blocker B1 OPEN->RESOLVED, wiring BROKEN->WIRED, edges growth, receipts) with distinct from/to fingerprints and the estate perspective stamped', 'PERSPECTIVE law: books measured from different estates are never diffed — SKIP-PERSPECTIVE with zero changes (the live-found defect: a CI 1-lane book over a full-estate book would have booked 49 fake transitions)', 'determinism law as diff instrument: books differing only in at/ok normalize to NO-DRIFT with zero changes and identical fingerprints', 'invalid maps (error book, STASIS-HALT book, null, {}) normalize to null; diffStable is null-safe (defensive normalize both sides)', 'byte-determinism: the same input pair yields a byte-identical record across two calls', 'fresh-process on the REAL estate: exit 0, FLEET-DELTA verdict line, any booked rows are valid transition records (operational ledger untouched via --out temp)', 'fresh-process sandbox with an ACTIVE breaker: STASIS-HALT BEFORE any read, exit 0, ZERO writes (out file never created) — the FATE-DEFENSE surface now covers all THREE measurement desks', 'fresh-process sandbox, SINGLE-LANE-WORKSPACE law: a 1/16-lane workspace books fleet-census.artifact.json (a valid presentLanes=1 map) and NEVER writes the canonical fleet-census.json; the artifact delta series starts as FIRST-DELTA with the estate stamped'],
+      why35.length ? 'fails: ' + why35.join('; ') : 'nine expectations hold; the drift series can no longer lie by changing the instrument');
+  } catch (e) { evalr('E35', 'census-delta', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
 
 
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.21.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.22.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];
