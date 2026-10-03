@@ -179,6 +179,16 @@
    ],
    "status": "done",
    "evidence": "CR-0016 PASS; mirrors @ fe30ead/d3f71c4/96c3f41c/08e2151/843607b1 (all in-file license verified); gate v1.5.0 GREEN 14/0 (ten pins); evals v1.15.0 26/26 (E26 ×5 strip-restore); judge v1.17.0 40/1/0 (nine anchors true); notices §9-§13; init.sh DOMAIN-INIT-OK"
+  },
+  {
+   "id": "feat-019",
+   "name": "Ground-truth audit + one-bloc token-mode proposal (Task 37)",
+   "description": "Owner directive: measure git ground truth without trusting prior claims. FRESH MEASUREMENTS (all live, Task 37): authenticated API sweep 16/16 repos reachable (the standing 'authWall 14' is a keyless-probe artifact — one-bloc.cjs reads token from process.env only while the credential lives in a file, so tokenReach was structurally always 0); post-pull local==remote 16/16 (zero divergence, zero loss); 0 open PRs; Domain CI 11,316 runs all recent success; sovereignty: single user account (no org), collaborators = owner only, PAT lacks Administration scope (branch protection unverifiable by desk = owner-gated); one-shot token-mode one-bloc run: reached=16/16 authWall=0 tokenReach=14 synced=15/16; judge re-run: 41 PASS / 0 WARN / 0 FAIL — first fully-clean verdict in estate history, the sole delta being the reach WARN. DELIVERABLE: CR-0017 (tier B PASS) proposing the permanent init.sh export wiring (token into env only, never printed/committed, keyless-first preserved, rollback = one line). Implementable potentials booked in worklog: branch-protection verification (owner action), PAT rotation cadence (owner), skills-lock hash lockbook (CR candidate), zai-openai-shim integration legs (parallel CR-0015 already landed), disk housekeeping (91%).",
+   "dependencies": [
+    "feat-018"
+   ],
+   "status": "done",
+   "evidence": "CR-0017 PASS; fresh sweep receipts in worklog Task 37; one-bloc token-mode one-shot JSON at 2026-10-03T05:36:36Z; judge 41/0/0 measured; init.sh DOMAIN-INIT-OK"
   }
  ]
 }
