@@ -1,6 +1,18 @@
 #!/usr/bin/env node
 /**
- * reef-harness-evo.cjs — GEPA-class harness evolution over the guarded executor (Z-61, CR-0029).
+ * reef-harness-evo.cjs — GEPA-class harness evolution over the guarded executor (Z-61, CR-0030).
+ *
+ * RENUMBER receipt: landed as CR-0029, renumbered CR-0029→CR-0030 (fifth collision,
+ * later-mover law; sibling took CR-0029 for codebase-memory-mcp) — the renumber was
+ * booked in the commit message only; Z-62 lands it in-file (zero content change).
+ *
+ * Z-62 FIX (v1.0.1, CR-0033): incumbentHarness() anchored on `return (` — an anchor
+ * that matches NOTHING in the runner (the harness lives in `SYSTEM = (`). The committed
+ * CR-0030 desk could NOT reproduce its own committed Z-61 book (the Z-61 run was made
+ * by the pre-commit working-tree variant); the FIRST scheduled evolution window
+ * (evo-windows.cjs FORCED, CR-0033) caught it live as INCUMBENT-UNREADABLE. Fix: anchor
+ * on the real single source of truth. PROOF: the fixed extraction is BYTE-IDENTICAL
+ * (689 chars) to Z-61's preserved pool seed (/tmp/reef-rung3/harness-0.txt).
  *
  * GEPA evolves the HARNESS (rules/skills/commands), not weights. Fleet adaptation
  * of the reef Rung-3 closed loop (CR-0027): the model REFLECTS on the booked failure
@@ -50,8 +62,10 @@ const log = (m) => console.log(`[reef-harness-evo] ${m}`);
 
 const incumbentHarness = () => {
   // the canonical harness v1, read from the runner source (single source of truth)
+  // Z-62: anchor is `SYSTEM = (` (the runner's real constant) — `return (` matched
+  // nothing (caught live by the first CR-0033 scheduled window; see header receipt)
   const src = fs.readFileSync(path.join(AG, "reef", "rung3_guarded_episode.py"), "utf8");
-  const m = src.match(/return \(\s*\n((?:\s*"[^"]*"\s*\n)+)\s*\)/);
+  const m = src.match(/(?:SYSTEM|HARNESS)\s*=\s*\(\s*\n((?:\s*"[^"]*"\s*\n)+)\s*\)/);
   if (!m) return null;
   return m[1].split("\n").map((l) => { const s = l.trim(); return s.startsWith('"') ? s.slice(1, -1) : s; }).join("").replace(/\\"/g, '"').replace(/\\n/g, "\n");
 };
@@ -97,10 +111,18 @@ async function main() {
       // default 3×400-2000ms ladder — the classifier matched the REAL SDK string
       // "API request failed with status 429" every time; patience was the gap).
       // Env-tunable per the CR-0024 design: 6 attempts, 1s..16s cap ≈ ≤47s/request.
+      // Z-62 v1.0.2: the ladder is NOW actually env-tunable — the Z-61 build
+      // hardcoded the values into the child env (scrubEnv merges the extra OVER the
+      // base, not process.env over the extra), so a caller could NOT raise patience
+      // during an ambient storm. Caught live by the second CR-0033 window (the
+      // 6-attempt ladder exhausted against the shared-IP 429; the 502 fail-loud was
+      // correct behavior — the desk booked NON-ATTEMPTs and window WINDOW-NO-WINNER).
       const shim = spawn("bun", [SHIM_ENTRY], {
         env: scrubEnv({
           SHIM_PORT: String(SHIM_EVO_PORT),
-          SHIM_RETRY_ATTEMPTS: "6", SHIM_RETRY_BASE_MS: "1000", SHIM_RETRY_CAP_MS: "16000",
+          SHIM_RETRY_ATTEMPTS: process.env.SHIM_RETRY_ATTEMPTS || "6",
+          SHIM_RETRY_BASE_MS: process.env.SHIM_RETRY_BASE_MS || "1000",
+          SHIM_RETRY_CAP_MS: process.env.SHIM_RETRY_CAP_MS || "16000",
         }),
         stdio: ["ignore", "ignore", "pipe"], detached: true,
       });
@@ -248,7 +270,7 @@ async function main() {
   const book = {
     ok: true,
     at,
-    agent: "reef-harness-evo v1.0.0 (Z-61, CR-0029 — GEPA-class harness evolution over the CR-0027 guarded executor)",
+    agent: "reef-harness-evo v1.0.2 (Z-61 CR-0030 [renumbered from CR-0029]; Z-62 v1.0.1 incumbent-anchor fix + v1.0.2 storm-ladder env-tunability, CR-0033 — GEPA-class harness evolution over the CR-0027 guarded executor)",
     laws: [
       "VERIFY-ONLY (the desk measures and books; adoption only via a judged tier-B CR)",
       "SERVE-WINDOW ×2 (shim v1.1.0 TEST instance + reef, killed in finally, verified dead; live :3040 untouched)",
@@ -268,11 +290,11 @@ async function main() {
   fs.writeFileSync(path.join(AG, "reef-harness-evo.json"), JSON.stringify(book, null, 2) + "\n");
 
   const md = [`# reef harness evolution (GEPA-class) — ${at}`, "",
-    "CR-0029: the model reflects on booked failure classes → proposes harness variants → every variant is measured on fresh-integer episodes behind the CR-0019 guard. VERIFY-ONLY: adoption via CR.", "",
+    "CR-0030 (renumbered from CR-0029): the model reflects on booked failure classes → proposes harness variants → every variant is measured on fresh-integer episodes behind the CR-0019 guard. VERIFY-ONLY: adoption via CR.", "",
     reflection ? `- reflection: receipt ${String(reflection.receipt).slice(0, 8)}… · ${reflection.proposed} variants accepted` : "- reflection: none this run",
     "", "| variant | rationale | eps (rewards) | mean reward | mean turns | denies |", "|---|---|---|---|---|---|"];
   for (const ev of evaluations) md.push(`| ${ev.label} | ${String(ev.rationale || "").replace(/\|/g, "/").slice(0, 60)} | ${ev.eps.map((e) => e.reward).join(", ")} | ${ev.meanReward} | ${ev.meanTurns ?? "—"} | ${ev.denies} |`);
-  md.push("", winner ? `**measured winner: ${winner.label}** (mean reward ${winner.meanReward}) — adoption pending CR-0029 judgment` : "no winner measured this run", "");
+  md.push("", winner ? `**measured winner: ${winner.label}** (mean reward ${winner.meanReward}) — adoption pending CR judgment (verify-only)` : "no winner measured this run", "");
   fs.writeFileSync(path.join(AG, "reef-harness-evo.md"), md.join("\n") + "\n");
 
   log(`winner=${winner ? winner.label : "none"} · rows=${rows.length}`);
