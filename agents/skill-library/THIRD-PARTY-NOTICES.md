@@ -201,6 +201,56 @@ MIT license requires (retain the license + copyright notice).
   provenance and the license-mismatch finding, and is the standing
   re-verification trigger.
 
+## 8. Alishahryar1/free-claude-code (Task 35 evaluation → same-wave adoption, first AGPL lineage)
+
+- **Source:** https://github.com/Alishahryar1/free-claude-code — "a local
+  proxy connecting coding agents to OpenAI-compatible AI providers"
+  (59 provider integrations, 11 coding-agent harnesses; 56,409 stars,
+  Python, created 2026-01-28, pushed 2026-10-03).
+- **License:** AGPL-3.0-only — verified IN-FILE at the pinned mirror
+  (`LICENSE`, 34,108 bytes: standard GNU AGPL v3 text with
+  `SPDX-License-Identifier: AGPL-3.0-only` and "Copyright (c) 2026 Ali
+  Khokhar"). The repo API reports license `NOASSERTION`/"Other" — a FALSE
+  NEGATIVE overridden by reading the file (the Task 33 rule: the file is the
+  truth). Unlike §5/§7, the license claim is backed by the file itself.
+- **Pinned mirror sha:** `03aca36` (cloned keyless to
+  `/home/z/reference-mirrors/free-claude-code`, outside the 16-repo estate
+  on purpose: the mirror is reference, not fleet; depth-50 clone of main
+  HEAD 2026-10-02 — full sha
+  `03aca36eb3b9f2bf07805b1c39ec4d61f6f740c1`; repo pushed_at 2026-10-03 ⇒
+  non-main pushes exist, trust the pin).
+- **Author (upstream):** Ali Khokhar and the free-claude-code contributors.
+- **Copyleft boundary (first non-permissive lineage the gate pins):** the
+  pin certifies STUDY PROVENANCE, not redistribution permission. This wave
+  adopted DOCTRINE ONLY — zero upstream Python code, configs, or docs bodies
+  were copied into this library — so no AGPL obligation is triggered. Any
+  future CODE incorporation would impose AGPL-3.0 obligations (including
+  §13 network-service source offer) estate-wide and is booked as an
+  owner-gated license decision, never desk-defaulted.
+- **What was adopted (reference patterns for the house package
+  `skills/frugal-router-operator/`):** never spend a model call on
+  mechanical work (local fast-path handlers answer quota probes, prefix
+  detection, titles, suggestions, filepath extraction without a provider
+  call), the StrictSlidingWindowLimiter with its guarantee stated in the
+  docstring, admission budgets independent of client lifetime with one
+  protection budget per provider, classified failures each carrying a named
+  remedy, authorized request/stream recovery replayed from history, the SSRF
+  egress guard that pins connections to resolved addresses against DNS
+  rebinding, reviewable installers, exact dependency pins, harness
+  capability preservation at the protocol boundary, and ToS-friendliness as
+  enforced design (integrations removed when disallowed) — each mapped to
+  its estate parallel in the house package's doctrine table.
+- **What was NOT taken:** zero upstream code copied (AGPL boundary above);
+  the runtime was not installed or executed (running FCC requires
+  user-supplied provider API keys = credentials = possession = OWNER
+  authority, and is redundant here — the desk's model leg is the z-ai SDK);
+  headline claims ("59 ToS-friendly providers", "1.3B+ free tokens/month",
+  "up to 90% fewer tokens", model failover) booked as upstream claims, not
+  desk-verified facts.
+- **State of changes:** the house package materially adapts (does not
+  reproduce) the referenced patterns; this notice is the required AGPL-3.0
+  attribution and change-state declaration.
+
 ## MIT License (reference text)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software

@@ -1,8 +1,8 @@
 # Desk Evals — runnable expectations (fresh-process judge, Z-36)
 
-_run-evals v1.13.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24, parallel-convergence superset) · 2026-10-03T04:52:43.532Z_
+_run-evals v1.14.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25, parallel-convergence superset) · 2026-10-03T04:58:58.664Z_
 
-**evals RED: 1 fail — booked honestly, the fails are the next work**
+**evals green: 25/25 expectations hold**
 
 ## E1 · dedupe identity is stable across repeat harvest — PASS
 - seed(3) + econ rows carrying the same two fills → exactly 3 entries
@@ -61,7 +61,7 @@ _run-evals v1.13.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - 200+data → REACHABLE with model count; 401/403 → AUTH-WALL; network error → UNREACHABLE (no hopeful green)
 - probing a nonexistent provider exits 0 with zero probes booked (fail-soft, no invention)
 - rail-ledger.json stamped (BOOKS-STAMP law)
-- _measured: live probes booked=69_
+- _measured: live probes booked=71_
 
 ## E12 · rail policy: FORBIDDEN row enabled as LIVE fails the gate — PASS
 - a catalog where cohere (ToS FORBIDDEN) is flipped to LIVE is rejected — ok:false with the FORBIDDEN reason named
@@ -74,14 +74,14 @@ _run-evals v1.13.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - every indicator names a mechanical evidence source (ANTI-GOODHART)
 - FWI book stamped fresh (<1h)
 - STASIS.json parseable with boolean active flag
-- _measured: verdict=DEGRADED indicators=9 sourced=true stasisArmed=true_
+- _measured: verdict=THRIVING indicators=9 sourced=true stasisArmed=true_
 
 ## E14 · collapse drill: containment PROVEN on a fresh run — PASS
 - receipt verdict CONTAINMENT-PROVEN with a green baseline (no false credit — BASELINE-RED would refuse attribution)
 - every injected fault class caught: faults_caught === faults_total >= 4 (registry corruption, guard neutered, book stamps stripped, forbidden rail LIVE)
 - receipts fresh < 168h — the drill runs on the CI schedule, containment proof is not a one-time trophy
 - CI summary ledger agrees (collapse-drill.json stamped)
-- _measured: caught=4/4 ageH=3 head=eeeab72e5432_
+- _measured: caught=4/4 ageH=0 head=025aaa2233c1_
 
 ## E15 · one-bloc: whole-git convergence map measured, never invented — PASS
 - one-bloc.cjs runs in a fresh process (exit 0, fail-soft)
@@ -89,7 +89,7 @@ _run-evals v1.13.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - every repo lands REACHED or an honest AUTH-WALL/UNKNOWN — no invented reach (KEYLESS-FIRST law)
 - keyless floor holds: >=2 public repos reachable with zero credentials (env-independent)
 - book stamped fresh (<1h) + STASIS law parseable + 3 truth-maps bound (dedup: one map, not three)
-- _measured: verdict=DEGRADED reached=2/16 keyless=2 authWall=0_
+- _measured: verdict=DEGRADED reached=2/16 keyless=2 authWall=14_
 
 ## E16 · workflow-parse gate: no dead lane wears a green shape — PASS
 - predicate catches `${{ }}` inside flow collections (the recruit.yml incident class)
@@ -98,11 +98,11 @@ _run-evals v1.13.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - 0 offenders + book stamped fresh (<10min) — full-YAML floor or honest idiom floor, mode named
 - _measured: scanned=41 mode=full offenders=0_
 
-## E17 · canon-liveness: honest verdict derivation + fresh receipt with named legs — FAIL
+## E17 · canon-liveness: honest verdict derivation + fresh receipt with named legs — PASS
 - white-box: L1 content → CONTENT-SERVED; L1 absent + L2 rail → RAIL-REACHABLE; both absent → CANON-DARK (zero hopeful greens)
 - black-box: fresh-process run exits 0 (fail-soft), receipt stamped with ≥3 named legs
 - the receipt verdict matches the derivation for this context — no environment drift between book and reality (Z-42 root cause: the dead anonymous fallback leg, private canon 404)
-- _measured: verdict=CANON-DARK legs=L1:ABSENT,L2:RAIL-DOWN,L3:DEAD-AS-EXPECTED-PRIVATE_
+- _measured: verdict=CONTENT-SERVED legs=L1:SERVING,L2:RAIL-UP,L3:DEAD-AS-EXPECTED-PRIVATE_
 
 ## E18 · ci-hands: the fleet measures its own CI estate with a pinned failure taxonomy — PASS
 - classifyRun pins the taxonomy: 0 jobs = STARTUP-FAILURE, empty-steps <30s = JOB-STARTUP, real step = STEP-FAILURE, green = NOT-FAILURE
@@ -110,21 +110,21 @@ _run-evals v1.13.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - fresh-process desk run: exit 0 (fail-soft), book stamped fresh (<30min)
 - honest reach floor: 16 repos declared, >=1 reached OR every unreached booked honestly as HTTP 4xx refusal (rate-limit is environment, not defect) — never invented
 - cua-bench contract: trajectory booked (every action logged) + STASIS state travels with the receipt
-- _measured: reached=2/16 lanes=22 green=22 activeRed=0 startup=0 mode=keyless_
+- _measured: reached=0/16 lanes=0 green=0 activeRed=0 startup=0 mode=keyless_
 
 ## E19 · hands book: honest verdict derivation + fresh receipts, zero hopeful greens — PASS
 - white-box: probe-ok → LIVE; absent → ABSENT; POLICY LOCK BEATS A GREEN PROBE → LOCKED-TIER-C (the cua permission-at-launch lesson); cross-ref → REF; probe-fail → UNREACHABLE
 - black-box: fresh-process desk exits 0 (fail-soft), ≥5 hands booked, ≥2 LIVE in any healthy context
 - every LIVE hand carries evidence+probeAt — a capability claimed without a receipt is a story
 - verdict enum closed (LIVE/ABSENT/UNREACHABLE/REF/LOCKED-TIER-C) — no hopeful greens possible
-- _measured: hands=6 live=3 receipted=true at=2026-10-03T04:52:42.686Z_
+- _measured: hands=6 live=4 receipted=true at=2026-10-03T04:58:47.250Z_
 
 ## E20 · skill-library gate: expertise as governed data with a mandatory Evidence Artifact — PASS
 - white-box: the predicate flags a bare built-in name (help), a missing Evidence Artifact section, and short/no-trigger descriptions — and PASSES the legal package
 - library floor: a missing authoring standard or unpinned mirror sha is an (library) offender — provenance is mechanical
 - black-box: fresh-process gate on the real library exits 0
 - book: skill-library.json GREEN, scanned >= 6, offenders [], stamped fresh (<30min)
-- _measured: scanned=11 offenders=0 legal=true caught(builtin,artifact)=true,true_
+- _measured: scanned=12 offenders=0 legal=true caught(builtin,artifact)=true,true_
 
 ## E23 · daily pulse: typed proposals + real gates + verify-only (the loop closed under law) — PASS
 - white-box: disposition derivation exact for all seven input kinds (queued→PROPOSED-CR, parked/tier-c→DEFERRED-TIER-C, needs-validation→GATED-BLOCKED, cr-pass→ACCEPTED-TODAY, cr-fail→ROLLED-BACK, observation→BOOKED)
@@ -132,7 +132,7 @@ _run-evals v1.13.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - gates: in the eval-harness context the recursion guard skips gates and marks it HONESTLY (no faked verdicts); real gate runs are proven standalone and pinned by the judge check
 - laws: verifyOnly=true, autoApply=false — the pulse never overrides the CR law
 - book fresh (<30min)
-- _measured: proposals=11 w1=true guard=true verifyOnly=true_
+- _measured: proposals=12 w1=true guard=true verifyOnly=true_
 
 ## E21 · strix lineage pin: Apache-2.0 attribution mechanically retained (gate v1.1.0) — PASS
 - white-box: stripping the strix sha 99c0711 from a notices copy yields a (library) offender naming the strix mirror sha
@@ -151,5 +151,11 @@ _run-evals v1.13.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - white-box: with the real notices restored, the mini-swe-sha offender is absent
 - the gate export exposes MINI_SWE_MIRROR_SHA so the pin is a code fact, not a doc hope
 - _measured: strip-caught=true restore-clean=true sha=04d809c_
+
+## E25 · fcc lineage pin: Alishahryar1/free-claude-code AGPL-3.0-only attribution mechanically retained (gate v1.4.0) — PASS
+- white-box: stripping the fcc sha 03aca36 from a notices copy yields a (library) offender naming the free-claude-code mirror sha
+- white-box: with the real notices restored, the fcc-sha offender is absent
+- the gate export exposes FCC_MIRROR_SHA so the pin is a code fact, not a doc hope
+- _measured: strip-caught=true restore-clean=true sha=03aca36_
 
 _Eval discipline adopted from learn-harness-engineering (Z-36): an eval is a runnable expectation, not a hope. Pure functions = white-box; desk processes = black-box fresh processes._
