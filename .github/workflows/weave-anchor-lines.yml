@@ -112,6 +112,7 @@ jobs:
           WEAVE_STEEM_WIF: ${{ secrets.WEAVE_STEEM_WIF }}
           WEAVE_HIVE_WIF: ${{ secrets.WEAVE_HIVE_WIF || secrets.HIVE_POSTING_WIF }}   # r181: קשירת-שם — HIVE_POSTING_WIF בכספת זו מאז 2026-09-23 (נמדד); המסילה-השנייה מתעוררת, fallback ל-WIF-ה-Steem
           WEAVE_SEAL_PASSPHRASE: ${{ secrets.WEAVE_SEAL_PASSPHRASE || secrets.MAIN_KEY }}
+          BLURT_ACTIVE_WIF: ${{ secrets.BLURT_ACTIVE_WIF }}   # r184: המסילה-השלישית — בכספת-Domain מאז 2026-09-23 (נמדד); חתימת-blurtjs (op-id 12)
 
       - name: Line 2 — Zero-gas EVM anchor on Z Chain 9369
         id: zero
