@@ -17,6 +17,13 @@
 #  · DEDUPE — the desk's fill registry makes re-runs idempotent: a fill already in
 #    fill-ledger-fills.jsonl is never double-booked, so 30-min ticks compose safely with
 #    lane-side runs into ONE ledger.
+#  · COORDINATION BUS (CR-0048, R19) — this cadence is the fleet's CHAIN-EYES tick, so
+#    the keyless coord-bus reader rides it as an independent leg: every saos.*
+#    custom_json op on the head account (weave checkpoints, platform snapshots, future
+#    namespaces) is captured into agents/coord-bus.json with the split-brain guard
+#    (primary+cross fingerprints must match or nothing is written). TWO independent
+#    no-noise publishes — each desk commits its own book only when ITS fingerprint
+#    changed; one chain read cadence, two lenses, zero extra Actions minutes.
 #  · Cadence `17,47 * * * *` — every 30 minutes, offset from every sibling cadence
 #    (market-grid :23/:53, grid-trigger-twin :9/:39, dex-grid :48, saos-dex :00/:30) so
 #    the fleet's Actions minutes never collide.
@@ -68,6 +75,14 @@ jobs:
         # and the process exits 0 — the tick always reaches the publish step, and the
         # canon carries the honest errors instead of a red X hiding them.
 
+      - name: coord-bus (keyless saos.* custom_json read — CR-0048, split-brain guarded)
+        if: steps.brake.outputs.active != 'true'
+        env:
+          COORD_BUS_MAX_PAGES: '40'  # CR-0048: the head churns ~28 ops/min of limit orders — a 30-min tick needs ~850 ops of reach (the watermark walk normally stops in 1-2 pages)
+        run: node agents/coord-bus.cjs
+        # Same fail-soft law: unreachable nodes or a split brain book a clean exit and
+        # write NOTHING — an honest empty shift, never a red X, never a lying bus view.
+
       - name: publish the tick back to the ledger
         if: steps.brake.outputs.active != 'true'
         run: |
@@ -79,6 +94,21 @@ jobs:
             echo "no ledger change — clean exit"
           else
             git commit -m "fill-ledger: tick $(date -u +%FT%TZ) [skip ci]"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+
+      - name: publish the bus book (independent no-noise — CR-0048)
+        if: steps.brake.outputs.active != 'true'
+        run: |
+          set -u
+          git config user.name "coord-bus-cron[bot]"
+          git config user.email "coord-bus-cron[bot]@users.noreply.github.com"
+          git add agents/coord-bus.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "bus unchanged — clean exit"
+          else
+            git commit -m "coord-bus: tick $(date -u +%FT%TZ) [skip ci]"
             git pull --rebase origin main
             git push origin HEAD:main
           fi
