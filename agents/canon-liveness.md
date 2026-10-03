@@ -1,6 +1,6 @@
 # Canon Liveness — the one-bloc nerves (fresh-process desk, Z-42)
 
-_canon-liveness v1.0.0 · 2026-10-03T16:04:16.424Z · CR-0005_
+_canon-liveness v1.0.0 · 2026-10-03T16:06:56.754Z · CR-0005_
 
 **verdict: CONTENT-SERVED** — desks read the canon from the sibling checkout — proven legs, book normally
 

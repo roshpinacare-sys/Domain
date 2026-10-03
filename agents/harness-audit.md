@@ -1,6 +1,6 @@
 # Harness Audit — the fleet's five-subsystem check (fresh-context judge node)
 
-_harness-audit v1.0.0 · 2026-10-03T16:04:47.376Z · born from the learn-harness-engineering study (Z-35, extended Task 19)_
+_harness-audit v1.0.0 · 2026-10-03T16:07:26.858Z · born from the learn-harness-engineering study (Z-35, extended Task 19)_
 
 **harness green: 41 checks pass, 0 fail — the five subsystems hold and the three structural failures have named countermeasures**
 
@@ -36,10 +36,10 @@ _harness-audit v1.0.0 · 2026-10-03T16:04:47.376Z · born from the learn-harness
 | 28 | anchors | KPI names its method (oracle discipline) | PASS | KPI.json method field |
 | 29 | anchors | spot oracle measured at run time (not cached stories) | PASS | ventures.json priceOracle |
 | 30 | graph | every FILLED role names a reachable worker artifact (role→worker wiring) | PASS | 7 FILLED roles · 7 wired |
-| 31 | loop | all six loop primitives have live fleet instances (automations/worktrees/skills/connectors/sub-agents/external state) | PASS | workflows:41 desks:58 receipts:true books:10 claims:true |
+| 31 | loop | all six loop primitives have live fleet instances (automations/worktrees/skills/connectors/sub-agents/external state) | PASS | workflows:41 desks:59 receipts:true books:10 claims:true |
 | 32 | sovereignty | role-registry integrity: every charter row names a real file (roles-as-data, no invented agents) | PASS | 57 rows · cols 9 · dupes 0 · missing files 0 |
-| 33 | sovereignty | change-request ledger integrity: every CR well-formed, no PENDING abandoned >7d | PASS | 28 CRs · malformed 0 · stale-pending 0 |
-| 34 | sovereignty | mechanical override live: destructive-command guard stamped, evals E7-E9 pin it | PASS | ledger at 2026-10-03T16:04:25.358Z · scan denies 3 · guardEvals green |
+| 33 | sovereignty | change-request ledger integrity: every CR well-formed, no PENDING abandoned >7d | PASS | 30 CRs · malformed 0 · stale-pending 0 |
+| 34 | sovereignty | mechanical override live: destructive-command guard stamped, evals E7-E9 pin it | PASS | ledger at 2026-10-03T16:07:05.374Z · scan denies 3 · guardEvals green |
 | 35 | sovereignty | cognitive rail governed: provider registry valid, forbidden rails never enabled, keyless probes booked, E10-E12 pin it | PASS | agents/inference-providers.csv + rail-ledger.json |
 | 36 | fate-defense | Emergence-World adoption: FWI scorecard fresh (9 indicators, each with a mechanical evidence source) + STASIS breaker armed + engine obeys it | PASS | FWI THRIVING fresh · 9 indicators · sources all named · stasis armed=false · engine gate=true |
 | 37 | sovereignty | collapse drill containment-proof: 4 fault classes injected into throwaway trees, judge caught every one on a fresh run | PASS | verdict CONTAINMENT-PROVEN · caught 4/4 · baseline green=true · age 11.2h · head 025aaa2233c1 |

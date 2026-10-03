@@ -1,6 +1,6 @@
 # CI Hands — the fleet's hands on its own CI estate (trycua/cua adoption)
 
-_ci-hands v1.0.0 · 2026-10-03T16:04:18.354Z · keyless · stasis armed/free_
+_ci-hands v1.0.0 · 2026-10-03T16:06:58.687Z · keyless · stasis armed/free_
 
 **CI-HANDS keyless floor: 0/16 reached — the rest booked UNREACHABLE (never invented)**
 
