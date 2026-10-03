@@ -364,7 +364,7 @@ MIT license requires (retain the license + copyright notice).
   `/home/z/reference-mirrors/OpenMontage`, outside the estate; main HEAD
   2026-09-05 — the repo's last push, ~4 weeks before the sweep).
 - **Author (upstream):** calesthio and OpenMontage contributors.
-- **What was adopted (reference patterns, booked in CR-0015 — no house
+- **What was adopted (reference patterns, booked in CR-0016 — no house
   package, scope discipline: the estate runs no media pipeline today):**
   creative pipelines as stage-gated flows where each stage hand-off is
   schema-checked (schemas/ = parse-gates between creative stages, the
@@ -390,7 +390,7 @@ MIT license requires (retain the license + copyright notice).
   `/home/z/reference-mirrors/orca`, outside the estate; main HEAD
   2026-10-02).
 - **Author (upstream):** Stably AI (Lovecast Inc.) and orca contributors.
-- **What was adopted (reference patterns, booked in CR-0015; the parallel
+- **What was adopted (reference patterns, booked in CR-0016; the parallel
   surfaces already live in the estate's lane law):** worktree-per-agent
   isolation (each agent owns a git worktree — lanes never share working
   state; the fills-ledger/lane parallel), worktree LINEAGE PRUNING
