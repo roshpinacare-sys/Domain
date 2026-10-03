@@ -14,8 +14,8 @@
  *   - body sections: When to use / Proactive Triggers / Output Artifacts /
  *     Related Skills / Evidence Artifact (house ANTI-GOODHART law) / Tier & Scope (house law)
  *   - library-level: authoring standard present + credits the source, THIRD-PARTY-NOTICES
- *     present + pins BOTH lineage mirror shas (claude-skills MIT + strix Apache-2.0),
- *     >= 6 packages
+ *     present + pins ALL lineage mirror shas (claude-skills MIT + strix Apache-2.0 +
+ *     google/ax Apache-2.0), >= 6 packages
  *
  * VERDICT: exit 0 = library green (offenders []), exit 1 = offenders booked.
  * v1.0.1: the bare-built-in shadow reason now outranks the generic namespacing reason
@@ -23,6 +23,9 @@
  * v1.1.0 (Task 29): second lineage pin — the notices must retain the usestrix/strix
  *          Apache-2.0 mirror sha 99c0711 alongside the claude-skills MIT sha (a rule
  *          not enforced in code is not a rule); strix book stamp updated.
+ * v1.2.0 (Task 31): third lineage pin — the notices must retain the google/ax
+ *          Apache-2.0 mirror sha ac23328 (agentic-orchestration lineage, Task 31
+ *          evaluation → same-wave adoption).
  * Books: agents/skill-library.json + agents/skill-library.md (single writer: this gate).
  * Zero dependencies. require()-safe: scanDir runs only under require.main === module CLI.
  */
@@ -37,6 +40,7 @@ const REQUIRED_SECTIONS = ['## When to use', '## Proactive Triggers', '## Output
   '## Related Skills', '## Evidence Artifact', '## Tier & Scope'];
 const MIRROR_SHA = '19392f7a';
 const STRIX_MIRROR_SHA = '99c0711';
+const AX_MIRROR_SHA = 'ac23328';
 
 function parseFrontmatter(text) {
   const m = /^\uFEFF?---\r?\n([\s\S]*?)\r?\n---\r?\n/.exec(text);
@@ -88,7 +92,8 @@ function scanDir(root) {
     if (!notices.includes(MIRROR_SHA)) offenders.push({ skill: '(library)', why: `notices do not pin the mirror sha ${MIRROR_SHA}` });
     if (!notices.includes('MIT')) offenders.push({ skill: '(library)', why: 'notices lack the MIT license reference' });
     if (!notices.includes(STRIX_MIRROR_SHA)) offenders.push({ skill: '(library)', why: `notices do not pin the strix mirror sha ${STRIX_MIRROR_SHA} (Apache-2.0 lineage, Task 29)` });
-    if (!notices.includes('Apache-2.0')) offenders.push({ skill: '(library)', why: 'notices lack the Apache-2.0 license reference (strix lineage)' });
+    if (!notices.includes(AX_MIRROR_SHA)) offenders.push({ skill: '(library)', why: `notices do not pin the ax mirror sha ${AX_MIRROR_SHA} (Apache-2.0 lineage, Task 31)` });
+    if (!notices.includes('Apache-2.0')) offenders.push({ skill: '(library)', why: 'notices lack the Apache-2.0 license reference (strix + ax lineage)' });
   }
 
   if (!fs.existsSync(skillsDir)) {
@@ -112,14 +117,14 @@ function writeBooks(root, res, at) {
   const AG = path.dirname(__filename);
   const jsonPath = path.join(AG, 'skill-library.json');
   const mdPath = path.join(AG, 'skill-library.md');
-  const book = { ok: res.ok, at, gate: 'skill-library-gate.cjs v1.1.0 (Task 27+29, study: alirezarezvani/claude-skills MIT sha 19392f7a + usestrix/strix Apache-2.0 sha 99c0711)', scanned: res.scanned, skills: res.skills, offenders: res.offenders };
+  const book = { ok: res.ok, at, gate: 'skill-library-gate.cjs v1.2.0 (Task 27+29+31, study: alirezarezvani/claude-skills MIT sha 19392f7a + usestrix/strix Apache-2.0 sha 99c0711 + google/ax Apache-2.0 sha ac23328)', scanned: res.scanned, skills: res.skills, offenders: res.offenders };
   fs.writeFileSync(jsonPath, JSON.stringify(book, null, 2) + '\n');
   const md = [];
-  md.push('# skill-library gate — role expertise as governed portable data (Task 27+29)');
+  md.push('# skill-library gate — role expertise as governed portable data (Task 27+29+31)');
   md.push('');
   md.push(`**verdict: ${res.ok ? 'GREEN' : 'RED'}** · ${res.scanned} packages · ${res.offenders.length} offenders · ${at}`);
   md.push('');
-  md.push('_Authoring standard adapted from alirezarezvani/claude-skills (MIT, mirror sha 19392f7a); security lineage: usestrix/strix (Apache-2.0, mirror sha 99c0711, Task 29). House-hardened: Evidence Artifact mandatory (ANTI-GOODHART), tier declaration, no silent scope. Provenance: skill-library/THIRD-PARTY-NOTICES.md_');
+  md.push('_Authoring standard adapted from alirezarezvani/claude-skills (MIT, mirror sha 19392f7a); security lineage: usestrix/strix (Apache-2.0, mirror sha 99c0711, Task 29); orchestration lineage: google/ax (Apache-2.0, mirror sha ac23328, Task 31). House-hardened: Evidence Artifact mandatory (ANTI-GOODHART), tier declaration, no silent scope. Provenance: skill-library/THIRD-PARTY-NOTICES.md_');
   md.push('');
   md.push('| package | verdict |');
   md.push('|---|---|');
@@ -133,7 +138,7 @@ function writeBooks(root, res, at) {
   return book;
 }
 
-module.exports = { scanDir, parseFrontmatter, checkSkill, BARE_BUILTINS, MIRROR_SHA, STRIX_MIRROR_SHA };
+module.exports = { scanDir, parseFrontmatter, checkSkill, BARE_BUILTINS, MIRROR_SHA, STRIX_MIRROR_SHA, AX_MIRROR_SHA };
 
 if (require.main === module) {
   const AG = path.dirname(__filename);

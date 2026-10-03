@@ -60,6 +60,37 @@ MIT license requires (retain the license + copyright notice).
   referenced patterns; this notice is the required Apache-2.0 attribution and
   change-state declaration.
 
+## 4. google/ax (Task 31 evaluation → same-wave adoption)
+
+- **Source:** https://github.com/google/ax
+- **License:** Apache-2.0 — https://github.com/google/ax/blob/main/LICENSE
+  (Apache License, Version 2.0, January 2004; full text preserved at the pinned
+  mirror's `LICENSE` file — a copy ships inside the mirror clone)
+- **Pinned mirror sha:** `ac23328` (cloned keyless to `/home/z/reference-mirrors/ax`,
+  outside the 16-repo estate on purpose: the mirror is reference, not fleet;
+  depth-50 clone of HEAD 2026-09-26 — matches API commit `ac2332829f22360ff97b0ba34d94dd0dd782f17e`)
+- **Author (upstream):** Google and ax contributors ("Google's open agentic
+  orchestration runtime")
+- **What was adopted:**
+  - The honest-orchestration patterns as REFERENCE for the house package
+    `skills/orchestration-ax-operator/`: declarative resource manifests
+    (`ax.io/v1alpha1` Task/Workspace/Model), task immutability (CreateTask with
+    enforced immutability, UpdateTask removed), up-front RFC 1123 validation at
+    apply-time (reject early instead of failing as `ActorCreationFailed` later),
+    the conditions chain (`WorkspaceReady` → `Ready`), per-task resource
+    requests/limits as budget guards, checkpointing suspend/resume semantics,
+    Model credentials referenced by `secretKey` (never inlined), and Workspace
+    skill-registries materialized to `/.agents/skills` — each mapped to its estate
+    parallel in the house package's doctrine table.
+- **What was NOT taken:** zero upstream code, manifests, YAML, or documentation
+  bodies were copied into this library; nothing was vendored. The house package is
+  an original adaptation whose Apache-2.0-derived references are limited to
+  documented patterns and their short names, attributed here. Running AX itself
+  (K8s cluster + Agent Substrate) is booked as wallet/possession-gated, not adopted.
+- **State of changes:** the house package materially adapts (does not reproduce) the
+  referenced patterns; this notice is the required Apache-2.0 attribution and
+  change-state declaration.
+
 ## MIT License (reference text)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software

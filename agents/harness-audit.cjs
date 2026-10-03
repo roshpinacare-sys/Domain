@@ -120,17 +120,20 @@ const freshCount = bookStates.filter((b) => b.exists && b.fresh).length;
   // Task 29: doctrine anchor — the Authority Map is constitutional text with a mechanical
   // anchor: wallet=owner, everything else=sovereignty-decided; strix Apache-2.0 lineage
   // pinned alongside the MIT lineage (gate v1.1.0 enforces, E21 re-proves).
+  // Task 31: the anchor extends — google/ax Apache-2.0 lineage (orchestration)
+  // pinned too (gate v1.2.0 enforces, E22 re-proves).
   let docOk = false, docEvidence = 'desk-operator SKILL.md missing';
   try {
     const dsk = fs.readFileSync(path.join(AG, 'skill-library', 'skills', 'desk-operator', 'SKILL.md'), 'utf8');
     const not2 = fs.readFileSync(path.join(AG, 'skill-library', 'THIRD-PARTY-NOTICES.md'), 'utf8');
     const hasMap = dsk.includes('## Authority Map') && dsk.includes('OWNER only') && dsk.includes('SOVEREIGNTY (the desk)') && dsk.includes('WALLET');
     const hasStrix = not2.includes('99c0711') && not2.includes('Apache-2.0');
-    docOk = hasMap && hasStrix;
-    docEvidence = `authority-map=${hasMap} (wallet=owner / sovereignty=desk / possession rows) · strix-lineage-pinned=${hasStrix} (sha 99c0711 + Apache-2.0)`;
+    const hasAx = not2.includes('ac23328') && not2.includes('google/ax');
+    docOk = hasMap && hasStrix && hasAx;
+    docEvidence = `authority-map=${hasMap} (wallet=owner / sovereignty=desk / possession rows) · strix-lineage-pinned=${hasStrix} (sha 99c0711 + Apache-2.0) · ax-lineage-pinned=${hasAx} (sha ac23328)`;
   } catch (e) { docEvidence = 'doctrine anchor error: ' + String(e.message || e).slice(0, 90); }
-  check('verification', 'doctrine anchor: the Authority Map (owner-confirmed 2026-10-03) lives in fleet-desk-operator and the strix Apache-2.0 lineage is pinned in the notices', docOk,
-    docEvidence, 'Task 29 (owner constitutional statement: "everything is subject to the sovereignty decision; only for the wallet am I an authority") — the map is the interpretive law for every future owner-gated label');
+  check('verification', 'doctrine anchor: the Authority Map (owner-confirmed 2026-10-03) lives in fleet-desk-operator and both Apache-2.0 lineages (strix security + ax orchestration) are pinned in the notices', docOk,
+    docEvidence, 'Task 29 (owner constitutional statement: "everything is subject to the sovereignty decision; only for the wallet am I an authority") + Task 31 (google/ax adoption) — the map is the interpretive law for every future owner-gated label');
 
   // Task 26: ci-hands — the fleet's own hands on its CI estate (trycua/cua adoption):
   // the Task 25 manual sweep mechanized: 16 repos sampled, failures classified, verdicts
@@ -399,7 +402,7 @@ const freshCount = bookStates.filter((b) => b.exists && b.fresh).length;
     fail: checks.filter((c) => c.status === 'FAIL').length
   };
   const out = {
-    ok: true, at, agent: 'harness-audit v1.13.1 (Z-35 + Task 19 + Z-37 sovereignty + Z-38 override + Z-39 cognitive rail + Task 22 fate-defense + Z-40 collapse drill + Task 23 one-bloc convergence + Task 24 workflow-parse gate + Z-42 canon reachability + Task 26 ci-hands + Z-43 hands book + Task 27 skill-library gate + Task 29 doctrine anchor + Z-49 daily pulse, parallel-convergence superset deduped)',
+    ok: true, at, agent: 'harness-audit v1.14.0 (Z-35 + Task 19 + Z-37 sovereignty + Z-38 override + Z-39 cognitive rail + Task 22 fate-defense + Z-40 collapse drill + Task 23 one-bloc convergence + Task 24 workflow-parse gate + Z-42 canon reachability + Task 26 ci-hands + Z-43 hands book + Task 27 skill-library gate + Task 29 doctrine anchor + Z-49 daily pulse + Task 31 ax lineage anchor, parallel-convergence superset deduped)',
     origin: 'walkinglabs/learn-harness-engineering study (Z-35): five subsystems + loop/graph engineering mapped to the fleet; Z-37 adds f/prompts.chat governance adoption (roles-as-data + decision ladder + change-requests + override protocol); Z-38 adds Dicklesworthstone/destructive_command_guard adoption (mechanical override gate + evals E7-E9); Z-39 adds tashfeenahmed/freellmapi adoption (cognitive-rail registry + keyless probes + evals E10-E12); Task 22 adds world.emergence.ai fate-defense adoption (STASIS circuit breaker + FWI scorecard + three laws, FATE-DEFENSE.md); Z-40 adds the emergence.ai collapse-drill containment proof (CR-0004, E14); two runtimes landed the same operator wave on the same study — merged, renumbered, deduped; the audit itself is the adopted artifact — a fresh-context checker node on a schedule',
     fiveSubsystems: {
       instructions: 'AGENTS.md + DOCTRINE.md + FLEET-NOTE.md + agent headers',
