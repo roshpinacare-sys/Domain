@@ -1,7 +1,7 @@
-# Daily Pulse — 2026-10-03T16:26:40.856Z
+# Daily Pulse — 2026-10-03T17:06:42.324Z
 
 - **loop:** reef/SkillClaw Rung 1 (day → review → propose → gate → settle) · **verify-only:** proposals never auto-applied
-- **window:** since 2026-10-03T16:23:22.147Z · **commits:** 2
+- **window:** since 2026-10-03T16:26:40.856Z · **commits:** 1
 - **gates:** skipped (PULSE_SKIP_GATES recursion guard — real gates proven in standalone runs) · skipped (PULSE_SKIP_GATES recursion guard — real gates proven in standalone runs)
 
 | # | id | disposition | advisory (lane/urgency) | action |
@@ -18,7 +18,7 @@
 | 10 | nv:runtime-deps-no-advisory-crossch | GATED-BLOCKED | — | resolve missing fact: Authoritative advisory cross-check for the bun.lock-resolved set. |
 | 11 | nv:runtime-dev-mode-on-public-defau | GATED-BLOCKED | — | resolve missing fact: Exact platform-policy fact: whether this runtime may run a production build on |
 | 12 | CR-0030 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
-| 13 | CR-0031 | ROLLED-BACK | — | rollback path (judged FAIL) |
+| 13 | CR-0032 | ROLLED-BACK | — | rollback path (judged FAIL) |
 | 14 | obs:one-bloc-boundary | DEFERRED-TIER-C | — | restore cross-repo credential (operator, tier C) — 2/16 reached; the len-93 token is gone from remot |
 | 15 | obs:hands | BOOKED | — | carry the hands boundary into the daily record |
 

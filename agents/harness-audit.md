@@ -1,6 +1,6 @@
 # Harness Audit — the fleet's five-subsystem check (fresh-context judge node)
 
-_harness-audit v1.0.0 · 2026-10-03T16:27:04.145Z · born from the learn-harness-engineering study (Z-35, extended Task 19)_
+_harness-audit v1.0.0 · 2026-10-03T17:07:16.506Z · born from the learn-harness-engineering study (Z-35, extended Task 19)_
 
 **harness green: 41 checks pass, 0 fail — the five subsystems hold and the three structural failures have named countermeasures**
 
@@ -26,7 +26,7 @@ _harness-audit v1.0.0 · 2026-10-03T16:27:04.145Z · born from the learn-harness
 | 18 | scope | doctrine binds kill rules (ventures have them) | PASS | DOCTRINE-economics.md §4 |
 | 19 | scope | ventures board carries kill rules (5/5) | PASS | ventures.json |
 | 20 | scope | resource floors/ceilings in code (VP floor, dust holds, RC gate) | PASS | treasury-desk CUR_VP_FLOOR |
-| 21 | lifecycle | CLAIMS ledger fresh (receipts keep continuity) | PASS | last receipt 4.4h ago |
+| 21 | lifecycle | CLAIMS ledger fresh (receipts keep continuity) | PASS | last receipt 5.1h ago |
 | 22 | lifecycle | recovery path codified (RESUME-KIT + .fleet/restore.sh) | PASS | canon reachable |
 | 23 | graph-failures | Goodhart countermeasure: two-sided ledger, measured never estimated | PASS | EARN-GOVERNOR LAW |
 | 24 | graph-failures | Blindness-upward countermeasure: kill rules + operator gate | PASS | kill rules + operator gates |
@@ -38,11 +38,11 @@ _harness-audit v1.0.0 · 2026-10-03T16:27:04.145Z · born from the learn-harness
 | 30 | graph | every FILLED role names a reachable worker artifact (role→worker wiring) | PASS | 7 FILLED roles · 7 wired |
 | 31 | loop | all six loop primitives have live fleet instances (automations/worktrees/skills/connectors/sub-agents/external state) | PASS | workflows:41 desks:60 receipts:true books:10 claims:true |
 | 32 | sovereignty | role-registry integrity: every charter row names a real file (roles-as-data, no invented agents) | PASS | 57 rows · cols 9 · dupes 0 · missing files 0 |
-| 33 | sovereignty | change-request ledger integrity: every CR well-formed, no PENDING abandoned >7d | PASS | 32 CRs · malformed 0 · stale-pending 0 |
-| 34 | sovereignty | mechanical override live: destructive-command guard stamped, evals E7-E9 pin it | PASS | ledger at 2026-10-03T16:26:42.492Z · scan denies 3 · guardEvals green |
+| 33 | sovereignty | change-request ledger integrity: every CR well-formed, no PENDING abandoned >7d | PASS | 33 CRs · malformed 0 · stale-pending 0 |
+| 34 | sovereignty | mechanical override live: destructive-command guard stamped, evals E7-E9 pin it | PASS | ledger at 2026-10-03T17:06:54.487Z · scan denies 3 · guardEvals green |
 | 35 | sovereignty | cognitive rail governed: provider registry valid, forbidden rails never enabled, keyless probes booked, E10-E12 pin it | PASS | agents/inference-providers.csv + rail-ledger.json |
 | 36 | fate-defense | Emergence-World adoption: FWI scorecard fresh (9 indicators, each with a mechanical evidence source) + STASIS breaker armed + engine obeys it | PASS | FWI THRIVING fresh · 9 indicators · sources all named · stasis armed=false · engine gate=true |
-| 37 | sovereignty | collapse drill containment-proof: 4 fault classes injected into throwaway trees, judge caught every one on a fresh run | PASS | verdict CONTAINMENT-PROVEN · caught 4/4 · baseline green=true · age 11.6h · head 025aaa2233c1 |
+| 37 | sovereignty | collapse drill containment-proof: 4 fault classes injected into throwaway trees, judge caught every one on a fresh run | PASS | verdict CONTAINMENT-PROVEN · caught 4/4 · baseline green=true · age 12.2h · head 025aaa2233c1 |
 | 38 | sovereignty | one-bloc convergence book: the whole git (16 repos) measured mechanically into ONE map — roles, HEADs, honest statuses, laws armed | PASS | verdict ONE-BLOC · reached 16/16 · keyless 2 · age 0h · maps bound 3 |
 | 39 | lifecycle | canon reachability proven: a live leg serves the Defi canon, legs booked, never DARK, receipt fits reality (Z-42) | PASS | verdict CONTENT-SERVED · legs L1:SERVING L2:RAIL-UP L3:DEAD-AS-EXPECTED-PRIVATE · fresh · L1-now serving |
 | 40 | sovereignty | hands book: execution surfaces probed, never claimed — every LIVE hand receipted, ABSENT honest, tier-C locks named, zero hopeful greens (Z-43) | PASS | hands 6 · LIVE 4 (receipted all) · ABSENT 1 · locks 3 · fresh |
