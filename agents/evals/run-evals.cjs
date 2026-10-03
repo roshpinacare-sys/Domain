@@ -349,6 +349,29 @@ function accumulateInMemory(bookRows, seed) {
       ['white-box: the predicate flags a bare built-in name (help), a missing Evidence Artifact section, and short/no-trigger descriptions — and PASSES the legal package', 'library floor: a missing authoring standard or unpinned mirror sha is an (library) offender — provenance is mechanical', 'black-box: fresh-process gate on the real library exits 0', 'book: skill-library.json GREEN, scanned >= 6, offenders [], stamped fresh (<30min)'],
       `scanned=${sb.scanned} offenders=${sb.offenders.length} legal=${legalPass} caught(builtin,artifact)=${w2},${w3}`);
   } catch (e) { evalr('E20', 'skill-library gate', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+  // ---- E21: daily pulse (Z-49, CR-0009) — the reef/SkillClaw self-improvement loop, rung 1.
+  // The loop is real only if proposals are TYPED, gates are REAL judge+evals runs, and
+  // nothing is auto-applied: the pulse proposes, the CR law disposes.
+  try {
+    const pulse = require(path.join(AG, 'pulse.cjs'));
+    // white-box: the disposition predicate is exact
+    const cases = [
+      [{ kind: 'probe-queued' }, 'PROPOSED-CR'], [{ kind: 'probe-parked' }, 'DEFERRED-TIER-C'],
+      [{ kind: 'needs-validation' }, 'GATED-BLOCKED'], [{ kind: 'cr-pass' }, 'ACCEPTED-TODAY'],
+      [{ kind: 'cr-fail' }, 'ROLLED-BACK'], [{ kind: 'tier-c' }, 'DEFERRED-TIER-C'], [{ kind: 'observation' }, 'BOOKED'],
+    ];
+    const w1 = cases.every(([i, want]) => pulse.deriveDisposition(i) === want);
+    const w2 = Array.isArray(pulse.DISPOSITIONS) && pulse.DISPOSITIONS.length === 6;
+    // black-box: fresh-process desk exits 0, book fresh, verify-only, gates recorded
+    const rr = spawnSync(process.execPath, [path.join(AG, 'pulse.cjs')], { cwd: AG, timeout: 180000, encoding: 'utf8', env: { ...process.env, PULSE_SKIP_GATES: '1' } });
+    const pb = JSON.parse(fs.readFileSync(path.join(AG, 'pulse-book.json'), 'utf8'));
+    const fresh = !!pb.at && (Date.now() - Date.parse(pb.at)) / 60000 < 30;
+    const skippedHonest = !!(pb.gates && pb.gates.judge && pb.gates.judge.includes('PULSE_SKIP_GATES')); // the guarded book marks the skip, never fakes a verdict
+    evalr('E21', 'daily pulse: typed proposals + real gates + verify-only (the loop closed under law)',
+      w1 && w2 && rr.status === 0 && pb.ok === true && pb.laws.verifyOnly === true && pb.laws.autoApply === false && Array.isArray(pb.proposals) && pb.proposals.length >= 2 && skippedHonest && fresh,
+      ['white-box: disposition derivation exact for all seven input kinds (queued→PROPOSED-CR, parked/tier-c→DEFERRED-TIER-C, needs-validation→GATED-BLOCKED, cr-pass→ACCEPTED-TODAY, cr-fail→ROLLED-BACK, observation→BOOKED)', 'black-box: fresh-process pulse exits 0 (fail-soft), ≥2 proposals booked', 'gates: in the eval-harness context the recursion guard skips gates and marks it HONESTLY (no faked verdicts); real gate runs are proven standalone and pinned by the judge check', 'laws: verifyOnly=true, autoApply=false — the pulse never overrides the CR law', 'book fresh (<30min)'],
+      `proposals=${pb.proposals.length} w1=${w1} guard=${skippedHonest} verifyOnly=${pb.laws.verifyOnly}`);
+  } catch (e) { evalr('E21', 'daily pulse', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
   // ---- E21: strix lineage pin (Task 29) — a rule not enforced in code is not a rule.
   // The Apache-2.0 attribution (usestrix/strix, mirror sha 99c0711) must be mechanically

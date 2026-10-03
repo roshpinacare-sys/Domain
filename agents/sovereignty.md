@@ -1,4 +1,4 @@
-# חוק הריבונות והאוטונומיה — SOVEREIGNTY LAW v1.0.5
+# חוק הריבונות והאוטונומיה — SOVEREIGNTY LAW v1.0.6
 
 > מקור ההשראה: **f/prompts.chat** — הריפו שהמפעיל הורה ללמוד היטב ולהשתמש בו כראוי (Z-37).
 > מה שנלקח משם הוא לא סלוגן אלא מנגנון: תפקידים-כמידע (roles-as-data), סולם החלטות מפורש,
@@ -154,3 +154,5 @@ prompts.chat חותם את פרומפטים-למפתחים ב-Override Protocol:
 
 ---
 *גלים Z-37→Z-43 · נבנה מתוך לימודים f/prompts.chat + destructive_command_guard + freellmapi + world.emergence.ai · אפס-סודות · אפס-המצאות · קבלות בכל טענה · גילוי בלי בלימה הוא תיאטרון · קנון שלא ידוע איך מגיעים אליו הוא אי.*
+
+- §5 enforcement line (Z-49, check-#32): the daily pulse book (agents/pulse-book.json) is watched by harness-audit check #32 — typed proposals, real judge+evals gates, verify-only (autoApply=false); the loop proposes, the CR law disposes (CR-0009, reef/SkillClaw Rung 1).

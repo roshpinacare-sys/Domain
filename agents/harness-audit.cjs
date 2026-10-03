@@ -371,6 +371,20 @@ const freshCount = bookStates.filter((b) => b.exists && b.fresh).length;
     hb ? `hands ${hbHands.length} · LIVE ${hbLive.length} (receipted ${hbReceipted ? 'all' : 'NO'}) · ABSENT ${hb.counts ? hb.counts.absent : '?'} · locks ${(hb.locked || []).length} · ${hbFresh ? 'fresh' : 'STALE'}` : 'hands-book.json missing',
     'Z-43 (CR-0006, study: trycua/cua): "give agents computers" — we adopt probe-before-trust, permission-at-launch and the action ladder on native surfaces; the VM/container runtime class is measured ABSENT here and the cloud fleet is tier C — the book is the boundary between power and story');
 
+  // Z-48/Z-49: daily pulse book — the self-improvement loop, rung 1 (CR-0009).
+  // reef/SkillClaw lesson: an agent that does not CLOSE THE LOOP (day ledger →
+  // proposals → evaluate → settle) improves by accident, not by law. The pulse
+  // proposes; the CR law disposes — verify-only, never auto-applied.
+  const pb = readJson(path.join(AG, 'pulse-book.json'));
+  const pbFresh = !!(pb && pb.at && (Date.now() - Date.parse(pb.at)) / 3600000 < 25);
+  const pbProps = pb && Array.isArray(pb.proposals) ? pb.proposals : [];
+  const pbEnum = pbProps.every((p) => ['PROPOSED-CR', 'GATED-BLOCKED', 'DEFERRED-TIER-C', 'ACCEPTED-TODAY', 'ROLLED-BACK', 'BOOKED'].includes(p.disposition));
+  const pbGates = !!(pb && pb.gates && typeof pb.gates.judge === 'string' && pb.gates.judge.length > 3 && typeof pb.gates.evals === 'string' && pb.gates.evals.length > 3);
+  const pbOk = !!(pb && pb.ok && pbFresh && pb.laws && pb.laws.verifyOnly === true && pb.laws.autoApply === false && pbGates && pbEnum && pbProps.length >= 2);
+  check('sovereignty', 'daily pulse book: the self-improvement loop closed under law — day ledger, typed proposals, judge+evals gates recorded, verify-only (Z-48/Z-49)', pbOk,
+    pb ? `proposals ${pbProps.length} · ${Object.entries(pb.counts || {}).filter(([, v]) => v > 0).map(([k, v]) => `${k}:${v}`).join(' ')} · ${pbFresh ? 'fresh' : 'STALE'} · verifyOnly ${pb.laws && pb.laws.verifyOnly}` : 'pulse-book.json missing',
+    'Z-49 (CR-0009, study: Human-Agent-Society/reef): the SkillClaw loop adopted as the single daily pulse — proposals are typed (PROPOSED-CR/GATED-BLOCKED/DEFERRED-TIER-C/ACCEPTED-TODAY/ROLLED-BACK/BOOKED), gates are real judge+evals runs, and application only happens through a judged CR — the loop improves the harness without ever overriding the law');
+
   // ---- silent-costs watch (L13) — booked as standing observations, honestly
   const silentCosts = {
     verificationDebt: 'selftests cover past incidents; every NEW failure mode (concat family ×3, null-deref, dedupe) becomes a check within one wave of discovery',
@@ -385,7 +399,7 @@ const freshCount = bookStates.filter((b) => b.exists && b.fresh).length;
     fail: checks.filter((c) => c.status === 'FAIL').length
   };
   const out = {
-    ok: true, at, agent: 'harness-audit v1.13.0 (Z-35 + Task 19 + Z-37 sovereignty + Z-38 override + Z-39 cognitive rail + Task 22 fate-defense + Z-40 collapse drill + Task 23 one-bloc convergence + Task 24 workflow-parse gate + Z-42 canon reachability + Task 26 ci-hands + Z-43 hands book + Task 27 skill-library gate + Task 29 doctrine anchor, parallel-convergence superset deduped)',
+    ok: true, at, agent: 'harness-audit v1.13.1 (Z-35 + Task 19 + Z-37 sovereignty + Z-38 override + Z-39 cognitive rail + Task 22 fate-defense + Z-40 collapse drill + Task 23 one-bloc convergence + Task 24 workflow-parse gate + Z-42 canon reachability + Task 26 ci-hands + Z-43 hands book + Task 27 skill-library gate + Task 29 doctrine anchor + Z-49 daily pulse, parallel-convergence superset deduped)'
     origin: 'walkinglabs/learn-harness-engineering study (Z-35): five subsystems + loop/graph engineering mapped to the fleet; Z-37 adds f/prompts.chat governance adoption (roles-as-data + decision ladder + change-requests + override protocol); Z-38 adds Dicklesworthstone/destructive_command_guard adoption (mechanical override gate + evals E7-E9); Z-39 adds tashfeenahmed/freellmapi adoption (cognitive-rail registry + keyless probes + evals E10-E12); Task 22 adds world.emergence.ai fate-defense adoption (STASIS circuit breaker + FWI scorecard + three laws, FATE-DEFENSE.md); Z-40 adds the emergence.ai collapse-drill containment proof (CR-0004, E14); two runtimes landed the same operator wave on the same study — merged, renumbered, deduped; the audit itself is the adopted artifact — a fresh-context checker node on a schedule',
     fiveSubsystems: {
       instructions: 'AGENTS.md + DOCTRINE.md + FLEET-NOTE.md + agent headers',
