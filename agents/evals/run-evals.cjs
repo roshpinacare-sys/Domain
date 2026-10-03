@@ -670,7 +670,7 @@ function accumulateInMemory(bookRows, seed) {
     let wf = null; try { wf = fs.readFileSync(path.join(path.resolve(AG, '..'), '.github', 'workflows', 'market-grid-cron.yml'), 'utf8'); } catch (_) {}
     if (!wf) { ok29 = false; why29.push('workflow missing'); } else {
       const laws29 = [
-        ['cadence 23,53', /cron:\s*'23,53 \* \* \* \*'/],
+        ['cadence 21,51 (minute-map reslot)', /cron:\s*'21,51 \* \* \* \*'/],
         ['STASIS gate step', /STASIS brake/],
         ['desk invocation', /node agents\/market-grid\.cjs/],
         ['append-only publish', /git diff --cached --quiet/],
@@ -689,7 +689,7 @@ function accumulateInMemory(bookRows, seed) {
     }
     evalr('E29', 'market-grid STASIS obedience + cadence wiring: fresh-process brake, labeled halt row, cron carries the laws',
       ok29,
-      ['fresh process: sandboxed copy + ACTIVE STASIS.json halts BEFORE any read — exit 0, STASIS-HALT stdout, zero markets measured', 'one labeled history row MARKET-GRID-HALTED-STASIS (append-only audit trail — the file is the receipt)', 'workflow market-grid-cron.yml: 30-min offset cadence 23,53, STASIS gate before the tick, keyless desk invocation, append-only publish with [skip ci], concurrency guard', 'YAML parseability + the broken-idiom predicate (E16 lineage) holds line-by-line'],
+      ['fresh process: sandboxed copy + ACTIVE STASIS.json halts BEFORE any read — exit 0, STASIS-HALT stdout, zero markets measured', 'one labeled history row MARKET-GRID-HALTED-STASIS (append-only audit trail — the file is the receipt)', 'workflow market-grid-cron.yml: 30-min offset cadence 21,51 (Z-70 minute-map reslot), STASIS gate before the tick, keyless desk invocation, append-only publish with [skip ci], concurrency guard', 'YAML parseability + the broken-idiom predicate (E16 lineage) holds line-by-line'],
       why29.length ? 'fails: ' + why29.join('; ') : 'brake proven in a fresh process; the cadence is wired (CR-0038)');
   } catch (e) { evalr('E29', 'market-grid STASIS/cadence', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
@@ -818,7 +818,7 @@ function accumulateInMemory(bookRows, seed) {
     const wf = fs.readFileSync(wfPath, 'utf8');
     let ok32 = true; const why32 = [];
     const law = (name, chk) => { const okc = (chk instanceof RegExp) ? chk.test(wf) : !!chk; if (!okc) { ok32 = false; why32.push(name); } };
-    law('daily-cron', /cron: '\d+ \d+ \* \* \*'/);
+    law('daily-cron', /cron:\s*['"]\d+ \d+ \* \* \*['"]/); // quote-agnostic (Z-70 reslot)
     law('workflow-dispatch', /workflow_dispatch/);
     law('stasis-gate', /STASIS\.json.*active===true|active===true.*STASIS\.json|JSON\.parse\(require\('fs'\)\.readFileSync\('agents\/STASIS\.json'[\s\S]*active/);
     law('stasis-gated-steps', /if: steps\.brake\.outputs\.active != 'true'/);
@@ -1386,11 +1386,70 @@ function accumulateInMemory(bookRows, seed) {
       why39.length ? 'fails: ' + why39.join('; ') : 'the fleet coordination surface is measurable by anyone, anywhere, keyless — and it cannot lie by node, by silence, or by an immortal lease');
   } catch (e) { evalr('E39', 'coordination bus', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
+  // ---- E40: THE SELF-HEALING PULSE + LEDGER-FIRST DAY-TRUTH (Z-70, CR-0049) ----
+  // (a) white-box ledgerDayTruth: the ledger row IS the day-book; the old Math.max
+  //     fusion swallowed NEGATIVE realized (a losing day read 0.000 SBD forever →
+  //     BREAKER-DAILY-LOSS silently disarmed). Negative truth must survive.
+  try {
+    const svk = require(path.join(AG, 'sovereign.cjs'));
+    let ok40a = true; const why40a = [];
+    const chk = (c, m) => { if (!c) { ok40a = false; why40a.push(m); } };
+    // ledger present, realized NEGATIVE → negative preserved (the disarm regression)
+    let t1 = svk.ledgerDayTruth({ fills_today: 3, realized_today_micro: 0 }, { total_fills: 9, inventory: { realized: -178154 } });
+    chk(t1.fills_today === 9 && t1.realized_today_micro === -178154, 'negative realized swallowed: ' + JSON.stringify(t1));
+    // ledger present, positive → ledger wins over stale smaller state
+    let t2 = svk.ledgerDayTruth({ fills_today: 5, realized_today_micro: 111 }, { total_fills: 7, inventory: { realized: 222000 } });
+    chk(t2.fills_today === 7 && t2.realized_today_micro === 222000, 'ledger did not win: ' + JSON.stringify(t2));
+    // ledger absent → state is the honest fallback
+    let t3 = svk.ledgerDayTruth({ fills_today: 4, realized_today_micro: -50 }, null);
+    chk(t3.fills_today === 4 && t3.realized_today_micro === -50, 'state fallback broken: ' + JSON.stringify(t3));
+    // ledger present but honest-null counters → state fallback (no invented zeros)
+    let t4 = svk.ledgerDayTruth({ fills_today: 2, realized_today_micro: 7 }, { total_fills: 'x', inventory: {} });
+    chk(t4.fills_today === 2 && t4.realized_today_micro === 7, 'malformed ledger not skipped: ' + JSON.stringify(t4));
+    // both absent → zeros, never NaN
+    let t5 = svk.ledgerDayTruth({}, {});
+    chk(t5.fills_today === 0 && t5.realized_today_micro === 0, 'zeros law broken: ' + JSON.stringify(t5));
+    evalr('E40a', 'LEDGER-FIRST DAY-TRUTH: negative realized survives (BREAKER-DAILY-LOSS can never be silently disarmed again), ledger wins when present, state is the honest fallback, zeros never NaN',
+      ok40a,
+      ['white-box: realized -178154 µSBD from the ledger reaches the gate untouched (the Math.max fusion regression is dead)', 'ledger counters win when present; malformed/null ledger rows fall back to state without inventing zeros', 'pure function: no fs, no state writes — exported for the gate and the eval alike'],
+      why40a.length ? 'fails: ' + why40a.join('; ') : 'a losing day now READS as a losing day — the loss breaker is armed by truth');
+  } catch (e) { evalr('E40a', 'ledger-first day-truth', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
+  // (b) white-box keeperDecide: stale→decided, fresh→skipped, no-receipt→decided, cooldown obeyed, per-desk maxGaps.
+  try {
+    const kp = require(path.join(AG, 'tick-keeper.cjs'));
+    let ok40b = true; const why40b = [];
+    const chkB = (c, m) => { if (!c) { ok40b = false; why40b.push(m); } };
+    const NOW = '2026-10-03T21:00:00.000Z';
+    // stale desk (>maxGap) → decided
+    let d1 = kp.keeperDecide({ now: NOW, arc: { 'sovereign-tick-cron': '2026-10-03T20:30:00.000Z', 'earn-audit-cron': NOW, 'fill-ledger-cron': NOW } });
+    chkB(d1.decided.length === 1 && d1.decided[0].desk === 'sovereign-tick-cron' && d1.decided[0].stale_min === 30.0, 'stale not caught: ' + JSON.stringify(d1.decided));
+    chkB(d1.skipped.length === 2, 'fresh desks not skipped: ' + JSON.stringify(d1.skipped));
+    // no receipt at all → decided (never-born desk is re-fired)
+    let d2 = kp.keeperDecide({ now: NOW, arc: {} });
+    chkB(d2.decided.length === 3 && d2.decided.every(x => x.reason === 'no-receipt-yet'), 'no-receipt law broken: ' + JSON.stringify(d2.decided));
+    // cooldown: a desk dispatched 10m ago is skipped even though stale
+    let d3 = kp.keeperDecide({ now: NOW, arc: { 'sovereign-tick-cron': '2026-10-03T20:30:00.000Z', 'earn-audit-cron': NOW, 'fill-ledger-cron': NOW }, cooldownBook: { 'sovereign-tick-cron': '2026-10-03T20:50:00.000Z' } });
+    chkB(d3.decided.length === 0 && d3.skipped.some(x => x.desk === 'sovereign-tick-cron' && /cooldown/.test(x.reason)), 'cooldown broken: ' + JSON.stringify(d3));
+    // cooldown expired (25m) → re-fired
+    let d4 = kp.keeperDecide({ now: NOW, arc: { 'sovereign-tick-cron': '2026-10-03T20:30:00.000Z', 'earn-audit-cron': NOW, 'fill-ledger-cron': NOW }, cooldownBook: { 'sovereign-tick-cron': '2026-10-03T20:35:00.000Z' } });
+    chkB(d4.decided.length === 1 && d4.decided[0].desk === 'sovereign-tick-cron', 'cooldown never releases: ' + JSON.stringify(d4.decided));
+    // per-desk maxGap override respected (earn-audit 45m law on its own number)
+    let d5 = kp.keeperDecide({ now: NOW, arc: { 'sovereign-tick-cron': NOW, 'earn-audit-cron': '2026-10-03T20:00:00.000Z', 'fill-ledger-cron': NOW } });
+    chkB(d5.decided.length === 1 && d5.decided[0].desk === 'earn-audit-cron' && d5.decided[0].stale_min === 60.0, 'per-desk gap law broken: ' + JSON.stringify(d5.decided));
+    // ARC registry: the three arc desks exist with receipts named
+    chkB(kp.ARC && kp.ARC['sovereign-tick-cron'] && /sovereign-decisions\.jsonl/.test(kp.ARC['sovereign-tick-cron'].receipt), 'arc registry incomplete');
+    evalr('E40b', 'SELF-HEALING PULSE: keeperDecide fires stale desks, re-fires never-born desks, obeys the 20m cooldown and releases it, respects per-desk gaps, and reads the arc registry it dispatches against',
+      ok40b,
+      ['white-box: stale 30m > 20m gap → decided with honest stale_min; fresh desks skipped with receipts', 'white-box: empty arc → all decided no-receipt-yet (a desk that never woke is re-fired, not mourned)', 'white-box: dispatch 10m ago → cooldown skip; 25m ago → re-fired; per-desk maxGaps override the defaults'],
+      why40b.length ? 'fails: ' + why40b.join('; ') : 'the reflex arc now holds its own pulse: measured starvation (zero schedule events) is answered by a keeper that re-fires from receipts');
+  } catch (e) { evalr('E40b', 'keeper decide', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
 
 
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.27.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.28.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];

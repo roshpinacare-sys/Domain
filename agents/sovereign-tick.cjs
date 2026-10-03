@@ -73,9 +73,9 @@ function main() {
     const armed = tick.stasis ? false : sv.armedCheck();
     // day-book truth = the LEDGER (single source): fills + realized are the ledger's own
     // since-midnight counters; the state file carries decisions + broadcast pacing only.
-    const ledgerFillsToday = (ledger && typeof ledger.total_fills === 'number') ? ledger.total_fills : (state.fills_today || 0);
-    const ledgerRealizedTodayMicro = (ledger && ledger.inventory && typeof ledger.inventory.realized === 'number') ? ledger.inventory.realized : (state.realized_today_micro || 0);
-    const effState = { ...state, fills_today: Math.max(state.fills_today || 0, ledgerFillsToday), realized_today_micro: Math.max(state.realized_today_micro || 0, ledgerRealizedTodayMicro) };
+    // Z-70 CR-0048: ledger-first via sv.ledgerDayTruth — the old Math.max fusion swallowed
+    // NEGATIVE realized (a losing day read 0.000 SBD, silently DISARMING BREAKER-DAILY-LOSS).
+    const effState = { ...state, ...sv.ledgerDayTruth(state, ledger) };
     tick.inputs = {
       suggested: !!(suggestion && suggestion.suggested),
       suggestion_reasons: (suggestion && suggestion.reasons) || [],

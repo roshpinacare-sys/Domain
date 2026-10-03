@@ -1,0 +1,42 @@
+{
+ "protocol": "SAOS-TICK-KEEPER/1",
+ "at": "2026-10-03T21:36:39.076Z",
+ "repo": "roshpinacare-sys/Domain",
+ "stasis": false,
+ "arc": {
+  "sovereign-tick-cron": {
+   "receipt": "agents/sovereign-decisions.jsonl",
+   "last_ts": "2026-10-03T21:35:25.128Z",
+   "max_gap_min": 20
+  },
+  "earn-audit-cron": {
+   "receipt": "agents/earn-audit.json",
+   "last_ts": "2026-10-03T21:03:31.182Z",
+   "max_gap_min": 45
+  },
+  "fill-ledger-cron": {
+   "receipt": "agents/fill-ledger.json",
+   "last_ts": "2026-10-03T21:35:25.188Z",
+   "max_gap_min": 45
+  }
+ },
+ "decided": [],
+ "dispatched": [],
+ "skipped": [
+  {
+   "desk": "sovereign-tick-cron",
+   "reason": "fresh 1.2m <= 20m"
+  },
+  {
+   "desk": "earn-audit-cron",
+   "reason": "fresh 33.1m <= 45m"
+  },
+  {
+   "desk": "fill-ledger-cron",
+   "reason": "fresh 1.2m <= 45m"
+  }
+ ],
+ "errors": [],
+ "duration_ms": 1,
+ "cooldown_book": {}
+}
