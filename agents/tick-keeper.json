@@ -1,6 +1,6 @@
 {
  "protocol": "SAOS-TICK-KEEPER/1",
- "at": "2026-10-03T22:18:37.142Z",
+ "at": "2026-10-03T22:20:46.382Z",
  "repo": "roshpinacare-sys/Domain",
  "stasis": false,
  "arc": {
@@ -25,44 +25,28 @@
    "max_gap_min": 120
   }
  },
- "decided": [
-  {
-   "desk": "sovereign-tick-cron",
-   "stale_min": 43.2,
-   "reason": "book stale 43.2m > 20m"
-  },
-  {
-   "desk": "market-grid-cron",
-   "stale_min": 217.4,
-   "reason": "book stale 217.4m > 120m"
-  }
- ],
- "dispatched": [
-  {
-   "desk": "sovereign-tick-cron",
-   "http_status": 404,
-   "ok": false,
-   "error": null
-  },
-  {
-   "desk": "market-grid-cron",
-   "http_status": 404,
-   "ok": false,
-   "error": null
-  }
- ],
+ "decided": [],
+ "dispatched": [],
  "skipped": [
   {
+   "desk": "sovereign-tick-cron",
+   "reason": "cooldown: dispatched 2m ago < 20m"
+  },
+  {
    "desk": "earn-audit-cron",
-   "reason": "fresh 22.9m <= 45m"
+   "reason": "fresh 25.0m <= 45m"
   },
   {
    "desk": "fill-ledger-cron",
-   "reason": "fresh 26.0m <= 45m"
+   "reason": "fresh 28.2m <= 45m"
+  },
+  {
+   "desk": "market-grid-cron",
+   "reason": "cooldown: dispatched 2m ago < 20m"
   }
  ],
  "errors": [],
- "duration_ms": 545,
+ "duration_ms": 1,
  "cooldown_book": {
   "earn-audit-cron": "2026-10-03T21:53:13.174Z",
   "sovereign-tick-cron": "2026-10-03T22:18:37.142Z",
