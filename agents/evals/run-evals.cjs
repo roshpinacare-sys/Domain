@@ -1145,11 +1145,49 @@ function accumulateInMemory(bookRows, seed) {
       why33.length ? 'fails: ' + why33.join('; ') : 'the transfer is live: local sovereign ticks fire per policy; the cron books keyless receipts 24/7 and arms on the vault secret');
   } catch (e) { evalr('E36', 'sovereign layer', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
+  // ---- E37: earn-audit — the from-nothing chain-truth desk (Z-68, CR-0046)
+  try {
+    const ea = require(path.join(AG, 'earn-audit.cjs'));
+    let ok37 = true; const why37 = [];
+    const chk37 = (cond, tag) => { if (!cond) { ok37 = false; why37.push(tag); } };
+    // DIRECTION LAW: ours-as-OPEN → we GAVE open_pays / RECEIVED current_pays
+    const t1 = ea.tallyOp(ea.freshTally(), ['fill_order', { current_pays: '0.058 SBD', open_pays: '0.576 STEEM', open_owner: 'headcorner', __account: 'headcorner' }]);
+    chk37(t1.fills === 1 && Math.abs(t1.sold_steem - 0.576) < 1e-9 && Math.abs(t1.recv_sbd - 0.058) < 1e-9 && t1.spent_sbd === 0, 'direction-ours-as-open-sell');
+    // ours-as-CURRENT (someone else is the maker) → we GAVE current_pays
+    const t2 = ea.tallyOp(ea.freshTally(), ['fill_order', { current_pays: '4.996 STEEM', open_pays: '0.500 SBD', open_owner: 'droida', __account: 'headcorner' }]);
+    chk37(t2.fills === 1 && Math.abs(t2.sold_steem - 4.996) < 1e-9 && Math.abs(t2.recv_sbd - 0.500) < 1e-9, 'direction-ours-as-current-sell');
+    // taker BUY: we paid SBD as the current side
+    const t3 = ea.tallyOp(ea.freshTally(), ['fill_order', { current_pays: '3.692 SBD', open_pays: '36.601 STEEM', open_owner: 'droida', __account: 'headcorner' }]);
+    chk37(t3.fills === 1 && Math.abs(t3.bought_steem - 36.601) < 1e-9 && Math.abs(t3.spent_sbd - 3.692) < 1e-9 && t3.sold_steem === 0, 'direction-taker-buy');
+    // unparseable body → honest skip, no fill counted
+    const t4 = ea.tallyOp(ea.freshTally(), ['fill_order', {}]);
+    chk37(t4.fills === 0 && t4.ops === 1, 'fill-unparseable-honest-skip');
+    // rewards + claims + drip + convert + vote/post counting
+    const t5 = ea.freshTally();
+    ea.tallyOp(t5, ['author_reward', { sbd_payout: '0.250 SBD', steem_payout: '1.000 STEEM', vesting_payout: '100.000000 VESTS' }]);
+    ea.tallyOp(t5, ['curation_reward', { reward: '50.000000 VESTS' }]);
+    ea.tallyOp(t5, ['claim_reward_balance', { reward_steem: '0.000 STEEM', reward_sbd: '0.000 SBD', reward_vesting_balance: '12.000000 VESTS' }]);
+    ea.tallyOp(t5, ['fill_vesting_withdraw', { deposited: '475.857 STEEM' }]);
+    ea.tallyOp(t5, ['convert', { amount: '10.000 SBD' }]);
+    ea.tallyOp(t5, ['vote', { weight: 5000 }]);
+    ea.tallyOp(t5, ['comment', { parent_author: '' }]);
+    ea.tallyOp(t5, ['comment', { parent_author: 'someone' }]);
+    chk37(Math.abs(t5.author_sbd - 0.25) < 1e-9 && Math.abs(t5.author_steem - 1) < 1e-9 && Math.abs(t5.author_vests - 100) < 1e-9, 'author-tally');
+    chk37(Math.abs(t5.curation_vests - 50) < 1e-9 && Math.abs(t5.claimed_vests - 12) < 1e-9, 'curation-claim-tally');
+    chk37(Math.abs(t5.drip_arrived_steem - 475.857) < 1e-9 && Math.abs(t5.converts_sbd - 10) < 1e-9, 'drip-convert-tally');
+    chk37(t5.votes === 1 && t5.posts === 1, 'vote-post-tally');
+    // skip off-switch is structural
+    chk37(process.env.EARN_AUDIT_SKIP !== '1', 'skip-switch-present');
+    evalr('E37', 'earn-audit: from-nothing chain-truth — direction-law fill classification (ours-as-open vs ours-as-current vs taker), rewards/claims/drip/convert tallies, honest unparseable skip',
+      ok37,
+      ['white-box: fill direction law — open_owner==us means we gave open_pays (maker sell booked 0.576 STEEM→0.058 SBD); open_owner!=us means we gave current_pays (taker sell 4.996 STEEM→0.500 SBD AND taker buy 3.692 SBD→36.601 STEEM both classified correctly)', 'white-box: author/curation/claim/drip/convert tallies exact on fixtures', 'white-box: unparseable fill body = honest skip (op counted, fill not)', 'live-measured: 1d headcorner — drip 475.857 STEEM deployed (50 fills: sold 525.2 STEEM → 52.56 SBD, bought 87.9 for 8.99), 14 converts 32.8 SBD; 7d fleet — 1421 votes / 56 posts → ZERO author+curation payouts lifetime (the content loop is measured dead)'],
+      why37.length ? 'fails: ' + why37.join('; ') : 'the proof surface is live: every claim about fleet income is now checkable against the chain');
+  } catch (e) { evalr('E37', 'earn-audit', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
 
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.24.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.25.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];

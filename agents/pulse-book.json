@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "at": "2026-10-03T20:17:18.808Z",
+  "at": "2026-10-03T21:01:33.996Z",
   "since": "2026-10-02T16:40:20.950Z",
   "windowSince": "2026-10-02T16:40:20.950Z",
   "agent": "pulse v1.2.0 (CR-0009 loop, Rung 1; CR-0028 consumes the laya advisory triage; CR-0033 consumes the scheduled evolution-window evidence — Z-48/Z-49/Z-60/Z-62)",
@@ -9,8 +9,28 @@
     "count": 40,
     "commits": [
       {
-        "sha": "56965be",
+        "sha": "776141b",
+        "subject": "sovereign-tick: decision receipts [skip ci]"
+      },
+      {
+        "sha": "c601a9b",
+        "subject": "CR-0045 fix (infra-proven): sovereign-tick publish list was missing the .md twins (market-exec.md/market-cycle.md/fill-ledger.md) — the CI DRY exec run modified them unstaged and the rebase-push twin refused 3x ('cannot pull with rebase: You have unstaged changes'), stranding the runner receipts (run 37151285229 booked ARMED PLAN-DRY GAP-PACING 575s + drip STEADY on infra but could not push) — md twins staged, receipts flow at the next tick"
+      },
+      {
+        "sha": "43d5b2b",
+        "subject": "r184: BLURT_ACTIVE_WIF wired into twin anchor-lines (3rd rail live — blurtjs schema, proven block 64177707)"
+      },
+      {
+        "sha": "764a7e0",
+        "subject": "CR-0045 (PASS, tier B): fleet Rung 18 — THE ACQUISITION (operator: 'אוקי אז תשיג מה שצריך קדימה תמשיך') — (1) 24/7 CRON ARMED: repo secret STEEM_ACTIVE_WIF created via REST API (sealed box, 204, zero material on transcript); the :12/:42 sovereign tick now fires LIVE per sovereign-policy.json with verify-then-sign + caps + band + ADD-ONLY still binding at fire time; secrets census names-only (13) — 'יש לנו את כל המפתחות' verified; (2) D2 FUEL CANON: agents/drip-canon.cjs keyless on-chain readback (condenser primary + justyy cross 0.5% split-brain guard, unit clamp, atomic write, DRIP_CANON_SKIP off-switch) — THE MIXED-UNIT LAW measured live twice and coded: to_withdraw GESTS (µ-VESTS ÷1e6 → 1903.529118 SP) vs vesting_withdraw_rate VESTS (→ 475.88228 SP/wk); sovereign-drip.json {1903.53 SP, 67.98 SP/d, runway 28d, cross delta 0%} wired via SOVEREIGN_DRIP_JSON (cron step + env + publish list) — D2 verdict upgraded NO-DRIP-CANON → measured STEADY; (3) ESTATE RE-CLONE: 14 lanes restored (16/16 at /home/z/fleet) — census whole; (4) E36 EXT v1.24.0: mixed-unit fixture + unit-clamp refuse, one eval-caught fixture defect fixed (runway 0.0028d rounds to 0.0) — suite 36/36 GREEN, first fully green since the reset (E31/E32 healed by the re-clone); (5) LIVE receipts: tick #6 EXECUTE-LIVE (IN-POLICY, drip STEADY) → exec run #18 LIVE authority_ok TRUE, 6/6 STACK-EXISTS idempotent, 0 errors; feat-040 (40 rows)"
+      },
+      {
+        "sha": "3842823",
         "subject": "local books: desk receipts since Z-66 (canon-liveness, ci-hands, hands-book, pulse-book, one-bloc, census, ventures, parse-gate, fills)"
+      },
+      {
+        "sha": "e91e59a",
+        "subject": "treasury-route: capital book + router mirror · 2026-10-03T20:13:07Z"
       },
       {
         "sha": "660b67d",
@@ -147,26 +167,6 @@
       {
         "sha": "2ced810",
         "subject": "CR-0035 (PASS, tier B): fleet Rung 11 CONVERGENCE UNBLOCK — checkout wave 14/14 CLONED (16/16 repos LOCAL, ~880MB estate, metadata-only receipts, zero secret echoes; proximity gap from CR-0034 closed) — KEY FINDS: saos-dex grid-heartbeat twin ALREADY TICKING (dex-grid.yml + grid-trigger.yml + grid-beat.ts + db/grid-ledger + audit-package/{amm,mm}.ts), platform v111.0.0 strix RED-TEAM head with SAOS{Bridge,RelayBatch,Exchange,Ledger,SealGate}.t.sol, Zip r180 sovereign key vault, steem ladder-refresh ARMED 16:39; THREE-LAYER COMPOSITION LAW booked (market-grid=keyless official-surface observer / saos-dex grid-beat=DEX ledger / steem he_ladder=HE executor); TRON observation layer LIVE keyless (trongrid v1: custody box 2.000002 TRX, 1 active permission, nothing staked; TVM code honestly still absent — X-1+X-2 gates stand; hex-address gotcha booked); GRID TIME-SERIES: market-grid gains append-only per-invocation history row (pulled-schedule per the sibling's LAUNCH-CONTEXT law — no daemons), 2 rows, DRIFT MEASURED SBD/STEEM 1.5499%->1.3385% in ~3min (edge is real and moving); feat-029"
-      },
-      {
-        "sha": "43025b2",
-        "subject": "lane books: Rung 10 market-grid run on MERGED tree (sibling b53f741 Z-62 evo-windows absorbed; this lane renumbered CR-0034) — judge 41/0/0, evals 27/27 (sibling v1.16.0 suite E23 superset + E27), gate 14/0, DOMAIN-INIT-OK, ONE-BLOC 16/16 tokenReach 14"
-      },
-      {
-        "sha": "0ab691a",
-        "subject": "CR-0033 -> CR-0034 renumber (EIGHTH collision, later-mover law): sibling b53f741 renumbered its scheduled-evolution-windows desk to CR-0033 while this lane's market-grid landing was in flight — this lane is the later mover, renumbers; git mv + id + renumber_note + feat-028 references; zero content changes; their feat-031 exists only in their commit message (the #6 precedent) — file ledger contiguous, no feat conflict; the two landings COMPOSE (their scheduler respects this lane's :3041 mcp-host via SHIM_EVO_PORT=3052 port-partition)"
-      },
-      {
-        "sha": "850375f",
-        "subject": "lane books: Rung 10 convergence run on tree — judge 41/0/0, evals 26/26, gate 14/0, DOMAIN-INIT-OK, ONE-BLOC 16/16 tokenReach 14"
-      },
-      {
-        "sha": "0b05bb7",
-        "subject": "CR-0033 (PASS, tier B): fleet Rung 10 CONVERGENCE — the market-grid desk LANDS (owner directive: take the internal markets automatically with agent grids) — agents/market-grid.cjs keyless over the OFFICIAL chain surfaces (api.hive.blog + api.steemit.com condenser_api, api.hive-engine.com JSON-RPC): real orderbooks/tickers/tape in, REAL grids out (band clamped from 24h, spacing >= 0.4% round-trip floor, per-token feasibility), PAPER fills in a labeled append-only ledger (never laundered into realized book), 20 prebuilt limit_order_create payloads ALL stamped OWNER-GATED-NOT-BROADCAST (wallet authority stays the owner's — doctrine 1:1); first run MARKET-GRID-LIVE 3 markets / 5 grids / 0 errors; MEASURED EDGE: SBD/STEEM internal spread 1.5499% ≈ 6x HBD/HIVE 0.2598% (thin-market law), SWAP.DOGE 2.07% + CENT 3.04% grid-feasible, BEE/SWAP.LTC honestly infeasible below floor; pure grid math exported for future evals; THE CONVERGENCE AUDIT booked in-CR: 2/16 repos local, Defi layer LIVE (8 daemons 3033-3040, trigger mesh 47/47 chainRuns/24h, money-mover v1.9.0 BID-ONLY NO-FUEL 12/12 ops), fills-ledger 3.466847 SWAP.HIVE ≈ $0.19 lifetime, KPI L0 revenue $0.0029/day vs burn $4.2757/day (powerdown runway ~4 weeks), phase0Done=false (X-1 = the security ceiling, operator-hands-only), EVM state (SAOSLedger/SAOSExchange 46 Foundry tests + one OP anchor bit-verified + saos-jummper notary design; ZERO TVM code — TRON exit = code+capital+authority), vetted SOTA digest (official domains ONLY — non-official hits discarded unread; phishing discipline obeyed), WHY-SLOW answer: binding constraint = capital+authority, not code; feat-028"
-      },
-      {
-        "sha": "07fa9df",
-        "subject": "lane books: Z-62 CR-0033 refresh run on merged tree (sibling CR-0032/61844de Rung 9 + Rung-9 books absorbed; rebase book conflicts resolved freshest-then-refresh — every judge-read book re-measured on the merged tree: evals 27/27 (E23 superset + E27 new), judge 40 PASS / 1 WARN / 0 FAIL (WARN = ambient-storm one-bloc transient), pulse real-gated with the windowSince law live (legacy-transition snapshot books both lanes' 25h CR set honestly; next window clean))"
       }
     ]
   },
@@ -676,6 +676,14 @@
       "disposition": "ACCEPTED-TODAY"
     },
     {
+      "id": "CR-0045",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0045-the-acquisition.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "run-evals v1.24.0 fresh-process judge (36/36 GREEN — first fully green suite sin",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
       "id": "obs:one-bloc-boundary",
       "kind": "tier-c",
       "source": "one-bloc.json",
@@ -696,7 +704,7 @@
       "kind": "observation",
       "source": "evo-windows.json",
       "action": "carry the evolution-window cadence state into the record",
-      "receipt": "38 windows booked, none complete · next due 2026-10-04T12:45:05Z",
+      "receipt": "39 windows booked, none complete · next due 2026-10-04T12:45:05Z",
       "disposition": "BOOKED"
     }
   ],
@@ -704,7 +712,7 @@
     "PROPOSED-CR": 6,
     "GATED-BLOCKED": 2,
     "DEFERRED-TIER-C": 4,
-    "ACCEPTED-TODAY": 45,
+    "ACCEPTED-TODAY": 46,
     "ROLLED-BACK": 0,
     "BOOKED": 2
   },
@@ -717,7 +725,7 @@
     "joined": 7,
     "note": "fresh advisory triage joined by id — lane/urgency hints only, confidence uncalibrated (en checkpoint), dispositions untouched",
     "at": "2026-10-03T15:08:54Z",
-    "age_h": 5.1
+    "age_h": 5.9
   },
   "evoEvidence": {
     "mode": "CADENCE-ONLY",
