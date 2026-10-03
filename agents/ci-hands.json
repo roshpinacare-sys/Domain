@@ -1,270 +1,1555 @@
 {
  "ok": true,
- "at": "2026-10-03T19:24:02.487Z",
- "ms": 835,
+ "at": "2026-10-03T19:48:58.250Z",
+ "ms": 43637,
  "agent": "ci-hands v1.0.0 (Task 26 — trycua/cua adoption: the fleet gets HANDS on its own CI estate; cua-bench contract: trajectory + result + pass-rate; read-only actuator, STASIS-safe, tier law kept)",
  "reposDeclared": 16,
- "reposReached": 0,
- "reposUnreachable": 16,
+ "reposReached": 16,
+ "reposUnreachable": 0,
  "window": 30,
- "sampledRuns": 0,
- "lanes": 0,
- "green": 0,
+ "sampledRuns": 437,
+ "lanes": 52,
+ "green": 33,
  "activeRed": 0,
- "selfHealed": 0,
- "historyTransient": 0,
- "recurring": 0,
- "startupFailures": 0,
- "passRate": null,
+ "selfHealed": 1,
+ "historyTransient": 17,
+ "recurring": 1,
+ "startupFailures": 1,
+ "passRate": 63,
  "stasis": {
   "parseable": true,
   "active": false
  },
- "tokenMode": "keyless",
+ "tokenMode": "env-token (redacted)",
  "proposals": [],
  "results": [
   {
    "repo": "saos-sovereign-platform",
-   "status": "UNREACHABLE",
-   "sampled": 0,
+   "status": "REACHED",
+   "sampled": 30,
    "failures": [],
-   "lanes": {},
-   "reason": "HTTP 403"
+   "lanes": {
+    ".github/workflows/foundry-tests.yml": {
+     "display": "foundry-tests",
+     "latest": "success",
+     "latestAt": "2026-10-03T19:40:04Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/gitleaks.yml": {
+     "display": "gitleaks-secret-scan",
+     "latest": "success",
+     "latestAt": "2026-10-03T19:40:04Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/platform-selftest.yml": {
+     "display": "platform-selftest",
+     "latest": "success",
+     "latestAt": "2026-10-03T18:26:25Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    }
+   }
   },
   {
    "repo": "steem",
-   "status": "UNREACHABLE",
-   "sampled": 0,
+   "status": "REACHED",
+   "sampled": 30,
    "failures": [],
-   "lanes": {},
-   "reason": "HTTP 403"
+   "lanes": {
+    ".github/workflows/gitleaks.yml": {
+     "display": "gitleaks-secret-scan",
+     "latest": "success",
+     "latestAt": "2026-10-03T19:42:49Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    }
+   }
   },
   {
    "repo": "Domain",
-   "status": "UNREACHABLE",
-   "sampled": 0,
-   "failures": [],
-   "lanes": {},
-   "reason": "HTTP 403"
+   "status": "REACHED",
+   "sampled": 30,
+   "failures": [
+    {
+     "id": 37145509253,
+     "lane": ".github/workflows/vault-transfer.yml",
+     "event": "workflow_dispatch",
+     "at": "2026-10-03T18:47:11Z",
+     "class": "STEP-FAILURE"
+    },
+    {
+     "id": 37145413994,
+     "lane": ".github/workflows/vault-transfer.yml",
+     "event": "workflow_dispatch",
+     "at": "2026-10-03T18:45:39Z",
+     "class": "STEP-FAILURE"
+    }
+   ],
+   "lanes": {
+    ".github/workflows/cloud-heart.yml": {
+     "display": "cloud-heart",
+     "latest": "success",
+     "latestAt": "2026-10-03T19:42:11Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    "dynamic/pages/pages-build-deployment": {
+     "display": "pages build and deployment",
+     "latest": "success",
+     "latestAt": "2026-10-03T19:42:11Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/mirror-from-console.yml": {
+     "display": "mirror-from-console",
+     "latest": "success",
+     "latestAt": "2026-10-03T19:41:57Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/gitleaks.yml": {
+     "display": "gitleaks-secret-scan",
+     "latest": "success",
+     "latestAt": "2026-10-03T19:24:19Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/fleet-census-cron.yml": {
+     "display": "fleet-census-cron",
+     "latest": "success",
+     "latestAt": "2026-10-03T19:18:21Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/weave-anchor-lines.yml": {
+     "display": "weave-anchor-lines",
+     "latest": "success",
+     "latestAt": "2026-10-03T19:02:52Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/watchdog.yml": {
+     "display": "watchdog",
+     "latest": "success",
+     "latestAt": "2026-10-03T19:02:33Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/weave-heart.yml": {
+     "display": "weave-heart",
+     "latest": "success",
+     "latestAt": "2026-10-03T19:02:21Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/tri-bridge.yml": {
+     "display": "tri-bridge",
+     "latest": "success",
+     "latestAt": "2026-10-03T18:59:35Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/web-publish.yml": {
+     "display": "web-publish",
+     "latest": "success",
+     "latestAt": "2026-10-03T18:58:20Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/vault-transfer.yml": {
+     "display": "vault-transfer",
+     "latest": "success",
+     "latestAt": "2026-10-03T18:50:30Z",
+     "failures": 2,
+     "verdict": "SELF-HEALED",
+     "classes": {
+      "37145509253": "STEP-FAILURE",
+      "37145413994": "STEP-FAILURE"
+     }
+    },
+    ".github/workflows/anchor-execute.yml": {
+     "display": "anchor-execute",
+     "latest": "success",
+     "latestAt": "2026-10-03T18:47:42Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    }
+   }
   },
   {
    "repo": "Console",
-   "status": "UNREACHABLE",
-   "sampled": 0,
+   "status": "REACHED",
+   "sampled": 30,
    "failures": [],
-   "lanes": {},
-   "reason": "HTTP 403"
+   "lanes": {
+    "dynamic/pages/pages-build-deployment": {
+     "display": "pages build and deployment",
+     "latest": "success",
+     "latestAt": "2026-10-03T19:44:00Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/trigger-mesh.yml": {
+     "display": "trigger-mesh",
+     "latest": "success",
+     "latestAt": "2026-10-03T19:43:52Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/gitleaks.yml": {
+     "display": "gitleaks-secret-scan",
+     "latest": "success",
+     "latestAt": "2026-10-03T19:02:48Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/truth-gate.yml": {
+     "display": "truth-gate",
+     "latest": "success",
+     "latestAt": "2026-10-03T19:02:27Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/grid-pulse.yml": {
+     "display": "grid-pulse",
+     "latest": "success",
+     "latestAt": "2026-10-03T18:58:16Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/money-watch.yml": {
+     "display": "money-watch",
+     "latest": "success",
+     "latestAt": "2026-10-03T18:43:45Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/dex-watch.yml": {
+     "display": "dex-watch",
+     "latest": "success",
+     "latestAt": "2026-10-03T18:40:59Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/agent-verify.yml": {
+     "display": "agent-verify",
+     "latest": "success",
+     "latestAt": "2026-10-03T17:50:53Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/console-publish.yml": {
+     "display": "console-publish",
+     "latest": "success",
+     "latestAt": "2026-10-03T14:48:42Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/agents-watch.yml": {
+     "display": "agents-watch",
+     "latest": "success",
+     "latestAt": "2026-10-03T14:48:40Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    }
+   }
   },
   {
    "repo": "Zip",
-   "status": "UNREACHABLE",
-   "sampled": 0,
+   "status": "REACHED",
+   "sampled": 30,
    "failures": [],
-   "lanes": {},
-   "reason": "HTTP 403"
+   "lanes": {
+    ".github/workflows/gitleaks.yml": {
+     "display": "gitleaks-secret-scan",
+     "latest": "success",
+     "latestAt": "2026-10-03T19:31:30Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/weave-anchor-lines.yml": {
+     "display": "weave-anchor-lines",
+     "latest": "success",
+     "latestAt": "2026-10-03T18:58:05Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/fleet-audit.yml": {
+     "display": "fleet-audit",
+     "latest": "success",
+     "latestAt": "2026-10-03T16:19:38Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    }
+   }
   },
   {
    "repo": "roshpina",
-   "status": "UNREACHABLE",
-   "sampled": 0,
-   "failures": [],
-   "lanes": {},
-   "reason": "HTTP 403"
+   "status": "REACHED",
+   "sampled": 26,
+   "failures": [
+    {
+     "id": 36768071537,
+     "lane": ".github/workflows/gitleaks.yml",
+     "event": "push",
+     "at": "2026-09-30T19:47:09Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36753693248,
+     "lane": ".github/workflows/gitleaks.yml",
+     "event": "push",
+     "at": "2026-09-30T17:45:35Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36750723466,
+     "lane": ".github/workflows/gitleaks.yml",
+     "event": "push",
+     "at": "2026-09-30T17:20:52Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36750400551,
+     "lane": ".github/workflows/gitleaks.yml",
+     "event": "push",
+     "at": "2026-09-30T17:18:07Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36690632964,
+     "lane": ".github/workflows/controls-audit.yml",
+     "event": "schedule",
+     "at": "2026-09-30T08:35:17Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36543566418,
+     "lane": ".github/workflows/controls-audit.yml",
+     "event": "schedule",
+     "at": "2026-09-29T08:34:22Z",
+     "class": "JOB-STARTUP"
+    }
+   ],
+   "lanes": {
+    ".github/workflows/controls-audit.yml": {
+     "display": "controls-audit",
+     "latest": "success",
+     "latestAt": "2026-10-03T08:32:24Z",
+     "failures": 11,
+     "verdict": "HISTORY-TRANSIENT",
+     "classes": {
+      "36690632964": "JOB-STARTUP",
+      "36543566418": "JOB-STARTUP"
+     }
+    },
+    ".github/workflows/gitleaks.yml": {
+     "display": "gitleaks-secret-scan",
+     "latest": "success",
+     "latestAt": "2026-10-02T21:51:00Z",
+     "failures": 4,
+     "verdict": "HISTORY-TRANSIENT",
+     "classes": {
+      "36768071537": "JOB-STARTUP",
+      "36753693248": "JOB-STARTUP",
+      "36750723466": "JOB-STARTUP",
+      "36750400551": "JOB-STARTUP"
+     }
+    }
+   }
   },
   {
    "repo": "anchor-baseline",
-   "status": "UNREACHABLE",
-   "sampled": 0,
-   "failures": [],
-   "lanes": {},
-   "reason": "HTTP 403"
+   "status": "REACHED",
+   "sampled": 25,
+   "failures": [
+    {
+     "id": 36768064520,
+     "lane": ".github/workflows/gitleaks.yml",
+     "event": "push",
+     "at": "2026-09-30T19:47:05Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36753661202,
+     "lane": ".github/workflows/gitleaks.yml",
+     "event": "push",
+     "at": "2026-09-30T17:45:20Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36750389702,
+     "lane": ".github/workflows/gitleaks.yml",
+     "event": "push",
+     "at": "2026-09-30T17:18:01Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36683935612,
+     "lane": ".github/workflows/baseline-integrity.yml",
+     "event": "schedule",
+     "at": "2026-09-30T07:28:58Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36536725002,
+     "lane": ".github/workflows/baseline-integrity.yml",
+     "event": "schedule",
+     "at": "2026-09-29T07:27:22Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36391781171,
+     "lane": ".github/workflows/baseline-integrity.yml",
+     "event": "schedule",
+     "at": "2026-09-28T07:27:52Z",
+     "class": "JOB-STARTUP"
+    }
+   ],
+   "lanes": {
+    ".github/workflows/baseline-integrity.yml": {
+     "display": "baseline-integrity",
+     "latest": "success",
+     "latestAt": "2026-10-03T07:28:03Z",
+     "failures": 11,
+     "verdict": "HISTORY-TRANSIENT",
+     "classes": {
+      "36683935612": "JOB-STARTUP",
+      "36536725002": "JOB-STARTUP",
+      "36391781171": "JOB-STARTUP"
+     }
+    },
+    ".github/workflows/gitleaks.yml": {
+     "display": "gitleaks-secret-scan",
+     "latest": "success",
+     "latestAt": "2026-10-02T21:55:01Z",
+     "failures": 3,
+     "verdict": "HISTORY-TRANSIENT",
+     "classes": {
+      "36768064520": "JOB-STARTUP",
+      "36753661202": "JOB-STARTUP",
+      "36750389702": "JOB-STARTUP"
+     }
+    }
+   }
   },
   {
    "repo": "Saosmartwallet",
-   "status": "UNREACHABLE",
-   "sampled": 0,
-   "failures": [],
-   "lanes": {},
-   "reason": "HTTP 403"
+   "status": "REACHED",
+   "sampled": 27,
+   "failures": [
+    {
+     "id": 36768047447,
+     "lane": ".github/workflows/gitleaks.yml",
+     "event": "push",
+     "at": "2026-09-30T19:46:56Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36764432958,
+     "lane": ".github/workflows/gitleaks.yml",
+     "event": "push",
+     "at": "2026-09-30T19:15:46Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36750335819,
+     "lane": ".github/workflows/gitleaks.yml",
+     "event": "push",
+     "at": "2026-09-30T17:17:34Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36733332683,
+     "lane": ".github/workflows/wallet-verify.yml",
+     "event": "schedule",
+     "at": "2026-09-30T14:59:43Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36586434321,
+     "lane": ".github/workflows/wallet-verify.yml",
+     "event": "schedule",
+     "at": "2026-09-29T14:57:04Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36440023797,
+     "lane": ".github/workflows/wallet-verify.yml",
+     "event": "schedule",
+     "at": "2026-09-28T14:58:29Z",
+     "class": "JOB-STARTUP"
+    }
+   ],
+   "lanes": {
+    ".github/workflows/wallet-verify.yml": {
+     "display": "wallet-verify",
+     "latest": "success",
+     "latestAt": "2026-10-03T18:39:01Z",
+     "failures": 14,
+     "verdict": "HISTORY-TRANSIENT",
+     "classes": {
+      "36733332683": "JOB-STARTUP",
+      "36586434321": "JOB-STARTUP",
+      "36440023797": "JOB-STARTUP"
+     }
+    },
+    ".github/workflows/gitleaks.yml": {
+     "display": "gitleaks-secret-scan",
+     "latest": "success",
+     "latestAt": "2026-10-02T22:48:06Z",
+     "failures": 3,
+     "verdict": "HISTORY-TRANSIENT",
+     "classes": {
+      "36768047447": "JOB-STARTUP",
+      "36764432958": "JOB-STARTUP",
+      "36750335819": "JOB-STARTUP"
+     }
+    }
+   }
   },
   {
    "repo": "Sdk",
-   "status": "UNREACHABLE",
-   "sampled": 0,
-   "failures": [],
-   "lanes": {},
-   "reason": "HTTP 403"
+   "status": "REACHED",
+   "sampled": 25,
+   "failures": [
+    {
+     "id": 36768053388,
+     "lane": ".github/workflows/gitleaks.yml",
+     "event": "push",
+     "at": "2026-09-30T19:46:59Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36753654469,
+     "lane": ".github/workflows/gitleaks.yml",
+     "event": "push",
+     "at": "2026-09-30T17:45:17Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36750378719,
+     "lane": ".github/workflows/gitleaks.yml",
+     "event": "push",
+     "at": "2026-09-30T17:17:56Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36697232579,
+     "lane": ".github/workflows/sdk-verify.yml",
+     "event": "schedule",
+     "at": "2026-09-30T09:36:57Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36550318020,
+     "lane": ".github/workflows/sdk-verify.yml",
+     "event": "schedule",
+     "at": "2026-09-29T09:37:04Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36404673684,
+     "lane": ".github/workflows/sdk-verify.yml",
+     "event": "schedule",
+     "at": "2026-09-28T09:37:19Z",
+     "class": "JOB-STARTUP"
+    }
+   ],
+   "lanes": {
+    ".github/workflows/sdk-verify.yml": {
+     "display": "sdk-verify",
+     "latest": "success",
+     "latestAt": "2026-10-03T09:35:27Z",
+     "failures": 11,
+     "verdict": "HISTORY-TRANSIENT",
+     "classes": {
+      "36697232579": "JOB-STARTUP",
+      "36550318020": "JOB-STARTUP",
+      "36404673684": "JOB-STARTUP"
+     }
+    },
+    ".github/workflows/gitleaks.yml": {
+     "display": "gitleaks-secret-scan",
+     "latest": "success",
+     "latestAt": "2026-10-02T21:49:00Z",
+     "failures": 3,
+     "verdict": "HISTORY-TRANSIENT",
+     "classes": {
+      "36768053388": "JOB-STARTUP",
+      "36753654469": "JOB-STARTUP",
+      "36750378719": "JOB-STARTUP"
+     }
+    }
+   }
   },
   {
    "repo": "Project-files",
-   "status": "UNREACHABLE",
-   "sampled": 0,
-   "failures": [],
-   "lanes": {},
-   "reason": "HTTP 403"
+   "status": "REACHED",
+   "sampled": 11,
+   "failures": [
+    {
+     "id": 36768042926,
+     "lane": ".github/workflows/gitleaks.yml",
+     "event": "push",
+     "at": "2026-09-30T19:46:54Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36753633822,
+     "lane": ".github/workflows/gitleaks.yml",
+     "event": "push",
+     "at": "2026-09-30T17:45:07Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36750368443,
+     "lane": ".github/workflows/gitleaks.yml",
+     "event": "push",
+     "at": "2026-09-30T17:17:50Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36417421806,
+     "lane": ".github/workflows/archive-keeper.yml",
+     "event": "schedule",
+     "at": "2026-09-28T11:44:08Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 35595400478,
+     "lane": ".github/workflows/archive-keeper.yml",
+     "event": "schedule",
+     "at": "2026-09-21T11:41:25Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 35150225633,
+     "lane": ".github/workflows/archive-keeper.yml",
+     "event": "push",
+     "at": "2026-09-16T21:03:40Z",
+     "class": "STARTUP-FAILURE"
+    }
+   ],
+   "lanes": {
+    ".github/workflows/archive-keeper.yml": {
+     "display": "archive-keeper",
+     "latest": "success",
+     "latestAt": "2026-10-03T01:07:39Z",
+     "failures": 3,
+     "verdict": "HISTORY-TRANSIENT",
+     "classes": {
+      "36417421806": "JOB-STARTUP",
+      "35595400478": "JOB-STARTUP",
+      "35150225633": "STARTUP-FAILURE"
+     }
+    },
+    ".github/workflows/gitleaks.yml": {
+     "display": "gitleaks-secret-scan",
+     "latest": "success",
+     "latestAt": "2026-10-02T21:54:02Z",
+     "failures": 3,
+     "verdict": "HISTORY-TRANSIENT",
+     "classes": {
+      "36768042926": "JOB-STARTUP",
+      "36753633822": "JOB-STARTUP",
+      "36750368443": "JOB-STARTUP"
+     }
+    }
+   }
   },
   {
    "repo": "Adsmarket",
-   "status": "UNREACHABLE",
-   "sampled": 0,
-   "failures": [],
-   "lanes": {},
-   "reason": "HTTP 403"
+   "status": "REACHED",
+   "sampled": 27,
+   "failures": [
+    {
+     "id": 36768031262,
+     "lane": ".github/workflows/gitleaks.yml",
+     "event": "push",
+     "at": "2026-09-30T19:46:48Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36753680607,
+     "lane": ".github/workflows/gitleaks.yml",
+     "event": "push",
+     "at": "2026-09-30T17:45:29Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36750357327,
+     "lane": ".github/workflows/gitleaks.yml",
+     "event": "push",
+     "at": "2026-09-30T17:17:44Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36678609491,
+     "lane": ".github/workflows/claims-guard.yml",
+     "event": "schedule",
+     "at": "2026-09-30T06:30:49Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36531412493,
+     "lane": ".github/workflows/claims-guard.yml",
+     "event": "schedule",
+     "at": "2026-09-29T06:30:25Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36386996977,
+     "lane": ".github/workflows/claims-guard.yml",
+     "event": "schedule",
+     "at": "2026-09-28T06:32:38Z",
+     "class": "JOB-STARTUP"
+    }
+   ],
+   "lanes": {
+    ".github/workflows/claims-guard.yml": {
+     "display": "claims-guard",
+     "latest": "success",
+     "latestAt": "2026-10-03T06:32:16Z",
+     "failures": 13,
+     "verdict": "HISTORY-TRANSIENT",
+     "classes": {
+      "36678609491": "JOB-STARTUP",
+      "36531412493": "JOB-STARTUP",
+      "36386996977": "JOB-STARTUP"
+     }
+    },
+    ".github/workflows/gitleaks.yml": {
+     "display": "gitleaks-secret-scan",
+     "latest": "success",
+     "latestAt": "2026-10-02T21:50:03Z",
+     "failures": 3,
+     "verdict": "HISTORY-TRANSIENT",
+     "classes": {
+      "36768031262": "JOB-STARTUP",
+      "36753680607": "JOB-STARTUP",
+      "36750357327": "JOB-STARTUP"
+     }
+    }
+   }
   },
   {
    "repo": "Defi",
-   "status": "UNREACHABLE",
-   "sampled": 0,
+   "status": "REACHED",
+   "sampled": 30,
    "failures": [],
-   "lanes": {},
-   "reason": "HTTP 403"
+   "lanes": {
+    ".github/workflows/canary.yml": {
+     "display": "canary",
+     "latest": "success",
+     "latestAt": "2026-10-03T15:25:12Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/gitleaks.yml": {
+     "display": "gitleaks-secret-scan",
+     "latest": "success",
+     "latestAt": "2026-10-03T13:39:59Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    }
+   }
   },
   {
    "repo": "saos-dex",
-   "status": "UNREACHABLE",
-   "sampled": 0,
+   "status": "REACHED",
+   "sampled": 30,
    "failures": [],
-   "lanes": {},
-   "reason": "HTTP 403"
+   "lanes": {
+    ".github/workflows/gitleaks.yml": {
+     "display": "gitleaks-secret-scan",
+     "latest": "success",
+     "latestAt": "2026-10-03T17:52:10Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/dex-grid.yml": {
+     "display": "dex-grid",
+     "latest": "success",
+     "latestAt": "2026-10-03T02:21:09Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/dex-beat.yml": {
+     "display": "dex-beat",
+     "latest": "success",
+     "latestAt": "2026-10-03T00:00:48Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    }
+   }
   },
   {
    "repo": "saos-jummper",
-   "status": "UNREACHABLE",
-   "sampled": 0,
-   "failures": [],
-   "lanes": {},
-   "reason": "HTTP 403"
+   "status": "REACHED",
+   "sampled": 30,
+   "failures": [
+    {
+     "id": 36768088206,
+     "lane": ".github/workflows/gitleaks.yml",
+     "event": "push",
+     "at": "2026-09-30T19:47:18Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36757952771,
+     "lane": ".github/workflows/gitleaks.yml",
+     "event": "push",
+     "at": "2026-09-30T18:21:08Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36757672178,
+     "lane": ".github/workflows/gitleaks.yml",
+     "event": "push",
+     "at": "2026-09-30T18:18:47Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36754019986,
+     "lane": ".github/workflows/gitleaks.yml",
+     "event": "push",
+     "at": "2026-09-30T17:48:20Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36703805595,
+     "lane": ".github/workflows/jumpper-tests.yml",
+     "event": "schedule",
+     "at": "2026-09-30T10:40:06Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36557018909,
+     "lane": ".github/workflows/jumpper-tests.yml",
+     "event": "schedule",
+     "at": "2026-09-29T10:40:33Z",
+     "class": "JOB-STARTUP"
+    }
+   ],
+   "lanes": {
+    ".github/workflows/gitleaks.yml": {
+     "display": "gitleaks-secret-scan",
+     "latest": "success",
+     "latestAt": "2026-10-03T14:01:41Z",
+     "failures": 4,
+     "verdict": "HISTORY-TRANSIENT",
+     "classes": {
+      "36768088206": "JOB-STARTUP",
+      "36757952771": "JOB-STARTUP",
+      "36757672178": "JOB-STARTUP",
+      "36754019986": "JOB-STARTUP"
+     }
+    },
+    ".github/workflows/jumpper-tests.yml": {
+     "display": "jumpper-tests",
+     "latest": "success",
+     "latestAt": "2026-10-03T10:51:10Z",
+     "failures": 12,
+     "verdict": "HISTORY-TRANSIENT",
+     "classes": {
+      "36703805595": "JOB-STARTUP",
+      "36557018909": "JOB-STARTUP"
+     }
+    }
+   }
   },
   {
    "repo": "saos-control-center",
-   "status": "UNREACHABLE",
-   "sampled": 0,
-   "failures": [],
-   "lanes": {},
-   "reason": "HTTP 403"
+   "status": "REACHED",
+   "sampled": 26,
+   "failures": [
+    {
+     "id": 36768076657,
+     "lane": ".github/workflows/gitleaks.yml",
+     "event": "push",
+     "at": "2026-09-30T19:47:12Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36764785907,
+     "lane": ".github/workflows/gitleaks.yml",
+     "event": "push",
+     "at": "2026-09-30T19:18:48Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36750346768,
+     "lane": ".github/workflows/gitleaks.yml",
+     "event": "push",
+     "at": "2026-09-30T17:17:39Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36717649400,
+     "lane": ".github/workflows/control-center-build.yml",
+     "event": "schedule",
+     "at": "2026-09-30T12:52:38Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36570899106,
+     "lane": ".github/workflows/control-center-build.yml",
+     "event": "schedule",
+     "at": "2026-09-29T12:51:04Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36424457495,
+     "lane": ".github/workflows/control-center-build.yml",
+     "event": "schedule",
+     "at": "2026-09-28T12:50:43Z",
+     "class": "JOB-STARTUP"
+    }
+   ],
+   "lanes": {
+    ".github/workflows/control-center-build.yml": {
+     "display": "control-center-build",
+     "latest": "success",
+     "latestAt": "2026-10-03T16:43:29Z",
+     "failures": 13,
+     "verdict": "HISTORY-TRANSIENT",
+     "classes": {
+      "36717649400": "JOB-STARTUP",
+      "36570899106": "JOB-STARTUP",
+      "36424457495": "JOB-STARTUP"
+     }
+    },
+    ".github/workflows/gitleaks.yml": {
+     "display": "gitleaks-secret-scan",
+     "latest": "success",
+     "latestAt": "2026-10-02T22:52:04Z",
+     "failures": 3,
+     "verdict": "HISTORY-TRANSIENT",
+     "classes": {
+      "36768076657": "JOB-STARTUP",
+      "36764785907": "JOB-STARTUP",
+      "36750346768": "JOB-STARTUP"
+     }
+    }
+   }
   },
   {
    "repo": "saos-sovereign-foundry",
-   "status": "UNREACHABLE",
-   "sampled": 0,
-   "failures": [],
-   "lanes": {},
-   "reason": "HTTP 403"
+   "status": "REACHED",
+   "sampled": 30,
+   "failures": [
+    {
+     "id": 37075087248,
+     "lane": ".github/workflows/ci.yml",
+     "event": "push",
+     "at": "2026-10-02T22:56:04Z",
+     "class": "STEP-FAILURE"
+    },
+    {
+     "id": 37066165510,
+     "lane": ".github/workflows/ci.yml",
+     "event": "push",
+     "at": "2026-10-02T21:19:43Z",
+     "class": "STEP-FAILURE"
+    },
+    {
+     "id": 36917630108,
+     "lane": ".github/workflows/ci.yml",
+     "event": "push",
+     "at": "2026-10-01T19:53:42Z",
+     "class": "STEP-FAILURE"
+    },
+    {
+     "id": 36768092568,
+     "lane": ".github/workflows/gitleaks.yml",
+     "event": "push",
+     "at": "2026-09-30T19:47:20Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36768092482,
+     "lane": ".github/workflows/ci.yml",
+     "event": "push",
+     "at": "2026-09-30T19:47:20Z",
+     "class": "JOB-STARTUP"
+    },
+    {
+     "id": 36764454503,
+     "lane": ".github/workflows/ci.yml",
+     "event": "push",
+     "at": "2026-09-30T19:15:57Z",
+     "class": "JOB-STARTUP"
+    }
+   ],
+   "lanes": {
+    ".github/workflows/ci.yml": {
+     "display": "CI",
+     "latest": "success",
+     "latestAt": "2026-10-03T01:03:32Z",
+     "failures": 15,
+     "verdict": "RECURRING",
+     "classes": {
+      "37075087248": "STEP-FAILURE",
+      "37066165510": "STEP-FAILURE",
+      "36917630108": "STEP-FAILURE",
+      "36768092482": "JOB-STARTUP",
+      "36764454503": "JOB-STARTUP"
+     }
+    },
+    ".github/workflows/gitleaks.yml": {
+     "display": "gitleaks-secret-scan",
+     "latest": "success",
+     "latestAt": "2026-10-03T01:03:32Z",
+     "failures": 9,
+     "verdict": "HISTORY-TRANSIENT",
+     "classes": {
+      "36768092568": "JOB-STARTUP"
+     }
+    }
+   }
   }
  ],
  "trajectory": [
   {
-   "ts": "2026-10-03T19:24:02.653Z",
+   "ts": "2026-10-03T19:48:59.239Z",
    "action": "list-runs",
    "target": "saos-sovereign-platform",
-   "outcome": 403,
-   "ms": 166
+   "outcome": 200,
+   "ms": 989
   },
   {
-   "ts": "2026-10-03T19:24:02.771Z",
+   "ts": "2026-10-03T19:49:00.182Z",
    "action": "list-runs",
    "target": "steem",
-   "outcome": 403,
-   "ms": 118
+   "outcome": 200,
+   "ms": 908
   },
   {
-   "ts": "2026-10-03T19:24:02.810Z",
+   "ts": "2026-10-03T19:49:01.025Z",
    "action": "list-runs",
    "target": "Domain",
-   "outcome": 403,
-   "ms": 39
+   "outcome": 200,
+   "ms": 839
   },
   {
-   "ts": "2026-10-03T19:24:02.850Z",
+   "ts": "2026-10-03T19:49:01.658Z",
+   "action": "probe-jobs",
+   "target": "Domain/37145509253",
+   "outcome": 200,
+   "ms": 437
+  },
+  {
+   "ts": "2026-10-03T19:49:02.199Z",
+   "action": "probe-jobs",
+   "target": "Domain/37145413994",
+   "outcome": 200,
+   "ms": 540
+  },
+  {
+   "ts": "2026-10-03T19:49:03.144Z",
    "action": "list-runs",
    "target": "Console",
-   "outcome": 403,
-   "ms": 40
+   "outcome": 200,
+   "ms": 945
   },
   {
-   "ts": "2026-10-03T19:24:02.889Z",
+   "ts": "2026-10-03T19:49:04.027Z",
    "action": "list-runs",
    "target": "Zip",
-   "outcome": 403,
-   "ms": 39
+   "outcome": 200,
+   "ms": 878
   },
   {
-   "ts": "2026-10-03T19:24:02.929Z",
+   "ts": "2026-10-03T19:49:05.039Z",
    "action": "list-runs",
    "target": "roshpina",
-   "outcome": 403,
-   "ms": 40
+   "outcome": 200,
+   "ms": 815
   },
   {
-   "ts": "2026-10-03T19:24:02.968Z",
+   "ts": "2026-10-03T19:49:05.530Z",
+   "action": "probe-jobs",
+   "target": "roshpina/36768071537",
+   "outcome": 200,
+   "ms": 487
+  },
+  {
+   "ts": "2026-10-03T19:49:06.023Z",
+   "action": "probe-jobs",
+   "target": "roshpina/36753693248",
+   "outcome": 200,
+   "ms": 492
+  },
+  {
+   "ts": "2026-10-03T19:49:06.478Z",
+   "action": "probe-jobs",
+   "target": "roshpina/36750723466",
+   "outcome": 200,
+   "ms": 454
+  },
+  {
+   "ts": "2026-10-03T19:49:06.949Z",
+   "action": "probe-jobs",
+   "target": "roshpina/36750400551",
+   "outcome": 200,
+   "ms": 471
+  },
+  {
+   "ts": "2026-10-03T19:49:07.488Z",
+   "action": "probe-jobs",
+   "target": "roshpina/36690632964",
+   "outcome": 200,
+   "ms": 538
+  },
+  {
+   "ts": "2026-10-03T19:49:07.982Z",
+   "action": "probe-jobs",
+   "target": "roshpina/36543566418",
+   "outcome": 200,
+   "ms": 493
+  },
+  {
+   "ts": "2026-10-03T19:49:08.781Z",
    "action": "list-runs",
    "target": "anchor-baseline",
-   "outcome": 403,
-   "ms": 39
+   "outcome": 200,
+   "ms": 798
   },
   {
-   "ts": "2026-10-03T19:24:03.007Z",
+   "ts": "2026-10-03T19:49:09.291Z",
+   "action": "probe-jobs",
+   "target": "anchor-baseline/36768064520",
+   "outcome": 200,
+   "ms": 506
+  },
+  {
+   "ts": "2026-10-03T19:49:09.841Z",
+   "action": "probe-jobs",
+   "target": "anchor-baseline/36753661202",
+   "outcome": 200,
+   "ms": 550
+  },
+  {
+   "ts": "2026-10-03T19:49:10.309Z",
+   "action": "probe-jobs",
+   "target": "anchor-baseline/36750389702",
+   "outcome": 200,
+   "ms": 468
+  },
+  {
+   "ts": "2026-10-03T19:49:11.258Z",
+   "action": "probe-jobs",
+   "target": "anchor-baseline/36683935612",
+   "outcome": 200,
+   "ms": 949
+  },
+  {
+   "ts": "2026-10-03T19:49:11.815Z",
+   "action": "probe-jobs",
+   "target": "anchor-baseline/36536725002",
+   "outcome": 200,
+   "ms": 556
+  },
+  {
+   "ts": "2026-10-03T19:49:12.749Z",
+   "action": "probe-jobs",
+   "target": "anchor-baseline/36391781171",
+   "outcome": 200,
+   "ms": 933
+  },
+  {
+   "ts": "2026-10-03T19:49:13.515Z",
    "action": "list-runs",
    "target": "Saosmartwallet",
-   "outcome": 403,
-   "ms": 39
+   "outcome": 200,
+   "ms": 766
   },
   {
-   "ts": "2026-10-03T19:24:03.047Z",
+   "ts": "2026-10-03T19:49:14.114Z",
+   "action": "probe-jobs",
+   "target": "Saosmartwallet/36768047447",
+   "outcome": 200,
+   "ms": 595
+  },
+  {
+   "ts": "2026-10-03T19:49:14.696Z",
+   "action": "probe-jobs",
+   "target": "Saosmartwallet/36764432958",
+   "outcome": 200,
+   "ms": 581
+  },
+  {
+   "ts": "2026-10-03T19:49:15.239Z",
+   "action": "probe-jobs",
+   "target": "Saosmartwallet/36750335819",
+   "outcome": 200,
+   "ms": 542
+  },
+  {
+   "ts": "2026-10-03T19:49:16.113Z",
+   "action": "probe-jobs",
+   "target": "Saosmartwallet/36733332683",
+   "outcome": 200,
+   "ms": 873
+  },
+  {
+   "ts": "2026-10-03T19:49:16.595Z",
+   "action": "probe-jobs",
+   "target": "Saosmartwallet/36586434321",
+   "outcome": 200,
+   "ms": 482
+  },
+  {
+   "ts": "2026-10-03T19:49:17.111Z",
+   "action": "probe-jobs",
+   "target": "Saosmartwallet/36440023797",
+   "outcome": 200,
+   "ms": 516
+  },
+  {
+   "ts": "2026-10-03T19:49:17.854Z",
    "action": "list-runs",
    "target": "Sdk",
-   "outcome": 403,
-   "ms": 40
+   "outcome": 200,
+   "ms": 743
   },
   {
-   "ts": "2026-10-03T19:24:03.086Z",
+   "ts": "2026-10-03T19:49:18.530Z",
+   "action": "probe-jobs",
+   "target": "Sdk/36768053388",
+   "outcome": 200,
+   "ms": 482
+  },
+  {
+   "ts": "2026-10-03T19:49:19.019Z",
+   "action": "probe-jobs",
+   "target": "Sdk/36753654469",
+   "outcome": 200,
+   "ms": 489
+  },
+  {
+   "ts": "2026-10-03T19:49:19.594Z",
+   "action": "probe-jobs",
+   "target": "Sdk/36750378719",
+   "outcome": 200,
+   "ms": 575
+  },
+  {
+   "ts": "2026-10-03T19:49:20.165Z",
+   "action": "probe-jobs",
+   "target": "Sdk/36697232579",
+   "outcome": 200,
+   "ms": 570
+  },
+  {
+   "ts": "2026-10-03T19:49:20.648Z",
+   "action": "probe-jobs",
+   "target": "Sdk/36550318020",
+   "outcome": 200,
+   "ms": 481
+  },
+  {
+   "ts": "2026-10-03T19:49:21.123Z",
+   "action": "probe-jobs",
+   "target": "Sdk/36404673684",
+   "outcome": 200,
+   "ms": 475
+  },
+  {
+   "ts": "2026-10-03T19:49:21.647Z",
    "action": "list-runs",
    "target": "Project-files",
-   "outcome": 403,
-   "ms": 39
+   "outcome": 200,
+   "ms": 524
   },
   {
-   "ts": "2026-10-03T19:24:03.124Z",
+   "ts": "2026-10-03T19:49:22.155Z",
+   "action": "probe-jobs",
+   "target": "Project-files/36768042926",
+   "outcome": 200,
+   "ms": 506
+  },
+  {
+   "ts": "2026-10-03T19:49:22.726Z",
+   "action": "probe-jobs",
+   "target": "Project-files/36753633822",
+   "outcome": 200,
+   "ms": 570
+  },
+  {
+   "ts": "2026-10-03T19:49:23.201Z",
+   "action": "probe-jobs",
+   "target": "Project-files/36750368443",
+   "outcome": 200,
+   "ms": 474
+  },
+  {
+   "ts": "2026-10-03T19:49:23.726Z",
+   "action": "probe-jobs",
+   "target": "Project-files/36417421806",
+   "outcome": 200,
+   "ms": 524
+  },
+  {
+   "ts": "2026-10-03T19:49:24.192Z",
+   "action": "probe-jobs",
+   "target": "Project-files/35595400478",
+   "outcome": 200,
+   "ms": 466
+  },
+  {
+   "ts": "2026-10-03T19:49:24.584Z",
+   "action": "probe-jobs",
+   "target": "Project-files/35150225633",
+   "outcome": 200,
+   "ms": 392
+  },
+  {
+   "ts": "2026-10-03T19:49:25.339Z",
    "action": "list-runs",
    "target": "Adsmarket",
-   "outcome": 403,
-   "ms": 38
+   "outcome": 200,
+   "ms": 754
   },
   {
-   "ts": "2026-10-03T19:24:03.163Z",
+   "ts": "2026-10-03T19:49:25.895Z",
+   "action": "probe-jobs",
+   "target": "Adsmarket/36768031262",
+   "outcome": 200,
+   "ms": 552
+  },
+  {
+   "ts": "2026-10-03T19:49:26.446Z",
+   "action": "probe-jobs",
+   "target": "Adsmarket/36753680607",
+   "outcome": 200,
+   "ms": 551
+  },
+  {
+   "ts": "2026-10-03T19:49:26.915Z",
+   "action": "probe-jobs",
+   "target": "Adsmarket/36750357327",
+   "outcome": 200,
+   "ms": 468
+  },
+  {
+   "ts": "2026-10-03T19:49:27.388Z",
+   "action": "probe-jobs",
+   "target": "Adsmarket/36678609491",
+   "outcome": 200,
+   "ms": 472
+  },
+  {
+   "ts": "2026-10-03T19:49:27.968Z",
+   "action": "probe-jobs",
+   "target": "Adsmarket/36531412493",
+   "outcome": 200,
+   "ms": 579
+  },
+  {
+   "ts": "2026-10-03T19:49:28.534Z",
+   "action": "probe-jobs",
+   "target": "Adsmarket/36386996977",
+   "outcome": 200,
+   "ms": 566
+  },
+  {
+   "ts": "2026-10-03T19:49:29.394Z",
    "action": "list-runs",
    "target": "Defi",
-   "outcome": 403,
-   "ms": 39
+   "outcome": 200,
+   "ms": 859
   },
   {
-   "ts": "2026-10-03T19:24:03.202Z",
+   "ts": "2026-10-03T19:49:30.225Z",
    "action": "list-runs",
    "target": "saos-dex",
-   "outcome": 403,
-   "ms": 39
+   "outcome": 200,
+   "ms": 817
   },
   {
-   "ts": "2026-10-03T19:24:03.243Z",
+   "ts": "2026-10-03T19:49:31.077Z",
    "action": "list-runs",
    "target": "saos-jummper",
-   "outcome": 403,
-   "ms": 41
+   "outcome": 200,
+   "ms": 847
   },
   {
-   "ts": "2026-10-03T19:24:03.282Z",
+   "ts": "2026-10-03T19:49:31.575Z",
+   "action": "probe-jobs",
+   "target": "saos-jummper/36768088206",
+   "outcome": 200,
+   "ms": 493
+  },
+  {
+   "ts": "2026-10-03T19:49:32.122Z",
+   "action": "probe-jobs",
+   "target": "saos-jummper/36757952771",
+   "outcome": 200,
+   "ms": 546
+  },
+  {
+   "ts": "2026-10-03T19:49:32.607Z",
+   "action": "probe-jobs",
+   "target": "saos-jummper/36757672178",
+   "outcome": 200,
+   "ms": 485
+  },
+  {
+   "ts": "2026-10-03T19:49:33.083Z",
+   "action": "probe-jobs",
+   "target": "saos-jummper/36754019986",
+   "outcome": 200,
+   "ms": 475
+  },
+  {
+   "ts": "2026-10-03T19:49:33.622Z",
+   "action": "probe-jobs",
+   "target": "saos-jummper/36703805595",
+   "outcome": 200,
+   "ms": 538
+  },
+  {
+   "ts": "2026-10-03T19:49:34.159Z",
+   "action": "probe-jobs",
+   "target": "saos-jummper/36557018909",
+   "outcome": 200,
+   "ms": 536
+  },
+  {
+   "ts": "2026-10-03T19:49:34.937Z",
    "action": "list-runs",
    "target": "saos-control-center",
-   "outcome": 403,
-   "ms": 39
+   "outcome": 200,
+   "ms": 778
   },
   {
-   "ts": "2026-10-03T19:24:03.322Z",
+   "ts": "2026-10-03T19:49:35.419Z",
+   "action": "probe-jobs",
+   "target": "saos-control-center/36768076657",
+   "outcome": 200,
+   "ms": 478
+  },
+  {
+   "ts": "2026-10-03T19:49:35.923Z",
+   "action": "probe-jobs",
+   "target": "saos-control-center/36764785907",
+   "outcome": 200,
+   "ms": 503
+  },
+  {
+   "ts": "2026-10-03T19:49:36.453Z",
+   "action": "probe-jobs",
+   "target": "saos-control-center/36750346768",
+   "outcome": 200,
+   "ms": 529
+  },
+  {
+   "ts": "2026-10-03T19:49:36.926Z",
+   "action": "probe-jobs",
+   "target": "saos-control-center/36717649400",
+   "outcome": 200,
+   "ms": 473
+  },
+  {
+   "ts": "2026-10-03T19:49:37.423Z",
+   "action": "probe-jobs",
+   "target": "saos-control-center/36570899106",
+   "outcome": 200,
+   "ms": 497
+  },
+  {
+   "ts": "2026-10-03T19:49:37.940Z",
+   "action": "probe-jobs",
+   "target": "saos-control-center/36424457495",
+   "outcome": 200,
+   "ms": 517
+  },
+  {
+   "ts": "2026-10-03T19:49:38.837Z",
    "action": "list-runs",
    "target": "saos-sovereign-foundry",
-   "outcome": 403,
-   "ms": 40
+   "outcome": 200,
+   "ms": 896
+  },
+  {
+   "ts": "2026-10-03T19:49:39.341Z",
+   "action": "probe-jobs",
+   "target": "saos-sovereign-foundry/37075087248",
+   "outcome": 200,
+   "ms": 500
+  },
+  {
+   "ts": "2026-10-03T19:49:39.782Z",
+   "action": "probe-jobs",
+   "target": "saos-sovereign-foundry/37066165510",
+   "outcome": 200,
+   "ms": 440
+  },
+  {
+   "ts": "2026-10-03T19:49:40.268Z",
+   "action": "probe-jobs",
+   "target": "saos-sovereign-foundry/36917630108",
+   "outcome": 200,
+   "ms": 486
+  },
+  {
+   "ts": "2026-10-03T19:49:40.760Z",
+   "action": "probe-jobs",
+   "target": "saos-sovereign-foundry/36768092568",
+   "outcome": 200,
+   "ms": 491
+  },
+  {
+   "ts": "2026-10-03T19:49:41.330Z",
+   "action": "probe-jobs",
+   "target": "saos-sovereign-foundry/36768092482",
+   "outcome": 200,
+   "ms": 570
+  },
+  {
+   "ts": "2026-10-03T19:49:41.887Z",
+   "action": "probe-jobs",
+   "target": "saos-sovereign-foundry/36764454503",
+   "outcome": 200,
+   "ms": 556
   }
  ],
- "verdict": "CI-HANDS keyless floor: 0/16 reached — the rest booked UNREACHABLE (never invented)"
+ "verdict": "CI-HANDS REACHED 16/16 · lanes 33/52 green (63%) · 0 active-red · 1 startup-failures"
 }

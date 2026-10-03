@@ -1,4 +1,4 @@
-# Daily Pulse — 2026-10-03T19:24:07.479Z
+# Daily Pulse — 2026-10-03T19:49:55.551Z
 
 - **loop:** reef/SkillClaw Rung 1 (day → review → propose → gate → settle) · **verify-only:** proposals never auto-applied
 - **window:** since 2026-10-02T16:40:20.950Z · **commits:** 40
@@ -60,14 +60,14 @@
 | 52 | CR-0040 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
 | 53 | CR-0041 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
 | 54 | CR-0042 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
-| 55 | obs:one-bloc-boundary | DEFERRED-TIER-C | — | restore cross-repo credential (operator, tier C) — 2/16 reached; the len-93 token is gone from remot |
+| 55 | CR-0043 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
 | 56 | obs:hands | BOOKED | — | carry the hands boundary into the daily record |
 | 57 | evo:harness-window | BOOKED | — | carry the evolution-window cadence state into the record |
 
 - PROPOSED-CR: 6
 - GATED-BLOCKED: 2
-- DEFERRED-TIER-C: 4
-- ACCEPTED-TODAY: 43
+- DEFERRED-TIER-C: 3
+- ACCEPTED-TODAY: 44
 - ROLLED-BACK: 0
 - BOOKED: 2
 
