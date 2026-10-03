@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "at": "2026-10-03T19:23:25.846Z",
+  "at": "2026-10-03T19:24:07.479Z",
   "since": "2026-10-02T16:40:20.950Z",
   "windowSince": "2026-10-02T16:40:20.950Z",
   "agent": "pulse v1.2.0 (CR-0009 loop, Rung 1; CR-0028 consumes the laya advisory triage; CR-0033 consumes the scheduled evolution-window evidence — Z-48/Z-49/Z-60/Z-62)",
@@ -8,6 +8,10 @@
     "since": "2026-10-02T16:40:20.950Z",
     "count": 40,
     "commits": [
+      {
+        "sha": "528126f",
+        "subject": "CR-0042 (PASS, tier B): fleet Rung 16 lane B — THE WIRING WAVE (operator directive: push all agents together, wire everything, 'בצע') — ELEVENTH COLLISION renumber (later-mover law): sibling took CR-0040/feat-034 (fleet census e35bbee) + CR-0041/feat-035 (census cron b4e18d0) + the E31/E32 suite slots (v1.20.0 = their 32); ours renumbered CR-0042/feat-036/feat-037/E33/E34, v1.21.0 — (1) agents/market-exec.cjs FLOW-CATCH (E33, default OFF, MARKET_EXEC_FLOWCATCH=1): the one-sided-tape breaker — ONE marketable sell (min = bid×0.999, <=50% liquid, ONE per run) joins the resting bid and fills AT the bid (price improvement), proceeds fund a stack-aware buy ladder (90% budget, anti-self-cross STACK-EXISTS, dust discipline, determinism byte-checked) — LIVE-FIRED run #13: taker 0.713 STEEM filled at the 0.101083 bid, buy 0.052 SBD -> 0.517 STEEM standing (orderid 1791054505, readback price_match TRUE), balances reconciled to the satoshi (0.792 STEEM/0.078 SBD; the +0.5 = sibling's 0.5@0.106 ask expiring 18:57:26) — two defects caught+fixed in-session (side-preservation through placements overwrote flow-taker -> phased law landed after; taker-verify: marketable leg ABSENT from book = FILL-CONFIRMED) — (2) fill-ledger WIRE FIX measured live: account_history_api serves EMPTY op bodies on BOTH official nodes; desk walks condenser_api.get_account_history (full bodies, dual-form asset parsing) -> 10 REAL FILLS captured (proceeds_unbased 0.508 SBD; the CR-0039 recycled ask 0.576 STEEM -> 0.058 SBD @ 0.100694 LIFTED by coin-raffle 19:01:57 + 9 earlier sibling fills) — proceeds_unbased law: pre-ledger-basis sells book proceeds honestly, basis unknown, never guessed into P&L — (3) .github/workflows/fill-ledger-cron.yml: the EYES cadence wired as the CR-0038 twin (:17/:47 off every sibling minute, STASIS-braked twice, keyless read-only, append-only publish [skip ci], dedupe makes ticks compose with lane runs into ONE ledger) — (4) agents/agent-registry.cjs (E34): the fleet's ERC-8004-SHAPED trustless-agent registry (ethereum/ERCs erc-8004.md receipt) — Identity (6 desks, agentURI+metadata+keyMode+alive honesty), Reputation (evidence-ONLY, feedbackHash = sha256(counted rows) recomputable), Validation (desk evals as validationRequest/response) — live: market-exec 62% clean-run (wire-defect history visible honestly), fill-ledger 10 fills, market-cycle 100% — keyless/offline; on-chain register owner-gated when funded — (5) agents/sovereign-convergence.md: the whole-git answer (differentiated stack 5 / top-10 wires ranked, 2 landed / measured blocker table — binding chain capital<-edge-proof<-fills<-positioning<-armed-loop, 3 of 5 links closed this session / custody proposals: threshold multisig via account_auths STEEM_MAX_AUTHORITY_MEMBERSHIP=40 no WIF sharing, custom_json zero-fee bus, native escrow ops, claimed-account spawning; delegate_rc UNVERIFIED, no mirror-hunting) — evals 32/32 local; feat-036; feat-037; CR-0042"
+      },
       {
         "sha": "844df83",
         "subject": "fleet-census(map): refresh 2026-10-03T19:18:31Z [skip ci]"
@@ -163,10 +167,6 @@
       {
         "sha": "d8ecbc0",
         "subject": "lane books: Rung 6 shim-queue run on merged tree (sibling CR-0024/0025 absorbed) — judge 41/0/0, evals 26/26, gate 14/0, DOMAIN-INIT-OK, ONE-BLOC 16/16"
-      },
-      {
-        "sha": "4b3c9a1",
-        "subject": "CR-0026 (PASS, renumbered from CR-0024 — fourth collision, later-mover law; sibling 1e4921c took CR-0024+CR-0025): shim v1.1.0 retry/backoff queue LANDED — global upstream gate (max 2 in-flight, FIFO) + exp backoff 1s..16s + jitter (SHIM_MAX_RETRIES env-tunable) + honest logs, fail-loud preserved; closes the CR-0022 rate-limit law (sibling CR-0023 absorbed the finding, sibling CR-0024 books the conservative bounded-ladder variant — fifth parallel convergence, dual implementations complementary); receipts: 6-burst smoke 6/6 HTTP 200 with queued wait_ms=696 + retry backoff_ms=1046 log lines; mini-swe guarded run Submitted 3 api_calls through the queue (G6-SHIM-QUEUE-OK); graft deep over the shim rc=0 — the whole-repo concept synthesis that 502'd twice in Rung 5 COMPLETED (18 provenance-traced concept nodes, concept-tier ask hits); 851 transient 429s absorbed across two deep runs; ambient sandbox-IP 429 storm booked as binding capacity constraint; shim-log counting law booked (FAILED lines double-count naive greps); feat-024"
       }
     ]
   },
@@ -680,7 +680,7 @@
       "kind": "observation",
       "source": "evo-windows.json",
       "action": "carry the evolution-window cadence state into the record",
-      "receipt": "32 windows booked, none complete · next due 2026-10-04T12:45:05Z",
+      "receipt": "33 windows booked, none complete · next due 2026-10-04T12:45:05Z",
       "disposition": "BOOKED"
     }
   ],
@@ -701,7 +701,7 @@
     "joined": 7,
     "note": "fresh advisory triage joined by id — lane/urgency hints only, confidence uncalibrated (en checkpoint), dispositions untouched",
     "at": "2026-10-03T15:08:54Z",
-    "age_h": 4.2
+    "age_h": 4.3
   },
   "evoEvidence": {
     "mode": "CADENCE-ONLY",

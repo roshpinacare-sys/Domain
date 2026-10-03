@@ -1,6 +1,6 @@
 # agent-registry — the fleet's ERC-8004-shaped trust surface (CR-0042)
 
-_2026-10-03T19:20:03.715Z · keyless + offline · every reputation value carries a recomputable sha256 of its evidence rows_
+_2026-10-03T19:24:08.005Z · keyless + offline · every reputation value carries a recomputable sha256 of its evidence rows_
 
 ## identity (6)
 - **market-exec** — signing executor (SBD/STEEM internal market) · file://agents/market-exec.cjs · owner-gated-signing · registered CR-0036 · alive:true
@@ -19,7 +19,7 @@ _2026-10-03T19:20:03.715Z · keyless + offline · every reputation value carries
 - **market-exec** E28 → VALIDATED (status PASS)
 - **fill-ledger** E30 → VALIDATED (status PASS)
 - **market-cycle** E30 → VALIDATED (status PASS)
-- **market-exec** E31 → VALIDATED (status PASS)
+- **market-exec** E31 → INVALID (status FAIL)
 
 ## summary: {"agents":6,"withEvidence":3,"validated":3,"totalFills":10}
 
