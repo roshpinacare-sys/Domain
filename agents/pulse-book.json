@@ -1,12 +1,21 @@
 {
   "ok": true,
-  "at": "2026-10-03T13:42:03.644Z",
-  "since": "2026-10-03T13:41:41.067Z",
+  "at": "2026-10-03T13:59:57.608Z",
+  "since": "2026-10-03T13:42:03.644Z",
   "agent": "pulse v1.0.0 (CR-0009, reef/SkillClaw loop pattern Rung 1, Z-48/Z-49)",
   "dayLedger": {
-    "since": "2026-10-03T13:41:41.067Z",
-    "count": 0,
-    "commits": []
+    "since": "2026-10-03T13:42:03.644Z",
+    "count": 2,
+    "commits": [
+      {
+        "sha": "a1eae51",
+        "subject": "lane books: Task 36 second-mover re-verification on a fresh reset sandbox — sibling Defi checkout restored (canon L1 leg), evals 26/26 ×2 stable, judge 41/0/0 third reproduction, one-bloc token-mode 16/16 authWall 0, canon CONTENT-SERVED L1=SERVING L2=RAIL-UP; environment root-cause booked: sandbox reset erased ../Defi so E17 read CANON-DARK — local-leg absence, not fleet truth"
+      },
+      {
+        "sha": "9bea765",
+        "subject": "CR-0018 renumber (Task 36 second-mover close): mini-runtime-landing CR-0016→CR-0018 — uncaught parallel-convergence collision (mini lane landed e57dc8c as CR-0016 AFTER the five-repo sweep took CR-0016 via renumber 1c2ec81); later mover renumbers per law; sole external reference (canon PROBE-LANE.md mini-swe row) updated in same commit; zero content changes — receipts/verdict/evidence untouched, renumber_note booked inside the CR"
+      }
+    ]
   },
   "proposals": [
     {
@@ -91,11 +100,11 @@
     },
     {
       "id": "lane:stablyai/orca",
-      "kind": "probe-queued",
+      "kind": "probe-parked",
       "source": "security-audit/PROBE-LANE.md",
-      "action": "draft tier-B CR for the queued pattern",
+      "action": "hold; opening conditions named in the lane canon",
       "receipt": "**PARKED as runtime (desktop-GUI class absent in a headless ",
-      "disposition": "PROPOSED-CR"
+      "disposition": "DEFERRED-TIER-C"
     },
     {
       "id": "nv:runtime-deps-no-advisory-crossch",
@@ -112,6 +121,14 @@
       "action": "resolve missing fact: Exact platform-policy fact: whether this runtime may run a production build on the public ",
       "receipt": "runtime-dev-mode-on-public-default-lane",
       "disposition": "GATED-BLOCKED"
+    },
+    {
+      "id": "CR-0019",
+      "kind": "cr-fail",
+      "source": "change-requests/CR-0019-parallel-worktree-wave.json",
+      "action": "rollback path (judged FAIL)",
+      "receipt": "live run receipts (exit codes + receipt files + shim interleave log + isolation ",
+      "disposition": "ROLLED-BACK"
     },
     {
       "id": "obs:one-bloc-boundary",
@@ -131,11 +148,11 @@
     }
   ],
   "counts": {
-    "PROPOSED-CR": 9,
+    "PROPOSED-CR": 8,
     "GATED-BLOCKED": 2,
-    "DEFERRED-TIER-C": 3,
+    "DEFERRED-TIER-C": 4,
     "ACCEPTED-TODAY": 0,
-    "ROLLED-BACK": 0,
+    "ROLLED-BACK": 1,
     "BOOKED": 1
   },
   "gates": {
