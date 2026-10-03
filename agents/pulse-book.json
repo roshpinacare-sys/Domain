@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "at": "2026-10-03T21:52:25.259Z",
+  "at": "2026-10-03T22:04:07.124Z",
   "since": "2026-10-02T16:40:20.950Z",
   "windowSince": "2026-10-02T16:40:20.950Z",
   "agent": "pulse v1.2.0 (CR-0009 loop, Rung 1; CR-0028 consumes the laya advisory triage; CR-0033 consumes the scheduled evolution-window evidence — Z-48/Z-49/Z-60/Z-62)",
@@ -9,8 +9,20 @@
     "count": 40,
     "commits": [
       {
-        "sha": "aa94d25",
-        "subject": "CR-0048 (PASS, tier B): fleet Rung 21 — THE SELF-HEALING PULSE (operator: 'תמשיך') — GitHub's scheduler MEASURED starving this repo (keyless API: sovereign-tick/earn-audit crons = 0 schedule events since arming, all runs workflow_dispatch; scheduled runs arrive hours late — treasury-route 16:20 slot ran 20:09; dispatch latency measured 15-30s) — so the fleet holds its own heartbeat: (1) agents/tick-keeper.cjs reads the arc's own receipts (decisions jsonl / earn-audit / fill-ledger) → keeperDecide pure → re-fires stale or never-born desks via PAT workflow_dispatch (PAT events bypass the GITHUB_TOKEN recursion block), 20m per-desk cooldown, STASIS-first (the healer obeys the breaker), single-writer, token env-only, fail-soft exit 0; tick-keeper.yml cron 2,32 (clean minutes); (2) agents/minute-map.json: 14 cron collisions measured → reslotted to 0 across 21 workflows (one workflow minute = one machine); (3) MEASURED DEFECT fixed: the Math.max(state,ledger) fusion swallowed NEGATIVE realized — a losing day read 0.000 SBD forever, silently DISARMING BREAKER-DAILY-LOSS — ledgerDayTruth(state,ledgerRow) makes the ledger row the day-book, negative truth reaches the gate; (4) earn-audit depth 4→30 pages (400 ops hid the drip on rotation days; ~3000 ops/account, pagesUsed booked); (5) evals: E29/E32 stale fixtures healed to the reslot + E39a (negative realized survives; ledger wins; state fallback; zeros never NaN) + E39b (stale/fresh/no-receipt/cooldown-20m/per-desk-gaps/arc-registry) — suite v1.27.0 40/40 GREEN; live: tick #9 PLAN-DRY DAY-CAPS (57 fills >= 24), keeper book fresh on all three desks; feat-043 (43 rows)"
+        "sha": "ef9c1eb",
+        "subject": "tick-keeper: dispatch token armed (CR-0049 fix) — WEAVE_OPS_PAT 404'd on workflow dispatches (keeper run 37156544364 booked it fail-loud: decided earn-audit stale 49.7m>45m correctly, dispatch http 404); SA_KEEPER_DISPATCH_TOKEN created via sealed-box REST (201, census 14 names-only), the deploy-grade token is 204-proven on BOTH dispatch targets (tick-keeper.yml run 37156544364 success + earn-audit-cron.yml re-fire 21:54Z) — the healer now holds a working key; cooldown book honored (earn-audit retry after 22:13Z)"
+      },
+      {
+        "sha": "a91d2a3",
+        "subject": "earn-audit: chain-truth income proof [skip ci]"
+      },
+      {
+        "sha": "c4d8425",
+        "subject": "tick-keeper: arc heartbeat [skip ci]"
+      },
+      {
+        "sha": "9835bde",
+        "subject": "CR-0049 (PASS, tier B): fleet Rung 21 — THE SELF-HEALING PULSE (operator: 'תמשיך') — FIFTEENTH-COLLISION RENUMBER (later-mover law): the coordination-bus lane landed CR-0048/feat-043/E39 (v1.27.0) while this rung was in flight — this rung renumbered CR-0048->CR-0049, feat-043->feat-044, E39a/b->E40a/b, v1.27.0->v1.28.0; their bus is KEPT and composes (coord-bus rides fill-ledger-cron at the reslotted 18,48) — GitHub's scheduler MEASURED starving this repo (keyless API: sovereign-tick/earn-audit crons = 0 schedule events since arming, all runs workflow_dispatch; scheduled runs arrive hours late — treasury-route 16:20 slot ran 20:09; dispatch latency measured 15-30s: 21:15:04 dispatch -> 21:15:22 decision) — so the fleet holds its own heartbeat: (1) agents/tick-keeper.cjs reads the arc's own receipts (decisions jsonl / earn-audit / fill-ledger) -> keeperDecide pure -> re-fires stale or never-born desks via PAT workflow_dispatch (PAT events bypass the GITHUB_TOKEN recursion block), 20m per-desk cooldown, STASIS-first (the healer obeys the breaker), single-writer, token env-only, fail-soft exit 0; tick-keeper.yml cron 2,32 (clean minutes); (2) agents/minute-map.json: 14 cron collisions measured -> reslotted to 0 across 21 workflows (one workflow minute = one machine — collisions multiply the starvation surface); (3) MEASURED DEFECT fixed: the Math.max(state,ledger) fusion swallowed NEGATIVE realized — a losing day read 0.000 SBD forever, silently DISARMING BREAKER-DAILY-LOSS — ledgerDayTruth(state,ledgerRow) makes the ledger row the day-book, negative truth reaches the gate; (4) earn-audit depth 4->30 pages (400 ops hid the drip on rotation days; ~3000 ops/account, pagesUsed booked); (5) evals on the MERGED tree: E29/E32 stale fixtures healed to the reslot + E40a (negative realized survives; ledger wins; state fallback; zeros never NaN) + E40b (stale/fresh/no-receipt/cooldown-20m/per-desk-gaps/arc-registry) — suite v1.28.0 41/41 GREEN (their E39 coord-bus + my E40); post-merge book refresh: fill-ledger run #19 (87 fills total, +9 new, realized -0.227 SBD, vwap edge -1.94% healing from -2.13), workflow-parse-gate GREEN 48 workflows 0 offenders, census 16/16 caps=61 wiring=10/10; live: tick #9 PLAN-DRY DAY-CAPS (57 fills >= 24 — day booked), keeper book fresh on all three desks; feat-044 (44 rows)"
       },
       {
         "sha": "a3acd36",
@@ -155,18 +167,6 @@
       {
         "sha": "96f3ffd",
         "subject": "lane books: Rung 13 cadence run on tree — judge 41/0/0, evals 29/29, gate 14/0, parse-gate GREEN 42 workflows, DOMAIN-INIT-OK, ONE-BLOC 16/16 tokenReach 14"
-      },
-      {
-        "sha": "7cd10db",
-        "subject": "CR-0038 (PASS, tier B): fleet Rung 13 THE CADENCE WIRED — .github/workflows/market-grid-cron.yml: the market-grid history time-series runs on Actions cron '23,53 * * * *' (every 30min, offset from every sibling pulse — grid-trigger-twin :9/:39, dex-grid :48, the saos-dex original :00/:30), keyless (zero operator secrets — official chain surfaces only, executor stays the OWNER-GATED preview), publishing each tick's books back with the twin idiom (add -> diff --cached --quiet -> commit 'market-grid(history): tick <UTC> [skip ci]' -> pull --rebase -> push HEAD:main, built-in GITHUB_TOKEN contents:write) — STASIS OBEYED TWICE (two independent gates, one law): the scheduler gates tick+publish on agents/STASIS.json (healthy no-op, honest STASIS-HALT receipt) AND market-grid.cjs now halts in code BEFORE any read or write (exit 0, STASIS-HALT stdout, one labeled MARKET-GRID-HALTED-STASIS history row, zero network — the FATE-DEFENSE law #1 gap closed: the desk previously carried the breaker as a comment only) — E29 in the merged suite (run-evals v1.17.0): fresh-process proof (sandboxed copy + ACTIVE breaker -> exit 0 / STASIS-HALT / zero markets / exactly one labeled row) + the workflow carries the six laws (cadence regex, STASIS gate, keyless invocation, append-only publish, concurrency guard, [skip ci]) + line-by-line broken-idiom predicate (E16 lineage) — the tick step carries continue-on-error because the desk is fail-loud by design (PARTIAL -> exit 1) while a time-series values every honest row — LIVE: brake proven live (flip/restore byte-checked) + live ticks PARTIAL (hive transient, honest) and MARKET-GRID-LIVE (3 markets / 5 grids / paper 20 / preview 20 / 0 errors) — DRIFT CONTINUES: SBD/STEEM spread 1.5499% (CR-0034) -> 1.3385% (CR-0035) -> 0.7548% now — the sibling's live market-exec is visibly compressing its own market; the cron's ~48 rows/day starts the first honest distribution of the edge; feat-032"
-      },
-      {
-        "sha": "24630bf",
-        "subject": "moment-watch: RISK_ON · steem-edge 267bps · 2026-10-03T18:37:39Z"
-      },
-      {
-        "sha": "916dd3e",
-        "subject": "org-gitleaks: 16 repos · head=0 · history=0 · 2026-10-03"
       }
     ]
   },
@@ -708,6 +708,14 @@
       "disposition": "ACCEPTED-TODAY"
     },
     {
+      "id": "CR-0050",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0050-claims-audit.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "workflow-parse-gate GREEN on the merged tree; run-evals v1.29.0 fresh-process 42",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
       "id": "obs:one-bloc-boundary",
       "kind": "tier-c",
       "source": "one-bloc.json",
@@ -728,7 +736,7 @@
       "kind": "observation",
       "source": "evo-windows.json",
       "action": "carry the evolution-window cadence state into the record",
-      "receipt": "48 windows booked, none complete · next due 2026-10-04T12:45:05Z",
+      "receipt": "49 windows booked, none complete · next due 2026-10-04T12:45:05Z",
       "disposition": "BOOKED"
     }
   ],
@@ -736,7 +744,7 @@
     "PROPOSED-CR": 6,
     "GATED-BLOCKED": 2,
     "DEFERRED-TIER-C": 4,
-    "ACCEPTED-TODAY": 49,
+    "ACCEPTED-TODAY": 50,
     "ROLLED-BACK": 0,
     "BOOKED": 2
   },
@@ -749,7 +757,7 @@
     "joined": 7,
     "note": "fresh advisory triage joined by id — lane/urgency hints only, confidence uncalibrated (en checkpoint), dispositions untouched",
     "at": "2026-10-03T15:08:54Z",
-    "age_h": 6.7
+    "age_h": 6.9
   },
   "evoEvidence": {
     "mode": "CADENCE-ONLY",
