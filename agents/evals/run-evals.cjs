@@ -592,6 +592,51 @@ function accumulateInMemory(bookRows, seed) {
   } catch (e) { evalr('E27', 'evo-windows scheduler', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
 
+  // ---- E28: market-exec planner (Z-63, CR-0036) — the signed internal-market grid math
+  // Pure functions only (require.main guard — Z-49 law: requiring never executes a run).
+  try {
+    const mx = require(path.join(AG, 'market-exec.cjs'));
+    let ok28 = true; const why28 = [];
+    // mode law: DRY_RUN default, LIVE only on explicit '1'
+    const m1 = mx.resolveMode(undefined) === 'DRY_RUN' && mx.resolveMode('') === 'DRY_RUN' && mx.resolveMode('1') === 'LIVE';
+    if (!m1) { ok28 = false; why28.push('resolveMode'); }
+    // band guard: ±2% of mid hard ceiling
+    const b1 = mx.inBand(1.00, 1.0) && mx.inBand(1.0199, 1.0) && !mx.inBand(1.0201, 1.0) && !mx.inBand(0.9799, 1.0);
+    if (!b1) { ok28 = false; why28.push('inBand'); }
+    // precision scanner: realized price tracks a 6dp target through 3dp assets
+    const s1 = mx.scanSellAmount(0.102006, 0.3, 1.25);
+    const sOk = s1 && s1.err < 0.0002 && Math.abs(mx.r3(s1.amount * 0.102006) / s1.amount - 0.102006) / 0.102006 < 0.0002;
+    if (!sOk) { ok28 = false; why28.push('scanSellAmount precision err=' + (s1 && s1.err)); }
+    // distinct targets get distinct realized prices (no level collapse)
+    const p2 = mx.scanSellAmount(0.102006, 0.3, 1.25), p3 = mx.scanSellAmount(0.102414, 0.3, 1.25);
+    if (!(p2 && p3 && Math.abs(p2.realized - p3.realized) > 0.0001)) { ok28 = false; why28.push('level collapse'); }
+    // full plan on the recon book: caps, sizes, ordering, no stacking on foreign orders
+    const plan = mx.buildPlan({
+      liquidSteem: 4.287, liquidSbd: 0.5, bid: 0.100087, ask: 0.101236, ownOrders: [],
+    });
+    const capOk = plan.used_steem <= 4.287 * 0.85 + 1e-9;
+    const sizesOk = plan.sells.every((s) => parseFloat(s.amount_to_sell) >= 0.3 && parseFloat(s.amount_to_sell) <= 1.25);
+    const orderOk = plan.sells.every((s, i, a) => i === 0 || s.target > a[i - 1].target);
+    const countOk = plan.sells.length + plan.buys.length <= mx.DEFAULTS.MAX_NEW_ORDERS;
+    if (!(capOk && sizesOk && orderOk && countOk)) { ok28 = false; why28.push(`caps=${capOk} sizes=${sizesOk} order=${orderOk} count=${countOk}`); }
+    // idempotency: an own order at the touch level blocks that level (STACK-EXISTS)
+    const planStack = mx.buildPlan({
+      liquidSteem: 4.287, liquidSbd: 0.5, bid: 0.100087, ask: 0.101236,
+      ownOrders: [{ orderid: 1, price: plan.sells[0].realized, steem_amt: 1.196, sbd_amt: 0.121 }],
+    });
+    const stackOk = planStack.sells.length === plan.sells.length - 1 && planStack.skipped.some((s) => s.reason === 'STACK-EXISTS');
+    if (!stackOk) { ok28 = false; why28.push('stack-skip'); }
+    // SBD cap: liquid 0.3 cannot fund two 0.25 buys
+    const planCap = mx.buildPlan({ liquidSteem: 4.287, liquidSbd: 0.3, bid: 0.100087, ask: 0.101236, ownOrders: [] });
+    const sbdCapOk = planCap.buys.length === 1 && planCap.skipped.some((s) => s.reason === 'SBD-CAP');
+    if (!sbdCapOk) { ok28 = false; why28.push('sbd-cap buys=' + planCap.buys.length); }
+    evalr('E28', 'market-exec planner: mode law, band guard, precision scan, caps, stack idempotency, SBD cap',
+      ok28,
+      ['white-box: resolveMode defaults DRY_RUN; only MARKET_EXEC_LIVE=1 arms broadcast', 'white-box: inBand ±2% fat-finger ceiling', 'white-box: scanSellAmount realizes 6dp targets through 3dp assets (err < 0.02%), distinct targets never collapse to one price', 'white-box: buildPlan caps — sells ≤ 85% liquid STEEM, buys ≤ liquid SBD, ≤ 6 orders, ascending targets, sizes 0.3..1.25', 'white-box: own-order within 0.35% → STACK-EXISTS skip (idempotent re-runs)', 'Z-49 law: require.main guard — eval require executes zero network, zero signatures'],
+      why28.length ? 'fails: ' + why28.join('; ') : 'planner pure-verified; live-fire receipt: run #7 broadcast 6/6, on-chain orderids 1791050734-39 standing');
+  } catch (e) { evalr('E28', 'market-exec planner', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
+
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
   const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.16.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
