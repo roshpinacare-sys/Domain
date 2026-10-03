@@ -85,7 +85,9 @@ function dispatch(desk, token) {
     const payload = JSON.stringify({ ref: 'main' });
     const req = https.request({
       hostname: 'api.github.com', path: `/repos/${REPO}/actions/workflows/${desk}/dispatches`, method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(payload), Authorization: `token ${token}`, 'User-Agent': 'saos-tick-keeper', Accept: 'application/vnd.github+json' },
+      // Z-71: fine-grained PATs reject the legacy token-prefix on dispatch endpoints
+      // (measured: Bearer 204 manual vs token-prefix 404 from the keeper, run 37157983852)
+      headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(payload), Authorization: `Bearer ${token}`, 'User-Agent': 'saos-tick-keeper', Accept: 'application/vnd.github+json' },
       timeout: 20000,
     }, (res) => { res.resume(); resolve({ status: res.statusCode }); });
     req.on('timeout', () => req.destroy(new Error('timeout')));
