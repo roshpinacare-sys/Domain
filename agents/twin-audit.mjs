@@ -22,6 +22,9 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { createRequire } from 'module';
+const requireCjs = createRequire(import.meta.url);
+const { evidenceMarkers } = requireCjs('./twin-marker-law.cjs'); // R22 — the marker-side law, pure + E42-shared
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT_DIR = path.join(ROOT, 'twin-audit');
@@ -133,15 +136,15 @@ for (const p of registry.pairs) {
     const bSide = isDomain(p.b) ? 'Domain' : 'Console';
     const pageA = await fetchText(BASE[aSide] + pageOf(p.a)); await sleep(350);
     const pageB = await fetchText(BASE[bSide] + pageOf(p.b)); await sleep(350);
-    const markerA = ev.domainMarker || ev.aMarker;
-    const markerB = ev.bMarker || ev.domainMarker || ev.aMarker;
-    if (pageA.body && markerA) check.markerOnA = pageA.body.includes(markerA);
-    if (pageB.body && markerB) check.markerOnB = pageB.body.includes(markerB);
-    if (markerA && check.markerOnA === false) ok = false;
-    if (markerB && check.markerOnB === false) ok = false;
+    const mk = evidenceMarkers(ev, { aIsDomain: aSide === 'Domain', bIsDomain: bSide === 'Domain' });
+    if (pageA.body && mk.a) check.markerOnA = pageA.body.includes(mk.a);
+    if (pageB.body && mk.b) check.markerOnB = pageB.body.includes(mk.b);
+    if (mk.a && check.markerOnA === false) ok = false;
+    if (mk.b && check.markerOnB === false) ok = false;
     if (ev.absenceOnA && pageA.body) { check.absenceOnA = !pageA.body.includes(ev.absenceOnA); if (!check.absenceOnA) ok = false; }
     if (ev.absenceCross && pageA.body && pageB.body) {
-      check.absenceCross = !pageA.body.includes(ev.bMarker) && !pageB.body.includes(ev.aMarker);
+      const crossB = ev.bMarker || mk.b, crossA = ev.aMarker || mk.a;
+      check.absenceCross = !(crossB && pageA.body.includes(crossB)) && !(crossA && pageB.body.includes(crossA));
       if (!check.absenceCross) ok = false;
     }
     if (pageA.status !== 200 || pageB.status !== 200) { ok = false; check.fetchNote = 'page fetch failed - evidence not judgeable this run'; }

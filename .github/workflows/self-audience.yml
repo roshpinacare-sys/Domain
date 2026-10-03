@@ -106,17 +106,32 @@ jobs:
       - name: fleet doctor (keyless self-diagnosis)
         run: node agents/fleet-doctor.cjs
 
+      # R22 (CR-0052) root-cause fix, measured from run 37144830642's log: the desk measured
+      # fine, committed 9 files (3181 insertions) — and DIED at push, 3 scheduled runs in a
+      # row. Chain: the add list MISSED files the measure steps wrote (left unstaged) →
+      # `git pull --rebase` refused ("You have unstaged changes"), the `|| true` swallowed
+      # it, then `git push` hit the remote-move race and failed. The receipts of a full day
+      # were written and then thrown away, daily. Fix: stage the whole measured surface
+      # (git add -A), rebase WITH autoStash, and the house 3-attempt retry idiom (same as
+      # twin-audit's publish loop).
       - name: commit receipts (secretless)
         run: |
           git config user.name "saos-self-audience"
           git config user.email "self-audience@saos.local"
           mkdir -p agents/receipts
-          for p in agents/receipts/*.json agent/state-report.json agents/state-report.json agents/learning-ledger.json agents/learning-summary.json; do [ -e "$p" ] && git add "$p" || true; done
-          for p in STATE-REPORT-*.md; do [ -e "$p" ] && git add "$p" || true; done
+          git add -A
           if git diff --cached --quiet; then
             echo "no receipt changes"
           else
             git commit -m "self-audience: daily receipts + state-report · $(date -u +%Y-%m-%dT%H:%M:%SZ) [skip ci]"
-            git pull --rebase origin main || true
-            git push origin HEAD:main
+
+            ok=0
+            for attempt in 1 2 3; do
+              if git -c rebase.autoStash=true pull --rebase origin main && git push origin HEAD:main; then
+                echo "receipts published (attempt ${attempt})"; ok=1; break
+              fi
+              echo "publish failed (attempt ${attempt})"
+              sleep 5
+            done
+            [ "$ok" = "1" ] || { echo "could not publish receipts after 3 attempts - fail-loud, the measurements will not be silently dropped"; exit 1; }
           fi

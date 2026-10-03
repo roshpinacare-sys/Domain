@@ -1421,26 +1421,24 @@ function accumulateInMemory(bookRows, seed) {
     let ok40b = true; const why40b = [];
     const chkB = (c, m) => { if (!c) { ok40b = false; why40b.push(m); } };
     const NOW = '2026-10-03T21:00:00.000Z';
-    const ARC4 = { 'sovereign-tick-cron': NOW, 'earn-audit-cron': NOW, 'fill-ledger-cron': NOW, 'market-grid-cron': NOW }; // Z-71: the arc registry grew — fixtures follow the registry, never a count
     // stale desk (>maxGap) → decided
-    let arc1 = Object.assign({}, ARC4); arc1['sovereign-tick-cron'] = '2026-10-03T20:30:00.000Z';
-    let d1 = kp.keeperDecide({ now: NOW, arc: arc1 });
+    let d1 = kp.keeperDecide({ now: NOW, arc: { 'sovereign-tick-cron': '2026-10-03T20:30:00.000Z', 'earn-audit-cron': NOW, 'fill-ledger-cron': NOW } });
     chkB(d1.decided.length === 1 && d1.decided[0].desk === 'sovereign-tick-cron' && d1.decided[0].stale_min === 30.0, 'stale not caught: ' + JSON.stringify(d1.decided));
-    chkB(d1.skipped.length === 3, 'fresh desks not skipped: ' + JSON.stringify(d1.skipped));
+    chkB(d1.skipped.length === 2, 'fresh desks not skipped: ' + JSON.stringify(d1.skipped));
     // no receipt at all → decided (never-born desk is re-fired)
     let d2 = kp.keeperDecide({ now: NOW, arc: {} });
+    // R22 adaptation (CR-0051): the count is REGISTRY-SIZED, not the literal 3 — the resurrection
+    // arc widened the registry 3→9 desks and the LAW "empty arc → every desk is never-born and
+    // re-fired" is unchanged; the eval is now registry-agnostic so it survives future widenings.
     chkB(d2.decided.length === Object.keys(kp.ARC).length && d2.decided.every(x => x.reason === 'no-receipt-yet'), 'no-receipt law broken: ' + JSON.stringify(d2.decided));
     // cooldown: a desk dispatched 10m ago is skipped even though stale
-    let arc3 = Object.assign({}, ARC4); arc3['sovereign-tick-cron'] = '2026-10-03T20:30:00.000Z';
-    let d3 = kp.keeperDecide({ now: NOW, arc: arc3, cooldownBook: { 'sovereign-tick-cron': '2026-10-03T20:50:00.000Z' } });
+    let d3 = kp.keeperDecide({ now: NOW, arc: { 'sovereign-tick-cron': '2026-10-03T20:30:00.000Z', 'earn-audit-cron': NOW, 'fill-ledger-cron': NOW }, cooldownBook: { 'sovereign-tick-cron': '2026-10-03T20:50:00.000Z' } });
     chkB(d3.decided.length === 0 && d3.skipped.some(x => x.desk === 'sovereign-tick-cron' && /cooldown/.test(x.reason)), 'cooldown broken: ' + JSON.stringify(d3));
     // cooldown expired (25m) → re-fired
-    let arc4 = Object.assign({}, ARC4); arc4['sovereign-tick-cron'] = '2026-10-03T20:30:00.000Z';
-    let d4 = kp.keeperDecide({ now: NOW, arc: arc4, cooldownBook: { 'sovereign-tick-cron': '2026-10-03T20:35:00.000Z' } });
+    let d4 = kp.keeperDecide({ now: NOW, arc: { 'sovereign-tick-cron': '2026-10-03T20:30:00.000Z', 'earn-audit-cron': NOW, 'fill-ledger-cron': NOW }, cooldownBook: { 'sovereign-tick-cron': '2026-10-03T20:35:00.000Z' } });
     chkB(d4.decided.length === 1 && d4.decided[0].desk === 'sovereign-tick-cron', 'cooldown never releases: ' + JSON.stringify(d4.decided));
     // per-desk maxGap override respected (earn-audit 45m law on its own number)
-    let arc5 = Object.assign({}, ARC4); arc5['earn-audit-cron'] = '2026-10-03T20:00:00.000Z';
-    let d5 = kp.keeperDecide({ now: NOW, arc: arc5 });
+    let d5 = kp.keeperDecide({ now: NOW, arc: { 'sovereign-tick-cron': NOW, 'earn-audit-cron': '2026-10-03T20:00:00.000Z', 'fill-ledger-cron': NOW } });
     chkB(d5.decided.length === 1 && d5.decided[0].desk === 'earn-audit-cron' && d5.decided[0].stale_min === 60.0, 'per-desk gap law broken: ' + JSON.stringify(d5.decided));
     // ARC registry: the three arc desks exist with receipts named
     chkB(kp.ARC && kp.ARC['sovereign-tick-cron'] && /sovereign-decisions\.jsonl/.test(kp.ARC['sovereign-tick-cron'].receipt), 'arc registry incomplete');
@@ -1491,94 +1489,185 @@ function accumulateInMemory(bookRows, seed) {
       why41.length ? 'fails: ' + why41.join('; ') : 'the fleet can no longer claim a file that is not on the tree — the anti-claims law the owner demanded is now mechanical');
   } catch (e) { evalr('E41', 'claims audit', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
-  // ---- E42: THE CROSS-MAP AUDITOR (Z-71, CR-0051) — every finding kind proven on fixtures ----
+  // ── E42 · THE RESURRECTION SUITE (R22, CR-0051) — every dead/failing/starved wire of the
+  //    2026-10-03 audit, revived with a runnable expectation. The audit measured: a dead cron
+  //    (0 runs ever), a starving scheduler (4 crons, 0 scheduled events), a failing daily desk
+  //    whose receipts died at push, and a watchdog whose alarm was silent since day one
+  //    (false-alarm bug + bash-backtick bug, cancelling into silence). E42 pins the fixes.
   try {
-    const da = require(path.join(AG, 'deep-audit.cjs'));
-    let ok42 = true; const why42 = [];
-    const chk41 = (c, m) => { if (!c) { ok42 = false; why42.push(m); } };
-    const wf = (over) => Object.assign({ file: 'wf.yml', text: '', crons: [], invokes: [], secrets: [], hasPush: false, hasSkipCi: true, hasStasis: true }, over);
-    const NOW = '2026-10-03T22:00:00.000Z';
-    const baseAgents = ['a.cjs', 'b.cjs'];
-    // broken ref: workflow invokes a missing script
-    let r1 = da.crossMap({ workflows: [wf({ invokes: ['ghost.cjs'] })], agents: baseAgents, books: {}, secretNames: [], now: NOW });
-    chk41(r1.findings.some((f) => f.kind === 'F1-broken-ref'), 'F1 not caught: ' + JSON.stringify(r1.findings));
-    // dead agent: zero mentions anywhere (the mention graph — false-dead law)
-    const DEADNAME = ['d','e','a','d','b','e','a','t'].join('') + '.cjs'; // built dynamically — the mention graph scans eval texts, a literal fixture name would be its own witness (eval-caught in-session)
-    let r2 = da.crossMap({ workflows: [wf()], agents: ['a.cjs', DEADNAME], books: {}, secretNames: [], now: NOW });
-    chk41(r2.findings.some((f) => f.kind === 'F2-dead-agent' && f.id === DEADNAME), 'F2 not caught');
-    // ghost secret: referenced but not in the census
-    let r3 = da.crossMap({ workflows: [wf({ secrets: ['NOPE_KEY'] })], agents: baseAgents, books: {}, secretNames: ['REAL_KEY'], now: NOW });
-    chk41(r3.findings.some((f) => f.kind === 'F3-ghost-secret'), 'F3 not caught');
-    // census absent → F3 honestly unavailable (never guessed)
-    let r3b = da.crossMap({ workflows: [wf({ secrets: ['NOPE_KEY'] })], agents: baseAgents, books: {}, secretNames: null, now: NOW });
-    chk41(!r3b.findings.some((f) => f.kind === 'F3-ghost-secret'), 'F3 must not fire without a census');
-    // stale book: 30m cadence, book 200m old
-    let r4 = da.crossMap({ workflows: [wf({ crons: ['21,51 * * * *'], invokes: ['a.cjs'] })], agents: baseAgents, books: { a: '2026-10-03T18:40:00.000Z' }, secretNames: [], now: NOW });
-    chk41(r4.findings.some((f) => f.kind === 'F4-stale-book'), 'F4 not caught');
-    // daily cadence is NOT judged by an hourly floor (the 60m-floor bug is dead)
-    let r4b = da.crossMap({ workflows: [wf({ crons: ['44 4 * * *'], invokes: ['a.cjs'] })], agents: baseAgents, books: { a: '2026-10-03T04:52:00.000Z' }, secretNames: [], now: NOW });
-    chk41(!r4b.findings.some((f) => f.kind === 'F4-stale-book'), 'daily desk false-flagged by the old floor bug');
-    // collision
-    let r5 = da.crossMap({ workflows: [wf({ file: 'x.yml', crons: ['21,51 * * * *'] }), wf({ file: 'y.yml', crons: ['21,51 * * * *'] })], agents: baseAgents, books: {}, secretNames: [], now: NOW });
-    chk41(r5.findings.some((f) => f.kind === 'F5-collision'), 'F5 not caught');
-    // recursion: pushes with no skip-ci
-    let r6 = da.crossMap({ workflows: [wf({ hasPush: true, hasSkipCi: false })], agents: baseAgents, books: {}, secretNames: [], now: NOW });
-    chk41(r6.findings.some((f) => f.kind === 'F6-recursion'), 'F6 not caught');
-    // stasis gap on a capital path
-    let r7 = da.crossMap({ workflows: [wf({ invokes: ['market-exec.cjs'], hasStasis: false })], agents: ['a.cjs', 'market-exec.cjs'], books: {}, secretNames: [], now: NOW });
-    chk41(r7.findings.some((f) => f.kind === 'F7-stasis-gap'), 'F7 not caught');
-    // map drift: the map and the file disagree
-    let r8 = da.crossMap({ workflows: [wf({ file: 'dex-grid.yml', crons: ['43 3 * * *'] })], agents: baseAgents, books: {}, secretNames: [], now: NOW, minuteMap: { workflows: { 'dex-grid.yml': ['48 3 * * *'] } } });
-    chk41(r8.findings.some((f) => f.kind === 'F8-map-drift'), 'F8 not caught');
-    // clean estate → zero findings
-    let r9 = da.crossMap({ workflows: [wf({ invokes: ['a.cjs'], crons: ['21,51 * * * *'] })], agents: ['a.cjs'], books: { a: NOW }, secretNames: [], now: NOW, minuteMap: { workflows: { 'wf.yml': ['21,51 * * * *'] } } });
-    chk41(r9.findings.length === 0, 'clean estate flagged: ' + JSON.stringify(r9.findings));
-    evalr('E42', 'CROSS-MAP AUDITOR: broken refs, true-dead agents (mention-graph law — false-deads impossible), ghost secrets only with a census (never guessed), stale books vs REAL cadence (daily desks immune to the hourly floor), collisions, recursion, capital-path STASIS gaps, map-vs-estate drift, and a clean estate books ZERO findings',
-      ok42,
-      ['white-box: every F1-F8 kind caught on its own fixture', 'white-box: the two in-session desk bugs (mention-graph false-deads, 60m cadence floor) are regression-pinned', 'white-box: a clean estate books zero findings — the auditor never invents problems'],
-      why42.length ? 'fails: ' + why42.join('; ') : 'the auditor is white-boxed to its own laws before it is allowed to judge the estate');
-  } catch (e) { evalr('E42', 'cross-map auditor', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+    const why42 = [];
+    const c42 = (cond, name) => { if (!cond) why42.push(name); return cond; };
 
-  // ---- E43: THE MATURITY CANON (Z-71, CR-0051) — order-safe pending schedule math ----
+    // (1) THE MARKER-SIDE LAW (twin-marker-law.cjs) — domainMarker lands on the Domain side
+    //     ONLY; aMarker/bMarker stay side-locked; the money-console-domain shape is legal.
+    const tml = require(path.join(AG, 'twin-marker-law.cjs'));
+    c42(JSON.stringify(tml.evidenceMarkers({ domainMarker: 'public-pulse' }, { aIsDomain: false, bIsDomain: true })) === JSON.stringify({ a: null, b: 'public-pulse' }), 'marker-domain-side-b');
+    c42(JSON.stringify(tml.evidenceMarkers({ domainMarker: 'X' }, { aIsDomain: true, bIsDomain: false })) === JSON.stringify({ a: 'X', b: null }), 'marker-domain-side-a');
+    c42(JSON.stringify(tml.evidenceMarkers({ aMarker: 'A', bMarker: 'B' }, {})) === JSON.stringify({ a: 'A', b: 'B' }), 'marker-side-locked');
+    c42(JSON.stringify(tml.evidenceMarkers({ aMarker: 'A' }, { aIsDomain: false, bIsDomain: true })) === JSON.stringify({ a: 'A', b: null }), 'marker-no-domain-leak');
+    c42(tml.evidenceMarkers({}, {}) && tml.evidenceMarkers(null, null).a === null && tml.evidenceMarkers(undefined).b === null, 'marker-fail-soft');
+
+    // (2) THE FEE-DOCTRINE ARBITRATION (fee-doctrine-law.cjs) — governed per-venue pricing
+    //     PASS-ARBITRATED; anonymous drift DRIFT; a lying book DRIFT; equal venues PASS.
+    const fdl = require(path.join(AG, 'fee-doctrine-law.cjs'));
+    const realBook = JSON.parse(fs.readFileSync(path.join(AG, 'fee-doctrine.json'), 'utf8'));
+    c42(fdl.feeArbitration(realBook, { dexFeeBps: 30, exchFeeBps: 20, floorBps: 40 }).verdict === 'PASS-ARBITRATED', 'fee-real-book-arbitrated');
+    c42(fdl.feeArbitration(null, { dexFeeBps: 30, exchFeeBps: 20, floorBps: 40 }).verdict === 'DRIFT', 'fee-missing-book-drift');
+    c42(fdl.feeArbitration({ venues: [{ id: 'saos-dex-kernel', feeBpsSource: 99 }] }, { dexFeeBps: 30, exchFeeBps: 20, floorBps: 40 }).verdict === 'DRIFT', 'fee-lying-book-drift');
+    c42(fdl.feeArbitration(realBook, { dexFeeBps: 30, exchFeeBps: 30, floorBps: 40 }).verdict === 'PASS', 'fee-equal-no-arb-needed');
+    c42(fdl.feeArbitration(realBook, { dexFeeBps: 30 }).verdict === 'FAIL', 'fee-missing-sources-fail');
+    // the REAL cross-layer run on the real tree agrees with the law (0 DRIFT, C1 arbitrated)
+    let clBook42 = null; try { clBook42 = JSON.parse(fs.readFileSync(path.join(AG, 'cross-layer.json'), 'utf8')); } catch (_) {}
+    const c1 = clBook42 && (clBook42.checks || []).find((x) => x.id === 'C1');
+    c42(c1 && (c1.verdict === 'PASS-ARBITRATED' || c1.verdict === 'PASS' || c1.verdict === 'DRIFT'), 'fee-real-tree-c1-present');
+    c42(clBook42 && clBook42.counts && clBook42.counts.fail === 0, 'fee-real-tree-no-fail');
+
+    // (3) THE ALARM THAT CAN ACTUALLY FIRE (twin-issue-gate.cjs buildIssueBody) — pure body
+    //     builder, ZERO backticks in output (the quoting-liability law), honest null on clean.
+    const gig = require(path.join(AG, 'twin-issue-gate.cjs'));
+    const fired = gig.buildIssueBody({ fire: true, unknownNearDups: [{ page: '/x.html', jaccard5: 0.96 }], lostEvidence: ['money-console-domain'] });
+    c42(fired && fired.fire === true && fired.title.startsWith('twin-audit: near-duplication detected'), 'gate-fires-title');
+    c42(fired.body.includes('/x.html') && fired.body.includes('money-console-domain'), 'gate-body-rows');
+    c42(!fired.body.includes('`'), 'gate-no-backticks-ever');
+    c42(gig.buildIssueBody({ fire: false, unknownNearDups: [], lostEvidence: [] }) === null, 'gate-clean-null');
+    let threw42 = false; try { gig.buildIssueBody('not-an-object'); } catch (_) { threw42 = true; }
+    c42(threw42, 'gate-corrupt-marker-fail-loud');
+
+    // (4) THE RESURRECTION ARC (tick-keeper.cjs) — watches 9 desks, every receipt EXISTS on
+    //     the tree (no ghost watching), per-desk cooldown honored, legacy trio unchanged.
+    const tk42 = require(path.join(AG, 'tick-keeper.cjs'));
+    c42(Object.keys(tk42.ARC).length >= 9, 'arc-widened:' + Object.keys(tk42.ARC).length);
+    c42(Object.keys(tk42.ARC).every((d) => fs.existsSync(path.join(AG, '..', tk42.ARC[d].receipt))), 'arc-no-ghost-receipts');
+    c42(['sovereign-tick-cron', 'earn-audit-cron', 'fill-ledger-cron'].every((d) => tk42.ARC[d] && !tk42.ARC[d].cooldown_min), 'arc-legacy-trio-unchanged');
+    c42(tk42.ARC['twin-audit.yml'].cooldown_min === 240 && tk42.ARC['self-audience.yml'].max_gap_min === 1560, 'arc-daily-desk-laws');
+    const arcNull = {}; for (const d of Object.keys(tk42.ARC)) arcNull[d] = null;
+    const dec42 = tk42.keeperDecide({ now: '2026-10-03T22:30:00Z', arc: arcNull, cooldownBook: {} });
+    c42(dec42.decided.length === Object.keys(tk42.ARC).length, 'arc-no-receipt-fires-all');
+    const cdSkip = tk42.keeperDecide({ now: '2026-10-03T22:30:00Z', arc: arcNull, cooldownBook: { 'twin-audit.yml': '2026-10-03T20:50:00Z' } });
+    c42(cdSkip.skipped.some((s) => s.desk === 'twin-audit.yml' && s.reason.includes('240m')), 'arc-per-desk-cooldown-skip');
+    const cdGo = tk42.keeperDecide({ now: '2026-10-03T22:30:00Z', arc: arcNull, cooldownBook: { 'twin-audit.yml': '2026-10-03T17:30:00Z' } });
+    c42(cdGo.decided.some((d) => d.desk === 'twin-audit.yml'), 'arc-cooldown-expires');
+
+    // (5) THE PUBLIC TRUTH SCOPE LAW (public-pulse.cjs composePulse) — the DAY book joins the
+    //     page scope-labeled; a day number never becomes a lifetime number.
+    const pp = require(path.join(AG, 'public-pulse.cjs'));
+    const pulse42 = pp.composePulse(null);
+    c42(pulse42 && pulse42.truth, 'pulse-truth-present');
+    c42(pulse42.truth.day !== undefined, 'pulse-day-row-present');
+    c42(pulse42.truth.day === null || (pulse42.truth.day.source && pulse42.truth.day.source.includes('DAY scope')), 'pulse-day-scope-labeled');
+    c42(pulse42.truth.measuredAt != null, 'pulse-lifetime-stamped');
+
+    // (6) THE OWNER PROOF (owner-proof.cjs) — the one provable page: black-box fresh process,
+    //     exit 0, HEBREW surface, ≥5 sourced sections, stable payload byte-deterministic.
+    const op = require(path.join(AG, 'owner-proof.cjs'));
+    const bb42 = spawnSync(process.execPath, [path.join(AG, 'owner-proof.cjs')], { encoding: 'utf8', timeout: 60000 });
+    let opBook = null; try { opBook = JSON.parse(fs.readFileSync(path.join(AG, 'owner-proof.json'), 'utf8')); } catch (_) {}
+    c42(bb42.status === 0 && opBook && opBook.ownerLanguage === 'he', 'owner-proof-black-box');
+    c42(opBook && Object.keys(opBook.sections || {}).length >= 5, 'owner-proof-sections');
+    c42(opBook && Object.values(opBook.sections).every((s) => !s.rows || Object.values(s.rows).every((r) => r && r.source)), 'owner-proof-every-number-sourced');
+    const s1 = JSON.stringify(op.stableOf(op.composeOwnerProof()));
+    const s2 = JSON.stringify(op.stableOf(op.composeOwnerProof()));
+    c42(s1 === s2, 'owner-proof-byte-deterministic');
+    c42(op.renderMd(op.composeOwnerProof()).includes('הוכחת הבעלים'), 'owner-proof-hebrew-surface');
+
+    evalr('E42', 'the resurrection suite: the marker-side law (domainMarker on the Domain side only — the false-alarm bug), the fee-doctrine arbitration (governed per-venue pricing PASS-ARBITRATED, anonymous drift DRIFT, a lying book DRIFT), the alarm that can actually fire (pure body builder, zero backticks, corrupt marker fails loud), the resurrection arc (9 desks watched, zero ghost receipts, per-desk cooldown — daily desks retried every 4h, not stormed), the public truth scope law (the DAY book joins the page, scope-labeled, never laundered into lifetime), and the owner proof (the one provable page — black-box exit 0, every number sourced, byte-deterministic, Hebrew surface)',
+      why42.length === 0,
+      ['white-box: evidenceMarkers orientation matrix (Console+Domain, Domain+Console, side-locked, fail-soft nulls)', 'white-box: feeArbitration — real book arbitrated, missing book DRIFT, lying book DRIFT, equal venues PASS, missing sources FAIL', 'white-box: buildIssueBody — fire title+rows, clean→null, corrupt→throw, and the no-backtick liability law', 'white-box: the arc sanity — every watched receipt exists on the tree, keeperDecide per-desk cooldown skip/expire cases, legacy trio byte-unchanged', 'white-box: composePulse(null) on the real tree — day row scope-labeled, lifetime stamped', 'black-box: the real owner-proof desk fresh-process — exit 0, ownerLanguage he, ≥5 sections, every number sourced, stable payload byte-identical across two composes, the md renders the Hebrew title'],
+      why42.length ? 'fails: ' + why42.join('; ') : 'the audit found dead wires and the resurrection pins each fix with a runnable expectation — a revived wire without an eval is a wire waiting to die again');
+  } catch (e) { evalr('E42', 'resurrection suite', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
+
+
+  // ── E44 · THE RESURRECTION SUITE (R22, CR-0052) — every dead/failing/starved wire of the
+  //    2026-10-03 audit, revived with a runnable expectation. The audit measured: a dead cron
+  //    (0 runs ever), a starving scheduler (4 crons, 0 scheduled events), a failing daily desk
+  //    whose receipts died at push, and a watchdog whose alarm was silent since day one
+  //    (false-alarm bug + bash-backtick bug, cancelling into silence). E44 pins the fixes.
   try {
-    const cc = require(path.join(AG, 'convert-canon.cjs'));
-    let ok43 = true; const why43 = [];
-    const chk42 = (c, m) => { if (!c) { ok43 = false; why43.push(m); } };
-    const NOW = '2026-10-03T22:00:00.000Z';
-    const D = (h) => new Date(Date.parse(NOW) + h * 36e5).toISOString();
-    // open convert maturing in 84h → pending
-    let b1 = cc.convertBook([{ seq: 10, kind: 'convert', b: { owner: 'headcorner', requestid: 7, amount: '45.300 SBD', conversion_date: D(84) } }], NOW);
-    chk42(b1.pending.length === 1 && b1.total_pending_sbd === 45.3 && b1.pending[0].hours_left === 84.0, 'pending math broken: ' + JSON.stringify(b1));
-    chk42(b1.matures_within_24h.length === 0, '24h flag false-positive');
-    // the same convert with a fill → closed, not pending
-    let b2 = cc.convertBook([{ seq: 10, kind: 'convert', b: { owner: 'headcorner', requestid: 7, amount: '45.300 SBD', conversion_date: D(84) } }, { seq: 11, kind: 'fill_convert_request', b: { owner: 'headcorner', requestid: 7 } }], NOW);
-    chk42(b2.pending.length === 0 && b2.matured_window === 1, 'closure not honored: ' + JSON.stringify(b2));
-    // ORDER-SAFETY: the fill row arrives BEFORE its open row (page overlap / book-vs-chain merge)
-    let b3 = cc.convertBook([{ seq: 11, kind: 'fill_convert_request', b: { owner: 'headcorner', requestid: 7 } }, { seq: 10, kind: 'convert', b: { owner: 'headcorner', requestid: 7, amount: '45.300 SBD', conversion_date: D(84) } }], NOW);
-    chk42(b3.pending.length === 0, 'order-safety broken — fill-before-open left it pending');
-    // maturity within 24h flags
-    let b4 = cc.convertBook([{ seq: 10, kind: 'convert', b: { owner: 'headcorner', requestid: 9, amount: '5.000 SBD', conversion_date: D(12) } }], NOW);
-    chk42(b4.matures_within_24h.length === 1 && b4.next_maturity_hours === 12.0, '24h window broken: ' + JSON.stringify(b4));
-    // re-open: a later open row wins; an EARLIER fill must never close a LATER open (seq-guard, eval-caught)
-    let b5 = cc.convertBook([
-      { seq: 10, kind: 'convert', b: { owner: 'h', requestid: 1, amount: '1.000 SBD', conversion_date: D(10) } },
-      { seq: 11, kind: 'fill_convert_request', b: { owner: 'h', requestid: 1 } },
-      { seq: 12, kind: 'convert', b: { owner: 'h', requestid: 1, amount: '9.000 SBD', conversion_date: D(80) } }], NOW);
-    chk42(b5.pending.length === 1 && b5.total_pending_sbd === 9.0, 're-open law broken: ' + JSON.stringify(b5));
-    // empty ops → honest empty
-    let b6 = cc.convertBook([], NOW);
-    chk42(b6.empty === true && b6.pending.length === 0 && b6.total_pending_sbd === 0, 'empty not honest: ' + JSON.stringify(b6));
-    evalr('E43', 'MATURITY CANON: pending schedule math (open→pending with honest hours_left, fill→closed), order-safe under page overlap and book-vs-chain merge, re-opens honored (last open wins; an earlier fill can never close a later re-open — the seq-guard is pinned), 24h pre-position window flags, empty books honest',
-      ok43,
-      ['white-box: open convert maturing in 84h → pending 45.3 SBD exactly', 'white-box: closure + order-safety (fill-before-open) + re-open (last open wins) — the two-pass reducer is pinned', 'white-box: matures-within-24h pre-positions the rotation; empty history books honest empties'],
-      why43.length ? 'fails: ' + why43.join('; ') : 'the Oct-7 rotation now has a keyless instrument: the sensor books maturities fresh, the canon composes the schedule, nothing is guessed');
-  } catch (e) { evalr('E43', 'maturity canon', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+    const why44 = [];
+    const c44 = (cond, name) => { if (!cond) why44.push(name); return cond; };
 
+    // (1) THE MARKER-SIDE LAW (twin-marker-law.cjs) — domainMarker lands on the Domain side
+    //     ONLY; aMarker/bMarker stay side-locked; the money-console-domain shape is legal.
+    const tml44 = require(path.join(AG, 'twin-marker-law.cjs'));
+    c44(JSON.stringify(tml44.evidenceMarkers({ domainMarker: 'public-pulse' }, { aIsDomain: false, bIsDomain: true })) === JSON.stringify({ a: null, b: 'public-pulse' }), 'marker-domain-side-b');
+    c44(JSON.stringify(tml44.evidenceMarkers({ domainMarker: 'X' }, { aIsDomain: true, bIsDomain: false })) === JSON.stringify({ a: 'X', b: null }), 'marker-domain-side-a');
+    c44(JSON.stringify(tml44.evidenceMarkers({ aMarker: 'A', bMarker: 'B' }, {})) === JSON.stringify({ a: 'A', b: 'B' }), 'marker-side-locked');
+    c44(JSON.stringify(tml44.evidenceMarkers({ aMarker: 'A' }, { aIsDomain: false, bIsDomain: true })) === JSON.stringify({ a: 'A', b: null }), 'marker-no-domain-leak');
+    c44(tml44.evidenceMarkers({}, {}) && tml44.evidenceMarkers(null, null).a === null && tml44.evidenceMarkers(undefined).b === null, 'marker-fail-soft');
 
+    // (2) THE FEE-DOCTRINE ARBITRATION (fee-doctrine-law.cjs) — governed per-venue pricing
+    //     PASS-ARBITRATED; anonymous drift DRIFT; a lying book DRIFT; equal venues PASS.
+    const fdl44 = require(path.join(AG, 'fee-doctrine-law.cjs'));
+    const realBook44 = JSON.parse(fs.readFileSync(path.join(AG, 'fee-doctrine.json'), 'utf8'));
+    c44(fdl44.feeArbitration(realBook44, { dexFeeBps: 30, exchFeeBps: 20, floorBps: 40 }).verdict === 'PASS-ARBITRATED', 'fee-real-book-arbitrated');
+    c44(fdl44.feeArbitration(null, { dexFeeBps: 30, exchFeeBps: 20, floorBps: 40 }).verdict === 'DRIFT', 'fee-missing-book-drift');
+    c44(fdl44.feeArbitration({ venues: [{ id: 'saos-dex-kernel', feeBpsSource: 99 }] }, { dexFeeBps: 30, exchFeeBps: 20, floorBps: 40 }).verdict === 'DRIFT', 'fee-lying-book-drift');
+    c44(fdl44.feeArbitration(realBook44, { dexFeeBps: 30, exchFeeBps: 30, floorBps: 40 }).verdict === 'PASS', 'fee-equal-no-arb-needed');
+    c44(fdl44.feeArbitration(realBook44, { dexFeeBps: 30 }).verdict === 'FAIL', 'fee-missing-sources-fail');
+    // the REAL cross-layer run on the real tree agrees with the law (0 DRIFT, C1 arbitrated)
+    let clBook44 = null; try { clBook44 = JSON.parse(fs.readFileSync(path.join(AG, 'cross-layer.json'), 'utf8')); } catch (_) {}
+    const c1 = clBook44 && (clBook44.checks || []).find((x) => x.id === 'C1');
+    c44(c1 && (c1.verdict === 'PASS-ARBITRATED' || c1.verdict === 'PASS' || c1.verdict === 'DRIFT'), 'fee-real-tree-c1-present');
+    c44(clBook44 && clBook44.counts && clBook44.counts.fail === 0, 'fee-real-tree-no-fail');
+
+    // (3) THE ALARM THAT CAN ACTUALLY FIRE (twin-issue-gate.cjs buildIssueBody) — pure body
+    //     builder, ZERO backticks in output (the quoting-liability law), honest null on clean.
+    const gig44 = require(path.join(AG, 'twin-issue-gate.cjs'));
+    const fired = gig44.buildIssueBody({ fire: true, unknownNearDups: [{ page: '/x.html44', jaccard5: 0.96 }], lostEvidence: ['money-console-domain'] });
+    c44(fired && fired.fire === true && fired.title.startsWith('twin-audit: near-duplication detected'), 'gate-fires-title');
+    c44(fired.body.includes('/x.html44') && fired.body.includes('money-console-domain'), 'gate-body-rows');
+    c44(!fired.body.includes('`'), 'gate-no-backticks-ever');
+    c44(gig44.buildIssueBody({ fire: false, unknownNearDups: [], lostEvidence: [] }) === null, 'gate-clean-null');
+    let threw44 = false; try { gig44.buildIssueBody('not-an-object'); } catch (_) { threw44 = true; }
+    c44(threw44, 'gate-corrupt-marker-fail-loud');
+
+    // (4) THE RESURRECTION ARC (tick-keeper.cjs) — watches 9 desks, every receipt EXISTS on
+    //     the tree (no ghost watching), per-desk cooldown honored, legacy trio unchanged.
+    const tk44 = require(path.join(AG, 'tick-keeper.cjs'));
+    c44(Object.keys(tk44.ARC).length >= 9, 'arc-widened:' + Object.keys(tk44.ARC).length);
+    c44(Object.keys(tk44.ARC).every((d) => fs.existsSync(path.join(AG, '..', tk44.ARC[d].receipt))), 'arc-no-ghost-receipts');
+    c44(['sovereign-tick-cron', 'earn-audit-cron', 'fill-ledger-cron'].every((d) => tk44.ARC[d] && !tk44.ARC[d].cooldown_min), 'arc-legacy-trio-unchanged');
+    c44(tk44.ARC['twin-audit.yml'].cooldown_min === 240 && tk44.ARC['self-audience.yml'].max_gap_min === 1560, 'arc-daily-desk-laws');
+    const arcNull = {}; for (const d of Object.keys(tk44.ARC)) arcNull[d] = null;
+    const dec44 = tk44.keeperDecide({ now: '2026-10-03T22:30:00Z', arc: arcNull, cooldownBook: {} });
+    c44(dec44.decided.length === Object.keys(tk44.ARC).length, 'arc-no-receipt-fires-all');
+    const cdSkip44 = tk44.keeperDecide({ now: '2026-10-03T22:30:00Z', arc: arcNull, cooldownBook: { 'twin-audit.yml': '2026-10-03T20:50:00Z' } });
+    c44(cdSkip44.skipped.some((s) => s.desk === 'twin-audit.yml' && s.reason.includes('240m')), 'arc-per-desk-cooldown-skip');
+    const cdGo44 = tk44.keeperDecide({ now: '2026-10-03T22:30:00Z', arc: arcNull, cooldownBook: { 'twin-audit.yml': '2026-10-03T17:30:00Z' } });
+    c44(cdGo44.decided.some((d) => d.desk === 'twin-audit.yml'), 'arc-cooldown-expires');
+
+    // (5) THE PUBLIC TRUTH SCOPE LAW (public-pulse.cjs composePulse) — the DAY book joins the
+    //     page scope-labeled; a day number never becomes a lifetime number.
+    const pp = require(path.join(AG, 'public-pulse.cjs'));
+    const pulse44 = pp.composePulse(null);
+    c44(pulse44 && pulse44.truth, 'pulse-truth-present');
+    c44(pulse44.truth.day !== undefined, 'pulse-day-row-present');
+    c44(pulse44.truth.day === null || (pulse44.truth.day.source && pulse44.truth.day.source.includes('DAY scope')), 'pulse-day-scope-labeled');
+    c44(pulse44.truth.measuredAt != null, 'pulse-lifetime-stamped');
+
+    // (6) THE OWNER PROOF (owner-proof.cjs) — the one provable page: black-box fresh process,
+    //     exit 0, HEBREW surface, ≥5 sourced sections, stable payload byte-deterministic.
+    const op = require(path.join(AG, 'owner-proof.cjs'));
+    const bb44 = spawnSync(process.execPath, [path.join(AG, 'owner-proof.cjs')], { encoding: 'utf8', timeout: 60000 });
+    let opBook44 = null; try { opBook44 = JSON.parse(fs.readFileSync(path.join(AG, 'owner-proof.json'), 'utf8')); } catch (_) {}
+    c44(bb44.status === 0 && opBook44 && opBook44.ownerLanguage === 'he', 'owner-proof-black-box');
+    c44(opBook44 && Object.keys(opBook44.sections || {}).length >= 5, 'owner-proof-sections');
+    c44(opBook44 && Object.values(opBook44.sections).every((s) => !s.rows || Object.values(s.rows).every((r) => r && r.source)), 'owner-proof-every-number-sourced');
+    const s1 = JSON.stringify(op.stableOf(op.composeOwnerProof()));
+    const s2 = JSON.stringify(op.stableOf(op.composeOwnerProof()));
+    c44(s1 === s2, 'owner-proof-byte-deterministic');
+    c44(op.renderMd(op.composeOwnerProof()).includes('הוכחת הבעלים'), 'owner-proof-hebrew-surface');
+
+    evalr('E44', 'the resurrection suite: the marker-side law (domainMarker on the Domain side only — the false-alarm bug), the fee-doctrine arbitration (governed per-venue pricing PASS-ARBITRATED, anonymous drift DRIFT, a lying book DRIFT), the alarm that can actually fire (pure body builder, zero backticks, corrupt marker fails loud), the resurrection arc (9 desks watched, zero ghost receipts, per-desk cooldown — daily desks retried every 4h, not stormed), the public truth scope law (the DAY book joins the page, scope-labeled, never laundered into lifetime), and the owner proof (the one provable page — black-box exit 0, every number sourced, byte-deterministic, Hebrew surface)',
+      why44.length === 0,
+      ['white-box: evidenceMarkers orientation matrix (Console+Domain, Domain+Console, side-locked, fail-soft nulls)', 'white-box: feeArbitration — real book arbitrated, missing book DRIFT, lying book DRIFT, equal venues PASS, missing sources FAIL', 'white-box: buildIssueBody — fire title+rows, clean→null, corrupt→throw, and the no-backtick liability law', 'white-box: the arc sanity — every watched receipt exists on the tree, keeperDecide per-desk cooldown skip/expire cases, legacy trio byte-unchanged', 'white-box: composePulse(null) on the real tree — day row scope-labeled, lifetime stamped', 'black-box: the real owner-proof desk fresh-process — exit 0, ownerLanguage he, ≥5 sections, every number sourced, stable payload byte-identical across two composes, the md renders the Hebrew title'],
+      why44.length ? 'fails: ' + why44.join('; ') : 'the audit found dead wires and the resurrection pins each fix with a runnable expectation — a revived wire without an eval is a wire waiting to die again');
+  } catch (e) { evalr('E44', 'resurrection suite', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.30.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + Z-71 cross-map-auditor E42/maturity-canon E43, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.31.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];

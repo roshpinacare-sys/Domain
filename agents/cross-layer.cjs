@@ -40,6 +40,7 @@ const OUT_MD = path.join(OUT_JSON.replace(/\.json$/, '.md'));
 
 const sha256 = (buf) => crypto.createHash('sha256').update(buf).digest('hex').slice(0, 16);
 const readText = (p) => { try { const b = fs.readFileSync(p); return { ok: true, text: b.toString('utf8'), sha: sha256(b), bytes: b.length }; } catch (_) { return { ok: false, sha: null, bytes: 0 }; } };
+const readJsonSafe = (p) => { try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch (_) { return null; } }; // R22 — fail-soft book reader (fee-doctrine arbitration)
 const grep1 = (text, re) => { const m = text && text.match(re); return m ? m[1] : null; };
 const num = (v) => (v === null || v === undefined ? null : Number(v)); // canonical num() coercion (Z-33 law)
 
@@ -107,10 +108,17 @@ if (dexFeeBps !== null && exchFeeBps !== null) {
   const dustDex = roundTripBps(0.005, dexFeeBps); // the dust-floor law receipt (see below)
   const drift = dexFeeBps - exchFeeBps;
   const floorBps = Math.round(floorPct * 100);
-  check('C1', 'fee-model cross-check (DEX kernel vs SAOSExchange vs market-grid floor)', drift === 0 ? 'PASS' : 'DRIFT',
-    `saos-dex kernel.ts FEE_BPS=${dexFeeBps} (treasury cut ${treasuryCut}%) vs SAOSExchange.sol FEE_BPS=${exchFeeBps} (pot ${potShareBps}bps, swap-cap ${swapCapBps}bps) — measured round trips on identical synthetic pools (integer-floor x·y=k, real post-trade reserves fed back): DEX doctrine ${c1.dexRt.marginalFeeOnly}bps marginal-fee / ${c1.dexRt.at01}bps @0.1%-of-depth / ${c1.dexRt.at1}bps @1%; exchange doctrine ${c1.exchRt.marginalFeeOnly}/${c1.exchRt.at01}/${c1.exchRt.at1}bps at the same sizes; market-grid FEE_FLOOR_PCT=${floorPct}pts=${floorBps}bps`,
-    { dexFeeBps, exchFeeBps, dexRoundTripBps: c1.dexRt, exchangeRoundTripBps: c1.exchRt, floorBps, dustFloorBps: dustDex });
-  if (drift !== 0) finding(`FEE DOCTRINE DRIFT measured across layers: saos-dex kernel charges ${dexFeeBps}bps/swap while SAOSExchange.sol (the EVM hub) charges ${exchFeeBps}bps/swap — two fee doctrines for the same fleet. Same fleet, two prices: any cross-venue routing (internal HE ladder -> DEX -> EVM exchange) must price each venue by ITS OWN doctrine, and the convergence law should pin one doctrine or document the arbitration rule.`);
+  // R22 (CR-0051) THE FEE-DOCTRINE ARBITRATION — pure law in agents/fee-doctrine-law.cjs:
+  // anonymous drift → DRIFT; registered book matching the measured sources → PASS-ARBITRATED.
+  const { feeArbitration } = require('./fee-doctrine-law.cjs');
+  const arb = feeArbitration(readJsonSafe(path.join(ROOT, 'agents', 'fee-doctrine.json')),
+    { dexFeeBps, exchFeeBps, floorBps });
+  const c1Verdict = arb.verdict;
+  const doctrineNote = ' — ' + (arb.arbitration || arb.note);
+  check('C1', 'fee-model cross-check (DEX kernel vs SAOSExchange vs market-grid floor)', c1Verdict,
+    `saos-dex kernel.ts FEE_BPS=${dexFeeBps} (treasury cut ${treasuryCut}%) vs SAOSExchange.sol FEE_BPS=${exchFeeBps} (pot ${potShareBps}bps, swap-cap ${swapCapBps}bps) — measured round trips on identical synthetic pools (integer-floor x·y=k, real post-trade reserves fed back): DEX doctrine ${c1.dexRt.marginalFeeOnly}bps marginal-fee / ${c1.dexRt.at01}bps @0.1%-of-depth / ${c1.dexRt.at1}bps @1%; exchange doctrine ${c1.exchRt.marginalFeeOnly}/${c1.exchRt.at01}/${c1.exchRt.at1}bps at the same sizes; market-grid FEE_FLOOR_PCT=${floorPct}pts=${floorBps}bps${doctrineNote}`,
+    { dexFeeBps, exchFeeBps, dexRoundTripBps: c1.dexRt, exchangeRoundTripBps: c1.exchRt, floorBps, dustFloorBps: dustDex, arbitration: arb.arbitration || arb.note });
+  if (drift !== 0 && c1Verdict === 'DRIFT') finding(`FEE DOCTRINE DRIFT measured across layers: saos-dex kernel charges ${dexFeeBps}bps/swap while SAOSExchange.sol (the EVM hub) charges ${exchFeeBps}bps/swap — two fee doctrines for the same fleet, and NO registered arbitration. Same fleet, two prices: register agents/fee-doctrine.json (per-venue constants + the pricing rule) or pin one doctrine. The convergence law accepts governed per-venue pricing — it refuses anonymous drift.`);
   if (floorPct !== null && floorBps < c1.dexRt.marginalFeeOnly) {
     finding(`MIGRATION LAW measured: market-grid's spacing floor (${floorBps}bps round-trip) UNDER-COVERS even the MARGINAL fee-only DEX round trip (${c1.dexRt.marginalFeeOnly}bps at ${dexFeeBps}bps/swap) — measured ${c1.dexRt.at01}bps at 0.1%-of-depth and ${c1.dexRt.at1}bps at 1% (price impact dominates with size; integer-floor x·y=k, real reserves fed back). The floor is honest for the CHAINS (internal Hive/Steem markets charge zero trade fee) but any market-grid->DEX bridge must raise spacing to >= ${c1.dexRt.marginalFeeOnly}bps + impact at its rung size, or route maker-only (book orders pay no AMM fee). Booked as the cross-layer migration law, not a bug.`);
     receipt(`DUST-FLOOR LAW measured: a 0.005%-of-depth DEX round trip costs ${dustDex}bps — NOT fee (floor(${dexFeeBps}bps x dust) rounds to 0 below ~333 units) but integer-floor rounding: each hop loses a whole unit (50 -> 49 -> 48). Minimum viable DEX rung is therefore depth-scale (~0.1% of reserves), another reason the chains-side 40bps floor does not transplant.`);

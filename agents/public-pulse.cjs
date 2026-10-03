@@ -64,6 +64,28 @@ function composePulse(live) {
     measuredAt: live && live.payload ? live.payload.pnl.measuredAt : (tb && tb.takenAt) || null,
     source: live && live.payload ? 'home GET /api/public/pulse (live at fetch time)' : 'agents/truth-baseline.json (committed snapshot; takenAt inside)',
   };
+  // R22 (CR-0051) — THE DAY BOOK JOINS THE TRUTH, scope-labeled, never laundered into
+  // lifetime: the baseline snapshot lags (it is a taken-at-once capture) while the
+  // fill-ledger walk commits every 30 minutes. The public page now carries BOTH, each
+  // stamped with its own scope + measuredAt. A day number never becomes a lifetime
+  // number; a lifetime number never hides a day number. (The owner's roast: the proof
+  // surface showed yesterday's P&L while fresh books existed — a staleness that reads
+  // as a lie even when it is only a lag.)
+  let dayTruth = null;
+  const fl = readJson('agents/fill-ledger.json');
+  if (Array.isArray(fl) && fl.length) {
+    const last = fl[fl.length - 1];
+    const inv = (last && last.inventory) || {};
+    dayTruth = {
+      realizedSbdToday: typeof inv.realized === 'number' ? +(inv.realized / 1e6).toFixed(6) : null,
+      fillsToday: last.total_fills != null ? last.total_fills : null,
+      newFillsLastWalk: Array.isArray(last.new_fills) ? last.new_fills.length : null,
+      mode: last.mode || null,
+      measuredAt: last.ts || null,
+      source: 'agents/fill-ledger.json (last committed walk — DAY scope, since 00:00Z)',
+    };
+  }
+  truth.day = dayTruth;
   const audience = {
     runAt: (aud && aud.runAt) || null,
     postsMeasured: t.postsMeasured || 0,
@@ -97,7 +119,7 @@ function composePulse(live) {
     generator: 'Domain/agents/public-pulse.cjs (keyless, fail-soft)',
     refresh: {
       policy: 'daily via public-pulse workflow; live home feed attempted first, committed books otherwise; every number carries its own measuredAt',
-      liveFeed: { requested: PULSE_URL || null, status: live.status, at: live.at },
+      liveFeed: { requested: PULSE_URL || null, status: live ? live.status : 'NOT-REQUESTED', at: live ? live.at : null }, // R22: compose must stay pure-safe for E42 (live may be null)
     },
     truth,
     audience,
@@ -215,4 +237,5 @@ async function main() {
   process.exit(0);
 }
 
-main().catch(() => process.exit(0));
+module.exports = { composePulse }; // R22 — exported for E42 white-box (require no longer executes the desk)
+if (require.main === module) main().catch(() => process.exit(0));

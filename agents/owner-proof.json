@@ -1,0 +1,188 @@
+{
+ "format": "saos-owner-proof/1",
+ "ownerLanguage": "he",
+ "sections": {
+  "ownership": {
+   "title": "מה יש לנו — אוצרות פר רשת (כל מספר ניתן לאימות על השרשרת)",
+   "rows": {
+    "steemLiquid": {
+     "value": "0.921 STEEM",
+     "source": "agents/money-ledger.json (condenser_api live read)",
+     "measuredAt": "2026-10-03T20:09:56.309Z"
+    },
+    "steemDebt": {
+     "value": "0.078 SBD",
+     "source": "agents/money-ledger.json",
+     "measuredAt": "2026-10-03T20:09:56.309Z"
+    },
+    "steemPowerSp": {
+     "value": "3810.486 SP",
+     "source": "agents/money-ledger.json",
+     "measuredAt": "2026-10-03T20:09:56.309Z",
+     "note": "ההון המוקפא — נזיל במרווחים לפי לוח ה-powerdown"
+    },
+    "hiveLiquid": {
+     "value": "0.034 HIVE",
+     "source": "agents/money-ledger.json",
+     "measuredAt": "2026-10-03T20:09:56.309Z"
+    },
+    "blurtLiquid": {
+     "value": "70.690 BLURT",
+     "source": "agents/money-ledger.json",
+     "measuredAt": "2026-10-03T20:09:56.309Z"
+    }
+   }
+  },
+  "runway": {
+   "title": "הכנסה מתוכננת — ה-powerdown (ה-drip) והראנווי שלו",
+   "rows": {
+    "weeklySp": {
+     "value": 475.883745,
+     "source": "agents/sovereign-drip.json (condenser_api, measured twice)",
+     "measuredAt": "2026-10-03T21:15:22.560Z",
+     "note": "STEEM נכנסים מדי שבוע מה-stake"
+    },
+    "remainingSp": {
+     "value": 1903.534981,
+     "source": "agents/sovereign-drip.json",
+     "measuredAt": "2026-10-03T21:15:22.560Z"
+    },
+    "runwayDays": {
+     "value": 28,
+     "source": "agents/sovereign-drip.json",
+     "measuredAt": "2026-10-03T21:15:22.560Z",
+     "note": "אחרי זה ה-stake נגמר — ההכנסה הזו היא החזר הון, לא תשואה"
+    },
+    "nextWithdrawal": {
+     "value": "2026-10-10T02:01:27",
+     "source": "agents/sovereign-drip.json",
+     "measuredAt": "2026-10-03T21:15:22.560Z"
+    },
+    "lastDripSteem": {
+     "value": 475.857,
+     "source": "agents/earn-audit.json (headcorner drip_arrived_steem, chain truth)",
+     "measuredAt": null,
+     "note": "ה-drip הקודם הגיע והוטל לשוק באותה שעה — הרוטציה האוטונומית הראשונה בהיסטוריה של הצי (CR-0046)"
+    }
+   }
+  },
+  "pnl": {
+   "title": "האמת על הכסף — רווח והפסד, בלי קישוט",
+   "lifetime": {
+    "realizedSbd": {
+     "value": -1.118787,
+     "source": "agents/truth-baseline.json",
+     "measuredAt": "2026-10-02T00:05:00Z",
+     "note": "מדד כל-חיים של המסחר"
+    },
+    "usdPerDay7dAvg": {
+     "value": 0.00412,
+     "source": "agents/truth-baseline.json",
+     "measuredAt": "2026-10-02T00:05:00Z"
+    },
+    "trips": {
+     "value": 65,
+     "source": "agents/truth-baseline.json",
+     "measuredAt": "2026-10-02T00:05:00Z"
+    }
+   },
+   "today": {
+    "realizedSbdToday": -0.227169,
+    "fillsToday": 87,
+    "measuredAt": "2026-10-03T21:52:35.139Z",
+    "source": "agents/fill-ledger.json (הליכת היום, היקף יומי מ-00:00Z)"
+   },
+   "incomeStreams": {
+    "contentRewards": {
+     "value": 0,
+     "source": "agents/earn-audit.json (chain truth, 7d window + lifetime walk)",
+     "measuredAt": "2026-10-03T21:55:45.550Z",
+     "note": "נמדד מת: 1421 הצבעות + 56 פוסטים → 0.000 לכל החיים — לולאת התוכן עדיין לא מרוויחה (CR-0046)"
+    },
+    "tradingSpread": {
+     "value": -0.227169,
+     "source": "agents/fill-ledger.json (הליכת היום, היקף יומי מ-00:00Z)",
+     "measuredAt": "2026-10-03T21:52:35.139Z",
+     "note": "הרגל היחידה שנמדדה עם תנועה — כרגע סביב האפס, ה-buy-premium breaker סוגר את הדליפה (CR-0047)"
+    }
+   }
+  },
+  "autonomy": {
+   "title": "מה רץ לבד — 24/7, בלי מפתח, עם מרפא עצמי",
+   "rows": {
+    "workflowsTotal": {
+     "value": 48,
+     "source": ".github/workflows (tree scan)",
+     "measuredAt": null
+    },
+    "workflowsScheduled": {
+     "value": 43,
+     "source": ".github/workflows (tree scan)",
+     "measuredAt": null
+    },
+    "keeperArcDesks": {
+     "value": 4,
+     "source": "agents/tick-keeper.json",
+     "measuredAt": "2026-10-03T22:22:53.326Z",
+     "note": "השומר מודד את הקבלות של הדסקים עצמן ומצית מחדש דסק רעב"
+    },
+    "stasisBreaker": {
+     "value": false,
+     "source": "agents/STASIS.json",
+     "measuredAt": null,
+     "note": "השובר ריק — אין עצירה בתוקף"
+    }
+   },
+   "arc": {
+    "sovereign-tick-cron": {
+     "value": "2026-10-03T21:35:25.128Z",
+     "source": "agents/sovereign-tick-cron receipts (agents/tick-keeper.json)",
+     "measuredAt": "2026-10-03T22:22:53.326Z",
+     "note": "מקסימום פער מותר: 20m"
+    },
+    "earn-audit-cron": {
+     "value": "2026-10-03T21:55:45.550Z",
+     "source": "agents/earn-audit-cron receipts (agents/tick-keeper.json)",
+     "measuredAt": "2026-10-03T22:22:53.326Z",
+     "note": "מקסימום פער מותר: 45m"
+    },
+    "fill-ledger-cron": {
+     "value": "2026-10-03T21:52:35.139Z",
+     "source": "agents/fill-ledger-cron receipts (agents/tick-keeper.json)",
+     "measuredAt": "2026-10-03T22:22:53.326Z",
+     "note": "מקסימום פער מותר: 45m"
+    },
+    "market-grid-cron": {
+     "value": "2026-10-03T18:41:15.465Z",
+     "source": "agents/market-grid-cron receipts (agents/tick-keeper.json)",
+     "measuredAt": "2026-10-03T22:22:53.326Z",
+     "note": "מקסימום פער מותר: 120m"
+    }
+   }
+  },
+  "laws": {
+   "title": "משמעת — מה מוכח ומה נבדק",
+   "rows": {
+    "claimsAudit": {
+     "value": "WARN",
+     "source": "agents/claims-audit.json",
+     "measuredAt": "2026-10-03T22:42:33.566Z",
+     "note": "כל קובץ שנטען בפנקס — נבדק שהוא באמת על העץ"
+    },
+    "censusLanes": {
+     "source": "agents/fleet-census.json",
+     "measuredAt": "2026-10-03T22:42:32.601Z",
+     "note": "מפת ה-16 מסלולים של הצי"
+    },
+    "ownerLanguage": {
+     "value": "he",
+     "source": "agents/claims-audit.cjs OWNER_LANGUAGE (CR-0050)",
+     "measuredAt": null,
+     "note": "כל פנייה לבעלים — בעברית"
+    }
+   }
+  }
+ },
+ "at": "2026-10-03T22:42:33.599Z",
+ "duration_ms": 3
+}

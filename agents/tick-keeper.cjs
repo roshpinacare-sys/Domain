@@ -36,24 +36,43 @@ const STASIS_JSON = process.env.STASIS_JSON || path.join(ROOT, 'agents', 'STASIS
 const REPO = process.env.KEEPER_REPO || 'roshpinacare-sys/Domain';
 
 // the reflex arc: desk → (watched receipt, staleness law)
+// R22 (CR-0051) THE RESURRECTION ARC: measured Z-71 (GitHub API 2026-10-03) — 4 workflows
+// with cron entries have ZERO scheduled events ever (sovereign-tick, earn-audit, census,
+// market-grid) — the scheduler registers them and starves them; plus twin-audit (false-alarm
+// bug R22-fixed) and self-audience (push-race bug R22-fixed) failed their last runs. The
+// keeper now watches EVERY desk that matters, with per-desk staleness AND per-desk
+// cooldown (a daily desk is retried every 4h, not stormed every 20m).
 const ARC = {
   'sovereign-tick-cron': { receipt: 'agents/sovereign-decisions.jsonl', max_gap_min: 20 }, // 30-min cadence → stale at 20
   'earn-audit-cron':     { receipt: 'agents/earn-audit.json',              max_gap_min: 45 },
-  'fill-ledger-cron':    { receipt: 'agents/fill-ledger.json',             max_gap_min: 45 },
-  'market-grid-cron':    { receipt: 'agents/market-grid.json',             max_gap_min: 120 }, // Z-71: measured 0 schedule events since creation (1 manual run) — the drip-starved capital desk joins the arc; its own gates bind at fire time
+  'fill-ledger-cron':    { receipt: 'agents/fill-ledger.json',             max_gap_min: 45 }, // never scheduled by GitHub (0 runs Z-71) — the keeper is its heartbeat until the scheduler heals
+  'market-grid-cron.yml':    { receipt: 'agents/market-grid.json',                  max_gap_min: 45,   cooldown_min: 60  },
+  'fleet-census-cron.yml':   { receipt: 'agents/fleet-census.json',                 max_gap_min: 1560, cooldown_min: 240 }, // daily 02:14
+  'twin-audit.yml':          { receipt: 'twin-audit/latest.json',                   max_gap_min: 1560, cooldown_min: 240 }, // daily 06:19
+  'self-audience.yml':       { receipt: 'agents/receipts/self-audience-receipt.json', max_gap_min: 1560, cooldown_min: 240 }, // daily
+  'public-pulse.yml':        { receipt: 'agents/pulse-book.json',                   max_gap_min: 1560, cooldown_min: 240 }, // daily
+  'audience-analyst.yml':    { receipt: 'audience/latest.json',                     max_gap_min: 1560, cooldown_min: 240 }, // daily 05:31
 };
+for (const k of Object.keys(ARC)) if (!ARC[k]) delete ARC[k]; // the resurrection arc must never carry ghost rows
 const COOLDOWN_MIN = 20; // per-desk re-dispatch floor — a broken desk is retried, not stormned
 
 // ── pure core (exported for E39) ─────────────────────────────────────────────
 // arc: { desk: last_ts|null } · cooldownBook: { desk: last_dispatch_ts|null }
-function keeperDecide({ now, arc, cooldownBook = {}, maxGaps = {}, cooldownMin = COOLDOWN_MIN }) {
+function keeperDecide({ now, arc = {}, cooldownBook = {}, maxGaps = {}, cooldownMin = COOLDOWN_MIN }) {
   const t = Date.parse(now);
   const decided = [], skipped = [];
-  for (const desk of Object.keys(ARC)) {
+  // R22 purity law: judge the PASSED arc — main() passes the full Object.keys(ARC) arc
+  // (null values = no receipt yet), and a narrower arc gets a narrower judgment (E40b's
+  // synthetic 3-desk cases stay exact). AN EMPTY arc means "no receipts at all anywhere"
+  // — the never-born fleet view: the whole registry is judged with null timestamps.
+  const desks = Object.keys(arc).length ? Object.keys(arc) : Object.keys(ARC);
+  for (const desk of desks) {
+    const a = ARC[desk] || {};
     const lastTs = arc[desk] || null;
-    const maxGap = maxGaps[desk] != null ? maxGaps[desk] : ARC[desk].max_gap_min;
+    const maxGap = maxGaps[desk] != null ? maxGaps[desk] : a.max_gap_min;
     const cd = cooldownBook[desk] ? Date.parse(cooldownBook[desk]) : 0;
-    if (cd && (t - cd) / 6e4 < cooldownMin) { skipped.push({ desk, reason: `cooldown: dispatched ${Math.floor((t - cd) / 6e4)}m ago < ${cooldownMin}m` }); continue; }
+    const cdMin = a.cooldown_min || cooldownMin; // R22: per-desk cooldown — daily desks are retried every 4h, not stormed
+    if (cd && (t - cd) / 6e4 < cdMin) { skipped.push({ desk, reason: `cooldown: dispatched ${Math.floor((t - cd) / 6e4)}m ago < ${cdMin}m` }); continue; }
     if (!lastTs) { decided.push({ desk, stale_min: null, reason: 'no-receipt-yet' }); continue; }
     const stale = (t - Date.parse(lastTs)) / 6e4;
     if (stale > maxGap) decided.push({ desk, stale_min: +stale.toFixed(1), reason: `book stale ${stale.toFixed(1)}m > ${maxGap}m` });
