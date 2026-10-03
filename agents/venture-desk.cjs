@@ -300,15 +300,39 @@ if (require.main === module) (async () => {
   // Z-42: leg attribution — when L1 is absent in this context, the honest null is
   // EXPLAINED from the canon-liveness receipt (if adjacent); the dead anonymous
   // fallback is gone, not retried.
+  // Z-59 CARRY LAW: a legless LOCAL run used to null the ledger and overwrite the
+  // committed book — the public board flipped to "unreachable" every time a lane
+  // ran locally (measured: CI measured L1 at 04:52Z, sibling local runs at 10-14Z
+  // re-nulled it). Fix: when DEFU_DIR is absent, CARRY the committed book's ledger
+  // if it is fresh (≤36h) and measured (oracle names KPI.json) — attributed as
+  // carried, never re-estimated, never synthesized. Stale or unmeasured → honest null.
   let kpiRaw = null;
   const kpiLocal = readCanon('fleet/KPI.json');
   if (kpiLocal) { try { kpiRaw = JSON.parse(kpiLocal); } catch (_) {} }
   let canonLeg = kpiRaw ? 'L1 sibling/CI checkout (content served)' : null;
   if (!kpiRaw) {
-    const cl = readJson('canon-liveness.json');
-    canonLeg = cl && cl.verdict
-      ? `none this context — canon-liveness verdict ${cl.verdict} (content honestly null, never estimated)`
-      : 'none this context — no canon leg adjacent (content honestly null, never estimated)';
+    const prev = readJson('ventures.json');
+    const pl = prev && prev.ledger ? prev.ledger : null;
+    const prevAgeH = pl && pl.at ? (Date.now() - new Date(pl.at).getTime()) / 36e5 : Infinity;
+    const prevIsMeasured = pl && typeof pl.oracle === 'string' && pl.oracle.includes('KPI.json')
+      && pl.earnUsdPerDay != null && pl.burnUsdPerDay != null;
+    if (prevIsMeasured && prevAgeH <= 36) {
+      const carriedAt = pl.at;
+      kpiRaw = {
+        carriedFromCommittedBook: true,
+        updatedAt: carriedAt,
+        revenuePerDayReal: { usd: pl.earnUsdPerDay, fuelBurn: { usdPerDay: pl.burnUsdPerDay, remainingWeeks: pl.runwayWeeks ?? null } },
+        ladder: null
+      };
+      canonLeg = `L1 CARRIED from committed book (CI measured ${carriedAt}, ≤36h; this context legless — carried attributed, never estimated)`;
+    } else {
+      const cl = readJson('canon-liveness.json');
+      canonLeg = cl && cl.verdict
+        ? `none this context — canon-liveness verdict ${cl.verdict} (content honestly null, never estimated)`
+        : prevIsMeasured
+          ? `none this context — committed book ledger stale (${isFinite(prevAgeH) ? prevAgeH.toFixed(0) : '?'}h old > 36h window; honest null, never estimated)`
+          : 'none this context — no canon leg adjacent (content honestly null, never estimated)';
+    }
   }
   let kpi = null;
   if (kpiRaw && kpiRaw.revenuePerDayReal) {
@@ -345,7 +369,9 @@ if (require.main === module) (async () => {
   const realizedUsd = (fills && fills.totalRealizedSwaphive != null && books.prices && books.prices.hive != null)
     ? f6(fills.totalRealizedSwaphive * books.prices.hive) : null;
   const ledger = {
-    at, oracle: kpi ? 'Defi/fleet/KPI.json (measured, raw)' : 'unreachable this run (honest null, no estimation)',
+    at, oracle: kpi
+      ? (kpiRaw && kpiRaw.carriedFromCommittedBook ? 'Defi/fleet/KPI.json (CI-measured, CARRIED from committed book — attributed, not re-measured this run)' : 'Defi/fleet/KPI.json (measured, raw)')
+      : 'unreachable this run (honest null, no estimation)',
     canonLeg,
     earnUsdPerDay: kpi ? kpi.earnUsdPerDay : null,
     burnUsdPerDay: kpi ? kpi.fuelBurnUsdPerDay : null,
