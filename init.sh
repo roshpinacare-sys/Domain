@@ -41,6 +41,7 @@ echo "  guard battery ok (DENY on destruction, allow on law+data)"
 
 echo "[domain-init] judge node (fail-soft, refreshes the audit book)"
 node agents/fleet-indicators.cjs || true   # fate-defense FWI scorecard (Task 22) — fail-soft, refreshes the book
+node agents/one-bloc.cjs || true           # one-bloc whole-git convergence map (Task 23) — keyless-first, env-token fallback, fail-soft
 if [ -d "${DEFU_DIR:-../Defi}" ]; then
   node agents/harness-audit.cjs || true
 else

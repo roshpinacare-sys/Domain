@@ -23,6 +23,7 @@
  *   E12 rail policy gate    — a FORBIDDEN row enabled as LIVE fails validation (Z-39)
  *   E13 fate-defense FWI    — the Emergence-World scorecard runs fresh, 9 indicators, every one artifact-sourced (Task 22; renumbered from my interim E10 — Z-39's rail evals landed first on main, supersession visible here)
  *   E14 collapse drill      — containment PROVEN on a fresh run: 4 fault classes, 4 REDs (Z-40, emergence.ai; renumbered from my interim E13 — Task 22's fate-defense landed on main first, parallel-convergence supersedes)
+ *   E15 one-bloc convergence — the whole git is measured mechanically: 16 roles, honest statuses, no invented reach (Task 23, owner directive "מקשה אחת")
  *
  * Fail-soft: exit 0 always; FAILs are booked honestly (HARNESS-AUDIT MANDATE:
  * green-washing the evals is a doctrine breach).
@@ -198,9 +199,26 @@ function accumulateInMemory(bookRows, seed) {
       ['receipt verdict CONTAINMENT-PROVEN with a green baseline (no false credit — BASELINE-RED would refuse attribution)', 'every injected fault class caught: faults_caught === faults_total >= 4 (registry corruption, guard neutered, book stamps stripped, forbidden rail LIVE)', 'receipts fresh < 168h — the drill runs on the CI schedule, containment proof is not a one-time trophy', 'CI summary ledger agrees (collapse-drill.json stamped)'], `caught=${rec.faults_caught}/${rec.faults_total} ageH=${Math.round(ageH)} head=${rec.head}`);
   } catch (e) { evalr('E14', 'collapse drill receipts', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
+  // ---- E15: one-bloc convergence — the whole git measured mechanically (Task 23)
+  try {
+    const r = spawnSync(process.execPath, [path.join(AG, 'one-bloc.cjs')], { cwd: AG, timeout: 300000, encoding: 'utf8', env: process.env });
+    const b = JSON.parse(fs.readFileSync(path.join(AG, 'one-bloc.json'), 'utf8'));
+    const rows = Array.isArray(b.repos) ? b.repos : [];
+    const sixteen = rows.length === 16;
+    const honest = rows.every((x) => ['REACHED', 'AUTH-WALL', 'UNKNOWN'].includes(x.status));
+    const keylessFloor = (b.counts && b.counts.keylessReach >= 2) || (b.counts && b.counts.reached >= 2); // Domain+Console are public — the env-independent invariant
+    const stamped = !!b.at && (Date.now() - Date.parse(b.at)) / 3600000 < 1;
+    const lawsArmed = b.laws && b.laws.stasisBreaker && b.laws.stasisBreaker.parseable === true;
+    const bound = Array.isArray(b.boundMaps) && b.boundMaps.length === 3;
+    evalr('E15', 'one-bloc: whole-git convergence map measured, never invented',
+      r.status === 0 && sixteen && honest && keylessFloor && stamped && lawsArmed && bound,
+      ['one-bloc.cjs runs in a fresh process (exit 0, fail-soft)', 'exactly 16 repos measured from agents/one-bloc-roles.csv (the BLOC-STATE hand map bound as data)', 'every repo lands REACHED or an honest AUTH-WALL/UNKNOWN — no invented reach (KEYLESS-FIRST law)', 'keyless floor holds: >=2 public repos reachable with zero credentials (env-independent)', 'book stamped fresh (<1h) + STASIS law parseable + 3 truth-maps bound (dedup: one map, not three)'],
+      `verdict=${b.verdict} reached=${b.counts && b.counts.reached}/16 keyless=${b.counts && b.counts.keylessReach} authWall=${b.counts && b.counts.authWall}`);
+  } catch (e) { evalr('E15', 'one-bloc convergence', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.4.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill adoptions (Task 22 + Z-40, deduped by renumbering — the same operator wave landed on the same study from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.5.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence adoptions (Task 22 + Z-40 + Task 23, deduped by renumbering — the same operator wave landed on the same study from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];

@@ -1,8 +1,8 @@
 # Harness Audit — the fleet's five-subsystem check (fresh-context judge node)
 
-_harness-audit v1.0.0 · 2026-10-02T23:44:46.176Z · born from the learn-harness-engineering study (Z-35, extended Task 19)_
+_harness-audit v1.0.0 · 2026-10-03T00:11:36.851Z · born from the learn-harness-engineering study (Z-35, extended Task 19)_
 
-**harness green: 33 checks pass, 0 fail — the five subsystems hold and the three structural failures have named countermeasures**
+**harness green: 34 checks pass, 0 fail — the five subsystems hold and the three structural failures have named countermeasures**
 
 | # | Subsystem | Check | Status | Evidence |
 |---|---|---|---|---|
@@ -22,7 +22,7 @@ _harness-audit v1.0.0 · 2026-10-02T23:44:46.176Z · born from the learn-harness
 | 14 | scope | doctrine binds kill rules (ventures have them) | PASS | DOCTRINE-economics.md §4 |
 | 15 | scope | ventures board carries kill rules (5/5) | PASS | ventures.json |
 | 16 | scope | resource floors/ceilings in code (VP floor, dust holds, RC gate) | PASS | treasury-desk CUR_VP_FLOOR |
-| 17 | lifecycle | CLAIMS ledger fresh (receipts keep continuity) | PASS | last receipt 0.1h ago |
+| 17 | lifecycle | CLAIMS ledger fresh (receipts keep continuity) | PASS | last receipt 0.4h ago |
 | 18 | lifecycle | recovery path codified (RESUME-KIT + .fleet/restore.sh) | PASS | canon reachable |
 | 19 | graph-failures | Goodhart countermeasure: two-sided ledger, measured never estimated | PASS | EARN-GOVERNOR LAW |
 | 20 | graph-failures | Blindness-upward countermeasure: kill rules + operator gate | PASS | kill rules + operator gates |
@@ -32,13 +32,14 @@ _harness-audit v1.0.0 · 2026-10-02T23:44:46.176Z · born from the learn-harness
 | 24 | anchors | KPI names its method (oracle discipline) | PASS | KPI.json method field |
 | 25 | anchors | spot oracle measured at run time (not cached stories) | PASS | ventures.json priceOracle |
 | 26 | graph | every FILLED role names a reachable worker artifact (role→worker wiring) | PASS | 7 FILLED roles · 7 wired |
-| 27 | loop | all six loop primitives have live fleet instances (automations/worktrees/skills/connectors/sub-agents/external state) | PASS | workflows:41 desks:50 receipts:true books:9 claims:true |
+| 27 | loop | all six loop primitives have live fleet instances (automations/worktrees/skills/connectors/sub-agents/external state) | PASS | workflows:41 desks:51 receipts:true books:9 claims:true |
 | 28 | sovereignty | role-registry integrity: every charter row names a real file (roles-as-data, no invented agents) | PASS | 50 rows · cols 9 · dupes 0 · missing files 0 |
 | 29 | sovereignty | change-request ledger integrity: every CR well-formed, no PENDING abandoned >7d | PASS | 4 CRs · malformed 0 · stale-pending 0 |
-| 30 | sovereignty | mechanical override live: destructive-command guard stamped, evals E7-E9 pin it | PASS | ledger at 2026-10-02T23:44:42.986Z · scan denies 0 · guardEvals green |
+| 30 | sovereignty | mechanical override live: destructive-command guard stamped, evals E7-E9 pin it | PASS | ledger at 2026-10-03T00:11:17.256Z · scan denies 3 · guardEvals green |
 | 31 | sovereignty | cognitive rail governed: provider registry valid, forbidden rails never enabled, keyless probes booked, E10-E12 pin it | PASS | agents/inference-providers.csv + rail-ledger.json |
 | 32 | fate-defense | Emergence-World adoption: FWI scorecard fresh (9 indicators, each with a mechanical evidence source) + STASIS breaker armed + engine obeys it | PASS | FWI THRIVING fresh · 9 indicators · sources all named · stasis armed=false · engine gate=true |
-| 33 | sovereignty | collapse drill containment-proof: 4 fault classes injected into throwaway trees, judge caught every one on a fresh run | PASS | verdict CONTAINMENT-PROVEN · caught 4/4 · baseline green=true · age 0h · head 522a298dcd31 |
+| 33 | sovereignty | collapse drill containment-proof: 4 fault classes injected into throwaway trees, judge caught every one on a fresh run | PASS | verdict CONTAINMENT-PROVEN · caught 4/4 · baseline green=true · age 0.4h · head 522a298dcd31 |
+| 34 | sovereignty | one-bloc convergence book: the whole git (16 repos) measured mechanically into ONE map — roles, HEADs, honest statuses, laws armed | PASS | verdict ONE-BLOC · reached 16/16 · keyless 2 · age 0h · maps bound 3 |
 
 **Books pulse:** econ-book.json ✓ · curation-book.json ✓ · money-ledger.json ✓ · ventures.json ✓ · fills-ledger.json ✓ · bridge-book.json ✓ · dex-book.json ✓ · learning-ledger.json ✓ · recruitment.json ✓
 
