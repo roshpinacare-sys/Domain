@@ -1,8 +1,8 @@
 # Desk Evals — runnable expectations (fresh-process judge, Z-36)
 
-_run-evals v1.6.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16, parallel-convergence superset) · 2026-10-03T00:44:00.696Z_
+_run-evals v1.7.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17, parallel-convergence superset) · 2026-10-03T00:49:06.971Z_
 
-**evals green: 16/16 expectations hold**
+**evals green: 17/17 expectations hold**
 
 ## E1 · dedupe identity is stable across repeat harvest — PASS
 - seed(3) + econ rows carrying the same two fills → exactly 3 entries
@@ -23,7 +23,7 @@ _run-evals v1.6.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense 
 - exit code 0 even when DEFU_DIR is bogus
 - missing canon = honest FAILs, never a crash, never green-washed
 - counts arithmetic consistent (pass+warn+fail == checks)
-- _measured: exit=0 pass=26 warn=0 fail=9_
+- _measured: exit=0 pass=26 warn=0 fail=10_
 
 ## E5 · concat-family regression: manabar coerced before arithmetic — PASS
 - string+number concatenates ("74488519347811969") — the Z-33 third-incident family
@@ -74,7 +74,7 @@ _run-evals v1.6.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense 
 - every indicator names a mechanical evidence source (ANTI-GOODHART)
 - FWI book stamped fresh (<1h)
 - STASIS.json parseable with boolean active flag
-- _measured: verdict=DEGRADED indicators=9 sourced=true stasisArmed=true_
+- _measured: verdict=THRIVING indicators=9 sourced=true stasisArmed=true_
 
 ## E14 · collapse drill: containment PROVEN on a fresh run — PASS
 - receipt verdict CONTAINMENT-PROVEN with a green baseline (no false credit — BASELINE-RED would refuse attribution)
@@ -89,7 +89,7 @@ _run-evals v1.6.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense 
 - every repo lands REACHED or an honest AUTH-WALL/UNKNOWN — no invented reach (KEYLESS-FIRST law)
 - keyless floor holds: >=2 public repos reachable with zero credentials (env-independent)
 - book stamped fresh (<1h) + STASIS law parseable + 3 truth-maps bound (dedup: one map, not three)
-- _measured: verdict=DEGRADED reached=2/16 keyless=2 authWall=0_
+- _measured: verdict=DEGRADED reached=2/16 keyless=2 authWall=14_
 
 ## E16 · workflow-parse gate: no dead lane wears a green shape — PASS
 - predicate catches `${{ }}` inside flow collections (the recruit.yml incident class)
@@ -97,5 +97,11 @@ _run-evals v1.6.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense 
 - gate desk runs fresh-process exit 0, scans >= 20 workflow files
 - 0 offenders + book stamped fresh (<10min) — full-YAML floor or honest idiom floor, mode named
 - _measured: scanned=41 mode=full offenders=0_
+
+## E17 · canon-liveness: honest verdict derivation + fresh receipt with named legs — PASS
+- white-box: L1 content → CONTENT-SERVED; L1 absent + L2 rail → RAIL-REACHABLE; both absent → CANON-DARK (zero hopeful greens)
+- black-box: fresh-process run exits 0 (fail-soft), receipt stamped with ≥3 named legs
+- the receipt verdict matches the derivation for this context — no environment drift between book and reality (Z-42 root cause: the dead anonymous fallback leg, private canon 404)
+- _measured: verdict=CONTENT-SERVED legs=L1:SERVING,L2:RAIL-UP,L3:DEAD-AS-EXPECTED-PRIVATE_
 
 _Eval discipline adopted from learn-harness-engineering (Z-36): an eval is a runnable expectation, not a hope. Pure functions = white-box; desk processes = black-box fresh processes._
