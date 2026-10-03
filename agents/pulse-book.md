@@ -1,8 +1,8 @@
-# Daily Pulse — 2026-10-03T17:06:42.324Z
+# Daily Pulse — 2026-10-03T17:14:54.682Z
 
 - **loop:** reef/SkillClaw Rung 1 (day → review → propose → gate → settle) · **verify-only:** proposals never auto-applied
-- **window:** since 2026-10-03T16:26:40.856Z · **commits:** 1
-- **gates:** skipped (PULSE_SKIP_GATES recursion guard — real gates proven in standalone runs) · skipped (PULSE_SKIP_GATES recursion guard — real gates proven in standalone runs)
+- **window:** since 2026-10-02T16:14:54.597Z · **commits:** 36
+- **gates:** harness-audit: 40 PASS / 1 WARN / 0 FAIL · books fresh 10/10 · run-evals: 27 PASS / 0 FAIL
 
 | # | id | disposition | advisory (lane/urgency) | action |
 |---|---|---|---|---|
@@ -17,16 +17,50 @@
 | 9 | lane:stablyai/orca | DEFERRED-TIER-C | — | hold; opening conditions named in the lane canon |
 | 10 | nv:runtime-deps-no-advisory-crossch | GATED-BLOCKED | — | resolve missing fact: Authoritative advisory cross-check for the bun.lock-resolved set. |
 | 11 | nv:runtime-dev-mode-on-public-defau | GATED-BLOCKED | — | resolve missing fact: Exact platform-policy fact: whether this runtime may run a production build on |
-| 12 | CR-0030 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
-| 13 | CR-0032 | ROLLED-BACK | — | rollback path (judged FAIL) |
-| 14 | obs:one-bloc-boundary | DEFERRED-TIER-C | — | restore cross-repo credential (operator, tier C) — 2/16 reached; the len-93 token is gone from remot |
-| 15 | obs:hands | BOOKED | — | carry the hands boundary into the daily record |
+| 12 | CR-0001 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
+| 13 | CR-0002 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
+| 14 | CR-0003 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
+| 15 | CR-0004 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
+| 16 | CR-0005 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
+| 17 | CR-0006 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
+| 18 | CR-0007 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
+| 19 | CR-0008 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
+| 20 | CR-0008 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
+| 21 | CR-0009 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
+| 22 | CR-0010 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
+| 23 | CR-0011 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
+| 24 | CR-0012 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
+| 25 | CR-0013 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
+| 26 | CR-0014 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
+| 27 | CR-0015 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
+| 28 | CR-0016 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
+| 29 | CR-0017 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
+| 30 | CR-0018 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
+| 31 | CR-0019 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
+| 32 | CR-0020 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
+| 33 | CR-0021 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
+| 34 | CR-0022 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
+| 35 | CR-0023 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
+| 36 | CR-0024 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
+| 37 | CR-0025 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
+| 38 | CR-0026 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
+| 39 | CR-0027 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
+| 40 | CR-0028 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
+| 41 | CR-0029 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
+| 42 | CR-0030 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
+| 43 | CR-0031 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
+| 44 | CR-0032 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
+| 45 | CR-0033 | ACCEPTED-TODAY | — | accepted version already shipped (judged) |
+| 46 | obs:one-bloc-boundary | DEFERRED-TIER-C | — | restore cross-repo credential (operator, tier C) — 2/16 reached; the len-93 token is gone from remot |
+| 47 | obs:hands | BOOKED | — | carry the hands boundary into the daily record |
+| 48 | evo:harness-window | BOOKED | — | carry the evolution-window cadence state into the record |
 
 - PROPOSED-CR: 6
 - GATED-BLOCKED: 2
 - DEFERRED-TIER-C: 4
-- ACCEPTED-TODAY: 1
-- ROLLED-BACK: 1
-- BOOKED: 1
+- ACCEPTED-TODAY: 34
+- ROLLED-BACK: 0
+- BOOKED: 2
 
 - advisory triage: **JOINED-FRESH** · joined 7 · fresh advisory triage joined by id — lane/urgency hints only, confidence uncalibrated (en checkpoint), dispositions untouched
+- evolution-window evidence: **CADENCE-ONLY** · windows booked but none measured complete yet — cadence state carried as evidence
