@@ -109,7 +109,7 @@ jobs:
         run: |
           git config user.name "saos-sovereign"
           git config user.email "sovereign@saos.local"
-          for p in agents/sovereign-decisions.jsonl agents/sovereign-state.json agents/sovereign-pending.json agents/sovereign-drip.json agents/fill-ledger.json agents/fill-ledger-fills.jsonl agents/market-cycle.json agents/market-exec.json; do
+          for p in agents/sovereign-decisions.jsonl agents/sovereign-state.json agents/sovereign-pending.json agents/sovereign-drip.json agents/fill-ledger.json agents/fill-ledger-fills.jsonl agents/fill-ledger.md agents/market-cycle.json agents/market-cycle.md agents/market-exec.json agents/market-exec.md; do
             [ -e "$p" ] && git add "$p" || true
           done
           if git diff --cached --quiet; then
