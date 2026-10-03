@@ -1,21 +1,21 @@
 # CI Hands — the fleet's hands on its own CI estate (trycua/cua adoption)
 
-_ci-hands v1.0.0 · 2026-10-03T18:21:11.597Z · keyless · stasis armed/free_
+_ci-hands v1.0.0 · 2026-10-03T18:39:36.189Z · keyless · stasis armed/free_
 
-**CI-HANDS keyless floor: 2/16 reached — the rest booked UNREACHABLE (never invented)**
+**CI-HANDS keyless floor: 0/16 reached — the rest booked UNREACHABLE (never invented)**
 
 | repo | lanes | green | active-red | self-healed | history-transient | verdict |
 |---|---|---|---|---|---|---|
-| saos-sovereign-platform | — | — | — | — | — | UNREACHABLE (HTTP 404) |
-| steem | — | — | — | — | — | UNREACHABLE (HTTP 404) |
-| Domain | 7 | 7 | 0 | 0 | 0 | measured |
-| Console | 9 | 9 | 0 | 0 | 0 | measured |
-| Zip | — | — | — | — | — | UNREACHABLE (HTTP 404) |
-| roshpina | — | — | — | — | — | UNREACHABLE (HTTP 404) |
-| anchor-baseline | — | — | — | — | — | UNREACHABLE (HTTP 404) |
-| Saosmartwallet | — | — | — | — | — | UNREACHABLE (HTTP 404) |
-| Sdk | — | — | — | — | — | UNREACHABLE (HTTP 404) |
-| Project-files | — | — | — | — | — | UNREACHABLE (HTTP 404) |
+| saos-sovereign-platform | — | — | — | — | — | UNREACHABLE (HTTP 403) |
+| steem | — | — | — | — | — | UNREACHABLE (HTTP 403) |
+| Domain | — | — | — | — | — | UNREACHABLE (HTTP 403) |
+| Console | — | — | — | — | — | UNREACHABLE (HTTP 403) |
+| Zip | — | — | — | — | — | UNREACHABLE (HTTP 403) |
+| roshpina | — | — | — | — | — | UNREACHABLE (HTTP 403) |
+| anchor-baseline | — | — | — | — | — | UNREACHABLE (HTTP 403) |
+| Saosmartwallet | — | — | — | — | — | UNREACHABLE (HTTP 403) |
+| Sdk | — | — | — | — | — | UNREACHABLE (HTTP 403) |
+| Project-files | — | — | — | — | — | UNREACHABLE (HTTP 403) |
 | Adsmarket | — | — | — | — | — | UNREACHABLE (HTTP 403) |
 | Defi | — | — | — | — | — | UNREACHABLE (HTTP 403) |
 | saos-dex | — | — | — | — | — | UNREACHABLE (HTTP 403) |

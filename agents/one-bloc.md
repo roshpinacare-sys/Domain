@@ -2,26 +2,26 @@
 
 _one-bloc v1.0.1 (Task 23 convergence — owner directive "מקשה אחת"; binds BLOC-STATE + SOVEREIGN-INDEX + FATE-DEFENSE into one machine map; keyless-first + env-token fallback, stderr redacted)_
 
-Measured: **2026-10-03T18:21:01.628Z** · Verdict: **DEGRADED** · REACHED 2/16 (keyless 2 + token 0) · AUTH-WALL 14 · UNKNOWN 0 · local-sync 0/16
+Measured: **2026-10-03T18:39:44.827Z** · Verdict: **ONE-BLOC** · REACHED 16/16 (keyless 2 + token 14) · AUTH-WALL 0 · UNKNOWN 0 · local-sync 11/16
 
 | ריפו | תפקיד | origin/main | מצב | דרך | סנכרון-מקומי |
 |---|---|---|---|---|---|
-| saos-sovereign-platform | המוח הריבוני — צבא מגייס-עצמו וסולם כלכלת-אמת | `—` | AUTH-WALL | — | UNKNOWN-ORIGIN |
-| steem | המפתחות הקנוניים + הזרוע החיה על-השרשרת | `—` | AUTH-WALL | — | UNKNOWN-ORIGIN |
-| Domain | הפנים הציבוריות + רכזת ה-CI האורגנית | `8d998d79b200` | REACHED | keyless | BEHIND |
+| saos-sovereign-platform | המוח הריבוני — צבא מגייס-עצמו וסולם כלכלת-אמת | `99daebfedf86` | REACHED | token | BEHIND |
+| steem | המפתחות הקנוניים + הזרוע החיה על-השרשרת | `33c541d6b635` | REACHED | token | SYNCED |
+| Domain | הפנים הציבוריות + רכזת ה-CI האורגנית | `24630bfd8458` | REACHED | keyless | BEHIND |
 | Console | מרכז-ההפעלה — אמת נמדדת פעם-אחת | `40fc118a608d` | REACHED | keyless | BEHIND |
-| Zip | המחסן החתום — עוגני אמת על שרשרת-אפו | `—` | AUTH-WALL | — | UNKNOWN-ORIGIN |
-| roshpina | הגרעין + מבקר השליטה העצמית | `—` | AUTH-WALL | — | UNKNOWN-ORIGIN |
-| anchor-baseline | שומר העוגן — בוט שלמות Merkle | `—` | AUTH-WALL | — | UNKNOWN-ORIGIN |
-| Saosmartwallet | הארנק — זרימת רישום כנה | `—` | AUTH-WALL | — | UNKNOWN-ORIGIN |
-| Sdk | המנשר — ללא SDK חיצוני בהכרה | `—` | AUTH-WALL | — | UNKNOWN-ORIGIN |
-| Project-files | הארכיון הפיזי — keeper ארכיונים | `—` | AUTH-WALL | — | UNKNOWN-ORIGIN |
-| Adsmarket | הקמפיין הכן — claims-guard | `—` | AUTH-WALL | — | UNKNOWN-ORIGIN |
-| Defi | הכלכלן — reprices חי fail-closed | `—` | AUTH-WALL | — | UNKNOWN-ORIGIN |
-| saos-dex | הבורסה — פעימות dex-beat/grid | `—` | AUTH-WALL | — | UNKNOWN-ORIGIN |
-| saos-jummper | החוזים בפייתון — signingcontract | `—` | AUTH-WALL | — | UNKNOWN-ORIGIN |
-| saos-control-center | מרכז הבקרה הפנימי — 12 סקריפטים env-first | `—` | AUTH-WALL | — | UNKNOWN-ORIGIN |
-| saos-sovereign-foundry | המפעל — key-broker fail-closed | `—` | AUTH-WALL | — | UNKNOWN-ORIGIN |
+| Zip | המחסן החתום — עוגני אמת על שרשרת-אפו | `21ae0a029616` | REACHED | token | BEHIND |
+| roshpina | הגרעין + מבקר השליטה העצמית | `e1c6eeb2994c` | REACHED | token | SYNCED |
+| anchor-baseline | שומר העוגן — בוט שלמות Merkle | `098a302a381d` | REACHED | token | SYNCED |
+| Saosmartwallet | הארנק — זרימת רישום כנה | `743d1f0fd632` | REACHED | token | SYNCED |
+| Sdk | המנשר — ללא SDK חיצוני בהכרה | `8437ae60d705` | REACHED | token | SYNCED |
+| Project-files | הארכיון הפיזי — keeper ארכיונים | `c8d8a92b4a22` | REACHED | token | SYNCED |
+| Adsmarket | הקמפיין הכן — claims-guard | `17683983156e` | REACHED | token | SYNCED |
+| Defi | הכלכלן — reprices חי fail-closed | `8dae9d842817` | REACHED | token | SYNCED |
+| saos-dex | הבורסה — פעימות dex-beat/grid | `1bb6ae6da857` | REACHED | token | BEHIND |
+| saos-jummper | החוזים בפייתון — signingcontract | `b70df1022f0e` | REACHED | token | SYNCED |
+| saos-control-center | מרכז הבקרה הפנימי — 12 סקריפטים env-first | `2ef1b78a152e` | REACHED | token | SYNCED |
+| saos-sovereign-foundry | המפעל — key-broker fail-closed | `62c0a7433892` | REACHED | token | SYNCED |
 
 Laws armed: STASIS breaker ✔ parseable, engine free (active=false) · FWI book present, age 0h, verdict THRIVING · FATE-DEFENSE canon present
 
