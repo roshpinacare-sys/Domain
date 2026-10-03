@@ -82,7 +82,7 @@ jobs:
             echo "no book change — clean exit"
           else
             git commit -m "market-grid(history): tick $(date -u +%FT%TZ) [skip ci]"
-            git pull --rebase origin main
+            git -c rebase.autoStash=true pull --rebase origin main
             git push origin HEAD:main
           fi
 

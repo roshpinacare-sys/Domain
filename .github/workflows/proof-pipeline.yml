@@ -74,6 +74,6 @@ jobs:
             echo "book unchanged — clean exit"
           else
             git commit -m "proof-pipeline: day book $(date -u +%F) · ready-to-sign anchor calldata (keyless) [skip ci]"
-            git pull --rebase origin main
+            git -c rebase.autoStash=true pull --rebase origin main
             git push origin HEAD:main
           fi

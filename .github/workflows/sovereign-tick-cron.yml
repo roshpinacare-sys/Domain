@@ -122,7 +122,7 @@ jobs:
             git commit -m "sovereign-tick: decision receipts [skip ci]"
             ok=0
             for i in 1 2 3; do
-              if git pull --rebase origin main && git push origin HEAD:main; then ok=1; break; fi
+              if git -c rebase.autoStash=true pull --rebase origin main && git push origin HEAD:main; then ok=1; break; fi
               echo "push attempt $i failed (concurrent commits on main) — re-pulling"
               git rebase --abort 2>/dev/null || true
               sleep 10
