@@ -1,6 +1,6 @@
 {
   "protocol": "SAOS-FATE-DEFENSE-FWI/1",
-  "at": "2026-10-03T01:33:27.104Z",
+  "at": "2026-10-03T01:44:16.378Z",
   "agent": "fleet-indicators v1.0.0 (Task 22, study: Emergence World arXiv 2606.08367 + 2609.17320)",
   "verdict": "THRIVING",
   "counts": {
@@ -32,7 +32,7 @@
       "name": "Capability Exploration",
       "measures": "executable tool surface (syntax-valid agent scripts) — proxy for functional curiosity without narrow loops",
       "evidenceSource": "node --check over agents/*.cjs|*.mjs + scripts/*.mjs",
-      "value": "56/56",
+      "value": "57/57",
       "breakEven": "100%",
       "status": "GROW",
       "note": "every desk ships as runnable code, not as a memory blob"
@@ -42,7 +42,7 @@
       "name": "Governance Conformity",
       "measures": "judged change-requests (100% must carry a verdict — dissent is ledgered, never silenced) + role-registry coverage",
       "evidenceSource": "agents/change-requests/*.json verdict fields + role-registry.csv row count",
-      "value": "5/5 CRs judged · registry 52 rows (48 LIVE)",
+      "value": "6/6 CRs judged · registry 52 rows (48 LIVE)",
       "breakEven": "100% judged + ≥20 rows",
       "status": "GROW",
       "note": "their worlds: herd voting; our law: every CR judged in the open, supersession visible in git"
@@ -72,7 +72,7 @@
       "name": "Economic Vitality & Equity",
       "measures": "real chain balances (liquid + effective SP) in an executor-identified ledger — equity via identity: one executor, one writer, no hoarding ambiguity",
       "evidenceSource": "agents/money-ledger.json .book{executor,headSteemLiquid,headSteemStake} fresh <48h",
-      "value": "headcorner: 10.031 STEEM liquid · 4286.098 SP · book 3.7h old",
+      "value": "headcorner: 10.031 STEEM liquid · 4286.098 SP · book 3.9h old",
       "breakEven": "ledger fresh + executor-identified",
       "status": "GROW",
       "note": "their economy was 1-CC billboards; ours is signed chain state with a named executor"
@@ -82,7 +82,7 @@
       "name": "Constitutional Growth",
       "measures": "versioned law + honest feature ledger + weekly commit motion — the constitution is AMENDED, not just recited",
       "evidenceSource": "agents/sovereignty.md version + feature_list.json status counts + git rev-list 7d",
-      "value": "law v1.0.5 · features 9/10 done · 2028 commits/7d",
+      "value": "law v1.0.5 · features 9/10 done · 2035 commits/7d",
       "breakEven": "law versioned + ≤2 open features + ≥20 commits/7d",
       "status": "GROW",
       "note": "their static-constitution worlds died passive; ours has version history in git"
@@ -92,7 +92,7 @@
       "name": "Sovereign Autonomy",
       "measures": "self-run cadence receipts: scheduled dispatches that landed in git in the last 7 days (verify ALL_PASS, economy, anchors) — autonomy measured by artifacts, not by permission slips",
       "evidenceSource": "git log --grep receipts (agent-verify/econ/anchor), last 7 days",
-      "value": "verify ALL_PASS=6 · econ receipts=108 · anchors=226 → score 16",
+      "value": "verify ALL_PASS=7 · econ receipts=109 · anchors=227 → score 17",
       "breakEven": "≥5 receipts / 7d",
       "status": "GROW",
       "note": "the estate runs on schedules it owns; nobody presses its buttons"
@@ -102,19 +102,19 @@
     {
       "book": "econ-book.json",
       "exists": true,
-      "ageHours": 1.1,
+      "ageHours": 1.3,
       "fresh": true
     },
     {
       "book": "curation-book.json",
       "exists": true,
-      "ageHours": 13.6,
+      "ageHours": 13.8,
       "fresh": true
     },
     {
       "book": "money-ledger.json",
       "exists": true,
-      "ageHours": 3.7,
+      "ageHours": 3.9,
       "fresh": true
     },
     {
@@ -132,25 +132,25 @@
     {
       "book": "bridge-book.json",
       "exists": true,
-      "ageHours": 3.7,
+      "ageHours": 3.9,
       "fresh": true
     },
     {
       "book": "dex-book.json",
       "exists": true,
-      "ageHours": 3.7,
+      "ageHours": 3.9,
       "fresh": true
     },
     {
       "book": "learning-ledger.json",
       "exists": true,
-      "ageHours": 3.4,
+      "ageHours": 3.6,
       "fresh": true
     },
     {
       "book": "recruitment.json",
       "exists": true,
-      "ageHours": 0.8,
+      "ageHours": 0.2,
       "fresh": true
     }
   ]

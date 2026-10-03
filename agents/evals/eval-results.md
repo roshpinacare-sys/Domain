@@ -1,8 +1,8 @@
 # Desk Evals — runnable expectations (fresh-process judge, Z-36)
 
-_run-evals v1.8.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Z-43 hands E18, parallel-convergence superset) · 2026-10-03T01:33:53.088Z_
+_run-evals v1.9.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19, parallel-convergence superset) · 2026-10-03T01:44:33.725Z_
 
-**evals green: 18/18 expectations hold**
+**evals green: 19/19 expectations hold**
 
 ## E1 · dedupe identity is stable across repeat harvest — PASS
 - seed(3) + econ rows carrying the same two fills → exactly 3 entries
@@ -23,7 +23,7 @@ _run-evals v1.8.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense 
 - exit code 0 even when DEFU_DIR is bogus
 - missing canon = honest FAILs, never a crash, never green-washed
 - counts arithmetic consistent (pass+warn+fail == checks)
-- _measured: exit=0 pass=27 warn=0 fail=10_
+- _measured: exit=0 pass=28 warn=0 fail=10_
 
 ## E5 · concat-family regression: manabar coerced before arithmetic — PASS
 - string+number concatenates ("74488519347811969") — the Z-33 third-incident family
@@ -61,7 +61,7 @@ _run-evals v1.8.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense 
 - 200+data → REACHABLE with model count; 401/403 → AUTH-WALL; network error → UNREACHABLE (no hopeful green)
 - probing a nonexistent provider exits 0 with zero probes booked (fail-soft, no invention)
 - rail-ledger.json stamped (BOOKS-STAMP law)
-- _measured: live probes booked=11_
+- _measured: live probes booked=12_
 
 ## E12 · rail policy: FORBIDDEN row enabled as LIVE fails the gate — PASS
 - a catalog where cohere (ToS FORBIDDEN) is flipped to LIVE is rejected — ok:false with the FORBIDDEN reason named
@@ -81,7 +81,7 @@ _run-evals v1.8.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense 
 - every injected fault class caught: faults_caught === faults_total >= 4 (registry corruption, guard neutered, book stamps stripped, forbidden rail LIVE)
 - receipts fresh < 168h — the drill runs on the CI schedule, containment proof is not a one-time trophy
 - CI summary ledger agrees (collapse-drill.json stamped)
-- _measured: caught=4/4 ageH=1 head=f05841f03ff3_
+- _measured: caught=4/4 ageH=0 head=eeeab72e5432_
 
 ## E15 · one-bloc: whole-git convergence map measured, never invented — PASS
 - one-bloc.cjs runs in a fresh process (exit 0, fail-soft)
@@ -104,11 +104,19 @@ _run-evals v1.8.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense 
 - the receipt verdict matches the derivation for this context — no environment drift between book and reality (Z-42 root cause: the dead anonymous fallback leg, private canon 404)
 - _measured: verdict=CONTENT-SERVED legs=L1:SERVING,L2:RAIL-UP,L3:DEAD-AS-EXPECTED-PRIVATE_
 
-## E18 · hands book: honest verdict derivation + fresh receipts, zero hopeful greens — PASS
+## E18 · ci-hands: the fleet measures its own CI estate with a pinned failure taxonomy — PASS
+- classifyRun pins the taxonomy: 0 jobs = STARTUP-FAILURE, empty-steps <30s = JOB-STARTUP, real step = STEP-FAILURE, green = NOT-FAILURE
+- laneVerdict is transient-aware: green lane + all-transient failures = HISTORY-TRANSIENT (never a haunted verdict)
+- fresh-process desk run: exit 0 (fail-soft), book stamped fresh (<30min)
+- honest reach floor: 16 repos declared, >=1 reached OR every unreached booked honestly as HTTP 4xx refusal (rate-limit is environment, not defect) — never invented
+- cua-bench contract: trajectory booked (every action logged) + STASIS state travels with the receipt
+- _measured: reached=0/16 lanes=0 green=0 activeRed=0 startup=0 mode=keyless_
+
+## E19 · hands book: honest verdict derivation + fresh receipts, zero hopeful greens — PASS
 - white-box: probe-ok → LIVE; absent → ABSENT; POLICY LOCK BEATS A GREEN PROBE → LOCKED-TIER-C (the cua permission-at-launch lesson); cross-ref → REF; probe-fail → UNREACHABLE
 - black-box: fresh-process desk exits 0 (fail-soft), ≥5 hands booked, ≥2 LIVE in any healthy context
 - every LIVE hand carries evidence+probeAt — a capability claimed without a receipt is a story
 - verdict enum closed (LIVE/ABSENT/UNREACHABLE/REF/LOCKED-TIER-C) — no hopeful greens possible
-- _measured: hands=6 live=4 receipted=true at=2026-10-03T01:33:50.897Z_
+- _measured: hands=6 live=4 receipted=true at=2026-10-03T01:44:31.596Z_
 
 _Eval discipline adopted from learn-harness-engineering (Z-36): an eval is a runnable expectation, not a hope. Pure functions = white-box; desk processes = black-box fresh processes._
