@@ -1,0 +1,176 @@
+{
+ "protocol": "SAOS-ARB-MESH/1",
+ "at": "2026-10-04T11:20:00.000Z",
+ "agent": "arb-mesh v1.0.0 (R41 MESH MARKET, CR-0071)",
+ "mode": "KEYLESS-MESH-DEMAND",
+ "stasisHalted": false,
+ "laws": [
+  "units: µ BigInt end to end, no floats in settlement",
+  "volatile pools: x·y ≥ k (Uniswap v2 exact, fee on input, floor to user)",
+  "peg pools: Curve stableswap A=10 (canonical, fee on output, −1 pad)",
+  "real value: wrapped mint 1:1 reserve-backed, redeem ALWAYS honored 1:1",
+  "atomicity: minOut guard, refused swaps leave state byte-unchanged",
+  "conservation: custody − wrappedReserve − Σ claims === 0 every tick",
+  "ledger: append-only op-log, monotonic seq, state = fold(ops)",
+  "floor law: rebalance only above 2×(fees+floor) — below it a plan, never a trade",
+  "feed law: settle consumes the booked router feed; measurement and settlement are separated",
+  "honest money: the powerdown drip is the booked fuel; no invented locks",
+  "mesh law (R41): fleet agents settle atomically on this ledger — batch-idempotent, no naked shorts, wires capped at 10% of free treasury per batch, a fill never exceeds 5% of first-hop depth, edge marked to fair (null when no fair exists)"
+ ],
+ "verdict": "NO-EDGE (every row below the floor — the machinery waits, the floor law protects the P&L)",
+ "batch": null,
+ "settledBatch": null,
+ "coreLedger": {
+  "seq": 9,
+  "at": "2026-10-04T11:07:32.074Z",
+  "ageHours": 0.21,
+  "conservationOk": true,
+  "attestation": "d6d5c769bf229029",
+  "feedFresh": true
+ },
+ "routerSeen": {
+  "at": "2026-10-04T08:48:34.143Z",
+  "arbRows": 4
+ },
+ "roster": [
+  "headcorner",
+  "cashmachine",
+  "haran",
+  "israelnews",
+  "lsa",
+  "macrame",
+  "siq",
+  "tov",
+  "wic",
+  "wog",
+  "woq"
+ ],
+ "candidates": [],
+ "keyedRailPlans": [],
+ "intentsDrafted": 0,
+ "intents": [],
+ "wires": 0,
+ "fills": [],
+ "rejects": [],
+ "sizeLadder": [
+  {
+   "pool": "P1",
+   "pair": "WSTEEM/STEEM",
+   "kind": "PEG",
+   "feeBps": 2,
+   "mid": 1.02603822,
+   "unit": "STEEM",
+   "rungs": [
+    {
+     "sizeBps": 10,
+     "sizeIn": "383",
+     "out": "383",
+     "execPrice": 1,
+     "slipBps": -2.53
+    },
+    {
+     "sizeBps": 100,
+     "sizeIn": "3837",
+     "out": "3842",
+     "execPrice": 1.0013031,
+     "slipBps": -2.41
+    },
+    {
+     "sizeBps": 500,
+     "sizeIn": "19189",
+     "out": "19144",
+     "execPrice": 0.99765491,
+     "slipBps": -2.76
+    }
+   ]
+  },
+  {
+   "pool": "P2",
+   "pair": "WSBD/SBD",
+   "kind": "PEG",
+   "feeBps": 2,
+   "mid": 1,
+   "unit": "SBD",
+   "rungs": [
+    {
+     "sizeBps": 10,
+     "sizeIn": "27",
+     "out": "26",
+     "execPrice": 0.96296296,
+     "slipBps": -3.7
+    },
+    {
+     "sizeBps": 100,
+     "sizeIn": "274",
+     "out": "273",
+     "execPrice": 0.99635036,
+     "slipBps": -0.36
+    },
+    {
+     "sizeBps": 500,
+     "sizeIn": "1372",
+     "out": "1365",
+     "execPrice": 0.99489796,
+     "slipBps": -0.51
+    }
+   ]
+  },
+  {
+   "pool": "P3",
+   "pair": "STEEM/SBD",
+   "kind": "VOLATILE",
+   "feeBps": 25,
+   "mid": 0.1054466,
+   "unit": "SBD",
+   "rungs": [
+    {
+     "sizeBps": 10,
+     "sizeIn": "1555",
+     "out": "163",
+     "execPrice": 0.10482315,
+     "slipBps": -0.59
+    },
+    {
+     "sizeBps": 100,
+     "sizeIn": "15551",
+     "out": "1619",
+     "execPrice": 0.10410906,
+     "slipBps": -1.26
+    },
+    {
+     "sizeBps": 500,
+     "sizeIn": "77755",
+     "out": "7789",
+     "execPrice": 0.10017362,
+     "slipBps": -5
+    }
+   ]
+  }
+ ],
+ "meshPnl": {
+  "lifetime": {
+   "byAgent": {
+    "headcorner": {
+     "fills": 1,
+     "volumeInMu": "5000",
+     "edgeMu": "-7",
+     "feesMu": "0"
+    }
+   },
+   "fills": 1,
+   "edgeMu": "-7",
+   "feesMu": "0",
+   "volumeInMu": "5000"
+  },
+  "batch": {
+   "id": "MESH-OPERATOR-PIPEPROOF-R41",
+   "fills": 1,
+   "rejects": 0,
+   "edgeMu": "-7",
+   "feesMu": "0",
+   "volumeInMu": "5000"
+  }
+ },
+ "gridGate": "PLAN-POOL-GATED-NOT-BROADCAST — counter-grid rungs fire only behind the owner gate; the mesh waits",
+ "errors": []
+}

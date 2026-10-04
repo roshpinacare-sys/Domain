@@ -1,8 +1,8 @@
 {
  "protocol": "SAOS-DEX-CORE/1",
- "at": "2026-10-04T10:01:10.121Z",
- "agent": "dex-core v1.0.0 (R40 EXCHANGE CORE, CR-0070)",
- "mode": "KEYLESS-ATOMIC-INTERNAL",
+ "at": "2026-10-04T11:07:32.074Z",
+ "agent": "dex-core v1.1.0 (R41 MESH MARKET, CR-0071)",
+ "mode": "KEYLESS-ATOMIC-INTERNAL (mesh batch)",
  "stasisHalted": false,
  "laws": [
   "units: µ BigInt end to end, no floats in settlement",
@@ -14,7 +14,8 @@
   "ledger: append-only op-log, monotonic seq, state = fold(ops)",
   "floor law: rebalance only above 2×(fees+floor) — below it a plan, never a trade",
   "feed law: settle consumes the booked router feed; measurement and settlement are separated",
-  "honest money: the powerdown drip is the booked fuel; no invented locks"
+  "honest money: the powerdown drip is the booked fuel; no invented locks",
+  "mesh law (R41): fleet agents settle atomically on this ledger — batch-idempotent, no naked shorts, wires capped at 10% of free treasury per batch, a fill never exceeds 5% of first-hop depth, edge marked to fair (null when no fair exists)"
  ],
  "feed": {
   "source": "agents/dex-router.json",
@@ -25,10 +26,10 @@
   "verdict": "FEED-LIVE"
  },
  "custodyProbe": {
-  "measured": true,
-  "node": "api.steemit.com"
+  "measured": false,
+  "node": null
  },
- "seq": 7,
+ "seq": 9,
  "vault": {
   "custody": {
    "STEEM": "15551000",
@@ -64,7 +65,7 @@
  "accounts": {
   "treasury": {
    "claims": {
-    "STEEM": "12829575",
+    "STEEM": "12824575",
     "SBD": "119670",
     "HIVE": "0",
     "HBD": "0",
@@ -78,6 +79,149 @@
     "P2": "1.0",
     "P3": "1.0"
    }
+  },
+  "headcorner": {
+   "claims": {
+    "STEEM": "0",
+    "SBD": "0",
+    "HIVE": "0",
+    "HBD": "0",
+    "BLURT": "0",
+    "SAOS": "0",
+    "WSTEEM": "4993",
+    "WSBD": "0"
+   },
+   "lp": {}
+  },
+  "cashmachine": {
+   "claims": {
+    "STEEM": "0",
+    "SBD": "0",
+    "HIVE": "0",
+    "HBD": "0",
+    "BLURT": "0",
+    "SAOS": "0",
+    "WSTEEM": "0",
+    "WSBD": "0"
+   },
+   "lp": {}
+  },
+  "haran": {
+   "claims": {
+    "STEEM": "0",
+    "SBD": "0",
+    "HIVE": "0",
+    "HBD": "0",
+    "BLURT": "0",
+    "SAOS": "0",
+    "WSTEEM": "0",
+    "WSBD": "0"
+   },
+   "lp": {}
+  },
+  "israelnews": {
+   "claims": {
+    "STEEM": "0",
+    "SBD": "0",
+    "HIVE": "0",
+    "HBD": "0",
+    "BLURT": "0",
+    "SAOS": "0",
+    "WSTEEM": "0",
+    "WSBD": "0"
+   },
+   "lp": {}
+  },
+  "lsa": {
+   "claims": {
+    "STEEM": "0",
+    "SBD": "0",
+    "HIVE": "0",
+    "HBD": "0",
+    "BLURT": "0",
+    "SAOS": "0",
+    "WSTEEM": "0",
+    "WSBD": "0"
+   },
+   "lp": {}
+  },
+  "macrame": {
+   "claims": {
+    "STEEM": "0",
+    "SBD": "0",
+    "HIVE": "0",
+    "HBD": "0",
+    "BLURT": "0",
+    "SAOS": "0",
+    "WSTEEM": "0",
+    "WSBD": "0"
+   },
+   "lp": {}
+  },
+  "siq": {
+   "claims": {
+    "STEEM": "0",
+    "SBD": "0",
+    "HIVE": "0",
+    "HBD": "0",
+    "BLURT": "0",
+    "SAOS": "0",
+    "WSTEEM": "0",
+    "WSBD": "0"
+   },
+   "lp": {}
+  },
+  "tov": {
+   "claims": {
+    "STEEM": "0",
+    "SBD": "0",
+    "HIVE": "0",
+    "HBD": "0",
+    "BLURT": "0",
+    "SAOS": "0",
+    "WSTEEM": "0",
+    "WSBD": "0"
+   },
+   "lp": {}
+  },
+  "wic": {
+   "claims": {
+    "STEEM": "0",
+    "SBD": "0",
+    "HIVE": "0",
+    "HBD": "0",
+    "BLURT": "0",
+    "SAOS": "0",
+    "WSTEEM": "0",
+    "WSBD": "0"
+   },
+   "lp": {}
+  },
+  "wog": {
+   "claims": {
+    "STEEM": "0",
+    "SBD": "0",
+    "HIVE": "0",
+    "HBD": "0",
+    "BLURT": "0",
+    "SAOS": "0",
+    "WSTEEM": "0",
+    "WSBD": "0"
+   },
+   "lp": {}
+  },
+  "woq": {
+   "claims": {
+    "STEEM": "0",
+    "SBD": "0",
+    "HIVE": "0",
+    "HBD": "0",
+    "BLURT": "0",
+    "SAOS": "0",
+    "WSTEEM": "0",
+    "WSBD": "0"
+   },
+   "lp": {}
   }
  },
  "pools": [
@@ -90,12 +234,12 @@
    "feeBps": 2,
    "amp": 10,
    "planned": false,
-   "ra": "388775",
-   "rb": "388775",
+   "ra": "383782",
+   "rb": "393775",
    "feeMeter": "0",
    "verdict": "LIVE-INTERNAL",
    "plannedWhy": null,
-   "mid": 1
+   "mid": 1.02603822
   },
   {
    "id": "P2",
@@ -502,8 +646,8 @@
    "asset": "STEEM",
    "custody": "15551000",
    "reserve": "777550",
-   "claims": "12829575",
-   "pooled": "1943875",
+   "claims": "12824575",
+   "pooled": "1948875",
    "diff": "0",
    "ok": true
   },
@@ -554,15 +698,76 @@
   }
  ],
  "conservationOk": true,
- "attestation": "e175b60bce5bd431",
+ "attestation": "d6d5c769bf229029",
+ "processedBatches": [
+  "MESH-OPERATOR-PIPEPROOF-R41"
+ ],
+ "meshPnl": {
+  "lifetime": {
+   "byAgent": {
+    "headcorner": {
+     "fills": 1,
+     "volumeInMu": "5000",
+     "edgeMu": "-7",
+     "feesMu": "0"
+    }
+   },
+   "fills": 1,
+   "edgeMu": "-7",
+   "feesMu": "0",
+   "volumeInMu": "5000"
+  },
+  "batch": {
+   "id": "MESH-OPERATOR-PIPEPROOF-R41",
+   "fills": 1,
+   "rejects": 0,
+   "edgeMu": "-7",
+   "feesMu": "0",
+   "volumeInMu": "5000"
+  }
+ },
  "genesisDone": true,
- "opsThisTick": [],
+ "opsThisTick": [
+  {
+   "seq": 8,
+   "type": "MESH-WIRE",
+   "agent": "headcorner",
+   "asset": "STEEM",
+   "amount": "5000",
+   "why": "edge-funding wire (cap 10% of free treasury per batch); conservation moves claims, never creates them"
+  },
+  {
+   "seq": 9,
+   "type": "AGENT_FILL",
+   "agent": "headcorner",
+   "from": "STEEM",
+   "to": "WSTEEM",
+   "amountIn": "5000",
+   "amountOut": "4993",
+   "routeIds": [
+    "P1"
+   ],
+   "hops": [
+    {
+     "pool": "P1",
+     "in": "5000",
+     "out": "4993",
+     "fee": "0"
+    }
+   ],
+   "edgeMu": "-7",
+   "fairUsed": "PEG-1:1",
+   "feesMu": "0"
+  }
+ ],
  "summary": {
-  "verdict": "EXCHANGE-CORE-LIVE",
+  "verdict": "MESH-SETTLED",
   "poolsLive": 3,
   "poolsPlanned": 1,
   "routesLive": 12,
   "routesPlanned": 4,
+  "meshFills": 1,
+  "meshBatch": "MESH-OPERATOR-PIPEPROOF-R41",
   "notes": []
  }
 }

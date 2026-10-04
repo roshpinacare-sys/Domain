@@ -38,8 +38,8 @@ _מורכב מהפנקסים המחויבים בלבד (keyless, offline). כל 
 
 ## מה רץ לבד — 24/7, בלי מפתח, עם מרפא עצמי
 
-- **workflowsTotal**: 53 — _מקור: .github/workflows (tree scan)_
-- **workflowsScheduled**: 47 — _מקור: .github/workflows (tree scan)_
+- **workflowsTotal**: 54 — _מקור: .github/workflows (tree scan)_
+- **workflowsScheduled**: 48 — _מקור: .github/workflows (tree scan)_
 - **keeperArcDesks**: 9 — _מקור: agents/tick-keeper.json · נמדד: 2026-10-04T00:29:41.896Z · השומר מודד את הקבלות של הדסקים עצמן ומצית מחדש דסק רעב_
 - **stasisBreaker**: false — _מקור: agents/STASIS.json · השובר ריק — אין עצירה בתוקף_
 - **arc · sovereign-tick-cron**: קבלה אחרונה "2026-10-03T22:43:14.918Z" — מקסימום פער מותר: 20m · נמדד: 2026-10-04T00:29:41.896Z
@@ -54,8 +54,8 @@ _מורכב מהפנקסים המחויבים בלבד (keyless, offline). כל 
 
 ## משמעת — מה מוכח ומה נבדק
 
-- **claimsAudit**: "WARN" — _מקור: agents/claims-audit.json · נמדד: 2026-10-04T10:05:39.367Z · כל קובץ שנטען בפנקס — נבדק שהוא באמת על העץ_
-- **censusLanes**: undefined — _מקור: agents/fleet-census.json · נמדד: 2026-10-04T10:05:37.324Z · מפת ה-16 מסלולים של הצי_
+- **claimsAudit**: "WARN" — _מקור: agents/claims-audit.json · נמדד: 2026-10-04T11:21:54.811Z · כל קובץ שנטען בפנקס — נבדק שהוא באמת על העץ_
+- **censusLanes**: undefined — _מקור: agents/fleet-census.json · נמדד: 2026-10-04T11:21:53.868Z · מפת ה-16 מסלולים של הצי_
 - **ownerLanguage**: "he" — _מקור: agents/claims-audit.cjs OWNER_LANGUAGE (CR-0050) · כל פנייה לבעלים — בעברית_
 
 _החוק: שום מספר לא מומצא, שום היקף לא מתגנב (יומי לעולם לא מתגלגל לכל-חיים), שום הפסד לא מוסתר._

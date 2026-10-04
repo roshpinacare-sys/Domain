@@ -1,0 +1,73 @@
+# ARB-MESH (R41 / CR-0071) — THE MESH MARKET, hourly.
+#
+# The owner demanded a networked arbitrage market for the agents and the soldiers —
+# "שוק ארביטראז רישתי עבור הסוכנים והחיילים זאת אומרת שנסחר גם פה וגם שם וגם שם" —
+# a wide volume of REAL trades and profits on our own network, and routers that can
+# take and swap large sums. This lane IS the demand side: the roster (headcorner +
+# soldiers) drafts mandates against every pool-side edge row that clears the R39/R40
+# FLOOR law, the queue lands on the core's ledger (`dex-core.cjs settle-intents`) and
+# settles ATOMICALLY — batch-idempotent, no naked shorts, wires capped at 10% of free
+# treasury per batch, a fill never above 5% of first-hop depth, edge marked honest-or-
+# null, conservation asserted per fill. Below the floor: NO-EDGE, booked honestly —
+# the floor law protects the P&L; the machinery waits and fires the hour the edge clears.
+# The size ladder quotes exact BigInt at 0.1%/1%/5% of depth — the large-sums capability,
+# measured, not promised.
+#
+# KEYLESS BY LAW: the mesh drafts and settles on our OWN ledger; keyed rails stay with
+# the owner-gated signing desks (PLAN-KEYED-RAIL rows, never fired here). Grid rungs stay
+# PLAN-POOL-GATED-NOT-BROADCAST. Fail-soft exit 0; STASIS halt-before-read; single-writer
+# atomic books (agents/arb-mesh.json/.md + append-only jsonl; the core consumes the queue).
+# [skip ci] book commits, rebase-first push (parallel runtimes are real).
+
+name: arb-mesh
+
+on:
+  schedule:
+    - cron: '7 * * * *'   # hourly at :07 — the mesh drafts on the settled core book before the router re-measures at :23
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: arb-mesh
+  cancel-in-progress: false
+
+jobs:
+  mesh-market:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: arb-mesh selftest (fresh process, zero network — the drafting laws judge themselves first)
+        run: node agents/arb-mesh.cjs selftest
+
+      - name: dex-core selftest (the settlement engine the mesh leans on)
+        run: node agents/dex-core.cjs selftest
+
+      - name: mesh tick (mandates → intents queue → atomic settle → honest P&L + size ladder)
+        run: node agents/arb-mesh.cjs
+
+      - name: commit mesh books (+ the core ledger when a batch settled)
+        run: |
+          git config user.name "saos-arb-mesh"
+          git config user.email "arb-mesh@fleet.local"
+          git add agents/arb-mesh.json agents/arb-mesh.md agents/arb-mesh-history.jsonl agents/dex-intents.json agents/dex-core.json agents/dex-core.md agents/dex-core-history.jsonl
+          if git diff --cached --quiet; then
+            echo "no book delta — quiet tick"
+          else
+            git commit -m "arb-mesh: mesh-market tick $(date -u +%Y-%m-%dT%H:%M:%SZ) [skip ci]"
+            for i in 1 2 3; do
+              git -c rebase.autoStash=true pull --rebase origin main && git push origin HEAD:main && break
+              echo "rebase-push retry $i"; sleep $((i * 5))
+            done
+          fi

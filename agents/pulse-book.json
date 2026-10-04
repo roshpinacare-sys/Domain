@@ -1,13 +1,174 @@
 {
   "ok": true,
-  "at": "2026-10-04T10:55:48.519Z",
-  "since": "2026-10-04T10:55:15.864Z",
-  "windowSince": "2026-10-04T10:55:15.864Z",
+  "at": "2026-10-04T11:21:52.985Z",
+  "since": "2026-10-02T16:40:20.950Z",
+  "windowSince": "2026-10-02T16:40:20.950Z",
   "agent": "pulse v1.2.0 (CR-0009 loop, Rung 1; CR-0028 consumes the laya advisory triage; CR-0033 consumes the scheduled evolution-window evidence — Z-48/Z-49/Z-60/Z-62)",
   "dayLedger": {
-    "since": "2026-10-04T10:55:15.864Z",
-    "count": 0,
-    "commits": []
+    "since": "2026-10-02T16:40:20.950Z",
+    "count": 40,
+    "commits": [
+      {
+        "sha": "a0d04c7",
+        "subject": "R40 THE EXCHANGE CORE (CR-0070 / feat-065 / E63, suite v1.48.0 -> v1.49.0, 63/63 GREEN): the DEX settles. dex-core.cjs — an atomic, deterministic, reserve-backed settlement engine on our own ledger, answering the owner's real-value law ('באמת להחליף למטבע האמיתי עם ערך ולא סתם שקר'). TWO INVARIANTS, ONE ENGINE: CPMM volatile pools (Uniswap v2 exact BigInt law, fee-on-input, floor to the user — the pool keeps the dust) + Curve stableswap peg pools (canonical 2020 formulation, A=10, Newton get_D/get_y with the 255-iter cap, fee-on-output, the canonical -1 pad). THE REAL-VALUE VAULT: WSTEEM/WSBD mint ONLY 1:1 against reserve custody actually held; REDEEM IS ALWAYS HONORED 1:1 (burn before payout); the conservation identity custody - wrappedReserve - sum(claims) - sum(pooledReserves) === 0 asserted every tick per asset; attestation sha256(seq, custody, reserves, minted, claims) booked and recomputed by E63 (real-tree). minOut ATOMICITY (a refused swap leaves state byte-unchanged), deterministic <=3-hop BigInt routing with cycle-free DFS and deterministic tie-breaks, catalog quoted at ~1% first-hop depth (a catalog quoted at a size that IS the pool is slippage theater). REBALANCE FLOOR LAW inherited from R39: when the P3 pool's own price drifts from the CEX-implied fair beyond 2x(costs), the treasury rebalances AGAINST ITS OWN POOL — we are our own LVR rebalancer (Milionis-Moallemi-Roughgarden-Zhang), the edge is marked to fair at execution, below the floor it is a plan row, never a trade. COUNTER-GRIDS ON OUR SIDE: anchored to the POOL MID (our network's own price, the other side of R39's CEX anchor), Avellaneda skew from the pool's own inventory share, spacing law inherited, PLAN-POOL-GATED-NOT-BROADCAST. THE DRIP-FUEL LOOP IS MECHANICAL: the measure phase books custody deltas as DEPOSIT-DELTA ops with provenance — the powerdown (2026-10-10, 470.84 SP/week x13) enters the DEX the hour it lands, zero new code on drip day; a custody DROP halts trading for the tick. GENESIS MEASURED 2026-10-04T09:52Z from the chain probe (headcorner @api.steemit.com): STEEM 15.551 / SBD 0.366 -> minted WSTEEM 0.77755 + WSBD 0.0549 (ratio 1.0), P1/P2 peg pools at mid 1.0, P3 born anchored at the booked fair 0.1054467, P4 SAOS/WSTEEM PLANNED-NO-CLAIM (dex/credits.json empty — a pool without a real claim waits, named). 12 routes LIVE-INTERNAL + 4 PLANNED-NO-CLAIM. E63 in the suite: white-box invariants (golden vectors, seeded 200-swap k-fuzz, the stableswap invariant equation evaluated independently in floats, a float bisection that shares NO code with the Newton solver), black-box fresh-process selftest 22/22, real-tree re-derivation of the booked book (conservation row-exact, attestation recompute, route quote recompute, arb net, grid rung). E47 re-based 52->53 workflows / 18->19 keyless (dex-core-cron joins, keyless by law). BASE REPAIR in the same rung: dex-router.cjs main is now require.main-guarded — requiring the laws never fires a tick (judge separation for every importer, E62/E63 purity). Workflow dex-core-cron.yml hourly :41 (selftest -> settle -> commit, [skip ci], rebase-first). Proof Surface: EXCHANGE CORE card in Hebrew (pools + vault + arb + pool-side grids + mechanical fuel law). claims feats=65 evidence offenders=0 suite MATCH, secret-scan 0 [skip ci]"
+      },
+      {
+        "sha": "b7e1898",
+        "subject": "R39 THE SWAP NET (CR-0069 / feat-064 / E62, suite v1.47.0 -> v1.48.0, 62/62 GREEN): the DEX learns to route. dex-router.cjs (keyless, STASIS-obeying, fail-soft exit 0, protocol SAOS-DEX-ROUTER/1) measures the whole venue graph hourly — steem/hive internal markets, Hive-Engine wrapped pools (multi-mirror, HE-RPC-DARK booked honest), the SAOS internal AMM mirror, public CEX reference feeds (Binance/MEXC/HTX measured live: STEEM 0.0635, HIVE 0.0564, BTC 85,100, SBD 0.602), and the inherited Z-27 verdict books. A 12-route swap catalog carries six-branch honest verdicts (LIVE-KEYED / GATED-KEYS / GATED-CAPITAL / C-GATE-OPERATOR / NO-RAIL / INTERNAL-SIM) — every gated route NAMES its unlock (HIVE keys R38-measured absent, operator CEX keys for the real-value large rails, blurt NO-RAIL measured, not faked). The arb net runs the FLOOR law (net must beat 2x(capture+0.4%) or the row books BELOW-FLOOR) with the 1.5% PEG-DRIFT-HALT watching SWAP.HIVE:SWAP.BTC vs the CEX cross (measured +1.49%, under the line) and the HBD-is-not-SBD refusal (no real HBD/USDT leg -> FEED-STALE, the SBD proxy refused). The OPPOSING counter-grids anchor to the CEX-implied fair price (SBD/STEEM = STEEM/USDT / SBD/USDT = 0.10548 — the desk's first live book caught its own inverted 9.48 parity and E62 pins the corrected law forever), Avellaneda-skewed +30.56bps STEEM-heavy, 0.4%-floor spaced, PLAN-OWNER-GATED-NOT-BROADCAST. The desk's own history jsonl is the edge time-series. Honest money law: the powerdown drip (2026-10-10, 470.84 SP x13 weekly) is the booked fuel; NO 3-day lock exists in any book. Baseline repaired in the same rung: harness-audit now judges the CR schema family (5 legal generations) and the role-registry points liquidity-desk at its real standing book; E47 re-based 51->52 workflows / 17->18 keyless (dex-router-cron joins, keyless by law). Workflow dex-router-cron.yml hourly :23, [skip ci] book commits, rebase-first. Proof Surface: SWAP-NET card in Hebrew (routes + arb + counter-grid + honest fuel law). claims feats=64 evidence offenders=0 suite MATCH, secret-scan 0 [skip ci]"
+      },
+      {
+        "sha": "645f3c9",
+        "subject": "R38 THE CHAIN PROOF (CR-0068 / feat-063 / E61, suite v1.46.0 -> v1.47.0, 61/61 GREEN): the NAME is not the CHAIN. The owner read the community name hive-177702 as a Hive-network home; both bridges were probed live (steemit.com EXISTS id 1979419 / api.hive.blog asserts 'does not exist' — absence evidence, never conflated with a network gap, trivalent legs true/false/null with one gap-path retry) and every status run now books a chainProof badge derived ONLY from the legs + the booked fee asset (six branches, flip law proves derivation): STEEM-CHAIN measured 2026-10-04 (steem=true, hive=false). The 'hive-' prefix is hivemind software naming on STEEM (Role.parseType reads name[5], type 1 journal — the same law R36 enforced) — the house never left Steem. The Hive second-home desk (owner directive: other networks too) probes Hive keylessly and states its authority truth by name: hiveAuthorityVerdict NO-KEYS/KEY-MISMATCH/READY gates EVERYTHING before name and funding — measured live: headcorner hive active pub STM8c9vp3… differs from the held steem pub STM5HbJD…-family WIFs, fee 3.000 HIVE vs headcorner liquid 0.034, soldiers 10/10 present but empty, 0 orders -> HOME-ABSENT-UNKEYED, armed-when-keyed (a create --chain hive rung is booked when keys+3 HIVE arrive; not dead code, no pretending). Proof Surface v13: the Clubhouse card carries the chain-of-record row + the hivemind explanation + the hive desk honest row in Hebrew. human-cadence.yml gains the keyless status+hive probe after the rc gate. claims feats=63 evidence offenders=0 suite MATCH, secret-scan 0 [skip ci]"
+      },
+      {
+        "sha": "34f2f23",
+        "subject": "R37 THE COMMUNITY BREATH (CR-0067 / feat-062 / E60, suite v1.45.0 -> v1.46.0, 60/60 GREEN): the fleet's life moves inside its own house. human-cadence.cjs v2 — blog posts land INSIDE hive-177702 The Clubhouse (first tag = community, hub tag trailing, gate + PROBE-B law untouched) and the join wave is its own staggered lane: subscribeOp byte-matches the measured ground truth (furqanashraf@hive-153176 read live: custom_json id=community, posting-only, json [\"subscribe\",{community}]), subscribePlan founder-first (headcorner) then window-ordered soldiers, budget 1/soldier ever, cap 2/run, read-back truth via bridge.list_subscribers (measured ARRAY row shape parsed), every refusal named (already-subscribed / budget-used / no-key / outside-window / quiet-hours). community-founder.cjs rc mode — the floor-protected RC top-up desk: GESTS units law (to_withdraw/withdrawn are micro-vests, /1e6), the OP is ABSOLUTE, attempt the 50 SP law target, resize ONCE from the chain assert truth (measured live: available: {\"amount\":...,\"precision\":6} — the parser demanding a bare closing brace was broken and is fixed by the measured shape), NEVER below the received floor (a top-up must not become a stealth clawback), honest verdicts RECLAIM-PENDING / TOPUP-HOLD / MODE-DRY / TOPUP-LIVE. LIVE measured 2026-10-04: the chain refused the top-up and reported available 14,162 vests (8.78 SP) < floor 16,131.75 vests (10 SP) -> TOPUP-HOLD, the 10 SP RC stands, the powerdown reclaim (476 SP/week from 2026-10-10) funds the growth with zero new code on the day it arrives. persona-slots.json v3 (community law-as-data), human-cadence.yml (community mode + hourly rc gate + book commits), E60 white+black-box, claims feats=62 offenders=0 suite MATCH, secret-scan 0 [skip ci]"
+      },
+      {
+        "sha": "8f7cfbe",
+        "subject": "R36 THE COMMUNITY HOME (CR-0066 / feat-061 / E59, suite v1.44.0 -> v1.45.0, 59/59 GREEN): the fleet founded its dedicated Steem community on ground truth measured from the live chain BEFORE a line of code (the PromoSteem ceremony: account_create with the measured 3.000 STEEM fee + community customs; bridge read-back surfaces probed live) — community-founder.cjs: FUNDING LAW (fee from our own idle MM capital, farthest-STEEM-sell-first, cap 2, SBD untouched, armed when liquid suffices), TYPE LAW /^hive-1\\d{5}$/, identity born clean (props gate rejects em-dashes/probe-words on the house itself), ORPHAN LAW purchased for 3.000 STEEM (hive-177701 created but in-memory keys died with a crashed run pre-vault — the vault now lands the moment the account exists; RESUME law finishes an interrupted ceremony without a second account), RC-first delegation sized to the CHAIN-TRUTH reservation (50 SP target attempted, resized from the chain assertion to the measured available — never guessed; min_delegation measured 1 SP), and the second measured law: hivemind applies updateProps only from an ADMIN signature (headcorner active authority) while setRole flows through the community posting key. LIVE: hive-177702 The Clubhouse — 12 founding roles (headcorner admin + 10 soldier members), 10 SP RC confirmed on-chain, title/about live on the bridge, 14 ceremony hints booked, read-back COMMUNITY-LIVE; honest absence verdicts for every pre-create state, single-writer atomic books, secret-scan 0 [skip ci]"
+      },
+      {
+        "sha": "bba4283",
+        "subject": "moment-watch: RISK_ON · steem-edge -427bps · 2026-10-04T06:02:01Z [skip ci]"
+      },
+      {
+        "sha": "f82479d",
+        "subject": "econ-desk: real-economy book 2026-10-04T05:59:08Z [skip ci]"
+      },
+      {
+        "sha": "c452b46",
+        "subject": "Z-83 · רגל-הקהילה ב-dex-grid-התאום (D-024): יצירת-קהילת-הצי ב-Steem על-פי-הוראת-הבעלים (trace 1a1056131d2dfc79) — נתיב-claim (RC) ← נתיב-עמלה, owner-gated מבני (mandate ב-saos-dex), fail-closed + read-back, קבלות-קומיט ל-saos-dex"
+      },
+      {
+        "sha": "b6193f0",
+        "subject": "market-grid(history): tick 2026-10-04T05:27:47Z [skip ci]"
+      },
+      {
+        "sha": "d518474",
+        "subject": "fill-ledger: tick 2026-10-04T05:27:04Z [skip ci]"
+      },
+      {
+        "sha": "90c5337",
+        "subject": "social-audit: daily baseline measurement · 2026-10-04T05:19:23Z [skip ci]"
+      },
+      {
+        "sha": "083f33e",
+        "subject": "social-audit: Z-82 המד-העומד של בריאות-הפעילות-החברתית"
+      },
+      {
+        "sha": "3596ffa",
+        "subject": "mirror-from-console: 2026-10-04T05:18:20Z · truth outputs mirrored from the Console home (one-bloc, keyless) [skip ci]"
+      },
+      {
+        "sha": "8ee4d99",
+        "subject": "sovereign-tick: decision receipts [skip ci]"
+      },
+      {
+        "sha": "76e75af",
+        "subject": "earn-audit: chain-truth income proof [skip ci]"
+      },
+      {
+        "sha": "ac3982f",
+        "subject": "R35 THE HUMAN CADENCE (CR-0065 / feat-060 / E58, suite v1.43.0 -> v1.44.0, 58/58 GREEN): the social stack measured robotic on-chain — 10 posts in one run ~500ms apart, votes at perfect 18-21s cadence in fixed order, follows at exact 3s intervals, one shared wheel of 39 network-meta cards on one shared skeleton with '(measured DATE)' stamps and the same fleet-stats line in every post, a broken 'probe B' post on-chain that collected 11 fleet votes — replaced by ONE publisher: human-cadence.cjs (persona-owned UTC windows from persona-slots.json v2, seeded per-day jitter, quiet hours 00:00-04:59 UTC, catch-up windows never bursts, caps 2 posts / 2 social / 3 curate soldiers per invocation), desk-truth content-library.json (40 hand-written pieces, one shape each, no shared openers/closers/fleet-stats/stamps, 14-day per-soldier cooldown), the PROBE-B LAW (body < 800 chars invisible to votes/comments/reblogs even inside the fleet), INTERNAL-ONLY law (external scope requires CURATE_SCOPE=external), legacy burst stacks defer (FORCE_LEGACY=1 seam), head-delegate v2 EQUAL-SHARE ((own SP - powerdown committed - RC reserve)/10 per soldier, hysteresis 5%, delegations glide with the powerdown), hourly human-cadence.yml, E47 sovereignty bar re-based in the open (49→50 workflows, 33→34 owner-secret, keyless 16), claims feats=60 evidence 172/175 offenders=0 suite MATCH [skip ci]"
+      },
+      {
+        "sha": "e351725",
+        "subject": "weave-mirror: 2026-10-04T04:32:00Z · weave books mirrored from the live Console home (keyless) [skip ci]"
+      },
+      {
+        "sha": "e54d7bc",
+        "subject": "dex-mirror: 2026-10-04T04:30:45Z · live engine book mirrored from the live Console mirror (keyless) [skip ci]"
+      },
+      {
+        "sha": "774327b",
+        "subject": "R34 THE FILL-THROUGH EVOLUTION (CR-0064 / feat-059 / E57, suite v1.42.0 -> v1.43.0, 57/57 GREEN): the measured binding is the CAPTURE, not order capacity — market-exec ladder evolves 3 sells + 3 buys × 0.5 SBD = exactly MAX_NEW_ORDERS (tripled buy exposure on the freed post-cure capital; cap law, band law, STACK-EXISTS untouched; the E28 SBD-cap pin evolved WITH the desk: 0.3 SBD funds zero 0.5-buys, 1.2 funds exactly two — never silent); the sovereign cadence calibrates to the measured fill rate (~1 fill/12min): heartbeat 900→600s, LIVE cooldown 15→10 min, loop restarted live; E57 white-box exact (evolved shape, ascending/descending ladders, buy budget 1.5 SBD, VWAP cap binds above the evolved ladder, cadence 10, real-tree ceiling ≤6 on run #27); cures so far: 5 own above-cap buys cancelled live across runs #24/#26 [skip ci]"
+      },
+      {
+        "sha": "0e187c4",
+        "subject": "R33 THE SOVEREIGN HANDS & THE P&L VERDICT (CR-0063 / feat-058 / E55+E56, suite v1.41.0 -> v1.42.0, 56/56 GREEN): the owner moved the last gate into the sovereignty — market-exec law 11 EDGE-CURE cancels own buys above the buy-edge cap BEFORE planning (the pre-law mine cleared LIVE: 2 own buys above cap 0.099869 cancelled, txids 2027f3e4c5/1f7385f1c6, balances re-read so the plan sees freed SBD), fetchOwnOrders side law (for_sale/NAI-resolved, never position), authority-verify moved ahead of planning; pnl-book.cjs — the realized-P&L verdict desk replaying the append-only ledger through fill-ledger's OWN pure core (µ-precise, lifetime + post-law windows, edgeLawHolds judged honestly, pre-basis proceeds never guessed into realized, chain read-back: liquid/locked/free + powerdown inflow 476 SP/week from 2026-10-10); sovereign-trade.cjs + sovereign-trade-loop.sh — the keyed cadence leg (decideTrade: STASIS->vault->mode->cooldown, vault presence-only honesty, child separation, 900s local heartbeat, VAULT-ABSENT-LOCAL zero-children honesty in CI); vault restored MATCH-ONCHAIN from the operator upload (600 perms, outside every repo); measured: lifetime realized -0.384998 SBD over 137 fills (the honest leak: buy VWAP 0.102413 vs sell VWAP 0.10017), post-law -0.185315 — the cure stops the mine and every matched post-law cycle earns >= +0.3% by construction; E55 (µ-replay exact by hand-check + pre-basis honesty + two windows + black-box byte-stable with corrupt line skipped) + E56 (decision law exact + vault presence-only + zero-children + byte-stable) [skip ci]"
+      },
+      {
+        "sha": "6059a94",
+        "subject": "fleet-census(ci): artifact+delta+claims 2026-10-04T04:09:11Z [skip ci]"
+      },
+      {
+        "sha": "8d10fe8",
+        "subject": "moment-watch: RISK_ON · steem-edge 598bps · 2026-10-04T04:07:46Z [skip ci]"
+      },
+      {
+        "sha": "8e4873d",
+        "subject": "econ-desk: real-economy book 2026-10-04T03:22:12Z [skip ci]"
+      },
+      {
+        "sha": "06af113",
+        "subject": "R32 books on the merged tree — HONEST RE-MEASURE: the sibling's agent-verify/fill-ledger ticks landed mid-rung (conflict #21 on the volatile market-grid books — resolved theirs-then-rerun, the R28 ours-trap law honored); the merged tree re-measured: market-grid MARKET-GRID-LIVE (v1.3.0 pond law live), mm-volume MMV-PLAN-LIVE (projVol 989.517 SBD/day on the FRESH ledger dials — avgSize 0.661 n=137, capture 106/day moved since the pre-rebase measurement; HE pond 960.4816 SBD, 5 venues projected, bindings named), evals 54/54 GREEN v1.41.0 on the merged tree, claims+census refreshed [skip ci]"
+      },
+      {
+        "sha": "f0bc8db",
+        "subject": "R32 THE SIDECHAIN POND (CR-0062 / feat-057 / E54, suite v1.40.0 -> v1.41.0, 54/54 GREEN): the venue's own measured 24h volume IS the volume bound — the Hive-Engine projection OPENS on the pond (min(pond, capacity) with the binding NAMED — pond or capacity — never a borrowed tape prior); the pond rides in SWAP.HIVE from the HE metrics contract and converts to SBD-term by the MEASURED HBD/HIVE internal-market mid (SBD≈HBD parity carried as a labeled doctrine conversion on every HE row — the RATE measured from the chains, never hardcoded). market-grid v1.3.0: HE rows carry pond24hHive + pondTerm (metrics.volume named for what it is), the daily-history contract is PROBED every run probe-first fail-loud (measured DARK — marketHistory/history answers null, not RPC-exposed; the day it answers the pond becomes a series with zero new code), history rows grow mids + hePonds + heHistoryAlive, the pond law joins the book's laws. mm-volume v1.4.0: venueEconomics grows the pond bound (fillsPerMin nullable + pondVolumeSbd; validity = fee/spread/size AND tape-or-pond; bounds.pondBoundTradesDay; deterministic tie order tape->capture->pond->capacity); pondSbdTerm pure; HE venues gain pond fields + econ + sharePct + shareLadder (the pond rides through N — capacity scales, the pond does not) + selfFlow on the MEASURED zero-fee basket (25% cap, INTERNAL-FLOW label, VWAP-exclusion — fee'd WAIV stays honestly blocked FEE-ROUND-TRIP-NONZERO); projections grow heVenuesProjected/hePondSbdDay/heProjVolumeSbdDay/heProjNetConsSbdDay; darkSurfaces grows he-daily-history; the plan ledger grows heVenuesProjected/hePondSbdDay; the series mapper is per-venue (HE sub = symbol, no cross-venue contamination). LIVE on the real chain: projVol 85.684 -> 1039.955 SBD/day (x12.14 on honest measured bounds, no invented volume) · HE pond 960.4816 SBD across 5 venues · HE projected 556.255 SBD/day · internal-flow cap 259.9887 SBD/day · BEE/CENT/SWAP.DOGE/WAIV pond-bound, SWAP.LTC capacity-bound (pond 801.2838 > capacity). E54 white-box exact (pond bound 160->110.56, cross-rate 110.7372, ladder pond-flat 99.834, selfFlow cap 27.64) + black-box mid-bearing fixture opens 3 HE venues byte-stable + mid-less fixture keeps honest nulls + real-tree live ladders. E53's WAIV pin EVOLVED WITH THE DESK (written in the eval, never silent): the mid-less fixture's honest reason is NO-MEASURED-HBD-HIVE-MID. Books refreshed on the rung: evals 54/54 GREEN v1.41.0 · claims 0 offenders feats=57 evidence 152/155 suite MATCH · census 16/16 caps=61 wiring=10/10 · secret-scan 0 (5 prose hits are past-rung key-handling descriptions) [skip ci]"
+      },
+      {
+        "sha": "a2592bc",
+        "subject": "agent-verify: ALL_PASS · 53/53 · 0 suspended · 2026-10-04T02:57:21Z [skip ci]"
+      },
+      {
+        "sha": "b668805",
+        "subject": "fill-ledger: tick 2026-10-04T02:55:29Z [skip ci]"
+      },
+      {
+        "sha": "4e0f10a",
+        "subject": "market-grid(history): tick 2026-10-04T02:55:17Z [skip ci]"
+      },
+      {
+        "sha": "bf1217e",
+        "subject": "earn-audit: chain-truth income proof [skip ci]"
+      },
+      {
+        "sha": "21156a7",
+        "subject": "R31 books on the merged tree — HONEST RE-SLOT: the first books commit carried a false 53/53 claim (the merged tree measured 52/1 — E47's pinned 48/15 sovereignty bar had moved under the sibling's Z74 rung: workflow-yaml-guard joined keyless, 48→49 files, 15→16 keyless). E47 re-based WITH the estate, the evolution written in the eval itself (never silently); suite re-measured on the merged tree: evals 53/53 GREEN v1.40.0 · claims 0 offenders suite MATCH · census 16/16 caps=61 wiring=10/10 · secret-scan 0 [skip ci]"
+      },
+      {
+        "sha": "9ced882",
+        "subject": "R31 THE MEASURED BINDING & THE VENUE EXPANSION (CR-0061 / feat-056 / E53, suite v1.39.0 -> v1.40.0, 53/53 GREEN): the second calibration dial anchors the projection in REALITY — calibratedTape meters the fill-ledger's REAL capture rate (0.0861 fills/min = 124 fills/day over the window ending at the last fill) vs the 10 fpm market-tape prior, both carried side-by-side labeled (Q12's law, second dial — never a silent rewrite); the projection now runs on min(tape, capacity, CAPTURE): the choke is the MEASURED CAPTURE (fill-through 21.528% of the 576/day order capacity), projected volume 796.032 -> 85.684 SBD/day on the measured dials, and the capture grows exactly the way the owner directive says — more rungs x fill-through x funded soldiers x bounded internal flow. THE VENUE EXPANSION (Q14): market-grid v1.2.0 measures each Hive-Engine basket token's OWN marketFeePercentage from the tokens contract (absent = 0; the whole basket BEE/WAIV/SWAP.DOGE/SWAP.LTC/CENT measured ZERO-FEE live) and probes the Blurt internal market probe-first fail-loud (measured DARK — ENOTFOUND, booked honestly with its reason); fee-doctrine.json grows two venue rows (hive-engine-sidechain per-token law; blurt-internal-market probe-first); mm-volume v1.3.0 prices all five HE venues per-token by their own measured fee row (edgeFromSpread: captured spread - round-trip fee, floor zero — the pricing half exact, no volume fiction), the volume projection waits for a measured sidechain tape (honest projectionNullReason NO-MEASURED-TAPE-HE, never invented), book.tapeCalibration + darkSurfaces + projections.captureTradesDay/captureFillThroughPct/heVenuesPriced, plan-ledger rows grow tapeFpm/captureTradesDay/heVenuesPriced. E53 white-box (calibratedTape window-relative + fallbacks labeled; capture binding exact 124x0.068=8.432, µ-precision kept 0.001fpm->1.44; edgeFromSpread zero-fee/fee-priced/floor-zero/invalid-null) + black-box (HE sorted+priced per-token, BEE self-flow honestly blocked NO-PROJECTED-VOLUME — internal flow waits for a measured tape like everything else, blurt dark, capture bound live, projection on both dials 0.823, byte-stable) + real-tree (tape-calibrated on the real ledger, live HE basket priced). E52 evolved WITH the desk (the 237.024 capture-null-era expectation became the both-dials 0.823 — the evolution written in the eval itself). Two in-rung catches by the suite on its own author (tape-bound µ-precision; selfFlow NO-PROJECTED-VOLUME honesty) — fixed in the eval, the desk was right. Books refreshed: evals 53/53 GREEN v1.40.0 · claims 0 offenders suite MATCH · census 16/16 caps=61 wiring=10/10 · delta DRIFT booked · secret-scan 0"
+      },
+      {
+        "sha": "43c645e",
+        "subject": "mirror-from-console: 2026-10-04T02:39:00Z · truth outputs mirrored from the Console home (one-bloc, keyless) [skip ci]"
+      },
+      {
+        "sha": "b3a4117",
+        "subject": "workflow-yaml-guard: חוק-Z74 מופץ (ריבוני, אפס-actions-צד-ג) — קובץ-workflow שבור נופל-אדום-מנומק ב-push שהכניס-אותו"
+      },
+      {
+        "sha": "e15f98b",
+        "subject": "org-gitleaks: 16 repos · head=0 · history=0 · 2026-10-04 [skip ci]"
+      },
+      {
+        "sha": "d85b9ca",
+        "subject": "weave-mirror: 2026-10-04T02:23:26Z · weave books mirrored from the live Console home (keyless) [skip ci]"
+      },
+      {
+        "sha": "fb658a9",
+        "subject": "dex-mirror: 2026-10-04T02:17:50Z · live engine book mirrored from the live Console mirror (keyless) [skip ci]"
+      },
+      {
+        "sha": "8f51a1b",
+        "subject": "R30 THE CALIBRATED ENGINE (CR-0060 / feat-055 / E52, suite v1.38.0 -> v1.39.0, 52/52 GREEN): 'time of truth' executed on the projection itself — mm-volume v1.2.0 runs the plan on the REAL fill size the ledger measured. Q10 WHAT IS THE TRUE FILL SIZE? calibratedAvgSize reads the fill-ledger's REAL classified fills (µ-precise): 130 real fills -> 0.691 SBD average vs 0.068 planned (reality runs ~10x the plan) — projected volume 39.168 -> 796.032 SBD/day, conservative net 0.2886 -> 2.6516 SBD/day; the prior rides along (avgSizePriorSbd + source), fallback chain real-fills -> exec-runs-planned -> law-assumption every rung labeled — calibration is NEVER a silent rewrite. Q11 DOES THE SHARE MOVE? shareSeries reads the desk's OWN append-only plan ledger as the time series: last-K {at,sharePct} points per venue, sorted, corrupt rows dropped, capK=24 — dominance becomes a TREND; the series lives in a time-born `series` namespace excluded from the byte-stable payload BY LAW (values deterministic, timestamps are the axis; E50/E51 strips evolved with the desk). Q12 WHAT DID CALIBRATION CHANGE? book.calibration carries prior->calibrated + liftPct (+916.1765% at first light) side-by-side. The honest consequence surfaced: at N=1 the calibrated share crosses 100% — the capacity ladder SATURATES the measured pond, flagged by saturates, never hidden. E52 white-box (calibratedAvgSize µ-exact (0.703+0.120)/2=0.4115 unclassified-ignored prior-carried; fallback chain all labeled; shareSeries sorted/filtered/capped-last-k/empty-null) + black-box (pre-seeded plan ledger -> calibration live 0.068->0.4115 lift>0 + series live from the desk's own past (23.9286%) + the projection itself on the real size (576x0.4115=237.024 SBD) + byte-stable with series excluded) + real-tree (calibrated on the real ledger 0.691 n=130, series growing). E51 evolved: the share-live check now proves the share is computed ON the calibrated size (avgSizeSbd === realized.avgFillSbd === 24.8333). Books refreshed: evals 52/52 GREEN v1.39.0 · claims 0 offenders feats=55 evidence 140/143 suite MATCH (warns pre-existing CR-0049) · census 16/16 caps=61 wiring=10/10 · delta DRIFT booked · secret-scan 0"
+      },
+      {
+        "sha": "a3d2ec7",
+        "subject": "moment-watch: RISK_ON · steem-edge 379bps · 2026-10-04T01:59:36Z [skip ci]"
+      },
+      {
+        "sha": "75844ac",
+        "subject": "R29 THE SHARE LADDER (CR-0059 / feat-054 / E51, suite v1.37.0 -> v1.38.0, 51/51 GREEN): 'the biggest market maker' becomes a measured number instead of a boast. THE POND: market-grid v1.1.0 reads condenser get_volume from the chains themselves — SBD/STEEM 24h pond 163.687 SBD, HBD/HIVE 958.712 HBD — booked into the live book + the append-only history (volumeSbdTerm rows); pure parseVolume exported (both chains' response shapes, invalid drops). THE SHARE: mm-volume v1.1.0 computes the fleet's projected volume over the measured pond as a LADDER over funded soldiers — SBD/STEEM: N=1 → 23.9286% (one soldier already holds a quarter of the venue), N=2 → 47.8572%, N=3 → 71.7858%, N=5 → 119.643% SATURATED (the pond caps the capacity ladder — the tape becomes the binding, surfaced never hidden); HBD/HIVE joins the plan: 4.0855% at N=1. THE TRUTH CHECK (Q8): realized24h meters the fill-ledger's REAL fill_order fills over a 24h window ending at the LAST fill (deterministic from data alone) — 124 real fills, 62.781 SBD sold / 24.388 SBD bought, avg fill 0.703 SBD, projection accuracy 160.2865% (the projection UNDERSTATES reality ~10× on fill notional — the assumption is now visible and re-basable); unclassified fills counted honestly, never guessed into P&L. THE DOCTRINE MAP (Q9): the six failures that killed the great market makers (adverse selection, inventory skew, fee drag, self-poison, silent rot, overtrading) each mapped onto the guard shipped WITH the plan. Both internal venues priced from the live book (steem 1.1677%, hive 0.1645% at measure time) with history fallback; share/realized are ENHANCEMENT sections — missing inputs null them honestly, never block the plan. E51 white-box (parseVolume/sharePct/shareLadder-monotonic+saturates/realized-window-relative-to-last micro-exact/doctrineMap=6) + black-box (rich fixture share+realized+accuracy live, byte-stable payload; enhancement-null fixture still MMV-PLAN-LIVE; real-tree share measured from the chain itself). In-rung catches by the suite on its own author: fillsCount semantics (all rows, unclassified booked), avgFill over classified only, fixture avgSize pinned, fallback registry account. Books refreshed: census 16/16 caps=61 wiring=10/10 · claims 0 offenders feats=54 evidence 135/138 suite MATCH"
+      },
+      {
+        "sha": "19b7554",
+        "subject": "R28 THE VOLUME ENGINE (CR-0058 / feat-053 / E50, suite v1.36.0 -> v1.37.0, 50/50 GREEN): the owner's market-maker directive gets its instrument — agents/mm-volume.cjs, the keyless deterministic STASIS-braked planner that prices every venue by ITS OWN fee doctrine (fee-doctrine law), projects volume/net-edge from measured spreads + the measured tape (SBD/STEEM: spread 1.4736%, fee 0, conservative edge 0.7368%, capacity-bound 39.168 SBD/day, net 0.2886→0.5772 SBD/day), partitions the ladder across fleet accounts (j mod N disjoint complete cover; growth table N∈{1,2,3,5} books the recruit path), arms internal soldier-to-soldier flow ONLY at zero round-trip fee — capped 25%, labeled INTERNAL-FLOW, EXCLUDED from the VWAP/edge books (the poison guard) — and derives the BUY-EDGE ceiling from the realized sell VWAP (0.102→0.1017, live from the 23-run market-exec history). PLAN-ONLY: the live broadcast path stays market-exec law (MARKET_EXEC_LIVE, verify-then-sign). SIX engineering queries asked and answered in code (Q1 where provable volume lives; Q2 what bounds profitability; Q3 how a fleet shares one ladder; Q4 internal flow bounded+labeled+excluded; Q5 other users' fees — spread capture + saos-dex-kernel 30bps/30% treasury cut; Q6 the six guards). Wired: mm-volume leg in fleet-census-cron after scheduler-heal + publish + volatile no-noise (mm-volume.json). E50 white-box (venueEconomics edge-exact, partitionLadder disjoint-complete, selfFlowPlan zero-fee-only + guards as data, buyEdgeFloor, sellVwapFromRuns) + black-box (fresh-process MMV-PLAN-LIVE on rich fixture, byte-stable payload, STASIS halt zero-writes, corrupt-inputs honest BLOCKED) + real-tree + host wiring. One in-rung catch: 0 rungs = no ladder = covers:false (fixed in the desk, not the eval). Books refreshed: census 16/16 caps=61 wiring=10/10 · claims 0 offenders feats=53 evidence 129/132 suite MATCH · delta · cadence · scheduler"
+      }
+    ]
   },
   "proposals": [
     {
@@ -155,6 +316,406 @@
       "disposition": "GATED-BLOCKED"
     },
     {
+      "id": "CR-0001",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0001-role-registry-audit-wiring.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "harness-audit v1.2.0 (fresh-process run 2026-10-02: 29 PASS / 0 WARN / 0 FAIL; c",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0002",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0002-command-guard-wiring.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "harness-audit v1.3.0 (fresh-process run 2026-10-02: 30 PASS / 0 WARN / 0 FAIL; c",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0003",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0003-cognitive-rail-governance.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "harness-audit v1.4.0 (fresh-process run 2026-10-02: 31 PASS / 0 WARN / 0 FAIL; c",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0004",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0004-collapse-resilience-drill.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "harness-audit v1.6.0 (fresh-process run on the PARALLEL-CONVERGED tree 2026-10-0",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0005",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0005-canon-reachability.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "harness-audit v1.7.0 (fresh-process run 2026-10-03: 34 PASS / 0 WARN / 0 FAIL; c",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0006",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0006-hands-expansion.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "harness-audit v1.10.0 (fresh-process run 2026-10-03T01:3xZ: 37 PASS / 0 WARN / 0",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0007",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0007-skill-library-gate.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "harness-audit",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0008",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0008-security-audit-doctrine.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "harness-audit v1.11.0 fresh-process run (38 PASS / 0 WARN / 0 FAIL on the post-C",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0008",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0008-security-strix-doctrine.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "harness-audit",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0009",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0009-daily-pulse.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "harness-audit v1.13.0 fresh-process: 39 checks — 39 PASS / 1 WARN / 0 FAIL (the ",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0010",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0010-agentic-orchestration-ax.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "harness-audit",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0011",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0011-applied-ai-patterns-consult.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "harness-audit",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0012",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0012-swe-mini-doctrine.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "harness-audit v1.15.0 + evals v1.13.0 + skill-library-gate v1.3.0",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0013",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0013-ai-review-consult.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "harness-audit v1.15.0 + evals v1.13.0 + skill-library-gate v1.3.0",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0014",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0014-fcc-frugal-routing.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "harness-audit v1.16.0 (fresh-process judge) + skill-library-gate v1.4.0 + evals ",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0015",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0015-zai-openai-shim.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "harness-audit v1.15.0 + evals v1.13.0 (25/25) + live curl receipts",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0016",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0016-five-repo-sweep.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "harness-audit v1.17.0 (fresh-process judge) + skill-library-gate v1.5.0 + evals ",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0017",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0017-one-bloc-token-mode.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "harness-audit v1.17.0 (fresh-process judge, 41/0/0 against the token-mode measur",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0018",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0018-mini-runtime-landing.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "live run receipts (exit codes + proof file + shim log) + harness-audit v1.17.0 +",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0019",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0019-command-guard-runtime.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "live run receipts (3 classes: pass + scope-deny + secret-deny, JSONL + exit code",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0020",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0020-parallel-worktree-wave.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "live run receipts (exit codes + receipt files + shim interleave log + isolation ",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0021",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0021-guarded-parallel-waves.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "live run receipts (exit codes + receipt files + deny-ledger delta + distinct tra",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0022",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0022-graft-context-multiplier.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "live run receipts (exit codes + trajectory JSONs + receipt files + deny-ledger d",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0023",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0023-rung2-triple-oracle-restore.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "live receipts (SQLite read-back, HTTP probes with timings, telemetry debug outpu",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0024",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0024-shim-retry-backoff.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "live-fire receipts (health JSON, retry log line with exact backoff, 200 response",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0025",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0025-carry-law-laya-triage.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "live receipts (venture-desk legless-run output with carried ledger + attribution",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0026",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0026-shim-retry-backoff-queue.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "live run receipts (HTTP codes + response bodies + shim log line-sliced counters ",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0027",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0027-reef-rung3-guarded-episode.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "receipts mechanical: ledger seq-25 score=1.0 with 4-receipt chain read back from",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0028",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0028-pulse-advisory-consumption.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "operator-ordered landing per Z-59 stage summary booking; receipts mechanical (E2",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0029",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0029-codebase-memory-mcp-runtime.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "live run receipts (build log + ELF size + cli exit codes + MCP stdio transcript ",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0030",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0030-reef-rung4-harness-evolution.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "receipts mechanical: selection is computed from attempts-only means in-book; led",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0031",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0031-fleet-mcp-host.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "live run receipts (curl exit codes + full JSON-RPC payloads + deny-ledger JSONL ",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0032",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0032-host-consumer-wiring.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "live run receipts (trajectory JSONs api_calls + answer files + episode consoles ",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0033",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0033-scheduled-evolution-windows.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "sovereign desk self-judgment per fleet law (evidence bundle: live-fire rows + by",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0034",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0034-market-grid-desk.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "live run receipts (MARKET-GRID-LIVE verdict with 0 errors; per-market ms latenci",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0035",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0035-checkout-wave-tron-grid-history.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "live run receipts (clone exit statuses + per-repo du/file-count/head-commit tabl",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0036",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0036-market-exec-signed-grid.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "live on-chain readbacks (find_limit_orders + get_accounts before/after) + cross-",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0037",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0037-cross-layer-convergence-pass.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "live run receipts (cross-layer.json verdict line + per-check measured JSON + sha",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0038",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0038-market-grid-cadence-cron.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "live run receipts (E29 fresh-process sandbox verdict + two live desk ticks with ",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0039",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0039-fill-ledger-cycle-loop.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "self (tier B desk landing; evals 29/29 fresh-process; live receipts on-chain)",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0040",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0040-fleet-census.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "self + run-evals v1.19.0 (E31) + full-chain gates",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0041",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0041-census-cadence.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "self + run-evals v1.20.0 (E32) + workflow-parse-gate + full-chain gates",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0042",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0042-wiring-wave.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "self (tier B desk landing; evals 32/32 local pre-rebase, 34/34 expected merged; ",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0043",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0043-census-delta.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "self + run-evals v1.21.0 (E33) + workflow-parse-gate + full-chain gates",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0044",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0044-sovereign-transfer.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "self (tier B desk landing; E35 fresh-process judge; live on-chain receipts order",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0045",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0045-the-acquisition.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "run-evals v1.24.0 fresh-process judge (36/36 GREEN — first fully green suite sin",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0046",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0046-from-nothing-proof.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "run-evals v1.25.0 fresh-process judge (37/37 GREEN) + live 1d/7d audits + op-lev",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0047",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0047-edge-optimization.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "run-evals v1.26.0 fresh-process judge (38/38 GREEN) + live full-day ledger walk ",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0048",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0048-coordination-bus.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "run-evals v1.25.0 (37/37 GREEN, E37 fresh-process + white-box) + cross-layer 7 c",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
+      "id": "CR-0050",
+      "kind": "cr-pass",
+      "source": "change-requests/CR-0050-claims-audit.json",
+      "action": "accepted version already shipped (judged)",
+      "receipt": "workflow-parse-gate GREEN on the merged tree; run-evals v1.29.0 fresh-process 42",
+      "disposition": "ACCEPTED-TODAY"
+    },
+    {
       "id": "obs:one-bloc-boundary",
       "kind": "tier-c",
       "source": "one-bloc.json",
@@ -167,7 +728,7 @@
       "kind": "observation",
       "source": "hands-book.json",
       "action": "carry the hands boundary into the daily record",
-      "receipt": "hands 6 · live 3",
+      "receipt": "hands 6 · live 4",
       "disposition": "BOOKED"
     },
     {
@@ -175,7 +736,7 @@
       "kind": "observation",
       "source": "evo-windows.json",
       "action": "carry the evolution-window cadence state into the record",
-      "receipt": "110 windows booked, none complete · next due 2026-10-04T12:45:05Z",
+      "receipt": "115 windows booked, none complete · next due 2026-10-04T12:45:05Z",
       "disposition": "BOOKED"
     }
   ],
@@ -183,7 +744,7 @@
     "PROPOSED-CR": 6,
     "GATED-BLOCKED": 2,
     "DEFERRED-TIER-C": 4,
-    "ACCEPTED-TODAY": 0,
+    "ACCEPTED-TODAY": 50,
     "ROLLED-BACK": 0,
     "BOOKED": 2
   },
@@ -196,7 +757,7 @@
     "joined": 7,
     "note": "fresh advisory triage joined by id — lane/urgency hints only, confidence uncalibrated (en checkpoint), dispositions untouched",
     "at": "2026-10-03T15:08:54Z",
-    "age_h": 19.8
+    "age_h": 20.2
   },
   "evoEvidence": {
     "mode": "CADENCE-ONLY",
