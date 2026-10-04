@@ -1,10 +1,11 @@
 {
   "protocol": "SAOS-FATE-DEFENSE-FWI/1",
-  "at": "2026-10-04T11:25:33.007Z",
+  "at": "2026-10-04T13:01:16.975Z",
   "agent": "fleet-indicators v1.0.0 (Task 22, study: Emergence World arXiv 2606.08367 + 2609.17320)",
   "verdict": "DEGRADED",
   "counts": {
-    "GROW": 7,
+    "HELD": 1,
+    "GROW": 6,
     "DECLINE": 2
   },
   "indicators": [
@@ -13,10 +14,10 @@
       "name": "Population Health",
       "measures": "persistent organs (live books) alive & fresh — our equivalent of \"agents alive at end of run\"",
       "evidenceSource": "agents/{econ,curation,money-ledger,ventures,fills-ledger,bridge,dex,learning-ledger,recruitment}-book.json .at/.updated < 48h",
-      "value": "9/9",
+      "value": "8/9",
       "breakEven": "≥7/9",
-      "status": "GROW",
-      "note": "all organs alive"
+      "status": "HELD",
+      "note": "curation-book.json"
     },
     {
       "id": "F2",
@@ -73,7 +74,7 @@
       "name": "Economic Vitality & Equity",
       "measures": "real chain balances (liquid + effective SP) in an executor-identified ledger — equity via identity: one executor, one writer, no hoarding ambiguity",
       "evidenceSource": "agents/money-ledger.json .book{executor,headSteemLiquid,headSteemStake} fresh <48h",
-      "value": "headcorner: 23.366 STEEM liquid · 3810.514 SP · book 12.7h old",
+      "value": "headcorner: 23.366 STEEM liquid · 3810.514 SP · book 14.3h old",
       "breakEven": "ledger fresh + executor-identified",
       "status": "GROW",
       "note": "their economy was 1-CC billboards; ours is signed chain state with a named executor"
@@ -83,7 +84,7 @@
       "name": "Constitutional Growth",
       "measures": "versioned law + honest feature ledger + weekly commit motion — the constitution is AMENDED, not just recited",
       "evidenceSource": "agents/sovereignty.md version + feature_list.json status counts + git rev-list 7d",
-      "value": "law v1.0.6 · features 31/66 done · 234 commits/7d",
+      "value": "law v1.0.6 · features 31/66 done · 235 commits/7d",
       "breakEven": "law versioned + ≤2 open features + ≥20 commits/7d",
       "status": "DECLINE",
       "note": "their static-constitution worlds died passive; ours has version history in git"
@@ -103,19 +104,19 @@
     {
       "book": "econ-book.json",
       "exists": true,
-      "ageHours": 5.4,
+      "ageHours": 7,
       "fresh": true
     },
     {
       "book": "curation-book.json",
       "exists": true,
-      "ageHours": 47.5,
-      "fresh": true
+      "ageHours": 49.1,
+      "fresh": false
     },
     {
       "book": "money-ledger.json",
       "exists": true,
-      "ageHours": 12.7,
+      "ageHours": 14.3,
       "fresh": true
     },
     {
@@ -133,25 +134,25 @@
     {
       "book": "bridge-book.json",
       "exists": true,
-      "ageHours": 12.6,
+      "ageHours": 14.2,
       "fresh": true
     },
     {
       "book": "dex-book.json",
       "exists": true,
-      "ageHours": 12.6,
+      "ageHours": 14.2,
       "fresh": true
     },
     {
       "book": "learning-ledger.json",
       "exists": true,
-      "ageHours": 12.7,
+      "ageHours": 14.3,
       "fresh": true
     },
     {
       "book": "recruitment.json",
       "exists": true,
-      "ageHours": 0.5,
+      "ageHours": 2.1,
       "fresh": true
     }
   ]

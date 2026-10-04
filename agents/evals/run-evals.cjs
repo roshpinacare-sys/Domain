@@ -3132,10 +3132,14 @@ function accumulateInMemory(bookRows, seed) {
       const ladNow = am.sizeLadder(coreNow).find((l) => l.pool === 'P3');
       const ladBook = (meshBook.sizeLadder || []).find((l) => l.pool === 'P3');
       if (ladNow && ladBook && ladNow.rungs[1] && ladBook.rungs[1] && ladNow.rungs[1].out !== ladBook.rungs[1].out) why64.push('booked ladder does not recompute from the booked pools');
-      // the operator pipe-proof fill (batch MESH-OPERATOR-PIPEPROOF-R41) is a REAL settled fill on the ledger
+      // the operator pipe-proof fill (batch MESH-OPERATOR-PIPEPROOF-R41) is a REAL settled fill on the ledger —
+      // the ops live in the APPEND-ONLY history (ledger-first law; opsThisTick rotates by design)
       if (Array.isArray(coreNow.processedBatches) && coreNow.processedBatches.includes('MESH-OPERATOR-PIPEPROOF-R41')) {
-        const fillRow = (coreNow.opsThisTick || []).find((o) => o.type === 'AGENT_FILL');
-        const wireRow = (coreNow.opsThisTick || []).find((o) => o.type === 'MESH-WIRE');
+        let hist65Lines = [];
+        try { hist65Lines = fs.readFileSync(path.join(AG, 'dex-core-history.jsonl'), 'utf8').trim().split('\n'); } catch (_) {}
+        const histOps = hist65Lines.slice(-600).map((l) => { try { return JSON.parse(l); } catch (_) { return null; } }).filter(Boolean);
+        const fillRow = histOps.find((o) => o.type === 'AGENT_FILL' && o.agent === 'headcorner' && o.amountIn === '5000' && o.to === 'WSTEEM');
+        const wireRow = histOps.find((o) => o.type === 'MESH-WIRE' && o.agent === 'headcorner' && o.asset === 'STEEM' && o.amount === '5000');
         if (!(fillRow && wireRow)) why64.push('pipe-proof batch booked without its wire+fill ops');
         if (fillRow && !(ub64(fillRow.amountOut) <= ub64(fillRow.amountIn) && ub64(fillRow.amountIn) >= dc.MESH_DUST)) why64.push('booked fill violates the peg/dust laws');
         if (!(Array.isArray(coreNow.conservation) && coreNow.conservation.every((r) => r.ok))) why64.push('booked ledger conservation broken');
@@ -3155,9 +3159,89 @@ function accumulateInMemory(bookRows, seed) {
       why64.length ? 'fails: ' + why64.join('; ') : 'the mesh trades: the fleet settles atomically on our own ledger, wired-capped, honest to the last µ');
   } catch (e) { evalr('E64', 'the mesh market', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
+  // ---- E65 (R42, CR-0072): THE MULTI-NETWORK VAULT — the vault holds what its keys can move, sees the rest.
+  // The custody-class law, the issuer identity, the redeem corridor (burn-before-payout + queued peg-outs),
+  // the cross-fair law, and the pool catalog P5-P9 (armed deterministically the day key material verifies).
+  try {
+    const why65 = [];
+    const dc = require(path.join(AG, 'dex-core.cjs'));
+    const ub65 = (s) => { try { return BigInt(String(s)); } catch (_) { return 0n; } };
+    // 1. custody-class law: golden rows — MEASURED-KEYED is the ONLY mintable class
+    const cc65 = dc.custodyClassRows({ HIVE: { reachable: true, node: 't', hive: 34000n, hbd: 3000n }, BLURT: { reachable: true, node: 't', blurt: 67841000n } });
+    if (!(cc65.STEEM.class === 'MEASURED-KEYED' && cc65.STEEM.mintable === true && cc65.SBD.mintable === true)) why65.push('STEEM/SBD custody class broken');
+    if (!(cc65.HIVE.class === 'OBSERVED-UNCONTROLLED' && cc65.HIVE.mintable === false && cc65.HIVE.observed === '34000')) why65.push('HIVE observed-uncontrolled broken');
+    if (!(cc65.BLURT.class === 'OBSERVED-POST-KEYED' && cc65.BLURT.observed === '67841000')) why65.push('BLURT post-keyed observed broken');
+    if (!(dc.custodyClassRows(null).HIVE.class === 'OBSERVED-ABSENT' && dc.custodyClassRows(null).SAOS.class === 'PLANNED-NO-CLAIM')) why65.push('absent/planned classes not honest');
+    // 2. observed NEVER becomes custody: settle with probes leaves custody zero and books OBSERVE ops
+    const mkVault65 = () => {
+      const vv = dc.emptyVault(); vv.custody.STEEM = '2000000'; vv.custody.SBD = '200000'; vv.custodyProvenance.STEEM = 't'; vv.custodyProvenance.SBD = 't';
+      const aa = { treasury: { claims: dc.emptyClaims(), lp: {} } };
+      aa.treasury.claims.STEEM = '2000000'; aa.treasury.claims.SBD = '200000';
+      return { vault: vv, accounts: aa, pools: [], seq: 1 };
+    };
+    const nets65 = { STEEM: { reachable: false, node: null }, HIVE: { reachable: true, node: 't', hive: 34000n, hbd: 3000n }, BLURT: { reachable: true, node: 't', blurt: 67841000n } };
+    const s65 = dc.settle(mkVault65(), { fresh: false, fair: null, hiveFair: null, routerAt: null }, null, '2026-10-05T00:00:00.000Z', nets65);
+    if (!(s65.st.vault.custody.HIVE === '0' && s65.st.vault.custody.BLURT === '0' && s65.st.vault.observed.BLURT === '67841000')) why65.push('observed leaked into custody or was not booked');
+    if (!s65.ops.some((o) => o.type === 'OBSERVE' && o.keyClass === 'OBSERVED-POST-KEYED')) why65.push('OBSERVE op missing its key class');
+    if (!(s65.consOk && s65.cons.every((r) => r.ok))) why65.push('conservation broke under the observed sync');
+    // 3. redeem law: burn BEFORE payout, conservation holds, the corridor named per chain
+    const rv65v = dc.emptyVault(); rv65v.custody.STEEM = '2000000'; rv65v.custodyProvenance.STEEM = 't'; rv65v.wrappedReserve.STEEM = '1000000'; rv65v.minted.WSTEEM = '1000000';
+    const rv65a = { treasury: { claims: dc.emptyClaims(), lp: {} } }; rv65a.treasury.claims.STEEM = '1000000'; rv65a.treasury.claims.WSTEEM = '1000000';
+    const rv65 = dc.redeem({ vault: rv65v, accounts: rv65a, pools: [], seq: 5 }, 'WSTEEM', '400000', 'treasury', '2026-10-05T00:00:00.000Z');
+    if (!(rv65.ok && rv65.st.vault.minted.WSTEEM === '600000' && rv65.st.vault.wrappedReserve.STEEM === '600000' && rv65.st.accounts.treasury.claims.STEEM === '1400000')) why65.push('redeem burn-before-payout broken');
+    if (!(rv65.cons && rv65.cons.every((r) => r.ok))) why65.push('redeem broke conservation');
+    if (!rv65.ops.some((o) => o.type === 'PEGOUT-QUEUED' && o.corridor.indexOf('KEYED-DESK') === 0)) why65.push('steem pegout corridor not keyed-desk banded');
+    // refusals are honest: dust / over-mint / unknown wrapper / insufficient claim
+    if (!(dc.redeem({ vault: rv65v, accounts: rv65a, pools: [], seq: 1 }, 'WSTEEM', '0', 'treasury', 't').refused === 'DUST'
+      && dc.redeem({ vault: rv65v, accounts: rv65a, pools: [], seq: 1 }, 'WSTEEM', '9999999', 'treasury', 't').refused === 'OVER-MINT'
+      && dc.redeem({ vault: rv65v, accounts: rv65a, pools: [], seq: 1 }, 'WNOPE', '100', 'treasury', 't').refused === 'UNKNOWN-WRAPPER'
+      && dc.redeem({ vault: rv65v, accounts: { ghost: { claims: dc.emptyClaims(), lp: {} } }, pools: [], seq: 1 }, 'WSTEEM', '500000', 'ghost', 't').refused === 'INSUFFICIENT-CLAIM')) why65.push('redeem refusals not honest');
+    // the blurt corridor: posting key only — the PLAN band, never a fake broadcast
+    const b65v = dc.emptyVault(); b65v.custody.BLURT = '500000'; b65v.wrappedReserve.BLURT = '500000'; b65v.minted.WBLURT = '500000';
+    const b65a = { treasury: { claims: dc.emptyClaims(), lp: {} } }; b65a.treasury.claims.WBLURT = '500000';
+    const b65 = dc.redeem({ vault: b65v, accounts: b65a, pools: [], seq: 1 }, 'WBLURT', '500000', 'treasury', 't');
+    if (!(b65.ok && b65.corridor.indexOf('PLAN-PEGOUT-KEYED') === 0)) why65.push('blurt pegout corridor not plan-keyed banded');
+    // 4. cross-fair law: deterministic BigInt cross, honest nulls
+    const cf65 = dc.crossFair('105446700', '56414230');
+    if (!(cf65 !== null && Math.abs(Number(cf65) - 105446700e9 / 56414230) <= 10 && dc.crossFair(null, '1') === null && dc.crossFair('1', null) === null)) why65.push('cross-fair law broken');
+    // 5. pool catalog P5-P9: the reconcile appends deterministically, once, born empty
+    if (!(dc.poolDefs(null).length === 9 && dc.poolDefs(null).some((d) => d.pair === 'HIVE/STEEM' && d.planned) && dc.poolDefs(null).some((d) => d.pair === 'WSBD/WHBD' && !d.planned))) why65.push('pool catalog P5-P9 broken');
+    const rec65 = { vault: dc.emptyVault(), accounts: { treasury: { claims: dc.emptyClaims(), lp: {} } }, pools: [{ id: 'P1', pair: 'WSTEEM/STEEM', kind: 'PEG', a: 'WSTEEM', b: 'STEEM', feeBps: 2, ra: '388775', rb: '388775', feeMeter: '0', verdict: 'LIVE-INTERNAL' }], seq: 1 };
+    dc.reconcilePools(rec65, 't', null); dc.reconcilePools(rec65, 't', null);
+    if (!(rec65.pools.length === 9 && rec65.pools.find((p) => p.id === 'P8').verdict === 'PLANNED-NO-CLAIM' && rec65.pools.find((p) => p.id === 'P9').verdict === 'AWAITING-CUSTODY')) why65.push('reconcile not idempotent or wrong birth verdicts');
+    // 6. the genesis 25% law: keyed custody mints, observed never mints
+    const plan65 = dc.genesisPlan({ STEEM: 1000000n, SBD: 0n, HIVE: 2000000n, HBD: 0n, BLURT: 4000000n, SAOS: 0n }, 105446700n);
+    if (!(plan65.mintWHIVE === 500000n && plan65.mintWBLURT === 1000000n && plan65.mintWHBD === 0n)) why65.push('the 25% mint law broken');
+    const g65 = dc.genesis({ STEEM: 1000000n, SBD: 0n, HIVE: 2000000n, HBD: 0n, BLURT: 4000000n, SAOS: 0n }, 105446700n, { STEEM: 't', HIVE: 't', BLURT: 't' }, '2026-10-05T00:00:00.000Z');
+    if (!(g65.pools.find((p) => p.id === 'P5').ra === '250000' && g65.pools.find((p) => p.id === 'P7').ra === '500000' && dc.conservation(g65.vault, g65.accounts, g65.pools).every((r) => r.ok))) why65.push('genesis arming or conservation broken');
+    // 7. issuer identity: stable, input-sensitive, recomputable
+    if (!(dc.issuerIdentity() === dc.issuerIdentity() && dc.issuerIdentity().length === 16 && dc.issuerIdentity(['WSTEEM']) !== dc.issuerIdentity(['WSTEEM', 'WSBD']))) why65.push('issuer identity not stable/sensitive');
+    // 8. black-box: the dex-core selftest in a fresh process (judge separation)
+    const bb65 = spawnSync(process.execPath, [path.join(AG, 'dex-core.cjs'), 'selftest'], { encoding: 'utf8', timeout: 30000 });
+    if (!(bb65.status === 0 && /DEX-CORE-SELFTEST-OK \d+\/\d+/.test(bb65.stdout || ''))) why65.push('dex-core selftest fresh-process failed');
+    // 9. real-tree: the booked multi-network vault re-derives from its own fields
+    const core65 = JSON.parse(fs.readFileSync(path.join(AG, 'dex-core.json'), 'utf8'));
+    if (core65.protocol === dc.PROTOCOL && core65.genesisDone) {
+      if (!Array.isArray(core65.pools) || !['P5', 'P6', 'P7', 'P8', 'P9'].every((id) => core65.pools.some((p) => p.id === id))) why65.push('booked pool catalog missing P5-P9');
+      if (dc.issuerIdentity() !== (core65.issuer || {}).identity) why65.push('booked issuer identity does not recompute');
+      if (!(core65.custodyClasses && core65.custodyClasses.STEEM.class === 'MEASURED-KEYED' && core65.custodyClasses.HIVE.mintable === false && core65.custodyClasses.SAOS.class === 'PLANNED-NO-CLAIM')) why65.push('booked custody classes do not re-derive');
+      const corr65 = (core65.issuer || {}).pegOutCorridors || {};
+      if (!(String(corr65.STEEM || '').indexOf('KEYED-DESK') === 0 && String(corr65.HIVE || '').indexOf('PLAN') === 0 && String(corr65.BLURT || '').indexOf('PLAN') === 0)) why65.push('booked pegout corridors not honestly banded');
+      if (!(Array.isArray(core65.conservation) && core65.conservation.every((r) => r.ok))) why65.push('booked vault conservation broken');
+      if (dc.attestationHash(core65.vault, core65.accounts, core65.pools, core65.seq) !== core65.attestation) why65.push('booked attestation does not recompute');
+      const a265 = (core65.arb || []).find((r) => r.id === 'A2');
+      if (!a265 || !['NO-CUSTODY', 'AWAITING-LIQUIDITY', 'FEED-STALE', 'NO-POOL'].includes(a265.verdict)) why65.push('the cross-bridge row is not honestly banded');
+      if (core65.vault.custody.HIVE !== '0' || core65.vault.custody.BLURT !== '0') why65.push('booked custody holds observed assets — the law is broken');
+      if (!(core65.vault.observed && ub65(core65.vault.observed.BLURT) >= 0n)) why65.push('the observed registry is not booked');
+    }
+    evalr('E65', 'the multi-network vault (CR-0072)', why65.length === 0,
+      ['white-box: the custody-class law — MEASURED-KEYED is the only mintable class, adjacent networks are OBSERVED-UNCONTROLLED / OBSERVED-POST-KEYED with live measured balances, honest OBSERVED-ABSENT when a probe fails, and the settle\u2019s observed sync books OBSERVE ops with key classes while custody stays zero and conservation holds', 'white-box: the redeem law — burn BEFORE payout (minted, reserve and claims move 1:1, conservation holds), peg-outs queued with their corridor named (STEEM/SBD = KEYED-DESK, HIVE/HBD/BLURT = PLAN-PEGOUT-KEYED-OPERATOR), refusals honest (DUST / OVER-MINT / UNKNOWN-WRAPPER / INSUFFICIENT-CLAIM), the cross-fair law deterministic BigInt with honest nulls, the reconcile appends P5-P9 once (born empty, custody-class-gated), the genesis 25% mint law arms only from keyed custody, and the issuer identity is stable, input-sensitive, recomputable', 'black-box: dex-core selftest in a fresh process (exit 0, OK marker — judge separation)', 'real-tree: the booked multi-network vault re-derives — P5-P9 in the catalog, the issuer identity recomputes, custody classes re-derive (STEEM/SBD keyed, observed rows unmintable), the corridors are honestly banded per chain, conservation holds, the attestation recomputes, the A2 cross-bridge row carries an honest band, and booked custody never holds observed assets'],
+      why65.length ? 'fails: ' + why65.join('; ') : 'the vault holds what its keys can move, sees every network, and queues every payout with its corridor named');
+  } catch (e) { evalr('E65', 'the multi-network vault', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.50.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48 + R27 metronome-audit E49 + R28 mm-volume E50 + R29 share-ladder E51 + R30 calibrated-engine E52 + R31 tape-calibration/venue-expansion E53 + R32 sidechain-pond E54 + R33 pnl-verdict E55 + sovereign-hands E56 + R34 fill-through-evolution E57 + R35 human-cadence E58 + R36 community-home E59 + R37 community-breath E60 + R38 chain-proof E61 + R39 swap-net E62 + R40 exchange-core E63 + R41 mesh-market E64, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.51.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48 + R27 metronome-audit E49 + R28 mm-volume E50 + R29 share-ladder E51 + R30 calibrated-engine E52 + R31 tape-calibration/venue-expansion E53 + R32 sidechain-pond E54 + R33 pnl-verdict E55 + sovereign-hands E56 + R34 fill-through-evolution E57 + R35 human-cadence E58 + R36 community-home E59 + R37 community-breath E60 + R38 chain-proof E61 + R39 swap-net E62 + R40 exchange-core E63 + R41 mesh-market E64 + R42 multi-network-vault E65, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];
