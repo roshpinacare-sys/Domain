@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "at": "2026-10-04T01:27:20.889Z",
+  "at": "2026-10-04T01:51:19.933Z",
   "since": "2026-10-02T16:40:20.950Z",
   "windowSince": "2026-10-02T16:40:20.950Z",
   "agent": "pulse v1.2.0 (CR-0009 loop, Rung 1; CR-0028 consumes the laya advisory triage; CR-0033 consumes the scheduled evolution-window evidence — Z-48/Z-49/Z-60/Z-62)",
@@ -8,6 +8,10 @@
     "since": "2026-10-02T16:40:20.950Z",
     "count": 40,
     "commits": [
+      {
+        "sha": "19b7554",
+        "subject": "R28 THE VOLUME ENGINE (CR-0058 / feat-053 / E50, suite v1.36.0 -> v1.37.0, 50/50 GREEN): the owner's market-maker directive gets its instrument — agents/mm-volume.cjs, the keyless deterministic STASIS-braked planner that prices every venue by ITS OWN fee doctrine (fee-doctrine law), projects volume/net-edge from measured spreads + the measured tape (SBD/STEEM: spread 1.4736%, fee 0, conservative edge 0.7368%, capacity-bound 39.168 SBD/day, net 0.2886→0.5772 SBD/day), partitions the ladder across fleet accounts (j mod N disjoint complete cover; growth table N∈{1,2,3,5} books the recruit path), arms internal soldier-to-soldier flow ONLY at zero round-trip fee — capped 25%, labeled INTERNAL-FLOW, EXCLUDED from the VWAP/edge books (the poison guard) — and derives the BUY-EDGE ceiling from the realized sell VWAP (0.102→0.1017, live from the 23-run market-exec history). PLAN-ONLY: the live broadcast path stays market-exec law (MARKET_EXEC_LIVE, verify-then-sign). SIX engineering queries asked and answered in code (Q1 where provable volume lives; Q2 what bounds profitability; Q3 how a fleet shares one ladder; Q4 internal flow bounded+labeled+excluded; Q5 other users' fees — spread capture + saos-dex-kernel 30bps/30% treasury cut; Q6 the six guards). Wired: mm-volume leg in fleet-census-cron after scheduler-heal + publish + volatile no-noise (mm-volume.json). E50 white-box (venueEconomics edge-exact, partitionLadder disjoint-complete, selfFlowPlan zero-fee-only + guards as data, buyEdgeFloor, sellVwapFromRuns) + black-box (fresh-process MMV-PLAN-LIVE on rich fixture, byte-stable payload, STASIS halt zero-writes, corrupt-inputs honest BLOCKED) + real-tree + host wiring. One in-rung catch: 0 rungs = no ladder = covers:false (fixed in the desk, not the eval). Books refreshed: census 16/16 caps=61 wiring=10/10 · claims 0 offenders feats=53 evidence 129/132 suite MATCH · delta · cadence · scheduler"
+      },
       {
         "sha": "60e5050",
         "subject": "R27 re-slotted on the merged tree (CR-0057 / feat-052 / E49, NINETEENTH-COLLISION RENUMBER per the later-mover law): the name-proof lane landed CR-0056/feat-051/E48/v1.35.0 first and the rebase three-way merge of run-evals.cjs/feature_list.json silently took their side inside this lane's own commit — the E32 keyless FAIL on the merged tree exposed the loss, the suite caught its own author again. Re-slotted: the metronome-audit eval re-inserted as E49 (the full block recovered from the pre-rebase commit via the reflog), feat-052 appended, the duplicate CR-0056-metronome-audit.json removed from the tree (the name-proof lane keeps CR-0056; history keeps the file immutably), CR-0057-metronome-audit.json is the canonical record, E32's keyless law re-aligned to the census-canonical definition (the rebase had reverted it). Suite v1.35.0 -> v1.36.0 (49/49 GREEN on the merged tree — E46 maturity-law + E47 keyless-wave + E48 suffix-law + E49 metronome-audit all composing): claims 0 offenders feats=52 evidence 123/126 suite MATCH · books refreshed"
@@ -163,10 +167,6 @@
       {
         "sha": "c4d8425",
         "subject": "tick-keeper: arc heartbeat [skip ci]"
-      },
-      {
-        "sha": "9835bde",
-        "subject": "CR-0049 (PASS, tier B): fleet Rung 21 — THE SELF-HEALING PULSE (operator: 'תמשיך') — FIFTEENTH-COLLISION RENUMBER (later-mover law): the coordination-bus lane landed CR-0048/feat-043/E39 (v1.27.0) while this rung was in flight — this rung renumbered CR-0048->CR-0049, feat-043->feat-044, E39a/b->E40a/b, v1.27.0->v1.28.0; their bus is KEPT and composes (coord-bus rides fill-ledger-cron at the reslotted 18,48) — GitHub's scheduler MEASURED starving this repo (keyless API: sovereign-tick/earn-audit crons = 0 schedule events since arming, all runs workflow_dispatch; scheduled runs arrive hours late — treasury-route 16:20 slot ran 20:09; dispatch latency measured 15-30s: 21:15:04 dispatch -> 21:15:22 decision) — so the fleet holds its own heartbeat: (1) agents/tick-keeper.cjs reads the arc's own receipts (decisions jsonl / earn-audit / fill-ledger) -> keeperDecide pure -> re-fires stale or never-born desks via PAT workflow_dispatch (PAT events bypass the GITHUB_TOKEN recursion block), 20m per-desk cooldown, STASIS-first (the healer obeys the breaker), single-writer, token env-only, fail-soft exit 0; tick-keeper.yml cron 2,32 (clean minutes); (2) agents/minute-map.json: 14 cron collisions measured -> reslotted to 0 across 21 workflows (one workflow minute = one machine — collisions multiply the starvation surface); (3) MEASURED DEFECT fixed: the Math.max(state,ledger) fusion swallowed NEGATIVE realized — a losing day read 0.000 SBD forever, silently DISARMING BREAKER-DAILY-LOSS — ledgerDayTruth(state,ledgerRow) makes the ledger row the day-book, negative truth reaches the gate; (4) earn-audit depth 4->30 pages (400 ops hid the drip on rotation days; ~3000 ops/account, pagesUsed booked); (5) evals on the MERGED tree: E29/E32 stale fixtures healed to the reslot + E40a (negative realized survives; ledger wins; state fallback; zeros never NaN) + E40b (stale/fresh/no-receipt/cooldown-20m/per-desk-gaps/arc-registry) — suite v1.28.0 41/41 GREEN (their E39 coord-bus + my E40); post-merge book refresh: fill-ledger run #19 (87 fills total, +9 new, realized -0.227 SBD, vwap edge -1.94% healing from -2.13), workflow-parse-gate GREEN 48 workflows 0 offenders, census 16/16 caps=61 wiring=10/10; live: tick #9 PLAN-DRY DAY-CAPS (57 fills >= 24 — day booked), keeper book fresh on all three desks; feat-044 (44 rows)"
       }
     ]
   },
@@ -736,7 +736,7 @@
       "kind": "observation",
       "source": "evo-windows.json",
       "action": "carry the evolution-window cadence state into the record",
-      "receipt": "65 windows booked, none complete · next due 2026-10-04T12:45:05Z",
+      "receipt": "67 windows booked, none complete · next due 2026-10-04T12:45:05Z",
       "disposition": "BOOKED"
     }
   ],
@@ -757,7 +757,7 @@
     "joined": 7,
     "note": "fresh advisory triage joined by id — lane/urgency hints only, confidence uncalibrated (en checkpoint), dispositions untouched",
     "at": "2026-10-03T15:08:54Z",
-    "age_h": 10.3
+    "age_h": 10.7
   },
   "evoEvidence": {
     "mode": "CADENCE-ONLY",

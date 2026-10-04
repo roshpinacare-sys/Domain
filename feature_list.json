@@ -652,6 +652,22 @@
       "cr": "CR-0058",
       "ownerLanguage": "he",
       "notes": "The owner directive 'נהיה השחקנים הכי גדולים של market maker וגריד על הרשתות... גם מסחר בינינו זה טוב... ניקח גם את העמלות של המשתמשים האחרים' — answered with a provable planner, not a promise: the fee-doctrine law prices each venue by its own book (zero-fee chain internal markets vs the saos-dex-kernel 30bps/30% treasury cut where other users' fees ARE our income); internal flow is real volume at zero fee but bounded, labeled, and excluded from the edge books so internal fills can never teach the fleet a fake edge; the fleet today = 1 funded account so the partition holds all 10 rungs and the growth table books the recruit path to N=5. One eval catch in-rung: 0 rungs is no ladder — covers:false fixed in the desk, not in the eval."
+    },
+    {
+      "id": "feat-054",
+      "title": "Fleet Rung 29: THE SHARE LADDER (CR-0059) — 'the biggest market maker' becomes a measured number: market-grid v1.1.0 reads the 24h pond from the chains themselves (condenser get_volume: SBD/STEEM 163.687 SBD, HBD/HIVE 958.712 HBD); mm-volume v1.1.0 computes the fleet's share as a ladder over funded soldiers (SBD/STEEM N=1 → 23.9286%, N=5 → 119.643% SATURATED — the pond caps the capacity ladder), meters REALIZED fills vs projection (124 real fills, 62.781 SBD sold, accuracy 160.2865% — the projection understates reality ~10× on fill notional, now visible), and ships the doctrine map: the six failures that killed the great market makers each answered by a shipped guard; HBD/HIVE joins the plan (share 4.0855%)",
+      "status": "LIVE",
+      "evidence": [
+        "agents/market-grid.cjs (v1.1.0: get_volume per internal market + pure parseVolume + volume24hSbdTerm in the live book + volumeSbdTerm rows in the append-only history)",
+        "agents/mm-volume.cjs (v1.1.0: sharePct/shareLadder with saturates, realized24h window-relative-to-last with µ-exact sums + unclassified honesty + projectionAccuracyPct, doctrineMap 6 failure→guard rows, live-book pricing with history fallback, HBD/HIVE venue)",
+        "agents/mm-volume.json (the book, measured live: shares 23.9286%/4.0855%, realized metering, doctrine)",
+        "agents/mm-volume.md (the Hebrew owner surface with the share ladder + the realized line)",
+        "agents/evals/run-evals.cjs (v1.38.0, E51: parseVolume/sharePct/shareLadder/realized24h/doctrineMap white-box exact + black-box rich/fixture-null/live-tree)",
+        "agents/change-requests/CR-0059-share-ladder.json (the rung's decision record: Q7 the pond, Q8 the truth check, Q9 the doctrine map)"
+      ],
+      "cr": "CR-0059",
+      "ownerLanguage": "he",
+      "notes": "In-rung eval catches (the suite judging its own author again): fillsCount semantics — ALL window rows counted with unclassified booked honestly (never guessed into P&L), avgFill over classified fills only; the fixture's avgSize had to be pinned by a placed row (assumed 0.1 default would have shifted the share); the fallback fixture needed the registry account to avoid the honest default-blocker. Real numbers at first light: one funded soldier = 23.93% of the SBD/STEEM pond; N=5 saturates it."
     }
   ]
 }

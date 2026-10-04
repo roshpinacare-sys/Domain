@@ -1,6 +1,6 @@
 {
- "at": "2026-10-04T01:22:29.287Z",
- "agent": "mm-volume v1.0.0 (CR-0058, fleet Rung 28 — the volume engine)",
+ "at": "2026-10-04T01:47:26.267Z",
+ "agent": "mm-volume v1.1.0 (CR-0058+CR-0059, fleet Rungs 28-29 — the volume engine + the share ladder)",
  "verdict": "MMV-PLAN-LIVE",
  "law": {
   "planOnly": "this desk PLANs and MEASURES — it never signs; the live broadcast path is market-exec.cjs law (MARKET_EXEC_LIVE=1, verify-then-sign)",
@@ -13,13 +13,39 @@
    "STASIS halt-before-read"
   ]
  },
+ "doctrine": [
+  {
+   "failure": "adverse selection — buying into a falling tape",
+   "guard": "BUY-EDGE law: no buy above the realized sell VWAP − 0.3%; flow-catch floors"
+  },
+  {
+   "failure": "inventory skew — stranded one-sided stock",
+   "guard": "SELL-CAP-85% + fill-ledger recycle suggestions close the loop"
+  },
+  {
+   "failure": "fee drag on thin venues",
+   "guard": "fee-doctrine: zero-fee chain markets first; every fee-priced venue priced by its own book"
+  },
+  {
+   "failure": "self-trading poisoning the edge books",
+   "guard": "VWAP-EXCLUSION + INTERNAL-FLOW labeling + the 25% cap"
+  },
+  {
+   "failure": "silent capacity rot (a cadence that dies quietly)",
+   "guard": "cadence legs + no-noise comparator + census wiring checks"
+  },
+  {
+   "failure": "overtrading beyond what the tape absorbs",
+   "guard": "volume = min(tape bound, capacity bound); the binding is surfaced, never hidden"
+  }
+ ],
  "venues": [
   {
    "venue": "SBD/STEEM (internal steem)",
    "layer": "chain-internal",
    "feeBps": 0,
-   "spreadPct": 1.4736,
-   "measuredFrom": "market-grid-history last row",
+   "spreadPct": 1.1677,
+   "measuredFrom": "market-grid live book",
    "avgSizeSbd": 0.068,
    "avgSizeAssumed": false,
    "avgSizeN": 17,
@@ -27,10 +53,10 @@
    "buyEdgeFloor": 0.1017,
    "econ": {
     "feeBps": 0,
-    "spreadPct": 1.4736,
+    "spreadPct": 1.1677,
     "feeRoundTripPct": 0,
-    "edgeConsPct": 0.7368,
-    "edgeOptPct": 1.4736,
+    "edgeConsPct": 0.5839,
+    "edgeOptPct": 1.1677,
     "bounds": {
      "tapeBoundTradesDay": 14400,
      "capBoundTradesDay": 576,
@@ -38,9 +64,137 @@
     },
     "projTradesDay": 576,
     "projVolumeSbd": 39.168,
-    "projNetConsSbd": 0.2886,
-    "projNetOptSbd": 0.5772
+    "projNetConsSbd": 0.2287,
+    "projNetOptSbd": 0.4574
    },
+   "marketVolume24h": {
+    "SBD": 163.687,
+    "STEEM": 1624.508
+   },
+   "marketVolume24hSbdTerm": 163.687,
+   "sharePct": 23.9286,
+   "shareLadder": [
+    {
+     "n": 1,
+     "volumeSbd": 39.168,
+     "sharePct": 23.9286,
+     "saturates": false,
+     "binding": "capacity"
+    },
+    {
+     "n": 2,
+     "volumeSbd": 78.336,
+     "sharePct": 47.8572,
+     "saturates": false,
+     "binding": "capacity"
+    },
+    {
+     "n": 3,
+     "volumeSbd": 117.504,
+     "sharePct": 71.7858,
+     "saturates": false,
+     "binding": "capacity"
+    },
+    {
+     "n": 5,
+     "volumeSbd": 195.84,
+     "sharePct": 119.643,
+     "saturates": true,
+     "binding": "capacity"
+    }
+   ],
+   "realized": {
+    "measured": true,
+    "windowHours": 24,
+    "windowEnd": "2026-10-04T00:32:36",
+    "fillsCount": 124,
+    "sells": 89,
+    "buys": 35,
+    "realizedSellSbd": 62.781,
+    "realizedBuySbd": 24.388,
+    "avgFillSbd": 0.703,
+    "ledgerRows": 130,
+    "projectionAccuracyPct": 160.2865
+   },
+   "selfFlow": {
+    "eligible": true,
+    "accounts": 1,
+    "feeRoundTripPct": 0,
+    "capPct": 0.25,
+    "internalCapSbd": 9.792,
+    "guards": [
+     "VWAP-EXCLUSION: internal fills never enter realized sell VWAP / edge books (poison guard)",
+     "LABEL: every internal row carries INTERNAL-FLOW",
+     "CAP: internal flow ≤ 25% of projected volume",
+     "FEE-NULL-ONLY: internal flow armed only on zero-fee round-trip venues"
+    ],
+    "blockedReason": null
+   }
+  },
+  {
+   "venue": "HBD/HIVE (internal hive)",
+   "layer": "chain-internal",
+   "feeBps": 0,
+   "spreadPct": 0.1645,
+   "measuredFrom": "market-grid live book",
+   "avgSizeSbd": 0.068,
+   "avgSizeAssumed": false,
+   "avgSizeN": 17,
+   "sellVwap": null,
+   "buyEdgeFloor": null,
+   "econ": {
+    "feeBps": 0,
+    "spreadPct": 0.1645,
+    "feeRoundTripPct": 0,
+    "edgeConsPct": 0.0823,
+    "edgeOptPct": 0.1645,
+    "bounds": {
+     "tapeBoundTradesDay": 14400,
+     "capBoundTradesDay": 576,
+     "binding": "capacity"
+    },
+    "projTradesDay": 576,
+    "projVolumeSbd": 39.168,
+    "projNetConsSbd": 0.0322,
+    "projNetOptSbd": 0.0644
+   },
+   "marketVolume24h": {
+    "HIVE": 16999.095,
+    "HBD": 958.712
+   },
+   "marketVolume24hSbdTerm": 958.712,
+   "sharePct": 4.0855,
+   "shareLadder": [
+    {
+     "n": 1,
+     "volumeSbd": 39.168,
+     "sharePct": 4.0855,
+     "saturates": false,
+     "binding": "capacity"
+    },
+    {
+     "n": 2,
+     "volumeSbd": 78.336,
+     "sharePct": 8.171,
+     "saturates": false,
+     "binding": "capacity"
+    },
+    {
+     "n": 3,
+     "volumeSbd": 117.504,
+     "sharePct": 12.2564,
+     "saturates": false,
+     "binding": "capacity"
+    },
+    {
+     "n": 5,
+     "volumeSbd": 195.84,
+     "sharePct": 20.4274,
+     "saturates": false,
+     "binding": "capacity"
+    }
+   ],
+   "realized": null,
    "selfFlow": {
     "eligible": true,
     "accounts": 1,
@@ -137,11 +291,11 @@
   "rolloutPath": "fleet rollout = fund + key-provision recruits (recruit.cjs contract path), one derived-key vault per account, each account re-runs market-exec law with its own caps; the partition above pre-assigns the rungs"
  },
  "projections": {
-  "venuesMeasured": 1,
-  "projVolumeSbdDay": 39.168,
-  "projNetConsSbdDay": 0.2886,
-  "projNetOptSbdDay": 0.5772,
-  "internalFlowCapSbdDay": 9.792
+  "venuesMeasured": 2,
+  "projVolumeSbdDay": 78.336,
+  "projNetConsSbdDay": 0.2609,
+  "projNetOptSbdDay": 0.5218,
+  "internalFlowCapSbdDay": 19.584
  },
  "ownerGate": {
   "mode": "PLAN-ONLY-OWNER-GATED",
@@ -151,10 +305,12 @@
  "inputs": {
   "feeDoctrine": "saos-fee-doctrine/1",
   "dexBookAt": "2026-10-03T22:48:25.453Z",
-  "marketGridHistoryRows": 9,
-  "lastMarketGridAt": "2026-10-04T00:43:22.943Z",
+  "marketGridBookAt": "2026-10-04T01:42:47.020Z",
+  "marketGridHistoryRows": 10,
+  "lastMarketGridAt": "2026-10-04T01:42:47.020Z",
   "treasuryAt": "2026-10-03T22:45:42.803Z",
   "execRunRows": 23,
+  "fillLedgerRows": 130,
   "registryAccounts": [
    "headcorner"
   ]
