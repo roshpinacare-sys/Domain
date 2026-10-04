@@ -1,28 +1,28 @@
 {
  "ok": true,
  "format": "moment-watch-v1",
- "publishedAt": "2026-10-04T01:59:36.412Z",
+ "publishedAt": "2026-10-04T04:07:46.333Z",
  "engine": "Domain/agents/moment-watch · R62 sovereign moment",
  "role": "reads the live moment every 30 minutes (market regime, our parity line vs the live internal book, fuel runway, measured anomalies) and records a deterministic directional call that is only ever scored after its horizon has passed - training as measurement, never as promise",
  "market": {
-  "steemUsd": 0.062597,
-  "steem24h": -0.09505393088706589,
-  "sbdUsd": 0.649082,
-  "btcUsd": 84791,
-  "btc24h": 0.21389370426995302,
+  "steemUsd": 0.06267,
+  "steem24h": -0.47998872431256656,
+  "sbdUsd": 0.657595,
+  "btcUsd": 84832,
+  "btc24h": 0.16961390753518485,
   "fearGreed": {
    "value": 65,
    "label": "Greed"
   }
  },
- "paritySbdPerSteem": 0.09643927885844931,
+ "paritySbdPerSteem": 0.09530181950896828,
  "liveBook": {
-  "bestBid": 0.10009017132551848,
-  "bestAsk": 0.10126582278481013,
-  "bidsDepthSbd": 2952.9,
-  "asksDepthSteem": 1419.13,
-  "levels": 21,
-  "bidSurplusBps": 379
+  "bestBid": 0.101,
+  "bestAsk": 0.102,
+  "bidsDepthSbd": 2953.51,
+  "asksDepthSteem": 1368.63,
+  "levels": 19,
+  "bidSurplusBps": 598
  },
  "regime": {
   "label": "RISK_ON",
@@ -40,25 +40,25 @@
  },
  "runway": {
   "active": true,
-  "weeklySp": 475.89012088820095,
+  "weeklySp": 475.89300629799413,
   "nextPayment": "2026-10-10T02:01:27",
-  "remainingSp": 1903.5604835515642,
-  "weeklyUsd": 29.79,
-  "treasuryUsd": 225.25
+  "remainingSp": 1903.5720251907367,
+  "weeklyUsd": 29.82,
+  "treasuryUsd": 233.95
  },
  "grid": {
-  "verdict": "ARMED-LIVE",
+  "verdict": "ARMED-WAITING",
   "armed": true,
-  "blocker": "buy-side waiting for SBD inventory: 0.000 SBD commitable < 0.15 needed",
-  "externalFlowUsd": 0.280059,
-  "publishedAt": "2026-10-03T18:58:26.471Z"
+  "blocker": "sell-side waiting for fuel: 2.213 STEEM commitable < 3 needed (next powerdown: 2026-10-10T02:01:27)",
+  "externalFlowUsd": 0.23817,
+  "publishedAt": "2026-10-04T04:00:51.138Z"
  },
  "moneyPath": {
   "fuel": {
    "ok": true,
    "account": "headcorner",
-   "steem": 1.005,
-   "sbd": 0,
+   "steem": 9.027,
+   "sbd": 1.314,
    "powerdown": {
     "active": true,
     "rateVests": 767703.510458,
@@ -71,23 +71,23 @@
  },
  "call": "FLAT",
  "callStats": {
-  "resolved": 63,
-  "hits": 22,
-  "hitRatePct": 35,
+  "resolved": 62,
+  "hits": 21,
+  "hitRatePct": 34,
   "horizonH": 6,
   "thresholdPct": 3
  },
- "resolvedNow": 1,
+ "resolvedNow": 0,
  "insights": [
   {
    "kind": "parity-edge",
    "tone": "warn",
-   "text": "הספר החי 379bps מעל קו-הזהות — אין עודף-קנייה כרגע; הגריד ממתין."
+   "text": "הספר החי 598bps מעל קו-הזהות — אין עודף-קנייה כרגע; הגריד ממתין."
   },
   {
    "kind": "sbd-inventory",
    "tone": "warn",
-   "text": "צוואר-הקנייה של הגריד: buy-side waiting for SBD inventory: 0.000 SBD commitable < 0.15 needed"
+   "text": "צוואר-הקנייה של הגריד: sell-side waiting for fuel: 2.213 STEEM commitable < 3 needed (next powerdown: 2026-10-10T02:01:27)"
   },
   {
    "kind": "fuel",
@@ -102,7 +102,7 @@
   {
    "kind": "external-flow",
    "tone": "info",
-   "text": "זרימת-חוץ מצטברת: 0.2801$ מ-43 מילויים (txids בספר הציבורי)."
+   "text": "זרימת-חוץ מצטברת: 0.2382$ מ-48 מילויים (txids בספר הציבורי)."
   }
  ],
  "sources": [
