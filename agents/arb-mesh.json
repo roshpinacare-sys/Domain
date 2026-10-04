@@ -1,201 +1,24 @@
 {
  "protocol": "SAOS-ARB-MESH/1",
- "at": "2026-10-04T21:24:40.643Z",
+ "at": "2026-10-04T22:22:50.016Z",
  "agent": "arb-mesh v1.0.0 (R41 MESH MARKET, CR-0071)",
- "mode": "KEYLESS-MESH-DEMAND",
- "stasisHalted": false,
- "laws": [
-  "counter-grid arm (R44): the owner gate is the CR-0074 ARTIFACT (present = open); the arm adds deterministic rung ids, the 2%-of-depth cap law, the dust refusal (GRID-TOO-THIN) and the two-sided law (a one-sided grid is a direction bet — REFUSED); settle stays pure (the gate is an argument)",
-  "pegout hand (R44): the keyed consumer of the pegout queue — DEST-ALLOWLIST law (chain payouts fire ONLY to estate-roster accounts, non-estate dests are REFUSED-DEST-NOT-ESTATE); the rail proves itself with a value-neutral self-transfer, receipted",
-  "intent gates (R43): XC intents settle on ONE balance universe — escrow in, route through OUR pools, chain payouts queued to the corridor (keyless code never broadcasts), refund whole behind the 2:1 clock, corridor exposure bonded ≤ 2× custody",
-  "units: µ BigInt end to end, no floats in settlement",
-  "volatile pools: x·y ≥ k (Uniswap v2 exact, fee on input, floor to user)",
-  "peg pools: Curve stableswap A=10 (canonical, fee on output, −1 pad)",
-  "real value: wrapped mint 1:1 reserve-backed, redeem ALWAYS honored 1:1",
-  "atomicity: minOut guard, refused swaps leave state byte-unchanged",
-  "conservation: custody − wrappedReserve − Σ claims === 0 every tick",
-  "ledger: append-only op-log, monotonic seq, state = fold(ops)",
-  "floor law: rebalance only above 2×(fees+floor) — below it a plan, never a trade",
-  "feed law: settle consumes the booked router feed; measurement and settlement are separated",
-  "honest money: the powerdown drip is the booked fuel; no invented locks",
-  "mesh law (R41): fleet agents settle atomically on this ledger — batch-idempotent, no naked shorts, wires capped at 10% of free treasury per batch, a fill never exceeds 5% of first-hop depth, edge marked to fair (null when no fair exists)",
-  "multi-network vault (R42): custody classes — MEASURED-KEYED is the only mintable class; adjacent networks are OBSERVED (seen, never custody, never a reserve); redeem is ALWAYS honored 1:1 in-ledger (burn before payout); the chain payout is queued for the keyed desks — keyless code never fires a broadcast"
- ],
- "verdict": "GATED-WIRE (edge above floor but no free capital to arm the agents — named, never faked)",
- "batch": "MESH-2026100421-3d45bf9e",
- "settledBatch": null,
- "coreLedger": {
-  "seq": 24,
-  "at": "2026-10-04T21:04:42.221Z",
-  "ageHours": 0.33,
-  "conservationOk": true,
-  "attestation": "d44677a368f3c033",
-  "feedFresh": true
- },
- "routerSeen": {
-  "at": "2026-10-04T21:00:15.036Z",
-  "arbRows": 4
- },
- "roster": [
-  "headcorner",
-  "cashmachine",
-  "haran",
-  "israelnews",
-  "lsa",
-  "macrame",
-  "siq",
-  "tov",
-  "wic",
-  "wog",
-  "woq"
- ],
- "candidates": [
-  {
-   "id": "A1",
-   "name": "P3 STEEM/SBD pool mid vs CEX-implied fair",
-   "poolMidNano": "106734950",
-   "fairNano": "111196640",
-   "netBps": 366.24,
-   "thresholdBps": 120,
-   "from": "SBD",
-   "to": "STEEM",
-   "railOwner": "treasury (our own pool — atomic, no bridge)",
-   "source": "dex-core.json (our pool — atomic, no bridge)",
-   "at": "2026-10-04T21:24:40.643Z"
-  }
- ],
- "keyedRailPlans": [
-  {
-   "id": "A1",
-   "name": "SBD/STEEM internal vs CEX-implied fair (lead-lag)",
-   "railOwner": "headcorner (STEEM active — LIVE)",
-   "verdict": "PLAN-KEYED-RAIL (the signing desks own this rail — the keyless mesh never signs)"
-  }
- ],
+ "verdict": "HALTED-STASIS",
+ "stasisHalted": true,
+ "stasisReason": "OWNER DIRECTIVE 2026-10-04 (IM trace 1a108e28015b0451): 'חייב לעצור ולבחון מה הסוכנים עושים' — measured live: ~60 delegation ops on headcorner in one day (2026-10-04), including fresh SP delegated to hcsoldier1/2/3 (LOST-NO-CUSTODY — no keys exist, no authority anchors), delegation flapping between 6+ conflicting target values from uncoordinated writers (05:17Z/05:21Z/05:22Z/11:43-45Z/14:55Z/17:48-49Z/20:33-34Z), and 15 signing agents that did not obey this brake. All capital lanes halt for examination until the owner reopens them.",
+ "roster": [],
+ "candidates": [],
  "intentsDrafted": 0,
- "intents": [],
- "wires": 0,
  "fills": [],
  "rejects": [],
- "sizeLadder": [
-  {
-   "pool": "P1",
-   "pair": "WSTEEM/STEEM",
-   "kind": "PEG",
-   "feeBps": 2,
-   "mid": 1.07679262,
-   "unit": "STEEM",
-   "rungs": [
-    {
-     "sizeBps": 10,
-     "sizeIn": "374",
-     "out": "376",
-     "execPrice": 1.00534759,
-     "slipBps": -6.63
-    },
-    {
-     "sizeBps": 100,
-     "sizeIn": "3744",
-     "out": "3766",
-     "execPrice": 1.00587607,
-     "slipBps": -6.58
-    },
-    {
-     "sizeBps": 500,
-     "sizeIn": "18721",
-     "out": "18762",
-     "execPrice": 1.00219005,
-     "slipBps": -6.92
-    }
-   ]
-  },
-  {
-   "pool": "P2",
-   "pair": "WSBD/SBD",
-   "kind": "PEG",
-   "feeBps": 2,
-   "mid": 1,
-   "unit": "SBD",
-   "rungs": [
-    {
-     "sizeBps": 10,
-     "sizeIn": "27",
-     "out": "26",
-     "execPrice": 0.96296296,
-     "slipBps": -3.7
-    },
-    {
-     "sizeBps": 100,
-     "sizeIn": "274",
-     "out": "273",
-     "execPrice": 0.99635036,
-     "slipBps": -0.36
-    },
-    {
-     "sizeBps": 500,
-     "sizeIn": "1372",
-     "out": "1365",
-     "execPrice": 0.99489796,
-     "slipBps": -0.51
-    }
-   ]
-  },
-  {
-   "pool": "P3",
-   "pair": "STEEM/SBD",
-   "kind": "VOLATILE",
-   "feeBps": 25,
-   "mid": 0.10673495,
-   "unit": "SBD",
-   "rungs": [
-    {
-     "sizeBps": 10,
-     "sizeIn": "1545",
-     "out": "164",
-     "execPrice": 0.10614887,
-     "slipBps": -0.54
-    },
-    {
-     "sizeBps": 100,
-     "sizeIn": "15456",
-     "out": "1629",
-     "execPrice": 0.10539596,
-     "slipBps": -1.25
-    },
-    {
-     "sizeBps": 500,
-     "sizeIn": "77284",
-     "out": "7837",
-     "execPrice": 0.10140521,
-     "slipBps": -4.99
-    }
-   ]
-  }
- ],
+ "sizeLadder": [],
  "meshPnl": {
   "lifetime": {
-   "byAgent": {
-    "headcorner": {
-     "fills": 1,
-     "volumeInMu": "5000",
-     "edgeMu": "-7",
-     "feesMu": "0"
-    }
-   },
-   "fills": 1,
-   "edgeMu": "-7",
+   "byAgent": {},
+   "fills": 0,
+   "edgeMu": "0",
    "feesMu": "0",
-   "volumeInMu": "5000"
-  },
-  "batch": {
-   "id": "MESH-OPERATOR-PIPEPROOF-R41",
-   "fills": 1,
-   "rejects": 0,
-   "edgeMu": "-7",
-   "feesMu": "0",
-   "volumeInMu": "5000"
+   "volumeInMu": "0"
   }
  },
- "gridGate": "GATED-ARMED-BROADCAST-READY (CR-0074 open — the kernel arms the opposing grids; the mesh still never fires a keyed rail)",
  "errors": []
 }
