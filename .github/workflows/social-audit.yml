@@ -1,0 +1,46 @@
+# SAOS SOCIAL-AUDIT — Z-82: מדידה-יומית של בריאות-הפעילות-החברתית.
+# קו-הבסיס (14 יום): 89% בדקות-משותפות · שיא 11/12 בדקה · 87% הצבעות-פנימיות.
+# היעד: < 5% · 1 · ירידה מתמדת. המדידה היא הבוס — לא הכוונה.
+# ריבוני: אפס-actions-צד-ג · נטול-מפתחות (RPC ציבורי בלבד).
+
+name: social-audit
+
+on:
+  schedule:
+    - cron: '17 4 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: social-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: sovereign-clone (zero third-party actions — Z74 law)
+        run: git clone --depth 1 "https://x-access-token:${GITHUB_TOKEN}@github.com/roshpinacare-sys/Domain.git" .
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: social audit (public RPC, keyless, 14-day window)
+        run: node agents/social/audit_activity.cjs --days 14 --limit 100
+
+      - name: commit audit receipts (secretless)
+        run: |
+          git config user.name "saos-social-audit"
+          git config user.email "social-audit@saos.local"
+          git add -A
+          if ! git diff --cached --quiet; then
+            git commit -m "social-audit: daily baseline measurement · $(date -u +%Y-%m-%dT%H:%M:%SZ) [skip ci]"
+            ok=0
+            for i in 1 2 3; do
+              if git -c rebase.autoStash=true pull --rebase origin main && git push origin HEAD:main; then ok=1; break; fi
+              sleep 5
+            done
+            [ "$ok" = "1" ] || { echo "could not publish audit — fail-loud"; exit 1; }
+          fi
