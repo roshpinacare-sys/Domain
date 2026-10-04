@@ -1,6 +1,6 @@
 {
  "protocol": "SAOS-ARB-MESH/1",
- "at": "2026-10-04T18:18:09.323Z",
+ "at": "2026-10-04T21:24:40.643Z",
  "agent": "arb-mesh v1.0.0 (R41 MESH MARKET, CR-0071)",
  "mode": "KEYLESS-MESH-DEMAND",
  "stasisHalted": false,
@@ -21,19 +21,19 @@
   "mesh law (R41): fleet agents settle atomically on this ledger — batch-idempotent, no naked shorts, wires capped at 10% of free treasury per batch, a fill never exceeds 5% of first-hop depth, edge marked to fair (null when no fair exists)",
   "multi-network vault (R42): custody classes — MEASURED-KEYED is the only mintable class; adjacent networks are OBSERVED (seen, never custody, never a reserve); redeem is ALWAYS honored 1:1 in-ledger (burn before payout); the chain payout is queued for the keyed desks — keyless code never fires a broadcast"
  ],
- "verdict": "NO-EDGE (every row below the floor — the machinery waits, the floor law protects the P&L)",
- "batch": null,
+ "verdict": "GATED-WIRE (edge above floor but no free capital to arm the agents — named, never faked)",
+ "batch": "MESH-2026100421-3d45bf9e",
  "settledBatch": null,
  "coreLedger": {
-  "seq": 23,
-  "at": "2026-10-04T17:14:23.614Z",
-  "ageHours": 1.06,
+  "seq": 24,
+  "at": "2026-10-04T21:04:42.221Z",
+  "ageHours": 0.33,
   "conservationOk": true,
-  "attestation": "c08b1d1525b2515e",
+  "attestation": "d44677a368f3c033",
   "feedFresh": true
  },
  "routerSeen": {
-  "at": "2026-10-04T15:58:44.370Z",
+  "at": "2026-10-04T21:00:15.036Z",
   "arbRows": 4
  },
  "roster": [
@@ -49,8 +49,29 @@
   "wog",
   "woq"
  ],
- "candidates": [],
- "keyedRailPlans": [],
+ "candidates": [
+  {
+   "id": "A1",
+   "name": "P3 STEEM/SBD pool mid vs CEX-implied fair",
+   "poolMidNano": "106734950",
+   "fairNano": "111196640",
+   "netBps": 366.24,
+   "thresholdBps": 120,
+   "from": "SBD",
+   "to": "STEEM",
+   "railOwner": "treasury (our own pool — atomic, no bridge)",
+   "source": "dex-core.json (our pool — atomic, no bridge)",
+   "at": "2026-10-04T21:24:40.643Z"
+  }
+ ],
+ "keyedRailPlans": [
+  {
+   "id": "A1",
+   "name": "SBD/STEEM internal vs CEX-implied fair (lead-lag)",
+   "railOwner": "headcorner (STEEM active — LIVE)",
+   "verdict": "PLAN-KEYED-RAIL (the signing desks own this rail — the keyless mesh never signs)"
+  }
+ ],
  "intentsDrafted": 0,
  "intents": [],
  "wires": 0,
