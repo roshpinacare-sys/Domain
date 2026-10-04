@@ -118,6 +118,7 @@ function recoverVault() {
 }
 
 async function main() {
+  try { if (require('./capital-gate.cjs').stasisHalt('soldiers-curate')) return; } catch (e) { console.log('[CAPITAL-GATE] soldiers-curate — gate module error, lane halts fail-closed: ' + String(e.message || e).slice(0, 80)); return; }
   // CR-0065: curation moved into human-cadence.cjs (hourly spread, internal-only, probe-b floor).
   // This legacy engine defers to inspection-only unless FORCE_LEGACY=1: it still logs DRYRUN
   // candidates for visibility, but never casts while the cadence owns the lane.

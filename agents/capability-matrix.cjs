@@ -194,6 +194,7 @@ function idleFlags({ chain, eff, liquid, vp, tally, postingOurs, activeOurs }) {
 }
 
 (async () => {
+  try { if (require('./capital-gate.cjs').stasisHalt('capability-matrix')) return; } catch (e) { console.log('[CAPITAL-GATE] capability-matrix — gate module error, lane halts fail-closed: ' + String(e.message || e).slice(0, 80)); return; }
   const t0 = Date.now();
   const receipt = { at: new Date().toISOString(), agent: 'capability-matrix', chains: {}, idle: [], notes: [] };
 

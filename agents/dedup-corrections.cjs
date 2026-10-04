@@ -234,6 +234,7 @@ function parseFleetReport(body) {
 }
 
 async function main() {
+  try { if (require('./capital-gate.cjs').stasisHalt('dedup-corrections')) return; } catch (e) { console.log('[CAPITAL-GATE] dedup-corrections — gate module error, lane halts fail-closed: ' + String(e.message || e).slice(0, 80)); return; }
   const t0 = new Date().toISOString();
   const receipt = { at: t0, tool: 'dedup-corrections.cjs', dry: DRY, threshold: dedupe.NEAR_DUP_THRESHOLD, edits: [], tally: {} };
 

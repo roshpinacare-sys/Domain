@@ -80,6 +80,7 @@ function rpc(method, params) {
 }
 
 async function main() {
+  try { if (require('./capital-gate.cjs').stasisHalt('self-audience')) return; } catch (e) { console.log('[CAPITAL-GATE] self-audience — gate module error, lane halts fail-closed: ' + String(e.message || e).slice(0, 80)); return; }
   // CR-0065: soldier cross-votes moved into the human cadence desk (spread hourly) —
   // this burst engine keeps ONLY headcorner's lane (flagship + flag-pole self-vote).
   try {

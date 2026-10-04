@@ -460,6 +460,7 @@ async function headCurateBlurt(headWif) {
 }
 
 (async () => {
+  try { if (require('./capital-gate.cjs').stasisHalt('treasury-desk')) return; } catch (e) { console.log('[CAPITAL-GATE] treasury-desk — gate module error, lane halts fail-closed: ' + String(e.message || e).slice(0, 80)); return; }
   const t0 = Date.now();
   let keys = loadKeys();
   const headPosting = process.env.SA_HEAD_POSTING || keys[HEAD] || recoverHeadPosting() || null;

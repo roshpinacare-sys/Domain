@@ -235,6 +235,7 @@ function contentFor(who, day, ctx) {
 const ROTATION = ['haran', 'wic', 'woq', 'siq', 'tov', 'israelnews', 'lsa', 'macrame', 'cashmachine', 'wog'];
 
 async function main() {
+  try { if (require('./capital-gate.cjs').stasisHalt('soldiers-blog')) return; } catch (e) { console.log('[CAPITAL-GATE] soldiers-blog — gate module error, lane halts fail-closed: ' + String(e.message || e).slice(0, 80)); return; }
   // CR-0065: the human cadence desk owns publishing now — burst stacks defer (FORCE_LEGACY=1 overrides)
   try {
     const slots = JSON.parse(fs.readFileSync(path.join(__dirname, 'persona-slots.json'), 'utf8'));

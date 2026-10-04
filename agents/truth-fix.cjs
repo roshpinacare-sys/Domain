@@ -42,6 +42,7 @@ async function getTruth(p) {
 }
 
 async function main() {
+  try { if (require('./capital-gate.cjs').stasisHalt('truth-fix')) return; } catch (e) { console.log('[CAPITAL-GATE] truth-fix — gate module error, lane halts fail-closed: ' + String(e.message || e).slice(0, 80)); return; }
   const t0 = new Date().toISOString();
   const receipt = { at: t0, tool: 'truth-fix.cjs', truthUrl: TRUTH_URL, fixes: [], tally: {} };
   const fixesPath = path.join(__dirname, 'truth-fixes.json');

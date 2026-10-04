@@ -101,6 +101,7 @@ async function alreadyReblogged(who, author, permlink) {
 }
 
 (async () => {
+  try { if (require('./capital-gate.cjs').stasisHalt('fleet-social')) return; } catch (e) { console.log('[CAPITAL-GATE] fleet-social — gate module error, lane halts fail-closed: ' + String(e.message || e).slice(0, 80)); return; }
   // CR-0065: comments/votes/follows/reblogs owned by the human cadence desk now — burst stacks defer
   try {
     const slots = JSON.parse(fs.readFileSync(path.join(__dirname, 'persona-slots.json'), 'utf8'));
