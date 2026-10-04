@@ -46,6 +46,7 @@
  *   E27 evo-windows scheduler — scheduled evolution windows: the pulled-schedule decision is exact (force/skip/bootstrap/first-window/cadence/no-runtime), window outcomes classify honestly (incumbent-retained vs ADOPTION-PENDING-CR, serve-window leak check), fresh-process books append-only rows without spawning the measured batch (Z-62, CR-0033)
  *   E62 swap net             — the DEX router: parity law (quote/base, HBD≠SBD refusal), arb FLOOR law + honest verdict set, peg-drift halt, gated routes name their unlock, counter-grids re-derive from the booked anchor (R39, CR-0069)
  *   E63 exchange core        — the DEX settles: CPMM k-law + golden vectors, Curve stableswap vs independent bisection, reserve/redeem real-value law, minOut atomicity, conservation identity, 3-hop deterministic routing, rebalance FLOOR law, pool-side counter-grids, byte-determinism, attestation recompute (R40, CR-0070)
+ *   E64 mesh market          — the fleet trades on our own ledger: settleIntents laws (roster/dust/naked-short refusals, capped WIRE, 5% depth cap, all-or-nothing hops, minOut atomicity, batch idempotency, byte-determinism, edge marked honest-or-null, fee accrual, conservation per fill, attestation recompute), mesh drafting laws (floor-law candidates only, direction = sell the rich side, operator-40/soldiers-60 mandate split, 1%-of-depth budget, dust skip, −0.5% minOut guard, keyed rails never fired), size ladder (monotone honest slippage), real-tree re-derivation of the booked mesh book + the operator pipe-proof fill (R41, CR-0071)
  *
  * Fail-soft: exit 0 always; FAILs are booked honestly (HARNESS-AUDIT MANDATE:
  * green-washing the evals is a doctrine breach).
@@ -1864,12 +1865,12 @@ function accumulateInMemory(bookRows, seed) {
     // hourly lane, keyless) joins — bar 51→52 files, keyless 17→18, owner-secret stays
     // 34; the router plans, it never signs — pins documented, never silent.
     // R40 evolution (in the open, CR-0070): our own dex-core-cron.yml (the EXCHANGE CORE
-    // hourly lane, keyless — selftest then settle-then-commit) joins — bar 52→53 files,
-    // keyless 18→19, owner-secret stays 34; the core settles OUR ledger, it never signs
-    // an external rail — pins documented, never silent.
-    c47(wfFiles47.length === 53, 'workflow-count-53');
+    // hourly lane, keyless — selftest then settle-then-commit) joins — bar 52→53→54 files,
+    // keyless 18→19→20, owner-secret stays 34; the core settles OUR ledger, the mesh drafts
+    // demand on it — neither ever signs an external rail — pins documented, never silent.
+    c47(wfFiles47.length === 54, 'workflow-count-53');
     c47(ownerSecretCount47 === 34, 'owner-secret-count-34');
-    c47(wfFiles47.length - ownerSecretCount47 === 19, 'keyless-count-19');
+    c47(wfFiles47.length - ownerSecretCount47 === 20, 'keyless-count-19');
     // the converted four: zero non-GITHUB_TOKEN refs, permissions kept, keyless checkout
     const converted47 = ['twin-audit.yml', 'audience-analyst.yml', 'content-reviewer.yml', 'public-pulse.yml'];
     for (const f of converted47) {
@@ -1891,12 +1892,12 @@ function accumulateInMemory(bookRows, seed) {
     c47(bb47.status === 0, 'gate-black-box-zero-tokens-exit-0');
     // the refreshed census book (same tree) carries the new sovereignty numbers
     let censusBook47 = null; try { censusBook47 = JSON.parse(fs.readFileSync(path.join(AG, 'fleet-census.json'), 'utf8')); } catch (_) {}
-    c47(censusBook47 && censusBook47.sovereignty && censusBook47.sovereignty.workflowsKeyless === 19, 'census-book-keyless-19');
+    c47(censusBook47 && censusBook47.sovereignty && censusBook47.sovereignty.workflowsKeyless === 20, 'census-book-keyless-19');
     c47(censusBook47 && censusBook47.sovereignty && censusBook47.sovereignty.workflowsOwnerSecret === 34, 'census-book-owner-secret-34');
 
-    evalr('E47', 'the keyless wave (CR-0055): the sovereignty bar pinned — the census regex recounts 19/53 keyless over the live dir (re-based on main four times: the sibling\'s Z74 workflow-yaml-guard 48/15 → 49/16, then R35\'s human-cadence.yml 49→50 with SA_FLEET_KEYS, then R36\'s social-audit 50→51, then R39\'s dex-router-cron 51→52, then R40\'s dex-core-cron 52→53 — the evolution written here each time), the four converted flows carry zero non-GITHUB_TOKEN refs under kept permissions, the dead PULSE_URL ref is durably documented-and-gone while its hook stays in the desk, and the issue gate survives zero tokens fresh-process',
+    evalr('E47', 'the keyless wave (CR-0055): the sovereignty bar pinned — the census regex recounts 20/54 keyless over the live dir (re-based on main six times: the sibling\'s Z74 workflow-yaml-guard 48/15 → 49/16, then R35\'s human-cadence.yml 49→50 with SA_FLEET_KEYS, then R36\'s social-audit 50→51, then R39\'s dex-router-cron 51→52, then R40\'s dex-core-cron 52→53, then R41\'s arb-mesh-cron 53→54 — the evolution written here each time), the four converted flows carry zero non-GITHUB_TOKEN refs under kept permissions, the dead PULSE_URL ref is durably documented-and-gone while its hook stays in the desk, and the issue gate survives zero tokens fresh-process',
       why47.length === 0,
-      ['white-box: census-authority regex recounted over .github/workflows = 53 files, 34 owner-secret, 19 keyless (the R26 bar re-based after the sibling\'s Z74 rung, re-based again at R35 for human-cadence.yml, at R36 for social-audit.yml, at R39 for dex-router-cron.yml, at R40 for dex-core-cron.yml, encoded as data with each evolution documented)', 'white-box: twin-audit/audience-analyst/content-reviewer/public-pulse — zero non-GITHUB_TOKEN secret refs, contents:write kept, github.token checkout, issues:write kept where gates exist', 'white-box: public-pulse.yml documents the dead-ref finding without referencing it; public-pulse.cjs still owns the optional PULSE_URL hook (capability preserved)', 'white-box: twin-issue-gate.cjs keeps the fail-soft token loop (empty tokens skipped)', 'black-box: the real gate fresh-process with GH_TOKEN/ZIP_PAT stripped and no marker → exit 0 honestly', 'white-box: the refreshed census book agrees (workflowsKeyless 19 / owner-secret 34)'],
+      ['white-box: census-authority regex recounted over .github/workflows = 53 files, 34 owner-secret, 19 keyless (the R26 bar re-based after the sibling\'s Z74 rung, re-based again at R35 for human-cadence.yml, at R36 for social-audit.yml, at R39 for dex-router-cron.yml, at R40 for dex-core-cron.yml, encoded as data with each evolution documented)', 'white-box: twin-audit/audience-analyst/content-reviewer/public-pulse — zero non-GITHUB_TOKEN secret refs, contents:write kept, github.token checkout, issues:write kept where gates exist', 'white-box: public-pulse.yml documents the dead-ref finding without referencing it; public-pulse.cjs still owns the optional PULSE_URL hook (capability preserved)', 'white-box: twin-issue-gate.cjs keeps the fail-soft token loop (empty tokens skipped)', 'black-box: the real gate fresh-process with GH_TOKEN/ZIP_PAT stripped and no marker → exit 0 honestly', 'white-box: the refreshed census book agrees (workflowsKeyless 20 / owner-secret 34)'],
       why47.length ? 'fails: ' + why47.join('; ') : 'a secret carried by habit is not security, it is surface — this eval pins the line: same-repo = keyless, cross-repo = capability');
   } catch (e) { evalr('E47', 'keyless wave', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
@@ -3024,9 +3025,139 @@ function accumulateInMemory(bookRows, seed) {
       why63.length ? 'fails: ' + why63.join('; ') : 'the exchange settles: two invariants, one vault, real reserves, deterministic to the last µ');
   } catch (e) { evalr('E63', 'the exchange core', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
+  // ---- E64 (R41, CR-0071): THE MESH MARKET — the fleet trades on our own ledger.
+  // The demand side of the DEX: agents/soldiers settle atomically through the core's
+  // settle-intents path (queue → wire-capped funding → all-or-nothing fills → honest P&L).
+  try {
+    const why64 = [];
+    const dc = require(path.join(AG, 'dex-core.cjs'));
+    const am = require(path.join(AG, 'arb-mesh.cjs'));
+    const ub64 = (s) => { try { return BigInt(String(s)); } catch (_) { return 0n; } };
+    // synthetic core book (identical shape to the booked one — deterministic, zero network).
+    // The pool IS priced at the row's mid: P3 rb/ra = 186612/1555100 = 0.12 exactly (mid 0.12 vs fair 0.1054467
+    // → gross ~1379bps, net above the floor — the fill must capture POSITIVE edge).
+    // Conservation: STEEM 15551000 − 777550 − 12829575 − (388775+1555100) === 0;
+    // SBD 388632 − 54900 − 119670 − (27450+186612) === 0; minted WSTEEM 777550 = Σclaims 388775 + pooled 388775 (1:1 law).
+    const mkCore64 = () => ({
+      protocol: 'SAOS-DEX-CORE/1', at: '2026-10-04T10:00:00.000Z', genesisDone: true, seq: 7,
+      conservationOk: true, attestation: 'x', processedBatches: [],
+      feed: { fresh: true, fairNano: '105446700' },
+      vault: {
+        custody: { STEEM: '15551000', SBD: '388632', HIVE: '0', HBD: '0', BLURT: '0', SAOS: '0' },
+        custodyProvenance: { STEEM: 'test', SBD: 'test', HIVE: null, HBD: null, BLURT: null, SAOS: null },
+        wrappedReserve: { STEEM: '777550', SBD: '54900' },
+        minted: { WSTEEM: '777550', WSBD: '54900' },
+        reserveRatio: { WSTEEM: 1, WSBD: 1 },
+      },
+      accounts: { treasury: { claims: { STEEM: '12829575', SBD: '119670', WSTEEM: '388775', WSBD: '27450', HIVE: '0', HBD: '0', BLURT: '0', SAOS: '0' }, lp: { P1: '1.0', P2: '1.0', P3: '1.0' } } },
+      pools: [
+        { id: 'P1', pair: 'WSTEEM/STEEM', kind: 'PEG', a: 'WSTEEM', b: 'STEEM', feeBps: 2, amp: 10, ra: '388775', rb: '388775', feeMeter: '0', planned: false },
+        { id: 'P2', pair: 'WSBD/SBD', kind: 'PEG', a: 'WSBD', b: 'SBD', feeBps: 2, amp: 10, ra: '27450', rb: '27450', feeMeter: '0', planned: false },
+        { id: 'P3', pair: 'STEEM/SBD', kind: 'VOLATILE', a: 'STEEM', b: 'SBD', feeBps: 25, amp: 0, ra: '1555100', rb: '186612', feeMeter: '0', planned: false },
+      ],
+      arb: [{ id: 'A1', name: 'P3 STEEM/SBD pool mid vs CEX-implied fair', poolMidNano: '120000000', fairNano: '105446700', netBps: 1378, thresholdBps: 120, verdict: 'CANDIDATE-FOK', railOwner: 'treasury (our own pool — atomic, no bridge)' }],
+      meshPnl: { lifetime: { byAgent: {}, fills: 0, edgeMu: '0', feesMu: '0', volumeInMu: '0' } },
+    });
+    const feed64 = { fresh: true, fair: 105446700n, fairSource: 'test', routerAt: '2026-10-04T10:00:00.000Z', router: {} };
+    // 1. refusals: roster-unknown / dust / gated-wire (naked short without treasury capital)
+    const r64a = dc.settleIntents(mkCore64(), { batch: 'E64-UNK', intents: [{ agent: 'ghost', from: 'STEEM', to: 'SBD', amountIn: '20000' }] }, feed64, '2026-10-04T10:00:00.000Z');
+    if (!(r64a.rejects.some((r) => r.why === 'ROSTER-UNKNOWN') && r64a.fills.length === 0)) why64.push('roster-unknown not refused');
+    const r64b = dc.settleIntents(mkCore64(), { batch: 'E64-DUST', intents: [{ agent: 'headcorner', from: 'STEEM', to: 'SBD', amountIn: '10' }] }, feed64, '2026-10-04T10:00:00.000Z');
+    if (!r64b.rejects.some((r) => r.why === 'DUST')) why64.push('dust not refused');
+    const broke64 = mkCore64(); broke64.accounts.treasury.claims.STEEM = '0';
+    const r64c = dc.settleIntents(broke64, { batch: 'E64-GATE', intents: [{ agent: 'headcorner', from: 'STEEM', to: 'SBD', amountIn: '20000' }] }, feed64, '2026-10-04T10:00:00.000Z');
+    if (!(r64c.rejects.some((r) => r.why === 'GATED-WIRE-NO-CAPITAL') && r64c.fills.length === 0)) why64.push('gated-wire not honest');
+    // 2. the real fill: wire + atomic settle + conservation + fee accrual + edge marked to the CEX fair
+    const f64 = dc.settleIntents(mkCore64(), { batch: 'E64-FILL', intents: [{ agent: 'headcorner', from: 'STEEM', to: 'SBD', amountIn: '20000', minOut: '1' }] }, feed64, '2026-10-04T10:00:00.000Z');
+    if (!(f64.fills.length === 1 && f64.ops.some((o) => o.type === 'MESH-WIRE'))) why64.push('wire-then-fill did not settle');
+    if (!(f64.consOk && f64.cons.every((r) => r.ok))) why64.push('conservation broke after fill');
+    if (!(f64.fills[0].edgeMu != null && String(f64.fills[0].fairUsed).indexOf('CEX-FAIR') === 0)) why64.push('edge not marked to fair');
+    if (!(ub64(f64.fills[0].edgeMu) > 0n)) why64.push('an above-floor edge must capture positive edge, got ' + f64.fills[0].edgeMu);
+    const p3After64 = f64.st.pools.find((p) => p.id === 'P3');
+    if (!(ub64(p3After64.feeMeter) > 0n)) why64.push('pool feeMeter did not accrue (LP revenue is the point)');
+    if (f64.att !== dc.attestationHash(f64.st.vault, f64.st.accounts, f64.st.pools, f64.st.seq)) why64.push('attestation does not recompute');
+    // depth cap: a fill never exceeds 5% of first-hop depth
+    const big64 = dc.settleIntents(mkCore64(), { batch: 'E64-CAP', intents: [{ agent: 'headcorner', from: 'STEEM', to: 'SBD', amountIn: '999999999999', minOut: '1' }] }, feed64, '2026-10-04T10:00:00.000Z');
+    if (!(big64.fills.length === 1 && ub64(big64.fills[0].amountIn) <= ub64('1555100') * 500n / 10000n)) why64.push('depth cap not enforced');
+    // 3. idempotency: the same batch settles nothing twice
+    const after64 = { ...mkCore64(), vault: f64.st.vault, accounts: f64.st.accounts, pools: f64.st.pools, seq: f64.st.seq, processedBatches: f64.processedBatches, meshPnl: f64.meshPnl };
+    const replay64 = dc.settleIntents(after64, { batch: 'E64-FILL', intents: [{ agent: 'headcorner', from: 'STEEM', to: 'SBD', amountIn: '20000' }] }, feed64, '2026-10-04T10:00:00.000Z');
+    if (!(replay64.skipped === true && replay64.fills.length === 0 && replay64.ops.length === 0)) why64.push('batch replay not idempotent');
+    // 4. minOut atomicity: refusal leaves the pools byte-unchanged and moves no claims
+    const pre64 = mkCore64();
+    const ref64 = dc.settleIntents(pre64, { batch: 'E64-MIN', intents: [{ agent: 'headcorner', from: 'STEEM', to: 'SBD', amountIn: '20000', minOut: '999999999999' }] }, feed64, '2026-10-04T10:00:00.000Z');
+    if (!(ref64.rejects.some((r) => r.why === 'REFUSED-MINOUT') && JSON.stringify(ref64.st.pools) === JSON.stringify(pre64.pools) && JSON.stringify(ref64.st.accounts) === JSON.stringify(pre64.accounts))) why64.push('minOut refusal not atomic');
+    // 5. determinism: same inputs → byte-identical fills + ops
+    const m64a = dc.settleIntents(mkCore64(), { batch: 'E64-DET', intents: [{ agent: 'headcorner', from: 'STEEM', to: 'SBD', amountIn: '15000' }] }, feed64, '2026-10-05T00:00:00.000Z');
+    const m64b = dc.settleIntents(mkCore64(), { batch: 'E64-DET', intents: [{ agent: 'headcorner', from: 'STEEM', to: 'SBD', amountIn: '15000' }] }, feed64, '2026-10-05T00:00:00.000Z');
+    if (!(JSON.stringify(m64a.fills) === JSON.stringify(m64b.fills) && JSON.stringify(m64a.ops) === JSON.stringify(m64b.ops))) why64.push('settleIntents not byte-deterministic');
+    // 6. mesh drafting laws: floor-law candidates only, direction = sell the rich side, keyed rails never
+    const cands64 = am.meshCandidates(mkCore64(), '2026-10-04T10:00:00.000Z');
+    if (!(cands64.length === 1 && cands64[0].from === 'STEEM' && cands64[0].to === 'SBD')) why64.push('candidate direction law broken (sell the rich side)');
+    const keyed64 = mkCore64(); keyed64.arb[0].railOwner = 'headcorner (STEEM active — LIVE)';
+    if (am.meshCandidates(keyed64, '2026-10-04T10:00:00.000Z').length !== 0) why64.push('a keyed rail became a keyless candidate');
+    const below64 = mkCore64(); below64.arb[0].verdict = 'BELOW-FLOOR';
+    if (am.meshCandidates(below64, '2026-10-04T10:00:00.000Z').length !== 0) why64.push('a below-floor row became a candidate');
+    const inv64 = mkCore64(); inv64.arb[0].poolMidNano = '90000000';
+    if (am.meshCandidates(inv64, '2026-10-04T10:00:00.000Z')[0].from !== 'SBD') why64.push('direction does not invert with the drift');
+    // 7. mandates: budget = 1% of first-hop depth, operator 40%, soldiers split 60%
+    const roster64 = ['headcorner', 's1', 's2', 's3', 's4'];
+    const man64 = am.meshMandates(cands64[0], mkCore64(), roster64);
+    if (ub64(man64.depth) !== 388775n) why64.push('first-hop depth is not the min over pools holding the input (P1 STEEM side)');
+    if (ub64(man64.rowBudget) !== ub64(man64.depth) * 100n / 10000n) why64.push('row budget is not 1% of depth');
+    if (!(ub64(man64.split[0].budgetMu) === ub64(man64.rowBudget) * 4000n / 10000n && ub64(man64.split[1].budgetMu) === (ub64(man64.rowBudget) - ub64(man64.split[0].budgetMu)) / 4n)) why64.push('operator-40/soldiers-60 split broken');
+    // 8. draft determinism + minOut guard −0.5%
+    const d64a = am.draftIntents(mkCore64(), '2026-10-04T10:00:00.000Z');
+    const d64b = am.draftIntents(mkCore64(), '2026-10-04T10:00:00.000Z');
+    if (JSON.stringify(d64a) !== JSON.stringify(d64b)) why64.push('draft not byte-deterministic');
+    const g64 = am.minOutFor(mkCore64(), 'STEEM', 'SBD', '10000');
+    if (!(g64.quote != null && ub64(g64.minOut) === ub64(g64.quote) - (ub64(g64.quote) * 50n / 10000n))) why64.push('minOut guard is not quote−0.5%');
+    // 9. size ladder: exact BigInt, monotone honest slippage
+    const ladder64 = am.sizeLadder(mkCore64()).find((l) => l.pool === 'P3');
+    const s01_64 = ladder64.rungs.find((r) => r.sizeBps === 10), s5_64 = ladder64.rungs.find((r) => r.sizeBps === 500);
+    if (!(s01_64 && s5_64 && s5_64.slipBps < s01_64.slipBps && s01_64.slipBps <= 0 && ub64(s5_64.out) > ub64(s01_64.out) * 10n)) why64.push('size ladder not honest/monotone');
+    // 10. black-box: both selftests in fresh processes (judge separation)
+    const bb64a = spawnSync(process.execPath, [path.join(AG, 'dex-core.cjs'), 'selftest'], { encoding: 'utf8', timeout: 30000 });
+    if (!(bb64a.status === 0 && /DEX-CORE-SELFTEST-OK \d+\/\d+/.test(bb64a.stdout || ''))) why64.push('dex-core selftest fresh-process failed');
+    const bb64b = spawnSync(process.execPath, [path.join(AG, 'arb-mesh.cjs'), 'selftest'], { encoding: 'utf8', timeout: 30000 });
+    if (!(bb64b.status === 0 && /ARB-MESH-SELFTEST-OK \d+\/\d+/.test(bb64b.stdout || ''))) why64.push('arb-mesh selftest fresh-process failed');
+    // 11. real-tree: the booked mesh book + the core ledger re-derive from their own fields
+    const meshBook = JSON.parse(fs.readFileSync(path.join(AG, 'arb-mesh.json'), 'utf8'));
+    if (meshBook.protocol === am.PROTOCOL) {
+      const coreNow = JSON.parse(fs.readFileSync(path.join(AG, 'dex-core.json'), 'utf8'));
+      if (!(Array.isArray(meshBook.roster) && meshBook.roster[0] === 'headcorner' && meshBook.roster.join(',') === dc.rosterLaw().join(','))) why64.push('booked roster does not re-derive from persona-slots');
+      const candsNow = am.meshCandidates(coreNow, meshBook.at);
+      if (candsNow.length !== meshBook.candidates.length) why64.push('booked candidates do not re-derive from the core book');
+      if (meshBook.verdict.indexOf('NO-EDGE') === 0 && candsNow.length > 0) why64.push('NO-EDGE booked over a live candidate');
+      const ladNow = am.sizeLadder(coreNow).find((l) => l.pool === 'P3');
+      const ladBook = (meshBook.sizeLadder || []).find((l) => l.pool === 'P3');
+      if (ladNow && ladBook && ladNow.rungs[1] && ladBook.rungs[1] && ladNow.rungs[1].out !== ladBook.rungs[1].out) why64.push('booked ladder does not recompute from the booked pools');
+      // the operator pipe-proof fill (batch MESH-OPERATOR-PIPEPROOF-R41) is a REAL settled fill on the ledger
+      if (Array.isArray(coreNow.processedBatches) && coreNow.processedBatches.includes('MESH-OPERATOR-PIPEPROOF-R41')) {
+        const fillRow = (coreNow.opsThisTick || []).find((o) => o.type === 'AGENT_FILL');
+        const wireRow = (coreNow.opsThisTick || []).find((o) => o.type === 'MESH-WIRE');
+        if (!(fillRow && wireRow)) why64.push('pipe-proof batch booked without its wire+fill ops');
+        if (fillRow && !(ub64(fillRow.amountOut) <= ub64(fillRow.amountIn) && ub64(fillRow.amountIn) >= dc.MESH_DUST)) why64.push('booked fill violates the peg/dust laws');
+        if (!(Array.isArray(coreNow.conservation) && coreNow.conservation.every((r) => r.ok))) why64.push('booked ledger conservation broken');
+        if (dc.attestationHash(coreNow.vault, coreNow.accounts, coreNow.pools, coreNow.seq) !== coreNow.attestation) why64.push('booked attestation does not recompute');
+        // idempotency on the BOOKED state: replaying the settled batch settles nothing
+        const replayBook = dc.settleIntents(coreNow, { batch: 'MESH-OPERATOR-PIPEPROOF-R41', intents: [{ agent: 'headcorner', from: 'STEEM', to: 'WSTEEM', amountIn: '5000' }] }, feed64, '2026-10-04T11:00:00.000Z');
+        if (!(replayBook.skipped === true && replayBook.fills.length === 0)) why64.push('booked batch replay is not idempotent');
+      }
+      if (meshBook.meshPnl && meshBook.meshPnl.lifetime) {
+        let sum64 = 0n;
+        for (const r of Object.values(meshBook.meshPnl.lifetime.byAgent || {})) sum64 += ub64(r.edgeMu);
+        if (sum64 !== ub64(meshBook.meshPnl.lifetime.edgeMu)) why64.push('mesh P&L by-agent does not sum to the lifetime row');
+      }
+    }
+    evalr('E64', 'the mesh market (CR-0071)', why64.length === 0,
+      ['white-box: settleIntents refuses the unknown roster / dust / naked shorts honestly (GATED-WIRE-NO-CAPITAL named, never faked), wires are capped at 10% of free treasury per batch, a fill never exceeds 5% of first-hop depth, every hop + minOut settle all-or-nothing on simulated copies (a refused minOut leaves pools AND accounts byte-unchanged), batch replays are idempotent, fills are byte-deterministic, edge is marked to the CEX fair (positive above the floor), the pool feeMeter accrues (LP revenue), conservation is asserted per fill and the attestation recomputes', 'white-box: the mesh drafting laws — only CANDIDATE-FOK rows on treasury rails become candidates, the direction is sell-the-rich-side (inverting with the drift), keyed rails are never fired by the keyless mesh, mandates split the 1%-of-depth row budget operator-40/soldiers-60, drafts are byte-deterministic, the minOut guard is quote−0.5%, and the size ladder quotes exact BigInt out with monotone honest slippage', 'black-box: dex-core selftest AND arb-mesh selftest both pass in fresh processes (exit 0, OK markers — judge separation)', 'real-tree: the booked mesh book re-derives (roster from persona-slots, candidates from the core book, the P3 ladder rung recomputes exact), the operator pipe-proof fill (MESH-OPERATOR-PIPEPROOF-R41) carries its wire+fill ops on the ledger with conservation OK and the attestation recomputing, replaying the booked batch settles nothing twice, and the by-agent P&L sums to the lifetime row'],
+      why64.length ? 'fails: ' + why64.join('; ') : 'the mesh trades: the fleet settles atomically on our own ledger, wired-capped, honest to the last µ');
+  } catch (e) { evalr('E64', 'the mesh market', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.49.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48 + R27 metronome-audit E49 + R28 mm-volume E50 + R29 share-ladder E51 + R30 calibrated-engine E52 + R31 tape-calibration/venue-expansion E53 + R32 sidechain-pond E54 + R33 pnl-verdict E55 + sovereign-hands E56 + R34 fill-through-evolution E57 + R35 human-cadence E58 + R36 community-home E59 + R37 community-breath E60 + R38 chain-proof E61 + R39 swap-net E62 + R40 exchange-core E63, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.50.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48 + R27 metronome-audit E49 + R28 mm-volume E50 + R29 share-ladder E51 + R30 calibrated-engine E52 + R31 tape-calibration/venue-expansion E53 + R32 sidechain-pond E54 + R33 pnl-verdict E55 + sovereign-hands E56 + R34 fill-through-evolution E57 + R35 human-cadence E58 + R36 community-home E59 + R37 community-breath E60 + R38 chain-proof E61 + R39 swap-net E62 + R40 exchange-core E63 + R41 mesh-market E64, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];

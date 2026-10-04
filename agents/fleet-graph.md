@@ -18,6 +18,7 @@ flowchart TD
         LU["liquidity-desk.cjs<br/>3-chain census + ladder"]
         RT["dex-router.cjs<br/>SWAP-NET: routes + arb net + counter-grids (R39)"]
         EC["dex-core.cjs<br/>EXCHANGE CORE: atomic settle + vault + pool counter-grids (R40)"]
+        MM["arb-mesh.cjs<br/>MESH MARKET: roster mandates → intents → atomic fills + honest P&L (R41)"]
         KA["kpi-scribe<br/>KPI.json oracle"]
         HA["harness-audit.cjs<br/>26 checks incl. sovereignty (Z-37)"]
     end
@@ -72,6 +73,7 @@ flowchart TD
 | liquidity-desk | census | CENSUS→SIGN SEPARATION | live chain reads |
 | dex-router (SWAP-NET) | census | CENSUS→SIGN SEPARATION · PLAN-OWNER-GATED-NOT-BROADCAST · Z-27 verdict authority inherited | dex-router.json protocol SAOS-DEX-ROUTER/1 + E62 re-derivation |
 | dex-core (EXCHANGE CORE) | settle (our ledger) | ATOMIC SETTLEMENT · REAL-VALUE LAW (mint 1:1 / redeem always 1:1) · CONSERVATION IDENTITY · FLOOR-LAW REBALANCE · byte-determinism | dex-core.json protocol SAOS-DEX-CORE/1 + E63 re-derivation + attestation sha256 recompute |
+| arb-mesh (MESH MARKET) | demand (our ledger) | MANDATE LAW (operator-40/soldiers-60, 1%-of-depth) · DIRECTION LAW (sell the rich side) · WIRE CAP 10% · DEPTH CAP 5% · BATCH IDEMPOTENCY · keyed rails never fired keylessly | arb-mesh.json protocol SAOS-ARB-MESH/1 + E64 re-derivation + the pipe-proof fill on the core ledger |
 | venture-desk | state→dashboard | EARN-GOVERNOR · MEASURABLE→DASHBOARD | fills-ledger chain arithmetic |
 | harness-audit | judge | HARNESS-AUDIT MANDATE | its own checks vs files |
 | evals | judge | JUDGE-SEPARATION | runnable expectations E1-E6 |
