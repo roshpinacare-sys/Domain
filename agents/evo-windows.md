@@ -1,13 +1,12 @@
-# Scheduled evolution windows — 2026-10-04T11:21:53Z
+# Scheduled evolution windows — 2026-10-04T11:25:54Z
 
 CR-0033: the CR-0030 GEPA-class harness evolution runs on a pulled cadence (no daemon); outcomes land here as evidence the pulse carries (verify-only: adoption via judged CR).
 
 - **decision this invocation:** SKIPPED-EVAL-CONTEXT — EVO_WINDOWS_SKIP_RUN=1 — the measured batch is off-budget in eval/CI contexts (the CR-0030 CI law, mirrored upstream of the spawn)
-- **cadence:** 20h · **next due:** 2026-10-04T12:45:05Z · **windows:** 116 (0 complete)
+- **cadence:** 20h · **next due:** 2026-10-04T12:45:05Z · **windows:** 117 (0 complete)
 
 | at | mode | status | detail |
 |---|---|---|---|
-| 2026-10-04T06:25:09Z | — | SKIPPED-EVAL-CONTEXT | EVO_WINDOWS_SKIP_RUN=1 — the measured batch is off-budget in eval/CI contexts (the CR-0030 CI law, mirrored up |
 | 2026-10-04T06:31:51Z | — | SKIPPED-EVAL-CONTEXT | EVO_WINDOWS_SKIP_RUN=1 — the measured batch is off-budget in eval/CI contexts (the CR-0030 CI law, mirrored up |
 | 2026-10-04T06:33:56Z | — | SKIPPED-EVAL-CONTEXT | EVO_WINDOWS_SKIP_RUN=1 — the measured batch is off-budget in eval/CI contexts (the CR-0030 CI law, mirrored up |
 | 2026-10-04T07:11:32Z | — | SKIPPED-EVAL-CONTEXT | EVO_WINDOWS_SKIP_RUN=1 — the measured batch is off-budget in eval/CI contexts (the CR-0030 CI law, mirrored up |
@@ -27,3 +26,4 @@ CR-0033: the CR-0030 GEPA-class harness evolution runs on a pulled cadence (no d
 | 2026-10-04T11:17:39Z | — | SKIPPED-EVAL-CONTEXT | EVO_WINDOWS_SKIP_RUN=1 — the measured batch is off-budget in eval/CI contexts (the CR-0030 CI law, mirrored up |
 | 2026-10-04T11:20:32Z | — | SKIPPED-EVAL-CONTEXT | EVO_WINDOWS_SKIP_RUN=1 — the measured batch is off-budget in eval/CI contexts (the CR-0030 CI law, mirrored up |
 | 2026-10-04T11:21:53Z | — | SKIPPED-EVAL-CONTEXT | EVO_WINDOWS_SKIP_RUN=1 — the measured batch is off-budget in eval/CI contexts (the CR-0030 CI law, mirrored up |
+| 2026-10-04T11:25:54Z | — | SKIPPED-EVAL-CONTEXT | EVO_WINDOWS_SKIP_RUN=1 — the measured batch is off-budget in eval/CI contexts (the CR-0030 CI law, mirrored up |

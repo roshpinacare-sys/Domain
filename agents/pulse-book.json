@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "at": "2026-10-04T11:21:52.985Z",
+  "at": "2026-10-04T11:25:54.534Z",
   "since": "2026-10-02T16:40:20.950Z",
   "windowSince": "2026-10-02T16:40:20.950Z",
   "agent": "pulse v1.2.0 (CR-0009 loop, Rung 1; CR-0028 consumes the laya advisory triage; CR-0033 consumes the scheduled evolution-window evidence — Z-48/Z-49/Z-60/Z-62)",
@@ -8,6 +8,54 @@
     "since": "2026-10-02T16:40:20.950Z",
     "count": 40,
     "commits": [
+      {
+        "sha": "28c45e1",
+        "subject": "R41 THE MESH MARKET (CR-0071 / feat-066 / E64, suite v1.49.0 -> v1.50.0, 64/64 GREEN): the fleet trades on our own ledger. arb-mesh.cjs (SAOS-ARB-MESH/1, keyless, STASIS-obeying, fail-soft) — the demand side of our own DEX, answering the owner's networked-arbitrage law ('שוק ארביטראז רישתי עבור הסוכנים והחיילים... שנסחר גם פה וגם שם וגם שם'). MANDATE LAW deterministic from the books: per pool-side edge row clearing the inherited FLOOR law (CANDIDATE-FOK), the operator commands 40% of the row budget, the ten soldiers split 60% equally, budget = 1% of first-hop depth (the catalog quote law). DIRECTION LAW: pool mid > fair => sell the base into the pool — edge captured trading TOWARD the fair, never against it. WIRE LAW (the smart treasury): an agent unable to cover his mandate is armed by a MESH-WIRE from treasury free claims — capped 10% of free per batch, partial wires shrink the fill, conservation moves claims and never creates them; no capital => honest GATED-WIRE, never a fake trade. dex-core.cjs v1.1.0 settleIntents: batch-idempotent (processedBatches memo 64), no naked shorts, dust refused, fill <= 5% of first-hop depth, every hop + minOut all-or-nothing on simulated copies (a refused minOut leaves pools AND accounts byte-unchanged — the wire applies only at commit), agent accounts born LAZILY at first real movement, edge marked honest-or-null (PEG 1:1 / STEEM-SBD to the CEX fair / else null), pool feeMeter accrues (LP revenue), conservation asserted per fill, attestation recomputes. Keyed rails NEVER fired keylessly (PLAN-KEYED-RAIL); grid rungs stay PLAN-POOL-GATED-NOT-BROADCAST. SIZE LADDER: exact BigInt quotes at 0.1%/1%/5% of depth with honest signed slippage (P3 measured: 0.1% => -0.59bps, 1% => -1.26bps, 5% => -5bps) — the large-sums capability, measured not promised. OPERATOR PIPE-PROOF on the live ledger: MESH-OPERATOR-PIPEPROOF-R41 — headcorner STEEM 5000µ => 4993µ WSTEEM via P1 (MESH-WIRE + AGENT_FILL, conservation OK, attestation d6d5c769bf229029), queue consumed and cleared single-writer. First live tick: NO-EDGE booked honestly (A1 nets -34.99bps below the 120bps floor — the machinery waits, the P&L is protected). E64 in the suite: white-box refusals/wire/atomicity/idempotency/determinism + drafting laws + ladder honesty, black-box both selftests fresh-process (dex-core 33/33, arb-mesh 15/15), real-tree re-derivation of the booked mesh book + the pipe-proof fill. E47 re-based 53->54 workflows / 19->20 keyless (arb-mesh-cron joins, keyless by law). arb-mesh-cron.yml hourly :07, keyless, [skip ci], rebase-first. claims feats=66 evidence offenders=0 suite MATCH, secret-scan 0 [skip ci]"
+      },
+      {
+        "sha": "e09f663",
+        "subject": "fill-ledger: tick 2026-10-04T11:10:41Z [skip ci]"
+      },
+      {
+        "sha": "576bc85",
+        "subject": "market-grid(history): tick 2026-10-04T11:10:34Z [skip ci]"
+      },
+      {
+        "sha": "c186a70",
+        "subject": "sovereign-tick: decision receipts [skip ci]"
+      },
+      {
+        "sha": "d8f704b",
+        "subject": "earn-audit: chain-truth income proof [skip ci]"
+      },
+      {
+        "sha": "2801989",
+        "subject": "audience: digest 2026-10-04 -  [skip ci]"
+      },
+      {
+        "sha": "69b29d5",
+        "subject": "human-cadence: hourly books · 2026-10-04T11:04:43Z [skip ci]"
+      },
+      {
+        "sha": "74893ef",
+        "subject": "content-review: public-content report 2026-10-04 - duplication 0% (24h window) [skip ci]"
+      },
+      {
+        "sha": "a7d63c4",
+        "subject": "agent-verify: HAS_FAILURES · 50/53 · 0 suspended · 2026-10-04T10:57:04Z [skip ci]"
+      },
+      {
+        "sha": "775078d",
+        "subject": "weave-mirror: 2026-10-04T10:57:01Z · weave books mirrored from the live Console home (keyless) [skip ci]"
+      },
+      {
+        "sha": "02f47c7",
+        "subject": "dex-mirror: 2026-10-04T10:56:48Z · live engine book mirrored from the live Console mirror (keyless) [skip ci]"
+      },
+      {
+        "sha": "ffd2179",
+        "subject": "recruit+ventures: army openings + two-sided ledger board 2026-10-04T10:56:08Z [skip ci]"
+      },
       {
         "sha": "a0d04c7",
         "subject": "R40 THE EXCHANGE CORE (CR-0070 / feat-065 / E63, suite v1.48.0 -> v1.49.0, 63/63 GREEN): the DEX settles. dex-core.cjs — an atomic, deterministic, reserve-backed settlement engine on our own ledger, answering the owner's real-value law ('באמת להחליף למטבע האמיתי עם ערך ולא סתם שקר'). TWO INVARIANTS, ONE ENGINE: CPMM volatile pools (Uniswap v2 exact BigInt law, fee-on-input, floor to the user — the pool keeps the dust) + Curve stableswap peg pools (canonical 2020 formulation, A=10, Newton get_D/get_y with the 255-iter cap, fee-on-output, the canonical -1 pad). THE REAL-VALUE VAULT: WSTEEM/WSBD mint ONLY 1:1 against reserve custody actually held; REDEEM IS ALWAYS HONORED 1:1 (burn before payout); the conservation identity custody - wrappedReserve - sum(claims) - sum(pooledReserves) === 0 asserted every tick per asset; attestation sha256(seq, custody, reserves, minted, claims) booked and recomputed by E63 (real-tree). minOut ATOMICITY (a refused swap leaves state byte-unchanged), deterministic <=3-hop BigInt routing with cycle-free DFS and deterministic tie-breaks, catalog quoted at ~1% first-hop depth (a catalog quoted at a size that IS the pool is slippage theater). REBALANCE FLOOR LAW inherited from R39: when the P3 pool's own price drifts from the CEX-implied fair beyond 2x(costs), the treasury rebalances AGAINST ITS OWN POOL — we are our own LVR rebalancer (Milionis-Moallemi-Roughgarden-Zhang), the edge is marked to fair at execution, below the floor it is a plan row, never a trade. COUNTER-GRIDS ON OUR SIDE: anchored to the POOL MID (our network's own price, the other side of R39's CEX anchor), Avellaneda skew from the pool's own inventory share, spacing law inherited, PLAN-POOL-GATED-NOT-BROADCAST. THE DRIP-FUEL LOOP IS MECHANICAL: the measure phase books custody deltas as DEPOSIT-DELTA ops with provenance — the powerdown (2026-10-10, 470.84 SP/week x13) enters the DEX the hour it lands, zero new code on drip day; a custody DROP halts trading for the tick. GENESIS MEASURED 2026-10-04T09:52Z from the chain probe (headcorner @api.steemit.com): STEEM 15.551 / SBD 0.366 -> minted WSTEEM 0.77755 + WSBD 0.0549 (ratio 1.0), P1/P2 peg pools at mid 1.0, P3 born anchored at the booked fair 0.1054467, P4 SAOS/WSTEEM PLANNED-NO-CLAIM (dex/credits.json empty — a pool without a real claim waits, named). 12 routes LIVE-INTERNAL + 4 PLANNED-NO-CLAIM. E63 in the suite: white-box invariants (golden vectors, seeded 200-swap k-fuzz, the stableswap invariant equation evaluated independently in floats, a float bisection that shares NO code with the Newton solver), black-box fresh-process selftest 22/22, real-tree re-derivation of the booked book (conservation row-exact, attestation recompute, route quote recompute, arb net, grid rung). E47 re-based 52->53 workflows / 18->19 keyless (dex-core-cron joins, keyless by law). BASE REPAIR in the same rung: dex-router.cjs main is now require.main-guarded — requiring the laws never fires a tick (judge separation for every importer, E62/E63 purity). Workflow dex-core-cron.yml hourly :41 (selftest -> settle -> commit, [skip ci], rebase-first). Proof Surface: EXCHANGE CORE card in Hebrew (pools + vault + arb + pool-side grids + mechanical fuel law). claims feats=65 evidence offenders=0 suite MATCH, secret-scan 0 [skip ci]"
@@ -119,54 +167,6 @@
       {
         "sha": "4e0f10a",
         "subject": "market-grid(history): tick 2026-10-04T02:55:17Z [skip ci]"
-      },
-      {
-        "sha": "bf1217e",
-        "subject": "earn-audit: chain-truth income proof [skip ci]"
-      },
-      {
-        "sha": "21156a7",
-        "subject": "R31 books on the merged tree — HONEST RE-SLOT: the first books commit carried a false 53/53 claim (the merged tree measured 52/1 — E47's pinned 48/15 sovereignty bar had moved under the sibling's Z74 rung: workflow-yaml-guard joined keyless, 48→49 files, 15→16 keyless). E47 re-based WITH the estate, the evolution written in the eval itself (never silently); suite re-measured on the merged tree: evals 53/53 GREEN v1.40.0 · claims 0 offenders suite MATCH · census 16/16 caps=61 wiring=10/10 · secret-scan 0 [skip ci]"
-      },
-      {
-        "sha": "9ced882",
-        "subject": "R31 THE MEASURED BINDING & THE VENUE EXPANSION (CR-0061 / feat-056 / E53, suite v1.39.0 -> v1.40.0, 53/53 GREEN): the second calibration dial anchors the projection in REALITY — calibratedTape meters the fill-ledger's REAL capture rate (0.0861 fills/min = 124 fills/day over the window ending at the last fill) vs the 10 fpm market-tape prior, both carried side-by-side labeled (Q12's law, second dial — never a silent rewrite); the projection now runs on min(tape, capacity, CAPTURE): the choke is the MEASURED CAPTURE (fill-through 21.528% of the 576/day order capacity), projected volume 796.032 -> 85.684 SBD/day on the measured dials, and the capture grows exactly the way the owner directive says — more rungs x fill-through x funded soldiers x bounded internal flow. THE VENUE EXPANSION (Q14): market-grid v1.2.0 measures each Hive-Engine basket token's OWN marketFeePercentage from the tokens contract (absent = 0; the whole basket BEE/WAIV/SWAP.DOGE/SWAP.LTC/CENT measured ZERO-FEE live) and probes the Blurt internal market probe-first fail-loud (measured DARK — ENOTFOUND, booked honestly with its reason); fee-doctrine.json grows two venue rows (hive-engine-sidechain per-token law; blurt-internal-market probe-first); mm-volume v1.3.0 prices all five HE venues per-token by their own measured fee row (edgeFromSpread: captured spread - round-trip fee, floor zero — the pricing half exact, no volume fiction), the volume projection waits for a measured sidechain tape (honest projectionNullReason NO-MEASURED-TAPE-HE, never invented), book.tapeCalibration + darkSurfaces + projections.captureTradesDay/captureFillThroughPct/heVenuesPriced, plan-ledger rows grow tapeFpm/captureTradesDay/heVenuesPriced. E53 white-box (calibratedTape window-relative + fallbacks labeled; capture binding exact 124x0.068=8.432, µ-precision kept 0.001fpm->1.44; edgeFromSpread zero-fee/fee-priced/floor-zero/invalid-null) + black-box (HE sorted+priced per-token, BEE self-flow honestly blocked NO-PROJECTED-VOLUME — internal flow waits for a measured tape like everything else, blurt dark, capture bound live, projection on both dials 0.823, byte-stable) + real-tree (tape-calibrated on the real ledger, live HE basket priced). E52 evolved WITH the desk (the 237.024 capture-null-era expectation became the both-dials 0.823 — the evolution written in the eval itself). Two in-rung catches by the suite on its own author (tape-bound µ-precision; selfFlow NO-PROJECTED-VOLUME honesty) — fixed in the eval, the desk was right. Books refreshed: evals 53/53 GREEN v1.40.0 · claims 0 offenders suite MATCH · census 16/16 caps=61 wiring=10/10 · delta DRIFT booked · secret-scan 0"
-      },
-      {
-        "sha": "43c645e",
-        "subject": "mirror-from-console: 2026-10-04T02:39:00Z · truth outputs mirrored from the Console home (one-bloc, keyless) [skip ci]"
-      },
-      {
-        "sha": "b3a4117",
-        "subject": "workflow-yaml-guard: חוק-Z74 מופץ (ריבוני, אפס-actions-צד-ג) — קובץ-workflow שבור נופל-אדום-מנומק ב-push שהכניס-אותו"
-      },
-      {
-        "sha": "e15f98b",
-        "subject": "org-gitleaks: 16 repos · head=0 · history=0 · 2026-10-04 [skip ci]"
-      },
-      {
-        "sha": "d85b9ca",
-        "subject": "weave-mirror: 2026-10-04T02:23:26Z · weave books mirrored from the live Console home (keyless) [skip ci]"
-      },
-      {
-        "sha": "fb658a9",
-        "subject": "dex-mirror: 2026-10-04T02:17:50Z · live engine book mirrored from the live Console mirror (keyless) [skip ci]"
-      },
-      {
-        "sha": "8f51a1b",
-        "subject": "R30 THE CALIBRATED ENGINE (CR-0060 / feat-055 / E52, suite v1.38.0 -> v1.39.0, 52/52 GREEN): 'time of truth' executed on the projection itself — mm-volume v1.2.0 runs the plan on the REAL fill size the ledger measured. Q10 WHAT IS THE TRUE FILL SIZE? calibratedAvgSize reads the fill-ledger's REAL classified fills (µ-precise): 130 real fills -> 0.691 SBD average vs 0.068 planned (reality runs ~10x the plan) — projected volume 39.168 -> 796.032 SBD/day, conservative net 0.2886 -> 2.6516 SBD/day; the prior rides along (avgSizePriorSbd + source), fallback chain real-fills -> exec-runs-planned -> law-assumption every rung labeled — calibration is NEVER a silent rewrite. Q11 DOES THE SHARE MOVE? shareSeries reads the desk's OWN append-only plan ledger as the time series: last-K {at,sharePct} points per venue, sorted, corrupt rows dropped, capK=24 — dominance becomes a TREND; the series lives in a time-born `series` namespace excluded from the byte-stable payload BY LAW (values deterministic, timestamps are the axis; E50/E51 strips evolved with the desk). Q12 WHAT DID CALIBRATION CHANGE? book.calibration carries prior->calibrated + liftPct (+916.1765% at first light) side-by-side. The honest consequence surfaced: at N=1 the calibrated share crosses 100% — the capacity ladder SATURATES the measured pond, flagged by saturates, never hidden. E52 white-box (calibratedAvgSize µ-exact (0.703+0.120)/2=0.4115 unclassified-ignored prior-carried; fallback chain all labeled; shareSeries sorted/filtered/capped-last-k/empty-null) + black-box (pre-seeded plan ledger -> calibration live 0.068->0.4115 lift>0 + series live from the desk's own past (23.9286%) + the projection itself on the real size (576x0.4115=237.024 SBD) + byte-stable with series excluded) + real-tree (calibrated on the real ledger 0.691 n=130, series growing). E51 evolved: the share-live check now proves the share is computed ON the calibrated size (avgSizeSbd === realized.avgFillSbd === 24.8333). Books refreshed: evals 52/52 GREEN v1.39.0 · claims 0 offenders feats=55 evidence 140/143 suite MATCH (warns pre-existing CR-0049) · census 16/16 caps=61 wiring=10/10 · delta DRIFT booked · secret-scan 0"
-      },
-      {
-        "sha": "a3d2ec7",
-        "subject": "moment-watch: RISK_ON · steem-edge 379bps · 2026-10-04T01:59:36Z [skip ci]"
-      },
-      {
-        "sha": "75844ac",
-        "subject": "R29 THE SHARE LADDER (CR-0059 / feat-054 / E51, suite v1.37.0 -> v1.38.0, 51/51 GREEN): 'the biggest market maker' becomes a measured number instead of a boast. THE POND: market-grid v1.1.0 reads condenser get_volume from the chains themselves — SBD/STEEM 24h pond 163.687 SBD, HBD/HIVE 958.712 HBD — booked into the live book + the append-only history (volumeSbdTerm rows); pure parseVolume exported (both chains' response shapes, invalid drops). THE SHARE: mm-volume v1.1.0 computes the fleet's projected volume over the measured pond as a LADDER over funded soldiers — SBD/STEEM: N=1 → 23.9286% (one soldier already holds a quarter of the venue), N=2 → 47.8572%, N=3 → 71.7858%, N=5 → 119.643% SATURATED (the pond caps the capacity ladder — the tape becomes the binding, surfaced never hidden); HBD/HIVE joins the plan: 4.0855% at N=1. THE TRUTH CHECK (Q8): realized24h meters the fill-ledger's REAL fill_order fills over a 24h window ending at the LAST fill (deterministic from data alone) — 124 real fills, 62.781 SBD sold / 24.388 SBD bought, avg fill 0.703 SBD, projection accuracy 160.2865% (the projection UNDERSTATES reality ~10× on fill notional — the assumption is now visible and re-basable); unclassified fills counted honestly, never guessed into P&L. THE DOCTRINE MAP (Q9): the six failures that killed the great market makers (adverse selection, inventory skew, fee drag, self-poison, silent rot, overtrading) each mapped onto the guard shipped WITH the plan. Both internal venues priced from the live book (steem 1.1677%, hive 0.1645% at measure time) with history fallback; share/realized are ENHANCEMENT sections — missing inputs null them honestly, never block the plan. E51 white-box (parseVolume/sharePct/shareLadder-monotonic+saturates/realized-window-relative-to-last micro-exact/doctrineMap=6) + black-box (rich fixture share+realized+accuracy live, byte-stable payload; enhancement-null fixture still MMV-PLAN-LIVE; real-tree share measured from the chain itself). In-rung catches by the suite on its own author: fillsCount semantics (all rows, unclassified booked), avgFill over classified only, fixture avgSize pinned, fallback registry account. Books refreshed: census 16/16 caps=61 wiring=10/10 · claims 0 offenders feats=54 evidence 135/138 suite MATCH"
-      },
-      {
-        "sha": "19b7554",
-        "subject": "R28 THE VOLUME ENGINE (CR-0058 / feat-053 / E50, suite v1.36.0 -> v1.37.0, 50/50 GREEN): the owner's market-maker directive gets its instrument — agents/mm-volume.cjs, the keyless deterministic STASIS-braked planner that prices every venue by ITS OWN fee doctrine (fee-doctrine law), projects volume/net-edge from measured spreads + the measured tape (SBD/STEEM: spread 1.4736%, fee 0, conservative edge 0.7368%, capacity-bound 39.168 SBD/day, net 0.2886→0.5772 SBD/day), partitions the ladder across fleet accounts (j mod N disjoint complete cover; growth table N∈{1,2,3,5} books the recruit path), arms internal soldier-to-soldier flow ONLY at zero round-trip fee — capped 25%, labeled INTERNAL-FLOW, EXCLUDED from the VWAP/edge books (the poison guard) — and derives the BUY-EDGE ceiling from the realized sell VWAP (0.102→0.1017, live from the 23-run market-exec history). PLAN-ONLY: the live broadcast path stays market-exec law (MARKET_EXEC_LIVE, verify-then-sign). SIX engineering queries asked and answered in code (Q1 where provable volume lives; Q2 what bounds profitability; Q3 how a fleet shares one ladder; Q4 internal flow bounded+labeled+excluded; Q5 other users' fees — spread capture + saos-dex-kernel 30bps/30% treasury cut; Q6 the six guards). Wired: mm-volume leg in fleet-census-cron after scheduler-heal + publish + volatile no-noise (mm-volume.json). E50 white-box (venueEconomics edge-exact, partitionLadder disjoint-complete, selfFlowPlan zero-fee-only + guards as data, buyEdgeFloor, sellVwapFromRuns) + black-box (fresh-process MMV-PLAN-LIVE on rich fixture, byte-stable payload, STASIS halt zero-writes, corrupt-inputs honest BLOCKED) + real-tree + host wiring. One in-rung catch: 0 rungs = no ladder = covers:false (fixed in the desk, not the eval). Books refreshed: census 16/16 caps=61 wiring=10/10 · claims 0 offenders feats=53 evidence 129/132 suite MATCH · delta · cadence · scheduler"
       }
     ]
   },
@@ -736,7 +736,7 @@
       "kind": "observation",
       "source": "evo-windows.json",
       "action": "carry the evolution-window cadence state into the record",
-      "receipt": "115 windows booked, none complete · next due 2026-10-04T12:45:05Z",
+      "receipt": "116 windows booked, none complete · next due 2026-10-04T12:45:05Z",
       "disposition": "BOOKED"
     }
   ],
@@ -757,7 +757,7 @@
     "joined": 7,
     "note": "fresh advisory triage joined by id — lane/urgency hints only, confidence uncalibrated (en checkpoint), dispositions untouched",
     "at": "2026-10-03T15:08:54Z",
-    "age_h": 20.2
+    "age_h": 20.3
   },
   "evoEvidence": {
     "mode": "CADENCE-ONLY",

@@ -12,10 +12,10 @@ _מורכב מהפנקסים המחויבים בלבד (keyless, offline). כל 
 
 ## הכנסה מתוכננת — ה-powerdown (ה-drip) והראנווי שלו
 
-- **weeklySp**: 475.894567 — _מקור: agents/sovereign-drip.json (condenser_api, measured twice) · נמדד: 2026-10-04T05:17:14.766Z · STEEM נכנסים מדי שבוע מה-stake_
-- **remainingSp**: 1903.57827 — _מקור: agents/sovereign-drip.json · נמדד: 2026-10-04T05:17:14.766Z_
-- **runwayDays**: 28 — _מקור: agents/sovereign-drip.json · נמדד: 2026-10-04T05:17:14.766Z · אחרי זה ה-stake נגמר — ההכנסה הזו היא החזר הון, לא תשואה_
-- **nextWithdrawal**: "2026-10-10T02:01:27" — _מקור: agents/sovereign-drip.json · נמדד: 2026-10-04T05:17:14.766Z_
+- **weeklySp**: 475.902463 — _מקור: agents/sovereign-drip.json (condenser_api, measured twice) · נמדד: 2026-10-04T11:08:46.764Z · STEEM נכנסים מדי שבוע מה-stake_
+- **remainingSp**: 1903.609852 — _מקור: agents/sovereign-drip.json · נמדד: 2026-10-04T11:08:46.764Z_
+- **runwayDays**: 28 — _מקור: agents/sovereign-drip.json · נמדד: 2026-10-04T11:08:46.764Z · אחרי זה ה-stake נגמר — ההכנסה הזו היא החזר הון, לא תשואה_
+- **nextWithdrawal**: "2026-10-10T02:01:27" — _מקור: agents/sovereign-drip.json · נמדד: 2026-10-04T11:08:46.764Z_
 - **lastDripSteem**: 475.857 — _מקור: agents/earn-audit.json (headcorner drip_arrived_steem, chain truth) · ה-drip הקודם הגיע והוטל לשוק באותה שעה — הרוטציה האוטונומית הראשונה בהיסטוריה של הצי (CR-0046)_
 
 ## האמת על הכסף — רווח והפסד, בלי קישוט
@@ -29,11 +29,11 @@ _מורכב מהפנקסים המחויבים בלבד (keyless, offline). כל 
 
 ## הגל המתוכנן — לוח ההבשלות מהשרשרת עצמה (ההפתעה שנמדדה, לא סיפור)
 
-- **pendingConverts**: 25 — _מקור: agents/convert-canon.json (chain walk, 90 pages) · נמדד: 2026-10-04T05:17:14.822Z · המרות SBD→STEEM שנפתחו ועוד לא הבשילו — מדוד מהשרשרת, לא מהספרים_
-- **pendingTotalSbd**: 131.856 — _מקור: agents/convert-canon.json · נמדד: 2026-10-04T05:17:14.822Z · סך ה-SBD שיהפוך ל-STEEM במחיר ה-feed בהבשלה_
-- **nextMaturity**: "2026-10-06T00:02:12Z" — _מקור: agents/convert-canon.json · נמדד: 2026-10-04T05:17:14.822Z · ההבשלה הבאה — חלון העימוד המוקדם נפתח 24 שעות לפניה_
-- **waveEnds**: "2026-10-07T17:06:39Z" — _מקור: agents/convert-canon.json · נמדד: 2026-10-04T05:17:14.822Z · סוף הגל הנוכחי — ההבשלה האחרונה בלוח_
-- **undated**: 0 — _מקור: agents/convert-canon.json · נמדד: 2026-10-04T05:17:14.822Z · המרות בלי תאריך ניתן לחישוב — לעולם לא מנוחשות (חוק CR-0054)_
+- **pendingConverts**: 25 — _מקור: agents/convert-canon.json (chain walk, 90 pages) · נמדד: 2026-10-04T11:08:46.812Z · המרות SBD→STEEM שנפתחו ועוד לא הבשילו — מדוד מהשרשרת, לא מהספרים_
+- **pendingTotalSbd**: 131.856 — _מקור: agents/convert-canon.json · נמדד: 2026-10-04T11:08:46.812Z · סך ה-SBD שיהפוך ל-STEEM במחיר ה-feed בהבשלה_
+- **nextMaturity**: "2026-10-06T00:02:12Z" — _מקור: agents/convert-canon.json · נמדד: 2026-10-04T11:08:46.812Z · ההבשלה הבאה — חלון העימוד המוקדם נפתח 24 שעות לפניה_
+- **waveEnds**: "2026-10-07T17:06:39Z" — _מקור: agents/convert-canon.json · נמדד: 2026-10-04T11:08:46.812Z · סוף הגל הנוכחי — ההבשלה האחרונה בלוח_
+- **undated**: 0 — _מקור: agents/convert-canon.json · נמדד: 2026-10-04T11:08:46.812Z · המרות בלי תאריך ניתן לחישוב — לעולם לא מנוחשות (חוק CR-0054)_
 - **honestyFix**: "~435 STEEM Oct-7 → התיקון: 117.887 SBD בגל 10-06..10-07" — _מקור: agents/change-requests/CR-0054-maturity-law-rung.json · נמדד: 2026-10-04T00:30:00Z · הספרים הקודמים סיפרו סיפור לא נמדד — התוקן ונחתם ב-E45_
 
 ## מה רץ לבד — 24/7, בלי מפתח, עם מרפא עצמי
@@ -54,8 +54,8 @@ _מורכב מהפנקסים המחויבים בלבד (keyless, offline). כל 
 
 ## משמעת — מה מוכח ומה נבדק
 
-- **claimsAudit**: "WARN" — _מקור: agents/claims-audit.json · נמדד: 2026-10-04T11:21:54.811Z · כל קובץ שנטען בפנקס — נבדק שהוא באמת על העץ_
-- **censusLanes**: undefined — _מקור: agents/fleet-census.json · נמדד: 2026-10-04T11:21:53.868Z · מפת ה-16 מסלולים של הצי_
+- **claimsAudit**: "WARN" — _מקור: agents/claims-audit.json · נמדד: 2026-10-04T11:25:56.312Z · כל קובץ שנטען בפנקס — נבדק שהוא באמת על העץ_
+- **censusLanes**: undefined — _מקור: agents/fleet-census.json · נמדד: 2026-10-04T11:25:55.404Z · מפת ה-16 מסלולים של הצי_
 - **ownerLanguage**: "he" — _מקור: agents/claims-audit.cjs OWNER_LANGUAGE (CR-0050) · כל פנייה לבעלים — בעברית_
 
 _החוק: שום מספר לא מומצא, שום היקף לא מתגנב (יומי לעולם לא מתגלגל לכל-חיים), שום הפסד לא מוסתר._
