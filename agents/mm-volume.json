@@ -1,0 +1,164 @@
+{
+ "at": "2026-10-04T01:22:29.287Z",
+ "agent": "mm-volume v1.0.0 (CR-0058, fleet Rung 28 — the volume engine)",
+ "verdict": "MMV-PLAN-LIVE",
+ "law": {
+  "planOnly": "this desk PLANs and MEASURES — it never signs; the live broadcast path is market-exec.cjs law (MARKET_EXEC_LIVE=1, verify-then-sign)",
+  "guards": [
+   "SELL-CAP-85% of liquid inventory",
+   "MAX-NEW-ORDERS 6/run/account",
+   "BUY-EDGE: no buy above realized sell VWAP − 0.3%",
+   "SPACING-FLOOR 0.4% (market-grid)",
+   "INTERNAL-FLOW capped 25% + labeled + VWAP-excluded",
+   "STASIS halt-before-read"
+  ]
+ },
+ "venues": [
+  {
+   "venue": "SBD/STEEM (internal steem)",
+   "layer": "chain-internal",
+   "feeBps": 0,
+   "spreadPct": 1.4736,
+   "measuredFrom": "market-grid-history last row",
+   "avgSizeSbd": 0.068,
+   "avgSizeAssumed": false,
+   "avgSizeN": 17,
+   "sellVwap": 0.102,
+   "buyEdgeFloor": 0.1017,
+   "econ": {
+    "feeBps": 0,
+    "spreadPct": 1.4736,
+    "feeRoundTripPct": 0,
+    "edgeConsPct": 0.7368,
+    "edgeOptPct": 1.4736,
+    "bounds": {
+     "tapeBoundTradesDay": 14400,
+     "capBoundTradesDay": 576,
+     "binding": "capacity"
+    },
+    "projTradesDay": 576,
+    "projVolumeSbd": 39.168,
+    "projNetConsSbd": 0.2886,
+    "projNetOptSbd": 0.5772
+   },
+   "selfFlow": {
+    "eligible": true,
+    "accounts": 1,
+    "feeRoundTripPct": 0,
+    "capPct": 0.25,
+    "internalCapSbd": 9.792,
+    "guards": [
+     "VWAP-EXCLUSION: internal fills never enter realized sell VWAP / edge books (poison guard)",
+     "LABEL: every internal row carries INTERNAL-FLOW",
+     "CAP: internal flow ≤ 25% of projected volume",
+     "FEE-NULL-ONLY: internal flow armed only on zero-fee round-trip venues"
+    ],
+    "blockedReason": null
+   }
+  },
+  {
+   "venue": "saos-dex-kernel (L1 our own DEX)",
+   "layer": "saos-L1",
+   "feeBps": 30,
+   "treasuryCutPct": 30,
+   "spreadPct": null,
+   "econ": null,
+   "selfFlow": {
+    "eligible": false,
+    "accounts": 1,
+    "feeRoundTripPct": 0.6,
+    "capPct": 0.25,
+    "internalCapSbd": 0,
+    "guards": [
+     "VWAP-EXCLUSION: internal fills never enter realized sell VWAP / edge books (poison guard)",
+     "LABEL: every internal row carries INTERNAL-FLOW",
+     "CAP: internal flow ≤ 25% of projected volume",
+     "FEE-NULL-ONLY: internal flow armed only on zero-fee round-trip venues"
+    ],
+    "blockedReason": "FEE-ROUND-TRIP-NONZERO"
+   },
+   "note": "feeBpsSource=30 bps per-swap input fee, 30% treasury cut — other users’ fees ARE the fleet’s income here; volume metering is operator-gated future"
+  }
+ ],
+ "fleet": {
+  "accountsNow": 1,
+  "fundedAccounts": [
+   "headcorner"
+  ],
+  "partition": {
+   "accounts": [
+    "headcorner"
+   ],
+   "slices": [
+    {
+     "account": "headcorner",
+     "rungs": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   ],
+   "covers": true
+  },
+  "growth": [
+   {
+    "n": 1,
+    "ordersDayCap": 576,
+    "volumeBoundSbd": 39.168,
+    "binding": "capacity"
+   },
+   {
+    "n": 2,
+    "ordersDayCap": 1152,
+    "volumeBoundSbd": 78.336,
+    "binding": "capacity"
+   },
+   {
+    "n": 3,
+    "ordersDayCap": 1728,
+    "volumeBoundSbd": 117.504,
+    "binding": "capacity"
+   },
+   {
+    "n": 5,
+    "ordersDayCap": 2880,
+    "volumeBoundSbd": 195.84,
+    "binding": "capacity"
+   }
+  ],
+  "rolloutPath": "fleet rollout = fund + key-provision recruits (recruit.cjs contract path), one derived-key vault per account, each account re-runs market-exec law with its own caps; the partition above pre-assigns the rungs"
+ },
+ "projections": {
+  "venuesMeasured": 1,
+  "projVolumeSbdDay": 39.168,
+  "projNetConsSbdDay": 0.2886,
+  "projNetOptSbdDay": 0.5772,
+  "internalFlowCapSbdDay": 9.792
+ },
+ "ownerGate": {
+  "mode": "PLAN-ONLY-OWNER-GATED",
+  "livePath": "market-exec.cjs (headcorner) — fleet rollout per fleet.rolloutPath",
+  "previewNote": "per-venue order previews are emitted by market-grid executorPreview; this book carries counts and prices only"
+ },
+ "inputs": {
+  "feeDoctrine": "saos-fee-doctrine/1",
+  "dexBookAt": "2026-10-03T22:48:25.453Z",
+  "marketGridHistoryRows": 9,
+  "lastMarketGridAt": "2026-10-04T00:43:22.943Z",
+  "treasuryAt": "2026-10-03T22:45:42.803Z",
+  "execRunRows": 23,
+  "registryAccounts": [
+   "headcorner"
+  ]
+ },
+ "blockedReasons": [],
+ "errors": []
+}
