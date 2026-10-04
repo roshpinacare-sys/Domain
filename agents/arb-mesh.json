@@ -1,10 +1,12 @@
 {
  "protocol": "SAOS-ARB-MESH/1",
- "at": "2026-10-04T14:40:46.482Z",
+ "at": "2026-10-04T18:18:09.323Z",
  "agent": "arb-mesh v1.0.0 (R41 MESH MARKET, CR-0071)",
  "mode": "KEYLESS-MESH-DEMAND",
  "stasisHalted": false,
  "laws": [
+  "counter-grid arm (R44): the owner gate is the CR-0074 ARTIFACT (present = open); the arm adds deterministic rung ids, the 2%-of-depth cap law, the dust refusal (GRID-TOO-THIN) and the two-sided law (a one-sided grid is a direction bet — REFUSED); settle stays pure (the gate is an argument)",
+  "pegout hand (R44): the keyed consumer of the pegout queue — DEST-ALLOWLIST law (chain payouts fire ONLY to estate-roster accounts, non-estate dests are REFUSED-DEST-NOT-ESTATE); the rail proves itself with a value-neutral self-transfer, receipted",
   "intent gates (R43): XC intents settle on ONE balance universe — escrow in, route through OUR pools, chain payouts queued to the corridor (keyless code never broadcasts), refund whole behind the 2:1 clock, corridor exposure bonded ≤ 2× custody",
   "units: µ BigInt end to end, no floats in settlement",
   "volatile pools: x·y ≥ k (Uniswap v2 exact, fee on input, floor to user)",
@@ -23,15 +25,15 @@
  "batch": null,
  "settledBatch": null,
  "coreLedger": {
-  "seq": 22,
-  "at": "2026-10-04T14:29:19.288Z",
-  "ageHours": 0.19,
+  "seq": 23,
+  "at": "2026-10-04T17:14:23.614Z",
+  "ageHours": 1.06,
   "conservationOk": true,
-  "attestation": "cb54a2fc09e19760",
+  "attestation": "c08b1d1525b2515e",
   "feedFresh": true
  },
  "routerSeen": {
-  "at": "2026-10-04T08:48:34.143Z",
+  "at": "2026-10-04T15:58:44.370Z",
   "arbRows": 4
  },
  "roster": [
@@ -173,6 +175,6 @@
    "volumeInMu": "5000"
   }
  },
- "gridGate": "PLAN-POOL-GATED-NOT-BROADCAST — counter-grid rungs fire only behind the owner gate; the mesh waits",
+ "gridGate": "GATED-ARMED-BROADCAST-READY (CR-0074 open — the kernel arms the opposing grids; the mesh still never fires a keyed rail)",
  "errors": []
 }

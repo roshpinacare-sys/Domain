@@ -1,6 +1,6 @@
 # arb-mesh — THE MESH MARKET (R41, CR-0071)
 
-At: 2026-10-04T14:40:46.482Z · Verdict: **NO-EDGE (every row below the floor — the machinery waits, the floor law protects the P&L)** · batch: — · protocol: SAOS-ARB-MESH/1
+At: 2026-10-04T18:18:09.323Z · Verdict: **NO-EDGE (every row below the floor — the machinery waits, the floor law protects the P&L)** · batch: — · protocol: SAOS-ARB-MESH/1
 
 Roster: 11 accounts (headcorner + 10 soldiers) · Edge candidates: 0 · Intents drafted: 0 · Fills settled: 0 · Refusals: 0
 
@@ -37,5 +37,5 @@ Roster: 11 accounts (headcorner + 10 soldiers) · Edge candidates: 0 · Intents 
 Fills: 1 · Volume in: 5000µ · Edge captured: -7µ · Fees paid (LP revenue): 0µ
 - headcorner: 1 fills · vol 5000µ · edge -7µ · fees 0µ
 
-Laws: L1 L2 L3 L4 L5 L6 L7 L8 L9 L10 L11 L12 L13 · Gate law: the pool-side counter-grids stay PLAN-POOL-GATED-NOT-BROADCAST — the mesh never fires a gated rung.
+Laws: L1 L2 L3 L4 L5 L6 L7 L8 L9 L10 L11 L12 L13 L14 L15 · Gate law: the counter-grid gate follows CR-0074 (open = GATED-ARMED-BROADCAST-READY, closed = PLAN-POOL-GATED-NOT-BROADCAST) — the mesh never fires a keyed rail either way.
 
