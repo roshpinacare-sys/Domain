@@ -1,9 +1,9 @@
-# FLEET CENSUS — 2026-10-04T04:18:47.644Z
+# FLEET CENSUS — 2026-10-04T05:10:20.531Z
 
 Offline · keyless · deterministic estate map (CR-0040). Answers: what do we hold, what limits us, how it wires.
 
-## Inventory — מה יש לנו (16/16 lanes present, 11505 commits, 61 capability markers)
-- **Domain** [PRESENT] 0e187c4@2026-10-04 · caps(16): marketGrid, marketExec, fillLedger, marketCycle, crossLayer, oneBloc, capabilityMatrix, econDesk, measureLearn, evoWindows, stasis, evals, skillGate, cadenceCron, gridHistory, gridPaper · workflows=49 desks=71
+## Inventory — מה יש לנו (16/16 lanes present, 11506 commits, 61 capability markers)
+- **Domain** [PRESENT] 774327b@2026-10-04 · caps(16): marketGrid, marketExec, fillLedger, marketCycle, crossLayer, oneBloc, capabilityMatrix, econDesk, measureLearn, evoWindows, stasis, evals, skillGate, cadenceCron, gridHistory, gridPaper · workflows=50 desks=72
 - **saos-dex** [PRESENT] 2bbd033@2026-10-03 · caps(8): kernel, amm, mm, gridBeat, gridLedger, dexCredits, dexGridCron, gridTrigger · workflows=4
 - **steem** [PRESENT] 33c541d6@2026-10-03 · caps(5): heLadder, liveGate, ladderRefresh, anchor, chainAttest · chainAgents=144 workflows=3
 - **saos-sovereign-platform** [PRESENT] e36529c@2026-10-03 · caps(5): exchange, ledger, bridge, meshHub, identity · meshContracts=11 meshTests=5 workflows=3
@@ -21,7 +21,7 @@ Offline · keyless · deterministic estate map (CR-0040). Answers: what do we ho
 - **saos-sovereign-foundry** [PRESENT] 62c0a74@2026-10-03 · caps(4): briefing, controls, broadcasts, agentDir · workflows=2
 
 ## Sovereignty — ריבונות
-- workflows: 16 keyless / 49 total (33 carry owner secrets)
+- workflows: 16 keyless / 50 total (34 carry owner secrets)
 - STASIS brake: present=true active=false halt-in-code desks=1
 - gated desks (DRY/OWNER-GATED/LIVE env): 8 — cross-layer, fleet-census, market-cycle, market-exec, market-grid, mm-volume, sovereign-tick, sovereign-trade
 - offline/keyless desks: 35 — agent-registry, bridge-desk, cadence-week, canon-liveness, capability-matrix, claims-audit, cognitive-rail, convert-canon, coord-bus, coord-lease, cross-layer, dedup-corrections, drip-canon, earn-audit, fleet-census, fleet-delta, harness-audit, head-delegate, market-exec, market-grid, one-bloc, owner-proof, page-laws, public-pulse, reconcile, recruit, reef-rung3, route-desk, scheduler-audit, scheduler-collect, scheduler-heal, social-dedupe, tick-keeper, venture-desk, workflow-audit
@@ -39,7 +39,7 @@ Offline · keyless · deterministic estate map (CR-0040). Answers: what do we ho
 - history rows: 13 {"MARKET-GRID-LIVE":12,"PARTIAL":1} · paper rows: 270
 - HBD/HIVE spread%: n=12 min=0.1322 max=0.1963 last=0.1465
 - SBD/STEEM spread%: n=13 min=0.6565 max=3.9603 last=1.0691
-- dex grid ledger: {"version":2,"orders":73,"fills":43} · fill-ledger rows: 137
+- dex grid ledger: {"version":2,"orders":73,"fills":43} · fill-ledger rows: 143
 
 ## Wiring — חיבור (10/10 WIRED)
 - [WIRED] cadence-cron — keyless Actions cron 23,53 * * * * ticks the grid observer
@@ -63,8 +63,8 @@ Offline · keyless · deterministic estate map (CR-0040). Answers: what do we ho
 - Domain/agents/cross-layer.cjs 0502753f50833acb
 - Domain/agents/one-bloc.cjs 534364660df2b421
 - Domain/agents/STASIS.json 5ab24bc6b95aba0b
-- Domain/agents/evals/run-evals.cjs c1082e6b5fd46b22
-- Domain/feature_list.json c69a6b48f805495f
+- Domain/agents/evals/run-evals.cjs 7ee2dab068a4d77a
+- Domain/feature_list.json e3db8fcd24fd3374
 - saos-dex/audit-package/src/kernel.ts 97e5c4a719ddfd0a
 - saos-dex/audit-package/src/amm.ts 91d876f699e18a05
 - saos-dex/db/grid-ledger.json 4476b1cd03fb9038

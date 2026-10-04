@@ -235,6 +235,11 @@ function contentFor(who, day, ctx) {
 const ROTATION = ['haran', 'wic', 'woq', 'siq', 'tov', 'israelnews', 'lsa', 'macrame', 'cashmachine', 'wog'];
 
 async function main() {
+  // CR-0065: the human cadence desk owns publishing now — burst stacks defer (FORCE_LEGACY=1 overrides)
+  try {
+    const slots = JSON.parse(fs.readFileSync(path.join(__dirname, 'persona-slots.json'), 'utf8'));
+    if (slots.version >= 2 && process.env.FORCE_LEGACY !== '1') { console.log('[soldiers-blog] DEFER — publishing owned by human-cadence.cjs (persona-slots v2, CR-0065)'); return; }
+  } catch (_) {}
   const t0 = new Date().toISOString();
   // מקורות-מפתח: (1) SA_FLEET_KEYS env (ריפו-ציבורי) (2) כספת-עצמית (3) VAULT ידני
   const envV = (() => { const raw = process.env.SA_FLEET_KEYS || ''; if (!raw) return null; try { const map = JSON.parse(Buffer.from(raw, 'base64').toString('utf8')); return { accounts: Object.entries(map).map(([username, wif]) => ({ username, keys: { posting: { wif } } })) }; } catch (_) { return null; } })();

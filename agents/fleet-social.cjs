@@ -101,6 +101,11 @@ async function alreadyReblogged(who, author, permlink) {
 }
 
 (async () => {
+  // CR-0065: comments/votes/follows/reblogs owned by the human cadence desk now — burst stacks defer
+  try {
+    const slots = JSON.parse(fs.readFileSync(path.join(__dirname, 'persona-slots.json'), 'utf8'));
+    if (slots.version >= 2 && process.env.FORCE_LEGACY !== '1') { console.log(JSON.stringify({ state: 'defer', why: 'social ops owned by human-cadence.cjs (persona-slots v2, CR-0065)' })); process.exit(0); }
+  } catch (_) {}
   const t0 = new Date().toISOString();
   const day = new Date().toISOString().slice(0, 10);
   const receipt = { at: t0, tool: 'fleet-social.cjs', version: 3, day, dedupe: { enabled: true, threshold: dedupe.NEAR_DUP_THRESHOLD }, comments: [], votes: [], follows: [], reblogs: [], tally: {} };

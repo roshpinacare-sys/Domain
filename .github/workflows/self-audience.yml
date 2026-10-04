@@ -5,11 +5,13 @@
 # (אותה-דוקטרינה כמו EVM_ANCHOR_PK), סורגי-בייטים לפני-כל-חתימה.
 #
 # צינור מלא (fail-soft — סוכן לעולם לא מפיל-את-הרכבת):
-#   1. soldiers-blog — רוטציית 10 חיילים · תוכן נתוני-אמת (מדידה-חיה לפני-פרסום)
-#   2. fleet-claim   — הצי תובע את פרסי-עצמו (posting-only, אידמפוטנטי, גילגול)
-#   3. head-delegate — תחזוקת-הון-עצמית: 30 SP לכל-חייל (אידמפוטנטי)
-#   4. self-audience — הצבעה-צולבת (לא-עצמית) · שערי VP/RC · verify-then-sign
-#   5. fleet-doctor  — אבחון-עצמי נטול-מפתחות · STATE-REPORT יומי
+#   1. fleet-claim   — הצי תובע את פרסי-עצמו (posting-only, אידמפוטנטי, גילגול)
+#   2. head-delegate — הון-עצמי חלקי-שוויון: חוק-הנתח-השווה v2 (CR-0065, אידמפוטנטי)
+#   3. self-audience — דגלול-הראש בלבד (חיילים מצביעים דרך human-cadence, CR-0065)
+#   4. fleet-doctor  — אבחון-עצמי נטול-מפתחות · STATE-REPORT יומי
+#
+# CR-0065: soldiers-blog + fleet-social הוסרו מהרכבת הזו — פרסום ותגובות בבעלות
+# human-cadence.yml (שעתי, חלונות-אישיים, אין-פיצוצים). FORCE_LEGACY=1 עוקף רק-ליד.
 #
 # סודות: SA_FLEET_KEYS (בסיס64 של מפת-posting-WIFs ×11) · SA_HEAD_ACTIVE (בסיס64)
 # אפס-סודות-בפלט/בקבלות/בקומיטים. קבלות-נטולות-סודות בלבד.
@@ -19,14 +21,7 @@ name: self-audience
 on:
   schedule:
     - cron: '30 14 * * *'   # 14:30 UTC
-  workflow_dispatch:
-    inputs:
-      skip_posts:
-        description: 'skip soldiers-blog (votes only)'
-        required: false
-        default: 'false'
-        type: choice
-        options: ['false', 'true']
+  workflow_dispatch: {}
 
 permissions:
   contents: write
@@ -69,13 +64,6 @@ jobs:
           npm install --prefix /tmp/steemjs steem@0.7.11 --omit=dev --no-audit --no-fund --loglevel=error
           NODE_PATH=/tmp/steemjs/node_modules node -e "require('steem'); console.log('steem-js OK via NODE_PATH')"
 
-      - name: soldiers publish (rotation, measured-truth content)
-        if: ${{ github.event.inputs.skip_posts != 'true' }}
-        env:
-          SA_FLEET_KEYS: ${{ secrets.SA_FLEET_KEYS }}
-          RECEIPT_OUT: agents/receipts/soldiers-blog-receipt.json
-        run: node agents/soldiers-blog.cjs
-
       - name: fleet claims its own rewards (self-economy)
         env:
           SA_FLEET_KEYS: ${{ secrets.SA_FLEET_KEYS }}
@@ -87,18 +75,6 @@ jobs:
           SA_HEAD_ACTIVE: ${{ secrets.SA_HEAD_ACTIVE }}
           RECEIPT_OUT: agents/receipts/head-delegate-receipt.json
         run: node agents/head-delegate.cjs
-
-      - name: cross-vote sweep (verify-then-sign, read-back)
-        env:
-          SA_FLEET_KEYS: ${{ secrets.SA_FLEET_KEYS }}
-          RECEIPT_OUT: agents/receipts/self-audience-receipt.json
-        run: node agents/self-audience.cjs
-
-      - name: fleet social (substantive comments + follow-graph + reblog — mutual support)
-        env:
-          SA_FLEET_KEYS: ${{ secrets.SA_FLEET_KEYS }}
-          RECEIPT_OUT: agents/receipts/fleet-social-receipt.json
-        run: node agents/fleet-social.cjs
 
       - name: learning loop (external engagement ledger — keyless)
         run: node agents/measure-learn.cjs
