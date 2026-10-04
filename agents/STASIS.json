@@ -1,10 +1,17 @@
 {
   "protocol": "SAOS-FATE-DEFENSE-STASIS/1",
-  "active": false,
-  "reason": null,
-  "requestedBy": null,
-  "since": null,
-  "scope": "economy-engine (all legs)",
-  "resumePolicy": "STASIS is a mechanical circuit breaker (FATE-DEFENSE law #1). Active=true halts the engine BEFORE any seal/open/broadcast as a healthy no-op (exit 0, STASIS-HALT receipt line). Set active=true only after N consecutive red engine runs or an owner directive; resume only after root-cause + judge-node green. The file itself is the audit trail — never delete history, flip the flag.",
-  "history": []
+  "active": true,
+  "reason": "OWNER DIRECTIVE 2026-10-04 (IM trace 1a108e28015b0451): 'חייב לעצור ולבחון מה הסוכנים עושים' — measured live: ~60 delegation ops on headcorner in one day (2026-10-04), including fresh SP delegated to hcsoldier1/2/3 (LOST-NO-CUSTODY — no keys exist, no authority anchors), delegation flapping between 6+ conflicting target values from uncoordinated writers (05:17Z/05:21Z/05:22Z/11:43-45Z/14:55Z/17:48-49Z/20:33-34Z), and 15 signing agents that did not obey this brake. All capital lanes halt for examination until the owner reopens them.",
+  "requestedBy": "owner directive 2026-10-04 (IM trace 1a108e28015b0451), executed by the platform main agent",
+  "since": "2026-10-04T22:06:00Z",
+  "scope": "all capital lanes: delegations, transfers, claims, converts, bridges, trades, votes — every signing agent obeys (capital-gate.cjs); measurement-only lanes continue",
+  "resumePolicy": "STASIS is a mechanical circuit breaker (FATE-DEFENSE law #1). Active=true halts the engine BEFORE any seal/open/broadcast as a healthy no-op (exit 0, STASIS-HALT receipt line). Set active=true only after N consecutive red engine runs or an owner directive; resume only after root-cause + judge-node green + explicit owner word. The file itself is the audit trail — never delete history, flip the flag.",
+  "history": [
+    {
+      "at": "2026-10-04T22:06:00Z",
+      "action": "engaged",
+      "by": "platform main agent on owner directive (trace 1a108e28015b0451)",
+      "note": "capital-lane freeze: auto-delegation chaos + capital sent to keyless lost soldiers (hcsoldier1/2/3); 15 signers wired to capital-gate (STASIS+ROSTER+JOURNAL) in the same commit"
+    }
+  ]
 }

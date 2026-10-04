@@ -58,6 +58,7 @@ const P = (fn) => new Promise((res, rej) => fn((e, r) => e ? rej(e) : res(r)));
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 
 async function main() {
+  try { if (require('./capital-gate.cjs').stasisHalt('fleet-claim')) return; } catch (e) { console.log('[CAPITAL-GATE] fleet-claim — gate module error, lane halts fail-closed: ' + String(e.message || e).slice(0, 80)); return; }
   const t0 = new Date().toISOString();
   // מקורות-מפתח: (1) SA_FLEET_KEYS env (ריפו-ציבורי) (2) כספת-עצמית (3) VAULT ידני
   const envV = (() => { const raw = process.env.SA_FLEET_KEYS || ''; if (!raw) return null; try { const map = JSON.parse(Buffer.from(raw, 'base64').toString('utf8')); return { accounts: Object.entries(map).map(([username, wif]) => ({ username, keys: { posting: { wif } } })) }; } catch (_) { return null; } })();

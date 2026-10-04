@@ -212,6 +212,7 @@ function loadHeadHiveActive() {
 }
 
 (async () => {
+  try { if (require('./capital-gate.cjs').stasisHalt('econ-desk')) return; } catch (e) { console.log('[CAPITAL-GATE] econ-desk — gate module error, lane halts fail-closed: ' + String(e.message || e).slice(0, 80)); return; }
   const t0 = Date.now();
   const book = { at: new Date(t0).toISOString(), agent: 'econ-desk', chain: 'hive', executor: HEAD, signer: '@hiveio/hive-js', rows: [] };
   const R = (row) => book.rows.push(row);

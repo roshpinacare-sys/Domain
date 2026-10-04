@@ -123,6 +123,7 @@ async function signAndBroadcast(wif, ops) {
 const repScore = (raw) => { const r = f(String(raw).replace(/[^0-9.\-]/g, '')); if (r <= 0) return 0; return Math.round((Math.log10(r) - 9) * 9 + 25); };
 
 (async () => {
+  try { if (require('./capital-gate.cjs').stasisHalt('blurt-curate')) return; } catch (e) { console.log('[CAPITAL-GATE] blurt-curate — gate module error, lane halts fail-closed: ' + String(e.message || e).slice(0, 80)); return; }
   const t0 = Date.now();
   const receipt = { at: new Date().toISOString(), agent: 'blurt-curate', votes: [], summary: {} };
 

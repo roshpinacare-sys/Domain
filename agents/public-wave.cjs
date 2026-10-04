@@ -386,6 +386,7 @@ async function supportPass(day, keys, memory, receipt) {
 }
 
 async function main() {
+  try { if (require('./capital-gate.cjs').stasisHalt('public-wave')) return; } catch (e) { console.log('[CAPITAL-GATE] public-wave — gate module error, lane halts fail-closed: ' + String(e.message || e).slice(0, 80)); return; }
   const t0 = new Date().toISOString();
   const day = new Date().toISOString().slice(0, 10);
   const receipt = { at: t0, tool: 'public-wave.cjs', version: 1, day, posts: [], support: [], questionsFound: 0, tally: {} };

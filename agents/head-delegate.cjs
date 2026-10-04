@@ -14,6 +14,7 @@ const fs = require('fs');
 const path = require('path');
 const { execFileSync } = require('child_process');
 const steem = require('steem');
+const capGate = require('./capital-gate.cjs'); // owner directive 2026-10-04: think-before-sign (STASIS + roster + journal)
 
 steem.api.setOptions({ url: 'https://api.steemit.com' });
 const ROOT = path.resolve(__dirname, '..');
@@ -63,6 +64,9 @@ const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 
 async function main() {
   const t0 = new Date().toISOString();
+  // שער-המחשבה (owner 2026-10-04): בלם-חירום קודם-לכל — ואז שוער-רוסטר על-כל-יעד
+  if (capGate.stasisHalt('head-delegate')) return;
+  const roster = capGate.guardTargets('head-delegate', SOLDIERS);
   // מקור-מפתח-פעיל: (1) SA_HEAD_ACTIVE env (ריפו-ציבורי) (2) כספת-עצמית (3) VAULT ידני
   const actEnv = process.env.SA_HEAD_ACTIVE ? Buffer.from(process.env.SA_HEAD_ACTIVE, 'base64').toString('utf8').trim() : null;
   const vaultPath = process.env.VAULT || (actEnv ? null : recoverVault());
@@ -104,8 +108,9 @@ async function main() {
   const vestsTarget = (targetSP / ratio).toFixed(6) + ' VESTS';
   console.log(`head-del] equal-share law: own=${ownSP.toFixed(1)} SP · powerdown-committed=${committedSP.toFixed(1)} SP · reserve=${HEAD_RESERVE_SP} SP → ${targetSP} SP per soldier (×${SOLDIERS.length})`);
 
-  const results = []; let delegated = 0, skipped = 0, failed = 0, reclaimed = 0;
-  for (const s of SOLDIERS) {
+  const results = []; let delegated = 0, skipped = 0, failed = 0, reclaimed = 0, refused = 0;
+  for (const x of roster.refused) { results.push({ to: x.name, target: 'n/a', status: 'REFUSED-ROSTER', why: x.reason }); refused++; console.log(`[REFUSED-ROSTER] headcorner → @${x.name} · ${x.reason}`); }
+  for (const s of roster.allowed) {
     const R = { to: s, target: `${targetSP} SP` };
     try {
       const sa = (await P(cb => steem.api.getAccounts([s], cb)))[0];
@@ -153,8 +158,9 @@ async function main() {
     console.log(`[${R.status}] headcorner ↩ @${s} (reclaim idle delegation — 7-day return)`);
     await sleep(400);
   }
+  capGate.journal('head-delegate', { dry: DRY, targetSPPerSoldier: targetSP, rosterLoaded: roster.rosterLoaded, allowed: roster.allowed, refused: roster.refused, delegated, reclaimed, skipped, failed, refusedCount: refused });
   const receipt = {
-    ok: true, tool: 'head-delegate.cjs', version: 2,
+    ok: true, tool: 'head-delegate.cjs', version: 3,
     doctrine: 'equal-share self-capital (CR-0065): (own SP - powerdown committed - RC reserve) shared equally across soldiers, hysteresis band 5%, delegations glide with the powerdown, idempotent, bounded',
     at: t0, finishedAt: new Date().toISOString(), dry: DRY,
     law: { ownSP: Math.round(ownSP * 10) / 10, powerdownCommittedSP: Math.round(committedSP * 10) / 10, reserveSP: HEAD_RESERVE_SP, targetSPPerSoldier: targetSP, soldiers: SOLDIERS.length },

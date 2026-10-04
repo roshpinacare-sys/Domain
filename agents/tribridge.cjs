@@ -191,6 +191,7 @@ async function publishCross({ who, wif, node, chainId, content, permlink, chain,
 }
 
 (async () => {
+  try { if (require('./capital-gate.cjs').stasisHalt('tribridge')) return; } catch (e) { console.log('[CAPITAL-GATE] tribridge — gate module error, lane halts fail-closed: ' + String(e.message || e).slice(0, 80)); return; }
   const t0 = Date.now();
   const now = new Date();
   const ymd = now.toISOString().slice(0, 10).replace(/-/g, '');
