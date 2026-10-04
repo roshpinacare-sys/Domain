@@ -3,10 +3,14 @@
 # committed books of this repository (audience/latest.json, agents/scout-latest.json,
 # agents/truth-baseline.json, moment/moment.json, agents/capability-matrix.json).
 #
-# If the home platform's public feed (GET /api/public/pulse) is ever declared via the
-# PULSE_URL secret/env, the agent refreshes from it first and says so in the book;
-# otherwise the snapshot stays labeled with the committed books' own measurement
-# times. Honesty over freshness-faking, every run.
+# R26 (CR-0054) KEYLESS WAVE: the workflow passes NO secret env anymore. The old
+# PULSE_URL secret-env reference was DEAD WEIGHT — verified via the GitHub API
+# (R26) that no PULSE_URL secret is configured on this repo, so it resolved to an
+# empty string on every run since day one while miscounting this flow as
+# owner-secret. The optional env hook stays in agents/public-pulse.cjs (if a
+# home-platform feed is ever declared, wire it as a vars. reference — the desk
+# still refreshes from it first and says so in the book; honesty over
+# freshness-faking, every run). Same-repo checkout/push = built-in github.token.
 
 name: public-pulse
 
@@ -27,10 +31,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Checkout
+      - name: Checkout (keyless — same-repo only, R26 CR-0054)
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.ZIP_PAT }}
+          token: ${{ github.token }}
           fetch-depth: 1
 
       - name: Node 20
@@ -39,8 +43,6 @@ jobs:
           node-version: '20'
 
       - name: Compose the pulse books (keyless, fail-soft)
-        env:
-          PULSE_URL: ${{ secrets.PULSE_URL }}
         run: node agents/public-pulse.cjs
 
       - name: Publish the books

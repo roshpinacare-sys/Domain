@@ -1831,10 +1831,54 @@ function accumulateInMemory(bookRows, seed) {
       ['white-box: a walked convert with ts and no date composes open+3.5d (the maturity law, computed — never guessed)', 'white-box: the measured ladder fixture — total, next maturity, and the 10-06→10-07 wave window match the chain walk', 'white-box: the seq-race — a dated sensor row survives an undated walked row with a higher seq', 'white-box: the undated bucket — no ts + no date = honest bucket, zero NaN in any schedule field', 'white-box: the sensor book keeps the per_account shape and every maturity row carries a parseable matures_at', 'white-box: the live canon book has zero phantom dates on the real tree', 'white-box: tallyOp computes matures_at + open_ts from the op timestamp and books closures'],
       why45.length ? 'fails: ' + why45.join('; ') : 'the schedule the operator was promised now exists — computed from chain law, pinned by runnable expectations');
   } catch (e) { evalr('E46', 'maturity-law suite', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+  // ---- E47 (R26, CR-0055): the keyless wave — the sovereignty bar pinned as data.
+  // The census's own regex (/secrets\.(?!GITHUB_TOKEN)[A-Z_]+/) is the counting
+  // authority; E47 recomputes it over the live dir and pins the converted four.
+  try {
+    const why47 = [];
+    const c47 = (cond, name) => { if (!cond) why47.push(name); };
+    const WFD = path.join(AG, '..', '.github', 'workflows');
+    const OWNER_SECRET_RE = /secrets\.(?!GITHUB_TOKEN)[A-Z_]+/;
+    const wfFiles47 = (() => { try { return fs.readdirSync(WFD).filter((f) => /\.ya?ml$/.test(f)); } catch (_) { return []; } })();
+    const texts47 = {};
+    for (const f of wfFiles47) texts47[f] = String(fs.readFileSync(path.join(WFD, f), 'utf8') || '');
+    const ownerSecretCount47 = wfFiles47.filter((f) => OWNER_SECRET_RE.test(texts47[f])).length;
+    c47(wfFiles47.length === 48, 'workflow-count-48');
+    c47(ownerSecretCount47 === 33, 'owner-secret-count-33');
+    c47(wfFiles47.length - ownerSecretCount47 === 15, 'keyless-count-15');
+    // the converted four: zero non-GITHUB_TOKEN refs, permissions kept, keyless checkout
+    const converted47 = ['twin-audit.yml', 'audience-analyst.yml', 'content-reviewer.yml', 'public-pulse.yml'];
+    for (const f of converted47) {
+      const t = texts47[f] || '';
+      c47(t.length > 0 && !OWNER_SECRET_RE.test(t), 'converted-clean:' + f);
+      c47(/contents:\s*write/.test(t), 'contents-write-declared:' + f);
+      c47(t.includes('${{ github.token }}'), 'github-token-checkout:' + f);
+    }
+    c47(/issues:\s*write/.test(texts47['twin-audit.yml'] || '') && /issues:\s*write/.test(texts47['audience-analyst.yml'] || '') && /issues:\s*write/.test(texts47['content-reviewer.yml'] || ''), 'issues-write-declared');
+    // the dead-ref finding is durably documented in the file it fixed (name without the secret pattern)
+    c47((texts47['public-pulse.yml'] || '').includes('PULSE_URL'), 'pulse-url-finding-documented');
+    // the optional feature hook stays in the DESK (capability preserved, not stripped)
+    c47(String(fs.readFileSync(path.join(AG, 'public-pulse.cjs'), 'utf8') || '').includes('PULSE_URL'), 'pulse-url-hook-lives-in-desk');
+    // the gate keeps its fail-soft token loop (empty tokens skipped — the fallback secret is gone, the honesty stays)
+    c47(String(fs.readFileSync(path.join(AG, 'twin-issue-gate.cjs'), 'utf8') || '').includes('if (!token) continue'), 'gate-skips-empty-tokens');
+    // black-box: the REAL gate fresh-process with zero tokens in env and no marker → honest exit 0
+    const bbEnv47 = Object.assign({}, process.env); delete bbEnv47.GH_TOKEN; delete bbEnv47.ZIP_PAT;
+    const bb47 = spawnSync(process.execPath, [path.join(AG, 'twin-issue-gate.cjs')], { encoding: 'utf8', timeout: 60000, env: bbEnv47 });
+    c47(bb47.status === 0, 'gate-black-box-zero-tokens-exit-0');
+    // the refreshed census book (same tree) carries the new sovereignty numbers
+    let censusBook47 = null; try { censusBook47 = JSON.parse(fs.readFileSync(path.join(AG, 'fleet-census.json'), 'utf8')); } catch (_) {}
+    c47(censusBook47 && censusBook47.sovereignty && censusBook47.sovereignty.workflowsKeyless === 15, 'census-book-keyless-15');
+    c47(censusBook47 && censusBook47.sovereignty && censusBook47.sovereignty.workflowsOwnerSecret === 33, 'census-book-owner-secret-33');
+
+    evalr('E47', 'the keyless wave (CR-0055): the sovereignty bar pinned — the census regex recounts 15/48 keyless over the live dir, the four converted flows carry zero non-GITHUB_TOKEN refs under kept permissions, the dead PULSE_URL ref is durably documented-and-gone while its hook stays in the desk, and the issue gate survives zero tokens fresh-process',
+      why47.length === 0,
+      ['white-box: census-authority regex recounted over .github/workflows = 48 files, 33 owner-secret, 15 keyless (the R26 bar, encoded as data)', 'white-box: twin-audit/audience-analyst/content-reviewer/public-pulse — zero non-GITHUB_TOKEN secret refs, contents:write kept, github.token checkout, issues:write kept where gates exist', 'white-box: public-pulse.yml documents the dead-ref finding without referencing it; public-pulse.cjs still owns the optional PULSE_URL hook (capability preserved)', 'white-box: twin-issue-gate.cjs keeps the fail-soft token loop (empty tokens skipped)', 'black-box: the real gate fresh-process with GH_TOKEN/ZIP_PAT stripped and no marker → exit 0 honestly', 'white-box: the refreshed census book agrees (workflowsKeyless 15 / owner-secret 33)'],
+      why47.length ? 'fails: ' + why47.join('; ') : 'a secret carried by habit is not security, it is surface — this eval pins the line: same-repo = keyless, cross-repo = capability');
+  } catch (e) { evalr('E47', 'keyless wave', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.33.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.34.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];
