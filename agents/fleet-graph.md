@@ -16,6 +16,7 @@ flowchart TD
 
     subgraph CENSUS["CENSUS — read-only, keyless (CENSUS→SIGN SEPARATION LAW)"]
         LU["liquidity-desk.cjs<br/>3-chain census + ladder"]
+        RT["dex-router.cjs<br/>SWAP-NET: routes + arb net + counter-grids (R39)"]
         KA["kpi-scribe<br/>KPI.json oracle"]
         HA["harness-audit.cjs<br/>26 checks incl. sovereignty (Z-37)"]
     end
@@ -68,6 +69,7 @@ flowchart TD
 | Node | Subsystem | Law binding | Anchor |
 |---|---|---|---|
 | liquidity-desk | census | CENSUS→SIGN SEPARATION | live chain reads |
+| dex-router (SWAP-NET) | census | CENSUS→SIGN SEPARATION · PLAN-OWNER-GATED-NOT-BROADCAST · Z-27 verdict authority inherited | dex-router.json protocol SAOS-DEX-ROUTER/1 + E62 re-derivation |
 | venture-desk | state→dashboard | EARN-GOVERNOR · MEASURABLE→DASHBOARD | fills-ledger chain arithmetic |
 | harness-audit | judge | HARNESS-AUDIT MANDATE | its own checks vs files |
 | evals | judge | JUDGE-SEPARATION | runnable expectations E1-E6 |
