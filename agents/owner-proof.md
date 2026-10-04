@@ -54,8 +54,8 @@ _מורכב מהפנקסים המחויבים בלבד (keyless, offline). כל 
 
 ## משמעת — מה מוכח ומה נבדק
 
-- **claimsAudit**: "WARN" — _מקור: agents/claims-audit.json · נמדד: 2026-10-04T02:46:23.276Z · כל קובץ שנטען בפנקס — נבדק שהוא באמת על העץ_
-- **censusLanes**: undefined — _מקור: agents/fleet-census.json · נמדד: 2026-10-04T02:46:22.406Z · מפת ה-16 מסלולים של הצי_
+- **claimsAudit**: "WARN" — _מקור: agents/claims-audit.json · נמדד: 2026-10-04T03:13:33.188Z · כל קובץ שנטען בפנקס — נבדק שהוא באמת על העץ_
+- **censusLanes**: undefined — _מקור: agents/fleet-census.json · נמדד: 2026-10-04T03:13:32.260Z · מפת ה-16 מסלולים של הצי_
 - **ownerLanguage**: "he" — _מקור: agents/claims-audit.cjs OWNER_LANGUAGE (CR-0050) · כל פנייה לבעלים — בעברית_
 
 _החוק: שום מספר לא מומצא, שום היקף לא מתגנב (יומי לעולם לא מתגלגל לכל-חיים), שום הפסד לא מוסתר._
