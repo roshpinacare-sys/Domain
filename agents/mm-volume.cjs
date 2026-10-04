@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* MM-VOLUME (CR-0058 + CR-0059, fleet Rungs 28-29 — THE VOLUME ENGINE + THE SHARE LADDER)
+/* MM-VOLUME (CR-0058..CR-0060, fleet Rungs 28-30 — THE VOLUME ENGINE + THE SHARE LADDER + THE CALIBRATED ENGINE)
  * — the fleet-scale market-making planner: how the fleet becomes the volume leader
  * of the venues it stands on, PROVABLY, before a single owner-gated sat moves.
  *
@@ -41,6 +41,19 @@
  *  Q9 WHAT KILLED THE GREAT MARKET MAKERS, AND WHICH GUARD ANSWERS EACH? → the
  *     doctrine map (adverse selection, inventory skew, fee drag, self-poison,
  *     silent rot, overtrading) — learned-before-burned, shipped WITH the plan.
+ *  Q10 (v1.2.0) WHAT IS THE TRUE FILL SIZE? → calibratedAvgSize: the fill-ledger's
+ *     REAL classified fills (µ-precise) give the actual average notional per fill
+ *     (0.703 SBD measured vs 0.068 planned — reality runs ~10× the plan). When the
+ *     ledger speaks, the projection RUNS ON IT; the prior size is carried as
+ *     priorAvgSizeSbd with its source — calibration is NEVER a silent rewrite.
+ *  Q11 DOES THE SHARE MOVE? → shareSeries: the append-only plan ledger IS the time
+ *     series; the desk reads its own past rows and emits the last K {at, sharePct}
+ *     points per venue — dominance becomes a TREND, not a single frame. The series
+ *     lives in the book's `series` namespace (time-born → excluded from the
+ *     byte-stable payload; the VALUES are deterministic, the timestamps are the axis).
+ *  Q12 WHAT DID CALIBRATION CHANGE? → the book carries a calibration block: prior
+ *     size → calibrated size, both sources, n, and the projection lift % — the
+ *     owner sees the lift AND where it came from, side by side, never overwritten.
  *
  * Laws carried (all pre-existing, re-honored here):
  *  · STASIS halt-before-read — TWO brakes, ONE law: the DIR-local brake (market-grid
@@ -79,6 +92,7 @@ const LAW = {
   ASSUMED_AVG_SIZE_SBD: 0.1,   // assumption label carried when no realized rows exist
   REALIZED_WINDOW_H: 24,       // realized metering window (ends at the LAST fill — determinism law)
   GROWTH_NS: [1, 2, 3, 5],     // the recruit growth ladder
+  SHARE_SERIES_K: 24,          // share-series length cap (the plan-ledger window)
 };
 
 // ---------- pure helpers (E50/E51 white-box surface) ----------
@@ -178,6 +192,50 @@ function avgSellNotional(runs) {
   return { avgSizeSbd: r4(avg) || LAW.ASSUMED_AVG_SIZE_SBD, assumed: false, n: notions.length };
 }
 
+/** Q10 — calibrated average fill notional (SBD) from the fill-ledger's REAL
+ * classified fills (µ-precise, direction-law parsed). Fallback chain: real fills
+ * → exec-runs planned notion → law assumption. The source is ALWAYS carried, and
+ * the prior size rides along (priorAvgSizeSbd) — calibration never rewrites history.
+ * Unclassified fills are ignored (the same honesty law as realized24h). */
+function calibratedAvgSize(fillsRows, prior) {
+  const notions = [];
+  for (const f of fillsRows || []) {
+    const lp = f && f.leg_parsed;
+    if (!lp) continue;
+    let micro = null;
+    if (lp.leg === 'SELL' && lp.recv && lp.recv.sym === 'SBD' && isFinite(lp.recv.micro)) micro = lp.recv.micro;
+    else if (lp.leg === 'BUY' && lp.sold && lp.sold.sym === 'SBD' && isFinite(lp.sold.micro)) micro = lp.sold.micro;
+    if (micro != null && micro > 0) notions.push(micro / 1e6);
+  }
+  if (notions.length) {
+    const avg = notions.reduce((s, x) => s + x, 0) / notions.length;
+    return {
+      avgSizeSbd: r4(avg) || (prior && prior.avgSizeSbd) || LAW.ASSUMED_AVG_SIZE_SBD,
+      source: 'fill-ledger-realized', n: notions.length,
+      priorAvgSizeSbd: prior ? prior.avgSizeSbd : null,
+      priorSource: prior ? (prior.assumed ? 'law-assumption' : 'exec-runs-planned') : null,
+    };
+  }
+  if (prior && !prior.assumed) return { avgSizeSbd: prior.avgSizeSbd, source: 'exec-runs-planned', n: prior.n || 0, priorAvgSizeSbd: null, priorSource: null };
+  return { avgSizeSbd: (prior && prior.avgSizeSbd) || LAW.ASSUMED_AVG_SIZE_SBD, source: 'law-assumption', n: 0, priorAvgSizeSbd: null, priorSource: null };
+}
+
+/** Q11 — the share as a TIME series: the append-only plan ledger IS the series.
+ * Reads the desk's OWN past rows (sorted by `at`), filters rows carrying shares
+ * for the venue whose label contains venueSub, returns the last capK points
+ * {at, sharePct}. Null when no row ever spoke — young series are honest too. */
+function shareSeries(planRows, venueSub, capK = LAW.SHARE_SERIES_K) {
+  const rows = (planRows || [])
+    .filter((r) => r && typeof r.at === 'string' && !isNaN(Date.parse(r.at)) && Array.isArray(r.shares))
+    .sort((a, b) => Date.parse(a.at) - Date.parse(b.at));
+  const pts = [];
+  for (const r of rows) {
+    const s = r.shares.find((x) => x && typeof x.venue === 'string' && String(x.venue).includes(venueSub) && typeof x.sharePct === 'number');
+    if (s) pts.push({ at: r.at, sharePct: s.sharePct });
+  }
+  return pts.length ? pts.slice(-capK) : null;
+}
+
 /** fleet growth table: the lift path from the funded fleet of today to a
  * partitioned fleet of N. Lift is honest: capacity scales with N, tape does not. */
 function growthTable({ accounts, fillsPerMin, avgSizeSbd, ns = LAW.GROWTH_NS, runsPerDay = LAW.RUNS_PER_DAY, maxNewPerRun = LAW.MAX_NEW_PER_RUN }) {
@@ -267,7 +325,7 @@ async function run() {
   if (halt.active && !haltSrc) { haltSrc = halt.source; haltReason = null; }
   if (haltSrc) {
     const at = new Date().toISOString();
-    const book = { at, agent: 'mm-volume v1.1.0', verdict: 'MMV-HALTED-STASIS', halted: true, reason: haltReason, scope: haltSrc, venues: [], fleet: null, selfFlow: null, projections: null, ownerGate: { mode: 'PLAN-ONLY-OWNER-GATED' }, blockedReasons: ['STASIS'], errors: [] };
+    const book = { at, agent: 'mm-volume v1.2.0', verdict: 'MMV-HALTED-STASIS', halted: true, reason: haltReason, scope: haltSrc, venues: [], fleet: null, selfFlow: null, projections: null, calibration: null, series: null, ownerGate: { mode: 'PLAN-ONLY-OWNER-GATED' }, blockedReasons: ['STASIS'], errors: [] };
     try { fs.writeFileSync(BOOK_JSON, JSON.stringify(book, null, 1)); } catch (_) {}
     console.log(`STASIS-HALT mm-volume · ${at}`);
     return;
@@ -293,6 +351,7 @@ async function run() {
   const registry = read('agent-registry.json');
   const mgBook = read('market-grid.json');       // v1.1.0 live book: spreads + the 24h pond
   const fillsRows = readJsonl('fill-ledger-fills.jsonl'); // v1.1.0 realized metering
+  const planRows = readJsonl('mm-volume-plan.jsonl');     // v1.2.0 the desk's OWN past — the share time-series source
 
   const blockedReasons = [];
   if (!feeDoctrine) blockedReasons.push('NO-FEE-DOCTRINE');
@@ -325,6 +384,7 @@ async function run() {
   };
 
   const notion = avgSellNotional(execRuns);
+  const calib = calibratedAvgSize(fillsRows, notion); // Q10: the projection runs on REAL fills when the ledger speaks
   const vwap = sellVwapFromRuns(execRuns);
   const edgeFloor = buyEdgeFloor(vwap);
   const internalFeeBps = 0; // fee-doctrine: chains-side internal markets charge zero trade fee
@@ -333,17 +393,17 @@ async function run() {
   for (const [chainName, label, marketIncludes] of [['steem', 'SBD/STEEM (internal steem)', 'steem'], ['hive', 'HBD/HIVE (internal hive)', 'HBD/HIVE']]) {
     const src = spreadFrom(chainName, marketIncludes);
     if (!src) { if (chainName === 'steem') blockedReasons.push('NO-MEASURED-STEEM-SPREAD'); continue; }
-    const econ = venueEconomics({ feeBps: internalFeeBps, spreadPct: src.spreadPct, fillsPerMin: LAW.TAPE_FILLS_PER_MIN, avgSizeSbd: notion.avgSizeSbd, accounts: 1 });
+    const econ = venueEconomics({ feeBps: internalFeeBps, spreadPct: src.spreadPct, fillsPerMin: LAW.TAPE_FILLS_PER_MIN, avgSizeSbd: calib.avgSizeSbd, accounts: 1 });
     venues.push({
       venue: label, layer: 'chain-internal', feeBps: internalFeeBps,
       spreadPct: r4(src.spreadPct), measuredFrom: src.from,
-      avgSizeSbd: notion.avgSizeSbd, avgSizeAssumed: notion.assumed, avgSizeN: notion.n,
+      avgSizeSbd: calib.avgSizeSbd, avgSizeSource: calib.source, avgSizeAssumed: calib.source === 'law-assumption', avgSizeN: calib.n, avgSizePriorSbd: calib.priorAvgSizeSbd,
       sellVwap: chainName === 'steem' ? vwap : null, buyEdgeFloor: chainName === 'steem' ? edgeFloor : null,
       econ,
       marketVolume24h: src.volRaw || null,
       marketVolume24hSbdTerm: src.volSbdTerm,
       sharePct: econ ? sharePct(econ.projVolumeSbd, src.volSbdTerm) : null,
-      shareLadder: econ ? shareLadder({ marketVolumeSbd: src.volSbdTerm, spreadPct: src.spreadPct, fillsPerMin: LAW.TAPE_FILLS_PER_MIN, avgSizeSbd: notion.avgSizeSbd }) : null,
+      shareLadder: econ ? shareLadder({ marketVolumeSbd: src.volSbdTerm, spreadPct: src.spreadPct, fillsPerMin: LAW.TAPE_FILLS_PER_MIN, avgSizeSbd: calib.avgSizeSbd }) : null,
       realized: chainName === 'steem' ? (function () {
         const r = realized24h(fillsRows);
         if (!r) return { measured: false, nullReason: 'NO-FILLS-LEDGER' };
@@ -390,13 +450,28 @@ async function run() {
   const verdict = blockedReasons.length === 0 && withEcon.length > 0 ? 'MMV-PLAN-LIVE' : (withEcon.length > 0 ? 'MMV-PARTIAL' : 'MMV-BLOCKED-INPUTS');
   const at = new Date().toISOString();
   const book = {
-    at, agent: 'mm-volume v1.1.0 (CR-0058+CR-0059, fleet Rungs 28-29 — the volume engine + the share ladder)', verdict,
+    at, agent: 'mm-volume v1.2.0 (CR-0058..CR-0060, fleet Rungs 28-30 — the volume engine + the share ladder + the calibrated engine)', verdict,
     law: {
       planOnly: 'this desk PLANs and MEASURES — it never signs; the live broadcast path is market-exec.cjs law (MARKET_EXEC_LIVE=1, verify-then-sign)',
       guards: ['SELL-CAP-85% of liquid inventory', 'MAX-NEW-ORDERS 6/run/account', 'BUY-EDGE: no buy above realized sell VWAP − 0.3%', 'SPACING-FLOOR 0.4% (market-grid)', 'INTERNAL-FLOW capped 25% + labeled + VWAP-excluded', 'STASIS halt-before-read'],
     },
     doctrine: doctrineMap(),
+    calibration: {
+      avgSizePriorSbd: notion.avgSizeSbd,
+      avgSizePriorSource: notion.assumed ? 'law-assumption' : 'exec-runs-planned',
+      avgSizePriorN: notion.n,
+      avgSizeCalibratedSbd: calib.avgSizeSbd,
+      avgSizeCalibratedSource: calib.source,
+      avgSizeCalibratedN: calib.n,
+      liftPct: (typeof calib.avgSizeSbd === 'number' && typeof notion.avgSizeSbd === 'number' && notion.avgSizeSbd > 0) ? r4(((calib.avgSizeSbd / notion.avgSizeSbd) - 1) * 100) : null,
+      law: 'Q12: the projection runs on the REAL fill size when the ledger speaks; the prior stays carried side-by-side — calibration is never a silent rewrite',
+    },
     venues, fleet, projections,
+    series: {
+      law: 'Q11: time-born namespace — the desk\u2019s own past (the append-only plan ledger); excluded from the byte-stable payload (values deterministic, timestamps are the axis)',
+      planLedgerRows: planRows.length,
+      shareSeries: venues.filter((v) => v.sharePct != null).map((v) => ({ venue: v.venue, points: shareSeries(planRows, String(v.venue).includes('hive') ? 'hive' : 'steem') || [] })),
+    },
     ownerGate: { mode: 'PLAN-ONLY-OWNER-GATED', livePath: 'market-exec.cjs (headcorner) — fleet rollout per fleet.rolloutPath', previewNote: 'per-venue order previews are emitted by market-grid executorPreview; this book carries counts and prices only' },
     inputs: {
       feeDoctrine: feeDoctrine ? (feeDoctrine.format || 'present') : null,
@@ -436,6 +511,12 @@ async function run() {
     ...(venues.filter((v) => v.realized && v.realized.measured).map((v) => [
       `מימוש מול פרויקציה (${v.venue}): ${v.realized.fillsCount} מילויים אמיתיים ב-24 שעות מהמילוי האחרון · נמכר ${v.realized.realizedSellSbd} SBD · נקנה ${v.realized.realizedBuySbd} SBD · מילוי ממוצע ${v.realized.avgFillSbd} SBD · דיוק הפרויקציה ${v.realized.projectionAccuracyPct}%`,
     ]).flat()),
+    ...(book.calibration && book.calibration.avgSizeCalibratedSource === 'fill-ledger-realized' ? [
+      `כיול מהמילויים האמיתיים (Q10): גודל מתוכנן ${book.calibration.avgSizePriorSbd} SBD (${book.calibration.avgSizePriorSource}) → מילוי אמתי נמדד ${book.calibration.avgSizeCalibratedSbd} SBD (${book.calibration.avgSizeCalibratedN} מילויים מסווגים) — הפרויקציה רצה על האמת (${book.calibration.liftPct > 0 ? '+' : ''}${book.calibration.liftPct}% תיקון)`,
+    ] : []),
+    ...(book.series && book.series.shareSeries.some((s) => s.points.length) ? [
+      `נתח-זמן (Q11): ` + book.series.shareSeries.filter((s) => s.points.length).map((s) => `${s.venue}: ${s.points.length} נקודות — אחרון ${s.points[s.points.length - 1].sharePct}%`).join(' · ') + ` (פנקס התוכניות הוא הסדרה — הנתח כמגמה, לא תמונה)`,
+    ] : []),
     '',
     `סולם הצי: ${fleet.accountsNow} חשבון/ות ממומנים (${fleet.fundedAccounts.join(', ')}) · חלוקת סולמות מכסה ${partition.covers ? 'את כל' : 'חלק מ'} ה-10 המדרגות`,
     `זרימה פנימית (מסחר בין החיילים): ${venues[0] && venues[0].selfFlow && venues[0].selfFlow.eligible ? `זמינה — תקרה ${projections.internalFlowCapSbdDay} SBD/יום, מתויגת INTERNAL-FLOW, מוחרגת מה-VWAP` : 'חסומה'}`,
@@ -449,7 +530,7 @@ async function run() {
   ].filter(Boolean).join('\n');
   try { fs.writeFileSync(BOOK_MD, he); } catch (e) { errors.push({ md: String(e.message) }); }
 
-  console.log(`mm-volume: ${verdict} · venues ${venues.length} · projVol ${projections.projVolumeSbdDay} SBD/day · netCons ${projections.projNetConsSbdDay} · shares ${venues.filter((v) => v.sharePct != null).map((v) => v.sharePct + '%').join('/') || '—'} · blocked ${blockedReasons.length}`);
+  console.log(`mm-volume: ${verdict} · venues ${venues.length} · projVol ${projections.projVolumeSbdDay} SBD/day · netCons ${projections.projNetConsSbdDay} · avgSize ${calib.avgSizeSbd} (${calib.source}, n=${calib.n}) · series ${book.series.planLedgerRows} rows · blocked ${blockedReasons.length}`);
 }
 
 // Z-49 law: requiring this file for evals must never execute a run
@@ -458,4 +539,4 @@ if (require.main === module) {
   run().catch((e) => { console.error('mm-volume FATAL:', e.message); process.exit(0); });
 }
 
-module.exports = { venueEconomics, partitionLadder, selfFlowPlan, buyEdgeFloor, sellVwapFromRuns, avgSellNotional, growthTable, sharePct, shareLadder, realized24h, doctrineMap, LAW };
+module.exports = { venueEconomics, partitionLadder, selfFlowPlan, buyEdgeFloor, sellVwapFromRuns, avgSellNotional, calibratedAvgSize, shareSeries, growthTable, sharePct, shareLadder, realized24h, doctrineMap, LAW };

@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "at": "2026-10-04T01:51:19.933Z",
+  "at": "2026-10-04T02:14:35.867Z",
   "since": "2026-10-02T16:40:20.950Z",
   "windowSince": "2026-10-02T16:40:20.950Z",
   "agent": "pulse v1.2.0 (CR-0009 loop, Rung 1; CR-0028 consumes the laya advisory triage; CR-0033 consumes the scheduled evolution-window evidence — Z-48/Z-49/Z-60/Z-62)",
@@ -8,6 +8,10 @@
     "since": "2026-10-02T16:40:20.950Z",
     "count": 40,
     "commits": [
+      {
+        "sha": "75844ac",
+        "subject": "R29 THE SHARE LADDER (CR-0059 / feat-054 / E51, suite v1.37.0 -> v1.38.0, 51/51 GREEN): 'the biggest market maker' becomes a measured number instead of a boast. THE POND: market-grid v1.1.0 reads condenser get_volume from the chains themselves — SBD/STEEM 24h pond 163.687 SBD, HBD/HIVE 958.712 HBD — booked into the live book + the append-only history (volumeSbdTerm rows); pure parseVolume exported (both chains' response shapes, invalid drops). THE SHARE: mm-volume v1.1.0 computes the fleet's projected volume over the measured pond as a LADDER over funded soldiers — SBD/STEEM: N=1 → 23.9286% (one soldier already holds a quarter of the venue), N=2 → 47.8572%, N=3 → 71.7858%, N=5 → 119.643% SATURATED (the pond caps the capacity ladder — the tape becomes the binding, surfaced never hidden); HBD/HIVE joins the plan: 4.0855% at N=1. THE TRUTH CHECK (Q8): realized24h meters the fill-ledger's REAL fill_order fills over a 24h window ending at the LAST fill (deterministic from data alone) — 124 real fills, 62.781 SBD sold / 24.388 SBD bought, avg fill 0.703 SBD, projection accuracy 160.2865% (the projection UNDERSTATES reality ~10× on fill notional — the assumption is now visible and re-basable); unclassified fills counted honestly, never guessed into P&L. THE DOCTRINE MAP (Q9): the six failures that killed the great market makers (adverse selection, inventory skew, fee drag, self-poison, silent rot, overtrading) each mapped onto the guard shipped WITH the plan. Both internal venues priced from the live book (steem 1.1677%, hive 0.1645% at measure time) with history fallback; share/realized are ENHANCEMENT sections — missing inputs null them honestly, never block the plan. E51 white-box (parseVolume/sharePct/shareLadder-monotonic+saturates/realized-window-relative-to-last micro-exact/doctrineMap=6) + black-box (rich fixture share+realized+accuracy live, byte-stable payload; enhancement-null fixture still MMV-PLAN-LIVE; real-tree share measured from the chain itself). In-rung catches by the suite on its own author: fillsCount semantics (all rows, unclassified booked), avgFill over classified only, fixture avgSize pinned, fallback registry account. Books refreshed: census 16/16 caps=61 wiring=10/10 · claims 0 offenders feats=54 evidence 135/138 suite MATCH"
+      },
       {
         "sha": "19b7554",
         "subject": "R28 THE VOLUME ENGINE (CR-0058 / feat-053 / E50, suite v1.36.0 -> v1.37.0, 50/50 GREEN): the owner's market-maker directive gets its instrument — agents/mm-volume.cjs, the keyless deterministic STASIS-braked planner that prices every venue by ITS OWN fee doctrine (fee-doctrine law), projects volume/net-edge from measured spreads + the measured tape (SBD/STEEM: spread 1.4736%, fee 0, conservative edge 0.7368%, capacity-bound 39.168 SBD/day, net 0.2886→0.5772 SBD/day), partitions the ladder across fleet accounts (j mod N disjoint complete cover; growth table N∈{1,2,3,5} books the recruit path), arms internal soldier-to-soldier flow ONLY at zero round-trip fee — capped 25%, labeled INTERNAL-FLOW, EXCLUDED from the VWAP/edge books (the poison guard) — and derives the BUY-EDGE ceiling from the realized sell VWAP (0.102→0.1017, live from the 23-run market-exec history). PLAN-ONLY: the live broadcast path stays market-exec law (MARKET_EXEC_LIVE, verify-then-sign). SIX engineering queries asked and answered in code (Q1 where provable volume lives; Q2 what bounds profitability; Q3 how a fleet shares one ladder; Q4 internal flow bounded+labeled+excluded; Q5 other users' fees — spread capture + saos-dex-kernel 30bps/30% treasury cut; Q6 the six guards). Wired: mm-volume leg in fleet-census-cron after scheduler-heal + publish + volatile no-noise (mm-volume.json). E50 white-box (venueEconomics edge-exact, partitionLadder disjoint-complete, selfFlowPlan zero-fee-only + guards as data, buyEdgeFloor, sellVwapFromRuns) + black-box (fresh-process MMV-PLAN-LIVE on rich fixture, byte-stable payload, STASIS halt zero-writes, corrupt-inputs honest BLOCKED) + real-tree + host wiring. One in-rung catch: 0 rungs = no ladder = covers:false (fixed in the desk, not the eval). Books refreshed: census 16/16 caps=61 wiring=10/10 · claims 0 offenders feats=53 evidence 129/132 suite MATCH · delta · cadence · scheduler"
@@ -163,10 +167,6 @@
       {
         "sha": "a91d2a3",
         "subject": "earn-audit: chain-truth income proof [skip ci]"
-      },
-      {
-        "sha": "c4d8425",
-        "subject": "tick-keeper: arc heartbeat [skip ci]"
       }
     ]
   },
@@ -736,7 +736,7 @@
       "kind": "observation",
       "source": "evo-windows.json",
       "action": "carry the evolution-window cadence state into the record",
-      "receipt": "67 windows booked, none complete · next due 2026-10-04T12:45:05Z",
+      "receipt": "68 windows booked, none complete · next due 2026-10-04T12:45:05Z",
       "disposition": "BOOKED"
     }
   ],
@@ -757,7 +757,7 @@
     "joined": 7,
     "note": "fresh advisory triage joined by id — lane/urgency hints only, confidence uncalibrated (en checkpoint), dispositions untouched",
     "at": "2026-10-03T15:08:54Z",
-    "age_h": 10.7
+    "age_h": 11.1
   },
   "evoEvidence": {
     "mode": "CADENCE-ONLY",
