@@ -8,12 +8,16 @@
 #      24h staleness check per account.
 #   3. Writes content-review/report-YYYY-MM-DD.json in this repo and commits it.
 #   4. If cross-account duplication > 30%, opens an issue
-#      "content-review: duplication X%" (issues:write on the repo token, with a
-#      ZIP_PAT fallback — the proven watchdog pattern).
+#      "content-review: duplication X%" (issues:write on the built-in
+#      github.token — the desk's token loop skips empty fallbacks by design).
 #
-# Conventions kept: checkout via ZIP_PAT (the proven template), Node 20, commit
-# with a neutral identity, no secrets in output. Scheduled off-peak so it never
-# overlaps the minute map in BLOC.md.
+# Conventions kept: Node 20, commit with a neutral identity, no secrets in
+# output. Scheduled off-peak so it never overlaps the minute map in BLOC.md.
+#
+# R26 (CR-0054) KEYLESS WAVE: every operation here targets THIS repo (checkout,
+# push, the duplication issue) under the declared permissions, so the tokens are
+# the built-in github.token. The ZIP_PAT convention was never a capability here;
+# zero owner secrets remain in this file.
 
 name: content-reviewer
 
@@ -35,10 +39,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
-      - name: Checkout
+      - name: Checkout (keyless — same-repo only, R26 CR-0054)
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.ZIP_PAT }}
+          token: ${{ github.token }}
           fetch-depth: 1
 
       - name: Node 20
@@ -73,7 +77,6 @@ jobs:
         if: always()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ZIP_PAT: ${{ secrets.ZIP_PAT }}
         run: |
           LAST=$(ls content-review/report-*.json 2>/dev/null | sort | tail -1)
           if [ -z "$LAST" ]; then echo "no report found"; exit 0; fi

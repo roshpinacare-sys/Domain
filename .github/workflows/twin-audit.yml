@@ -8,8 +8,11 @@
 # unregistered pair drifts into near-duplication or a registered pair loses its
 # evidence. Keyless against the sites; report committed as a public receipt.
 #
-# Conventions kept: checkout via ZIP_PAT (the proven watchdog template), Node 20,
-# neutral commit identity, node exits 0 and the shell decides the issue gate.
+# Conventions kept: Node 20, neutral commit identity, node exits 0 and the shell
+# decides the issue gate. R26 (CR-0054) KEYLESS WAVE: this flow works ONLY on this
+# repo (checkout, push, issues — all under the declared permissions), so the
+# checkout/issue tokens are the built-in github.token; the ZIP_PAT convention was
+# never a capability here. Zero owner secrets remain in this file.
 
 name: twin-audit
 
@@ -31,10 +34,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: Checkout
+      - name: Checkout (keyless — same-repo only, R26 CR-0054)
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.ZIP_PAT }}
+          token: ${{ github.token }}
           fetch-depth: 1
 
       - name: Node 20
@@ -70,10 +73,11 @@ jobs:
       # (`syntax error near unexpected token 'done'`), so the watchdog's alarm was silent
       # since day one. The gate is now agents/twin-issue-gate.cjs — a Node desk, no
       # quoting tricks, fail-loud on a corrupt marker, honest exit 0 when both tokens fail.
+      # R26 (CR-0054): the ZIP_PAT fallback env is gone — the gate desk keeps its
+      # fail-soft token loop (empty tokens are skipped), GH_TOKEN carries issues:write.
       - name: Issue gate (unknown near-dup pair, or lost capability evidence)
         if: always()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ZIP_PAT: ${{ secrets.ZIP_PAT }}
           TWIN_ISSUE_MARKER: /tmp/twin-issue.json
         run: node agents/twin-issue-gate.cjs
