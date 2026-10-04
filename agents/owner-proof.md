@@ -23,9 +23,9 @@ _מורכב מהפנקסים המחויבים בלבד (keyless, offline). כל 
 - **realizedSbd (lifetime)**: -1.118787 — _מקור: agents/truth-baseline.json · נמדד: 2026-10-02T00:05:00Z · מדד כל-חיים של המסחר_
 - **usdPerDay7dAvg (lifetime)**: 0.00412 — _מקור: agents/truth-baseline.json · נמדד: 2026-10-02T00:05:00Z_
 - **trips (lifetime)**: 65 — _מקור: agents/truth-baseline.json · נמדד: 2026-10-02T00:05:00Z_
-- **יום אחרון**: realizedSbdToday=-0.262613, fills=112 — agents/fill-ledger.json (הליכת היום, היקף יומי מ-00:00Z)
+- **יום אחרון**: realizedSbdToday=-0.364918, fills=130 — agents/fill-ledger.json (הליכת היום, היקף יומי מ-00:00Z)
 - **הכנסה · contentRewards**: 0 — נמדד מת: 1421 הצבעות + 56 פוסטים → 0.000 לכל החיים — לולאת התוכן עדיין לא מרוויחה (CR-0046) · agents/earn-audit.json (chain truth, 7d window + lifetime walk)
-- **הכנסה · tradingSpread**: -0.262613 — הרגל היחידה שנמדדה עם תנועה — כרגע סביב האפס, ה-buy-premium breaker סוגר את הדליפה (CR-0047) · agents/fill-ledger.json (הליכת היום, היקף יומי מ-00:00Z)
+- **הכנסה · tradingSpread**: -0.364918 — הרגל היחידה שנמדדה עם תנועה — כרגע סביב האפס, ה-buy-premium breaker סוגר את הדליפה (CR-0047) · agents/fill-ledger.json (הליכת היום, היקף יומי מ-00:00Z)
 
 ## הגל המתוכנן — לוח ההבשלות מהשרשרת עצמה (ההפתעה שנמדדה, לא סיפור)
 
@@ -54,8 +54,8 @@ _מורכב מהפנקסים המחויבים בלבד (keyless, offline). כל 
 
 ## משמעת — מה מוכח ומה נבדק
 
-- **claimsAudit**: "WARN" — _מקור: agents/claims-audit.json · נמדד: 2026-10-04T00:39:59.101Z · כל קובץ שנטען בפנקס — נבדק שהוא באמת על העץ_
-- **censusLanes**: undefined — _מקור: agents/fleet-census.json · נמדד: 2026-10-04T00:39:58.188Z · מפת ה-16 מסלולים של הצי_
+- **claimsAudit**: "WARN" — _מקור: agents/claims-audit.json · נמדד: 2026-10-04T00:51:26.485Z · כל קובץ שנטען בפנקס — נבדק שהוא באמת על העץ_
+- **censusLanes**: undefined — _מקור: agents/fleet-census.json · נמדד: 2026-10-04T00:51:25.620Z · מפת ה-16 מסלולים של הצי_
 - **ownerLanguage**: "he" — _מקור: agents/claims-audit.cjs OWNER_LANGUAGE (CR-0050) · כל פנייה לבעלים — בעברית_
 
 _החוק: שום מספר לא מומצא, שום היקף לא מתגנב (יומי לעולם לא מתגלגל לכל-חיים), שום הפסד לא מוסתר._
