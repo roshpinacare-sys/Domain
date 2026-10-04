@@ -93,11 +93,33 @@ function crossings(grid, trades) {
 }
 
 // ── market surfaces ─────────────────────────────────────────────────────────
+// ── pure volume parsing (E51 white-box surface) ─
+/** parse a condenser get_volume result (e.g. {sbd_volume:"163.687 SBD",
+ * steem_volume:"1624.508 STEEM"}) into {sym: amount}. Non-finite/malformed
+ * entries drop out; the response shape is not assumed — every *_volume field is
+ * scanned (steem vs hive naming differ). */
+function parseVolume(result) {
+  const out = {};
+  if (!result || typeof result !== 'object') return out;
+  for (const [k, v] of Object.entries(result)) {
+    if (!k.endsWith('_volume') || typeof v !== 'string') continue;
+    const [amtRaw, symRaw] = v.trim().split(/\s+/);
+    const amt = parseFloat(amtRaw);
+    if (!isFinite(amt) || amt < 0 || !symRaw) continue;
+    out[symRaw] = amt;
+  }
+  return out;
+}
+
 async function readInternal(node, chain) {
   const t0 = Date.now();
   const ticker = await post(node, { jsonrpc: '2.0', method: 'condenser_api.get_ticker', params: [], id: 1 });
   const book = await post(node, { jsonrpc: '2.0', method: 'condenser_api.get_order_book', params: [10], id: 2 });
   const trades = await post(node, { jsonrpc: '2.0', method: 'condenser_api.get_recent_trades', params: [20], id: 3 });
+  // v1.1.0 (CR-0059): the 24h pond — how much really trades here per day. The
+  // share ladder (fleet volume / market volume) is the honest answer to "the
+  // BIGGEST market maker": a share needs both numbers, measured.
+  const volume = await post(node, { jsonrpc: '2.0', method: 'condenser_api.get_volume', params: [], id: 4 });
   if (!ticker.result || !book.result || !trades.result) throw new Error('incomplete answer from ' + node);
   const bid = parseFloat(ticker.result.highest_bid);
   const ask = parseFloat(ticker.result.lowest_ask);
@@ -110,6 +132,8 @@ async function readInternal(node, chain) {
   const crossed = crossings(g.grid, tape);
   const base = chain === 'hive' ? 'HBD' : 'SBD';
   const quote = chain === 'hive' ? 'HIVE' : 'STEEM';
+  const vols = parseVolume(volume.result || null);
+  const volSbdTerm = chain === 'hive' ? (vols.HBD ?? null) : (vols.SBD ?? null);
   return {
     market: `${base}/${quote} (internal ${chain})`, chain,
     bid, ask, mid: +m.toFixed(8), spreadPct: +spreadPct(bid, ask).toFixed(4),
@@ -117,6 +141,7 @@ async function readInternal(node, chain) {
     grid: g.grid, step: g.step, spacingDisciplined: g.spacingDisciplined,
     paperFills: crossed.length, tapeSamples: tape.length, tapeLevels: tape.slice(0, 20),
     depthBids: (book.result.bids || []).length, depthAsks: (book.result.asks || []).length,
+    volume24h: vols, volume24hSbdTerm: volSbdTerm,
     ms: Date.now() - t0,
   };
 }
@@ -182,7 +207,7 @@ function executorPreview(internalRows) {
       return;
     }
   } catch (_) { /* no brake declared (missing/unreadable STASIS.json) → run normally; the tracked file + init's STASIS proof are the integrity layer */ }
-  const out = { at: new Date().toISOString(), agent: 'market-grid v1.0.0 (Z-60+ internal-market sovereignty instrument)', laws: null, markets: [], hiveEngine: null, paperLedger: PAPER_LEDGER, executorPreviewCount: 0, errors: [], summary: {} };
+  const out = { at: new Date().toISOString(), agent: 'market-grid v1.1.0 (Z-60+ internal-market sovereignty instrument)', laws: null, markets: [], hiveEngine: null, paperLedger: PAPER_LEDGER, executorPreviewCount: 0, errors: [], summary: {} };
   out.laws = ['official sources only (chain nodes + sidechain RPC)', 'keyless: reads only, executor = owner-gated preview, never broadcast', 'paper is paper (labeled ledger, never laundered into realized book)', 'fail-loud per market', 'single canon (market-grid.json/.md)'];
 
   const internal = [];
@@ -223,6 +248,7 @@ function executorPreview(internalRows) {
   const row = {
     at: out.at, verdict: out.summary.verdict,
     spreads: internal.map((r) => ({ market: r.market, spreadPct: r.spreadPct, pct24h: r.pct24h, tapeCrossed: r.paperFills })),
+    volumeSbdTerm: internal.map((r) => ({ chain: r.chain, market: r.market, volSbdTerm: r.volume24hSbdTerm })),
     heFeasible: out.hiveEngine ? out.hiveEngine.rows.filter((r) => r.gridFeasible).map((r) => `${r.symbol}:${r.spreadPct}%`) : [],
     grids: out.summary.gridsComputed, paper: paperRows.length, preview: out.executorPreviewCount, errors: out.errors.length,
   };
@@ -250,4 +276,4 @@ function executorPreview(internalRows) {
   if (out.summary.verdict !== 'MARKET-GRID-LIVE') process.exit(1);
 })().catch((e) => { console.error('market-grid FATAL:', e.message); process.exit(1); });
 
-module.exports = { mid, spreadPct, band, buildGrid, crossings };
+module.exports = { mid, spreadPct, band, buildGrid, crossings, parseVolume };

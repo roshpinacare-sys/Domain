@@ -2081,9 +2081,92 @@ function accumulateInMemory(bookRows, seed) {
       why50.length ? 'fails: ' + why50.join('; ') : 'the owner directive \u2014 the fleet as the biggest market maker on its networks, provably, before capital moves \u2014 now has its instrument: a deterministic planner that prices every venue by its own fee doctrine, partitions the ladder across the soldiers, bounds and labels the internal flow, and never signs');
   } catch (e) { evalr('E50', 'volume engine', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
+
+  // ---- E51 (R29, CR-0059): the share ladder — the pond, the share, the realized truth.
+  // market-grid v1.1.0 reads condenser get_volume (the 24h pond); mm-volume v1.1.0
+  // computes fleet share for N soldiers and meters REALIZED fills vs projection.
+  try {
+    const why51 = [];
+    const c51 = (cond, name) => { if (!cond) why51.push(name); };
+    const mgc = require(path.join(AG, 'market-grid.cjs'));
+    const mv51 = require(path.join(AG, 'mm-volume.cjs'));
+    // white-box: parseVolume edge-exact over both chains' response shapes
+    const pv51 = mgc.parseVolume({ sbd_volume: '163.687 SBD', steem_volume: '1624.508 STEEM' });
+    c51(pv51.SBD === 163.687 && pv51.STEEM === 1624.508, 'parseVolume-both-sides');
+    const pv51b = mgc.parseVolume({ hbd_volume: '958.712 HBD', hive_volume: '16999.095 HIVE' });
+    c51(pv51b.HBD === 958.712 && pv51b.HIVE === 16999.095, 'parseVolume-hive-naming');
+    c51(mgc.parseVolume({ junk: 'nope', broken_volume: 'x SBD', negative_volume: '-1 SBD' }).SBD === undefined && Object.keys(mgc.parseVolume(null)).length === 0, 'parseVolume-drops-invalid');
+    // white-box: sharePct edge-exact + honest saturation
+    c51(mv51.sharePct(39.168, 163.687) === 23.9286, 'sharePct-exact');
+    c51(mv51.sharePct(0, 163.687) === null && mv51.sharePct(100, 0) === null && mv51.sharePct(null, 100) === null, 'sharePct-invalid-null');
+    // white-box: shareLadder monotonic + saturates flag
+    const sl51 = mv51.shareLadder({ marketVolumeSbd: 163.687, spreadPct: 1.4736, fillsPerMin: 10, avgSizeSbd: 0.068 });
+    c51(Array.isArray(sl51) && sl51.length === 4 && sl51.every((s, i) => i === 0 || s.sharePct > sl51[i - 1].sharePct), 'shareLadder-monotonic');
+    c51(sl51[0].sharePct === 23.9286 && sl51[3].saturates === true && sl51[0].saturates === false, 'shareLadder-saturates');
+    c51(mv51.shareLadder({ marketVolumeSbd: 0, spreadPct: 1, fillsPerMin: 1, avgSizeSbd: 1 }) === null, 'shareLadder-no-pond-null');
+    // white-box: realized24h window is RELATIVE to the last fill (determinism law)
+    const fills51 = [
+      { timestamp: '2026-10-02T00:00:00Z', leg_parsed: { leg: 'SELL', recv: { sym: 'SBD', micro: 10000000 } } }, // 48h before last — excluded
+      { timestamp: '2026-10-04T10:00:00Z', leg_parsed: { leg: 'SELL', recv: { sym: 'SBD', micro: 25000000 } } },
+      { timestamp: '2026-10-04T20:00:00Z', leg_parsed: { leg: 'SELL', recv: { sym: 'SBD', micro: 37500000 } } },
+      { timestamp: '2026-10-04T22:00:00Z', leg_parsed: { leg: 'BUY', sold: { sym: 'SBD', micro: 12000000 } } },
+      { timestamp: '2026-10-04T23:00:00Z', leg_parsed: { leg: 'UNCLASSIFIED', reason: 'x' } },
+    ];
+    const r51 = mv51.realized24h(fills51);
+    c51(r51 && r51.fillsCount === 4 && r51.unclassified === 1 && r51.sells === 2 && r51.buys === 1, 'realized-window-relative-to-last');
+    c51(r51.realizedSellSbd === 62.5 && r51.realizedBuySbd === 12 && r51.avgFillSbd === 24.8333, 'realized-sums-micro-exact-avg-over-classified');
+    c51(mv51.realized24h([]) === null && mv51.realized24h([{ timestamp: 'nope' }]) === null, 'realized-empty-null');
+    c51(mv51.doctrineMap().length === 6 && mv51.doctrineMap().every((d) => d.failure && d.guard), 'doctrine-map-six');
+    // black-box: fixture WITH the live book + fills ledger → share + realized sections live
+    const fx51 = fs.mkdtempSync(path.join(require('os').tmpdir(), 'mmv51-'));
+    fs.writeFileSync(path.join(fx51, 'fee-doctrine.json'), JSON.stringify({ format: 'saos-fee-doctrine/1', venues: [{ id: 'saos-dex-kernel', feeBpsSource: 30, treasuryCutPct: 30 }] }));
+    fs.writeFileSync(path.join(fx51, 'dex-book.json'), JSON.stringify({ at: '2026-10-04T00:00:00Z', steem: {} }));
+    fs.writeFileSync(path.join(fx51, 'market-grid-history.jsonl'), JSON.stringify({ at: '2026-10-04T00:00:00Z', spreads: [{ market: 'SBD/STEEM (internal steem)', spreadPct: 1.4736 }] }) + '\n');
+    fs.writeFileSync(path.join(fx51, 'money-ledger.json'), JSON.stringify({ updated: '2026-10-04T00:00:00Z', book: { headSteemLiquid: '23.366 STEEM', headSteemDebt: '11.241 SBD' } }));
+    fs.writeFileSync(path.join(fx51, 'market-exec.json'), JSON.stringify([{ mode: 'DRY_RUN', placed: [{ amount_to_sell: '0.680 STEEM', realized: 0.100 }] }]));
+    fs.writeFileSync(path.join(fx51, 'agent-registry.json'), JSON.stringify({ identity: [{ metadata: { owner: 'steem://headcorner' } }] }));
+    fs.writeFileSync(path.join(fx51, 'market-grid.json'), JSON.stringify({ at: '2026-10-04T01:00:00Z', markets: [{ chain: 'steem', spreadPct: 1.4736, volume24hSbdTerm: 163.687 }, { chain: 'hive', spreadPct: 0.1645, volume24hSbdTerm: 958.712 }] }));
+    fs.writeFileSync(path.join(fx51, 'fill-ledger-fills.jsonl'), fills51.slice(1, 4).map((f) => JSON.stringify(f)).join('\n') + '\n');
+    const r51a = spawnSync(process.execPath, [path.join(AG, 'mm-volume.cjs')], { env: { ...process.env, MMV_DIR: fx51 }, cwd: AG, timeout: 60000, encoding: 'utf8' });
+    const book51 = (() => { try { return JSON.parse(fs.readFileSync(path.join(fx51, 'mm-volume.json'), 'utf8')); } catch (_) { return null; } })();
+    c51(r51a.status === 0 && book51 && book51.verdict === 'MMV-PLAN-LIVE', 'mmv51-blackbox-live');
+    const st51 = book51 && book51.venues.find((v) => String(v.venue).includes('steem'));
+    c51(st51 && st51.sharePct === 23.9286 && Array.isArray(st51.shareLadder) && st51.shareLadder[3].saturates === true, 'mmv51-share-live');
+    c51(st51 && st51.realized && st51.realized.measured === true && st51.realized.fillsCount === 3 && st51.realized.realizedSellSbd === 62.5 && st51.realized.avgFillSbd === 24.8333, 'mmv51-realized-live');
+    c51(st51 && st51.realized && typeof st51.realized.projectionAccuracyPct === 'number', 'mmv51-accuracy');
+    // determinism: stable payload byte-identical across two runs
+    const snap51 = book51 ? JSON.stringify({ ...book51, at: null }) : '';
+    spawnSync(process.execPath, [path.join(AG, 'mm-volume.cjs')], { env: { ...process.env, MMV_DIR: fx51 }, cwd: AG, timeout: 60000, encoding: 'utf8' });
+    const book51b = (() => { try { return JSON.parse(fs.readFileSync(path.join(fx51, 'mm-volume.json'), 'utf8')); } catch (_) { return null; } })();
+    c51(book51b && JSON.stringify({ ...book51b, at: null }) === snap51, 'mmv51-stable-payload');
+    fs.rmSync(fx51, { recursive: true, force: true });
+    // black-box: enhancement sections are OPTIONAL — missing live book/fills nulls them, never blocks the plan
+    const fx51b = fs.mkdtempSync(path.join(require('os').tmpdir(), 'mmv51b-'));
+    fs.writeFileSync(path.join(fx51b, 'fee-doctrine.json'), JSON.stringify({ format: 'saos-fee-doctrine/1', venues: [] }));
+    fs.writeFileSync(path.join(fx51b, 'dex-book.json'), JSON.stringify({ at: '2026-10-04T00:00:00Z', steem: {} }));
+    fs.writeFileSync(path.join(fx51b, 'market-grid-history.jsonl'), JSON.stringify({ at: '2026-10-04T00:00:00Z', spreads: [{ market: 'SBD/STEEM (internal steem)', spreadPct: 1.4736 }] }) + '\n');
+    fs.writeFileSync(path.join(fx51b, 'money-ledger.json'), JSON.stringify({ updated: '2026-10-04T00:00:00Z', book: { headSteemLiquid: '1 STEEM', headSteemDebt: '1 SBD' } }));
+    fs.writeFileSync(path.join(fx51b, 'market-exec.json'), '[]');
+    fs.writeFileSync(path.join(fx51b, 'agent-registry.json'), JSON.stringify({ identity: [{ metadata: { owner: 'steem://headcorner' } }] }));
+    const r51c = spawnSync(process.execPath, [path.join(AG, 'mm-volume.cjs')], { env: { ...process.env, MMV_DIR: fx51b }, cwd: AG, timeout: 60000, encoding: 'utf8' });
+    const book51c = (() => { try { return JSON.parse(fs.readFileSync(path.join(fx51b, 'mm-volume.json'), 'utf8')); } catch (_) { return null; } })();
+    const st51c = book51c && book51c.venues.find((v) => String(v.venue).includes('steem'));
+    c51(r51c.status === 0 && book51c && book51c.verdict === 'MMV-PLAN-LIVE', 'mmv51-fallback-still-live');
+    c51(st51c && st51c.sharePct === null && st51c.marketVolume24hSbdTerm === null && st51c.realized && st51c.realized.measured === false, 'mmv51-enhancements-null-honest');
+    fs.rmSync(fx51b, { recursive: true, force: true });
+    // white-box: the real tree — the share is measured from the chain itself
+    let realBook51 = null; try { realBook51 = JSON.parse(fs.readFileSync(path.join(AG, 'mm-volume.json'), 'utf8')); } catch (_) {}
+    const realSteem51 = realBook51 && realBook51.venues && realBook51.venues.find((v) => String(v.venue).includes('steem'));
+    c51(realSteem51 && realSteem51.sharePct != null && realSteem51.shareLadder && realSteem51.realized && realSteem51.realized.measured === true, 'mmv51-real-tree-share');
+    evalr('E51', 'the share ladder (CR-0059): get_volume parsing exact over both chains\u2019 response shapes with invalid drop, sharePct edge-exact with honest invalid-nulls, the share ladder monotonic with the saturates flag (the pond caps the capacity ladder), realized24h metered over a window RELATIVE to the last fill (determinism law) with micro-exact sums, the six-failure doctrine map, black-box share+realized live on a rich fixture with byte-stable payload, enhancement sections null-honest without blocking the plan, and the real-tree share measured from the chain itself',
+      why51.length === 0,
+      ['white-box: parseVolume steem/hive naming + malformed/negative/null drops', 'white-box: sharePct exact (39.168/163.687=23.9286%) + invalid nulls', 'white-box: shareLadder monotonic + saturates at N=5 over the measured pond', 'white-box: realized24h window relative to last fill, micro-exact sums, empty null', 'white-box: doctrineMap = 6 failure\u2192guard rows, all populated', 'black-box: rich fixture (live book + fills) \u2192 MMV-PLAN-LIVE, share 23.9286%, realized measured + accuracy, stable payload byte-identical', 'black-box: no live book/fills \u2192 sections null with honest nullReason, plan still MMV-PLAN-LIVE', 'white-box: the real-tree book carries the chain-measured share + realized metering'],
+      why51.length ? 'fails: ' + why51.join('; ') : '"the BIGGEST" is now a measured number: the pond read from the chain itself, the fleet\u2019s share as a ladder over funded soldiers, and the projection judged against REAL fills — a boast became an instrument');
+  } catch (e) { evalr('E51', 'share ladder', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.37.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48 + R27 metronome-audit E49 + R28 mm-volume E50, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.38.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48 + R27 metronome-audit E49 + R28 mm-volume E50 + R29 share-ladder E51, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];
