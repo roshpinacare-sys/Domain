@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "at": "2026-10-04T14:30:58.773Z",
+  "at": "2026-10-04T14:42:39.640Z",
   "since": "2026-10-02T16:40:20.950Z",
   "windowSince": "2026-10-02T16:40:20.950Z",
   "agent": "pulse v1.2.0 (CR-0009 loop, Rung 1; CR-0028 consumes the laya advisory triage; CR-0033 consumes the scheduled evolution-window evidence — Z-48/Z-49/Z-60/Z-62)",
@@ -8,6 +8,18 @@
     "since": "2026-10-02T16:40:20.950Z",
     "count": 40,
     "commits": [
+      {
+        "sha": "d272693",
+        "subject": "R43 THE INTENT GATES (CR-0073 / feat-068 / E66, suite v1.51.0 -> v1.52.0, 66/66 GREEN): the DEX learns cross-chain intents. dex-xc.cjs (SAOS-DEX-XC/1, keyless, STASIS-obeying, fail-soft): the doors — 8 networks with MEASURED hard-finality clocks (EVM 780s = Ethereum 2-epoch governs large sums, TRON 60s solidified, SOL 13s = 32 slots, STEEM/HIVE 60s = 2/3-witness round, BLURT 63s = full 21-witness round) and honest bands (STEEM/SBD=KEYED-DESK, HIVE/HBD/BLURT=PLAN-PEGOUT-KEYED-OPERATOR, EVM/TRON/SOL=PLAN-KEYED-DOOR — PRICED-NEVER-SETTLED until keys verify); the ERC-7683 lifecycle over ONE ledger: planOpen (door law, wrapper doors price through OUR pools, deterministic sha256-16 intent ids, SIZE-CAP-SPLIT-REQUIRED at plan time) + chooseFill (pool-default solver — every intent pays fees to OUR network; P2P roster outbids, ties lexicographic) + clockActions (refund at unlock, confirm at the door finality) + advanceStates (event-sourced, idempotent). ESCROW-IDENTITY LAW: per-intent escrow accounts (xc-escrow-<intentId>), escrow-drain idempotency, cross-batch DOUBLE-OPEN defense. CLOCK LAW: the 2:1 HTLC interlock (refund unlock = 2 x fill window; refunds WHOLE). BOND LAW (THORChain-adapted): corridor exposure <= 2x custody, else BOND-LAW-EXCEEDED byte-unchanged. dex-core.cjs v1.3.0 settleXcOps/settle-xc: the doors' ops applied atomically on the single balance universe — chain-dest redeem SIMULATED BEFORE commit (a refused redeem leaves pools+escrow+accounts byte-identical), the pool-mover's re-derivation law (route rows re-priced after any pool move), pegout rows published to dex/pegout-queue.json, queue consumed single-writer. TWO BASE-REPAIRS bought (תיקון-בסיס לפני היקף) and locked as E66 golden vectors: routeBest reversed-leg quoting (SBD→STEEM 1000µ quoted 105µ instead of 9402µ — masked since R40 by ab-only fills and symmetric peg pools) + poolSwap b-side newRa/newRb transposition (masked by 1:1 pools). LIVE PIPE-PROOF on the real ledger (seq 18→22): intent 401c2409c4583ac5 — treasury 1000µ SBD → route P3+P1 through OUR pools → 9358µ WSTEEM → REDEEM 1:1 → PEGOUT-QUEUED to the KEYED-DESK corridor → XC-CONFIRM at finality+1s, exposure cleared, conservation true at every op. dex-xc-cron.yml (:53 hourly, keyless, [skip ci], rebase-first); E47 re-based 54→55 workflows / 20→21 keyless (pins documented); fleet-graph XC node; CR-0073 (Q-law: constants with sources); feat-068. E66: base-repair golden vectors + white-box doors/settlement/solver/clocks + black-box dex-xc selftest fresh-process (66/66) + real-tree booked book + live pipe-proof. claims feats=68 evidence 212/215 offenders=0 suite MATCH, census 16/16 wiring 10/10, secret-scan 0 [skip ci]"
+      },
+      {
+        "sha": "4316bf7",
+        "subject": "twin-audit: live twin report 2026-10-04 - near-dup 0/16 (threshold 0.95) [skip ci]"
+      },
+      {
+        "sha": "67b5c70",
+        "subject": "mirror-from-console: 2026-10-04T13:26:56Z · truth outputs mirrored from the Console home (one-bloc, keyless) [skip ci]"
+      },
       {
         "sha": "a5dc89c",
         "subject": "dex-vault: R42 THE MULTI-NETWORK VAULT (CR-0072 / feat-067 / E65, suite v1.50.0 -> v1.51.0, 65/65 GREEN): the vault holds what its keys can move and sees every network. dex-core.cjs v1.2.0: CUSTODY-CLASS LAW — MEASURED-KEYED is the only mintable class (STEEM/SBD, active keys in the protected desks); OBSERVED-POST-KEYED (BLURT 67.841 measured @blurt-rpc.saboin.com — the steem posting WIF is the blurt posting key, transfers gated); OBSERVED-UNCONTROLLED (HIVE 0.034 + 0.003 HBD @api.hive.blog — active pub != held keys, R38 law); PLANNED-NO-CLAIM (SAOS); OBSERVED-ABSENT (honest unknown). probeNetworks(): keyless condenser probes per network with node fallbacks, booked as OBSERVE ops with provenance — the vault SEES every network, NEVER counts observations as custody or reserve; the class upgrades the same tick verified key material appears (no new code). ISSUER identity SAOS-DEX-ISSUER/1 (stable recomputable sha256-16 over wrappers+chains+catalog, measured d7ff39690365bfa8) with the mint law (1:1 against MEASURED-KEYED custody, 25% deterministic genesis law) and per-chain peg-out corridors. REDEEM law: burn BEFORE payout — in-ledger redeem ALWAYS honored 1:1 (conservation asserted); chain payout QUEUED to dex/pegout-queue.json with the corridor named (STEEM/SBD=KEYED-DESK, HIVE/HBD/BLURT=PLAN-PEGOUT-KEYED-OPERATOR); keyless code never fires a broadcast; refusals DUST/OVER-MINT/UNKNOWN-WRAPPER/INSUFFICIENT-CLAIM booked; requests consumed single-writer from dex/redeem-requests.json. Pool catalog P5-P9 appended by the deterministic reconcile law (idempotent, born empty, custody-class-gated): P5 WHIVE/HIVE, P6 WHBD/HBD, P7 WBLURT/BLURT pegs, P8 HIVE/STEEM cross-network bridge (planned), P9 WSBD/WHBD dollar bridge. CROSS-FAIR law: HIVE-per-STEEM = SBD-per-STEEM / HBD-per-HIVE (measured 1869150744 nano = 1.8692), BigInt floor, honest nulls; A2 row honestly banded NO-CUSTODY. E65: white-box custody/redeem/cross-fair/reconcile/genesis/issuer laws, black-box dex-core selftest fresh-process (52/52), real-tree re-derivation of the booked vault (issuer identity recomputes, custody classes re-derive, corridors honestly banded, conservation OK, attestation recomputes, A2 band, observed registry); E64 real-tree fixed to the ledger-first law (pipe-proof ops re-derived from the append-only history, not the rotating opsThisTick). First R42 tick: seq 17, 12 LIVE routes + 70 honest planned/thin, A1 BELOW-FLOOR (the floor law protects the P&L). claims feats=67 evidence offenders=0 suite MATCH, secret-scan 0 [skip ci]"
@@ -155,18 +167,6 @@
       {
         "sha": "6059a94",
         "subject": "fleet-census(ci): artifact+delta+claims 2026-10-04T04:09:11Z [skip ci]"
-      },
-      {
-        "sha": "8d10fe8",
-        "subject": "moment-watch: RISK_ON · steem-edge 598bps · 2026-10-04T04:07:46Z [skip ci]"
-      },
-      {
-        "sha": "8e4873d",
-        "subject": "econ-desk: real-economy book 2026-10-04T03:22:12Z [skip ci]"
-      },
-      {
-        "sha": "06af113",
-        "subject": "R32 books on the merged tree — HONEST RE-MEASURE: the sibling's agent-verify/fill-ledger ticks landed mid-rung (conflict #21 on the volatile market-grid books — resolved theirs-then-rerun, the R28 ours-trap law honored); the merged tree re-measured: market-grid MARKET-GRID-LIVE (v1.3.0 pond law live), mm-volume MMV-PLAN-LIVE (projVol 989.517 SBD/day on the FRESH ledger dials — avgSize 0.661 n=137, capture 106/day moved since the pre-rebase measurement; HE pond 960.4816 SBD, 5 venues projected, bindings named), evals 54/54 GREEN v1.41.0 on the merged tree, claims+census refreshed [skip ci]"
       }
     ]
   },
@@ -736,7 +736,7 @@
       "kind": "observation",
       "source": "evo-windows.json",
       "action": "carry the evolution-window cadence state into the record",
-      "receipt": "121 windows booked, none complete · next due 2026-10-04T12:45:05Z",
+      "receipt": "124 windows booked, none complete · next due 2026-10-04T12:45:05Z",
       "disposition": "BOOKED"
     }
   ],
@@ -757,7 +757,7 @@
     "joined": 7,
     "note": "fresh advisory triage joined by id — lane/urgency hints only, confidence uncalibrated (en checkpoint), dispositions untouched",
     "at": "2026-10-03T15:08:54Z",
-    "age_h": 23.4
+    "age_h": 23.6
   },
   "evoEvidence": {
     "mode": "CADENCE-ONLY",
