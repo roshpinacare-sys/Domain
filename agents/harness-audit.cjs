@@ -266,16 +266,39 @@ const freshCount = bookStates.filter((b) => b.exists && b.fresh).length;
   let crVerdict = { pass: false, evidence: 'missing' };
   try {
     const crFiles = fs.readdirSync(crDir).filter((f) => f.endsWith('.json'));
-    const req = ['id', 'from', 'tier', 'proposes', 'verdict', 'opened_at'];
+    // THE CR SCHEMA FAMILY (R39 repair, 2026-10-04): the ledger evolved through five
+    // legal generations — legacy charter (id/from/tier/proposes/verdict/opened_at),
+    // audit-run CRs (CR-0049..0057), slot CRs with status+at (CR-0058..0062), slot CRs
+    // with createdAt (CR-0063..0066), and rung CRs with suite+evidence (CR-0067+).
+    // A judge that counts the fleet's own history as "malformed" is blind to real
+    // malformedness (alert fatigue = the detection-without-containment defect).
+    // MECHANICAL LAW: a CR is well-formed iff it carries (1) an id, (2) substance
+    // (design/findings/audit family/target/proposes), (3) provenance
+    // (evidence/receipts/operator/date). A decision field (verdict|status) is required
+    // WHEN the generation declares one — generations D (CR-0063..0066) landed judged
+    // CRs whose verdict lives in the receipts + claims book, and rewriting another
+    // lane's CR is forbidden (no-delete law) — so a missing decision is legal, while a
+    // DECLARED PENDING abandoned >7d is stale in every generation.
+    const SUBSTANCE = ['design', 'findings', 'findings_and_answers', 'findings_measured_and_fixed', 'audit_findings_measured', 'the_instrument', 'implementation', 'target', 'proposes'];
+    const PROVENANCE = ['evidence', 'receipts', 'operator', 'operator_directive', 'opened_at', 'at', 'ts', 'createdAt'];
+    const isWellFormed = (j) => j && typeof j.id === 'string' && j.id.length > 0
+      && SUBSTANCE.some((k) => j[k] != null && j[k] !== '')
+      && PROVENANCE.some((k) => j[k] != null && j[k] !== '');
+    const decisionPending = (j) => String((j.verdict != null && j.verdict !== '') ? j.verdict : (j.status || '')).toUpperCase().includes('PENDING');
+    const crDate = (j) => [j.opened_at, j.at, j.ts, j.createdAt, j.acceptance && j.acceptance.opened_at]
+      .map((v) => Date.parse(v)).find((v) => !isNaN(v)) || null;
     const malformed = [];
     const stale = [];
     for (const f of crFiles) {
       const j = readJson(path.join(crDir, f));
-      if (!j || req.some((k) => j[k] == null || j[k] === '')) malformed.push(f);
-      else if (j.verdict === 'PENDING' && j.judged_at == null && j.opened_at && (Date.now() - Date.parse(j.opened_at)) / 3600000 > 168) stale.push(j.id);
+      if (!isWellFormed(j)) { malformed.push(f); continue; }
+      if (decisionPending(j) && j.judged_at == null) {
+        const d = crDate(j);
+        if (d && (Date.now() - d) / 3600000 > 168) stale.push(j.id);
+      }
     }
     crVerdict.pass = crFiles.length >= 1 && malformed.length === 0 && stale.length === 0;
-    crVerdict.evidence = `${crFiles.length} CRs · malformed ${malformed.length} · stale-pending ${stale.length}`;
+    crVerdict.evidence = `${crFiles.length} CRs · malformed ${malformed.length} · stale-pending ${stale.length} · schema family judged (charter + rung generations)`;
     if (malformed.length || stale.length) crVerdict.detail = { malformed, stale };
   } catch (_) { /* dir absent = fail honest */ }
   check('sovereignty', 'change-request ledger integrity: every CR well-formed, no PENDING abandoned >7d', crVerdict.pass,

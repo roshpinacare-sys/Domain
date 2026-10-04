@@ -44,6 +44,7 @@
  *   E25 fcc lineage pin      — same strip-restore predicate for the Alishahryar1/free-claude-code AGPL-3.0-only mirror sha 03aca36 (Task 35, frugal-routing lineage, license verified in-file)
  *   E26 sweep lineage pins   — one strip-restore pass over the FIVE Task 36 pins (Graft fe30ead / agency-agents d3f71c4 / codebase-memory 96c3f41c / OpenMontage 08e2151 / orca 843607b1): stripping any one yields a (library) offender naming it; restoring clears (Task 36 five-repo sweep)
  *   E27 evo-windows scheduler — scheduled evolution windows: the pulled-schedule decision is exact (force/skip/bootstrap/first-window/cadence/no-runtime), window outcomes classify honestly (incumbent-retained vs ADOPTION-PENDING-CR, serve-window leak check), fresh-process books append-only rows without spawning the measured batch (Z-62, CR-0033)
+ *   E62 swap net             — the DEX router: parity law (quote/base, HBD≠SBD refusal), arb FLOOR law + honest verdict set, peg-drift halt, gated routes name their unlock, counter-grids re-derive from the booked anchor (R39, CR-0069)
  *
  * Fail-soft: exit 0 always; FAILs are booked honestly (HARNESS-AUDIT MANDATE:
  * green-washing the evals is a doctrine breach).
@@ -1858,9 +1859,12 @@ function accumulateInMemory(bookRows, seed) {
     // social-health standing gauge, keyless) joins — bar 50→51 files, keyless 16→17,
     // owner-secret stays 34; our own R36 lane adds NO workflow (community-founder is a
     // local-vault desk, live once, status keyless in books) — pins documented, never silent.
-    c47(wfFiles47.length === 51, 'workflow-count-51');
+    // R39 evolution (in the open, CR-0069): our own dex-router-cron.yml (the SWAP-NET
+    // hourly lane, keyless) joins — bar 51→52 files, keyless 17→18, owner-secret stays
+    // 34; the router plans, it never signs — pins documented, never silent.
+    c47(wfFiles47.length === 52, 'workflow-count-52');
     c47(ownerSecretCount47 === 34, 'owner-secret-count-34');
-    c47(wfFiles47.length - ownerSecretCount47 === 17, 'keyless-count-17');
+    c47(wfFiles47.length - ownerSecretCount47 === 18, 'keyless-count-18');
     // the converted four: zero non-GITHUB_TOKEN refs, permissions kept, keyless checkout
     const converted47 = ['twin-audit.yml', 'audience-analyst.yml', 'content-reviewer.yml', 'public-pulse.yml'];
     for (const f of converted47) {
@@ -1882,12 +1886,12 @@ function accumulateInMemory(bookRows, seed) {
     c47(bb47.status === 0, 'gate-black-box-zero-tokens-exit-0');
     // the refreshed census book (same tree) carries the new sovereignty numbers
     let censusBook47 = null; try { censusBook47 = JSON.parse(fs.readFileSync(path.join(AG, 'fleet-census.json'), 'utf8')); } catch (_) {}
-    c47(censusBook47 && censusBook47.sovereignty && censusBook47.sovereignty.workflowsKeyless === 17, 'census-book-keyless-17');
+    c47(censusBook47 && censusBook47.sovereignty && censusBook47.sovereignty.workflowsKeyless === 18, 'census-book-keyless-18');
     c47(censusBook47 && censusBook47.sovereignty && censusBook47.sovereignty.workflowsOwnerSecret === 34, 'census-book-owner-secret-34');
 
-    evalr('E47', 'the keyless wave (CR-0055): the sovereignty bar pinned — the census regex recounts 16/50 keyless over the live dir (re-based on main twice: the sibling\'s Z74 workflow-yaml-guard 48/15 → 49/16, then R35\'s human-cadence.yml 49→50 with SA_FLEET_KEYS — the evolution written here each time), the four converted flows carry zero non-GITHUB_TOKEN refs under kept permissions, the dead PULSE_URL ref is durably documented-and-gone while its hook stays in the desk, and the issue gate survives zero tokens fresh-process',
+    evalr('E47', 'the keyless wave (CR-0055): the sovereignty bar pinned — the census regex recounts 18/52 keyless over the live dir (re-based on main three times: the sibling\'s Z74 workflow-yaml-guard 48/15 → 49/16, then R35\'s human-cadence.yml 49→50 with SA_FLEET_KEYS, then R36\'s social-audit 50→51, then R39\'s dex-router-cron 51→52 — the evolution written here each time), the four converted flows carry zero non-GITHUB_TOKEN refs under kept permissions, the dead PULSE_URL ref is durably documented-and-gone while its hook stays in the desk, and the issue gate survives zero tokens fresh-process',
       why47.length === 0,
-      ['white-box: census-authority regex recounted over .github/workflows = 50 files, 34 owner-secret, 16 keyless (the R26 bar re-based after the sibling\'s Z74 rung, re-based again at R35 for human-cadence.yml, encoded as data with each evolution documented)', 'white-box: twin-audit/audience-analyst/content-reviewer/public-pulse — zero non-GITHUB_TOKEN secret refs, contents:write kept, github.token checkout, issues:write kept where gates exist', 'white-box: public-pulse.yml documents the dead-ref finding without referencing it; public-pulse.cjs still owns the optional PULSE_URL hook (capability preserved)', 'white-box: twin-issue-gate.cjs keeps the fail-soft token loop (empty tokens skipped)', 'black-box: the real gate fresh-process with GH_TOKEN/ZIP_PAT stripped and no marker → exit 0 honestly', 'white-box: the refreshed census book agrees (workflowsKeyless 16 / owner-secret 34)'],
+      ['white-box: census-authority regex recounted over .github/workflows = 52 files, 34 owner-secret, 18 keyless (the R26 bar re-based after the sibling\'s Z74 rung, re-based again at R35 for human-cadence.yml, at R36 for social-audit.yml, at R39 for dex-router-cron.yml, encoded as data with each evolution documented)', 'white-box: twin-audit/audience-analyst/content-reviewer/public-pulse — zero non-GITHUB_TOKEN secret refs, contents:write kept, github.token checkout, issues:write kept where gates exist', 'white-box: public-pulse.yml documents the dead-ref finding without referencing it; public-pulse.cjs still owns the optional PULSE_URL hook (capability preserved)', 'white-box: twin-issue-gate.cjs keeps the fail-soft token loop (empty tokens skipped)', 'black-box: the real gate fresh-process with GH_TOKEN/ZIP_PAT stripped and no marker → exit 0 honestly', 'white-box: the refreshed census book agrees (workflowsKeyless 18 / owner-secret 34)'],
       why47.length ? 'fails: ' + why47.join('; ') : 'a secret carried by habit is not security, it is surface — this eval pins the line: same-repo = keyless, cross-repo = capability');
   } catch (e) { evalr('E47', 'keyless wave', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
@@ -2855,9 +2859,60 @@ function accumulateInMemory(bookRows, seed) {
       why61.length ? 'fails: ' + why61.join('; ') : 'the chain, not the name, is the truth: STEEM-CHAIN measured live on both bridges (2026-10-04: steem=true, hive=false), the hive second-home desk states its empty hands by name, and the badge re-derives from evidence');
   } catch (e) { evalr('E61', 'the chain proof', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
+  // ---- E62 (R39, CR-0069): THE SWAP NET — the router plans, the owner-gated desks sign.
+  // The owner directed the DEX to swap STEEM/HIVE/BLURT + pegs to real value, opposing
+  // grids on our side of the book, and a networked arb market. This eval pins the laws
+  // the desk must never break: the parity law (quote/base — the inverted reading was
+  // caught by the desk's own first live book), the HBD-is-not-SBD refusal, the arb FLOOR
+  // law (net must beat 2×(capture+0.4%) or the row books BELOW-FLOOR), the peg-drift
+  // halt, the five-branch honest verdict set, the gated-routes-name-their-unlock law,
+  // and the counter-grid re-derivation from the booked anchor (a grid that cannot be
+  // recomputed from its own numbers is a lie caught before push).
+  try {
+    const dr62 = require(path.join(AG, 'dex-router.cjs'));
+    const why62 = []; const c62 = (cond, name) => { if (!cond) why62.push(name); };
+    // white-box: parity + floor + verdict-set + peg + grid laws
+    c62(dr62.impliedFair(0.602, 0.0635) === +(0.0635 / 0.602).toFixed(8), 'parity-law-quote-over-base');
+    c62(dr62.impliedFair(0, 1) === null && dr62.impliedFair(1, 0) === null, 'parity-zero-law');
+    c62(dr62.arbNet(200, 25, 20) === 155, 'arb-net-law');
+    c62(dr62.arbVerdict(999, 1, true, 2.0) === 'PEG-DRIFT-HALT' && dr62.arbVerdict(999, 1, false, null) === 'FEED-STALE' && dr62.arbVerdict(1, 123, true, null) === 'BELOW-FLOOR' && dr62.arbVerdict(999, 123, true, null) === 'CANDIDATE-FOK', 'verdict-set-honest');
+    const gg62 = dr62.counterGrid({ anchor: 0.105, spacingBps: 40, steemShare: 0.8056, steemLiquid: 14.34, quoteLiquid: 0.366, capPerRungSteem: 1.25, capPerRungQuote: 1.25 * 0.105 });
+    c62(gg62.anchorAdj === +(0.105 * (1 - dr62.skewShiftBps(0.8056) / 10000)).toFixed(8), 'grid-skew-rederivation');
+    c62(gg62.rungs.filter((r) => r.side === 'sell').length === 3 && gg62.rungs.filter((r) => r.side === 'buy').length === 3, 'grid-both-sides-opposing');
+    // black-box: fresh-process selftest (judge separation, zero network)
+    const bb62 = spawnSync('node', [path.join(AG, 'dex-router.cjs'), 'selftest'], { encoding: 'utf8', timeout: 30000 });
+    c62(bb62.status === 0 && /DEX-ROUTER-SELFTEST-OK \d+\/\d+/.test(bb62.stdout || ''), 'bb-selftest-fresh-process');
+    // real-tree: the booked book re-derives from its own legs
+    const rb62 = JSON.parse(fs.readFileSync(path.join(AG, 'dex-router.json'), 'utf8'));
+    if (rb62.verdict === 'DEX-ROUTER-HALTED-STASIS') {
+      c62(rb62.protocol === 'SAOS-DEX-ROUTER/1', 'stasis-book-protocol');
+    } else {
+      c62(rb62.protocol === 'SAOS-DEX-ROUTER/1', 'book-protocol');
+      c62(['SWAP-NET-LIVE', 'PARTIAL', 'ERROR'].includes(rb62.summary && rb62.summary.verdict), 'summary-verdict-honest');
+      const ENUM62 = ['LIVE-KEYED', 'GATED-KEYS', 'GATED-CAPITAL', 'C-GATE-OPERATOR', 'NO-RAIL', 'INTERNAL-SIM'];
+      c62((rb62.routes || []).length >= 10 && (rb62.routes || []).every((r) => ENUM62.includes(r.verdict)), 'routes-verdict-enum');
+      c62((rb62.routes || []).filter((r) => !['LIVE-KEYED', 'INTERNAL-SIM', 'NO-RAIL'].includes(r.verdict)).every((r) => typeof r.unlock === 'string' && r.unlock.length > 3), 'gated-routes-name-unlock');
+      c62((rb62.routes || []).some((r) => r.id === 'R10' && r.verdict === 'NO-RAIL' && !!r.why), 'blurt-absence-booked');
+      const a162 = (rb62.arb || []).find((r) => r.id === 'A1');
+      if (a162 && a162.netBps != null) c62(Math.abs(a162.netBps - (Math.abs(a162.grossBps) - a162.feesBps - a162.slipBps)) < 0.02, 'arb-row-recomputes');
+      c62((rb62.arb || []).length >= 4 && (rb62.arb || []).every((r) => ['CANDIDATE-FOK', 'BELOW-FLOOR', 'FEED-STALE', 'PEG-DRIFT-HALT'].includes(r.verdict)), 'arb-verdicts-honest');
+      const gs62 = (rb62.counterGrid || {}).steem;
+      if (gs62 && gs62.rungs && gs62.rungs.length) {
+        const adj62 = +(gs62.anchor * (1 - gs62.skewShiftBps / 10000)).toFixed(8);
+        const sell1 = gs62.rungs.find((r) => r.side === 'sell');
+        c62(sell1 && Math.abs(sell1.price - +(adj62 * (1 + gs62.spacingBps / 10000)).toFixed(8)) < 5e-8, 'counter-grid-rederives-from-book');
+        c62(gs62.verdict === 'PLAN-OWNER-GATED-NOT-BROADCAST', 'counter-grid-plan-gated');
+        c62(String(gs62.anchorSource || '').startsWith('CEX-IMPLIED-FAIR') || String(gs62.anchorSource || '').startsWith('LOCAL-MID-FALLBACK'), 'grid-anchor-source-named');
+      }
+    }
+    evalr('E62', 'the swap net (CR-0069)', why62.length === 0,
+      ['white-box: the parity law prices 1 QUOTE in BASE terms (quote/base — the inverted reading is the parity bug the first live book caught and the eval pins forever), zeroes are nulls, the arb FLOOR law nets gross minus fees minus slippage, and the verdict set is exactly {CANDIDATE-FOK, BELOW-FLOOR, FEED-STALE, PEG-DRIFT-HALT} with the 1.5% peg halt outranking any edge', 'white-box: the counter-grid is both-sided (3 opposing rungs per side), anchored and skewed exactly as the Avellaneda law shifts it, and the first sell rung re-derives to the 8th decimal from the anchor it is booked with', 'black-box: dex-router selftest runs in a fresh process, exit 0, protocol marker on stdout (zero network — judge separation)', 'real-tree: the booked swap-net book carries the protocol marker, an honest summary verdict, 10+ routes every one inside the six-branch verdict enum, every gated route naming its unlock, the blurt absence booked as NO-RAIL with its why, arb rows that recompute (net = |gross| − fees − slip), and a counter-grid whose rungs re-derive from the booked anchor/skew/spacing'],
+      why62.length ? 'fails: ' + why62.join('; ') : 'the router plans, the gates are named, the peg is watched, and the opposing grids re-derive from their own numbers');
+  } catch (e) { evalr('E62', 'the swap net', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.47.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48 + R27 metronome-audit E49 + R28 mm-volume E50 + R29 share-ladder E51 + R30 calibrated-engine E52 + R31 tape-calibration/venue-expansion E53 + R32 sidechain-pond E54 + R33 pnl-verdict E55 + sovereign-hands E56 + R34 fill-through-evolution E57 + R35 human-cadence E58 + R36 community-home E59 + R37 community-breath E60 + R38 chain-proof E61, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.48.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48 + R27 metronome-audit E49 + R28 mm-volume E50 + R29 share-ladder E51 + R30 calibrated-engine E52 + R31 tape-calibration/venue-expansion E53 + R32 sidechain-pond E54 + R33 pnl-verdict E55 + sovereign-hands E56 + R34 fill-through-evolution E57 + R35 human-cadence E58 + R36 community-home E59 + R37 community-breath E60 + R38 chain-proof E61 + R39 swap-net E62, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];

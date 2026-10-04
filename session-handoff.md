@@ -20,3 +20,10 @@
    never re-do what a receipt already closes.
 4. Take exactly one feature from `feature_list.json` to done-with-evidence.
 5. Update the three state files; push rebase-first; leave books fresher.
+
+## R39 booked rungs (do not re-derive)
+- THE SWAP NET is live (CR-0069, feat-064, E62, suite v1.48.0): dex-router.cjs
+  hourly lane measures venues/routes/arb/counter-grids; execution stays with the
+  owner-gated signing surfaces. Next: peg-out rail identity (R11 exit corridor),
+  HBD/USDT real leg (A2 FEED-STALE until found), operator CEX keys (R7-R9),
+  drip-day grid-cap expansion (2026-10-10).
