@@ -36,6 +36,7 @@ const NODE = 'https://api.steemit.com';
 const NODE_CROSS = 'https://api.justyy.com';
 const ROSTER = ['headcorner', 'cashmachine', 'haran', 'israelnews', 'lsa', 'macrame', 'siq', 'tov', 'wic', 'wog', 'woq'];
 const MAX_PAGES = +(process.env.EARN_AUDIT_MAX_PAGES || 30); // Z-70 CR-0048: 4 pages (400 ops) hid the drip on rotation days — headcorner's 7d window covered only ~404 ops; 30 pages = ~3000 ops/account
+const CONVERT_MATURITY_DAYS = 3.5; // STEEM chain law: SBD→STEEM conversion matures 3.5 days after open (Z-72 CR-0054 — computed from the op timestamp, never guessed)
 const WINDOW_DAYS = +(process.env.EARN_AUDIT_DAYS || 7);
 
 function rpc(method, params, node = NODE, timeout = 20000) {
@@ -59,14 +60,14 @@ const num = (s) => parseFloat(s) || 0;
 function freshTally() {
   return { author_sbd: 0, author_steem: 0, author_vests: 0, curation_vests: 0, claimed_steem: 0, claimed_sbd: 0, claimed_vests: 0, drip_arrived_steem: 0, transfer_in_steem: 0, transfer_in_sbd: 0, transfer_out_steem: 0, sold_steem: 0, recv_sbd: 0, bought_steem: 0, spent_sbd: 0, fills: 0, votes: 0, posts: 0, converts_sbd: 0, ops: 0, convert_maturities: [], convert_fills: [] }; // Z-71 CR-0050: the sensor keeps the maturity SCHEDULE, not just the SBD sum — the convert-canon composes its pending book from this memory
 }
-function tallyOp(t, op) {
+function tallyOp(t, op, opTs) {
   const [kind, b] = op;
   t.ops++;
   if (kind === 'author_reward') { t.author_sbd += num(b.sbd_payout); t.author_steem += num(b.steem_payout); t.author_vests += num(b.vesting_payout); }
   else if (kind === 'curation_reward') t.curation_vests += num(b.reward);
   else if (kind === 'claim_reward_balance') { t.claimed_steem += num(b.reward_steem); t.claimed_sbd += num(b.reward_sbd); t.claimed_vests += num(b.reward_vesting_balance); }
   else if (kind === 'fill_vesting_withdraw') t.drip_arrived_steem += num(b.deposited);
-  else if (kind === 'convert') { t.converts_sbd += num(b.amount); t.convert_maturities.push({ requestid: b.requestid, amount_sbd: num(b.amount), conversion_date: b.conversion_date }); }
+  else if (kind === 'convert') { t.converts_sbd += num(b.amount); const openTs = opTs || null; const maturesAt = openTs ? new Date(Date.parse(openTs) + CONVERT_MATURITY_DAYS * 864e5).toISOString().replace('.000', '') : null; t.convert_maturities.push({ requestid: b.requestid, amount_sbd: num(b.amount), open_ts: openTs, matures_at: maturesAt, conversion_date: b.conversion_date || maturesAt }); } // Z-72 CR-0054: the chain `convert` op carries NO conversion_date (measured live: body = {amount, owner, requestid} only) — maturity is a CHAIN LAW (open + 3.5d), the sensor computes it itself; booking `undefined` left the 24h pre-position window dead code forever
   else if (kind === 'fill_convert_request') t.convert_fills.push({ requestid: b.requestid }); // the closure — the schedule needs it to know what is still pending
   else if (kind === 'transfer') {
     const incoming = b.to === b.__account;
@@ -102,7 +103,7 @@ async function walkAccount(account, sinceTs, gp) {
       oldestTs = oldestTs && oldestTs < e.timestamp ? oldestTs : e.timestamp;
       if (e.timestamp < sinceTs) continue;
       e.op[1] && (e.op[1].__account = account);
-      tallyOp(t, e.op);
+      tallyOp(t, e.op, e.timestamp); // Z-72 CR-0054: op timestamp rides along — the maturity law needs the open moment
     }
     if (oldestTs) oldestScanned = oldestScanned && oldestScanned < oldestTs ? oldestScanned : oldestTs;
     if (oldestTs && oldestTs < sinceTs) { reachedFloor = true; break; }

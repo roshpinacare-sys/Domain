@@ -1,6 +1,6 @@
 # Workflow Parse Gate — every lane must be able to run
 
-_workflow-parse-gate v1.0.0 · 2026-10-03T23:52:16.347Z · dir .github/workflows_
+_workflow-parse-gate v1.0.0 · 2026-10-04T00:07:26.232Z · dir .github/workflows_
 
 **PARSE-GATE GREEN: 48 workflows scanned, mode full, 0 offenders**
 
