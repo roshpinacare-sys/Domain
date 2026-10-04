@@ -1,6 +1,6 @@
 # community-founder — הבית הקהילתי (CR-0066)
 
-עודכן: 2026-10-04T07:35:03.701Z
+עודכן: 2026-10-04T11:04:43.440Z
 
 ## הקהילה חיה
 - שם-חשבון: hive-177702
@@ -12,18 +12,10 @@
 
 ## שרשרת-האם (הוכחה חיה, R38)
 - פס-דין: STEEM-CHAIN
-- נבדק חי: steem=true · hive=false · ב-2026-10-04T07:35:03.701Z
+- נבדק חי: steem=true · hive=false · ב-2026-10-04T11:04:43.109Z
 - הסבר: "hive-" בשם הוא קונבנציית-hivemind על Steem (סוג 1 = journal), לא רשת Hive
 
 ## ריצות אחרונות
-- [2026-10-04T06:21:19.856Z] status → COMMUNITY-LIVE
-  - adopt: the vault carries hive-177702 with keys — finalizing from the chain
-  - chain: hive-177702 title=The Clubhouse · roles=12 · subs=0 · receivedSP=10.0
-- [2026-10-04T06:22:43.311Z] status → COMMUNITY-LIVE
-  - adopt: the vault carries hive-177702 with keys — finalizing from the chain
-  - chain: hive-177702 title=The Clubhouse · roles=12 · subs=0 · receivedSP=10.0
-- [2026-10-04T06:23:41.135Z] status → COMMUNITY-LIVE
-  - chain: hive-177702 title=The Clubhouse · roles=12 · subs=0 · receivedSP=10.0
 - [2026-10-04T06:24:44.992Z] status → COMMUNITY-LIVE
   - adopt: the vault carries hive-177702 with keys — finalizing from the chain
   - chain: hive-177702 title=The Clubhouse · roles=12 · subs=0 · receivedSP=10.0
@@ -51,3 +43,12 @@
 - [2026-10-04T07:35:01.012Z] status → COMMUNITY-LIVE
   - chain: hive-177702 title=The Clubhouse · roles=12 · subs=0 · receivedSP=10.0
   - chain-proof: steem=true · hive=false → STEEM-CHAIN
+- [2026-10-04T11:04:42.191Z] rc → MODE-DRY · plan armed — COMMUNITY_LIVE=1 signs the top-up
+  - plan: available 1268037 vests (786.06 SP) · reservation 767704 vests · short 64526 vests · floor 10 SP received
+- [2026-10-04T11:04:42.441Z] status → COMMUNITY-LIVE
+  - chain: hive-177702 title=The Clubhouse · roles=12 · subs=2 · receivedSP=10.0
+  - chain-proof: steem=true · hive=false → STEEM-CHAIN
+- [2026-10-04T11:04:43.133Z] hive → HOME-ABSENT-UNKEYED · no Hive key material is held (measured: headcorner hive active pub STM8c9vp3… ≠ the held steem pub) — the desk cannot sign what it does not hold
+  - hive fee=3.000 HIVE · headcorner liquid=0.034 · need=3.050 · orders=0
+  - soldiers-on-hive=10/10 · names-free=hive-177702 · steem-house-on-hive=no
+  - authority=NO-KEYS · vault=absent · stasis=clear
