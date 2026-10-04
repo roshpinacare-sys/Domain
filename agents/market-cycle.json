@@ -923,5 +923,48 @@
       }
     },
     "duration_ms": 11434
+  },
+  {
+    "ts": "2026-10-04T05:17:20.127Z",
+    "mode": "DRY",
+    "skip_fetch": false,
+    "fill_ledger": {
+      "script": "fill-ledger.cjs",
+      "status": 0,
+      "error": null,
+      "stdout_tail": "[fill-ledger] mode=READ-ONLY new=0 total=143 realized_sbd=-0.389730 vwap=sell 0.100201 / buy 0.102413 (edge -2.2078%) recycle=FUNDED-BUY-SIDE 0.657 SBD errors=0 in 644ms | [fill-ledger] canon: agents/fill-ledger.json (run #33)",
+      "stderr_tail": ""
+    },
+    "suggestion": {
+      "suggested": true,
+      "reasons": [
+        "FUNDED-BUY-SIDE 0.657 SBD"
+      ]
+    },
+    "decision": {
+      "executorMode": "DRY",
+      "reason": "MODE-DRY: planning receipt only, zero signatures"
+    },
+    "executor": {
+      "script": "market-exec.cjs",
+      "status": 0,
+      "error": null,
+      "stdout_tail": "[market-exec] mode=DRY_RUN planned=0 skipped=6 errors=0 verify=0/0 in 699ms | [market-exec] canon: agents/market-exec.json (run #33)",
+      "stderr_tail": ""
+    },
+    "errors": [],
+    "run_index": 22,
+    "fill_ledger_row": {
+      "run_index": 33,
+      "new_fills": 0,
+      "realized_sbd": -0.38973,
+      "recycle": {
+        "suggested": true,
+        "reasons": [
+          "FUNDED-BUY-SIDE 0.657 SBD"
+        ]
+      }
+    },
+    "duration_ms": 1415
   }
 ]
