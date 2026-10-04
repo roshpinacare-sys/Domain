@@ -1,6 +1,6 @@
 {
  "protocol": "SAOS-DEX-CORE/1",
- "at": "2026-10-04T16:05:01.144Z",
+ "at": "2026-10-04T17:14:23.614Z",
  "agent": "dex-core v1.4.0 (R44 THE OPPOSING HANDS, CR-0074)",
  "mode": "KEYLESS-ATOMIC-INTERNAL",
  "stasisHalted": false,
@@ -89,12 +89,12 @@
  "redeemBook": [],
  "feed": {
   "source": "agents/dex-router.json",
-  "routerAt": "2026-10-04T08:48:34.143Z",
+  "routerAt": "2026-10-04T15:58:44.370Z",
   "fresh": true,
-  "fairNano": 105446700,
+  "fairNano": 106686930,
   "fairSource": "CEX-IMPLIED-FAIR (SBDUSDT/STEEMUSDT — lead-lag anchor, the opposing side of the local book)",
-  "hiveFairNano": 56414230,
-  "crossFairNano": "1869150744",
+  "hiveFairNano": 56829820,
+  "crossFairNano": "1877305435",
   "fairSource2": "LOCAL-MID-FALLBACK (CEX feed stale)",
   "verdict": "FEED-LIVE"
  },
@@ -113,8 +113,8 @@
    "SAOS": "0"
   },
   "custodyProvenance": {
-   "STEEM": "MEASURED condenser headcorner @https://api.steemit.com 2026-10-04T16:05:01.144Z (CUSTODY-DROP)",
-   "SBD": "MEASURED condenser headcorner @https://api.steemit.com 2026-10-04T16:05:01.144Z (CUSTODY-DROP)",
+   "STEEM": "MEASURED condenser headcorner @https://api.steemit.com 2026-10-04T17:14:23.614Z (CUSTODY-DROP)",
+   "SBD": "MEASURED condenser headcorner @https://api.steemit.com 2026-10-04T17:14:23.614Z (CUSTODY-DROP)",
    "HIVE": "UNKEYED-ADJACENCY — honest zero until key material exists (R38 law)",
    "HBD": "UNKEYED-ADJACENCY — honest zero until key material exists (R38 law)",
    "BLURT": "UNKEYED-ADJACENCY — honest zero until key material exists (R38 law)",
@@ -143,9 +143,9 @@
    "BLURT": "67477000"
   },
   "observedProvenance": {
-   "HIVE": "MEASURED HIVE headcorner @https://api.hive.blog 2026-10-04T16:05:01.144Z (class OBSERVED-UNCONTROLLED)",
-   "HBD": "MEASURED HIVE headcorner @https://api.hive.blog 2026-10-04T16:05:01.144Z (class OBSERVED-UNCONTROLLED)",
-   "BLURT": "MEASURED BLURT headcorner @https://blurt-rpc.saboin.com 2026-10-04T16:05:01.144Z (class OBSERVED-POST-KEYED)"
+   "HIVE": "MEASURED HIVE headcorner @https://api.hive.blog 2026-10-04T17:14:23.614Z (class OBSERVED-UNCONTROLLED)",
+   "HBD": "MEASURED HIVE headcorner @https://api.hive.blog 2026-10-04T17:14:23.614Z (class OBSERVED-UNCONTROLLED)",
+   "BLURT": "MEASURED BLURT headcorner @https://blurt-rpc.saboin.com 2026-10-04T17:14:23.614Z (class OBSERVED-POST-KEYED)"
   }
  },
  "accounts": {
@@ -1393,11 +1393,11 @@
     "cex:STEEMUSDT+SBDUSDT"
    ],
    "poolMidNano": "106734950",
-   "fairNano": "105446700",
+   "fairNano": "106686930",
    "fairSource": "CEX-IMPLIED-FAIR (SBDUSDT/STEEMUSDT — lead-lag anchor, the opposing side of the local book)",
-   "grossBps": 122.17,
+   "grossBps": 4.5,
    "feesBps": 35,
-   "netBps": 87.17,
+   "netBps": -30.5,
    "thresholdBps": 120,
    "verdict": "BELOW-FLOOR",
    "railOwner": "treasury (our own pool — atomic, no bridge)"
@@ -1421,7 +1421,7 @@
   {
    "id": "A2",
    "name": "P8 HIVE/STEEM cross-network bridge",
-   "crossFairNano": "1869150744",
+   "crossFairNano": "1877305435",
    "fairSource": "cross of CEX-IMPLIED-FAIR (SBDUSDT/STEEMUSDT — lead-lag anchor, the opposing side of the local book) / LOCAL-MID-FALLBACK (CEX feed stale)",
    "verdict": "NO-CUSTODY",
    "why": "HIVE custody is OBSERVED-UNCONTROLLED — the bridge arms when hive active key material verifies into the estate (R38 law)",
@@ -1858,17 +1858,6 @@
  "opsThisTick": [
   {
    "seq": 23,
-   "type": "OBSERVE",
-   "asset": "BLURT",
-   "network": "BLURT",
-   "node": "https://blurt-rpc.saboin.com",
-   "amount": "67477000",
-   "prior": "67841000",
-   "keyClass": "OBSERVED-POST-KEYED",
-   "note": "observed, NOT custody — minting and conservation never touch it"
-  },
-  {
-   "seq": 23,
    "type": "GRID-ARM",
    "pool": "P1",
    "pair": "WSTEEM/STEEM",
@@ -1915,8 +1904,8 @@
   "meshFills": 0,
   "meshBatch": null,
   "notes": [
-   "STEEM custody DROP -13415000µ measured — trading HALTED this tick (safety law: the vault never trades on shrinking custody)",
-   "SBD custody DROP -282000µ measured — trading HALTED this tick (safety law: the vault never trades on shrinking custody)"
+   "STEEM custody DROP -11496000µ measured — trading HALTED this tick (safety law: the vault never trades on shrinking custody)",
+   "SBD custody DROP -351000µ measured — trading HALTED this tick (safety law: the vault never trades on shrinking custody)"
   ]
  }
 }
