@@ -133,18 +133,26 @@ jobs:
           node agents/scheduler-audit.cjs
           node agents/scheduler-heal.cjs || true
 
+      # MM-VOLUME leg (CR-0058, R28) — THE VOLUME ENGINE: the fleet-scale market-making
+      # planner — venue economics from the fee doctrine + measured spreads, the
+      # deterministic fleet partition, the bounded+labelled internal-flow plan, and the
+      # owner-gated projections (plan-only, never signs; live path stays market-exec law).
+      - name: mm-volume plan (R28 — the fleet on the orderbook, provably)
+        if: steps.brake.outputs.active != 'true'
+        run: node agents/mm-volume.cjs
+
       - name: publish the map back to the book
         if: steps.brake.outputs.active != 'true'
         run: |
           set -u
           git config user.name "fleet-census-cron[bot]"
           git config user.email "fleet-census-cron[bot]@users.noreply.github.com"
-          git add agents/fleet-census.artifact.json agents/fleet-delta.jsonl agents/claims-audit.json agents/claims-audit.md agents/cadence-week.json agents/cadence-week.md agents/scheduler-raw.json agents/scheduler-audit.json agents/scheduler-audit.md 2>/dev/null || true
+          git add agents/fleet-census.artifact.json agents/fleet-delta.jsonl agents/claims-audit.json agents/claims-audit.md agents/cadence-week.json agents/cadence-week.md agents/scheduler-raw.json agents/scheduler-audit.json agents/scheduler-audit.md agents/mm-volume.json agents/mm-volume.md agents/mm-volume-plan.jsonl 2>/dev/null || true
           NODRIFT=$(node -e '
             const fs=require("fs"),cp=require("child_process");
             const strip=(s)=>{try{const o=JSON.parse(s);delete o.at;return JSON.stringify(o);}catch(e){return "UNPARSEABLE";}};
             const staged=cp.execSync("git diff --cached --name-only",{encoding:"utf8"}).split("\n").filter(Boolean);
-            const volatile=["agents/fleet-census.artifact.json","agents/claims-audit.json","agents/cadence-week.json","agents/scheduler-raw.json","agents/scheduler-audit.json"];
+            const volatile=["agents/fleet-census.artifact.json","agents/claims-audit.json","agents/cadence-week.json","agents/scheduler-raw.json","agents/scheduler-audit.json","agents/mm-volume.json"];
             const real=staged.filter((f)=>!volatile.includes(f));
             let stableSame=true;
             for(const f of volatile){

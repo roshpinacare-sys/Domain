@@ -2004,9 +2004,86 @@ function accumulateInMemory(bookRows, seed) {
       why49.length ? 'fails: ' + why49.join('; ') : 'a cadence the fleet cannot see is a cadence that can rot silently — this eval pins the moment the fleet started measuring its own time and re-firing its own pulse');
   } catch (e) { evalr('E49', 'metronome audit', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
+  // ---- E50 (R28, CR-0058): the volume engine — the fleet-scale market-making planner.
+  // Venue economics priced by each venue's OWN fee doctrine, the deterministic fleet
+  // partition, the bounded+labelled internal flow, and the plan-only owner gate.
+  try {
+    const why50 = [];
+    const c50 = (cond, name) => { if (!cond) why50.push(name); };
+    const mv = require(path.join(AG, 'mm-volume.cjs'));
+    // white-box: venueEconomics edge-exact (zero-fee internal market vs fee'd venue)
+    const e50 = mv.venueEconomics({ feeBps: 0, spreadPct: 1.4736, fillsPerMin: 10, avgSizeSbd: 0.068 });
+    c50(e50 && e50.edgeConsPct === 0.7368 && e50.edgeOptPct === 1.4736, 've-zero-fee-edges');
+    c50(e50.bounds.tapeBoundTradesDay === 14400 && e50.bounds.capBoundTradesDay === 576 && e50.bounds.binding === 'capacity', 've-binding-capacity');
+    c50(e50.projTradesDay === 576 && e50.projVolumeSbd === 39.168, 've-volume');
+    const ef50 = mv.venueEconomics({ feeBps: 75, spreadPct: 1, fillsPerMin: 10, avgSizeSbd: 0.1 });
+    c50(ef50 && ef50.edgeConsPct === 0 && ef50.edgeOptPct === 0, 've-fee-kills-edge-floor-zero');
+    c50(mv.venueEconomics({ feeBps: null, spreadPct: 1, fillsPerMin: 1, avgSizeSbd: 1 }) === null, 've-invalid-null');
+    // white-box: partitionLadder — sorted accounts, disjoint complete cover, deterministic
+    const p50 = mv.partitionLadder(['bravo', 'alpha', 'charlie'], 10);
+    c50(p50.covers === true && p50.slices.length === 3 && p50.slices[0].account === 'alpha' && p50.slices[0].rungs.length === 4 && p50.slices[1].rungs.length === 3 && p50.slices[2].rungs.length === 3, 'partition-cover-sorted');
+    const allR = p50.slices.flatMap((s) => s.rungs);
+    c50(new Set(allR).size === 10 && allR.reduce((s, x) => s + x, 0) === 45, 'partition-disjoint-complete');
+    c50(mv.partitionLadder([], 10).covers === false && mv.partitionLadder(['a'], 0).covers === false, 'partition-empty-false');
+    // white-box: selfFlowPlan — eligible ONLY at zero round-trip fee, cap math, guards as data
+    const sf50 = mv.selfFlowPlan({ accounts: ['headcorner'], projVolumeSbd: 100, feeBps: 0 });
+    c50(sf50.eligible === true && sf50.internalCapSbd === 25 && sf50.guards.some((g) => g.startsWith('VWAP-EXCLUSION')), 'selfflow-zero-fee-cap');
+    const sf50b = mv.selfFlowPlan({ accounts: ['a'], projVolumeSbd: 100, feeBps: 75 });
+    c50(sf50b.eligible === false && sf50b.blockedReason === 'FEE-ROUND-TRIP-NONZERO', 'selfflow-fee-blocked');
+    const sf50c = mv.selfFlowPlan({ accounts: [], projVolumeSbd: 100, feeBps: 0 });
+    c50(sf50c.eligible === false && sf50c.blockedReason === 'NO-FLEET-ACCOUNTS', 'selfflow-no-accounts');
+    // white-box: BUY-EDGE floor + realized sell VWAP (SBD-weighted over placed rows)
+    c50(mv.buyEdgeFloor(null) === null && mv.buyEdgeFloor(0.102) === 0.1017, 'buy-edge-floor');
+    const wap50 = mv.sellVwapFromRuns([{ placed: [{ amount_to_sell: '1.000 STEEM', realized: 0.100 }, { amount_to_sell: '3.000 STEEM', realized: 0.104 }] }]);
+    c50(wap50 === 0.103, 'sell-vwap-weighted');
+    // black-box: fresh process on a rich fixture → MMV-PLAN-LIVE, book + plan ledger written
+    const fx50 = fs.mkdtempSync(path.join(require('os').tmpdir(), 'mmv50-'));
+    fs.writeFileSync(path.join(fx50, 'fee-doctrine.json'), JSON.stringify({ format: 'saos-fee-doctrine/1', venues: [{ id: 'saos-dex-kernel', feeBpsSource: 30, treasuryCutPct: 30 }] }));
+    fs.writeFileSync(path.join(fx50, 'dex-book.json'), JSON.stringify({ at: '2026-10-04T00:00:00Z', steem: {} }));
+    fs.writeFileSync(path.join(fx50, 'market-grid-history.jsonl'), JSON.stringify({ at: '2026-10-04T00:00:00Z', spreads: [{ market: 'SBD/STEEM (internal steem)', spreadPct: 1.4736 }] }) + '\n');
+    fs.writeFileSync(path.join(fx50, 'money-ledger.json'), JSON.stringify({ updated: '2026-10-04T00:00:00Z', book: { headSteemLiquid: '23.366 STEEM', headSteemDebt: '11.241 SBD' } }));
+    fs.writeFileSync(path.join(fx50, 'market-exec.json'), '[]');
+    fs.writeFileSync(path.join(fx50, 'agent-registry.json'), JSON.stringify({ identity: [{ metadata: { owner: 'steem://headcorner' } }] }));
+    const r50a = spawnSync(process.execPath, [path.join(AG, 'mm-volume.cjs')], { env: { ...process.env, MMV_DIR: fx50 }, cwd: AG, timeout: 60000, encoding: 'utf8' });
+    const book50 = (() => { try { return JSON.parse(fs.readFileSync(path.join(fx50, 'mm-volume.json'), 'utf8')); } catch (_) { return null; } })();
+    c50(r50a.status === 0 && book50 && book50.verdict === 'MMV-PLAN-LIVE', 'mmv-blackbox-live');
+    c50(book50 && book50.venues.length === 2 && book50.venues[0].econ && book50.venues[0].selfFlow.eligible === true && book50.fleet.partition.covers === true, 'mmv-blackbox-venues');
+    c50(fs.existsSync(path.join(fx50, 'mm-volume-plan.jsonl')) && fs.existsSync(path.join(fx50, 'mm-volume.md')), 'mmv-plan-ledger');
+    // determinism: the stable payload (book minus at) is byte-identical across two runs
+    const snap50 = book50 ? JSON.stringify({ ...book50, at: null }) : '';
+    spawnSync(process.execPath, [path.join(AG, 'mm-volume.cjs')], { env: { ...process.env, MMV_DIR: fx50 }, cwd: AG, timeout: 60000, encoding: 'utf8' });
+    const book50b = (() => { try { return JSON.parse(fs.readFileSync(path.join(fx50, 'mm-volume.json'), 'utf8')); } catch (_) { return null; } })();
+    c50(book50b && JSON.stringify({ ...book50b, at: null }) === snap50, 'mmv-stable-payload');
+    // black-box: STASIS halt-before-read — active local brake → MMV-HALTED-STASIS, zero plan writes
+    fs.writeFileSync(path.join(fx50, 'STASIS.json'), JSON.stringify({ active: true, reason: 'E50 eval brake' }));
+    const planRowsBefore50 = fs.readFileSync(path.join(fx50, 'mm-volume-plan.jsonl'), 'utf8').split('\n').filter(Boolean).length;
+    const r50c = spawnSync(process.execPath, [path.join(AG, 'mm-volume.cjs')], { env: { ...process.env, MMV_DIR: fx50 }, cwd: AG, timeout: 60000, encoding: 'utf8' });
+    const book50c = (() => { try { return JSON.parse(fs.readFileSync(path.join(fx50, 'mm-volume.json'), 'utf8')); } catch (_) { return null; } })();
+    const planRowsAfter50 = fs.readFileSync(path.join(fx50, 'mm-volume-plan.jsonl'), 'utf8').split('\n').filter(Boolean).length;
+    c50(r50c.status === 0 && book50c && book50c.verdict === 'MMV-HALTED-STASIS' && planRowsAfter50 === planRowsBefore50, 'mmv-stasis-halt-zero-write');
+    fs.rmSync(fx50, { recursive: true, force: true });
+    // black-box: corrupt inputs → honest blocked book, exit 0 (measured nothing, invented nothing)
+    const fx50b = fs.mkdtempSync(path.join(require('os').tmpdir(), 'mmv50b-'));
+    fs.writeFileSync(path.join(fx50b, 'fee-doctrine.json'), '{corrupt');
+    const r50d = spawnSync(process.execPath, [path.join(AG, 'mm-volume.cjs')], { env: { ...process.env, MMV_DIR: fx50b }, cwd: AG, timeout: 60000, encoding: 'utf8' });
+    const book50d = (() => { try { return JSON.parse(fs.readFileSync(path.join(fx50b, 'mm-volume.json'), 'utf8')); } catch (_) { return null; } })();
+    c50(r50d.status === 0 && book50d && book50d.verdict === 'MMV-BLOCKED-INPUTS' && book50d.blockedReasons.includes('NO-FEE-DOCTRINE'), 'mmv-corrupt-honest');
+    fs.rmSync(fx50b, { recursive: true, force: true });
+    // white-box: the real tree agrees and the host workflow carries the leg + publish wiring
+    let realBook50 = null; try { realBook50 = JSON.parse(fs.readFileSync(path.join(AG, 'mm-volume.json'), 'utf8')); } catch (_) {}
+    c50(realBook50 && /^(MMV-PLAN-LIVE|MMV-PARTIAL|MMV-BLOCKED-INPUTS|MMV-HALTED-STASIS)$/.test(realBook50.verdict), 'mmv-real-tree-book');
+    const hostWf50 = String(fs.readFileSync(path.join(AG, '..', '.github', 'workflows', 'fleet-census-cron.yml'), 'utf8') || '');
+    c50(hostWf50.includes('agents/mm-volume.cjs') && hostWf50.includes('agents/mm-volume.json') && hostWf50.includes('agents/mm-volume-plan.jsonl'), 'mmv-host-wired');
+
+    evalr('E50', 'the volume engine (CR-0058): venue economics edge-exact over each venue\u2019s own fee doctrine (zero-fee internal edges, fee-kill floor zeroing the edge, capacity-vs-tape binding), fleet partition sorted+disjoint+complete, internal flow eligible only at zero round-trip fee with cap+VWAP-exclusion guards as data, BUY-EDGE floor from the realized sell VWAP, fresh-process MMV-PLAN-LIVE on a rich fixture, byte-stable payload, STASIS halt zero-writes, corrupt inputs honestly BLOCKED, real-tree book + host wiring pinned',
+      why50.length === 0,
+      ['white-box: venueEconomics edges/bounds/binding exact, invalid null', 'white-box: partitionLadder sorted disjoint complete cover, empty false', 'white-box: selfFlowPlan zero-fee eligible + cap 25%, fee-blocked, no-accounts blocked, guards as data', 'white-box: buyEdgeFloor null-law + 0.102\u21920.1017, sellVwapFromRuns SBD-weighted', 'black-box: rich fixture \u2192 exit 0, MMV-PLAN-LIVE, 2 venues, plan ledger + Hebrew md written, stable payload byte-identical across runs', 'black-box: STASIS active \u2192 MMV-HALTED-STASIS, zero plan rows (halt-before-read)', 'black-box: corrupt inputs \u2192 exit 0, MMV-BLOCKED-INPUTS with honest reasons', 'white-box: the real-tree book agrees and the host workflow carries the mm-volume leg + publish/volatile wiring'],
+      why50.length ? 'fails: ' + why50.join('; ') : 'the owner directive \u2014 the fleet as the biggest market maker on its networks, provably, before capital moves \u2014 now has its instrument: a deterministic planner that prices every venue by its own fee doctrine, partitions the ladder across the soldiers, bounds and labels the internal flow, and never signs');
+  } catch (e) { evalr('E50', 'volume engine', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.36.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48 + R27 metronome-audit E49, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.37.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48 + R27 metronome-audit E49 + R28 mm-volume E50, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];
