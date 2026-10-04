@@ -26,6 +26,7 @@ const SOLDIER_WEIGHT = 10000; // חיילים: 100% (SP-אבק — מקסום-א
 const HEAD_WEIGHT = 2000;     // ראש: 20% (4608 SP — פרס-משמעותי לחיילים, חיסכון-VP)
 const HEAD_SELF_WEIGHT = 100; // ראש: 1% עצמי על-דגלול-בלבד (אות-חיות)
 const HEAD_FLAGSHIP = (author, permlink) => author === 'headcorner' && /^saos-grid-\d{8}$/.test(permlink);
+let HEAD_ONLY = false; // CR-0065: set true when persona-slots v2 exists — soldier cross-votes move to the cadence desk
 
 // ── שחזור-עצמי: פענוח-הכספת-מהריפו-הפרטי (דוקטרינת-משמורת-מערכת) ──
 // זוג-פותח: recovery-meta.json ↔ agent/vault/*.zip.enc · אם-פער-דורות — ההיסטוריה
@@ -79,6 +80,12 @@ function rpc(method, params) {
 }
 
 async function main() {
+  // CR-0065: soldier cross-votes moved into the human cadence desk (spread hourly) —
+  // this burst engine keeps ONLY headcorner's lane (flagship + flag-pole self-vote).
+  try {
+    const slots = JSON.parse(fs.readFileSync(path.join(__dirname, 'persona-slots.json'), 'utf8'));
+    if (slots.version >= 2 && process.env.FORCE_LEGACY !== '1') { HEAD_ONLY = true; console.log('[self-audience] HEAD-ONLY — soldier cross-votes owned by human-cadence.cjs (CR-0065)'); }
+  } catch (_) {}
   const t0 = new Date().toISOString();
   // מקורות-מפתח: (1) SA_FLEET_KEYS env (ריפו-ציבורי — סודות-גיט) (2) כספת-עצמית מהריפו-הפרטי (3) VAULT ידני
   const envV = (() => { const raw = process.env.SA_FLEET_KEYS || ''; if (!raw) return null; try { const map = JSON.parse(Buffer.from(raw, 'base64').toString('utf8')); return { accounts: Object.entries(map).map(([username, wif]) => ({ username, keys: { posting: { wif } } })) }; } catch (_) { return null; } })();
@@ -128,6 +135,7 @@ async function main() {
   // ── 3. מטריצת-הצבעה ──
   const jobs = [];
   for (const p of posts) for (const voter of FLEET) {
+    if (HEAD_ONLY && voter !== 'headcorner') continue; // CR-0065: soldiers vote via human-cadence
     if (voter === p.author) {
       if (HEAD_FLAGSHIP(p.author, p.permlink) && !p.votes.includes(voter)) jobs.push({ voter, ...p, weight: HEAD_SELF_WEIGHT, self: true });
       continue;

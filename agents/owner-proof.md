@@ -23,9 +23,9 @@ _מורכב מהפנקסים המחויבים בלבד (keyless, offline). כל 
 - **realizedSbd (lifetime)**: -1.118787 — _מקור: agents/truth-baseline.json · נמדד: 2026-10-02T00:05:00Z · מדד כל-חיים של המסחר_
 - **usdPerDay7dAvg (lifetime)**: 0.00412 — _מקור: agents/truth-baseline.json · נמדד: 2026-10-02T00:05:00Z_
 - **trips (lifetime)**: 65 — _מקור: agents/truth-baseline.json · נמדד: 2026-10-02T00:05:00Z_
-- **יום אחרון**: realizedSbdToday=-0.384998, fills=137 — agents/fill-ledger.json (הליכת היום, היקף יומי מ-00:00Z)
+- **יום אחרון**: realizedSbdToday=-0.38973, fills=143 — agents/fill-ledger.json (הליכת היום, היקף יומי מ-00:00Z)
 - **הכנסה · contentRewards**: 0 — נמדד מת: 1421 הצבעות + 56 פוסטים → 0.000 לכל החיים — לולאת התוכן עדיין לא מרוויחה (CR-0046) · agents/earn-audit.json (chain truth, 7d window + lifetime walk)
-- **הכנסה · tradingSpread**: -0.384998 — הרגל היחידה שנמדדה עם תנועה — כרגע סביב האפס, ה-buy-premium breaker סוגר את הדליפה (CR-0047) · agents/fill-ledger.json (הליכת היום, היקף יומי מ-00:00Z)
+- **הכנסה · tradingSpread**: -0.38973 — הרגל היחידה שנמדדה עם תנועה — כרגע סביב האפס, ה-buy-premium breaker סוגר את הדליפה (CR-0047) · agents/fill-ledger.json (הליכת היום, היקף יומי מ-00:00Z)
 
 ## הגל המתוכנן — לוח ההבשלות מהשרשרת עצמה (ההפתעה שנמדדה, לא סיפור)
 
@@ -38,8 +38,8 @@ _מורכב מהפנקסים המחויבים בלבד (keyless, offline). כל 
 
 ## מה רץ לבד — 24/7, בלי מפתח, עם מרפא עצמי
 
-- **workflowsTotal**: 49 — _מקור: .github/workflows (tree scan)_
-- **workflowsScheduled**: 43 — _מקור: .github/workflows (tree scan)_
+- **workflowsTotal**: 50 — _מקור: .github/workflows (tree scan)_
+- **workflowsScheduled**: 44 — _מקור: .github/workflows (tree scan)_
 - **keeperArcDesks**: 9 — _מקור: agents/tick-keeper.json · נמדד: 2026-10-04T00:29:41.896Z · השומר מודד את הקבלות של הדסקים עצמן ומצית מחדש דסק רעב_
 - **stasisBreaker**: false — _מקור: agents/STASIS.json · השובר ריק — אין עצירה בתוקף_
 - **arc · sovereign-tick-cron**: קבלה אחרונה "2026-10-03T22:43:14.918Z" — מקסימום פער מותר: 20m · נמדד: 2026-10-04T00:29:41.896Z
@@ -54,8 +54,8 @@ _מורכב מהפנקסים המחויבים בלבד (keyless, offline). כל 
 
 ## משמעת — מה מוכח ומה נבדק
 
-- **claimsAudit**: "WARN" — _מקור: agents/claims-audit.json · נמדד: 2026-10-04T04:18:48.670Z · כל קובץ שנטען בפנקס — נבדק שהוא באמת על העץ_
-- **censusLanes**: undefined — _מקור: agents/fleet-census.json · נמדד: 2026-10-04T04:18:47.644Z · מפת ה-16 מסלולים של הצי_
+- **claimsAudit**: "WARN" — _מקור: agents/claims-audit.json · נמדד: 2026-10-04T05:10:21.440Z · כל קובץ שנטען בפנקס — נבדק שהוא באמת על העץ_
+- **censusLanes**: undefined — _מקור: agents/fleet-census.json · נמדד: 2026-10-04T05:10:20.531Z · מפת ה-16 מסלולים של הצי_
 - **ownerLanguage**: "he" — _מקור: agents/claims-audit.cjs OWNER_LANGUAGE (CR-0050) · כל פנייה לבעלים — בעברית_
 
 _החוק: שום מספר לא מומצא, שום היקף לא מתגנב (יומי לעולם לא מתגלגל לכל-חיים), שום הפסד לא מוסתר._

@@ -118,6 +118,16 @@ function recoverVault() {
 }
 
 async function main() {
+  // CR-0065: curation moved into human-cadence.cjs (hourly spread, internal-only, probe-b floor).
+  // This legacy engine defers to inspection-only unless FORCE_LEGACY=1: it still logs DRYRUN
+  // candidates for visibility, but never casts while the cadence owns the lane.
+  try {
+    const slots = JSON.parse(fs.readFileSync(path.join(__dirname, 'persona-slots.json'), 'utf8'));
+    if (slots.version >= 2 && process.env.FORCE_LEGACY !== '1') {
+      console.log('[soldiers-curate] DEFER-TO-CADENCE — curation owned by human-cadence.cjs (CR-0065, internal-only). Running as inspection DRYRUN.');
+      process.env.DRYRUN = '1';
+    }
+  } catch (_) {}
   const t0 = new Date().toISOString();
   // INCIDENT (2026-10-02, chain-verified): the first run of this desk cast 41 votes
 // (cashmachine 14, haran 14, israelnews 13) at 100% weight — the read-back rpc
@@ -207,7 +217,10 @@ const book0 = (() => { try { return JSON.parse(fs.readFileSync(OUT_JSON, 'utf8')
       const rep = rawRep <= 0 ? 25 : Math.min(99, Math.max(1, (Math.log10(rawRep) - 9) * 9 + 25)); // raw int -> steem rep scale
       const pend = num(p.pending_payout_value) + num(p.total_payout_value);
       const votes = (p.active_votes || []).length;
-      if (FLEET.includes(p.author)) continue;                       // support the public, not the echo
+      // INTERNAL-ONLY LAW (owner directive 2026-10-04, CR-0065): until the quality bar lifts,
+      // the fleet does not engage outside itself. External candidates require CURATE_SCOPE=external.
+      const EXTERNAL_ALLOWED = (process.env.CURATE_SCOPE || 'internal') === 'external';
+      if (!FLEET.includes(p.author) && !EXTERNAL_ALLOWED) continue; // external posts: paused until quality bar
       if (BOT_RX.test(p.permlink) || BOT_RX.test(String(p.title || ''))) continue;
       if ((p.active_votes || []).length < MIN_ACTIVE_VOTES) continue;
       if (seenAuthors.has(p.author) || seenPermlinks.has(p.permlink)) continue; // fleet dedupe (7d)

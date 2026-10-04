@@ -1850,10 +1850,12 @@ function accumulateInMemory(bookRows, seed) {
     for (const f of wfFiles47) texts47[f] = String(fs.readFileSync(path.join(WFD, f), 'utf8') || '');
     const ownerSecretCount47 = wfFiles47.filter((f) => OWNER_SECRET_RE.test(texts47[f])).length;
     // R31 evolution (in the open): the sibling's Z74 rung added workflow-yaml-guard
-    // (keyless) on main — the sovereignty bar moved 48→49 files, 15→16 keyless;
-    // the pinned bar re-based WITH the estate, documented here, never silently.
-    c47(wfFiles47.length === 49, 'workflow-count-49');
-    c47(ownerSecretCount47 === 33, 'owner-secret-count-33');
+    // (keyless) on main — the sovereignty bar moved 48→49 files, 15→16 keyless.
+    // R35 evolution (in the open, CR-0065): human-cadence.yml joins (owner-secret via
+    // SA_FLEET_KEYS — the same fleet secret, hourly social lane) — bar 49→50 files,
+    // 33→34 owner-secret, keyless stays 16; the pin re-bases WITH the estate, documented, never silent.
+    c47(wfFiles47.length === 50, 'workflow-count-50');
+    c47(ownerSecretCount47 === 34, 'owner-secret-count-34');
     c47(wfFiles47.length - ownerSecretCount47 === 16, 'keyless-count-16');
     // the converted four: zero non-GITHUB_TOKEN refs, permissions kept, keyless checkout
     const converted47 = ['twin-audit.yml', 'audience-analyst.yml', 'content-reviewer.yml', 'public-pulse.yml'];
@@ -1877,11 +1879,11 @@ function accumulateInMemory(bookRows, seed) {
     // the refreshed census book (same tree) carries the new sovereignty numbers
     let censusBook47 = null; try { censusBook47 = JSON.parse(fs.readFileSync(path.join(AG, 'fleet-census.json'), 'utf8')); } catch (_) {}
     c47(censusBook47 && censusBook47.sovereignty && censusBook47.sovereignty.workflowsKeyless === 16, 'census-book-keyless-16');
-    c47(censusBook47 && censusBook47.sovereignty && censusBook47.sovereignty.workflowsOwnerSecret === 33, 'census-book-owner-secret-33');
+    c47(censusBook47 && censusBook47.sovereignty && censusBook47.sovereignty.workflowsOwnerSecret === 34, 'census-book-owner-secret-34');
 
-    evalr('E47', 'the keyless wave (CR-0055): the sovereignty bar pinned — the census regex recounts 16/49 keyless over the live dir (re-based on main: the sibling\'s Z74 workflow-yaml-guard joined keyless — 48/15 → 49/16, the evolution written here), the four converted flows carry zero non-GITHUB_TOKEN refs under kept permissions, the dead PULSE_URL ref is durably documented-and-gone while its hook stays in the desk, and the issue gate survives zero tokens fresh-process',
+    evalr('E47', 'the keyless wave (CR-0055): the sovereignty bar pinned — the census regex recounts 16/50 keyless over the live dir (re-based on main twice: the sibling\'s Z74 workflow-yaml-guard 48/15 → 49/16, then R35\'s human-cadence.yml 49→50 with SA_FLEET_KEYS — the evolution written here each time), the four converted flows carry zero non-GITHUB_TOKEN refs under kept permissions, the dead PULSE_URL ref is durably documented-and-gone while its hook stays in the desk, and the issue gate survives zero tokens fresh-process',
       why47.length === 0,
-      ['white-box: census-authority regex recounted over .github/workflows = 49 files, 33 owner-secret, 16 keyless (the R26 bar re-based after the sibling\'s Z74 rung, encoded as data with the evolution documented)', 'white-box: twin-audit/audience-analyst/content-reviewer/public-pulse — zero non-GITHUB_TOKEN secret refs, contents:write kept, github.token checkout, issues:write kept where gates exist', 'white-box: public-pulse.yml documents the dead-ref finding without referencing it; public-pulse.cjs still owns the optional PULSE_URL hook (capability preserved)', 'white-box: twin-issue-gate.cjs keeps the fail-soft token loop (empty tokens skipped)', 'black-box: the real gate fresh-process with GH_TOKEN/ZIP_PAT stripped and no marker → exit 0 honestly', 'white-box: the refreshed census book agrees (workflowsKeyless 16 / owner-secret 33)'],
+      ['white-box: census-authority regex recounted over .github/workflows = 50 files, 34 owner-secret, 16 keyless (the R26 bar re-based after the sibling\'s Z74 rung, re-based again at R35 for human-cadence.yml, encoded as data with each evolution documented)', 'white-box: twin-audit/audience-analyst/content-reviewer/public-pulse — zero non-GITHUB_TOKEN secret refs, contents:write kept, github.token checkout, issues:write kept where gates exist', 'white-box: public-pulse.yml documents the dead-ref finding without referencing it; public-pulse.cjs still owns the optional PULSE_URL hook (capability preserved)', 'white-box: twin-issue-gate.cjs keeps the fail-soft token loop (empty tokens skipped)', 'black-box: the real gate fresh-process with GH_TOKEN/ZIP_PAT stripped and no marker → exit 0 honestly', 'white-box: the refreshed census book agrees (workflowsKeyless 16 / owner-secret 34)'],
       why47.length ? 'fails: ' + why47.join('; ') : 'a secret carried by habit is not security, it is surface — this eval pins the line: same-repo = keyless, cross-repo = capability');
   } catch (e) { evalr('E47', 'keyless wave', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
@@ -2577,9 +2579,87 @@ function accumulateInMemory(bookRows, seed) {
       why57.length ? 'fails: ' + why57.join('; ') : 'the capture binding got its answer: more touch-levels within the same six-order ceiling and a heartbeat matched to the measured fill cadence — the freed capital stops sitting idle');
   } catch (e) { evalr('E57', 'the fill-through evolution', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
+  // ---- E58 (R35, CR-0065): THE HUMAN CADENCE — the burst stack is dead: persona-owned
+  // windows, seeded jitter, quiet hours, desk-owned content with a hard gate, the PROBE-B
+  // floor for every internal engagement, and the equal-share delegation law.
+  try {
+    const why58 = [];
+    const c58 = (cond, name) => { if (!cond) why58.push(name); };
+    const hc = require(path.join(AG, 'human-cadence.cjs'));
+    // determinism: same (doy, account, mode) same jitter, always inside the span
+    c58(hc.jitterMinute(280, 'wic', 'blog', 22) === hc.jitterMinute(280, 'wic', 'blog', 22), 'jitter-deterministic');
+    const j58 = hc.jitterMinute(280, 'wic', 'blog', 22);
+    c58(j58 >= 0 && j58 <= 22, 'jitter-bounds');
+    // windows: blog window = first hour .. last hour + 2 (catch-up, never burst); off-day null
+    c58(JSON.stringify(hc.blogWindow({ blogDaysUTC: [0, 1], blogHoursUTC: [5, 6] }, 1)) === '{"start":5,"end":8}', 'blog-window-shape');
+    c58(hc.blogWindow({ blogDaysUTC: [0, 1], blogHoursUTC: [5, 6] }, 3) === null, 'blog-off-day-null');
+    c58(hc.hourInWindow([9], 10, 1, [0, 1, 2, 3, 4]) === true, 'curate-catchup-hour');
+    c58(hc.hourInWindow([9], 11, 1, [0, 1, 2, 3, 4]) === false, 'curate-window-closes');
+    c58(hc.inQuietHours(3) === true && hc.inQuietHours(6) === false, 'quiet-hours');
+    // the content gate: the real library passes whole, the sins fail by name
+    const lib58 = JSON.parse(fs.readFileSync(path.join(AG, 'content-library.json'), 'utf8'));
+    let piecesTotal = 0, piecesClean = 0;
+    for (const pieces of Object.values(lib58.desks)) for (const p of pieces) { piecesTotal++; if (hc.contentGate(p).ok) piecesClean++; }
+    c58(piecesTotal >= 40 && piecesClean === piecesTotal, `library-clean(${piecesClean}/${piecesTotal})`);
+    c58(hc.contentGate({ title: 'SAOS WEB probe B', body: 'probe B', tags: ['blog', 'saos'] }).why.includes('probe-word'), 'gate-probe-word');
+    c58(hc.contentGate({ title: 'A good piece', body: 'short', tags: ['blog', 'saos'] }).why.includes('body-too-short'), 'gate-too-short');
+    c58(hc.contentGate({ title: 'A good piece', body: 'a'.repeat(500) + ' no dash', tags: ['blog'] }).why.includes('hub-tag-missing'), 'gate-hub-tag');
+    const stamped = hc.contentGate({ title: 'Something (measured 2026-10-04)', body: 'b'.repeat(500), tags: ['blog', 'saos'] });
+    c58(stamped.why.includes('measured-stamp'), 'gate-measured-stamp');
+    const fleetStats = hc.contentGate({ title: 'A good piece', body: 'c'.repeat(500) + ' measured 3810 SP across the operation', tags: ['blog', 'saos'] });
+    c58(fleetStats.why.includes('fleet-stats-in-soldier-post'), 'gate-fleet-stats');
+    // piece cooldown: all used today -> null; fresh pool deterministic pick, never inside cooldown
+    const pool58 = (lib58.desks.haran || []);
+    c58(hc.pickPiece(pool58, { pieceUse: Object.fromEntries(pool58.map((p) => [p.id, 280])) }, 280) === null, 'piece-cooldown-blocks');
+    const got58 = hc.pickPiece(pool58, { pieceUse: {} }, 280);
+    c58(got58 && pool58.includes(got58), 'piece-pick-fresh');
+    c58(hc.pickPiece(pool58, { pieceUse: {} }, 280).id === got58.id, 'piece-pick-deterministic');
+    // THE PROBE-B LAW on engagement candidates
+    const goodPost = { author: 'haran', permlink: 'x-1', created: new Date(Date.now() - 5 * 3600000).toISOString().replace('Z', ''), body: 'd'.repeat(500) + ' The bold line here is **the part that carries the whole argument of the piece** and more follows after it, enough depth for the floor. ' + 'd'.repeat(400), title: 'A real piece', children: 2, active_votes: [] };
+    const badPost = { author: 'haran', permlink: 'x-2', created: new Date(Date.now() - 5 * 3600000).toISOString().replace('Z', ''), body: 'probe B', title: 'SAOS WEB probe B', children: 0, active_votes: [] };
+    c58(hc.candidateEligible(goodPost, { now: Date.now(), voter: 'tov' }).ok === true, 'candidate-good');
+    c58(String(hc.candidateEligible(badPost, { now: Date.now(), voter: 'tov' }).why).startsWith('probe-b-law'), 'candidate-probe-b-floor');
+    c58(hc.candidateEligible({ ...goodPost, author: 'outsider' }, { now: Date.now(), voter: 'tov' }).why === 'internal-only-law', 'internal-only-law');
+    c58(hc.candidateEligible({ ...goodPost, author: 'tov' }, { now: Date.now(), voter: 'tov' }).why === 'not-external-or-self', 'no-self-engagement');
+    c58(hc.candidateEligible({ ...goodPost, active_votes: [{ voter: 'tov' }] }, { now: Date.now(), voter: 'tov' }).why === 'already-voted', 'no-repeat-vote');
+    const young = hc.candidateEligible({ ...goodPost, created: new Date(Date.now() - 0.5 * 3600000).toISOString().replace('Z', '') }, { now: Date.now(), voter: 'tov' });
+    c58(young.why === 'age-window', 'age-floor-2h');
+    // curation score prefers depth, deterministic
+    c58(hc.curateScore({ ...goodPost, body: 'e'.repeat(6000) }) > hc.curateScore({ ...goodPost, body: 'f'.repeat(900) }), 'score-prefers-depth');
+    // comment builder: deterministic, references a real fragment, never an AI marker
+    const cm58 = hc.buildComment(goodPost, 'tov', 280);
+    c58(typeof cm58 === 'string' && cm58.length > 40, 'comment-built');
+    c58(hc.buildComment(goodPost, 'tov', 280) === cm58, 'comment-deterministic');
+    // the day plan: every soldier planned, blogs land on their days only, jitter inside the span
+    const plan58 = hc.dayPlan(280, 0);
+    c58(Object.keys(plan58).length === hc.SOLDIERS.length, 'plan-covers-fleet');
+    const blogsSunday = Object.values(plan58).filter((p) => p.blogDay).length;
+    const slots58 = JSON.parse(fs.readFileSync(path.join(AG, 'persona-slots.json'), 'utf8'));
+    const expectSunday = Object.values(slots58.soldiers).filter((s) => s.blogDaysUTC.includes(0)).length;
+    c58(blogsSunday === expectSunday && blogsSunday < hc.SOLDIERS.length, 'plan-day-pattern');
+    c58(Object.values(plan58).every((p) => !p.blogDay || (p.blogJitterMin >= 0 && p.blogJitterMin <= slots58.jitterMinutes)), 'plan-jitter-bounds');
+    // slots file is law-as-data: quiet hours + hub tag + distinct curate hours per soldier
+    c58(slots58.quietHoursUTC.to === 5, 'quiet-hours-law-data');
+    const curateHours58 = Object.values(slots58.soldiers).map((s) => s.curateHoursUTC[0]);
+    c58(new Set(curateHours58).size === curateHours58.length, 'curate-hours-distinct');
+    // delegation law v2: equal-share math with the powerdown respected (own - committed - reserve)/10, floor 30
+    const target58 = Math.max(30, Math.floor((3946.7 - 476 - 500) / 10));
+    c58(target58 === 297, 'equal-share-math');
+    c58(Math.max(30, Math.floor((800 - 476 - 500) / 10)) === 30, 'equal-share-floor');
+    // black-box: fresh-process status mode (keyless) — exit 0, protocol book written
+    const bb58 = spawnSync('node', [path.join(AG, 'human-cadence.cjs'), 'status'], { encoding: 'utf8', timeout: 30000 });
+    c58(bb58.status === 0, 'bb-status-exit-0');
+    let st58 = null; try { st58 = JSON.parse(fs.readFileSync(path.join(AG, 'human-cadence-status.json'), 'utf8')); } catch (_) {}
+    c58(st58 && st58.protocol === 'SAOS-HUMAN-CADENCE-STATUS/1', 'bb-status-book');
+    c58(st58 && Object.keys(st58.plan || {}).length === hc.SOLDIERS.length, 'bb-status-plan');
+    evalr('E58', 'the human cadence (CR-0065)', why58.length === 0,
+      ['white-box: seeded jitter deterministic per (doy, account, mode) and always inside the span; blog window = first hour..last hour+2 (catch-up, never burst); quiet hours 00:00-04:59 UTC', 'white-box: the content gate passes the whole hand-written library (40+ pieces, every desk clean) and rejects by name: probe-words, measured-stamps, fleet-stats in soldier posts, AI markers, missing hub tag, too-short bodies', 'white-box: piece cooldown blocks reuse within 14 days per soldier; fresh picks are deterministic; the PROBE-B LAW (body < 800 chars) makes junk invisible to votes/comments/reblogs; internal-only law rejects non-fleet authors; self-engagement and repeat votes blocked', 'white-box: the day plan covers all ten soldiers on their own weekday patterns with distinct curate hours; the equal-share delegation law computes (own - powerdown - reserve)/10 with the 30 SP floor', 'black-box: fresh-process status mode (keyless) exits 0 and writes the SAOS-HUMAN-CADENCE-STATUS plan book'],
+      why58.length ? 'fails: ' + why58.join('; ') : 'one moment one owner: the burst stack is replaced by persona-owned windows, desk-owned content, and engagement floors — the robot tells are now machine-checked');
+  } catch (e) { evalr('E58', 'the human cadence', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.43.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48 + R27 metronome-audit E49 + R28 mm-volume E50 + R29 share-ladder E51 + R30 calibrated-engine E52 + R31 tape-calibration/venue-expansion E53 + R32 sidechain-pond E54 + R33 pnl-verdict E55 + sovereign-hands E56 + R34 fill-through-evolution E57, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.44.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48 + R27 metronome-audit E49 + R28 mm-volume E50 + R29 share-ladder E51 + R30 calibrated-engine E52 + R31 tape-calibration/venue-expansion E53 + R32 sidechain-pond E54 + R33 pnl-verdict E55 + sovereign-hands E56 + R34 fill-through-evolution E57 + R35 human-cadence E58, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];

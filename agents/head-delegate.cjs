@@ -87,30 +87,47 @@ async function main() {
   if (!actOk) { console.log('[head-del] GATE FAIL — no broadcast, fail-soft'); return; }
 
   const ratio = parseFloat(globals.total_vesting_fund_steem) / parseFloat(globals.total_vesting_shares);
-  const vestsTarget = (SP_PER_SOLDIER / ratio).toFixed(6) + ' VESTS';
 
-  const results = []; let delegated = 0, skipped = 0, failed = 0;
+  // ── v2 EQUAL-SHARE LAW (CR-0065) ──
+  // The owner directed equal, full-power delegation: "האצלת כוח לחיילים בצורה שווה כדי
+  // לקבל את מלוא סכום ההצבעות". The law shares the head's OWN stake equally after two
+  // commitments: the powerdown (self-funding battery of the market lane, R33) and an RC
+  // reserve for headcorner's own operations. As the powerdown consumes capital weekly,
+  // the target shrinks and delegations glide down with it — social power and market fuel
+  // coexist by arithmetic, never by hand-tuning.
+  const HEAD_RESERVE_SP = Number(process.env.HEAD_RESERVE_SP || 500);
+  const ownVests = parseFloat(head.vesting_shares) - Math.max(0, parseFloat(head.delegated_vesting_shares));
+  const committedVests = Math.min(parseFloat(head.to_withdraw || '0'), parseFloat(head.vesting_shares));
+  const ownSP = ownVests * ratio;
+  const committedSP = committedVests * ratio;
+  const targetSP = Math.max(SP_PER_SOLDIER, Math.floor((ownSP - committedSP - HEAD_RESERVE_SP) / SOLDIERS.length));
+  const vestsTarget = (targetSP / ratio).toFixed(6) + ' VESTS';
+  console.log(`head-del] equal-share law: own=${ownSP.toFixed(1)} SP · powerdown-committed=${committedSP.toFixed(1)} SP · reserve=${HEAD_RESERVE_SP} SP → ${targetSP} SP per soldier (×${SOLDIERS.length})`);
+
+  const results = []; let delegated = 0, skipped = 0, failed = 0, reclaimed = 0;
   for (const s of SOLDIERS) {
-    const R = { to: s, target: `${SP_PER_SOLDIER} SP` };
+    const R = { to: s, target: `${targetSP} SP` };
     try {
       const sa = (await P(cb => steem.api.getAccounts([s], cb)))[0];
       const have = parseFloat(sa.received_vesting_shares);
-      const want = SP_PER_SOLDIER / ratio;
-      if (have >= want * 0.95) { R.status = 'SKIP-ALREADY'; R.haveSp = Math.round(have); skipped++; }
-      else if (DRY) { R.status = 'DRY-WOULD-DELEGATE'; R.haveSp = Math.round(have); }
+      const haveSp = have * ratio;
+      const want = targetSP / ratio;
+      if (have >= want * 0.95 && have <= want * 1.05) { R.status = 'SKIP-ALREADY'; R.haveSp = Math.round(haveSp * 10) / 10; skipped++; }
+      else if (DRY) { R.status = have < want ? 'DRY-WOULD-DELEGATE' : 'DRY-WOULD-RECLAIM'; R.haveSp = Math.round(haveSp * 10) / 10; R.targetSp = targetSP; }
       else {
         await P(cb => steem.broadcast.delegateVestingShares(actWif, HEAD, s, vestsTarget, cb));
-        await sleep(2000);
+        await sleep(2500);
         const sa2 = (await P(cb => steem.api.getAccounts([s], cb)))[0];
         const got = parseFloat(sa2.received_vesting_shares);
-        R.status = got >= want * 0.95 ? 'DELEGATED-VERIFIED' : 'NO-READBACK';
-        R.readbackSp = Math.round(got * 1000) / 1000;
-        R.status === 'DELEGATED-VERIFIED' ? delegated++ : failed++;
+        R.readbackSp = Math.round(got * ratio * 10) / 10;
+        const withinBand = got >= want * 0.95 && got <= want * 1.05;
+        if (have < want) { R.status = withinBand ? 'DELEGATED-VERIFIED' : 'NO-READBACK'; R.status === 'DELEGATED-VERIFIED' ? delegated++ : failed++; }
+        else { R.status = withinBand ? 'RECLAIMED-VERIFIED' : 'NO-READBACK'; R.status === 'RECLAIMED-VERIFIED' ? reclaimed++ : failed++; }
       }
     } catch (e) { R.status = 'FAIL'; R.err = String(e.message || e).slice(0, 90); failed++; }
     results.push(R);
-    console.log(`[${R.status}] headcorner → @${s} (${R.haveSp != null ? R.haveSp + ' SP have' : vestsTarget})`);
-    await sleep(400);
+    console.log(`[${R.status}] headcorner → @${s} (${R.haveSp != null ? R.haveSp + ' SP have' : 'have=?'} → ${targetSP} SP)`);
+    await sleep(1500 + Math.floor(Math.random() * 1500));
   }
 
 
@@ -137,9 +154,12 @@ async function main() {
     await sleep(400);
   }
   const receipt = {
-    ok: true, tool: 'head-delegate.cjs', doctrine: 'self-capital — the fleet allocates its own SP, idempotent, bounded 30 SP × 11 soldiers',
-    at: t0, finishedAt: new Date().toISOString(), dry: DRY, target: vestsTarget,
-    tally: { delegatedVerified: delegated, skippedAlready: skipped, failed },
+    ok: true, tool: 'head-delegate.cjs', version: 2,
+    doctrine: 'equal-share self-capital (CR-0065): (own SP - powerdown committed - RC reserve) shared equally across soldiers, hysteresis band 5%, delegations glide with the powerdown, idempotent, bounded',
+    at: t0, finishedAt: new Date().toISOString(), dry: DRY,
+    law: { ownSP: Math.round(ownSP * 10) / 10, powerdownCommittedSP: Math.round(committedSP * 10) / 10, reserveSP: HEAD_RESERVE_SP, targetSPPerSoldier: targetSP, soldiers: SOLDIERS.length },
+    target: vestsTarget,
+    tally: { delegatedVerified: delegated, reclaimedVerified: reclaimed, skippedAlready: skipped, failed },
     results,
   };
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
