@@ -2,14 +2,14 @@
 
 _one-bloc v1.0.1 (Task 23 convergence — owner directive "מקשה אחת"; binds BLOC-STATE + SOVEREIGN-INDEX + FATE-DEFENSE into one machine map; keyless-first + env-token fallback, stderr redacted)_
 
-Measured: **2026-10-04T04:11:11.813Z** · Verdict: **DEGRADED** · REACHED 2/16 (keyless 2 + token 0) · AUTH-WALL 14 · UNKNOWN 0 · local-sync 0/16
+Measured: **2026-10-04T04:18:29.371Z** · Verdict: **DEGRADED** · REACHED 2/16 (keyless 2 + token 0) · AUTH-WALL 14 · UNKNOWN 0 · local-sync 1/16
 
 | ריפו | תפקיד | origin/main | מצב | דרך | סנכרון-מקומי |
 |---|---|---|---|---|---|
 | saos-sovereign-platform | המוח הריבוני — צבא מגייס-עצמו וסולם כלכלת-אמת | `—` | AUTH-WALL | — | UNKNOWN-ORIGIN |
 | steem | המפתחות הקנוניים + הזרוע החיה על-השרשרת | `—` | AUTH-WALL | — | UNKNOWN-ORIGIN |
-| Domain | הפנים הציבוריות + רכזת ה-CI האורגנית | `6059a940756e` | REACHED | keyless | BEHIND |
-| Console | מרכז-ההפעלה — אמת נמדדת פעם-אחת | `0e24a2eb44aa` | REACHED | keyless | BEHIND |
+| Domain | הפנים הציבוריות + רכזת ה-CI האורגנית | `0e187c4a8a91` | REACHED | keyless | SYNCED |
+| Console | מרכז-ההפעלה — אמת נמדדת פעם-אחת | `05289fd610e1` | REACHED | keyless | BEHIND |
 | Zip | המחסן החתום — עוגני אמת על שרשרת-אפו | `—` | AUTH-WALL | — | UNKNOWN-ORIGIN |
 | roshpina | הגרעין + מבקר השליטה העצמית | `—` | AUTH-WALL | — | UNKNOWN-ORIGIN |
 | anchor-baseline | שומר העוגן — בוט שלמות Merkle | `—` | AUTH-WALL | — | UNKNOWN-ORIGIN |

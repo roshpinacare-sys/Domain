@@ -15,7 +15,7 @@
 #    crash of the loop.
 set -u
 cd "$(dirname "$0")/.."
-: "${SOVEREIGN_HEARTBEAT_SEC:=900}"
+: "${SOVEREIGN_HEARTBEAT_SEC:=600}"
 : "${SOVEREIGN_TRADE_LOG:=/tmp/sovereign-trade.log}"
 mkdir -p "$(dirname "$SOVEREIGN_TRADE_LOG")"
 echo "[sovereign-heartbeat] armed at $(date -u +%FT%TZ) heartbeat=${SOVEREIGN_HEARTBEAT_SEC}s live=${SOVEREIGN_TRADE_LIVE:-0}" >> "$SOVEREIGN_TRADE_LOG"

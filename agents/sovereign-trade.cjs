@@ -42,7 +42,7 @@ const ROOT = path.resolve(__dirname, '..');
 const OUT_JSON = process.env.SOVEREIGN_TRADE_JSON || path.join(ROOT, 'agents', 'sovereign-trade.json');
 const OUT_MD = OUT_JSON.replace(/\.json$/, '.md');
 const HC_DERIVED = process.env.HC_DERIVED || '/home/z/my-project/.fleet/headcorner-derived.json';
-const COOLDOWN_MIN = +(process.env.SOVEREIGN_COOLDOWN_MIN || 15);
+const COOLDOWN_MIN = +(process.env.SOVEREIGN_COOLDOWN_MIN || 10); // R34: calibrated to the measured fill cadence (~1 fill/12min)
 
 // ── pure core (exported for E56) ─────────────────────────────────────────────
 // decideTrade: the sovereignty's one decision per invocation.

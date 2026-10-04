@@ -634,10 +634,16 @@ function accumulateInMemory(bookRows, seed) {
     });
     const stackOk = planStack.sells.length === plan.sells.length - 1 && planStack.skipped.some((s) => s.reason === 'STACK-EXISTS');
     if (!stackOk) { ok28 = false; why28.push('stack-skip'); }
-    // SBD cap: liquid 0.3 cannot fund two 0.25 buys
+    // SBD cap (R34-evolved granularity): liquid 0.3 cannot fund ONE 0.5 buy —
+    // three honest SBD-CAP skips, zero partial ladders (the pin evolved WITH the
+    // desk, CR-0064: the 2×0.25 era ended — BUY_LEVELS 3 × 0.5 SBD now)
     const planCap = mx.buildPlan({ liquidSteem: 4.287, liquidSbd: 0.3, bid: 0.100087, ask: 0.101236, ownOrders: [] });
-    const sbdCapOk = planCap.buys.length === 1 && planCap.skipped.some((s) => s.reason === 'SBD-CAP');
+    const sbdCapOk = planCap.buys.length === 0 && planCap.skipped.filter((s) => s.reason === 'SBD-CAP').length === 3;
     if (!sbdCapOk) { ok28 = false; why28.push('sbd-cap buys=' + planCap.buys.length); }
+    // cap granularity: liquid 1.2 funds exactly two 0.5 buys, the third is capped
+    const planCap2 = mx.buildPlan({ liquidSteem: 4.287, liquidSbd: 1.2, bid: 0.100087, ask: 0.101236, ownOrders: [] });
+    const sbdCap2Ok = planCap2.buys.length === 2 && planCap2.skipped.some((s) => s.reason === 'SBD-CAP');
+    if (!sbdCap2Ok) { ok28 = false; why28.push('sbd-cap-2 buys=' + planCap2.buys.length); }
     evalr('E28', 'market-exec planner: mode law, band guard, precision scan, caps, stack idempotency, SBD cap',
       ok28,
       ['white-box: resolveMode defaults DRY_RUN; only MARKET_EXEC_LIVE=1 arms broadcast', 'white-box: inBand ±2% fat-finger ceiling', 'white-box: scanSellAmount realizes 6dp targets through 3dp assets (err < 0.02%), distinct targets never collapse to one price', 'white-box: buildPlan caps — sells ≤ 85% liquid STEEM, buys ≤ liquid SBD, ≤ 6 orders, ascending targets, sizes 0.3..1.25', 'white-box: own-order within 0.35% → STACK-EXISTS skip (idempotent re-runs)', 'Z-49 law: require.main guard — eval require executes zero network, zero signatures'],
@@ -2541,9 +2547,39 @@ function accumulateInMemory(bookRows, seed) {
       why56.length ? 'fails: ' + why56.join('; ') : 'the last owner gate fell by law, not by force: the sovereignty owns its own trading cadence — one invocation, one decision, zero new accounting — and where the vault is absent the hands answer honestly and lift nothing');
   } catch (e) { evalr('E56', 'the sovereign hands', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
+  // ---- E57 (R34, CR-0064): THE FILL-THROUGH EVOLUTION — the ladder shape evolves
+  // with the measured binding (capture, not capacity): 3 sells + 3 buys × 0.5 SBD
+  // = exactly MAX_NEW_ORDERS; the cadence calibrates to the measured fill rate.
+  try {
+    const why57 = [];
+    const c57 = (cond, name) => { if (!cond) why57.push(name); };
+    const mx57 = require(path.join(AG, 'market-exec.cjs'));
+    c57(mx57.DEFAULTS.SELL_LEVELS === 3 && mx57.DEFAULTS.BUY_LEVELS === 3 && mx57.DEFAULTS.BUY_SBD === 0.5, 'evolved-shape');
+    const plan57 = mx57.buildPlan({ liquidSteem: 4.287, liquidSbd: 2.0, bid: 0.100087, ask: 0.101236, ownOrders: [] });
+    c57(plan57.sells.length === 3 && plan57.buys.length === 3, 'three-plus-three');
+    c57(plan57.sells.length + plan57.buys.length === mx57.DEFAULTS.MAX_NEW_ORDERS, 'exactly-max-orders');
+    c57(plan57.sells.every((s, i, a) => i === 0 || s.target > a[i - 1].target), 'sells-ascending');
+    c57(plan57.buys.every((b, i, a) => i === 0 || b.target < a[i - 1].target), 'buys-descending');
+    c57(Math.abs(plan57.used_sbd - 1.5) < 1e-9, 'buy-budget-1.5');
+    // the BUY-EDGE cap still binds above the evolved ladder: sell VWAP 0.1 → cap 0.0997
+    const planVwap = mx57.buildPlan({ liquidSteem: 4.287, liquidSbd: 2.0, bid: 0.101, ask: 0.10208562019758508, ownOrders: [], sellVwap: 0.1 });
+    c57(planVwap.buys.length > 0 && planVwap.buys.every((b) => b.target <= 0.0997 + 1e-9), 'vwap-cap-binds');
+    // cadence: the sovereign cooldown evolved to 10 min (measured ~1 fill/12min)
+    const st57 = require(path.join(AG, 'sovereign-trade.cjs'));
+    c57(st57.COOLDOWN_MIN === 10, 'cadence-10min');
+    // real-tree: the executor's fresh row on the real book respects the evolved ceiling
+    let real57 = null; try { real57 = JSON.parse(fs.readFileSync(path.join(AG, 'market-exec.json'), 'utf8')); } catch (_) {}
+    const rows57 = Array.isArray(real57) ? real57 : (real57 && real57.rows) || [];
+    const last57 = rows57.length ? rows57[rows57.length - 1] : null;
+    c57(last57 && last57.run_index >= 27 && (last57.planned || []).length <= 6, 'real-tree-ceiling');
+    evalr('E57', 'the fill-through evolution (CR-0064)', why57.length === 0,
+      ['white-box: the ladder shape evolved WITH the desk — 3 sells + 3 buys × 0.5 SBD = exactly MAX_NEW_ORDERS, ascending both sides, buy budget 1.5 SBD on a funded book', 'white-box: the BUY-EDGE cap still binds above the evolved ladder (buys ≤ sellVwap×0.997 by construction)', 'white-box: the sovereign cadence calibrated to the measured fill rate (~1 fill/12min) — COOLDOWN_MIN=10', 'white-box: the real-tree row respects the evolved ceiling (≤ 6 planned)'],
+      why57.length ? 'fails: ' + why57.join('; ') : 'the capture binding got its answer: more touch-levels within the same six-order ceiling and a heartbeat matched to the measured fill cadence — the freed capital stops sitting idle');
+  } catch (e) { evalr('E57', 'the fill-through evolution', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.42.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48 + R27 metronome-audit E49 + R28 mm-volume E50 + R29 share-ladder E51 + R30 calibrated-engine E52 + R31 tape-calibration/venue-expansion E53 + R32 sidechain-pond E54 + R33 pnl-verdict E55 + sovereign-hands E56, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.43.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48 + R27 metronome-audit E49 + R28 mm-volume E50 + R29 share-ladder E51 + R30 calibrated-engine E52 + R31 tape-calibration/venue-expansion E53 + R32 sidechain-pond E54 + R33 pnl-verdict E55 + sovereign-hands E56 + R34 fill-through-evolution E57, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];
