@@ -124,3 +124,32 @@ jobs:
           echo "${{ steps.guard.outputs.reason }}"
           echo "The twin takes over automatically when the original's last success ages past 23h."
           echo "Nothing was touched — one home, one grid, one book."
+
+      # Z-83 · רגל-הקהילה (D-024): בית-הצי ב-Steem על-פי-הוראת-הבעלים המתועדת
+      # (trace 1a1056131d2dfc79 · "יש לנסות לפתוח לנו קהילה יעודית בסטים").
+      # owner-gated מבני: בלי grids/state/community-mandate.json אין יצירה.
+      # נתיב-claim ראשון (דלק-RC, אפס-STEEM) ← נתיב-עמלה (3 STEEM מהנזיל-שלנו).
+      # אידמפוטנטי + fail-closed + read-back אחרי כל-אופ; HOLD כנה אינו מפיל את הביט.
+      - name: Community leg (owner-mandated Steem community — D-024, fail-closed)
+        if: always()
+        env:
+          SAOS_RELAY_AGENT_ACCOUNT: headcorner
+          STEEM_ACTIVE_WIF: ${{ secrets.STEEM_ACTIVE_WIF }}
+        run: node grids/community.mjs --execute
+        continue-on-error: true
+
+      - name: Community evidence commit (receipt = commit)
+        if: always()
+        run: |
+          set -u
+          git config user.name "community-leg[bot]"
+          git config user.email "community-leg[bot]@users.noreply.github.com"
+          git add grids/state/community-plan.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "no community evidence change — clean exit"
+          else
+            git commit -m "community-leg: owner-mandated Steem community evidence $(date -u +%FT%TZ) [skip ci]"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+
