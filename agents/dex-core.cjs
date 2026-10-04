@@ -63,6 +63,17 @@
  * Feed law: the core consumes the BOOKED dex-router.json (the hourly venue graph) —
  * measurement (router, network) and settlement (core, pure) are separated so the settle
  * path is deterministic and re-runnable byte-identically on the same inputs.
+ *
+ * R43 (CR-0073) adds the XC INTENT settlement path (settleXcOps / settle-xc): the cross-chain
+ * intent doors drafted by dex-xc.cjs are applied HERE — the single balance universe. XC-OPEN
+ * escrows owner claims into the xc-escrow account; XC-FILL routes the escrow through OUR pools
+ * (ledger-dest) or through our pools + the redeem law (chain-dest — burn + pegout-queue row with
+ * the corridor named); XC-CONFIRM clears the corridor exposure when the door's finality clock
+ * passes; XC-REFUND returns the escrow WHOLE (the 2:1 HTLC clock law — refund unlocks only after
+ * the fill window AND a full extra fill window). The BOND LAW (2:1, THORChain-adapted): the
+ * vault's outstanding corridor exposure may never exceed 2× its custody of the payout asset.
+ * Idempotency by escrow drain: a replayed fill finds the escrow empty and is refused. The core
+ * stays dumb and safe — the doors, the clocks and the state machine live in dex-xc.cjs.
  */
 
 const fs = require('fs');
@@ -78,9 +89,10 @@ const ROUTER_BOOK = path.join(AG, 'dex-router.json');
 const STASIS_FILE = path.join(AG, 'STASIS.json');
 const CREDITS_BOOK = path.join(AG, '..', 'dex', 'credits.json');
 const INTENTS_FILE = path.join(AG, 'dex-intents.json'); // the mesh queue — written by arb-mesh.cjs, consumed+cleared by THIS desk (single-writer law)
+const XC_OPS_FILE = path.join(AG, '..', 'dex', 'xc-ops.json'); // the XC intent queue — written by dex-xc.cjs, consumed+cleared by THIS desk (single-writer law)
 const ROSTER_FILE = path.join(AG, 'persona-slots.json');
 const PROTOCOL = 'SAOS-DEX-CORE/1';
-const VERSION = 'dex-core v1.2.0 (R42 MULTI-NETWORK VAULT, CR-0072)';
+const VERSION = 'dex-core v1.3.0 (R43 INTENT GATES, CR-0073)';
 const REDEEM_REQUESTS_FILE = path.join(AG, '..', 'dex', 'redeem-requests.json');
 const PEGOUT_QUEUE_FILE = path.join(AG, '..', 'dex', 'pegout-queue.json');
 
@@ -89,6 +101,10 @@ const MESH_DUST = 1000n;              // 0.001 unit — below this a fill is noi
 const MESH_WIRE_MAX_SHARE_BPS = 1000n; // a batch may wire ≤10% of the treasury's FREE claims to agents
 const MESH_FILL_MAX_DEPTH_BPS = 500n;  // a single fill may not exceed 5% of the first-hop depth
 const MESH_BATCH_MEMO = 64;            // processed-batch ids kept for idempotency (rotating)
+
+// ── cross-chain intent constants (R43) ────────────────────────────────────
+const CHAIN_WRAPPER = { STEEM: 'WSTEEM', SBD: 'WSBD', HIVE: 'WHIVE', HBD: 'WHBD', BLURT: 'WBLURT' }; // chains with a wrapper in the vault catalog (R42 law)
+const XC_BOND_EXPOSURE_RATIO = 2n;    // the BOND LAW (THORChain-adapted): outstanding corridor exposure ≤ 2× custody of the payout asset
 
 // ── multi-network vault constants (R42) ────────────────────────────────────
 const WRAP_UNDERLYING = { WSTEEM: 'STEEM', WSBD: 'SBD', WHIVE: 'HIVE', WHBD: 'HBD', WBLURT: 'BLURT' };
@@ -332,10 +348,17 @@ function poolSwap(pool, from, to, amountIn, minOut) {
   }
   if (!out) return { error: 'DUST-OR-EMPTY-REFUSED' };
   if (minOut != null && out < minOut) return { error: 'REFUSED-MINOUT', out };
+  // R43 BASE-REPAIR LAW #2 (תיקון-בסיס לפני היקף): newRa/newRb are in the POOL's a/b space.
+  // For b-side inputs (inIsA=false) the resolved ra = pool.rb (reserveIn) and rb = pool.ra
+  // (reserveOut) — so the a-side update is rb − out and the b-side update is ra + amountIn.
+  // The previous return transposed them (newRa = ra − out = pool.rb − out): correct ONLY for
+  // a-side inputs or symmetric 1:1 pools — masked until the intent gates filled b-side into
+  // an imbalanced pool (SBD→WSTEEM via P1). Both live selftests + the booked pipe-proof stay
+  // byte-identical (symmetric pools coincide).
   return {
     out, feeAmt,
-    newRa: inIsA ? ra + amountIn : ra - out,
-    newRb: inIsA ? rb - out : rb + amountIn,
+    newRa: inIsA ? ra + amountIn : rb - out,
+    newRb: inIsA ? rb - out : ra + amountIn,
   };
 }
 
@@ -350,8 +373,12 @@ function routeBest(pools, from, to, amountIn) {
       if (pathIds.includes(p.id)) continue;
       const dir = p.a === cur ? 'ab' : (p.b === cur ? 'ba' : null);
       if (!dir) continue;
-      const ra = ub(dir === 'ab' ? p.ra : p.rb), rb = ub(dir === 'ab' ? p.rb : p.ra);
-      const r = poolSwap({ ...p, ra: mu(ra), rb: mu(rb) }, cur, dir === 'ab' ? p.b : p.a, acc, null);
+      // R43 BASE-REPAIR LAW (תיקון-בסיס לפני היקף): the pool is passed RAW — poolSwap resolves the
+      // direction itself from (pool.a, pool.b, from). The previous pre-flip (ra/rb swapped for 'ba'
+      // legs) was applied TWICE on reversed legs — an imbalanced 'ba' leg quoted reserves backwards
+      // (SBD→STEEM quoted 105µ for 1000µ instead of 9402µ). Masked until R43: every live fill was an
+      // 'ab' leg or rode a symmetric 1:1 peg pool. Found by the intent-gates' cross-chain quotes.
+      const r = poolSwap(p, cur, dir === 'ab' ? p.b : p.a, acc, null);
       if (!r || r.error) continue;
       const next = dir === 'ab' ? p.b : p.a;
       const nt = [...taken, r.out];
@@ -1082,7 +1109,253 @@ async function settleIntentsTick() {
     return 0;
   }
 }
+// ── XC intent settlement (R43): the doors' ops applied on ONE balance universe ──
+/** The core stays dumb and safe: it applies XC ops atomically, asserts conservation per op,
+ *  enforces the escrow/bond laws, and NEVER invents state. The doors, the clocks, the state
+ *  machine and the fill competition live in dex-xc.cjs (judge separation — the mesh pattern).
+ *  Idempotency by escrow drain: a replayed fill/refund finds the escrow empty and is refused. */
+function settleXcOps(prev, queue, feed, now) {
+  const st = {
+    vault: JSON.parse(JSON.stringify(prev.vault)),
+    accounts: JSON.parse(JSON.stringify(prev.accounts)),
+    pools: JSON.parse(JSON.stringify(prev.pools)),
+    seq: prev.seq || 0,
+    xcExposure: JSON.parse(JSON.stringify(prev.xcExposure || {})),
+  };
+  const ops = [];
+  const op = (type, payload) => { st.seq += 1; ops.push({ seq: st.seq, type, at: now, ...payload }); };
+  const notes = [], settledXc = [], rejectsXc = [];
+  const batch = (queue && queue.batch) || null;
+
+  const finish = (extra) => {
+    const cons = conservation(st.vault, st.accounts, st.pools);
+    const consOk = cons.every((c) => c.ok);
+    st.vault.reserveRatio = reserveRatios(st.vault);
+    const att = attestationHash(st.vault, st.accounts, st.pools, st.seq);
+    return { st, ops, notes, batchId: batch, cons, consOk, att, settledXc, rejectsXc, xcExposure: st.xcExposure, ...extra };
+  };
+
+  if (!batch) { notes.push('xc ops without a batch id — refused by law'); return finish({ skipped: true }); }
+  if (!Array.isArray(queue.ops) || queue.ops.length === 0) { notes.push('empty xc queue'); return finish({ skipped: true }); }
+
+  // R43 ESCROW-IDENTITY LAW: every intent escrows into its OWN account (xc-escrow-<intentId>) —
+  // the escrow account IS the intent's custody. Idempotency by escrow drain is then PER-INTENT:
+  // a replayed fill/refund finds its own escrow empty and is refused, and can never consume
+  // another intent's escrow (the shared-escrow design would have allowed exactly that).
+  const escrowName = (id) => 'xc-escrow-' + String(id).replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 24);
+  const getAcc = (name) => { if (!st.accounts[name]) st.accounts[name] = { claims: emptyClaims(), lp: {} }; return st.accounts[name]; };
+  // first-hop depth of an asset (min across live pools holding it) — the split-fill size cap
+  const depthOf = (asset) => {
+    let d = 0n;
+    for (const p of st.pools) {
+      if (p.planned || (ub(p.ra) <= 0n && ub(p.rb) <= 0n)) continue;
+      if (p.a === asset) d = d === 0n ? ub(p.ra) : (ub(p.ra) < d ? ub(p.ra) : d);
+      if (p.b === asset) d = d === 0n ? ub(p.rb) : (ub(p.rb) < d ? ub(p.rb) : d);
+    }
+    return d;
+  };
+  const refuse = (o, why) => { op('XC-REFUSED', { intentId: (o && o.intentId) || null, xcOp: (o && o.type) || '?', why: String(why).slice(0, 160) }); rejectsXc.push({ intentId: (o && o.intentId) || null, xcOp: (o && o.type) || '?', why: String(why).slice(0, 160) }); };
+
+  for (const o of (queue.ops || [])) {
+    const t = String((o && o.type) || '');
+    const intentId = String((o && o.intentId) || '');
+    if (!intentId) { refuse(o, 'UNKNOWN-INTENT'); continue; }
+    if (t === 'XC-OPEN') {
+      const owner = String(o.owner || ''); const origin = String(o.origin || '');
+      const amount = ub(o.amountMu); const minOut = (o.minOutMu != null) ? ub(o.minOutMu) : null;
+      const destKind = String(o.destKind || ''); const destAsset = o.destAsset ? String(o.destAsset) : null; const destChain = o.destChain ? String(o.destChain) : null;
+      if (!owner || !st.accounts[owner]) { refuse(o, 'UNKNOWN-OWNER'); continue; }
+      if (!ASSETS.includes(origin) && !WRAPPED.includes(origin)) { refuse(o, 'BAD-ASSET'); continue; }
+      if (amount < MESH_DUST) { refuse(o, 'DUST'); continue; }
+      if (destKind === 'CHAIN' && !CHAIN_WRAPPER[destChain]) { refuse(o, 'DOOR-GATED-PLAN (no wrapper in the vault catalog — the door is priced, never settled, until keys verify)'); continue; }
+      if (destKind === 'LEDGER' && (!destAsset || (!ASSETS.includes(destAsset) && !WRAPPED.includes(destAsset)))) { refuse(o, 'BAD-DEST'); continue; }
+      const held = ub(st.accounts[owner].claims[origin] || '0');
+      if (held < amount) { refuse(o, 'NO-ESCROW'); continue; }
+      const cap = depthOf(origin) * MESH_FILL_MAX_DEPTH_BPS / BPS; // the split-fill law: one intent ≤ 5% of first-hop depth — larger sums split into child intents
+      if (amount > cap) { refuse(o, 'SIZE-CAP-SPLIT-REQUIRED'); continue; }
+      if (ops.some((x) => x.type === 'XC-ESCROW' && x.intentId === intentId)) { refuse(o, 'DOUBLE-OPEN'); continue; }
+      // cross-batch replay defense: this intent's escrow account already holds value ⇒ it is already open
+      const existingEsc = st.accounts[escrowName(intentId)];
+      if (existingEsc && ub(existingEsc.claims[origin] || '0') > 0n) { refuse(o, 'DOUBLE-OPEN (escrow already held — cross-batch replay refused)'); continue; }
+      const ownerAcc = getAcc(owner), esc = getAcc(escrowName(intentId));
+      ownerAcc.claims[origin] = mu(ub(ownerAcc.claims[origin]) - amount);
+      esc.claims[origin] = mu(ub(esc.claims[origin]) + amount);
+      op('XC-ESCROW', { intentId, owner, origin, amount: mu(amount), destKind, destAsset, destChain, minOut: minOut == null ? null : mu(minOut), law: 'escrow moves claims, never creates them — conservation holds' });
+      settledXc.push({ intentId, op: 'OPEN' });
+      continue;
+    }
+    if (t === 'XC-FILL-POOL' || t === 'XC-FILL-P2P') {
+      const origin = String(o.origin || ''); const amount = ub(o.amountMu);
+      const destKind = String(o.destKind || ''); const destAsset = o.destAsset ? String(o.destAsset) : null; const destChain = o.destChain ? String(o.destChain) : null;
+      const minOut = (o.minOutMu != null) ? ub(o.minOutMu) : null;
+      const owner = String(o.owner || '');
+      const esc = st.accounts[escrowName(intentId)];
+      const escHeld = esc ? ub(esc.claims[origin] || '0') : 0n;
+      if (escHeld < amount) { refuse(o, 'ESCROW-MISMATCH (drained or absent — a replayed fill is refused by law)'); continue; }
+      if (t === 'XC-FILL-P2P') {
+        // P2P fill: a roster filler delivers the LEDGER destination out of his own claims; the escrow drains to the filler.
+        if (destKind !== 'LEDGER' || !destAsset) { refuse(o, 'P2P-LEDGER-ONLY'); continue; }
+        const filler = String(o.filler || '');
+        if (!rosterLaw().includes(filler)) { refuse(o, 'ROSTER-UNKNOWN'); continue; }
+        const deliver = ub(o.deliverMu);
+        if (deliver < MESH_DUST) { refuse(o, 'DUST'); continue; }
+        if (minOut != null && deliver < minOut) { refuse(o, 'P2P-BELOW-QUOTE'); continue; }
+        const fHeld = (st.accounts[filler] ? ub(st.accounts[filler].claims[destAsset] || '0') : 0n);
+        if (fHeld < deliver) { refuse(o, 'NO-FILL-CAPITAL'); continue; }
+        getAcc(filler).claims[destAsset] = mu(fHeld - deliver);
+        getAcc(owner).claims[destAsset] = mu(ub(getAcc(owner).claims[destAsset]) + deliver);
+        esc.claims[origin] = mu(escHeld - amount);
+        getAcc(filler).claims[origin] = mu(ub(getAcc(filler).claims[origin]) + amount);
+        op('XC-FILL', { intentId, mode: 'P2P', filler, origin, amount: mu(amount), destAsset, delivered: mu(deliver), law: 'escrow-first — the filler delivers against held escrow, the escrow drains to the filler' });
+        settledXc.push({ intentId, op: 'FILL-P2P', filler, delivered: mu(deliver) });
+        continue;
+      }
+      // POOL fill: the escrowed origin routes through OUR pools (the traffic law: every intent pays fees to our network)
+      const dest = destKind === 'CHAIN' ? CHAIN_WRAPPER[destChain] : destAsset;
+      if (!dest) { refuse(o, 'BAD-DEST'); continue; }
+      const route = routeBest(st.pools, origin, dest, amount);
+      if (!route) { refuse(o, 'NO-ROUTE'); continue; }
+      // ATOMIC SIMULATE on copies (all-or-nothing — the mesh law inherited)
+      const touched = new Map();
+      let cur = origin, amt = amount, simOk = true, why2 = '', feesTotal = 0n;
+      const hops = [];
+      for (const pid of route.ids) {
+        const p = st.pools.find((x) => x.id === pid);
+        if (!p) { simOk = false; why2 = 'POOL-VANISHED'; break; }
+        if (!touched.has(pid)) touched.set(pid, JSON.parse(JSON.stringify(p)));
+        const cp = touched.get(pid);
+        const dirOut = cp.a === cur ? cp.b : cp.a;
+        const sw = poolSwap(cp, cur, dirOut, amt, null);
+        if (!sw || sw.error) { simOk = false; why2 = 'HOP-REFUSED-' + String((sw && sw.error) || 'EMPTY'); break; }
+        cp.ra = mu(sw.newRa); cp.rb = mu(sw.newRb); cp.feeMeter = mu(ub(cp.feeMeter) + sw.feeAmt);
+        feesTotal += sw.feeAmt;
+        hops.push({ pool: pid, in: mu(amt), out: mu(sw.out) });
+        amt = sw.out; cur = dirOut;
+      }
+      if (!simOk || cur !== dest) { refuse(o, why2 || 'ROUTE-BROKE'); continue; }
+      if (minOut != null && amt < minOut) { refuse(o, 'REFUSED-MINOUT'); continue; }
+      // ATOMICITY (all-or-nothing): the chain-dest redeem is SIMULATED on copies BEFORE any commit —
+      // a refused redeem leaves pools, escrow and accounts byte-unchanged (the mesh law inherited).
+      let rdSim = null;
+      if (destKind === 'CHAIN') {
+        // the BOND LAW (2:1) — outstanding corridor exposure + this payout ≤ 2× custody of the payout asset
+        const underlying = WRAP_UNDERLYING[dest];
+        const exposure = ub(st.xcExposure[underlying] || '0');
+        const custody = ub(st.vault.custody[underlying] || '0');
+        if (exposure + amt > custody * XC_BOND_EXPOSURE_RATIO) {
+          refuse(o, `BOND-LAW-EXCEEDED (exposure ${mu(exposure)}+${mu(amt)} > 2×custody ${mu(custody * XC_BOND_EXPOSURE_RATIO)})`);
+          continue;
+        }
+        const simVault = JSON.parse(JSON.stringify(st.vault));
+        const simAccounts = JSON.parse(JSON.stringify(st.accounts));
+        simAccounts[escrowName(intentId)].claims[origin] = mu(escHeld - amount);
+        if (!simAccounts[owner]) simAccounts[owner] = { claims: emptyClaims(), lp: {} };
+        simAccounts[owner].claims[dest] = mu(ub(simAccounts[owner].claims[dest] || '0') + amt);
+        const simPools = JSON.parse(JSON.stringify(st.pools));
+        for (const [pid, cp] of touched) { const p = simPools.find((x) => x.id === pid); p.ra = cp.ra; p.rb = cp.rb; p.feeMeter = cp.feeMeter; }
+        rdSim = redeem({ vault: simVault, accounts: simAccounts, seq: st.seq, pools: simPools }, dest, amt, owner, now);
+        if (!rdSim.ok) { refuse(o, 'REDEEM-REFUSED-' + String(rdSim.refused || '?')); continue; }
+      }
+      // COMMIT the route + the escrow drain (all-or-nothing)
+      for (const [pid, cp] of touched) { const p = st.pools.find((x) => x.id === pid); p.ra = cp.ra; p.rb = cp.rb; p.feeMeter = cp.feeMeter; }
+      esc.claims[origin] = mu(escHeld - amount);
+      if (destKind === 'CHAIN') {
+        // the wrapper lands on the owner, then the REDEEM law burns it and queues the corridor payout (the R42 law reused, never re-implemented)
+        getAcc(owner).claims[dest] = mu(ub(getAcc(owner).claims[dest]) + amt);
+        st.vault = rdSim.st.vault; st.accounts = rdSim.st.accounts; st.seq = rdSim.st.seq;
+        for (const ro of rdSim.ops) ops.push(ro);
+        const underlying = WRAP_UNDERLYING[dest];
+        st.xcExposure[underlying] = mu(ub(st.xcExposure[underlying] || '0') + amt);
+        op('XC-FILL', { intentId, mode: 'POOL-CHAIN', owner, origin, amount: mu(amount), routeIds: route.ids, hops, wrapper: dest, wrapperOut: mu(amt), feesMu: mu(feesTotal), pegout: rdSim.pegout, law: 'route through our pools, redeem 1:1, payout queued to the corridor — the escrow drains, value is real' });
+        settledXc.push({ intentId, op: 'FILL-POOL-CHAIN', payout: mu(amt), corridor: rdSim.corridor });
+      } else {
+        getAcc(owner).claims[destAsset] = mu(ub(getAcc(owner).claims[destAsset]) + amt);
+        op('XC-FILL', { intentId, mode: 'POOL-LEDGER', owner, origin, amount: mu(amount), routeIds: route.ids, hops, destAsset, out: mu(amt), feesMu: mu(feesTotal), law: 'route through our pools — atomic, minOut enforced' });
+        settledXc.push({ intentId, op: 'FILL-POOL-LEDGER', out: mu(amt) });
+      }
+      if (!conservation(st.vault, st.accounts, st.pools).every((c) => c.ok)) return finish({ halted: 'CONSERVATION-BROKEN-AFTER-XC-FILL' });
+      continue;
+    }
+    if (t === 'XC-CONFIRM') {
+      const asset = String(o.asset || ''); const payout = ub(o.payoutMu);
+      const exposure = ub(st.xcExposure[asset] || '0');
+      st.xcExposure[asset] = mu(exposure >= payout ? exposure - payout : 0n);
+      op('XC-CONFIRM', { intentId, asset, payout: mu(payout), law: "the door's finality clock passed — the corridor exposure is cleared (the chain receipt stays the keyed desk's)" });
+      settledXc.push({ intentId, op: 'CONFIRM', asset });
+      continue;
+    }
+    if (t === 'XC-REFUND') {
+      const origin = String(o.origin || ''); const amount = ub(o.amountMu); const owner = String(o.owner || '');
+      if (!st.accounts[owner]) { refuse(o, 'UNKNOWN-OWNER'); continue; }
+      const esc = st.accounts[escrowName(intentId)];
+      const escHeld = esc ? ub(esc.claims[origin] || '0') : 0n;
+      if (escHeld < amount) { refuse(o, 'ESCROW-MISMATCH (drained or absent — a replayed refund is refused by law)'); continue; }
+      esc.claims[origin] = mu(escHeld - amount);
+      getAcc(owner).claims[origin] = mu(ub(getAcc(owner).claims[origin]) + amount);
+      op('XC-REFUND', { intentId, owner, origin, amount: mu(amount), law: 'refund WHOLE after the 2:1 clock — the timelock is the law, no dust loss' });
+      settledXc.push({ intentId, op: 'REFUND' });
+      continue;
+    }
+    refuse(o, 'UNKNOWN-OP');
+  }
+  return finish({});
+}
+
+// ── xc settle path (R43): the core consumes the doors' queue single-writer ──
+async function settleXcTick() {
+  const now = nowIso();
+  try {
+    const stasis = stasisCheck();
+    if (stasis) {
+      writeBook({ protocol: PROTOCOL, at: now, agent: VERSION, verdict: 'EXCHANGE-CORE-HALTED-STASIS', stasisHalted: true, stasisReason: stasis.reason || null, laws: LAWS, pools: [], routes: [], arb: [], counterGrids: {}, errors: [] });
+      console.log(`STASIS-HALT dex-core settle-xc · ${now} (the queue stays — the doors own it, settling resumes when STASIS lifts)`);
+      return 0;
+    }
+    const prev = loadBook();
+    if (!prev || prev.protocol !== PROTOCOL || !prev.genesisDone) { console.log('dex-core: no genesis book — settle-xc refuses (nothing to settle on)'); return 0; }
+    let queue = null;
+    try { queue = JSON.parse(fs.readFileSync(XC_OPS_FILE, 'utf8')); } catch (_) { queue = null; }
+    if (!queue || !Array.isArray(queue.ops) || queue.ops.length === 0) { console.log('dex-core: no xc ops in the queue'); return 0; }
+    const feed = loadRouterFeed();
+    const xc = settleXcOps(prev, queue, feed, now);
+    // THE POOL-MOVER'S RE-DERIVATION LAW (R43): any desk that moves the pools re-derives the
+    // route rows it leaves in the book — a fill that changes reserves makes every stale quote
+    // a lie. Each LIVE route row re-prices at its booked size against the POST-settle pools.
+    const reDerivedRoutes = (prev.routes || []).map((r) => {
+      if (r.verdict !== 'LIVE-INTERNAL' || !r.from || !r.to || !r.quoteFor) return r;
+      const m = String(r.quoteFor).match(/^(\d+) µ/);
+      if (!m) return r;
+      const fresh = routeBest(xc.st.pools, r.from, r.to, BigInt(m[1]));
+      return { ...r, quote: fresh ? mu(fresh.out) : null, verdict: fresh ? 'LIVE-INTERNAL' : 'STALE-THIN (re-derived after the xc fill — no route at this size now)' };
+    });
+    const book = assemble(prev, { st: xc.st, ops: xc.ops, routes: reDerivedRoutes, arb: prev.arb || [], counterGrids: prev.counterGrids || {}, cons: xc.cons, consOk: xc.consOk, att: xc.att, feesMu: 0n, edgeMu: ub((prev.treasuryPnl || {}).rebalanceEdgeMu || '0'), notes: xc.notes, rebalanceBooked: false, xcExposure: xc.xcExposure }, feed, null, now, false, xc.ops, null);
+    book.mode = 'KEYLESS-ATOMIC-INTERNAL (xc intents)';
+    book.xc = { batch: xc.batchId, settled: xc.settledXc, rejects: xc.rejectsXc, exposure: xc.xcExposure };
+    if (xc.settledXc.length) book.summary.verdict = 'XC-SETTLED';
+    writeBook(book); writeMd(book);
+    appendHistory(xc.ops);
+    // publish pegout rows from chain-dest fills (the corridor queue — keyed desks own the broadcast)
+    const pegoutRows = xc.ops.filter((o) => o.type === 'XC-FILL' && o.pegout).map((o) => ({ at: now, intentId: o.intentId, ...o.pegout }));
+    if (pegoutRows.length) {
+      try {
+        let pq = null; try { pq = JSON.parse(fs.readFileSync(PEGOUT_QUEUE_FILE, 'utf8')); } catch (_) { pq = null; }
+        pq = pq || { protocol: 'SAOS-DEX-PEGOUT-QUEUE/1', rows: [] };
+        pq.at = now; pq.rows = [...(pq.rows || []), ...pegoutRows].slice(-256);
+        fs.writeFileSync(PEGOUT_QUEUE_FILE + '.tmp', JSON.stringify(pq, null, 1) + '\n'); fs.renameSync(PEGOUT_QUEUE_FILE + '.tmp', PEGOUT_QUEUE_FILE);
+      } catch (_) {}
+    }
+    // consume the queue (single-writer: the doors wrote it, the core clears it)
+    try { fs.writeFileSync(XC_OPS_FILE + '.tmp', JSON.stringify({ protocol: 'SAOS-DEX-XC-OPS/1', batch: null, at: now, ops: [], lastSettled: xc.batchId }, null, 1) + '\n'); fs.renameSync(XC_OPS_FILE + '.tmp', XC_OPS_FILE); } catch (_) {}
+    console.log(`DEX-CORE-XC-SETTLE batch=${xc.batchId} settled=${xc.settledXc.length} rejects=${xc.rejectsXc.length} exposure=${JSON.stringify(xc.xcExposure)} cons=${xc.consOk} att=${xc.att}`);
+    return 0;
+  } catch (e) {
+    console.log(`dex-core settle-xc: ERROR (fail-soft, exit 0) ${e.message}`);
+    return 0;
+  }
+}
+
 const LAWS = [
+  'intent gates (R43): XC intents settle on ONE balance universe — escrow in, route through OUR pools, chain payouts queued to the corridor (keyless code never broadcasts), refund whole behind the 2:1 clock, corridor exposure bonded ≤ 2× custody',
   'units: µ BigInt end to end, no floats in settlement',
   'volatile pools: x·y ≥ k (Uniswap v2 exact, fee on input, floor to user)',
   'peg pools: Curve stableswap A=10 (canonical, fee on output, −1 pad)',
@@ -1124,6 +1397,7 @@ function assemble(prev, settled, feed, probe, now, isGenesis, ops, meshResult) {
     conservationOk: settled.consOk,
     attestation: settled.att,
     processedBatches: mesh ? mesh.processedBatches : (prev.processedBatches || []),
+    xcExposure: (settled && settled.xcExposure) || prev.xcExposure || {}, // the bond law's exposure ledger — carried tick to tick, cleared only by XC-CONFIRM
     meshPnl: mesh ? mesh.meshPnl : (prev.meshPnl || { lifetime: { byAgent: {}, fills: 0, edgeMu: '0', feesMu: '0', volumeInMu: '0' }, batch: null }),
     genesisDone: true,
     opsThisTick: opRows.map((o) => ({ seq: o.seq, type: o.type, ...Object.fromEntries(Object.keys(o).filter((k) => !['seq', 'type', 'at'].includes(k)).map((k) => [k, o[k]])) })),
@@ -1349,10 +1623,12 @@ if (require.main === module) {
   const arg = process.argv[2] || '';
   if (arg === 'selftest') process.exit(selftest());
   if (arg === 'settle-intents') { settleIntentsTick().then((rc) => process.exit(rc)).catch(() => process.exit(0)); }
+  else if (arg === 'settle-xc') { settleXcTick().then((rc) => process.exit(rc)).catch(() => process.exit(0)); }
   else tick().then((rc) => process.exit(rc)).catch(() => process.exit(0));
 }
 
 module.exports = {
+  PROTOCOL,
   // units + invariants
   cpmmOut, cpmmKCheck, feeOnInput, stableD, stableGetY, stableOut,
   // pools + routing
@@ -1363,7 +1639,9 @@ module.exports = {
   redeem, crossFair, custodyClassRows, issuerIdentity, reconcilePools, custodyProbeFrom, observedFrom,
   WRAP_UNDERLYING, CUSTODY_CLASSES, PEGOUT_CORRIDORS, MINT_SHARE_BPS, REDEEM_DUST,
   // engine
-  settle, settleIntents, rosterLaw, selftest, LAWS,
+  settle, settleIntents, settleXcOps, rosterLaw, selftest, LAWS,
   SCALE, BPS, NANO, STABLE_A, FEE_VOLATILE_BPS, FEE_PEG_BPS, PEG_GUARD_DRIFT_PCT,
   MESH_DUST, MESH_WIRE_MAX_SHARE_BPS, MESH_FILL_MAX_DEPTH_BPS,
+  // cross-chain intent gates (R43)
+  CHAIN_WRAPPER, XC_BOND_EXPOSURE_RATIO,
 };

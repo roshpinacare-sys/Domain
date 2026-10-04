@@ -1,10 +1,11 @@
 {
  "protocol": "SAOS-ARB-MESH/1",
- "at": "2026-10-04T11:20:00.000Z",
+ "at": "2026-10-04T14:29:21.467Z",
  "agent": "arb-mesh v1.0.0 (R41 MESH MARKET, CR-0071)",
  "mode": "KEYLESS-MESH-DEMAND",
  "stasisHalted": false,
  "laws": [
+  "intent gates (R43): XC intents settle on ONE balance universe — escrow in, route through OUR pools, chain payouts queued to the corridor (keyless code never broadcasts), refund whole behind the 2:1 clock, corridor exposure bonded ≤ 2× custody",
   "units: µ BigInt end to end, no floats in settlement",
   "volatile pools: x·y ≥ k (Uniswap v2 exact, fee on input, floor to user)",
   "peg pools: Curve stableswap A=10 (canonical, fee on output, −1 pad)",
@@ -15,17 +16,18 @@
   "floor law: rebalance only above 2×(fees+floor) — below it a plan, never a trade",
   "feed law: settle consumes the booked router feed; measurement and settlement are separated",
   "honest money: the powerdown drip is the booked fuel; no invented locks",
-  "mesh law (R41): fleet agents settle atomically on this ledger — batch-idempotent, no naked shorts, wires capped at 10% of free treasury per batch, a fill never exceeds 5% of first-hop depth, edge marked to fair (null when no fair exists)"
+  "mesh law (R41): fleet agents settle atomically on this ledger — batch-idempotent, no naked shorts, wires capped at 10% of free treasury per batch, a fill never exceeds 5% of first-hop depth, edge marked to fair (null when no fair exists)",
+  "multi-network vault (R42): custody classes — MEASURED-KEYED is the only mintable class; adjacent networks are OBSERVED (seen, never custody, never a reserve); redeem is ALWAYS honored 1:1 in-ledger (burn before payout); the chain payout is queued for the keyed desks — keyless code never fires a broadcast"
  ],
  "verdict": "NO-EDGE (every row below the floor — the machinery waits, the floor law protects the P&L)",
  "batch": null,
  "settledBatch": null,
  "coreLedger": {
-  "seq": 9,
-  "at": "2026-10-04T11:07:32.074Z",
-  "ageHours": 0.21,
+  "seq": 22,
+  "at": "2026-10-04T14:29:19.288Z",
+  "ageHours": 0,
   "conservationOk": true,
-  "attestation": "d6d5c769bf229029",
+  "attestation": "cb54a2fc09e19760",
   "feedFresh": true
  },
  "routerSeen": {
@@ -58,29 +60,29 @@
    "pair": "WSTEEM/STEEM",
    "kind": "PEG",
    "feeBps": 2,
-   "mid": 1.02603822,
+   "mid": 1.07679262,
    "unit": "STEEM",
    "rungs": [
     {
      "sizeBps": 10,
-     "sizeIn": "383",
-     "out": "383",
-     "execPrice": 1,
-     "slipBps": -2.53
+     "sizeIn": "374",
+     "out": "376",
+     "execPrice": 1.00534759,
+     "slipBps": -6.63
     },
     {
      "sizeBps": 100,
-     "sizeIn": "3837",
-     "out": "3842",
-     "execPrice": 1.0013031,
-     "slipBps": -2.41
+     "sizeIn": "3744",
+     "out": "3766",
+     "execPrice": 1.00587607,
+     "slipBps": -6.58
     },
     {
      "sizeBps": 500,
-     "sizeIn": "19189",
-     "out": "19144",
-     "execPrice": 0.99765491,
-     "slipBps": -2.76
+     "sizeIn": "18721",
+     "out": "18762",
+     "execPrice": 1.00219005,
+     "slipBps": -6.92
     }
    ]
   },
@@ -120,29 +122,29 @@
    "pair": "STEEM/SBD",
    "kind": "VOLATILE",
    "feeBps": 25,
-   "mid": 0.1054466,
+   "mid": 0.10673495,
    "unit": "SBD",
    "rungs": [
     {
      "sizeBps": 10,
-     "sizeIn": "1555",
-     "out": "163",
-     "execPrice": 0.10482315,
-     "slipBps": -0.59
+     "sizeIn": "1545",
+     "out": "164",
+     "execPrice": 0.10614887,
+     "slipBps": -0.54
     },
     {
      "sizeBps": 100,
-     "sizeIn": "15551",
-     "out": "1619",
-     "execPrice": 0.10410906,
-     "slipBps": -1.26
+     "sizeIn": "15456",
+     "out": "1629",
+     "execPrice": 0.10539596,
+     "slipBps": -1.25
     },
     {
      "sizeBps": 500,
-     "sizeIn": "77755",
-     "out": "7789",
-     "execPrice": 0.10017362,
-     "slipBps": -5
+     "sizeIn": "77284",
+     "out": "7837",
+     "execPrice": 0.10140521,
+     "slipBps": -4.99
     }
    ]
   }

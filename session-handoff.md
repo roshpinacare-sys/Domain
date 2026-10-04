@@ -65,3 +65,23 @@
 - Next: hive/blurt active keys verify → P5/P6/P7/P9 arm + A2 wakes; a measured SAOS
   claim arms P4; operator CEX keys (R7-R9); drip-day (2026-10-10) books itself;
   EVM/TRON/SOL intent doors (ERC-7683 template).
+
+## R43 booked rungs (do not re-derive)
+- THE INTENT GATES are live (CR-0073, feat-068, E66, suite v1.51.0 → v1.52.0): dex-xc.cjs
+  (SAOS-DEX-XC/1) runs the cross-chain intent doors — 8 networks with measured hard-finality
+  clocks (EVM 780s / TRON 60s / SOL 13s / STEEM+HIVE 60s / BLURT 63s) and honest bands
+  (KEYED-DESK / PLAN-PEGOUT-KEYED-OPERATOR / PLAN-KEYED-DOOR); the ERC-7683 lifecycle over
+  ONE ledger (escrow-identity per intent, escrow-drain idempotency, quotes from OUR pools
+  −0.5%, pool-default solver with P2P roster outbids, the 2:1 HTLC clock interlock, the bond
+  law exposure ≤ 2× custody, the 5% split-fill cap, whole refunds). dex-core.cjs v1.3.0
+  settles the doors' ops atomically (settleXcOps / settle-xc) and re-derives route rows after
+  any pool move (the pool-mover's re-derivation law). LIVE PIPE-PROOF booked (seq 18→22):
+  1000µ SBD → our pools → 9358µ WSTEEM → redeem 1:1 → pegout queued KEYED-DESK → confirmed
+  at finality+1s, conservation true at every op.
+- BASE-REPAIRS locked as E66 golden vectors: routeBest reversed-leg quoting (SBD→STEEM 1000µ
+  quoted 105µ instead of 9402µ) + poolSwap b-side newRa/newRb transposition — both masked
+  since R40 by 'ab'-only fills and symmetric peg pools.
+- Hourly lane: dex-xc-cron.yml :53 (selftest → doors tick → commit, keyless, rebase-first).
+- Next: hive/blurt active keys verify → P5-P9 + the EVM/TRON/SOL door bands arm (no new
+  code); a measured SAOS claim arms P4; operator CEX keys (R7-R9); drip-day (2026-10-10)
+  books itself; intent fill competition widens as the soldiers' desks come online.
