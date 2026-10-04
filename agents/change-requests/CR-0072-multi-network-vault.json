@@ -1,0 +1,30 @@
+{
+ "id": "CR-0072",
+ "slot": 72,
+ "title": "Fleet Rung 42 — THE MULTI-NETWORK VAULT: the vault holds what its keys can move and sees every network. The owner demanded a smart thing on our network that holds real coins/tokens of all networks and ours — \"לעשות משהו חכם על הרשת שלנו שתוכל להחזיק מטבעות אמיתיים טוקנים של כל הרשתות וגם שלנו כמובן\". R42 lands it in dex-core.cjs v1.2.0: CUSTODY-CLASS LAW — what the vault may count as ITS OWN: MEASURED-KEYED (active key material in the protected desks + chain-measured balance → custody, the ONLY mintable class; STEEM/SBD today), OBSERVED-POST-KEYED (posting key held — account controlled, transfers gated; BLURT), OBSERVED-UNCONTROLLED (the name exists on the chain but its active pub ≠ any held key — the R38 law; HIVE/HBD), PLANNED-NO-CLAIM (SAOS), OBSERVED-ABSENT (probe failed — honest unknown). The OBSERVED registry: HIVE/HBD/BLURT probed KEYLESSLY every tick via condenser RPCs (api.steemit.com / api.hive.blog+openhive / blurt-rpc.saboin.com+2 fallbacks) and booked with node provenance — the vault SEES every network, holds only what its keys can move, and the class upgrades the same tick verified key material appears (no new code). ISSUER IDENTITY (SAOS-DEX-ISSUER/1 — R11's corridor landed): a stable recomputable sha256-16 identity over the wrapper set + chain bindings + pool catalog; the mint law (1:1 against MEASURED-KEYED custody only, 25% of measured keyed custody per wrapper — the deterministic genesis law) and the per-chain peg-out corridors hang off it. REDEEM LAW (the real-value law's second half): burn BEFORE payout — the in-ledger redeem is ALWAYS honored 1:1 (minted/reserve/claims move together, conservation asserted); the chain-side payout is QUEUED to dex/pegout-queue.json with its corridor named — a keyed desk owns the broadcast, keyless code never fires one (STEEM/SBD = KEYED-DESK; HIVE/HBD = PLAN-PEGOUT-KEYED-OPERATOR; BLURT = PLAN-PEGOUT-KEYED-OPERATOR, posting key only). Redeem requests are consumed single-writer by the tick from dex/redeem-requests.json (atomic tmp+rename, refusals booked: DUST / OVER-MINT / UNKNOWN-WRAPPER / INSUFFICIENT-CLAIM). POOL CATALOG P5-P9 appended to the live book by the deterministic reconcile law (never reorders, idempotent, born empty): P5 WHIVE/HIVE, P6 WHBD/HBD, P7 WBLURT/BLURT (pegs), P8 HIVE/STEEM (the cross-network bridge pair, planned — arms when HIVE key material verifies), P9 WSBD/WHBD (the SBD↔HBD dollar bridge). CROSS-FAIR LAW: HIVE-per-STEEM = the cross of the router anchors (SBD-per-STEEM ÷ HBD-per-HIVE — the dollar pegs are the shared unit), BigInt floor, honest nulls; booked in the feed row and the A2 arb row (NO-CUSTODY until armed — honest band).",
+ "operator": "Z.ai Code (Domain lane, main orchestrator)",
+ "design": [
+  "dex-core.cjs v1.2.0 (SAOS-DEX-CORE/1, keyless, STASIS-obeying, fail-soft exit 0): the multi-network vault — custody classes, observed registry, issuer identity, redeem corridor, pool catalog P5-P9, cross-fair law",
+  "custody classes: MEASURED-KEYED (mintable) / OBSERVED-POST-KEYED / OBSERVED-UNCONTROLLED / PLANNED-NO-CLAIM / OBSERVED-ABSENT — the class law is data, the upgrade is the same tick key material verifies (key-check law)",
+  "probeNetworks(): keyless condenser probes per network with node fallbacks; custodyProbeFrom() derives the STEEM drip-fuel loop; observedFrom() derives the adjacent-network registry; fail-soft per node",
+  "redeem(): burn-before-payout, all-or-nothing, conservation asserted; PEGOUT-QUEUED ops name the corridor; queues are single-writer ledger files (atomic tmp+rename)",
+  "reconcilePools(): the live book extends deterministically — one POOL-CATALOG-EXTEND op per appended pool, second call appends nothing",
+  "crossFair(): (SBD-per-STEEM × 1e9) ÷ (HBD-per-HIVE) in nano — the shared dollar peg is the unit; A2 row books NO-CUSTODY/AWAITING-LIQUIDITY/FEED-STALE honestly",
+  "E65 in the suite (v1.50.0 → v1.51.0): white-box custody/redeem/cross-fair/reconcile/genesis laws, black-box dex-core selftest fresh-process (52/52), real-tree re-derivation of the booked multi-network vault (issuer identity, custody classes, corridors, attestation, A2 band, observed registry) — 65/65 GREEN"
+ ],
+ "acceptance": [
+  "MEASURED-KEYED is the only mintable class; observed balances book as OBSERVE ops and NEVER touch custody, minting, or conservation",
+  "redeem is ALWAYS honored 1:1 in-ledger (burn before payout); the chain payout is queued with its corridor named — keyless code never fires a broadcast",
+  "the booked vault re-derives: issuer identity recomputes, custody classes re-derive, P5-P9 present, conservation OK, attestation recomputes, A2 honestly banded",
+  "the pool catalog reconciles idempotently (9 pools, P8 planned, P5/P6/P7/P9 born AWAITING-CUSTODY)",
+  "no new cron workflow (dex-core-cron :41 picks up the vault); suite v1.51.0, 65/65 GREEN; secret-scan 0"
+ ],
+ "measured": [
+  "live probes 2026-10-04: HIVE headcorner 0.034 HIVE + 0.003 HBD @api.hive.blog (OBSERVED-UNCONTROLLED — active pub ≠ held keys, R38), BLURT headcorner 67.841 BLURT @blurt-rpc.saboin.com (OBSERVED-POST-KEYED — the steem posting WIF IS the blurt posting key, byte-verified before any vote), STEEM keyed custody measured by the drip-fuel loop",
+  "cross fair measured: 1869150744 nano = 1.8692 HIVE per STEEM (cross of 0.1054467 / 0.05641423 — both router anchors)",
+  "issuer identity measured: d7ff39690365bfa8 (SAOS-DEX-ISSUER/1 over 5 wrappers + 3 chains + 9 pool pairs)",
+  "first R42 tick: seq 17, 12 LIVE routes + 70 honest planned/thin rows, A1 BELOW-FLOOR (the floor law protects the P&L), A-P1 PEG-DRIFT-HALT (the honest state after the R41 pipe-proof fill), dex-core selftest 52/52, suite 65/65 GREEN v1.51.0"
+ ],
+ "status": "ACCEPTED-2026-10-04",
+ "ownerDirective": "trace 1a105f6d58b6c3a5 + 1a1068668c102581 + תמשיך (1a106e5d9f29c915): \"משהו חכם על הרשת שלנו שתוכל להחזיק מטבעות אמיתיים טוקנים של כל הרשתות וגם שלנו... באמת להחליף למטבע האמיתי עם ערך ולא סתם שקר... שהכל ירוץ וודאי עם בדיקות\""
+}

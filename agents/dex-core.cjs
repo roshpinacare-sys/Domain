@@ -1,6 +1,24 @@
 'use strict';
 /**
- * dex-core.cjs — R40 THE EXCHANGE CORE (CR-0070 / feat-065 / E63, suite v1.48.0 → v1.49.0)
+ * dex-core.cjs — R42 THE MULTI-NETWORK VAULT (CR-0072 / feat-067 / E65, suite v1.50.0 → v1.51.0)
+ * R40 landed the exchange core (CR-0070), R41 the mesh market (CR-0071). R42 extends the VAULT
+ * across networks (the owner's law: "משהו חכם על הרשת שלנו שתוכל להחזיק מטבעות אמיתיים טוקנים
+ * של כל הרשתות וגם שלנו"):
+ *  - CUSTODY-CLASS LAW: what the vault may count as ITS OWN — MEASURED-KEYED (active keys in the
+ *    protected desks + chain-measured → custody, the ONLY mintable class) / OBSERVED-POST-KEYED
+ *    (posting key held — account controlled, transfers gated) / OBSERVED-UNCONTROLLED (the name
+ *    exists, its active pub ≠ any held key — R38 law) / PLANNED-NO-CLAIM / OBSERVED-ABSENT.
+ *  - The OBSERVED registry: adjacent networks (HIVE/HBD/BLURT) probed KEYLESSLY every tick and
+ *    booked with provenance — the vault SEES every network and holds only what its keys can move.
+ *  - ISSUER identity (SAOS-DEX-ISSUER/1): a stable recomputable identity over the wrapper set +
+ *    chain bindings + pool catalog; the mint law (1:1 against MEASURED-KEYED custody only) and
+ *    the peg-out corridors (per chain, honestly banded) hang off it — R11's corridor landed.
+ *  - REDEEM law (the real-value law's second half): burn BEFORE payout — the in-ledger redeem is
+ *    ALWAYS honored 1:1; the chain-side payout is QUEUED to dex/pegout-queue.json with its
+ *    corridor named — a keyed desk owns the broadcast, keyless code never fires one.
+ *  - Pool catalog P5-P9: WHIVE/HIVE, WHBD/HBD, WBLURT/BLURT pegs + P9 WSBD/WHBD (the SBD↔HBD
+ *    dollar bridge) + P8 HIVE/STEEM (the cross-network bridge, cross-fair law) — appended to the
+ *    live book by the deterministic reconcile law, arming the day key material verifies.
  *
  * Owner directive (2026-10-04, Hebrew, trace 1a105f6d58b6c3a5): "צריך לטפל בו היטב
  * לדאוג שנוכל לעשות שם החלפות swap וכו... חשוב שגם נוכל באמת להחליף למטבע האמיתי
@@ -62,13 +80,49 @@ const CREDITS_BOOK = path.join(AG, '..', 'dex', 'credits.json');
 const INTENTS_FILE = path.join(AG, 'dex-intents.json'); // the mesh queue — written by arb-mesh.cjs, consumed+cleared by THIS desk (single-writer law)
 const ROSTER_FILE = path.join(AG, 'persona-slots.json');
 const PROTOCOL = 'SAOS-DEX-CORE/1';
-const VERSION = 'dex-core v1.1.0 (R41 MESH MARKET, CR-0071)';
+const VERSION = 'dex-core v1.2.0 (R42 MULTI-NETWORK VAULT, CR-0072)';
+const REDEEM_REQUESTS_FILE = path.join(AG, '..', 'dex', 'redeem-requests.json');
+const PEGOUT_QUEUE_FILE = path.join(AG, '..', 'dex', 'pegout-queue.json');
 
 // ── mesh market constants (R41) ────────────────────────────────────────────
 const MESH_DUST = 1000n;              // 0.001 unit — below this a fill is noise, refused
 const MESH_WIRE_MAX_SHARE_BPS = 1000n; // a batch may wire ≤10% of the treasury's FREE claims to agents
 const MESH_FILL_MAX_DEPTH_BPS = 500n;  // a single fill may not exceed 5% of the first-hop depth
 const MESH_BATCH_MEMO = 64;            // processed-batch ids kept for idempotency (rotating)
+
+// ── multi-network vault constants (R42) ────────────────────────────────────
+const WRAP_UNDERLYING = { WSTEEM: 'STEEM', WSBD: 'SBD', WHIVE: 'HIVE', WHBD: 'HBD', WBLURT: 'BLURT' };
+const MINT_SHARE_BPS = 2500n;          // a wrapper mints 25% of measured KEYED custody (deterministic genesis law)
+const REDEEM_DUST = 1n;                // 1µ — a redeem below this is noise
+const NETWORK_PROBES = {
+  STEEM: ['https://api.steemit.com'],
+  HIVE: ['https://api.hive.blog', 'https://api.openhive.network'],
+  BLURT: ['https://blurt-rpc.saboin.com', 'https://rpc.blurt.world', 'https://api.blurt.blkobserver.xyz'],
+};
+/** CUSTODY-CLASS LAW (R42): what the vault may count as ITS OWN.
+ *  MEASURED-KEYED is the ONLY mintable class. Adjacent networks are OBSERVED — seen,
+ *  booked with provenance, never custody, never a reserve. The class upgrades the same
+ *  tick verified active key material appears in a protected desk (key-check law) — no new code. */
+const CUSTODY_CLASSES = {
+  STEEM: 'MEASURED-KEYED', SBD: 'MEASURED-KEYED',
+  HIVE: 'OBSERVED-UNCONTROLLED', HBD: 'OBSERVED-UNCONTROLLED',
+  BLURT: 'OBSERVED-POST-KEYED', SAOS: 'PLANNED-NO-CLAIM',
+};
+const CUSTODY_KEYPROOF = {
+  'MEASURED-KEYED': 'active key material in the protected keyed desks (the signing desks broadcast daily)',
+  'OBSERVED-POST-KEYED': 'posting key held (account controlled; TRANSFERS need the active key — gated)',
+  'OBSERVED-UNCONTROLLED': 'the name exists on the chain but its active pub ≠ any held key (R38 law)',
+  'PLANNED-NO-CLAIM': 'no measured claim exists in the estate books (dex/credits.json)',
+  'OBSERVED-ABSENT': 'the chain probe failed this tick — honest unknown, booked observation stands',
+};
+const PEGOUT_CORRIDORS = {
+  STEEM: 'KEYED-DESK (steem active in the protected desks — operator-gated broadcast)',
+  SBD: 'KEYED-DESK (steem active in the protected desks — operator-gated broadcast)',
+  HIVE: 'PLAN-PEGOUT-KEYED-OPERATOR (no hive active key in the estate — R38 law)',
+  HBD: 'PLAN-PEGOUT-KEYED-OPERATOR (no hive active key in the estate — R38 law)',
+  BLURT: 'PLAN-PEGOUT-KEYED-OPERATOR (posting key only — transfers gated)',
+  SAOS: 'INTERNAL-ONLY (no chain — the claim IS the asset)',
+};
 
 // ── units law ───────────────────────────────────────────────────────────────
 const SCALE = 1000000n; // µ
@@ -180,30 +234,44 @@ function poolDefs(fairNano) {
     { id: 'P3', pair: 'STEEM/SBD', kind: 'VOLATILE', a: 'STEEM', b: 'SBD', feeBps: FEE_VOLATILE_BPS, amp: 0, planned: false },
     { id: 'P4', pair: 'SAOS/WSTEEM', kind: 'VOLATILE', a: 'SAOS', b: 'WSTEEM', feeBps: FEE_VOLATILE_BPS, amp: 0, planned: true,
       plannedWhy: 'no measured SAOS claim exists in the estate books (dex/credits.json is empty today) — the pool arms the day a real claim is measured into the vault; the mirror reference price is the planned seed anchor' },
+    { id: 'P5', pair: 'WHIVE/HIVE', kind: 'PEG', a: 'WHIVE', b: 'HIVE', feeBps: FEE_PEG_BPS, amp: 10, planned: false },
+    { id: 'P6', pair: 'WHBD/HBD', kind: 'PEG', a: 'WHBD', b: 'HBD', feeBps: FEE_PEG_BPS, amp: 10, planned: false },
+    { id: 'P7', pair: 'WBLURT/BLURT', kind: 'PEG', a: 'WBLURT', b: 'BLURT', feeBps: FEE_PEG_BPS, amp: 10, planned: false },
+    { id: 'P8', pair: 'HIVE/STEEM', kind: 'VOLATILE', a: 'HIVE', b: 'STEEM', feeBps: FEE_VOLATILE_BPS, amp: 0, planned: true,
+      plannedWhy: 'the cross-network bridge pair arms when HIVE key material verifies into the estate (R38 law) — the cross fair (STEEM-anchor / HIVE-anchor) stands measured from the router book' },
+    { id: 'P9', pair: 'WSBD/WHBD', kind: 'PEG', a: 'WSBD', b: 'WHBD', feeBps: FEE_PEG_BPS, amp: 10, planned: false },
   ];
 }
 /** deterministic genesis shares given measured custody (µ BigInt) — the same custody always yields the same genesis ops */
 function genesisPlan(custody, fairNano) {
   const steem = custody.STEEM || 0n, sbd = custody.SBD || 0n;
+  const hive = custody.HIVE || 0n, hbd = custody.HBD || 0n, blurt = custody.BLURT || 0n;
   const mintWSTEEM = steem * 5n / 100n;      // 5% of liquid STEEM becomes reserve-backed WSTEEM
   const mintWSBD = sbd * 15n / 100n;         // 15% of SBD becomes reserve-backed WSBD
+  // R42: the multi-network wrappers mint 25% of measured KEYED custody (custody-class law —
+  // OBSERVED rows NEVER mint; today HIVE/HBD/BLURT keyed custody is zero, the pools wait armed)
+  const mintWHIVE = hive * MINT_SHARE_BPS / 10000n;
+  const mintWHBD = hbd * MINT_SHARE_BPS / 10000n;
+  const mintWBLURT = blurt * MINT_SHARE_BPS / 10000n;
   const p1Side = mintWSTEEM / 2n;            // half the wrapper seeds the peg pool, both sides 1:1
   const p2Side = mintWSBD / 2n;
   const p3Steem = steem * 10n / 100n;        // 10% of liquid STEEM into the volatile pool
+  const p5Side = mintWHIVE / 2n, p6Side = mintWHBD / 2n, p7Side = mintWBLURT / 2n;
+  const p9Sbd = mintWSBD * 20n / 100n, p9Hbd = mintWHBD * 20n / 100n; // the SBD↔HBD dollar bridge
   const fair = fairNano ? BigInt(Math.trunc(Number(fairNano))) : 105446700n;
   const p3Sbd = p3Steem * fair / NANO;       // seeded AT fair — the pool is born anchored
-  return { mintWSTEEM, mintWSBD, p1Side, p2Side, p3Steem, p3Sbd, fair };
+  return { mintWSTEEM, mintWSBD, mintWHIVE, mintWHBD, mintWBLURT, p1Side, p2Side, p3Steem, p3Sbd, p5Side, p6Side, p7Side, p9Sbd, p9Hbd, fair };
 }
 
 // ── state helpers ───────────────────────────────────────────────────────────
 const ASSETS = ['STEEM', 'SBD', 'HIVE', 'HBD', 'BLURT', 'SAOS'];
-const WRAPPED = ['WSTEEM', 'WSBD'];
+const WRAPPED = ['WSTEEM', 'WSBD', 'WHIVE', 'WHBD', 'WBLURT'];
 function emptyVault() {
-  const custody = {}, provenance = {};
-  for (const a of ASSETS) { custody[a] = '0'; provenance[a] = null; }
+  const custody = {}, provenance = {}, observed = {}, observedProvenance = {};
+  for (const a of ASSETS) { custody[a] = '0'; provenance[a] = null; observed[a] = '0'; observedProvenance[a] = null; }
   const minted = {}, reserve = {};
   for (const w of WRAPPED) { minted[w] = '0'; reserve[w] = '0'; }
-  return { custody, custodyProvenance: provenance, wrappedReserve: reserve, minted, reserveRatio: { WSTEEM: 1, WSBD: 1 } };
+  return { custody, custodyProvenance: provenance, observed, observedProvenance, wrappedReserve: reserve, minted, reserveRatio: {} };
 }
 function emptyClaims() {
   const c = {};
@@ -234,7 +302,7 @@ function conservation(vault, accounts, pools) {
 function reserveRatios(vault) {
   const out = {};
   for (const w of WRAPPED) {
-    const res = ub(vault.wrappedReserve[w === 'WSTEEM' ? 'STEEM' : 'SBD'] || '0');
+    const res = ub(vault.wrappedReserve[WRAP_UNDERLYING[w]] || '0');
     const minted = ub(vault.minted[w] || '0');
     out[w] = minted > 0n ? +(Number(res) / Number(minted)).toFixed(6) : 1;
   }
@@ -297,28 +365,70 @@ function routeBest(pools, from, to, amountIn) {
   return paths[0];
 }
 
-// ── measure phase (keyless chain probe — custody is ground truth from the chain) ──
+// ── measure phase (keyless chain probes — the vault sees every network) ────
 function nowIso() {
   if (process.env.DEX_CORE_NOW) { const t = Date.parse(process.env.DEX_CORE_NOW); if (isFinite(t)) return new Date(t).toISOString(); }
   return new Date().toISOString();
 }
-async function probeCustody() {
-  const one = async (node) => {
-    const ctl = new AbortController(); const t = setTimeout(() => ctl.abort(), 8000);
-    try {
-      const r = await fetch(node, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', method: 'condenser_api.get_accounts', params: [['headcorner']], id: 1 }), signal: ctl.signal });
-      clearTimeout(t);
-      const j = await r.json();
-      const a = j && j.result && j.result[0];
-      if (!a) return null;
-      // condenser serves "14.840 STEEM" (3 decimals) → µ = strip dot, ×1000
-      const toMu = (s) => { const m = /^([\d,]+)\.(\d{1,3})\s+(\w+)$/.exec(String(s || '').trim()); if (!m) return 0n; return BigInt(m[1].replace(/,/g, '') + m[2].padEnd(3, '0')) * 1000n; };
-      return { steem: toMu(a.balance), sbd: toMu(a.sbd_balance) };
-    } catch (e) { clearTimeout(t); return null; }
-  };
-  const steem = await one('https://api.steemit.com').catch(() => null);
-  if (steem) return { measured: true, node: 'api.steemit.com', steem: steem.steem, sbd: steem.sbd };
-  return { measured: false, node: null, steem: null, sbd: null };
+/** probeNetworks (R42): keyless condenser probes per network — headcorner's balances observed
+ *  with node provenance, fail-soft per node, honest OBSERVED-ABSENT when unreachable.
+ *  STEEM balances are the KEYED custody (the drip-fuel loop's ground truth); HIVE/BLURT
+ *  balances are OBSERVED (not custody — the custody-class law decides). */
+async function probeNetworks() {
+  const toMu = (s) => { const m = /^([\d,]+)\.(\d{1,3})\s+(\w+)$/.exec(String(s || '').trim()); if (!m) return 0n; return BigInt(m[1].replace(/,/g, '') + m[2].padEnd(3, '0')) * 1000n; };
+  const out = {};
+  for (const [net, nodes] of Object.entries(NETWORK_PROBES)) {
+    let hit = null;
+    for (const node of nodes) {
+      const ctl = new AbortController(); const t = setTimeout(() => ctl.abort(), 8000);
+      try {
+        const r = await fetch(node, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', method: 'condenser_api.get_accounts', params: [['headcorner']], id: 1 }), signal: ctl.signal });
+        clearTimeout(t);
+        const j = await r.json();
+        const a = j && j.result && j.result[0];
+        if (!a) continue;
+        const row = { reachable: true, node };
+        if (net === 'STEEM') { row.steem = toMu(a.balance); row.sbd = toMu(a.sbd_balance); }
+        else if (net === 'HIVE') { row.hive = toMu(a.balance); row.hbd = toMu(a.hbd_balance); }
+        else if (net === 'BLURT') { row.blurt = toMu(a.balance); }
+        hit = row; break;
+      } catch (e) { clearTimeout(t); }
+    }
+    out[net] = hit || { reachable: false, node: null };
+  }
+  return out;
+}
+/** the STEEM keyed-custody probe (the drip-fuel loop) derived from the network probes */
+function custodyProbeFrom(nets) {
+  const s = nets && nets.STEEM;
+  return s && s.reachable ? { measured: true, node: s.node, steem: s.steem, sbd: s.sbd } : { measured: false, node: null, steem: null, sbd: null };
+}
+/** observed balances (adjacent networks — NOT custody) derived from the network probes */
+function observedFrom(nets) {
+  const out = {};
+  for (const a of ASSETS) out[a] = null;
+  const h = nets && nets.HIVE, b = nets && nets.BLURT;
+  if (h && h.reachable) { out.HIVE = { mu: mu(h.hive || 0n), network: 'HIVE', node: h.node }; out.HBD = { mu: mu(h.hbd || 0n), network: 'HIVE', node: h.node }; }
+  if (b && b.reachable) { out.BLURT = { mu: mu(b.blurt || 0n), network: 'BLURT', node: b.node }; }
+  return out;
+}
+/** CUSTODY-CLASS LAW rows (R42): per asset — the class, mintability, the observed balance, the key proof, the unlock. */
+function custodyClassRows(nets) {
+  const obs = observedFrom(nets);
+  const rows = {};
+  for (const a of ASSETS) {
+    const cls = CUSTODY_CLASSES[a];
+    const isObserved = cls === 'OBSERVED-UNCONTROLLED' || cls === 'OBSERVED-POST-KEYED';
+    const effCls = isObserved && !obs[a] ? 'OBSERVED-ABSENT' : cls;
+    rows[a] = {
+      class: effCls,
+      mintable: cls === 'MEASURED-KEYED',
+      observed: obs[a] ? obs[a].mu : null,
+      keyProof: CUSTODY_KEYPROOF[effCls] || CUSTODY_KEYPROOF[cls],
+      unlock: cls === 'MEASURED-KEYED' ? null : (cls === 'PLANNED-NO-CLAIM' ? 'a measured SAOS claim in the vault (dex/credits.json)' : 'verified active key material in a protected desk (key-check law) — the class upgrades the same tick, no new code'),
+    };
+  }
+  return rows;
 }
 
 // ── the book ────────────────────────────────────────────────────────────────
@@ -332,10 +442,39 @@ function loadRouterFeed() {
     const fresh = isFinite(at) && (Date.now() - at) < FEED_MAX_AGE_MS;
     const cg = (rb.counterGrid || {}).steem || {};
     const fair = cg.anchor ? Math.round(bn(cg.anchor) * 1e9) : null; // nano SBD-per-STEEM
+    const cgHive = (rb.counterGrid || {}).hive || {};
+    const hiveFair = cgHive.anchor ? Math.round(bn(cgHive.anchor) * 1e9) : null; // nano HBD-per-HIVE
     const pct24h = cg.anchorSource ? 4.2 : null; // the internal market spread the router measured (spacing input)
     const cex = (rb.venues || {}).steem_internal || null;
-    return { router: rb, fresh, fair, fairSource: cg.anchorSource || null, routerAt: rb.at || null };
-  } catch (_) { return { router: null, fresh: false, fair: null, fairSource: null, routerAt: null }; }
+    return { router: rb, fresh, fair, fairSource: cg.anchorSource || null, routerAt: rb.at || null, hiveFair, hiveFairSource: cgHive.anchorSource || null };
+  } catch (_) { return { router: null, fresh: false, fair: null, fairSource: null, routerAt: null, hiveFair: null, hiveFairSource: null }; }
+}
+/** CROSS-FAIR LAW (R42): the cross-network price — HIVE per STEEM — is the cross of the two
+ *  router anchors (SBD-per-STEEM ÷ HBD-per-HIVE; the dollar pegs are the shared unit).
+ *  BigInt floor, null when either anchor is absent — honest absence, never a guess. */
+function crossFair(steemFairNano, hiveFairNano) {
+  if (steemFairNano == null || hiveFairNano == null) return null;
+  const s = BigInt(steemFairNano), h = BigInt(hiveFairNano);
+  if (s <= 0n || h <= 0n) return null;
+  return (s * NANO) / h;
+}
+/** ISSUER identity (R42 — SAOS-DEX-ISSUER/1): a stable, recomputable identity over the
+ *  wrapper set + chain bindings + pool catalog. Any node re-derives it; the signing keys
+ *  stay in the protected desks. The mint law and the peg-out corridors hang off it. */
+function issuerIdentity(wrappers) {
+  const w = wrappers || WRAPPED;
+  const canon = JSON.stringify({ p: PROTOCOL, wrapped: [...w].sort(), chains: ['BLURT', 'HIVE', 'STEEM'], pools: poolDefs(105446700n).map((d) => d.pair).sort() });
+  return crypto.createHash('sha256').update(canon).digest('hex').slice(0, 16);
+}
+function issuerRow() {
+  return {
+    id: 'SAOS-DEX-ISSUER/1',
+    identity: issuerIdentity(),
+    wrappedAssets: [...WRAPPED],
+    mintLaw: '1:1 against MEASURED-KEYED custody only (25% of measured keyed custody per wrapper — the deterministic genesis law); redeem ALWAYS honored 1:1 in-ledger (burn before payout)',
+    pegOutCorridors: PEGOUT_CORRIDORS,
+    note: 'the identity recomputes from the wrapper set + chain bindings + pool catalog — any node verifies; the signing keys stay in the protected desks',
+  };
 }
 function stasisCheck() {
   try { const st = JSON.parse(fs.readFileSync(STASIS_FILE, 'utf8')); return st && st.active === true ? st : null; } catch (_) { return null; }
@@ -375,7 +514,13 @@ function writeMd(b) {
       L.push(`- Counter-grid ${id} ${g.pair}: anchor ${g.anchor} (${g.anchorSource}) · skew ${g.skewShiftBps}bps · spacing ${g.spacingPct}% · rungs ${g.rungs.length} · ${g.verdict}`);
     }
     L.push('');
-    L.push(`Vault: minted WSTEEM ${b.vault.minted.WSTEEM}µ (reserve ratio ${b.vault.reserveRatio.WSTEEM}) · WSBD ${b.vault.minted.WSBD}µ (ratio ${b.vault.reserveRatio.WSBD}) · redeem is ALWAYS honored 1:1 — the real-value law`);
+    L.push(`Issuer: ${b.issuer ? `${b.issuer.id} — identity \`${b.issuer.identity}\`` : '—'} · mint law 1:1 against MEASURED-KEYED custody only`);
+    if (b.issuer) L.push(`Peg-out corridors: ${Object.entries(b.issuer.pegOutCorridors).map(([k, v]) => `${k}=${v.indexOf('PLAN') === 0 ? 'PLAN-KEYED' : (v.indexOf('INTERNAL') === 0 ? 'INTERNAL' : 'KEYED-DESK')}`).join(', ')}`);
+    const cc = b.custodyClasses || {};
+    const obsLive = Object.keys(cc).filter((a) => cc[a] && cc[a].observed && cc[a].observed !== '0').map((a) => `${a} ${cc[a].observed}µ (${cc[a].class})`).join(' · ');
+    L.push(`Observed (adjacent networks — seen, never custody): ${obsLive || 'none reachable this tick'}`);
+    L.push(`Custody classes: ${Object.keys(cc).map((a) => `${a}=${cc[a] ? cc[a].class : '?'}`).join(' · ')}`);
+    L.push(`Vault: minted ${WRAPPED.map((w) => `${w} ${b.vault.minted[w] || '0'}µ`).join(' · ')} · redeem is ALWAYS honored 1:1 (burn before payout) — the real-value law`);
     L.push('');
     L.push(`Treasury P&L: fees ${b.treasuryPnl.feesMu}µ (LP revenue) · rebalance edges ${b.treasuryPnl.rebalanceEdgeMu}µ (marked to fair at execution — the LVR defense on our own pool)`);
     L.push('');
@@ -405,27 +550,23 @@ function genesis(custody, fairNano, provenance, now) {
     if (amt > 0n) { accounts.treasury.claims[a] = mu(amt); op('DEPOSIT', { asset: a, amount: mu(amt), provenance: provenance[a] || null }); }
   }
   // MINT wrappers 1:1 (reserve law: custody moves into the wrapped reserve, minted tracks it)
-  if (plan.mintWSTEEM > 0n) {
-    op('MINT', { wrapped: 'WSTEEM', amount: mu(plan.mintWSTEEM), reserveAsset: 'STEEM', ratio: '1:1' });
-    vault.minted.WSTEEM = mu(ub(vault.minted.WSTEEM) + plan.mintWSTEEM);
-    vault.wrappedReserve.STEEM = mu(ub(vault.wrappedReserve.STEEM) + plan.mintWSTEEM);
-    accounts.treasury.claims.STEEM = mu(ub(accounts.treasury.claims.STEEM) - plan.mintWSTEEM);
-    accounts.treasury.claims.WSTEEM = mu(ub(accounts.treasury.claims.WSTEEM) + plan.mintWSTEEM);
-  }
-  if (plan.mintWSBD > 0n) {
-    op('MINT', { wrapped: 'WSBD', amount: mu(plan.mintWSBD), reserveAsset: 'SBD', ratio: '1:1' });
-    vault.minted.WSBD = mu(ub(vault.minted.WSBD) + plan.mintWSBD);
-    vault.wrappedReserve.SBD = mu(ub(vault.wrappedReserve.SBD) + plan.mintWSBD);
-    accounts.treasury.claims.SBD = mu(ub(accounts.treasury.claims.SBD) - plan.mintWSBD);
-    accounts.treasury.claims.WSBD = mu(ub(accounts.treasury.claims.WSBD) + plan.mintWSBD);
+  // R42: the law covers every wrapper in the catalog — the custody-class law gates each one
+  for (const [w, u, amt] of [['WSTEEM', 'STEEM', plan.mintWSTEEM], ['WSBD', 'SBD', plan.mintWSBD], ['WHIVE', 'HIVE', plan.mintWHIVE], ['WHBD', 'HBD', plan.mintWHBD], ['WBLURT', 'BLURT', plan.mintWBLURT]]) {
+    if (amt > 0n) {
+      op('MINT', { wrapped: w, amount: mu(amt), reserveAsset: u, ratio: '1:1' });
+      vault.minted[w] = mu(ub(vault.minted[w]) + amt);
+      vault.wrappedReserve[u] = mu(ub(vault.wrappedReserve[u]) + amt);
+      accounts.treasury.claims[u] = mu(ub(accounts.treasury.claims[u]) - amt);
+      accounts.treasury.claims[w] = mu(ub(accounts.treasury.claims[w]) + amt);
+    }
   }
   // SEED pools from treasury claims
   const defs = poolDefs(plan.fair);
   const pools = [];
   for (const d of defs) {
     if (d.planned) { pools.push({ ...d, ra: '0', rb: '0', feeMeter: '0', verdict: 'PLANNED-NO-CLAIM' }); continue; }
-    const ra = d.id === 'P1' ? plan.p1Side : d.id === 'P2' ? plan.p2Side : d.id === 'P3' ? plan.p3Steem : 0n;
-    const rb = d.id === 'P1' ? plan.p1Side : d.id === 'P2' ? plan.p2Side : d.id === 'P3' ? plan.p3Sbd : 0n;
+    const ra = d.id === 'P1' ? plan.p1Side : d.id === 'P2' ? plan.p2Side : d.id === 'P3' ? plan.p3Steem : d.id === 'P5' ? plan.p5Side : d.id === 'P6' ? plan.p6Side : d.id === 'P7' ? plan.p7Side : d.id === 'P9' ? plan.p9Sbd : 0n;
+    const rb = d.id === 'P1' ? plan.p1Side : d.id === 'P2' ? plan.p2Side : d.id === 'P3' ? plan.p3Sbd : d.id === 'P5' ? plan.p5Side : d.id === 'P6' ? plan.p6Side : d.id === 'P7' ? plan.p7Side : d.id === 'P9' ? plan.p9Hbd : 0n;
     if (ra > 0n && rb > 0n) {
       op('SEED_POOL', { pool: d.id, a: d.a, ra: mu(ra), b: d.b, rb: mu(rb), fairNano: mu(plan.fair) });
       accounts.treasury.claims[d.a] = mu(ub(accounts.treasury.claims[d.a]) - ra);
@@ -439,12 +580,63 @@ function genesis(custody, fairNano, provenance, now) {
   return { vault, accounts, pools, ops, seq };
 }
 
+/** POOL-CATALOG RECONCILIATION (R42): the booked pools are never reordered or removed;
+ *  missing catalog pools are APPENDED deterministically in poolDefs order (born empty —
+ *  the custody-class law decides when they arm). Idempotent: a second call appends nothing. */
+function reconcilePools(st, now, op) {
+  const defs = poolDefs(null);
+  const have = new Set(st.pools.map((p) => p.id));
+  let added = 0;
+  for (const d of defs) {
+    if (have.has(d.id)) continue;
+    st.pools.push({ ...d, ra: '0', rb: '0', feeMeter: '0', verdict: d.planned ? 'PLANNED-NO-CLAIM' : 'AWAITING-CUSTODY' });
+    if (op) op('POOL-CATALOG-EXTEND', { pool: d.id, pair: d.pair, kind: d.kind, law: 'appended empty — the custody-class law decides when it arms' });
+    added += 1;
+  }
+  return added;
+}
+
+/** REDEEM LAW (R42 — the real-value law's second half): burn BEFORE payout.
+ *  The in-ledger redeem is ALWAYS honored 1:1 (the reserve covers it — the mint law);
+ *  the chain-side payout is QUEUED with its corridor named — a keyed desk owns the
+ *  broadcast, keyless code never fires one. Conservation moves, never creates. */
+function redeem(prev, wrapped, amountMu, account, now) {
+  const underlying = WRAP_UNDERLYING[wrapped];
+  if (!underlying) return { ok: false, refused: 'UNKNOWN-WRAPPER' };
+  const amount = ub(amountMu);
+  if (amount < REDEEM_DUST) return { ok: false, refused: 'DUST' };
+  const st = {
+    vault: JSON.parse(JSON.stringify(prev.vault)),
+    accounts: JSON.parse(JSON.stringify(prev.accounts)),
+    seq: prev.seq || 0,
+  };
+  const minted = ub(st.vault.minted[wrapped] || '0');
+  if (minted < amount) return { ok: false, refused: 'OVER-MINT' };
+  const acc = st.accounts[account];
+  const claim = acc ? ub(acc.claims[wrapped] || '0') : 0n;
+  if (!acc || claim < amount) return { ok: false, refused: 'INSUFFICIENT-CLAIM' };
+  const ops = [];
+  st.seq += 1;
+  ops.push({ seq: st.seq, type: 'REDEEM', at: now, wrapped, underlying, amount: mu(amount), account, ratio: '1:1', law: 'burn before payout — the in-ledger redeem is ALWAYS honored' });
+  st.vault.minted[wrapped] = mu(minted - amount);
+  st.vault.wrappedReserve[underlying] = mu(ub(st.vault.wrappedReserve[underlying] || '0') - amount);
+  acc.claims[wrapped] = mu(claim - amount);
+  acc.claims[underlying] = mu(ub(acc.claims[underlying] || '0') + amount);
+  const corridor = PEGOUT_CORRIDORS[underlying] || 'INTERNAL-ONLY';
+  st.seq += 1;
+  const pegout = { asset: underlying, amount: mu(amount), account, corridor, queue: 'dex/pegout-queue.json', law: 'the chain payout is queued — a keyed desk owns the broadcast, keyless code never fires one' };
+  ops.push({ seq: st.seq, type: 'PEGOUT-QUEUED', at: now, ...pegout });
+  const cons = conservation(st.vault, st.accounts, prev.pools || []);
+  return { ok: cons.every((r) => r.ok), st, ops, corridor, pegout, cons };
+}
+
 // ── tick: the deterministic settle path ─────────────────────────────────────
-function settle(prev, feed, custodyProbe, now) {
+function settle(prev, feed, custodyProbe, now, networkProbe) {
   const st = { vault: prev.vault, accounts: prev.accounts, pools: prev.pools, seq: prev.seq || 0 };
   const ops = [];
   const op = (type, payload) => { st.seq += 1; ops.push({ seq: st.seq, type, at: now, ...payload }); };
   const notes = [];
+  reconcilePools(st, now, op); // R42: the catalog extends deterministically, once
   // 1) custody sync (the drip-fuel loop): only book a delta when the chain disagrees
   if (custodyProbe && custodyProbe.measured) {
     const mSTEEM = custodyProbe.steem, mSBD = custodyProbe.sbd;
@@ -467,11 +659,32 @@ function settle(prev, feed, custodyProbe, now) {
       }
     }
   }
+  // 1b) observed sync (R42): the multi-network vault SEES every network — observed rows are
+  //  booked with provenance and NEVER touch custody, minting, or conservation
+  if (networkProbe) {
+    if (!st.vault.observed) st.vault.observed = {};
+    if (!st.vault.observedProvenance) st.vault.observedProvenance = {};
+    const obs = observedFrom(networkProbe);
+    for (const a of ['HIVE', 'HBD', 'BLURT']) {
+      const row = obs[a];
+      if (row) {
+        const m = ub(row.mu);
+        const booked = ub(st.vault.observed[a] || '0');
+        const cls = CUSTODY_CLASSES[a];
+        if (m !== booked) op('OBSERVE', { asset: a, network: row.network, node: row.node, amount: mu(m), prior: mu(booked), keyClass: cls, note: 'observed, NOT custody — minting and conservation never touch it' });
+        st.vault.observed[a] = mu(m);
+        st.vault.observedProvenance[a] = `MEASURED ${row.network} headcorner @${row.node} ${now} (class ${cls})`;
+      } else {
+        st.vault.observedProvenance[a] = `probe unreachable ${now} (class OBSERVED-ABSENT — booked observation stands)`;
+      }
+    }
+    st.custodyClasses = custodyClassRows(networkProbe);
+  }
   // 2) route catalog quotes (no state change) — every active pair, best path.
   //    Quote size law: ~1% of the first-hop depth (min reserve over pools holding `from`),
   //    floor 0.01 unit — a catalog quoted at a size that IS the pool is slippage theater.
   const routes = [];
-  const assets = ['STEEM', 'SBD', 'WSTEEM', 'WSBD', 'SAOS'];
+  const assets = ['STEEM', 'SBD', 'HIVE', 'HBD', 'BLURT', 'WSTEEM', 'WSBD', 'WHIVE', 'WHBD', 'WBLURT', 'SAOS'];
   for (const from of assets) for (const to of assets) {
     if (from === to) continue;
     let depth = 0n;
@@ -481,11 +694,11 @@ function settle(prev, feed, custodyProbe, now) {
       if (p.b === from) depth = depth === 0n ? ub(p.rb) : (ub(p.rb) < depth ? ub(p.rb) : depth);
     }
     if (depth < 10000n) { // 0.01 unit of depth cannot produce a quote — honest absence, never slippage theater
-      const plannedFor = st.pools.some((p) => p.planned && (p.a === from || p.b === from || p.a === to || p.b === to));
+      const plannedPool = st.pools.find((p) => p.planned && (p.a === from || p.b === from || p.a === to || p.b === to));
       routes.push({ id: `C-${from}-${to}`, from, to, via: null, quote: null, quoteFor: null,
-        verdict: plannedFor ? 'PLANNED-NO-CLAIM' : 'THIN-DEPTH-NO-QUOTE',
-        why: plannedFor ? null : `min first-hop depth ${mu(depth)}µ < 0.01 unit`,
-        unlock: plannedFor ? 'a measured SAOS claim in the vault (dex/credits.json is empty today) — the pool arms the day a real claim is measured' : null });
+        verdict: plannedPool ? 'PLANNED-NO-CLAIM' : 'THIN-DEPTH-NO-QUOTE',
+        why: plannedPool ? null : `min first-hop depth ${mu(depth)}µ < 0.01 unit`,
+        unlock: plannedPool ? (plannedPool.plannedWhy || null) : null });
       continue;
     }
     const size = depth / 100n; // ~1% of first-hop depth
@@ -541,14 +754,26 @@ function settle(prev, feed, custodyProbe, now) {
     } else {
       arb.push({ id: 'A1', name: 'P3 STEEM/SBD pool mid vs CEX-implied fair', verdict: 'FEED-STALE', why: 'the router feed is absent or stale — rebalancing stays a plan, never a guess' });
     }
-    // PEG pools drift rows (tight guard)
-    for (const pid of ['P1', 'P2']) {
+    // PEG pools drift rows (tight guard) — every peg pool in the catalog (R42: P5/P6/P7/P9 join when armed)
+    for (const pid of ['P1', 'P2', 'P5', 'P6', 'P7', 'P9']) {
       const pp = st.pools.find((p) => p.id === pid);
       if (!pp || ub(pp.ra) <= 0n || ub(pp.rb) <= 0n) continue;
       const mNano = ub(pp.rb) * NANO / ub(pp.ra);
       const driftPct = Number((absb(mNano - NANO) * 10000n) / NANO) / 100;
       arb.push({ id: `A-${pid}`, name: `${pp.pair} peg guard`, poolMidNano: mu(mNano), driftPct: +driftPct.toFixed(4), verdict: Math.abs(driftPct) > PEG_GUARD_DRIFT_PCT ? 'PEG-DRIFT-HALT' : 'PEG-OK', guardPct: PEG_GUARD_DRIFT_PCT });
     }
+  }
+  // 3b) the cross-network bridge row (R42): P8 HIVE/STEEM — the cross fair from the router anchors
+  const crossNano = crossFair(feed.fair, feed.hiveFair);
+  const p8 = st.pools.find((p) => p.id === 'P8');
+  if (crossNano) {
+    const hiveKeyed = ub(st.vault.custody.HIVE || '0');
+    arb.push({ id: 'A2', name: 'P8 HIVE/STEEM cross-network bridge', crossFairNano: mu(crossNano), fairSource: `cross of ${feed.fairSource || '?'} / ${feed.hiveFairSource || '?'}`,
+      verdict: !p8 ? 'NO-POOL' : (hiveKeyed > 0n ? 'AWAITING-LIQUIDITY' : 'NO-CUSTODY'),
+      why: 'HIVE custody is OBSERVED-UNCONTROLLED — the bridge arms when hive active key material verifies into the estate (R38 law)',
+      railOwner: 'treasury (our own pool — atomic, no bridge)' });
+  } else {
+    arb.push({ id: 'A2', name: 'P8 HIVE/STEEM cross-network bridge', verdict: 'FEED-STALE', why: 'no cross fair (router anchors absent) — the bridge row waits, never guesses' });
   }
   // 4) counter-grids on OUR side of the book (anchor = pool mid, skew = pool inventory share)
   const counterGrids = {};
@@ -754,8 +979,40 @@ async function tick() {
       return 0;
     }
     let prev = loadBook();
-    const probe = await probeCustody();
+    const nets = await probeNetworks();
+    const probe = custodyProbeFrom(nets);
     const feed = loadRouterFeed();
+    // R42 redeem corridor: requests are consumed single-writer by THIS tick (burn before payout)
+    const redeemRows = [];
+    const pegoutRows = [];
+    let redeemOps = [];
+    let rq = null;
+    try { rq = JSON.parse(fs.readFileSync(REDEEM_REQUESTS_FILE, 'utf8')); } catch (_) { rq = null; }
+    if (rq && Array.isArray(rq.requests) && rq.requests.length && prev && prev.genesisDone) {
+      let cur = prev;
+      for (const r of rq.requests) {
+        const res = redeem(cur, r.wrapped, ub(r.amount), r.account || 'treasury', now);
+        if (res.ok) {
+          cur = { vault: res.st.vault, accounts: res.st.accounts, seq: res.st.seq };
+          redeemOps = redeemOps.concat(res.ops);
+          redeemRows.push({ op: 'REDEEM', wrapped: r.wrapped, amount: mu(ub(r.amount)), account: r.account || 'treasury', corridor: res.corridor });
+          pegoutRows.push({ at: now, ...res.pegout });
+        } else {
+          redeemRows.push({ op: 'REDEEM-REFUSED', wrapped: r.wrapped, amount: mu(ub(r.amount)), account: r.account || 'treasury', refused: res.refused });
+        }
+      }
+      prev = { ...cur, treasuryPnl: prev.treasuryPnl, processedBatches: prev.processedBatches, meshPnl: prev.meshPnl, custodyClasses: prev.custodyClasses };
+      // publish the pegout queue (keyed desks own the broadcast — operator-gated) and clear the requests
+      if (pegoutRows.length) {
+        try {
+          let pq = null; try { pq = JSON.parse(fs.readFileSync(PEGOUT_QUEUE_FILE, 'utf8')); } catch (_) { pq = null; }
+          pq = pq || { protocol: 'SAOS-DEX-PEGOUT-QUEUE/1', rows: [] };
+          pq.at = now; pq.rows = [...(pq.rows || []), ...pegoutRows].slice(-256);
+          fs.writeFileSync(PEGOUT_QUEUE_FILE + '.tmp', JSON.stringify(pq, null, 1) + '\n'); fs.renameSync(PEGOUT_QUEUE_FILE + '.tmp', PEGOUT_QUEUE_FILE);
+        } catch (_) {}
+      }
+      try { fs.writeFileSync(REDEEM_REQUESTS_FILE + '.tmp', JSON.stringify({ protocol: 'SAOS-DEX-REDEEM-REQUESTS/1', at: now, requests: [], lastProcessedAt: now }, null, 1) + '\n'); fs.renameSync(REDEEM_REQUESTS_FILE + '.tmp', REDEEM_REQUESTS_FILE); } catch (_) {}
+    }
     if (!prev || prev.protocol !== PROTOCOL || !prev.genesisDone) {
       // custody for genesis: measured probe → router-book liquid → honest zeros
       const custody = { STEEM: 0n, SBD: 0n, HIVE: 0n, HBD: 0n, BLURT: 0n, SAOS: 0n };
@@ -772,21 +1029,22 @@ async function tick() {
         provenance.STEEM = custody.STEEM > 0n ? `FALLBACK dex-router.json counterGrid.steem.liquid @${feed.routerAt}` : 'NO-FEED — vault born empty, the drip funds it when it lands';
         provenance.SBD = custody.SBD > 0n ? `FALLBACK dex-router.json counterGrid.steem.liquid @${feed.routerAt}` : 'NO-FEED — vault born empty, the drip funds it when it lands';
       }
-      for (const a of ['HIVE', 'HBD', 'BLURT']) provenance[a] = 'UNKEYED-ADJACENCY — honest zero until key material exists (R38 law)';
+      for (const a of ['HIVE', 'HBD', 'BLURT']) provenance[a] = `CUSTODY-CLASS ${CUSTODY_CLASSES[a]} — observed on-chain, never custody, until key material verifies (R42/R38 law)`;
       provenance.SAOS = 'PLANNED-NO-CLAIM — dex/credits.json empty today';
       const g = genesis(custody, feed.fair, provenance, now);
-      const settled = settle({ vault: g.vault, accounts: g.accounts, pools: g.pools, seq: g.seq, opsBooked: g.ops }, feed, null, now);
+      const settled = settle({ vault: g.vault, accounts: g.accounts, pools: g.pools, seq: g.seq, opsBooked: g.ops }, feed, null, now, nets);
       const book = assemble(g, settled, feed, probe, now, true);
       writeBook(book); writeMd(book);
       appendHistory([...g.ops, ...settled.ops]);
       console.log(`DEX-CORE-GENESIS seq=${book.seq} pools=${book.pools.filter((p) => !p.planned).length} custody=STEEM ${g.vault.custody.STEEM}µ/SBD ${g.vault.custody.SBD}µ att=${book.attestation}`);
       return 0;
     }
-    const settled = settle(prev, feed, probe, now);
-    const book = assemble(prev, settled, feed, probe, now, false, settled.ops);
+    const settled = settle(prev, feed, probe, now, nets);
+    settled.redeemBook = redeemRows;
+    const book = assemble(prev, settled, feed, probe, now, false, [...redeemOps, ...settled.ops]);
     writeBook(book); writeMd(book);
-    appendHistory(settled.ops);
-    console.log(`DEX-CORE-TICK seq=${book.seq} routes=${book.routes.length} arb=${book.arb.length} rebalance=${settled.rebalanceBooked} att=${book.attestation}`);
+    appendHistory([...redeemOps, ...settled.ops]);
+    console.log(`DEX-CORE-TICK seq=${book.seq} routes=${book.routes.length} arb=${book.arb.length} rebalance=${settled.rebalanceBooked} redeems=${redeemRows.length} issuer=${book.issuer ? book.issuer.identity : '?'} att=${book.attestation}`);
     return 0;
   } catch (e) {
     try { writeBook({ protocol: PROTOCOL, at: now, agent: VERSION, verdict: 'ERROR', stasisHalted: false, laws: LAWS, error: String(e.message).slice(0, 300), pools: [], routes: [], arb: [], counterGrids: {}, errors: [String(e.message).slice(0, 300)] }); } catch (_) {}
@@ -836,6 +1094,7 @@ const LAWS = [
   'feed law: settle consumes the booked router feed; measurement and settlement are separated',
   'honest money: the powerdown drip is the booked fuel; no invented locks',
   'mesh law (R41): fleet agents settle atomically on this ledger — batch-idempotent, no naked shorts, wires capped at 10% of free treasury per batch, a fill never exceeds 5% of first-hop depth, edge marked to fair (null when no fair exists)',
+  'multi-network vault (R42): custody classes — MEASURED-KEYED is the only mintable class; adjacent networks are OBSERVED (seen, never custody, never a reserve); redeem is ALWAYS honored 1:1 in-ledger (burn before payout); the chain payout is queued for the keyed desks — keyless code never fires a broadcast',
 ];
 function assemble(prev, settled, feed, probe, now, isGenesis, ops, meshResult) {
   const s = settled.st;
@@ -848,7 +1107,10 @@ function assemble(prev, settled, feed, probe, now, isGenesis, ops, meshResult) {
   return {
     protocol: PROTOCOL, at: now, agent: VERSION, mode: mesh ? 'KEYLESS-ATOMIC-INTERNAL (mesh batch)' : 'KEYLESS-ATOMIC-INTERNAL',
     stasisHalted: false, laws: LAWS,
-    feed: { source: 'agents/dex-router.json', routerAt: feed.routerAt, fresh: feed.fresh, fairNano: feed.fair, fairSource: feed.fairSource, verdict: feed.fresh ? 'FEED-LIVE' : 'FEED-STALE' },
+    issuer: issuerRow(),
+    custodyClasses: s.custodyClasses || prev.custodyClasses || custodyClassRows(null),
+    redeemBook: settled.redeemBook || null,
+    feed: { source: 'agents/dex-router.json', routerAt: feed.routerAt, fresh: feed.fresh, fairNano: feed.fair, fairSource: feed.fairSource, hiveFairNano: feed.hiveFair || null, crossFairNano: (feed.fair && feed.hiveFair) ? mu(crossFair(feed.fair, feed.hiveFair)) : null, fairSource2: feed.hiveFairSource || null, verdict: feed.fresh ? 'FEED-LIVE' : 'FEED-STALE' },
     custodyProbe: { measured: !!(probe && probe.measured), node: probe ? probe.node : null },
     seq: s.seq,
     vault: s.vault,
@@ -1024,6 +1286,59 @@ function selftest() {
   const m1 = settleIntents(mkBook(1000000n, 120000n, null), { batch: 'B-DET', intents: [{ agent: 'headcorner', from: 'STEEM', to: 'SBD', amountIn: '15000' }] }, feedMesh, '2026-10-05T00:00:00.000Z');
   const m2 = settleIntents(mkBook(1000000n, 120000n, null), { batch: 'B-DET', intents: [{ agent: 'headcorner', from: 'STEEM', to: 'SBD', amountIn: '15000' }] }, feedMesh, '2026-10-05T00:00:00.000Z');
   ok('mesh-deterministic', JSON.stringify(m1.fills) === JSON.stringify(m2.fills) && JSON.stringify(m1.ops) === JSON.stringify(m2.ops));
+
+  // ── R42 MULTI-NETWORK VAULT selftest ───────────────────────────────────────
+  // custody-class law: golden rows, mintability, honest absence
+  ok('r42-custody-law-golden', CUSTODY_CLASSES.STEEM === 'MEASURED-KEYED' && CUSTODY_CLASSES.HIVE === 'OBSERVED-UNCONTROLLED' && CUSTODY_CLASSES.BLURT === 'OBSERVED-POST-KEYED' && CUSTODY_CLASSES.SAOS === 'PLANNED-NO-CLAIM');
+  const ccRows = custodyClassRows({ STEEM: { reachable: true, node: 't', steem: 1000n, sbd: 100n }, HIVE: { reachable: true, node: 't', hive: 34000n, hbd: 3000n }, BLURT: { reachable: true, node: 't', blurt: 67841000n } });
+  ok('r42-custody-classes', ccRows.HIVE.class === 'OBSERVED-UNCONTROLLED' && ccRows.HIVE.mintable === false && ccRows.HIVE.observed === '34000' && ccRows.STEEM.class === 'MEASURED-KEYED' && ccRows.STEEM.mintable === true && ccRows.BLURT.observed === '67841000' && ccRows.BLURT.class === 'OBSERVED-POST-KEYED' && ccRows.SAOS.class === 'PLANNED-NO-CLAIM');
+  ok('r42-observed-absent-honest', custodyClassRows(null).HIVE.class === 'OBSERVED-ABSENT' && custodyClassRows(null).HIVE.mintable === false);
+  // issuer identity: stable, recomputable, input-sensitive
+  ok('r42-issuer-stable', issuerIdentity() === issuerIdentity() && issuerIdentity().length === 16);
+  ok('r42-issuer-input-sensitive', issuerIdentity(['WSTEEM']) !== issuerIdentity(['WSTEEM', 'WSBD']));
+  // redeem law: burn before payout, conservation holds, pegout queued with its corridor named
+  const rv0 = emptyVault(); rv0.custody.STEEM = '2000000'; rv0.custodyProvenance.STEEM = 'test';
+  rv0.wrappedReserve.STEEM = '1000000'; rv0.minted.WSTEEM = '1000000';
+  const ra0 = { treasury: { claims: emptyClaims(), lp: {} } };
+  ra0.treasury.claims.STEEM = '1000000'; ra0.treasury.claims.WSTEEM = '1000000';
+  const rp0 = [{ id: 'P1', pair: 'WSTEEM/STEEM', kind: 'PEG', a: 'WSTEEM', b: 'STEEM', feeBps: 2, ra: '0', rb: '0', feeMeter: '0', verdict: 'AWAITING-CUSTODY' }];
+  const rv1 = redeem({ vault: rv0, accounts: ra0, pools: rp0, seq: 5 }, 'WSTEEM', '400000', 'treasury', '2026-10-05T00:00:00.000Z');
+  ok('r42-redeem-burn-before-payout', rv1.ok && rv1.st.vault.minted.WSTEEM === '600000' && rv1.st.vault.wrappedReserve.STEEM === '600000' && rv1.st.accounts.treasury.claims.WSTEEM === '600000' && rv1.st.accounts.treasury.claims.STEEM === '1400000');
+  ok('r42-redeem-conservation', rv1.cons && rv1.cons.every((r) => r.ok));
+  ok('r42-redeem-pegout-queued-keyed', rv1.ops.some((o) => o.type === 'PEGOUT-QUEUED' && o.asset === 'STEEM' && o.corridor.indexOf('KEYED-DESK') === 0));
+  ok('r42-redeem-refusals', redeem({ vault: rv0, accounts: ra0, pools: [], seq: 1 }, 'WSTEEM', '0', 'treasury', 't').refused === 'DUST'
+    && redeem({ vault: rv0, accounts: ra0, pools: [], seq: 1 }, 'WSTEEM', '9999999', 'treasury', 't').refused === 'OVER-MINT'
+    && redeem({ vault: rv0, accounts: ra0, pools: [], seq: 1 }, 'WNOPE', '100', 'treasury', 't').refused === 'UNKNOWN-WRAPPER'
+    && redeem({ vault: rv0, accounts: { ghost: { claims: emptyClaims(), lp: {} } }, pools: [], seq: 1 }, 'WSTEEM', '500000', 'ghost', 't').refused === 'INSUFFICIENT-CLAIM');
+  // the blurt pegout corridor: posting key only — transfers gated (the honest PLAN band)
+  // (the synthetic book must be BORN balanced: custody 500000 = reserve + claims, the mint law's own shape)
+  const rb0 = emptyVault(); rb0.custody.BLURT = '500000'; rb0.custodyProvenance.BLURT = 'test';
+  rb0.wrappedReserve.BLURT = '500000'; rb0.minted.WBLURT = '500000';
+  const raB = { treasury: { claims: emptyClaims(), lp: {} } }; raB.treasury.claims.BLURT = '0'; raB.treasury.claims.WBLURT = '500000';
+  const rvB = redeem({ vault: rb0, accounts: raB, pools: [], seq: 1 }, 'WBLURT', '500000', 'treasury', 't');
+  ok('r42-blurt-pegout-plan-keyed', rvB.ok && rvB.corridor.indexOf('PLAN-PEGOUT-KEYED') === 0);
+  // cross fair: deterministic BigInt floor, honest null
+  const cf = crossFair('105446700', '56414230');
+  ok('r42-crossfair-golden', cf !== null && absb(cf - BigInt(Math.round(105446700e9 / 56414230))) <= 10n && crossFair(null, '56414230') === null && crossFair('105446700', null) === null);
+  // pool catalog: 9 pools, the new pairs, the reconcile appends deterministically and once
+  ok('r42-pool-catalog-9', poolDefs(null).length === 9 && poolDefs(null).some((d) => d.pair === 'HIVE/STEEM' && d.planned) && poolDefs(null).some((d) => d.pair === 'WSBD/WHBD' && !d.planned));
+  const rec0 = { vault: emptyVault(), accounts: { treasury: { claims: emptyClaims(), lp: {} } }, pools: [{ id: 'P1', pair: 'WSTEEM/STEEM', kind: 'PEG', a: 'WSTEEM', b: 'STEEM', feeBps: 2, ra: '388775', rb: '388775', feeMeter: '0', verdict: 'LIVE-INTERNAL' }], seq: 1 };
+  reconcilePools(rec0, 't', null);
+  reconcilePools(rec0, 't', null);
+  ok('r42-reconcile-append-once', rec0.pools.length === 9 && rec0.pools.filter((p) => ['P5', 'P6', 'P7', 'P9'].includes(p.id)).every((p) => p.verdict === 'AWAITING-CUSTODY') && rec0.pools.find((p) => p.id === 'P8').verdict === 'PLANNED-NO-CLAIM');
+  // genesis arms the new wrappers ONLY from keyed custody (25% law); observed never mints
+  const plan42 = genesisPlan({ STEEM: 1000000n, SBD: 0n, HIVE: 2000000n, HBD: 0n, BLURT: 4000000n, SAOS: 0n }, 105446700n);
+  ok('r42-genesis-mint-25pct-law', plan42.mintWHIVE === 500000n && plan42.mintWBLURT === 1000000n && plan42.mintWHBD === 0n && plan42.mintWSTEEM === 50000n);
+  const g42 = genesis({ STEEM: 1000000n, SBD: 0n, HIVE: 2000000n, HBD: 0n, BLURT: 4000000n, SAOS: 0n }, 105446700n, { STEEM: 't', HIVE: 't', BLURT: 't' }, '2026-10-05T00:00:00.000Z');
+  ok('r42-genesis-arms-new-pools', g42.pools.find((p) => p.id === 'P5').ra === '250000' && g42.pools.find((p) => p.id === 'P7').ra === '500000' && g42.pools.find((p) => p.id === 'P9').verdict === 'AWAITING-CUSTODY' && g42.pools.find((p) => p.id === 'P8').verdict === 'PLANNED-NO-CLAIM');
+  ok('r42-genesis-conservation', conservation(g42.vault, g42.accounts, g42.pools).every((r) => r.ok));
+  // observed sync: the settle books the observation, custody stays zero, conservation untouched
+  const ob0 = mkBook(1000000n, 120000n, null);
+  const nets42 = { STEEM: { reachable: false, node: null }, HIVE: { reachable: true, node: 't', hive: 34000n, hbd: 3000n }, BLURT: { reachable: true, node: 't', blurt: 67841000n } };
+  const ob1 = settle(ob0, feedLive, null, nowIso(), nets42);
+  ok('r42-observed-never-custody', ob1.st.vault.custody.HIVE === '0' && ob1.st.vault.observed.HIVE === '34000' && ob1.st.vault.observed.BLURT === '67841000' && ob1.ops.some((o) => o.type === 'OBSERVE' && o.keyClass === 'OBSERVED-UNCONTROLLED'));
+  ok('r42-observed-conservation', ob1.consOk && ob1.cons.every((r) => r.ok));
+  ok('r42-observed-custody-classes-booked', !!ob1.st.custodyClasses && ob1.st.custodyClasses.HIVE.class === 'OBSERVED-UNCONTROLLED' && ob1.st.custodyClasses.BLURT.mintable === false);
   const pass = c.filter((x) => x.ok).length;
   console.log(`DEX-CORE-SELFTEST-OK ${pass}/${c.length}`);
   if (pass !== c.length) { for (const x of c) if (!x.ok) console.log(`  FAIL ${x.name}`); }
@@ -1041,9 +1356,12 @@ module.exports = {
   // units + invariants
   cpmmOut, cpmmKCheck, feeOnInput, stableD, stableGetY, stableOut,
   // pools + routing
-  poolDefs, genesisPlan, poolSwap, routeBest,
+  poolDefs, genesisPlan, genesis, poolSwap, routeBest,
   // vault + ledger
   emptyVault, emptyClaims, conservation, reserveRatios, attestationHash,
+  // multi-network vault (R42)
+  redeem, crossFair, custodyClassRows, issuerIdentity, reconcilePools, custodyProbeFrom, observedFrom,
+  WRAP_UNDERLYING, CUSTODY_CLASSES, PEGOUT_CORRIDORS, MINT_SHARE_BPS, REDEEM_DUST,
   // engine
   settle, settleIntents, rosterLaw, selftest, LAWS,
   SCALE, BPS, NANO, STABLE_A, FEE_VOLATILE_BPS, FEE_PEG_BPS, PEG_GUARD_DRIFT_PCT,

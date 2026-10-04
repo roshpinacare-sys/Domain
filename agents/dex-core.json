@@ -1,8 +1,8 @@
 {
  "protocol": "SAOS-DEX-CORE/1",
- "at": "2026-10-04T11:07:32.074Z",
- "agent": "dex-core v1.1.0 (R41 MESH MARKET, CR-0071)",
- "mode": "KEYLESS-ATOMIC-INTERNAL (mesh batch)",
+ "at": "2026-10-04T12:57:47.821Z",
+ "agent": "dex-core v1.2.0 (R42 MULTI-NETWORK VAULT, CR-0072)",
+ "mode": "KEYLESS-ATOMIC-INTERNAL",
  "stasisHalted": false,
  "laws": [
   "units: µ BigInt end to end, no floats in settlement",
@@ -15,21 +15,91 @@
   "floor law: rebalance only above 2×(fees+floor) — below it a plan, never a trade",
   "feed law: settle consumes the booked router feed; measurement and settlement are separated",
   "honest money: the powerdown drip is the booked fuel; no invented locks",
-  "mesh law (R41): fleet agents settle atomically on this ledger — batch-idempotent, no naked shorts, wires capped at 10% of free treasury per batch, a fill never exceeds 5% of first-hop depth, edge marked to fair (null when no fair exists)"
+  "mesh law (R41): fleet agents settle atomically on this ledger — batch-idempotent, no naked shorts, wires capped at 10% of free treasury per batch, a fill never exceeds 5% of first-hop depth, edge marked to fair (null when no fair exists)",
+  "multi-network vault (R42): custody classes — MEASURED-KEYED is the only mintable class; adjacent networks are OBSERVED (seen, never custody, never a reserve); redeem is ALWAYS honored 1:1 in-ledger (burn before payout); the chain payout is queued for the keyed desks — keyless code never fires a broadcast"
  ],
+ "issuer": {
+  "id": "SAOS-DEX-ISSUER/1",
+  "identity": "d7ff39690365bfa8",
+  "wrappedAssets": [
+   "WSTEEM",
+   "WSBD",
+   "WHIVE",
+   "WHBD",
+   "WBLURT"
+  ],
+  "mintLaw": "1:1 against MEASURED-KEYED custody only (25% of measured keyed custody per wrapper — the deterministic genesis law); redeem ALWAYS honored 1:1 in-ledger (burn before payout)",
+  "pegOutCorridors": {
+   "STEEM": "KEYED-DESK (steem active in the protected desks — operator-gated broadcast)",
+   "SBD": "KEYED-DESK (steem active in the protected desks — operator-gated broadcast)",
+   "HIVE": "PLAN-PEGOUT-KEYED-OPERATOR (no hive active key in the estate — R38 law)",
+   "HBD": "PLAN-PEGOUT-KEYED-OPERATOR (no hive active key in the estate — R38 law)",
+   "BLURT": "PLAN-PEGOUT-KEYED-OPERATOR (posting key only — transfers gated)",
+   "SAOS": "INTERNAL-ONLY (no chain — the claim IS the asset)"
+  },
+  "note": "the identity recomputes from the wrapper set + chain bindings + pool catalog — any node verifies; the signing keys stay in the protected desks"
+ },
+ "custodyClasses": {
+  "STEEM": {
+   "class": "MEASURED-KEYED",
+   "mintable": true,
+   "observed": null,
+   "keyProof": "active key material in the protected keyed desks (the signing desks broadcast daily)",
+   "unlock": null
+  },
+  "SBD": {
+   "class": "MEASURED-KEYED",
+   "mintable": true,
+   "observed": null,
+   "keyProof": "active key material in the protected keyed desks (the signing desks broadcast daily)",
+   "unlock": null
+  },
+  "HIVE": {
+   "class": "OBSERVED-UNCONTROLLED",
+   "mintable": false,
+   "observed": "34000",
+   "keyProof": "the name exists on the chain but its active pub ≠ any held key (R38 law)",
+   "unlock": "verified active key material in a protected desk (key-check law) — the class upgrades the same tick, no new code"
+  },
+  "HBD": {
+   "class": "OBSERVED-UNCONTROLLED",
+   "mintable": false,
+   "observed": "3000",
+   "keyProof": "the name exists on the chain but its active pub ≠ any held key (R38 law)",
+   "unlock": "verified active key material in a protected desk (key-check law) — the class upgrades the same tick, no new code"
+  },
+  "BLURT": {
+   "class": "OBSERVED-POST-KEYED",
+   "mintable": false,
+   "observed": "67841000",
+   "keyProof": "posting key held (account controlled; TRANSFERS need the active key — gated)",
+   "unlock": "verified active key material in a protected desk (key-check law) — the class upgrades the same tick, no new code"
+  },
+  "SAOS": {
+   "class": "PLANNED-NO-CLAIM",
+   "mintable": false,
+   "observed": null,
+   "keyProof": "no measured claim exists in the estate books (dex/credits.json)",
+   "unlock": "a measured SAOS claim in the vault (dex/credits.json)"
+  }
+ },
+ "redeemBook": [],
  "feed": {
   "source": "agents/dex-router.json",
   "routerAt": "2026-10-04T08:48:34.143Z",
   "fresh": true,
   "fairNano": 105446700,
   "fairSource": "CEX-IMPLIED-FAIR (SBDUSDT/STEEMUSDT — lead-lag anchor, the opposing side of the local book)",
+  "hiveFairNano": 56414230,
+  "crossFairNano": "1869150744",
+  "fairSource2": "LOCAL-MID-FALLBACK (CEX feed stale)",
   "verdict": "FEED-LIVE"
  },
  "custodyProbe": {
-  "measured": false,
-  "node": null
+  "measured": true,
+  "node": "https://api.steemit.com"
  },
- "seq": 9,
+ "seq": 17,
  "vault": {
   "custody": {
    "STEEM": "15551000",
@@ -40,8 +110,8 @@
    "SAOS": "0"
   },
   "custodyProvenance": {
-   "STEEM": "MEASURED condenser headcorner @api.steemit.com 2026-10-04T10:01:10.121Z",
-   "SBD": "MEASURED condenser headcorner @api.steemit.com 2026-10-04T10:01:10.121Z",
+   "STEEM": "MEASURED condenser headcorner @https://api.steemit.com 2026-10-04T12:57:47.821Z (CUSTODY-DROP)",
+   "SBD": "MEASURED condenser headcorner @https://api.steemit.com 2026-10-04T12:57:47.821Z",
    "HIVE": "UNKEYED-ADJACENCY — honest zero until key material exists (R38 law)",
    "HBD": "UNKEYED-ADJACENCY — honest zero until key material exists (R38 law)",
    "BLURT": "UNKEYED-ADJACENCY — honest zero until key material exists (R38 law)",
@@ -59,7 +129,20 @@
   },
   "reserveRatio": {
    "WSTEEM": 1,
-   "WSBD": 1
+   "WSBD": 1,
+   "WHIVE": 1,
+   "WHBD": 1,
+   "WBLURT": 1
+  },
+  "observed": {
+   "HIVE": "34000",
+   "HBD": "3000",
+   "BLURT": "67841000"
+  },
+  "observedProvenance": {
+   "HIVE": "MEASURED HIVE headcorner @https://api.hive.blog 2026-10-04T12:57:47.821Z (class OBSERVED-UNCONTROLLED)",
+   "HBD": "MEASURED HIVE headcorner @https://api.hive.blog 2026-10-04T12:57:47.821Z (class OBSERVED-UNCONTROLLED)",
+   "BLURT": "MEASURED BLURT headcorner @https://blurt-rpc.saboin.com 2026-10-04T12:57:47.821Z (class OBSERVED-POST-KEYED)"
   }
  },
  "accounts": {
@@ -288,6 +371,86 @@
    "verdict": "PLANNED-NO-CLAIM",
    "plannedWhy": "no measured SAOS claim exists in the estate books (dex/credits.json is empty today) — the pool arms the day a real claim is measured into the vault; the mirror reference price is the planned seed anchor",
    "mid": null
+  },
+  {
+   "id": "P5",
+   "pair": "WHIVE/HIVE",
+   "kind": "PEG",
+   "a": "WHIVE",
+   "b": "HIVE",
+   "feeBps": 2,
+   "amp": 10,
+   "planned": false,
+   "ra": "0",
+   "rb": "0",
+   "feeMeter": "0",
+   "verdict": "AWAITING-CUSTODY",
+   "plannedWhy": null,
+   "mid": null
+  },
+  {
+   "id": "P6",
+   "pair": "WHBD/HBD",
+   "kind": "PEG",
+   "a": "WHBD",
+   "b": "HBD",
+   "feeBps": 2,
+   "amp": 10,
+   "planned": false,
+   "ra": "0",
+   "rb": "0",
+   "feeMeter": "0",
+   "verdict": "AWAITING-CUSTODY",
+   "plannedWhy": null,
+   "mid": null
+  },
+  {
+   "id": "P7",
+   "pair": "WBLURT/BLURT",
+   "kind": "PEG",
+   "a": "WBLURT",
+   "b": "BLURT",
+   "feeBps": 2,
+   "amp": 10,
+   "planned": false,
+   "ra": "0",
+   "rb": "0",
+   "feeMeter": "0",
+   "verdict": "AWAITING-CUSTODY",
+   "plannedWhy": null,
+   "mid": null
+  },
+  {
+   "id": "P8",
+   "pair": "HIVE/STEEM",
+   "kind": "VOLATILE",
+   "a": "HIVE",
+   "b": "STEEM",
+   "feeBps": 25,
+   "amp": 0,
+   "planned": true,
+   "ra": "0",
+   "rb": "0",
+   "feeMeter": "0",
+   "verdict": "PLANNED-NO-CLAIM",
+   "plannedWhy": "the cross-network bridge pair arms when HIVE key material verifies into the estate (R38 law) — the cross fair (STEEM-anchor / HIVE-anchor) stands measured from the router book",
+   "mid": null
+  },
+  {
+   "id": "P9",
+   "pair": "WSBD/WHBD",
+   "kind": "PEG",
+   "a": "WSBD",
+   "b": "WHBD",
+   "feeBps": 2,
+   "amp": 10,
+   "planned": false,
+   "ra": "0",
+   "rb": "0",
+   "feeMeter": "0",
+   "verdict": "AWAITING-CUSTODY",
+   "plannedWhy": null,
+   "mid": null
   }
  ],
  "routes": [
@@ -298,8 +461,8 @@
    "via": [
     "P3"
    ],
-   "quote": "407",
-   "quoteFor": "3887 µ STEEM (~1% first-hop depth)",
+   "quote": "413",
+   "quoteFor": "3937 µ STEEM (~1% first-hop depth)",
    "verdict": "LIVE-INTERNAL"
   },
   {
@@ -309,8 +472,8 @@
    "via": [
     "P1"
    ],
-   "quote": "3883",
-   "quoteFor": "3887 µ STEEM (~1% first-hop depth)",
+   "quote": "3942",
+   "quoteFor": "3937 µ STEEM (~1% first-hop depth)",
    "verdict": "LIVE-INTERNAL"
   },
   {
@@ -321,8 +484,8 @@
     "P3",
     "P2"
    ],
-   "quote": "406",
-   "quoteFor": "3887 µ STEEM (~1% first-hop depth)",
+   "quote": "412",
+   "quoteFor": "3937 µ STEEM (~1% first-hop depth)",
    "verdict": "LIVE-INTERNAL"
   },
   {
@@ -360,14 +523,344 @@
    "verdict": "LIVE-INTERNAL"
   },
   {
+   "id": "C-HIVE-STEEM",
+   "from": "HIVE",
+   "to": "STEEM",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "the cross-network bridge pair arms when HIVE key material verifies into the estate (R38 law) — the cross fair (STEEM-anchor / HIVE-anchor) stands measured from the router book"
+  },
+  {
+   "id": "C-HIVE-SBD",
+   "from": "HIVE",
+   "to": "SBD",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "the cross-network bridge pair arms when HIVE key material verifies into the estate (R38 law) — the cross fair (STEEM-anchor / HIVE-anchor) stands measured from the router book"
+  },
+  {
+   "id": "C-HIVE-HBD",
+   "from": "HIVE",
+   "to": "HBD",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "the cross-network bridge pair arms when HIVE key material verifies into the estate (R38 law) — the cross fair (STEEM-anchor / HIVE-anchor) stands measured from the router book"
+  },
+  {
+   "id": "C-HIVE-BLURT",
+   "from": "HIVE",
+   "to": "BLURT",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "the cross-network bridge pair arms when HIVE key material verifies into the estate (R38 law) — the cross fair (STEEM-anchor / HIVE-anchor) stands measured from the router book"
+  },
+  {
+   "id": "C-HIVE-WSTEEM",
+   "from": "HIVE",
+   "to": "WSTEEM",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "no measured SAOS claim exists in the estate books (dex/credits.json is empty today) — the pool arms the day a real claim is measured into the vault; the mirror reference price is the planned seed anchor"
+  },
+  {
+   "id": "C-HIVE-WSBD",
+   "from": "HIVE",
+   "to": "WSBD",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "the cross-network bridge pair arms when HIVE key material verifies into the estate (R38 law) — the cross fair (STEEM-anchor / HIVE-anchor) stands measured from the router book"
+  },
+  {
+   "id": "C-HIVE-WHIVE",
+   "from": "HIVE",
+   "to": "WHIVE",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "the cross-network bridge pair arms when HIVE key material verifies into the estate (R38 law) — the cross fair (STEEM-anchor / HIVE-anchor) stands measured from the router book"
+  },
+  {
+   "id": "C-HIVE-WHBD",
+   "from": "HIVE",
+   "to": "WHBD",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "the cross-network bridge pair arms when HIVE key material verifies into the estate (R38 law) — the cross fair (STEEM-anchor / HIVE-anchor) stands measured from the router book"
+  },
+  {
+   "id": "C-HIVE-WBLURT",
+   "from": "HIVE",
+   "to": "WBLURT",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "the cross-network bridge pair arms when HIVE key material verifies into the estate (R38 law) — the cross fair (STEEM-anchor / HIVE-anchor) stands measured from the router book"
+  },
+  {
+   "id": "C-HIVE-SAOS",
+   "from": "HIVE",
+   "to": "SAOS",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "no measured SAOS claim exists in the estate books (dex/credits.json is empty today) — the pool arms the day a real claim is measured into the vault; the mirror reference price is the planned seed anchor"
+  },
+  {
+   "id": "C-HBD-STEEM",
+   "from": "HBD",
+   "to": "STEEM",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "the cross-network bridge pair arms when HIVE key material verifies into the estate (R38 law) — the cross fair (STEEM-anchor / HIVE-anchor) stands measured from the router book"
+  },
+  {
+   "id": "C-HBD-SBD",
+   "from": "HBD",
+   "to": "SBD",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "THIN-DEPTH-NO-QUOTE",
+   "why": "min first-hop depth 0µ < 0.01 unit",
+   "unlock": null
+  },
+  {
+   "id": "C-HBD-HIVE",
+   "from": "HBD",
+   "to": "HIVE",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "the cross-network bridge pair arms when HIVE key material verifies into the estate (R38 law) — the cross fair (STEEM-anchor / HIVE-anchor) stands measured from the router book"
+  },
+  {
+   "id": "C-HBD-BLURT",
+   "from": "HBD",
+   "to": "BLURT",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "THIN-DEPTH-NO-QUOTE",
+   "why": "min first-hop depth 0µ < 0.01 unit",
+   "unlock": null
+  },
+  {
+   "id": "C-HBD-WSTEEM",
+   "from": "HBD",
+   "to": "WSTEEM",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "no measured SAOS claim exists in the estate books (dex/credits.json is empty today) — the pool arms the day a real claim is measured into the vault; the mirror reference price is the planned seed anchor"
+  },
+  {
+   "id": "C-HBD-WSBD",
+   "from": "HBD",
+   "to": "WSBD",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "THIN-DEPTH-NO-QUOTE",
+   "why": "min first-hop depth 0µ < 0.01 unit",
+   "unlock": null
+  },
+  {
+   "id": "C-HBD-WHIVE",
+   "from": "HBD",
+   "to": "WHIVE",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "THIN-DEPTH-NO-QUOTE",
+   "why": "min first-hop depth 0µ < 0.01 unit",
+   "unlock": null
+  },
+  {
+   "id": "C-HBD-WHBD",
+   "from": "HBD",
+   "to": "WHBD",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "THIN-DEPTH-NO-QUOTE",
+   "why": "min first-hop depth 0µ < 0.01 unit",
+   "unlock": null
+  },
+  {
+   "id": "C-HBD-WBLURT",
+   "from": "HBD",
+   "to": "WBLURT",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "THIN-DEPTH-NO-QUOTE",
+   "why": "min first-hop depth 0µ < 0.01 unit",
+   "unlock": null
+  },
+  {
+   "id": "C-HBD-SAOS",
+   "from": "HBD",
+   "to": "SAOS",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "no measured SAOS claim exists in the estate books (dex/credits.json is empty today) — the pool arms the day a real claim is measured into the vault; the mirror reference price is the planned seed anchor"
+  },
+  {
+   "id": "C-BLURT-STEEM",
+   "from": "BLURT",
+   "to": "STEEM",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "the cross-network bridge pair arms when HIVE key material verifies into the estate (R38 law) — the cross fair (STEEM-anchor / HIVE-anchor) stands measured from the router book"
+  },
+  {
+   "id": "C-BLURT-SBD",
+   "from": "BLURT",
+   "to": "SBD",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "THIN-DEPTH-NO-QUOTE",
+   "why": "min first-hop depth 0µ < 0.01 unit",
+   "unlock": null
+  },
+  {
+   "id": "C-BLURT-HIVE",
+   "from": "BLURT",
+   "to": "HIVE",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "the cross-network bridge pair arms when HIVE key material verifies into the estate (R38 law) — the cross fair (STEEM-anchor / HIVE-anchor) stands measured from the router book"
+  },
+  {
+   "id": "C-BLURT-HBD",
+   "from": "BLURT",
+   "to": "HBD",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "THIN-DEPTH-NO-QUOTE",
+   "why": "min first-hop depth 0µ < 0.01 unit",
+   "unlock": null
+  },
+  {
+   "id": "C-BLURT-WSTEEM",
+   "from": "BLURT",
+   "to": "WSTEEM",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "no measured SAOS claim exists in the estate books (dex/credits.json is empty today) — the pool arms the day a real claim is measured into the vault; the mirror reference price is the planned seed anchor"
+  },
+  {
+   "id": "C-BLURT-WSBD",
+   "from": "BLURT",
+   "to": "WSBD",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "THIN-DEPTH-NO-QUOTE",
+   "why": "min first-hop depth 0µ < 0.01 unit",
+   "unlock": null
+  },
+  {
+   "id": "C-BLURT-WHIVE",
+   "from": "BLURT",
+   "to": "WHIVE",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "THIN-DEPTH-NO-QUOTE",
+   "why": "min first-hop depth 0µ < 0.01 unit",
+   "unlock": null
+  },
+  {
+   "id": "C-BLURT-WHBD",
+   "from": "BLURT",
+   "to": "WHBD",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "THIN-DEPTH-NO-QUOTE",
+   "why": "min first-hop depth 0µ < 0.01 unit",
+   "unlock": null
+  },
+  {
+   "id": "C-BLURT-WBLURT",
+   "from": "BLURT",
+   "to": "WBLURT",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "THIN-DEPTH-NO-QUOTE",
+   "why": "min first-hop depth 0µ < 0.01 unit",
+   "unlock": null
+  },
+  {
+   "id": "C-BLURT-SAOS",
+   "from": "BLURT",
+   "to": "SAOS",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "no measured SAOS claim exists in the estate books (dex/credits.json is empty today) — the pool arms the day a real claim is measured into the vault; the mirror reference price is the planned seed anchor"
+  },
+  {
    "id": "C-WSTEEM-STEEM",
    "from": "WSTEEM",
    "to": "STEEM",
    "via": [
     "P1"
    ],
-   "quote": "3883",
-   "quoteFor": "3887 µ WSTEEM (~1% first-hop depth)",
+   "quote": "3842",
+   "quoteFor": "3837 µ WSTEEM (~1% first-hop depth)",
    "verdict": "LIVE-INTERNAL"
   },
   {
@@ -378,8 +871,8 @@
     "P1",
     "P3"
    ],
-   "quote": "407",
-   "quoteFor": "3887 µ WSTEEM (~1% first-hop depth)",
+   "quote": "403",
+   "quoteFor": "3837 µ WSTEEM (~1% first-hop depth)",
    "verdict": "LIVE-INTERNAL"
   },
   {
@@ -391,8 +884,8 @@
     "P3",
     "P2"
    ],
-   "quote": "406",
-   "quoteFor": "3887 µ WSTEEM (~1% first-hop depth)",
+   "quote": "402",
+   "quoteFor": "3837 µ WSTEEM (~1% first-hop depth)",
    "verdict": "LIVE-INTERNAL"
   },
   {
@@ -432,6 +925,336 @@
    "verdict": "LIVE-INTERNAL"
   },
   {
+   "id": "C-WHIVE-STEEM",
+   "from": "WHIVE",
+   "to": "STEEM",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "the cross-network bridge pair arms when HIVE key material verifies into the estate (R38 law) — the cross fair (STEEM-anchor / HIVE-anchor) stands measured from the router book"
+  },
+  {
+   "id": "C-WHIVE-SBD",
+   "from": "WHIVE",
+   "to": "SBD",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "THIN-DEPTH-NO-QUOTE",
+   "why": "min first-hop depth 0µ < 0.01 unit",
+   "unlock": null
+  },
+  {
+   "id": "C-WHIVE-HIVE",
+   "from": "WHIVE",
+   "to": "HIVE",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "the cross-network bridge pair arms when HIVE key material verifies into the estate (R38 law) — the cross fair (STEEM-anchor / HIVE-anchor) stands measured from the router book"
+  },
+  {
+   "id": "C-WHIVE-HBD",
+   "from": "WHIVE",
+   "to": "HBD",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "THIN-DEPTH-NO-QUOTE",
+   "why": "min first-hop depth 0µ < 0.01 unit",
+   "unlock": null
+  },
+  {
+   "id": "C-WHIVE-BLURT",
+   "from": "WHIVE",
+   "to": "BLURT",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "THIN-DEPTH-NO-QUOTE",
+   "why": "min first-hop depth 0µ < 0.01 unit",
+   "unlock": null
+  },
+  {
+   "id": "C-WHIVE-WSTEEM",
+   "from": "WHIVE",
+   "to": "WSTEEM",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "no measured SAOS claim exists in the estate books (dex/credits.json is empty today) — the pool arms the day a real claim is measured into the vault; the mirror reference price is the planned seed anchor"
+  },
+  {
+   "id": "C-WHIVE-WSBD",
+   "from": "WHIVE",
+   "to": "WSBD",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "THIN-DEPTH-NO-QUOTE",
+   "why": "min first-hop depth 0µ < 0.01 unit",
+   "unlock": null
+  },
+  {
+   "id": "C-WHIVE-WHBD",
+   "from": "WHIVE",
+   "to": "WHBD",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "THIN-DEPTH-NO-QUOTE",
+   "why": "min first-hop depth 0µ < 0.01 unit",
+   "unlock": null
+  },
+  {
+   "id": "C-WHIVE-WBLURT",
+   "from": "WHIVE",
+   "to": "WBLURT",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "THIN-DEPTH-NO-QUOTE",
+   "why": "min first-hop depth 0µ < 0.01 unit",
+   "unlock": null
+  },
+  {
+   "id": "C-WHIVE-SAOS",
+   "from": "WHIVE",
+   "to": "SAOS",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "no measured SAOS claim exists in the estate books (dex/credits.json is empty today) — the pool arms the day a real claim is measured into the vault; the mirror reference price is the planned seed anchor"
+  },
+  {
+   "id": "C-WHBD-STEEM",
+   "from": "WHBD",
+   "to": "STEEM",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "the cross-network bridge pair arms when HIVE key material verifies into the estate (R38 law) — the cross fair (STEEM-anchor / HIVE-anchor) stands measured from the router book"
+  },
+  {
+   "id": "C-WHBD-SBD",
+   "from": "WHBD",
+   "to": "SBD",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "THIN-DEPTH-NO-QUOTE",
+   "why": "min first-hop depth 0µ < 0.01 unit",
+   "unlock": null
+  },
+  {
+   "id": "C-WHBD-HIVE",
+   "from": "WHBD",
+   "to": "HIVE",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "the cross-network bridge pair arms when HIVE key material verifies into the estate (R38 law) — the cross fair (STEEM-anchor / HIVE-anchor) stands measured from the router book"
+  },
+  {
+   "id": "C-WHBD-HBD",
+   "from": "WHBD",
+   "to": "HBD",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "THIN-DEPTH-NO-QUOTE",
+   "why": "min first-hop depth 0µ < 0.01 unit",
+   "unlock": null
+  },
+  {
+   "id": "C-WHBD-BLURT",
+   "from": "WHBD",
+   "to": "BLURT",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "THIN-DEPTH-NO-QUOTE",
+   "why": "min first-hop depth 0µ < 0.01 unit",
+   "unlock": null
+  },
+  {
+   "id": "C-WHBD-WSTEEM",
+   "from": "WHBD",
+   "to": "WSTEEM",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "no measured SAOS claim exists in the estate books (dex/credits.json is empty today) — the pool arms the day a real claim is measured into the vault; the mirror reference price is the planned seed anchor"
+  },
+  {
+   "id": "C-WHBD-WSBD",
+   "from": "WHBD",
+   "to": "WSBD",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "THIN-DEPTH-NO-QUOTE",
+   "why": "min first-hop depth 0µ < 0.01 unit",
+   "unlock": null
+  },
+  {
+   "id": "C-WHBD-WHIVE",
+   "from": "WHBD",
+   "to": "WHIVE",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "THIN-DEPTH-NO-QUOTE",
+   "why": "min first-hop depth 0µ < 0.01 unit",
+   "unlock": null
+  },
+  {
+   "id": "C-WHBD-WBLURT",
+   "from": "WHBD",
+   "to": "WBLURT",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "THIN-DEPTH-NO-QUOTE",
+   "why": "min first-hop depth 0µ < 0.01 unit",
+   "unlock": null
+  },
+  {
+   "id": "C-WHBD-SAOS",
+   "from": "WHBD",
+   "to": "SAOS",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "no measured SAOS claim exists in the estate books (dex/credits.json is empty today) — the pool arms the day a real claim is measured into the vault; the mirror reference price is the planned seed anchor"
+  },
+  {
+   "id": "C-WBLURT-STEEM",
+   "from": "WBLURT",
+   "to": "STEEM",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "the cross-network bridge pair arms when HIVE key material verifies into the estate (R38 law) — the cross fair (STEEM-anchor / HIVE-anchor) stands measured from the router book"
+  },
+  {
+   "id": "C-WBLURT-SBD",
+   "from": "WBLURT",
+   "to": "SBD",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "THIN-DEPTH-NO-QUOTE",
+   "why": "min first-hop depth 0µ < 0.01 unit",
+   "unlock": null
+  },
+  {
+   "id": "C-WBLURT-HIVE",
+   "from": "WBLURT",
+   "to": "HIVE",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "the cross-network bridge pair arms when HIVE key material verifies into the estate (R38 law) — the cross fair (STEEM-anchor / HIVE-anchor) stands measured from the router book"
+  },
+  {
+   "id": "C-WBLURT-HBD",
+   "from": "WBLURT",
+   "to": "HBD",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "THIN-DEPTH-NO-QUOTE",
+   "why": "min first-hop depth 0µ < 0.01 unit",
+   "unlock": null
+  },
+  {
+   "id": "C-WBLURT-BLURT",
+   "from": "WBLURT",
+   "to": "BLURT",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "THIN-DEPTH-NO-QUOTE",
+   "why": "min first-hop depth 0µ < 0.01 unit",
+   "unlock": null
+  },
+  {
+   "id": "C-WBLURT-WSTEEM",
+   "from": "WBLURT",
+   "to": "WSTEEM",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "no measured SAOS claim exists in the estate books (dex/credits.json is empty today) — the pool arms the day a real claim is measured into the vault; the mirror reference price is the planned seed anchor"
+  },
+  {
+   "id": "C-WBLURT-WSBD",
+   "from": "WBLURT",
+   "to": "WSBD",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "THIN-DEPTH-NO-QUOTE",
+   "why": "min first-hop depth 0µ < 0.01 unit",
+   "unlock": null
+  },
+  {
+   "id": "C-WBLURT-WHIVE",
+   "from": "WBLURT",
+   "to": "WHIVE",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "THIN-DEPTH-NO-QUOTE",
+   "why": "min first-hop depth 0µ < 0.01 unit",
+   "unlock": null
+  },
+  {
+   "id": "C-WBLURT-WHBD",
+   "from": "WBLURT",
+   "to": "WHBD",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "THIN-DEPTH-NO-QUOTE",
+   "why": "min first-hop depth 0µ < 0.01 unit",
+   "unlock": null
+  },
+  {
+   "id": "C-WBLURT-SAOS",
+   "from": "WBLURT",
+   "to": "SAOS",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "no measured SAOS claim exists in the estate books (dex/credits.json is empty today) — the pool arms the day a real claim is measured into the vault; the mirror reference price is the planned seed anchor"
+  },
+  {
    "id": "C-SAOS-STEEM",
    "from": "SAOS",
    "to": "STEEM",
@@ -440,7 +1263,7 @@
    "quoteFor": null,
    "verdict": "PLANNED-NO-CLAIM",
    "why": null,
-   "unlock": "a measured SAOS claim in the vault (dex/credits.json is empty today) — the pool arms the day a real claim is measured"
+   "unlock": "no measured SAOS claim exists in the estate books (dex/credits.json is empty today) — the pool arms the day a real claim is measured into the vault; the mirror reference price is the planned seed anchor"
   },
   {
    "id": "C-SAOS-SBD",
@@ -451,7 +1274,40 @@
    "quoteFor": null,
    "verdict": "PLANNED-NO-CLAIM",
    "why": null,
-   "unlock": "a measured SAOS claim in the vault (dex/credits.json is empty today) — the pool arms the day a real claim is measured"
+   "unlock": "no measured SAOS claim exists in the estate books (dex/credits.json is empty today) — the pool arms the day a real claim is measured into the vault; the mirror reference price is the planned seed anchor"
+  },
+  {
+   "id": "C-SAOS-HIVE",
+   "from": "SAOS",
+   "to": "HIVE",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "no measured SAOS claim exists in the estate books (dex/credits.json is empty today) — the pool arms the day a real claim is measured into the vault; the mirror reference price is the planned seed anchor"
+  },
+  {
+   "id": "C-SAOS-HBD",
+   "from": "SAOS",
+   "to": "HBD",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "no measured SAOS claim exists in the estate books (dex/credits.json is empty today) — the pool arms the day a real claim is measured into the vault; the mirror reference price is the planned seed anchor"
+  },
+  {
+   "id": "C-SAOS-BLURT",
+   "from": "SAOS",
+   "to": "BLURT",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "no measured SAOS claim exists in the estate books (dex/credits.json is empty today) — the pool arms the day a real claim is measured into the vault; the mirror reference price is the planned seed anchor"
   },
   {
    "id": "C-SAOS-WSTEEM",
@@ -462,7 +1318,7 @@
    "quoteFor": null,
    "verdict": "PLANNED-NO-CLAIM",
    "why": null,
-   "unlock": "a measured SAOS claim in the vault (dex/credits.json is empty today) — the pool arms the day a real claim is measured"
+   "unlock": "no measured SAOS claim exists in the estate books (dex/credits.json is empty today) — the pool arms the day a real claim is measured into the vault; the mirror reference price is the planned seed anchor"
   },
   {
    "id": "C-SAOS-WSBD",
@@ -473,7 +1329,40 @@
    "quoteFor": null,
    "verdict": "PLANNED-NO-CLAIM",
    "why": null,
-   "unlock": "a measured SAOS claim in the vault (dex/credits.json is empty today) — the pool arms the day a real claim is measured"
+   "unlock": "no measured SAOS claim exists in the estate books (dex/credits.json is empty today) — the pool arms the day a real claim is measured into the vault; the mirror reference price is the planned seed anchor"
+  },
+  {
+   "id": "C-SAOS-WHIVE",
+   "from": "SAOS",
+   "to": "WHIVE",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "no measured SAOS claim exists in the estate books (dex/credits.json is empty today) — the pool arms the day a real claim is measured into the vault; the mirror reference price is the planned seed anchor"
+  },
+  {
+   "id": "C-SAOS-WHBD",
+   "from": "SAOS",
+   "to": "WHBD",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "no measured SAOS claim exists in the estate books (dex/credits.json is empty today) — the pool arms the day a real claim is measured into the vault; the mirror reference price is the planned seed anchor"
+  },
+  {
+   "id": "C-SAOS-WBLURT",
+   "from": "SAOS",
+   "to": "WBLURT",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "no measured SAOS claim exists in the estate books (dex/credits.json is empty today) — the pool arms the day a real claim is measured into the vault; the mirror reference price is the planned seed anchor"
   }
  ],
  "arb": [
@@ -497,9 +1386,9 @@
   {
    "id": "A-P1",
    "name": "WSTEEM/STEEM peg guard",
-   "poolMidNano": "1000000000",
-   "driftPct": 0,
-   "verdict": "PEG-OK",
+   "poolMidNano": "1026038219",
+   "driftPct": 2.6,
+   "verdict": "PEG-DRIFT-HALT",
    "guardPct": 0.5
   },
   {
@@ -509,45 +1398,54 @@
    "driftPct": 0,
    "verdict": "PEG-OK",
    "guardPct": 0.5
+  },
+  {
+   "id": "A2",
+   "name": "P8 HIVE/STEEM cross-network bridge",
+   "crossFairNano": "1869150744",
+   "fairSource": "cross of CEX-IMPLIED-FAIR (SBDUSDT/STEEMUSDT — lead-lag anchor, the opposing side of the local book) / LOCAL-MID-FALLBACK (CEX feed stale)",
+   "verdict": "NO-CUSTODY",
+   "why": "HIVE custody is OBSERVED-UNCONTROLLED — the bridge arms when hive active key material verifies into the estate (R38 law)",
+   "railOwner": "treasury (our own pool — atomic, no bridge)"
   }
  ],
  "counterGrids": {
   "P1": {
    "pair": "WSTEEM/STEEM",
-   "anchor": 1,
+   "anchor": 1.02603822,
    "anchorSource": "POOL-MID (our side of the book)",
    "spacingPct": 0.42,
    "skewShiftBps": 50,
-   "inventoryShareBase": 500000,
+   "inventoryShareBase": 493574,
    "rungs": [
     {
      "side": "buy",
-     "price": 0.990821,
+     "price": 1.01662021,
      "unit": "STEEM"
     },
     {
      "side": "sell",
-     "price": 0.999179,
+     "price": 1.02519584,
      "unit": "WSTEEM"
     },
     {
      "side": "buy",
-     "price": 0.986642,
+     "price": 1.0123324,
      "unit": "STEEM"
     },
     {
      "side": "sell",
-     "price": 1.003358,
+     "price": 1.02948366,
      "unit": "WSTEEM"
     },
     {
      "side": "buy",
-     "price": 0.982463,
+     "price": 1.00804459,
      "unit": "STEEM"
     },
     {
      "side": "sell",
-     "price": 1.007537,
+     "price": 1.03377147,
      "unit": "WSTEEM"
     }
    ],
@@ -698,7 +1596,7 @@
   }
  ],
  "conservationOk": true,
- "attestation": "d6d5c769bf229029",
+ "attestation": "1b3859480fd81306",
  "processedBatches": [
   "MESH-OPERATOR-PIPEPROOF-R41"
  ],
@@ -729,45 +1627,89 @@
  "genesisDone": true,
  "opsThisTick": [
   {
-   "seq": 8,
-   "type": "MESH-WIRE",
-   "agent": "headcorner",
-   "asset": "STEEM",
-   "amount": "5000",
-   "why": "edge-funding wire (cap 10% of free treasury per batch); conservation moves claims, never creates them"
+   "seq": 10,
+   "type": "POOL-CATALOG-EXTEND",
+   "pool": "P5",
+   "pair": "WHIVE/HIVE",
+   "kind": "PEG",
+   "law": "appended empty — the custody-class law decides when it arms"
   },
   {
-   "seq": 9,
-   "type": "AGENT_FILL",
-   "agent": "headcorner",
-   "from": "STEEM",
-   "to": "WSTEEM",
-   "amountIn": "5000",
-   "amountOut": "4993",
-   "routeIds": [
-    "P1"
-   ],
-   "hops": [
-    {
-     "pool": "P1",
-     "in": "5000",
-     "out": "4993",
-     "fee": "0"
-    }
-   ],
-   "edgeMu": "-7",
-   "fairUsed": "PEG-1:1",
-   "feesMu": "0"
+   "seq": 11,
+   "type": "POOL-CATALOG-EXTEND",
+   "pool": "P6",
+   "pair": "WHBD/HBD",
+   "kind": "PEG",
+   "law": "appended empty — the custody-class law decides when it arms"
+  },
+  {
+   "seq": 12,
+   "type": "POOL-CATALOG-EXTEND",
+   "pool": "P7",
+   "pair": "WBLURT/BLURT",
+   "kind": "PEG",
+   "law": "appended empty — the custody-class law decides when it arms"
+  },
+  {
+   "seq": 13,
+   "type": "POOL-CATALOG-EXTEND",
+   "pool": "P8",
+   "pair": "HIVE/STEEM",
+   "kind": "VOLATILE",
+   "law": "appended empty — the custody-class law decides when it arms"
+  },
+  {
+   "seq": 14,
+   "type": "POOL-CATALOG-EXTEND",
+   "pool": "P9",
+   "pair": "WSBD/WHBD",
+   "kind": "PEG",
+   "law": "appended empty — the custody-class law decides when it arms"
+  },
+  {
+   "seq": 15,
+   "type": "OBSERVE",
+   "asset": "HIVE",
+   "network": "HIVE",
+   "node": "https://api.hive.blog",
+   "amount": "34000",
+   "prior": "0",
+   "keyClass": "OBSERVED-UNCONTROLLED",
+   "note": "observed, NOT custody — minting and conservation never touch it"
+  },
+  {
+   "seq": 16,
+   "type": "OBSERVE",
+   "asset": "HBD",
+   "network": "HIVE",
+   "node": "https://api.hive.blog",
+   "amount": "3000",
+   "prior": "0",
+   "keyClass": "OBSERVED-UNCONTROLLED",
+   "note": "observed, NOT custody — minting and conservation never touch it"
+  },
+  {
+   "seq": 17,
+   "type": "OBSERVE",
+   "asset": "BLURT",
+   "network": "BLURT",
+   "node": "https://blurt-rpc.saboin.com",
+   "amount": "67841000",
+   "prior": "0",
+   "keyClass": "OBSERVED-POST-KEYED",
+   "note": "observed, NOT custody — minting and conservation never touch it"
   }
  ],
  "summary": {
-  "verdict": "MESH-SETTLED",
+  "verdict": "EXCHANGE-CORE-LIVE",
   "poolsLive": 3,
-  "poolsPlanned": 1,
+  "poolsPlanned": 2,
   "routesLive": 12,
-  "routesPlanned": 4,
-  "meshFills": 1,
-  "meshBatch": "MESH-OPERATOR-PIPEPROOF-R41",
-  "notes": []
+  "routesPlanned": 70,
+  "meshFills": 0,
+  "meshBatch": null,
+  "notes": [
+   "STEEM custody DROP -870000µ measured — trading HALTED this tick (safety law: the vault never trades on shrinking custody)"
+  ]
  }
 }

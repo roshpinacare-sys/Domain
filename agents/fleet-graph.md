@@ -17,7 +17,7 @@ flowchart TD
     subgraph CENSUS["CENSUS — read-only, keyless (CENSUS→SIGN SEPARATION LAW)"]
         LU["liquidity-desk.cjs<br/>3-chain census + ladder"]
         RT["dex-router.cjs<br/>SWAP-NET: routes + arb net + counter-grids (R39)"]
-        EC["dex-core.cjs<br/>EXCHANGE CORE: atomic settle + vault + pool counter-grids (R40)"]
+        EC["dex-core.cjs<br/>EXCHANGE CORE + MULTI-NETWORK VAULT: atomic settle + custody classes + issuer + redeem corridor (R40/R42)"]
         MM["arb-mesh.cjs<br/>MESH MARKET: roster mandates → intents → atomic fills + honest P&L (R41)"]
         KA["kpi-scribe<br/>KPI.json oracle"]
         HA["harness-audit.cjs<br/>26 checks incl. sovereignty (Z-37)"]

@@ -38,3 +38,30 @@
 - Next: a real SAOS claim measured into the vault arms P4 (PLANNED-NO-CLAIM today);
   peg-out rail identity (R11 exit corridor); HBD/USDT real leg (A2 FEED-STALE);
   operator CEX keys (R7-R9); drip-day custody delta books itself (2026-10-10).
+
+## R41 booked rungs (do not re-derive)
+- THE MESH MARKET is live (CR-0071, feat-066, E64, suite v1.50.0): arb-mesh.cjs drafts
+  mandates (operator-40/soldiers-60, budget = 1% of first-hop depth, direction =
+  sell-the-rich-side) and the core settles batches atomically (batch-idempotent, wires
+  capped 10% of free treasury, fills ≤5% of depth, all-or-nothing hops, honest-or-null
+  edge). Operator pipe-proof fill booked on the live ledger; first live tick NO-EDGE
+  (the floor law protects the P&L). Hourly lane: arb-mesh-cron.yml :07.
+- Next: a measured SAOS claim arms P4; operator CEX keys (R7-R9); drip-day expansion
+  (2026-10-10); intents/bridges to EVM/TRON/SOL doors (ERC-7683 as the template).
+
+## R42 booked rungs (do not re-derive)
+- THE MULTI-NETWORK VAULT is live (CR-0072, feat-067, E65, suite v1.51.0): dex-core.cjs
+  v1.2.0 holds what its keys can move and sees every network. Custody classes
+  (MEASURED-KEYED mintable-only; OBSERVED-POST-KEYED BLURT 67.841; OBSERVED-UNCONTROLLED
+  HIVE 0.034+0.003 HBD; PLANNED-NO-CLAIM SAOS; OBSERVED-ABSENT honest), keyless condenser
+  probes with node provenance every tick, issuer identity SAOS-DEX-ISSUER/1
+  (d7ff39690365bfa8), redeem corridor burn-before-payout + pegout queue
+  (dex/pegout-queue.json, corridors: KEYED-DESK for STEEM/SBD, PLAN-PEGOUT-KEYED-OPERATOR
+  for HIVE/HBD/BLURT), pool catalog P5-P9 (WHIVE/HIVE, WHBD/HBD, WBLURT/BLURT,
+  HIVE/STEEM cross, WSBD/WHBD dollar bridge), cross-fair law (1.8692 HIVE per STEEM).
+- Upgrade law: the custody class upgrades THE SAME TICK verified active key material
+  appears in a protected desk (key-check law) — no new code on that day; the pools
+  arm from the deterministic 25% genesis law.
+- Next: hive/blurt active keys verify → P5/P6/P7/P9 arm + A2 wakes; a measured SAOS
+  claim arms P4; operator CEX keys (R7-R9); drip-day (2026-10-10) books itself;
+  EVM/TRON/SOL intent doors (ERC-7683 template).

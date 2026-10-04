@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "at": "2026-10-04T11:25:54.534Z",
+  "at": "2026-10-04T13:01:34.778Z",
   "since": "2026-10-02T16:40:20.950Z",
   "windowSince": "2026-10-02T16:40:20.950Z",
   "agent": "pulse v1.2.0 (CR-0009 loop, Rung 1; CR-0028 consumes the laya advisory triage; CR-0033 consumes the scheduled evolution-window evidence — Z-48/Z-49/Z-60/Z-62)",
@@ -8,6 +8,10 @@
     "since": "2026-10-02T16:40:20.950Z",
     "count": 40,
     "commits": [
+      {
+        "sha": "d0129bd",
+        "subject": "arb-mesh: post-rebase re-verification on the merged tree (evals 64/64 GREEN v1.50.0, claims feats=66 offenders=0 suite MATCH) [skip ci]"
+      },
       {
         "sha": "28c45e1",
         "subject": "R41 THE MESH MARKET (CR-0071 / feat-066 / E64, suite v1.49.0 -> v1.50.0, 64/64 GREEN): the fleet trades on our own ledger. arb-mesh.cjs (SAOS-ARB-MESH/1, keyless, STASIS-obeying, fail-soft) — the demand side of our own DEX, answering the owner's networked-arbitrage law ('שוק ארביטראז רישתי עבור הסוכנים והחיילים... שנסחר גם פה וגם שם וגם שם'). MANDATE LAW deterministic from the books: per pool-side edge row clearing the inherited FLOOR law (CANDIDATE-FOK), the operator commands 40% of the row budget, the ten soldiers split 60% equally, budget = 1% of first-hop depth (the catalog quote law). DIRECTION LAW: pool mid > fair => sell the base into the pool — edge captured trading TOWARD the fair, never against it. WIRE LAW (the smart treasury): an agent unable to cover his mandate is armed by a MESH-WIRE from treasury free claims — capped 10% of free per batch, partial wires shrink the fill, conservation moves claims and never creates them; no capital => honest GATED-WIRE, never a fake trade. dex-core.cjs v1.1.0 settleIntents: batch-idempotent (processedBatches memo 64), no naked shorts, dust refused, fill <= 5% of first-hop depth, every hop + minOut all-or-nothing on simulated copies (a refused minOut leaves pools AND accounts byte-unchanged — the wire applies only at commit), agent accounts born LAZILY at first real movement, edge marked honest-or-null (PEG 1:1 / STEEM-SBD to the CEX fair / else null), pool feeMeter accrues (LP revenue), conservation asserted per fill, attestation recomputes. Keyed rails NEVER fired keylessly (PLAN-KEYED-RAIL); grid rungs stay PLAN-POOL-GATED-NOT-BROADCAST. SIZE LADDER: exact BigInt quotes at 0.1%/1%/5% of depth with honest signed slippage (P3 measured: 0.1% => -0.59bps, 1% => -1.26bps, 5% => -5bps) — the large-sums capability, measured not promised. OPERATOR PIPE-PROOF on the live ledger: MESH-OPERATOR-PIPEPROOF-R41 — headcorner STEEM 5000µ => 4993µ WSTEEM via P1 (MESH-WIRE + AGENT_FILL, conservation OK, attestation d6d5c769bf229029), queue consumed and cleared single-writer. First live tick: NO-EDGE booked honestly (A1 nets -34.99bps below the 120bps floor — the machinery waits, the P&L is protected). E64 in the suite: white-box refusals/wire/atomicity/idempotency/determinism + drafting laws + ladder honesty, black-box both selftests fresh-process (dex-core 33/33, arb-mesh 15/15), real-tree re-derivation of the booked mesh book + the pipe-proof fill. E47 re-based 53->54 workflows / 19->20 keyless (arb-mesh-cron joins, keyless by law). arb-mesh-cron.yml hourly :07, keyless, [skip ci], rebase-first. claims feats=66 evidence offenders=0 suite MATCH, secret-scan 0 [skip ci]"
@@ -163,10 +167,6 @@
       {
         "sha": "b668805",
         "subject": "fill-ledger: tick 2026-10-04T02:55:29Z [skip ci]"
-      },
-      {
-        "sha": "4e0f10a",
-        "subject": "market-grid(history): tick 2026-10-04T02:55:17Z [skip ci]"
       }
     ]
   },
@@ -736,7 +736,7 @@
       "kind": "observation",
       "source": "evo-windows.json",
       "action": "carry the evolution-window cadence state into the record",
-      "receipt": "116 windows booked, none complete · next due 2026-10-04T12:45:05Z",
+      "receipt": "118 windows booked, none complete · next due 2026-10-04T12:45:05Z",
       "disposition": "BOOKED"
     }
   ],
@@ -757,7 +757,7 @@
     "joined": 7,
     "note": "fresh advisory triage joined by id — lane/urgency hints only, confidence uncalibrated (en checkpoint), dispositions untouched",
     "at": "2026-10-03T15:08:54Z",
-    "age_h": 20.3
+    "age_h": 21.9
   },
   "evoEvidence": {
     "mode": "CADENCE-ONLY",
