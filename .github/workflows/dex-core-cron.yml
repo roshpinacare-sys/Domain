@@ -1,0 +1,66 @@
+# DEX-CORE (R40 / CR-0070) — THE EXCHANGE CORE, hourly.
+#
+# The owner demanded real swaps on our own network — "באמת להחליף למטבע האמיתי
+# עם ערך ולא סתם שקר" — opposing grids on our side, a networked arbitrage market,
+# and a vault that holds real coins. This lane ticks the settlement engine: the
+# atomic deterministic core with CPMM volatile pools + Curve stableswap peg pools,
+# the reserve-backed wrapped vault (mint 1:1, redeem always honored 1:1), the
+# conservation identity, the rebalance FLOOR law on our own pool, the pool-side
+# counter-grids, and the drip-fuel loop (custody deltas book as ops the hour the
+# powerdown lands — zero new code on drip day).
+#
+# KEYLESS BY LAW: the core settles our OWN ledger atomically; external rails stay
+# with the owner-gated signing surfaces (market-exec / grid-beat / operator CEX).
+# Fail-soft exit 0; STASIS halt-before-read; single-writer atomic book
+# (agents/dex-core.json/.md) + append-only op-log jsonl. [skip ci] book commits,
+# rebase-first push (parallel runtimes are real).
+
+name: dex-core
+
+on:
+  schedule:
+    - cron: '41 * * * *'   # hourly at :41 — off the busy minutes of the minute-map (:23 router, :45 console, :55 verify)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dex-core
+  cancel-in-progress: false
+
+jobs:
+  exchange-core:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: exchange-core selftest (fresh process, zero network — settle math judges itself first)
+        run: node agents/dex-core.cjs selftest
+
+      - name: exchange-core tick (custody probe + settle + routes + arb + grids + attestation)
+        run: node agents/dex-core.cjs status
+
+      - name: commit exchange-core books
+        run: |
+          git config user.name "saos-dex-core"
+          git config user.email "dex-core@fleet.local"
+          git add agents/dex-core.json agents/dex-core.md agents/dex-core-history.jsonl
+          if git diff --cached --quiet; then
+            echo "no book delta — quiet tick"
+          else
+            git commit -m "dex-core: exchange-core tick $(date -u +%Y-%m-%dT%H:%M:%SZ) [skip ci]"
+            for i in 1 2 3; do
+              git -c rebase.autoStash=true pull --rebase origin main && git push origin HEAD:main && break
+              echo "rebase-push retry $i"; sleep $((i * 5))
+            done
+          fi

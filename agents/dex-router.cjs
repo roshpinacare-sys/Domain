@@ -469,6 +469,7 @@ function selftest() {
 }
 
 (async () => {
+  if (require.main !== module) return; // judge separation (R40 base repair): requiring the laws never fires a tick — dex-core imports the FLOOR/parity laws, the evals import the exports; a tick only runs when the router IS the main
   const arg = (process.argv[2] || 'status').toLowerCase();
   if (arg === 'selftest') process.exit(selftest());
   const at = new Date().toISOString();

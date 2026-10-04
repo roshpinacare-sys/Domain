@@ -1,0 +1,568 @@
+{
+ "protocol": "SAOS-DEX-CORE/1",
+ "at": "2026-10-04T10:01:10.121Z",
+ "agent": "dex-core v1.0.0 (R40 EXCHANGE CORE, CR-0070)",
+ "mode": "KEYLESS-ATOMIC-INTERNAL",
+ "stasisHalted": false,
+ "laws": [
+  "units: µ BigInt end to end, no floats in settlement",
+  "volatile pools: x·y ≥ k (Uniswap v2 exact, fee on input, floor to user)",
+  "peg pools: Curve stableswap A=10 (canonical, fee on output, −1 pad)",
+  "real value: wrapped mint 1:1 reserve-backed, redeem ALWAYS honored 1:1",
+  "atomicity: minOut guard, refused swaps leave state byte-unchanged",
+  "conservation: custody − wrappedReserve − Σ claims === 0 every tick",
+  "ledger: append-only op-log, monotonic seq, state = fold(ops)",
+  "floor law: rebalance only above 2×(fees+floor) — below it a plan, never a trade",
+  "feed law: settle consumes the booked router feed; measurement and settlement are separated",
+  "honest money: the powerdown drip is the booked fuel; no invented locks"
+ ],
+ "feed": {
+  "source": "agents/dex-router.json",
+  "routerAt": "2026-10-04T08:48:34.143Z",
+  "fresh": true,
+  "fairNano": 105446700,
+  "fairSource": "CEX-IMPLIED-FAIR (SBDUSDT/STEEMUSDT — lead-lag anchor, the opposing side of the local book)",
+  "verdict": "FEED-LIVE"
+ },
+ "custodyProbe": {
+  "measured": true,
+  "node": "api.steemit.com"
+ },
+ "seq": 7,
+ "vault": {
+  "custody": {
+   "STEEM": "15551000",
+   "SBD": "366000",
+   "HIVE": "0",
+   "HBD": "0",
+   "BLURT": "0",
+   "SAOS": "0"
+  },
+  "custodyProvenance": {
+   "STEEM": "MEASURED condenser headcorner @api.steemit.com 2026-10-04T10:01:10.121Z",
+   "SBD": "MEASURED condenser headcorner @api.steemit.com 2026-10-04T10:01:10.121Z",
+   "HIVE": "UNKEYED-ADJACENCY — honest zero until key material exists (R38 law)",
+   "HBD": "UNKEYED-ADJACENCY — honest zero until key material exists (R38 law)",
+   "BLURT": "UNKEYED-ADJACENCY — honest zero until key material exists (R38 law)",
+   "SAOS": "PLANNED-NO-CLAIM — dex/credits.json empty today"
+  },
+  "wrappedReserve": {
+   "WSTEEM": "0",
+   "WSBD": "0",
+   "STEEM": "777550",
+   "SBD": "54900"
+  },
+  "minted": {
+   "WSTEEM": "777550",
+   "WSBD": "54900"
+  },
+  "reserveRatio": {
+   "WSTEEM": 1,
+   "WSBD": 1
+  }
+ },
+ "accounts": {
+  "treasury": {
+   "claims": {
+    "STEEM": "12829575",
+    "SBD": "119670",
+    "HIVE": "0",
+    "HBD": "0",
+    "BLURT": "0",
+    "SAOS": "0",
+    "WSTEEM": "388775",
+    "WSBD": "27450"
+   },
+   "lp": {
+    "P1": "1.0",
+    "P2": "1.0",
+    "P3": "1.0"
+   }
+  }
+ },
+ "pools": [
+  {
+   "id": "P1",
+   "pair": "WSTEEM/STEEM",
+   "kind": "PEG",
+   "a": "WSTEEM",
+   "b": "STEEM",
+   "feeBps": 2,
+   "amp": 10,
+   "planned": false,
+   "ra": "388775",
+   "rb": "388775",
+   "feeMeter": "0",
+   "verdict": "LIVE-INTERNAL",
+   "plannedWhy": null,
+   "mid": 1
+  },
+  {
+   "id": "P2",
+   "pair": "WSBD/SBD",
+   "kind": "PEG",
+   "a": "WSBD",
+   "b": "SBD",
+   "feeBps": 2,
+   "amp": 10,
+   "planned": false,
+   "ra": "27450",
+   "rb": "27450",
+   "feeMeter": "0",
+   "verdict": "LIVE-INTERNAL",
+   "plannedWhy": null,
+   "mid": 1
+  },
+  {
+   "id": "P3",
+   "pair": "STEEM/SBD",
+   "kind": "VOLATILE",
+   "a": "STEEM",
+   "b": "SBD",
+   "feeBps": 25,
+   "amp": 0,
+   "planned": false,
+   "ra": "1555100",
+   "rb": "163980",
+   "feeMeter": "0",
+   "verdict": "LIVE-INTERNAL",
+   "plannedWhy": null,
+   "mid": 0.1054466
+  },
+  {
+   "id": "P4",
+   "pair": "SAOS/WSTEEM",
+   "kind": "VOLATILE",
+   "a": "SAOS",
+   "b": "WSTEEM",
+   "feeBps": 25,
+   "amp": 0,
+   "planned": true,
+   "ra": "0",
+   "rb": "0",
+   "feeMeter": "0",
+   "verdict": "PLANNED-NO-CLAIM",
+   "plannedWhy": "no measured SAOS claim exists in the estate books (dex/credits.json is empty today) — the pool arms the day a real claim is measured into the vault; the mirror reference price is the planned seed anchor",
+   "mid": null
+  }
+ ],
+ "routes": [
+  {
+   "id": "C-STEEM-SBD",
+   "from": "STEEM",
+   "to": "SBD",
+   "via": [
+    "P3"
+   ],
+   "quote": "407",
+   "quoteFor": "3887 µ STEEM (~1% first-hop depth)",
+   "verdict": "LIVE-INTERNAL"
+  },
+  {
+   "id": "C-STEEM-WSTEEM",
+   "from": "STEEM",
+   "to": "WSTEEM",
+   "via": [
+    "P1"
+   ],
+   "quote": "3883",
+   "quoteFor": "3887 µ STEEM (~1% first-hop depth)",
+   "verdict": "LIVE-INTERNAL"
+  },
+  {
+   "id": "C-STEEM-WSBD",
+   "from": "STEEM",
+   "to": "WSBD",
+   "via": [
+    "P3",
+    "P2"
+   ],
+   "quote": "406",
+   "quoteFor": "3887 µ STEEM (~1% first-hop depth)",
+   "verdict": "LIVE-INTERNAL"
+  },
+  {
+   "id": "C-SBD-STEEM",
+   "from": "SBD",
+   "to": "STEEM",
+   "via": [
+    "P3"
+   ],
+   "quote": "28",
+   "quoteFor": "274 µ SBD (~1% first-hop depth)",
+   "verdict": "LIVE-INTERNAL"
+  },
+  {
+   "id": "C-SBD-WSTEEM",
+   "from": "SBD",
+   "to": "WSTEEM",
+   "via": [
+    "P3",
+    "P1"
+   ],
+   "quote": "27",
+   "quoteFor": "274 µ SBD (~1% first-hop depth)",
+   "verdict": "LIVE-INTERNAL"
+  },
+  {
+   "id": "C-SBD-WSBD",
+   "from": "SBD",
+   "to": "WSBD",
+   "via": [
+    "P2"
+   ],
+   "quote": "273",
+   "quoteFor": "274 µ SBD (~1% first-hop depth)",
+   "verdict": "LIVE-INTERNAL"
+  },
+  {
+   "id": "C-WSTEEM-STEEM",
+   "from": "WSTEEM",
+   "to": "STEEM",
+   "via": [
+    "P1"
+   ],
+   "quote": "3883",
+   "quoteFor": "3887 µ WSTEEM (~1% first-hop depth)",
+   "verdict": "LIVE-INTERNAL"
+  },
+  {
+   "id": "C-WSTEEM-SBD",
+   "from": "WSTEEM",
+   "to": "SBD",
+   "via": [
+    "P1",
+    "P3"
+   ],
+   "quote": "407",
+   "quoteFor": "3887 µ WSTEEM (~1% first-hop depth)",
+   "verdict": "LIVE-INTERNAL"
+  },
+  {
+   "id": "C-WSTEEM-WSBD",
+   "from": "WSTEEM",
+   "to": "WSBD",
+   "via": [
+    "P1",
+    "P3",
+    "P2"
+   ],
+   "quote": "406",
+   "quoteFor": "3887 µ WSTEEM (~1% first-hop depth)",
+   "verdict": "LIVE-INTERNAL"
+  },
+  {
+   "id": "C-WSBD-STEEM",
+   "from": "WSBD",
+   "to": "STEEM",
+   "via": [
+    "P2",
+    "P3"
+   ],
+   "quote": "28",
+   "quoteFor": "274 µ WSBD (~1% first-hop depth)",
+   "verdict": "LIVE-INTERNAL"
+  },
+  {
+   "id": "C-WSBD-SBD",
+   "from": "WSBD",
+   "to": "SBD",
+   "via": [
+    "P2"
+   ],
+   "quote": "273",
+   "quoteFor": "274 µ WSBD (~1% first-hop depth)",
+   "verdict": "LIVE-INTERNAL"
+  },
+  {
+   "id": "C-WSBD-WSTEEM",
+   "from": "WSBD",
+   "to": "WSTEEM",
+   "via": [
+    "P2",
+    "P3",
+    "P1"
+   ],
+   "quote": "27",
+   "quoteFor": "274 µ WSBD (~1% first-hop depth)",
+   "verdict": "LIVE-INTERNAL"
+  },
+  {
+   "id": "C-SAOS-STEEM",
+   "from": "SAOS",
+   "to": "STEEM",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "a measured SAOS claim in the vault (dex/credits.json is empty today) — the pool arms the day a real claim is measured"
+  },
+  {
+   "id": "C-SAOS-SBD",
+   "from": "SAOS",
+   "to": "SBD",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "a measured SAOS claim in the vault (dex/credits.json is empty today) — the pool arms the day a real claim is measured"
+  },
+  {
+   "id": "C-SAOS-WSTEEM",
+   "from": "SAOS",
+   "to": "WSTEEM",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "a measured SAOS claim in the vault (dex/credits.json is empty today) — the pool arms the day a real claim is measured"
+  },
+  {
+   "id": "C-SAOS-WSBD",
+   "from": "SAOS",
+   "to": "WSBD",
+   "via": null,
+   "quote": null,
+   "quoteFor": null,
+   "verdict": "PLANNED-NO-CLAIM",
+   "why": null,
+   "unlock": "a measured SAOS claim in the vault (dex/credits.json is empty today) — the pool arms the day a real claim is measured"
+  }
+ ],
+ "arb": [
+  {
+   "id": "A1",
+   "name": "P3 STEEM/SBD pool mid vs CEX-implied fair",
+   "legs": [
+    "P3-POOL",
+    "cex:STEEMUSDT+SBDUSDT"
+   ],
+   "poolMidNano": "105446595",
+   "fairNano": "105446700",
+   "fairSource": "CEX-IMPLIED-FAIR (SBDUSDT/STEEMUSDT — lead-lag anchor, the opposing side of the local book)",
+   "grossBps": 0.01,
+   "feesBps": 35,
+   "netBps": -34.99,
+   "thresholdBps": 120,
+   "verdict": "BELOW-FLOOR",
+   "railOwner": "treasury (our own pool — atomic, no bridge)"
+  },
+  {
+   "id": "A-P1",
+   "name": "WSTEEM/STEEM peg guard",
+   "poolMidNano": "1000000000",
+   "driftPct": 0,
+   "verdict": "PEG-OK",
+   "guardPct": 0.5
+  },
+  {
+   "id": "A-P2",
+   "name": "WSBD/SBD peg guard",
+   "poolMidNano": "1000000000",
+   "driftPct": 0,
+   "verdict": "PEG-OK",
+   "guardPct": 0.5
+  }
+ ],
+ "counterGrids": {
+  "P1": {
+   "pair": "WSTEEM/STEEM",
+   "anchor": 1,
+   "anchorSource": "POOL-MID (our side of the book)",
+   "spacingPct": 0.42,
+   "skewShiftBps": 50,
+   "inventoryShareBase": 500000,
+   "rungs": [
+    {
+     "side": "buy",
+     "price": 0.990821,
+     "unit": "STEEM"
+    },
+    {
+     "side": "sell",
+     "price": 0.999179,
+     "unit": "WSTEEM"
+    },
+    {
+     "side": "buy",
+     "price": 0.986642,
+     "unit": "STEEM"
+    },
+    {
+     "side": "sell",
+     "price": 1.003358,
+     "unit": "WSTEEM"
+    },
+    {
+     "side": "buy",
+     "price": 0.982463,
+     "unit": "STEEM"
+    },
+    {
+     "side": "sell",
+     "price": 1.007537,
+     "unit": "WSTEEM"
+    }
+   ],
+   "verdict": "PLAN-POOL-GATED-NOT-BROADCAST"
+  },
+  "P2": {
+   "pair": "WSBD/SBD",
+   "anchor": 1,
+   "anchorSource": "POOL-MID (our side of the book)",
+   "spacingPct": 0.42,
+   "skewShiftBps": 50,
+   "inventoryShareBase": 500000,
+   "rungs": [
+    {
+     "side": "buy",
+     "price": 0.990821,
+     "unit": "SBD"
+    },
+    {
+     "side": "sell",
+     "price": 0.999179,
+     "unit": "WSBD"
+    },
+    {
+     "side": "buy",
+     "price": 0.986642,
+     "unit": "SBD"
+    },
+    {
+     "side": "sell",
+     "price": 1.003358,
+     "unit": "WSBD"
+    },
+    {
+     "side": "buy",
+     "price": 0.982463,
+     "unit": "SBD"
+    },
+    {
+     "side": "sell",
+     "price": 1.007537,
+     "unit": "WSBD"
+    }
+   ],
+   "verdict": "PLAN-POOL-GATED-NOT-BROADCAST"
+  },
+  "P3": {
+   "pair": "STEEM/SBD",
+   "anchor": 0.1054466,
+   "anchorSource": "POOL-MID (our side of the book)",
+   "spacingPct": 0.42,
+   "skewShiftBps": 50,
+   "inventoryShareBase": 904611,
+   "rungs": [
+    {
+     "side": "buy",
+     "price": 0.1044787,
+     "unit": "SBD"
+    },
+    {
+     "side": "sell",
+     "price": 0.10536002,
+     "unit": "STEEM"
+    },
+    {
+     "side": "buy",
+     "price": 0.10403804,
+     "unit": "SBD"
+    },
+    {
+     "side": "sell",
+     "price": 0.10580068,
+     "unit": "STEEM"
+    },
+    {
+     "side": "buy",
+     "price": 0.10359738,
+     "unit": "SBD"
+    },
+    {
+     "side": "sell",
+     "price": 0.10624135,
+     "unit": "STEEM"
+    }
+   ],
+   "verdict": "PLAN-POOL-GATED-NOT-BROADCAST"
+  }
+ },
+ "treasuryPnl": {
+  "feesMu": "0",
+  "rebalanceEdgeMu": "0",
+  "note": "fees are LP revenue (treasury owns the LP); rebalance edges are marked to the CEX fair at execution — the LVR defense on our own pool"
+ },
+ "conservation": [
+  {
+   "asset": "STEEM",
+   "custody": "15551000",
+   "reserve": "777550",
+   "claims": "12829575",
+   "pooled": "1943875",
+   "diff": "0",
+   "ok": true
+  },
+  {
+   "asset": "SBD",
+   "custody": "366000",
+   "reserve": "54900",
+   "claims": "119670",
+   "pooled": "191430",
+   "diff": "0",
+   "ok": true
+  },
+  {
+   "asset": "HIVE",
+   "custody": "0",
+   "reserve": "0",
+   "claims": "0",
+   "pooled": "0",
+   "diff": "0",
+   "ok": true
+  },
+  {
+   "asset": "HBD",
+   "custody": "0",
+   "reserve": "0",
+   "claims": "0",
+   "pooled": "0",
+   "diff": "0",
+   "ok": true
+  },
+  {
+   "asset": "BLURT",
+   "custody": "0",
+   "reserve": "0",
+   "claims": "0",
+   "pooled": "0",
+   "diff": "0",
+   "ok": true
+  },
+  {
+   "asset": "SAOS",
+   "custody": "0",
+   "reserve": "0",
+   "claims": "0",
+   "pooled": "0",
+   "diff": "0",
+   "ok": true
+  }
+ ],
+ "conservationOk": true,
+ "attestation": "e175b60bce5bd431",
+ "genesisDone": true,
+ "opsThisTick": [],
+ "summary": {
+  "verdict": "EXCHANGE-CORE-LIVE",
+  "poolsLive": 3,
+  "poolsPlanned": 1,
+  "routesLive": 12,
+  "routesPlanned": 4,
+  "notes": []
+ }
+}
