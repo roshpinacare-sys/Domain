@@ -1,11 +1,11 @@
 {
   "protocol": "SAOS-FATE-DEFENSE-FWI/1",
-  "at": "2026-10-04T10:05:08.881Z",
+  "at": "2026-10-04T10:55:39.349Z",
   "agent": "fleet-indicators v1.0.0 (Task 22, study: Emergence World arXiv 2606.08367 + 2609.17320)",
   "verdict": "DEGRADED",
   "counts": {
-    "GROW": 7,
-    "DECLINE": 2
+    "GROW": 6,
+    "DECLINE": 3
   },
   "indicators": [
     {
@@ -73,7 +73,7 @@
       "name": "Economic Vitality & Equity",
       "measures": "real chain balances (liquid + effective SP) in an executor-identified ledger — equity via identity: one executor, one writer, no hoarding ambiguity",
       "evidenceSource": "agents/money-ledger.json .book{executor,headSteemLiquid,headSteemStake} fresh <48h",
-      "value": "headcorner: 23.366 STEEM liquid · 3810.514 SP · book 11.3h old",
+      "value": "headcorner: 23.366 STEEM liquid · 3810.514 SP · book 12.2h old",
       "breakEven": "ledger fresh + executor-identified",
       "status": "GROW",
       "note": "their economy was 1-CC billboards; ours is signed chain state with a named executor"
@@ -83,7 +83,7 @@
       "name": "Constitutional Growth",
       "measures": "versioned law + honest feature ledger + weekly commit motion — the constitution is AMENDED, not just recited",
       "evidenceSource": "agents/sovereignty.md version + feature_list.json status counts + git rev-list 7d",
-      "value": "law v1.0.6 · features 31/65 done · 221 commits/7d",
+      "value": "law v1.0.6 · features 31/65 done · 1 commits/7d",
       "breakEven": "law versioned + ≤2 open features + ≥20 commits/7d",
       "status": "DECLINE",
       "note": "their static-constitution worlds died passive; ours has version history in git"
@@ -93,9 +93,9 @@
       "name": "Sovereign Autonomy",
       "measures": "self-run cadence receipts: scheduled dispatches that landed in git in the last 7 days (verify ALL_PASS, economy, anchors) — autonomy measured by artifacts, not by permission slips",
       "evidenceSource": "git log --grep receipts (agent-verify/econ/anchor), last 7 days",
-      "value": "verify ALL_PASS=4 · econ receipts=13 · anchors=11 → score 14",
+      "value": "verify ALL_PASS=0 · econ receipts=0 · anchors=0 → score 0",
       "breakEven": "≥5 receipts / 7d",
-      "status": "GROW",
+      "status": "DECLINE",
       "note": "the estate runs on schedules it owns; nobody presses its buttons"
     }
   ],
@@ -103,19 +103,19 @@
     {
       "book": "econ-book.json",
       "exists": true,
-      "ageHours": 4.1,
+      "ageHours": 4.9,
       "fresh": true
     },
     {
       "book": "curation-book.json",
       "exists": true,
-      "ageHours": 46.2,
+      "ageHours": 47,
       "fresh": true
     },
     {
       "book": "money-ledger.json",
       "exists": true,
-      "ageHours": 11.3,
+      "ageHours": 12.2,
       "fresh": true
     },
     {
@@ -133,25 +133,25 @@
     {
       "book": "bridge-book.json",
       "exists": true,
-      "ageHours": 11.3,
+      "ageHours": 12.1,
       "fresh": true
     },
     {
       "book": "dex-book.json",
       "exists": true,
-      "ageHours": 11.3,
+      "ageHours": 12.1,
       "fresh": true
     },
     {
       "book": "learning-ledger.json",
       "exists": true,
-      "ageHours": 11.3,
+      "ageHours": 12.2,
       "fresh": true
     },
     {
       "book": "recruitment.json",
       "exists": true,
-      "ageHours": 29.2,
+      "ageHours": 0,
       "fresh": true
     }
   ]
