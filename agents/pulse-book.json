@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "at": "2026-10-04T13:01:34.778Z",
+  "at": "2026-10-04T14:30:58.773Z",
   "since": "2026-10-02T16:40:20.950Z",
   "windowSince": "2026-10-02T16:40:20.950Z",
   "agent": "pulse v1.2.0 (CR-0009 loop, Rung 1; CR-0028 consumes the laya advisory triage; CR-0033 consumes the scheduled evolution-window evidence — Z-48/Z-49/Z-60/Z-62)",
@@ -8,6 +8,18 @@
     "since": "2026-10-02T16:40:20.950Z",
     "count": 40,
     "commits": [
+      {
+        "sha": "a5dc89c",
+        "subject": "dex-vault: R42 THE MULTI-NETWORK VAULT (CR-0072 / feat-067 / E65, suite v1.50.0 -> v1.51.0, 65/65 GREEN): the vault holds what its keys can move and sees every network. dex-core.cjs v1.2.0: CUSTODY-CLASS LAW — MEASURED-KEYED is the only mintable class (STEEM/SBD, active keys in the protected desks); OBSERVED-POST-KEYED (BLURT 67.841 measured @blurt-rpc.saboin.com — the steem posting WIF is the blurt posting key, transfers gated); OBSERVED-UNCONTROLLED (HIVE 0.034 + 0.003 HBD @api.hive.blog — active pub != held keys, R38 law); PLANNED-NO-CLAIM (SAOS); OBSERVED-ABSENT (honest unknown). probeNetworks(): keyless condenser probes per network with node fallbacks, booked as OBSERVE ops with provenance — the vault SEES every network, NEVER counts observations as custody or reserve; the class upgrades the same tick verified key material appears (no new code). ISSUER identity SAOS-DEX-ISSUER/1 (stable recomputable sha256-16 over wrappers+chains+catalog, measured d7ff39690365bfa8) with the mint law (1:1 against MEASURED-KEYED custody, 25% deterministic genesis law) and per-chain peg-out corridors. REDEEM law: burn BEFORE payout — in-ledger redeem ALWAYS honored 1:1 (conservation asserted); chain payout QUEUED to dex/pegout-queue.json with the corridor named (STEEM/SBD=KEYED-DESK, HIVE/HBD/BLURT=PLAN-PEGOUT-KEYED-OPERATOR); keyless code never fires a broadcast; refusals DUST/OVER-MINT/UNKNOWN-WRAPPER/INSUFFICIENT-CLAIM booked; requests consumed single-writer from dex/redeem-requests.json. Pool catalog P5-P9 appended by the deterministic reconcile law (idempotent, born empty, custody-class-gated): P5 WHIVE/HIVE, P6 WHBD/HBD, P7 WBLURT/BLURT pegs, P8 HIVE/STEEM cross-network bridge (planned), P9 WSBD/WHBD dollar bridge. CROSS-FAIR law: HIVE-per-STEEM = SBD-per-STEEM / HBD-per-HIVE (measured 1869150744 nano = 1.8692), BigInt floor, honest nulls; A2 row honestly banded NO-CUSTODY. E65: white-box custody/redeem/cross-fair/reconcile/genesis/issuer laws, black-box dex-core selftest fresh-process (52/52), real-tree re-derivation of the booked vault (issuer identity recomputes, custody classes re-derive, corridors honestly banded, conservation OK, attestation recomputes, A2 band, observed registry); E64 real-tree fixed to the ledger-first law (pipe-proof ops re-derived from the append-only history, not the rotating opsThisTick). First R42 tick: seq 17, 12 LIVE routes + 70 honest planned/thin, A1 BELOW-FLOOR (the floor law protects the P&L). claims feats=67 evidence offenders=0 suite MATCH, secret-scan 0 [skip ci]"
+      },
+      {
+        "sha": "06eba46",
+        "subject": "moment-watch: RISK_ON · steem-edge -581bps · 2026-10-04T12:21:50Z [skip ci]"
+      },
+      {
+        "sha": "c87307d",
+        "subject": "public-pulse: refresh public pulse books 2026-10-04T11:34:32Z [skip ci]"
+      },
       {
         "sha": "d0129bd",
         "subject": "arb-mesh: post-rebase re-verification on the merged tree (evals 64/64 GREEN v1.50.0, claims feats=66 offenders=0 suite MATCH) [skip ci]"
@@ -155,18 +167,6 @@
       {
         "sha": "06af113",
         "subject": "R32 books on the merged tree — HONEST RE-MEASURE: the sibling's agent-verify/fill-ledger ticks landed mid-rung (conflict #21 on the volatile market-grid books — resolved theirs-then-rerun, the R28 ours-trap law honored); the merged tree re-measured: market-grid MARKET-GRID-LIVE (v1.3.0 pond law live), mm-volume MMV-PLAN-LIVE (projVol 989.517 SBD/day on the FRESH ledger dials — avgSize 0.661 n=137, capture 106/day moved since the pre-rebase measurement; HE pond 960.4816 SBD, 5 venues projected, bindings named), evals 54/54 GREEN v1.41.0 on the merged tree, claims+census refreshed [skip ci]"
-      },
-      {
-        "sha": "f0bc8db",
-        "subject": "R32 THE SIDECHAIN POND (CR-0062 / feat-057 / E54, suite v1.40.0 -> v1.41.0, 54/54 GREEN): the venue's own measured 24h volume IS the volume bound — the Hive-Engine projection OPENS on the pond (min(pond, capacity) with the binding NAMED — pond or capacity — never a borrowed tape prior); the pond rides in SWAP.HIVE from the HE metrics contract and converts to SBD-term by the MEASURED HBD/HIVE internal-market mid (SBD≈HBD parity carried as a labeled doctrine conversion on every HE row — the RATE measured from the chains, never hardcoded). market-grid v1.3.0: HE rows carry pond24hHive + pondTerm (metrics.volume named for what it is), the daily-history contract is PROBED every run probe-first fail-loud (measured DARK — marketHistory/history answers null, not RPC-exposed; the day it answers the pond becomes a series with zero new code), history rows grow mids + hePonds + heHistoryAlive, the pond law joins the book's laws. mm-volume v1.4.0: venueEconomics grows the pond bound (fillsPerMin nullable + pondVolumeSbd; validity = fee/spread/size AND tape-or-pond; bounds.pondBoundTradesDay; deterministic tie order tape->capture->pond->capacity); pondSbdTerm pure; HE venues gain pond fields + econ + sharePct + shareLadder (the pond rides through N — capacity scales, the pond does not) + selfFlow on the MEASURED zero-fee basket (25% cap, INTERNAL-FLOW label, VWAP-exclusion — fee'd WAIV stays honestly blocked FEE-ROUND-TRIP-NONZERO); projections grow heVenuesProjected/hePondSbdDay/heProjVolumeSbdDay/heProjNetConsSbdDay; darkSurfaces grows he-daily-history; the plan ledger grows heVenuesProjected/hePondSbdDay; the series mapper is per-venue (HE sub = symbol, no cross-venue contamination). LIVE on the real chain: projVol 85.684 -> 1039.955 SBD/day (x12.14 on honest measured bounds, no invented volume) · HE pond 960.4816 SBD across 5 venues · HE projected 556.255 SBD/day · internal-flow cap 259.9887 SBD/day · BEE/CENT/SWAP.DOGE/WAIV pond-bound, SWAP.LTC capacity-bound (pond 801.2838 > capacity). E54 white-box exact (pond bound 160->110.56, cross-rate 110.7372, ladder pond-flat 99.834, selfFlow cap 27.64) + black-box mid-bearing fixture opens 3 HE venues byte-stable + mid-less fixture keeps honest nulls + real-tree live ladders. E53's WAIV pin EVOLVED WITH THE DESK (written in the eval, never silent): the mid-less fixture's honest reason is NO-MEASURED-HBD-HIVE-MID. Books refreshed on the rung: evals 54/54 GREEN v1.41.0 · claims 0 offenders feats=57 evidence 152/155 suite MATCH · census 16/16 caps=61 wiring=10/10 · secret-scan 0 (5 prose hits are past-rung key-handling descriptions) [skip ci]"
-      },
-      {
-        "sha": "a2592bc",
-        "subject": "agent-verify: ALL_PASS · 53/53 · 0 suspended · 2026-10-04T02:57:21Z [skip ci]"
-      },
-      {
-        "sha": "b668805",
-        "subject": "fill-ledger: tick 2026-10-04T02:55:29Z [skip ci]"
       }
     ]
   },
@@ -736,7 +736,7 @@
       "kind": "observation",
       "source": "evo-windows.json",
       "action": "carry the evolution-window cadence state into the record",
-      "receipt": "118 windows booked, none complete · next due 2026-10-04T12:45:05Z",
+      "receipt": "121 windows booked, none complete · next due 2026-10-04T12:45:05Z",
       "disposition": "BOOKED"
     }
   ],
@@ -757,7 +757,7 @@
     "joined": 7,
     "note": "fresh advisory triage joined by id — lane/urgency hints only, confidence uncalibrated (en checkpoint), dispositions untouched",
     "at": "2026-10-03T15:08:54Z",
-    "age_h": 21.9
+    "age_h": 23.4
   },
   "evoEvidence": {
     "mode": "CADENCE-ONLY",

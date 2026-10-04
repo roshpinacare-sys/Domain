@@ -1,10 +1,11 @@
 {
  "protocol": "SAOS-DEX-CORE/1",
- "at": "2026-10-04T12:57:47.821Z",
- "agent": "dex-core v1.2.0 (R42 MULTI-NETWORK VAULT, CR-0072)",
+ "at": "2026-10-04T14:29:19.288Z",
+ "agent": "dex-core v1.3.0 (R43 INTENT GATES, CR-0073)",
  "mode": "KEYLESS-ATOMIC-INTERNAL",
  "stasisHalted": false,
  "laws": [
+  "intent gates (R43): XC intents settle on ONE balance universe — escrow in, route through OUR pools, chain payouts queued to the corridor (keyless code never broadcasts), refund whole behind the 2:1 clock, corridor exposure bonded ≤ 2× custody",
   "units: µ BigInt end to end, no floats in settlement",
   "volatile pools: x·y ≥ k (Uniswap v2 exact, fee on input, floor to user)",
   "peg pools: Curve stableswap A=10 (canonical, fee on output, −1 pad)",
@@ -99,7 +100,7 @@
   "measured": true,
   "node": "https://api.steemit.com"
  },
- "seq": 17,
+ "seq": 22,
  "vault": {
   "custody": {
    "STEEM": "15551000",
@@ -110,8 +111,8 @@
    "SAOS": "0"
   },
   "custodyProvenance": {
-   "STEEM": "MEASURED condenser headcorner @https://api.steemit.com 2026-10-04T12:57:47.821Z (CUSTODY-DROP)",
-   "SBD": "MEASURED condenser headcorner @https://api.steemit.com 2026-10-04T12:57:47.821Z",
+   "STEEM": "MEASURED condenser headcorner @https://api.steemit.com 2026-10-04T14:29:19.288Z (CUSTODY-DROP)",
+   "SBD": "MEASURED condenser headcorner @https://api.steemit.com 2026-10-04T14:29:19.288Z",
    "HIVE": "UNKEYED-ADJACENCY — honest zero until key material exists (R38 law)",
    "HBD": "UNKEYED-ADJACENCY — honest zero until key material exists (R38 law)",
    "BLURT": "UNKEYED-ADJACENCY — honest zero until key material exists (R38 law)",
@@ -120,11 +121,11 @@
   "wrappedReserve": {
    "WSTEEM": "0",
    "WSBD": "0",
-   "STEEM": "777550",
+   "STEEM": "768192",
    "SBD": "54900"
   },
   "minted": {
-   "WSTEEM": "777550",
+   "WSTEEM": "768192",
    "WSBD": "54900"
   },
   "reserveRatio": {
@@ -140,16 +141,16 @@
    "BLURT": "67841000"
   },
   "observedProvenance": {
-   "HIVE": "MEASURED HIVE headcorner @https://api.hive.blog 2026-10-04T12:57:47.821Z (class OBSERVED-UNCONTROLLED)",
-   "HBD": "MEASURED HIVE headcorner @https://api.hive.blog 2026-10-04T12:57:47.821Z (class OBSERVED-UNCONTROLLED)",
-   "BLURT": "MEASURED BLURT headcorner @https://blurt-rpc.saboin.com 2026-10-04T12:57:47.821Z (class OBSERVED-POST-KEYED)"
+   "HIVE": "MEASURED HIVE headcorner @https://api.hive.blog 2026-10-04T14:29:19.288Z (class OBSERVED-UNCONTROLLED)",
+   "HBD": "MEASURED HIVE headcorner @https://api.hive.blog 2026-10-04T14:29:19.288Z (class OBSERVED-UNCONTROLLED)",
+   "BLURT": "MEASURED BLURT headcorner @https://blurt-rpc.saboin.com 2026-10-04T14:29:19.288Z (class OBSERVED-POST-KEYED)"
   }
  },
  "accounts": {
   "treasury": {
    "claims": {
-    "STEEM": "12824575",
-    "SBD": "119670",
+    "STEEM": "12833933",
+    "SBD": "118670",
     "HIVE": "0",
     "HBD": "0",
     "BLURT": "0",
@@ -305,6 +306,22 @@
     "WSBD": "0"
    },
    "lp": {}
+  },
+  "xc-escrow-401c2409c4583ac5": {
+   "claims": {
+    "STEEM": "0",
+    "SBD": "0",
+    "HIVE": "0",
+    "HBD": "0",
+    "BLURT": "0",
+    "SAOS": "0",
+    "WSTEEM": "0",
+    "WSBD": "0",
+    "WHIVE": "0",
+    "WHBD": "0",
+    "WBLURT": "0"
+   },
+   "lp": {}
   }
  },
  "pools": [
@@ -317,12 +334,12 @@
    "feeBps": 2,
    "amp": 10,
    "planned": false,
-   "ra": "383782",
-   "rb": "393775",
-   "feeMeter": "0",
+   "ra": "374424",
+   "rb": "403177",
+   "feeMeter": "1",
    "verdict": "LIVE-INTERNAL",
    "plannedWhy": null,
-   "mid": 1.02603822
+   "mid": 1.07679262
   },
   {
    "id": "P2",
@@ -349,12 +366,12 @@
    "feeBps": 25,
    "amp": 0,
    "planned": false,
-   "ra": "1555100",
-   "rb": "163980",
-   "feeMeter": "0",
+   "ra": "1545698",
+   "rb": "164980",
+   "feeMeter": "2",
    "verdict": "LIVE-INTERNAL",
    "plannedWhy": null,
-   "mid": 0.1054466
+   "mid": 0.10673495
   },
   {
    "id": "P4",
@@ -461,8 +478,8 @@
    "via": [
     "P3"
    ],
-   "quote": "413",
-   "quoteFor": "3937 µ STEEM (~1% first-hop depth)",
+   "quote": "428",
+   "quoteFor": "4031 µ STEEM (~1% first-hop depth)",
    "verdict": "LIVE-INTERNAL"
   },
   {
@@ -472,8 +489,8 @@
    "via": [
     "P1"
    ],
-   "quote": "3942",
-   "quoteFor": "3937 µ STEEM (~1% first-hop depth)",
+   "quote": "4000",
+   "quoteFor": "4031 µ STEEM (~1% first-hop depth)",
    "verdict": "LIVE-INTERNAL"
   },
   {
@@ -484,8 +501,8 @@
     "P3",
     "P2"
    ],
-   "quote": "412",
-   "quoteFor": "3937 µ STEEM (~1% first-hop depth)",
+   "quote": "427",
+   "quoteFor": "4031 µ STEEM (~1% first-hop depth)",
    "verdict": "LIVE-INTERNAL"
   },
   {
@@ -495,7 +512,7 @@
    "via": [
     "P3"
    ],
-   "quote": "28",
+   "quote": "2556",
    "quoteFor": "274 µ SBD (~1% first-hop depth)",
    "verdict": "LIVE-INTERNAL"
   },
@@ -507,7 +524,7 @@
     "P3",
     "P1"
    ],
-   "quote": "27",
+   "quote": "2537",
    "quoteFor": "274 µ SBD (~1% first-hop depth)",
    "verdict": "LIVE-INTERNAL"
   },
@@ -859,8 +876,8 @@
    "via": [
     "P1"
    ],
-   "quote": "3842",
-   "quoteFor": "3837 µ WSTEEM (~1% first-hop depth)",
+   "quote": "3766",
+   "quoteFor": "3744 µ WSTEEM (~1% first-hop depth)",
    "verdict": "LIVE-INTERNAL"
   },
   {
@@ -871,8 +888,8 @@
     "P1",
     "P3"
    ],
-   "quote": "403",
-   "quoteFor": "3837 µ WSTEEM (~1% first-hop depth)",
+   "quote": "399",
+   "quoteFor": "3744 µ WSTEEM (~1% first-hop depth)",
    "verdict": "LIVE-INTERNAL"
   },
   {
@@ -884,8 +901,8 @@
     "P3",
     "P2"
    ],
-   "quote": "402",
-   "quoteFor": "3837 µ WSTEEM (~1% first-hop depth)",
+   "quote": "398",
+   "quoteFor": "3744 µ WSTEEM (~1% first-hop depth)",
    "verdict": "LIVE-INTERNAL"
   },
   {
@@ -896,7 +913,7 @@
     "P2",
     "P3"
    ],
-   "quote": "28",
+   "quote": "2547",
    "quoteFor": "274 µ WSBD (~1% first-hop depth)",
    "verdict": "LIVE-INTERNAL"
   },
@@ -920,7 +937,7 @@
     "P3",
     "P1"
    ],
-   "quote": "27",
+   "quote": "2528",
    "quoteFor": "274 µ WSBD (~1% first-hop depth)",
    "verdict": "LIVE-INTERNAL"
   },
@@ -1373,12 +1390,12 @@
     "P3-POOL",
     "cex:STEEMUSDT+SBDUSDT"
    ],
-   "poolMidNano": "105446595",
+   "poolMidNano": "106734950",
    "fairNano": "105446700",
    "fairSource": "CEX-IMPLIED-FAIR (SBDUSDT/STEEMUSDT — lead-lag anchor, the opposing side of the local book)",
-   "grossBps": 0.01,
+   "grossBps": 122.17,
    "feesBps": 35,
-   "netBps": -34.99,
+   "netBps": 87.17,
    "thresholdBps": 120,
    "verdict": "BELOW-FLOOR",
    "railOwner": "treasury (our own pool — atomic, no bridge)"
@@ -1386,8 +1403,8 @@
   {
    "id": "A-P1",
    "name": "WSTEEM/STEEM peg guard",
-   "poolMidNano": "1026038219",
-   "driftPct": 2.6,
+   "poolMidNano": "1076792620",
+   "driftPct": 7.67,
    "verdict": "PEG-DRIFT-HALT",
    "guardPct": 0.5
   },
@@ -1412,40 +1429,40 @@
  "counterGrids": {
   "P1": {
    "pair": "WSTEEM/STEEM",
-   "anchor": 1.02603822,
+   "anchor": 1.07679262,
    "anchorSource": "POOL-MID (our side of the book)",
    "spacingPct": 0.42,
    "skewShiftBps": 50,
-   "inventoryShareBase": 493574,
+   "inventoryShareBase": 481511,
    "rungs": [
     {
      "side": "buy",
-     "price": 1.01662021,
+     "price": 1.06690874,
      "unit": "STEEM"
     },
     {
      "side": "sell",
-     "price": 1.02519584,
+     "price": 1.07590857,
      "unit": "WSTEEM"
     },
     {
      "side": "buy",
-     "price": 1.0123324,
+     "price": 1.06240882,
      "unit": "STEEM"
     },
     {
      "side": "sell",
-     "price": 1.02948366,
+     "price": 1.08040849,
      "unit": "WSTEEM"
     },
     {
      "side": "buy",
-     "price": 1.00804459,
+     "price": 1.05790891,
      "unit": "STEEM"
     },
     {
      "side": "sell",
-     "price": 1.03377147,
+     "price": 1.08490841,
      "unit": "WSTEEM"
     }
    ],
@@ -1494,40 +1511,40 @@
   },
   "P3": {
    "pair": "STEEM/SBD",
-   "anchor": 0.1054466,
+   "anchor": 0.10673495,
    "anchorSource": "POOL-MID (our side of the book)",
    "spacingPct": 0.42,
    "skewShiftBps": 50,
-   "inventoryShareBase": 904611,
+   "inventoryShareBase": 903558,
    "rungs": [
     {
      "side": "buy",
-     "price": 0.1044787,
+     "price": 0.10575523,
      "unit": "SBD"
     },
     {
      "side": "sell",
-     "price": 0.10536002,
+     "price": 0.10664732,
      "unit": "STEEM"
     },
     {
      "side": "buy",
-     "price": 0.10403804,
+     "price": 0.10530918,
      "unit": "SBD"
     },
     {
      "side": "sell",
-     "price": 0.10580068,
+     "price": 0.10709337,
      "unit": "STEEM"
     },
     {
      "side": "buy",
-     "price": 0.10359738,
+     "price": 0.10486314,
      "unit": "SBD"
     },
     {
      "side": "sell",
-     "price": 0.10624135,
+     "price": 0.10753941,
      "unit": "STEEM"
     }
    ],
@@ -1535,7 +1552,7 @@
   }
  },
  "treasuryPnl": {
-  "feesMu": "0",
+  "feesMu": "3",
   "rebalanceEdgeMu": "0",
   "note": "fees are LP revenue (treasury owns the LP); rebalance edges are marked to the CEX fair at execution — the LVR defense on our own pool"
  },
@@ -1543,8 +1560,8 @@
   {
    "asset": "STEEM",
    "custody": "15551000",
-   "reserve": "777550",
-   "claims": "12824575",
+   "reserve": "768192",
+   "claims": "12833933",
    "pooled": "1948875",
    "diff": "0",
    "ok": true
@@ -1553,8 +1570,8 @@
    "asset": "SBD",
    "custody": "366000",
    "reserve": "54900",
-   "claims": "119670",
-   "pooled": "191430",
+   "claims": "118670",
+   "pooled": "192430",
    "diff": "0",
    "ok": true
   },
@@ -1596,10 +1613,13 @@
   }
  ],
  "conservationOk": true,
- "attestation": "1b3859480fd81306",
+ "attestation": "cb54a2fc09e19760",
  "processedBatches": [
   "MESH-OPERATOR-PIPEPROOF-R41"
  ],
+ "xcExposure": {
+  "STEEM": "0"
+ },
  "meshPnl": {
   "lifetime": {
    "byAgent": {
@@ -1625,81 +1645,7 @@
   }
  },
  "genesisDone": true,
- "opsThisTick": [
-  {
-   "seq": 10,
-   "type": "POOL-CATALOG-EXTEND",
-   "pool": "P5",
-   "pair": "WHIVE/HIVE",
-   "kind": "PEG",
-   "law": "appended empty — the custody-class law decides when it arms"
-  },
-  {
-   "seq": 11,
-   "type": "POOL-CATALOG-EXTEND",
-   "pool": "P6",
-   "pair": "WHBD/HBD",
-   "kind": "PEG",
-   "law": "appended empty — the custody-class law decides when it arms"
-  },
-  {
-   "seq": 12,
-   "type": "POOL-CATALOG-EXTEND",
-   "pool": "P7",
-   "pair": "WBLURT/BLURT",
-   "kind": "PEG",
-   "law": "appended empty — the custody-class law decides when it arms"
-  },
-  {
-   "seq": 13,
-   "type": "POOL-CATALOG-EXTEND",
-   "pool": "P8",
-   "pair": "HIVE/STEEM",
-   "kind": "VOLATILE",
-   "law": "appended empty — the custody-class law decides when it arms"
-  },
-  {
-   "seq": 14,
-   "type": "POOL-CATALOG-EXTEND",
-   "pool": "P9",
-   "pair": "WSBD/WHBD",
-   "kind": "PEG",
-   "law": "appended empty — the custody-class law decides when it arms"
-  },
-  {
-   "seq": 15,
-   "type": "OBSERVE",
-   "asset": "HIVE",
-   "network": "HIVE",
-   "node": "https://api.hive.blog",
-   "amount": "34000",
-   "prior": "0",
-   "keyClass": "OBSERVED-UNCONTROLLED",
-   "note": "observed, NOT custody — minting and conservation never touch it"
-  },
-  {
-   "seq": 16,
-   "type": "OBSERVE",
-   "asset": "HBD",
-   "network": "HIVE",
-   "node": "https://api.hive.blog",
-   "amount": "3000",
-   "prior": "0",
-   "keyClass": "OBSERVED-UNCONTROLLED",
-   "note": "observed, NOT custody — minting and conservation never touch it"
-  },
-  {
-   "seq": 17,
-   "type": "OBSERVE",
-   "asset": "BLURT",
-   "network": "BLURT",
-   "node": "https://blurt-rpc.saboin.com",
-   "amount": "67841000",
-   "prior": "0",
-   "keyClass": "OBSERVED-POST-KEYED",
-   "note": "observed, NOT custody — minting and conservation never touch it"
-  }
- ],
+ "opsThisTick": [],
  "summary": {
   "verdict": "EXCHANGE-CORE-LIVE",
   "poolsLive": 3,
@@ -1709,7 +1655,7 @@
   "meshFills": 0,
   "meshBatch": null,
   "notes": [
-   "STEEM custody DROP -870000µ measured — trading HALTED this tick (safety law: the vault never trades on shrinking custody)"
+   "STEEM custody DROP -2783000µ measured — trading HALTED this tick (safety law: the vault never trades on shrinking custody)"
   ]
  }
 }

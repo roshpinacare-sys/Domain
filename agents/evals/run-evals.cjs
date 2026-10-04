@@ -46,7 +46,8 @@
  *   E27 evo-windows scheduler — scheduled evolution windows: the pulled-schedule decision is exact (force/skip/bootstrap/first-window/cadence/no-runtime), window outcomes classify honestly (incumbent-retained vs ADOPTION-PENDING-CR, serve-window leak check), fresh-process books append-only rows without spawning the measured batch (Z-62, CR-0033)
  *   E62 swap net             — the DEX router: parity law (quote/base, HBD≠SBD refusal), arb FLOOR law + honest verdict set, peg-drift halt, gated routes name their unlock, counter-grids re-derive from the booked anchor (R39, CR-0069)
  *   E63 exchange core        — the DEX settles: CPMM k-law + golden vectors, Curve stableswap vs independent bisection, reserve/redeem real-value law, minOut atomicity, conservation identity, 3-hop deterministic routing, rebalance FLOOR law, pool-side counter-grids, byte-determinism, attestation recompute (R40, CR-0070)
- *   E64 mesh market          — the fleet trades on our own ledger: settleIntents laws (roster/dust/naked-short refusals, capped WIRE, 5% depth cap, all-or-nothing hops, minOut atomicity, batch idempotency, byte-determinism, edge marked honest-or-null, fee accrual, conservation per fill, attestation recompute), mesh drafting laws (floor-law candidates only, direction = sell the rich side, operator-40/soldiers-60 mandate split, 1%-of-depth budget, dust skip, −0.5% minOut guard, keyed rails never fired), size ladder (monotone honest slippage), real-tree re-derivation of the booked mesh book + the operator pipe-proof fill (R41, CR-0071)
+ *   E65 multi-network vault  — custody classes (MEASURED-KEYED the only mintable), observed registry, issuer identity, redeem corridor (burn-before-payout + queued peg-outs with named corridors), cross-fair law, P5-P9 reconcile + genesis 25% law (R42, CR-0072)
+ *   E66 intent gates         — the cross-chain intent doors: the door registry (8 networks, measured hard-finality constants, honest bands), the 2:1 HTLC clock interlock, the quote law (routeBest + −0.5% guard), escrow-identity (per-intent escrow accounts, escrow-drain idempotency), the pool-fill chain flow (route → wrapper → redeem 1:1 → pegout queued to the named corridor), the bond law (exposure ≤ 2× custody), minOut atomicity on copies, P2P fills (roster-only, below-quote refused, ledger-dest only), refunds WHOLE after the unlock, solver competition (pool default, P2P outbids, lexicographic ties), state advance (event-sourced, idempotent), byte-determinism, attestation — PLUS the two R43 base-repairs locked as golden vectors: routeBest reversed-leg law (SBD→STEEM 1000µ = 9402µ exact cpmmOut) and poolSwap's b-side newRa/newRb return law (R43, CR-0073)
  *
  * Fail-soft: exit 0 always; FAILs are booked honestly (HARNESS-AUDIT MANDATE:
  * green-washing the evals is a doctrine breach).
@@ -1868,9 +1869,14 @@ function accumulateInMemory(bookRows, seed) {
     // hourly lane, keyless — selftest then settle-then-commit) joins — bar 52→53→54 files,
     // keyless 18→19→20, owner-secret stays 34; the core settles OUR ledger, the mesh drafts
     // demand on it — neither ever signs an external rail — pins documented, never silent.
-    c47(wfFiles47.length === 54, 'workflow-count-53');
+    // R43 evolution (in the open, CR-0073): our own dex-xc-cron.yml (the INTENT GATES hourly
+    // lane, keyless — selftest then doors-then-settle-then-commit) joins — bar 54→55 files,
+    // keyless 20→21, owner-secret stays 34; the doors price every network and gate what the
+    // keys cannot move — the pegout queue is the only corridor, keyless code never broadcasts —
+    // pins documented, never silent.
+    c47(wfFiles47.length === 55, 'workflow-count-53');
     c47(ownerSecretCount47 === 34, 'owner-secret-count-34');
-    c47(wfFiles47.length - ownerSecretCount47 === 20, 'keyless-count-19');
+    c47(wfFiles47.length - ownerSecretCount47 === 21, 'keyless-count-19');
     // the converted four: zero non-GITHUB_TOKEN refs, permissions kept, keyless checkout
     const converted47 = ['twin-audit.yml', 'audience-analyst.yml', 'content-reviewer.yml', 'public-pulse.yml'];
     for (const f of converted47) {
@@ -3239,9 +3245,104 @@ function accumulateInMemory(bookRows, seed) {
       why65.length ? 'fails: ' + why65.join('; ') : 'the vault holds what its keys can move, sees every network, and queues every payout with its corridor named');
   } catch (e) { evalr('E65', 'the multi-network vault', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
+  // ---- E66 (R43, CR-0073): THE INTENT GATES — cross-chain intents with ERC-7683 vocabulary on one ledger.
+  // The door registry (measured finality), the 2:1 HTLC clock, escrow-identity, the bond law, the solver,
+  // and the two base-repairs the rung bought: routeBest's reversed-leg law + poolSwap's b-side return law.
+  try {
+    const why66 = [];
+    const dc66 = require(path.join(AG, 'dex-core.cjs'));
+    const xc66 = require(path.join(AG, 'dex-xc.cjs'));
+    const ub66 = (s) => { try { return BigInt(String(s)); } catch (_) { return 0n; } };
+    // 0. BASE-REPAIR GOLDEN VECTORS (R43 bought these — they stay locked forever):
+    //    routeBest through a REVERSED leg ('ba') on an imbalanced pool quotes the exact cpmmOut law
+    const pools66 = [
+      { id: 'P1', pair: 'WSTEEM/STEEM', kind: 'PEG', a: 'WSTEEM', b: 'STEEM', feeBps: 2, amp: 10, ra: '388775', rb: '388775', feeMeter: '0', planned: false },
+      { id: 'P2', pair: 'WSBD/SBD', kind: 'PEG', a: 'WSBD', b: 'SBD', feeBps: 2, amp: 10, ra: '27450', rb: '27450', feeMeter: '0', planned: false },
+      { id: 'P3', pair: 'STEEM/SBD', kind: 'VOLATILE', a: 'STEEM', b: 'SBD', feeBps: 25, ra: '1555100', rb: '163980', feeMeter: '0', planned: false },
+    ];
+    const rev66 = dc66.routeBest(pools66, 'SBD', 'STEEM', 1000n); // 'ba' leg — was 105µ before the repair
+    if (!(rev66 && rev66.ids.length === 1 && rev66.out === dc66.cpmmOut(163980n, 1555100n, 1000n, 25))) why66.push('routeBest reversed-leg law broken (the R43 base-repair regressed)');
+    //    poolSwap's b-side return: newRa (a-side) = rb − out, newRb (b-side) = ra + amountIn (BIGINT law)
+    const ps66 = dc66.poolSwap(pools66[2], 'SBD', 'STEEM', 1000n, null);
+    if (!(ps66 && ps66.newRa === 1545698n && ps66.newRb === 164980n)) why66.push('poolSwap b-side return law broken (the R43 base-repair regressed)');
+    // 1. the door registry: 8 networks, measured finality, honest bands
+    const D66 = xc66.DOORS;
+    if (!(Object.keys(D66).length === 8 && D66.EVM.finalityHardS === 780 && D66.TRON.finalityHardS === 60 && D66.SOL.finalityHardS === 13 && D66.STEEM.finalityHardS === 60 && D66.BLURT.finalityHardS === 63)) why66.push('door finality constants broken');
+    if (!(D66.STEEM.band === 'KEYED-DESK' && D66.HIVE.band === 'PLAN-PEGOUT-KEYED-OPERATOR' && D66.EVM.band === 'PLAN-KEYED-DOOR')) why66.push('door bands not honest');
+    // 2. the 2:1 HTLC interlock: refund unlock = 2 × fill window
+    if (!(xc66.REFUND_UNLOCK_S === 2 * xc66.FILL_TIMEOUT_S)) why66.push('the 2:1 clock interlock broken');
+    // 3. the quote law: guard −0.5% exact, honest nulls
+    const q66 = xc66.priceIntent(pools66, 'SBD', 'STEEM', '1000');
+    if (!(q66 && ub66(q66.minOutMu) === ub66(q66.quoteMu) - (ub66(q66.quoteMu) * 50n / 10000n))) why66.push('quote guard law broken');
+    if (xc66.priceIntent(pools66, 'BLURT', 'STEEM', '1000') !== null) why66.push('no-route pairs must price null');
+    // 4. the door law: EVM-family intents PRICED-NEVER-SETTLED, wrapper doors price through OUR pools
+    const core66m = () => ({ protocol: 'SAOS-DEX-CORE/1', at: '2026-10-04T10:00:00.000Z', genesisDone: true, seq: 7, conservationOk: true, attestation: 'x', accounts: { treasury: { claims: { STEEM: '12829575', SBD: '119670', WSTEEM: '388775', WSBD: '27450' } } }, pools: JSON.parse(JSON.stringify(pools66)), vault: { custody: { STEEM: '15162225', SBD: '338550', HIVE: '0', HBD: '0', BLURT: '0', SAOS: '0' }, wrappedReserve: { STEEM: '388775', SBD: '27450', HIVE: '0', HBD: '0', BLURT: '0', SAOS: '0' }, minted: { WSTEEM: '388775', WSBD: '27450', WHIVE: '0', WHBD: '0', WBLURT: '0' }, reserveRatio: {} } });
+    const evm66 = xc66.planOpen(core66m(), { at: '2026-10-04T12:00:00.000Z', owner: 'treasury', origin: 'SBD', destChain: 'EVM', amountMu: '1000' }, '2026-10-04T12:00:00.000Z');
+    if (!(evm66.ok === false && evm66.band.indexOf('DOOR-GATED-PLAN') === 0)) why66.push('EVM door not honestly gated');
+    const ch66 = xc66.planOpen(core66m(), { at: '2026-10-04T12:00:00.000Z', owner: 'treasury', origin: 'SBD', destChain: 'STEEM', amountMu: '1000' }, '2026-10-04T12:00:00.000Z');
+    if (!(ch66.ok && ch66.intent.destKind === 'CHAIN' && ch66.intent.routeIds.includes('P3') && ch66.intent.routeIds.includes('P1'))) why66.push('wrapper door does not price through our pools');
+    const lg66a = xc66.planOpen(core66m(), { at: '2026-10-04T12:00:00.000Z', owner: 'treasury', origin: 'SBD', dest: 'STEEM', amountMu: '1000' }, '2026-10-04T12:00:00.000Z');
+    const lg66b = xc66.planOpen(core66m(), { at: '2026-10-04T12:00:00.000Z', owner: 'treasury', origin: 'SBD', dest: 'STEEM', amountMu: '1000' }, '2026-10-04T12:00:00.000Z');
+    if (!(lg66a.ok && lg66a.intent.intentId === lg66b.intent.intentId && lg66a.intent.intentId.length === 16)) why66.push('intent ids not deterministic');
+    const big66 = xc66.planOpen(core66m(), { at: '2026-10-04T12:00:00.000Z', owner: 'treasury', origin: 'SBD', dest: 'STEEM', amountMu: '20000' }, '2026-10-04T12:00:00.000Z');
+    if (!(big66.ok === false && big66.band.indexOf('SIZE-CAP-SPLIT-REQUIRED') === 0)) why66.push('split-fill size cap not enforced at plan time');
+    // 5. the settle laws: escrow-identity, refusals, fill flow, bond, minOut atomicity, refund
+    const feed66 = { fresh: true, fair: '105446700' };
+    const NOW66 = '2026-10-04T12:00:00.000Z';
+    const open66 = dc66.settleXcOps(core66m(), { batch: 'E66-O', ops: [{ type: 'XC-OPEN', intentId: 'x01', owner: 'treasury', origin: 'SBD', destKind: 'CHAIN', destChain: 'STEEM', amountMu: '1000', minOutMu: '1' }] }, feed66, NOW66);
+    if (!(open66.settledXc.length === 1 && ub66(open66.st.accounts['xc-escrow-x01'].claims.SBD) === 1000n && open66.consOk)) why66.push('escrow-identity law broken');
+    const dbl66 = dc66.settleXcOps(open66.st, { batch: 'E66-D', ops: [{ type: 'XC-OPEN', intentId: 'x01', owner: 'treasury', origin: 'SBD', destKind: 'CHAIN', destChain: 'STEEM', amountMu: '1000', minOutMu: '1' }] }, feed66, NOW66);
+    if (!dbl66.rejectsXc.some((r) => r.why.indexOf('DOUBLE-OPEN') === 0)) why66.push('cross-batch double-open not refused (escrow-already-held defense)');
+    const fill66 = dc66.settleXcOps(open66.st, { batch: 'E66-F', ops: [{ type: 'XC-FILL-POOL', intentId: 'x01', owner: 'treasury', origin: 'SBD', destKind: 'CHAIN', destChain: 'STEEM', amountMu: '1000', minOutMu: '1' }] }, feed66, NOW66);
+    const f66op = fill66.ops.find((o) => o.type === 'XC-FILL' && o.mode === 'POOL-CHAIN');
+    if (!(f66op && f66op.pegout && f66op.pegout.asset === 'STEEM' && f66op.pegout.corridor.indexOf('KEYED-DESK') === 0 && ub66(fill66.xcExposure.STEEM) === ub66(f66op.wrapperOut) && fill66.consOk && ub66(fill66.st.accounts['xc-escrow-x01'].claims.SBD) === 0n)) why66.push('chain fill flow broken (route → wrapper → redeem → pegout → exposure → escrow drained)');
+    const rep66 = dc66.settleXcOps(fill66.st, { batch: 'E66-R', ops: [{ type: 'XC-FILL-POOL', intentId: 'x01', owner: 'treasury', origin: 'SBD', destKind: 'CHAIN', destChain: 'STEEM', amountMu: '1000', minOutMu: '1' }] }, feed66, NOW66);
+    if (!rep66.rejectsXc.some((r) => r.why.indexOf('ESCROW-MISMATCH') === 0)) why66.push('escrow-drain idempotency broken (a replayed fill must be refused)');
+    // the bond law: pre-booked exposure beyond 2× custody refuses the fill byte-unchanged
+    const bond66m = core66m(); bond66m.xcExposure = { STEEM: '30330000' };
+    const bondOpen66 = dc66.settleXcOps(bond66m, { batch: 'E66-BO', ops: [{ type: 'XC-OPEN', intentId: 'b01', owner: 'treasury', origin: 'SBD', destKind: 'CHAIN', destChain: 'STEEM', amountMu: '1000', minOutMu: '1' }] }, feed66, NOW66);
+    const bondFill66 = dc66.settleXcOps(bondOpen66.st, { batch: 'E66-BF', ops: [{ type: 'XC-FILL-POOL', intentId: 'b01', owner: 'treasury', origin: 'SBD', destKind: 'CHAIN', destChain: 'STEEM', amountMu: '1000', minOutMu: '1' }] }, feed66, NOW66);
+    if (!(bondFill66.rejectsXc.some((r) => r.why.indexOf('BOND-LAW-EXCEEDED') === 0) && bondFill66.consOk && ub66(bondFill66.st.accounts['xc-escrow-b01'].claims.SBD) === 1000n)) why66.push('the bond law (exposure ≤ 2× custody) broken or not atomic');
+    // refund: whole, replay-refused, conservation-clean
+    const ledOpen66 = dc66.settleXcOps(core66m(), { batch: 'E66-LO', ops: [{ type: 'XC-OPEN', intentId: 'l01', owner: 'treasury', origin: 'SBD', destKind: 'LEDGER', destAsset: 'STEEM', amountMu: '1000', minOutMu: '1' }] }, feed66, NOW66);
+    const ref66 = dc66.settleXcOps(ledOpen66.st, { batch: 'E66-REF', ops: [{ type: 'XC-REFUND', intentId: 'l01', owner: 'treasury', origin: 'SBD', amountMu: '1000' }] }, feed66, NOW66);
+    if (!(ref66.settledXc.some((s) => s.op === 'REFUND') && ub66(ref66.st.accounts.treasury.claims.SBD) === 119670n && ref66.consOk)) why66.push('whole-refund law broken');
+    // 6. the solver: pool default, P2P outbids, ties lexicographic; the clocks: refund at unlock, confirm at finality
+    const it66 = { intentId: 'd01', owner: 'treasury', origin: 'SBD', amountMu: '1000', destKind: 'LEDGER', destAsset: 'STEEM', destChain: null, band: 'INTERNAL-BOOK', doorFinalityS: 0, quoteMu: '9000', minOutMu: '8955', routeIds: ['P3', 'P1'], state: 'OPENED', openedAt: NOW66, fillDeadline: new Date(Date.parse(NOW66) + xc66.FILL_TIMEOUT_S * 1000).toISOString(), refundUnlock: new Date(Date.parse(NOW66) + xc66.REFUND_UNLOCK_S * 1000).toISOString(), filledAt: null, confirmedAt: null, fillMode: null, filler: null, filledOutMu: null, payoutMu: null, corridor: null, refusals: [] };
+    const s1 = xc66.chooseFill(core66m(), it66, []);
+    const s2 = xc66.chooseFill(core66m(), it66, [{ intentId: 'd01', filler: 'z-filler', deliverMu: '99999999' }, { intentId: 'd01', filler: 'a-filler', deliverMu: '99999999' }]);
+    if (!(s1 && s1.mode === 'POOL' && s2 && s2.mode === 'P2P' && s2.solver === 'a-filler')) why66.push('solver competition law broken (pool default / outbid / lexicographic ties)');
+    if (xc66.clockActions([it66], NOW66).length !== 0) why66.push('early clock actions forbidden');
+    const refOp66 = xc66.clockActions([{ ...it66, refundUnlock: new Date(Date.parse(NOW66) - 1000).toISOString() }], NOW66);
+    if (!(refOp66.length === 1 && refOp66[0].type === 'XC-REFUND')) why66.push('refund not drafted at the unlock');
+    const fc66 = xc66.clockActions([{ ...it66, destKind: 'CHAIN', destChain: 'STEEM', doorFinalityS: 60, state: 'FILLED', filledAt: NOW66, payoutMu: '9358', filledOutMu: '9358' }], new Date(Date.parse(NOW66) + 61000).toISOString());
+    if (!(fc66.length === 1 && fc66[0].type === 'XC-CONFIRM' && fc66[0].asset === 'STEEM')) why66.push('confirm not drafted at the door finality');
+    // state advance: full lifecycle, idempotent replay, honest refusals
+    const life66 = xc66.advanceStates([{ ...it66, destKind: 'CHAIN', destChain: 'STEEM', doorFinalityS: 60, state: 'DRAFTED' }], [{ type: 'XC-ESCROW', at: NOW66, intentId: 'd01' }, { type: 'XC-FILL', at: NOW66, intentId: 'd01', mode: 'POOL-CHAIN', wrapperOut: '9358', pegout: { corridor: 'KEYED-DESK (x)' } }, { type: 'XC-CONFIRM', at: NOW66, intentId: 'd01', asset: 'STEEM', payoutMu: '9358' }]);
+    if (!(life66.intents[0].state === 'CONFIRMED' && life66.intents[0].corridor.indexOf('KEYED-DESK') === 0 && xc66.advanceStates(life66.intents, [{ type: 'XC-FILL', at: NOW66, intentId: 'd01', mode: 'POOL-CHAIN', wrapperOut: '9358' }]).intents[0].state === 'CONFIRMED')) why66.push('state advance broken or not idempotent');
+    // determinism: the attestation is stable and state-sensitive
+    if (!(xc66.attestationHash({ intents: life66.intents, stats: life66.stats }) === xc66.attestationHash({ intents: life66.intents, stats: life66.stats }))) why66.push('attestation not deterministic');
+    // 7. black-box: the dex-xc selftest in a fresh process (judge separation)
+    const bb66 = spawnSync(process.execPath, [path.join(AG, 'dex-xc.cjs'), 'selftest'], { encoding: 'utf8', timeout: 30000 });
+    if (!(bb66.status === 0 && /DEX-XC-SELFTEST-OK \d+\/\d+/.test(bb66.stdout || ''))) why66.push('dex-xc selftest fresh-process failed');
+    // 8. real-tree: the booked doors book + the live pipe-proof intent re-derive
+    try {
+      const booked66 = JSON.parse(fs.readFileSync(path.join(AG, '..', 'dex', 'xc-intents.json'), 'utf8'));
+      if (booked66.protocol === xc66.PROTOCOL) {
+        if (JSON.stringify(booked66.doors) !== JSON.stringify(xc66.DOORS)) why66.push('booked doors do not re-derive from the constants');
+        if (!booked66.intents.every((i) => i.intentId && ['DRAFTED', 'OPENED', 'FILLED', 'CONFIRMED', 'REFUNDED', 'OPEN-REFUSED'].includes(i.state))) why66.push('booked intent states outside the lifecycle');
+        const proof66 = booked66.intents.find((i) => i.state === 'CONFIRMED' && i.corridor && i.corridor.indexOf('KEYED-DESK') === 0);
+        if (!proof66) why66.push('the live pipe-proof intent (SBD→STEEM corridor, confirmed) is not booked');
+      }
+    } catch (_) { why66.push('the booked xc-intents book is missing'); }
+    evalr('E66', 'the intent gates (CR-0073)', why66.length === 0,
+      ['base-repair golden vectors locked: routeBest quotes reversed legs by the exact cpmmOut law (SBD→STEEM 1000µ = 9402µ — was 105µ before R43) and poolSwap returns b-side newRa/newRb in the pool\u2019s a/b space (1545698/164980 — the transposition that masked until the intent gates filled b-side)', 'white-box doors: 8 networks with measured hard-finality constants (EVM 780s, TRON 60s, SOL 13s, STEEM/HIVE 60s, BLURT 63s) and honest bands (KEYED-DESK / PLAN-PEGOUT-KEYED-OPERATOR / PLAN-KEYED-DOOR), the 2:1 HTLC interlock (refund unlock = 2 × fill window), the quote law (routeBest + −0.5% guard, honest nulls), the door law (EVM-family PRICED-NEVER-SETTLED, wrapper doors price through OUR pools, deterministic 16-hex intent ids, the split-fill size cap at plan time)', 'white-box settlement: escrow-identity (per-intent escrow accounts, escrow-drain idempotency, cross-batch DOUBLE-OPEN refused), the chain-fill flow (route through our pools → wrapper → redeem 1:1 → pegout queued with the corridor named → exposure booked → escrow drained → conservation holds), the bond law (pre-booked exposure beyond 2× custody refuses the fill byte-unchanged), whole refunds, minOut atomicity on copies, P2P fills roster-gated', 'white-box solver + clocks: the pool is the default solver, P2P outbids, ties lexicographic; refunds drafted only at the unlock, confirms only at the door finality; the state advance is event-sourced and idempotent; the attestation is deterministic and state-sensitive', 'black-box: dex-xc selftest in a fresh process (exit 0, OK marker — judge separation)', 'real-tree: the booked doors book re-derives (doors identical, states inside the lifecycle) and the LIVE pipe-proof intent (SBD→STEEM chain payout, KEYED-DESK corridor, CONFIRMED after the finality clock) is booked on the real ledger'],
+      why66.length ? 'fails: ' + why66.join('; ') : 'the doors price every network honestly, settle what our keys can move, and never fake a broadcast');
+  } catch (e) { evalr('E66', 'the intent gates', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.51.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48 + R27 metronome-audit E49 + R28 mm-volume E50 + R29 share-ladder E51 + R30 calibrated-engine E52 + R31 tape-calibration/venue-expansion E53 + R32 sidechain-pond E54 + R33 pnl-verdict E55 + sovereign-hands E56 + R34 fill-through-evolution E57 + R35 human-cadence E58 + R36 community-home E59 + R37 community-breath E60 + R38 chain-proof E61 + R39 swap-net E62 + R40 exchange-core E63 + R41 mesh-market E64 + R42 multi-network-vault E65, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.52.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48 + R27 metronome-audit E49 + R28 mm-volume E50 + R29 share-ladder E51 + R30 calibrated-engine E52 + R31 tape-calibration/venue-expansion E53 + R32 sidechain-pond E54 + R33 pnl-verdict E55 + sovereign-hands E56 + R34 fill-through-evolution E57 + R35 human-cadence E58 + R36 community-home E59 + R37 community-breath E60 + R38 chain-proof E61 + R39 swap-net E62 + R40 exchange-core E63 + R41 mesh-market E64 + R42 multi-network-vault E65 + R43 intent-gates E66, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];

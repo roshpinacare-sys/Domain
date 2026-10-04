@@ -831,6 +831,25 @@
   {
    "id": "feat-067",
    "title": "Fleet Rung 42: THE MULTI-NETWORK VAULT (CR-0072) — the vault holds what its keys can move and sees every network. The owner demanded a smart thing on our network that holds real coins/tokens of all networks and ours. dex-core.cjs v1.2.0: the CUSTODY-CLASS LAW (MEASURED-KEYED is the only mintable class — STEEM/SBD; OBSERVED-POST-KEYED BLURT; OBSERVED-UNCONTROLLED HIVE/HBD per the R38 law; PLANNED-NO-CLAIM SAOS; OBSERVED-ABSENT honest unknown), keyless multi-network condenser probes booked with node provenance in the OBSERVED registry (the vault sees every network, holds only what its keys can move, upgrades the same tick key material verifies), the ISSUER identity SAOS-DEX-ISSUER/1 (stable recomputable sha256-16 over wrappers+chains+catalog; measured d7ff39690365bfa8) with the mint law (1:1 against MEASURED-KEYED custody only, 25% deterministic genesis law) and per-chain peg-out corridors, the REDEEM law (burn BEFORE payout — in-ledger redeem ALWAYS honored 1:1, chain payout queued to dex/pegout-queue.json with the corridor named: KEYED-DESK for STEEM/SBD, PLAN-PEGOUT-KEYED-OPERATOR for HIVE/HBD/BLURT; keyless code never fires a broadcast; refusals DUST/OVER-MINT/UNKNOWN-WRAPPER/INSUFFICIENT-CLAIM booked), the pool catalog P5-P9 appended by the deterministic reconcile law (P5 WHIVE/HIVE, P6 WHBD/HBD, P7 WBLURT/BLURT pegs, P8 HIVE/STEEM cross-network bridge planned, P9 WSBD/WHBD dollar bridge), and the CROSS-FAIR law (HIVE-per-STEEM = SBD-per-STEEM / HBD-per-HIVE, measured 1.8692; the A2 row honestly banded NO-CUSTODY). E65 in the suite: 65/65 GREEN v1.51.0 (selftest 52/52). Live probes: HIVE 0.034 + 0.003 HBD, BLURT 67.841."
+  },
+  {
+   "id": "feat-068",
+   "title": "Fleet Rung 43: THE INTENT GATES (CR-0073) — the DEX learns cross-chain intents. dex-xc.cjs (SAOS-DEX-XC/1, new) + dex-core.cjs v1.3.0 (settleXcOps): ERC-7683 vocabulary (open → resolve → fill → settle/timeout/refund) over ONE deterministic ledger. DOOR LAW: 8 networks with measured hard-finality clocks and honest bands (EVM 780s, TRON 60s, SOL 13s, STEEM/HIVE 60s, BLURT 63s; KEYED-DESK / PLAN-PEGOUT-KEYED-OPERATOR / PLAN-KEYED-DOOR — the EVM/TRON/SOL doors are PRICED-NEVER-SETTLED until keys verify). ESCROW-IDENTITY LAW: per-intent escrow accounts, escrow-drain idempotency, cross-batch DOUBLE-OPEN defense. QUOTE LAW: floors derive from OUR pools (routeBest BigInt + −0.5% guard), no escrow against nothing. FILL LAW: our pools are the default solver (every intent pays fees to OUR network — the traffic flywheel), P2P roster fillers outbid, chain-dest fills route to the wrapper then the R42 redeem law burns 1:1 and queues the payout to the NAMED corridor (keyless code never broadcasts). BOND LAW (THORChain-adapted 2:1): corridor exposure ≤ 2× custody, else refused byte-unchanged. CLOCK LAW (the HTLC 2:1 interlock): refund unlock = 2 × fill window, refunds WHOLE. SPLIT-FILL LAW: one intent ≤ 5% of first-hop depth. TWO BASE-REPAIRS bought and locked as golden vectors: routeBest reversed-leg law (SBD→STEEM quoted 105µ instead of 9402µ — masked since R40) and poolSwap b-side return transposition (masked by symmetric peg pools). LIVE PIPE-PROOF booked on the real ledger (seq 18→22): 1000µ SBD → our pools P3+P1 → 9358µ WSTEEM → redeem 1:1 → pegout queued KEYED-DESK → confirmed at finality+1s, conservation true at every op. E66 + suite v1.51.0 -> v1.52.0, 66/66 GREEN, secret-scan 0.",
+   "cr": "CR-0073",
+   "evidence": [
+    "agents/dex-xc.cjs",
+    "agents/dex-xc.json",
+    "agents/dex-xc.md",
+    "agents/dex-xc-history.jsonl",
+    "agents/dex-core.cjs",
+    "agents/dex-core.json",
+    "dex/xc-intents.json",
+    "dex/xc-ops.json",
+    "dex/pegout-queue.json",
+    "agents/evals/run-evals.cjs",
+    ".github/workflows/dex-xc-cron.yml",
+    "agents/change-requests/CR-0073-intent-gates.json"
+   ]
   }
  ]
 }
