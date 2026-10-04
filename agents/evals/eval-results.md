@@ -1,8 +1,8 @@
 # Desk Evals — runnable expectations (fresh-process judge, Z-36)
 
-_run-evals v1.34.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47, parallel-convergence superset) · 2026-10-04T00:24:55.407Z_
+_run-evals v1.35.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48, parallel-convergence superset) · 2026-10-04T00:39:59.311Z_
 
-**evals green: 47/47 expectations hold**
+**evals green: 48/48 expectations hold**
 
 ## E1 · dedupe identity is stable across repeat harvest — PASS
 - seed(3) + econ rows carrying the same two fills → exactly 3 entries
@@ -61,7 +61,7 @@ _run-evals v1.34.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - 200+data → REACHABLE with model count; 401/403 → AUTH-WALL; network error → UNREACHABLE (no hopeful green)
 - probing a nonexistent provider exits 0 with zero probes booked (fail-soft, no invention)
 - rail-ledger.json stamped (BOOKS-STAMP law)
-- _measured: live probes booked=87_
+- _measured: live probes booked=89_
 
 ## E12 · rail policy: FORBIDDEN row enabled as LIVE fails the gate — PASS
 - a catalog where cohere (ToS FORBIDDEN) is flipped to LIVE is rejected — ok:false with the FORBIDDEN reason named
@@ -102,7 +102,7 @@ _run-evals v1.34.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - white-box: L1 content → CONTENT-SERVED; L1 absent + L2 rail → RAIL-REACHABLE; both absent → CANON-DARK (zero hopeful greens)
 - black-box: fresh-process run exits 0 (fail-soft), receipt stamped with ≥3 named legs
 - the receipt verdict matches the derivation for this context — no environment drift between book and reality (Z-42 root cause: the dead anonymous fallback leg, private canon 404)
-- _measured: verdict=CONTENT-SERVED legs=L1:SERVING,L2:RAIL-UP,L3:DEAD-AS-EXPECTED-PRIVATE_
+- _measured: verdict=CONTENT-SERVED legs=L1:SERVING,L2:RAIL-DOWN,L3:DEAD-AS-EXPECTED-PRIVATE_
 
 ## E18 · ci-hands: the fleet measures its own CI estate with a pinned failure taxonomy — PASS
 - classifyRun pins the taxonomy: 0 jobs = STARTUP-FAILURE, empty-steps <30s = JOB-STARTUP, real step = STEP-FAILURE, green = NOT-FAILURE
@@ -110,14 +110,14 @@ _run-evals v1.34.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - fresh-process desk run: exit 0 (fail-soft), book stamped fresh (<30min)
 - honest reach floor: 16 repos declared, >=1 reached OR every unreached booked honestly as HTTP 4xx refusal (rate-limit is environment, not defect) — never invented
 - cua-bench contract: trajectory booked (every action logged) + STASIS state travels with the receipt
-- _measured: reached=1/16 lanes=9 green=9 activeRed=0 startup=0 mode=keyless_
+- _measured: reached=0/16 lanes=0 green=0 activeRed=0 startup=0 mode=keyless_
 
 ## E19 · hands book: honest verdict derivation + fresh receipts, zero hopeful greens — PASS
 - white-box: probe-ok → LIVE; absent → ABSENT; POLICY LOCK BEATS A GREEN PROBE → LOCKED-TIER-C (the cua permission-at-launch lesson); cross-ref → REF; probe-fail → UNREACHABLE
 - black-box: fresh-process desk exits 0 (fail-soft), ≥5 hands booked, ≥2 LIVE in any healthy context
 - every LIVE hand carries evidence+probeAt — a capability claimed without a receipt is a story
 - verdict enum closed (LIVE/ABSENT/UNREACHABLE/REF/LOCKED-TIER-C) — no hopeful greens possible
-- _measured: hands=6 live=4 receipted=true at=2026-10-04T00:24:41.940Z_
+- _measured: hands=6 live=4 receipted=true at=2026-10-04T00:39:45.784Z_
 
 ## E20 · skill-library gate: expertise as governed data with a mandatory Evidence Artifact — PASS
 - white-box: the predicate flags a bare built-in name (help), a missing Evidence Artifact section, and short/no-trigger descriptions — and PASSES the legal package
@@ -170,7 +170,7 @@ _run-evals v1.34.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - white-box: classifyOutcome() honest — incumbent-retained=INCUMBENT-RETAINED, challenger=ADOPTION-PENDING-CR (verify-only), reef-alive=LEAK-DETECTED (a leak is never silenced), no-book=WINDOW-NO-WINNER
 - black-box: fresh-process desk exits 0 under EVO_WINDOWS_SKIP_RUN=1, appends exactly ONE row (append-only history), never spawns the measured batch (off-budget law)
 - laws: verifyOnly booked in the book laws map
-- _measured: wdec=true wcls=true appended=true decision=SKIPPED-EVAL-CONTEXT windows=60_
+- _measured: wdec=true wcls=true appended=true decision=SKIPPED-EVAL-CONTEXT windows=62_
 
 ## E28 · market-exec planner: mode law, band guard, precision scan, caps, stack idempotency, SBD cap — PASS
 - white-box: resolveMode defaults DRY_RUN; only MARKET_EXEC_LIVE=1 arms broadcast
@@ -355,5 +355,12 @@ _run-evals v1.34.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - black-box: the real gate fresh-process with GH_TOKEN/ZIP_PAT stripped and no marker → exit 0 honestly
 - white-box: the refreshed census book agrees (workflowsKeyless 15 / owner-secret 33)
 - _measured: a secret carried by habit is not security, it is surface — this eval pins the line: same-repo = keyless, cross-repo = capability_
+
+## E48 · the suffix law + the wire-name floor (CR-0056): the keeper dispatch normalizes legacy registry keys to workflow file names (the measured 404 class — 2 desks 404 while 2 desks 204 in the same run, same token — heals), every registry key must resolve to a workflow file that EXISTS on the tree (the keeper can never 404-by-name again while this holds), the seal-adopt wire revived from the sovereign house history (script exists, invocation matches, parses), and the keeper registry shape stays intact — PASS
+- white-box: workflowFileOf — the measured 404 class (bare desk names) suffixes, suffixed names stay identity, falsy stays falsy (fail-soft)
+- white-box: the wire-name floor over the LIVE tree — ARC key × workflowFileOf must exist in .github/workflows
+- white-box: seal-adopt.mjs exists on the tree, the r72 workflow invokes exactly node scripts/seal-adopt.mjs, and the script parses (node --check)
+- white-box: keeperDecide + ARC (9 desks) shape unchanged by the suffix law
+- _measured: the self-healing loop is now name-proof: stale → decide → dispatch 204 → desk runs → book commits_
 
 _Eval discipline adopted from learn-harness-engineering (Z-36): an eval is a runnable expectation, not a hope. Pure functions = white-box; desk processes = black-box fresh processes._
