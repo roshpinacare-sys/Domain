@@ -1,9 +1,9 @@
-# FLEET CENSUS — 2026-10-04T11:21:53.868Z
+# FLEET CENSUS — 2026-10-04T11:25:55.404Z
 
 Offline · keyless · deterministic estate map (CR-0040). Answers: what do we hold, what limits us, how it wires.
 
-## Inventory — מה יש לנו (16/16 lanes present, 11524 commits, 61 capability markers)
-- **Domain** [PRESENT] a0d04c7@2026-10-04 · caps(16): marketGrid, marketExec, fillLedger, marketCycle, crossLayer, oneBloc, capabilityMatrix, econDesk, measureLearn, evoWindows, stasis, evals, skillGate, cadenceCron, gridHistory, gridPaper · workflows=54 desks=76
+## Inventory — מה יש לנו (16/16 lanes present, 11536 commits, 61 capability markers)
+- **Domain** [PRESENT] 28c45e1@2026-10-04 · caps(16): marketGrid, marketExec, fillLedger, marketCycle, crossLayer, oneBloc, capabilityMatrix, econDesk, measureLearn, evoWindows, stasis, evals, skillGate, cadenceCron, gridHistory, gridPaper · workflows=54 desks=76
 - **saos-dex** [PRESENT] 2bbd033@2026-10-03 · caps(8): kernel, amm, mm, gridBeat, gridLedger, dexCredits, dexGridCron, gridTrigger · workflows=4
 - **steem** [PRESENT] 33c541d6@2026-10-03 · caps(5): heLadder, liveGate, ladderRefresh, anchor, chainAttest · chainAgents=144 workflows=3
 - **saos-sovereign-platform** [PRESENT] e36529c@2026-10-03 · caps(5): exchange, ledger, bridge, meshHub, identity · meshContracts=11 meshTests=5 workflows=3
@@ -29,16 +29,16 @@ Offline · keyless · deterministic estate map (CR-0040). Answers: what do we ho
 
 ## Blockers — מה חוסם אותנו (open=2, operator=2, laws=1)
 - **B1** [OPEN] fee-doctrine drift — same fleet, two prices (kernel vs SAOSExchange) · evidence: {"kernelBps":30,"exchangeBps":20}
-- **B2** [OPEN] cadence time-series too young for distribution verdicts (needs ~100+ rows) · evidence: {"historyRows":14,"verdicts":{"MARKET-GRID-LIVE":13,"PARTIAL":1}}
+- **B2** [OPEN] cadence time-series too young for distribution verdicts (needs ~100+ rows) · evidence: {"historyRows":15,"verdicts":{"MARKET-GRID-LIVE":14,"PARTIAL":1}}
 - **B3** [ACTIVE] migration law ACTIVE — market-grid 40bps floor under-covers DEX round trips; any DEX bridge must re-space or stay maker-only · evidence: {"crossLayerDesk":true,"measuredBpsAtTenthPctDepth":90}
 - **B4** [OPERATOR-GATED] (owner) TVM absent — TRON exit = code+capital+authority, all operator-gated (X-1+X-2) · evidence: {"tvmContractMarkers":1}
 - **B5** [OPERATOR-GATED] (owner) binding constraint = capital+authority, not code — signing power stays the owner's by doctrine · evidence: {"dryRunDefault":true,"liveGate":true}
 - **B6** [STANDING-BY] (owner) STASIS breaker — fleet-wide halt state · evidence: {"active":false}
 
 ## Edge series — measured (from our own ledgers)
-- history rows: 14 {"MARKET-GRID-LIVE":13,"PARTIAL":1} · paper rows: 290
-- HBD/HIVE spread%: n=13 min=0.1322 max=0.2376 last=0.2376
-- SBD/STEEM spread%: n=14 min=0.4343 max=3.9603 last=0.4343
+- history rows: 15 {"MARKET-GRID-LIVE":14,"PARTIAL":1} · paper rows: 310
+- HBD/HIVE spread%: n=14 min=0.0028 max=0.2376 last=0.0028
+- SBD/STEEM spread%: n=15 min=0.4343 max=4.1761 last=4.1761
 - dex grid ledger: {"version":2,"orders":73,"fills":43} · fill-ledger rows: 151
 
 ## Wiring — חיבור (10/10 WIRED)
@@ -55,7 +55,7 @@ Offline · keyless · deterministic estate map (CR-0040). Answers: what do we ho
 
 ## Receipts (sha256-16)
 - Domain/agents/market-grid.cjs 8b0b5fe85d0c85b4
-- Domain/agents/market-grid-history.jsonl 66db95c45873020d
+- Domain/agents/market-grid-history.jsonl d5c5b168447314dc
 - Domain/.github/workflows/market-grid-cron.yml eddd43efe4066f0c
 - Domain/agents/market-exec.cjs bd970860cecd027d
 - Domain/agents/fill-ledger.cjs 8bf2b04c1c8b9f90

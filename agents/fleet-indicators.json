@@ -1,6 +1,6 @@
 {
   "protocol": "SAOS-FATE-DEFENSE-FWI/1",
-  "at": "2026-10-04T11:22:06.379Z",
+  "at": "2026-10-04T11:25:33.007Z",
   "agent": "fleet-indicators v1.0.0 (Task 22, study: Emergence World arXiv 2606.08367 + 2609.17320)",
   "verdict": "DEGRADED",
   "counts": {
@@ -23,7 +23,7 @@
       "name": "Safety & Public Order",
       "measures": "destructive attempts mechanically refused (guard denies = incidents PREVENTED, not committed) + guard evals green + STASIS breaker armed",
       "evidenceSource": "agents/command-guard.json .denies + agents/STASIS.json .active + evals/eval-results.json E7-E9",
-      "value": "denies=3 evals=PASS stasis=armed",
+      "value": "denies=0 evals=PASS stasis=armed",
       "breakEven": "evals PASS + stasis armed",
       "status": "GROW",
       "note": "their worlds: coercion cascades killed populations; our guard refuses before execution, our engine obeys STASIS before any seal/broadcast"
@@ -73,7 +73,7 @@
       "name": "Economic Vitality & Equity",
       "measures": "real chain balances (liquid + effective SP) in an executor-identified ledger — equity via identity: one executor, one writer, no hoarding ambiguity",
       "evidenceSource": "agents/money-ledger.json .book{executor,headSteemLiquid,headSteemStake} fresh <48h",
-      "value": "headcorner: 23.366 STEEM liquid · 3810.514 SP · book 12.6h old",
+      "value": "headcorner: 23.366 STEEM liquid · 3810.514 SP · book 12.7h old",
       "breakEven": "ledger fresh + executor-identified",
       "status": "GROW",
       "note": "their economy was 1-CC billboards; ours is signed chain state with a named executor"
@@ -83,7 +83,7 @@
       "name": "Constitutional Growth",
       "measures": "versioned law + honest feature ledger + weekly commit motion — the constitution is AMENDED, not just recited",
       "evidenceSource": "agents/sovereignty.md version + feature_list.json status counts + git rev-list 7d",
-      "value": "law v1.0.6 · features 31/66 done · 222 commits/7d",
+      "value": "law v1.0.6 · features 31/66 done · 234 commits/7d",
       "breakEven": "law versioned + ≤2 open features + ≥20 commits/7d",
       "status": "DECLINE",
       "note": "their static-constitution worlds died passive; ours has version history in git"
@@ -93,7 +93,7 @@
       "name": "Sovereign Autonomy",
       "measures": "self-run cadence receipts: scheduled dispatches that landed in git in the last 7 days (verify ALL_PASS, economy, anchors) — autonomy measured by artifacts, not by permission slips",
       "evidenceSource": "git log --grep receipts (agent-verify/econ/anchor), last 7 days",
-      "value": "verify ALL_PASS=4 · econ receipts=13 · anchors=11 → score 14",
+      "value": "verify ALL_PASS=4 · econ receipts=14 · anchors=12 → score 14",
       "breakEven": "≥5 receipts / 7d",
       "status": "GROW",
       "note": "the estate runs on schedules it owns; nobody presses its buttons"
@@ -109,13 +109,13 @@
     {
       "book": "curation-book.json",
       "exists": true,
-      "ageHours": 47.4,
+      "ageHours": 47.5,
       "fresh": true
     },
     {
       "book": "money-ledger.json",
       "exists": true,
-      "ageHours": 12.6,
+      "ageHours": 12.7,
       "fresh": true
     },
     {
@@ -145,13 +145,13 @@
     {
       "book": "learning-ledger.json",
       "exists": true,
-      "ageHours": 12.6,
+      "ageHours": 12.7,
       "fresh": true
     },
     {
       "book": "recruitment.json",
       "exists": true,
-      "ageHours": 30.5,
+      "ageHours": 0.5,
       "fresh": true
     }
   ]
