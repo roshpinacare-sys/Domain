@@ -850,6 +850,29 @@
     ".github/workflows/dex-xc-cron.yml",
     "agents/change-requests/CR-0073-intent-gates.json"
    ]
+  },
+  {
+   "id": "feat-069",
+   "title": "Fleet Rung 44: THE OPPOSING HANDS (CR-0074) — the counter-grids ARM and the pegout hand proves itself. The owner ordered the opposing grids to stand on our own network — \"אני רוצה לייצר עוד גרידים מתנגדים על הרשת שלנו מצד שני\" (trace 1a105f6d58b6c3a5, re-confirmed 1a1076497144c3ed) — and CR-0074 IS the gate as a repo artifact. DEX-CORE v1.4.0: counterGridGate() (the artifact law — present = open, never a boolean), rungSizeLaw() (per-side notional ≤ 2% of depth value marked to the anchor, split across rungs; cap golden 5183µ; GRID_DUST=1000µ floor), rungId() (deterministic sha256-16 idempotent re-arm), armCounterGrids() (PLAN→GATED-ARMED-BROADCAST-READY; TWO-SIDED law — a one-sided grid is a direction bet, REFUSED-ONE-SIDED; GRID-TOO-THIN keeps dust quiet), GRID-ARM ops booked in the append-only ledger, settle stays pure (the gate is a 6th argument — byte-determinism untouched). counter-grid.cjs (SAOS-COUNTER-GRID/1, keyless): publishes the ring — audits every armed grid (ids re-derive, two-sided, sizes uniform), books a sha256-16 payload seal, live verdict GATED-ARMED-BROADCAST-READY armed=2 grids (P1 WSTEEM/STEEM + P3 STEEM/SBD; P2 GRID-TOO-THIN — the dust law working on the real tree) 12 rungs seal 49cad75d7eb83821. pegout-hand.cjs (SAOS-PEGOUT-HAND/1, keyed): the real-value law's second half — DEST-ALLOWLIST LAW (chain payouts fire ONLY to the 15 estate-roster accounts; the live queue's 'treasury' row booked REFUSED-DEST-NOT-ESTATE, never a transfer to a squatter), µ→chain floor law, pure single-writer queue consumption, own transfer serializer BYTE-VERIFIED against steem-js (golden vectors pinned), signed with gate-crypto.js sovereign ECDSA (zero steem-js at runtime). LIVE RAIL PROOF: 0.001 STEEM self-transfer headcorner→headcorner INCLUDED at block 110150252, txid 798b2990d595d58be2f09a25b9096c4202319188, verified in-block — and the debugging bought the SYNCHRONOUS-BROADCAST RECEIPT LAW: broadcast_transaction_synchronous only (a silent accept-and-drop via the plain broadcast was caught live and retracted honestly in the append-only history). arb-mesh gate row now follows the artifact. E67 in the suite (v1.52.0 → v1.53.0, 67/67 GREEN): white-box gate/sizing/arm/allowlist/floor/purity/serializer-golden, black-box both selftests fresh-process, real-tree ring re-derivation + refusal row + synchronous txid. claims feats=69 evidence offenders=0 suite MATCH, secret-scan 0 [skip ci]",
+   "cr": "CR-0074",
+   "evidence": [
+    "agents/dex-core.cjs",
+    "agents/dex-core.json",
+    "agents/dex-core.md",
+    "agents/dex-core-history.jsonl",
+    "agents/counter-grid.cjs",
+    "agents/counter-grid.json",
+    "agents/counter-grid.md",
+    "agents/counter-grid-history.jsonl",
+    "agents/pegout-hand.cjs",
+    "agents/pegout-hand.json",
+    "agents/pegout-hand.md",
+    "agents/pegout-hand-history.jsonl",
+    "dex/pegout-queue.json",
+    "agents/arb-mesh.cjs",
+    "agents/evals/run-evals.cjs",
+    "agents/change-requests/CR-0074-counter-grids.json"
+   ]
   }
  ]
 }

@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "at": "2026-10-04T14:42:39.640Z",
+  "at": "2026-10-04T16:14:24.036Z",
   "since": "2026-10-02T16:40:20.950Z",
   "windowSince": "2026-10-02T16:40:20.950Z",
   "agent": "pulse v1.2.0 (CR-0009 loop, Rung 1; CR-0028 consumes the laya advisory triage; CR-0033 consumes the scheduled evolution-window evidence — Z-48/Z-49/Z-60/Z-62)",
@@ -8,6 +8,14 @@
     "since": "2026-10-02T16:40:20.950Z",
     "count": 40,
     "commits": [
+      {
+        "sha": "d707894",
+        "subject": "arb-mesh: post-rebase re-verification on the merged tree (evals 66/66 GREEN v1.52.0, E47 census-book pin re-based 20->21 keyless with the dex-xc-cron lane documented, mesh book refreshed from the CI-tick pools, claims feats=68 offenders=0 suite MATCH) [skip ci]"
+      },
+      {
+        "sha": "e6ecd55",
+        "subject": "soldiers-curate: fleet curation book 2026-10-04T14:40:29Z [skip ci]"
+      },
       {
         "sha": "d272693",
         "subject": "R43 THE INTENT GATES (CR-0073 / feat-068 / E66, suite v1.51.0 -> v1.52.0, 66/66 GREEN): the DEX learns cross-chain intents. dex-xc.cjs (SAOS-DEX-XC/1, keyless, STASIS-obeying, fail-soft): the doors — 8 networks with MEASURED hard-finality clocks (EVM 780s = Ethereum 2-epoch governs large sums, TRON 60s solidified, SOL 13s = 32 slots, STEEM/HIVE 60s = 2/3-witness round, BLURT 63s = full 21-witness round) and honest bands (STEEM/SBD=KEYED-DESK, HIVE/HBD/BLURT=PLAN-PEGOUT-KEYED-OPERATOR, EVM/TRON/SOL=PLAN-KEYED-DOOR — PRICED-NEVER-SETTLED until keys verify); the ERC-7683 lifecycle over ONE ledger: planOpen (door law, wrapper doors price through OUR pools, deterministic sha256-16 intent ids, SIZE-CAP-SPLIT-REQUIRED at plan time) + chooseFill (pool-default solver — every intent pays fees to OUR network; P2P roster outbids, ties lexicographic) + clockActions (refund at unlock, confirm at the door finality) + advanceStates (event-sourced, idempotent). ESCROW-IDENTITY LAW: per-intent escrow accounts (xc-escrow-<intentId>), escrow-drain idempotency, cross-batch DOUBLE-OPEN defense. CLOCK LAW: the 2:1 HTLC interlock (refund unlock = 2 x fill window; refunds WHOLE). BOND LAW (THORChain-adapted): corridor exposure <= 2x custody, else BOND-LAW-EXCEEDED byte-unchanged. dex-core.cjs v1.3.0 settleXcOps/settle-xc: the doors' ops applied atomically on the single balance universe — chain-dest redeem SIMULATED BEFORE commit (a refused redeem leaves pools+escrow+accounts byte-identical), the pool-mover's re-derivation law (route rows re-priced after any pool move), pegout rows published to dex/pegout-queue.json, queue consumed single-writer. TWO BASE-REPAIRS bought (תיקון-בסיס לפני היקף) and locked as E66 golden vectors: routeBest reversed-leg quoting (SBD→STEEM 1000µ quoted 105µ instead of 9402µ — masked since R40 by ab-only fills and symmetric peg pools) + poolSwap b-side newRa/newRb transposition (masked by 1:1 pools). LIVE PIPE-PROOF on the real ledger (seq 18→22): intent 401c2409c4583ac5 — treasury 1000µ SBD → route P3+P1 through OUR pools → 9358µ WSTEEM → REDEEM 1:1 → PEGOUT-QUEUED to the KEYED-DESK corridor → XC-CONFIRM at finality+1s, exposure cleared, conservation true at every op. dex-xc-cron.yml (:53 hourly, keyless, [skip ci], rebase-first); E47 re-based 54→55 workflows / 20→21 keyless (pins documented); fleet-graph XC node; CR-0073 (Q-law: constants with sources); feat-068. E66: base-repair golden vectors + white-box doors/settlement/solver/clocks + black-box dex-xc selftest fresh-process (66/66) + real-tree booked book + live pipe-proof. claims feats=68 evidence 212/215 offenders=0 suite MATCH, census 16/16 wiring 10/10, secret-scan 0 [skip ci]"
@@ -159,14 +167,6 @@
       {
         "sha": "774327b",
         "subject": "R34 THE FILL-THROUGH EVOLUTION (CR-0064 / feat-059 / E57, suite v1.42.0 -> v1.43.0, 57/57 GREEN): the measured binding is the CAPTURE, not order capacity — market-exec ladder evolves 3 sells + 3 buys × 0.5 SBD = exactly MAX_NEW_ORDERS (tripled buy exposure on the freed post-cure capital; cap law, band law, STACK-EXISTS untouched; the E28 SBD-cap pin evolved WITH the desk: 0.3 SBD funds zero 0.5-buys, 1.2 funds exactly two — never silent); the sovereign cadence calibrates to the measured fill rate (~1 fill/12min): heartbeat 900→600s, LIVE cooldown 15→10 min, loop restarted live; E57 white-box exact (evolved shape, ascending/descending ladders, buy budget 1.5 SBD, VWAP cap binds above the evolved ladder, cadence 10, real-tree ceiling ≤6 on run #27); cures so far: 5 own above-cap buys cancelled live across runs #24/#26 [skip ci]"
-      },
-      {
-        "sha": "0e187c4",
-        "subject": "R33 THE SOVEREIGN HANDS & THE P&L VERDICT (CR-0063 / feat-058 / E55+E56, suite v1.41.0 -> v1.42.0, 56/56 GREEN): the owner moved the last gate into the sovereignty — market-exec law 11 EDGE-CURE cancels own buys above the buy-edge cap BEFORE planning (the pre-law mine cleared LIVE: 2 own buys above cap 0.099869 cancelled, txids 2027f3e4c5/1f7385f1c6, balances re-read so the plan sees freed SBD), fetchOwnOrders side law (for_sale/NAI-resolved, never position), authority-verify moved ahead of planning; pnl-book.cjs — the realized-P&L verdict desk replaying the append-only ledger through fill-ledger's OWN pure core (µ-precise, lifetime + post-law windows, edgeLawHolds judged honestly, pre-basis proceeds never guessed into realized, chain read-back: liquid/locked/free + powerdown inflow 476 SP/week from 2026-10-10); sovereign-trade.cjs + sovereign-trade-loop.sh — the keyed cadence leg (decideTrade: STASIS->vault->mode->cooldown, vault presence-only honesty, child separation, 900s local heartbeat, VAULT-ABSENT-LOCAL zero-children honesty in CI); vault restored MATCH-ONCHAIN from the operator upload (600 perms, outside every repo); measured: lifetime realized -0.384998 SBD over 137 fills (the honest leak: buy VWAP 0.102413 vs sell VWAP 0.10017), post-law -0.185315 — the cure stops the mine and every matched post-law cycle earns >= +0.3% by construction; E55 (µ-replay exact by hand-check + pre-basis honesty + two windows + black-box byte-stable with corrupt line skipped) + E56 (decision law exact + vault presence-only + zero-children + byte-stable) [skip ci]"
-      },
-      {
-        "sha": "6059a94",
-        "subject": "fleet-census(ci): artifact+delta+claims 2026-10-04T04:09:11Z [skip ci]"
       }
     ]
   },
@@ -736,7 +736,7 @@
       "kind": "observation",
       "source": "evo-windows.json",
       "action": "carry the evolution-window cadence state into the record",
-      "receipt": "124 windows booked, none complete · next due 2026-10-04T12:45:05Z",
+      "receipt": "127 windows booked, none complete · next due 2026-10-04T12:45:05Z",
       "disposition": "BOOKED"
     }
   ],
@@ -757,7 +757,7 @@
     "joined": 7,
     "note": "fresh advisory triage joined by id — lane/urgency hints only, confidence uncalibrated (en checkpoint), dispositions untouched",
     "at": "2026-10-03T15:08:54Z",
-    "age_h": 23.6
+    "age_h": 25.1
   },
   "evoEvidence": {
     "mode": "CADENCE-ONLY",

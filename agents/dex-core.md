@@ -1,6 +1,6 @@
 # dex-core — EXCHANGE CORE (R40, CR-0070)
 
-At: 2026-10-04T14:29:19.288Z · Verdict: **EXCHANGE-CORE-LIVE** · mode: KEYLESS-ATOMIC-INTERNAL · seq: 22 · attestation: `cb54a2fc09e19760`
+At: 2026-10-04T16:05:01.144Z · Verdict: **EXCHANGE-CORE-LIVE** · mode: KEYLESS-ATOMIC-INTERNAL · seq: 23 · attestation: `c08b1d1525b2515e`
 
 Feed: FEED-LIVE (router book @ 2026-10-04T08:48:34.143Z) · conservation: **OK** · custody probe: MEASURED @https://api.steemit.com
 
@@ -108,17 +108,17 @@ Routes: 12 LIVE-INTERNAL (atomic settlement in our own ledger) · 70 planned/thi
 - A-P2 WSBD/SBD peg guard: PEG-OK · drift 0%
 - A2 P8 HIVE/STEEM cross-network bridge: NO-CUSTODY
 
-- Counter-grid P1 WSTEEM/STEEM: anchor 1.07679262 (POOL-MID (our side of the book)) · skew 50bps · spacing 0.42% · rungs 6 · PLAN-POOL-GATED-NOT-BROADCAST
-- Counter-grid P2 WSBD/SBD: anchor 1 (POOL-MID (our side of the book)) · skew 50bps · spacing 0.42% · rungs 6 · PLAN-POOL-GATED-NOT-BROADCAST
-- Counter-grid P3 STEEM/SBD: anchor 0.10673495 (POOL-MID (our side of the book)) · skew 50bps · spacing 0.42% · rungs 6 · PLAN-POOL-GATED-NOT-BROADCAST
+- Counter-grid P1 WSTEEM/STEEM: anchor 1.07679262 (POOL-MID (our side of the book)) · skew 50bps · spacing 0.42% · rungs 6 · GATED-ARMED-BROADCAST-READY · size 4992µ/rung (cap 200bps) · gate OPEN
+- Counter-grid P2 WSBD/SBD: anchor 1 (POOL-MID (our side of the book)) · skew 50bps · spacing 0.42% · rungs 6 · GRID-TOO-THIN · size 0µ/rung (cap 200bps) · gate OPEN
+- Counter-grid P3 STEEM/SBD: anchor 0.10673495 (POOL-MID (our side of the book)) · skew 50bps · spacing 0.42% · rungs 6 · GATED-ARMED-BROADCAST-READY · size 20608µ/rung (cap 200bps) · gate OPEN
 
 Issuer: SAOS-DEX-ISSUER/1 — identity `d7ff39690365bfa8` · mint law 1:1 against MEASURED-KEYED custody only
 Peg-out corridors: STEEM=KEYED-DESK, SBD=KEYED-DESK, HIVE=PLAN-KEYED, HBD=PLAN-KEYED, BLURT=PLAN-KEYED, SAOS=INTERNAL
-Observed (adjacent networks — seen, never custody): HIVE 34000µ (OBSERVED-UNCONTROLLED) · HBD 3000µ (OBSERVED-UNCONTROLLED) · BLURT 67841000µ (OBSERVED-POST-KEYED)
+Observed (adjacent networks — seen, never custody): HIVE 34000µ (OBSERVED-UNCONTROLLED) · HBD 3000µ (OBSERVED-UNCONTROLLED) · BLURT 67477000µ (OBSERVED-POST-KEYED)
 Custody classes: STEEM=MEASURED-KEYED · SBD=MEASURED-KEYED · HIVE=OBSERVED-UNCONTROLLED · HBD=OBSERVED-UNCONTROLLED · BLURT=OBSERVED-POST-KEYED · SAOS=PLANNED-NO-CLAIM
 Vault: minted WSTEEM 768192µ · WSBD 54900µ · WHIVE 0µ · WHBD 0µ · WBLURT 0µ · redeem is ALWAYS honored 1:1 (burn before payout) — the real-value law
 
 Treasury P&L: fees 3µ (LP revenue) · rebalance edges 0µ (marked to fair at execution — the LVR defense on our own pool)
 
-Attestation sha256(seq, custody, reserves, minted, claims) = `cb54a2fc09e19760` — recomputable by any node; the cron book commit is the publication.
+Attestation sha256(seq, custody, reserves, minted, claims) = `c08b1d1525b2515e` — recomputable by any node; the cron book commit is the publication.
 

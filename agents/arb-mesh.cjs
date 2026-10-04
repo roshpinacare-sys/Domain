@@ -43,7 +43,6 @@ const path = require('path');
 const crypto = require('crypto');
 const { spawnSync } = require('child_process');
 const dc = require('./dex-core.cjs'); // the engine — required, never re-implemented
-
 const AG = __dirname;
 const CORE_BOOK = path.join(AG, 'dex-core.json');
 const ROUTER_BOOK = path.join(AG, 'dex-router.json');
@@ -227,7 +226,7 @@ function writeMd(b) {
   L.push(`\n## Mesh P&L (lifetime, from the ledger — the core book is the source of truth)\n`);
   L.push(`Fills: ${b.meshPnl.lifetime.fills} · Volume in: ${b.meshPnl.lifetime.volumeInMu}µ · Edge captured: ${b.meshPnl.lifetime.edgeMu}µ · Fees paid (LP revenue): ${b.meshPnl.lifetime.feesMu}µ`);
   for (const [a, r] of Object.entries(b.meshPnl.lifetime.byAgent || {})) L.push(`- ${a}: ${r.fills} fills · vol ${r.volumeInMu}µ · edge ${r.edgeMu}µ · fees ${r.feesMu}µ`);
-  L.push(`\nLaws: ${b.laws.map((x, i) => `L${i + 1}`).join(' ')} · Gate law: the pool-side counter-grids stay PLAN-POOL-GATED-NOT-BROADCAST — the mesh never fires a gated rung.\n`);
+  L.push(`\nLaws: ${b.laws.map((x, i) => `L${i + 1}`).join(' ')} · Gate law: the counter-grid gate follows CR-0074 (open = GATED-ARMED-BROADCAST-READY, closed = PLAN-POOL-GATED-NOT-BROADCAST) — the mesh never fires a keyed rail either way.\n`);
   fs.writeFileSync(OUT_MD, L.join('\n') + '\n');
 }
 function appendHistory(rows) {
@@ -314,7 +313,9 @@ async function tick() {
       intents: queueDraft ? queueDraft.intents : [],
       wires, fills, rejects, sizeLadder: ladderRows,
       meshPnl: meshPnl || { lifetime: { byAgent: {}, fills: 0, edgeMu: '0', feesMu: '0', volumeInMu: '0' } },
-      gridGate: 'PLAN-POOL-GATED-NOT-BROADCAST — counter-grid rungs fire only behind the owner gate; the mesh waits',
+      gridGate: dc.counterGridGate().open
+        ? `GATED-ARMED-BROADCAST-READY (CR-0074 open — the kernel arms the opposing grids; the mesh still never fires a keyed rail)`
+        : 'PLAN-POOL-GATED-NOT-BROADCAST — counter-grid rungs fire only behind the owner gate; the mesh waits',
       errors: [],
     };
     writeBook(book); writeMd(book);

@@ -1,11 +1,11 @@
 # sovereign-trade — ידי הריבונות (CR-0063)
 
-ריצה אחרונה: 2026-10-04T14:35:33.817Z · זרוע **LIVE** · ילדים: market-cycle **OK** · pnl-book **OK**
+ריצה אחרונה: 2026-10-04T16:16:36.835Z · זרוע **LIVE** · ילדים: market-cycle **OK** · pnl-book **OK**
 
 החלטה: SOVEREIGN-CADENCE-ARMED (הריבונות מחזיקה את הגלגל — הרפלקס חי, חוקי ה-child שולטים בפנים)
 
-market-cycle: [market-cycle] mode=LIVE decision=LIVE errors=0 in 4913ms
-pnl-book: [pnl-book] verdict=PNL-LIVE lifetime realized=-0.389098 SBD (fills 151) · post-law fills=54 realized=-0.187134 · errors=0 in 899ms
+market-cycle: [market-cycle] mode=LIVE decision=LIVE errors=0 in 9842ms
+pnl-book: [pnl-book] verdict=PNL-LIVE lifetime realized=-0.388666 SBD (fills 158) · post-law fills=61 realized=-0.187217 · errors=0 in 796ms
 
 ## שגיאות (0)
 
