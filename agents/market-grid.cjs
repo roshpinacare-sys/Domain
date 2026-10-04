@@ -146,11 +146,24 @@ async function readInternal(node, chain) {
   };
 }
 
+// v1.2.0 (CR-0061): the per-token market fee is a CHAIN FACT, not a constant —
+// the tokens contract carries each token's own marketFeePercentage (absent = 0).
+// The desk re-measures it on every run; the doctrine book prices by the measured row.
 async function readHiveEngine() {
   const t0 = Date.now();
   const res = await post(HE_RPC, { jsonrpc: '2.0', method: 'find',
     params: { contract: 'market', table: 'metrics', query: { symbol: { $in: HE_BASKET } }, limit: 10, offset: 0 }, id: 1 });
   if (!Array.isArray(res.result)) throw new Error('HE metrics not an array');
+  let feeMap = {};
+  try {
+    const tok = await post(HE_RPC, { jsonrpc: '2.0', method: 'find',
+      params: { contract: 'tokens', table: 'tokens', query: { symbol: { $in: HE_BASKET } }, limit: 10, offset: 0 }, id: 2 });
+    for (const t of (tok.result || [])) {
+      if (!t || typeof t.symbol !== 'string') continue;
+      const f = parseFloat(t.marketFeePercentage);
+      feeMap[t.symbol] = isFinite(f) && f >= 0 ? f : 0; // absent = zero per-token market fee (measured law)
+    }
+  } catch (_) { feeMap = {}; } // fee measurement fails soft per desk law — rows carry feePct: null
   const rows = res.result.map((r) => {
     const bid = parseFloat(r.highestBid || '0'), ask = parseFloat(r.lowestAsk || '0');
     const m = mid(bid, ask);
@@ -158,15 +171,32 @@ async function readHiveEngine() {
     const b = band(m || 1, pct);
     const g = buildGrid(m || 1, b);
     const sp = m > 0 ? spreadPct(bid, ask) : Infinity;
+    const feePct = Object.prototype.hasOwnProperty.call(feeMap, r.symbol) ? feeMap[r.symbol] : null;
     return {
       symbol: r.symbol, lastPrice: r.lastPrice, bid, ask,
       mid: +m.toFixed(8), spreadPct: isFinite(sp) ? +sp.toFixed(4) : null,
+      feePct, feeBps: feePct != null ? +(feePct * 100).toFixed(2) : null,
       volume24h: parseFloat(r.volume || '0'),
       gridFeasible: m > 0 && isFinite(sp) && sp >= FEE_FLOOR_PCT,
       rungs: g.grid.length, step: g.step,
     };
   });
   return { market: 'Hive-Engine basket (sidechain DEX)', rows, ms: Date.now() - t0 };
+}
+
+// v1.2.0 (CR-0061): the Blurt internal market — probe-FIRST, fail-loud. Measured
+// 2026-10-04: no blurt node answered from the estate; the probe books the darkness
+// honestly every run, and the day a node answers the venue prices itself at 0 bps
+// (fee-doctrine law). A surface that is dark is a surface we MEASURE as dark —
+// never silently skipped, never invented (the books pattern).
+async function probeBlurt() {
+  try {
+    const res = await post('https://api.blurt.world', { jsonrpc: '2.0', method: 'condenser_api.get_ticker', params: [], id: 1 }, 8000);
+    const bid = parseFloat(res && res.result && res.result.highest_bid);
+    const ask = parseFloat(res && res.result && res.result.lowest_ask);
+    if (!isFinite(bid) || !isFinite(ask) || bid <= 0 || ask <= 0) return { alive: false, reason: 'BLURT-TICKER-INCOMPLETE' };
+    return { alive: true, bid, ask, mid: +mid(bid, ask).toFixed(8), spreadPct: +spreadPct(bid, ask).toFixed(4) };
+  } catch (e) { return { alive: false, reason: 'BLURT-SURFACE-DARK: ' + String(e.message).slice(0, 70) }; }
 }
 
 // ── executor preview (OWNER-GATED — never broadcast) ────────────────────────
@@ -207,7 +237,7 @@ function executorPreview(internalRows) {
       return;
     }
   } catch (_) { /* no brake declared (missing/unreadable STASIS.json) → run normally; the tracked file + init's STASIS proof are the integrity layer */ }
-  const out = { at: new Date().toISOString(), agent: 'market-grid v1.1.0 (Z-60+ internal-market sovereignty instrument)', laws: null, markets: [], hiveEngine: null, paperLedger: PAPER_LEDGER, executorPreviewCount: 0, errors: [], summary: {} };
+  const out = { at: new Date().toISOString(), agent: 'market-grid v1.2.0 (Z-60+ internal-market sovereignty instrument; v1.2.0 CR-0061: HE per-token fees + blurt probe)', laws: null, markets: [], hiveEngine: null, blurt: null, paperLedger: PAPER_LEDGER, executorPreviewCount: 0, errors: [], summary: {} };
   out.laws = ['official sources only (chain nodes + sidechain RPC)', 'keyless: reads only, executor = owner-gated preview, never broadcast', 'paper is paper (labeled ledger, never laundered into realized book)', 'fail-loud per market', 'single canon (market-grid.json/.md)'];
 
   const internal = [];
@@ -216,6 +246,7 @@ function executorPreview(internalRows) {
   }
   out.markets = internal;
   try { out.hiveEngine = await readHiveEngine(); } catch (e) { out.errors.push({ market: 'hive-engine', error: String(e.message) }); }
+  try { out.blurt = await probeBlurt(); } catch (e) { out.blurt = { alive: false, reason: 'BLURT-PROBE-CRASHED: ' + String(e.message).slice(0, 60) }; }
   out.executorPreviewCount = executorPreview(internal).length;
 
   // paper fills (placement-time snapshot) — labeled PAPER, appended evidence trail.
@@ -250,6 +281,8 @@ function executorPreview(internalRows) {
     spreads: internal.map((r) => ({ market: r.market, spreadPct: r.spreadPct, pct24h: r.pct24h, tapeCrossed: r.paperFills })),
     volumeSbdTerm: internal.map((r) => ({ chain: r.chain, market: r.market, volSbdTerm: r.volume24hSbdTerm })),
     heFeasible: out.hiveEngine ? out.hiveEngine.rows.filter((r) => r.gridFeasible).map((r) => `${r.symbol}:${r.spreadPct}%`) : [],
+    heFees: out.hiveEngine ? out.hiveEngine.rows.map((r) => `${r.symbol}:${r.feeBps != null ? r.feeBps : 'unknown'}bps`) : [],
+    blurtAlive: out.blurt ? out.blurt.alive === true : null,
     grids: out.summary.gridsComputed, paper: paperRows.length, preview: out.executorPreviewCount, errors: out.errors.length,
   };
   try { fs.appendFileSync(HISTORY, JSON.stringify(row) + '\n'); } catch (e) { out.errors.push({ market: 'history', error: String(e.message) }); }
@@ -263,7 +296,8 @@ function executorPreview(internalRows) {
     `| Market | Bid | Ask | Spread% | 24h% | Grid rungs | Step | Paper fills (snapshot) |`,
     `|---|---|---|---|---|---|---|---|`,
     ...internal.map((r) => `| ${r.market} | ${r.bid} | ${r.ask} | ${r.spreadPct} | ${r.pct24h} | ${r.grid.length} | ${r.step} | ${r.paperFills} |`),
-    ...(out.hiveEngine ? [``, `Hive-Engine basket (keyless RPC): ` + out.hiveEngine.rows.map((r) => `${r.symbol} spread ${r.spreadPct}%${r.gridFeasible ? ' FEASIBLE' : ' thin'}`).join(' · ')] : []),
+    ...(out.hiveEngine ? [``, `Hive-Engine basket (keyless RPC, per-token fee measured from the tokens contract): ` + out.hiveEngine.rows.map((r) => `${r.symbol} spread ${r.spreadPct}% fee ${r.feeBps != null ? r.feeBps + 'bps' : 'unknown'}${r.gridFeasible ? ' FEASIBLE' : ' thin'}`).join(' · ')] : []),
+    ...(out.blurt ? [``, `Blurt internal market: ${out.blurt.alive === true ? `ALIVE — bid ${out.blurt.bid} · ask ${out.blurt.ask} · spread ${out.blurt.spreadPct}%` : `DARK (probed, honest) — ${out.blurt.reason || 'no answer'}`}`] : []),
     ``,
     `Laws: ${out.laws.join(' · ')}`,
     ``,

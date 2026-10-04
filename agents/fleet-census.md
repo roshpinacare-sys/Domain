@@ -1,9 +1,9 @@
-# FLEET CENSUS — 2026-10-04T02:14:43.311Z
+# FLEET CENSUS — 2026-10-04T02:43:24.277Z
 
 Offline · keyless · deterministic estate map (CR-0040). Answers: what do we hold, what limits us, how it wires.
 
-## Inventory — מה יש לנו (16/16 lanes present, 11486 commits, 61 capability markers)
-- **Domain** [PRESENT] 75844ac@2026-10-04 · caps(16): marketGrid, marketExec, fillLedger, marketCycle, crossLayer, oneBloc, capabilityMatrix, econDesk, measureLearn, evoWindows, stasis, evals, skillGate, cadenceCron, gridHistory, gridPaper · workflows=48 desks=69
+## Inventory — מה יש לנו (16/16 lanes present, 11490 commits, 61 capability markers)
+- **Domain** [PRESENT] d85b9ca@2026-10-04 · caps(16): marketGrid, marketExec, fillLedger, marketCycle, crossLayer, oneBloc, capabilityMatrix, econDesk, measureLearn, evoWindows, stasis, evals, skillGate, cadenceCron, gridHistory, gridPaper · workflows=48 desks=69
 - **saos-dex** [PRESENT] 2bbd033@2026-10-03 · caps(8): kernel, amm, mm, gridBeat, gridLedger, dexCredits, dexGridCron, gridTrigger · workflows=4
 - **steem** [PRESENT] 33c541d6@2026-10-03 · caps(5): heLadder, liveGate, ladderRefresh, anchor, chainAttest · chainAgents=144 workflows=3
 - **saos-sovereign-platform** [PRESENT] e36529c@2026-10-03 · caps(5): exchange, ledger, bridge, meshHub, identity · meshContracts=11 meshTests=5 workflows=3
@@ -29,16 +29,16 @@ Offline · keyless · deterministic estate map (CR-0040). Answers: what do we ho
 
 ## Blockers — מה חוסם אותנו (open=2, operator=2, laws=1)
 - **B1** [OPEN] fee-doctrine drift — same fleet, two prices (kernel vs SAOSExchange) · evidence: {"kernelBps":30,"exchangeBps":20}
-- **B2** [OPEN] cadence time-series too young for distribution verdicts (needs ~100+ rows) · evidence: {"historyRows":10,"verdicts":{"MARKET-GRID-LIVE":9,"PARTIAL":1}}
+- **B2** [OPEN] cadence time-series too young for distribution verdicts (needs ~100+ rows) · evidence: {"historyRows":11,"verdicts":{"MARKET-GRID-LIVE":10,"PARTIAL":1}}
 - **B3** [ACTIVE] migration law ACTIVE — market-grid 40bps floor under-covers DEX round trips; any DEX bridge must re-space or stay maker-only · evidence: {"crossLayerDesk":true,"measuredBpsAtTenthPctDepth":90}
 - **B4** [OPERATOR-GATED] (owner) TVM absent — TRON exit = code+capital+authority, all operator-gated (X-1+X-2) · evidence: {"tvmContractMarkers":1}
 - **B5** [OPERATOR-GATED] (owner) binding constraint = capital+authority, not code — signing power stays the owner's by doctrine · evidence: {"dryRunDefault":true,"liveGate":true}
 - **B6** [STANDING-BY] (owner) STASIS breaker — fleet-wide halt state · evidence: {"active":false}
 
 ## Edge series — measured (from our own ledgers)
-- history rows: 10 {"MARKET-GRID-LIVE":9,"PARTIAL":1} · paper rows: 210
-- HBD/HIVE spread%: n=9 min=0.1322 max=0.1963 last=0.1645
-- SBD/STEEM spread%: n=10 min=0.6565 max=3.9603 last=1.1677
+- history rows: 11 {"MARKET-GRID-LIVE":10,"PARTIAL":1} · paper rows: 230
+- HBD/HIVE spread%: n=10 min=0.1322 max=0.1963 last=0.1867
+- SBD/STEEM spread%: n=11 min=0.6565 max=3.9603 last=2.5031
 - dex grid ledger: {"version":2,"orders":73,"fills":43} · fill-ledger rows: 130
 
 ## Wiring — חיבור (10/10 WIRED)
@@ -54,8 +54,8 @@ Offline · keyless · deterministic estate map (CR-0040). Answers: what do we ho
 - [WIRED] census-map — this census maps all 16 lanes of the estate
 
 ## Receipts (sha256-16)
-- Domain/agents/market-grid.cjs 7dc566dc0f89cd08
-- Domain/agents/market-grid-history.jsonl 1f8f9f1e933d7acb
+- Domain/agents/market-grid.cjs 8182917b2d9727cb
+- Domain/agents/market-grid-history.jsonl 45ee1ba366290416
 - Domain/.github/workflows/market-grid-cron.yml eddd43efe4066f0c
 - Domain/agents/market-exec.cjs 496e5495b9c3529d
 - Domain/agents/fill-ledger.cjs 8bf2b04c1c8b9f90
@@ -63,8 +63,8 @@ Offline · keyless · deterministic estate map (CR-0040). Answers: what do we ho
 - Domain/agents/cross-layer.cjs 0502753f50833acb
 - Domain/agents/one-bloc.cjs 534364660df2b421
 - Domain/agents/STASIS.json 5ab24bc6b95aba0b
-- Domain/agents/evals/run-evals.cjs 3edd7708bfba7861
-- Domain/feature_list.json de3c52702fc855c4
+- Domain/agents/evals/run-evals.cjs 78c126d30c1eeb0f
+- Domain/feature_list.json eb26838d1e93fe1d
 - saos-dex/audit-package/src/kernel.ts 97e5c4a719ddfd0a
 - saos-dex/audit-package/src/amm.ts 91d876f699e18a05
 - saos-dex/db/grid-ledger.json 4476b1cd03fb9038

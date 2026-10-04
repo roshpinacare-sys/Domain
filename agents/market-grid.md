@@ -1,13 +1,15 @@
 # market-grid — internal-market sovereignty instrument (Z-60+)
 
-At: 2026-10-04T01:42:47.020Z · Verdict: **MARKET-GRID-LIVE** · Markets read: 3 · Errors: 0
+At: 2026-10-04T02:41:18.351Z · Verdict: **MARKET-GRID-LIVE** · Markets read: 3 · Errors: 0
 
 | Market | Bid | Ask | Spread% | 24h% | Grid rungs | Step | Paper fills (snapshot) |
 |---|---|---|---|---|---|---|---|
-| HBD/HIVE (internal hive) | 0.05622489959839357 | 0.05631747884447038 | 0.1645 | -0.262 | 10 | 0.00022508 | 5 |
-| SBD/STEEM (internal steem) | 0.10009017132551848 | 0.10126582278481013 | 1.1677 | 0 | 10 | 0.00040271 | 5 |
+| HBD/HIVE (internal hive) | 0.05610021786492374 | 0.05620503597122302 | 0.1867 | 0.155 | 10 | 0.00022461 | 5 |
+| SBD/STEEM (internal steem) | 0.10009017132551848 | 0.10262725779967159 | 2.5031 | 3.704 | 10 | 0.00075081 | 5 |
 
-Hive-Engine basket (keyless RPC): BEE spread 0.0001% thin · SWAP.LTC spread 0.3965% thin · SWAP.DOGE spread 2.0692% FEASIBLE · CENT spread 3.0426% FEASIBLE · WAIV spread 0.2738% thin
+Hive-Engine basket (keyless RPC, per-token fee measured from the tokens contract): BEE spread 0.199% fee 0bps thin · SWAP.LTC spread 0.0623% fee 0bps thin · SWAP.DOGE spread 2.0692% fee 0bps FEASIBLE · CENT spread 3.0426% fee 0bps FEASIBLE · WAIV spread 0.2738% fee 0bps thin
+
+Blurt internal market: DARK (probed, honest) — BLURT-SURFACE-DARK: getaddrinfo ENOTFOUND api.blurt.world
 
 Laws: official sources only (chain nodes + sidechain RPC) · keyless: reads only, executor = owner-gated preview, never broadcast · paper is paper (labeled ledger, never laundered into realized book) · fail-loud per market · single canon (market-grid.json/.md)
 
