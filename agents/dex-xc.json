@@ -1,48 +1,12 @@
 {
  "protocol": "SAOS-DEX-XC/1",
- "at": "2026-10-04T21:59:27.265Z",
+ "at": "2026-10-04T22:57:32.423Z",
  "agent": "dex-xc v1.0.0 (R43 INTENT GATES, CR-0073)",
- "intents": [
-  {
-   "intentId": "401c2409c4583ac5",
-   "owner": "treasury",
-   "origin": "SBD",
-   "amountMu": "1000",
-   "destKind": "CHAIN",
-   "destAsset": null,
-   "destChain": "STEEM",
-   "band": "KEYED-DESK",
-   "doorFinalityS": 60,
-   "quoteMu": "9358",
-   "minOutMu": "9312",
-   "routeIds": [
-    "P3",
-    "P1"
-   ],
-   "guardBps": 50,
-   "state": "CONFIRMED",
-   "openedAt": "2026-10-04T13:35:00.000Z",
-   "fillDeadline": "2026-10-04T14:35:00.000Z",
-   "refundUnlock": "2026-10-04T15:35:00.000Z",
-   "filledAt": "2026-10-04T14:23:10.883Z",
-   "confirmedAt": "2026-10-04T14:24:37.881Z",
-   "fillMode": "POOL-CHAIN",
-   "filler": null,
-   "filledOutMu": "9358",
-   "payoutMu": "9358",
-   "corridor": "KEYED-DESK (steem active in the protected desks — operator-gated broadcast)",
-   "refusals": []
-  }
- ],
- "stats": {
-  "opened": 0,
-  "filled": 0,
-  "confirmed": 1,
-  "refunded": 0,
-  "refused": 0
- },
- "processedOps": [],
- "errors": [],
+ "verdict": "XC-DOORS-HALTED-STASIS",
+ "stasisHalted": true,
+ "stasisReason": "OWNER DIRECTIVE 2026-10-04 (IM trace 1a108e28015b0451): 'חייב לעצור ולבחון מה הסוכנים עושים' — measured live: ~60 delegation ops on headcorner in one day (2026-10-04), including fresh SP delegated to hcsoldier1/2/3 (LOST-NO-CUSTODY — no keys exist, no authority anchors), delegation flapping between 6+ conflicting target values from uncoordinated writers (05:17Z/05:21Z/05:22Z/11:43-45Z/14:55Z/17:48-49Z/20:33-34Z), and 15 signing agents that did not obey this brake. All capital lanes halt for examination until the owner reopens them.",
+ "intents": [],
+ "stats": {},
  "doors": {
   "EVM": {
    "band": "PLAN-KEYED-DOOR",
@@ -93,31 +57,5 @@
    "source": "blurtwallet FAQ — 3s blocks, full 21-witness round 63s"
   }
  },
- "recovery": "state book rebuilt deterministically after the R43 persistence fix — the escrow was already booked on the core ledger (seq history is the authority)",
- "stasisHalted": false,
- "doorsLaw": {
-  "fillTimeoutS": 3600,
-  "refundUnlockS": 7200,
-  "bondExposureRatio": "2:1 (XC_BOND_EXPOSURE_RATIO, enforced by the core)",
-  "guardBps": 50,
-  "dustMu": "1000"
- },
- "core": {
-  "seq": 25,
-  "at": "2026-10-04T21:51:45.436Z",
-  "conservationOk": true,
-  "attestation": "3c7a93f1abfcabc4"
- },
- "verdict": "XC-DOORS-LIVE",
- "batchId": null,
- "queueDrafted": {
-  "opens": 0,
-  "fills": 0,
-  "clock": 0,
-  "planNotes": []
- },
- "exposure": {
-  "STEEM": "0"
- },
- "attestation": "ac4e471ed75c7a81"
+ "errors": []
 }
