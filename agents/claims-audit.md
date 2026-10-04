@@ -1,6 +1,6 @@
 # Claims Audit — the anti-claims instrument (CR-0049, R21)
 
-**WARN** · feats 64 · evidence resolved 196/199 · offenders 0 · warns 4 · suite MATCH
+**WARN** · feats 65 · evidence resolved 201/204 · offenders 0 · warns 4 · suite MATCH
 
 _Owner-language law: owner-facing replies: עברית (Hebrew) — the owner reads Hebrew; repo/CI artifacts stay English_
 

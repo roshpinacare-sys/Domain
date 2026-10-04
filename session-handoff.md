@@ -27,3 +27,14 @@
   owner-gated signing surfaces. Next: peg-out rail identity (R11 exit corridor),
   HBD/USDT real leg (A2 FEED-STALE until found), operator CEX keys (R7-R9),
   drip-day grid-cap expansion (2026-10-10).
+
+## R40 booked rungs (do not re-derive)
+- THE EXCHANGE CORE is live (CR-0070, feat-065, E63, suite v1.49.0): dex-core.cjs
+  settles swaps atomically on our own ledger — CPMM volatile + stableswap peg pools,
+  reserve-backed wrapped vault (mint 1:1, redeem ALWAYS 1:1), conservation identity,
+  attestation sha256, deterministic ≤3-hop routing, rebalance FLOOR law on our own
+  pool (LVR defense), pool-side counter-grids, drip-fuel loop (DEPOSIT-DELTA ops).
+  Hourly lane: dex-core-cron.yml :41 (selftest then tick then commit).
+- Next: a real SAOS claim measured into the vault arms P4 (PLANNED-NO-CLAIM today);
+  peg-out rail identity (R11 exit corridor); HBD/USDT real leg (A2 FEED-STALE);
+  operator CEX keys (R7-R9); drip-day custody delta books itself (2026-10-10).
