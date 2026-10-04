@@ -52,5 +52,59 @@
     "errors": [],
     "run_index": 2,
     "duration_ms": 5494
+  },
+  {
+    "ts": "2026-10-04T04:13:48.345Z",
+    "arm": "LIVE",
+    "reason": "SOVEREIGN-CADENCE-ARMED (הריבונות מחזיקה את הגלגל — הרפלקס חי, חוקי ה-child שולטים בפנים)",
+    "cooldown": {
+      "min": 15,
+      "lastLiveAt": "2026-10-04T03:57:48.625Z",
+      "ok": true
+    },
+    "vault": {
+      "path": "~/my-project/.fleet/headcorner-derived.json",
+      "present": true
+    },
+    "children": {
+      "marketCycle": {
+        "status": "OK",
+        "tail": "[market-cycle] mode=LIVE decision=LIVE errors=0 in 9864ms"
+      },
+      "pnlBook": {
+        "status": "OK",
+        "tail": "[pnl-book] verdict=PNL-LIVE lifetime realized=-0.384998 SBD (fills 137) · post-law fills=40 realized=-0.185315 · errors=0 in 898ms"
+      }
+    },
+    "errors": [],
+    "run_index": 3,
+    "duration_ms": 10843
+  },
+  {
+    "ts": "2026-10-04T04:18:11.812Z",
+    "arm": "DRY",
+    "reason": "COOLDOWN (זרוע LIVE ב-10 הדקות האחרונות — קבלת-פלאנינג בלבד)",
+    "cooldown": {
+      "min": 10,
+      "lastLiveAt": "2026-10-04T04:13:48.345Z",
+      "ok": false
+    },
+    "vault": {
+      "path": "~/my-project/.fleet/headcorner-derived.json",
+      "present": true
+    },
+    "children": {
+      "marketCycle": {
+        "status": "OK",
+        "tail": "[market-cycle] mode=DRY decision=DRY errors=0 in 4629ms"
+      },
+      "pnlBook": {
+        "status": "OK",
+        "tail": "[pnl-book] verdict=PNL-LIVE lifetime realized=-0.384998 SBD (fills 137) · post-law fills=40 realized=-0.185315 · errors=0 in 878ms"
+      }
+    },
+    "errors": [],
+    "run_index": 4,
+    "duration_ms": 5573
   }
 ]

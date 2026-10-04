@@ -1,15 +1,15 @@
 # CI Hands — the fleet's hands on its own CI estate (trycua/cua adoption)
 
-_ci-hands v1.0.0 · 2026-10-04T04:11:21.891Z · keyless · stasis armed/free_
+_ci-hands v1.0.0 · 2026-10-04T04:18:39.589Z · keyless · stasis armed/free_
 
-**CI-HANDS keyless floor: 0/16 reached — the rest booked UNREACHABLE (never invented)**
+**CI-HANDS keyless floor: 2/16 reached — the rest booked UNREACHABLE (never invented)**
 
 | repo | lanes | green | active-red | self-healed | history-transient | verdict |
 |---|---|---|---|---|---|---|
-| saos-sovereign-platform | — | — | — | — | — | UNREACHABLE (HTTP 403) |
-| steem | — | — | — | — | — | UNREACHABLE (HTTP 403) |
-| Domain | — | — | — | — | — | UNREACHABLE (HTTP 403) |
-| Console | — | — | — | — | — | UNREACHABLE (HTTP 403) |
+| saos-sovereign-platform | — | — | — | — | — | UNREACHABLE (HTTP 404) |
+| steem | — | — | — | — | — | UNREACHABLE (HTTP 404) |
+| Domain | 19 | 19 | 0 | 0 | 0 | measured |
+| Console | 7 | 7 | 0 | 0 | 0 | measured |
 | Zip | — | — | — | — | — | UNREACHABLE (HTTP 403) |
 | roshpina | — | — | — | — | — | UNREACHABLE (HTTP 403) |
 | anchor-baseline | — | — | — | — | — | UNREACHABLE (HTTP 403) |

@@ -726,6 +726,18 @@
     "agents/pnl-book.json",
     "agents/sovereign-trade.json"
    ]
+  },
+  {
+   "id": "feat-059",
+   "title": "Fleet Rung 34: THE FILL-THROUGH EVOLUTION (CR-0064) — the ladder shape evolves with the measured binding (capture, not capacity): market-exec DEFAULTS SELL_LEVELS 4→3 + BUY_LEVELS 2→3 + BUY_SBD 0.25→0.5 (3 sells + 3 buys = exactly MAX_NEW_ORDERS, tripled buy exposure on the freed post-cure capital), the sovereign cadence calibrates to the measured fill rate (~1 fill/12min → heartbeat 600s, LIVE cooldown 10 min), the E28 SBD-cap pin evolved WITH the desk (0.3→0 buys, 1.2→2 buys — never silent), E57 white-box exact (shape, budgets, VWAP cap binds above the evolved ladder, cadence, real-tree ceiling ≤ 6), suite v1.42.0 → v1.43.0, 57/57 GREEN; cures so far: 5 own above-cap buys cancelled live.",
+   "status": "implemented",
+   "evidence": [
+    "agents/evals/eval-results.json",
+    "agents/market-exec.cjs",
+    "agents/sovereign-trade.cjs",
+    "agents/sovereign-trade-loop.sh",
+    "agents/change-requests/CR-0064-fill-through-evolution.json"
+   ]
   }
  ]
 }

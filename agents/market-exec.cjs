@@ -67,8 +67,13 @@ const NODE_CROSS = 'https://api.justyy.com';
 
 // ── pure planner (exported for E28) ─────────────────────────────────────────
 const DEFAULTS = {
-  SELL_LEVELS: 4, SELL_SIZE_MIN: 0.3, SELL_SIZE_MAX: 1.25,
-  BUY_LEVELS: 2, BUY_SBD: 0.25,
+  // R34 (CR-0064) THE FILL-THROUGH EVOLUTION: the measured binding is the CAPTURE
+  // (fill-through), not order capacity — the post-cure freed SBD sat idle behind
+  // 2×0.25 buys while the tape runs ~1 fill/12min. The ladder evolves to 3 sells
+  // + 3 buys = exactly MAX_NEW_ORDERS, with 0.5 SBD per buy level (buys ≤ liquid
+  // SBD cap unchanged — the cap law, the band law and the STACK-EXISTS law hold).
+  SELL_LEVELS: 3, SELL_SIZE_MIN: 0.3, SELL_SIZE_MAX: 1.25,
+  BUY_LEVELS: 3, BUY_SBD: 0.5,
   SPACING: 1.004, BUY_SPACING: 0.996,
   SELL_CAP_PCT: 0.85, MAX_NEW_ORDERS: 6,
   BAND_PCT: 2.0, STACK_PCT: 0.35, MIN_REMAINING: 0.5,
