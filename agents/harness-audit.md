@@ -1,6 +1,6 @@
 # Harness Audit — the fleet's five-subsystem check (fresh-context judge node)
 
-_harness-audit v1.0.0 · 2026-10-04T03:19:00.241Z · born from the learn-harness-engineering study (Z-35, extended Task 19)_
+_harness-audit v1.0.0 · 2026-10-04T04:11:05.327Z · born from the learn-harness-engineering study (Z-35, extended Task 19)_
 
 **harness NOT green: 12 FAIL — the audit is honest, the fails are the next work**
 
@@ -36,13 +36,13 @@ _harness-audit v1.0.0 · 2026-10-04T03:19:00.241Z · born from the learn-harness
 | 28 | anchors | KPI names its method (oracle discipline) | FAIL | KPI.json method field |
 | 29 | anchors | spot oracle measured at run time (not cached stories) | PASS | ventures.json priceOracle |
 | 30 | graph | every FILLED role names a reachable worker artifact (role→worker wiring) | PASS | 7 FILLED roles · 7 wired |
-| 31 | loop | all six loop primitives have live fleet instances (automations/worktrees/skills/connectors/sub-agents/external state) | FAIL | workflows:49 desks:87 receipts:true books:10 claims:false |
+| 31 | loop | all six loop primitives have live fleet instances (automations/worktrees/skills/connectors/sub-agents/external state) | FAIL | workflows:49 desks:89 receipts:true books:10 claims:false |
 | 32 | sovereignty | role-registry integrity: every charter row names a real file (roles-as-data, no invented agents) | FAIL | 57 rows · cols 9 · dupes 0 · missing files 1 |
-| 33 | sovereignty | change-request ledger integrity: every CR well-formed, no PENDING abandoned >7d | FAIL | 63 CRs · malformed 13 · stale-pending 0 |
-| 34 | sovereignty | mechanical override live: destructive-command guard stamped, evals E7-E9 pin it | PASS | ledger at 2026-10-04T03:13:11.757Z · scan denies 0 · guardEvals green |
+| 33 | sovereignty | change-request ledger integrity: every CR well-formed, no PENDING abandoned >7d | FAIL | 64 CRs · malformed 14 · stale-pending 0 |
+| 34 | sovereignty | mechanical override live: destructive-command guard stamped, evals E7-E9 pin it | PASS | ledger at 2026-10-04T04:04:18.896Z · scan denies 0 · guardEvals green |
 | 35 | sovereignty | cognitive rail governed: provider registry valid, forbidden rails never enabled, keyless probes booked, E10-E12 pin it | PASS | agents/inference-providers.csv + rail-ledger.json |
 | 36 | fate-defense | Emergence-World adoption: FWI scorecard fresh (9 indicators, each with a mechanical evidence source) + STASIS breaker armed + engine obeys it | PASS | FWI DEGRADED fresh · 9 indicators · sources all named · stasis armed=false · engine gate=true |
-| 37 | sovereignty | collapse drill containment-proof: 4 fault classes injected into throwaway trees, judge caught every one on a fresh run | PASS | verdict CONTAINMENT-PROVEN · caught 4/4 · baseline green=true · age 22.4h · head 025aaa2233c1 |
+| 37 | sovereignty | collapse drill containment-proof: 4 fault classes injected into throwaway trees, judge caught every one on a fresh run | PASS | verdict CONTAINMENT-PROVEN · caught 4/4 · baseline green=true · age 23.3h · head 025aaa2233c1 |
 | 38 | sovereignty | one-bloc convergence book: the whole git (16 repos) measured mechanically into ONE map — roles, HEADs, honest statuses, laws armed | WARN | verdict DEGRADED · reached 2/16 · keyless 2 · age 0.1h · maps bound 3 |
 | 39 | lifecycle | canon reachability proven: a live leg serves the Defi canon, legs booked, never DARK, receipt fits reality (Z-42) | FAIL | verdict CONTENT-SERVED · legs L1:SERVING L2:RAIL-UP L3:DEAD-AS-EXPECTED-PRIVATE · fresh · L1-now absent |
 | 40 | sovereignty | hands book: execution surfaces probed, never claimed — every LIVE hand receipted, ABSENT honest, tier-C locks named, zero hopeful greens (Z-43) | PASS | hands 6 · LIVE 4 (receipted all) · ABSENT 1 · locks 3 · fresh |

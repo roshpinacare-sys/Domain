@@ -42,6 +42,14 @@
  * 10. SINGLE WRITER: agents/market-exec.json (append-only run rows) + agents/market-exec.md
  *     (regenerated human summary). require.main guard (Z-49): requiring this file for
  *     evals must never execute a run.
+ * 11. EDGE-CURE (R33, CR-0063): inside a LIVE run armed with MARKET_EXEC_CURE=1, BEFORE
+ *     planning, own BUY orders priced above the BUY-EDGE cap (sellVwap x (1-edge-floor))
+ *     are CANCELLED — the add-only law kept pre-law orders resting, and a resting buy
+ *     above the cap is a mine: it fills above the realized sell VWAP = the structural
+ *     leak the BUY-PREMIUM law was built to stop. The cure is mechanical (one criterion),
+ *     own-account only, receipted per orderid, and re-reads balances so the plan sees
+ *     the freed SBD. Resting buys AT or below the cap are never touched — they are the
+ *     profit ladder, not the mine.
  */
 
 const fs = require('fs');
@@ -288,7 +296,17 @@ async function fetchOwnOrders(node) {
     const sbdLeg = isSbd(o.sell_price.base) ? o.sell_price.base : o.sell_price.quote;
     const steemLeg = isSbd(o.sell_price.base) ? o.sell_price.quote : o.sell_price.base;
     const sbd = amt(sbdLeg), steem = amt(steemLeg);
-    return { orderid: o.orderid, price: +(sbd / steem).toFixed(6), steem_amt: steem, sbd_amt: sbd, created: o.created, expiration: o.expiration };
+    // side law (R33, CR-0063): for_sale (integer, precision-3) names the asset being
+    // sold — selling SBD = a buy-for-STEEM order. Resolved by amount match against the
+    // base/quote legs, never by position; unreadable → null (the EDGE-CURE only acts
+    // on a positively-classified 'buy', never on a guess).
+    let side = null;
+    if (o.for_sale != null) {
+      const fsAmt = o.for_sale / 1000;
+      const baseMatch = Math.abs(amt(o.sell_price.base) - fsAmt) < 1e-6;
+      side = baseMatch ? (isSbd(o.sell_price.base) ? 'buy' : 'sell') : (isSbd(o.sell_price.quote) ? 'buy' : 'sell');
+    }
+    return { orderid: o.orderid, price: +(sbd / steem).toFixed(6), steem_amt: steem, sbd_amt: sbd, side, created: o.created, expiration: o.expiration };
   });
 }
 
@@ -376,6 +394,7 @@ function writeMd(row) {
   L.push(`| liquid before | ${row.liquid_before.steem} / ${row.liquid_before.sbd} |`);
   L.push(`| own orders on book (pre) | ${row.own_orders_pre} |`);
   L.push(`| authority check | ${row.authority_ok} |`);
+  L.push(`| EDGE-CURE (R33) | ${row.cure ? `cancelled ${row.cure.cancelled}/${row.cure.candidates.length} own buys above cap ${row.cure.cap}${row.cure.failed.length ? ' · failed ' + row.cure.failed.length : ''}` : 'not armed'} |`);
   L.push('');
   L.push(`## placed (${row.placed.length})`);
   for (const p of row.placed) L.push(`- L${p.level} ${p.side} ${p.amount_to_sell} → ${p.min_to_receive} (target ${p.target}, realized ${p.realized}, err ${p.err_pct}%)${p.broadcast ? ' · broadcast ✓' : ' · DRY'}`);
@@ -419,22 +438,9 @@ async function main() {
     row.feed = fh.current_median_history ? +(f(fh.current_median_history.base) / f(fh.current_median_history.quote)).toFixed(6) : null;
     row.liquid_before = { steem: acc.balance, sbd: acc.sbd_balance };
     row.own_orders_pre = ownPre.length;
-    const liquidSteem = f(acc.balance), liquidSbd = f(acc.sbd_balance);
-    // 3. plan (pure) — flow-catch mode replaces the resting-grid plan when armed
-    // (MARKET_EXEC_FLOWCATCH=1): one marketable sell joins the bid, proceeds fund the
-    // buy ladder (Z-65, CR-0042; default OFF — the grid law stays the default).
-    const flowcatch = String(process.env.MARKET_EXEC_FLOWCATCH || '') === '1';
-    row.flowcatch = flowcatch;
-    // BUY-PREMIUM LAW feed: the ledger's realized sell VWAP (read-only; the ledger
-    // is the single writer of its own canon). null → the band law alone applies.
-    const sellVwap = readLedgerSellVwap();
-    row.sell_vwap_used = sellVwap;
-    const plan = flowcatch
-      ? buildFlowCatchPlan({ liquidSteem, bid: book.bid, ask: book.ask, proceedsSbd: liquidSbd, ownOrders: ownPre, sellVwap })
-      : buildPlan({ liquidSteem, liquidSbd, bid: book.bid, ask: book.ask, ownOrders: ownPre, sellVwap });
-    row.mid = plan.mid; row.planned = [...plan.sells, ...plan.buys].map((p) => ({ ...p }));
-    row.skipped = plan.skipped;
-    // 4. authority verify BEFORE any signature
+    let liquidSteem = f(acc.balance), liquidSbd = f(acc.sbd_balance);
+    // 3. authority verify BEFORE any signature (moved ahead of planning in R33:
+    // the EDGE-CURE phase signs cancels before the plan is built)
     let wif = null;
     if (mode === 'LIVE') {
       wif = loadActiveWif();
@@ -444,6 +450,44 @@ async function main() {
     } else {
       row.authority_ok = 'skipped (DRY_RUN)';
     }
+    // 3.5 BUY-PREMIUM LAW feed + EDGE-CURE phase (R33, CR-0063 — law 11)
+    const sellVwap = readLedgerSellVwap();
+    row.sell_vwap_used = sellVwap;
+    const cureArmed = mode === 'LIVE' && String(process.env.MARKET_EXEC_CURE || '') === '1';
+    if (cureArmed) {
+      const cap = sellVwap != null ? r6(sellVwap * (1 - DEFAULTS.BUY_EDGE_FLOOR_PCT / 100)) : null;
+      row.cure = { armed: true, cap, candidates: [], cancelled: 0, failed: [] };
+      if (cap != null) {
+        const bad = ownPre.filter((o) => o.side === 'buy' && o.price > cap);
+        for (const b of bad) row.cure.candidates.push({ orderid: b.orderid, price: b.price, cap });
+        for (const b of bad) {
+          try {
+            const res = await signBroadcast(NODE_PRIMARY, steem, wif, [['limit_order_cancel', { owner: HEAD, orderid: b.orderid }]]);
+            row.broadcast.push({ phase: '0-edge-cure', ops: 1, orderid: b.orderid, ...res });
+            row.cure.cancelled++;
+          } catch (e) {
+            row.cure.failed.push({ orderid: b.orderid, error: String(e.message || e).slice(0, 90) });
+            row.errors.push('cure cancel ' + b.orderid + ': ' + String(e.message || e).slice(0, 90));
+          }
+        }
+        if (row.cure.cancelled > 0) {
+          await sleep(3000);
+          const [accPost] = await Promise.all([rpcNode(NODE_PRIMARY, 'condenser_api.get_accounts', [[HEAD]])]);
+          liquidSteem = f(accPost.balance); liquidSbd = f(accPost.sbd_balance);
+          row.liquid_after_cure = { steem: accPost.balance, sbd: accPost.sbd_balance };
+        }
+      }
+    }
+    // 4. plan (pure) — flow-catch mode replaces the resting-grid plan when armed
+    // (MARKET_EXEC_FLOWCATCH=1): one marketable sell joins the bid, proceeds fund the
+    // buy ladder (Z-65, CR-0042; default OFF — the grid law stays the default).
+    const flowcatch = String(process.env.MARKET_EXEC_FLOWCATCH || '') === '1';
+    row.flowcatch = flowcatch;
+    const plan = flowcatch
+      ? buildFlowCatchPlan({ liquidSteem, bid: book.bid, ask: book.ask, proceedsSbd: liquidSbd, ownOrders: ownPre, sellVwap })
+      : buildPlan({ liquidSteem, liquidSbd, bid: book.bid, ask: book.ask, ownOrders: ownPre, sellVwap });
+    row.mid = plan.mid; row.planned = [...plan.sells, ...plan.buys].map((p) => ({ ...p }));
+    row.skipped = plan.skipped;
     // 5. execute
     const expiry = new Date(Date.now() + DEFAULTS.EXPIRY_DAYS * 864e5).toISOString().slice(0, 19);
     const ops = [];
