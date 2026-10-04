@@ -32,8 +32,9 @@ const OUT_MD = path.join(AG, 'convert-canon.md');
 const STASIS_JSON = path.join(AG, 'STASIS.json');
 const ACCOUNT = process.env.CONVERT_ACCOUNT || 'headcorner';
 const NODE = 'https://api.steemit.com';
-const MAX_PAGES = +(process.env.CONVERT_MAX_PAGES || 30);
+const MAX_PAGES = +(process.env.CONVERT_MAX_PAGES || 90); // Z-72 CR-0054: 30 pages (~13h at measured density) saw only the ladder's tail — the maturity horizon is open+84h, so the walk must reach ~2 days back to book EVERY pending convert (measured: the 10-02..03 ladder, 23 rows / 117.887 SBD, sits inside 60 pages; 90 = measured need + headroom, ~20s walk cost on the tick cadence)
 const WINDOW_DAYS = +(process.env.CONVERT_WINDOW_DAYS || 90); // converts mature in 3.5 days on Steem — 90d window is generous
+const MATURITY_DAYS = 3.5; // STEEM chain law: SBD→STEEM conversion matures 3.5 days after open (Z-72 CR-0054 — the reducer computes it from the op's own timestamp; the chain op carries no date field)
 
 function rpc(method, params, timeout = 20000) {
   return new Promise((resolve, reject) => {
@@ -56,18 +57,27 @@ function convertBook(ops, nowIso) {
   // arriving before its open row in the input (page overlap, book-vs-chain merge)
   // must still close it; the LAST open per id wins (re-opens are possible on-chain).
   const opens = {}, fills = [];
-  for (const { seq, kind, b } of ops) {
+  for (const { seq, kind, b, ts } of ops) {
     if (kind === 'convert') {
       const id = `${b.owner}|${b.requestid}`;
       const prev = opens[id];
-      if (!prev || seq > prev.openedAtSeq) opens[id] = { id, owner: b.owner, requestid: b.requestid, amountSbd: parseFloat(String(b.amount).replace(' SBD', '')), conversion_date: b.conversion_date, openedAtSeq: seq, closedAtSeq: null };
+      // Z-72 CR-0054 THE MATURITY LAW: the chain `convert` op carries NO conversion_date (measured live: {amount, owner, requestid} only).
+      // Maturity = open + 3.5d (chain law, computed — never guessed). Priority: an EXPLICIT book date (sensor memory) > computed from the op's own timestamp > undefined (undated bucket).
+      const date = b.conversion_date || (ts ? new Date(Date.parse(ts) + MATURITY_DAYS * 864e5).toISOString().replace('.000', '') : undefined);
+      if (!prev) opens[id] = { id, owner: b.owner, requestid: b.requestid, amountSbd: parseFloat(String(b.amount).replace(' SBD', '')), conversion_date: date, openedAtSeq: seq, closedAtSeq: null };
+      else {
+        // a dated row (sensor memory / later walk) must never be LAUNDERED into undated by a seq-race — the E43 law keeps the last OPEN, the date law keeps the best-known date
+        if (!prev.conversion_date && date) prev.conversion_date = date;
+        if (seq > prev.openedAtSeq) { prev.openedAtSeq = seq; prev.amountSbd = parseFloat(String(b.amount).replace(' SBD', '')); prev.conversion_date = date || prev.conversion_date; }
+      }
     } else if (kind === 'fill_convert_request') fills.push({ id: `${b.owner}|${b.requestid}`, seq });
   }
   for (const f of fills) { const st = opens[f.id]; if (st && f.seq > st.openedAtSeq && (st.closedAtSeq == null || f.seq > st.closedAtSeq)) st.closedAtSeq = f.seq; } // Z-71 eval-caught: an earlier fill must NEVER close a later re-open
   const state = opens;
-  const pending = [], maturedWindow = [];
+  const pending = [], maturedWindow = [], undated = []; // Z-72 CR-0054: undated bucket — a convert with no parseable maturity is NEVER guessed and NEVER NaN-bracketed into pending/matured
   for (const st of Object.values(state)) {
-    const maturityMs = Date.parse(st.conversion_date);
+    const maturityMs = st.conversion_date ? Date.parse(st.conversion_date) : NaN;
+    if (!isFinite(maturityMs)) { undated.push({ requestid: st.requestid, owner: st.owner, amount_sbd: st.amountSbd, closed: st.closedAtSeq != null, note: 'no maturity date on book or chain op — measured blind spot, never guessed' }); continue; }
     const rec = { requestid: st.requestid, owner: st.owner, amount_sbd: st.amountSbd, conversion_date: st.conversion_date, hours_left: +((maturityMs - nowMs) / 36e5).toFixed(1), closed: st.closedAtSeq != null };
     if (st.closedAtSeq != null) { if (maturityMs >= nowMs - WINDOW_DAYS * 864e5) maturedWindow.push(rec); continue; }
     if (maturityMs > nowMs) pending.push(rec); else maturedWindow.push({ ...rec, note: 'maturity passed but no fill op seen (chain pays lazily or window missed it)' });
@@ -75,7 +85,7 @@ function convertBook(ops, nowIso) {
   pending.sort((a, b) => a.conversion_date.localeCompare(b.conversion_date));
   const totalPendingSbd = +pending.reduce((s, r) => s + r.amount_sbd, 0).toFixed(3);
   return {
-    pending, matured_window: maturedWindow.length,
+    pending, matured_window: maturedWindow.length, undated_window: undated, undated: undated.length,
     total_pending_sbd: totalPendingSbd,
     next_maturity: pending.length ? pending[0].conversion_date : null,
     next_maturity_hours: pending.length ? pending[0].hours_left : null,
@@ -112,7 +122,7 @@ async function main() {
       const ts = e.timestamp + 'Z';
       if (!oldestTs || ts < oldestTs) oldestTs = ts;
       const kind = e.op[0];
-      if (kind === 'convert' || kind === 'fill_convert_request') ops.push({ seq, kind, b: e.op[1] });
+      if (kind === 'convert' || kind === 'fill_convert_request') ops.push({ seq, kind, b: e.op[1], ts: e.timestamp + 'Z' }); // Z-72 CR-0054: the op timestamp rides along — the reducer computes the maturity law (open + 3.5d) instead of shipping undefined
     }
     if (minSeq === 0) { walkedHead = true; break; }
     oldestSeq = minSeq;
@@ -122,12 +132,12 @@ async function main() {
   let sensorRows = 0, sensorSince = null;
   try {
     const ea = JSON.parse(fs.readFileSync(path.join(AG, 'earn-audit.json'), 'utf8'));
-    const rows = Array.isArray(ea) ? ea : (ea.rows || []);
+    const rows = Array.isArray(ea) ? ea : (ea.per_account || ea.rows || []); // Z-72 CR-0054 THE BROKEN WIRE, fixed: the sensor book writes `per_account`, the canon read `rows` — sensor memory composed EMPTY forever (sensor_rows was pinned 0 by every run); both shapes now legal, the wire is alive
     for (const r of rows) {
       const acct = r.account || r.name;
-      for (const m of (r.convert_maturities || [])) { ops.push({ seq: 0, kind: 'convert', b: { owner: acct, requestid: m.requestid, amount: m.amount_sbd + ' SBD', conversion_date: m.conversion_date } }); sensorRows++; }
+      for (const m of (r.convert_maturities || [])) { ops.push({ seq: 0, kind: 'convert', b: { owner: acct, requestid: m.requestid, amount: m.amount_sbd + ' SBD', conversion_date: m.conversion_date || m.matures_at || undefined } }); sensorRows++; } // Z-72: the sensor now books matures_at (chain ops carry no date) — the compose prefers it, never guesses when both absent
       for (const f of (r.convert_fills || [])) ops.push({ seq: 1e15, kind: 'fill_convert_request', b: { owner: acct, requestid: f.requestid } });
-      if ((r.convert_maturities || []).length && (!sensorSince || (r.at || r.ts) < sensorSince)) sensorSince = r.at || r.ts;
+      if ((r.convert_maturities || []).length && (!sensorSince || (r.at || r.ts || ea.at) < sensorSince)) sensorSince = r.at || r.ts || ea.at;
     }
   } catch (_) {}
   const reachedFloor = walkedHead || pagesUsed >= MAX_PAGES; // honest-depth book

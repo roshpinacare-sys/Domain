@@ -88,6 +88,24 @@ function composeOwnerProof() {
     },
   };
 
+  // ── 3b. הגל המתוכנן — לוח ההבשלות האמיתי (Z-72, CR-0053): הסיפור "~435 STEEM Oct-7" היה
+  //    בדיה; האמת הנמדדת — 23 המרות, 117.887 SBD, מבשילות 2026-10-06T00:02Z → 2026-10-07T01:38Z.
+  //    כל מספר מגיע מהקאנון שקורא את השרשרת עצמה (הליכת 90 עמודים), עם המקור והזמן.
+  const cc = readJson('agents/convert-canon.json');
+  const pend = (cc && Array.isArray(cc.pending)) ? cc.pending : [];
+  const lastMat = pend.length ? pend[pend.length - 1].conversion_date : null;
+  proof.sections.rotation = {
+    title: 'הגל המתוכנן — לוח ההבשלות מהשרשרת עצמה (ההפתעה שנמדדה, לא סיפור)',
+    rows: {
+      pendingConverts: row(pend.length || (cc ? 0 : null), 'agents/convert-canon.json (chain walk, 90 pages)', cc && cc.at, 'המרות SBD→STEEM שנפתחו ועוד לא הבשילו — מדוד מהשרשרת, לא מהספרים'),
+      pendingTotalSbd: row(cc ? cc.total_pending_sbd : null, 'agents/convert-canon.json', cc && cc.at, 'סך ה-SBD שיהפוך ל-STEEM במחיר ה-feed בהבשלה'),
+      nextMaturity: row(cc ? cc.next_maturity : null, 'agents/convert-canon.json', cc && cc.at, 'ההבשלה הבאה — חלון העימוד המוקדם נפתח 24 שעות לפניה'),
+      waveEnds: row(lastMat, 'agents/convert-canon.json', cc && cc.at, 'סוף הגל הנוכחי — ההבשלה האחרונה בלוח'),
+      undated: row(cc ? (cc.undated ?? 0) : null, 'agents/convert-canon.json', cc && cc.at, 'המרות בלי תאריך ניתן לחישוב — לעולם לא מנוחשות (חוק CR-0054)'),
+      honestyFix: row('~435 STEEM Oct-7 → התיקון: 117.887 SBD בגל 10-06..10-07', 'agents/change-requests/CR-0054-maturity-law-rung.json', '2026-10-04T00:30:00Z', 'הספרים הקודמים סיפרו סיפור לא נמדד — התוקן ונחתם ב-E45'),
+    },
+  };
+
   // ── 4. מה רץ לבד — האוטונומיה ────────────────────────────────────────────────
   const keeper = readJson('agents/tick-keeper.json');
   const arcRows = {};

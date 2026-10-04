@@ -1772,9 +1772,69 @@ function accumulateInMemory(bookRows, seed) {
       why45.length ? 'fails: ' + why45.join('; ') : 'a ledger that is only appended to is a diary — this eval pins the moment the diary became an instrument: the series are now READ, distributed, and gated by an encoded bar');
   } catch (e) { evalr('E45', 'cadence-week read', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
+  // ── E46 · THE MATURITY-LAW SUITE (Z-72, CR-0054) — the convert schedule was a fiction with
+  //    three measured root causes, each now a runnable expectation:
+  //    (1) THE BROKEN WIRE: convert-canon read the sensor book's `rows` while earn-audit writes
+  //        `per_account` — sensor memory composed EMPTY forever (sensor_rows pinned 0 by every run);
+  //    (2) THE PHANTOM DATE: the chain `convert` op carries NO conversion_date (measured live:
+  //        body = {amount, owner, requestid} only) — the sensor booked `undefined` and the 24h
+  //        pre-position window was dead code since birth; the maturity is a CHAIN LAW (open + 3.5d);
+  //    (3) THE SEQ-RACE LAUNDERING: walked rows (high seq, undated) overwrote the sensor's dated
+  //        rows (seq 0) under the last-open-wins law — the best-known date must survive the race.
+  //    Plus the measured-reality fixture: the 2026-10-02..03 ladder (23 converts, 117.887 SBD)
+  //    matures 2026-10-06T00:02Z → 2026-10-07T01:38Z — the REAL rotation wave, not the
+  //    '~435 STEEM Oct-7' fiction the unmeasured books told.
+  try {
+    const why45 = [];
+    const c45 = (cond, name) => { if (!cond) why45.push(name); return cond; };
+    const cc45 = require(path.join(AG, 'convert-canon.cjs'));
+    const NOW45 = '2026-10-03T23:59:00.000Z';
+    // (a) THE MATURITY LAW — a walked convert with ts and NO date composes open+3.5d
+    const a45 = cc45.convertBook([{ seq: 62119, kind: 'convert', b: { owner: 'headcorner', requestid: 1791014973, amount: '1.400 SBD' }, ts: '2026-10-03T08:09:36Z' }], NOW45);
+    c45(a45.pending.length === 1 && a45.pending[0].conversion_date === '2026-10-06T20:09:36Z' && a45.undated === 0, 'maturity-law-computed');
+    // (b) THE MEASURED REALITY — the 3-point ladder sample: 0.001@10-02T12:02:12, 7.611@12:02:30, 1.26@10-03T13:38:21 → wave 10-06T00:02:12 → 10-07T01:38:21
+    const b45 = cc45.convertBook([
+      { seq: 61000, kind: 'convert', b: { owner: 'headcorner', requestid: 1790976163, amount: '0.001 SBD' }, ts: '2026-10-02T12:02:12Z' },
+      { seq: 61001, kind: 'convert', b: { owner: 'headcorner', requestid: 1790976165, amount: '7.611 SBD' }, ts: '2026-10-02T12:02:30Z' },
+      { seq: 62140, kind: 'convert', b: { owner: 'headcorner', requestid: 1791034699, amount: '1.260 SBD' }, ts: '2026-10-03T13:38:21Z' },
+    ], NOW45);
+    c45(b45.pending.length === 3 && b45.total_pending_sbd === 8.872, 'ladder-total-measured');
+    c45(b45.next_maturity === '2026-10-06T00:02:12Z' && b45.pending[b45.pending.length - 1].conversion_date === '2026-10-07T01:38:21Z', 'wave-window-10-06-to-10-07');
+    // (c) THE SEQ-RACE LAW — a DATED sensor row must survive an undated walked row with higher seq
+    const c45b = cc45.convertBook([
+      { seq: 0, kind: 'convert', b: { owner: 'x', requestid: 1, amount: '5 SBD', conversion_date: '2026-10-07T00:00:00Z' } },
+      { seq: 999, kind: 'convert', b: { owner: 'x', requestid: 1, amount: '5 SBD' }, ts: '2026-10-03T12:00:00Z' },
+    ], NOW45);
+    c45(c45b.pending.length === 1 && c45b.pending[0].conversion_date === '2026-10-07T00:00:00Z', 'seq-race-date-survives');
+    // (d) THE UNDATED BUCKET — no ts + no date = never guessed, never NaN-bracketed
+    const d45 = cc45.convertBook([{ seq: 5, kind: 'convert', b: { owner: 'y', requestid: 2, amount: '3 SBD' } }], NOW45);
+    c45(d45.undated === 1 && d45.pending.length === 0 && d45.next_maturity === null, 'undated-never-guessed');
+    // (e) THE BROKEN WIRE, regression-pinned: the sensor compose reads per_account (both shapes legal)
+    const ea45 = JSON.parse(fs.readFileSync(path.join(AG, 'earn-audit.json'), 'utf8'));
+    c45(Array.isArray(ea45.per_account) && ea45.per_account.length >= 1, 'sensor-book-per-account-shape');
+    const freshSensor = (ea45.per_account || []).find((r) => r.account === 'headcorner');
+    c45(!!freshSensor && (freshSensor.convert_maturities || []).every((m) => typeof m.matures_at === 'string' && !isNaN(Date.parse(m.matures_at))), 'sensor-books-matures-at');
+    // (f) THE LIVE CANON BOOK agrees with the composed law (the real schedule on the real tree)
+    let live45 = null; try { live45 = JSON.parse(fs.readFileSync(path.join(AG, 'convert-canon.json'), 'utf8')); } catch (_) {}
+    c45(!!live45 && Array.isArray(live45.pending) && live45.pending.every((p) => !Number.isNaN(Date.parse(p.conversion_date))), 'live-canon-no-phantom-dates');
+    c45(!!live45 && (live45.sensor_rows > 0 || live45.pending.length > 0 || live45.empty === true), 'wire-alive-or-honestly-empty');
+    // (g) THE SENSOR DESK itself, white-box: tallyOp computes the maturity from the op timestamp
+    const eaDesk45 = require(path.join(AG, 'earn-audit.cjs'));
+    const t45 = eaDesk45.freshTally();
+    eaDesk45.tallyOp(t45, ['convert', { owner: 'headcorner', requestid: 42, amount: '1.400 SBD' }], '2026-10-03T08:09:36');
+    c45(t45.convert_maturities[0].matures_at === '2026-10-06T20:09:36Z' && t45.convert_maturities[0].open_ts === '2026-10-03T08:09:36', 'sensor-tally-computes-maturity');
+    eaDesk45.tallyOp(t45, ['fill_convert_request', { owner: 'headcorner', requestid: 42 }]);
+    c45(t45.convert_fills.length === 1 && t45.convert_fills[0].requestid === 42, 'sensor-books-closure');
+
+    evalr('E46', 'the maturity-law suite: the convert schedule measured into existence — the broken wire (per_account) alive, the phantom date (chain ops carry none) replaced by the open+3.5d chain law, the seq-race date-laundering dead, undated rows honestly bucketed, and the REAL rotation wave (117.887 SBD, 2026-10-06T00:02Z → 2026-10-07T01:38Z) booked from chain measurement — not the 435-STEEM fiction',
+      why45.length === 0,
+      ['white-box: a walked convert with ts and no date composes open+3.5d (the maturity law, computed — never guessed)', 'white-box: the measured ladder fixture — total, next maturity, and the 10-06→10-07 wave window match the chain walk', 'white-box: the seq-race — a dated sensor row survives an undated walked row with a higher seq', 'white-box: the undated bucket — no ts + no date = honest bucket, zero NaN in any schedule field', 'white-box: the sensor book keeps the per_account shape and every maturity row carries a parseable matures_at', 'white-box: the live canon book has zero phantom dates on the real tree', 'white-box: tallyOp computes matures_at + open_ts from the op timestamp and books closures'],
+      why45.length ? 'fails: ' + why45.join('; ') : 'the schedule the operator was promised now exists — computed from chain law, pinned by runnable expectations');
+  } catch (e) { evalr('E46', 'maturity-law suite', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.32.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.33.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];

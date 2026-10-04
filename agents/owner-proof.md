@@ -27,6 +27,15 @@ _מורכב מהפנקסים המחויבים בלבד (keyless, offline). כל 
 - **הכנסה · contentRewards**: 0 — נמדד מת: 1421 הצבעות + 56 פוסטים → 0.000 לכל החיים — לולאת התוכן עדיין לא מרוויחה (CR-0046) · agents/earn-audit.json (chain truth, 7d window + lifetime walk)
 - **הכנסה · tradingSpread**: -0.262613 — הרגל היחידה שנמדדה עם תנועה — כרגע סביב האפס, ה-buy-premium breaker סוגר את הדליפה (CR-0047) · agents/fill-ledger.json (הליכת היום, היקף יומי מ-00:00Z)
 
+## הגל המתוכנן — לוח ההבשלות מהשרשרת עצמה (ההפתעה שנמדדה, לא סיפור)
+
+- **pendingConverts**: 23 — _מקור: agents/convert-canon.json (chain walk, 90 pages) · נמדד: 2026-10-04T00:06:36.669Z · המרות SBD→STEEM שנפתחו ועוד לא הבשילו — מדוד מהשרשרת, לא מהספרים_
+- **pendingTotalSbd**: 117.887 — _מקור: agents/convert-canon.json · נמדד: 2026-10-04T00:06:36.669Z · סך ה-SBD שיהפוך ל-STEEM במחיר ה-feed בהבשלה_
+- **nextMaturity**: "2026-10-06T00:02:12Z" — _מקור: agents/convert-canon.json · נמדד: 2026-10-04T00:06:36.669Z · ההבשלה הבאה — חלון העימוד המוקדם נפתח 24 שעות לפניה_
+- **waveEnds**: "2026-10-07T01:38:21Z" — _מקור: agents/convert-canon.json · נמדד: 2026-10-04T00:06:36.669Z · סוף הגל הנוכחי — ההבשלה האחרונה בלוח_
+- **undated**: 0 — _מקור: agents/convert-canon.json · נמדד: 2026-10-04T00:06:36.669Z · המרות בלי תאריך ניתן לחישוב — לעולם לא מנוחשות (חוק CR-0054)_
+- **honestyFix**: "~435 STEEM Oct-7 → התיקון: 117.887 SBD בגל 10-06..10-07" — _מקור: agents/change-requests/CR-0054-maturity-law-rung.json · נמדד: 2026-10-04T00:30:00Z · הספרים הקודמים סיפרו סיפור לא נמדד — התוקן ונחתם ב-E45_
+
 ## מה רץ לבד — 24/7, בלי מפתח, עם מרפא עצמי
 
 - **workflowsTotal**: 48 — _מקור: .github/workflows (tree scan)_
@@ -40,8 +49,8 @@ _מורכב מהפנקסים המחויבים בלבד (keyless, offline). כל 
 
 ## משמעת — מה מוכח ומה נבדק
 
-- **claimsAudit**: "WARN" — _מקור: agents/claims-audit.json · נמדד: 2026-10-03T23:51:22.143Z · כל קובץ שנטען בפנקס — נבדק שהוא באמת על העץ_
-- **censusLanes**: undefined — _מקור: agents/fleet-census.json · נמדד: 2026-10-03T23:51:21.268Z · מפת ה-16 מסלולים של הצי_
+- **claimsAudit**: "WARN" — _מקור: agents/claims-audit.json · נמדד: 2026-10-04T00:07:44.037Z · כל קובץ שנטען בפנקס — נבדק שהוא באמת על העץ_
+- **censusLanes**: undefined — _מקור: agents/fleet-census.json · נמדד: 2026-10-04T00:07:43.133Z · מפת ה-16 מסלולים של הצי_
 - **ownerLanguage**: "he" — _מקור: agents/claims-audit.cjs OWNER_LANGUAGE (CR-0050) · כל פנייה לבעלים — בעברית_
 
 _החוק: שום מספר לא מומצא, שום היקף לא מתגנב (יומי לעולם לא מתגלגל לכל-חיים), שום הפסד לא מוסתר._
