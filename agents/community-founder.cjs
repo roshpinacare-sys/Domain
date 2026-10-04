@@ -180,11 +180,55 @@ const updatePropsOpAdmin = (community, props) =>
 const delegateOp = (spVestsAsset) => ['delegate_vesting_shares', { delegator: HEAD, delegatee: null, vesting_shares: spVestsAsset }];
 const cancelOp = (orderid) => ['limit_order_cancel', { owner: HEAD, orderid }];
 
-// exported pure surface (E59 white-box + evals) — zero secrets, zero chain I/O
+// ---------- RC top-up desk (CR-0067, E60 white-box surface) ----------
+
+/** measured units law (2026-10-04): account.to_withdraw / withdrawn are GESTS-scale
+ *  (micro-vests) — divide by 1e6 to get VESTS. headcorner measured live:
+ *  to_withdraw 3.070814e12 µv = 1903.5 SP scheduled, withdrawn 2.303111e12 µv = 1427.6 SP. */
+const gestsToVests = (g) => (Number(g) > 0 ? Number(g) / 1e6 : 0);
+
+/** the chain-assert truth (R36 law): the reservation math is chain-side — when a
+ *  delegate attempt is refused, the assert message carries the REAL available shares.
+ *  Measured 2026-10-04 live: `available: {"amount":"1396610000","precision":6,...}` —
+ *  the amount is micro-vests and is followed by precision/nai, never a bare closing brace. */
+function parseAvailableVests(msg) {
+  const m = String(msg || '').match(/available:\s*\{"amount":"(\d+)"/);
+  if (!m) return null;
+  const v = parseInt(m[1], 10) / 1e6;
+  return isFinite(v) && v >= 0 ? v : null;
+}
+
+/** RC top-up plan (pure): the honest local estimate. available = own - delegated-out
+ *  - powerdown reservation (to_withdraw - withdrawn). The OP is absolute (the total
+ *  delegation), the resize NEVER lands below the current received floor — a top-up
+ *  must not become a stealth clawback of the house's RC. */
+function rcTopUpPlan({ ownVests, delegatedVests, toWithdrawGests, withdrawnGests, receivedVests, targetSp, fund, sharesTotal }) {
+  const p = { reservationVests: 0, availableVests: 0, availableSp: 0, targetVests: 0, shortVests: 0, floorVests: 0, verdict: 'RECLAIM-PENDING' };
+  if (!(fund > 0) || !(sharesTotal > 0) || !(ownVests > 0)) return p;
+  const targetVests = (targetSp * sharesTotal) / fund;
+  const reservation = Math.max(0, gestsToVests(toWithdrawGests) - gestsToVests(withdrawnGests));
+  const available = Math.max(0, ownVests - delegatedVests - reservation);
+  p.reservationVests = reservation;
+  p.availableVests = available;
+  p.availableSp = +((available * fund) / sharesTotal).toFixed(3);
+  p.targetVests = targetVests;
+  p.shortVests = Math.max(0, targetVests - (receivedVests || 0));
+  p.floorVests = receivedVests || 0;
+  p.verdict = available + 1e-6 >= p.shortVests ? 'TOPUP-READY' : 'RECLAIM-PENDING';
+  return p;
+}
+
+/** the top-up op: ABSOLUTE total delegation to the community */
+function rcTopUpOp(community, vests) {
+  return ['delegate_vesting_shares', { delegator: HEAD, delegatee: community, vesting_shares: vests.toFixed(6) + ' VESTS' }];
+}
+
+// exported pure surface (E59+E60 white-box + evals) — zero secrets, zero chain I/O
 module.exports = {
   communityProps, propsGate, validName, nameCandidates, spToVests, vestsToSp,
   fundingPlan, memberRoles, accountCreateOp, setRoleOp, updatePropsOp, updatePropsOpAdmin, cancelOp,
   COMMUNITY_RC_SP, FEE_MARGIN, MAX_CANCELS, HEAD,
+  gestsToVests, parseAvailableVests, rcTopUpPlan, rcTopUpOp,
 };
 
 // ---------- runtime helpers ----------
@@ -526,16 +570,78 @@ async function modeStatus(run, book) {
   return run;
 }
 
+// ---------- RC top-up (CR-0067): the house's RC grows from the powerdown reclaim ----------
+
+async function modeRc(run, book) {
+  if (stasis()) { run.verdict = 'STASIS-HALT'; run.why = 'the breaker is active, the desk obeys'; return run; }
+  const name = book.community && book.community.name;
+  if (!name) { run.verdict = 'COMMUNITY-ABSENT'; run.why = 'no community in the book — nothing to top up'; return run; }
+  const [hc, comm, dgp] = await Promise.all([getAccount(HEAD), getAccount(name), getDGP()]);
+  if (!hc || !comm || !dgp) { run.verdict = 'READ-BACK-FAIL'; run.why = 'accounts/globals unavailable'; return run; }
+  const fund = parseFloat(dgp.total_vesting_fund_steem), sharesTotal = parseFloat(dgp.total_vesting_shares);
+  const num = (a) => parseFloat(String(a).split(' ')[0]);
+  const receivedVests = num(comm.received_vesting_shares);
+  const plan = rcTopUpPlan({
+    ownVests: num(hc.vesting_shares), delegatedVests: num(hc.delegated_vesting_shares),
+    toWithdrawGests: hc.to_withdraw, withdrawnGests: hc.withdrawn,
+    receivedVests, targetSp: COMMUNITY_RC_SP, fund, sharesTotal,
+  });
+  run.plan = plan;
+  run.steps.push('plan: available ' + plan.availableVests.toFixed(0) + ' vests (' + plan.availableSp.toFixed(2) + ' SP) · reservation ' + plan.reservationVests.toFixed(0) + ' vests · short ' + plan.shortVests.toFixed(0) + ' vests · floor ' + (plan.floorVests * fund / sharesTotal).toFixed(0) + ' SP received');
+  if (plan.verdict !== 'TOPUP-READY') {
+    run.verdict = 'RECLAIM-PENDING';
+    run.why = 'available ' + plan.availableSp.toFixed(2) + ' SP < short ' + (plan.shortVests * fund / sharesTotal).toFixed(2) + ' SP — the powerdown reclaim (' + hc.next_vesting_withdrawal + ') frees the stake';
+    return run;
+  }
+  if (process.env.COMMUNITY_LIVE !== '1') { run.verdict = 'MODE-DRY'; run.why = 'plan armed — COMMUNITY_LIVE=1 signs the top-up'; return run; }
+  const vault = loadHeadVault();
+  if (!vault || !vault.steem || !vault.steem.active || !vault.steem.active.wif) { run.verdict = 'VAULT-ABSENT-LOCAL'; return run; }
+  const activeWif = vault.steem.active.wif;
+  // attempt the ABSOLUTE target; on chain-refusal resize ONCE from the assert truth,
+  // never below the received floor (a top-up must not become a clawback)
+  let vests = plan.targetVests, tx = null;
+  for (let attempt = 0; attempt < 2 && !tx; attempt++) {
+    try {
+      tx = await broadcast([rcTopUpOp(name, vests)], [activeWif]);
+      run.txids.push({ op: 'rc_topup:' + (vests * fund / sharesTotal).toFixed(1) + 'SP', hint: tx.txid_hint });
+      run.steps.push('delegated total ' + (vests * fund / sharesTotal).toFixed(1) + ' SP hint=' + tx.txid_hint);
+    } catch (e) {
+      const m = String(e.message || e);
+      const avail = parseAvailableVests(m);
+      if (avail != null && attempt === 0) {
+        const resizedSp = Math.max(plan.floorVests * fund / sharesTotal, Math.floor(avail * 0.95 * fund / sharesTotal));
+        const resizedVests = (resizedSp * sharesTotal) / fund;
+        if (resizedVests <= plan.floorVests) { run.verdict = 'TOPUP-HOLD'; run.why = 'chain available ' + avail.toFixed(0) + ' vests <= floor — the current RC stands, the reclaim decides'; return run; }
+        vests = resizedVests;
+        run.steps.push('delegate-resized: chain available ' + avail.toFixed(1) + ' vests -> total ' + resizedSp.toFixed(1) + ' SP (chain-truth, floor protected)');
+      } else { run.verdict = 'DELEGATE-FAIL'; run.why = m.slice(0, 200); return run; }
+    }
+  }
+  await new Promise((r) => setTimeout(r, 2000));
+  const after = await getAccount(name);
+  const afterSp = after ? vestsToSp(parseFloat(after.received_vesting_shares), fund, sharesTotal) : 0;
+  run.steps.push('read-back: receivedSP=' + afterSp.toFixed(1));
+  run.verdict = afterSp >= Math.min(vests * fund / sharesTotal, COMMUNITY_RC_SP) - 1 ? 'TOPUP-LIVE' : 'READ-BACK-WEAK';
+  if (run.verdict === 'TOPUP-LIVE' && book.community) {
+    book.community = Object.assign({}, book.community, {
+      delegatedSp: Math.round(vests * fund / sharesTotal), delegatedSpTarget: COMMUNITY_RC_SP,
+      receivedSp: +afterSp.toFixed(2), rcTopUpAt: run.at,
+    });
+  }
+  return run;
+}
+
 // ---------- main ----------
 
 async function main() {
   const mode = (process.argv[2] || 'status').toLowerCase();
-  if (!['probe', 'create', 'status'].includes(mode)) { console.log('usage: community-founder.cjs probe|create|status'); process.exit(0); }
+  if (!['probe', 'create', 'status', 'rc'].includes(mode)) { console.log('usage: community-founder.cjs probe|create|status|rc'); process.exit(0); }
   const run = { at: new Date().toISOString(), mode, steps: [], txids: [], verdict: null, why: null, communityPlan: null };
   const book = readBook();
   try {
     if (mode === 'probe') await modeProbe(run);
     else if (mode === 'create') await modeCreate(run, book);
+    else if (mode === 'rc') await modeRc(run, book);
     else await modeStatus(run, book);
   } catch (e) {
     run.verdict = 'ERROR'; run.why = String(e.message || e).slice(0, 200);

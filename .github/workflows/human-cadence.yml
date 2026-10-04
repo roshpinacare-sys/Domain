@@ -10,7 +10,9 @@
 # Laws carried: STASIS gate (in-code halt-before-read) · verify-then-sign · read-back
 # after every op · fail-soft exit 0 · zero secrets in output · internal-only engagement
 # until the quality bar lifts · the PROBE-B LAW (never engage posts under 800 chars of
-# body, never the word probe) · single-writer atomic books (agents/human-cadence.json/.md).
+# body, never the word probe) · THE COMMUNITY BREATH (CR-0067: posts land inside
+# hive-177702, subscribes are their own staggered lane) · single-writer atomic books
+# (agents/human-cadence.json/.md).
 
 name: human-cadence
 
@@ -20,11 +22,11 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: 'blog | curate | social | status | all'
+        description: 'blog | curate | social | community | status | all'
         required: false
         default: 'all'
         type: choice
-        options: ['all', 'blog', 'curate', 'social', 'status']
+        options: ['all', 'blog', 'curate', 'social', 'community', 'status']
 
 permissions:
   contents: write
@@ -60,11 +62,16 @@ jobs:
           SA_FLEET_KEYS: ${{ secrets.SA_FLEET_KEYS }}
         run: node agents/human-cadence.cjs ${{ github.event.inputs.mode || 'all' }}
 
+      - name: community RC top-up gate (honest bookkeeping; LIVE only when armed)
+        env:
+          NODE_PATH: /tmp/steemjs/node_modules
+        run: node agents/community-founder.cjs rc
+
       - name: commit cadence books (secretless)
         run: |
           git config user.name "saos-human-cadence"
           git config user.email "human-cadence@saos.local"
-          git add agents/human-cadence.json agents/human-cadence.md agents/cadence-memory.json agents/human-cadence-status.json
+          git add agents/human-cadence.json agents/human-cadence.md agents/cadence-memory.json agents/human-cadence-status.json agents/community-founder.json agents/community-founder.md
           if git diff --cached --quiet; then
             echo "no cadence changes"
           else
