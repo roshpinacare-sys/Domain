@@ -1,6 +1,6 @@
 {
- "at": "2026-10-04T01:47:26.267Z",
- "agent": "mm-volume v1.1.0 (CR-0058+CR-0059, fleet Rungs 28-29 — the volume engine + the share ladder)",
+ "at": "2026-10-04T02:09:56.386Z",
+ "agent": "mm-volume v1.2.0 (CR-0058..CR-0060, fleet Rungs 28-30 — the volume engine + the share ladder + the calibrated engine)",
  "verdict": "MMV-PLAN-LIVE",
  "law": {
   "planOnly": "this desk PLANs and MEASURES — it never signs; the live broadcast path is market-exec.cjs law (MARKET_EXEC_LIVE=1, verify-then-sign)",
@@ -39,6 +39,16 @@
    "guard": "volume = min(tape bound, capacity bound); the binding is surfaced, never hidden"
   }
  ],
+ "calibration": {
+  "avgSizePriorSbd": 0.068,
+  "avgSizePriorSource": "exec-runs-planned",
+  "avgSizePriorN": 17,
+  "avgSizeCalibratedSbd": 0.691,
+  "avgSizeCalibratedSource": "fill-ledger-realized",
+  "avgSizeCalibratedN": 130,
+  "liftPct": 916.1765,
+  "law": "Q12: the projection runs on the REAL fill size when the ledger speaks; the prior stays carried side-by-side — calibration is never a silent rewrite"
+ },
  "venues": [
   {
    "venue": "SBD/STEEM (internal steem)",
@@ -46,9 +56,11 @@
    "feeBps": 0,
    "spreadPct": 1.1677,
    "measuredFrom": "market-grid live book",
-   "avgSizeSbd": 0.068,
+   "avgSizeSbd": 0.691,
+   "avgSizeSource": "fill-ledger-realized",
    "avgSizeAssumed": false,
-   "avgSizeN": 17,
+   "avgSizeN": 130,
+   "avgSizePriorSbd": 0.068,
    "sellVwap": 0.102,
    "buyEdgeFloor": 0.1017,
    "econ": {
@@ -63,42 +75,42 @@
      "binding": "capacity"
     },
     "projTradesDay": 576,
-    "projVolumeSbd": 39.168,
-    "projNetConsSbd": 0.2287,
-    "projNetOptSbd": 0.4574
+    "projVolumeSbd": 398.016,
+    "projNetConsSbd": 2.324,
+    "projNetOptSbd": 4.6476
    },
    "marketVolume24h": {
     "SBD": 163.687,
     "STEEM": 1624.508
    },
    "marketVolume24hSbdTerm": 163.687,
-   "sharePct": 23.9286,
+   "sharePct": 243.1568,
    "shareLadder": [
     {
      "n": 1,
-     "volumeSbd": 39.168,
-     "sharePct": 23.9286,
-     "saturates": false,
+     "volumeSbd": 398.016,
+     "sharePct": 243.1568,
+     "saturates": true,
      "binding": "capacity"
     },
     {
      "n": 2,
-     "volumeSbd": 78.336,
-     "sharePct": 47.8572,
-     "saturates": false,
+     "volumeSbd": 796.032,
+     "sharePct": 486.3135,
+     "saturates": true,
      "binding": "capacity"
     },
     {
      "n": 3,
-     "volumeSbd": 117.504,
-     "sharePct": 71.7858,
-     "saturates": false,
+     "volumeSbd": 1194.048,
+     "sharePct": 729.4703,
+     "saturates": true,
      "binding": "capacity"
     },
     {
      "n": 5,
-     "volumeSbd": 195.84,
-     "sharePct": 119.643,
+     "volumeSbd": 1990.08,
+     "sharePct": 1215.7838,
      "saturates": true,
      "binding": "capacity"
     }
@@ -108,20 +120,21 @@
     "windowHours": 24,
     "windowEnd": "2026-10-04T00:32:36",
     "fillsCount": 124,
+    "unclassified": 0,
     "sells": 89,
     "buys": 35,
     "realizedSellSbd": 62.781,
     "realizedBuySbd": 24.388,
     "avgFillSbd": 0.703,
     "ledgerRows": 130,
-    "projectionAccuracyPct": 160.2865
+    "projectionAccuracyPct": 15.7735
    },
    "selfFlow": {
     "eligible": true,
     "accounts": 1,
     "feeRoundTripPct": 0,
     "capPct": 0.25,
-    "internalCapSbd": 9.792,
+    "internalCapSbd": 99.504,
     "guards": [
      "VWAP-EXCLUSION: internal fills never enter realized sell VWAP / edge books (poison guard)",
      "LABEL: every internal row carries INTERNAL-FLOW",
@@ -137,9 +150,11 @@
    "feeBps": 0,
    "spreadPct": 0.1645,
    "measuredFrom": "market-grid live book",
-   "avgSizeSbd": 0.068,
+   "avgSizeSbd": 0.691,
+   "avgSizeSource": "fill-ledger-realized",
    "avgSizeAssumed": false,
-   "avgSizeN": 17,
+   "avgSizeN": 130,
+   "avgSizePriorSbd": 0.068,
    "sellVwap": null,
    "buyEdgeFloor": null,
    "econ": {
@@ -154,43 +169,43 @@
      "binding": "capacity"
     },
     "projTradesDay": 576,
-    "projVolumeSbd": 39.168,
-    "projNetConsSbd": 0.0322,
-    "projNetOptSbd": 0.0644
+    "projVolumeSbd": 398.016,
+    "projNetConsSbd": 0.3276,
+    "projNetOptSbd": 0.6547
    },
    "marketVolume24h": {
     "HIVE": 16999.095,
     "HBD": 958.712
    },
    "marketVolume24hSbdTerm": 958.712,
-   "sharePct": 4.0855,
+   "sharePct": 41.5157,
    "shareLadder": [
     {
      "n": 1,
-     "volumeSbd": 39.168,
-     "sharePct": 4.0855,
+     "volumeSbd": 398.016,
+     "sharePct": 41.5157,
      "saturates": false,
      "binding": "capacity"
     },
     {
      "n": 2,
-     "volumeSbd": 78.336,
-     "sharePct": 8.171,
+     "volumeSbd": 796.032,
+     "sharePct": 83.0314,
      "saturates": false,
      "binding": "capacity"
     },
     {
      "n": 3,
-     "volumeSbd": 117.504,
-     "sharePct": 12.2564,
-     "saturates": false,
+     "volumeSbd": 1194.048,
+     "sharePct": 124.5471,
+     "saturates": true,
      "binding": "capacity"
     },
     {
      "n": 5,
-     "volumeSbd": 195.84,
-     "sharePct": 20.4274,
-     "saturates": false,
+     "volumeSbd": 1990.08,
+     "sharePct": 207.5785,
+     "saturates": true,
      "binding": "capacity"
     }
    ],
@@ -200,7 +215,7 @@
     "accounts": 1,
     "feeRoundTripPct": 0,
     "capPct": 0.25,
-    "internalCapSbd": 9.792,
+    "internalCapSbd": 99.504,
     "guards": [
      "VWAP-EXCLUSION: internal fills never enter realized sell VWAP / edge books (poison guard)",
      "LABEL: every internal row carries INTERNAL-FLOW",
@@ -266,25 +281,25 @@
    {
     "n": 1,
     "ordersDayCap": 576,
-    "volumeBoundSbd": 39.168,
+    "volumeBoundSbd": 398.016,
     "binding": "capacity"
    },
    {
     "n": 2,
     "ordersDayCap": 1152,
-    "volumeBoundSbd": 78.336,
+    "volumeBoundSbd": 796.032,
     "binding": "capacity"
    },
    {
     "n": 3,
     "ordersDayCap": 1728,
-    "volumeBoundSbd": 117.504,
+    "volumeBoundSbd": 1194.048,
     "binding": "capacity"
    },
    {
     "n": 5,
     "ordersDayCap": 2880,
-    "volumeBoundSbd": 195.84,
+    "volumeBoundSbd": 1990.08,
     "binding": "capacity"
    }
   ],
@@ -292,10 +307,34 @@
  },
  "projections": {
   "venuesMeasured": 2,
-  "projVolumeSbdDay": 78.336,
-  "projNetConsSbdDay": 0.2609,
-  "projNetOptSbdDay": 0.5218,
-  "internalFlowCapSbdDay": 19.584
+  "projVolumeSbdDay": 796.032,
+  "projNetConsSbdDay": 2.6516,
+  "projNetOptSbdDay": 5.3023,
+  "internalFlowCapSbdDay": 199.008
+ },
+ "series": {
+  "law": "Q11: time-born namespace — the desk’s own past (the append-only plan ledger); excluded from the byte-stable payload (values deterministic, timestamps are the axis)",
+  "planLedgerRows": 2,
+  "shareSeries": [
+   {
+    "venue": "SBD/STEEM (internal steem)",
+    "points": [
+     {
+      "at": "2026-10-04T01:47:26.267Z",
+      "sharePct": 23.9286
+     }
+    ]
+   },
+   {
+    "venue": "HBD/HIVE (internal hive)",
+    "points": [
+     {
+      "at": "2026-10-04T01:47:26.267Z",
+      "sharePct": 4.0855
+     }
+    ]
+   }
+  ]
  },
  "ownerGate": {
   "mode": "PLAN-ONLY-OWNER-GATED",

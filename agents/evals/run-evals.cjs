@@ -2050,10 +2050,13 @@ function accumulateInMemory(bookRows, seed) {
     c50(book50 && book50.venues.length === 2 && book50.venues[0].econ && book50.venues[0].selfFlow.eligible === true && book50.fleet.partition.covers === true, 'mmv-blackbox-venues');
     c50(fs.existsSync(path.join(fx50, 'mm-volume-plan.jsonl')) && fs.existsSync(path.join(fx50, 'mm-volume.md')), 'mmv-plan-ledger');
     // determinism: the stable payload (book minus at) is byte-identical across two runs
-    const snap50 = book50 ? JSON.stringify({ ...book50, at: null }) : '';
+    // determinism: stable payload byte-identical across two runs — the `series`
+    // namespace is TIME-BORN (the desk's own past), so it is stripped alongside `at`:
+    // the VALUES are deterministic, the timestamps are the axis (R30 law)
+    const snap50 = book50 ? JSON.stringify({ ...book50, at: null, series: null }) : '';
     spawnSync(process.execPath, [path.join(AG, 'mm-volume.cjs')], { env: { ...process.env, MMV_DIR: fx50 }, cwd: AG, timeout: 60000, encoding: 'utf8' });
     const book50b = (() => { try { return JSON.parse(fs.readFileSync(path.join(fx50, 'mm-volume.json'), 'utf8')); } catch (_) { return null; } })();
-    c50(book50b && JSON.stringify({ ...book50b, at: null }) === snap50, 'mmv-stable-payload');
+    c50(book50b && JSON.stringify({ ...book50b, at: null, series: null }) === snap50, 'mmv-stable-payload');
     // black-box: STASIS halt-before-read — active local brake → MMV-HALTED-STASIS, zero plan writes
     fs.writeFileSync(path.join(fx50, 'STASIS.json'), JSON.stringify({ active: true, reason: 'E50 eval brake' }));
     const planRowsBefore50 = fs.readFileSync(path.join(fx50, 'mm-volume-plan.jsonl'), 'utf8').split('\n').filter(Boolean).length;
@@ -2131,14 +2134,14 @@ function accumulateInMemory(bookRows, seed) {
     const book51 = (() => { try { return JSON.parse(fs.readFileSync(path.join(fx51, 'mm-volume.json'), 'utf8')); } catch (_) { return null; } })();
     c51(r51a.status === 0 && book51 && book51.verdict === 'MMV-PLAN-LIVE', 'mmv51-blackbox-live');
     const st51 = book51 && book51.venues.find((v) => String(v.venue).includes('steem'));
-    c51(st51 && st51.sharePct === 23.9286 && Array.isArray(st51.shareLadder) && st51.shareLadder[3].saturates === true, 'mmv51-share-live');
+    c51(st51 && st51.avgSizeSource === 'fill-ledger-realized' && st51.avgSizeSbd === 24.8333 && st51.realized && st51.avgSizeSbd === st51.realized.avgFillSbd && st51.sharePct != null && Array.isArray(st51.shareLadder) && st51.shareLadder[3].saturates === true, 'mmv51-share-live-calibrated');
     c51(st51 && st51.realized && st51.realized.measured === true && st51.realized.fillsCount === 3 && st51.realized.realizedSellSbd === 62.5 && st51.realized.avgFillSbd === 24.8333, 'mmv51-realized-live');
     c51(st51 && st51.realized && typeof st51.realized.projectionAccuracyPct === 'number', 'mmv51-accuracy');
     // determinism: stable payload byte-identical across two runs
-    const snap51 = book51 ? JSON.stringify({ ...book51, at: null }) : '';
+    const snap51 = book51 ? JSON.stringify({ ...book51, at: null, series: null }) : '';
     spawnSync(process.execPath, [path.join(AG, 'mm-volume.cjs')], { env: { ...process.env, MMV_DIR: fx51 }, cwd: AG, timeout: 60000, encoding: 'utf8' });
     const book51b = (() => { try { return JSON.parse(fs.readFileSync(path.join(fx51, 'mm-volume.json'), 'utf8')); } catch (_) { return null; } })();
-    c51(book51b && JSON.stringify({ ...book51b, at: null }) === snap51, 'mmv51-stable-payload');
+    c51(book51b && JSON.stringify({ ...book51b, at: null, series: null }) === snap51, 'mmv51-stable-payload');
     fs.rmSync(fx51, { recursive: true, force: true });
     // black-box: enhancement sections are OPTIONAL — missing live book/fills nulls them, never blocks the plan
     const fx51b = fs.mkdtempSync(path.join(require('os').tmpdir(), 'mmv51b-'));
@@ -2164,9 +2167,76 @@ function accumulateInMemory(bookRows, seed) {
       why51.length ? 'fails: ' + why51.join('; ') : '"the BIGGEST" is now a measured number: the pond read from the chain itself, the fleet\u2019s share as a ladder over funded soldiers, and the projection judged against REAL fills — a boast became an instrument');
   } catch (e) { evalr('E51', 'share ladder', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
+  // ---- E52 (R30, CR-0060): THE CALIBRATED ENGINE — the projection runs on REAL
+  // fills (calibratedAvgSize: µ-exact, prior carried, never a silent rewrite), the
+  // share becomes a TIME series read from the desk's own append-only plan ledger
+  // (shareSeries: sorted, filtered, capped), and the whole `series` namespace is
+  // TIME-BORN — excluded from the byte-stable payload (values deterministic).
+  try {
+    const why52 = [];
+    const c52 = (cond, name) => { if (!cond) why52.push(name); };
+    const mv52 = require(path.join(AG, 'mm-volume.cjs'));
+    // white-box: calibratedAvgSize — µ-exact over classified fills, unclassified ignored, prior carried
+    const prior52 = { avgSizeSbd: 0.068, assumed: false, n: 17 };
+    const fills52 = [
+      { timestamp: '2026-10-04T10:00:00Z', leg_parsed: { leg: 'SELL', recv: { sym: 'SBD', micro: 703000 } } },
+      { timestamp: '2026-10-04T11:00:00Z', leg_parsed: { leg: 'BUY', sold: { sym: 'SBD', micro: 120000 } } },
+      { timestamp: '2026-10-04T12:00:00Z', leg_parsed: { leg: 'UNCLASSIFIED', reason: 'x' } },
+    ];
+    const cal52 = mv52.calibratedAvgSize(fills52, prior52);
+    c52(cal52.avgSizeSbd === 0.4115 && cal52.source === 'fill-ledger-realized' && cal52.n === 2, 'calibrated-micro-exact-unclassified-ignored');
+    c52(cal52.priorAvgSizeSbd === 0.068 && cal52.priorSource === 'exec-runs-planned', 'calibrated-prior-carried');
+    c52(mv52.calibratedAvgSize([], { avgSizeSbd: 0.2, assumed: false, n: 4 }).source === 'exec-runs-planned', 'calibrated-fallback-exec-runs');
+    const law52 = mv52.calibratedAvgSize([], { avgSizeSbd: 0.1, assumed: true, n: 0 });
+    c52(law52.source === 'law-assumption' && law52.avgSizeSbd === 0.1 && law52.priorAvgSizeSbd === null, 'calibrated-fallback-law');
+    // white-box: shareSeries — sorted by at, venue-substring filtered, corrupt rows dropped, capK keeps the LAST k
+    const plans52 = [
+      { at: '2026-10-04T02:00:00Z', shares: [{ venue: 'SBD/STEEM (internal steem)', sharePct: 5 }] },
+      { at: '2026-10-04T01:00:00Z', shares: [{ venue: 'SBD/STEEM (internal steem)', sharePct: 3 }] },
+      { at: 'not-a-date', shares: [{ venue: 'SBD/STEEM (internal steem)', sharePct: 99 }] },
+      { at: '2026-10-04T03:00:00Z', shares: [{ venue: 'HBD/HIVE (internal hive)', sharePct: 9 }] },
+    ];
+    const ser52 = mv52.shareSeries(plans52, 'steem');
+    c52(ser52 && ser52.length === 2 && ser52[0].sharePct === 3 && ser52[1].sharePct === 5 && ser52[0].at < ser52[1].at, 'share-series-sorted-filtered');
+    c52(mv52.shareSeries(plans52, 'steem', 1).length === 1 && mv52.shareSeries(plans52, 'steem', 1)[0].sharePct === 5, 'share-series-cap-last-k');
+    c52(mv52.shareSeries(plans52, 'blurt') === null && mv52.shareSeries([]) === null && mv52.shareSeries(null) === null, 'share-series-empty-null');
+    // black-box: rich fixture WITH a pre-seeded plan ledger → calibration + series live, projection on the REAL size
+    const fx52 = fs.mkdtempSync(path.join(require('os').tmpdir(), 'mmv52-'));
+    fs.writeFileSync(path.join(fx52, 'fee-doctrine.json'), JSON.stringify({ format: 'saos-fee-doctrine/1', venues: [] }));
+    fs.writeFileSync(path.join(fx52, 'dex-book.json'), JSON.stringify({ at: '2026-10-04T00:00:00Z', steem: {} }));
+    fs.writeFileSync(path.join(fx52, 'market-grid-history.jsonl'), JSON.stringify({ at: '2026-10-04T00:00:00Z', spreads: [{ market: 'SBD/STEEM (internal steem)', spreadPct: 1.4736 }] }) + '\n');
+    fs.writeFileSync(path.join(fx52, 'money-ledger.json'), JSON.stringify({ updated: '2026-10-04T00:00:00Z', book: { headSteemLiquid: '2 STEEM', headSteemDebt: '1 SBD' } }));
+    fs.writeFileSync(path.join(fx52, 'market-exec.json'), JSON.stringify([{ mode: 'DRY_RUN', placed: [{ amount_to_sell: '0.680 STEEM', realized: 0.100 }] }]));
+    fs.writeFileSync(path.join(fx52, 'agent-registry.json'), JSON.stringify({ identity: [{ metadata: { owner: 'steem://headcorner' } }] }));
+    fs.writeFileSync(path.join(fx52, 'market-grid.json'), JSON.stringify({ at: '2026-10-04T01:00:00Z', markets: [{ chain: 'steem', spreadPct: 1.4736, volume24hSbdTerm: 163.687 }] }));
+    fs.writeFileSync(path.join(fx52, 'fill-ledger-fills.jsonl'), fills52.slice(0, 2).map((f) => JSON.stringify(f)).join('\n') + '\n');
+    fs.writeFileSync(path.join(fx52, 'mm-volume-plan.jsonl'), JSON.stringify({ at: '2026-10-04T00:30:00Z', verdict: 'MMV-PLAN-LIVE', shares: [{ venue: 'SBD/STEEM (internal steem)', sharePct: 23.9286 }] }) + '\n');
+    const r52 = spawnSync(process.execPath, [path.join(AG, 'mm-volume.cjs')], { env: { ...process.env, MMV_DIR: fx52 }, cwd: AG, timeout: 60000, encoding: 'utf8' });
+    const book52 = (() => { try { return JSON.parse(fs.readFileSync(path.join(fx52, 'mm-volume.json'), 'utf8')); } catch (_) { return null; } })();
+    c52(r52.status === 0 && book52 && book52.verdict === 'MMV-PLAN-LIVE', 'mmv52-blackbox-live');
+    c52(book52 && book52.calibration && book52.calibration.avgSizeCalibratedSource === 'fill-ledger-realized' && book52.calibration.avgSizeCalibratedSbd === 0.4115 && book52.calibration.avgSizePriorSbd === 0.068 && book52.calibration.liftPct > 0, 'mmv52-calibration-live');
+    c52(book52 && book52.series && book52.series.planLedgerRows === 1 && Array.isArray(book52.series.shareSeries) && book52.series.shareSeries.some((s) => String(s.venue).includes('steem') && s.points.length === 1 && s.points[0].sharePct === 23.9286), 'mmv52-series-live-from-past');
+    // the projection itself runs on the calibrated size: 576 trades × 0.4115 = 237.024 SBD
+    const st52 = book52 && book52.venues.find((v) => String(v.venue).includes('steem'));
+    c52(st52 && st52.econ && st52.econ.projVolumeSbd === 237.024 && st52.avgSizeSource === 'fill-ledger-realized', 'mmv52-projection-on-real-size');
+    // determinism with the time-born namespace excluded
+    const snap52 = book52 ? JSON.stringify({ ...book52, at: null, series: null }) : '';
+    spawnSync(process.execPath, [path.join(AG, 'mm-volume.cjs')], { env: { ...process.env, MMV_DIR: fx52 }, cwd: AG, timeout: 60000, encoding: 'utf8' });
+    const book52b = (() => { try { return JSON.parse(fs.readFileSync(path.join(fx52, 'mm-volume.json'), 'utf8')); } catch (_) { return null; } })();
+    c52(book52b && JSON.stringify({ ...book52b, at: null, series: null }) === snap52, 'mmv52-stable-payload-series-excluded');
+    fs.rmSync(fx52, { recursive: true, force: true });
+    // real-tree: the engine runs CALIBRATED on the real ledger and the series grows rung over rung
+    let real52 = null; try { real52 = JSON.parse(fs.readFileSync(path.join(AG, 'mm-volume.json'), 'utf8')); } catch (_) {}
+    c52(real52 && real52.calibration && real52.calibration.avgSizeCalibratedSource === 'fill-ledger-realized' && real52.calibration.liftPct > 0 && real52.calibration.avgSizePriorSbd != null, 'mmv52-real-tree-calibrated');
+    c52(real52 && real52.series && real52.series.planLedgerRows >= 1 && Array.isArray(real52.series.shareSeries), 'mmv52-real-tree-series');
+    evalr('E52', 'the calibrated engine (CR-0060)', why52.length === 0,
+      ['white-box: calibratedAvgSize µ-exact over classified fills, unclassified ignored, prior size + source carried side-by-side', 'white-box: fallback chain real-fills → exec-runs-planned → law-assumption, each labeled', 'white-box: shareSeries sorted by at, venue-substring filtered, corrupt rows dropped, capK keeps the LAST k, empty → null', 'black-box: pre-seeded plan ledger → calibration live (0.068 → 0.4115, lift > 0) + series live from the desk\u2019s own past (1 point, 23.9286%) + projection on the REAL size (576 × 0.4115 = 237.024 SBD)', 'black-box: byte-stable payload with the time-born `series` namespace excluded', 'white-box: the real tree runs calibrated on the REAL fill ledger (0.691 SBD measured, n=130) and the plan-ledger series grows'],
+      why52.length ? 'fails: ' + why52.join('; ') : '"time of truth" honored on both ends: the projection now runs on the REAL fill size the ledger measured (the ×10 lift shown WITH its source, never silent), and the share of the pond became a time series read from the desk\u2019s own past — dominance is a trend, not a frame');
+  } catch (e) { evalr('E52', 'calibrated engine', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.38.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48 + R27 metronome-audit E49 + R28 mm-volume E50 + R29 share-ladder E51, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.39.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48 + R27 metronome-audit E49 + R28 mm-volume E50 + R29 share-ladder E51 + R30 calibrated-engine E52, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];
