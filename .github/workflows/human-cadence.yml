@@ -67,6 +67,13 @@ jobs:
           NODE_PATH: /tmp/steemjs/node_modules
         run: node agents/community-founder.cjs rc
 
+      - name: community chain proof + hive second-home probe (keyless honesty, R38)
+        env:
+          NODE_PATH: /tmp/steemjs/node_modules
+        run: |
+          node agents/community-founder.cjs status
+          node agents/community-founder.cjs hive
+
       - name: commit cadence books (secretless)
         run: |
           git config user.name "saos-human-cadence"

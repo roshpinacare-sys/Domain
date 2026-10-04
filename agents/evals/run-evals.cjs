@@ -2798,9 +2798,66 @@ function accumulateInMemory(bookRows, seed) {
       why60.length ? 'fails: ' + why60.join('; ') : 'the house breathes: posts land inside it, joins arrive one moment one owner, and its RC grows only from the chain truth with the floor protected');
   } catch (e) { evalr('E60', 'the community breath', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
+  // ---- E61 (R38, CR-0068): THE CHAIN PROOF — the NAME is not the CHAIN. The owner saw
+  // "hive-177702" and read Hive network; the badge derives the chain-of-record from LIVE
+  // probes of both bridges + the booked fee asset, and the Hive second-home desk states
+  // its authority truth honestly (no keys held → no ceremony, no pretending).
+  try {
+    const why61 = [];
+    const c61 = (cond, name) => { if (!cond) why61.push(name); };
+    const cf61 = require(path.join(AG, 'community-founder.cjs'));
+    // the registry: two chains, their nodes and their fee assets (steem ≠ hive)
+    const reg61 = cf61.chainRegistry();
+    c61(reg61.steem.node.includes('steemit.com') && reg61.steem.feeAsset === 'STEEM', 'registry-steem');
+    c61(reg61.hive.node.includes('hive.blog') && reg61.hive.feeAsset === 'HIVE', 'registry-hive');
+    // the badge is DERIVED from the legs + fee asset, never from the name, never hardcoded:
+    c61(cf61.chainBadge({ existsSteem: true, existsHive: false, feeAsset: '3.000 STEEM' }) === 'STEEM-CHAIN', 'badge-steem-chain');
+    c61(cf61.chainBadge({ existsSteem: false, existsHive: true, feeAsset: '3.000 HIVE' }) === 'HIVE-CHAIN', 'badge-hive-chain');
+    c61(cf61.chainBadge({ existsSteem: true, existsHive: true, feeAsset: '3.000 STEEM' }) === 'CROSS-CHAIN', 'badge-cross');
+    c61(cf61.chainBadge({ existsSteem: false, existsHive: false, feeAsset: '3.000 STEEM' }) === 'ABSENT-EVERYWHERE', 'badge-absent');
+    c61(cf61.chainBadge({ existsSteem: true, existsHive: false, feeAsset: '3.000 HIVE' }) === 'STEEM-CHAIN-FEE-MISMATCH', 'badge-fee-mismatch-steem');
+    c61(cf61.chainBadge({ existsSteem: false, existsHive: true, feeAsset: '3.000 STEEM' }) === 'HIVE-CHAIN-FEE-MISMATCH', 'badge-fee-mismatch-hive');
+    // flip law: the same name flips the badge when the legs flip — derivation, not a label
+    c61(cf61.chainBadge({ existsSteem: true, existsHive: false, feeAsset: '3.000 STEEM' }) !== cf61.chainBadge({ existsSteem: true, existsHive: true, feeAsset: '3.000 STEEM' }), 'badge-flips-with-legs');
+    // the Hive authority law: the desk cannot sign what it does not hold
+    c61(cf61.hiveAuthorityVerdict(false, 'PUB', 'PUB') === 'NO-KEYS', 'authority-no-keys');
+    c61(cf61.hiveAuthorityVerdict(true, 'CHAINPUB', null) === 'KEY-MISMATCH', 'authority-vault-empty');
+    c61(cf61.hiveAuthorityVerdict(true, 'PUBA', 'PUBB') === 'KEY-MISMATCH', 'authority-pub-mismatch');
+    c61(cf61.hiveAuthorityVerdict(true, 'PUB', 'PUB') === 'READY', 'authority-ready');
+    // the hive probe verdict order: authority gates EVERYTHING, then name, then funding
+    c61(cf61.hiveProbeVerdict({ nameFree: true, liquidHive: 99, need: 3.05, authority: 'NO-KEYS' }) === 'HOME-ABSENT-UNKEYED', 'hive-unkeyed-even-rich');
+    c61(cf61.hiveProbeVerdict({ nameFree: true, liquidHive: 99, need: 3.05, authority: 'KEY-MISMATCH' }) === 'KEY-MISMATCH', 'hive-mismatch-before-all');
+    c61(cf61.hiveProbeVerdict({ nameFree: false, liquidHive: 99, need: 3.05, authority: 'READY' }) === 'NAME-TAKEN', 'hive-name-taken');
+    c61(cf61.hiveProbeVerdict({ nameFree: true, liquidHive: 0.034, need: 3.05, authority: 'READY' }) === 'FUNDING-SHORT', 'hive-funding-short-measured');
+    c61(cf61.hiveProbeVerdict({ nameFree: true, liquidHive: 3.05, need: 3.05, authority: 'READY' }) === 'CREATE-READY', 'hive-create-ready');
+    // real-tree: the booked chain proof must be REPRODUCIBLE from its own legs (the badge
+    // is derived, so the eval re-derives it) — and the hive run's verdict is from the
+    // honest set with the authority why named when unkeyed
+    const book61 = JSON.parse(fs.readFileSync(path.join(AG, 'community-founder.json'), 'utf8'));
+    const proof61 = book61.chainProof;
+    c61(proof61 && typeof proof61.name === 'string' && typeof proof61.checkedAt === 'string', 'proof-shape');
+    const feeAsset61 = (book61.community && book61.community.feeAsset) || '3.000 STEEM';
+    if (proof61) {
+      c61(cf61.chainBadge({ existsSteem: proof61.existsSteem, existsHive: proof61.existsHive, feeAsset: feeAsset61 }) === proof61.badge, 'badge-reproducible-from-legs');
+      // the legs are trivalent (true/false/null) — nulls are honest gaps, never invented
+      c61([true, false, null].includes(proof61.existsSteem) && [true, false, null].includes(proof61.existsHive), 'legs-trivalent');
+    }
+    const hiveRun61 = (book61.runs || []).filter((r) => r.mode === 'hive').slice(-1)[0];
+    c61(hiveRun61 && ['HOME-ABSENT-UNKEYED', 'KEY-MISMATCH', 'NAME-TAKEN', 'FUNDING-SHORT', 'CREATE-READY', 'READ-BACK-FAIL', 'STASIS-HALT', 'ERROR'].includes(hiveRun61.verdict), 'hive-run-honest-verdict');
+    if (hiveRun61 && hiveRun61.verdict === 'HOME-ABSENT-UNKEYED') c61(!!hiveRun61.why, 'hive-why-named-unkeyed');
+    if (hiveRun61 && hiveRun61.hivePlan) {
+      c61(hiveRun61.hivePlan.authority === 'NO-KEYS' ? typeof hiveRun61.hivePlan.fee === 'string' : true, 'hive-plan-carries-fee');
+      // measured law: the Steem house must be ABSENT on hive (bridge assert is the evidence)
+      c61(hiveRun61.hivePlan.steemHouseOnHive !== true || proof61 == null, 'hive-house-absent-law');
+    }
+    evalr('E61', 'the chain proof (CR-0068)', why61.length === 0,
+      ['white-box: the registry carries both chains with their nodes and fee assets; the badge is derived ONLY from the live probe legs + booked fee asset — all six branches covered, and the flip law proves derivation (same name, flipped legs → flipped badge), never a hardcoded label', 'white-box: the Hive authority law refuses to pretend — NO-KEYS when no vault, KEY-MISMATCH when pubs diverge (measured live: headcorner hive pub STM8c9vp3… ≠ the held steem pub STM5HhJD…), READY only on exact match; the probe verdict gates authority BEFORE name and funding — an unkeyed desk answers HOME-ABSENT-UNKEYED even when rich', 'real-tree: the booked chain proof carries trivalent legs (absence asserts are evidence, unreachable is a gap) and the badge re-derives exactly from its own legs + the booked fee asset; the hive run verdict is from the honest set and the why is named when unkeyed; the Steem house must be absent on Hive'],
+      why61.length ? 'fails: ' + why61.join('; ') : 'the chain, not the name, is the truth: STEEM-CHAIN measured live on both bridges (2026-10-04: steem=true, hive=false), the hive second-home desk states its empty hands by name, and the badge re-derives from evidence');
+  } catch (e) { evalr('E61', 'the chain proof', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.46.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48 + R27 metronome-audit E49 + R28 mm-volume E50 + R29 share-ladder E51 + R30 calibrated-engine E52 + R31 tape-calibration/venue-expansion E53 + R32 sidechain-pond E54 + R33 pnl-verdict E55 + sovereign-hands E56 + R34 fill-through-evolution E57 + R35 human-cadence E58 + R36 community-home E59 + R37 community-breath E60, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.47.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48 + R27 metronome-audit E49 + R28 mm-volume E50 + R29 share-ladder E51 + R30 calibrated-engine E52 + R31 tape-calibration/venue-expansion E53 + R32 sidechain-pond E54 + R33 pnl-verdict E55 + sovereign-hands E56 + R34 fill-through-evolution E57 + R35 human-cadence E58 + R36 community-home E59 + R37 community-breath E60 + R38 chain-proof E61, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];

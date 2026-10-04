@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "at": "2026-10-04T06:33:56.544Z",
+  "at": "2026-10-04T07:37:05.411Z",
   "since": "2026-10-02T16:40:20.950Z",
   "windowSince": "2026-10-02T16:40:20.950Z",
   "agent": "pulse v1.2.0 (CR-0009 loop, Rung 1; CR-0028 consumes the laya advisory triage; CR-0033 consumes the scheduled evolution-window evidence — Z-48/Z-49/Z-60/Z-62)",
@@ -9,7 +9,11 @@
     "count": 40,
     "commits": [
       {
-        "sha": "00eb0d4",
+        "sha": "34f2f23",
+        "subject": "R37 THE COMMUNITY BREATH (CR-0067 / feat-062 / E60, suite v1.45.0 -> v1.46.0, 60/60 GREEN): the fleet's life moves inside its own house. human-cadence.cjs v2 — blog posts land INSIDE hive-177702 The Clubhouse (first tag = community, hub tag trailing, gate + PROBE-B law untouched) and the join wave is its own staggered lane: subscribeOp byte-matches the measured ground truth (furqanashraf@hive-153176 read live: custom_json id=community, posting-only, json [\"subscribe\",{community}]), subscribePlan founder-first (headcorner) then window-ordered soldiers, budget 1/soldier ever, cap 2/run, read-back truth via bridge.list_subscribers (measured ARRAY row shape parsed), every refusal named (already-subscribed / budget-used / no-key / outside-window / quiet-hours). community-founder.cjs rc mode — the floor-protected RC top-up desk: GESTS units law (to_withdraw/withdrawn are micro-vests, /1e6), the OP is ABSOLUTE, attempt the 50 SP law target, resize ONCE from the chain assert truth (measured live: available: {\"amount\":...,\"precision\":6} — the parser demanding a bare closing brace was broken and is fixed by the measured shape), NEVER below the received floor (a top-up must not become a stealth clawback), honest verdicts RECLAIM-PENDING / TOPUP-HOLD / MODE-DRY / TOPUP-LIVE. LIVE measured 2026-10-04: the chain refused the top-up and reported available 14,162 vests (8.78 SP) < floor 16,131.75 vests (10 SP) -> TOPUP-HOLD, the 10 SP RC stands, the powerdown reclaim (476 SP/week from 2026-10-10) funds the growth with zero new code on the day it arrives. persona-slots.json v3 (community law-as-data), human-cadence.yml (community mode + hourly rc gate + book commits), E60 white+black-box, claims feats=62 offenders=0 suite MATCH, secret-scan 0 [skip ci]"
+      },
+      {
+        "sha": "8f7cfbe",
         "subject": "R36 THE COMMUNITY HOME (CR-0066 / feat-061 / E59, suite v1.44.0 -> v1.45.0, 59/59 GREEN): the fleet founded its dedicated Steem community on ground truth measured from the live chain BEFORE a line of code (the PromoSteem ceremony: account_create with the measured 3.000 STEEM fee + community customs; bridge read-back surfaces probed live) — community-founder.cjs: FUNDING LAW (fee from our own idle MM capital, farthest-STEEM-sell-first, cap 2, SBD untouched, armed when liquid suffices), TYPE LAW /^hive-1\\d{5}$/, identity born clean (props gate rejects em-dashes/probe-words on the house itself), ORPHAN LAW purchased for 3.000 STEEM (hive-177701 created but in-memory keys died with a crashed run pre-vault — the vault now lands the moment the account exists; RESUME law finishes an interrupted ceremony without a second account), RC-first delegation sized to the CHAIN-TRUTH reservation (50 SP target attempted, resized from the chain assertion to the measured available — never guessed; min_delegation measured 1 SP), and the second measured law: hivemind applies updateProps only from an ADMIN signature (headcorner active authority) while setRole flows through the community posting key. LIVE: hive-177702 The Clubhouse — 12 founding roles (headcorner admin + 10 soldier members), 10 SP RC confirmed on-chain, title/about live on the bridge, 14 ceremony hints booked, read-back COMMUNITY-LIVE; honest absence verdicts for every pre-create state, single-writer atomic books, secret-scan 0 [skip ci]"
       },
       {
@@ -163,10 +167,6 @@
       {
         "sha": "3121568",
         "subject": "R27 THE METRONOME AUDIT (CR-0056 / feat-051 / E48): the fleet measures its own TIME. FINDING MEASURED LIVE: GitHub's scheduler stopped firing scheduled events on this repo — boundary 2026-10-03T20:10:04Z (last scheduled run observed anywhere); every schedule added after ~18:36Z has ZERO scheduled runs ever (fill-ledger-cron, market-grid-cron, fleet-census-cron, sovereign-tick-cron, earn-audit-cron, tick-keeper — alive only via keeper-arc hand-dispatches) and the old 30-min grid-trigger-twin schedule degraded to sparse drops (14:32Z->18:36Z gap). THE INSTRUMENT: agents/scheduler-collect.cjs (keyless I/O on the built-in GITHUB_TOKEN: cron extraction + scheduled-run census per workflow, fail-soft, SAOS-SCHEDULER-RAW/1) -> agents/scheduler-audit.cjs (pure deterministic STASIS-braked desk: expected-vs-observed slots with 40-min grace, PULSE/DEGRADED/STARVED/UNMEASURED verdict machine, repo-wide scheduler boundary, bounded heal list, atomic at-free Hebrew md) -> agents/scheduler-heal.cjs (bounded dispatch of the desk's list — never invents). THE SELF-HEALING FLEET IS THE KEYLESS FLEET: heal candidates = STARVED ∧ keyless (census's own owner-secret regex) ∧ not-host ∧ not-keeper, cap 3 as data. LIVE PROOF 2026-10-04T00:43Z: the desk listed earn-audit-cron/fill-ledger-cron/market-grid-cron; the healer dispatched all three — HTTP 204 x3 — GitHub registered the runs 00:43:08-11Z. Secret-carrying starved legs are excluded by law (E48 pins it fresh-process on a fixture with a secret-carrying starved row). First book: verdict SCHEDULER-STARVED · 6 starved / 15 degraded / 1 unmeasured · 43 scheduled workflows · boundary 2026-10-03T20:10:04Z. Wired as an independent leg on fleet-census-cron (collect -> audit -> heal -> publish, actions:write, volatile no-noise list updated). ALSO BOOKED: the R26 wave's first keyless CI publish — audience-analyst success on 8d86d12 with digest 5e4ca43 published via the built-in github.token; cloud-heart/soldiers-curate confirmed genuine cross-repo PAT users (the CR-0055 line holds). E32's keyless law ALIGNED to the census-canonical definition (zero non-GITHUB_TOKEN refs — the older zero-secrets-dot regex predated R26 and contradicted E47; the scheduler-audit leg rides the built-in token by design). Suite v1.34.0 -> v1.35.0 (48/48 GREEN — the suite caught two test bugs of its own author mid-rung: a scope leak and a window math error, both fixed honestly)"
-      },
-      {
-        "sha": "932b6a6",
-        "subject": "fill-ledger: tick 2026-10-04T00:43:34Z [skip ci]"
       }
     ]
   },
@@ -736,7 +736,7 @@
       "kind": "observation",
       "source": "evo-windows.json",
       "action": "carry the evolution-window cadence state into the record",
-      "receipt": "98 windows booked, none complete · next due 2026-10-04T12:45:05Z",
+      "receipt": "101 windows booked, none complete · next due 2026-10-04T12:45:05Z",
       "disposition": "BOOKED"
     }
   ],
@@ -757,7 +757,7 @@
     "joined": 7,
     "note": "fresh advisory triage joined by id — lane/urgency hints only, confidence uncalibrated (en checkpoint), dispositions untouched",
     "at": "2026-10-03T15:08:54Z",
-    "age_h": 15.4
+    "age_h": 16.5
   },
   "evoEvidence": {
     "mode": "CADENCE-ONLY",

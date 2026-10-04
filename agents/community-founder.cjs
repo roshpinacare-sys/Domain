@@ -65,6 +65,7 @@ const BOOK_JSON = path.join(AG, 'community-founder.json');
 const BOOK_MD = path.join(AG, 'community-founder.md');
 const HC_DERIVED = process.env.HC_DERIVED || '/home/z/my-project/.fleet/headcorner-derived.json';
 const COMM_KEYS = process.env.COMM_KEYS || '/home/z/my-project/.fleet/community-keys.json';
+const HIVE_KEYS = process.env.HIVE_KEYS || '/home/z/my-project/.fleet/hive-keys.json';
 const HEAD = 'headcorner';
 const NODE = process.env.STEEM_NODE || 'https://api.steemit.com';
 const FEE_MARGIN = 0.05;
@@ -142,6 +143,52 @@ function fundingPlan(liquid, need, orders, maxCancels) {
   plan.armed = plan.freed + liquid + 1e-9 >= need;
   plan.why = plan.armed ? 'FUND-THEN-CREATE' : 'IDLE-CAPITAL-TOO-SMALL';
   return plan;
+}
+
+// ---------- chain-of-record (R38, CR-0068): the NAME is not the CHAIN ----------
+// The owner measured the name and asked (2026-10-04, Hebrew): "מה לגבי קהילה בסטימיט —
+// אני רואה שעשית רק בhive". The "hive-177702" prefix misled even the owner: it is the
+// hivemind software's naming convention for communities ON STEEM (condenser
+// Role.parseType reads name[5] as the community TYPE digit — that's why the TYPE LAW
+// requires hive-1xxxxx). The chain, not the name, is the truth — so every status run
+// now probes BOTH bridges live and books a derived badge.
+
+/** the two chains the fleet runs on, with their nodes and fee assets */
+function chainRegistry() {
+  return {
+    steem: { node: 'https://api.steemit.com', feeAsset: 'STEEM', human: 'Steem' },
+    hive: { node: 'https://api.hive.blog', feeAsset: 'HIVE', human: 'Hive' },
+  };
+}
+
+/** the chain-of-record badge: derived ONLY from the live probe of both bridges and
+ *  the booked fee asset — never from the account name, never hardcoded. */
+function chainBadge({ existsSteem, existsHive, feeAsset }) {
+  const fee = String(feeAsset || '').toUpperCase();
+  if (existsSteem && existsHive) return 'CROSS-CHAIN';
+  if (existsSteem && !existsHive) return fee.includes('STEEM') ? 'STEEM-CHAIN' : 'STEEM-CHAIN-FEE-MISMATCH';
+  if (!existsSteem && existsHive) return fee.includes('HIVE') ? 'HIVE-CHAIN' : 'HIVE-CHAIN-FEE-MISMATCH';
+  return 'ABSENT-EVERYWHERE';
+}
+
+/** the Hive second-home authority law: the desk cannot sign what it does not hold.
+ *  Measured live 2026-10-04: headcorner's Hive active pubkey (STM8c9vp3…) differs from
+ *  the Steem one we hold (STM5HhJD…) — the same WIF does NOT sign on Hive, and the
+ *  fleet holds no Hive key material. NO-KEYS is the honest verdict today. */
+function hiveAuthorityVerdict(vaultPresent, chainPub, vaultPub) {
+  if (!vaultPresent) return 'NO-KEYS';
+  if (!chainPub || !vaultPub || chainPub !== vaultPub) return 'KEY-MISMATCH';
+  return 'READY';
+}
+
+/** the honest hive-probe verdict: authority gates everything (no keys → no ceremony,
+ *  no pretending), then the name, then the funding law — same order as the Steem desk. */
+function hiveProbeVerdict({ nameFree, liquidHive, need, authority }) {
+  if (authority === 'KEY-MISMATCH') return 'KEY-MISMATCH';
+  if (authority !== 'READY') return 'HOME-ABSENT-UNKEYED';
+  if (!nameFree) return 'NAME-TAKEN';
+  if (!(liquidHive + 1e-9 >= need)) return 'FUNDING-SHORT';
+  return 'CREATE-READY';
 }
 
 /** the founding roles: headcorner admin (the measured creator pattern), soldiers members */
@@ -229,6 +276,7 @@ module.exports = {
   fundingPlan, memberRoles, accountCreateOp, setRoleOp, updatePropsOp, updatePropsOpAdmin, cancelOp,
   COMMUNITY_RC_SP, FEE_MARGIN, MAX_CANCELS, HEAD,
   gestsToVests, parseAvailableVests, rcTopUpPlan, rcTopUpOp,
+  chainRegistry, chainBadge, hiveAuthorityVerdict, hiveProbeVerdict, HIVE_KEYS,
 };
 
 // ---------- runtime helpers ----------
@@ -241,9 +289,9 @@ function loadHeadVault() {
 }
 function communityVaultPresent() { try { return fs.existsSync(COMM_KEYS); } catch (_) { return false; } }
 
-const rpc = (method, params) => new Promise((res, rej) => {
+const rpc = (method, params, node) => new Promise((res, rej) => {
   const body = JSON.stringify({ jsonrpc: '2.0', method, params, id: 1 });
-  const req = require('https').request({ hostname: new URL(NODE).hostname, path: '/', method: 'POST', headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) }, timeout: 25000 }, (r) => {
+  const req = require('https').request({ hostname: new URL(node || NODE).hostname, path: '/', method: 'POST', headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) }, timeout: 25000 }, (r) => {
     let d = ''; r.on('data', (c) => (d += c)); r.on('end', () => { try { const j = JSON.parse(d); j.error ? rej(new Error(String(j.error.data && j.error.data.stack && j.error.data.stack[0] && j.error.data.stack[0].data && j.error.data.stack[0].data.format ? JSON.stringify(j.error.data.stack[0].data).slice(0, 500) : (j.error.message || j.error.data || 'rpc')).slice(0, 500))) : res(j.result); } catch (e) { rej(e); } });
   });
   req.on('error', rej); req.write(body); req.end();
@@ -324,6 +372,14 @@ function bookToMd(b) {
   } else {
     L.push('');
     L.push('## מצב: הקהילה טרם נוצרה (כנות מלאה)');
+  }
+  if (b.chainProof && b.chainProof.badge) {
+    const p = b.chainProof;
+    L.push('');
+    L.push('## שרשרת-האם (הוכחה חיה, R38)');
+    L.push('- פס-דין: ' + p.badge);
+    L.push('- נבדק חי: steem=' + p.existsSteem + ' · hive=' + p.existsHive + ' · ב-' + p.checkedAt);
+    L.push('- הסבר: "hive-" בשם הוא קונבנציית-hivemind על Steem (סוג 1 = journal), לא רשת Hive');
   }
   L.push('');
   L.push('## ריצות אחרונות');
@@ -511,6 +567,34 @@ async function modeCreate(run, book) {
   return run;
 }
 
+async function communityExists(name, node) {
+  // trivalent truth: true (title seen) / false (the bridge's own "does not exist" assert
+  // — evidence of ABSENCE, never a network failure) / null (unreachable — honest gap).
+  // The two must never be conflated: absence is a measured answer, unreachable is none.
+  // One retry on the unreachable path only (a transient hiccup must not erase the
+  // badge's second leg; absence asserts are answers and are never retried).
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const c = await rpc('bridge.get_community', { name, observer: null }, node);
+      return !!(c && c.title);
+    } catch (e) {
+      if (/does not exist/i.test(String(e.message || e))) return false;
+      if (attempt === 0) { await new Promise((r) => setTimeout(r, 1200)); continue; }
+      return null;
+    }
+  }
+  return null;
+}
+
+async function chainProof(name, feeAsset) {
+  // R38: the NAME is not the CHAIN — probe BOTH bridges live, derive the badge from
+  // the evidence (never from the account name). Unreachable → null (honest gap).
+  const reg = chainRegistry();
+  const existsSteem = await communityExists(name, reg.steem.node);
+  const existsHive = await communityExists(name, reg.hive.node);
+  return { name, existsSteem, existsHive, badge: chainBadge({ existsSteem, existsHive, feeAsset }), checkedAt: new Date().toISOString() };
+}
+
 async function modeStatus(run, book) {
   let name = book.community && book.community.name;
   let adopt = false;
@@ -538,6 +622,14 @@ async function modeStatus(run, book) {
   // and the RC delegation visible on the account. Subscribers are informational (they land
   // when soldiers subscribe from the cadence desk).
   run.verdict = (comm && comm.title && roles.length >= 12 && receivedSp >= 8) ? 'COMMUNITY-LIVE' : 'READ-BACK-WEAK';
+  // CHAIN PROOF (R38): the badge answers "קהילה בסטימיט או בהייב?" with chain evidence,
+  // not with the name — measured live on both bridges every status run.
+  try {
+    const proof = await chainProof(name, (book.community && book.community.feeAsset) || '3.000 STEEM');
+    run.chainProof = proof;
+    book.chainProof = proof;
+    run.steps.push('chain-proof: steem=' + (proof.existsSteem === null ? 'unreachable' : proof.existsSteem) + ' · hive=' + (proof.existsHive === null ? 'unreachable' : proof.existsHive) + ' → ' + proof.badge);
+  } catch (e) { run.steps.push('chain-proof: unavailable (' + String(e.message || e).slice(0, 60) + ')'); }
   if (adopt && run.verdict === 'COMMUNITY-LIVE') {
     // finalize: the ceremony ran, the book lagged — build the community record from the
     // chain read-back plus the create run's booked ceremony hints
@@ -631,17 +723,64 @@ async function modeRc(run, book) {
   return run;
 }
 
+// ---------- hive mode (R38): the second-home desk, keyless honesty ----------
+// The owner directive "או אם יש גם ברשתות האחרות" books a home on Hive too. The desk
+// probes Hive keylessly every run: fee, fleet balances, open orders, name law, and the
+// AUTHORITY truth (we hold no Hive keys — measured: headcorner's Hive active pubkey
+// differs from the Steem one). It cannot create, and it never pretends: the verdicts
+// HOME-ABSENT-UNKEYED / KEY-MISMATCH / NAME-TAKEN / FUNDING-SHORT / CREATE-READY are
+// the whole surface. When Hive key material + 3 HIVE arrive (operator upload like R33,
+// or estate earnings), a create --chain hive rung is booked — not dead code today.
+
+async function modeHive(run, book) {
+  const reg = chainRegistry();
+  const H = (method, params) => rpc(method, params, reg.hive.node);
+  const props = await H('condenser_api.get_chain_properties', []);
+  const fee = props && props.account_creation_fee ? String(props.account_creation_fee) : null;
+  if (!fee) { run.verdict = 'READ-BACK-FAIL'; run.why = 'hive chain props unavailable'; return run; }
+  const fleet = [HEAD].concat(Object.keys(require('./persona-slots.json').soldiers));
+  const accs = await H('condenser_api.get_accounts', [fleet]);
+  const byName = Object.fromEntries((accs || []).filter(Boolean).map((a) => [a.name, a]));
+  const head = byName[HEAD];
+  if (!head) { run.verdict = 'READ-BACK-FAIL'; run.why = 'headcorner absent on hive'; return run; }
+  const liquid = parseFloat(head.balance);
+  const need = parseFloat(fee) + FEE_MARGIN;
+  const chainPub = (head.active && head.active.key_auths && head.active.key_auths[0] && head.active.key_auths[0][0]) || null;
+  const present = fs.existsSync(HIVE_KEYS);
+  let vaultPub = null;
+  if (present) { try { const v = JSON.parse(fs.readFileSync(HIVE_KEYS, 'utf8')); vaultPub = (v && v.active && v.active.pub) || (v && v.steem && v.steem.active && v.steem.active.pubkey) || null; } catch (_) {} }
+  const authority = hiveAuthorityVerdict(present, chainPub, vaultPub);
+  const cand = nameCandidates(process.env.COMM_NAME_CANDIDATES_HIVE
+    ? JSON.parse(process.env.COMM_NAME_CANDIDATES_HIVE)
+    : ['hive-177702', 'hive-180901', 'hive-190200', 'hive-199801', 'hive-199802']);
+  const taken = new Set((await H('condenser_api.get_accounts', [cand]) || []).map((a) => a.name));
+  const free = cand.filter((n) => !taken.has(n));
+  const orders = await H('database_api.find_limit_orders', { account: HEAD }).then((r) => (r && r.orders) || []).catch(() => []);
+  const houseOnHive = await communityExists('hive-177702', reg.hive.node);
+  const verdict = hiveProbeVerdict({ nameFree: free.length > 0, liquidHive: liquid, need, authority });
+  run.verdict = verdict;
+  run.why = authority === 'NO-KEYS'
+    ? 'no Hive key material is held (measured: headcorner hive active pub ' + String(chainPub || '').slice(0, 9) + '… ≠ the held steem pub) — the desk cannot sign what it does not hold'
+    : authority === 'KEY-MISMATCH' ? 'vault pub ≠ chain pub — wrong key generation, never guessed' : null;
+  run.steps.push('hive fee=' + fee + ' · headcorner liquid=' + liquid.toFixed(3) + ' · need=' + need.toFixed(3) + ' · orders=' + orders.length);
+  run.steps.push('soldiers-on-hive=' + fleet.slice(1).filter((s) => byName[s]).length + '/' + (fleet.length - 1) + ' · names-free=' + (free[0] || 'NONE') + ' · steem-house-on-hive=' + (houseOnHive === true ? 'yes' : houseOnHive === false ? 'no' : 'unreachable'));
+  run.steps.push('authority=' + authority + ' · vault=' + (present ? 'present' : 'absent') + ' · stasis=' + (stasis() ? 'HALT' : 'clear'));
+  run.hivePlan = { fee, liquid, need, authority, chainPubPrefix: String(chainPub || '').slice(0, 9), freeFirst: free[0] || null, soldiersOnHive: fleet.slice(1).filter((s) => byName[s]).length, steemHouseOnHive: houseOnHive };
+  return run;
+}
+
 // ---------- main ----------
 
 async function main() {
   const mode = (process.argv[2] || 'status').toLowerCase();
-  if (!['probe', 'create', 'status', 'rc'].includes(mode)) { console.log('usage: community-founder.cjs probe|create|status|rc'); process.exit(0); }
+  if (!['probe', 'create', 'status', 'rc', 'hive'].includes(mode)) { console.log('usage: community-founder.cjs probe|create|status|rc|hive'); process.exit(0); }
   const run = { at: new Date().toISOString(), mode, steps: [], txids: [], verdict: null, why: null, communityPlan: null };
   const book = readBook();
   try {
     if (mode === 'probe') await modeProbe(run);
     else if (mode === 'create') await modeCreate(run, book);
     else if (mode === 'rc') await modeRc(run, book);
+    else if (mode === 'hive') await modeHive(run, book);
     else await modeStatus(run, book);
   } catch (e) {
     run.verdict = 'ERROR'; run.why = String(e.message || e).slice(0, 200);
