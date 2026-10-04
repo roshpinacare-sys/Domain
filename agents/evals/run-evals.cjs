@@ -823,7 +823,7 @@ function accumulateInMemory(bookRows, seed) {
     law('stasis-gate', /STASIS\.json.*active===true|active===true.*STASIS\.json|JSON\.parse\(require\('fs'\)\.readFileSync\('agents\/STASIS\.json'[\s\S]*active/);
     law('stasis-gated-steps', /if: steps\.brake\.outputs\.active != 'true'/);
     law('concurrency-guard', /concurrency:[\s\S]*group: fleet-census-cron/);
-    law('keyless', !/secrets\./.test(wf));
+    law('keyless', !/secrets\.(?!GITHUB_TOKEN)[A-Z_]+/.test(wf)); // the census-canonical keyless definition (E47): built-in GITHUB_TOKEN is keyless — the scheduler-audit leg (R27) rides on it
     law('skip-ci-publish', /\[skip ci\]/);
     law('rebase-push', /pull --rebase origin main[\s\S]*push origin HEAD:main/);
     law('timeout', /timeout-minutes: \d+/);
@@ -1918,9 +1918,95 @@ function accumulateInMemory(bookRows, seed) {
   } catch (e) { evalr('E48', 'suffix law', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
 
+  // ---- E49 (R27, CR-0057): the metronome audit — the fleet measures its own TIME.
+  // scheduler-collect (keyless I/O, GITHUB_TOKEN) feeds scheduler-audit (pure desk):
+  // expected-vs-observed slots per scheduled workflow, PULSE/DEGRADED/STARVED verdicts,
+  // the repo-wide scheduler boundary, and the bounded keyless-only heal list.
+  try {
+    const why49 = [];
+    const c49 = (cond, name) => { if (!cond) why49.push(name); };
+    const sa = require(path.join(AG, 'scheduler-audit.cjs'));
+    // white-box: parseCron edge-exact over the cron family the fleet actually uses
+    const pc1 = sa.parseCron('23,53 * * * *');
+    c49(pc1 && pc1.minutes.length === 2 && pc1.minutes[0] === 23 && pc1.hours === 'all', 'parseCron-minutes-list');
+    const pc2 = sa.parseCron('19 6 * * *');
+    c49(pc2 && pc2.minutes.length === 1 && Array.isArray(pc2.hours) && pc2.hours[0] === 6, 'parseCron-daily');
+    const pc3 = sa.parseCron('44 1,7,13,19 * * *');
+    c49(pc3 && pc3.hours.length === 4 && pc3.hours[3] === 19, 'parseCron-hour-list');
+    const pc4 = sa.parseCron('53 */2 * * *');
+    c49(pc4 && Array.isArray(pc4.hours) && pc4.hours.length === 12 && pc4.hours[1] === 2, 'parseCron-hour-step');
+    c49(sa.parseCron('23,53 * *') === null && sa.parseCron('23,53 * * * 1') === null && sa.parseCron('60 * * * *') === null && sa.parseCron('23 */0 * * *') === null, 'parseCron-invalid-null');
+    // white-box: slotsIn edge-exact on known windows
+    const F6 = Date.parse('2026-10-04T00:00:00Z'), T6 = Date.parse('2026-10-04T06:00:00Z');
+    c49(sa.slotsIn('23,53 * * * *', F6, T6) === 12, 'slotsIn-halfhourly-6h');
+    c49(sa.slotsIn('19 6 * * *', F6, Date.parse('2026-10-04T07:00:00Z')) === 1, 'slotsIn-daily-slot');
+    c49(sa.slotsIn('14 2 * * *', F6, Date.parse('2026-10-04T02:00:00Z')) === 0, 'slotsIn-outside-window');
+    c49(sa.slotsIn('bogus', F6, T6) === -1, 'slotsIn-unparseable-minus1');
+    // white-box: the verdict machine edge-exact
+    c49(sa.verdictFor(0, ['2026-10-04T00:23:00Z']) === 'UNMEASURED' && sa.verdictFor(11, null) === 'UNMEASURED', 'verdict-unmeasured');
+    c49(sa.verdictFor(11, []) === 'STARVED' && sa.verdictFor(11, ['a', 'b']) === 'DEGRADED' && sa.verdictFor(11, ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k']) === 'PULSE', 'verdict-starved-degraded-pulse');
+    // white-box + black-box: the real desk fresh-process on a fixture dir (rich + empty)
+    const fx49 = fs.mkdtempSync(path.join(require('os').tmpdir(), 'sched48-'));
+    const fxWf = path.join(fx49, 'wf');
+    fs.mkdirSync(fxWf);
+    fs.writeFileSync(path.join(fxWf, 'k1.yml'), "on:\n  schedule:\n    - cron: '23,53 * * * *'\n");
+    fs.writeFileSync(path.join(fxWf, 'k2.yml'), "on:\n  schedule:\n    - cron: '18,48 * * * *'\n");
+    fs.writeFileSync(path.join(fxWf, 'k3.yml'), "on:\n  schedule:\n    - cron: '0 5 * * *'\n");
+    fs.writeFileSync(path.join(fxWf, 'k4.yml'), "on:\n  schedule:\n    - cron: '0 4 * * *'\n      # secrets.SA_FLEET_KEYS-style owner-secret line lives here so the heal must skip it\n      env:\n        K: ${{ secrets.SA_FLEET_KEYS }}\n");
+    const raw48 = {
+      format: 'SAOS-SCHEDULER-RAW/1', repo: 'fixture/repo',
+      windowFrom: '2026-10-04T00:00:00Z', windowTo: '2026-10-04T06:00:00Z',
+      workflows: [
+        { file: 'k1.yml', crons: ['23,53 * * * *'], scheduledRuns: ['2026-10-04T00:23:00Z', '2026-10-04T00:53:00Z'] },
+        { file: 'k2.yml', crons: ['18,48 * * * *'], scheduledRuns: [] },
+        { file: 'k3.yml', crons: ['0 5 * * *'], scheduledRuns: ['2026-10-04T05:00:00Z'] },
+        { file: 'k4.yml', crons: ['0 4 * * *'], scheduledRuns: [] },
+      ],
+    };
+    fs.writeFileSync(path.join(fx49, 'scheduler-raw.json'), JSON.stringify(raw48, null, 1) + '\n');
+    const bb49 = spawnSync(process.execPath, [path.join(AG, 'scheduler-audit.cjs')], {
+      encoding: 'utf8', timeout: 60000,
+      env: { ...process.env, SCHEDULER_AUDIT_DIR: fx49, SCHEDULER_WF_DIR: fxWf },
+    });
+    let fxBook49 = null; try { fxBook49 = JSON.parse(fs.readFileSync(path.join(fx49, 'scheduler-audit.json'), 'utf8')); } catch (_) {}
+    c49(bb49.status === 0 && fxBook49 && fxBook49.verdict === 'SCHEDULER-STARVED', 'sched-black-box-verdict');
+    c49(fxBook49 && fxBook49.sections.pulse.rows.length === 4, 'sched-black-box-rows');
+    const fxRows49 = {};
+    for (const r of (fxBook49 ? fxBook49.sections.pulse.rows : [])) fxRows49[r.file] = r;
+    // k1: window audit-end 05:20 (grace) → 10 expected slots (05:23/05:53 cut by the grace), 2 observed → DEGRADED
+    c49(fxRows49['k1.yml'] && fxRows49['k1.yml'].expectedSlots === 10 && fxRows49['k1.yml'].observed === 2 && fxRows49['k1.yml'].verdict === 'DEGRADED', 'sched-black-box-degraded-numbers');
+    c49(fxRows49['k2.yml'] && fxRows49['k2.yml'].verdict === 'STARVED', 'sched-black-box-starved');
+    c49(fxRows49['k3.yml'] && fxRows49['k3.yml'].verdict === 'PULSE' && fxRows49['k3.yml'].expectedSlots === 1, 'sched-black-box-pulse');
+    c49(fxRows49['k4.yml'] && fxRows49['k4.yml'].verdict === 'STARVED', 'sched-black-box-secret-starved-row');
+    // the heal composition law: STARVED ∧ keyless ∧ not-host ∧ not-keeper, cap 3 — k4 carries an owner secret and must be excluded
+    c49(fxBook49 && JSON.stringify(fxBook49.sections.heal.candidates) === JSON.stringify(['k2.yml']), 'sched-heal-keyless-only');
+    c49(fxBook49 && fxBook49.sections.boundary.schedulerLastSeenAt === '2026-10-04T05:00:00Z', 'sched-boundary-max-last');
+    const fxMd49 = fs.existsSync(path.join(fx49, 'scheduler-audit.md')) ? fs.readFileSync(path.join(fx49, 'scheduler-audit.md'), 'utf8') : '';
+    c49(/ביקורת המתזמן/.test(fxMd49) && !/^\s*"at"/m.test(fxMd49) && /he|חוק/.test(fxMd49), 'sched-md-hebrew-atfree');
+    fs.rmSync(fx49, { recursive: true, force: true });
+    // the empty law: corrupt raw → SCHEDULER-EMPTY, book written honestly, exit 0
+    const fx49b = fs.mkdtempSync(path.join(require('os').tmpdir(), 'sched48b-'));
+    fs.writeFileSync(path.join(fx49b, 'scheduler-raw.json'), '{corrupt');
+    const bb49b = spawnSync(process.execPath, [path.join(AG, 'scheduler-audit.cjs')], { encoding: 'utf8', timeout: 60000, env: { ...process.env, SCHEDULER_AUDIT_DIR: fx49b } });
+    let fxBook49b = null; try { fxBook49b = JSON.parse(fs.readFileSync(path.join(fx49b, 'scheduler-audit.json'), 'utf8')); } catch (_) {}
+    c49(bb49b.status === 0 && fxBook49b && fxBook49b.verdict === 'SCHEDULER-EMPTY' && fxBook49b.sections.pulse.rows.length === 0, 'sched-empty-law');
+    fs.rmSync(fx49b, { recursive: true, force: true });
+    // white-box: the real book (fresh from the live run above) agrees and the wiring is on the host
+    let realBook49 = null; try { realBook49 = JSON.parse(fs.readFileSync(path.join(AG, 'scheduler-audit.json'), 'utf8')); } catch (_) {}
+    c49(realBook49 && /^(SCHEDULER-STARVED|SCHEDULER-DEGRADED|SCHEDULER-PULSE|SCHEDULER-EMPTY)$/.test(realBook49.verdict), 'sched-real-tree-book');
+    const hostWf49 = String(fs.readFileSync(path.join(AG, '..', '.github', 'workflows', 'fleet-census-cron.yml'), 'utf8') || '');
+    c49(hostWf49.includes('actions: write') && hostWf49.includes('scheduler-collect.cjs') && hostWf49.includes('scheduler-audit.cjs') && hostWf49.includes('scheduler-heal.cjs'), 'sched-host-wired');
+    c49(hostWf49.includes('agents/scheduler-raw.json') && hostWf49.includes('agents/scheduler-audit.json'), 'sched-publish-wired');
+
+    evalr('E49', 'the metronome audit (CR-0057): the fleet measures its own time — cron parser edge-exact over the family the fleet uses, slot math exact on known windows, the PULSE/DEGRADED/STARVED verdict machine, the repo-wide scheduler boundary, byte-deterministic stable payload, Hebrew owner surface, and the bounded heal composition law (STARVED ∧ keyless ∧ not-host ∧ not-keeper, cap 3) proven fresh-process on a fixture',
+      why49.length === 0,
+      ['white-box: parseCron minutes/hour-lists/hour-steps exact, every invalid form null (4 fields, dow set, minute 60, step 0)', 'white-box: slotsIn 12 slots for half-hourly over 6h, the daily slot found inside its window, 0 outside, -1 unparseable', 'white-box: verdictFor UNMEASURED (expected 0 / runs null), STARVED (0 observed), DEGRADED (missed>=3), PULSE (missed<=2)', 'black-box: rich fixture (4 workflows, one carrying a secret) → exit 0, SCHEDULER-STARVED, exact expected/observed numbers, boundary = max last, heal = keyless-only [k2] (the secret-carrying k4 excluded by law), Hebrew at-free md', 'black-box: corrupt raw → SCHEDULER-EMPTY with an honest note, book written, exit 0 (measured nothing, invented nothing)', 'white-box: the real-tree book agrees and the host workflow carries actions:write + collect/audit/heal + publish/volatile wiring'],
+      why49.length ? 'fails: ' + why49.join('; ') : 'a cadence the fleet cannot see is a cadence that can rot silently — this eval pins the moment the fleet started measuring its own time and re-firing its own pulse');
+  } catch (e) { evalr('E49', 'metronome audit', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.35.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.36.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48 + R27 metronome-audit E49, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];

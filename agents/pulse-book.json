@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "at": "2026-10-04T00:51:24.767Z",
+  "at": "2026-10-04T00:56:54.741Z",
   "since": "2026-10-02T16:40:20.950Z",
   "windowSince": "2026-10-02T16:40:20.950Z",
   "agent": "pulse v1.2.0 (CR-0009 loop, Rung 1; CR-0028 consumes the laya advisory triage; CR-0033 consumes the scheduled evolution-window evidence — Z-48/Z-49/Z-60/Z-62)",
@@ -8,6 +8,10 @@
     "since": "2026-10-02T16:40:20.950Z",
     "count": 40,
     "commits": [
+      {
+        "sha": "c5263f0",
+        "subject": "R27 books on the merged tree: census 16/16 caps=61 wiring 10/10 · delta NO-DRIFT · cadence LIVE (8 rows) · evals 48/48 GREEN v1.35.0 · claims 0 offenders feats=51 evidence 117/120 suite MATCH · scheduler books refreshed on the merged tree [skip ci]"
+      },
       {
         "sha": "3121568",
         "subject": "R27 THE METRONOME AUDIT (CR-0056 / feat-051 / E48): the fleet measures its own TIME. FINDING MEASURED LIVE: GitHub's scheduler stopped firing scheduled events on this repo — boundary 2026-10-03T20:10:04Z (last scheduled run observed anywhere); every schedule added after ~18:36Z has ZERO scheduled runs ever (fill-ledger-cron, market-grid-cron, fleet-census-cron, sovereign-tick-cron, earn-audit-cron, tick-keeper — alive only via keeper-arc hand-dispatches) and the old 30-min grid-trigger-twin schedule degraded to sparse drops (14:32Z->18:36Z gap). THE INSTRUMENT: agents/scheduler-collect.cjs (keyless I/O on the built-in GITHUB_TOKEN: cron extraction + scheduled-run census per workflow, fail-soft, SAOS-SCHEDULER-RAW/1) -> agents/scheduler-audit.cjs (pure deterministic STASIS-braked desk: expected-vs-observed slots with 40-min grace, PULSE/DEGRADED/STARVED/UNMEASURED verdict machine, repo-wide scheduler boundary, bounded heal list, atomic at-free Hebrew md) -> agents/scheduler-heal.cjs (bounded dispatch of the desk's list — never invents). THE SELF-HEALING FLEET IS THE KEYLESS FLEET: heal candidates = STARVED ∧ keyless (census's own owner-secret regex) ∧ not-host ∧ not-keeper, cap 3 as data. LIVE PROOF 2026-10-04T00:43Z: the desk listed earn-audit-cron/fill-ledger-cron/market-grid-cron; the healer dispatched all three — HTTP 204 x3 — GitHub registered the runs 00:43:08-11Z. Secret-carrying starved legs are excluded by law (E48 pins it fresh-process on a fixture with a secret-carrying starved row). First book: verdict SCHEDULER-STARVED · 6 starved / 15 degraded / 1 unmeasured · 43 scheduled workflows · boundary 2026-10-03T20:10:04Z. Wired as an independent leg on fleet-census-cron (collect -> audit -> heal -> publish, actions:write, volatile no-noise list updated). ALSO BOOKED: the R26 wave's first keyless CI publish — audience-analyst success on 8d86d12 with digest 5e4ca43 published via the built-in github.token; cloud-heart/soldiers-curate confirmed genuine cross-repo PAT users (the CR-0055 line holds). E32's keyless law ALIGNED to the census-canonical definition (zero non-GITHUB_TOKEN refs — the older zero-secrets-dot regex predated R26 and contradicted E47; the scheduler-audit leg rides the built-in token by design). Suite v1.34.0 -> v1.35.0 (48/48 GREEN — the suite caught two test bugs of its own author mid-rung: a scope leak and a window math error, both fixed honestly)"
@@ -163,10 +167,6 @@
       {
         "sha": "a3acd36",
         "subject": "lane books: Rung 19 coordination-bus run on the MERGED tree (rebase over lane's CR-0046 from-nothing + CR-0047 edge-optimization) — evals 39/39 (their E37 earn-audit + E38 buy-premium + my E39 coordination-bus, v1.27.0), gate GREEN 47 workflows 0 offenders, cross-layer 7 checks 6 PASS 1 DRIFT, census 16/16 caps=61 wiring=10/10, ONE-BLOC 16/16 tokenReach 14, coord-bus live on the merged tree: BUS-READ 1 fresh msg (watermark walk stopped at the floor) → BUS-UNCHANGED (no-noise law live) → floor-chain + truncation guard landed, append-only ledgers intact (fills 57 / decisions 9 / delta 1), coordination proof wire live in public/pulse.json"
-      },
-      {
-        "sha": "d043f7d",
-        "subject": "CR-0048 (PASS, tier B): fleet Rung 19 — THE COORDINATION BUS (owner: תמשיך; booked by sovereign-convergence §4.3) — THIRTEENTH-COLLISION RENUMBER (later-mover law): the sibling from-nothing lane landed CR-0046/feat-041/E37 (earn-audit) and the edge lane CR-0047/feat-042/E38 while this rung was in flight — this rung renumbered CR-0046->CR-0048, feat-041->feat-043, E37->E39, run-evals v1.26.0 -> v1.27.0 (their E37 earn-audit + E38 buy-premium kept, my coordination-bus appended as E39) — (1) agents/coord-bus.cjs THE KEYLESS BUS READER: measured live at open, the bus ALREADY CARRIES TRAFFIC (33 saos.weave.core.v1 weave checkpoints + 4 saos.snapshot.v1 platform digests on headcorner) and the estate measured it NOWHERE — the desk reads saos.* custom_json ops keyless (api.steemit.com primary + api.justyy.com cross) with THE SPLIT-BRAIN GUARD (HEAD-VECTOR fingerprints must match or NOTHING is written; head vectors carry lastSeq/lastAt/headDigest = sha16 of the head MESSAGE, so a same-seq content LIE still fails the guard; deeper windows with the same head agree), THE LIMIT-100 LAW (measured live: limit>100 -> error -32801; the account_history_api operation_filter is a GHOST — measured live, string/numeric/absent all return UNFILTERED results on BOTH nodes — filtering is CLIENT-side), THE FLOOR-CHAIN WATERMARK WALK (pages stop when the previous book's lowest SEEN seq is re-reached — min over heads ∪ scan floor, no gaps between consecutive books; measured live: the head account churns ~28 ops/min of limit-order traffic which slides a fixed window — the workflow reaches 40x100 ops, the walk normally stops in 1-2 pages), THE HEAD-VECTOR FINGERPRINT (bus STATE = per-namespace head, NOT the sliding window — a silent bus books NO noise commit), TRUNCATION HONESTY (a cap-bound walk books BUS-TRUNCATED and writes NOTHING — the last complete book stands; the desk defect E39 caught BEFORE production: an unreachable/truncated view would clobber a good book and fake fleet-wide silence), namespace whitelist (unknown saos.* kept+flagged known:false, foreign ignored), STASIS halt-before-read (stasisHalt borrowed from the census desk by require — second-mover law), fail-soft exit 0, single-writer atomic book, COORD_BUS_SKIP + COORD_BUS_FIXTURE eval seams (house idiom); (2) agents/coord-lease.cjs RESERVATIONS.JSONL COLLISION LEASES: append-only stream, resolveLeases pure reducer (last-claim-wins, foreign release no-op, stale race rows lose to the active lease), claimDecision reason-code machine (GRANT / GRANT-RENEW / TAKEOVER-EXPIRED / REFUSE with holder+expiresAt evidence / REFUSE-NO-TTL / REFUSE missing) — NO IMMORTAL LEASES (no positive finite ttl = refused); CLI claim/release/list; keyless offline fail-soft; (3) WIRED: coord-bus rides fill-ledger-cron :17/:47 as an INDEPENDENT leg with its own no-noise publish ('coord-bus: tick … [skip ci]') — one chain-read cadence, two lenses (fill_order + custom_json), zero extra Actions minutes (התייעל למקסימום), composing with the sibling's FILL_LEDGER_MAX_PAGES=15 on the same workflow; the PUBLIC PULSE page gains the COORDINATION PROOF WIRE (bus health + active lease count + fleet identity count 6, composed from committed books only, every number stamped with its own measurement time, no trading amounts — public-safe); (4) E39 in run-evals v1.26.0 -> v1.27.0: white-box (whitelist, page-walk math, dedupe+sort, split-brain incl. both-empty + head-content-lie + window-depth-agrees, head-vector shape, watermark walk stops at the floor, floor chain, namespace rollup, lease state machine, lease reducer determinism) + black-box fresh-process (A: BUS-READ over the fixture seam — the sandbox forbids cross-process loopback, the transport seam is the house eval idiom; B: SPLIT-BRAIN zero-write; B2: UNREACHABLE zero-write; T: BUS-TRUNCATED zero-write with the last complete book standing; C: STASIS zero-network halt; D: the real CLI append law — only grants write, 1 claim + 1 release = 2 rows) — 39/39 GREEN on the MERGED tree (with the sibling's Rung 20); ledger: feat-043 (43 rows), CR-0048"
       }
     ]
   },
@@ -736,7 +736,7 @@
       "kind": "observation",
       "source": "evo-windows.json",
       "action": "carry the evolution-window cadence state into the record",
-      "receipt": "62 windows booked, none complete · next due 2026-10-04T12:45:05Z",
+      "receipt": "63 windows booked, none complete · next due 2026-10-04T12:45:05Z",
       "disposition": "BOOKED"
     }
   ],
@@ -757,7 +757,7 @@
     "joined": 7,
     "note": "fresh advisory triage joined by id — lane/urgency hints only, confidence uncalibrated (en checkpoint), dispositions untouched",
     "at": "2026-10-03T15:08:54Z",
-    "age_h": 9.7
+    "age_h": 9.8
   },
   "evoEvidence": {
     "mode": "CADENCE-ONLY",
