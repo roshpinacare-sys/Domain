@@ -1,8 +1,8 @@
 # Desk Evals — runnable expectations (fresh-process judge, Z-36)
 
-_run-evals v1.35.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48, parallel-convergence superset) · 2026-10-04T00:51:26.693Z_
+_run-evals v1.36.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48 + R27 metronome-audit E49, parallel-convergence superset) · 2026-10-04T00:56:56.811Z_
 
-**evals RED: 1 fail — booked honestly, the fails are the next work**
+**evals green: 49/49 expectations hold**
 
 ## E1 · dedupe identity is stable across repeat harvest — PASS
 - seed(3) + econ rows carrying the same two fills → exactly 3 entries
@@ -61,7 +61,7 @@ _run-evals v1.35.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - 200+data → REACHABLE with model count; 401/403 → AUTH-WALL; network error → UNREACHABLE (no hopeful green)
 - probing a nonexistent provider exits 0 with zero probes booked (fail-soft, no invention)
 - rail-ledger.json stamped (BOOKS-STAMP law)
-- _measured: live probes booked=90_
+- _measured: live probes booked=91_
 
 ## E12 · rail policy: FORBIDDEN row enabled as LIVE fails the gate — PASS
 - a catalog where cohere (ToS FORBIDDEN) is flipped to LIVE is rejected — ok:false with the FORBIDDEN reason named
@@ -110,14 +110,14 @@ _run-evals v1.35.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - fresh-process desk run: exit 0 (fail-soft), book stamped fresh (<30min)
 - honest reach floor: 16 repos declared, >=1 reached OR every unreached booked honestly as HTTP 4xx refusal (rate-limit is environment, not defect) — never invented
 - cua-bench contract: trajectory booked (every action logged) + STASIS state travels with the receipt
-- _measured: reached=0/16 lanes=0 green=0 activeRed=0 startup=0 mode=keyless_
+- _measured: reached=1/16 lanes=9 green=9 activeRed=0 startup=0 mode=keyless_
 
 ## E19 · hands book: honest verdict derivation + fresh receipts, zero hopeful greens — PASS
 - white-box: probe-ok → LIVE; absent → ABSENT; POLICY LOCK BEATS A GREEN PROBE → LOCKED-TIER-C (the cua permission-at-launch lesson); cross-ref → REF; probe-fail → UNREACHABLE
 - black-box: fresh-process desk exits 0 (fail-soft), ≥5 hands booked, ≥2 LIVE in any healthy context
 - every LIVE hand carries evidence+probeAt — a capability claimed without a receipt is a story
 - verdict enum closed (LIVE/ABSENT/UNREACHABLE/REF/LOCKED-TIER-C) — no hopeful greens possible
-- _measured: hands=6 live=4 receipted=true at=2026-10-04T00:51:22.434Z_
+- _measured: hands=6 live=4 receipted=true at=2026-10-04T00:56:43.269Z_
 
 ## E20 · skill-library gate: expertise as governed data with a mandatory Evidence Artifact — PASS
 - white-box: the predicate flags a bare built-in name (help), a missing Evidence Artifact section, and short/no-trigger descriptions — and PASSES the legal package
@@ -170,7 +170,7 @@ _run-evals v1.35.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - white-box: classifyOutcome() honest — incumbent-retained=INCUMBENT-RETAINED, challenger=ADOPTION-PENDING-CR (verify-only), reef-alive=LEAK-DETECTED (a leak is never silenced), no-book=WINDOW-NO-WINNER
 - black-box: fresh-process desk exits 0 under EVO_WINDOWS_SKIP_RUN=1, appends exactly ONE row (append-only history), never spawns the measured batch (off-budget law)
 - laws: verifyOnly booked in the book laws map
-- _measured: wdec=true wcls=true appended=true decision=SKIPPED-EVAL-CONTEXT windows=63_
+- _measured: wdec=true wcls=true appended=true decision=SKIPPED-EVAL-CONTEXT windows=64_
 
 ## E28 · market-exec planner: mode law, band guard, precision scan, caps, stack idempotency, SBD cap — PASS
 - white-box: resolveMode defaults DRY_RUN; only MARKET_EXEC_LIVE=1 arms broadcast
@@ -207,14 +207,14 @@ _run-evals v1.35.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - fail-soft: FLEET_CENSUS_ESTATE pointed at an empty dir → exit 0, 0/16 present, all lanes MISSING, blockers still booked with null-safe evidence
 - _measured: census=16/16 caps=61 wiring=10/10 blockers open=2 operator=2 laws=1_
 
-## E32 · census-cadence: the estate map refreshes itself on a keyless daily cron, double-gated by STASIS — FAIL
+## E32 · census-cadence: the estate map refreshes itself on a keyless daily cron, double-gated by STASIS — PASS
 - workflow: daily cron off the org minute map + workflow_dispatch escape hatch
 - workflow: scheduler STASIS gate reads agents/STASIS.json before tick+publish (healthy no-op when active)
 - workflow: keyless — zero secrets.* references; the publish rides the built-in GITHUB_TOKEN
 - workflow: concurrency guard + timeout + deterministic publish (clean exit on no-drift, no noise commits) + [skip ci] + pull --rebase push idiom
 - desk: STASIS-HALT in code BEFORE any lane read — fresh-process sandbox with an ACTIVE breaker books verdict=STASIS-HALT with NO inventory section (zero reads beyond the breaker file), exit 0
 - desk: the shared book is restored on the real estate after the sandbox run (16/16 lanes, no verdict field)
-- _measured: fails: keyless_
+- _measured: six+ laws regexed on the workflow; fresh-process halt proven with zero lane reads; book restored_
 
 ## E33 · flow-catch planner: marketable-sell floor law, proceeds-funded buy ladder, anti self-cross stack, dust discipline, determinism — PASS
 - white-box: taker ≤ 50% liquid, min price = bid×(1−0.1%), precision scan exact at 3dp, realized ≥ floor
@@ -362,5 +362,14 @@ _run-evals v1.35.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - white-box: seal-adopt.mjs exists on the tree, the r72 workflow invokes exactly node scripts/seal-adopt.mjs, and the script parses (node --check)
 - white-box: keeperDecide + ARC (9 desks) shape unchanged by the suffix law
 - _measured: the self-healing loop is now name-proof: stale → decide → dispatch 204 → desk runs → book commits_
+
+## E49 · the metronome audit (CR-0057): the fleet measures its own time — cron parser edge-exact over the family the fleet uses, slot math exact on known windows, the PULSE/DEGRADED/STARVED verdict machine, the repo-wide scheduler boundary, byte-deterministic stable payload, Hebrew owner surface, and the bounded heal composition law (STARVED ∧ keyless ∧ not-host ∧ not-keeper, cap 3) proven fresh-process on a fixture — PASS
+- white-box: parseCron minutes/hour-lists/hour-steps exact, every invalid form null (4 fields, dow set, minute 60, step 0)
+- white-box: slotsIn 12 slots for half-hourly over 6h, the daily slot found inside its window, 0 outside, -1 unparseable
+- white-box: verdictFor UNMEASURED (expected 0 / runs null), STARVED (0 observed), DEGRADED (missed>=3), PULSE (missed<=2)
+- black-box: rich fixture (4 workflows, one carrying a secret) → exit 0, SCHEDULER-STARVED, exact expected/observed numbers, boundary = max last, heal = keyless-only [k2] (the secret-carrying k4 excluded by law), Hebrew at-free md
+- black-box: corrupt raw → SCHEDULER-EMPTY with an honest note, book written, exit 0 (measured nothing, invented nothing)
+- white-box: the real-tree book agrees and the host workflow carries actions:write + collect/audit/heal + publish/volatile wiring
+- _measured: a cadence the fleet cannot see is a cadence that can rot silently — this eval pins the moment the fleet started measuring its own time and re-firing its own pulse_
 
 _Eval discipline adopted from learn-harness-engineering (Z-36): an eval is a runnable expectation, not a hope. Pure functions = white-box; desk processes = black-box fresh processes._

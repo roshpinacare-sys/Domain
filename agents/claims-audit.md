@@ -1,6 +1,6 @@
 # Claims Audit — the anti-claims instrument (CR-0049, R21)
 
-**WARN** · feats 51 · evidence resolved 116/119 · offenders 0 · warns 5 · suite MATCH
+**WARN** · feats 52 · evidence resolved 123/126 · offenders 0 · warns 4 · suite MATCH
 
 _Owner-language law: owner-facing replies: עברית (Hebrew) — the owner reads Hebrew; repo/CI artifacts stay English_
 
@@ -12,5 +12,4 @@ _Owner-language law: owner-facing replies: עברית (Hebrew) — the owner rea
 - ALLOWED-CLAIM — ledger shorthand: the token means agents/fill-ledger-fills.jsonl, which exists — the shorthand itself is not a path (feat-036; CR-0049)
 - ALLOWED-CLAIM — runtime surface: the Tier-E mailbox is created by sovereign.cjs on first parking; cited in feat-039 as the designed surface (CR-0049)
 - DUPLICATE-SLOT CR-0008 — historical slot reuse kept by the immutability law (documented in CR-0049)
-- DUPLICATE-SLOT CR-0056 — historical slot reuse kept by the immutability law (documented in CR-0049)
 
