@@ -80,7 +80,7 @@
    "setRole:member:wog": "206c95d6d4…"
   },
   "finalizedBy": "status-adoption",
-  "lastStatusAt": "2026-10-04T17:57:44.197Z"
+  "lastStatusAt": "2026-10-04T21:14:08.688Z"
  },
  "runs": [
   {
@@ -726,14 +726,76 @@
     "soldiersOnHive": 10,
     "steemHouseOnHive": false
    }
+  },
+  {
+   "at": "2026-10-04T21:14:07.517Z",
+   "mode": "rc",
+   "steps": [
+    "plan: available 1084663 vests (672.41 SP) · reservation 767704 vests · short 64524 vests · floor 10 SP received"
+   ],
+   "txids": [],
+   "verdict": "MODE-DRY",
+   "why": "plan armed — COMMUNITY_LIVE=1 signs the top-up",
+   "communityPlan": null,
+   "plan": {
+    "reservationVests": 767703.510456,
+    "availableVests": 1084663.3966629994,
+    "availableSp": 672.406,
+    "targetVests": 80655.34685109921,
+    "shortVests": 64523.59204309921,
+    "floorVests": 16131.754808,
+    "verdict": "TOPUP-READY"
+   }
+  },
+  {
+   "at": "2026-10-04T21:14:07.840Z",
+   "mode": "status",
+   "steps": [
+    "chain: hive-177702 title=The Clubhouse · roles=12 · subs=4 · receivedSP=10.0",
+    "chain-proof: steem=true · hive=false → STEEM-CHAIN"
+   ],
+   "txids": [],
+   "verdict": "COMMUNITY-LIVE",
+   "why": null,
+   "communityPlan": null,
+   "chainProof": {
+    "name": "hive-177702",
+    "existsSteem": true,
+    "existsHive": false,
+    "badge": "STEEM-CHAIN",
+    "checkedAt": "2026-10-04T21:14:08.688Z"
+   }
+  },
+  {
+   "at": "2026-10-04T21:14:08.717Z",
+   "mode": "hive",
+   "steps": [
+    "hive fee=3.000 HIVE · headcorner liquid=0.034 · need=3.050 · orders=0",
+    "soldiers-on-hive=10/10 · names-free=hive-177702 · steem-house-on-hive=no",
+    "authority=NO-KEYS · vault=absent · stasis=clear"
+   ],
+   "txids": [],
+   "verdict": "HOME-ABSENT-UNKEYED",
+   "why": "no Hive key material is held (measured: headcorner hive active pub STM8c9vp3… ≠ the held steem pub) — the desk cannot sign what it does not hold",
+   "communityPlan": null,
+   "hivePlan": {
+    "fee": "3.000 HIVE",
+    "liquid": 0.034,
+    "need": 3.05,
+    "authority": "NO-KEYS",
+    "chainPubPrefix": "STM8c9vp3",
+    "freeFirst": "hive-177702",
+    "soldiersOnHive": 10,
+    "steemHouseOnHive": false
+   }
   }
  ],
- "at": "2026-10-04T17:57:44.680Z",
+ "at": "2026-10-04T21:14:09.360Z",
  "chainProof": {
   "name": "hive-177702",
   "existsSteem": true,
   "existsHive": false,
   "badge": "STEEM-CHAIN",
-  "checkedAt": "2026-10-04T17:57:44.197Z"
+  "checkedAt": "2026-10-04T21:14:08.688Z"
  }
 }
