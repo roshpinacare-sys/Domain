@@ -1,23 +1,23 @@
 {
  "ok": true,
- "at": "2026-10-04T10:05:19.194Z",
+ "at": "2026-10-04T10:55:44.859Z",
  "agent": "canon-liveness v1.0.0 (Z-42, CR-0005 — one-bloc nerves)",
  "origin": "the 2026-10-02T23:44Z honest null was root-caused to a structurally dead fallback leg (anonymous raw on a PRIVATE canon repo → 404 forever); reachability is now a booked fact with named legs, not an environment surprise",
- "verdict": "CONTENT-SERVED",
+ "verdict": "CANON-DARK",
  "legs": [
   {
    "id": "L1",
    "name": "sibling/CI checkout serves canon content",
-   "content": true,
-   "verdict": "SERVING",
-   "detail": "/home/z/git-audit/Defi · KPI updatedAt 2026-10-03T12:00:28.365Z · doctrine marker present"
+   "content": false,
+   "verdict": "ABSENT",
+   "detail": "no readable KPI.json at /home/runner/work/Domain/Defi (DEFU_DIR=unset → ../Defi)"
   },
   {
    "id": "L2",
    "name": "authenticated git rail (embedded remote creds, never printed)",
-   "reachable": true,
-   "verdict": "RAIL-UP",
-   "detail": "Defi@b7e18980ac94(local-clone(origin)) Domain@b7e18980ac94(local-clone(origin)) steem@b7e18980ac94(local-clone(origin))"
+   "reachable": false,
+   "verdict": "RAIL-DOWN",
+   "detail": "Defi=unreachable(anonymous-https(no-prompt)) Domain@a0d04c7f083b(local-clone(origin)) steem=unreachable(anonymous-https(no-prompt))"
   },
   {
    "id": "L3",
@@ -27,7 +27,7 @@
    "detail": "anonymous GET fleet/KPI.json → HTTP 404 (private canon: 404 expected; 200 would mean the canon went public — book it, never assume it)"
   }
  ],
- "deskGuidance": "desks read the canon from the sibling checkout — proven legs, book normally",
+ "deskGuidance": "CANON-DARK: every cross-repo desk is an island — fix the legs before trusting any cross-repo number",
  "doctrineMarker": {
   "law": "CANON-REACHABILITY LAW + ONE-CANON LAW (Defi/fleet/DOCTRINE-economics.md v1.7)"
  }
