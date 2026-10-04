@@ -1,6 +1,6 @@
 # fill-ledger — fill measurement leg (CR-0039)
 
-Last run: 2026-10-04T05:17:20.156Z · mode **READ-ONLY** · head **headcorner** · since 2026-10-03T00:00:00Z
+Last run: 2026-10-04T05:26:57.127Z · mode **READ-ONLY** · head **headcorner** · since 2026-10-03T00:00:00Z
 
 | metric | value |
 |---|---|
@@ -10,10 +10,10 @@ Last run: 2026-10-04T05:17:20.156Z · mode **READ-ONLY** · head **headcorner** 
 | realized P&L (costed cycles) | -0.389730 SBD |
 | proceeds from pre-ledger-basis sells | 48.069000 SBD |
 | unclassified legs | 30 |
-| liquid now | 0.186 STEEM / 0.657 SBD |
+| liquid now | 0.186 STEEM / 0.102 SBD |
 | own orders on book | 13 |
-| recycle suggestion | **SUGGESTED** — FUNDED-BUY-SIDE 0.657 SBD |
+| recycle suggestion | **NO** — NO-FUNDS |
 
 ## errors (0)
 
-Run history: 33 rows in canon. Ledger: fill-ledger-fills.jsonl (append-only, replay-derived state).
+Run history: 34 rows in canon. Ledger: fill-ledger-fills.jsonl (append-only, replay-derived state).
