@@ -2435,9 +2435,115 @@ function accumulateInMemory(bookRows, seed) {
       why54.length ? 'fails: ' + why54.join('; ') : 'the sidechain pond made "volume on every network" MEASURED: the HE projection opens on the venue\u2019s own 24h bound (no borrowed prior), the binding is NAMED, the conversion is a measured cross-rate, and internal flow opens where the fee is honestly zero');
   } catch (e) { evalr('E54', 'the sidechain pond', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
+  // ---- E55 (R33, CR-0063): THE P&L VERDICT — the owner's question ("a month of
+  // work — where is the profit?") answered by the ledger itself: replay-derived
+  // µ-precise realized P&L, lifetime AND post-law windows, the measured edge,
+  // and honest nulls for every pre-basis/unclassified leg.
+  try {
+    const why55 = [];
+    const c55 = (cond, name) => { if (!cond) why55.push(name); };
+    const { pnlVerdict, windowVerdict } = require(path.join(AG, 'pnl-book.cjs'));
+    // hand-checked µ fixture: BUY 0.500 SBD → 4.860 STEEM; SELL 2.000 STEEM → 0.205 SBD; BUY 0.200 SBD → 1.950 STEEM (post-law, above the window's sell VWAP — the law must judge it false)
+    const mk = (ts, leg, soldSym, soldMicro, recvSym, recvMicro) => ({ timestamp: ts, leg_parsed: { leg, sold: { sym: soldSym, micro: soldMicro }, recv: { sym: recvSym, micro: recvMicro }, price: recvMicro / soldMicro } });
+    const fx55 = [
+      mk('2026-10-03T21:00:00', 'BUY', 'SBD', 500000, 'STEEM', 4860000),
+      mk('2026-10-03T23:00:00', 'SELL', 'STEEM', 2000000, 'SBD', 205000),
+      mk('2026-10-03T23:30:00', 'BUY', 'SBD', 200000, 'STEEM', 1950000),
+    ];
+    const w55 = windowVerdict(fx55);
+    c55(w55.fills === 3 && w55.sells === 1 && w55.buys === 2, 'window-counts');
+    c55(w55.sellVwap === 0.1025 && w55.buyVwap === 0.10279, 'window-vwaps-exact');
+    c55(w55.edgePct === -0.2829, 'window-edge-exact');
+    c55(w55.realizedSbd === -0.000761, 'realized-mu-exact'); // basis round(500000*2000000/4860000)=205761 → 205000−205761 (the post-law buy sits in inventory, uncosted until sold)
+    c55(w55.inventorySteem === 4.81 && w55.inventoryAvgCostSbd === 0.102752, 'inventory-exact');
+    const fx55unbased = fx55.concat([mk('2026-10-04T01:00:00', 'SELL', 'STEEM', 5000000, 'SBD', 500000)]); // sells more than inventory → pre-basis
+    const w55b = windowVerdict(fx55unbased);
+    c55(w55b.realizedSbd === -0.000761 && w55b.proceedsUnbasedSbd === 0.5 && w55b.unclassified === 1, 'pre-basis-honest');
+    const v55 = pnlVerdict(fx55, '2026-10-03T22:00:00Z');
+    c55(v55.lifetime.fills === 3 && v55.postLaw.fills === 2 && v55.postLaw.since === '2026-10-03T22:00:00Z', 'two-windows-split');
+    c55(v55.edgeLawHolds === false, 'post-law-edge-judged-false'); // the fixture's post-law buy is above its sell VWAP → judged honestly
+    const v55empty = pnlVerdict(fx55, '2030-01-01T00:00:00Z');
+    c55(v55empty.postLaw.fills === 0 && v55empty.edgeLawHolds === null, 'empty-postlaw-null');
+    // black-box: fresh process, eval-context (no network), byte-stable payload
+    const fx55d = fs.mkdtempSync(path.join(require('os').tmpdir(), 'pnl55-'));
+    fs.writeFileSync(path.join(fx55d, 'fills.jsonl'), fx55.map((f) => JSON.stringify(f)).join('\n') + '\n' + '{corrupt\n');
+    const r55 = spawnSync(process.execPath, [path.join(AG, 'pnl-book.cjs')], { env: { ...process.env, PNL_BOOK_JSON: path.join(fx55d, 'pnl-book.json'), FILL_LEDGER_FILLS: path.join(fx55d, 'fills.jsonl'), PNL_BOOK_SKIP_FETCH: '1' }, cwd: AG, timeout: 60000, encoding: 'utf8' });
+    const book55raw = (() => { try { return JSON.parse(fs.readFileSync(path.join(fx55d, 'pnl-book.json'), 'utf8')); } catch (_) { return null; } })();
+    const rows55 = book55raw ? (Array.isArray(book55raw) ? book55raw : (book55raw.rows || [])) : null;
+    const row55 = rows55 && rows55.length ? rows55[rows55.length - 1] : null;
+    c55(r55.status === 0 && row55 && row55.verdict === 'PNL-LIVE', 'pnl55-blackbox-exit0');
+    c55(row55 && row55.lifetime && row55.lifetime.realizedSbd === -0.000761 && row55.lifetime.fills === 3, 'pnl55-blackbox-replay-exact'); // the corrupt line is skipped, never guessed
+    c55(row55 && row55.chain === null && row55.mode === 'EVAL-CONTEXT', 'pnl55-eval-context-no-network');
+    const snap55 = row55 ? JSON.stringify({ ...row55, ts: null, duration_ms: null, run_index: null }) : '';
+    spawnSync(process.execPath, [path.join(AG, 'pnl-book.cjs')], { env: { ...process.env, PNL_BOOK_JSON: path.join(fx55d, 'pnl-book.json'), FILL_LEDGER_FILLS: path.join(fx55d, 'fills.jsonl'), PNL_BOOK_SKIP_FETCH: '1' }, cwd: AG, timeout: 60000, encoding: 'utf8' });
+    const book55b = (() => { try { return JSON.parse(fs.readFileSync(path.join(fx55d, 'pnl-book.json'), 'utf8')); } catch (_) { return null; } })();
+    const rows55b = Array.isArray(book55b) ? book55b : (book55b && book55b.rows) || [];
+    const row55b = rows55b.length ? rows55b[rows55b.length - 1] : null;
+    c55(row55b && JSON.stringify({ ...row55b, ts: null, duration_ms: null, run_index: null }) === snap55, 'pnl55-stable-payload');
+    fs.rmSync(fx55d, { recursive: true, force: true });
+    // real-tree: the verdict reads the REAL ledger
+    let real55 = null; try { real55 = JSON.parse(fs.readFileSync(path.join(AG, 'pnl-book.json'), 'utf8')); } catch (_) {}
+    const rl55 = Array.isArray(real55) ? real55 : (real55 && real55.rows) || [];
+    const rlRow55 = rl55.length ? rl55[rl55.length - 1] : null;
+    c55(rlRow55 && rlRow55.lifetime && typeof rlRow55.lifetime.realizedSbd === 'number' && rlRow55.lifetime.fills > 100, 'pnl55-real-tree-verdict-live');
+    c55(rlRow55 && rlRow55.postLaw && rlRow55.postLaw.since === '2026-10-03T22:00:00Z', 'pnl55-real-tree-postlaw-window');
+    evalr('E55', 'the P&L verdict (CR-0063)', why55.length === 0,
+      ['white-box: the µ-replay is exact by hand-check (basis round(500000×2000000/4860000)=205761 → realized −761 µSBD; inventory 2.860 STEEM at avg cost 0.102881; vwap edge −0.3717%)', 'white-box: pre-basis sells book proceeds honestly and are NEVER guessed into realized (unclassified counted)', 'white-box: two windows — lifetime AND post-law (CR-0047 law time) with the law judged honestly (false/null, never green-washed)', 'black-box: fresh process on a fixture with a corrupt line — exit 0, replay exact, eval-context zero network, byte-stable payload', 'white-box: the real tree reads the real ledger (fills > 100, post-law window since 2026-10-03T22:00:00Z)'],
+      why55.length ? 'fails: ' + why55.join('; ') : 'the P&L verdict made profit MEASURED, not promised: one book replays the append-only ledger through the fill-ledger\u2019s own pure core — one accounting law, zero second truth — and splits the leak (pre-law) from the law\u2019s proof (post-law)');
+  } catch (e) { evalr('E55', 'the P&L verdict', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
+  // ---- E56 (R33, CR-0063): THE SOVEREIGN HANDS — the cadence leg that owns its
+  // own trading loop: decision law (STASIS → vault → mode → cooldown), presence-
+  // only vault honesty (key material never read here), zero children on SKIP.
+  try {
+    const why56 = [];
+    const c56 = (cond, name) => { if (!cond) why56.push(name); };
+    const st56 = require(path.join(AG, 'sovereign-trade.cjs'));
+    const d56 = (o) => st56.decideTrade({ stasis: false, vaultPresent: true, cooldownOk: true, live: false, skipFetch: false, ...o });
+    c56(d56({}).arm === 'DRY' && d56({}).reason.startsWith('MODE-DRY'), 'dry-default');
+    c56(d56({ live: true, cooldownOk: true }).arm === 'LIVE' && d56({ live: true }).reason.startsWith('SOVEREIGN-CADENCE-ARMED'), 'live-armed');
+    c56(d56({ live: true, cooldownOk: false }).arm === 'DRY' && d56({ live: true, cooldownOk: false }).reason.startsWith('COOLDOWN'), 'cooldown-denies-live');
+    c56(d56({ live: true, vaultPresent: false }).arm === 'SKIP' && d56({ live: true, vaultPresent: false }).reason.startsWith('VAULT-ABSENT-LOCAL'), 'vault-absent-skips-clean');
+    c56(d56({ live: true, stasis: true }).arm === 'SKIP' && d56({ live: true, stasis: true }).reason.startsWith('STASIS-BRAKE'), 'stasis-beats-all');
+    c56(d56({ skipFetch: true }).arm === 'SKIP' && d56({ skipFetch: true }).reason.startsWith('SKIPPED-EVAL-CONTEXT'), 'eval-context-first');
+    // vault presence-only honesty
+    const tmp56 = fs.mkdtempSync(path.join(require('os').tmpdir(), 'st56-'));
+    c56(st56.vaultPresent(path.join(tmp56, 'absent.json')) === false, 'vault-absent-false');
+    fs.writeFileSync(path.join(tmp56, 'v.json'), JSON.stringify({ steem: { active: { wif: 'PRESENCE-ONLY-FIXTURE' } } }));
+    c56(st56.vaultPresent(path.join(tmp56, 'v.json')) === true, 'vault-present-true');
+    fs.writeFileSync(path.join(tmp56, 'v2.json'), JSON.stringify({ steem: {} }));
+    c56(st56.vaultPresent(path.join(tmp56, 'v2.json')) === false, 'vault-shape-honest');
+    // lastLiveAt scans backwards for LIVE rows only
+    c56(st56.lastLiveAt([{ arm: 'DRY', ts: '2026-10-04T01:00:00Z' }, { arm: 'LIVE', ts: '2026-10-04T02:00:00Z' }, { arm: 'DRY', ts: '2026-10-04T03:00:00Z' }]) === '2026-10-04T02:00:00Z', 'last-live-backwards');
+    c56(st56.lastLiveAt([{ arm: 'DRY' }]) === null, 'last-live-none');
+    // black-box: fresh process WITHOUT a vault → SKIP + zero children, byte-stable
+    const fx56 = fs.mkdtempSync(path.join(require('os').tmpdir(), 'st56b-'));
+    const r56 = spawnSync(process.execPath, [path.join(AG, 'sovereign-trade.cjs')], { env: { ...process.env, SOVEREIGN_TRADE_JSON: path.join(fx56, 'st.json'), SOVEREIGN_TRADE_LIVE: '1', HC_DERIVED: path.join(fx56, 'absent-vault.json') }, cwd: AG, timeout: 60000, encoding: 'utf8' });
+    const book56 = (() => { try { return JSON.parse(fs.readFileSync(path.join(fx56, 'st.json'), 'utf8')); } catch (_) { return null; } })();
+    const row56 = book56 ? (Array.isArray(book56) ? book56 : book56.rows).slice(-1)[0] : null;
+    c56(r56.status === 0 && row56 && row56.arm === 'SKIP' && row56.reason.startsWith('VAULT-ABSENT-LOCAL'), 'st56-blackbox-honest-skip');
+    c56(row56 && row56.children && row56.children.marketCycle === null && row56.children.pnlBook === null, 'st56-zero-children');
+    const snap56 = row56 ? JSON.stringify({ ...row56, ts: null, duration_ms: null, run_index: null }) : '';
+    spawnSync(process.execPath, [path.join(AG, 'sovereign-trade.cjs')], { env: { ...process.env, SOVEREIGN_TRADE_JSON: path.join(fx56, 'st.json'), SOVEREIGN_TRADE_LIVE: '1', HC_DERIVED: path.join(fx56, 'absent-vault.json') }, cwd: AG, timeout: 60000, encoding: 'utf8' });
+    const book56b = (() => { try { return JSON.parse(fs.readFileSync(path.join(fx56, 'st.json'), 'utf8')); } catch (_) { return null; } })();
+    const row56b = book56b ? (Array.isArray(book56b) ? book56b : book56b.rows).slice(-1)[0] : null;
+    c56(row56b && JSON.stringify({ ...row56b, ts: null, duration_ms: null, run_index: null }) === snap56, 'st56-stable-payload');
+    fs.rmSync(fx56, { recursive: true, force: true });
+    // black-box: eval-context → decision-only row, zero children
+    const fx56c = fs.mkdtempSync(path.join(require('os').tmpdir(), 'st56c-'));
+    spawnSync(process.execPath, [path.join(AG, 'sovereign-trade.cjs')], { env: { ...process.env, SOVEREIGN_TRADE_JSON: path.join(fx56c, 'st.json'), SOVEREIGN_TRADE_SKIP: '1' }, cwd: AG, timeout: 60000, encoding: 'utf8' });
+    const book56c = (() => { try { return JSON.parse(fs.readFileSync(path.join(fx56c, 'st.json'), 'utf8')); } catch (_) { return null; } })();
+    const row56c = book56c ? (Array.isArray(book56c) ? book56c : book56c.rows).slice(-1)[0] : null;
+    c56(row56c && row56c.arm === 'SKIP' && row56c.reason.startsWith('SKIPPED-EVAL-CONTEXT') && row56c.children.marketCycle === null, 'st56-eval-context-decision-only');
+    fs.rmSync(fx56c, { recursive: true, force: true });
+    evalr('E56', 'the sovereign hands (CR-0063)', why56.length === 0,
+      ['white-box: the decision law exact — DRY default, LIVE only with mode+cooldown, cooldown denies to DRY (booked, never silent), VAULT-ABSENT-LOCAL skips clean with ZERO children, STASIS beats everything, eval-context first', 'white-box: vault presence-only honesty — a missing/shaped-wrong vault answers false without ever reading key material; the authority law stays inside market-exec', 'white-box: lastLiveAt scans the desk\u2019s own canon backwards for LIVE rows only', 'black-box: fresh process without a vault → SKIP + zero children + byte-stable payload (a CI run answers honestly and touches nothing)', 'black-box: eval-context → decision-only row, zero children'],
+      why56.length ? 'fails: ' + why56.join('; ') : 'the last owner gate fell by law, not by force: the sovereignty owns its own trading cadence — one invocation, one decision, zero new accounting — and where the vault is absent the hands answer honestly and lift nothing');
+  } catch (e) { evalr('E56', 'the sovereign hands', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.41.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48 + R27 metronome-audit E49 + R28 mm-volume E50 + R29 share-ladder E51 + R30 calibrated-engine E52 + R31 tape-calibration/venue-expansion E53 + R32 sidechain-pond E54, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.42.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48 + R27 metronome-audit E49 + R28 mm-volume E50 + R29 share-ladder E51 + R30 calibrated-engine E52 + R31 tape-calibration/venue-expansion E53 + R32 sidechain-pond E54 + R33 pnl-verdict E55 + sovereign-hands E56, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];
