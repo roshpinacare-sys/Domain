@@ -9,8 +9,8 @@
   - מסלול בר-ביצוע CENT: 13 פעמים, אחרון 3.0426%
   - מסלול בר-ביצוע SWAP.DOGE: 13 פעמים, אחרון 3.0741%
   - מסלול בר-ביצוע WAIV: 5 פעמים, אחרון 0.5216%
-- דלתא: 4 שורות (DRIFT=3, FIRST-DELTA=1), שינויי ריבונות 7, מעברי חוסמים 0
-- חיבור ל-artifact: ה-census ציטט 6 שורות היסטוריה מול 13 בפועל (פער 7), 1/16 מסלולים, estateCommits 1
+- דלתא: 5 שורות (DRIFT=4, FIRST-DELTA=1), שינויי ריבונות 14, מעברי חוסמים 0
+- חיבור ל-artifact: ה-census ציטט 13 שורות היסטוריה מול 13 בפועל (פער 0), 1/16 מסלולים, estateCommits 1
 - סף B2 (מקודד): marketGrid>=5 ∧ delta>=1
 
 _owner-facing replies: עברית (Hebrew) — the owner reads Hebrew; repo/CI artifacts stay English_
