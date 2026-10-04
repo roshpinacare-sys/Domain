@@ -1843,9 +1843,12 @@ function accumulateInMemory(bookRows, seed) {
     const texts47 = {};
     for (const f of wfFiles47) texts47[f] = String(fs.readFileSync(path.join(WFD, f), 'utf8') || '');
     const ownerSecretCount47 = wfFiles47.filter((f) => OWNER_SECRET_RE.test(texts47[f])).length;
-    c47(wfFiles47.length === 48, 'workflow-count-48');
+    // R31 evolution (in the open): the sibling's Z74 rung added workflow-yaml-guard
+    // (keyless) on main — the sovereignty bar moved 48→49 files, 15→16 keyless;
+    // the pinned bar re-based WITH the estate, documented here, never silently.
+    c47(wfFiles47.length === 49, 'workflow-count-49');
     c47(ownerSecretCount47 === 33, 'owner-secret-count-33');
-    c47(wfFiles47.length - ownerSecretCount47 === 15, 'keyless-count-15');
+    c47(wfFiles47.length - ownerSecretCount47 === 16, 'keyless-count-16');
     // the converted four: zero non-GITHUB_TOKEN refs, permissions kept, keyless checkout
     const converted47 = ['twin-audit.yml', 'audience-analyst.yml', 'content-reviewer.yml', 'public-pulse.yml'];
     for (const f of converted47) {
@@ -1867,12 +1870,12 @@ function accumulateInMemory(bookRows, seed) {
     c47(bb47.status === 0, 'gate-black-box-zero-tokens-exit-0');
     // the refreshed census book (same tree) carries the new sovereignty numbers
     let censusBook47 = null; try { censusBook47 = JSON.parse(fs.readFileSync(path.join(AG, 'fleet-census.json'), 'utf8')); } catch (_) {}
-    c47(censusBook47 && censusBook47.sovereignty && censusBook47.sovereignty.workflowsKeyless === 15, 'census-book-keyless-15');
+    c47(censusBook47 && censusBook47.sovereignty && censusBook47.sovereignty.workflowsKeyless === 16, 'census-book-keyless-16');
     c47(censusBook47 && censusBook47.sovereignty && censusBook47.sovereignty.workflowsOwnerSecret === 33, 'census-book-owner-secret-33');
 
-    evalr('E47', 'the keyless wave (CR-0055): the sovereignty bar pinned — the census regex recounts 15/48 keyless over the live dir, the four converted flows carry zero non-GITHUB_TOKEN refs under kept permissions, the dead PULSE_URL ref is durably documented-and-gone while its hook stays in the desk, and the issue gate survives zero tokens fresh-process',
+    evalr('E47', 'the keyless wave (CR-0055): the sovereignty bar pinned — the census regex recounts 16/49 keyless over the live dir (re-based on main: the sibling\'s Z74 workflow-yaml-guard joined keyless — 48/15 → 49/16, the evolution written here), the four converted flows carry zero non-GITHUB_TOKEN refs under kept permissions, the dead PULSE_URL ref is durably documented-and-gone while its hook stays in the desk, and the issue gate survives zero tokens fresh-process',
       why47.length === 0,
-      ['white-box: census-authority regex recounted over .github/workflows = 48 files, 33 owner-secret, 15 keyless (the R26 bar, encoded as data)', 'white-box: twin-audit/audience-analyst/content-reviewer/public-pulse — zero non-GITHUB_TOKEN secret refs, contents:write kept, github.token checkout, issues:write kept where gates exist', 'white-box: public-pulse.yml documents the dead-ref finding without referencing it; public-pulse.cjs still owns the optional PULSE_URL hook (capability preserved)', 'white-box: twin-issue-gate.cjs keeps the fail-soft token loop (empty tokens skipped)', 'black-box: the real gate fresh-process with GH_TOKEN/ZIP_PAT stripped and no marker → exit 0 honestly', 'white-box: the refreshed census book agrees (workflowsKeyless 15 / owner-secret 33)'],
+      ['white-box: census-authority regex recounted over .github/workflows = 49 files, 33 owner-secret, 16 keyless (the R26 bar re-based after the sibling\'s Z74 rung, encoded as data with the evolution documented)', 'white-box: twin-audit/audience-analyst/content-reviewer/public-pulse — zero non-GITHUB_TOKEN secret refs, contents:write kept, github.token checkout, issues:write kept where gates exist', 'white-box: public-pulse.yml documents the dead-ref finding without referencing it; public-pulse.cjs still owns the optional PULSE_URL hook (capability preserved)', 'white-box: twin-issue-gate.cjs keeps the fail-soft token loop (empty tokens skipped)', 'black-box: the real gate fresh-process with GH_TOKEN/ZIP_PAT stripped and no marker → exit 0 honestly', 'white-box: the refreshed census book agrees (workflowsKeyless 16 / owner-secret 33)'],
       why47.length ? 'fails: ' + why47.join('; ') : 'a secret carried by habit is not security, it is surface — this eval pins the line: same-repo = keyless, cross-repo = capability');
   } catch (e) { evalr('E47', 'keyless wave', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
