@@ -99,11 +99,23 @@ function lastLineTs(p) { // jsonl → last parseable .ts ; json book → .at | l
   } catch (_) { return null; }
 }
 
+// Z-73 CR-0056 THE SUFFIX LAW (measured, keeper run 37165106733): GitHub's dispatch
+// endpoint accepts the workflow FILE NAME only — desks registered before the .yml
+// naming convention (sovereign-tick-cron, fill-ledger-cron) 404'd while suffixed
+// desks (market-grid-cron.yml, audience-analyst.yml) 204'd in the SAME run with the
+// SAME token. The registry keys stay as-is (they are the arc-book keys, pinned by
+// E40b/E44 fixtures) — the dispatch layer normalizes via this exported pure helper.
+function workflowFileOf(desk) {
+  if (!desk) return desk; // fail-soft: a falsy desk is returned as-is, never fabricated into a name
+  return String(desk).endsWith('.yml') ? String(desk) : String(desk) + '.yml';
+}
+
 function dispatch(desk, token) {
   return new Promise((resolve) => {
     const payload = JSON.stringify({ ref: 'main' });
+    const wf = workflowFileOf(desk); // Z-73 CR-0056 THE SUFFIX LAW (measured, keeper run 37165106733) — see the exported helper
     const req = https.request({
-      hostname: 'api.github.com', path: `/repos/${REPO}/actions/workflows/${desk}/dispatches`, method: 'POST',
+      hostname: 'api.github.com', path: `/repos/${REPO}/actions/workflows/${wf}/dispatches`, method: 'POST',
       // Z-71: fine-grained PATs reject the legacy token-prefix on dispatch endpoints
       // (measured: Bearer 204 manual vs token-prefix 404 from the keeper, run 37157983852)
       headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(payload), Authorization: `Bearer ${token}`, 'User-Agent': 'saos-tick-keeper', Accept: 'application/vnd.github+json' },
@@ -162,5 +174,4 @@ async function main() {
   console.log(`[tick-keeper] stasis=${book.stasis} fired=[${fired}] skipped=${(book.skipped || []).length} errors=${book.errors.length} in ${book.duration_ms}ms`);
 }
 
-module.exports = { keeperDecide, ARC, COOLDOWN_MIN, OUT_JSON };
-if (require.main === module) main().catch((e) => { console.log('[tick-keeper] RECEIPT (fail-soft): ' + String(e.message).slice(0, 140)); try { fs.writeFileSync(OUT_JSON, JSON.stringify({ protocol: 'SAOS-TICK-KEEPER/1', at: new Date().toISOString(), error: String(e.message).slice(0, 140) }, null, 1) + '\n'); } catch (_) {} process.exit(0); });
+module.exports = { workflowFileOf, dispatch, keeperDecide, ARC, COOLDOWN_MIN, OUT_JSON };

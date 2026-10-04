@@ -1876,9 +1876,51 @@ function accumulateInMemory(bookRows, seed) {
       why47.length ? 'fails: ' + why47.join('; ') : 'a secret carried by habit is not security, it is surface — this eval pins the line: same-repo = keyless, cross-repo = capability');
   } catch (e) { evalr('E47', 'keyless wave', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
+  // ---- E48 (Z-73, CR-0056): THE SUFFIX LAW + THE WIRE-NAME FLOOR — the keeper's own
+  //      dispatch receipts (run 37165106733) measured the 404 class: desks registered
+  //      before the .yml naming convention (sovereign-tick-cron, fill-ledger-cron)
+  //      404'd while suffixed desks 204'd in the SAME run with the SAME token. The
+  //      dispatch layer now normalizes; E48 pins it AND the stronger floor: every
+  //      registry key must resolve to a workflow file that EXISTS on the tree — the
+  //      keeper can never 404-by-name again while this holds. Plus the seal-adopt
+  //      wire revival (the r72 workflow pointed at a script that never lived here —
+  //      restored from the sovereign house history 52bc7ce).
+  try {
+    const why48 = [];
+    const c48 = (cond, name) => { if (!cond) why48.push(name); return cond; };
+    const tk48 = require(path.join(AG, 'tick-keeper.cjs'));
+    // (1) the suffix law, pure — the measured 404 class heals
+    c48(tk48.workflowFileOf('sovereign-tick-cron') === 'sovereign-tick-cron.yml', 'suffix-law-404-class-healed');
+    c48(tk48.workflowFileOf('fill-ledger-cron') === 'fill-ledger-cron.yml', 'suffix-law-fill-ledger');
+    c48(tk48.workflowFileOf('market-grid-cron.yml') === 'market-grid-cron.yml', 'suffix-law-identity-suffixed');
+    c48(tk48.workflowFileOf('audience-analyst.yml') === 'audience-analyst.yml', 'suffix-law-identity-daily');
+    c48(tk48.workflowFileOf(null) === null && tk48.workflowFileOf(undefined) === undefined && tk48.workflowFileOf('') === '', 'suffix-law-fail-soft');
+    // (2) THE WIRE-NAME FLOOR — every registry key resolves to a REAL workflow file on the tree
+    const ROOT48 = path.resolve(AG, '..'); // the repo root (AG = agents/)
+    const WF_DIR = path.join(ROOT48, '.github', 'workflows');
+    for (const desk of Object.keys(tk48.ARC || {})) {
+      c48(fs.existsSync(path.join(WF_DIR, tk48.workflowFileOf(desk))), 'wire-name-floor:' + desk);
+    }
+    // (3) the seal-adopt wire — the script EXISTS on the tree and the workflow invokes exactly it
+    c48(fs.existsSync(path.join(ROOT48, 'scripts', 'seal-adopt.mjs')), 'seal-adopt-script-revived');
+    const saYml = fs.readFileSync(path.join(ROOT48, '.github', 'workflows', 'seal-adopt.yml'), 'utf8');
+    c48(saYml.includes('node scripts/seal-adopt.mjs'), 'seal-adopt-workflow-invocation-matches');
+    let saCheck = { status: -1 };
+    try { saCheck = spawnSync(process.execPath, ['--check', path.join(ROOT48, 'scripts', 'seal-adopt.mjs')], { encoding: 'utf8', timeout: 30000 }); } catch (_) {}
+    c48(saCheck.status === 0, 'seal-adopt-script-parses');
+    // (4) the arc book keeps its shape (the keeperDecide contract unchanged by the suffix law)
+    c48(typeof tk48.keeperDecide === 'function' && !!tk48.ARC && Object.keys(tk48.ARC).length >= 9, 'keeper-registry-shape-intact');
+
+    evalr('E48', 'the suffix law + the wire-name floor (CR-0056): the keeper dispatch normalizes legacy registry keys to workflow file names (the measured 404 class — 2 desks 404 while 2 desks 204 in the same run, same token — heals), every registry key must resolve to a workflow file that EXISTS on the tree (the keeper can never 404-by-name again while this holds), the seal-adopt wire revived from the sovereign house history (script exists, invocation matches, parses), and the keeper registry shape stays intact',
+      why48.length === 0,
+      ['white-box: workflowFileOf — the measured 404 class (bare desk names) suffixes, suffixed names stay identity, falsy stays falsy (fail-soft)', 'white-box: the wire-name floor over the LIVE tree — ARC key × workflowFileOf must exist in .github/workflows', 'white-box: seal-adopt.mjs exists on the tree, the r72 workflow invokes exactly node scripts/seal-adopt.mjs, and the script parses (node --check)', 'white-box: keeperDecide + ARC (9 desks) shape unchanged by the suffix law'],
+      why48.length ? 'fails: ' + why48.join('; ') : 'the self-healing loop is now name-proof: stale → decide → dispatch 204 → desk runs → book commits');
+  } catch (e) { evalr('E48', 'suffix law', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
+
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.34.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.35.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];
