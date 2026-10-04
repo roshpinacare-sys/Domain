@@ -21,6 +21,10 @@
  *     silently skipped (the books pattern).
  *  5. SINGLE CANON: the book (market-grid.json + .md) is the one record; the paper
  *     ledger is its append-only evidence trail.
+ *  6. THE POND LAW (v1.1.0+): every venue carries its measured 24h volume — the
+ *     share ladder needs both numbers. HE rows carry pond24hHive from the metrics
+ *     contract (SWAP.HIVE base term); the SBD-term conversion is mm-volume's
+ *     measured cross-rate (the HBD/HIVE internal mid), never a hardcoded price.
  *
  * Grid math (exported pure, for future evals):
  *  - mid(bid, ask) — honest mid
@@ -43,6 +47,11 @@ const PAPER_LEDGER = process.env.MGRID_PAPER || path.join(ROOT, 'agents', 'marke
 const HIVE_NODE = 'https://api.hive.blog';
 const STEEM_NODE = 'https://api.steemit.com';
 const HE_RPC = 'https://api.hive-engine.com/rpc/contracts';
+// v1.3.0 (CR-0062): the sidechain pond probe — the daily-history contract table
+// probed FIRST every run (probe-first, fail-loud: the Blurt pattern). Measured
+// 2026-10-04: marketHistory/history answers null (not RPC-exposed) → booked dark
+// with its reason; the day it answers, the pond becomes a SERIES, no new code.
+const HE_HISTORY = { contract: 'marketHistory', table: 'history' };
 const HE_BASKET = ['BEE', 'WAIV', 'SWAP.DOGE', 'SWAP.LTC', 'CENT'];
 const FEE_FLOOR_PCT = 0.4; // round-trip cost floor: no grid rung closer than this
 const RUNGS_PER_SIDE = 5;
@@ -154,6 +163,16 @@ async function readHiveEngine() {
   const res = await post(HE_RPC, { jsonrpc: '2.0', method: 'find',
     params: { contract: 'market', table: 'metrics', query: { symbol: { $in: HE_BASKET } }, limit: 10, offset: 0 }, id: 1 });
   if (!Array.isArray(res.result)) throw new Error('HE metrics not an array');
+  // v1.3.0 — the daily-history probe (probe-first, fail-loud, the Blurt law):
+  // an honest answer is a pond SERIES; a dark surface is MEASURED as dark.
+  const historyProbe = await (async () => {
+    try {
+      const h = await post(HE_RPC, { jsonrpc: '2.0', method: 'find',
+        params: { contract: HE_HISTORY.contract, table: HE_HISTORY.table, query: { symbol: HE_BASKET[0] }, limit: 3, offset: 0, descending: true }, id: 3 }, 8000);
+      if (Array.isArray(h.result) && h.result.length) return { alive: true, rows: h.result.length };
+      return { alive: false, reason: 'HE-DAILY-HISTORY-DARK: marketHistory/history answered ' + (h.result === null ? 'null' : 'no rows') + ' (not RPC-exposed) — the day it answers, the pond becomes a series' };
+    } catch (e) { return { alive: false, reason: 'HE-DAILY-HISTORY-DARK: ' + String(e.message).slice(0, 70) }; }
+  })();
   let feeMap = {};
   try {
     const tok = await post(HE_RPC, { jsonrpc: '2.0', method: 'find',
@@ -172,16 +191,21 @@ async function readHiveEngine() {
     const g = buildGrid(m || 1, b);
     const sp = m > 0 ? spreadPct(bid, ask) : Infinity;
     const feePct = Object.prototype.hasOwnProperty.call(feeMap, r.symbol) ? feeMap[r.symbol] : null;
+    const pond24hHive = parseFloat(r.volume || '0');
     return {
       symbol: r.symbol, lastPrice: r.lastPrice, bid, ask,
       mid: +m.toFixed(8), spreadPct: isFinite(sp) ? +sp.toFixed(4) : null,
       feePct, feeBps: feePct != null ? +(feePct * 100).toFixed(2) : null,
-      volume24h: parseFloat(r.volume || '0'),
+      volume24h: pond24hHive,
+      // v1.3.0 — the pond law: the measured 24h volume, named for what it is
+      // (the venue's own pond, SWAP.HIVE base term — the HE metrics.volume field)
+      pond24hHive: isFinite(pond24hHive) && pond24hHive >= 0 ? pond24hHive : null,
+      pondTerm: 'SWAP.HIVE (base-asset units, HE metrics.volume)',
       gridFeasible: m > 0 && isFinite(sp) && sp >= FEE_FLOOR_PCT,
       rungs: g.grid.length, step: g.step,
     };
   });
-  return { market: 'Hive-Engine basket (sidechain DEX)', rows, ms: Date.now() - t0 };
+  return { market: 'Hive-Engine basket (sidechain DEX)', rows, historyProbe, ms: Date.now() - t0 };
 }
 
 // v1.2.0 (CR-0061): the Blurt internal market — probe-FIRST, fail-loud. Measured
@@ -237,8 +261,8 @@ function executorPreview(internalRows) {
       return;
     }
   } catch (_) { /* no brake declared (missing/unreadable STASIS.json) → run normally; the tracked file + init's STASIS proof are the integrity layer */ }
-  const out = { at: new Date().toISOString(), agent: 'market-grid v1.2.0 (Z-60+ internal-market sovereignty instrument; v1.2.0 CR-0061: HE per-token fees + blurt probe)', laws: null, markets: [], hiveEngine: null, blurt: null, paperLedger: PAPER_LEDGER, executorPreviewCount: 0, errors: [], summary: {} };
-  out.laws = ['official sources only (chain nodes + sidechain RPC)', 'keyless: reads only, executor = owner-gated preview, never broadcast', 'paper is paper (labeled ledger, never laundered into realized book)', 'fail-loud per market', 'single canon (market-grid.json/.md)'];
+  const out = { at: new Date().toISOString(), agent: 'market-grid v1.3.0 (Z-60+ internal-market sovereignty instrument; v1.3.0 CR-0062: HE pond law + daily-history probe-first)', laws: null, markets: [], hiveEngine: null, blurt: null, paperLedger: PAPER_LEDGER, executorPreviewCount: 0, errors: [], summary: {} };
+  out.laws = ['official sources only (chain nodes + sidechain RPC)', 'keyless: reads only, executor = owner-gated preview, never broadcast', 'paper is paper (labeled ledger, never laundered into realized book)', 'fail-loud per market', 'single canon (market-grid.json/.md)', 'the pond law: every venue carries its measured 24h volume (v1.3.0 CR-0062)'];
 
   const internal = [];
   for (const [node, chain] of [[HIVE_NODE, 'hive'], [STEEM_NODE, 'steem']]) {
@@ -279,7 +303,12 @@ function executorPreview(internalRows) {
   const row = {
     at: out.at, verdict: out.summary.verdict,
     spreads: internal.map((r) => ({ market: r.market, spreadPct: r.spreadPct, pct24h: r.pct24h, tapeCrossed: r.paperFills })),
+    // v1.3.0 (CR-0062): mids ride in the history — the SBD-term pond conversion
+    // needs a measured cross-rate even when the live book blinks
+    mids: internal.map((r) => ({ chain: r.chain, market: r.market, mid: r.mid })),
     volumeSbdTerm: internal.map((r) => ({ chain: r.chain, market: r.market, volSbdTerm: r.volume24hSbdTerm })),
+    hePonds: out.hiveEngine ? out.hiveEngine.rows.map((r) => ({ symbol: r.symbol, pond24hHive: r.pond24hHive })) : [],
+    heHistoryAlive: out.hiveEngine ? out.hiveEngine.historyProbe.alive === true : null,
     heFeasible: out.hiveEngine ? out.hiveEngine.rows.filter((r) => r.gridFeasible).map((r) => `${r.symbol}:${r.spreadPct}%`) : [],
     heFees: out.hiveEngine ? out.hiveEngine.rows.map((r) => `${r.symbol}:${r.feeBps != null ? r.feeBps : 'unknown'}bps`) : [],
     blurtAlive: out.blurt ? out.blurt.alive === true : null,
@@ -296,7 +325,8 @@ function executorPreview(internalRows) {
     `| Market | Bid | Ask | Spread% | 24h% | Grid rungs | Step | Paper fills (snapshot) |`,
     `|---|---|---|---|---|---|---|---|`,
     ...internal.map((r) => `| ${r.market} | ${r.bid} | ${r.ask} | ${r.spreadPct} | ${r.pct24h} | ${r.grid.length} | ${r.step} | ${r.paperFills} |`),
-    ...(out.hiveEngine ? [``, `Hive-Engine basket (keyless RPC, per-token fee measured from the tokens contract): ` + out.hiveEngine.rows.map((r) => `${r.symbol} spread ${r.spreadPct}% fee ${r.feeBps != null ? r.feeBps + 'bps' : 'unknown'}${r.gridFeasible ? ' FEASIBLE' : ' thin'}`).join(' · ')] : []),
+    ...(out.hiveEngine ? [``, `Hive-Engine basket (keyless RPC, per-token fee measured from the tokens contract): ` + out.hiveEngine.rows.map((r) => `${r.symbol} spread ${r.spreadPct}% fee ${r.feeBps != null ? r.feeBps + 'bps' : 'unknown'} pond ${r.pond24hHive != null ? r.pond24hHive : 'unknown'} SWAP.HIVE/24h${r.gridFeasible ? ' FEASIBLE' : ' thin'}`).join(' · ')] : []),
+    ...(out.hiveEngine ? [`HE daily-history probe: ${out.hiveEngine.historyProbe.alive === true ? `ALIVE — ${out.hiveEngine.historyProbe.rows} rows (the pond is a series)` : `DARK (probed, honest) — ${out.hiveEngine.historyProbe.reason || 'no answer'}`}`] : []),
     ...(out.blurt ? [``, `Blurt internal market: ${out.blurt.alive === true ? `ALIVE — bid ${out.blurt.bid} · ask ${out.blurt.ask} · spread ${out.blurt.spreadPct}%` : `DARK (probed, honest) — ${out.blurt.reason || 'no answer'}`}`] : []),
     ``,
     `Laws: ${out.laws.join(' · ')}`,

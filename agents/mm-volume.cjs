@@ -59,6 +59,20 @@
  *     a measured tape (honest nullReason, never invented). The Blurt internal
  *     market is PROBED (probe-first fail-loud): dark today → booked as a dark
  *     surface with its reason; alive tomorrow → priced at 0 bps.
+ *  Q16 (v1.4.0) HOW DOES A VOLUME PROJECTION OPEN WITHOUT A TAPE? → THE SIDECHAIN
+ *     POND: the venue's own measured 24h volume IS the bound — no one can trade
+ *     more than everything that trades (pondBound = floor(pondSbd / avgSize)) —
+ *     the projection opens on min(pond, capacity) with the binding NAMED
+ *     ('pond' or 'capacity'), never a borrowed tape prior. The pond rides in
+ *     SWAP.HIVE from the HE metrics contract and converts to SBD-term by the
+ *     MEASURED cross-rate (the HBD/HIVE internal-market mid from the chains
+ *     themselves) — the rate is measured, the SBD≈HBD parity is a labeled
+ *     doctrine conversion (both are the chains' own USD-like assets).
+ *  Q17 (v1.4.0) WHAT IS STILL MISSING FOR THE SIDECHAIN TAPE? → the per-trade
+ *     tape: marketHistory/history is probed EVERY RUN (probe-first, market-grid
+ *     v1.3.0) and measured dark today (not RPC-exposed) — booked as a dark
+ *     surface with its reason; the day it answers, the pond becomes a SERIES
+ *     with zero new code. Standing depth (buyBook/sellBook) is the next rung.
  *  Q10 (v1.2.0) WHAT IS THE TRUE FILL SIZE? → calibratedAvgSize: the fill-ledger's
  *     REAL classified fills (µ-precise) give the actual average notional per fill
  *     (0.703 SBD measured vs 0.068 planned — reality runs ~10× the plan). When the
@@ -122,24 +136,33 @@ const r4 = (x) => (typeof x === 'number' && isFinite(x)) ? Math.round(x * 10000)
  * tape AND by the fleet's order capacity AND — when the ledger speaks (Q13,
  * v1.3.0) — by the MEASURED CAPTURE RATE (the fills our posture actually got),
  * whichever bites first. The binding names the smallest bound; ties resolve in
- * the deterministic order tape → capture → capacity. */
-function venueEconomics({ feeBps, spreadPct, fillsPerMin, avgSizeSbd, runsPerDay = LAW.RUNS_PER_DAY, maxNewPerRun = LAW.MAX_NEW_PER_RUN, accounts = 1, captureTradesDay = null }) {
-  if (![feeBps, spreadPct, fillsPerMin, avgSizeSbd].every((x) => typeof x === 'number' && isFinite(x) && x >= 0)) return null;
+ * the deterministic order tape → capture → pond → capacity. */
+function venueEconomics({ feeBps, spreadPct, fillsPerMin, avgSizeSbd, runsPerDay = LAW.RUNS_PER_DAY, maxNewPerRun = LAW.MAX_NEW_PER_RUN, accounts = 1, captureTradesDay = null, pondVolumeSbd = null }) {
+  // validity: fee/spread/size always required; volume truth = a measured tape OR
+  // a measured pond (v1.4.0) — a venue with neither has no honest projection.
+  const feeOk = typeof feeBps === 'number' && isFinite(feeBps) && feeBps >= 0;
+  const spreadOk = typeof spreadPct === 'number' && isFinite(spreadPct) && spreadPct >= 0;
+  const sizeOk = typeof avgSizeSbd === 'number' && isFinite(avgSizeSbd) && avgSizeSbd > 0;
+  const tapeOk = typeof fillsPerMin === 'number' && isFinite(fillsPerMin) && fillsPerMin >= 0;
+  const pondOk = typeof pondVolumeSbd === 'number' && isFinite(pondVolumeSbd) && pondVolumeSbd > 0;
+  if (![feeOk, spreadOk, sizeOk].every(Boolean) || (!tapeOk && !pondOk)) return null;
   const feeRoundTripPct = (feeBps * 2) / 100;
   const edgeConsPct = Math.max(0, r4(spreadPct / 2 - feeRoundTripPct));
   const edgeOptPct = Math.max(0, r4(spreadPct - feeRoundTripPct));
-  const tapeBound = fillsPerMin * 60 * 24;
+  const tapeBound = tapeOk ? fillsPerMin * 60 * 24 : null;
   const capBound = maxNewPerRun * runsPerDay * Math.max(1, accounts);
   const captureBound = (typeof captureTradesDay === 'number' && isFinite(captureTradesDay) && captureTradesDay > 0) ? captureTradesDay : null;
-  const candidates = [['tape', tapeBound], ['capacity', capBound]];
-  if (captureBound != null) candidates.splice(1, 0, ['capture', captureBound]);
+  // Q16 — the pond bound: even capturing the ENTIRE measured daily pond caps the
+  // volume; trades are integral, so the bound floors at whole fills.
+  const pondBound = pondOk ? Math.floor(pondVolumeSbd / avgSizeSbd) : null;
+  const candidates = [['tape', tapeBound], ['capture', captureBound], ['pond', pondBound], ['capacity', capBound]].filter((c) => c[1] != null);
   candidates.sort((a, b) => a[1] - b[1]);
-  const projTradesDay = Math.min(tapeBound, capBound, captureBound != null ? captureBound : Infinity);
+  const projTradesDay = Math.min(tapeBound != null ? tapeBound : Infinity, capBound, captureBound != null ? captureBound : Infinity, pondBound != null ? pondBound : Infinity);
   const projVolumeSbd = r4(projTradesDay * avgSizeSbd);
   return {
     feeBps, spreadPct: r4(spreadPct), feeRoundTripPct: r4(feeRoundTripPct),
     edgeConsPct, edgeOptPct,
-    bounds: { tapeBoundTradesDay: Math.round(tapeBound), capBoundTradesDay: Math.round(capBound), captureTradesDay: captureBound != null ? Math.round(captureBound) : null, binding: candidates[0][0] },
+    bounds: { tapeBoundTradesDay: tapeBound != null ? Math.round(tapeBound) : null, capBoundTradesDay: Math.round(capBound), captureTradesDay: captureBound != null ? Math.round(captureBound) : null, pondBoundTradesDay: pondBound != null ? pondBound : null, binding: candidates[0][0] },
     projTradesDay, projVolumeSbd,
     projNetConsSbd: r4((projVolumeSbd * edgeConsPct) / 100),
     projNetOptSbd: r4((projVolumeSbd * edgeOptPct) / 100),
@@ -166,6 +189,16 @@ function calibratedTape(fillsRows, priorFpm, windowH = LAW.REALIZED_WINDOW_H) {
     return { fillsPerMin: fpm, source: 'fill-ledger-realized', n: win.length, priorFpm: hasPrior ? priorFpm : null, windowEnd: rows[rows.length - 1].timestamp };
   }
   return { fillsPerMin: hasPrior ? priorFpm : LAW.TAPE_FILLS_PER_MIN, source: hasPrior ? 'exec-recon-prior' : 'law-assumption', n: 0, priorFpm: hasPrior ? priorFpm : null, windowEnd: rows[rows.length - 1].timestamp };
+}
+
+/** Q16 (v1.4.0) — the pond in SBD term: pond (SWAP.HIVE) × the MEASURED cross-rate
+ * (HBD/HIVE internal mid from the chains). The SBD≈HBD parity is a labeled
+ * doctrine conversion (both are the chains' own USD-like assets); the RATE is
+ * measured, never hardcoded. Null when either input is invalid. */
+function pondSbdTerm(pondHive, hbdHiveMid) {
+  if (!(typeof pondHive === 'number' && isFinite(pondHive) && pondHive >= 0)) return null;
+  if (!(typeof hbdHiveMid === 'number' && isFinite(hbdHiveMid) && hbdHiveMid > 0)) return null;
+  return r4(pondHive * hbdHiveMid);
 }
 
 /** Q14 (v1.3.0) — pricing WITHOUT a measured tape (the venue expansion):
@@ -314,12 +347,13 @@ function sharePct(projVolumeSbd, marketVolumeSbd) {
 }
 
 /** the share ladder: for N funded soldiers, the projected volume AND its share
- * of the measured pond. This is the answer to "the BIGGEST" — a ladder, not a boast. */
-function shareLadder({ marketVolumeSbd, spreadPct, fillsPerMin, avgSizeSbd, ns = LAW.GROWTH_NS, runsPerDay = LAW.RUNS_PER_DAY, maxNewPerRun = LAW.MAX_NEW_PER_RUN }) {
+ * of the measured pond. This is the answer to "the BIGGEST" — a ladder, not a boast.
+ * The pond bound (v1.4.0) rides through: capacity scales with N, the pond does not. */
+function shareLadder({ marketVolumeSbd, spreadPct, fillsPerMin, avgSizeSbd, ns = LAW.GROWTH_NS, runsPerDay = LAW.RUNS_PER_DAY, maxNewPerRun = LAW.MAX_NEW_PER_RUN, pondVolumeSbd = null }) {
   if (typeof marketVolumeSbd !== 'number' || !isFinite(marketVolumeSbd) || marketVolumeSbd <= 0) return null;
   const out = [];
   for (const n of ns) {
-    const e = venueEconomics({ feeBps: 0, spreadPct, fillsPerMin, avgSizeSbd, runsPerDay, maxNewPerRun, accounts: n });
+    const e = venueEconomics({ feeBps: 0, spreadPct, fillsPerMin, avgSizeSbd, runsPerDay, maxNewPerRun, accounts: n, pondVolumeSbd });
     if (!e) continue;
     const share = sharePct(e.projVolumeSbd, marketVolumeSbd);
     out.push({ n, volumeSbd: e.projVolumeSbd, sharePct: share, saturates: share != null && share >= 100, binding: e.bounds.binding });
@@ -381,7 +415,7 @@ async function run() {
   if (halt.active && !haltSrc) { haltSrc = halt.source; haltReason = null; }
   if (haltSrc) {
     const at = new Date().toISOString();
-    const book = { at, agent: 'mm-volume v1.3.0', verdict: 'MMV-HALTED-STASIS', halted: true, reason: haltReason, scope: haltSrc, venues: [], darkSurfaces: [], fleet: null, selfFlow: null, projections: null, calibration: null, tapeCalibration: null, series: null, ownerGate: { mode: 'PLAN-ONLY-OWNER-GATED' }, blockedReasons: ['STASIS'], errors: [] };
+    const book = { at, agent: 'mm-volume v1.4.0', verdict: 'MMV-HALTED-STASIS', halted: true, reason: haltReason, scope: haltSrc, venues: [], darkSurfaces: [], fleet: null, selfFlow: null, projections: null, calibration: null, tapeCalibration: null, series: null, ownerGate: { mode: 'PLAN-ONLY-OWNER-GATED' }, blockedReasons: ['STASIS'], errors: [] };
     try { fs.writeFileSync(BOOK_JSON, JSON.stringify(book, null, 1)); } catch (_) {}
     console.log(`STASIS-HALT mm-volume · ${at}`);
     return;
@@ -438,6 +472,16 @@ async function run() {
     if (typeof hs === 'number') return { spreadPct: hs, from: 'market-grid-history last row', volSbdTerm: null, volRaw: null };
     return null;
   };
+  // Q16 — the measured HBD/HIVE cross-rate for the HE pond conversion: live book
+  // first, history fallback (mids ride in the history since market-grid v1.3.0).
+  const hiveMidFrom = () => {
+    const lm = liveMarkets.find((m) => m && m.chain === 'hive' && typeof m.mid === 'number' && m.mid > 0);
+    if (lm) return { mid: lm.mid, from: 'market-grid live book (chain condenser mid)' };
+    const hm = lastMg && Array.isArray(lastMg.mids) ? (lastMg.mids.find((m) => m && m.chain === 'hive' && typeof m.mid === 'number' && m.mid > 0) || {}).mid : null;
+    if (typeof hm === 'number') return { mid: hm, from: 'market-grid-history last row' };
+    return null;
+  };
+  const hiveMid = hiveMidFrom();
 
   const notion = avgSellNotional(execRuns);
   const calib = calibratedAvgSize(fillsRows, notion); // Q10: the projection runs on REAL fills when the ledger speaks
@@ -488,11 +532,13 @@ async function run() {
     }
   }
 
-  // Q14 (v1.3.0) — THE VENUE EXPANSION: the Hive-Engine sidechain basket, priced
-  // PER-TOKEN by its OWN measured fee (market-grid v1.2.0 carries feeBps from the
-  // tokens contract; absent → doctrine-law zero). Priced here; volume projection
-  // waits for a measured sidechain tape (honest nullReason, never invented).
+  // Q14/Q16 (v1.4.0) — THE VENUE EXPANSION, NOW WITH THE POND: the Hive-Engine
+  // sidechain basket priced PER-TOKEN by its OWN measured fee, and the volume
+  // projection OPENS on the measured pond bound (min(pond, capacity), binding
+  // NAMED — no borrowed tape prior). The pond rides in SWAP.HIVE from the HE
+  // metrics contract and converts to SBD-term by the measured HBD/HIVE mid.
   let heVenuesPriced = 0;
+  let heVenuesProjected = 0;
   const heRows = (mgBook && mgBook.hiveEngine && Array.isArray(mgBook.hiveEngine.rows)) ? mgBook.hiveEngine.rows : [];
   for (const row of heRows
     .filter((r) => r && typeof r.symbol === 'string' && typeof r.spreadPct === 'number')
@@ -501,21 +547,41 @@ async function run() {
     const edge = edgeFromSpread(feeBps, row.spreadPct);
     const priced = edge.edgeConsPct != null;
     if (priced) heVenuesPriced++;
+    const pondHive = (row.pond24hHive != null) ? row.pond24hHive : (typeof row.volume24h === 'number' && isFinite(row.volume24h) && row.volume24h >= 0 ? row.volume24h : null);
+    const pondSbd = pondSbdTerm(pondHive, hiveMid ? hiveMid.mid : null);
+    // the projection opens on the measured pond; the capture bound does NOT apply
+    // here (the ledger meters steem-side fills only — the honest-scoping law)
+    const heEcon = priced && pondSbd != null && pondSbd > 0
+      ? venueEconomics({ feeBps, spreadPct: row.spreadPct, fillsPerMin: null, avgSizeSbd: calib.avgSizeSbd, pondVolumeSbd: pondSbd }) : null;
+    if (heEcon) heVenuesProjected++;
+    const projectionNullReason = heEcon ? null
+      : (priced ? (pondSbd == null ? (pondHive == null ? 'NO-MEASURED-POND-HE' : 'NO-MEASURED-HBD-HIVE-MID') : 'NO-PROJECTED-VOLUME') : 'NO-MEASURED-SPREAD');
     venues.push({
       venue: row.symbol + '/SWAP.HIVE (hive-engine)', layer: 'hive-engine-sidechain',
       feeBps, feeMeasured: typeof row.feeBps === 'number' ? 'tokens-contract-live' : 'doctrine-law-absent-zero',
       spreadPct: r4(row.spreadPct), measuredFrom: 'market-grid live book (HE RPC)',
-      edge, econ: null, projectionNullReason: priced ? 'NO-MEASURED-TAPE-HE' : 'NO-MEASURED-SPREAD',
+      edge, econ: heEcon, projectionNullReason,
+      pond24hHive: pondHive, pondTerm: 'SWAP.HIVE (base-asset units, HE metrics.volume)',
+      pond24hSbdTerm: pondSbd, pondConversion: pondSbd != null ? (hiveMid ? hiveMid.from : null) : null,
+      pondConversionLaw: 'SBD≈HBD parity (both chains\u2019 USD-like assets), rate = measured HBD/HIVE internal mid',
       marketVolume24h: typeof row.volume24h === 'number' ? r4(row.volume24h) : null,
       marketVolumeTerm: 'SWAP.HIVE (quote-asset units)',
+      sharePct: heEcon ? sharePct(heEcon.projVolumeSbd, pondSbd) : null,
+      shareLadder: heEcon ? shareLadder({ marketVolumeSbd: pondSbd, spreadPct: row.spreadPct, fillsPerMin: null, avgSizeSbd: calib.avgSizeSbd, pondVolumeSbd: pondSbd }) : null,
       gridFeasible: row.gridFeasible === true,
-      selfFlow: selfFlowPlan({ accounts, projVolumeSbd: 0, feeBps }),
+      selfFlow: selfFlowPlan({ accounts, projVolumeSbd: heEcon ? heEcon.projVolumeSbd : 0, feeBps }),
     });
   }
 
   // Q14 — the Blurt internal market: probe-first (market-grid v1.2.0). Dark today
   // → an honest dark-surface row with its reason; alive tomorrow → priced at 0 bps.
+  // Q17 (v1.4.0) — the HE daily-history probe surfaces the same law (probe-first,
+  // market-grid v1.3.0): measured dark today, a series the day it answers.
   const darkSurfaces = [];
+  const heHist = mgBook && mgBook.hiveEngine && mgBook.hiveEngine.historyProbe ? mgBook.hiveEngine.historyProbe : null;
+  if (heHist && heHist.alive === false) {
+    darkSurfaces.push({ surface: 'he-daily-history', reason: heHist.reason || 'HE-DAILY-HISTORY-DARK', pondSource: 'metrics.volume 24h snapshot instead of a series', probedAt: mgBook.at || null });
+  }
   const blurt = mgBook && mgBook.blurt ? mgBook.blurt : null;
   if (blurt && blurt.alive === false) {
     darkSurfaces.push({ surface: 'blurt-internal-market', reason: blurt.reason || 'SURFACE-DARK', feeBpsSource: 0, probedAt: mgBook.at || null });
@@ -541,6 +607,7 @@ async function run() {
 
   // totals (over venues with economics)
   const withEcon = venues.filter((v) => v.econ);
+  const heProjected = venues.filter((v) => v.layer === 'hive-engine-sidechain' && v.econ);
   const projections = {
     venuesMeasured: withEcon.length,
     projVolumeSbdDay: r4(withEcon.reduce((s, v) => s + (v.econ.projVolumeSbd || 0), 0)),
@@ -550,12 +617,16 @@ async function run() {
     captureTradesDay: captureLedger ? captureTradesDay : null,
     captureFillThroughPct: captureLedger && withEcon.length ? r4((captureTradesDay / (LAW.MAX_NEW_PER_RUN * LAW.RUNS_PER_DAY)) * 100) : null,
     heVenuesPriced,
+    heVenuesProjected,
+    hePondSbdDay: r4(heProjected.reduce((s, v) => s + (v.pond24hSbdTerm || 0), 0)),
+    heProjVolumeSbdDay: r4(heProjected.reduce((s, v) => s + (v.econ.projVolumeSbd || 0), 0)),
+    heProjNetConsSbdDay: r4(heProjected.reduce((s, v) => s + (v.econ.projNetConsSbd || 0), 0)),
   };
 
   const verdict = blockedReasons.length === 0 && withEcon.length > 0 ? 'MMV-PLAN-LIVE' : (withEcon.length > 0 ? 'MMV-PARTIAL' : 'MMV-BLOCKED-INPUTS');
   const at = new Date().toISOString();
   const book = {
-    at, agent: 'mm-volume v1.3.0 (CR-0058..CR-0061, fleet Rungs 28-31 — the volume engine + the share ladder + the calibrated engine + the measured binding & the venue expansion)', verdict,
+    at, agent: 'mm-volume v1.4.0 (CR-0058..CR-0062, fleet Rungs 28-32 — the volume engine + the share ladder + the calibrated engine + the measured binding & the venue expansion + THE SIDECHAIN POND)', verdict,
     law: {
       planOnly: 'this desk PLANs and MEASURES — it never signs; the live broadcast path is market-exec.cjs law (MARKET_EXEC_LIVE=1, verify-then-sign)',
       guards: ['SELL-CAP-85% of liquid inventory', 'MAX-NEW-ORDERS 6/run/account', 'BUY-EDGE: no buy above realized sell VWAP − 0.3%', 'SPACING-FLOOR 0.4% (market-grid)', 'INTERNAL-FLOW capped 25% + labeled + VWAP-excluded', 'STASIS halt-before-read'],
@@ -587,7 +658,7 @@ async function run() {
     series: {
       law: 'Q11: time-born namespace — the desk\u2019s own past (the append-only plan ledger); excluded from the byte-stable payload (values deterministic, timestamps are the axis)',
       planLedgerRows: planRows.length,
-      shareSeries: venues.filter((v) => v.sharePct != null).map((v) => ({ venue: v.venue, points: shareSeries(planRows, String(v.venue).includes('hive') ? 'hive' : 'steem') || [] })),
+      shareSeries: venues.filter((v) => v.sharePct != null).map((v) => ({ venue: v.venue, points: shareSeries(planRows, v.layer === 'hive-engine-sidechain' ? v.venue.split('/')[0] : (String(v.venue).includes('hive') ? 'hive' : 'steem')) || [] })),
     },
     ownerGate: { mode: 'PLAN-ONLY-OWNER-GATED', livePath: 'market-exec.cjs (headcorner) — fleet rollout per fleet.rolloutPath', previewNote: 'per-venue order previews are emitted by market-grid executorPreview; this book carries counts and prices only' },
     inputs: {
@@ -607,11 +678,11 @@ async function run() {
   try { fs.writeFileSync(BOOK_JSON + '.tmp', JSON.stringify(book, null, 1)); fs.renameSync(BOOK_JSON + '.tmp', BOOK_JSON); } catch (e) { errors.push({ book: String(e.message) }); }
 
   // append-only plan ledger (one row per run; STASIS rows never reach here)
-  try { fs.appendFileSync(PLAN_JSONL, JSON.stringify({ at, verdict, projVolumeSbdDay: projections.projVolumeSbdDay, projNetConsSbdDay: projections.projNetConsSbdDay, internalFlowCapSbdDay: projections.internalFlowCapSbdDay, captureTradesDay: projections.captureTradesDay, tapeFpm: tapeCal.fillsPerMin, tapeSource: tapeCal.source, heVenuesPriced: projections.heVenuesPriced, shares: venues.filter((v) => v.sharePct != null).map((v) => ({ venue: v.venue, sharePct: v.sharePct })), errors: errors.length }) + '\n'); } catch (e) { errors.push({ plan: String(e.message) }); }
+  try { fs.appendFileSync(PLAN_JSONL, JSON.stringify({ at, verdict, projVolumeSbdDay: projections.projVolumeSbdDay, projNetConsSbdDay: projections.projNetConsSbdDay, internalFlowCapSbdDay: projections.internalFlowCapSbdDay, captureTradesDay: projections.captureTradesDay, tapeFpm: tapeCal.fillsPerMin, tapeSource: tapeCal.source, heVenuesPriced: projections.heVenuesPriced, heVenuesProjected: projections.heVenuesProjected, hePondSbdDay: projections.hePondSbdDay, shares: venues.filter((v) => v.sharePct != null).map((v) => ({ venue: v.venue, sharePct: v.sharePct })), errors: errors.length }) + '\n'); } catch (e) { errors.push({ plan: String(e.message) }); }
 
   // Hebrew owner surface (AT-FREE)
   const he = [
-    '# מנוע הנפח — תוכנית עושה-השוק של הצי (CR-0058..CR-0061, Rung 28-31)',
+    '# מנוע הנפח — תוכנית עושה-השוק של הצי (CR-0058..CR-0062, Rung 28-32)',
     '',
     `פסק דין: **${verdict === 'MMV-PLAN-LIVE' ? 'מנוע-נפח-חי' : verdict === 'MMV-PARTIAL' ? 'חלקי' : 'חסום-קלטים'}**`,
     projections.venuesMeasured ? `נפח מוקרן: **${projections.projVolumeSbdDay} SBD/יום** · רווח נטו מוקרן (שמרני→אופטימי): **${projections.projNetConsSbdDay} → ${projections.projNetOptSbdDay} SBD/יום**` : 'אין נפח מוקרן — חסרות מדידות',
@@ -635,7 +706,10 @@ async function run() {
       `כיול הטייפ (Q13): קצב הלכידה שלנו נמדד **${book.tapeCalibration.measuredFpm} מילויים/דק׳ = ${book.tapeCalibration.captureTradesDay} מילויים/יום** (${book.tapeCalibration.measuredN} מילויים בחלון) מול טייפ-השוק ${book.tapeCalibration.priorTapeFpm}/דק׳ — **החנק האמיתי הוא הלכידה, לא היכולת** (מילוי-דרך ${projections.captureFillThroughPct}% מתקרת הפקודות); הלכידה צומחת בדיוק כפי שההוראה קובעת: עוד מדרגות × מילוי-דרך × חיילים ממומנים × זרימה פנימי מגובלת`,
     ] : []),
     ...(venues.filter((v) => v.layer === 'hive-engine-sidechain').length ? [
-      `הרחבת הזירות (Q14): ${venues.filter((v) => v.layer === 'hive-engine-sidechain').length} זירות Hive-Engine מתומחרות per-token מהחוזה החי (${venues.filter((v) => v.layer === 'hive-engine-sidechain').map((v) => `${v.venue.split('/')[0]} ${v.feeBps}bps קצה ${v.edge && v.edge.edgeConsPct != null ? v.edge.edgeConsPct : '—'}%${v.gridFeasible ? ' ראוי-גריד' : ''}`).join(' · ')}) — נפח מוקרן ימתין לטייפ צד-שרשרת נמדד (כנה, לא מומצא)`,
+      `הרחבת הזירות (Q14/Q16): ${venues.filter((v) => v.layer === 'hive-engine-sidechain').length} זירות Hive-Engine מתומחרות per-token מהחוזה החי — והבריכה הנמדדת פותחת את הפרויקציה: הבריכה של כל טוקן (${venues.filter((v) => v.layer === 'hive-engine-sidechain').map((v) => `${v.venue.split('/')[0]} בריכה ${v.pond24hSbdTerm != null ? v.pond24hSbdTerm : '—'} SBD/24ש׳`).join(' · ')}) מתורגמת מ-SWAP.HIVE לשער HBD/HIVE **נמדד** (חוק ההמרה: SBD≈HBD, שניהם נכסי-דולר של השרשרות; השער נמדד — לא מוצק)`,
+    ] : []),
+    ...(venues.filter((v) => v.layer === 'hive-engine-sidechain' && v.econ).length ? [
+      `פרויקציית הבריכה (Q16): אף אחד לא יכול לסחור יותר מכל מה שנסחר — הנפח נפתח על min(בריכה, יכולת) עם החוסם **מתויג**; ${projections.heVenuesProjected} זירות HE עם נפח מוקרן: ${projections.heProjVolumeSbdDay} SBD/יום (בריכה כוללת ${projections.hePondSbdDay} SBD) · רווח נטו מוקרן ${projections.heProjNetConsSbdDay} SBD/יום — בלי שאילת טייפ אחת מושאלת`,
     ] : []),
     ...(book.darkSurfaces && book.darkSurfaces.length ? [
       `משטחים חשוכים (כנים, מדודים): ` + book.darkSurfaces.map((d) => `${d.surface} — ${d.reason}`).join(' · '),
@@ -656,7 +730,7 @@ async function run() {
   ].filter(Boolean).join('\n');
   try { fs.writeFileSync(BOOK_MD, he); } catch (e) { errors.push({ md: String(e.message) }); }
 
-  console.log(`mm-volume: ${verdict} · venues ${venues.length} (HE priced ${projections.heVenuesPriced}) · projVol ${projections.projVolumeSbdDay} SBD/day · netCons ${projections.projNetConsSbdDay} · avgSize ${calib.avgSizeSbd} (${calib.source}, n=${calib.n}) · tape ${tapeCal.fillsPerMin}/min (${tapeCal.source}, capture ${captureLedger ? captureTradesDay : '—'}/day) · dark ${darkSurfaces.length} · series ${book.series.planLedgerRows} rows · blocked ${blockedReasons.length}`);
+  console.log(`mm-volume: ${verdict} · venues ${venues.length} (HE priced ${projections.heVenuesPriced}, HE projected ${projections.heVenuesProjected} on pond ${projections.hePondSbdDay} SBD) · projVol ${projections.projVolumeSbdDay} SBD/day · netCons ${projections.projNetConsSbdDay} · avgSize ${calib.avgSizeSbd} (${calib.source}, n=${calib.n}) · tape ${tapeCal.fillsPerMin}/min (${tapeCal.source}, capture ${captureLedger ? captureTradesDay : '—'}/day) · dark ${darkSurfaces.length} · series ${book.series.planLedgerRows} rows · blocked ${blockedReasons.length}`);
 }
 
 // Z-49 law: requiring this file for evals must never execute a run
@@ -665,4 +739,4 @@ if (require.main === module) {
   run().catch((e) => { console.error('mm-volume FATAL:', e.message); process.exit(0); });
 }
 
-module.exports = { venueEconomics, calibratedTape, edgeFromSpread, partitionLadder, selfFlowPlan, buyEdgeFloor, sellVwapFromRuns, avgSellNotional, calibratedAvgSize, shareSeries, growthTable, sharePct, shareLadder, realized24h, doctrineMap, LAW };
+module.exports = { venueEconomics, calibratedTape, edgeFromSpread, pondSbdTerm, partitionLadder, selfFlowPlan, buyEdgeFloor, sellVwapFromRuns, avgSellNotional, calibratedAvgSize, shareSeries, growthTable, sharePct, shareLadder, realized24h, doctrineMap, LAW };
