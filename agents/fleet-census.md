@@ -1,9 +1,9 @@
-# FLEET CENSUS — 2026-10-04T14:39:02.705Z
+# FLEET CENSUS — 2026-10-04T14:42:40.505Z
 
 Offline · keyless · deterministic estate map (CR-0040). Answers: what do we hold, what limits us, how it wires.
 
-## Inventory — מה יש לנו (16/16 lanes present, 11540 commits, 61 capability markers)
-- **Domain** [PRESENT] a5dc89c@2026-10-04 · caps(16): marketGrid, marketExec, fillLedger, marketCycle, crossLayer, oneBloc, capabilityMatrix, econDesk, measureLearn, evoWindows, stasis, evals, skillGate, cadenceCron, gridHistory, gridPaper · workflows=55 desks=77
+## Inventory — מה יש לנו (16/16 lanes present, 11543 commits, 61 capability markers)
+- **Domain** [PRESENT] d272693@2026-10-04 · caps(16): marketGrid, marketExec, fillLedger, marketCycle, crossLayer, oneBloc, capabilityMatrix, econDesk, measureLearn, evoWindows, stasis, evals, skillGate, cadenceCron, gridHistory, gridPaper · workflows=55 desks=77
 - **saos-dex** [PRESENT] 2bbd033@2026-10-03 · caps(8): kernel, amm, mm, gridBeat, gridLedger, dexCredits, dexGridCron, gridTrigger · workflows=4
 - **steem** [PRESENT] 33c541d6@2026-10-03 · caps(5): heLadder, liveGate, ladderRefresh, anchor, chainAttest · chainAgents=144 workflows=3
 - **saos-sovereign-platform** [PRESENT] e36529c@2026-10-03 · caps(5): exchange, ledger, bridge, meshHub, identity · meshContracts=11 meshTests=5 workflows=3
@@ -63,7 +63,7 @@ Offline · keyless · deterministic estate map (CR-0040). Answers: what do we ho
 - Domain/agents/cross-layer.cjs 0502753f50833acb
 - Domain/agents/one-bloc.cjs 534364660df2b421
 - Domain/agents/STASIS.json 5ab24bc6b95aba0b
-- Domain/agents/evals/run-evals.cjs afef9f4cb96a3cb0
+- Domain/agents/evals/run-evals.cjs 927399b075cbd49c
 - Domain/feature_list.json c085a880c9241149
 - saos-dex/audit-package/src/kernel.ts 97e5c4a719ddfd0a
 - saos-dex/audit-package/src/amm.ts 91d876f699e18a05
