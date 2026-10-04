@@ -1,6 +1,6 @@
 # הקצב האנושי · 2026-10-04
 
-ריצה 2026-10-04T21:13:00.813Z · פורסמו 1 אל-תוך hive-177702 · הצבעות-פנים 0 · תגובות 0 · הצטרפו 0
+ריצה 2026-10-04T21:38:09.345Z · פורסמו 0 אל-תוך hive-177702 · הצבעות-פנים 0 · תגובות 0 · הצטרפו 0
 
 > חוק CR-0065+CR-0067: רגע-אחד, בעל-אחד. אין-פיצוצים. כל-חייל בחלון-השעות-שלו, רטט-מזריע-ליום,
 > שעות-דממה 00:00-04:59 UTC. הקהילה hive-177702 היא הבית: הפוסטים נוחתים בתוכה, וההצטרפות
@@ -12,14 +12,12 @@
 
 | הצטרפות-לבית | חוק |
 |---|---|
-| woq -> hive-177702 | BROADCAST-NO-READBACK |
-| tov -> hive-177702 | BROADCAST-NO-READBACK |
-| tov tov-02 | POSTED-VERIFIED |
+| - -> hive-177702 | NO-ELIGIBLE |
 
 | הצבעות-פנים | חוק |
 |---|---|
 
 | חברתי | חוק |
 |---|---|
-| woq | תגובה: NO-CANDIDATE · הצבעה: - · reblog: REBLOG-SENT |
-| tov | תגובה: NO-CANDIDATE · הצבעה: - · reblog: REBLOG-SENT |
+| woq | תגובה: SKIP-BUDGET-USED-TODAY · הצבעה: - · reblog: SKIP-BUDGET-USED-TODAY |
+| tov | תגובה: SKIP-BUDGET-USED-TODAY · הצבעה: - · reblog: SKIP-BUDGET-USED-TODAY |
