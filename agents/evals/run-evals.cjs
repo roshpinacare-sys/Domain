@@ -1854,9 +1854,13 @@ function accumulateInMemory(bookRows, seed) {
     // R35 evolution (in the open, CR-0065): human-cadence.yml joins (owner-secret via
     // SA_FLEET_KEYS — the same fleet secret, hourly social lane) — bar 49→50 files,
     // 33→34 owner-secret, keyless stays 16; the pin re-bases WITH the estate, documented, never silent.
-    c47(wfFiles47.length === 50, 'workflow-count-50');
+    // R36 evolution (in the open, CR-0066): the sibling's Z-82 social-audit.yml (the
+    // social-health standing gauge, keyless) joins — bar 50→51 files, keyless 16→17,
+    // owner-secret stays 34; our own R36 lane adds NO workflow (community-founder is a
+    // local-vault desk, live once, status keyless in books) — pins documented, never silent.
+    c47(wfFiles47.length === 51, 'workflow-count-51');
     c47(ownerSecretCount47 === 34, 'owner-secret-count-34');
-    c47(wfFiles47.length - ownerSecretCount47 === 16, 'keyless-count-16');
+    c47(wfFiles47.length - ownerSecretCount47 === 17, 'keyless-count-17');
     // the converted four: zero non-GITHUB_TOKEN refs, permissions kept, keyless checkout
     const converted47 = ['twin-audit.yml', 'audience-analyst.yml', 'content-reviewer.yml', 'public-pulse.yml'];
     for (const f of converted47) {
@@ -1878,7 +1882,7 @@ function accumulateInMemory(bookRows, seed) {
     c47(bb47.status === 0, 'gate-black-box-zero-tokens-exit-0');
     // the refreshed census book (same tree) carries the new sovereignty numbers
     let censusBook47 = null; try { censusBook47 = JSON.parse(fs.readFileSync(path.join(AG, 'fleet-census.json'), 'utf8')); } catch (_) {}
-    c47(censusBook47 && censusBook47.sovereignty && censusBook47.sovereignty.workflowsKeyless === 16, 'census-book-keyless-16');
+    c47(censusBook47 && censusBook47.sovereignty && censusBook47.sovereignty.workflowsKeyless === 17, 'census-book-keyless-17');
     c47(censusBook47 && censusBook47.sovereignty && censusBook47.sovereignty.workflowsOwnerSecret === 34, 'census-book-owner-secret-34');
 
     evalr('E47', 'the keyless wave (CR-0055): the sovereignty bar pinned — the census regex recounts 16/50 keyless over the live dir (re-based on main twice: the sibling\'s Z74 workflow-yaml-guard 48/15 → 49/16, then R35\'s human-cadence.yml 49→50 with SA_FLEET_KEYS — the evolution written here each time), the four converted flows carry zero non-GITHUB_TOKEN refs under kept permissions, the dead PULSE_URL ref is durably documented-and-gone while its hook stays in the desk, and the issue gate survives zero tokens fresh-process',
@@ -2657,9 +2661,75 @@ function accumulateInMemory(bookRows, seed) {
       why58.length ? 'fails: ' + why58.join('; ') : 'one moment one owner: the burst stack is replaced by persona-owned windows, desk-owned content, and engagement floors — the robot tells are now machine-checked');
   } catch (e) { evalr('E58', 'the human cadence', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
+  // ---- E59 (R36, CR-0066): THE COMMUNITY HOME — the founding ceremony measured from the
+  // live chain first (PromoSteem flow), funded from own idle capital, keys in a 600-perm
+  // vault, RC-first delegation, and a chain read-back that must confirm the house.
+  try {
+    const why59 = [];
+    const c59 = (cond, name) => { if (!cond) why59.push(name); };
+    const cf = require(path.join(AG, 'community-founder.cjs'));
+    // the identity is born clean: gate passes the real props, rejects em-dash / probe tells
+    const props59 = cf.communityProps();
+    c59(cf.propsGate(props59).ok === true, 'props-gate-passes-real');
+    c59(cf.propsGate({ ...props59, title: 'The Club — a — test' }).why.includes('title-robotic-tell'), 'gate-em-dash');
+    c59(cf.propsGate({ ...props59, desc: 'probe sandbox lorem' }).why.includes('desc-robotic-tell'), 'gate-probe-tell');
+    c59(cf.propsGate({ ...props59, lang: 'he' }).why.includes('lang-law'), 'gate-lang-law');
+    // TYPE LAW: journal-type names only (condenser Role.parseType reads name[5])
+    c59(cf.validName('hive-177701') === true && cf.validName('hive-277701') === false, 'type-law-1xxx');
+    c59(cf.validName('clubhouse') === false && cf.validName('hive-17770') === false, 'type-law-shape');
+    c59(cf.nameCandidates(['hive-177701', 'nope', 'hive-177701', 'hive-177702'])[0] === 'hive-177701' && cf.nameCandidates(['hive-177701', 'nope', 'hive-177701', 'hive-177702']).length === 2, 'name-candidates-dedupe');
+    // SP<->vests roundtrip exact at chain scale
+    c59(Math.abs(cf.vestsToSp(cf.spToVests(50, 196e6, 392e9), 196e6, 392e9) - 50) < 1e-9, 'sp-vests-roundtrip');
+    c59(cf.spToVests(0, 196e6, 392e9) === null && cf.spToVests(50, 0, 392e9) === null, 'sp-vests-null-guard');
+    // FUNDING LAW: farthest idle STEEM sell first, one-cancel coverage, SBD untouched, cap
+    const mk = (id, baseAmt, quoteAmt, nai) => ({ orderid: id, sell_price: { base: { nai, amount: String(baseAmt) }, quote: { nai: nai === '@@000000021' ? '@@000000013' : '@@000000021', amount: String(quoteAmt) } } });
+    const book59 = cf.fundingPlan(0.012, 3.05, [mk(1, 4750, 51148, '@@000000021'), mk(2, 4750, 51372, '@@000000021'), mk(3, 4750, 51625, '@@000000021'), mk(4, 303, 3060, '@@000000013')], 2);
+    c59(book59.cancels.length === 1 && book59.cancels[0] === 3, 'funding-farthest-first');
+    c59(Math.abs(book59.freed - 4.75) < 1e-9 && book59.armed === true, 'funding-one-cancel-covers');
+    c59(cf.fundingPlan(0.012, 3.05, [mk(4, 303, 3060, '@@000000013')], 2).armed === false, 'funding-sbd-untouched');
+    c59(cf.fundingPlan(5.0, 3.05, [mk(1, 4750, 51148, '@@000000021')], 2).armed === true && cf.fundingPlan(5.0, 3.05, [], 2).cancels.length === 0, 'funding-liquid-sufficient');
+    const two59 = cf.fundingPlan(0.012, 8.05, [mk(1, 4750, 51148, '@@000000021'), mk(2, 4750, 51372, '@@000000021'), mk(3, 4750, 51625, '@@000000021')], 2);
+    c59(two59.cancels.length === 2 && two59.cancels[0] === 3 && two59.cancels[1] === 2, 'funding-cap-two');
+    // the founding roles: headcorner admin (measured creator pattern), soldiers member
+    const roles59 = cf.memberRoles(['headcorner', 'wic', 'haran']);
+    c59(roles59[0].role === 'admin' && roles59[1].role === 'member' && roles59[2].role === 'member', 'founding-roles');
+    // op shapes byte-match the measured ground truth (hive-153176 op 0/1/2)
+    const op59 = cf.accountCreateOp('hive-177701', { owner: 'OW', active: 'AC', posting: 'PO', memo: 'ME' }, '3.000 STEEM');
+    c59(op59[0] === 'account_create' && op59[1].fee === '3.000 STEEM' && op59[1].creator === 'headcorner' && op59[1].new_account_name === 'hive-177701', 'op-account-create-shape');
+    c59(op59[1].owner.weight_threshold === 1 && op59[1].owner.account_auths.length === 0 && op59[1].owner.key_auths[0][1] === 1 && op59[1].json_metadata === '', 'op-auth-shape');
+    const roleOp59 = cf.setRoleOp('hive-177701', 'headcorner', 'admin');
+    c59(roleOp59[0] === 'custom_json' && roleOp59[1].id === 'community' && roleOp59[1].required_posting_auths[0] === 'hive-177701' && roleOp59[1].required_auths.length === 0, 'op-customjson-posting-only');
+    c59(JSON.parse(roleOp59[1].json)[0] === 'setRole' && JSON.parse(roleOp59[1].json)[1].role === 'admin', 'op-setrole-json');
+    const propsOp59 = cf.updatePropsOp('hive-177701', props59);
+    c59(JSON.parse(propsOp59[1].json)[0] === 'updateProps' && JSON.parse(propsOp59[1].json)[1].props.title === 'The Clubhouse', 'op-updateprops-json');
+    // RC-first reserve is a constant law, not a hand-tuned number
+    c59(cf.COMMUNITY_RC_SP === 50 && cf.MAX_CANCELS === 2 && cf.FEE_MARGIN === 0.05, 'rc-reserve-law');
+    // real-tree: the status book (keyless fresh process) must answer with structure, not hope
+    let st59 = null; try { st59 = JSON.parse(fs.readFileSync(path.join(AG, 'community-founder.json'), 'utf8')); } catch (_) {}
+    c59(st59 && st59.protocol === 'SAOS-COMMUNITY-FOUNDER/1', 'book-protocol');
+    const comm59 = st59 && st59.community;
+    if (comm59 && comm59.name) {
+      // when the book carries a community, the chain read-back must confirm the house
+      c59(cf.validName(comm59.name), 'book-name-type-law');
+      c59(cf.propsGate({ title: comm59.title, about: comm59.about || props59.about, desc: comm59.desc || props59.desc, lang: comm59.lang }).ok === true, 'book-identity-clean');
+      c59(Array.isArray(comm59.members) && comm59.members.length >= 11, 'book-members-11');
+      c59(comm59.members.some((m) => m.account === 'headcorner' && m.role === 'admin'), 'book-admin-role');
+      c59(comm59.txids && comm59.txids['account_create:' + comm59.name], 'book-create-txid');
+      c59(comm59.delegatedSp >= 8 && comm59.delegatedSp <= cf.COMMUNITY_RC_SP && comm59.receivedSp >= comm59.delegatedSp - 1, 'book-rc-confirmed');
+      c59(Object.keys(comm59.txids || {}).length >= 13, 'book-ceremony-txids');
+    } else {
+      // no community yet: the absence must be honest, never faked
+      const last59 = st59 && (st59.runs || []).slice(-1)[0];
+      c59(last59 && (last59.verdict === 'COMMUNITY-ABSENT' || last59.verdict === 'ARMED-WAITING' || last59.verdict === 'CREATE-READY' || last59.verdict === 'IDLE-CAPITAL-TOO-SMALL' || last59.verdict === 'VAULT-ABSENT-LOCAL' || last59.verdict === 'STASIS-HALT' || last59.verdict === 'NAME-NONE-FREE' || last59.verdict === 'ERROR' || last59.verdict === 'FUNDING-SHORT' || last59.verdict === 'MODE-DRY' || last59.verdict === 'ALREADY-CREATED' || last59.verdict === 'READ-BACK-FAIL' || last59.verdict === 'READ-BACK-WEAK' || last59.verdict === 'PROPS-GATE' || last59.verdict === 'DELEGATE-FAIL' || last59.verdict === 'VAULT-MISMATCH' || last59.verdict === 'VAULT-UNREADABLE'), 'honest-absence-verdict');
+    }
+    evalr('E59', 'the community home (CR-0066)', why59.length === 0,
+      ['white-box: the props gate passes the real identity and rejects em-dashes, probe-words and wrong lang by name — the house is born clean of the owner\'s robotic tells', 'white-box: TYPE LAW /^hive-1\\d{5}$/ enforced with dedupe; SP<->VESTS roundtrip exact with null guards; FUNDING LAW picks the farthest idle STEEM sell first, one-cancel coverage preferred, cap 2, SBD orders never touched, armed when liquid suffices', 'white-box: op builders byte-match the measured ground truth (account_create with measured fee + single-key auths + empty json_metadata; community customs signed by community POSTING only; setRole admin for headcorner, member for soldiers)', 'real-tree: the status book carries SAOS-COMMUNITY-FOUNDER/1; when a community exists the chain read-back must confirm it (title clean, >= 11 members, admin role, create txid, RC delegation confirmed, full ceremony txids); when absent, the verdict must be one of the honest absences'],
+      why59.length ? 'fails: ' + why59.join('; ') : 'the fleet owns its house: founded on measured ceremony, funded from idle capital, keys cold in the vault, and the chain itself confirms the read-back');
+  } catch (e) { evalr('E59', 'the community home', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.44.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48 + R27 metronome-audit E49 + R28 mm-volume E50 + R29 share-ladder E51 + R30 calibrated-engine E52 + R31 tape-calibration/venue-expansion E53 + R32 sidechain-pond E54 + R33 pnl-verdict E55 + sovereign-hands E56 + R34 fill-through-evolution E57 + R35 human-cadence E58, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.45.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48 + R27 metronome-audit E49 + R28 mm-volume E50 + R29 share-ladder E51 + R30 calibrated-engine E52 + R31 tape-calibration/venue-expansion E53 + R32 sidechain-pond E54 + R33 pnl-verdict E55 + sovereign-hands E56 + R34 fill-through-evolution E57 + R35 human-cadence E58 + R36 community-home E59, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];
