@@ -25,6 +25,11 @@
  *    /probe|test|sandbox|lorem/i are invisible to every mode.
  *  · INTERNAL-ONLY (owner directive 2026-10-04) — comments, votes and reblogs target
  *    fleet posts only, until the quality bar lifts the gate. No external engagement.
+ *  · THE COMMUNITY BREATH (CR-0067) — hive-177702 is the home feed: blog posts land
+ *    INSIDE The Clubhouse (first tag = the community), and joining is its own staggered
+ *    lane (subscribe in persona windows, budget 1 per soldier ever, max 2 per run,
+ *    read-back via bridge.list_subscribers, posting-key signature only — the measured
+ *    ground-truth shape). Founder order: headcorner joins first.
  *  · verify-then-sign everywhere; read-back after every op; fail-soft exit 0; zero
  *    secrets printed; STASIS halt-before-read; single-writer atomic books.
  *
@@ -147,6 +152,67 @@ function curateScore(post) {
   return Number((2 * fresh + Math.min(1, depth / 6000) + discuss).toFixed(3));
 }
 
+// ---------- community breath (CR-0067, E60 white-box surface) ----------
+
+/** the home feed: soldier posts land INSIDE The Clubhouse (CR-0066 founded it, CR-0067 lives in it) */
+const COMMUNITY = (SLOTS.community && SLOTS.community.name) || null;
+const MAX_SUBSCRIBES_PER_RUN = SLOTS.maxSubscribesPerRun || 2;
+
+/** subscribe op — byte-shape of the measured ground truth (furqanashraf@hive-153176, 2026-10-04):
+ *  custom_json id='community', required_auths [], required_posting_auths [who],
+ *  json ["subscribe",{"community":"<name>"}] — posting-key signature only. */
+function subscribeOp(who, community) {
+  return ['custom_json', {
+    required_auths: [],
+    required_posting_auths: [who],
+    id: 'community',
+    json: JSON.stringify(['subscribe', { community }]),
+  }];
+}
+
+/** a library piece becomes a community post: the house is the first tag, hub tag stays trailing */
+function communityTags(piece, community) {
+  if (!piece || !Array.isArray(piece.tags) || !community) return null;
+  return [community, ...piece.tags];
+}
+
+/** bridge.list_subscribers returns [[account, role, title, joined]] — parse into objects */
+function subscribersReadBack(rows) {
+  if (!Array.isArray(rows)) return [];
+  return rows
+    .filter((r) => Array.isArray(r) && typeof r[0] === 'string' && r[0])
+    .map((r) => ({ account: r[0], role: typeof r[1] === 'string' ? r[1] : null, joined: typeof r[3] === 'string' ? r[3] : null }))
+    .sort((a, b) => (a.account < b.account ? -1 : a.account > b.account ? 1 : 0));
+}
+
+/** eligibility for the subscribe wave: persona comment window, quiet-hours law, one per lifetime, read-back truth first */
+function subscribeEligible(who, cfg, { hour, weekday, subscribedSet, memorySub, hasKey }) {
+  if (subscribedSet && subscribedSet.has(who)) return { ok: false, why: 'already-subscribed' };
+  if (memorySub && memorySub[who]) return { ok: false, why: 'budget-used' };
+  if (!hasKey) return { ok: false, why: 'no-key' };
+  if (!hourInWindow(cfg.commentHoursUTC, hour, weekday)) return { ok: false, why: 'outside-window' };
+  if (inQuietHours(hour)) return { ok: false, why: 'quiet-hours' };
+  return { ok: true };
+}
+
+/** the join plan: headcorner (founder) first, then soldiers by window start — deterministic, capped */
+function subscribePlan(now, subscribedSet, memory, keys) {
+  const hour = now.getUTCHours(), weekday = now.getUTCDay();
+  const memSub = (memory && memory.subscribeDone) || {};
+  const cand = [];
+  for (const who of FLEET) {
+    const cfg = SLOTS.soldiers[who];
+    if (!cfg) continue; // headcorner rides the founder slot below
+    const e = subscribeEligible(who, cfg, { hour, weekday, subscribedSet, memorySub: memSub, hasKey: !!keys[who] });
+    if (e.ok) cand.push({ who, start: Math.min(...cfg.commentHoursUTC) });
+  }
+  cand.sort((a, b) => (a.start - b.start) || (a.who < b.who ? -1 : 1));
+  const plan = [];
+  if (keys[HEAD] && !(subscribedSet && subscribedSet.has(HEAD)) && !memSub[HEAD]) plan.push({ who: HEAD, start: 0 });
+  for (const c of cand) plan.push(c);
+  return plan.slice(0, MAX_SUBSCRIBES_PER_RUN);
+}
+
 /** slot plan for a whole UTC day (status surface + eval determinism) */
 function dayPlan(doy, weekday) {
   const plan = {};
@@ -167,7 +233,7 @@ function dayPlan(doy, weekday) {
 
 // ---------- runtime helpers ----------
 
-function loadMemory() { try { return JSON.parse(fs.readFileSync(MEMORY_FILE, 'utf8')); } catch (_) { return { pieceUse: {}, lastBlogDoy: {}, reblogDoy: {}, votesDoy: {}, commentDoy: {} }; } }
+function loadMemory() { try { return JSON.parse(fs.readFileSync(MEMORY_FILE, 'utf8')); } catch (_) { return { pieceUse: {}, lastBlogDoy: {}, reblogDoy: {}, votesDoy: {}, commentDoy: {}, subscribeDone: {} }; } }
 function saveMemory(m) { const t = MEMORY_FILE + '.tmp'; fs.writeFileSync(t, JSON.stringify(m, null, 1)); fs.renameSync(t, MEMORY_FILE); }
 
 function loadKeys() {
@@ -229,15 +295,18 @@ async function modeBlog(now, keys, memory, run) {
           const existing = await getContent(e.who, permlink);
           if (existing && existing.author === e.who) R.status = 'SKIP-ALREADY-POSTED';
           else {
+            // CR-0067: the house is home — first tag = community (when the house exists), hub tag stays trailing
+            const tags = COMMUNITY ? communityTags(e.piece, COMMUNITY) : e.piece.tags;
+            R.community = COMMUNITY || null;
             const ops = [
-              ['comment', { parent_author: '', parent_permlink: e.piece.tags[0], author: e.who, permlink, title: e.piece.title, body: e.piece.body, json_metadata: JSON.stringify({ tags: e.piece.tags, app: 'saos-human-cadence/1', format: 'markdown' }) }],
+              ['comment', { parent_author: '', parent_permlink: tags[0], author: e.who, permlink, title: e.piece.title, body: e.piece.body, json_metadata: JSON.stringify({ tags, app: 'saos-human-cadence/1', format: 'markdown' }) }],
               ['comment_options', { author: e.who, permlink, max_accepted_payout: '1000000.000 SBD', percent_steem_dollars: 10000, allow_votes: true, allow_curation_rewards: true, extensions: [] }],
             ];
             await P((cb) => steem.broadcast.send({ operations: ops, extensions: [] }, [wif], cb));
             await sleep(2500 + Math.floor(Math.random() * 3500));
             const chk = await getContent(e.who, permlink);
             R.status = chk && chk.author === e.who && chk.body === e.piece.body ? 'POSTED-VERIFIED' : 'BROADCAST-NO-READBACK';
-            R.url = `https://steemit.com/@${e.who}/${permlink}`;
+            R.url = COMMUNITY ? `https://steemit.com/hive-177702/@${e.who}/${permlink}` : `https://steemit.com/@${e.who}/${permlink}`;
             if (R.status === 'POSTED-VERIFIED') {
               published++;
               memory.lastBlogDoy[e.who] = doy;
@@ -405,25 +474,63 @@ async function modeSocial(now, keys, memory, run, posts, memoryCommentDoy) {
   }
 }
 
+/** THE COMMUNITY BREATH (CR-0067): staggered joins — one moment, one owner, read-back truth */
+async function modeCommunity(now, keys, run, memory) {
+  if (!COMMUNITY) { run.community.push({ status: 'SKIP-NO-COMMUNITY' }); return; }
+  const doy = Math.floor((now.getTime() - Date.UTC(now.getUTCFullYear(), 0, 0)) / 864e5);
+  let subs = [];
+  try { subs = await rpc('bridge.list_subscribers', { community: COMMUNITY }); } catch (err) { run.community.push({ status: 'FAIL', err: String(err.message || err).slice(0, 80) }); return; }
+  const before = subscribersReadBack(subs);
+  run.communityBefore = before.length;
+  const subscribedSet = new Set(before.map((s) => s.account));
+  const plan = subscribePlan(now, subscribedSet, memory, keys);
+  if (!plan.length) { run.community.push({ status: subscribedSet.size >= FLEET.length ? 'HOME-SUBSCRIBED' : 'NO-ELIGIBLE', subscribed: subscribedSet.size, target: FLEET.length }); return; }
+  let joined = 0;
+  for (const c of plan) {
+    const wif = keys[c.who];
+    const R = { who: c.who, community: COMMUNITY };
+    if (!wif) { R.status = 'SKIP-NO-KEY'; run.community.push(R); continue; }
+    try {
+      const op = subscribeOp(c.who, COMMUNITY);
+      await P((cb) => steem.broadcast.send({ operations: [op], extensions: [] }, [wif], cb));
+      await sleep(4000 + Math.floor(Math.random() * 6000));
+      const after = subscribersReadBack(await rpc('bridge.list_subscribers', { community: COMMUNITY }));
+      R.status = after.some((s) => s.account === c.who) ? 'SUBSCRIBED-VERIFIED' : 'BROADCAST-NO-READBACK';
+      if (R.status === 'SUBSCRIBED-VERIFIED') { joined++; memory.subscribeDone[c.who] = doy; }
+    } catch (err) { R.status = 'FAIL'; R.err = String(err.message || err).slice(0, 80); }
+    run.community.push(R);
+    console.log(`[human-cadence community] ${R.status} ${c.who} -> ${COMMUNITY}`);
+    await sleep(3000 + Math.floor(Math.random() * 5000));
+  }
+  run.communityJoined = joined;
+}
+
 // ---------- bookkeeping ----------
 
 function writeBooks(run) {
   const stable = { ...run };
   delete stable.at;
   const book0 = (() => { try { return JSON.parse(fs.readFileSync(BOOK_JSON, 'utf8')); } catch (_) { return { runs: [] }; } })();
-  const book = { ok: true, tool: 'human-cadence.cjs', version: 1, law: SLOTS.law, internalOnly: true, at: run.at, runs: book0.runs.concat([{ at: run.at, stable }]).slice(-48) };
+  const book = { ok: true, tool: 'human-cadence.cjs', version: 2, law: SLOTS.law, internalOnly: true, community: COMMUNITY, at: run.at, runs: book0.runs.concat([{ at: run.at, stable }]).slice(-48) };
   const t = BOOK_JSON + '.tmp'; fs.writeFileSync(t, JSON.stringify(book, null, 1)); fs.renameSync(t, BOOK_JSON);
   const c = (arr, s) => (arr || []).reduce((n, r) => n + ((r && r.status === s) || (r && r.comment && r.comment.status === s) ? 1 : 0), 0);
   const posted = (run.blog || []).filter((r) => r.status === 'POSTED-VERIFIED').length;
   const votes = (run.curate || []).reduce((n, r) => n + r.picks.filter((p) => p.status === 'VOTED-VERIFIED').length, 0);
   const comments = (run.social || []).filter((r) => r.comment && r.comment.status === 'COMMENTED-VERIFIED').length;
+  const joined = (run.community || []).filter((r) => r.status === 'SUBSCRIBED-VERIFIED').length;
   const lines = [
     `# הקצב האנושי · ${run.at.slice(0, 10)}`, '',
-    `ריצה ${run.at} · פורסמו ${posted} · הצבעות-פנים ${votes} · תגובות ${comments}`, '',
-    `> חוק CR-0065: רגע-אחד, בעל-אחד. אין-פיצוצים. כל-חייל בחלון-השעות-שלו, רטט-מזריע-ליום,`,
-    `> שעות-דממה 00:00-04:59 UTC. חוק-ה-probe: פוסט מתחת-ל-800 תווים לא-מקבל תגובה, הצבעה או reblog — אפילו-שלנו.`, '',
+    `ריצה ${run.at} · פורסמו ${posted}${COMMUNITY ? ` אל-תוך ${COMMUNITY}` : ''} · הצבעות-פנים ${votes} · תגובות ${comments} · הצטרפו ${joined}`, '',
+    `> חוק CR-0065+CR-0067: רגע-אחד, בעל-אחד. אין-פיצוצים. כל-חייל בחלון-השעות-שלו, רטט-מזריע-ליום,`,
+    `> שעות-דממה 00:00-04:59 UTC. הקהילה ${COMMUNITY || '-'} היא הבית: הפוסטים נוחתים בתוכה, וההצטרפות`,
+    `> לה עצמה מפוזרת בחלונות-אישיים (תקציב 1 לכל-חייל, 2 לריצה). חוק-ה-probe: פוסט מתחת-ל-800 תווים`,
+    `> לא-מקבל תגובה, הצבעה או reblog — אפילו-שלנו.`, '',
     `| פוסטים | חוק |`, '|---|---|',
   ];
+  if (run.community && run.community.length) {
+    lines.push('', '| הצטרפות-לבית | חוק |', '|---|---|');
+    for (const c of run.community) lines.push(`| ${c.who || '-'} -> ${c.community || COMMUNITY || '-'} | ${c.status}${c.err ? ` (${c.err})` : ''} |`);
+  }
   for (const b of run.blog || []) lines.push(`| ${b.author} ${b.piece || ''} | ${b.status}${b.why ? ` (${b.why})` : ''} |`);
   lines.push('', '| הצבעות-פנים | חוק |', '|---|---|');
   for (const r of run.curate || []) for (const p of r.picks || []) lines.push(`| ${r.voter} -> @${p.author} w=${p.weightPct}% | ${p.status} |`);
@@ -435,7 +542,8 @@ function writeBooks(run) {
 function writeStatus(now) {
   const doy = Math.floor((now.getTime() - Date.UTC(now.getUTCFullYear(), 0, 0)) / 864e5);
   const plan = dayPlan(doy, now.getUTCDay());
-  const out = { protocol: 'SAOS-HUMAN-CADENCE-STATUS/1', at: now.toISOString(), day: now.toISOString().slice(0, 10), weekdayUTC: now.getUTCDay(), doy, quietHoursUTC: SLOTS.quietHoursUTC, jitterMinutes: SLOTS.jitterMinutes, hubTag: SLOTS.hub && SLOTS.hub.tag, plan, pieceCounts: Object.fromEntries(Object.entries(LIB.desks || {}).map(([d, ps]) => [d, ps.length])) };
+  const memory = loadMemory();
+  const out = { protocol: 'SAOS-HUMAN-CADENCE-STATUS/1', at: now.toISOString(), day: now.toISOString().slice(0, 10), weekdayUTC: now.getUTCDay(), doy, quietHoursUTC: SLOTS.quietHoursUTC, jitterMinutes: SLOTS.jitterMinutes, hubTag: SLOTS.hub && SLOTS.hub.tag, community: COMMUNITY, subscribeDone: Object.keys((memory && memory.subscribeDone) || {}), plan, pieceCounts: Object.fromEntries(Object.entries(LIB.desks || {}).map(([d, ps]) => [d, ps.length])) };
   fs.writeFileSync(path.join(AG, 'human-cadence-status.json'), JSON.stringify(out, null, 1));
   console.log(`[human-cadence status] day ${out.day} · blogs today: ${Object.entries(plan).filter(([, p]) => p.blogDay).map(([w]) => w).join(', ')}`);
 }
@@ -446,7 +554,7 @@ async function main(modeArg) {
   const now = new Date();
   const mode = modeArg || process.argv[2] || 'all';
   if (mode === 'status') { writeStatus(now); process.exit(0); }
-  const run = { at: now.toISOString(), mode, blog: [], curate: [], social: [] };
+  const run = { at: now.toISOString(), mode, blog: [], curate: [], social: [], community: [] };
   try {
     if (fs.existsSync(STASIS_FILE) && JSON.parse(fs.readFileSync(STASIS_FILE, 'utf8')).active === true) {
       console.log('[human-cadence] STASIS-HALT — the breaker is active, the cadence obeys');
@@ -462,12 +570,13 @@ async function main(modeArg) {
   const memoryCommentDoy = memory.commentDoy || (memory.commentDoy = {});
   let posts = [];
   if (mode === 'all' || mode === 'curate' || mode === 'social') { try { posts = await fleetPosts(now); } catch (_) {} run.fleetPostsScanned = posts.length; }
+  if (mode === 'all' || mode === 'community') await modeCommunity(now, keys, run, memory); // join before post — the founder order
   if (mode === 'all' || mode === 'blog') await modeBlog(now, keys, memory, run);
   if (mode === 'all' || mode === 'curate') await modeCurate(now, keys, run, posts, memoryVotesDoy);
   if (mode === 'all' || mode === 'social') await modeSocial(now, keys, memory, run, posts, memoryCommentDoy);
   saveMemory(memory);
   writeBooks(run);
-  console.log(`[human-cadence] DONE · blog=${run.blog.length} curate=${run.curate.length} social=${run.social.length}`);
+  console.log(`[human-cadence] DONE · blog=${run.blog.length} curate=${run.curate.length} social=${run.social.length} community=${run.community.length}`);
   process.exit(0);
 }
 
@@ -475,4 +584,4 @@ if (require.main === module) {
   main().catch((e) => { console.log(JSON.stringify({ state: 'fail-soft', msg: String(e.message || e).slice(0, 160) })); process.exit(0); });
 }
 
-module.exports = { seeded, jitterMinute, pickWeight, blogWindow, hourInWindow, inQuietHours, contentGate, pickPiece, candidateEligible, curateScore, dayPlan, slugify, buildComment, PROBE_RX, CANDIDATE_BODY_FLOOR, PIECE_COOLDOWN_DAYS, SOLDIERS, FLEET };
+module.exports = { seeded, jitterMinute, pickWeight, blogWindow, hourInWindow, inQuietHours, contentGate, pickPiece, candidateEligible, curateScore, dayPlan, slugify, buildComment, PROBE_RX, CANDIDATE_BODY_FLOOR, PIECE_COOLDOWN_DAYS, SOLDIERS, FLEET, COMMUNITY, MAX_SUBSCRIBES_PER_RUN, subscribeOp, communityTags, subscribersReadBack, subscribeEligible, subscribePlan };

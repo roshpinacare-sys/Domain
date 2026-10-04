@@ -2727,9 +2727,80 @@ function accumulateInMemory(bookRows, seed) {
       why59.length ? 'fails: ' + why59.join('; ') : 'the fleet owns its house: founded on measured ceremony, funded from idle capital, keys cold in the vault, and the chain itself confirms the read-back');
   } catch (e) { evalr('E59', 'the community home', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
+  // ---- E60 (R37, CR-0067): THE COMMUNITY BREATH — the fleet's life moves inside its own
+  // house: posts land in hive-177702, joins are their own staggered lane, and the house's
+  // RC top-up is a floor-protected chain-truth desk (the assert is the truth, never the guess).
+  try {
+    const why60 = [];
+    const c60 = (cond, name) => { if (!cond) why60.push(name); };
+    const hc60 = require(path.join(AG, 'human-cadence.cjs'));
+    const cf60 = require(path.join(AG, 'community-founder.cjs'));
+    // the house is law-as-data in persona-slots v3
+    const slots60 = JSON.parse(fs.readFileSync(path.join(AG, 'persona-slots.json'), 'utf8'));
+    c60(hc60.COMMUNITY === 'hive-177702' && slots60.community && slots60.community.name === 'hive-177702', 'community-law-data');
+    c60(slots60.community.home === true && slots60.maxSubscribesPerRun === 2 && slots60.subscribeBudgetPerSoldier === 1, 'join-budget-law');
+    // subscribe op byte-shape = the measured ground truth (furqanashraf@hive-153176, live 2026-10-04)
+    const op60 = hc60.subscribeOp('furqanashraf', 'hive-153176');
+    c60(op60[0] === 'custom_json' && op60[1].id === 'community' && op60[1].required_auths.length === 0 && op60[1].required_posting_auths[0] === 'furqanashraf', 'subscribe-op-auths');
+    c60(op60[1].json === '["subscribe",{"community":"hive-153176"}]', 'subscribe-op-json-byte');
+    // community form: the house is the first tag, hub tag stays trailing, junk -> null
+    const ct60 = hc60.communityTags({ tags: ['oldmaps', 'history', 'saos'] }, 'hive-177702');
+    c60(ct60[0] === 'hive-177702' && ct60[ct60.length - 1] === 'saos' && ct60.length === 4, 'community-tags-first-last');
+    c60(hc60.communityTags({ tags: 'junk' }, 'hive-177702') === null && hc60.communityTags({ tags: ['a'] }, null) === null, 'community-tags-junk-null');
+    // read-back parser: the measured [[account, role, title, joined]] rows
+    const rb60 = hc60.subscribersReadBack([['furqanashraf', 'guest', null, '2026-09-16 08:14:33'], ['zzz', 'member', null, null], ['aaa', 'mod', null, null]]);
+    c60(rb60.length === 3 && rb60[0].account === 'aaa' && rb60[1].role === 'guest' && rb60[2].joined === null, 'readback-parse-sort');
+    c60(hc60.subscribersReadBack('junk').length === 0 && hc60.subscribersReadBack([[null], [42]]).length === 0, 'readback-junk-null');
+    // join eligibility: every refusal has a name, the window law rules
+    const cfg60 = slots60.soldiers.haran;
+    c60(hc60.subscribeEligible('haran', cfg60, { hour: 9, weekday: 6, subscribedSet: new Set(['haran']), hasKey: true }).why === 'already-subscribed', 'join-already');
+    c60(hc60.subscribeEligible('haran', cfg60, { hour: 9, weekday: 6, hasKey: true, memorySub: { haran: 280 } }).why === 'budget-used', 'join-budget-used');
+    c60(hc60.subscribeEligible('haran', cfg60, { hour: 9, weekday: 6, hasKey: false }).why === 'no-key', 'join-no-key');
+    c60(hc60.subscribeEligible('haran', cfg60, { hour: 23, weekday: 6, hasKey: true }).why === 'outside-window', 'join-window');
+    // quiet-hours: needs a window that CONTAINS the quiet hour — the check order is window first (measured)
+    c60(hc60.subscribeEligible('x', { commentHoursUTC: [1, 2] }, { hour: 2, weekday: 6, hasKey: true }).why === 'quiet-hours', 'join-quiet');
+    c60(hc60.subscribeEligible('x', { commentHoursUTC: [1, 2] }, { hour: 2, weekday: 6, hasKey: true, subscribedSet: new Set(['x']) }).why === 'already-subscribed', 'join-order-truth-first');
+    c60(hc60.subscribeEligible('haran', cfg60, { hour: 10, weekday: 6, hasKey: true }).ok === true, 'join-ok');
+    // the plan: founder first, then soldiers by window start (2026-10-04 is a SUNDAY, weekday 0 —
+    // wic's comment window [7,8] catches hour 9 via the +1h catch-up law, before haran's [9,10]); capped; already-subscribed skipped
+    const now60 = new Date('2026-10-04T09:17:00Z');
+    const keys60 = Object.fromEntries(['headcorner', 'haran', 'israelnews', 'wic', 'tov'].map((k) => [k, 'wif']));
+    const plan60 = hc60.subscribePlan(now60, new Set(), { subscribeDone: {} }, keys60);
+    c60(plan60.length === 2 && plan60[0].who === 'headcorner' && plan60[1].who === 'wic', 'plan-founder-first-window-order');
+    const planSub = hc60.subscribePlan(now60, new Set(['headcorner', 'wic']), { subscribeDone: {} }, keys60);
+    c60(planSub.length === 1 && planSub[0].who === 'haran', 'plan-skips-subscribed');
+    const planMem = hc60.subscribePlan(now60, new Set(), { subscribeDone: { headcorner: 280, wic: 280 } }, keys60);
+    c60(planMem.length === 1 && planMem[0].who === 'haran', 'plan-budget-memory');
+    c60(JSON.stringify(hc60.subscribePlan(now60, new Set(), { subscribeDone: {} }, keys60)) === JSON.stringify(plan60), 'plan-deterministic');
+    // RC top-up desk: GESTS units law + the assert truth + the floor-protected plan
+    c60(Math.abs(cf60.gestsToVests(3070814041830) - 3070814.04183) < 1e-4, 'gests-units-law');
+    const av60 = cf60.parseAvailableVests('Assert Exception:available_shares >= delta: not enough mana. required: {"amount":"64526822644","precision":6,"nai":"@@000000037"} available: {"amount":"14162000000","precision":6,"nai":"@@000000037"}');
+    c60(Math.abs(av60 - 14162) < 1e-6, 'assert-truth-parsed');
+    c60(cf60.parseAvailableVests('some other failure') === null, 'assert-junk-null');
+    const ready60 = cf60.rcTopUpPlan({ ownVests: 6366749.189565, delegatedVests: 4331009.035920, toWithdrawGests: 3070814041830, withdrawnGests: 2303110531374, receivedVests: 16131.754808, targetSp: 50, fund: 196e6, sharesTotal: 392e9 });
+    c60(ready60.verdict === 'TOPUP-READY' && Math.abs(ready60.reservationVests - 767703.510456) < 0.01 && Math.abs(ready60.shortVests - 83868.245192) < 0.01, 'rc-plan-ready-math');
+    const poor60 = cf60.rcTopUpPlan({ ownVests: 100000, delegatedVests: 50000, toWithdrawGests: 0, withdrawnGests: 0, receivedVests: 16131.754808, targetSp: 50, fund: 196e6, sharesTotal: 392e9 });
+    c60(poor60.verdict === 'RECLAIM-PENDING' && poor60.availableVests === 50000, 'rc-plan-reclaim-pending');
+    c60(cf60.rcTopUpPlan({ ownVests: 0, delegatedVests: 0, toWithdrawGests: 0, withdrawnGests: 0, receivedVests: 0, targetSp: 50, fund: 0, sharesTotal: 0 }).verdict === 'RECLAIM-PENDING', 'rc-plan-null-guard');
+    const op2_60 = cf60.rcTopUpOp('hive-177702', 80651.5306122449);
+    c60(op2_60[0] === 'delegate_vesting_shares' && op2_60[1].delegator === 'headcorner' && op2_60[1].delegatee === 'hive-177702' && op2_60[1].vesting_shares === '80651.530612 VESTS', 'rc-topup-op-absolute');
+    // real-tree: the books carry the breath — book v2 with the community, the rc run booked honestly
+    const book60 = JSON.parse(fs.readFileSync(path.join(AG, 'human-cadence.json'), 'utf8'));
+    c60(book60.version === 2 && book60.community === 'hive-177702', 'cadence-book-v2-community');
+    const cfBook60 = JSON.parse(fs.readFileSync(path.join(AG, 'community-founder.json'), 'utf8'));
+    c60(cfBook60.community && cfBook60.community.name === 'hive-177702', 'community-book-present');
+    const lastRc60 = (cfBook60.runs || []).filter((r) => r.mode === 'rc').slice(-1)[0];
+    c60(lastRc60 && ['RECLAIM-PENDING', 'TOPUP-HOLD', 'MODE-DRY', 'TOPUP-LIVE', 'STASIS-HALT', 'VAULT-ABSENT-LOCAL', 'READ-BACK-FAIL', 'COMMUNITY-ABSENT', 'DELEGATE-FAIL'].includes(lastRc60.verdict), 'rc-run-honest-verdict');
+    const st60 = JSON.parse(fs.readFileSync(path.join(AG, 'human-cadence-status.json'), 'utf8'));
+    c60(st60.community === 'hive-177702' && Array.isArray(st60.subscribeDone), 'status-carries-breath');
+    evalr('E60', 'the community breath (CR-0067)', why60.length === 0,
+      ['white-box: the subscribe op byte-matches the measured ground truth (custom_json id=community, posting-only auths, json ["subscribe",{community}]); communityTags puts the house first and the hub tag trailing; the read-back parser eats the measured [[account, role, title, joined]] rows and starves junk', 'white-box: every join refusal has a name (already-subscribed, budget-used, no-key, outside-window, quiet-hours); the plan is founder-first then window-ordered, deterministic, capped at 2 per run, and skips the read-back-truth subscribers and the memory budget alike', 'white-box: the RC top-up desk measures in GESTS units (the 1e6 law), parses the REAL assert shape (amount followed by precision/nai — measured live 2026-10-04), computes the floor-protected plan (available = own - delegated - (to_withdraw - withdrawn)/1e6; short = target - received; honest RECLAIM-PENDING vs TOPUP-READY), and builds the ABSOLUTE delegation op', 'real-tree: cadence book v2 carries the community; the community book is present; the rc run verdict is one of the honest set; the status book carries the community and the subscribeDone budget'],
+      why60.length ? 'fails: ' + why60.join('; ') : 'the house breathes: posts land inside it, joins arrive one moment one owner, and its RC grows only from the chain truth with the floor protected');
+  } catch (e) { evalr('E60', 'the community breath', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.45.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48 + R27 metronome-audit E49 + R28 mm-volume E50 + R29 share-ladder E51 + R30 calibrated-engine E52 + R31 tape-calibration/venue-expansion E53 + R32 sidechain-pond E54 + R33 pnl-verdict E55 + sovereign-hands E56 + R34 fill-through-evolution E57 + R35 human-cadence E58 + R36 community-home E59, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.46.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48 + R27 metronome-audit E49 + R28 mm-volume E50 + R29 share-ladder E51 + R30 calibrated-engine E52 + R31 tape-calibration/venue-expansion E53 + R32 sidechain-pond E54 + R33 pnl-verdict E55 + sovereign-hands E56 + R34 fill-through-evolution E57 + R35 human-cadence E58 + R36 community-home E59 + R37 community-breath E60, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];

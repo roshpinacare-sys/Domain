@@ -1,12 +1,20 @@
 {
-  "version": 2,
-  "law": "THE HUMAN CADENCE (CR-0065): no two fleet ops share a moment. Each soldier owns personal hours across the UTC day, seeded per-day jitter, quiet hours 00:00-04:59 UTC. One publisher (human-cadence.cjs); every other social engine defers. Slots are windows, not instants - a starved runner catching up still lands inside a wide window and never inside a burst.",
+  "version": 3,
+  "law": "THE HUMAN CADENCE (CR-0065, extended CR-0067): no two fleet ops share a moment. Each soldier owns personal hours across the UTC day, seeded per-day jitter, quiet hours 00:00-04:59 UTC. One publisher (human-cadence.cjs); every other social engine defers. Slots are windows, not instants - a starved runner catching up still lands inside a wide window and never inside a burst. CR-0067: the community is the home feed - soldier posts land INSIDE The Clubhouse (hive-177702 as first tag), and joining is its own staggered lane (subscribe in persona windows, budget 1 per soldier ever, max 2 per run, read-back via bridge.list_subscribers).",
   "quietHoursUTC": { "from": 0, "to": 5 },
   "jitterMinutes": 22,
   "minAgeHoursBeforeComment": 2,
   "maxCommentsPerSoldierPerDay": 1,
   "maxReblogsPerSoldierPerDay": 1,
+  "subscribeBudgetPerSoldier": 1,
+  "maxSubscribesPerRun": 2,
   "supportVoteWeightsPct": [25, 30, 35, 40, 45],
+  "community": {
+    "name": "hive-177702",
+    "title": "The Clubhouse",
+    "home": true,
+    "why": "CR-0066 founded the house; CR-0067 moves the fleet's life into it. First tag = the community (posts land in https://steemit.com/created/hive-177702), the desk tags keep topical discoverability, the saos hub tag stays trailing as the internal feed marker. Subscribes are staggered exactly like every other human op - eleven joins never share a moment."
+  },
   "soldiers": {
     "wic":        { "desk": "quiet hours", "blogDaysUTC": [0, 1, 2, 3, 4], "blogHoursUTC": [5, 6],       "commentHoursUTC": [7, 8],       "curateHoursUTC": [9] },
     "haran":      { "desk": "old maps",    "blogDaysUTC": [1, 2, 4, 5],    "blogHoursUTC": [6, 7, 8],    "commentHoursUTC": [9, 10],      "curateHoursUTC": [10] },
@@ -21,6 +29,6 @@
   },
   "hub": {
     "tag": "saos",
-    "why": "the clubhouse tag: every soldier post carries it as a trailing tag, so https://steemit.com/created/saos is the fleet's own internal feed while topical first tags keep each piece discoverable on its own merits"
+    "why": "the clubhouse tag: every soldier post carries it as a trailing tag, so https://steemit.com/created/saos stays the fleet's own internal marker while the community (hive-177702) is the home feed and topical first tags keep each piece discoverable on its own merits"
   }
 }

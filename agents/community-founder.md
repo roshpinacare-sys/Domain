@@ -1,6 +1,6 @@
 # community-founder — הבית הקהילתי (CR-0066)
 
-עודכן: 2026-10-04T06:24:46.745Z
+עודכן: 2026-10-04T07:06:57.153Z
 
 ## הקהילה חיה
 - שם-חשבון: hive-177702
@@ -11,11 +11,6 @@
 - txids: {"account_create:hive-177702":"201f2c3852…","delegate_vesting_shares:10SP":"1f1616b334…","setRole:admin:headcorner":"201c29f519…","updateProps":"1f2c57b9e4…","setRole:member:wic":"1f38326d89…","setRole:member:haran":"201c5e8989…","setRole:member:israelnews":"200a78a76a…","setRole:member:siq":"2025dcfd09…","setRole:member:cashmachine":"1f4b7e68ff…","setRole:member:lsa":"2064a07977…","setRole:member:macrame":"1f17caedae…","setRole:member:woq":"1f6ad0387b…","setRole:member:tov":"20787921f6…","setRole:member:wog":"206c95d6d4…"}
 
 ## ריצות אחרונות
-- [2026-10-04T06:00:12.352Z] create → FUNDING-SHORT · liquid 0.014 < 3.050
-  - keys-generated (vault-only, pubs=STM8dhn4m…)
-  - funding-cancel order 2026100413 hint=1f45300a9c…
-  - liquid-after-funding=0.014
-- [2026-10-04T06:01:42.585Z] create → IDLE-CAPITAL-TOO-SMALL · IDLE-CAPITAL-TOO-SMALL · liquid=0.014 · need=3.050
 - [2026-10-04T06:02:25.069Z] create → IDLE-CAPITAL-TOO-SMALL · IDLE-CAPITAL-TOO-SMALL · liquid=0.014 · need=3.050
 - [2026-10-04T06:03:49.389Z] create → IDLE-CAPITAL-TOO-SMALL · IDLE-CAPITAL-TOO-SMALL · liquid=0.014 · need=3.050
 - [2026-10-04T06:04:42.871Z] create → ERROR · Assert Exception:available_shares >= op.vesting_shares: Account headcorner does not have enough mana to delegate. requir
@@ -58,3 +53,7 @@
 - [2026-10-04T06:24:44.992Z] status → COMMUNITY-LIVE
   - adopt: the vault carries hive-177702 with keys — finalizing from the chain
   - chain: hive-177702 title=The Clubhouse · roles=12 · subs=0 · receivedSP=10.0
+- [2026-10-04T07:06:06.037Z] rc → DELEGATE-FAIL · Assert Exception:available_shares >= delta: Account headcorner does not have enough mana to delegate. required: {"amount":"64526822644","precision":6,"nai":"@@000000037"} available: {"amount":"1396610
+  - plan: available 1268037 vests (786.05 SP) · reservation 767704 vests · short 64527 vests · floor 0 SP received
+- [2026-10-04T07:06:55.461Z] rc → TOPUP-HOLD · chain available 14162 vests <= floor — the current RC stands, the reclaim decides
+  - plan: available 1268037 vests (786.05 SP) · reservation 767704 vests · short 64527 vests · floor 10 SP received
