@@ -1,11 +1,10 @@
 {
   "protocol": "SAOS-FATE-DEFENSE-FWI/1",
-  "at": "2026-10-04T14:42:03.328Z",
+  "at": "2026-10-04T16:16:43.714Z",
   "agent": "fleet-indicators v1.0.0 (Task 22, study: Emergence World arXiv 2606.08367 + 2609.17320)",
   "verdict": "DEGRADED",
   "counts": {
-    "HELD": 1,
-    "GROW": 6,
+    "GROW": 7,
     "DECLINE": 2
   },
   "indicators": [
@@ -14,17 +13,17 @@
       "name": "Population Health",
       "measures": "persistent organs (live books) alive & fresh — our equivalent of \"agents alive at end of run\"",
       "evidenceSource": "agents/{econ,curation,money-ledger,ventures,fills-ledger,bridge,dex,learning-ledger,recruitment}-book.json .at/.updated < 48h",
-      "value": "8/9",
+      "value": "9/9",
       "breakEven": "≥7/9",
-      "status": "HELD",
-      "note": "curation-book.json"
+      "status": "GROW",
+      "note": "all organs alive"
     },
     {
       "id": "F2",
       "name": "Safety & Public Order",
       "measures": "destructive attempts mechanically refused (guard denies = incidents PREVENTED, not committed) + guard evals green + STASIS breaker armed",
       "evidenceSource": "agents/command-guard.json .denies + agents/STASIS.json .active + evals/eval-results.json E7-E9",
-      "value": "denies=0 evals=PASS stasis=armed",
+      "value": "denies=3 evals=PASS stasis=armed",
       "breakEven": "evals PASS + stasis armed",
       "status": "GROW",
       "note": "their worlds: coercion cascades killed populations; our guard refuses before execution, our engine obeys STASIS before any seal/broadcast"
@@ -34,7 +33,7 @@
       "name": "Capability Exploration",
       "measures": "executable tool surface (syntax-valid agent scripts) — proxy for functional curiosity without narrow loops",
       "evidenceSource": "node --check over agents/*.cjs|*.mjs + scripts/*.mjs",
-      "value": "98/98",
+      "value": "100/100",
       "breakEven": "100%",
       "status": "GROW",
       "note": "every desk ships as runnable code, not as a memory blob"
@@ -44,7 +43,7 @@
       "name": "Governance Conformity",
       "measures": "judged change-requests (100% must carry a verdict — dissent is ledgered, never silenced) + role-registry coverage",
       "evidenceSource": "agents/change-requests/*.json verdict fields + role-registry.csv row count",
-      "value": "70/74 CRs judged · registry 57 rows (53 LIVE)",
+      "value": "71/75 CRs judged · registry 57 rows (53 LIVE)",
       "breakEven": "100% judged + ≥20 rows",
       "status": "DECLINE",
       "note": "their worlds: herd voting; our law: every CR judged in the open, supersession visible in git"
@@ -74,7 +73,7 @@
       "name": "Economic Vitality & Equity",
       "measures": "real chain balances (liquid + effective SP) in an executor-identified ledger — equity via identity: one executor, one writer, no hoarding ambiguity",
       "evidenceSource": "agents/money-ledger.json .book{executor,headSteemLiquid,headSteemStake} fresh <48h",
-      "value": "headcorner: 23.366 STEEM liquid · 3810.514 SP · book 15.9h old",
+      "value": "headcorner: 23.366 STEEM liquid · 3810.514 SP · book 17.5h old",
       "breakEven": "ledger fresh + executor-identified",
       "status": "GROW",
       "note": "their economy was 1-CC billboards; ours is signed chain state with a named executor"
@@ -84,7 +83,7 @@
       "name": "Constitutional Growth",
       "measures": "versioned law + honest feature ledger + weekly commit motion — the constitution is AMENDED, not just recited",
       "evidenceSource": "agents/sovereignty.md version + feature_list.json status counts + git rev-list 7d",
-      "value": "law v1.0.6 · features 31/68 done · 241 commits/7d",
+      "value": "law v1.0.6 · features 31/69 done · 243 commits/7d",
       "breakEven": "law versioned + ≤2 open features + ≥20 commits/7d",
       "status": "DECLINE",
       "note": "their static-constitution worlds died passive; ours has version history in git"
@@ -104,55 +103,55 @@
     {
       "book": "econ-book.json",
       "exists": true,
-      "ageHours": 8.7,
+      "ageHours": 10.3,
       "fresh": true
     },
     {
       "book": "curation-book.json",
       "exists": true,
-      "ageHours": 50.8,
-      "fresh": false
+      "ageHours": 1.6,
+      "fresh": true
     },
     {
       "book": "money-ledger.json",
       "exists": true,
-      "ageHours": 15.9,
+      "ageHours": 17.5,
       "fresh": true
     },
     {
       "book": "ventures.json",
       "exists": true,
-      "ageHours": 0,
+      "ageHours": 0.1,
       "fresh": true
     },
     {
       "book": "fills-ledger.json",
       "exists": true,
-      "ageHours": 0,
+      "ageHours": 0.1,
       "fresh": true
     },
     {
       "book": "bridge-book.json",
       "exists": true,
-      "ageHours": 15.9,
+      "ageHours": 17.5,
       "fresh": true
     },
     {
       "book": "dex-book.json",
       "exists": true,
-      "ageHours": 15.9,
+      "ageHours": 17.5,
       "fresh": true
     },
     {
       "book": "learning-ledger.json",
       "exists": true,
-      "ageHours": 16,
+      "ageHours": 17.5,
       "fresh": true
     },
     {
       "book": "recruitment.json",
       "exists": true,
-      "ageHours": 3.8,
+      "ageHours": 5.4,
       "fresh": true
     }
   ]

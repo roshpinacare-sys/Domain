@@ -74,6 +74,23 @@
  * vault's outstanding corridor exposure may never exceed 2× its custody of the payout asset.
  * Idempotency by escrow drain: a replayed fill finds the escrow empty and is refused. The core
  * stays dumb and safe — the doors, the clocks and the state machine live in dex-xc.cjs.
+ *
+ * R44 (CR-0074) arms THE OPPOSING HANDS — the two things the owner's directive left gated:
+ *  - COUNTER-GRID ARM LAW: the pool-side counter-grids were born PLAN-POOL-GATED-NOT-BROADCAST
+ *    (R39/R40) — the owner has now given the gate twice ("אני רוצה לייצר עוד גרידים מתנגדים על
+ *    הרשת שלנו מצד שני", trace 1a105f6d58b6c3a5, and the rung trigger 1a1076497144c3ed). The
+ *    gate is an ARTIFACT, not a boolean: agents/change-requests/CR-0074-counter-grids.json
+ *    present in the repo = gate open. The arm adds the laws the broadcast needs: deterministic
+ *    rung ids (sha256-16, idempotent re-arm), the CAP law (a grid's per-side notional ≤ 2% of
+ *    that side's depth value marked to the anchor), the DUST law (a rung under GRID_DUST keeps
+ *    the grid quiet — GRID-TOO-THIN, dust orders never rest), and the TWO-SIDED law (a grid
+ *    without BOTH ladders is a direction bet, REFUSED — the essence of מתנגד is both hands).
+ *    settle stays pure: the gate arrives as an argument, byte-determinism untouched.
+ *  - PEGOUT HAND (agents/pegout-hand.cjs): the keyed consumer of dex/pegout-queue.json — the
+ *    second half of the real-value law. DEST-ALLOWLIST law: a chain payout fires ONLY to an
+ *    estate-roster account; a row naming a non-estate account is REFUSED-DEST-NOT-ESTATE
+ *    (never a transfer to a squatter). The hand proves itself with a 0.001 self-transfer
+ *    (value-neutral, receipted) — the rail is real, the queue law is enforced.
  */
 
 const fs = require('fs');
@@ -92,7 +109,7 @@ const INTENTS_FILE = path.join(AG, 'dex-intents.json'); // the mesh queue — wr
 const XC_OPS_FILE = path.join(AG, '..', 'dex', 'xc-ops.json'); // the XC intent queue — written by dex-xc.cjs, consumed+cleared by THIS desk (single-writer law)
 const ROSTER_FILE = path.join(AG, 'persona-slots.json');
 const PROTOCOL = 'SAOS-DEX-CORE/1';
-const VERSION = 'dex-core v1.3.0 (R43 INTENT GATES, CR-0073)';
+const VERSION = 'dex-core v1.4.0 (R44 THE OPPOSING HANDS, CR-0074)';
 const REDEEM_REQUESTS_FILE = path.join(AG, '..', 'dex', 'redeem-requests.json');
 const PEGOUT_QUEUE_FILE = path.join(AG, '..', 'dex', 'pegout-queue.json');
 
@@ -105,6 +122,14 @@ const MESH_BATCH_MEMO = 64;            // processed-batch ids kept for idempoten
 // ── cross-chain intent constants (R43) ────────────────────────────────────
 const CHAIN_WRAPPER = { STEEM: 'WSTEEM', SBD: 'WSBD', HIVE: 'WHIVE', HBD: 'WHBD', BLURT: 'WBLURT' }; // chains with a wrapper in the vault catalog (R42 law)
 const XC_BOND_EXPOSURE_RATIO = 2n;    // the BOND LAW (THORChain-adapted): outstanding corridor exposure ≤ 2× custody of the payout asset
+
+// ── counter-grid arm law (R44) ─────────────────────────────────────────────
+const CR_COUNTER_GRID_FILE = path.join(AG, 'change-requests', 'CR-0074-counter-grids.json'); // the owner-gate ARTIFACT — its presence in the repo IS the open gate
+const GRID_CAP_DEPTH_BPS = 200n;      // a grid's per-side notional ≤ 2% of that side's depth value marked to the anchor (impermanent-value defense)
+const GRID_DUST = 1000n;              // 0.001 unit — a rung below this is dust; the grid stays quiet (GRID-TOO-THIN)
+const GRID_VERDICT_PLAN = 'PLAN-POOL-GATED-NOT-BROADCAST';
+const GRID_VERDICT_ARMED = 'GATED-ARMED-BROADCAST-READY';
+const GRID_VERDICT_THIN = 'GRID-TOO-THIN';
 
 // ── multi-network vault constants (R42) ────────────────────────────────────
 const WRAP_UNDERLYING = { WSTEEM: 'STEEM', WSBD: 'SBD', WHIVE: 'HIVE', WHBD: 'HBD', WBLURT: 'BLURT' };
@@ -506,6 +531,69 @@ function issuerRow() {
 function stasisCheck() {
   try { const st = JSON.parse(fs.readFileSync(STASIS_FILE, 'utf8')); return st && st.active === true ? st : null; } catch (_) { return null; }
 }
+
+// ── R44: the counter-grid ARM — the owner gate + the sizing/cap/dust/idempotency laws ──
+/** the owner gate: CR-0074's presence in the repo IS the open gate (the owner's directive
+ *  "לייצר עוד גרידים מתנגדים על הרשת שלנו מצד שני" recorded as the artifact). No file — no
+ *  broadcast. The gate is an artifact someone can audit in git history, not a boolean an
+ *  import can flip in memory. `exists` is injectable for the evals/selftest (purity law). */
+function counterGridGate(exists) {
+  const present = exists === undefined || exists === null ? fs.existsSync(CR_COUNTER_GRID_FILE) : !!exists;
+  return {
+    open: present,
+    artifact: 'CR-0074-counter-grids.json',
+    source: present
+      ? 'owner-directive-recorded (traces 1a105f6d58b6c3a5 + rung 1a1076497144c3ed) — the opposing grids are ordered to stand'
+      : 'gate-closed — the CR-0074 artifact is absent from the repo',
+  };
+}
+/** RUNG SIZING LAW: a grid's per-side notional ≤ GRID_CAP_DEPTH_BPS of its side's depth value
+ *  (both pool sides marked to the anchor, in quote units), split evenly across the rungs,
+ *  converted to BASE µ at the anchor. A rung below GRID_DUST ⇒ thin:true — dust never rests. */
+function rungSizeLaw(depthBaseMu, depthQuoteMu, anchorNano, rungs) {
+  const anchor = Number(anchorNano) / 1e9;
+  const rb = Number(depthQuoteMu || 0), ra = Number(depthBaseMu || 0);
+  if (!(anchor > 0) || !(rungs > 0) || rb <= 0 || ra <= 0) return { sizeMu: 0n, capNotionalQuote: 0, thin: true };
+  const depthQuoteValue = rb + ra * anchor;                                  // both sides marked to the anchor (quote units)
+  const capNotionalQuote = Math.floor(depthQuoteValue * Number(GRID_CAP_DEPTH_BPS) / 10000);
+  const perRungQuote = capNotionalQuote / rungs;
+  const sizeMu = BigInt(Math.max(0, Math.floor(perRungQuote / anchor)));      // per-rung size in BASE µ
+  return { sizeMu, capNotionalQuote, thin: sizeMu < GRID_DUST };
+}
+/** deterministic rung id: sha256-16 over (pool|pair|side|level|anchor|size) — same state ⇒ same
+ *  id ⇒ a re-arm finds the same rung and does not duplicate (idempotency by id, mesh law family). */
+function rungId(poolId, pair, side, level, anchorNano, sizeMu) {
+  return crypto.createHash('sha256').update(`${poolId}|${pair}|${side}|${level}|${anchorNano}|${sizeMu}`).digest('hex').slice(0, 16);
+}
+/** THE ARM: planned grids → broadcast-ready rungs with ids + sizes + payload.
+ *  Gate closed ⇒ verdict stays PLAN (byte-for-byte the R39/R40 plan). Gate open ⇒
+ *  TWO-SIDED law (both ladders present and mirrored — a one-sided grid is a direction bet,
+ *  REFUSED-ONE-SIDED, never a counter-grid), CAP law sizes, DUST law refusal, and the
+ *  deterministic broadcastPayload rows the engine surface consumes. */
+function armCounterGrids(counterGrids, gate) {
+  const out = {};
+  for (const [poolId, g] of Object.entries(counterGrids || {})) {
+    if (!gate.open) { out[poolId] = { ...g, gate: { open: false, artifact: gate.artifact, source: gate.source }, verdict: GRID_VERDICT_PLAN }; continue; }
+    const buys = (g.rungs || []).filter((r) => r.side === 'buy');
+    const sells = (g.rungs || []).filter((r) => r.side === 'sell');
+    const twoSided = buys.length > 0 && buys.length === sells.length;
+    if (!twoSided) { out[poolId] = { ...g, gate: { open: true, artifact: gate.artifact, source: gate.source }, verdict: 'REFUSED-ONE-SIDED' }; continue; }
+    const anchorNano = BigInt(Math.round(Number(g.anchor) * 1e9));
+    const size = rungSizeLaw(g.depthBaseMu, g.depthQuoteMu, anchorNano, buys.length);
+    if (size.thin) { out[poolId] = { ...g, gate: { open: true, artifact: gate.artifact, source: gate.source }, verdict: GRID_VERDICT_THIN, sizeLaw: { capNotionalQuote: size.capNotionalQuote, sizeMu: '0', capBps: Number(GRID_CAP_DEPTH_BPS) } }; continue; }
+    const rungs = [];
+    buys.forEach((r, i) => rungs.push({ ...r, level: i + 1, id: rungId(poolId, g.pair, 'buy', i + 1, anchorNano, size.sizeMu), sizeMu: mu(size.sizeMu) }));
+    sells.forEach((r, i) => rungs.push({ ...r, level: i + 1, id: rungId(poolId, g.pair, 'sell', i + 1, anchorNano, size.sizeMu), sizeMu: mu(size.sizeMu) }));
+    out[poolId] = {
+      ...g, rungs,
+      gate: { open: true, artifact: gate.artifact, source: gate.source },
+      sizeLaw: { capNotionalQuote: size.capNotionalQuote, sizeMu: mu(size.sizeMu), capBps: Number(GRID_CAP_DEPTH_BPS) },
+      verdict: GRID_VERDICT_ARMED,
+      broadcastPayload: rungs.map((r) => ({ op: 'GRID-RUNG', id: r.id, pool: poolId, pair: g.pair, side: r.side, level: r.level, price: r.price, sizeMu: r.sizeMu, unit: r.unit })),
+    };
+  }
+  return out;
+}
 function writeBook(obj) {
   const tmp = OUT_JSON + '.tmp';
   fs.writeFileSync(tmp, JSON.stringify(obj, null, 1) + '\n');
@@ -538,7 +626,7 @@ function writeMd(b) {
     L.push('');
     for (const id of Object.keys(b.counterGrids || {})) {
       const g = b.counterGrids[id];
-      L.push(`- Counter-grid ${id} ${g.pair}: anchor ${g.anchor} (${g.anchorSource}) · skew ${g.skewShiftBps}bps · spacing ${g.spacingPct}% · rungs ${g.rungs.length} · ${g.verdict}`);
+      L.push(`- Counter-grid ${id} ${g.pair}: anchor ${g.anchor} (${g.anchorSource}) · skew ${g.skewShiftBps}bps · spacing ${g.spacingPct}% · rungs ${g.rungs.length} · ${g.verdict}${g.sizeLaw ? ` · size ${g.sizeLaw.sizeMu}µ/rung (cap ${g.sizeLaw.capBps}bps)` : ''}${g.gate ? ` · gate ${g.gate.open ? 'OPEN' : 'CLOSED'}` : ''}`);
     }
     L.push('');
     L.push(`Issuer: ${b.issuer ? `${b.issuer.id} — identity \`${b.issuer.identity}\`` : '—'} · mint law 1:1 against MEASURED-KEYED custody only`);
@@ -658,7 +746,7 @@ function redeem(prev, wrapped, amountMu, account, now) {
 }
 
 // ── tick: the deterministic settle path ─────────────────────────────────────
-function settle(prev, feed, custodyProbe, now, networkProbe) {
+function settle(prev, feed, custodyProbe, now, networkProbe, gridGate) {
   const st = { vault: prev.vault, accounts: prev.accounts, pools: prev.pools, seq: prev.seq || 0 };
   const ops = [];
   const op = (type, payload) => { st.seq += 1; ops.push({ seq: st.seq, type, at: now, ...payload }); };
@@ -817,7 +905,15 @@ function settle(prev, feed, custodyProbe, now, networkProbe) {
       rungs.push({ side: 'buy', price: +(adj * (1 - i * spacingPct / 100)).toFixed(8), unit: p.b });
       rungs.push({ side: 'sell', price: +(adj * (1 + i * spacingPct / 100)).toFixed(8), unit: p.a });
     }
-    counterGrids[p.id] = { pair: p.pair, anchor: +(Number(midNano) / 1e9).toFixed(8), anchorSource: 'POOL-MID (our side of the book)', spacingPct, skewShiftBps: skew, inventoryShareBase: +invShareBase.toFixed(4), rungs, verdict: 'PLAN-POOL-GATED-NOT-BROADCAST' };
+    counterGrids[p.id] = { pair: p.pair, anchor: +(Number(midNano) / 1e9).toFixed(8), anchorSource: 'POOL-MID (our side of the book)', spacingPct, skewShiftBps: skew, inventoryShareBase: +invShareBase.toFixed(4), depthBaseMu: mu(ra), depthQuoteMu: mu(rb), rungs, verdict: GRID_VERDICT_PLAN };
+  }
+  // 4b) R44 ARM LAW: the gate (an argument — settle stays pure) decides PLAN vs GATED-ARMED;
+  //     armed grids book a GRID-ARM op (the arm is a decision event in the append-only ledger).
+  const gate44 = gridGate || { open: false, artifact: 'CR-0074-counter-grids.json', source: 'gate-closed (settle default — determinism law)' };
+  const armedGrids = armCounterGrids(counterGrids, gate44);
+  const gridArmOps = [];
+  for (const [id, g] of Object.entries(armedGrids)) {
+    if (g.verdict === GRID_VERDICT_ARMED) gridArmOps.push({ seq: st.seq, type: 'GRID-ARM', at: now, pool: id, pair: g.pair, anchor: g.anchor, verdict: g.verdict, rungs: g.broadcastPayload.length, sizeMu: g.sizeLaw.sizeMu, capBps: g.sizeLaw.capBps, ids: g.broadcastPayload.map((r) => r.id) });
   }
   // 5) treasury P&L (fees are LP revenue via the persistent feeMeter; edges accumulate across ticks in the book)
   let feesMu = 0n, edgeMu = 0n;
@@ -830,7 +926,7 @@ function settle(prev, feed, custodyProbe, now, networkProbe) {
   const consOk = cons.every((c) => c.ok);
   st.vault.reserveRatio = reserveRatios(st.vault);
   const att = attestationHash(st.vault, st.accounts, st.pools, st.seq);
-  return { st, ops, routes, arb, counterGrids, cons, consOk, att, feesMu, edgeMu, notes, rebalanceBooked };
+  return { st, ops: ops.concat(gridArmOps), routes, arb, counterGrids: armedGrids, gridGate: gate44, cons, consOk, att, feesMu, edgeMu, notes, rebalanceBooked };
 }
 
 // ── R41 THE MESH MARKET: the fleet settles on this ledger ───────────────────
@@ -1059,14 +1155,14 @@ async function tick() {
       for (const a of ['HIVE', 'HBD', 'BLURT']) provenance[a] = `CUSTODY-CLASS ${CUSTODY_CLASSES[a]} — observed on-chain, never custody, until key material verifies (R42/R38 law)`;
       provenance.SAOS = 'PLANNED-NO-CLAIM — dex/credits.json empty today';
       const g = genesis(custody, feed.fair, provenance, now);
-      const settled = settle({ vault: g.vault, accounts: g.accounts, pools: g.pools, seq: g.seq, opsBooked: g.ops }, feed, null, now, nets);
+      const settled = settle({ vault: g.vault, accounts: g.accounts, pools: g.pools, seq: g.seq, opsBooked: g.ops }, feed, null, now, nets, counterGridGate());
       const book = assemble(g, settled, feed, probe, now, true);
       writeBook(book); writeMd(book);
       appendHistory([...g.ops, ...settled.ops]);
       console.log(`DEX-CORE-GENESIS seq=${book.seq} pools=${book.pools.filter((p) => !p.planned).length} custody=STEEM ${g.vault.custody.STEEM}µ/SBD ${g.vault.custody.SBD}µ att=${book.attestation}`);
       return 0;
     }
-    const settled = settle(prev, feed, probe, now, nets);
+    const settled = settle(prev, feed, probe, now, nets, counterGridGate());
     settled.redeemBook = redeemRows;
     const book = assemble(prev, settled, feed, probe, now, false, [...redeemOps, ...settled.ops]);
     writeBook(book); writeMd(book);
@@ -1355,6 +1451,8 @@ async function settleXcTick() {
 }
 
 const LAWS = [
+  'counter-grid arm (R44): the owner gate is the CR-0074 ARTIFACT (present = open); the arm adds deterministic rung ids, the 2%-of-depth cap law, the dust refusal (GRID-TOO-THIN) and the two-sided law (a one-sided grid is a direction bet — REFUSED); settle stays pure (the gate is an argument)',
+  'pegout hand (R44): the keyed consumer of the pegout queue — DEST-ALLOWLIST law (chain payouts fire ONLY to estate-roster accounts, non-estate dests are REFUSED-DEST-NOT-ESTATE); the rail proves itself with a value-neutral self-transfer, receipted',
   'intent gates (R43): XC intents settle on ONE balance universe — escrow in, route through OUR pools, chain payouts queued to the corridor (keyless code never broadcasts), refund whole behind the 2:1 clock, corridor exposure bonded ≤ 2× custody',
   'units: µ BigInt end to end, no floats in settlement',
   'volatile pools: x·y ≥ k (Uniswap v2 exact, fee on input, floor to user)',
@@ -1613,6 +1711,27 @@ function selftest() {
   ok('r42-observed-never-custody', ob1.st.vault.custody.HIVE === '0' && ob1.st.vault.observed.HIVE === '34000' && ob1.st.vault.observed.BLURT === '67841000' && ob1.ops.some((o) => o.type === 'OBSERVE' && o.keyClass === 'OBSERVED-UNCONTROLLED'));
   ok('r42-observed-conservation', ob1.consOk && ob1.cons.every((r) => r.ok));
   ok('r42-observed-custody-classes-booked', !!ob1.st.custodyClasses && ob1.st.custodyClasses.HIVE.class === 'OBSERVED-UNCONTROLLED' && ob1.st.custodyClasses.BLURT.mintable === false);
+  // ── R44 COUNTER-GRID ARM selftest ──────────────────────────────────────
+  const gateClosed44 = counterGridGate(false);
+  const gateOpen44 = counterGridGate(true);
+  ok('r44-gate-artifact-law', gateClosed44.open === false && gateOpen44.open === true && gateOpen44.artifact === 'CR-0074-counter-grids.json' && gateOpen44.source.indexOf('owner-directive') === 0);
+  const planGrids44 = { PX: { pair: 'WSTEEM/STEEM', anchor: 1, anchorSource: 'POOL-MID (our side of the book)', spacingPct: 0.4, skewShiftBps: 50, inventoryShareBase: 0.5, depthBaseMu: '388775', depthQuoteMu: '388775', rungs: [
+    { side: 'buy', price: 0.996, unit: 'STEEM' }, { side: 'sell', price: 1.004, unit: 'WSTEEM' },
+    { side: 'buy', price: 0.992, unit: 'STEEM' }, { side: 'sell', price: 1.008, unit: 'WSTEEM' },
+    { side: 'buy', price: 0.988, unit: 'STEEM' }, { side: 'sell', price: 1.012, unit: 'WSTEEM' } ], verdict: GRID_VERDICT_PLAN } };
+  const closedOut44 = armCounterGrids(planGrids44, gateClosed44);
+  ok('r44-gate-closed-stays-plan', closedOut44.PX.verdict === GRID_VERDICT_PLAN && !closedOut44.PX.broadcastPayload && closedOut44.PX.gate.open === false);
+  const armed44 = armCounterGrids(planGrids44, gateOpen44).PX;
+  ok('r44-gate-open-arms', armed44.verdict === GRID_VERDICT_ARMED && armed44.broadcastPayload.length === 6 && armed44.gate.open === true);
+  ok('r44-rung-ids-deterministic', armCounterGrids(planGrids44, gateOpen44).PX.broadcastPayload[0].id === armed44.broadcastPayload[0].id && /^[0-9a-f]{16}$/.test(armed44.broadcastPayload[0].id));
+  ok('r44-two-sided-law', armed44.broadcastPayload.filter((r) => r.side === 'buy').length === 3 && armed44.broadcastPayload.filter((r) => r.side === 'sell').length === 3);
+  ok('r44-cap-law-golden', armed44.sizeLaw.capBps === 200 && armed44.sizeLaw.sizeMu === '5183'); // 2% of (388775×2 @anchor 1) = 15551 quote → 3 rungs → floor(5183.67)µ base
+  ok('r44-dust-thin-refused', armCounterGrids({ PY: { ...planGrids44.PX, depthBaseMu: '50000', depthQuoteMu: '50000' } }, gateOpen44).PY.verdict === GRID_VERDICT_THIN);
+  ok('r44-one-sided-refused', armCounterGrids({ PZ: { ...planGrids44.PX, rungs: planGrids44.PX.rungs.filter((r) => r.side === 'buy') } }, gateOpen44).PZ.verdict === 'REFUSED-ONE-SIDED');
+  const armSettle44 = settle(mkBook(1000000n, 120000n, null), feedLive, null, nowIso(), null, gateOpen44);
+  ok('r44-settle-gate-plumbing', armSettle44.gridGate.open === true && armSettle44.counterGrids.P3.verdict === GRID_VERDICT_ARMED && armSettle44.ops.some((o) => o.type === 'GRID-ARM' && o.pool === 'P3') && armSettle44.consOk);
+  const planSettle44 = settle(mkBook(1000000n, 120000n, null), feedLive, null, nowIso(), null);
+  ok('r44-settle-default-closed', planSettle44.gridGate.open === false && planSettle44.counterGrids.P3.verdict === GRID_VERDICT_PLAN && !planSettle44.ops.some((o) => o.type === 'GRID-ARM'));
   const pass = c.filter((x) => x.ok).length;
   console.log(`DEX-CORE-SELFTEST-OK ${pass}/${c.length}`);
   if (pass !== c.length) { for (const x of c) if (!x.ok) console.log(`  FAIL ${x.name}`); }
@@ -1644,4 +1763,7 @@ module.exports = {
   MESH_DUST, MESH_WIRE_MAX_SHARE_BPS, MESH_FILL_MAX_DEPTH_BPS,
   // cross-chain intent gates (R43)
   CHAIN_WRAPPER, XC_BOND_EXPOSURE_RATIO,
+  // counter-grid arm (R44)
+  counterGridGate, armCounterGrids, rungSizeLaw, rungId,
+  GRID_VERDICT_PLAN, GRID_VERDICT_ARMED, GRID_VERDICT_THIN, GRID_CAP_DEPTH_BPS, GRID_DUST, GRID_RUNGS_PER_SIDE,
 };

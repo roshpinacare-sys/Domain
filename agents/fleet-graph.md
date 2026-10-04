@@ -20,6 +20,7 @@ flowchart TD
         EC["dex-core.cjs<br/>EXCHANGE CORE + MULTI-NETWORK VAULT: atomic settle + custody classes + issuer + redeem corridor + XC settlement (R40/R42/R43)"]
         MM["arb-mesh.cjs<br/>MESH MARKET: roster mandates → intents → atomic fills + honest P&L (R41)"]
         XG["dex-xc.cjs<br/>INTENT GATES: 8-network doors (measured finality) + escrow-identity + 2:1 clock + bond law + solver (R43)"]
+        CG["counter-grid.cjs<br/>OPPOSING GRIDS: the CR-0074 artifact gate + cap/dust/two-sided arm laws, payload seal (R44)"]
         KA["kpi-scribe<br/>KPI.json oracle"]
         HA["harness-audit.cjs<br/>26 checks incl. sovereignty (Z-37)"]
     end
@@ -29,6 +30,7 @@ flowchart TD
         SC["soldiers-curate.cjs<br/>10 soldiers"]
         BC["blurt-curate.cjs<br/>blurt head"]
         ED["econ-desk.cjs<br/>hive-engine market ops"]
+        PH["pegout-hand.cjs<br/>PEGOUT HAND: keyed redemption, dest-allowlist law, sovereign-crypto transfers (R44)"]
     end
 
     subgraph BOOKS["BOOKS — external state (the truth behind sessions)"]
@@ -75,6 +77,8 @@ flowchart TD
 | dex-router (SWAP-NET) | census | CENSUS→SIGN SEPARATION · PLAN-OWNER-GATED-NOT-BROADCAST · Z-27 verdict authority inherited | dex-router.json protocol SAOS-DEX-ROUTER/1 + E62 re-derivation |
 | dex-core (EXCHANGE CORE) | settle (our ledger) | ATOMIC SETTLEMENT · REAL-VALUE LAW (mint 1:1 / redeem always 1:1) · CONSERVATION IDENTITY · FLOOR-LAW REBALANCE · byte-determinism | dex-core.json protocol SAOS-DEX-CORE/1 + E63 re-derivation + attestation sha256 recompute |
 | arb-mesh (MESH MARKET) | demand (our ledger) | MANDATE LAW (operator-40/soldiers-60, 1%-of-depth) · DIRECTION LAW (sell the rich side) · WIRE CAP 10% · DEPTH CAP 5% · BATCH IDEMPOTENCY · keyed rails never fired keylessly | arb-mesh.json protocol SAOS-ARB-MESH/1 + E64 re-derivation + the pipe-proof fill on the core ledger |
+| counter-grid (OPPOSING GRIDS) | broadcast-ready plans (our ledger) | CR-0074 ARTIFACT GATE (present = open) · TWO-SIDED LAW (one-sided = REFUSED) · CAP 2%-of-depth · DUST refusal · sha256-16 idempotent rung ids | counter-grid.json protocol SAOS-COUNTER-GRID/1 + E67 re-derivation + the payload seal recompute |
+| pegout-hand (PEGOUT HAND) | sign (redemption rail) | DEST-ALLOWLIST LAW (estate roster only, else REFUSED-DEST-NOT-ESTATE) · synchronous-broadcast RECEIPT LAW (txid or nothing) · sovereign serializer golden vectors · floor law | pegout-hand.json protocol SAOS-PEGOUT-HAND/1 + E67 + the block-110150252 rail proof (txid 798b2990…) |
 | venture-desk | state→dashboard | EARN-GOVERNOR · MEASURABLE→DASHBOARD | fills-ledger chain arithmetic |
 | harness-audit | judge | HARNESS-AUDIT MANDATE | its own checks vs files |
 | evals | judge | JUDGE-SEPARATION | runnable expectations E1-E6 |

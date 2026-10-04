@@ -1,6 +1,6 @@
 # community-founder — הבית הקהילתי (CR-0066)
 
-עודכן: 2026-10-04T11:04:43.440Z
+עודכן: 2026-10-04T15:42:42.608Z
 
 ## הקהילה חיה
 - שם-חשבון: hive-177702
@@ -12,13 +12,10 @@
 
 ## שרשרת-האם (הוכחה חיה, R38)
 - פס-דין: STEEM-CHAIN
-- נבדק חי: steem=true · hive=false · ב-2026-10-04T11:04:43.109Z
+- נבדק חי: steem=true · hive=false · ב-2026-10-04T15:42:42.608Z
 - הסבר: "hive-" בשם הוא קונבנציית-hivemind על Steem (סוג 1 = journal), לא רשת Hive
 
 ## ריצות אחרונות
-- [2026-10-04T06:24:44.992Z] status → COMMUNITY-LIVE
-  - adopt: the vault carries hive-177702 with keys — finalizing from the chain
-  - chain: hive-177702 title=The Clubhouse · roles=12 · subs=0 · receivedSP=10.0
 - [2026-10-04T07:06:06.037Z] rc → DELEGATE-FAIL · Assert Exception:available_shares >= delta: Account headcorner does not have enough mana to delegate. required: {"amount":"64526822644","precision":6,"nai":"@@000000037"} available: {"amount":"1396610
   - plan: available 1268037 vests (786.05 SP) · reservation 767704 vests · short 64527 vests · floor 0 SP received
 - [2026-10-04T07:06:55.461Z] rc → TOPUP-HOLD · chain available 14162 vests <= floor — the current RC stands, the reclaim decides
@@ -52,3 +49,6 @@
   - hive fee=3.000 HIVE · headcorner liquid=0.034 · need=3.050 · orders=0
   - soldiers-on-hive=10/10 · names-free=hive-177702 · steem-house-on-hive=no
   - authority=NO-KEYS · vault=absent · stasis=clear
+- [2026-10-04T15:42:39.701Z] status → COMMUNITY-LIVE
+  - chain: hive-177702 title=The Clubhouse · roles=12 · subs=2 · receivedSP=10.0
+  - chain-proof: steem=true · hive=false → STEEM-CHAIN

@@ -48,6 +48,7 @@
  *   E63 exchange core        — the DEX settles: CPMM k-law + golden vectors, Curve stableswap vs independent bisection, reserve/redeem real-value law, minOut atomicity, conservation identity, 3-hop deterministic routing, rebalance FLOOR law, pool-side counter-grids, byte-determinism, attestation recompute (R40, CR-0070)
  *   E65 multi-network vault  — custody classes (MEASURED-KEYED the only mintable), observed registry, issuer identity, redeem corridor (burn-before-payout + queued peg-outs with named corridors), cross-fair law, P5-P9 reconcile + genesis 25% law (R42, CR-0072)
  *   E66 intent gates         — the cross-chain intent doors: the door registry (8 networks, measured hard-finality constants, honest bands), the 2:1 HTLC clock interlock, the quote law (routeBest + −0.5% guard), escrow-identity (per-intent escrow accounts, escrow-drain idempotency), the pool-fill chain flow (route → wrapper → redeem 1:1 → pegout queued to the named corridor), the bond law (exposure ≤ 2× custody), minOut atomicity on copies, P2P fills (roster-only, below-quote refused, ledger-dest only), refunds WHOLE after the unlock, solver competition (pool default, P2P outbids, lexicographic ties), state advance (event-sourced, idempotent), byte-determinism, attestation — PLUS the two R43 base-repairs locked as golden vectors: routeBest reversed-leg law (SBD→STEEM 1000µ = 9402µ exact cpmmOut) and poolSwap's b-side newRa/newRb return law (R43, CR-0073)
+ *   E67 opposing hands       — the counter-grid ARM (the CR-0074 ARTIFACT gate — settle stays pure; the 2%-of-depth cap law with the 5183µ golden; the dust refusal GRID-TOO-THIN; deterministic sha256-16 rung ids; the two-sided law with REFUSED-ONE-SIDED) + the pegout hand (the dest-allowlist law — the live queue's 'treasury' row booked REFUSED-DEST-NOT-ESTATE; the µ→chain floor law; pure queue mutation; the steem-js byte-verified transfer serializer golden vector; the synchronous-broadcast receipt law — the rail proof carries a txid, never a silent accept) (R44, CR-0074)
  *
  * Fail-soft: exit 0 always; FAILs are booked honestly (HARNESS-AUDIT MANDATE:
  * green-washing the evals is a doctrine breach).
@@ -3023,7 +3024,7 @@ function accumulateInMemory(bookRows, seed) {
         const firstSell = g63r.rungs.find((r) => r.side === 'sell');
         const adj63 = g63r.anchor * (1 - g63r.skewShiftBps / 10000);
         c63(firstSell && Math.abs(firstSell.price - +(adj63 * (1 + g63r.spacingPct / 100)).toFixed(8)) < 5e-8, 'book-grid-rederives');
-        c63(g63r.verdict === 'PLAN-POOL-GATED-NOT-BROADCAST', 'grid-plan-gated');
+        c63(g63r.verdict === (fs.existsSync(path.join(AG, 'change-requests', 'CR-0074-counter-grids.json')) ? 'GATED-ARMED-BROADCAST-READY' : 'PLAN-POOL-GATED-NOT-BROADCAST'), 'grid-verdict-matches-gate');
       }
     }
     evalr('E63', 'the exchange core (CR-0070)', why63.length === 0,
@@ -3340,9 +3341,71 @@ function accumulateInMemory(bookRows, seed) {
       why66.length ? 'fails: ' + why66.join('; ') : 'the doors price every network honestly, settle what our keys can move, and never fake a broadcast');
   } catch (e) { evalr('E66', 'the intent gates', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
+  // ---- E67 (R44, CR-0074): THE OPPOSING HANDS — the counter-grids ARM + the pegout hand.
+  try {
+    const why67 = [];
+    const dc67 = require(path.join(AG, 'dex-core.cjs'));
+    const cg67 = require(path.join(AG, 'counter-grid.cjs'));
+    const ph67 = require(path.join(AG, 'pegout-hand.cjs'));
+    // 1. white-box: the gate is the ARTIFACT (injectable exists — settle purity preserved)
+    if (!(dc67.counterGridGate(false).open === false && dc67.counterGridGate(true).open === true && dc67.counterGridGate().open === true)) why67.push('the CR-0074 artifact gate law broken');
+    // 2. white-box: the sizing law — cap golden (2% of depth value marked to the anchor, split across rungs) + dust refusal
+    const size67 = dc67.rungSizeLaw('388775', '388775', 1000000000n, 3);
+    if (!(size67.sizeMu === 5183n && size67.thin === false)) why67.push('the rung sizing cap golden broken');
+    if (!(dc67.rungSizeLaw('50000', '50000', 1000000000n, 3).thin === true)) why67.push('the dust refusal (GRID-TOO-THIN) broken');
+    // 3. white-box: the arm — deterministic ids, two-sided law, one-sided refusal
+    const plan67 = { P1: { pair: 'WSTEEM/STEEM', anchor: 1, anchorSource: 'POOL-MID (our side of the book)', spacingPct: 0.4, skewShiftBps: 50, inventoryShareBase: 0.5, depthBaseMu: '388775', depthQuoteMu: '388775', rungs: [
+      { side: 'buy', price: 0.996, unit: 'STEEM' }, { side: 'sell', price: 1.004, unit: 'WSTEEM' },
+      { side: 'buy', price: 0.992, unit: 'STEEM' }, { side: 'sell', price: 1.008, unit: 'WSTEEM' },
+      { side: 'buy', price: 0.988, unit: 'STEEM' }, { side: 'sell', price: 1.012, unit: 'WSTEEM' } ], verdict: 'PLAN-POOL-GATED-NOT-BROADCAST' } };
+    const closed67 = dc67.armCounterGrids(plan67, dc67.counterGridGate(false));
+    const armed67 = dc67.armCounterGrids(plan67, dc67.counterGridGate(true)).P1;
+    if (!(closed67.P1.verdict === 'PLAN-POOL-GATED-NOT-BROADCAST' && !closed67.P1.broadcastPayload)) why67.push('gate closed must stay PLAN');
+    if (!(armed67.verdict === 'GATED-ARMED-BROADCAST-READY' && armed67.broadcastPayload.length === 6 && armed67.broadcastPayload.filter((r) => r.side === 'buy').length === 3)) why67.push('the arm law broken (armed verdict / payload / two-sided)');
+    if (!(armed67.broadcastPayload[0].id === dc67.armCounterGrids(plan67, dc67.counterGridGate(true)).P1.broadcastPayload[0].id && /^[0-9a-f]{16}$/.test(armed67.broadcastPayload[0].id))) why67.push('rung ids not deterministic sha256-16');
+    const oneSide67 = dc67.armCounterGrids({ PZ: { ...plan67.P1, rungs: plan67.P1.rungs.filter((r) => r.side === 'buy') } }, dc67.counterGridGate(true)).PZ;
+    if (oneSide67.verdict !== 'REFUSED-ONE-SIDED') why67.push('a one-sided grid must be REFUSED-ONE-SIDED');
+    // 4. white-box: the pegout hand — allowlist law (the live 'treasury' row is the refusal), floor law, queue purity, serializer golden vector
+    if (!(ph67.validateRow({ asset: 'STEEM', amount: '9358', account: 'treasury', corridor: 'KEYED-DESK' }).refused === 'REFUSED-DEST-NOT-ESTATE')) why67.push('the dest-allowlist law broken (treasury must be refused)');
+    if (!(ph67.validateRow({ asset: 'STEEM', amount: '1000', account: 'cashmachine', corridor: 'KEYED-DESK' }).verdict === 'FIREABLE-KEYED')) why67.push('an estate dest must be FIREABLE-KEYED');
+    if (!(ph67.muToSatoshi('9358', 3) === 9n && ph67.muToSatoshi('999', 3) === 0n)) why67.push('the µ→chain floor law broken');
+    if (ph67.satoshiToAmount(9n, 'STEEM') !== '0.009 STEEM') why67.push('satoshi→chain amount form broken');
+    const q67 = { rows: [{ intentId: 'A', asset: 'STEEM', amount: '1000', account: 'cashmachine' }] };
+    const q67b = ph67.applyResult(q67, 'A', { fired: true });
+    if (!(q67.rows[0].fired === undefined && q67b.rows[0].fired === true)) why67.push('applyResult must be pure (input untouched)');
+    const gv67 = ph67.serializeTransferTx({ ref_block_num: 44000, ref_block_prefix: 305419896, expiration: '2026-10-04T16:00:00', operations: [['transfer', { from: 'headcorner', to: 'headcorner', amount: '0.001 STEEM', memo: 'SAOS-PEGOUT-HAND/1 rail-proof R44' }]], extensions: [] });
+    if (Buffer.from(gv67).toString('hex') !== 'e0ab785634120078c26a01020a68656164636f726e65720a68656164636f726e6572010000000000000003535445454d00002153414f532d5045474f55542d48414e442f31207261696c2d70726f6f662052343400') why67.push('the transfer serializer golden vector broken (steem-js byte law)');
+    // 5. black-box: both desks' selftests in fresh processes (judge separation)
+    const bb67a = spawnSync(process.execPath, [path.join(AG, 'counter-grid.cjs'), 'selftest'], { encoding: 'utf8', timeout: 30000 });
+    if (!(bb67a.status === 0 && /COUNTER-GRID-SELFTEST-OK \d+\/\d+/.test(bb67a.stdout || ''))) why67.push('counter-grid selftest fresh-process failed');
+    const bb67b = spawnSync(process.execPath, [path.join(AG, 'pegout-hand.cjs'), 'selftest'], { encoding: 'utf8', timeout: 30000 });
+    if (!(bb67b.status === 0 && /PEGOUT-HAND-SELFTEST-OK \d+\/\d+/.test(bb67b.stdout || ''))) why67.push('pegout-hand selftest fresh-process failed');
+    // 6. real-tree: the booked ring re-derives (ids recompute, the seal matches) + the hand books the refusal + the rail-proof txid
+    const cgBook = JSON.parse(fs.readFileSync(path.join(AG, 'counter-grid.json'), 'utf8'));
+    if (cgBook.protocol === cg67.PROTOCOL && cgBook.summary.verdict === 'GATED-ARMED-BROADCAST-READY') {
+      const armedRows = Object.entries(cgBook.grids || {}).filter(([, g]) => g.verdict === 'GATED-ARMED-BROADCAST-READY');
+      if (!armedRows.length) why67.push('the booked ring has no armed grids');
+      for (const [, g] of armedRows) {
+        const audit = cg67.auditGrid(g.poolId, g);
+        if (!(audit.idsOk && audit.twoSided && audit.sizesOk)) why67.push(`booked grid ${g.poolId} does not re-derive (ids/two-sided/sizes)`);
+      }
+      const rebooked = cg67.payloadSeal(cgBook.payloadPreview);
+      if (cgBook.summary.payloadSeal && rebooked !== cgBook.summary.payloadSeal) why67.push('the payload seal does not recompute');
+    }
+    const phBook = JSON.parse(fs.readFileSync(path.join(AG, 'pegout-hand.json'), 'utf8'));
+    if (phBook.protocol === ph67.PROTOCOL) {
+      if (!phBook.rows.some((r) => r.verdict === 'REFUSED-DEST-NOT-ESTATE')) why67.push('the live queue refusal row is not booked');
+      const proofRows = fs.readFileSync(path.join(AG, 'pegout-hand-history.jsonl'), 'utf8').trim().split('\n').filter(Boolean).map((l) => JSON.parse(l)).filter((h) => h.verdict === 'PROOF-SENT' && h.txid);
+      if (!proofRows.length) why67.push('no PROOF-SENT row with a synchronous txid booked');
+    }
+    evalr('E67', 'the opposing hands (CR-0074)', why67.length === 0,
+      ['white-box: the gate is the CR-0074 ARTIFACT (injectable exists — settle stays pure), the sizing law prices the cap golden 5183µ at the anchor and refuses dust pools, the arm produces deterministic sha256-16 rung ids with BOTH ladders and refuses one-sided grids (REFUSED-ONE-SIDED), and the pegout hand enforces the dest-allowlist (the live queue\u2019s treasury row booked REFUSED-DEST-NOT-ESTATE), the µ→chain floor law, pure queue mutation, and the steem-js byte-verified transfer serializer golden vector', 'black-box: counter-grid AND pegout-hand selftests in fresh processes (exit 0, OK markers — judge separation)', 'real-tree: the booked ring re-derives (every armed grid\u2019s rung ids, two-sidedness and sizes recompute; the payload seal recomputes) and the hand\u2019s books carry the honest refusal row + a PROOF-SENT row with the synchronous txid (block-included, never a silent accept)'],
+      why67.length ? 'fails: ' + why67.join('; ') : 'the opposing grids stand under law and the redemption hand is keyed, allowlisted and chain-proven');
+  } catch (e) { evalr('E67', 'the opposing hands', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
+
   // ---- book the results (MEASURABLE→DASHBOARD LAW)
   const counts = { pass: evals.filter((e) => e.status === 'PASS').length, fail: evals.filter((e) => e.status === 'FAIL').length };
-  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.52.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48 + R27 metronome-audit E49 + R28 mm-volume E50 + R29 share-ladder E51 + R30 calibrated-engine E52 + R31 tape-calibration/venue-expansion E53 + R32 sidechain-pond E54 + R33 pnl-verdict E55 + sovereign-hands E56 + R34 fill-through-evolution E57 + R35 human-cadence E58 + R36 community-home E59 + R37 community-breath E60 + R38 chain-proof E61 + R39 swap-net E62 + R40 exchange-core E63 + R41 mesh-market E64 + R42 multi-network-vault E65 + R43 intent-gates E66, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
+  const out = { ok: true, at: new Date().toISOString(), agent: 'run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48 + R27 metronome-audit E49 + R28 mm-volume E50 + R29 share-ladder E51 + R30 calibrated-engine E52 + R31 tape-calibration/venue-expansion E53 + R32 sidechain-pond E54 + R33 pnl-verdict E55 + sovereign-hands E56 + R34 fill-through-evolution E57 + R35 human-cadence E58 + R36 community-home E59 + R37 community-breath E60 + R38 chain-proof E61 + R39 swap-net E62 + R40 exchange-core E63 + R41 mesh-market E64 + R42 multi-network-vault E65 + R43 intent-gates E66 + R44 opposing-hands E67, parallel-convergence superset)', origin: 'learn-harness-engineering eval discipline + destructive_command_guard + freellmapi + Emergence World fate-defense + collapse-drill + one-bloc convergence + workflow-parse-gate + canon-reachability + trycua/cua hands + alirezarezvani/claude-skills skill-library + usestrix/strix security-lineage + google/ax orchestration-lineage + SWE-agent/mini-swe-agent minimal-agent-lineage + Alishahryar1/free-claude-code frugal-routing-lineage + Task 36 five-repo sweep (Graft/agency-agents/codebase-memory/OpenMontage/orca) + Z-62 scheduled evolution windows adoptions (Task 22 + Z-40 + Task 23 + Task 24 + Z-42 + Task 26 + Z-43 + Task 27 + Task 29 + Task 31 + Task 33 + Task 35 + Task 36 + Z-62, deduped by renumbering — the same operator wave landed on the same order from two runtimes)', counts, evals,
     verdict: counts.fail === 0 ? `evals green: ${counts.pass}/${evals.length} expectations hold` : `evals RED: ${counts.fail} fail — booked honestly, the fails are the next work` };
   fs.writeFileSync(path.join(OUT_DIR, 'eval-results.json'), JSON.stringify(out, null, 1) + '\n');
   const md = ['# Desk Evals — runnable expectations (fresh-process judge, Z-36)', '', `_${out.agent} · ${out.at}_`, '', `**${out.verdict}**`, ''];
