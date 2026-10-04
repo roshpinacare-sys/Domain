@@ -49,7 +49,7 @@ _מורכב מהפנקסים המחויבים בלבד (keyless, offline). כל 
 
 ## משמעת — מה מוכח ומה נבדק
 
-- **claimsAudit**: "WARN" — _מקור: agents/claims-audit.json · נמדד: 2026-10-04T00:24:55.218Z · כל קובץ שנטען בפנקס — נבדק שהוא באמת על העץ_
+- **claimsAudit**: "WARN" — _מקור: agents/claims-audit.json · נמדד: 2026-10-04T00:24:55.449Z · כל קובץ שנטען בפנקס — נבדק שהוא באמת על העץ_
 - **censusLanes**: undefined — _מקור: agents/fleet-census.json · נמדד: 2026-10-04T00:24:54.329Z · מפת ה-16 מסלולים של הצי_
 - **ownerLanguage**: "he" — _מקור: agents/claims-audit.cjs OWNER_LANGUAGE (CR-0050) · כל פנייה לבעלים — בעברית_
 
