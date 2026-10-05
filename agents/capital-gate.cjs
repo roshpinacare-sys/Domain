@@ -12,29 +12,55 @@
  *                 או-לא-מוכר → REFUSED עם נימוק (קבלה-כנה, לעולם לא דילוג-שקט).
  *   3. JOURNAL  — כל-החלטת-הון נרשמת ל-receipts/capital-decisions.jsonl (מה/למה/כמה).
  *
+ * ══ V-a — החוזה-האפיסטמי (SOVEREIGN COGNITIVE ACTIVATION, trace 1a10c90522120149) ══
+ * R27 מדד: JSON-תקין-שקרי {"active":false} (או "active":"true" כמחרוזת) הרים-את-הבלם
+ * גם-כאן. התיקון-המבני — אותו-חוזה בשני-הבתים:
+ *   (1) אותנטיקה — STASIS חייב protocol='SAOS-FATE-DEFENSE-STASIS/1' + mode ∈ {full,staged}
+ *       + since ISO; אחרת → fail-closed (unauthenticated → HALT).
+ *   (2) סמכות-כיוונית — SHRINK תמיד מכני-מותר; EXPAND (active!==true / מסילה-פתוחה)
+ *       חייב-כיסוי בשרשרת-הנחיות-הבעלים agents/receipts/owner-directives.jsonl
+ *       (**tamper-EVIDENT, לא tamper-PROOF** — עריכה-שקטה נופלת; בנייה-מחדש = מדיניות-מוגנת-
+ *       בשקיפות, לא קריפטו — מתויג-כך בכנות בכל-קבלה).
+ *   (3) צרכן-מכני לשומרי-הלופ — agents/cognition/lane-guards.json (loopguard.cjs):
+ *       שומר יכול רק לסגור; שדות-פתיחה = foreignFields אינרטיים; קובץ-לא-קריא = עצירה-לכל-המסילות.
+ *   (4) זיכרון-החלטות — כל-הכרעת-שער כותבת קבלה-קוגניטיבית (idempotent per tool|lane|decision|
+ *       minute; append-only). יומן-לא-כתיב ≠ וטו: 'journal-unwritable (decision still enforced)'
+ *       + journalHealth().degraded.
+ *
  * אפס-סודות: המודול קורא קבצי-מדיניות בלבד — לעולם לא נוגע במפתחות ולא מדפיס חומר-רגיש.
  * fail-closed: רוסטר-חסר = כל-היעדים נדחים (מעולם לא "תן-לכל-אחד").
  */
 
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 
 const AG = __dirname;
 const STASIS_FILE = path.join(AG, 'STASIS.json');
 const ROSTER_FILE = path.join(AG, 'fleet-roster.json');
 const JOURNAL = path.join(AG, 'receipts', 'capital-decisions.jsonl');
+const CHAIN = require('./directivesChain.cjs');
+const GUARDS = require('./loopguard.cjs');
 
-/** מצב-הבלם — fail-closed מהודק (T-B 2026-10-05): קריאה-כושלת = HALT עם שורה-קולחת.
- * היסטוריית-התיקון: הגרסה-הקודמת החזירה {active:false} בקריאה-כושלת (fail-open!) —
- * נמדד ונסגר: הקובץ-מחויב-בריפו ותמיד-קיים אחרי-checkout, ולכן קריאה-כושלת היא
- * אנומליה-אמיתית והתשובה-הנכונה-היא עצירה (FATE-DEFENSE #1 — עצירה-בטוחה-תמיד). */
+/** מצב-הבלם — fail-closed מהודק (T-B 2026-10-05) + אותנטיקה (V-a 2026-10-05):
+ * קריאה-כושלת = HALT עם שורה-קולחת; קובץ-קריא בלי-פרוטוקול-תקף (protocol/mode/since)
+ * = unauthenticated HALT — JSON-תקין-שקרי כבר לא מרים-בלם (סגירת-חור-R27). */
 function stasisState() {
-  try {
-    return JSON.parse(fs.readFileSync(STASIS_FILE, 'utf8'));
-  } catch (e) {
+  let doc;
+  try { doc = JSON.parse(fs.readFileSync(STASIS_FILE, 'utf8')); }
+  catch (e) {
     console.log(`[CAPITAL-GATE] STASIS-STATE-UNREADABLE ${STASIS_FILE} — fail-closed HALT (${String((e && e.message) || e).slice(0, 80)})`);
     return { active: true, unreadable: true, mode: 'full', reason: 'stasis file unreadable — fail-closed halt', since: '?' };
   }
+  if (!doc || typeof doc !== 'object' || doc.protocol !== 'SAOS-FATE-DEFENSE-STASIS/1') {
+    console.log(`[CAPITAL-GATE] STASIS-UNAUTHENTICATED ${STASIS_FILE} — fail-closed HALT (lacks protocol)`);
+    return { active: true, unreadable: false, unauthenticated: true, mode: 'full', reason: 'STASIS file lacks valid protocol — fail-closed halt', since: '?' };
+  }
+  if ((doc.mode !== 'full' && doc.mode !== 'staged') || typeof doc.since !== 'string' || Number.isNaN(Date.parse(doc.since))) {
+    console.log(`[CAPITAL-GATE] STASIS-UNAUTHENTICATED ${STASIS_FILE} — fail-closed HALT (protocol validation failed)`);
+    return { active: true, unreadable: false, unauthenticated: true, mode: 'full', reason: 'STASIS file fails protocol validation (mode must be full|staged; since must be ISO) — fail-closed halt', since: '?' };
+  }
+  return doc;
 }
 
 /**
@@ -63,24 +89,156 @@ function laneOf(tool) {
   return 'general';
 }
 
+/* ══ V-a: זיכרון-ההחלטות — קבלה-קוגניטיבית לכל-הכרעת-שער ══ */
+let journalHealthState = { ok: true, lastError: null, lastWriteAt: null };
+
+function journalHealth() {
+  let lines = 0;
+  try { lines = fs.readFileSync(JOURNAL, 'utf8').split('\n').filter(Boolean).length; } catch (_) { lines = 0; }
+  return { ok: journalHealthState.ok, degraded: !journalHealthState.ok, lastAt: journalHealthState.lastWriteAt, lines, file: JOURNAL, lastError: journalHealthState.lastError, lastWriteAt: journalHealthState.lastWriteAt, receiptProtocol: 'SAOS-COGNITIVE-RECEIPT/1' };
+}
+
+function writeReceipt(tool, lane, decision, authority, evidence, reasonNote) {
+  const minuteBucket = new Date().toISOString().slice(0, 16);
+  const key = crypto.createHash('sha256').update([tool, lane, decision, minuteBucket].join('|'), 'utf8').digest('hex');
+  try {
+    fs.mkdirSync(path.dirname(JOURNAL), { recursive: true });
+    let raw = '';
+    try { raw = fs.readFileSync(JOURNAL, 'utf8'); } catch (_) { /* קובץ-חסר = כתיבה-ראשונה */ }
+    if (raw.indexOf(key) !== -1) return key; /* idempotency: אותו-כלי/מסילה/הכרעה באותו-דקה לעולם לא משוכפלת (append-only, לעולם לא לכתוב-מחדש) */
+    const receipt = {
+      at: new Date().toISOString(),
+      kind: 'capital-gate-stasis-decision',
+      decision,
+      tool,
+      lane,
+      authority,
+      evidence: (evidence || []).map((e) => ({ source: String(e.source || '').slice(0, 120), ref: String(e.ref || '').slice(0, 200), at: e.at || null })),
+      preconditions: ['stasisState authenticated (SAOS-FATE-DEFENSE-STASIS/1)', 'laneOf(' + String(tool) + ')=' + lane],
+      confidence: 1,
+      expectedOutcome: decision === 'halt'
+        ? 'tool exits as a healthy no-op before any key material is loaded'
+        : 'tool proceeds under staged-lane authority; roster + journal gates still apply downstream',
+      alternatives: [],
+      idempotencyKey: key,
+      abortConditions: [],
+      postconditions: [],
+      verification: { method: 'next gate invocation appends the paired receipt', status: 'pending', at: null, actual: null, deviation: null },
+      note: String(reasonNote || '').slice(0, 200),
+    };
+    fs.appendFileSync(JOURNAL, JSON.stringify(receipt) + '\n');
+    journalHealthState = { ok: true, lastError: null, lastWriteAt: receipt.at };
+    return key;
+  } catch (e) {
+    journalHealthState = { ok: false, lastError: String((e && e.message) || e).slice(0, 120), lastWriteAt: journalHealthState.lastWriteAt };
+    console.log('[CAPITAL-GATE] journal-unwritable (decision still enforced) · ' + journalHealthState.lastError);
+    return null;
+  }
+}
+
+/* סמכות-לפי-כיוון (V-a) — מטא-דאטה טהור: shrink=מנגנון-תמיד-מותר, expand=policy-gated, measure=חופשי. */
+const AUTHORITY_OF = Object.freeze({ shrink: 'mechanism-shrink', expand: 'policy-gated', measure: 'free' });
+function authorityOf(action) {
+  return AUTHORITY_OF[String(action || '').trim().toLowerCase()] || 'policy-gated'; /* לא-מוכר = כמו-הרחבה (fail-closed) */
+}
+
+/** עזר: שרשרת-הנחיות-הבעלים מאומתת ומכסה-את-המסילות-המבוקשות? */
+function directivesCover(neededLanes) {
+  const v = CHAIN.verifyChain();
+  if (!v.ok) return { covered: false, chainOk: false, breakAt: v.breakAt, reason: v.reason };
+  return { covered: CHAIN.hasEntryForLanes(neededLanes), chainOk: true, breakAt: null, reason: null };
+}
+
 /**
  * true אם הבלם פעיל — הקורא חייב לצאת 0 (no-op בריא) מיד.
- * STAGED (owner directive 2026-10-05, trace 1a10bfe1342b2391 — 'Re-enable its autonomous
- * capabilities intelligently. Let it operate.' + calibration mandate): כש-mode=staged
- * והמסילה של הכלי ∈ stagedLanes.allow → קבלת STASIS-STAGED-ALLOW והיתר-מותנה;
- * כל-יתר (כלי-לא-מוכר, מסילה-סגורה, mode=full, active=true ללא-mode) נעצר בדיוק-כמו-קודם.
- * אין-נפילה-פתוחה: קובץ-חסר/פגום = active=true full = עצירה (ראו stasisState).
+ *
+ * סדר-ההכרעה (V-a — החוזה-האפיסטמי):
+ *   (a) אותנטיקה: קובץ-לא-קריא/בלי-פרוטוקול-תקף → HALT (mechanism-shrink);
+ *   (b) שומר-המסילה: guardHalt(lane).halt → HALT '[CAPITAL-GATE] LANE-GUARD-HALT' (mechanism-guard);
+ *   (c) active!==true = טענת-הרחבה: מותרת רק עם-כיסוי-משורשר של-הבעלים — אחרת HALT
+ *       'resume-lacks-owner-directive-entry' (סגירת-החור-של-"active":false מזויף);
+ *   (d) staged allow: כל-מסילה-פתוחה-בקובץ חייבת-כיסוי — אחרת HALT 'staged-lane-lacks-directive-entry';
+ *   (e) אחרת — ההתנהגות-הקיימת (STASIS-STAGED-ALLOW / STASIS-HALT).
+ * אין-נפילה-פתוחה: קובץ-חסר/פגום/מזויף = עצירה (ראו stasisState).
  */
 function stasisHalt(tool) {
   const s = stasisState();
-  if (s.active !== true) return false;
   const lane = laneOf(tool);
+  const reason = String(s.reason || 'unspecified');
+
+  /* (a) אותנטיקה — קובץ שאי-אפשר לאמת = עצירה */
+  if (s.unreadable || s.unauthenticated) {
+    const tag = s.unauthenticated ? 'STASIS-UNAUTHENTICATED' : 'STASIS-STATE-UNREADABLE';
+    console.log(`[CAPITAL-GATE] ${tag} ${tool} (lane=${lane}) · reason: ${reason.slice(0, 160)}`);
+    writeReceipt(tool, lane, 'halt', 'mechanism-shrink', [
+      { source: 'agents/STASIS.json', ref: tag.toLowerCase() + ': ' + reason.slice(0, 140), at: new Date().toISOString() },
+    ], 'fail-closed: state file could not be authenticated');
+    return true;
+  }
+
+  /* (b) שומר-המסילה — פסק-דין-מכני שיכול-רק-לסגור */
+  const gh = GUARDS.guardHalt(lane);
+  if (gh.halt) {
+    const gid = gh.guard ? gh.guard.id : 'guards-unreadable';
+    console.log(`[CAPITAL-GATE] LANE-GUARD-HALT ${tool} (lane=${lane}) · guard=${gid} · reason: ${String(gh.reason || 'unspecified').slice(0, 120)}`);
+    writeReceipt(tool, lane, 'halt', 'mechanism-guard', [
+      { source: 'agents/cognition/lane-guards.json', ref: 'guard ' + gid + (gh.guard && gh.guard.evidenceRef ? ' · ' + gh.guard.evidenceRef : ''), at: (gh.guard && gh.guard.openedAt) || new Date().toISOString() },
+    ], String(gh.reason || 'lane-guard-close').slice(0, 180));
+    return true;
+  }
+
   const allow = Array.isArray(s.stagedLanes && s.stagedLanes.allow) ? s.stagedLanes.allow.map((x) => String(x).toLowerCase()) : [];
-  if (s.mode === 'staged' && allow.includes(lane)) {
-    console.log(`[CAPITAL-GATE] STASIS-STAGED-ALLOW ${tool} (lane=${lane}) · reason: ${String(s.reason || 'unspecified').slice(0, 160)} · since ${s.since || '?'}`);
+
+  /* (c) active!==true → סמכות-כיוונית: הרמת-בלם = הרחבה = חייבת-ראיה-משורשרת של-הבעלים */
+  if (s.active !== true) {
+    const needed = allow.length ? allow : ['*'];
+    const cov = directivesCover(needed);
+    if (!cov.covered) {
+      console.log(`[CAPITAL-GATE] RESUME-DENIED ${tool} (lane=${lane}) · reason: resume-lacks-owner-directive-entry · needed=[${needed.join(',')}]${cov.chainOk ? '' : ' · chain ' + cov.reason}`);
+      writeReceipt(tool, lane, 'halt', 'mechanism-shrink', [
+        { source: 'agents/receipts/owner-directives.jsonl', ref: cov.chainOk ? ('chain verifies; no coverage for [' + needed.join(',') + ']') : ('chain tampered/unreadable: ' + cov.reason), at: new Date().toISOString() },
+        { source: 'agents/STASIS.json', ref: 'active=false claim without owner-directives coverage', at: s.since },
+      ], 'resume-lacks-owner-directive-entry');
+      return true;
+    }
+    if (allow.length && !allow.includes(lane)) {
+      console.log(`[CAPITAL-GATE] RESUME-DENIED ${tool} (lane=${lane}) · reason: lane-not-in-owner-directive-resume · resumed=[${allow.join(',')}]`);
+      writeReceipt(tool, lane, 'halt', 'mechanism-shrink', [
+        { source: 'agents/receipts/owner-directives.jsonl', ref: 'covers [' + allow.join(',') + '] only', at: new Date().toISOString() },
+      ], 'lane-not-in-owner-directive-resume');
+      return true;
+    }
+    console.log(`[CAPITAL-GATE] RESUME-ALLOWED-BY-DIRECTIVES ${tool} (lane=${lane}) · owner-directives cover [${needed.join(',')}] · tamper-EVIDENT (policy-gated, not crypto-proof)`);
+    writeReceipt(tool, lane, 'allow', 'policy-gated', [
+      { source: 'agents/receipts/owner-directives.jsonl', ref: 'owner-directives coverage for [' + needed.join(',') + ']', at: new Date().toISOString() },
+    ], 'resume covered by owner-directives chain (tamper-evident, policy-gated)');
     return false;
   }
-  console.log(`[CAPITAL-GATE] STASIS-HALT ${tool} (lane=${lane}) · reason: ${s.reason || 'unspecified'} · since ${s.since || '?'}`);
+
+  /* (d) staged allow — המסילה-פתוחה-בקובץ חייבת-כיסוי-בשרשרת-הנחיות-הבעלים */
+  if (s.mode === 'staged' && allow.includes(lane)) {
+    const cov = directivesCover(allow);
+    if (!cov.covered) {
+      console.log(`[CAPITAL-GATE] STAGED-DENIED ${tool} (lane=${lane}) · reason: staged-lane-lacks-directive-entry · allow=[${allow.join(',')}]${cov.chainOk ? '' : ' · chain ' + cov.reason}`);
+      writeReceipt(tool, lane, 'halt', 'mechanism-shrink', [
+        { source: 'agents/receipts/owner-directives.jsonl', ref: cov.chainOk ? ('chain verifies; staged allow [' + allow.join(',') + '] not fully covered') : ('chain tampered/unreadable: ' + cov.reason), at: new Date().toISOString() },
+        { source: 'agents/STASIS.json', ref: 'stagedLanes.allow=[' + allow.join(',') + ']', at: s.since },
+      ], 'staged-lane-lacks-directive-entry');
+      return true;
+    }
+    console.log(`[CAPITAL-GATE] STASIS-STAGED-ALLOW ${tool} (lane=${lane}) · reason: ${reason.slice(0, 160)} · since ${s.since || '?'} · directives-covered`);
+    writeReceipt(tool, lane, 'allow', 'policy-gated', [
+      { source: 'agents/STASIS.json', ref: 'mode=staged, stagedLanes.allow=[' + allow.join(',') + ']', at: s.since },
+      { source: 'agents/receipts/owner-directives.jsonl', ref: 'owner-directives coverage for [' + allow.join(',') + ']', at: new Date().toISOString() },
+    ], 'staged allow covered by owner-directives chain (tamper-evident, policy-gated)');
+    return false;
+  }
+
+  /* (e) ההתנהגות-הקיימת: עצירה-כללית */
+  console.log(`[CAPITAL-GATE] STASIS-HALT ${tool} (lane=${lane}) · reason: ${reason.slice(0, 160)} · since ${s.since || '?'}`);
+  writeReceipt(tool, lane, 'halt', 'mechanism-shrink', [
+    { source: 'agents/STASIS.json', ref: 'protocol valid · active=true · mode=' + s.mode, at: s.since },
+  ], 'stasis-halt (lane not in staged allow, or mode=full)');
   return true;
 }
 
@@ -114,12 +272,17 @@ function guardTargets(tool, targets) {
   return out;
 }
 
-/** יומן-ההחלטות — שורה-אחת לכל-הכרעת-הון (מה/למה/תוצאה). אפס-סודות. */
+/** יומן-ההחלטות — שורה-אחת לכל-הכרעת-הון (מה/למה/תוצאה). אפס-סודות.
+ * (ממשק-היסטורי לקוראים-קיימים; הקבלות-הקוגניטיביות נכתבות דרך writeReceipt ב-stasisHalt.) */
 function journal(tool, row) {
   try {
     fs.mkdirSync(path.dirname(JOURNAL), { recursive: true });
     fs.appendFileSync(JOURNAL, JSON.stringify({ at: new Date().toISOString(), tool, ...row }) + '\n');
-  } catch (_) { /* יומן לא יפיל ריצה — אבל כל-שאר השערים כן */ }
+    journalHealthState = { ok: true, lastError: null, lastWriteAt: new Date().toISOString() };
+  } catch (e) {
+    journalHealthState = { ok: false, lastError: String((e && e.message) || e).slice(0, 120), lastWriteAt: journalHealthState.lastWriteAt };
+    console.log('[CAPITAL-GATE] journal-unwritable (decision still enforced) · ' + journalHealthState.lastError);
+  }
 }
 
-module.exports = { stasisState, stasisHalt, laneOf, loadRoster, guardTargets, journal, STASIS_FILE, ROSTER_FILE, JOURNAL };
+module.exports = { stasisState, stasisHalt, laneOf, loadRoster, guardTargets, journal, journalHealth, authorityOf, STASIS_FILE, ROSTER_FILE, JOURNAL };
