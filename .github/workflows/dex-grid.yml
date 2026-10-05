@@ -47,13 +47,26 @@ jobs:
       # grids/state/STASIS.json (one brake law across both homes; saos-dex brake.mjs is the
       # canonical reader, this is the mechanical scheduler-level preflight). Fail-closed: an
       # unreadable brake file fails the step and the job — the twin never signs on doubt.
-      - name: STASIS gate (mechanical, FATE-DEFENSE law #1 — reads the saos-dex home brake)
+      # T-B (owner directive 2026-10-05, trace 1a10bfe1342b2391 — staged re-entry): the preflight
+      # now emits active AND mode AND whether the GRID lane is open (stagedLanes.allow).
+      # The honest-refusal design is unchanged: an open lane is PERMISSION, not activation —
+      # the twin still refuses while the active key awaits the operator, and still verifies-only
+      # while the sovereign original is healthy.
+      - name: STASIS gate (mechanical, FATE-DEFENSE law #1 — lane-aware staged preflight, reads the saos-dex home brake)
         id: brake
         run: |
-          ST=$(node -p "JSON.parse(require('fs').readFileSync('grids/state/STASIS.json','utf8')).active===true")
-          echo "active=$ST" >> "$GITHUB_OUTPUT"
-          if [ "$ST" = "true" ]; then
-            echo "STASIS-HALT dex-grid · the breaker is active — capital lanes obey (limit orders + community leg)"
+          set -eu
+          S=$(node -e "const s=JSON.parse(require('fs').readFileSync('grids/state/STASIS.json','utf8'));console.log([s.active===true?'true':'false',String(s.mode||'full'),(Array.isArray(s.stagedLanes&&s.stagedLanes.allow)&&s.stagedLanes.allow.map(String).map(x=>x.toLowerCase()).includes('grid'))?'true':'false'].join(' '))")
+          ACTIVE=$(echo "$S" | cut -d' ' -f1); MODE=$(echo "$S" | cut -d' ' -f2); LANE_OK=$(echo "$S" | cut -d' ' -f3)
+          echo "active=$ACTIVE" >> "$GITHUB_OUTPUT"
+          echo "mode=$MODE" >> "$GITHUB_OUTPUT"
+          echo "lane_allowed=$LANE_OK" >> "$GITHUB_OUTPUT"
+          if [ "$ACTIVE" = "true" ] && [ "$MODE" = "staged" ] && [ "$LANE_OK" = "true" ]; then
+            echo "[CAPITAL-GATE] STASIS-STAGED-ALLOW dex-grid twin (lane=grid) · owner directive 2026-10-05 trace 1a10bfe1342b2391 — staged grid lane open in the saos-dex home; the in-code brake (grids/brake.mjs) re-checks at sign-time"
+          elif [ "$ACTIVE" = "true" ]; then
+            echo "STASIS-HALT dex-grid twin (lane=grid) · the breaker is active (mode=$MODE) — capital lanes obey (limit orders + community leg)"
+          else
+            echo "STASIS-LIFTED dex-grid twin · active=false — full operation (master flag)"
           fi
 
       - name: Bun
@@ -124,7 +137,7 @@ jobs:
           echo "reason=the original is not healthy (last: ${CC:-unknown}) — the twin takes over the grid" >> "$GITHUB_OUTPUT"
 
       - name: Grid (read the live book, mark to live feeds, place if armed, publish)
-        if: steps.brake.outputs.active == 'false' && (steps.guard.outputs.takeover == '1' || github.event_name == 'workflow_dispatch')
+        if: (steps.brake.outputs.active != 'true' || steps.brake.outputs.lane_allowed == 'true') && (steps.guard.outputs.takeover == '1' || github.event_name == 'workflow_dispatch')
         run: bun run grid-beat.ts
         env:
           SAOS_RELAY_AGENT_ACCOUNT: headcorner
@@ -144,6 +157,9 @@ jobs:
       # owner-gated מבני: בלי grids/state/community-mandate.json אין יצירה.
       # נתיב-claim ראשון (דלק-RC, אפס-STEEM) ← נתיב-עמלה (3 STEEM מהנזיל-שלנו).
       # אידמפוטנטי + fail-closed + read-back אחרי כל-אופ; HOLD כנה אינו מפיל את הביט.
+      # T-B staged-lane law: the community leg = GENERAL lane (create/delegate) — it stays
+      # halted under mode=staged exactly as the owner ordered; only a FULL lift (active=false)
+      # opens it. Condition unchanged from R24-a.
       - name: Community leg (owner-mandated Steem community — D-024, fail-closed)
         if: always() && steps.brake.outputs.active == 'false'
         env:

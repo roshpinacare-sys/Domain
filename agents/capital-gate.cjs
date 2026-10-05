@@ -24,16 +24,63 @@ const STASIS_FILE = path.join(AG, 'STASIS.json');
 const ROSTER_FILE = path.join(AG, 'fleet-roster.json');
 const JOURNAL = path.join(AG, 'receipts', 'capital-decisions.jsonl');
 
-/** מצב-הבלם (fail-closed: קריאה-כושלת לא מבטלת בלם קיים — קוראים שוב-ושוב בכל-ריצה). */
+/** מצב-הבלם — fail-closed מהודק (T-B 2026-10-05): קריאה-כושלת = HALT עם שורה-קולחת.
+ * היסטוריית-התיקון: הגרסה-הקודמת החזירה {active:false} בקריאה-כושלת (fail-open!) —
+ * נמדד ונסגר: הקובץ-מחויב-בריפו ותמיד-קיים אחרי-checkout, ולכן קריאה-כושלת היא
+ * אנומליה-אמיתית והתשובה-הנכונה-היא עצירה (FATE-DEFENSE #1 — עצירה-בטוחה-תמיד). */
 function stasisState() {
-  try { return JSON.parse(fs.readFileSync(STASIS_FILE, 'utf8')); } catch (_) { return { active: false, unreadable: true }; }
+  try {
+    return JSON.parse(fs.readFileSync(STASIS_FILE, 'utf8'));
+  } catch (e) {
+    console.log(`[CAPITAL-GATE] STASIS-STATE-UNREADABLE ${STASIS_FILE} — fail-closed HALT (${String((e && e.message) || e).slice(0, 80)})`);
+    return { active: true, unreadable: true, mode: 'full', reason: 'stasis file unreadable — fail-closed halt', since: '?' };
+  }
 }
 
-/** true אם הבלם פעיל — הקורא חייב לצאת 0 (no-op בריא) מיד. */
+/**
+ * מסילת-הכלי — laneOf(tool) (owner directive 2026-10-05, trace 1a10bfe1342b2391 —
+ * staged re-entry + calibration mandate). מיפוי-מפורש מהאודיט של R23/R24-a (כל-אתר-חתימה
+ * נבדק-מול-האופ-שלו בקוד — לא לפי-שם-בלבד):
+ *   'claims' — כלים שהאופ-שלהם claim_reward_balance (posting-only, אידמפוטנטי):
+ *              daily-claim, fleet-claim.
+ *   'grid'   — כלים שהאופ-שלהם limit_order_create/cancel על הספר-הפנימי:
+ *              market-exec (סולם/ספר THE-REAL-GRID).
+ *   'general'— כל-יתר: האצלות (head-delegate), העברות (treasury-desk, pegout-hand),
+ *              יצירת-חשבונות (community-founder), הצבעות (blurt-curate, soldiers-curate,
+ *              self-audience), HE-orders (econ-desk), וכל-כלי-לא-מוכר.
+ * כלי-לא-מוכר → 'general' (fail-closed: אין-היכרות = אין-מסילה-פתוחה).
+ */
+const LANES = Object.freeze({
+  claims: Object.freeze(['daily-claim', 'fleet-claim']),
+  grid: Object.freeze(['market-exec']),
+});
+
+function laneOf(tool) {
+  const t = String(tool || '').trim().toLowerCase();
+  for (const lane of Object.keys(LANES)) {
+    if (LANES[lane].includes(t)) return lane;
+  }
+  return 'general';
+}
+
+/**
+ * true אם הבלם פעיל — הקורא חייב לצאת 0 (no-op בריא) מיד.
+ * STAGED (owner directive 2026-10-05, trace 1a10bfe1342b2391 — 'Re-enable its autonomous
+ * capabilities intelligently. Let it operate.' + calibration mandate): כש-mode=staged
+ * והמסילה של הכלי ∈ stagedLanes.allow → קבלת STASIS-STAGED-ALLOW והיתר-מותנה;
+ * כל-יתר (כלי-לא-מוכר, מסילה-סגורה, mode=full, active=true ללא-mode) נעצר בדיוק-כמו-קודם.
+ * אין-נפילה-פתוחה: קובץ-חסר/פגום = active=true full = עצירה (ראו stasisState).
+ */
 function stasisHalt(tool) {
   const s = stasisState();
   if (s.active !== true) return false;
-  console.log(`[CAPITAL-GATE] STASIS-HALT ${tool} · reason: ${s.reason || 'unspecified'} · since ${s.since || '?'}`);
+  const lane = laneOf(tool);
+  const allow = Array.isArray(s.stagedLanes && s.stagedLanes.allow) ? s.stagedLanes.allow.map((x) => String(x).toLowerCase()) : [];
+  if (s.mode === 'staged' && allow.includes(lane)) {
+    console.log(`[CAPITAL-GATE] STASIS-STAGED-ALLOW ${tool} (lane=${lane}) · reason: ${String(s.reason || 'unspecified').slice(0, 160)} · since ${s.since || '?'}`);
+    return false;
+  }
+  console.log(`[CAPITAL-GATE] STASIS-HALT ${tool} (lane=${lane}) · reason: ${s.reason || 'unspecified'} · since ${s.since || '?'}`);
   return true;
 }
 
@@ -75,4 +122,4 @@ function journal(tool, row) {
   } catch (_) { /* יומן לא יפיל ריצה — אבל כל-שאר השערים כן */ }
 }
 
-module.exports = { stasisState, stasisHalt, loadRoster, guardTargets, journal, STASIS_FILE, ROSTER_FILE, JOURNAL };
+module.exports = { stasisState, stasisHalt, laneOf, loadRoster, guardTargets, journal, STASIS_FILE, ROSTER_FILE, JOURNAL };
