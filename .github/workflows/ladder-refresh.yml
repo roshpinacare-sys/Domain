@@ -51,13 +51,26 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: STASIS gate (mechanical, FATE-DEFENSE law #1 — R24-a, owner directive 2026-10-04)
+      # T-B (owner directive 2026-10-05, trace 1a10bfe1342b2391 — staged re-entry):
+      # lane-aware preflight for the grid lane: emits active AND the mode + whether the
+      # grid lane is open. fail-closed: unreadable/missing brake file fails this step
+      # and the job. The private steem checkout re-checks the SAME law at sign-time
+      # (steem/agent/lib/capital_gate.cjs laneOf('ladder-refresh') = 'grid').
+      - name: STASIS gate (mechanical, FATE-DEFENSE law #1 — lane-aware staged preflight)
         id: brake
         run: |
-          ST=$(node -p "JSON.parse(require('fs').readFileSync('agents/STASIS.json','utf8')).active===true")
-          echo "active=$ST" >> "$GITHUB_OUTPUT"
-          if [ "$ST" = "true" ]; then
-            echo "STASIS-HALT ladder-refresh · the breaker is active — capital lanes obey (internal-market limit orders)"
+          set -eu
+          S=$(node -e "const s=JSON.parse(require('fs').readFileSync('agents/STASIS.json','utf8'));console.log([s.active===true?'true':'false',String(s.mode||'full'),(Array.isArray(s.stagedLanes&&s.stagedLanes.allow)&&s.stagedLanes.allow.map(String).map(x=>x.toLowerCase()).includes('grid'))?'true':'false'].join(' '))")
+          ACTIVE=$(echo "$S" | cut -d' ' -f1); MODE=$(echo "$S" | cut -d' ' -f2); LANE_OK=$(echo "$S" | cut -d' ' -f3)
+          echo "active=$ACTIVE" >> "$GITHUB_OUTPUT"
+          echo "mode=$MODE" >> "$GITHUB_OUTPUT"
+          echo "lane_allowed=$LANE_OK" >> "$GITHUB_OUTPUT"
+          if [ "$ACTIVE" = "true" ] && [ "$MODE" = "staged" ] && [ "$LANE_OK" = "true" ]; then
+            echo "[CAPITAL-GATE] STASIS-STAGED-ALLOW ladder-refresh (lane=grid) · owner directive 2026-10-05 trace 1a10bfe1342b2391 — staged grid lane open; the in-code gate (capital_gate.cjs) re-checks at sign-time"
+          elif [ "$ACTIVE" = "true" ]; then
+            echo "STASIS-HALT ladder-refresh (lane=grid) · the breaker is active (mode=$MODE) — capital lanes obey (internal-market limit orders)"
+          else
+            echo "STASIS-LIFTED ladder-refresh · active=false — full operation (master flag)"
           fi
 
       - name: checkout private steem (seal custody lives here) — proven org-gitleaks pattern
@@ -82,7 +95,7 @@ jobs:
         run: npm install --prefix /tmp/steemjs steem@0.7.11 --omit=dev --no-audit --no-fund --loglevel=error
 
       - name: run the ladder-refresh cycle (seal → active-key live-verify → executor caps → receipt)
-        if: steps.brake.outputs.active != 'true'
+        if: steps.brake.outputs.active != 'true' || steps.brake.outputs.lane_allowed == 'true'
         env:
           STEEM_DIR: ${{ github.workspace }}/steem
           STEEMJS_DIR: /tmp/steemjs
