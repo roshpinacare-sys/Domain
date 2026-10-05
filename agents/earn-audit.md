@@ -1,8 +1,8 @@
-# Earn audit · 2026-10-05T16:23:14.882Z (window 7d, keyless chain-truth)
+# Earn audit · 2026-10-05T16:50:53.243Z (window 7d, keyless chain-truth)
 
 | account | author SBD | author STEEM | curation SP | claimed vests SP | drip arrived STEEM | sold STEEM | recv SBD | bought STEEM | spent SBD | converts SBD | fills | votes | posts |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| headcorner ⚠TRUNC | 0 | 0 | 0.054019 | 0 | 0 | 99.90400000000004 | 10.028000000000004 | 90.11400000000003 | 9.318999999999999 | 13.969 | 80 | 7 | 17 |
+| headcorner ⚠TRUNC | 0 | 0 | 0.054019 | 0 | 0 | 99.90400000000005 | 10.028000000000002 | 90.11400000000003 | 9.318999999999999 | 13.969 | 80 | 7 | 17 |
 | cashmachine | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 163 | 10 |
 | haran | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 128 | 5 |
 | israelnews | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 177 | 7 |
