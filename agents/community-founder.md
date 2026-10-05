@@ -1,6 +1,6 @@
 # community-founder — הבית הקהילתי (CR-0066)
 
-עודכן: 2026-10-05T00:33:08.491Z
+עודכן: 2026-10-05T01:23:40.137Z
 
 ## הקהילה חיה
 - שם-חשבון: hive-177702
@@ -12,19 +12,10 @@
 
 ## שרשרת-האם (הוכחה חיה, R38)
 - פס-דין: STEEM-CHAIN
-- נבדק חי: steem=true · hive=false · ב-2026-10-05T00:33:08.297Z
+- נבדק חי: steem=true · hive=false · ב-2026-10-05T01:23:39.817Z
 - הסבר: "hive-" בשם הוא קונבנציית-hivemind על Steem (סוג 1 = journal), לא רשת Hive
 
 ## ריצות אחרונות
-- [2026-10-04T21:38:16.551Z] rc → MODE-DRY · plan armed — COMMUNITY_LIVE=1 signs the top-up
-  - plan: available 1084663 vests (672.41 SP) · reservation 767704 vests · short 64524 vests · floor 10 SP received
-- [2026-10-04T21:38:16.825Z] status → COMMUNITY-LIVE
-  - chain: hive-177702 title=The Clubhouse · roles=12 · subs=6 · receivedSP=10.0
-  - chain-proof: steem=true · hive=false → STEEM-CHAIN
-- [2026-10-04T21:38:17.346Z] hive → HOME-ABSENT-UNKEYED · no Hive key material is held (measured: headcorner hive active pub STM8c9vp3… ≠ the held steem pub) — the desk cannot sign what it does not hold
-  - hive fee=3.000 HIVE · headcorner liquid=0.034 · need=3.050 · orders=0
-  - soldiers-on-hive=10/10 · names-free=hive-177702 · steem-house-on-hive=no
-  - authority=NO-KEYS · vault=absent · stasis=clear
 - [2026-10-04T22:22:27.269Z] rc → STASIS-HALT · the breaker is active, the desk obeys
 - [2026-10-04T22:22:27.319Z] status → COMMUNITY-LIVE
   - chain: hive-177702 title=The Clubhouse · roles=12 · subs=6 · receivedSP=10.0
@@ -46,6 +37,14 @@
   - chain: hive-177702 title=The Clubhouse · roles=12 · subs=6 · receivedSP=10.0
   - chain-proof: steem=true · hive=false → STEEM-CHAIN
 - [2026-10-05T00:33:08.326Z] hive → HOME-ABSENT-UNKEYED · no Hive key material is held (measured: headcorner hive active pub STM8c9vp3… ≠ the held steem pub) — the desk cannot sign what it does not hold
+  - hive fee=3.000 HIVE · headcorner liquid=0.034 · need=3.050 · orders=0
+  - soldiers-on-hive=10/10 · names-free=hive-177702 · steem-house-on-hive=no
+  - authority=NO-KEYS · vault=absent · stasis=HALT
+- [2026-10-05T01:23:39.105Z] rc → STASIS-HALT · the breaker is active, the desk obeys
+- [2026-10-05T01:23:39.138Z] status → COMMUNITY-LIVE
+  - chain: hive-177702 title=The Clubhouse · roles=12 · subs=6 · receivedSP=10.0
+  - chain-proof: steem=true · hive=false → STEEM-CHAIN
+- [2026-10-05T01:23:39.840Z] hive → HOME-ABSENT-UNKEYED · no Hive key material is held (measured: headcorner hive active pub STM8c9vp3… ≠ the held steem pub) — the desk cannot sign what it does not hold
   - hive fee=3.000 HIVE · headcorner liquid=0.034 · need=3.050 · orders=0
   - soldiers-on-hive=10/10 · names-free=hive-177702 · steem-house-on-hive=no
   - authority=NO-KEYS · vault=absent · stasis=HALT
