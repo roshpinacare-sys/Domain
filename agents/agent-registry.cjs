@@ -1,4 +1,5 @@
 'use strict';
+// measurement-only lane — capital gate N/A (STASIS scope)
 /**
  * agent-registry.cjs — Z-65 FLEET AGENT REGISTRY (CR-0042): the fleet's own
  * ERC-8004-SHAPED trustless-agent registry, keyless and evidence-derived.

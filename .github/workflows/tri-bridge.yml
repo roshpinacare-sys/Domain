@@ -33,6 +33,15 @@ jobs:
         with:
           fetch-depth: 1
 
+      - name: STASIS gate (mechanical, FATE-DEFENSE law #1 — R24-a, owner directive 2026-10-04)
+        id: brake
+        run: |
+          ST=$(node -p "JSON.parse(require('fs').readFileSync('agents/STASIS.json','utf8')).active===true")
+          echo "active=$ST" >> "$GITHUB_OUTPUT"
+          if [ "$ST" = "true" ]; then
+            echo "STASIS-HALT tri-bridge · the breaker is active — capital lanes obey (votes + blurt fuel transfers)"
+          fi
+
       - name: Node 20
         uses: actions/setup-node@v4
         with:
@@ -44,6 +53,7 @@ jobs:
           NODE_PATH=/tmp/steemjs/node_modules node -e "require('steem'); console.log('steem-js OK')"
 
       - name: cross-publish today's posts (hive + blurt, verify-then-sign)
+        if: steps.brake.outputs.active != 'true'
         env:
           SA_FLEET_KEYS: ${{ secrets.SA_FLEET_KEYS }}
           SA_HEAD_ACTIVE: ${{ secrets.SA_HEAD_ACTIVE }}

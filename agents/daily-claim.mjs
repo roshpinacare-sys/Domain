@@ -80,6 +80,9 @@ async function main() {
 
   if (DRY) return finish("DRY-READY", { pending, note: "honest dry run — gates passed, nothing broadcast" });
 
+  // STASIS per-site gate (owner directive 2026-10-04): halt before the capital broadcast, fail-closed — claims are a capital lane
+  try { if (createRequire(import.meta.url)("./capital-gate.cjs").stasisHalt("daily-claim")) return finish("STASIS-HALT", { note: "owner directive 2026-10-04 — capital lane halted before signing" }); } catch (e) { console.log(`[CAPITAL-GATE] daily-claim — gate module error, lane halts fail-closed: ${String(e?.message || e).slice(0, 80)}`); return finish("STASIS-HALT", { note: "capital-gate module error — fail-closed" }); }
+
   // שידור claim_reward_balance (רשות-posting מספיקה) עם מירוץ-45 שניות
   const op = ["claim_reward_balance", {
     account: POSTER,

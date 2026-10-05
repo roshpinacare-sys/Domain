@@ -1,4 +1,5 @@
 'use strict';
+// measurement-only lane — capital gate N/A (STASIS scope)
 /**
  * market-grid.cjs — Z-60+ MARKET-GRID DESK (the internal-market sovereignty instrument)
  *

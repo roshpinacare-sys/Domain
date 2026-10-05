@@ -14,6 +14,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with: {fetch-depth: 1}
+      - name: STASIS gate (mechanical, FATE-DEFENSE law #1 — R24-a, owner directive 2026-10-04)
+        id: brake
+        run: |
+          ST=$(node -p "JSON.parse(require('fs').readFileSync('agents/STASIS.json','utf8')).active===true")
+          echo "active=$ST" >> "$GITHUB_OUTPUT"
+          if [ "$ST" = "true" ]; then
+            echo "STASIS-HALT soldiers-curate · the breaker is active — capital lanes obey (votes)"
+          fi
       - name: "checkout the private vault repo (STEEM_REPO_DIR recovery path, econ-desk pattern)"
         uses: actions/checkout@v4
         with:
@@ -26,6 +34,7 @@ jobs:
       - name: "install signer lib (tri-bridge pattern)"
         run: npm install --prefix /tmp/steemjs steem@0.7.11 --omit=dev --no-audit --no-fund --loglevel=error
       - name: "soldiers lane curation (public external content, chain dedupe, cache-bust read-back)"
+        if: steps.brake.outputs.active != 'true'
         run: NODE_PATH=/tmp/steemjs/node_modules STEEM_REPO_DIR=$GITHUB_WORKSPACE/steem-home MAXVOTES=2 node agents/soldiers-curate.cjs
       - name: commit book
         run: |

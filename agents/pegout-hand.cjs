@@ -286,6 +286,8 @@ async function proof() {
   const wif = JSON.parse(fs.readFileSync(HC_DERIVED, 'utf8')).steem.active.wif;
   const amount = '0.001 STEEM';
   const memo = 'SAOS-PEGOUT-HAND/1 rail-proof R44 — value-neutral self-transfer, the real-value law\u2019s hand';
+  // STASIS per-site gate (owner directive 2026-10-04): halt before signing/broadcast, fail-closed
+  try { if (require('./capital-gate.cjs').stasisHalt('pegout-hand')) { appendHistory({ at: now, mode: 'proof', verdict: 'STASIS-HALT', why: 'owner directive 2026-10-04 — nothing signed' }); return 0; } } catch (e) { console.log('[CAPITAL-GATE] pegout-hand — gate module error, lane halts fail-closed: ' + String(e.message || e).slice(0, 80)); appendHistory({ at: now, mode: 'proof', verdict: 'STASIS-HALT', why: 'capital-gate module error — fail-closed' }); return 0; }
   try {
     const signed = await buildSignedTransfer(OPERATOR, OPERATOR, amount, memo, wif);
     const rcpt = await broadcast(signed);
@@ -316,6 +318,8 @@ async function fire() {
     const v = validateRow(row);
     if (!v.ok) { doc = applyResult(doc, row.intentId, { fired: false, refusal: v.refused, handledAt: now }); continue; }
     if (v.verdict !== 'FIREABLE-KEYED') { doc = applyResult(doc, row.intentId, { fired: false, refusal: v.verdict, handledAt: now }); continue; }
+    // STASIS per-site gate (owner directive 2026-10-04): halt before signing/broadcast, fail-closed — remaining rows stay queued
+    try { if (require('./capital-gate.cjs').stasisHalt('pegout-hand')) { appendHistory({ at: now, mode: 'fire', verdict: 'STASIS-HALT', why: 'owner directive 2026-10-04 — nothing signed, rows stay queued' }); break; } } catch (e) { console.log('[CAPITAL-GATE] pegout-hand — gate module error, lane halts fail-closed: ' + String(e.message || e).slice(0, 80)); appendHistory({ at: now, mode: 'fire', verdict: 'STASIS-HALT', why: 'capital-gate module error — fail-closed, rows stay queued' }); break; }
     const amount = satoshiToAmount(v.satoshi, row.asset);
     try {
       const signed = await buildSignedTransfer(OPERATOR, row.account, amount, `SAOS-PEGOUT-HAND/1 redeem ${row.intentId}`, wif);
@@ -326,8 +330,9 @@ async function fire() {
     }
   }
   saveQueue(doc);
-  appendHistory({ at: now, mode: 'fire', consumed: (queue.rows || []).length });
-  console.log(`[pegout-hand] fire: consumed ${(queue.rows || []).length} rows (single-writer, atomic)`);
+  const handled = (doc.rows || []).filter((r) => r.handledAt === now).length; // STASIS-aware: a halt leaves the rest queued
+  appendHistory({ at: now, mode: 'fire', consumed: handled });
+  console.log(`[pegout-hand] fire: consumed ${handled} rows (single-writer, atomic)`);
   return 0;
 }
 

@@ -467,6 +467,7 @@ async function main() {
         for (const b of bad) row.cure.candidates.push({ orderid: b.orderid, price: b.price, cap });
         for (const b of bad) {
           try {
+            try { if (require('./capital-gate.cjs').stasisHalt('market-exec')) return; } catch (e) { console.log('[CAPITAL-GATE] market-exec — gate module error, lane halts fail-closed: ' + String(e.message || e).slice(0, 80)); return; }
             const res = await signBroadcast(NODE_PRIMARY, steem, wif, [['limit_order_cancel', { owner: HEAD, orderid: b.orderid }]]);
             row.broadcast.push({ phase: '0-edge-cure', ops: 1, orderid: b.orderid, ...res });
             row.cure.cancelled++;
@@ -511,6 +512,7 @@ async function main() {
       const rest = placements.filter((p) => p.side !== 'flow-taker');
       if (flowcatch && takers.length) {
         const takerOps = takers.map((p) => buildOpFromPlacement(p, expiry, p.orderid));
+        try { if (require('./capital-gate.cjs').stasisHalt('market-exec')) return; } catch (e) { console.log('[CAPITAL-GATE] market-exec — gate module error, lane halts fail-closed: ' + String(e.message || e).slice(0, 80)); return; }
         const res = await signBroadcast(NODE_PRIMARY, steem, wif, takerOps);
         row.broadcast.push({ phase: 'A-taker', ops: takerOps.length, ...res });
         for (const p of takers) p.broadcast = true;
@@ -527,6 +529,7 @@ async function main() {
           const placement = { ...b, side: 'buy', broadcast: false, orderid: Math.floor(Date.now() / 1000) % 4294967000 + placements.length + 1 };
           ops.length = 0;
           ops.push(buildOpFromPlacement(placement, expiry, placement.orderid));
+          try { if (require('./capital-gate.cjs').stasisHalt('market-exec')) return; } catch (e) { console.log('[CAPITAL-GATE] market-exec — gate module error, lane halts fail-closed: ' + String(e.message || e).slice(0, 80)); return; }
           const resB = await signBroadcast(NODE_PRIMARY, steem, wif, ops);
           row.broadcast.push({ phase: 'B-buys', ops: 1, ...resB });
           placement.broadcast = true;
@@ -537,6 +540,7 @@ async function main() {
       } else {
         for (const p of placements) { ops.push(buildOpFromPlacement(p, expiry, p.orderid)); }
         if (ops.length) {
+          try { if (require('./capital-gate.cjs').stasisHalt('market-exec')) return; } catch (e) { console.log('[CAPITAL-GATE] market-exec — gate module error, lane halts fail-closed: ' + String(e.message || e).slice(0, 80)); return; }
           const res = await signBroadcast(NODE_PRIMARY, steem, wif, ops);
           row.broadcast = [{ ops: ops.length, ...res }];
           for (const p of placements) p.broadcast = true;
