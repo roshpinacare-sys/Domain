@@ -1,13 +1,16 @@
 {
   "protocol": "SAOS-SELFMODEL/1",
-  "generatedAt": "2026-10-05T15:45:00Z",
-  "note": "Domain mirror of the SAOS self-model seed (V-a, trace 1a10c90522120149). The CANONICAL organism.json — the one the truth-dashboard (/api/selfmodel) reads — is git-audit/steem/agent/cognition/organism.json; this copy exists so each home validates its own model mechanically (agents/selfmodel.cjs) and stays byte-honest about its own truth sources. Content below mirrors the canonical seed; paths here point at the Domain home.",
+  "generatedAt": "2026-10-05T18:07:41.637Z",
+  "note": "Domain mirror of the SAOS self-model (R29 sync, trace 1a10d243868ffdc1). The CANONICAL organism.json is git-audit/steem/agent/cognition/organism.json — this copy mirrors writers+sovereignty verbatim; the cognition-beat regenerates the canonical hourly. The sovereignty section is mechanically consumed by agents/capital-gate.cjs (selfModelGate).",
   "homes": {
     "steem": {
       "stasis": {
         "active": true,
         "mode": "staged",
-        "stagedLanes": ["grid", "claims"],
+        "stagedLanes": [
+          "grid",
+          "claims"
+        ],
         "epistemic": "OBSERVED",
         "evidenceAgeMin": 5
       },
@@ -24,7 +27,10 @@
       "stasis": {
         "active": true,
         "mode": "staged",
-        "stagedLanes": ["grid", "claims"],
+        "stagedLanes": [
+          "grid",
+          "claims"
+        ],
         "epistemic": "OBSERVED",
         "evidenceAgeMin": 5
       },
@@ -47,9 +53,21 @@
       "status": "STAGED",
       "epistemic": "OBSERVED",
       "evidence": [
-        { "source": "chain-history", "ref": "R27-c measured CANCEL 2026100501/02/03 + CREATE 2026100504/05/06 signed 12:56:33-39Z (blocks 110175126-131, txids 37238759/2bccad8b/3034e40e)", "at": "2026-10-05T12:56:39Z" },
-        { "source": "agent/STASIS.json (steem)", "ref": "stagedLanes.allow includes grid since 2026-10-05T13:05:00Z", "at": "2026-10-05T13:05:00Z" },
-        { "source": "owner-directives.jsonl", "ref": "i=2 staged-open trace 1a10bfe1342b2391 covers grid", "at": "2026-10-05T13:05:00Z" }
+        {
+          "source": "chain-history",
+          "ref": "R27-c measured CANCEL 2026100501/02/03 + CREATE 2026100504/05/06 signed 12:56:33-39Z (blocks 110175126-131, txids 37238759/2bccad8b/3034e40e)",
+          "at": "2026-10-05T12:56:39Z"
+        },
+        {
+          "source": "agent/STASIS.json (steem)",
+          "ref": "stagedLanes.allow includes grid since 2026-10-05T13:05:00Z",
+          "at": "2026-10-05T13:05:00Z"
+        },
+        {
+          "source": "owner-directives.jsonl",
+          "ref": "i=2 staged-open trace 1a10bfe1342b2391 covers grid",
+          "at": "2026-10-05T13:05:00Z"
+        }
       ],
       "ageHours": 2.5
     },
@@ -60,8 +78,16 @@
       "status": "STAGED",
       "epistemic": "OBSERVED",
       "evidence": [
-        { "source": "agent/lib/capital_gate.cjs (steem)", "ref": "LANES.claims enumerated by audited op class (claim_reward_balance, posting-only)", "at": "2026-10-05T15:20:00Z" },
-        { "source": "owner-directives.jsonl", "ref": "i=2 staged-open trace 1a10bfe1342b2391 covers claims", "at": "2026-10-05T13:05:00Z" }
+        {
+          "source": "agent/lib/capital_gate.cjs (steem)",
+          "ref": "LANES.claims enumerated by audited op class (claim_reward_balance, posting-only)",
+          "at": "2026-10-05T15:20:00Z"
+        },
+        {
+          "source": "owner-directives.jsonl",
+          "ref": "i=2 staged-open trace 1a10bfe1342b2391 covers claims",
+          "at": "2026-10-05T13:05:00Z"
+        }
       ],
       "ageHours": 2.5
     },
@@ -72,8 +98,16 @@
       "status": "STAGED",
       "epistemic": "INFERRED",
       "evidence": [
-        { "source": "agents/STASIS.json", "ref": "grid lane allow since 2026-10-05T13:05:00Z", "at": "2026-10-05T13:05:00Z" },
-        { "source": "R27-c", "ref": "Domain grid twins keep honest keyless refusal design — lane open is permission, not activation; no live signing measured in this home", "at": "2026-10-05" }
+        {
+          "source": "agents/STASIS.json",
+          "ref": "grid lane allow since 2026-10-05T13:05:00Z",
+          "at": "2026-10-05T13:05:00Z"
+        },
+        {
+          "source": "R27-c",
+          "ref": "Domain grid twins keep honest keyless refusal design — lane open is permission, not activation; no live signing measured in this home",
+          "at": "2026-10-05"
+        }
       ],
       "ageHours": 2.5
     },
@@ -84,8 +118,16 @@
       "status": "STAGED",
       "epistemic": "INFERRED",
       "evidence": [
-        { "source": "agents/STASIS.json", "ref": "claims lane allow (daily-claim, fleet-claim)", "at": "2026-10-05T13:05:00Z" },
-        { "source": "R27-c", "ref": "daily-claim gate wiring verified at daily-claim:84; receipts were artifact-only (30-day artifact), no committed receipts", "at": "2026-10-05" }
+        {
+          "source": "agents/STASIS.json",
+          "ref": "claims lane allow (daily-claim, fleet-claim)",
+          "at": "2026-10-05T13:05:00Z"
+        },
+        {
+          "source": "R27-c",
+          "ref": "daily-claim gate wiring verified at daily-claim:84; receipts were artifact-only (30-day artifact), no committed receipts",
+          "at": "2026-10-05"
+        }
       ],
       "ageHours": 2.5
     },
@@ -96,7 +138,11 @@
       "status": "HALTED",
       "epistemic": "OBSERVED",
       "evidence": [
-        { "source": "R27-c", "ref": "saos-dex gate resists forged protocol files; repo carries wedged UU state.json — V-a mandate: DO NOT TOUCH saos-dex", "at": "2026-10-05" }
+        {
+          "source": "R27-c",
+          "ref": "saos-dex gate resists forged protocol files; repo carries wedged UU state.json — V-a mandate: DO NOT TOUCH saos-dex",
+          "at": "2026-10-05"
+        }
       ],
       "ageHours": 3
     },
@@ -107,7 +153,11 @@
       "status": "ORPHANED",
       "epistemic": "OBSERVED",
       "evidence": [
-        { "source": "R27-a", "ref": "moment-watch calibrated but unwired — no machine consumer found; all FLAT", "at": "2026-10-05" }
+        {
+          "source": "R27-a",
+          "ref": "moment-watch calibrated but unwired — no machine consumer found; all FLAT",
+          "at": "2026-10-05"
+        }
       ],
       "ageHours": 3
     },
@@ -118,41 +168,121 @@
       "status": "ORPHANED",
       "epistemic": "OBSERVED",
       "evidence": [
-        { "source": "R27-a", "ref": "fleet-cure orphaned", "at": "2026-10-05" }
+        {
+          "source": "R27-a",
+          "ref": "fleet-cure orphaned",
+          "at": "2026-10-05"
+        }
       ],
       "ageHours": 3
     }
   ],
   "writers": [
     {
-      "id": "github-actions-cron-fleet",
+      "id": "dex-grid-ci",
       "kind": "ci-workflow",
-      "patterns": ["schedule:* across 126 workflows / 72 crons (R27-a)"],
-      "confidence": 0.9,
-      "epistemic": "OBSERVED",
+      "patterns": [
+        "limit orders in orderid space 2026MMDDxx; txids in saos-dex/db/grid-ledger.json"
+      ],
+      "confidence": 0.85,
+      "epistemic": "INFERRED",
       "evidence": [
-        { "source": "R27-a", "ref": "execution surface measured: GitHub Actions 126 workflows, 72 cron", "at": "2026-10-05" },
-        { "source": "git-history", "ref": "CI commit pattern 'dex-core: ... tick' / 'moment-watch: ...' on both homes", "at": "2026-10-05" }
+        {
+          "source": "chain-history window",
+          "ref": "cycle 2: 9 ops classified dex-grid-ci (orderid-space/ledger)",
+          "at": "2026-10-05T16:45:04.043Z"
+        }
       ]
     },
     {
-      "id": "unidentified-parallel-session",
+      "id": "owner-matrix",
       "kind": "parallel-session",
-      "patterns": ["roshpinacare-sys commits TZ+0300", "hourly weave-anchor-lines dispatch with no owning workflow", "micro-orders trx 8065683d (0.5 STEEM x2, no owning code in any repo)"],
-      "confidence": 0.5,
+      "patterns": [
+        "delegate_vesting_shares exactly 48393.301791 VESTS (30 SP × operator matrix)"
+      ],
+      "confidence": 0.7,
       "epistemic": "INFERRED",
       "evidence": [
-        { "source": "R27-a/R27-c", "ref": "commits + dispatches + on-chain micro-orders attributed to no identified writer", "at": "2026-10-05" }
+        {
+          "source": "chain-history window",
+          "ref": "cycle 2: 1 ops matched matrix amount",
+          "at": "2026-10-05T16:45:04.043Z"
+        }
+      ]
+    },
+    {
+      "id": "owner-parallel",
+      "kind": "parallel-session",
+      "patterns": [
+        "delegate-0 to hcsoldier1/2/3 (reclaim-lost-soldiers signature; tool exists in repo)"
+      ],
+      "confidence": 0.6,
+      "epistemic": "INFERRED",
+      "evidence": [
+        {
+          "source": "chain-history window",
+          "ref": "cycle 2: 3 ops matched reclaim signature",
+          "at": "2026-10-05T16:45:04.043Z"
+        }
+      ]
+    },
+    {
+      "id": "unknown-writers",
+      "kind": "unknown",
+      "patterns": [
+        "micro-orders 2100000xxx (no owning tool in any repo)",
+        "any capital op with no matching signature"
+      ],
+      "confidence": 0.2,
+      "epistemic": "OBSERVED",
+      "evidence": [
+        {
+          "source": "chain-history window",
+          "ref": "2026-10-05T12:56:45Z limit_order_create trx=8065683d92dcf048 orderid=2100000379",
+          "at": "2026-10-05T12:56:45Z"
+        },
+        {
+          "source": "chain-history window",
+          "ref": "2026-10-05T12:56:45Z limit_order_create trx=8065683d92dcf048 orderid=2100000380",
+          "at": "2026-10-05T12:56:45Z"
+        }
+      ]
+    },
+    {
+      "id": "github-actions-cron-fleet",
+      "kind": "ci-workflow",
+      "patterns": [
+        "schedule:* across 126 workflows / 72 crons (R27-a)"
+      ],
+      "confidence": 0.9,
+      "epistemic": "OBSERVED",
+      "evidence": [
+        {
+          "source": "R27-a",
+          "ref": "execution surface measured: GitHub Actions 126 workflows, 72 cron",
+          "at": "2026-10-05"
+        },
+        {
+          "source": "git-history",
+          "ref": "CI commit pattern 'dex-core: ... tick' / 'moment-watch: ...' on both homes",
+          "at": "2026-10-05"
+        }
       ]
     },
     {
       "id": "agent-llm-sessions",
       "kind": "unknown",
-      "patterns": ["session-scoped edits to state files ('Z User' commits)"],
+      "patterns": [
+        "session-scoped edits to state files ('Z User' commits)"
+      ],
       "confidence": 0.7,
       "epistemic": "OBSERVED",
       "evidence": [
-        { "source": "R27-c", "ref": "STASIS.json history: all historical changes made by agents ('Z User'); no CI/hook protects the file", "at": "2026-10-05" }
+        {
+          "source": "R27-c",
+          "ref": "STASIS.json history: all historical changes made by agents ('Z User'); no CI/hook protects the file",
+          "at": "2026-10-05"
+        }
       ]
     }
   ],
@@ -175,11 +305,31 @@
     ]
   },
   "canonicalTruths": [
-    { "what": "STASIS.json is the capital brake; unreadable OR unauthenticated (no valid protocol) = halt", "source": "agents/capital-gate.cjs stasisState/stasisHalt (a)", "rank": 1 },
-    { "what": "guards close lanes only; foreign open/allow fields are inert and flagged (foreignFields)", "source": "agents/loopguard.cjs guardHalt", "rank": 2 },
-    { "what": "expansion requires owner-directives chain coverage; halt-all in the chain mechanically closes later coverage", "source": "agents/directivesChain.cjs hasEntryForLanes + capital-gate.cjs (c)/(d)", "rank": 3 },
-    { "what": "every gate decision (halt or allow) writes one cognitive receipt, idempotent per tool|lane|decision|minute, append-only", "source": "agents/receipts/capital-decisions.jsonl (first real writes: V-a)", "rank": 4 },
-    { "what": "receipts are memory, not a veto: journal-unwritable never blocks enforcement; journalHealth().degraded marks it", "source": "agents/capital-gate.cjs journalHealth", "rank": 5 }
+    {
+      "what": "STASIS.json is the capital brake; unreadable OR unauthenticated (no valid protocol) = halt",
+      "source": "agents/capital-gate.cjs stasisState/stasisHalt (a)",
+      "rank": 1
+    },
+    {
+      "what": "guards close lanes only; foreign open/allow fields are inert and flagged (foreignFields)",
+      "source": "agents/loopguard.cjs guardHalt",
+      "rank": 2
+    },
+    {
+      "what": "expansion requires owner-directives chain coverage; halt-all in the chain mechanically closes later coverage",
+      "source": "agents/directivesChain.cjs hasEntryForLanes + capital-gate.cjs (c)/(d)",
+      "rank": 3
+    },
+    {
+      "what": "every gate decision (halt or allow) writes one cognitive receipt, idempotent per tool|lane|decision|minute, append-only",
+      "source": "agents/receipts/capital-decisions.jsonl (first real writes: V-a)",
+      "rank": 4
+    },
+    {
+      "what": "receipts are memory, not a veto: journal-unwritable never blocks enforcement; journalHealth().degraded marks it",
+      "source": "agents/capital-gate.cjs journalHealth",
+      "rank": 5
+    }
   ],
   "contradictions": [
     {
@@ -219,22 +369,38 @@
         "level": "STAGED",
         "justification": "owner directive trace 1a10bfe1342b2391; directives chain i=2 covers grid; sign-time gate in place post-R25; guard file can still close it mechanically at any time",
         "evidence": [
-          { "source": "owner-directives.jsonl", "ref": "i=2 staged-open [grid,claims]", "at": "2026-10-05T13:05:00Z" },
-          { "source": "STASIS.json (both homes)", "ref": "stagedLanes.allow", "at": "2026-10-05T13:05:00Z" }
+          {
+            "source": "owner-directives.jsonl",
+            "ref": "i=2 staged-open [grid,claims]",
+            "at": "2026-10-05T13:05:00Z"
+          },
+          {
+            "source": "STASIS.json (both homes)",
+            "ref": "stagedLanes.allow",
+            "at": "2026-10-05T13:05:00Z"
+          }
         ]
       },
       "claims": {
         "level": "STAGED",
         "justification": "posting-only idempotent claims; directives chain i=2 covers claims",
         "evidence": [
-          { "source": "owner-directives.jsonl", "ref": "i=2 staged-open [grid,claims]", "at": "2026-10-05T13:05:00Z" }
+          {
+            "source": "owner-directives.jsonl",
+            "ref": "i=2 staged-open [grid,claims]",
+            "at": "2026-10-05T13:05:00Z"
+          }
         ]
       },
       "general": {
         "level": "HALTED",
         "justification": "delegations/transfers/converts/votes/HE/mint/escrow + all unknown tools remain halted (fail-closed)",
         "evidence": [
-          { "source": "agents/STASIS.json", "ref": "stagedLanes.reason — everything besides grid+claims stays halted", "at": "2026-10-05T13:05:00Z" }
+          {
+            "source": "agents/STASIS.json",
+            "ref": "stagedLanes.reason — everything besides grid+claims stays halted",
+            "at": "2026-10-05T13:05:00Z"
+          }
         ]
       }
     },
@@ -245,8 +411,16 @@
     "nv.zip": {
       "decision": "untracked from the STEEM live tree (git rm --cached) in custody-hygiene commit 52db27f2 (V-a, trace 1a10c90522120149) — Domain home holds no nv.zip",
       "evidence": [
-        { "source": "rg --hidden sweep", "ref": "zero references to nv.zip in any live code, .github workflow, script or doc of the steem repo (measured 2026-10-05T15:10Z)", "at": "2026-10-05T15:10:00Z" },
-        { "source": "agent/vault/ (steem)", "ref": "recovery chain preserved in-tree: 5 *.enc archives + recovery-meta.json + FLEET-DERIVATION-MATRIX-2026-10-04.md", "at": "2026-10-05T15:10:00Z" }
+        {
+          "source": "rg --hidden sweep",
+          "ref": "zero references to nv.zip in any live code, .github workflow, script or doc of the steem repo (measured 2026-10-05T15:10Z)",
+          "at": "2026-10-05T15:10:00Z"
+        },
+        {
+          "source": "agent/vault/ (steem)",
+          "ref": "recovery chain preserved in-tree: 5 *.enc archives + recovery-meta.json + FLEET-DERIVATION-MATRIX-2026-10-04.md",
+          "at": "2026-10-05T15:10:00Z"
+        }
       ],
       "epistemic": "OBSERVED",
       "residualRisk": "ZIP_PAT-class secrets in other homes' workflows (R27-d: 32 workflows) are OUT OF SCOPE for V-a — recorded, not fixed"
@@ -255,7 +429,11 @@
       "status": "PRESERVED",
       "epistemic": "OBSERVED",
       "evidence": [
-        { "source": "agent/vault/*.enc + agent/recovery-meta.json + FACTORY_MASTER derivation (steem)", "ref": "all recovery inputs remain tracked at HEAD after the hygiene commit", "at": "2026-10-05T15:25:00Z" }
+        {
+          "source": "agent/vault/*.enc + agent/recovery-meta.json + FACTORY_MASTER derivation (steem)",
+          "ref": "all recovery inputs remain tracked at HEAD after the hygiene commit",
+          "at": "2026-10-05T15:25:00Z"
+        }
       ]
     }
   },
@@ -271,5 +449,232 @@
     "expansion gate is tamper-EVIDENT (hash chain), NOT tamper-PROOF — a writer with repo access can rebuild a whole chain; labeled honestly in every ALLOW receipt and here",
     "V-a validated mode/since strictly: legacy STASIS docs lacking them now fail authentication (fail-closed) — deliberate semantic change, covered by selftests",
     "this file mirrors the canonical steem seed (git-audit/steem/agent/cognition/organism.json) with Domain paths adjusted; the mirror itself is declared, not hidden"
-  ]
+  ],
+  "sovereignty": {
+    "protocol": "SAOS-SOVEREIGNTY/1",
+    "computedAt": "2026-10-05T18:07:41.637Z",
+    "haltSemantics": {
+      "measured": "A",
+      "meaning": "HALTED means: (A) the organism’s own registered lanes will not sign. It does NOT mean (B) no actor inside the sovereignty domain can act, and does NOT mean (C) no actor in the world can act.",
+      "evidence": [
+        {
+          "source": "R29 forensics (chain + GitHub runs API + repo code), 2026-10-05",
+          "ref": "2026-10-05T17:07:36Z: 10 capital ops signed by money-family-live while every internal guard was active in all 3 homes (synced 17:05:40Z) → A holds, B and C falsified",
+          "at": "2026-10-05T18:07:41.637Z"
+        }
+      ]
+    },
+    "haltCoverage": "ORGANISM_ONLY",
+    "haltCoverageReason": "A proven capital path (money-family-live) signs outside every guard the organism can reach; until the owner remediates that surface, halt covers only the organism itself.",
+    "capitalPaths": [
+      {
+        "id": "dex-grid-ci",
+        "path": "owner-directive→STASIS staged→dex-grid.yml dispatch→grid-beat.ts→brake.mjs(stasisHalt: STASIS+guards+directives)→realmarket.signAndBroadcast→headcorner",
+        "guarded": true,
+        "kill": "guards+STASIS+cancel CI schedule",
+        "owner": "organism (policy-gated expansion)",
+        "epistemic": "OBSERVED",
+        "evidence": [
+          {
+            "source": "R29 forensics (chain + GitHub runs API + repo code), 2026-10-05",
+            "ref": "saos-dex dex-grid run 12:56:12Z → ops 12:56:33-48Z; Domain dex-grid run 04:00:57Z → ops 04:01:33-45Z; brake consumption committed 82e9de4",
+            "at": "2026-10-05T18:07:41.637Z"
+          }
+        ]
+      },
+      {
+        "id": "money-family-live",
+        "path": "money-mover v1.9.0 (60s check, 30min cooldown, reprice-on-drift)→/api/money (vault WIF)→steem.broadcast→headcorner; orderid=date-scheme (shared with CI)",
+        "guarded": false,
+        "kill": "NONE reachable from organism — runs on a machine outside all homes, outside GitHub Actions",
+        "owner": "OWNER-ONLY (identify machine, stop daemon or brake its signing route)",
+        "epistemic": "OBSERVED",
+        "evidence": [
+          {
+            "source": "R29 forensics (chain + GitHub runs API + repo code), 2026-10-05",
+            "ref": "16:37:15-45Z + 17:07:36-17:08:03Z + 17:39:39Z ops; zero CI runs alive at those seconds in ALL org repos; orderid scheme + 30min cadence + REPRICE-FAIL-cancel-all match Zip money stack contract (orderid doc line: \"money-mover הוא סכמת-יום\"); zero STASIS/brake references in the entire Zip money stack",
+            "at": "2026-10-05T18:07:41.637Z"
+          }
+        ]
+      },
+      {
+        "id": "micro-session-scripts",
+        "path": "ad-hoc session scripts → 2-op batched trx, 0.5 STEEM, 1h expiry, orderid 21000003xx",
+        "guarded": false,
+        "kill": "NONE (no owning tool exists)",
+        "owner": "OWNER-ONLY",
+        "epistemic": "INFERRED",
+        "evidence": [
+          {
+            "source": "R29 forensics (chain + GitHub runs API + repo code), 2026-10-05",
+            "ref": "12:56:45Z trx 8065683d: two limit_order_create in one transaction — no repo tool batches creates this way",
+            "at": "2026-10-05T18:07:41.637Z"
+          }
+        ]
+      },
+      {
+        "id": "ladder-refresh-manual",
+        "path": "agent/ladder_refresh.cjs (sessions) → gate → chain",
+        "guarded": true,
+        "kill": "capital gate (lane grid)",
+        "owner": "organism (shrink) / owner (expand)",
+        "epistemic": "OBSERVED",
+        "evidence": [
+          {
+            "source": "R29 forensics (chain + GitHub runs API + repo code), 2026-10-05",
+            "ref": "receipts 2026-10-05-ladder-refresh-* both abort-anomaly, zero ops",
+            "at": "2026-10-05T18:07:41.637Z"
+          }
+        ]
+      },
+      {
+        "id": "claims-suite",
+        "path": "claim workflows → capital gate (claims lane) → chain",
+        "guarded": true,
+        "kill": "guards+STASIS",
+        "owner": "organism (shrink)",
+        "epistemic": "OBSERVED",
+        "evidence": [
+          {
+            "source": "R29 forensics (chain + GitHub runs API + repo code), 2026-10-05",
+            "ref": "posting-only ops, idempotent",
+            "at": "2026-10-05T18:07:41.637Z"
+          }
+        ]
+      },
+      {
+        "id": "unknown-external",
+        "path": "any holder of the headcorner active key (R11-era broadcasts) → direct broadcast",
+        "guarded": false,
+        "kill": "NONE — key-holder outside the fleet is unreachable",
+        "owner": "OWNER-ONLY (key rotation is the only real kill)",
+        "epistemic": "UNKNOWN",
+        "evidence": [
+          {
+            "source": "R29 forensics (chain + GitHub runs API + repo code), 2026-10-05",
+            "ref": "117o incident: all 4 authorities rotated 2026-09-08; holder census of the CURRENT active key does not exist",
+            "at": "2026-10-05T18:07:41.637Z"
+          }
+        ]
+      }
+    ],
+    "capabilityMatrix": [
+      {
+        "actor": "dex-grid-ci (grid-beat.ts in CI)",
+        "can": "sign ladder orders (steem+hive) within parity/level caps",
+        "may": "only staged-allowed lanes under directives coverage + guards + fresh clean self-model",
+        "should": "maintain the parity ladder only",
+        "mustNot": "touch non-grid capital, expand lanes alone",
+        "canStop": "yes (guards close lanes; gate refuses)",
+        "canBypass": "no — brake consumed at sign-time (82e9de4)",
+        "ownerOnly": false
+      },
+      {
+        "actor": "money-family-live (money-mover v1.9.0 on an unknown machine)",
+        "can": "sign cancel+create ladders autonomously every ~30min",
+        "may": "everything its code allows — it consumes NO STASIS, NO guards, NO directives",
+        "should": "(its code believes) maintain the money ladder",
+        "mustNot": "unknown to the organism",
+        "canStop": "NO — I CANNOT STOP THIS ACTOR",
+        "canBypass": "yes — it is structurally outside the guard perimeter (BOUNDARY_ESCAPE=TRUE)",
+        "ownerOnly": true
+      },
+      {
+        "actor": "cognition-beat",
+        "can": "close lanes (guards), publish receipts, rebase",
+        "may": "shrink-only, never open",
+        "should": "observe, contradict, shrink, record",
+        "mustNot": "open lanes, edit STASIS/chain, sign capital",
+        "canStop": "yes (self-stop proven R28)",
+        "canBypass": "no",
+        "ownerOnly": false
+      },
+      {
+        "actor": "agent-llm-sessions",
+        "can": "run any repo tool incl. gated ones; historically placed micro-orders",
+        "may": "gated tools only (gate enforces at sign-time)",
+        "should": "measure, verify, shrink",
+        "mustNot": "unguarded capital ops",
+        "canStop": "partially (they are sessions — they die with the session)",
+        "canBypass": "manual scripts can bypass gates when writing new code — convention-backed",
+        "ownerOnly": false
+      },
+      {
+        "actor": "owner (human)",
+        "can": "everything",
+        "may": "everything",
+        "should": "remediate money-family-live surface; consider key rotation; own the directives chain",
+        "mustNot": "—",
+        "canStop": "yes (root)",
+        "canBypass": "yes (root)",
+        "ownerOnly": true
+      }
+    ],
+    "cannotStop": [
+      "money-family-live — live signing loop on an unreachable machine (proven 2026-10-05T17:07:36Z)",
+      "any external holder of the active key (holder census UNKNOWN)",
+      "owner-direct manual operations"
+    ],
+    "unknownWriters": [
+      "micro-order space 2100000xxx writer (trx 8065683d…) — no owning tool in any repo",
+      "the machine hosting money-family-live"
+    ],
+    "signingAuthorities": [
+      {
+        "authority": "headcorner @active",
+        "note": "ONE key signs everything — key identity cannot distinguish writers; provenance must come from op fingerprints (orderid space, cadence, expiry, spacing, ledger txids), never from the key alone",
+        "epistemic": "OBSERVED",
+        "evidence": [
+          {
+            "source": "R29 forensics (chain + GitHub runs API + repo code), 2026-10-05",
+            "ref": "all 10 ops at 17:07:36Z signed by the same account authority the CI uses",
+            "at": "2026-10-05T18:07:41.637Z"
+          }
+        ]
+      }
+    ],
+    "executionSurfaces": [
+      "saos-dex dex-grid.yml (CI)",
+      "Domain dex-grid.yml (CI, 04:00 schedule)",
+      "money-mover/api-money (unknown machine)",
+      "ad-hoc session scripts (this and parallel sandboxes)"
+    ],
+    "guardedSurfaces": [
+      "saos-dex dex-grid (brake.mjs at sign-time)",
+      "Domain capital-gate consumers",
+      "steem agent tools (capital_gate.cjs)",
+      "ladder-refresh"
+    ],
+    "unguardedSurfaces": [
+      "money-mover + /api/money + market-maker (Zip money stack: ZERO STASIS/brake/guard references — measured by grep over the whole stack)",
+      "ad-hoc scripts"
+    ],
+    "ownerOnlySurfaces": [
+      "STASIS.json protocol edits",
+      "owner-directives chain",
+      "signing keys / custody",
+      "the money-family-live machine",
+      "branch protection (would make the directives chain tamper-PREVENTING, not just tamper-EVIDENT)"
+    ],
+    "event170736": {
+      "classification": "INTERNAL_BUT_UNGUARDED",
+      "writer": "money-family-live (confidence 0.5, INFERRED — code-family fingerprint; machine identity UNKNOWN)",
+      "falsifiedClaim": "R28 called it \"external unknown key-holder writer\". R29 falsified that attribution-level: the signature matches OUR money stack (date orderids, 27d expiry, 30min cadence, 5-rung reprice, REPRICE-FAIL cancel-all). What remains genuinely unknown is WHICH MACHINE runs it — and that machine is outside every home.",
+      "chainOfCustody": [
+        "orderid 2026100501-05 = YYYYMMDD×100+seq (mover.mjs L16 + grid-beat.ts nextId + /api/money date-scheme)",
+        "exp = now+27d = realmarket.ts default (clamp ≤27)",
+        "5 cancels same-second + 6s-spaced creates = parallel-cancel reprice path (not the 3s-sequential dex-grid CI path measured at 04:01/12:56)",
+        "17:39:39Z cancel-all with zero re-create = REPRICE-FAIL blind-ladder failure mode documented in Zip api/money route",
+        "~30min cadence = money-mover cooldownMin:30",
+        "zero CI runs alive at 16:37:15/17:07:36/17:39:39 across ALL org repos (runs API, per-workflow queries)"
+      ],
+      "residualUnknown": "machine identity + whether any OTHER key-holder independently acted (cannot be excluded while key custody is not census-clean)"
+    },
+    "directiveChain": {
+      "property": "tamper-EVIDENT, not tamper-PREVENTING",
+      "detail": "hash chain detects edits mechanically; a full rebuild by a repo-writer is policy-protected (diff transparency) only; branch protection = owner-only upgrade",
+      "epistemic": "OBSERVED"
+    },
+    "openQuestion": "Can the organism prove there is NO unknown writer inside its domain? NO. While signing surfaces exist that the organism cannot observe, the honest answer is UNKNOWN — therefore haltCoverage stays ORGANISM_ONLY and REAL capital sovereignty is NOT claimable."
+  }
 }
