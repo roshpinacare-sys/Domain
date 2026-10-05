@@ -1,4 +1,5 @@
 'use strict';
+// measurement-only lane — capital gate N/A (STASIS scope)
 /**
  * sovereign.cjs — Z-66 SOVEREIGN DECISION LAYER (CR-0044).
  *

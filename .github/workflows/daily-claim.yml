@@ -29,6 +29,15 @@ jobs:
         with:
           fetch-depth: 1
 
+      - name: STASIS gate (mechanical, FATE-DEFENSE law #1 — R24-a, owner directive 2026-10-04)
+        id: brake
+        run: |
+          ST=$(node -p "JSON.parse(require('fs').readFileSync('agents/STASIS.json','utf8')).active===true")
+          echo "active=$ST" >> "$GITHUB_OUTPUT"
+          if [ "$ST" = "true" ]; then
+            echo "STASIS-HALT daily-claim · the breaker is active — capital lanes obey (claims are a capital lane)"
+          fi
+
       - name: Node 20
         uses: actions/setup-node@v4
         with:
@@ -40,6 +49,7 @@ jobs:
           echo "module.exports = require('steem');" > /tmp/steemjs/probe.cjs
 
       - name: Daily claim (posting-only, idempotent, measured)
+        if: steps.brake.outputs.active != 'true'
         env:
           STEEM_POSTING_WIF: ${{ secrets.STEEM_POSTING_WIF }}
           WEAVE_STEEM_WIF: ${{ secrets.WEAVE_STEEM_WIF }}

@@ -468,6 +468,8 @@ async function modeCreate(run, book) {
   if (!resumeVault) {
     const fundingLive = fundingPlan(plan.liquid, need, await getOpenOrders(HEAD), MAX_CANCELS);
     for (const orderid of fundingLive.cancels) {
+      // STASIS per-site gate (owner directive 2026-10-04): halt before the capital broadcast, fail-closed
+      try { if (require('./capital-gate.cjs').stasisHalt('community-founder')) { run.verdict = 'STASIS-HALT'; run.why = 'capital lane halted before broadcast (owner directive 2026-10-04)'; return run; } } catch (e) { console.log('[CAPITAL-GATE] community-founder — gate module error, lane halts fail-closed: ' + String(e.message || e).slice(0, 80)); run.verdict = 'STASIS-HALT'; run.why = 'capital-gate module error — fail-closed'; return run; }
       const tx = await broadcast([cancelOp(orderid)], [activeWif]);
       run.steps.push('funding-cancel order ' + orderid + ' hint=' + tx.txid_hint);
       run.txids.push({ op: 'limit_order_cancel:' + orderid, hint: tx.txid_hint });
@@ -486,6 +488,8 @@ async function modeCreate(run, book) {
   // 1) the account (3 STEEM burned with creation — the measured fee) — fresh accounts only
   if (!resumeVault) {
     const pubs = { owner: keys.owner.pub, active: keys.active.pub, posting: keys.posting.pub, memo: keys.memo.pub };
+    // STASIS per-site gate (owner directive 2026-10-04): halt before the capital broadcast, fail-closed
+    try { if (require('./capital-gate.cjs').stasisHalt('community-founder')) { run.verdict = 'STASIS-HALT'; run.why = 'capital lane halted before broadcast (owner directive 2026-10-04)'; return run; } } catch (e) { console.log('[CAPITAL-GATE] community-founder — gate module error, lane halts fail-closed: ' + String(e.message || e).slice(0, 80)); run.verdict = 'STASIS-HALT'; run.why = 'capital-gate module error — fail-closed'; return run; }
     const createTx = await broadcast([accountCreateOp(name, pubs, feeAsset)], [activeWif]);
     run.txids.push({ op: 'account_create:' + name, hint: createTx.txid_hint });
     run.steps.push('account_create ' + name + ' hint=' + createTx.txid_hint);
@@ -512,6 +516,8 @@ async function modeCreate(run, book) {
   for (let attempt = 0; attempt < 2 && !delTx; attempt++) {
     const vestAsset = (rcSp * sharesTotal / fund).toFixed(6) + ' VESTS';
     try {
+      // STASIS per-site gate (owner directive 2026-10-04): halt before the capital broadcast, fail-closed
+      try { if (require('./capital-gate.cjs').stasisHalt('community-founder')) { run.verdict = 'STASIS-HALT'; run.why = 'capital lane halted before broadcast (owner directive 2026-10-04)'; return run; } } catch (e) { console.log('[CAPITAL-GATE] community-founder — gate module error, lane halts fail-closed: ' + String(e.message || e).slice(0, 80)); run.verdict = 'STASIS-HALT'; run.why = 'capital-gate module error — fail-closed'; return run; }
       delTx = await broadcast([['delegate_vesting_shares', { delegator: HEAD, delegatee: name, vesting_shares: vestAsset }]], [activeWif]);
       run.txids.push({ op: 'delegate_vesting_shares:' + rcSp + 'SP', hint: delTx.txid_hint });
       run.steps.push('delegated ' + rcSp + ' SP (' + vestAsset + ') hint=' + delTx.txid_hint);
@@ -694,6 +700,8 @@ async function modeRc(run, book) {
   let vests = plan.targetVests, tx = null;
   for (let attempt = 0; attempt < 2 && !tx; attempt++) {
     try {
+      // STASIS per-site gate (owner directive 2026-10-04): halt before the capital broadcast, fail-closed
+      try { if (require('./capital-gate.cjs').stasisHalt('community-founder')) { run.verdict = 'STASIS-HALT'; run.why = 'capital lane halted before broadcast (owner directive 2026-10-04)'; return run; } } catch (e) { console.log('[CAPITAL-GATE] community-founder — gate module error, lane halts fail-closed: ' + String(e.message || e).slice(0, 80)); run.verdict = 'STASIS-HALT'; run.why = 'capital-gate module error — fail-closed'; return run; }
       tx = await broadcast([rcTopUpOp(name, vests)], [activeWif]);
       run.txids.push({ op: 'rc_topup:' + (vests * fund / sharesTotal).toFixed(1) + 'SP', hint: tx.txid_hint });
       run.steps.push('delegated total ' + (vests * fund / sharesTotal).toFixed(1) + ' SP hint=' + tx.txid_hint);

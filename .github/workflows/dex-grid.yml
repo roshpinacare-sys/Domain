@@ -42,6 +42,20 @@ jobs:
           token: ${{ secrets.ZIP_PAT }}
           fetch-depth: 1
 
+      # R24-a (owner directive 2026-10-04): this twin signs CAPITAL ops in the saos-dex home
+      # (grid limit orders + the community create/delegate leg), so it obeys THAT home's brake —
+      # grids/state/STASIS.json (one brake law across both homes; saos-dex brake.mjs is the
+      # canonical reader, this is the mechanical scheduler-level preflight). Fail-closed: an
+      # unreadable brake file fails the step and the job — the twin never signs on doubt.
+      - name: STASIS gate (mechanical, FATE-DEFENSE law #1 — reads the saos-dex home brake)
+        id: brake
+        run: |
+          ST=$(node -p "JSON.parse(require('fs').readFileSync('grids/state/STASIS.json','utf8')).active===true")
+          echo "active=$ST" >> "$GITHUB_OUTPUT"
+          if [ "$ST" = "true" ]; then
+            echo "STASIS-HALT dex-grid · the breaker is active — capital lanes obey (limit orders + community leg)"
+          fi
+
       - name: Bun
         uses: oven-sh/setup-bun@v2
         with:
@@ -110,7 +124,7 @@ jobs:
           echo "reason=the original is not healthy (last: ${CC:-unknown}) — the twin takes over the grid" >> "$GITHUB_OUTPUT"
 
       - name: Grid (read the live book, mark to live feeds, place if armed, publish)
-        if: steps.guard.outputs.takeover == '1' || github.event_name == 'workflow_dispatch'
+        if: steps.brake.outputs.active == 'false' && (steps.guard.outputs.takeover == '1' || github.event_name == 'workflow_dispatch')
         run: bun run grid-beat.ts
         env:
           SAOS_RELAY_AGENT_ACCOUNT: headcorner
@@ -131,7 +145,7 @@ jobs:
       # נתיב-claim ראשון (דלק-RC, אפס-STEEM) ← נתיב-עמלה (3 STEEM מהנזיל-שלנו).
       # אידמפוטנטי + fail-closed + read-back אחרי כל-אופ; HOLD כנה אינו מפיל את הביט.
       - name: Community leg (owner-mandated Steem community — D-024, fail-closed)
-        if: always()
+        if: always() && steps.brake.outputs.active == 'false'
         env:
           SAOS_RELAY_AGENT_ACCOUNT: headcorner
           STEEM_ACTIVE_WIF: ${{ secrets.STEEM_ACTIVE_WIF }}

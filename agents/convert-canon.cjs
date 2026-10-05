@@ -1,4 +1,5 @@
 'use strict';
+// measurement-only lane — capital gate N/A (STASIS scope)
 /**
  * convert-canon.cjs — THE MATURITY CANON (Z-71, CR-0050).
  *

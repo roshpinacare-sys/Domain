@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// measurement-only lane — capital gate N/A (STASIS scope)
 /**
  * earn-audit.cjs — THE FROM-NOTHING PROOF DESK (Z-68, CR-0046)
  * Operator directive: "אם היית חכם היית יכול לייצר גם מכלום ... אל תסמוך על

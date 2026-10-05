@@ -13,6 +13,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with: {fetch-depth: 1}
+      - name: STASIS gate (mechanical, FATE-DEFENSE law #1 — R24-a, owner directive 2026-10-04)
+        id: brake
+        run: |
+          ST=$(node -p "JSON.parse(require('fs').readFileSync('agents/STASIS.json','utf8')).active===true")
+          echo "active=$ST" >> "$GITHUB_OUTPUT"
+          if [ "$ST" = "true" ]; then
+            echo "STASIS-HALT econ-desk · the breaker is active — capital lanes obey (hive-engine market orders)"
+          fi
       - uses: actions/setup-node@v4
         with: {node-version: 20}
       - name: "install signer (hive-js; R-ECON-3)"
@@ -25,6 +33,7 @@ jobs:
           fetch-depth: 1
           path: steem-repo
       - name: "run econ desk"
+        if: steps.brake.outputs.active != 'true'
         env:
           SA_FLEET_KEYS: ${{ secrets.SA_FLEET_KEYS }}
           STEEM_REPO_DIR: steem-repo
