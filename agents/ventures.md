@@ -1,13 +1,13 @@
 # Ventures — the fleet's public business board (two-sided ledger)
 
-_venture-desk v1.2.0 · 2026-10-04T16:13:37.260Z · doctrine: check failed this run (honest) · leg: not readable in this context (canon-liveness names the legs)_
+_venture-desk v1.2.0 · 2026-10-05T05:14:22.273Z · doctrine: check failed this run (honest) · leg: not readable in this context (canon-liveness names the legs)_
 
 Born from the clodfarm study (Z-31): they built the best stop-spending governor we have seen and no earn side at all. We adopt the governor math and bind the missing half as law. Standing truth:
 
-**measured ledger unreachable this run — booked as null, never estimated**
+**earn $-0.0053/day vs burn $4.2771/day — the gap is the mission; every venture's earn side is booked from here on (EARN-GOVERNOR LAW)**
 
-- **EARN-GOVERNOR (measured surfaces):** market desk realized lifetime **3.466847 SWAP.HIVE** ≈ **$0.19859** across 3 fills (fills-ledger, deduped, chain-truthed)
-- **Price oracle (measured this run):** HIVE $0.05728263889783238 · STEEM $0.06324892138648706 · BLURT $null
+- **EARN-GOVERNOR (measured surfaces):** market desk realized lifetime **3.466847 SWAP.HIVE** ≈ **$0.198928** across 3 fills (fills-ledger, deduped, chain-truthed)
+- **Price oracle (measured this run):** HIVE $0.05738 · STEEM $0.062847 · BLURT $0.00130526
 
 ## V1 · Curation house — OPEN
 - **Thesis:** disciplined public-external curation (10 soldiers lane; headcorner lanes steem/hive/blurt owned by the weave daemon) — our votes ARE the traffic
@@ -16,8 +16,8 @@ Born from the clodfarm study (Z-31): they built the best stop-spending governor 
 - **Kill rule:** no measurable curation accrual in 3 consecutive cycles → weight→0 (IDLE)
 - **Evidence:** curation-book.json (marker "soldiers lane of the fleet curation") ✓ · soldiers-curate.cjs (marker "verify-then-sign") ✓ · money-ledger.json (marker "headBlurt") ✓ → mechanism PROVEN in-repo
 - **lastRun:** {"day":"2026-10-04","verified":0,"attempted":0,"soldiersWithKey":10}
-- **laneSurfaces:** {"steem":{"stake":"3810.514 SP","liquid":"23.366 STEEM","debt":"11.241 SBD"},"hive":{"stake":"25.389 HP","votingPower":98,"pending":{"liquid":"0.000 HIVE","debt":"0.000 HBD","vests":"0.000000 VESTS"},"rcPct":96},"blurt":{"stake":"8728.329 BP","votingPower":96.09,"pending":{"liquid":"0.000 BLURT","debt":null,"vests":"0.000000 VESTS"}}}
-- **earn:** measured pending $0 (0 HIVE @$0.05728263889783238)
+- **laneSurfaces:** {"steem":{"stake":"1392.409 SP","liquid":"3.652 STEEM","debt":"0.015 SBD"},"hive":{"stake":"25.39 HP","votingPower":98,"pending":{"liquid":"0.000 HIVE","debt":"0.000 HBD","vests":"0.000000 VESTS"},"rcPct":98.1},"blurt":{"stake":"8728.692 BP","votingPower":97.99,"pending":{"liquid":"0.000 BLURT","debt":null,"vests":"0.000000 VESTS"}}}
+- **earn:** measured pending $0 (0 HIVE @$0.05738, 0 BLURT @$0.00130526)
 - **z34Probe:** soldiers lane verified ALIVE by DRYRUN probe (78 candidates/8 soldiers, 2026-10-02T21:4xZ) — the zero tally that morning was transient, kill-rule NOT triggered
 
 ## V2 · Market desk — OPEN
@@ -29,10 +29,10 @@ Born from the clodfarm study (Z-31): they built the best stop-spending governor 
 - **swapHiveTreasury:** 0
 - **hiveLiquid:** 0.034
 - **railFrontier:** 0
-- **lastDeskRun:** 2026-10-04T05:59:02.988Z
+- **lastDeskRun:** 2026-10-04T20:59:10.983Z
 - **realizedLifetime:** 3.466847 SWAP.HIVE across 3 fills (fills-ledger, deduped, chain-truthed)
-- **realizedLifetimeUsd:** $0.19859 at measured HIVE $0.05728263889783238
-- **earnLineProgress:** one settled wave ($0.19859) already exceeds the 7d line budget ($0.14) — line on pace, rate still measured per-day by KPI oracle
+- **realizedLifetimeUsd:** $0.198928 at measured HIVE $0.05738
+- **earnLineProgress:** one settled wave ($0.198928) already exceeds the 7d line budget ($0.14) — line on pace, rate still measured per-day by KPI oracle
 
 ## V3 · Knowledge house — OPEN
 - **Thesis:** public verified playbooks (rail-health, verify-then-sign, delta-settlement, the two-sided ledger itself) as the authority funnel
@@ -41,7 +41,7 @@ Born from the clodfarm study (Z-31): they built the best stop-spending governor 
 - **Kill rule:** 3 consecutive playbooks with zero engagement → PIVOT lane
 - **Evidence:** knowledge-cards-en.json ✓ · public-wave.cjs ✓ → mechanism PROVEN in-repo
 - **earn:** leading indicators only for now (engagement), no fake USD
-- **latestSample:** {"post":"saos-wog-20261003","votes":11,"payout":"0.001 SBD","at":"2026-10-03T22:44:13.218Z"}
+- **latestSample:** {"post":"saos-wog-20261003","votes":11,"payout":"0.001 SBD","at":"2026-10-04T20:34:20.164Z"}
 
 ## V4 · Content house — OPEN
 - **Thesis:** per-persona expert lanes, zero AI-smell, English public content — support the public, never the echo
@@ -60,7 +60,7 @@ Born from the clodfarm study (Z-31): they built the best stop-spending governor 
 - **Kill rule:** no external fill in 21d → freeze grid spend (IDLE)
 - **Evidence:** routes.json ✓ · route-desk.cjs ✓ → mechanism PROVEN in-repo
 - **lifetimeUsd:** null
-- **earn:** KPI source unreachable this run
+- **earn:** measured lifetime $null
 
 ---
 

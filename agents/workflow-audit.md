@@ -1,6 +1,6 @@
 # Workflow Audit (Z-30 workflow-pruner desk)
 
-Updated: 2026-10-04T10:55:13.200Z UTC. Domain workflows: 53 · Console workflows: 0
+Updated: 2026-10-05T05:13:58.093Z UTC. Domain workflows: 55 · Console workflows: 0
 
 ## Twin groups (same script-set, same repo)
 - none detected
