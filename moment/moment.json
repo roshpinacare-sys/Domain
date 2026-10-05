@@ -1,33 +1,33 @@
 {
  "ok": true,
  "format": "moment-watch-v1",
- "publishedAt": "2026-10-05T22:49:29.791Z",
+ "publishedAt": "2026-10-05T23:21:12.160Z",
  "engine": "Domain/agents/moment-watch · R62 sovereign moment",
  "role": "reads the live moment every 30 minutes (market regime, our parity line vs the live internal book, fuel runway, measured anomalies) and records a deterministic directional call that is only ever scored after its horizon has passed - training as measurement, never as promise",
  "market": {
-  "steemUsd": 0.063466,
-  "steem24h": -0.43158733707074853,
-  "sbdUsd": 0.585547,
-  "btcUsd": 85948,
-  "btc24h": -0.45578213360650355,
+  "steemUsd": 0.063266,
+  "steem24h": -0.8750582630736414,
+  "sbdUsd": 0.585745,
+  "btcUsd": 85867,
+  "btc24h": -0.8667674971041508,
   "fearGreed": {
    "value": 70,
    "label": "Greed"
   }
  },
- "paritySbdPerSteem": 0.10838754190526122,
+ "paritySbdPerSteem": 0.10800945804061496,
  "liveBook": {
   "bestBid": 0.100217,
-  "bestAsk": 0.10058710592949163,
-  "bidsDepthSbd": 2937.36,
-  "asksDepthSteem": 196.84,
-  "levels": 15,
-  "bidSurplusBps": -754
+  "bestAsk": 0.10097665488744817,
+  "bidsDepthSbd": 2927.99,
+  "asksDepthSteem": 243.59,
+  "levels": 14,
+  "bidSurplusBps": -721
  },
  "regime": {
   "label": "RISK_ON",
   "drivers": [
-   "BTC -0.5%",
+   "BTC -0.9%",
    "F&G 70"
   ],
   "thresholds": {
@@ -39,12 +39,12 @@
   }
  },
  "runway": {
-  "active": true,
-  "weeklySp": 475.9505891291766,
-  "nextPayment": "2026-10-10T02:01:27",
-  "remainingSp": 1903.8023565154665,
-  "weeklyUsd": 30.21,
-  "treasuryUsd": 71.47
+  "active": false,
+  "weeklySp": 0,
+  "nextPayment": "1969-12-31T23:59:59",
+  "remainingSp": 0,
+  "weeklyUsd": null,
+  "treasuryUsd": 71.24
  },
  "grid": {
   "verdict": "ARMED-LIVE",
@@ -82,17 +82,12 @@
   {
    "kind": "parity-edge",
    "tone": "good",
-   "text": "עומק-קנייה חי 754bps מתחת לקו-הזהות (bid 0.1002 מול parity 0.1084) — עודף מדוד לגריד."
+   "text": "עומק-קנייה חי 721bps מתחת לקו-הזהות (bid 0.1002 מול parity 0.1080) — עודף מדוד לגריד."
   },
   {
    "kind": "sbd-inventory",
    "tone": "warn",
    "text": "צוואר-הקנייה של הגריד: buy-side waiting for SBD inventory: 0.013 SBD commitable < 0.15 needed"
-  },
-  {
-   "kind": "fuel",
-   "tone": "info",
-   "text": "דלק נוחת 2026-10-10 — ≈476 SP ≈ 30.2$ בסימון חי."
   },
   {
    "kind": "deposits",
