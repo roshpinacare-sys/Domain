@@ -1,11 +1,28 @@
 {
- "at": "2026-10-05T05:13:58.093Z",
+ "at": "2026-10-06T04:56:31.008Z",
  "agent": "workflow-audit",
  "count": {
   "domain": 55,
   "console": 0
  },
- "twins": [],
+ "twins": [
+  {
+   "repo": "Domain",
+   "signature": "agents/STASIS.js",
+   "files": [
+    "economy-engine.yml",
+    "ladder-refresh.yml"
+   ]
+  }
+ ],
  "crossRepoDupes": [],
- "plan": []
+ "plan": [
+  {
+   "keep": "economy-engine.yml",
+   "tombstone": [
+    "ladder-refresh.yml"
+   ],
+   "action": "set on: workflow_dispatch only (or delete if no history), after one green manual run"
+  }
+ ]
 }
