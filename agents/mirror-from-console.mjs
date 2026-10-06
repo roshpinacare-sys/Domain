@@ -22,7 +22,7 @@
 // dex-mirror :52 · agent-verify :55 דו-שעתי · weave-mirror :57).
 // אפס-סודות: קריאה ציבורית בלבד + הטוקן של הריפו הזה.
 
-import { readFileSync, writeFileSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
 
 const SRC = "https://roshpinacare-sys.github.io/Console";
 const MAX_SOURCE_AGE_H = 48;
@@ -93,6 +93,10 @@ for (const { path: rel, ts } of DATA) {
       } catch { changed = true; }
     }
     if (changed) {
+      // r68: ספרייה חדשה (כמו weave/) עשויה שלא להתקיים בבית — יוצרים
+      // אותה לפני הכתיבה (נמדד: writeFileSync זרק ENOENT על weave/)
+      const dir = local.includes("/") ? local.slice(0, local.lastIndexOf("/")) : ".";
+      mkdirSync(dir, { recursive: true });
       writeFileSync(local, text.endsWith("\n") ? text : text + "\n");
       dUpdated++;
       report.data[rel] = { status: "MIRRORED", age: ageNote };
