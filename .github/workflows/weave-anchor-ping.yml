@@ -27,7 +27,7 @@ name: weave-anchor-ping
 
 on:
   schedule:
-    - cron: '9 * * * *' # hourly, offset from every other cadence in the org
+    - cron: '9 */6 * * *' # R67-A: 3h -> 6h
   workflow_dispatch:
     inputs:
       mode:

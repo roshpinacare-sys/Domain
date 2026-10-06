@@ -27,7 +27,7 @@ name: watchdog
 
 on:
   schedule:
-    - cron: '10 * * * *'  # שעתי, בקיזוז מכל שאר המכונות (אין מי שרץ ב-:10)
+    - cron: '10 */3 * * *' # R67-A: 2h -> 3h
   workflow_dispatch:
     inputs:
       stale_h:

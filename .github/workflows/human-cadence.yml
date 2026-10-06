@@ -18,7 +18,7 @@ name: human-cadence
 
 on:
   schedule:
-    - cron: '13 * * * *'   # every hour at :13 — off the busy minutes of the minute-map
+    - cron: '13 */3 * * *' # R67-A: 2h -> 3h
   workflow_dispatch:
     inputs:
       mode:

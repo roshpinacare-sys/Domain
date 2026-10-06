@@ -20,7 +20,7 @@ name: dex-xc
 
 on:
   schedule:
-    - cron: '53 * * * *'   # hourly at :53 — off the busy minutes of the minute-map (:23 router, :41 core, :07 mesh)
+    - cron: '53 */3 * * *' # R67-A: 2h -> 3h
   workflow_dispatch:
 
 permissions:
