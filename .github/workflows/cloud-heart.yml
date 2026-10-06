@@ -38,8 +38,6 @@
 name: cloud-heart
 
 on:
-  schedule:
-    - cron: '17,47 * * * *'  # כל 30 דק', בקיזוז מהמקור (:00/:30 ב-steem)
   workflow_dispatch:
     inputs:
       mode:
@@ -51,7 +49,6 @@ on:
           - auto
           - takeover
           - alive
-
 permissions:
   contents: write
 
