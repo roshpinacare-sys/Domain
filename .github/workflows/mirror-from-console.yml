@@ -9,7 +9,8 @@
 # מה משוקף (מלא ב-agents/mirror-from-console.mjs):
 #   DATA  — agents/registry.json · agents/gh-snapshot.json · dex/money.json
 #           dex/deposits.json · dex/watch.json · truth/latest.json ·
-#           truth/history.json · truth/slo.json
+#           truth/history.json · truth/slo.json · weave/census.json ·
+#           weave/vitals.json · weave/agreement.json (r68)
 #   HTML  — (הוסר ב-Task 14-b, 2026-10-02) אפס שטחי-HTML: Domain היא החזית
 #           הציבורית הריבונית ועורכת את דפיה בביתה; Console מרכז-ההפעלה.
 #           הפיצול מתועד ב-README.md · דוקטרינת הפיצול. ההגנה הכנה (DRIFT)
@@ -52,13 +53,13 @@ jobs:
         run: |
           git config user.name "mirror-from-console"
           git config user.email "mirror-from-console@users.noreply.github.com"
-          git add agents/registry.json agents/gh-snapshot.json dex/money.json dex/deposits.json dex/watch.json truth/latest.json truth/history.json truth/slo.json mirror-report.json
+          git add agents/registry.json agents/gh-snapshot.json dex/money.json dex/deposits.json dex/watch.json truth/latest.json truth/history.json truth/slo.json mirror-report.json weave/census.json weave/vitals.json weave/agreement.json
           if git diff --cached --quiet; then
             echo "mirror unchanged - the bloc books are already ours"
             exit 0
           fi
           for attempt in 1 2 3; do
-            git add agents/registry.json agents/gh-snapshot.json dex/money.json dex/deposits.json dex/watch.json truth/latest.json truth/history.json truth/slo.json mirror-report.json
+            git add agents/registry.json agents/gh-snapshot.json dex/money.json dex/deposits.json dex/watch.json truth/latest.json truth/history.json truth/slo.json mirror-report.json weave/census.json weave/vitals.json weave/agreement.json
             git commit -m "mirror-from-console: $(date -u +%Y-%m-%dT%H:%M:%SZ) · truth outputs mirrored from the Console home (one-bloc, keyless) [skip ci]"
             git pull --rebase origin main
             if git push; then echo "mirror published (attempt ${attempt})"; exit 0; fi
@@ -66,7 +67,7 @@ jobs:
             git checkout -- .
             git reset --hard origin/main
             node agents/mirror-from-console.mjs
-            git add agents/registry.json agents/gh-snapshot.json dex/money.json dex/deposits.json dex/watch.json truth/latest.json truth/history.json truth/slo.json mirror-report.json
+            git add agents/registry.json agents/gh-snapshot.json dex/money.json dex/deposits.json dex/watch.json truth/latest.json truth/history.json truth/slo.json mirror-report.json weave/census.json weave/vitals.json weave/agreement.json
             if git diff --cached --quiet; then
               echo "after re-mirror there is nothing to commit - the bloc books are already ours"
               exit 0
