@@ -80,113 +80,9 @@
    "setRole:member:wog": "206c95d6d4…"
   },
   "finalizedBy": "status-adoption",
-  "lastStatusAt": "2026-10-06T05:24:06.087Z"
+  "lastStatusAt": "2026-10-06T06:29:34.804Z"
  },
  "runs": [
-  {
-   "at": "2026-10-04T06:12:57.656Z",
-   "mode": "create",
-   "steps": [
-    "keys-generated (vault-only, pubs=STM7t6rP6…)",
-    "liquid-after-funding=11.895",
-    "account_create hive-177702 hint=201f2c3852…",
-    "vault-saved (600 perms, outside every repo) — keys can no longer be lost"
-   ],
-   "txids": [
-    {
-     "op": "account_create:hive-177702",
-     "hint": "201f2c3852…"
-    }
-   ],
-   "verdict": "DELEGATE-FAIL",
-   "why": "Assert Exception:available_shares >= op.vesting_shares: Account headcorner does not have enough mana to delegate. requir",
-   "communityPlan": {
-    "name": "hive-177702",
-    "resume": false
-   }
-  },
-  {
-   "at": "2026-10-04T06:14:11.920Z",
-   "mode": "create",
-   "steps": [
-    "RESUME: vault carries hive-177702 with keys — the ceremony continues from the delegation step",
-    "delegate-resized: chain available 18119.1 vests -> 10 SP (chain-truth reservation, never guessed)",
-    "delegated 10 SP (16131.754808 VESTS) hint=1f1616b334…",
-    "setRole admin headcorner hint=201c29f519…",
-    "updateProps hint=1f2c57b9e4…",
-    "setRole member wic hint=1f38326d89…",
-    "setRole member haran hint=201c5e8989…",
-    "setRole member israelnews hint=200a78a76a…",
-    "setRole member siq hint=2025dcfd09…",
-    "setRole member cashmachine hint=1f4b7e68ff…",
-    "setRole member lsa hint=2064a07977…",
-    "setRole member macrame hint=1f17caedae…",
-    "setRole member woq hint=1f6ad0387b…",
-    "setRole member tov hint=20787921f6…",
-    "setRole member wog hint=206c95d6d4…",
-    "read-back: title=@hive-177702 · roles=2 · subs=0 · receivedSP=10.0"
-   ],
-   "txids": [
-    {
-     "op": "delegate_vesting_shares:10SP",
-     "hint": "1f1616b334…"
-    },
-    {
-     "op": "setRole:admin:headcorner",
-     "hint": "201c29f519…"
-    },
-    {
-     "op": "updateProps",
-     "hint": "1f2c57b9e4…"
-    },
-    {
-     "op": "setRole:member:wic",
-     "hint": "1f38326d89…"
-    },
-    {
-     "op": "setRole:member:haran",
-     "hint": "201c5e8989…"
-    },
-    {
-     "op": "setRole:member:israelnews",
-     "hint": "200a78a76a…"
-    },
-    {
-     "op": "setRole:member:siq",
-     "hint": "2025dcfd09…"
-    },
-    {
-     "op": "setRole:member:cashmachine",
-     "hint": "1f4b7e68ff…"
-    },
-    {
-     "op": "setRole:member:lsa",
-     "hint": "2064a07977…"
-    },
-    {
-     "op": "setRole:member:macrame",
-     "hint": "1f17caedae…"
-    },
-    {
-     "op": "setRole:member:woq",
-     "hint": "1f6ad0387b…"
-    },
-    {
-     "op": "setRole:member:tov",
-     "hint": "20787921f6…"
-    },
-    {
-     "op": "setRole:member:wog",
-     "hint": "206c95d6d4…"
-    }
-   ],
-   "verdict": "READ-BACK-WEAK",
-   "why": null,
-   "communityPlan": {
-    "name": "hive-177702",
-    "resume": true
-   }
-  },
   {
    "at": "2026-10-04T06:15:43.666Z",
    "mode": "status",
@@ -2042,14 +1938,56 @@
     "soldiersOnHive": 10,
     "steemHouseOnHive": false
    }
+  },
+  {
+   "at": "2026-10-06T06:29:34.372Z",
+   "mode": "status",
+   "steps": [
+    "chain: hive-177702 title=The Clubhouse · roles=12 · subs=6 · receivedSP=10.0",
+    "chain-proof: steem=true · hive=false → STEEM-CHAIN"
+   ],
+   "txids": [],
+   "verdict": "COMMUNITY-LIVE",
+   "why": null,
+   "communityPlan": null,
+   "chainProof": {
+    "name": "hive-177702",
+    "existsSteem": true,
+    "existsHive": false,
+    "badge": "STEEM-CHAIN",
+    "checkedAt": "2026-10-06T06:29:34.804Z"
+   }
+  },
+  {
+   "at": "2026-10-06T06:29:34.837Z",
+   "mode": "hive",
+   "steps": [
+    "hive fee=3.000 HIVE · headcorner liquid=0.034 · need=3.050 · orders=0",
+    "soldiers-on-hive=10/10 · names-free=hive-177702 · steem-house-on-hive=no",
+    "authority=NO-KEYS · vault=absent · stasis=HALT"
+   ],
+   "txids": [],
+   "verdict": "HOME-ABSENT-UNKEYED",
+   "why": "no Hive key material is held (measured: headcorner hive active pub STM8c9vp3… ≠ the held steem pub) — the desk cannot sign what it does not hold",
+   "communityPlan": null,
+   "hivePlan": {
+    "fee": "3.000 HIVE",
+    "liquid": 0.034,
+    "need": 3.05,
+    "authority": "NO-KEYS",
+    "chainPubPrefix": "STM8c9vp3",
+    "freeFirst": "hive-177702",
+    "soldiersOnHive": 10,
+    "steemHouseOnHive": false
+   }
   }
  ],
- "at": "2026-10-06T05:24:06.536Z",
+ "at": "2026-10-06T06:29:35.022Z",
  "chainProof": {
   "name": "hive-177702",
   "existsSteem": true,
   "existsHive": false,
   "badge": "STEEM-CHAIN",
-  "checkedAt": "2026-10-06T05:24:06.087Z"
+  "checkedAt": "2026-10-06T06:29:34.804Z"
  }
 }
