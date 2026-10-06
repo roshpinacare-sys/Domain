@@ -1,19 +1,27 @@
 # WEAVE-ANCHOR-PING (DOMAIN HUB) — sovereign cadence for the external-witness anchor line
 #
-# The measured gap (Task 18, 2026-10-02): Zip's weave-anchor-lines is dispatch-only
-# (workflow_dispatch) and its pinger lived in the sandbox — every sandbox reset orphans
-# the chain and the saos.weave.core.v1 core anchor goes stale (observed: last green
-# heart 00:00:27Z, then 21+ hours of silence; A31 red; agent-verify 52/53).
+# 2026-10-06 · senior-engineer round (measured): the hourly dispatch into Zip's
+# weave-anchor-lines became a false alarm. Private-repo Actions minutes are
+# exhausted since 09-20 (OL-14, owner-level billing fix pending), so every
+# dispatched run dies at startup (zero steps, no logs) while the SAME machine
+# runs green twice an hour as the Domain twin (weave-anchor-lines.yml HERE, on
+# checkout of Zip via ZIP_PAT) plus weave-heart's backstop dispatch after every
+# beat. Red-in-Zip stopped meaning "the chain is unattended" — the line IS
+# attended, on public minutes.
 #
-# The fix follows the org-gitleaks precedent: the PUBLIC Domain repo owns the cadence
-# (unlimited free Actions minutes) and pings the private Zip workflow through the
-# proven ZIP_PAT checkout token (already in the Domain vault). The anchor line itself
-# still runs in Zip with its own seal/secret discipline — this workflow ONLY pings;
-# it holds no keys and touches no chains.
-#
-# Concurrency: the anchor line has its own concurrency group; a missed ping (overlap)
-# is harmless — GitHub queues/drops per that group. Hourly cadence ≈ the old weave-heart.
-# A ping failure stays visible here (red = the chain needs attention) — fail-honest.
+# The ping keeps its covenant — hourly, fail-honest, red = the chain needs
+# attention — but it now measures the truth directly instead of knocking on a
+# door with no minutes:
+#   1. NUDGE the live twin in this repo (same inputs forwarded; public minutes;
+#      the twin's concurrency group dedupes, a redundant nudge is harmless).
+#   2. VERDICT from measured freshness: the twin's most recent SUCCESSFUL
+#      anchor-lines run must be within the freshness window (default 3.5h —
+#      the bi-hourly cadence + one fully missed cycle of margin). Stale ⇒
+#      exit 1 — honest red, exactly like before, only now it can only mean
+#      "the anchor chain is actually stale".
+# It still holds no keys and touches no chains. The dispatch target moved from
+# the minutes-dead private copy to the living twin — one line of doctrine:
+# ping the machine that can actually run.
 
 name: weave-anchor-ping
 
@@ -23,7 +31,7 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: 'anchor mode forwarded to Zip weave-anchor-lines'
+        description: 'anchor mode forwarded to the twin weave-anchor-lines (auto/dry/verify-only)'
         required: false
         default: 'auto'
         type: choice
@@ -31,9 +39,19 @@ on:
           - auto
           - dry
           - verify-only
+      recover:
+        description: 'recovery txid forwarded to the twin (0x…64hex), empty = none'
+        required: false
+        type: string
+      fresh_h:
+        description: 'freshness window in hours for the verdict (default 3.5)'
+        required: false
+        default: '3.5'
+        type: string
 
 permissions:
   contents: read
+  actions: write # nudge the twin + read its run history (write implies read)
 
 concurrency:
   group: weave-anchor-ping
@@ -44,16 +62,33 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Dispatch Zip weave-anchor-lines (PAT from the Domain vault)
+      - name: Nudge the live twin (public minutes — the machine that can actually run)
         run: |
           MODE="${{ inputs.mode || 'auto' }}"
-          CODE=$(curl -s -o /tmp/ping-out.json -w "%{http_code}" -X POST \
-            -H "Authorization: Bearer ${{ secrets.ZIP_PAT }}" \
-            -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/roshpinacare-sys/Zip/actions/workflows/weave-anchor-lines.yml/dispatches" \
-            -d "{\"ref\":\"main\",\"inputs\":{\"mode\":\"$MODE\"}}")
-          echo "dispatch http_code=$CODE mode=$MODE"
-          if [ "$CODE" != "204" ]; then
-            cat /tmp/ping-out.json
-            echo "PING FAILED — the anchor chain is unattended"; exit 1
+          ARGS=(-f "mode=$MODE")
+          if [ -n "${{ inputs.recover }}" ]; then ARGS+=(-f "recover=${{ inputs.recover }}"); fi
+          CODE=$(gh workflow run weave-anchor-lines.yml --repo roshpinacare-sys/Domain --ref main "${ARGS[@]}" 2>&1; echo "rc=$?")
+          echo "$CODE"
+          if echo "$CODE" | grep -q "rc=0"; then
+            echo "nudge=dispatched mode=$MODE"
+          else
+            echo "nudge=FAILED (the twin could not be dispatched — freshness verdict below is the honest judge)"
           fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Freshness verdict — red only if the anchor chain is truly stale
+        run: |
+          FRESH_H="${{ inputs.fresh_h || '3.5' }}"
+          LAST=$(curl -s -H "Authorization: Bearer ${{ github.token }}" \
+            "https://api.github.com/repos/roshpinacare-sys/Domain/actions/workflows/weave-anchor-lines.yml/runs?status=success&per_page=1")
+          CREATED=$(echo "$LAST" | node -e "const d=JSON.parse(require('fs').readFileSync(0,'utf8')); const r=(d.workflow_runs||[])[0]; console.log(r?r.created_at:'')")
+          if [ -z "$CREATED" ]; then
+            echo "no successful anchor-lines run found — the chain is unattended"; exit 1
+          fi
+          CUT=$(date -u -d "$FRESH_H hours ago" +%Y-%m-%dT%H:%M:%SZ)
+          echo "last-success=$CREATED · window=$FRESH_H h (older than $CUT = stale)"
+          if [[ "$CREATED" < "$CUT" ]]; then
+            echo "STALE — the anchor chain needs attention (no green twin run inside the window)"; exit 1
+          fi
+          echo "FRESH — the twin anchored inside the window; the line is attended"
