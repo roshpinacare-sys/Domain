@@ -1,8 +1,8 @@
-# Earn audit · 2026-10-06T02:48:54.026Z (window 7d, keyless chain-truth)
+# Earn audit · 2026-10-06T03:20:50.656Z (window 7d, keyless chain-truth)
 
 | account | author SBD | author STEEM | curation SP | claimed vests SP | drip arrived STEEM | sold STEEM | recv SBD | bought STEEM | spent SBD | converts SBD | fills | votes | posts |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| headcorner ⚠TRUNC | 0 | 0 | 0.05402 | 0 | 0 | 70.61900000000006 | 7.102999999999999 | 74.675 | 7.738999999999999 | 13.969 | 61 | 9 | 21 |
+| headcorner ⚠TRUNC | 0 | 0 | 0.05402 | 0 | 0 | 64.77900000000001 | 6.5230000000000015 | 74.67500000000001 | 7.739 | 13.969 | 51 | 9 | 21 |
 | cashmachine | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 163 | 10 |
 | haran | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 128 | 5 |
 | israelnews | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 177 | 7 |
@@ -14,6 +14,6 @@
 | wog | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 114 | 4 |
 | woq | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 142 | 8 |
 
-**fleet totals:** {"author_sbd":0,"author_steem":0,"author_vests":0,"curation_vests":87.133292,"claimed_steem":0,"claimed_sbd":0,"claimed_vests":0,"drip_arrived_steem":0,"transfer_in_steem":0.002,"transfer_in_sbd":0,"transfer_out_steem":0,"sold_steem":70.619,"recv_sbd":7.103,"bought_steem":74.675,"spent_sbd":7.739,"fills":61,"votes":1425,"posts":83,"converts_sbd":13.969,"ops":5233,"curation_sp":0.05402,"author_vests_sp":0,"claimed_vests_sp":0,"walk_pages":57}
+**fleet totals:** {"author_sbd":0,"author_steem":0,"author_vests":0,"curation_vests":87.133292,"claimed_steem":0,"claimed_sbd":0,"claimed_vests":0,"drip_arrived_steem":0,"transfer_in_steem":0.002,"transfer_in_sbd":0,"transfer_out_steem":0,"sold_steem":64.779,"recv_sbd":6.523,"bought_steem":74.675,"spent_sbd":7.739,"fills":51,"votes":1425,"posts":83,"converts_sbd":13.969,"ops":5233,"curation_sp":0.05402,"author_vests_sp":0,"claimed_vests_sp":0,"walk_pages":57}
 
 _feed: {"base":"58283593.263 SBD","quote":"559883768.276 STEEM","steem_usd_implied":0.104099} — every number above is counted from chain ops, not from books_
