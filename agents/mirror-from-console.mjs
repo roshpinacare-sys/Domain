@@ -37,6 +37,11 @@ const DATA = [
   { path: "truth/latest.json", ts: (d) => d.at },
   { path: "truth/history.json", ts: (d) => (Array.isArray(d.runs) && d.runs.length && d.runs[d.runs.length - 1].at) || null },
   { path: "truth/slo.json", ts: (d) => d.generatedAt },
+  // r68: ספרי-מנועי-השרשרת (חוק r68 ב-BLOC — מחושבים ב-Console בלבד,
+  // Domain משקף ומציג, לעולם לא מחשב מחדש)
+  { path: "weave/census.json", ts: (d) => d.generatedAt },
+  { path: "weave/vitals.json", ts: (d) => d.generatedAt },
+  { path: "weave/agreement.json", ts: (d) => d.generatedAt },
 ];
 
 // HTML: שטחי-התנועה הכפולים — הוסרו מהשיקוף ב-Task 14-b (2026-10-02):
