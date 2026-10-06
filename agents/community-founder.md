@@ -1,6 +1,6 @@
 # community-founder — הבית הקהילתי (CR-0066)
 
-עודכן: 2026-10-06T18:26:22.010Z
+עודכן: 2026-10-06T19:22:24.343Z
 
 ## הקהילה חיה
 - שם-חשבון: hive-177702
@@ -12,17 +12,10 @@
 
 ## שרשרת-האם (הוכחה חיה, R38)
 - פס-דין: STEEM-CHAIN
-- נבדק חי: steem=true · hive=false · ב-2026-10-06T18:26:21.684Z
+- נבדק חי: steem=true · hive=false · ב-2026-10-06T19:22:24.044Z
 - הסבר: "hive-" בשם הוא קונבנציית-hivemind על Steem (סוג 1 = journal), לא רשת Hive
 
 ## ריצות אחרונות
-- [2026-10-06T13:26:06.924Z] status → COMMUNITY-LIVE
-  - chain: hive-177702 title=The Clubhouse · roles=12 · subs=6 · receivedSP=10.0
-  - chain-proof: steem=true · hive=false → STEEM-CHAIN
-- [2026-10-06T13:26:07.937Z] hive → HOME-ABSENT-UNKEYED · no Hive key material is held (measured: headcorner hive active pub STM8c9vp3… ≠ the held steem pub) — the desk cannot sign what it does not hold
-  - hive fee=3.000 HIVE · headcorner liquid=0.034 · need=3.050 · orders=0
-  - soldiers-on-hive=10/10 · names-free=hive-177702 · steem-house-on-hive=no
-  - authority=NO-KEYS · vault=absent · stasis=HALT
 - [2026-10-06T14:26:04.262Z] status → COMMUNITY-LIVE
   - chain: hive-177702 title=The Clubhouse · roles=12 · subs=6 · receivedSP=10.0
   - chain-proof: steem=true · hive=false → STEEM-CHAIN
@@ -55,6 +48,13 @@
   - chain: hive-177702 title=The Clubhouse · roles=12 · subs=6 · receivedSP=10.0
   - chain-proof: steem=true · hive=false → STEEM-CHAIN
 - [2026-10-06T18:26:21.706Z] hive → HOME-ABSENT-UNKEYED · no Hive key material is held (measured: headcorner hive active pub STM8c9vp3… ≠ the held steem pub) — the desk cannot sign what it does not hold
+  - hive fee=3.000 HIVE · headcorner liquid=0.034 · need=3.050 · orders=0
+  - soldiers-on-hive=10/10 · names-free=hive-177702 · steem-house-on-hive=no
+  - authority=NO-KEYS · vault=absent · stasis=HALT
+- [2026-10-06T19:22:22.936Z] status → COMMUNITY-LIVE
+  - chain: hive-177702 title=The Clubhouse · roles=12 · subs=6 · receivedSP=10.0
+  - chain-proof: steem=true · hive=false → STEEM-CHAIN
+- [2026-10-06T19:22:24.077Z] hive → HOME-ABSENT-UNKEYED · no Hive key material is held (measured: headcorner hive active pub STM8c9vp3… ≠ the held steem pub) — the desk cannot sign what it does not hold
   - hive fee=3.000 HIVE · headcorner liquid=0.034 · need=3.050 · orders=0
   - soldiers-on-hive=10/10 · names-free=hive-177702 · steem-house-on-hive=no
   - authority=NO-KEYS · vault=absent · stasis=HALT
