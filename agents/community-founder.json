@@ -80,49 +80,9 @@
    "setRole:member:wog": "206c95d6d4…"
   },
   "finalizedBy": "status-adoption",
-  "lastStatusAt": "2026-10-06T02:23:25.553Z"
+  "lastStatusAt": "2026-10-06T03:23:31.960Z"
  },
  "runs": [
-  {
-   "at": "2026-10-04T05:58:31.816Z",
-   "mode": "create",
-   "steps": [
-    "keys-generated (vault-only, pubs=STM8T91jH…)",
-    "funding-cancel order 2026100414 hint=2009d83ac4…",
-    "liquid-after-funding=0.011"
-   ],
-   "txids": [
-    {
-     "op": "limit_order_cancel:2026100414",
-     "hint": "2009d83ac4…"
-    }
-   ],
-   "verdict": "FUNDING-SHORT",
-   "why": "liquid 0.011 < 3.050",
-   "communityPlan": {
-    "name": "hive-177701"
-   }
-  },
-  {
-   "at": "2026-10-04T06:00:12.352Z",
-   "mode": "create",
-   "steps": [
-    "keys-generated (vault-only, pubs=STM8dhn4m…)",
-    "funding-cancel order 2026100413 hint=1f45300a9c…",
-    "liquid-after-funding=0.014"
-   ],
-   "txids": [
-    {
-     "op": "limit_order_cancel:2026100413",
-     "hint": "1f45300a9c…"
-    }
-   ],
-   "verdict": "FUNDING-SHORT",
-   "why": "liquid 0.014 < 3.050",
-   "communityPlan": {
-    "name": "hive-177701"
-   }
-  },
   {
    "at": "2026-10-04T06:01:42.585Z",
    "mode": "create",
@@ -2003,14 +1963,56 @@
     "soldiersOnHive": 10,
     "steemHouseOnHive": false
    }
+  },
+  {
+   "at": "2026-10-06T03:23:30.801Z",
+   "mode": "status",
+   "steps": [
+    "chain: hive-177702 title=The Clubhouse · roles=12 · subs=6 · receivedSP=10.0",
+    "chain-proof: steem=true · hive=false → STEEM-CHAIN"
+   ],
+   "txids": [],
+   "verdict": "COMMUNITY-LIVE",
+   "why": null,
+   "communityPlan": null,
+   "chainProof": {
+    "name": "hive-177702",
+    "existsSteem": true,
+    "existsHive": false,
+    "badge": "STEEM-CHAIN",
+    "checkedAt": "2026-10-06T03:23:31.960Z"
+   }
+  },
+  {
+   "at": "2026-10-06T03:23:32.083Z",
+   "mode": "hive",
+   "steps": [
+    "hive fee=3.000 HIVE · headcorner liquid=0.034 · need=3.050 · orders=0",
+    "soldiers-on-hive=10/10 · names-free=hive-177702 · steem-house-on-hive=no",
+    "authority=NO-KEYS · vault=absent · stasis=HALT"
+   ],
+   "txids": [],
+   "verdict": "HOME-ABSENT-UNKEYED",
+   "why": "no Hive key material is held (measured: headcorner hive active pub STM8c9vp3… ≠ the held steem pub) — the desk cannot sign what it does not hold",
+   "communityPlan": null,
+   "hivePlan": {
+    "fee": "3.000 HIVE",
+    "liquid": 0.034,
+    "need": 3.05,
+    "authority": "NO-KEYS",
+    "chainPubPrefix": "STM8c9vp3",
+    "freeFirst": "hive-177702",
+    "soldiersOnHive": 10,
+    "steemHouseOnHive": false
+   }
   }
  ],
- "at": "2026-10-06T02:23:25.754Z",
+ "at": "2026-10-06T03:23:32.852Z",
  "chainProof": {
   "name": "hive-177702",
   "existsSteem": true,
   "existsHive": false,
   "badge": "STEEM-CHAIN",
-  "checkedAt": "2026-10-06T02:23:25.553Z"
+  "checkedAt": "2026-10-06T03:23:31.960Z"
  }
 }
