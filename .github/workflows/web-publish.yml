@@ -12,7 +12,7 @@ name: web-publish
 
 on:
   schedule:
-    - cron: '6,26,46 * * * *'
+    - cron: '46 */2 * * *' # R67-A: was every 20min; now 2h - Zip+roshpina paid dispatches 72/day -> 24/day
   workflow_dispatch:
 
 permissions:

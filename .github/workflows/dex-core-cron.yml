@@ -19,7 +19,7 @@ name: dex-core
 
 on:
   schedule:
-    - cron: '41 * * * *'   # hourly at :41 — off the busy minutes of the minute-map (:23 router, :45 console, :55 verify)
+    - cron: '41 */3 * * *' # R67-A: 2h -> 3h
   workflow_dispatch:
 
 permissions:

@@ -23,7 +23,7 @@ name: arb-mesh
 
 on:
   schedule:
-    - cron: '7 * * * *'   # hourly at :07 — the mesh drafts on the settled core book before the router re-measures at :23
+    - cron: '7 */3 * * *' # R67-A: 2h -> 3h, paired with the 3h router
   workflow_dispatch:
 
 permissions:
