@@ -1,6 +1,6 @@
 # Army Recruitment Board (Z-29 self-recruitment desk)
 
-Updated: 2026-10-05T05:13:59.005Z UTC. The autonomy opens its own roles from live gaps. FILLED = mechanism evidence in-repo. PROPOSED = contract drafted, no implementation yet — the board does not lie.
+Updated: 2026-10-06T04:56:34.040Z UTC. The autonomy opens its own roles from live gaps. FILLED = mechanism evidence in-repo. PROPOSED = contract drafted, no implementation yet — the board does not lie.
 
 Signals: rail="FRESH" (frontier 0h) · newest receipt 0h
 

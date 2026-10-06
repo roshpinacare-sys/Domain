@@ -1,6 +1,6 @@
 # Reconciliation Book (Z-30 books-consul desk)
 
-Updated: 2026-10-05T05:13:56.589Z UTC. Single-writer law: one desk owns each topic. Every capital claim is cross-checked against LIVE chain state per run.
+Updated: 2026-10-06T04:56:28.427Z UTC. Single-writer law: one desk owns each topic. Every capital claim is cross-checked against LIVE chain state per run.
 
 | topic | canonical book | writer | exists | age h |
 |---|---|---|---|---|
@@ -10,7 +10,7 @@ Updated: 2026-10-05T05:13:56.589Z UTC. Single-writer law: one desk owns each top
 | bridge-verdicts | bridge-book.json | bridge-desk | true | 0 |
 | key-authority | capability-matrix.json | capability-matrix | true | 0 |
 
-Live truth: steem null + 0MV · hive 0.034 · HBD 0.003 · BEE 0 · SWAP.HIVE 0.0302069
+Live truth: steem null + 0MV · hive 0.034 · HBD 0.003 · BEE 0 · SWAP.HIVE 0.03020691
 
 Checks: money-ledger.json/references executor account=OK · econ-book.json/references executor account=OK · econ-book.json/swapHive vs live=DRIFT
 
