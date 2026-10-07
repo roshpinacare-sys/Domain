@@ -17,7 +17,7 @@ name: weave-anchor-lines
 
 on:
   schedule:
-    - cron: '33 21 * * *' # R67-C: 4h -> daily 21:33
+    - cron: '33 * * * *' # r68-e: daily -> hourly at :33 - R67-C moved this line to daily and the anchor line went silent for 4h+ (last dispatch 21:45, anchor 21:46, nothing until the 01:52 manual dispatch). The measured protocol cadence is 29-40min (census doctrine); this workflow runs on the PUBLIC repo - zero paid minutes were ever saved by the daily move, only the protocol freshness was lost. Hourly at :33 restores the live line the census reads. weave-heart's daily 16:13 backstop dispatch stays.
   workflow_dispatch:
     inputs:
       mode:
