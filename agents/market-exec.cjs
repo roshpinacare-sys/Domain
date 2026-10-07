@@ -96,6 +96,15 @@ const DEFAULTS = {
   // -2.13% edge on 2026-10-03 — this cap makes buying above realized sells
   // structurally impossible, independent of which lane priced the fill history.
   BUY_EDGE_FLOOR_PCT: 0.3,
+  // SELL-FLOOR LAW (R74): the mirror of the BUY-PREMIUM law. When the ledger's
+  // inventory avg cost is known, NO sell (maker ladder or flow-catch taker) may
+  // be priced below avgCost x (1 + SELL_EDGE_FLOOR_PCT/100). Measured leak:
+  // sells 0.1002 vs inventory cost 0.1031 = -2.85% on every cycle (realized
+  // -0.389 SBD by 2026-10-04, edge -2.30%) — the ladder chased the ask below
+  // the cost basis. The floor makes selling below cost structurally impossible:
+  // ladder levels clamp UP to the floor (they rest above the touch and WAIT
+  // instead of filling at a loss) and the flow taker refuses the dump outright.
+  SELL_EDGE_FLOOR_PCT: 0.3,
 };
 
 const mid = (bid, ask) => (bid + ask) / 2;
@@ -128,18 +137,23 @@ function stacked(target, ownOrders, pct = DEFAULTS.STACK_PCT) {
   return (ownOrders || []).some((o) => Math.abs(o.price - target) / target < pct / 100);
 }
 
-function buildPlan({ liquidSteem, liquidSbd, bid, ask, ownOrders, sellVwap = null, params = DEFAULTS }) {
+function buildPlan({ liquidSteem, liquidSbd, bid, ask, ownOrders, sellVwap = null, avgCost = null, params = DEFAULTS }) {
   const vwapCap = sellVwap != null ? r6(sellVwap * (1 - params.BUY_EDGE_FLOOR_PCT / 100)) : null;
+  // SELL-FLOOR LAW (R74): never price a sell below the inventory cost basis + edge floor
+  const sellFloor = avgCost != null ? r6(avgCost * (1 + params.SELL_EDGE_FLOOR_PCT / 100)) : null;
   const m = mid(bid, ask);
   const sells = [], buys = [], skipped = [];
   const sellCap = liquidSteem * params.SELL_CAP_PCT;
   let used = 0;
 
-  const firstSell = r6(ask - params.FIRST_SELL_OFFSET);
+  let firstSell = r6(ask - params.FIRST_SELL_OFFSET);
+  if (sellFloor != null && firstSell < sellFloor) firstSell = sellFloor; // clamp UP — rest above the touch, never fill at a loss
   const firstBuy = r6(bid - params.FIRST_BUY_OFFSET);
 
   for (let i = 0; i < params.SELL_LEVELS; i++) {
-    const target = r6(i === 0 ? firstSell : firstSell * Math.pow(params.SPACING, i));
+    let target = r6(i === 0 ? firstSell : firstSell * Math.pow(params.SPACING, i));
+    let floored = false;
+    if (sellFloor != null && target < sellFloor) { target = sellFloor; floored = true; }
     const reason = (name) => skipped.push({ kind: 'sell', level: i + 1, target, reason: name });
     if (!inBand(target, m)) { reason('OUT-OF-BAND'); continue; }
     if (stacked(target, ownOrders)) { reason('STACK-EXISTS'); continue; }
@@ -153,6 +167,7 @@ function buildPlan({ liquidSteem, liquidSbd, bid, ask, ownOrders, sellVwap = nul
       amount_to_sell: `${s.amount.toFixed(3)} STEEM`,
       min_to_receive: `${s.receive.toFixed(3)} SBD`,
       target, realized: +s.realized.toFixed(6), err_pct: +(s.err * 100).toFixed(4),
+      floored: floored || undefined, sell_floor: floored ? sellFloor : undefined,
     });
   }
 
@@ -199,14 +214,20 @@ function buildPlan({ liquidSteem, liquidSbd, bid, ask, ownOrders, sellVwap = nul
 // positioned to catch the same flow one tick lower (recon conditional-GO: 0.4%
 // spacing near the touch). Spread-capture cycle: sell @bid → buys @bid−0.1%/−0.4%
 // → flow fills them → measured +0.4-0.8% per round trip by fill-ledger.
-function buildFlowCatchPlan({ liquidSteem, bid, ask, proceedsSbd = 0, ownOrders, sellVwap = null, params = DEFAULTS }) {
+function buildFlowCatchPlan({ liquidSteem, bid, ask, proceedsSbd = 0, ownOrders, sellVwap = null, avgCost = null, params = DEFAULTS }) {
   const m = mid(bid, ask);
   const vwapCap = sellVwap != null ? r6(sellVwap * (1 - params.BUY_EDGE_FLOOR_PCT / 100)) : null;
+  // SELL-FLOOR LAW (R74): the taker leg fills AT the bid — if that bid is below the
+  // inventory cost basis + edge floor, the taker refuses (a dump below cost is the
+  // exact leak this law exists to kill; waiting costs nothing, filling at a loss does).
+  const sellFloor = avgCost != null ? r6(avgCost * (1 + params.SELL_EDGE_FLOOR_PCT / 100)) : null;
   const sells = [], buys = [], skipped = [];
   // taker leg: one marketable sell, capped, floor-guarded
   const cap = liquidSteem * params.FLOW_SELL_CAP_PCT;
   const minPrice = r6(bid * (1 - params.FLOW_FLOOR_PCT));
-  if (!inBand(minPrice, m)) {
+  if (sellFloor != null && minPrice < sellFloor) {
+    skipped.push({ kind: 'flow-taker', target: minPrice, reason: 'SELL-FLOOR', sell_floor: sellFloor });
+  } else if (!inBand(minPrice, m)) {
     skipped.push({ kind: 'flow-taker', target: minPrice, reason: 'OUT-OF-BAND' });
   } else {
     const s = scanSellAmount(minPrice, params.SELL_SIZE_MIN, Math.min(params.SELL_SIZE_MAX, cap));
@@ -342,6 +363,17 @@ function readLedgerSellVwap() {
   } catch (_) { return null; }
 }
 
+// SELL-FLOOR LAW feed (R74): inventory avg cost from the ledger's last row
+// (mu-unit inventory {qty, cost} -> SBD per STEEM). No row / no qty -> null (law silent).
+function readLedgerAvgCost() {
+  try {
+    const j = JSON.parse(fs.readFileSync(process.env.FILL_LEDGER_JSON || path.join(ROOT, 'agents', 'fill-ledger.json'), 'utf8'));
+    const rows = Array.isArray(j) ? j : (j.rows || []);
+    const inv = rows.length ? rows[rows.length - 1].inventory : null;
+    return inv && inv.qty > 0 && inv.cost > 0 ? inv.cost / inv.qty : null;
+  } catch (_) { return null; }
+}
+
 // verify-then-sign: on-chain active authority must match the derived WIF's pubkey
 async function verifyAuthority(node, steem, wif) {
   const pub = steem.auth.wifToPublic(wif);
@@ -458,6 +490,9 @@ async function main() {
     // 3.5 BUY-PREMIUM LAW feed + EDGE-CURE phase (R33, CR-0063 — law 11)
     const sellVwap = readLedgerSellVwap();
     row.sell_vwap_used = sellVwap;
+    const avgCost = readLedgerAvgCost();
+    row.avg_cost_used = avgCost;
+    row.sell_floor_used = avgCost != null ? r6(avgCost * (1 + DEFAULTS.SELL_EDGE_FLOOR_PCT / 100)) : null;
     const cureArmed = mode === 'LIVE' && String(process.env.MARKET_EXEC_CURE || '') === '1';
     if (cureArmed) {
       const cap = sellVwap != null ? r6(sellVwap * (1 - DEFAULTS.BUY_EDGE_FLOOR_PCT / 100)) : null;
@@ -490,8 +525,8 @@ async function main() {
     const flowcatch = String(process.env.MARKET_EXEC_FLOWCATCH || '') === '1';
     row.flowcatch = flowcatch;
     const plan = flowcatch
-      ? buildFlowCatchPlan({ liquidSteem, bid: book.bid, ask: book.ask, proceedsSbd: liquidSbd, ownOrders: ownPre, sellVwap })
-      : buildPlan({ liquidSteem, liquidSbd, bid: book.bid, ask: book.ask, ownOrders: ownPre, sellVwap });
+      ? buildFlowCatchPlan({ liquidSteem, bid: book.bid, ask: book.ask, proceedsSbd: liquidSbd, ownOrders: ownPre, sellVwap, avgCost })
+      : buildPlan({ liquidSteem, liquidSbd, bid: book.bid, ask: book.ask, ownOrders: ownPre, sellVwap, avgCost });
     row.mid = plan.mid; row.planned = [...plan.sells, ...plan.buys].map((p) => ({ ...p }));
     row.skipped = plan.skipped;
     // 5. execute
@@ -524,7 +559,7 @@ async function main() {
         ]);
         const proceedsSbd = f(accMid.sbd_balance);
         row.flow_proceeds_sbd = proceedsSbd;
-        const buyPlan = buildFlowCatchPlan({ liquidSteem: 0, bid: book.bid, ask: book.ask, proceedsSbd, ownOrders: ownPre, sellVwap });
+        const buyPlan = buildFlowCatchPlan({ liquidSteem: 0, bid: book.bid, ask: book.ask, proceedsSbd, ownOrders: ownPre, sellVwap, avgCost });
         for (const b of buyPlan.buys) {
           const placement = { ...b, side: 'buy', broadcast: false, orderid: Math.floor(Date.now() / 1000) % 4294967000 + placements.length + 1 };
           ops.length = 0;
