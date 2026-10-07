@@ -17,14 +17,20 @@
 #           נשארת רדומה ב-agents/mirror-from-console.mjs.
 #   דוח   — mirror-report.json (פומבי, בכל ריצה)
 #
-# תזמון: שעתי ב-:15 (מפת-הדקות ב-Domain ללא חפיפה: moment :12/:42 ·
-# dex-mirror :52 · agent-verify :55 דו-שעתי · weave-mirror :57).
+# תזמון (r68-d): דו-שעתי ב-:11 של השעות האי-זוגיות — אחרי ש-Console
+# השלים את מחזור המנועים של השעה הזוגית (census :08 · agreement :14 ·
+# vitals :50), כך שכל ריצה משקפת את שלושת ספרי הרשת הטריים, והפיגור
+# המרבי של ספר בבית הזה יורד מכ-24ש' לכ-שעה. keyless וציבורי —
+# אפס צריכת-דקות. מפת-הדקות ב-Domain: אין התנגשות ב-:11 אי-זוגי
+# (agent-verify :56 זוגי · watchdog 15:10 · שאר היומיים מפוזרים).
 # הזנקה ידנית אפשרית בכל רגע (workflow_dispatch).
 
 name: mirror-from-console
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '11 1-23/2 * * *'
 permissions:
   contents: write
 
