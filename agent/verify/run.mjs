@@ -118,17 +118,32 @@ async function evaluate(a, baseUrl) {
     const staleHours = Number(a.staleHours ?? 26);
     if (!Number.isFinite(staleHours)) return { id, ok: false, details: "invalid assertion: staleHours is not a number" };
     const rpc = String(a.rpc ?? "https://api.steemit.com");
-    let hist;
+    let hist = [];
     try {
-      const r = await fetch(rpc, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "condenser_api.get_account_history", params: [account, -1, 100] }),
-        signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
-      });
-      const j = await r.json();
-      hist = j?.result;
-      if (!Array.isArray(hist)) return { id, ok: false, details: `rpc returned no history array (HTTP ${r.status})` };
+      // R71c: the witness account now fires hundreds of ops/hour (grid orders +
+      // anchors), so a flat 100-op window can contain no core op even while the
+      // anchor line is alive and firing. Walk the history backwards up to 400
+      // ops so the window reliably CONTAINS an anchor. The verdict logic below
+      // (26h staleness + inversion detection) is unchanged.
+      let start = -1;
+      for (let page = 0; page < 4; page++) {
+        const r = await fetch(rpc, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "condenser_api.get_account_history", params: [account, start, 100] }),
+          signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+        });
+        const j = await r.json();
+        const part = j?.result;
+        if (!Array.isArray(part)) {
+          if (hist.length === 0) return { id, ok: false, details: `rpc returned no history array (HTTP ${r.status})` };
+          break;
+        }
+        hist = hist.concat(part);
+        const firstIdx = Number(part[0]?.[0]);
+        if (!Number.isFinite(firstIdx) || firstIdx <= 0) break;
+        start = firstIdx - 1;
+      }
     } catch (err) {
       return { id, ok: false, details: `rpc fetch failed: ${err?.message ?? err}` };
     }
@@ -147,7 +162,7 @@ async function evaluate(a, baseUrl) {
         nonCore = { id: String(body.id ?? "?"), ts };
       }
     }
-    if (!coreTs) return { id, ok: false, details: `core op ${coreOp} not found in last 100 ops of @${account}` };
+    if (!coreTs) return { id, ok: false, details: `core op ${coreOp} not found in last ${hist.length} ops of @${account}` };
     const coreAgeH = (Date.now() - Date.parse(coreTs + "Z")) / 3_600_000;
     if (coreAgeH <= staleHours) {
       return { id, ok: true, details: `core anchor ${coreAgeH.toFixed(1)}h old (fresh, <= ${staleHours}h)` };
