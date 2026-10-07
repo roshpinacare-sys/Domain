@@ -1,6 +1,6 @@
 # CI Hands — the fleet's hands on its own CI estate (trycua/cua adoption)
 
-_ci-hands v1.0.0 · 2026-10-06T04:58:04.859Z · env-token (redacted) · stasis BRAKE ON_
+_ci-hands v1.0.0 · 2026-10-07T04:58:45.201Z · env-token (redacted) · stasis BRAKE ON_
 
 **CI-HANDS keyless floor: 2/16 reached — the rest booked UNREACHABLE (never invented)**
 
@@ -8,8 +8,8 @@ _ci-hands v1.0.0 · 2026-10-06T04:58:04.859Z · env-token (redacted) · stasis B
 |---|---|---|---|---|---|---|
 | saos-sovereign-platform | — | — | — | — | — | UNREACHABLE (HTTP 404) |
 | steem | — | — | — | — | — | UNREACHABLE (HTTP 404) |
-| Domain | 20 | 20 | 0 | 0 | 0 | measured |
-| Console | 9 | 9 | 0 | 0 | 0 | measured |
+| Domain | 14 | 14 | 0 | 0 | 0 | measured |
+| Console | 11 | 11 | 0 | 0 | 0 | measured |
 | Zip | — | — | — | — | — | UNREACHABLE (HTTP 404) |
 | roshpina | — | — | — | — | — | UNREACHABLE (HTTP 404) |
 | anchor-baseline | — | — | — | — | — | UNREACHABLE (HTTP 404) |

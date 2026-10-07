@@ -1,11 +1,11 @@
 {
   "protocol": "SAOS-FATE-DEFENSE-FWI/1",
-  "at": "2026-10-06T04:57:17.915Z",
+  "at": "2026-10-07T04:58:13.864Z",
   "agent": "fleet-indicators v1.0.0 (Task 22, study: Emergence World arXiv 2606.08367 + 2609.17320)",
   "verdict": "DEGRADED",
   "counts": {
-    "GROW": 6,
-    "DECLINE": 2,
+    "DECLINE": 4,
+    "GROW": 4,
     "HELD": 1
   },
   "indicators": [
@@ -14,10 +14,10 @@
       "name": "Population Health",
       "measures": "persistent organs (live books) alive & fresh — our equivalent of \"agents alive at end of run\"",
       "evidenceSource": "agents/{econ,curation,money-ledger,ventures,fills-ledger,bridge,dex,learning-ledger,recruitment}-book.json .at/.updated < 48h",
-      "value": "9/9",
+      "value": "6/9",
       "breakEven": "≥7/9",
-      "status": "GROW",
-      "note": "all organs alive"
+      "status": "DECLINE",
+      "note": "econ-book.json, curation-book.json, money-ledger.json"
     },
     {
       "id": "F2",
@@ -54,7 +54,7 @@
       "name": "Public Expression",
       "measures": "on-chain learning posts + measured reward samples — expression that produces culture AND receipts",
       "evidenceSource": "agents/learning-ledger.json keys + samples[]",
-      "value": "45 posts · 191 samples",
+      "value": "45 posts · 231 samples",
       "breakEven": "≥20 posts",
       "status": "GROW",
       "note": "their M6 measured volume; ours ties every expression to a chain-measured payout sample"
@@ -74,9 +74,9 @@
       "name": "Economic Vitality & Equity",
       "measures": "real chain balances (liquid + effective SP) in an executor-identified ledger — equity via identity: one executor, one writer, no hoarding ambiguity",
       "evidenceSource": "agents/money-ledger.json .book{executor,headSteemLiquid,headSteemStake} fresh <48h",
-      "value": "headcorner: 3.652 STEEM liquid · 1392.409 SP · book 32h old",
+      "value": "headcorner: 3.652 STEEM liquid · 1392.409 SP · book 56h old",
       "breakEven": "ledger fresh + executor-identified",
-      "status": "GROW",
+      "status": "DECLINE",
       "note": "their economy was 1-CC billboards; ours is signed chain state with a named executor"
     },
     {
@@ -104,20 +104,20 @@
     {
       "book": "econ-book.json",
       "exists": true,
-      "ageHours": 32,
-      "fresh": true
+      "ageHours": 56,
+      "fresh": false
     },
     {
       "book": "curation-book.json",
       "exists": true,
-      "ageHours": 38.3,
-      "fresh": true
+      "ageHours": 62.3,
+      "fresh": false
     },
     {
       "book": "money-ledger.json",
       "exists": true,
-      "ageHours": 32,
-      "fresh": true
+      "ageHours": 56,
+      "fresh": false
     },
     {
       "book": "ventures.json",
@@ -146,7 +146,7 @@
     {
       "book": "learning-ledger.json",
       "exists": true,
-      "ageHours": 14.1,
+      "ageHours": 14.2,
       "fresh": true
     },
     {
