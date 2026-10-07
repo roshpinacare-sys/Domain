@@ -37,19 +37,19 @@ function fail(code, he) {
   process.exit(1);
 }
 
-// normalize any Graphene-family WIF (Steem 0x80 / BLURT 0x5d / …) into a
-// Steem-parseable 0x80 WIF: decode, verify checksum, re-stamp the version
-// byte — the private SCALAR is chain-agnostic (same curve).
+// normalize any Graphene-family WIF into a dhive-parseable WIF.
+// Measured forms: 37 bytes (version+scalar+chk) and 38 bytes
+// (version+scalar+0x01-compressed-flag+chk — the LIVE fleet keys' form).
+// The private SCALAR is chain-agnostic (same curve) — re-stamp 0x80.
 function wifNormalized(wif) {
   try {
     const bytes = bs58.decode(wif.trim());
-    if (bytes.length !== 37) return null;
+    if (bytes.length !== 37 && bytes.length !== 38) return null;
     const chk = crypto.createHash("sha256").update(
-      crypto.createHash("sha256").update(bytes.subarray(0, 33)).digest()
+      crypto.createHash("sha256").update(bytes.subarray(0, bytes.length - 4)).digest()
     ).digest().subarray(0, 4);
-    if (!chk.equals(bytes.subarray(33))) return null;
-    const payload = bytes.subarray(1, 33);
-    const body = Buffer.concat([Buffer.from([0x80]), payload]);
+    if (!chk.equals(bytes.subarray(bytes.length - 4))) return null;
+    const body = Buffer.concat([Buffer.from([0x80]), bytes.subarray(1, 33)]);
     const chk2 = crypto.createHash("sha256").update(
       crypto.createHash("sha256").update(body).digest()
     ).digest().subarray(0, 4);
