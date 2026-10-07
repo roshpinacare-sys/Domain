@@ -102,9 +102,12 @@ jobs:
           # gitleaks defaults to `git log --all` — stale side-refs (dead branches of
           # the same lineage) were dyeing the verdict red while the live line was
           # clean (measured 2026-10-07: steem@main orphan = 32 false findings).
-          ( cd scan && /tmp/gitleaks detect --source . --log-opts="HEAD" --report-format json --report-path /tmp/gl-history.json --redact --no-banner --log-level error )
+          # Repos may carry their own .gitleaks.toml (steem: books allowlist, R244).
+          CFG=""
+          [ -f scan/.gitleaks.toml ] && CFG="--config .gitleaks.toml"
+          ( cd scan && /tmp/gitleaks detect --source . $CFG --log-opts="HEAD" --report-format json --report-path /tmp/gl-history.json --redact --no-banner --log-level error )
           RC_HISTORY=$?
-          ( cd scan && /tmp/gitleaks detect --no-git --source . --report-format json --report-path /tmp/gl-head.json --redact --no-banner --log-level error )
+          ( cd scan && /tmp/gitleaks detect --no-git --source . $CFG --report-format json --report-path /tmp/gl-head.json --redact --no-banner --log-level error )
           RC_HEAD=$?
 
           count_of() { python3 -c "import json,sys;print(len(json.load(open(sys.argv[1]))))" "$1" 2>/dev/null || echo "-1"; }
