@@ -22,6 +22,8 @@
 
 const dhive = require("@hiveio/dhive");
 const sodium = require("libsodium-wrappers");
+const bs58 = require("bs58");
+const crypto = require("crypto");
 
 const PAT = process.env.WEAVE_OPS_PAT || "";
 const MODE = (process.env.REPAIR_MODE || "check").toLowerCase();
@@ -33,6 +35,28 @@ const ANCHOR_FLEET = ["cashmachine", "headcorner", "lsa"];
 function fail(code, he) {
   console.log(`[repair] ✗ ${code} — ${he}`);
   process.exit(1);
+}
+
+// normalize any Graphene-family WIF (Steem 0x80 / BLURT 0x5d / …) into a
+// Steem-parseable 0x80 WIF: decode, verify checksum, re-stamp the version
+// byte — the private SCALAR is chain-agnostic (same curve).
+function wifNormalized(wif) {
+  try {
+    const bytes = bs58.decode(wif.trim());
+    if (bytes.length !== 37) return null;
+    const chk = crypto.createHash("sha256").update(
+      crypto.createHash("sha256").update(bytes.subarray(0, 33)).digest()
+    ).digest().subarray(0, 4);
+    if (!chk.equals(bytes.subarray(33))) return null;
+    const payload = bytes.subarray(1, 33);
+    const body = Buffer.concat([Buffer.from([0x80]), payload]);
+    const chk2 = crypto.createHash("sha256").update(
+      crypto.createHash("sha256").update(body).digest()
+    ).digest().subarray(0, 4);
+    return bs58.encode(Buffer.concat([body, chk2]));
+  } catch {
+    return null;
+  }
 }
 
 async function gh(path, method = "GET", body = null) {
@@ -81,8 +105,10 @@ async function steemAccounts(names) {
   // derive public keys (public information — safe to print)
   const cands = [];
   for (const [username, wif] of entries) {
+    const norm = wifNormalized(wif);
     try {
-      const pub = new dhive.PrivateKey(wif).createPublic("STM").toString();
+      if (!norm) throw new Error("bad checksum/length");
+      const pub = new dhive.PrivateKey(norm).createPublic("STM").toString();
       cands.push({ username, pub });
     } catch {
       cands.push({ username, pub: null });
