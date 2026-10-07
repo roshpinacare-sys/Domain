@@ -127,6 +127,18 @@ async function steemAccounts(names) {
   }
 
   console.log(`[repair] vault entries: ${cands.length} · mode: ${MODE}`);
+  // shape diagnostics — lengths/categories ONLY, zero secret content
+  for (const [username, wif] of entries) {
+    let decoded = null, chkOk = false;
+    try {
+      decoded = bs58.decode(wif.trim());
+      const chk = crypto.createHash("sha256").update(
+        crypto.createHash("sha256").update(decoded.subarray(0, decoded.length - 4)).digest()
+      ).digest().subarray(0, 4);
+      chkOk = chk.equals(decoded.subarray(decoded.length - 4));
+    } catch { /* not base58 */ }
+    console.log(`  · shape @${username}: strlen=${wif.length} head="${wif.slice(0, 2)}" b58bytes=${decoded ? decoded.length : "no"} checksum=${chkOk ? "ok" : "bad"}`);
+  }
   console.log("[repair] MATCH TABLE (public keys + chain authorities only):");
   const matched = [];
   for (const c of cands) {
