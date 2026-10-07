@@ -49,7 +49,25 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        repo: [Adsmarket, Console, Domain, Defi, Project-files, Saosmartwallet, Sdk, Zip, anchor-baseline, roshpina, saos-control-center, saos-dex, saos-jummper, saos-sovereign-foundry, saos-sovereign-platform, steem]
+        # 13-e (R244): each leg judges the repo's LIVE line only — steem's canonical
+        # line is saos-cockpit (default branch; its `main` is a stale orphan side-ref).
+        include:
+          - { repo: Adsmarket, ref: main }
+          - { repo: Console, ref: main }
+          - { repo: Domain, ref: main }
+          - { repo: Defi, ref: main }
+          - { repo: Project-files, ref: main }
+          - { repo: Saosmartwallet, ref: main }
+          - { repo: Sdk, ref: main }
+          - { repo: Zip, ref: main }
+          - { repo: anchor-baseline, ref: main }
+          - { repo: roshpina, ref: main }
+          - { repo: saos-control-center, ref: main }
+          - { repo: saos-dex, ref: main }
+          - { repo: saos-jummper, ref: main }
+          - { repo: saos-sovereign-foundry, ref: main }
+          - { repo: saos-sovereign-platform, ref: main }
+          - { repo: steem, ref: saos-cockpit }
     steps:
       - name: Prepare leg status (pending until the scan overwrites it)
         if: always()
@@ -59,11 +77,11 @@ jobs:
           mkdir -p /tmp/gl-status
           python3 -c 'import json,sys; json.dump({"repo":sys.argv[1],"findingsHistory":None,"findingsHead":None,"conclusion":"pending"}, open(f"/tmp/gl-status/{sys.argv[1]}.json","w"))' "$REPO"
 
-      - name: Checkout ${{ matrix.repo }} (full history)
+      - name: Checkout ${{ matrix.repo }} @ ${{ matrix.ref }} (full history)
         uses: actions/checkout@v4
         with:
           repository: roshpinacare-sys/${{ matrix.repo }}
-          ref: main
+          ref: ${{ matrix.ref }}
           token: ${{ secrets.ZIP_PAT }}
           fetch-depth: 0
           path: scan
@@ -80,7 +98,11 @@ jobs:
           curl -sSL -o /tmp/gl.tgz https://github.com/gitleaks/gitleaks/releases/download/v8.24.3/gitleaks_8.24.3_linux_x64.tar.gz
           tar -xzf /tmp/gl.tgz -C /tmp gitleaks
 
-          ( cd scan && /tmp/gitleaks detect --source . --report-format json --report-path /tmp/gl-history.json --redact --no-banner --log-level error )
+          # 13-e: history verdict = the checked-out (canonical) branch's lineage ONLY.
+          # gitleaks defaults to `git log --all` — stale side-refs (dead branches of
+          # the same lineage) were dyeing the verdict red while the live line was
+          # clean (measured 2026-10-07: steem@main orphan = 32 false findings).
+          ( cd scan && /tmp/gitleaks detect --source . --log-opts="HEAD" --report-format json --report-path /tmp/gl-history.json --redact --no-banner --log-level error )
           RC_HISTORY=$?
           ( cd scan && /tmp/gitleaks detect --no-git --source . --report-format json --report-path /tmp/gl-head.json --redact --no-banner --log-level error )
           RC_HEAD=$?

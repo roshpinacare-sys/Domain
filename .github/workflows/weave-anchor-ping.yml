@@ -93,8 +93,12 @@ jobs:
           if [ -z "$CREATED" ]; then
             echo "no successful anchor-lines run found — the chain is unattended"; exit 1
           fi
-          CUT=$(date -u -d "$FRESH_H hours ago" +%Y-%m-%dT%H:%M:%SZ)
-          echo "last-success=$CREATED · window=$FRESH_H h (older than $CUT = stale)"
+          # R244: GNU date rejects decimal hours ("3.5 hours ago") — bash -e then
+          # killed the step and faked a red verdict (the real root cause of the
+          # 2026-10-06 reds). Convert hours→integer minutes and guard the result.
+          MIN=$(awk -v h="$FRESH_H" 'BEGIN{printf "%d", h*60+0.5}')
+          CUT=$(date -u -d "$MIN minutes ago" +%Y-%m-%dT%H:%M:%SZ) || { echo "VERDICT-ERROR (inconclusive — CUT could not be computed)"; exit 1; }
+          echo "last-success=$CREATED · window=$FRESH_H h=$MIN min (older than $CUT = stale)"
           if [[ "$CREATED" < "$CUT" ]]; then
             echo "STALE — the anchor chain needs attention (no green twin run inside the window)"; exit 1
           fi
