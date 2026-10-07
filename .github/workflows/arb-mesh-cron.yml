@@ -54,13 +54,13 @@ jobs:
       - name: dex-core selftest (the settlement engine the mesh leans on)
         run: node agents/dex-core.cjs selftest
 
-      - name: uniform batch clearing selftest (R76 · the CoW take judges itself: one price, order-invariance, netting, minOut exclusion)
+      - name: uniform batch clearing selftest (R76 · the CoW take judges itself — one price, order-invariance, netting, minOut exclusion)
         run: node agents/dex-core.cjs selftest-batch
 
       - name: mesh tick (mandates → intents queue → atomic settle → honest P&L + size ladder)
         run: node agents/arb-mesh.cjs
 
-      - name: uniform batch clearing proof (R76 · DRY lane: measures the queue as ONE batch, publishes agents/dex-batch.json, moves nothing)
+      - name: uniform batch clearing proof (R76 · DRY lane — measures the queue as ONE batch, publishes agents/dex-batch.json, moves nothing)
         run: node agents/dex-core.cjs clear-batch
 
       - name: commit mesh books (+ the core ledger when a batch settled, + the batch-clear proof book)
