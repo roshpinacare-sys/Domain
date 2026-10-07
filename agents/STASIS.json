@@ -7,8 +7,8 @@
   "since": "2026-10-04T22:06:00Z",
   "scope": "all capital lanes: delegations, transfers, claims, converts, bridges, trades, votes — every signing agent obeys (capital-gate.cjs); measurement-only lanes continue",
   "stagedLanes": {
-    "allow": ["grid", "claims"],
-    "reason": "he-EN: פתיחה-מדורגת-ממוקדת בלבד — מסילת-הסולם/הספר (market-exec — limit_order_create/cancel על שוק-הפנימי) ומסילת-התביעות (daily-claim, fleet-claim — claim_reward_balance בלבד). כל-יתר המסילות נשארות-עצורות: האצלות, העברות, converts, הצבעות, יצירת-חשבונות. Targeted staged lift only — the ladder/book machine (limit orders) and reward claims (claim_reward_balance) open; everything else (delegations, transfers, converts, votes, account creation) stays halted. Unknown tool = general = halted (fail-closed). The Domain grid twins keep their honest keyless refusal design — a lane being open is permission, not activation.",
+    "allow": ["grid", "claims", "dex-batch-settle"],
+    "reason": "he-EN: פתיחה-מדורגת-ממוקדת בלבד — מסילת-הסולם/הספר (market-exec — limit_order_create/cancel על שוק-הפנימי) ומסילת-התביעות (daily-claim, fleet-claim — claim_reward_balance בלבד). R77: נוספה מסילת-הניקוי-המאושר (dex-batch-settle — ניקוי-אצווה אחיד על ספר-המנוע הפנימי: חסר-מפתח, פנימי-בלבד, מחיר-אחד לכל סוחר, שימור-נבדק, אידמפוטנטי — יחידות-SIM שהיושרה מסמנת NOT-REAL-MONEY; אפס שידורי-שרשרת). כל-יתר המסילות נשארות-עצורות: האצלות, העברות, converts, הצבעות, יצירת-חשבונות. Targeted staged lift only — the ladder/book machine (limit orders), reward claims (claim_reward_balance), and the R77 approved batch settlement (keyless, internal-only, one-price, conservation-checked on the SIM ledger) open; everything else (delegations, transfers, converts, votes, account creation, chain broadcasts) stays halted. Unknown tool = general = halted (fail-closed). The Domain grid twins keep their honest keyless refusal design — a lane being open is permission, not activation. The settle lane's owner artifact: agents/change-requests/CR-0075-owner-approval.json (revocation = delete the file or remove the kind — the engine refuses fail-closed on the next tick).",
     "since": "2026-10-05T13:05:00Z"
   },
   "resumeLog": [
@@ -16,6 +16,11 @@
       "at": "2026-10-05T13:05:00Z",
       "what": "staged lanes grid+claims opened",
       "authority": "owner directive 2026-10-05 IM trace 1a10bfe1342b2391: 'Re-enable its autonomous capabilities intelligently. Let it operate.' + calibration mandate; root-cause closed R24/R25; Wave-3 targeted resume; judge-green selftests R25-d; first-run observation required"
+    },
+    {
+      "at": "2026-10-07T20:40:00Z",
+      "what": "staged lane dex-batch-settle opened (R77 THE OWNER GATES) — the approved uniform batch settlement on the engine book (keyless, internal-only SIM units, one price, conservation-checked, idempotent) + the engine fee law adopted (the Meteora take, trade-time only, ledger fee stays base)",
+      "authority": "owner directive 2026-10-07 IM trace 1a117de3a33a3b25: 'מאשר בצע תמשיך', ratified 'תמשיך מאיפה שעצרת'; within the staged re-entry calibration mandate 2026-10-05 (IM trace 1a10bfe1342b2391) — the safest path first; owner artifact agents/change-requests/CR-0075-owner-approval.json (presence + opens[] IS the gate; revocation = delete/remove-kind, fail-closed)"
     }
   ],
   "resumePolicy": "STASIS is a mechanical circuit breaker (FATE-DEFENSE law #1). Active=true halts the engine BEFORE any seal/open/broadcast as a healthy no-op (exit 0, STASIS-HALT receipt line). Set active=true only after N consecutive red engine runs or an owner directive; resume only after root-cause + judge-node green + explicit owner word. The file itself is the audit trail — never delete history, flip the flag. Staged lanes (mode=staged + stagedLanes.allow) are enforced per-tool-lane by capital-gate.cjs laneOf(); an allowed lane prints a STASIS-STAGED-ALLOW receipt; everything else halts exactly as before.",
@@ -31,6 +36,12 @@
       "action": "staged-lanes-opened",
       "by": "T-B agent on owner directive 2026-10-05 (IM trace 1a10bfe1342b2391) — 'Re-enable its autonomous capabilities intelligently. Let it operate.' + calibration mandate",
       "note": "resumePolicy conditions measured and satisfied: (1) root-cause CLOSED — R24 forensics (stale-signer class closed by sign-time gates; orderid ledger proved the 882 STEEM is standing in ~70 grid orders) + R25-a..d fixes pushed and API-verified; (2) judge-node GREEN — selftests green (capital-gate staged-lane selftest; pegout 17/17; evals baseline unchanged); (3) owner word EXPLICIT — IM trace 1a10bfe1342b2391 2026-10-05. Wave-3 of MASTER-ORDER-DRAFT-2026-10-05 §7 = targeted lift for the grid. mode=staged, active stays true; lanes grid+claims only; every other lane halts; fail-closed hardening: unreadable STASIS.json now HALTS (was fail-open)"
+    },
+    {
+      "at": "2026-10-07T20:40:00Z",
+      "what": "staged lane dex-batch-settle opened (R77 THE OWNER GATES) — the approved uniform batch settlement on the engine book (keyless, internal-only SIM units, one price, conservation-checked, idempotent) + the engine fee law adopted (the Meteora take, trade-time only, ledger fee stays base)",
+      "authority": "owner directive 2026-10-07 IM trace 1a117de3a33a3b25: 'מאשר בצע תמשיך', ratified 'תמשיך מאיפה שעצרת'; within the staged re-entry calibration mandate 2026-10-05 (IM trace 1a10bfe1342b2391) — the safest path first; owner artifact agents/change-requests/CR-0075-owner-approval.json (presence + opens[] IS the gate; revocation = delete/remove-kind, fail-closed)",
+      "note": "resumePolicy measured: judge-node GREEN (selftest-batch-settle 28/28 + selftest-batch 15/15 + engine selftest green) + owner word EXPLICIT (two messages) + zero real-chain exposure (keyless SIM book, honest-econ marks unchanged). active stays true, mode=staged; the lane list is now grid+claims+dex-batch-settle; every other lane halts exactly as before"
     }
   ]
 }
