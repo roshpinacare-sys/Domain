@@ -109,7 +109,7 @@ const INTENTS_FILE = path.join(AG, 'dex-intents.json'); // the mesh queue — wr
 const XC_OPS_FILE = path.join(AG, '..', 'dex', 'xc-ops.json'); // the XC intent queue — written by dex-xc.cjs, consumed+cleared by THIS desk (single-writer law)
 const ROSTER_FILE = path.join(AG, 'persona-slots.json');
 const PROTOCOL = 'SAOS-DEX-CORE/1';
-const VERSION = 'dex-core v1.5.0 (R76 THE UNIFORM CLEARING)';
+const VERSION = 'dex-core v1.6.0 (R77 THE OWNER GATES)';
 const REDEEM_REQUESTS_FILE = path.join(AG, '..', 'dex', 'redeem-requests.json');
 const PEGOUT_QUEUE_FILE = path.join(AG, '..', 'dex', 'pegout-queue.json');
 
@@ -123,6 +123,17 @@ const MESH_BATCH_MEMO = 64;            // processed-batch ids kept for idempoten
 const BATCH_FILE = path.join(AG, 'dex-batch.json'); // the DRY proof book - this lane measures, it never settles
 const BATCH_MAX_ROUNDS = 4;            // exclusion-reclear rounds before an honest CLEARING-ROUNDS-EXHAUSTED
 const BATCH_SANDWICH_FR_BPS = 1000n;   // the measured sandwich front-run: 10% of the victim size
+
+// ── R77 owner-gate constants (THE OWNER GATES: batch settle + engine fee law) ──
+const CR_OWNER_APPROVAL_FILE = path.join(AG, 'change-requests', 'CR-0075-owner-approval.json'); // the owner-gate ARTIFACT — its presence + opens[] in the repo IS the open gate (the CR-0074 artifact law)
+const BATCH_SETTLED_FILE = path.join(AG, 'dex-batch-settled.json'); // the APPROVED settle lane book — the DRY proof (dex-batch.json) stays movedNothing:true forever
+const FEE_LAW_FILE = path.join(AG, 'fee-law.json');                 // the ENGINE fee law book — measured from OUR OWN books only
+const FEE_LAW_K_VOL = 1;               // fee = base + K_VOL × σ (the Meteora take, engine-adopted)
+const FEE_LAW_CAP_ABS_BPS = 200n;      // absolute cap: 200bps
+const FEE_LAW_CAP_FACTOR = 2;          // cap = min(2 × base, 200bps)
+const FEE_LAW_MAX_AGE_H = 30;          // freshness law: a stale law book = base fee (fail-closed)
+const FEE_LAW_MIN_SAMPLES = 2;         // below this a pool has no measured σ — the fee stays base (no invention)
+const FEE_LAW_PRICE_WINDOW = 30;       // realized hop prices sampled per pool (last N)
 
 // ── cross-chain intent constants (R43) ────────────────────────────────────
 const CHAIN_WRAPPER = { STEEM: 'WSTEEM', SBD: 'WSBD', HIVE: 'WHIVE', HBD: 'WHBD', BLURT: 'WBLURT' }; // chains with a wrapper in the vault catalog (R42 law)
@@ -1457,6 +1468,366 @@ function clearBatchTick() {
   }
 }
 
+// ── R77 THE OWNER GATES (batch settle + engine fee law) ────────────────────
+// The owner's word arrived twice: 2026-10-05 "Re-enable its autonomous capabilities
+// intelligently. Let it operate." (staged re-entry, limited exposure, observation,
+// increasing confidence) and 2026-10-07 "מאשר בצע תמשיך" (IM trace 1a117de3a33a3b25).
+// The gates are ARTIFACTS in the repo (the CR-0074 law: an artifact someone can audit in
+// git history, not a boolean an import can flip in memory):
+//   · CR-0075-owner-approval.json — presence + opens[] IS the open gate.
+//   · agents/STASIS.json stagedLanes.allow — the staged-lane law (capital-gate doctrine)
+//     now enforced by the ENGINE itself: STASIS active halts a settle lane unless the lane
+//     is staged-allowed. The lane opened: dex-batch-settle — the KEYLESS, internal-only,
+//     one-price, anti-sandwich settlement (the safest path first — the calibration mandate).
+
+const BATCH_SETTLE_LAWS = [
+  'artifact gate: CR-0075-owner-approval.json presence + opens[] in the repo IS the open gate — absent, revoked, or malformed = the lane refuses (fail-closed DRY)',
+  'staged-lane gate: STASIS active halts every settle lane unless the lane is named in STASIS.json stagedLanes.allow (the owner staged re-entry doctrine)',
+  'measurement == application: the batch is measured ON the law-fee pools this lane applies — the uniform clearing price INCLUDES the engine fee law',
+  'one batch, one atomic commit: internal matches move agent-to-agent at the measured fair (zero pool touch); residual clears walk the route all-or-nothing on simulated copies',
+  'conservation is the verdict: any dust left by per-row flooring books to the solver (treasury) — claims are moved, never created; a conservation break refuses the WHOLE batch',
+  'idempotency: the settled batch id joins processedBatches (rotating memo) — a replayed batch settles nothing twice',
+  'the queue is consumed single-writer (the mesh wrote it, the core clears it) and the settled book publishes the gate trace so any node can audit the approval',
+];
+
+const FEE_LAW_LAWS = [
+  'the engine fee law (the Meteora take, owner-approved): fee = clamp(base + K_VOL × σ, base, min(2 × base, 200))',
+  'σ is measured from OUR OWN official books ONLY — the ledger fill hops (realized prices) + the router fair (fairGap); zero invention',
+  'a pool without enough measured samples stays at base — the law never guesses (honesty law)',
+  'VOLATILE pools only: PEG pools are 1:1 by law and the fee law does not touch them',
+  'the law can only RAISE above base, never lower (allFeesAtOrAboveBase self-audit; a book row below base is refused at trade time)',
+  'the stored ledger fee stays BASE: the law rides on top at trade time (Meteora model — base fee + dynamic fee), so re-measurement never fee-creeps',
+  'freshness: a law book older than 30h = base fee everywhere (fail-closed)',
+];
+
+/** the owner gate (R77): CR-0075's presence + opens[] IS the open gate. `exists`/`read`
+ *  injectable for the evals/selftest (purity law — the same seam counterGridGate uses). */
+function ownerGate(kind, exists, read) {
+  const has = exists === undefined || exists === null ? fs.existsSync(CR_OWNER_APPROVAL_FILE) : !!exists;
+  let cr = null, open = false, why = has ? null : 'ARTIFACT-ABSENT (CR-0075 not in the repo — the gate is closed)';
+  if (has) {
+    try {
+      cr = JSON.parse(read === undefined || read === null ? fs.readFileSync(CR_OWNER_APPROVAL_FILE, 'utf8') : read);
+      if (!cr || cr.ok !== true || !Array.isArray(cr.opens)) { open = false; why = 'ARTIFACT-MALFORMED (ok/opens missing — refuse)'; }
+      else if (cr.opens.map(String).includes(String(kind))) open = true;
+      else why = 'KIND-NOT-OPENED (the artifact exists but does not open ' + String(kind) + ')';
+    } catch (e) { cr = null; open = false; why = 'ARTIFACT-UNPARSEABLE (refuse)'; }
+  }
+  return {
+    open, kind, why,
+    cr: cr ? { cr: String(cr.cr || 'CR-0075'), directive: cr.directive || null, trace: cr.trace || null, at: cr.at || null } : null,
+  };
+}
+
+/** the staged-lane law (STASIS mode=staged) enforced by the engine: STASIS active halts a
+ *  settle lane unless the lane is named in stagedLanes.allow. STASIS inactive → run. */
+function stagedLaneCheck(lane, stasis) {
+  const s = stasis === undefined ? stasisCheck() : stasis;
+  if (!s) return { halt: false, reason: null, staged: false, allow: null, stasis: null };
+  const allow = Array.isArray(s.stagedLanes && s.stagedLanes.allow) ? s.stagedLanes.allow.map((x) => String(x).toLowerCase()) : [];
+  const allowed = allow.includes(String(lane).toLowerCase());
+  return {
+    halt: !allowed,
+    reason: allowed ? null : 'STASIS-STAGED: lane "' + String(lane) + '" is not in stagedLanes.allow=[' + allow.join(',') + ']',
+    staged: true, allow, stasis: { since: s.since || null },
+  };
+}
+
+// ── the ENGINE fee law (R77-B) ─────────────────────────────────────────────
+/** realized hop prices per pool from the ledger's own fill history (zero invention) */
+function fillPricesForPool(poolId, histRows) {
+  const prices = [];
+  for (const r of histRows || []) {
+    if (!r || r.type !== 'AGENT_FILL') continue;
+    for (const h of (r.hops || [])) {
+      if (!h || h.pool !== poolId) continue;
+      const i = ub(h.in), o = ub(h.out);
+      if (i > 0n && o > 0n) prices.push(o * NANO / i); // realized price in nano (out per in)
+    }
+  }
+  return prices.slice(-FEE_LAW_PRICE_WINDOW);
+}
+/** the measured fair for a pool pair from the router feed — ONLY where the feed measures one
+ *  (STEEM/SBD: fair = nano SBD per STEEM). Everything else returns null (no invention). */
+function fairForPair(pool, feed) {
+  const fresh = !!(feed && feed.fresh && feed.fair);
+  if (fresh && pool.a === 'STEEM' && pool.b === 'SBD') return BigInt(feed.fair); // same orientation as the mid (SBD per STEEM)
+  return null;
+}
+function bpsOf(numer, denom) { return denom > 0n ? Number((numer < 0n ? -numer : numer) * 10000n / denom) : null; }
+/** measure the fee law for every live pool from our own books (pure, deterministic) */
+function measureFeeLaw(prev, histRows, feed, now) {
+  const pools = (prev && Array.isArray(prev.pools) ? prev.pools : []).filter((p) => p && !p.planned);
+  const rows = [];
+  for (const p of pools) {
+    const base = Number(p.feeBps);
+    if (p.kind !== 'VOLATILE') {
+      rows.push({ pool: p.id, pair: p.pair, kind: p.kind, baseBps: base, samples: 0, twapDevBps: null, fairGapBps: null, rangeBps: null, sigmaBps: null, feeBps: base, deltaBps: 0, basis: 'PEG 1:1 by law — the fee law does not touch pegs (no invention)' });
+      continue;
+    }
+    const ra = ub(p.ra), rb = ub(p.rb);
+    const midNano = ra > 0n ? rb * NANO / ra : null;
+    const prices = fillPricesForPool(p.id, histRows);
+    let twapDevBps = null, rangeBps = null;
+    if (prices.length >= FEE_LAW_MIN_SAMPLES) {
+      let sum = 0n; for (const x of prices) sum += x;
+      const mean = sum / BigInt(prices.length);
+      let sq = 0n; for (const x of prices) { const d = x - mean; sq += d * d; }
+      const dev = BigInt(Math.round(Math.sqrt(Number(sq / BigInt(prices.length)))));
+      twapDevBps = bpsOf(dev, mean);
+      let mx = prices[0], mn = prices[0];
+      for (const x of prices) { if (x > mx) mx = x; if (x < mn) mn = x; }
+      rangeBps = bpsOf(mx - mn, mean);
+    }
+    let fairGapBps = null;
+    const fairNano = fairForPair(p, feed);
+    if (fairNano && midNano) fairGapBps = bpsOf(midNano - fairNano, fairNano);
+    const comps = [twapDevBps, fairGapBps, rangeBps].filter((x) => x != null && isFinite(x));
+    const sigma = comps.length ? Math.max(...comps) : null;
+    const cap = Math.min(base * FEE_LAW_CAP_FACTOR, Number(FEE_LAW_CAP_ABS_BPS));
+    const fee = sigma == null ? base : Math.max(base, Math.min(cap, base + FEE_LAW_K_VOL * Math.round(sigma)));
+    rows.push({
+      pool: p.id, pair: p.pair, kind: p.kind, baseBps: base,
+      samples: prices.length, twapDevBps, fairGapBps, rangeBps, sigmaBps: sigma,
+      feeBps: fee, deltaBps: fee - base,
+      basis: sigma == null
+        ? 'no measured σ from our own books (samples < ' + FEE_LAW_MIN_SAMPLES + ' or no fair) — the fee stays base (no invention)'
+        : 'measured: realized-price dev ' + (twapDevBps == null ? '—' : twapDevBps + 'bps') + ' · fairGap ' + (fairGapBps == null ? '—' : fairGapBps + 'bps') + ' · range ' + (rangeBps == null ? '—' : rangeBps + 'bps') + ' → σ=' + Math.round(sigma) + 'bps',
+    });
+  }
+  const raised = rows.filter((r) => r.deltaBps > 0).length;
+  const check = rows.every((r) => r.feeBps >= r.baseBps) && rows.every((r) => r.kind === 'PEG' || r.feeBps <= Math.min(r.baseBps * FEE_LAW_CAP_FACTOR, Number(FEE_LAW_CAP_ABS_BPS)));
+  return {
+    ok: true, book: 'saos-engine-fee-law/1.0', publishedAt: now,
+    engine: VERSION + ' fee-law · R77 the engine fee law (the Meteora take, owner-approved CR-0075)',
+    verdict: raised > 0 ? 'LIVE (the measured volatility raised ' + raised + ' engine pool fee(s) above base)' : 'BASE (no measured σ raised a fee yet — the law waits for the tape to thicken)',
+    law: { formula: 'fee_bps = clamp(base + K_VOL × σ, base, min(2 × base, 200))', K_VOL: FEE_LAW_K_VOL, CAP_ABS_BPS: Number(FEE_LAW_CAP_ABS_BPS), CAP_FACTOR: FEE_LAW_CAP_FACTOR, maxAgeH: FEE_LAW_MAX_AGE_H, minSamples: FEE_LAW_MIN_SAMPLES, mechanism: 'the Meteora take adopted by the ENGINE: fees rise with MEASURED volatility so LPs are compensated exactly when their risk rises · σ measured from the ledger fill hops + the router fair only' },
+    tape: { ledgerSeq: prev && prev.seq != null ? prev.seq : null, ledgerAt: prev && prev.at ? prev.at : null, fillRowsSampled: (histRows || []).filter((r) => r && r.type === 'AGENT_FILL').length, fairFresh: !!(feed && feed.fresh) },
+    pools: rows,
+    checks: { allFeesAtOrAboveBase: rows.every((r) => r.feeBps >= r.baseBps), capsRespected: check, pegsUntouched: rows.every((r) => r.kind !== 'PEG' || r.deltaBps === 0) },
+    application: 'trade-time only: settle-intents fills, uniform batch clears and core routes price by this law when fresh (≤30h); the stored pool fee stays BASE — the law never fee-creeps',
+    laws: FEE_LAW_LAWS, errors: [],
+  };
+}
+/** the law book (fail-closed: absent/malformed → null → base fee everywhere) */
+function lawFeeBook() {
+  try { const b = JSON.parse(fs.readFileSync(FEE_LAW_FILE, 'utf8')); return b && b.ok === true && Array.isArray(b.pools) ? b : null; } catch (_) { return null; }
+}
+/** the law fee for ONE pool at trade time (null = keep base). VOLATILE only, fresh only,
+ *  only rows the law itself allows (≥ base, within caps) — a bad row refuses to base. */
+function lawFeeFor(pool, book, nowMs) {
+  if (!pool || pool.kind !== 'VOLATILE') return null;
+  const b = book === undefined ? lawFeeBook() : book;
+  if (!b || !b.publishedAt) return null;
+  const t = nowMs === undefined ? Date.now() : nowMs;
+  const ageH = (t - Date.parse(b.publishedAt)) / 3.6e6;
+  if (!isFinite(ageH) || ageH < 0 || ageH > FEE_LAW_MAX_AGE_H) return null;
+  const row = (b.pools || []).find((p) => p && p.pool === pool.id);
+  if (!row || row.sigmaBps == null || row.feeBps == null) return null;
+  const base = Number(pool.feeBps), fee = Number(row.feeBps);
+  if (!(fee >= base)) return null; // the law can only RAISE — a lower row refuses (fail-closed)
+  if (fee > Math.min(base * FEE_LAW_CAP_FACTOR, Number(FEE_LAW_CAP_ABS_BPS))) return null; // out-of-law row refuses
+  return fee;
+}
+/** trade-time adoption: a pool COPY with the law fee (the ledger fee stays base — the law rides on top) */
+function withLawFee(pool, book) {
+  const fee = lawFeeFor(pool, book);
+  return fee == null ? pool : { ...pool, baseFeeBps: pool.feeBps, feeBps: fee, lawFeeBps: fee };
+}
+function withLawFees(pools, book) { return (pools || []).map((p) => withLawFee(p, book)); }
+
+// ── the APPROVED batch settlement (R77-A) ──────────────────────────────────
+/** settleBatch (pure, gate/stasis/feeBook injectable for the selftest): measures the queue
+ *  with clearBatchUniform ON the law-fee pools (measurement == application) and applies it
+ *  to a state copy atomically. Returns either a refusal state (movedNothing, ledger:null)
+ *  or the full settlement: {st, ops, fills, rejects, notes, batchId, processedBatches, cons,
+ *  consOk, att, meshPnl, batchResult, book fields}. */
+function settleBatch(prev, queue, feed, now, gate, lane, feeBook) {
+  const g = gate || ownerGate('BATCH-SETTLE');
+  const l = lane || stagedLaneCheck('dex-batch-settle');
+  const fb = feeBook === undefined ? lawFeeBook() : feeBook;
+  const intents = queue && Array.isArray(queue.intents) ? queue.intents : [];
+  const base = {
+    ok: true, book: 'saos-batch-settle/1.0', publishedAt: now, engine: VERSION,
+    batch: (queue && queue.batch) || null, intentsInQueue: intents.length,
+    gate: { cr: 'CR-0075', kind: 'BATCH-SETTLE', open: g.open, why: g.why || null, directive: g.cr ? g.cr.directive : null, trace: g.cr ? g.cr.trace : null, artifactAt: g.cr ? g.cr.at : null },
+    lane: { name: 'dex-batch-settle', staged: l.staged, allowed: !l.halt, allow: l.allow || null, since: l.stasis ? l.stasis.since : null },
+    stasisHalted: !!(l.staged && l.halt), measuredInStasis: !!l.staged,
+    feeLaw: { bookAt: fb ? fb.publishedAt : null, verdict: fb ? fb.verdict : 'NO-BOOK (base fee everywhere — fail-closed)' },
+    laws: BATCH_SETTLE_LAWS, notes: [], errors: [],
+  };
+  const refusal = (verdict, extra) => ({ ...base, ...extra, verdict, movedNothing: true, ledger: null });
+  if (!g.open) return refusal('GATE-CLOSED (the owner approval artifact is absent or does not open BATCH-SETTLE — the DRY proof lane stays the only lane)');
+  if (l.halt) return refusal('STASIS-HALT (the staged-lane law: ' + String(l.reason || 'the lane is not staged-allowed') + ')');
+  if (!prev || prev.protocol !== PROTOCOL || !prev.genesisDone) return refusal('NO-GENESIS-BOOK (nothing to settle on — the engine book is absent or pre-genesis)');
+  if (!intents.length) return refusal('NO-INTENTS (the queue is empty — the honest empty state)');
+  const batch = (queue && queue.batch) || null;
+  const processedBatches = Array.isArray(prev.processedBatches) ? [...prev.processedBatches] : [];
+  if (batch && processedBatches.includes(batch)) return refusal('SETTLED-ALREADY (idempotency law — no double settle)', { ledger: { seq: prev.seq } });
+  // measurement == application: measure ON the law-fee pools this lane applies
+  const lawPools = withLawFees(prev.pools, fb);
+  const m = clearBatchUniform({ ...prev, pools: lawPools }, queue, feed, now);
+  // apply on copies — atomic across the WHOLE batch (the walk runs on the SAME law-fee pools,
+  // so the uniform clearing price INCLUDES the engine fee law; the BASE fee is restored at commit)
+  const st = { vault: JSON.parse(JSON.stringify(prev.vault)), accounts: JSON.parse(JSON.stringify(prev.accounts)), pools: JSON.parse(JSON.stringify(lawPools)), seq: prev.seq || 0 };
+  const ops = []; const op = (type, payload) => { st.seq += 1; ops.push({ seq: st.seq, type, at: now, batch, ...payload }); };
+  const acc = (name) => { if (!st.accounts[name]) st.accounts[name] = { claims: emptyClaims(), lp: {} }; return st.accounts[name]; };
+  const fills = [], rejects = [], notes = [];
+  const netI = new Map(), netC = new Map(); // agent|asset → BigInt — TWO ledgers: internal matches (agent-to-agent, must net to zero per asset; per-row flooring dust → the solver absorbs) and pool clears (the pool is the counterparty — the net is exactly what the reserves moved, no absorption)
+  const move = (m, agent, asset, delta) => { const k = agent + '|' + asset; m.set(k, (m.get(k) || 0n) + delta); };
+
+  // 1 · internal matches (coincidence of wants) — agent to agent at the measured fair, zero pool touch
+  for (const row of (m.netting.internalRows || [])) {
+    move(netI, row.agent, row.from, -ub(row.inMu));
+    move(netI, row.agent, row.to, ub(row.outMu));
+    fills.push({ agent: row.agent, from: row.from, to: row.to, amountIn: row.inMu, amountOut: row.outMu, routeIds: [], hops: [], edgeMu: '0', fairUsed: 'INTERNAL-MATCH-AT-MEASURED-FAIR (no pool, no fee)', feesMu: '0', kind: 'BATCH-INTERNAL', at: now });
+    op('BATCH-INTERNAL', { agent: row.agent, from: row.from, to: row.to, amountIn: row.inMu, amountOut: row.outMu, why: 'coincidence of wants at the measured fair — zero fees, zero pool touch, zero sandwich surface' });
+  }
+  // 2 · residual clears — walk the route all-or-nothing on simulated pool copies
+  let feesTotal = 0n, solverDustTotal = 0n, poolClears = 0;
+  for (const c of (m.clears || [])) {
+    if (!c.traders || !c.traders.length) { for (const x of (c.excluded || [])) rejects.push({ agent: x.agent, from: c.from, to: c.to, why: x.why }); continue; }
+    const aggIn = ub(c.aggIn);
+    if (aggIn <= 0n) continue;
+    const touched = new Map(); const hops = [];
+    let cur = c.from, amt = aggIn, simOk = true, why2 = '', clearFees = 0n;
+    for (const pid of (c.routeIds || [])) {
+      const p = st.pools.find((x) => x.id === pid);
+      if (!p) { simOk = false; why2 = 'POOL-VANISHED'; break; }
+      if (!touched.has(pid)) touched.set(pid, JSON.parse(JSON.stringify(p)));
+      const cp = touched.get(pid);
+      const dirOut = cp.a === cur ? cp.b : cp.a;
+      const sw = poolSwap(cp, cur, dirOut, amt, null);
+      if (!sw || sw.error) { simOk = false; why2 = 'HOP-REFUSED-' + String((sw && sw.error) || 'EMPTY'); break; }
+      cp.ra = mu(sw.newRa); cp.rb = mu(sw.newRb);
+      cp.feeMeter = mu(ub(cp.feeMeter) + sw.feeAmt);
+      clearFees += sw.feeAmt;
+      hops.push({ pool: pid, in: mu(amt), out: mu(sw.out), fee: mu(sw.feeAmt), feeBpsUsed: cp.lawFeeBps != null ? cp.lawFeeBps : cp.feeBps, lawFee: cp.lawFeeBps != null });
+      amt = sw.out; cur = dirOut;
+    }
+    const walkedOut = simOk && cur === c.to ? amt : null;
+    if (!simOk || walkedOut == null || (c.aggOut != null && ub(c.aggOut) !== walkedOut)) {
+      // measurement/apply divergence cannot happen by construction (same pools, same law fees,
+      // same deterministic BigInt math) — if it EVER does, the whole batch refuses, nothing moves
+      return refusal('MEASURE-APPLY-DIVERGED (the walked route disagrees with the measurement — fail-closed, nothing moved)', { notes: [...notes, String(why2 || 'aggOut mismatch')] });
+    }
+    for (const [pid, cp] of touched) { const p = st.pools.find((x) => x.id === pid); p.ra = cp.ra; p.rb = cp.rb; p.feeMeter = cp.feeMeter; }
+    const remainder = ub(c.solverRemainderMu);
+    if (remainder > 0n) { acc('treasury').claims[c.to] = mu(ub(acc('treasury').claims[c.to]) + remainder); solverDustTotal += remainder; }
+    for (const t of c.traders) {
+      move(netC, t.agent, c.from, -ub(t.sizeIn));
+      move(netC, t.agent, c.to, ub(t.uniformOut));
+      const feeShare = clearFees > 0n ? ub(t.sizeIn) * clearFees / aggIn : 0n; // pro-rata by the same law as the uniform shares (THIS clear's fees only)
+      fills.push({ agent: t.agent, from: c.from, to: c.to, amountIn: t.sizeIn, amountOut: t.uniformOut, routeIds: c.routeIds || [], hops, edgeMu: '0', fairUsed: 'UNIFORM-CLEARING-PRICE (the pool price IS the clearing — edge marked 0, never guessed)', feesMu: mu(feeShare), kind: 'BATCH-CLEAR', minOut: t.minOut, at: now });
+      op('BATCH-CLEAR', { agent: t.agent, from: c.from, to: c.to, amountIn: t.sizeIn, amountOut: t.uniformOut, minOut: t.minOut, why: 'one batch, one price — cleared at the uniform clearing price (order-invariance: a permuted queue clears byte-identical)' });
+      poolClears += 1;
+    }
+    op('BATCH-SOLVER-DUST', { asset: c.to, amount: mu(remainder), why: 'the uniform remainder books to the solver (treasury) — solver absorption law' });
+    feesTotal += clearFees; // the ledger's fee meter for this tick (per-clear fees accumulated once)
+    for (const x of (c.excluded || [])) rejects.push({ agent: x.agent, from: c.from, to: c.to, why: x.why });
+  }
+  // 3 · apply the net agent movements; absorb per-row flooring dust of the INTERNAL ledger into the treasury
+  //     (conservation is the verdict: internal matches must net to zero per asset — flooring dust is the solver's;
+  //      pool clears net against the RESERVES which already moved by the walked hops — never absorbed, never dusted)
+  const netSum = (m, asset) => { let s = 0n; for (const [k, delta] of m) { if (k.endsWith('|' + asset)) s += delta; } return s; };
+  const applyNet = (m) => { for (const [k, delta] of m) { const idx = k.lastIndexOf('|'); acc(k.slice(0, idx)).claims[k.slice(idx + 1)] = mu(ub(acc(k.slice(0, idx)).claims[k.slice(idx + 1)]) + delta); } };
+  applyNet(netC);
+  applyNet(netI);
+  const dustAbsorbed = {};
+  for (const asset of Object.keys(emptyClaims())) {
+    const s = netSum(netI, asset);
+    if (s !== 0n) { acc('treasury').claims[asset] = mu(ub(acc('treasury').claims[asset]) - s); dustAbsorbed[asset] = mu(-s); } // the solver absorbs the internal flooring dust (moves, never creates)
+  }
+  if (Object.keys(dustAbsorbed).length) op('BATCH-FLOOR-DUST', { assets: dustAbsorbed, why: 'per-row flooring dust from the internal netting books to the solver — conservation moves claims, never creates them' });
+  // the ledger fee stays BASE (the law rode on top at trade time only — the no-fee-creep law)
+  for (const p of st.pools) { if (p.baseFeeBps != null) { p.feeBps = p.baseFeeBps; delete p.lawFeeBps; delete p.baseFeeBps; } }
+  // 4 · idempotency + verdicts
+  if (batch) { processedBatches.push(batch); while (processedBatches.length > MESH_BATCH_MEMO) processedBatches.shift(); }
+  const cons = conservation(st.vault, st.accounts, st.pools);
+  const consOk = cons.every((c) => c.ok);
+  st.vault.reserveRatio = reserveRatios(st.vault);
+  const att = attestationHash(st.vault, st.accounts, st.pools, st.seq);
+  // lifetime P&L (honest: edge marked 0 at uniform clearing, fees measured per hop share)
+  const prevLife = (prev.meshPnl && prev.meshPnl.lifetime) || { byAgent: {}, fills: 0, edgeMu: '0', feesMu: '0', volumeInMu: '0' };
+  const life = { byAgent: { ...prevLife.byAgent }, fills: prevLife.fills, edgeMu: ub(prevLife.edgeMu), feesMu: ub(prevLife.feesMu), volumeInMu: ub(prevLife.volumeInMu) };
+  let batchVolume = 0n, batchFees = 0n;
+  for (const f of fills) {
+    const row = life.byAgent[f.agent] || { fills: 0, edgeMu: 0n, feesMu: 0n, volumeInMu: 0n };
+    row.fills += 1; row.volumeInMu += ub(f.amountIn); row.feesMu += ub(f.feesMu || '0');
+    life.byAgent[f.agent] = row;
+    life.fills += 1; life.volumeInMu += ub(f.amountIn); life.feesMu += ub(f.feesMu || '0');
+    batchVolume += ub(f.amountIn); batchFees += ub(f.feesMu || '0');
+  }
+  for (const k of Object.keys(life.byAgent)) { const r = life.byAgent[k]; life.byAgent[k] = { fills: r.fills, volumeInMu: mu(r.volumeInMu), edgeMu: mu(r.edgeMu), feesMu: mu(r.feesMu) }; }
+  const meshPnl = { lifetime: { byAgent: life.byAgent, fills: life.fills, edgeMu: mu(life.edgeMu), feesMu: mu(life.feesMu), volumeInMu: mu(life.volumeInMu) }, batch: { id: batch, fills: fills.length, rejects: rejects.length, edgeMu: '0', feesMu: mu(batchFees), volumeInMu: mu(batchVolume) } };
+  notes.push('uniform batch settlement by the owner gate CR-0075 (directive: ' + String((g.cr && g.cr.directive) || '-') + ') — ' + (m.netting.internalRows || []).length + ' internal match(es), ' + poolClears + ' pool clear(s), ' + (m.refused || []).length + ' refused, sandwich windows exposed: 0');
+  return {
+    ...base, verdict: consOk ? 'BATCH-SETTLED' : 'CONSERVATION-BROKEN (the batch refuses publication as settled)', movedNothing: false,
+    internalRows: m.netting.internalRows || [], pairNotes: m.netting.pairNotes || [],
+    clears: m.clears || [], refused: m.refused || [], traders: fills.length, poolClears, feesMu: mu(feesTotal), solverDustMu: mu(solverDustTotal),
+    sandwich: m.sandwich, ledger: { seqBefore: prev.seq, seqAfter: st.seq, cons, consOk, att, processedBatches },
+    st, ops, fills, rejects, notes, batchId: batch, processedBatches, cons, consOk, att, meshPnl, batchResult: m,
+  };
+}
+
+/** the settle-batch tick: the APPROVED lane. Publishes agents/dex-batch-settled.json in EVERY
+ *  state (gate closed / stasis / no intents / settled) — the gate itself is auditable on Pages. */
+async function settleBatchTick() {
+  const now = nowIso();
+  try {
+    const gate = ownerGate('BATCH-SETTLE');
+    const lane = stagedLaneCheck('dex-batch-settle');
+    const prev = loadBook();
+    let queue = null;
+    try { queue = JSON.parse(fs.readFileSync(INTENTS_FILE, 'utf8')); } catch (_) { queue = null; }
+    const feed = loadRouterFeed();
+    const r = settleBatch(prev, queue, feed, now, gate, lane);
+    const book = r.ledger
+      ? { ...r, st: undefined, ops: undefined, fills: undefined, rejects: undefined, batchResult: undefined, summary: { verdict: r.verdict, batch: r.batchId, traders: r.traders, internalRows: (r.internalRows || []).length, poolClears: r.poolClears, feesMu: r.feesMu, solverDustMu: r.solverDustMu } }
+      : { ...r };
+    const tmp = BATCH_SETTLED_FILE + '.tmp';
+    fs.writeFileSync(tmp, JSON.stringify(book, null, 1) + '\n');
+    fs.renameSync(tmp, BATCH_SETTLED_FILE);
+    if (r.ledger && r.consOk) {
+      const settled = { st: r.st, ops: r.ops, routes: prev.routes || [], arb: prev.arb || [], counterGrids: prev.counterGrids || {}, cons: r.cons, consOk: r.consOk, att: r.att, feesMu: 0n, edgeMu: ub(((prev.treasuryPnl || {}).rebalanceEdgeMu) || '0'), notes: r.notes, rebalanceBooked: false };
+      const b = assemble(prev, settled, feed, null, now, false, r.ops, r);
+      b.verdict = 'BATCH-SETTLED';
+      b.batchSettle = { book: 'saos-batch-settle/1.0', batch: r.batchId, gate: book.gate, lane: book.lane, traders: r.traders, internalRows: (r.internalRows || []).length, poolClears: r.poolClears, feesMu: r.feesMu, solverDustMu: r.solverDustMu, sandwichWindows: (r.sandwich || {}).batchWindows };
+      writeBook(b); writeMd(b); appendHistory(r.ops);
+      try { fs.writeFileSync(INTENTS_FILE + '.tmp', JSON.stringify({ batch: null, at: now, intents: [], lastSettledBatch: r.batchId }, null, 1) + '\n'); fs.renameSync(INTENTS_FILE + '.tmp', INTENTS_FILE); } catch (_) {}
+      console.log(`DEX-CORE-BATCH-SETTLE verdict=BATCH-SETTLED batch=${r.batchId || '-'} internal=${(r.internalRows || []).length} poolClears=${r.poolClears} fees=${r.feesMu} solverDust=${r.solverDustMu} cons=${r.consOk} att=${r.att}`);
+    } else {
+      console.log(`DEX-CORE-BATCH-SETTLE verdict=${book.verdict} gate=${gate.open} laneAllowed=${!lane.halt} queue=${book.intentsInQueue} cons=${r.ledger ? r.consOk : 'n/a'}`);
+    }
+    return 0;
+  } catch (e) {
+    try { fs.writeFileSync(BATCH_SETTLED_FILE, JSON.stringify({ ok: false, book: 'saos-batch-settle/1.0', publishedAt: now, engine: VERSION, verdict: 'ERROR (booked honestly, exit 0)', movedNothing: true, laws: BATCH_SETTLE_LAWS, errors: [String(e.message).slice(0, 300)] }, null, 1) + '\n'); } catch (_) {}
+    console.log(`dex-core settle-batch: ERROR (fail-soft, exit 0) ${e.message}`);
+    return 0;
+  }
+}
+
+/** the fee-law tick: measure the engine fee law from our own books and publish it. */
+function feeLawTick() {
+  const now = nowIso();
+  try {
+    const prev = loadBook();
+    let hist = [];
+    try { hist = fs.readFileSync(OUT_HISTORY, 'utf8').split('\n').filter(Boolean).map((l) => { try { return JSON.parse(l); } catch (_) { return null; } }).filter(Boolean); } catch (_) { hist = []; }
+    const feed = loadRouterFeed();
+    const book = measureFeeLaw(prev, hist, feed, now);
+    const tmp = FEE_LAW_FILE + '.tmp';
+    fs.writeFileSync(tmp, JSON.stringify(book, null, 1) + '\n');
+    fs.renameSync(tmp, FEE_LAW_FILE);
+    const raised = book.pools.filter((p) => p.deltaBps > 0).map((p) => p.pool + ' ' + p.baseBps + '→' + p.feeBps + 'bps').join(', ');
+    console.log(`DEX-CORE-FEE-LAW verdict=${book.verdict}${raised ? ' · raised: ' + raised : ''} tape=${book.tape.fillRowsSampled} fill rows`);
+    return 0;
+  } catch (e) {
+    console.log(`dex-core fee-law: ERROR (fail-soft, exit 0) ${e.message}`);
+    return 0;
+  }
+}
+
 /** selftest-batch: the uniform clearing laws judge themselves (fresh process, zero network).
  *  The roster is read LIVE (roster law): the traders are real roster names, so the proofs
  *  never depend on a hardcoded list. */
@@ -1532,6 +1903,147 @@ function selftestBatch() {
   ok('dust-refused-honestly', r6.validIntents === 0 && r6.refused.length === 1 && r6.refused[0].why === 'DUST');
   const pass = c.filter((x) => x.ok).length;
   console.log(`DEX-CORE-SELFTEST-BATCH-OK ${pass}/${c.length}`);
+  if (pass !== c.length) { for (const x of c) if (!x.ok) console.log(`  FAIL ${x.name}`); }
+  return pass === c.length ? 0 : 1;
+}
+
+/** selftest-batch-settle (R77): the APPROVED batch settlement laws judge themselves —
+ *  fresh process, zero network, gate/stasis/feeBook injected (purity law). */
+function selftestBatchSettle() {
+  const c = []; const ok = (name, cond) => c.push({ name, ok: !!cond });
+  const roster = rosterLaw();
+  const [A, B, C] = roster;
+  const mkCore = (extra) => {
+    // balanced book (the R44 mkBook law): custody = pooled + free claims, per real asset
+    const accounts = { treasury: { claims: { STEEM: '1000000', SBD: '100000' } } };
+    for (const r of roster) accounts[r] = { claims: { STEEM: '500000', SBD: '50000' } };
+    const pools = [
+      { id: 'P3', pair: 'STEEM/SBD', kind: 'VOLATILE', a: 'STEEM', b: 'SBD', feeBps: 25, ra: '1555100', rb: '163980', feeMeter: '0', planned: false },
+    ];
+    const sumClaims = (a) => mu(Object.values(accounts).reduce((s, acc) => s + ub(acc.claims[a] || '0'), 0n));
+    const pooled = (a) => mu(pools.reduce((s, p) => s + (p.a === a ? ub(p.ra) : 0n) + (p.b === a ? ub(p.rb) : 0n), 0n));
+    const vv = emptyVault();
+    for (const a of ['STEEM', 'SBD']) { vv.custody[a] = mu(ub(pooled(a)) + ub(sumClaims(a))); vv.custodyProvenance[a] = 'test'; }
+    return { protocol: PROTOCOL, at: '2026-10-07T10:00:00.000Z', genesisDone: true, seq: 7, processedBatches: [], vault: vv, accounts, pools, ...(extra || {}) };
+  };
+  const feed = { fresh: true, fair: '105446700' }; // 0.1054467 SBD per STEEM
+  const gateOpen = ownerGate('BATCH-SETTLE', true, JSON.stringify({ ok: true, cr: 'CR-0075', opens: ['BATCH-SETTLE', 'ENGINE-FEE-LAW'], directive: 'מאשר בצע תמשיך', trace: '1a117de3a33a3b25' }));
+  const gateWrongKind = ownerGate('BATCH-SETTLE', true, JSON.stringify({ ok: true, cr: 'CR-0075', opens: ['SOMETHING-ELSE'] }));
+  const gateBad = ownerGate('BATCH-SETTLE', true, '{broken');
+  const gateAbsent = ownerGate('BATCH-SETTLE', false, null);
+  const laneOpen = stagedLaneCheck('dex-batch-settle', { active: true, since: '2026-10-04T22:06:00Z', stagedLanes: { allow: ['grid', 'claims', 'dex-batch-settle'] } });
+  const laneShut = stagedLaneCheck('dex-batch-settle', { active: true, since: '2026-10-04T22:06:00Z', stagedLanes: { allow: ['grid', 'claims'] } });
+  const laneNoStasis = stagedLaneCheck('dex-batch-settle', null);
+  // 1 · the gate laws
+  ok('gate-open-by-artifact', gateOpen.open === true && gateOpen.cr.trace === '1a117de3a33a3b25');
+  ok('gate-absent-closed', gateAbsent.open === false && gateAbsent.why.indexOf('ARTIFACT-ABSENT') === 0);
+  ok('gate-wrong-kind-closed', gateWrongKind.open === false && gateWrongKind.why.indexOf('KIND-NOT-OPENED') === 0);
+  ok('gate-malformed-closed', gateBad.open === false && gateBad.why.indexOf('ARTIFACT-UNPARSEABLE') === 0);
+  // 2 · the staged-lane laws
+  ok('lane-staged-allowed-runs', laneOpen.staged === true && laneOpen.halt === false);
+  ok('lane-staged-not-allowed-halts', laneShut.halt === true && laneShut.reason.indexOf('STASIS-STAGED') === 0);
+  ok('lane-no-stasis-runs', laneNoStasis.staged === false && laneNoStasis.halt === false);
+  // 3 · refusals move nothing (every refusal: movedNothing=true, ledger:null)
+  const core = mkCore();
+  const q = (rows) => ({ batch: 'B77-1', at: '2026-10-07T10:00:00.000Z', intents: rows });
+  const intents = q([{ agent: A, from: 'STEEM', to: 'SBD', amountIn: '20000', minOut: null }, { agent: B, from: 'STEEM', to: 'SBD', amountIn: '20000', minOut: null }]);
+  for (const [name, r] of [['gate-closed-refuses', settleBatch(core, intents, feed, 'x', gateAbsent, laneOpen, null)], ['lane-halted-refuses', settleBatch(core, intents, feed, 'x', gateOpen, laneShut, null)], ['no-genesis-refuses', settleBatch(null, intents, feed, 'x', gateOpen, laneOpen, null)], ['no-intents-refuses', settleBatch(core, q([]), feed, 'x', gateOpen, laneOpen, null)]]) {
+    ok(name, r.movedNothing === true && r.ledger === null && r.verdict.length > 0);
+  }
+  ok('settled-already-refuses', settleBatch(mkCore({ processedBatches: ['B77-1'] }), intents, feed, 'x', gateOpen, laneOpen, null).verdict.indexOf('SETTLED-ALREADY') === 0);
+  // 4 · the one-sided residual batch SETTLES with conservation + attestation
+  const r = settleBatch(core, intents, feed, '2026-10-07T10:00:00.000Z', gateOpen, laneOpen, null);
+  ok('batch-settles', r.verdict === 'BATCH-SETTLED' && r.movedNothing === false && r.traders === 2);
+  ok('conservation-holds', r.consOk === true && r.ledger.cons.every((x) => x.ok));
+  ok('one-price-uniform', r.clears.length === 1 && r.clears[0].traders.every((t) => t.uniformOut === r.clears[0].traders[0].uniformOut));
+  ok('solver-dust-booked', r.fills.reduce((s, f) => s + BigInt(f.amountOut), 0n) + BigInt(r.solverDustMu) === BigInt(r.clears[0].aggOut));
+  ok('pool-moved-once', BigInt(r.st.pools.find((p) => p.id === 'P3').ra) === BigInt('1595100') && r.st.pools.find((p) => p.id === 'P3').feeMeter !== '0');
+  ok('agents-debited-credited', r.st.accounts[A].claims.SBD !== '50000' && r.st.accounts[A].claims.STEEM === '480000');
+  ok('idempotency-marks-batch', r.processedBatches.includes('B77-1'));
+  ok('gate-trace-in-book', r.gate.cr === 'CR-0075' && r.gate.trace === '1a117de3a33a3b25');
+  ok('sandwich-windows-zero', r.sandwich.batchWindows === 0);
+  // 5 · two-sided flow nets internally: zero pool touch, tokens move agent-to-agent at the fair
+  const twoSided = q([
+    { agent: A, from: 'SBD', to: 'STEEM', amountIn: '2000', minOut: null },   // sell SBD, buy STEEM
+    { agent: B, from: 'STEEM', to: 'SBD', amountIn: '19000', minOut: null },  // sell STEEM, buy SBD
+  ]);
+  const poolsBefore = JSON.stringify(core.pools);
+  const r2 = settleBatch(core, twoSided, feed, '2026-10-07T10:00:00.000Z', gateOpen, laneOpen, null);
+  ok('two-sided-nets-internally', r2.verdict === 'BATCH-SETTLED' && r2.internalRows.length === 2 && r2.poolClears <= 2); // per-row flooring leaves ±1µ residuals that clear the pools honestly
+  ok('conservation-holds-2', r2.consOk === true);
+  ok('match-at-fair', r2.internalRows.every((row) => Math.abs(Number(row.from === 'SBD' ? BigInt(row.inMu) - BigInt(row.outMu) * 105446700n / 1000000000n : BigInt(row.outMu) - BigInt(row.inMu) * 105446700n / 1000000000n)) <= 1)); // the match price is the measured fair within the 1µ floor
+  const after = JSON.stringify(core.pools);
+  ok('pure-no-mutation-of-input', after === poolsBefore); // the settle law: the caller's state is NEVER mutated (copies only)
+  // 6 · a permuted queue settles to a byte-identical LEDGER (order-invariance on the settle path)
+  const perm = q([{ agent: B, from: 'STEEM', to: 'SBD', amountIn: '19000', minOut: null }, { agent: A, from: 'SBD', to: 'STEEM', amountIn: '2000', minOut: null }]);
+  const r3 = settleBatch(core, perm, feed, '2026-10-07T10:00:00.000Z', gateOpen, laneOpen, null);
+  ok('permuted-queue-identical-ledger', r3.verdict === 'BATCH-SETTLED' && r3.att === r2.att);
+  // 7 · the fee law rides the batch: a law book raising P3 25→50 changes the uniform price and the hop rows say lawFee
+  const lawBook = { ok: true, publishedAt: '2026-10-07T09:00:00.000Z', pools: [{ pool: 'P3', sigmaBps: 25, feeBps: 50 }] };
+  const r4 = settleBatch(core, intents, feed, '2026-10-07T10:00:00.000Z', gateOpen, laneOpen, lawBook);
+  const hop = (r4.fills.find((f) => f.kind === 'BATCH-CLEAR') || {}).hops || [];
+  ok('law-fee-rides-the-batch', r4.verdict === 'BATCH-SETTLED' && hop.some((h) => h.lawFee === true && h.feeBpsUsed === 50) && BigInt(r4.clears[0].aggOut) < BigInt(r.clears[0].aggOut));
+  ok('law-fee-ledger-fee-stays-base', r4.st.pools.find((p) => p.id === 'P3').feeBps === 25); // the ledger fee NEVER fee-creeps
+  const pass = c.filter((x) => x.ok).length;
+  console.log(`DEX-CORE-SELFTEST-BATCH-SETTLE-OK ${pass}/${c.length}`);
+  if (pass !== c.length) { for (const x of c) if (!x.ok) console.log(`  FAIL ${x.name}`); }
+  return pass === c.length ? 0 : 1;
+}
+
+/** selftest-fee-law (R77): the engine fee law judges itself — pure, deterministic. */
+function selftestFeeLaw() {
+  const c = []; const ok = (name, cond) => c.push({ name, ok: !!cond });
+  const NOW = '2026-10-07T12:00:00.000Z';
+  const core = {
+    protocol: PROTOCOL, at: NOW, genesisDone: true, seq: 7,
+    pools: [
+      { id: 'P1', pair: 'WSTEEM/STEEM', kind: 'PEG', a: 'WSTEEM', b: 'STEEM', feeBps: 2, ra: '1000', rb: '1000', planned: false },
+      { id: 'P3', pair: 'STEEM/SBD', kind: 'VOLATILE', a: 'STEEM', b: 'SBD', feeBps: 25, ra: '1000000', rb: '105447', planned: false }, // mid = 0.105447 SBD/STEEM ≈ the fair
+      { id: 'P4', pair: 'SAOS/WSTEEM', kind: 'VOLATILE', a: 'SAOS', b: 'WSTEEM', feeBps: 30, ra: '0', rb: '0', planned: true },
+      { id: 'P5', pair: 'SAOS/WSTEEM', kind: 'VOLATILE', a: 'SAOS', b: 'WSTEEM', feeBps: 30, ra: '800000', rb: '900000', planned: false }, // live, NO measured fair (no invention)
+    ],
+  };
+  // the realized-price tape: P3 filled at two prices around the mid → σ exists (µ in, µ out)
+  const hist = [
+    { type: 'AGENT_FILL', hops: [{ pool: 'P3', in: '1000000', out: '103500', fee: '2500' }] },  // 0.1035 SBD per STEEM
+    { type: 'AGENT_FILL', hops: [{ pool: 'P3', in: '1000000', out: '105500', fee: '2500' }] },  // 0.1055 SBD per STEEM
+    { type: 'AGENT_FILL', hops: [{ pool: 'P5', in: '100000', out: '112500', fee: '3000' }] },   // P5: ONE sample only
+  ];
+  const feed = { fresh: true, fair: '105446700' };
+  const book = measureFeeLaw(core, hist, feed, NOW);
+  ok('book-shape', book.ok === true && book.book === 'saos-engine-fee-law/1.0' && Array.isArray(book.pools));
+  ok('peg-untouched', book.pools.find((p) => p.pool === 'P1').deltaBps === 0 && book.checks.pegsUntouched === true);
+  ok('planned-pool-skipped', !book.pools.some((p) => p.pool === 'P4'));
+  const p3 = book.pools.find((p) => p.pool === 'P3');
+  ok('sigma-measured-from-tape', p3.samples === 2 && p3.sigmaBps != null && p3.feeBps >= p3.baseBps && p3.deltaBps >= 0);
+  ok('checks-green', book.checks.allFeesAtOrAboveBase === true && book.checks.capsRespected === true);
+  // thin tape: <2 samples AND no fair → σ null → base (no invention)
+  const thin = measureFeeLaw(core, [hist[2]], feed, NOW);
+  const p5t = thin.pools.find((p) => p.pool === 'P5');
+  ok('thin-tape-stays-base', p5t.sigmaBps == null && p5t.feeBps === 30 && p5t.deltaBps === 0);
+  // the law raises with σ: a violent tape raises the fee, capped at min(2×base, 200)
+  const violent = [
+    { type: 'AGENT_FILL', hops: [{ pool: 'P3', in: '1000000', out: '90000', fee: '2500' }] },   // 0.0900
+    { type: 'AGENT_FILL', hops: [{ pool: 'P3', in: '1000000', out: '130000', fee: '2500' }] },  // 0.1300 (±19% around 0.11)
+  ];
+  const hot = measureFeeLaw(core, violent, feed, NOW);
+  const p3h = hot.pools.find((p) => p.pool === 'P3');
+  ok('volatility-raises-fee', p3h.sigmaBps != null && p3h.sigmaBps > p3.sigmaBps && p3h.feeBps > p3h.baseBps);
+  ok('cap-respected', p3h.feeBps <= Math.min(2 * p3h.baseBps, 200));
+  // lawFeeFor: fresh book raises; stale book → null (base); lower row refuses; PEG refuses
+  const nowMs = Date.parse('2026-10-07T13:00:00.000Z');
+  ok('lawfee-fresh-adopts', lawFeeFor(core.pools.find((p) => p.id === 'P3'), { publishedAt: '2026-10-07T12:00:00.000Z', pools: [{ pool: 'P3', sigmaBps: 25, feeBps: 50 }] }, nowMs) === 50);
+  ok('lawfee-stale-refuses', lawFeeFor(core.pools.find((p) => p.id === 'P3'), { publishedAt: '2026-10-05T12:00:00.000Z', pools: [{ pool: 'P3', sigmaBps: 25, feeBps: 50 }] }, nowMs) === null);
+  ok('lawfee-lower-row-refuses', lawFeeFor(core.pools.find((p) => p.id === 'P3'), { publishedAt: '2026-10-07T12:00:00.000Z', pools: [{ pool: 'P3', sigmaBps: 0, feeBps: 10 }] }, nowMs) === null);
+  ok('lawfee-overcap-row-refuses', lawFeeFor(core.pools.find((p) => p.id === 'P3'), { publishedAt: '2026-10-07T12:00:00.000Z', pools: [{ pool: 'P3', sigmaBps: 999, feeBps: 500 }] }, nowMs) === null);
+  ok('lawfee-peg-refuses', lawFeeFor(core.pools.find((p) => p.id === 'P1'), { publishedAt: '2026-10-07T12:00:00.000Z', pools: [{ pool: 'P1', sigmaBps: 25, feeBps: 50 }] }, nowMs) === null);
+  ok('lawfee-unknown-pool-base', lawFeeFor(core.pools.find((p) => p.id === 'P3'), { publishedAt: '2026-10-07T12:00:00.000Z', pools: [{ pool: 'PX', sigmaBps: 25, feeBps: 50 }] }, nowMs) === null);
+  // withLawFee keeps the ledger object untouched (copy, Meteora model)
+  const p3src = core.pools.find((p) => p.id === 'P3');
+  const wrapped = withLawFee(p3src, { publishedAt: '2026-10-07T12:00:00.000Z', pools: [{ pool: 'P3', sigmaBps: 25, feeBps: 50 }] });
+  ok('withlawfee-copy-not-mutate', wrapped !== p3src && wrapped.feeBps === 50 && wrapped.lawFeeBps === 50 && p3src.feeBps === 25);
+  const pass = c.filter((x) => x.ok).length;
+  console.log(`DEX-CORE-SELFTEST-FEE-LAW-OK ${pass}/${c.length}`);
   if (pass !== c.length) { for (const x of c) if (!x.ok) console.log(`  FAIL ${x.name}`); }
   return pass === c.length ? 0 : 1;
 }
@@ -2074,7 +2586,11 @@ if (require.main === module) {
   const arg = process.argv[2] || '';
   if (arg === 'selftest') process.exit(selftest());
   if (arg === 'selftest-batch') process.exit(selftestBatch());
+  if (arg === 'selftest-batch-settle') process.exit(selftestBatchSettle());
+  if (arg === 'selftest-fee-law') process.exit(selftestFeeLaw());
   if (arg === 'clear-batch') { clearBatchTick(); process.exit(0); }
+  if (arg === 'fee-law') { feeLawTick(); process.exit(0); }
+  if (arg === 'settle-batch') { settleBatchTick().then((rc) => process.exit(rc)).catch(() => process.exit(0)); }
   if (arg === 'settle-intents') { settleIntentsTick().then((rc) => process.exit(rc)).catch(() => process.exit(0)); }
   else if (arg === 'settle-xc') { settleXcTick().then((rc) => process.exit(rc)).catch(() => process.exit(0)); }
   else tick().then((rc) => process.exit(rc)).catch(() => process.exit(0));
@@ -2095,6 +2611,9 @@ module.exports = {
   settle, settleIntents, settleXcOps, rosterLaw, selftest, LAWS,
   // uniform batch clearing (R76)
   clearBatchUniform, sandwichExtraction, selftestBatch, BATCH_LAWS, BATCH_MAX_ROUNDS, BATCH_SANDWICH_FR_BPS,
+  // the owner gates (R77): the approved batch settlement + the engine fee law
+  ownerGate, stagedLaneCheck, settleBatch, settleBatchTick, selftestBatchSettle, BATCH_SETTLE_LAWS,
+  measureFeeLaw, lawFeeBook, lawFeeFor, withLawFee, withLawFees, feeLawTick, selftestFeeLaw, FEE_LAW_LAWS,
   SCALE, BPS, NANO, STABLE_A, FEE_VOLATILE_BPS, FEE_PEG_BPS, PEG_GUARD_DRIFT_PCT,
   MESH_DUST, MESH_WIRE_MAX_SHARE_BPS, MESH_FILL_MAX_DEPTH_BPS,
   // cross-chain intent gates (R43)

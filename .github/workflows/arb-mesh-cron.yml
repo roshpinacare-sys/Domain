@@ -57,17 +57,29 @@ jobs:
       - name: uniform batch clearing selftest (R76 · the CoW take judges itself — one price, order-invariance, netting, minOut exclusion)
         run: node agents/dex-core.cjs selftest-batch
 
+      - name: approved settlement selftest (R77 · the owner-gate lane judges itself — CR-0075 gate, staged-lane, conservation, idempotency, order-invariance)
+        run: node agents/dex-core.cjs selftest-batch-settle
+
+      - name: engine fee-law selftest (R77 · the Meteora take judges itself — measured σ, caps, pegs untouched, no invention)
+        run: node agents/dex-core.cjs selftest-fee-law
+
       - name: mesh tick (mandates → intents queue → atomic settle → honest P&L + size ladder)
         run: node agents/arb-mesh.cjs
 
       - name: uniform batch clearing proof (R76 · DRY lane — measures the queue as ONE batch, publishes agents/dex-batch.json, moves nothing)
         run: node agents/dex-core.cjs clear-batch
 
+      - name: engine fee-law tick (R77 · the Meteora take adopted by the ENGINE — σ measured from our own books only, publishes agents/fee-law.json)
+        run: node agents/dex-core.cjs fee-law
+
+      - name: approved batch settlement tick (R77 · the CR-0075 lane — publishes agents/dex-batch-settled.json in EVERY state, the owner gate trace is auditable on Pages)
+        run: node agents/dex-core.cjs settle-batch
+
       - name: commit mesh books (+ the core ledger when a batch settled, + the batch-clear proof book)
         run: |
           git config user.name "saos-arb-mesh"
           git config user.email "arb-mesh@fleet.local"
-          git add agents/arb-mesh.json agents/arb-mesh.md agents/arb-mesh-history.jsonl agents/dex-intents.json agents/dex-core.json agents/dex-core.md agents/dex-core-history.jsonl agents/dex-batch.json
+          git add agents/arb-mesh.json agents/arb-mesh.md agents/arb-mesh-history.jsonl agents/dex-intents.json agents/dex-core.json agents/dex-core.md agents/dex-core-history.jsonl agents/dex-batch.json agents/fee-law.json agents/dex-batch-settled.json
           if git diff --cached --quiet; then
             echo "no book delta — quiet tick"
           else
