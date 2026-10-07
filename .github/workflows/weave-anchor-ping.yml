@@ -78,11 +78,18 @@ jobs:
           GH_TOKEN: ${{ github.token }}
 
       - name: Freshness verdict — red only if the anchor chain is truly stale
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           FRESH_H="${{ inputs.fresh_h || '3.5' }}"
-          LAST=$(curl -s -H "Authorization: Bearer ${{ github.token }}" \
-            "https://api.github.com/repos/roshpinacare-sys/Domain/actions/workflows/weave-anchor-lines.yml/runs?status=success&per_page=1")
-          CREATED=$(echo "$LAST" | node -e "const d=JSON.parse(require('fs').readFileSync(0,'utf8')); const r=(d.workflow_runs||[])[0]; console.log(r?r.created_at:'')")
+          # R244 robustness: a transient API empty/error must never fake "no run
+          # exists" (measured 2026-10-06 — false reds from bare `curl -s` while
+          # the twin was green in the same minute). gh api is authenticated and
+          # surfaces errors; an API failure = INCONCLUSIVE (honest, distinct
+          # verdict — never mistaken for staleness). Still red either way.
+          if ! CREATED=$(gh api "repos/roshpinacare-sys/Domain/actions/workflows/weave-anchor-lines.yml/runs?status=success&per_page=1" --jq '.workflow_runs[0].created_at // ""' 2>/tmp/ping-api.err); then
+            echo "API-ERROR (inconclusive — the freshness judge could not read the twin, this is NOT a staleness verdict): $(cat /tmp/ping-api.err)"; exit 1
+          fi
           if [ -z "$CREATED" ]; then
             echo "no successful anchor-lines run found — the chain is unattended"; exit 1
           fi
