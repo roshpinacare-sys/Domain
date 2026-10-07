@@ -109,7 +109,7 @@ const INTENTS_FILE = path.join(AG, 'dex-intents.json'); // the mesh queue — wr
 const XC_OPS_FILE = path.join(AG, '..', 'dex', 'xc-ops.json'); // the XC intent queue — written by dex-xc.cjs, consumed+cleared by THIS desk (single-writer law)
 const ROSTER_FILE = path.join(AG, 'persona-slots.json');
 const PROTOCOL = 'SAOS-DEX-CORE/1';
-const VERSION = 'dex-core v1.4.0 (R44 THE OPPOSING HANDS, CR-0074)';
+const VERSION = 'dex-core v1.5.0 (R76 THE UNIFORM CLEARING)';
 const REDEEM_REQUESTS_FILE = path.join(AG, '..', 'dex', 'redeem-requests.json');
 const PEGOUT_QUEUE_FILE = path.join(AG, '..', 'dex', 'pegout-queue.json');
 
@@ -118,6 +118,11 @@ const MESH_DUST = 1000n;              // 0.001 unit — below this a fill is noi
 const MESH_WIRE_MAX_SHARE_BPS = 1000n; // a batch may wire ≤10% of the treasury's FREE claims to agents
 const MESH_FILL_MAX_DEPTH_BPS = 500n;  // a single fill may not exceed 5% of the first-hop depth
 const MESH_BATCH_MEMO = 64;            // processed-batch ids kept for idempotency (rotating)
+
+// ── uniform batch clearing constants (R76 · the CoW take) ──────────────
+const BATCH_FILE = path.join(AG, 'dex-batch.json'); // the DRY proof book - this lane measures, it never settles
+const BATCH_MAX_ROUNDS = 4;            // exclusion-reclear rounds before an honest CLEARING-ROUNDS-EXHAUSTED
+const BATCH_SANDWICH_FR_BPS = 1000n;   // the measured sandwich front-run: 10% of the victim size
 
 // ── cross-chain intent constants (R43) ────────────────────────────────────
 const CHAIN_WRAPPER = { STEEM: 'WSTEEM', SBD: 'WSBD', HIVE: 'WHIVE', HBD: 'WHBD', BLURT: 'WBLURT' }; // chains with a wrapper in the vault catalog (R42 law)
@@ -1205,6 +1210,332 @@ async function settleIntentsTick() {
     return 0;
   }
 }
+// ── uniform batch clearing (R76 THE UNIFORM CLEARING · the CoW take) ───────────────
+// The sequential settle path fills intents one-by-one: price-time priority inside the batch,
+// and every boundary between two fills is a sandwich window on a real chain. The batch law
+// abolishes both: the queue clears as ONE batch - canonical order, two-sided flow nets
+// internally at the MEASURED fair (coincidence of wants, zero fees, zero pool touch), the
+// residual clears the pools as ONE aggregate trade, and every trader receives the SAME
+// uniform clearing price. Order-invariance is the anti-sandwich proof: a permuted queue
+// clears byte-identical, there is no ordering to exploit. This lane is DRY by law: it
+// measures and publishes the proof (agents/dex-batch.json) and moves NOTHING - the settle
+// gate stays the owner's (STASIS law, judge separation from settleIntents above).
+
+/** measured sandwich on ONE pool (pure): front-run frBps of the victim, the victim fills,
+ *  the attacker back-runs. Returns the attacker's profit and the victim's damage - the
+ *  exact value a sandwicher extracts from ONE sequential-fill boundary. */
+function sandwichExtraction(pool, from, to, victimIn, frBps) {
+  const fr = victimIn * frBps / BPS;
+  if (fr <= 0n) return null;
+  const p1 = JSON.parse(JSON.stringify(pool));
+  const s1 = poolSwap(p1, from, to, fr, null);
+  if (!s1 || s1.error) return null;
+  p1.ra = mu(s1.newRa); p1.rb = mu(s1.newRb);
+  const s2 = poolSwap(p1, from, to, victimIn, null);
+  if (!s2 || s2.error) return null;
+  p1.ra = mu(s2.newRa); p1.rb = mu(s2.newRb);
+  const s3 = poolSwap(p1, to, from, s1.out, null);
+  if (!s3 || s3.error) return null;
+  const p0 = JSON.parse(JSON.stringify(pool));
+  const s0 = poolSwap(p0, from, to, victimIn, null);
+  return {
+    attackerProfitMu: mu(s3.out - fr), // in `from` units: the sandwicher's extracted value
+    victimOutMu: mu(s2.out),
+    victimOutCleanMu: s0 && !s0.error ? mu(s0.out) : null,
+    victimDamageMu: s0 && !s0.error ? mu(s0.out - s2.out) : null,
+    unit: from,
+  };
+}
+
+/** uniform batch clearing (pure, DRY): prev is read, never written. Every intent is
+ *  validated by the same laws as the sequential path (roster, pair, dust, 5%-depth cap),
+ *  then the batch clears: net, route the residual aggregate once, one uniform price,
+ *  minOut misses are excluded honestly and the batch re-clears without them. */
+function clearBatchUniform(prev, queue, feed, now) {
+  const pools = JSON.parse(JSON.stringify(prev.pools || []));
+  const roster = rosterLaw();
+  const intentsIn = (queue && Array.isArray(queue.intents)) ? queue.intents : [];
+  const refused = [], notes = [];
+  // 1 · validate + canonical order (the order-independence law: sort, never trust arrival)
+  const valid = [];
+  for (const it of intentsIn) {
+    const agent = String((it && it.agent) || '');
+    const from = String((it && it.from) || '');
+    const to = String((it && it.to) || '');
+    const amountIn = ub(it && it.amountIn);
+    const minOut = (it && it.minOut != null) ? ub(it.minOut) : null;
+    if (!roster.includes(agent)) { refused.push({ agent, from, to, amountIn: mu(amountIn), why: 'ROSTER-UNKNOWN' }); continue; }
+    if (!from || !to || from === to) { refused.push({ agent, from, to, amountIn: mu(amountIn), why: 'BAD-PAIR' }); continue; }
+    if (amountIn < MESH_DUST) { refused.push({ agent, from, to, amountIn: mu(amountIn), why: 'DUST' }); continue; }
+    let depth = 0n;
+    for (const p of pools) {
+      if (p.planned || (ub(p.ra) <= 0n && ub(p.rb) <= 0n)) continue;
+      if (p.a === from) depth = depth === 0n ? ub(p.ra) : (ub(p.ra) < depth ? ub(p.ra) : depth);
+      if (p.b === from) depth = depth === 0n ? ub(p.rb) : (ub(p.rb) < depth ? ub(p.rb) : depth);
+    }
+    if (depth <= 0n) { refused.push({ agent, from, to, amountIn: mu(amountIn), why: 'NO-DEPTH' }); continue; }
+    const cap = depth * MESH_FILL_MAX_DEPTH_BPS / BPS;
+    const sizeIn = amountIn > cap ? cap : amountIn;
+    valid.push({ agent, from, to, sizeIn, minOut, truncated: sizeIn !== amountIn });
+  }
+  valid.sort((x, y) => x.agent < y.agent ? -1 : x.agent > y.agent ? 1 : x.from < y.from ? -1 : x.from > y.from ? 1 : x.to < y.to ? -1 : x.to > y.to ? 1 : (x.sizeIn < y.sizeIn ? -1 : x.sizeIn > y.sizeIn ? 1 : 0));
+  // 2 · group by normalized pair (sells = a->b)
+  const groups = new Map();
+  for (const v of valid) {
+    const a = v.from < v.to ? v.from : v.to;
+    const b = v.from < v.to ? v.to : v.from;
+    const key = a + '/' + b;
+    if (!groups.has(key)) groups.set(key, { a, b, sells: [], buys: [] });
+    (v.from === a ? g_sells(groups.get(key)) : g_buys(groups.get(key))).push(v);
+  }
+  function g_sells(g) { return g.sells; }
+  function g_buys(g) { return g.buys; }
+  // 3 · per-pair: net two-sided flow at the measured fair, clear the residuals uniformly
+  const clears = [], pairNotes = [];
+  const internalRows = [];
+  for (const [key, g] of groups) {
+    const twoSided = g.sells.length > 0 && g.buys.length > 0;
+    let sellSide = g.sells, buySide = g.buys;
+    if (twoSided) {
+      // the fair is measured as SBD per STEEM (feed.fairNano); any other two-sided pair has no measured fair
+      const fairNano = (feed && feed.fresh && feed.fair && (key === 'SBD/STEEM')) ? BigInt(feed.fair) : null;
+      if (!fairNano) {
+        for (const v of g.sells) refused.push({ agent: v.agent, from: v.from, to: v.to, amountIn: mu(v.sizeIn), why: 'MIXED-DIRECTION-NO-FAIR' });
+        for (const v of g.buys) refused.push({ agent: v.agent, from: v.from, to: v.to, amountIn: mu(v.sizeIn), why: 'MIXED-DIRECTION-NO-FAIR' });
+        pairNotes.push(key + ': two-sided flow without a measured fair - refused fail-closed (netting at an unmeasured price would invent one)');
+        continue;
+      }
+      // orientation: sells = SBD->STEEM (buy STEEM), buys = STEEM->SBD (sell STEEM); fair = SBD per STEEM
+      const sellSteem = sellSide.reduce((s, v) => s + v.sizeIn * NANO / fairNano, 0n); // SBD-sized inputs -> STEEM value
+      const buySteem = buySide.reduce((s, v) => s + v.sizeIn, 0n);                     // STEEM-sized inputs
+      const matchedSteem = sellSteem < buySteem ? sellSteem : buySteem; // coincidence of wants, in STEEM
+      // internal clears at the measured fair, zero fees, zero pool touch (coincidence of wants)
+      const fillInternal = (arr, steemValue, isInSteem) => {
+        const total = arr.reduce((s, v) => s + (isInSteem ? v.sizeIn : v.sizeIn * NANO / fairNano), 0n);
+        if (total <= 0n) return;
+        for (const v of arr) {
+          const share = steemValue * (isInSteem ? v.sizeIn : v.sizeIn * NANO / fairNano) / total;
+          if (v.from === 'SBD') internalRows.push({ agent: v.agent, from: 'SBD', to: 'STEEM', inMu: mu(share * fairNano / NANO), outMu: mu(share), why: 'INTERNAL-MATCH-AT-MEASURED-FAIR (no pool, no fee)' });
+          else internalRows.push({ agent: v.agent, from: 'STEEM', to: 'SBD', inMu: mu(share), outMu: mu(share * fairNano / NANO), why: 'INTERNAL-MATCH-AT-MEASURED-FAIR (no pool, no fee)' });
+        }
+      };
+      fillInternal(sellSide, matchedSteem, false); // SBD->STEEM side: their sizeIn is SBD
+      fillInternal(buySide, matchedSteem, true);   // STEEM->SBD side: their sizeIn is STEEM
+      // residuals: what each side still owes after the internal match (pro-rata truncation, minOut scales too)
+      const sellTotal = sellSide.reduce((s, v) => s + v.sizeIn, 0n);
+      const buyTotal = buySide.reduce((s, v) => s + v.sizeIn, 0n);
+      const sellResidualSbd = sellTotal - matchedSteem * fairNano / NANO;
+      const buyResidualSteem = buyTotal - matchedSteem;
+      const scaleSells = (v) => ({ ...v, sizeIn: v.sizeIn * sellResidualSbd / sellTotal, minOut: v.minOut == null ? null : v.minOut * sellResidualSbd / sellTotal });
+      const scaleBuys = (v) => ({ ...v, sizeIn: v.sizeIn * buyResidualSteem / buyTotal, minOut: v.minOut == null ? null : v.minOut * buyResidualSteem / buyTotal });
+      sellSide = sellResidualSbd > 0n ? sellSide.map(scaleSells).filter((v) => v.sizeIn > 0n) : [];
+      buySide = buyResidualSteem > 0n ? buySide.map(scaleBuys).filter((v) => v.sizeIn > 0n) : [];
+      pairNotes.push(key + ': two-sided flow - matched ' + mu(matchedSteem) + 'mu STEEM internally at the measured fair (' + mu(fairNano) + ' nano SBD/STEEM), residuals ' + mu(sellResidualSbd) + 'mu SBD + ' + mu(buyResidualSteem) + 'mu STEEM clear the pools');
+    }
+    // residual sides clear uniformly (a side that netted to zero simply does not clear)
+    const sides = [];
+    if (sellSide.length) sides.push({ from: g.a, to: g.b, intents: sellSide });
+    if (buySide.length) sides.push({ from: g.b, to: g.a, intents: buySide });
+    for (const side of sides) {
+      let alive = side.intents.map((v, i) => ({ ...v, idx: i }));
+      const excluded = [];
+      let rounds = 0, aggOut = 0n, aggIn = 0n, route = null;
+      const cleared = [];
+      while (alive.length && rounds < BATCH_MAX_ROUNDS) {
+        rounds += 1;
+        aggIn = 0n; for (const v of alive) aggIn += v.sizeIn;
+        if (aggIn <= 0n) break;
+        route = routeBest(pools, side.from, side.to, aggIn);
+        if (!route) { for (const v of alive) excluded.push({ agent: v.agent, why: 'NO-ROUTE-AT-CLEARING' }); alive = []; route = null; break; }
+        const shares = alive.map((v) => route.out * v.sizeIn / aggIn); // uniform pro-rata shares (floor)
+        const failing = alive.filter((v, i) => v.minOut != null && shares[i] < v.minOut);
+        if (!failing.length) {
+          aggOut = route.out;
+          alive.forEach((v, i) => cleared.push({ agent: v.agent, sizeIn: mu(v.sizeIn), uniformOut: mu(shares[i]), minOut: v.minOut == null ? null : mu(v.minOut), verdict: 'CLEARED' }));
+          alive = [];
+          break;
+        }
+        for (const v of failing) excluded.push({ agent: v.agent, why: 'UNSATISFIED-AT-CLEARING (uniform share below minOut - the order waits for a batch where it clears, like any unfilled limit order)' });
+        alive = alive.filter((v) => !failing.includes(v));
+      }
+      for (const v of alive) excluded.push({ agent: v.agent, why: 'CLEARING-ROUNDS-EXHAUSTED' });
+      let sumShares = 0n; for (const c of cleared) sumShares += ub(c.uniformOut);
+      const remainder = aggOut > 0n ? aggOut - sumShares : 0n; // the solver absorbs the rounding dust
+      clears.push({
+        pair: key, from: side.from, to: side.to,
+        rounds, aggIn: mu(aggIn), aggOut: mu(aggOut),
+        routeIds: route ? route.ids : [],
+        uniformPriceNano: aggIn > 0n && aggOut > 0n ? mu(aggOut * NANO / aggIn) : null,
+        traders: cleared,
+        excluded,
+        solverRemainderMu: mu(remainder),
+        why: cleared.length ? null : (excluded.length ? 'NO-CLEAR (every trader excluded or refused at clearing)' : 'EMPTY-SIDE'),
+      });
+    }
+  }
+  // 4 · the sandwich surface: the sequential path would expose one boundary per fill pair;
+  // the batch exposes ZERO (one atomic clearing - nothing exists between fills).
+  const clearedTotal = clears.reduce((s, c) => s + c.traders.length, 0);
+  const sequentialFills = valid.length; // what the one-by-one path would have settled
+  const windows = sequentialFills > 1 ? sequentialFills - 1 : 0;
+  let measuredWindow = null;
+  const firstRoute = clears.find((c) => c.routeIds && c.routeIds.length);
+  if (windows > 0 && firstRoute) {
+    const p0 = pools.find((p) => p.id === firstRoute.routeIds[0]);
+    if (p0) {
+      const m = sandwichExtraction(p0, firstRoute.from, firstRoute.to, ub(firstRoute.aggIn), BATCH_SANDWICH_FR_BPS);
+      if (m) measuredWindow = { pool: p0.id, frBps: Number(BATCH_SANDWICH_FR_BPS), victimInMu: firstRoute.aggIn, ...m, note: 'measured on the first hop of the winning route with a ' + Number(BATCH_SANDWICH_FR_BPS) / 100 + '% front-run - this is what ONE sequential boundary hands a sandwicher' };
+    }
+  }
+  return {
+    ok: true, book: 'saos-batch-clear/1.0', publishedAt: now,
+    engine: VERSION, batch: (queue && queue.batch) || null, queueAt: (queue && queue.at) || null,
+    movedNothing: true,
+    intentsInQueue: intentsIn.length, validIntents: valid.length,
+    netting: { internalRows, pairNotes },
+    clears, refused,
+    clearedTotal,
+    sandwich: {
+      sequentialFills, windows,
+      measuredWindow,
+      batchWindows: 0,
+      statement: 'sequential settle exposes ' + windows + ' intra-batch sandwich windows; the batch clears as ONE atomic op - there is nothing between fills to front-run, and a permuted queue clears byte-identical',
+    },
+    dry: { ledgerAt: prev.at || null, ledgerSeq: prev.seq == null ? null : prev.seq, note: 'DRY proof lane - the ledger was read, never written; conservation of the read state is untouched by construction (no op was produced)' },
+    notes,
+  };
+}
+
+const BATCH_LAWS = [
+  'one batch, one price: every trader in the batch clears at the SAME uniform clearing price - price-time priority inside the batch is abolished',
+  'order-invariance is the anti-sandwich proof: a permuted queue clears byte-identical; there is no ordering to exploit',
+  'coincidence of wants: two-sided flow nets internally at the MEASURED fair (zero fees, zero pool touch); only the residual clears the pools',
+  'fail-closed netting: two-sided flow without a fresh measured fair refuses (MIXED-DIRECTION-NO-FAIR) - the batch never invents a clearing price',
+  'solver absorption: the uniform remainder (rounding dust) books to the solver (treasury); a trader whose uniform share misses his minOut is excluded honestly (UNSATISFIED-AT-CLEARING), never force-filled',
+  'DRY proof lane: this book measures and proves; it moves NOTHING; the settle gate stays the owner\'s (STASIS law)',
+];
+
+/** the clear-batch tick: consume the queue as a MEASUREMENT, publish the proof book, touch nothing */
+function clearBatchTick() {
+  const now = nowIso();
+  try {
+    const stasis = stasisCheck();
+    let queue = null;
+    try { queue = JSON.parse(fs.readFileSync(INTENTS_FILE, 'utf8')); } catch (_) { queue = null; }
+    if (!queue || !Array.isArray(queue.intents)) queue = { batch: null, intents: [] };
+    const prev = loadBook();
+    const coreLive = !!(prev && prev.protocol === PROTOCOL && prev.genesisDone && Array.isArray(prev.pools) && prev.pools.length > 0);
+    let book;
+    if (!coreLive) {
+      book = {
+        ok: true, book: 'saos-batch-clear/1.0', publishedAt: now, engine: VERSION,
+        verdict: queue.intents.length ? 'NO-CORE-POOLS (the engine book carries no live pools - the proof lane refuses to invent reserves)' : 'NO-INTENTS',
+        stasisHalted: !!stasis, measuredInStasis: !!stasis, movedNothing: true,
+        batch: queue.batch || null, intentsInQueue: queue.intents.length,
+        netting: { internalRows: [], pairNotes: [] }, clears: [], refused: [], clearedTotal: 0,
+        sandwich: { sequentialFills: 0, windows: 0, measuredWindow: null, batchWindows: 0, statement: 'nothing to clear - the proof lane publishes the honest empty state' },
+        dry: { ledgerAt: prev ? prev.at : null, ledgerSeq: prev && prev.seq != null ? prev.seq : null, note: 'DRY proof lane - nothing to read against a live engine yet' },
+        laws: BATCH_LAWS, notes: [], errors: [],
+      };
+    } else {
+      const feed = loadRouterFeed();
+      const r = clearBatchUniform(prev, queue, feed, now);
+      book = { ...r, stasisHalted: !!stasis, measuredInStasis: !!stasis, laws: BATCH_LAWS, errors: [] };
+      book.verdict = book.clearedTotal > 0 ? 'BATCH-CLEAR-PROVEN' : (book.validIntents > 0 ? 'NOTHING-TO-CLEAR (every intent refused or excluded - booked honestly)' : 'NO-INTENTS');
+    }
+    const tmp = BATCH_FILE + '.tmp';
+    fs.writeFileSync(tmp, JSON.stringify(book, null, 1) + '\n');
+    fs.renameSync(tmp, BATCH_FILE);
+    console.log(`DEX-CORE-CLEAR-BATCH verdict=${book.verdict} batch=${book.batch || '-'} queue=${book.intentsInQueue} cleared=${book.clearedTotal} windows(seq)=${book.sandwich.windows} windows(batch)=${book.sandwich.batchWindows} stasis=${!!stasis}`);
+    return 0;
+  } catch (e) {
+    try {
+      fs.writeFileSync(BATCH_FILE, JSON.stringify({ ok: false, book: 'saos-batch-clear/1.0', publishedAt: now, engine: VERSION, verdict: 'ERROR (booked honestly, exit 0)', stasisHalted: !!stasisCheck(), movedNothing: true, laws: BATCH_LAWS, errors: [String(e.message).slice(0, 300)] }, null, 1) + '\n');
+    } catch (_) {}
+    console.log(`dex-core clear-batch: ERROR (fail-soft, exit 0) ${e.message}`);
+    return 0;
+  }
+}
+
+/** selftest-batch: the uniform clearing laws judge themselves (fresh process, zero network).
+ *  The roster is read LIVE (roster law): the traders are real roster names, so the proofs
+ *  never depend on a hardcoded list. */
+function selftestBatch() {
+  const c = []; const ok = (name, cond) => c.push({ name, ok: !!cond });
+  const roster = rosterLaw();
+  const [A, B, C] = roster; // operator first, then soldiers sorted - deterministic
+  const mkCore = () => ({
+    protocol: PROTOCOL, at: '2026-10-07T10:00:00.000Z', genesisDone: true, seq: 7,
+    accounts: Object.fromEntries(roster.map((r) => [r, { claims: { STEEM: '500000', SBD: '50000', WSTEEM: '388775', WSBD: '27450' } }])),
+    pools: [
+      { id: 'P1', pair: 'WSTEEM/STEEM', kind: 'PEG', a: 'WSTEEM', b: 'STEEM', feeBps: 2, ra: '388775', rb: '388775', feeMeter: '0', planned: false },
+      { id: 'P2', pair: 'WSBD/SBD', kind: 'PEG', a: 'WSBD', b: 'SBD', feeBps: 2, ra: '27450', rb: '27450', feeMeter: '0', planned: false },
+      { id: 'P3', pair: 'STEEM/SBD', kind: 'VOLATILE', a: 'STEEM', b: 'SBD', feeBps: 25, ra: '1555100', rb: '163980', feeMeter: '0', planned: false },
+    ],
+  });
+  const feed = { fresh: true, fair: '105446700' }; // 0.1054467 SBD per STEEM
+  const q = (rows) => ({ batch: 'BATCH-TEST-1', at: '2026-10-07T10:00:00.000Z', intents: rows });
+  const oneSided = q([
+    { agent: A, from: 'STEEM', to: 'SBD', amountIn: '20000', minOut: null },
+    { agent: B, from: 'STEEM', to: 'SBD', amountIn: '20000', minOut: null },
+    { agent: C, from: 'STEEM', to: 'SBD', amountIn: '20000', minOut: null },
+  ]);
+  const r1 = clearBatchUniform(mkCore(), oneSided, feed, '2026-10-07T10:00:00.000Z');
+  // 1 · uniform price for all
+  const side1 = r1.clears.find((x) => x.from === 'STEEM');
+  const prices = side1 ? side1.traders.map((t) => (ub(t.uniformOut) * NANO) / ub(t.sizeIn)) : [];
+  ok('uniform-price-identical-for-all', !!side1 && side1.traders.length === 3 && prices.every((p) => p === prices[0]));
+  // 2 · remainder to solver: sum of shares + remainder == aggOut
+  const sumShares = side1 ? side1.traders.reduce((s, t) => s + ub(t.uniformOut), 0n) : 0n;
+  ok('remainder-conservation', !!side1 && sumShares + ub(side1.solverRemainderMu) === ub(side1.aggOut));
+  // 3 · permutation invariance (the anti-sandwich proof)
+  const shuffled = q([oneSided.intents[2], oneSided.intents[0], oneSided.intents[1]]);
+  const r2 = clearBatchUniform(mkCore(), shuffled, feed, '2026-10-07T10:00:00.000Z');
+  ok('permutation-invariance-byte-identical', JSON.stringify(r1.clears) === JSON.stringify(r2.clears));
+  // 4 · sandwich surface: sequential has windows (and they pay), batch has zero
+  ok('sequential-windows-exist', r1.sandwich.sequentialFills === 3 && r1.sandwich.windows === 2);
+  ok('batch-windows-zero', r1.sandwich.batchWindows === 0);
+  ok('measured-sandwich-pays', !!r1.sandwich.measuredWindow && ub(r1.sandwich.measuredWindow.attackerProfitMu) > 0n && ub(r1.sandwich.measuredWindow.victimDamageMu) > 0n);
+  // 5 · coincidence of wants: two-sided flow nets internally, only the residual touches the pool
+  const twoSided = q([
+    { agent: A, from: 'STEEM', to: 'SBD', amountIn: '10000', minOut: null }, // sells 10000mu STEEM
+    { agent: B, from: 'SBD', to: 'STEEM', amountIn: '1500', minOut: null },  // buys with 1500mu SBD = 14226mu STEEM at fair
+  ]);
+  const r3 = clearBatchUniform(mkCore(), twoSided, feed, '2026-10-07T10:00:00.000Z');
+  const buyInternal = r3.netting.internalRows.find((x) => x.agent === A);
+  const sellInternal = r3.netting.internalRows.find((x) => x.agent === B);
+  ok('internal-match-at-measured-fair', !!buyInternal && !!sellInternal); // both sides matched internally at 0.1054467 SBD/STEEM
+  ok('seller-fully-internal-no-steem-side-clear', !!buyInternal && !r3.clears.some((x) => x.from === 'STEEM')); // the smaller side (10000mu STEEM) netted away entirely
+  const resSbd = r3.clears.find((x) => x.from === 'SBD');
+  ok('only-residual-clears-pool', !!resSbd && r3.clears.length === 1 && ub(resSbd.aggIn) > 0n && ub(resSbd.aggIn) < 1500n * SCALE); // only the 446mu SBD residual touches the pool
+  // 6 · minOut exclusion: an impossible limit waits honestly, the batch re-clears without him
+  const withRidic = q([
+    { agent: A, from: 'STEEM', to: 'SBD', amountIn: '20000', minOut: null },
+    { agent: B, from: 'STEEM', to: 'SBD', amountIn: '20000', minOut: '999999' }, // 999999 SBD for 20000mu STEEM = impossible
+    { agent: C, from: 'STEEM', to: 'SBD', amountIn: '20000', minOut: null },
+  ]);
+  const r4 = clearBatchUniform(mkCore(), withRidic, feed, '2026-10-07T10:00:00.000Z');
+  const side4 = r4.clears.find((x) => x.from === 'STEEM');
+  ok('impossible-minout-excluded', r4.clearedTotal === 2 && !!side4 && side4.excluded.some((x) => x.agent === B && x.why.indexOf('UNSATISFIED-AT-CLEARING') === 0));
+  ok('survivors-still-clear', !!side4 && side4.traders.length === 2 && side4.traders.every((t) => ub(t.uniformOut) >= 1000n));
+  // 7 · DRY: the ledger is untouched
+  const before = mkCore();
+  const snap = JSON.stringify(before);
+  clearBatchUniform(before, oneSided, feed, '2026-10-07T10:00:00.000Z');
+  ok('dry-ledger-untouched', JSON.stringify(before) === snap);
+  ok('dry-moved-nothing-flagged', r1.movedNothing === true);
+  // 8 · fail-closed netting: two-sided without a fresh fair refuses
+  const r5 = clearBatchUniform(mkCore(), twoSided, { fresh: false, fair: null }, '2026-10-07T10:00:00.000Z');
+  ok('mixed-no-fair-refused', r5.refused.length === 2 && r5.refused.every((x) => x.why === 'MIXED-DIRECTION-NO-FAIR') && r5.clearedTotal === 0);
+  // 9 · dust refusal: below MESH_DUST an intent is noise, honestly refused
+  const r6 = clearBatchUniform(mkCore(), q([{ agent: A, from: 'STEEM', to: 'SBD', amountIn: '999', minOut: null }]), feed, '2026-10-07T10:00:00.000Z');
+  ok('dust-refused-honestly', r6.validIntents === 0 && r6.refused.length === 1 && r6.refused[0].why === 'DUST');
+  const pass = c.filter((x) => x.ok).length;
+  console.log(`DEX-CORE-SELFTEST-BATCH-OK ${pass}/${c.length}`);
+  if (pass !== c.length) { for (const x of c) if (!x.ok) console.log(`  FAIL ${x.name}`); }
+  return pass === c.length ? 0 : 1;
+}
+
 // ── XC intent settlement (R43): the doors' ops applied on ONE balance universe ──
 /** The core stays dumb and safe: it applies XC ops atomically, asserts conservation per op,
  *  enforces the escrow/bond laws, and NEVER invents state. The doors, the clocks, the state
@@ -1466,6 +1797,7 @@ const LAWS = [
   'honest money: the powerdown drip is the booked fuel; no invented locks',
   'mesh law (R41): fleet agents settle atomically on this ledger — batch-idempotent, no naked shorts, wires capped at 10% of free treasury per batch, a fill never exceeds 5% of first-hop depth, edge marked to fair (null when no fair exists)',
   'multi-network vault (R42): custody classes — MEASURED-KEYED is the only mintable class; adjacent networks are OBSERVED (seen, never custody, never a reserve); redeem is ALWAYS honored 1:1 in-ledger (burn before payout); the chain payout is queued for the keyed desks — keyless code never fires a broadcast',
+  'uniform batch clearing (R76): the queue clears as ONE batch - canonical order, two-sided netting at the measured fair, one uniform clearing price for every trader, the solver absorbs the remainder; order-invariance (a permuted queue clears byte-identical) is the anti-sandwich proof · the proof lane is DRY (moves nothing), the settle gate stays the owner\'s',
 ];
 function assemble(prev, settled, feed, probe, now, isGenesis, ops, meshResult) {
   const s = settled.st;
@@ -1741,6 +2073,8 @@ function selftest() {
 if (require.main === module) {
   const arg = process.argv[2] || '';
   if (arg === 'selftest') process.exit(selftest());
+  if (arg === 'selftest-batch') process.exit(selftestBatch());
+  if (arg === 'clear-batch') { clearBatchTick(); process.exit(0); }
   if (arg === 'settle-intents') { settleIntentsTick().then((rc) => process.exit(rc)).catch(() => process.exit(0)); }
   else if (arg === 'settle-xc') { settleXcTick().then((rc) => process.exit(rc)).catch(() => process.exit(0)); }
   else tick().then((rc) => process.exit(rc)).catch(() => process.exit(0));
@@ -1759,6 +2093,8 @@ module.exports = {
   WRAP_UNDERLYING, CUSTODY_CLASSES, PEGOUT_CORRIDORS, MINT_SHARE_BPS, REDEEM_DUST,
   // engine
   settle, settleIntents, settleXcOps, rosterLaw, selftest, LAWS,
+  // uniform batch clearing (R76)
+  clearBatchUniform, sandwichExtraction, selftestBatch, BATCH_LAWS, BATCH_MAX_ROUNDS, BATCH_SANDWICH_FR_BPS,
   SCALE, BPS, NANO, STABLE_A, FEE_VOLATILE_BPS, FEE_PEG_BPS, PEG_GUARD_DRIFT_PCT,
   MESH_DUST, MESH_WIRE_MAX_SHARE_BPS, MESH_FILL_MAX_DEPTH_BPS,
   // cross-chain intent gates (R43)
