@@ -113,64 +113,93 @@ async function evaluate(a, baseUrl) {
   // for 32.7h). Independent of the Console target: the chain is a second
   // witness, not a page fetch.
   if (a.kind === "steem_priority") {
-    const account = String(a.account ?? "cashmachine");
+    const accounts = (Array.isArray(a.accounts) && a.accounts.length
+      ? a.accounts.map((x) => String(x).toLowerCase())
+      : [String(a.account ?? "cashmachine").toLowerCase()]);
     const coreOp = String(a.coreOp ?? "saos.weave.core.v1");
     const staleHours = Number(a.staleHours ?? 26);
     if (!Number.isFinite(staleHours)) return { id, ok: false, details: "invalid assertion: staleHours is not a number" };
-    const rpc = String(a.rpc ?? "https://api.steemit.com");
-    let hist = [];
-    try {
-      // R71c: the witness account now fires hundreds of ops/hour (grid orders +
-      // anchors), so a flat 100-op window can contain no core op even while the
-      // anchor line is alive and firing. Walk the history backwards up to 400
-      // ops so the window reliably CONTAINS an anchor. The verdict logic below
-      // (26h staleness + inversion detection) is unchanged.
+    const staleMs = staleHours * 3_600_000;
+    const maxPages = Number(a.maxPages ?? 120); // R73: 120 pages ≈ 12,000 ops ≈ the whole ~26h even at grid-flood cadence (R71c's 400-op window flaked again on 2026-10-07 16:30Z: hundreds of grid ops fired between anchors)
+    const nodes = Array.isArray(a.rpcNodes) && a.rpcNodes.length
+      ? a.rpcNodes.map(String)
+      : [String(a.rpc ?? "https://api.steemit.com"), "https://api.justyy.com"];
+    let lead = null; // { account, ts, nonCore } — the freshest core anchor on the line
+    const errors = [];
+    async function pageOf(account, start) {
+      let lastErr = null;
+      for (const node of nodes) {
+        try {
+          const r = await fetch(node, {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "condenser_api.get_account_history", params: [account, start, 100] }),
+            signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+          });
+          const j = await r.json();
+          if (j?.error) { lastErr = new Error(String(j.error?.message ?? "rpc error").slice(0, 80)); continue; } // try next node
+          if (!Array.isArray(j?.result)) { lastErr = new Error(`no history array (HTTP ${r.status})`); continue; }
+          return j.result;
+        } catch (err) { lastErr = err; }
+      }
+      throw lastErr ?? new Error("all nodes failed");
+    }
+    for (const account of accounts) {
+      let coreTs = "";
+      let nonCore = null;
+      let pages = 0;
       let start = -1;
-      for (let page = 0; page < 4; page++) {
-        const r = await fetch(rpc, {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "condenser_api.get_account_history", params: [account, start, 100] }),
-          signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
-        });
-        const j = await r.json();
-        const part = j?.result;
-        if (!Array.isArray(part)) {
-          if (hist.length === 0) return { id, ok: false, details: `rpc returned no history array (HTTP ${r.status})` };
-          break;
+      let stop = "";
+      try {
+        while (pages < maxPages) {
+          const hist = await pageOf(account, start);
+          pages++;
+          let oldestTs = "";
+          for (const [, entry] of hist) {
+            const op = entry?.op;
+            if (!op) continue;
+            const ts = String(entry.timestamp ?? "");
+            if (ts && (!oldestTs || ts < oldestTs)) oldestTs = ts;
+            if (op[0] !== "custom_json") continue;
+            const body = op[1] ?? {};
+            if (!Array.isArray(body.required_posting_auths) || !body.required_posting_auths.includes(account)) continue;
+            if (!ts) continue;
+            if (body.id === coreOp) {
+              if (ts > coreTs) coreTs = ts; // backward pages: the first hit is the freshest; keep scanning this page only
+            } else if (!nonCore || ts > nonCore.ts) {
+              nonCore = { id: String(body.id ?? "?"), ts };
+            }
+          }
+          if (coreTs) { stop = "core-found"; break; } // freshest possible on this account
+          const low = hist[0]?.[0];
+          if (low === 0 || low === undefined) { stop = "depth-end"; break; }
+          if (oldestTs && Date.parse(oldestTs + "Z") < Date.now() - staleMs) { stop = "window-covered"; break; }
+          start = low - 1;
         }
-        hist = hist.concat(part);
-        const firstIdx = Number(part[0]?.[0]);
-        if (!Number.isFinite(firstIdx) || firstIdx <= 0) break;
-        start = firstIdx - 1;
+        if (!coreTs && !stop) stop = "budget-spent";
+      } catch (err) {
+        stop = "rpc-fail";
+        errors.push(`@${account}: ${stop} at page ${pages}: ${err?.message ?? err}`);
       }
-    } catch (err) {
-      return { id, ok: false, details: `rpc fetch failed: ${err?.message ?? err}` };
-    }
-    let coreTs = "";
-    let nonCore = null;
-    for (const [, entry] of hist) {
-      const op = entry?.op;
-      if (!op || op[0] !== "custom_json") continue;
-      const body = op[1] ?? {};
-      if (!Array.isArray(body.required_posting_auths) || !body.required_posting_auths.includes(account)) continue;
-      const ts = String(entry.timestamp ?? "");
-      if (!ts) continue;
-      if (body.id === coreOp) {
-        if (ts > coreTs) coreTs = ts;
-      } else if (!nonCore || ts > nonCore.ts) {
-        nonCore = { id: String(body.id ?? "?"), ts };
+      if (stop === "rpc-fail") continue;
+      if (coreTs && (!lead || coreTs > lead.ts)) lead = { account, ts: coreTs, nonCore };
+      else if (!coreTs && stop !== "window-covered" && stop !== "depth-end") {
+        errors.push(`@${account}: no core op in ${pages * 100} ops (${stop})`);
       }
     }
-    if (!coreTs) return { id, ok: false, details: `core op ${coreOp} not found in last ${hist.length} ops of @${account}` };
-    const coreAgeH = (Date.now() - Date.parse(coreTs + "Z")) / 3_600_000;
+    if (!lead) {
+      const errNote = errors.length ? ` (${errors.slice(0, 2).join("; ")})` : "";
+      return { id, ok: false, details: `core op ${coreOp} not found within the ${staleHours}h window of any witness on the line [${accounts.join(", ")}]${errNote}` };
+    }
+    const coreAgeH = (Date.now() - Date.parse(lead.ts + "Z")) / 3_600_000;
     if (coreAgeH <= staleHours) {
-      return { id, ok: true, details: `core anchor ${coreAgeH.toFixed(1)}h old (fresh, <= ${staleHours}h)` };
+      const errNote = errors.length ? ` · ${errors.length} witness read note(s)` : "";
+      return { id, ok: true, details: `core anchor ${coreAgeH.toFixed(1)}h old (fresh, <= ${staleHours}h) · witness @${lead.account} · deep-window read${errNote}` };
     }
-    if (nonCore && nonCore.ts > coreTs) {
-      return { id, ok: false, details: `priority inversion: core ${coreAgeH.toFixed(1)}h stale while ${nonCore.id} fired later (${nonCore.ts}Z) and consumed the anchor budget` };
+    if (lead.nonCore && lead.nonCore.ts > lead.ts) {
+      return { id, ok: false, details: `priority inversion: core ${coreAgeH.toFixed(1)}h stale on @${lead.account} while ${lead.nonCore.id} fired later (${lead.nonCore.ts}Z) and consumed the anchor budget` };
     }
-    return { id, ok: true, details: `core anchor ${coreAgeH.toFixed(1)}h stale but no non-core op fired after it (honest starvation: RC regen, no inversion)` };
+    return { id, ok: true, details: `core anchor ${coreAgeH.toFixed(1)}h stale on @${lead.account} but no non-core op fired after it (honest starvation: RC regen, no inversion)` };
   }
 
   // ── ledger_integrity: the operator contract book must be whole ──────
