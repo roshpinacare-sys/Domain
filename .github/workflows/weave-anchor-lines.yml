@@ -34,7 +34,7 @@ on:
         required: false
         type: string
       chain:
-        description: 'self-recall chain (R251 keeper): dispatches the next cycle at the next :33 — anti-scheduler-starvation (GitHub dropped 7 hourly firings 06:27→13:33 on 2026-10-08). Manual dispatches spawn a chain ONLY with chain=true.'
+        description: 'self-recall chain (R251.2 keeper): dispatches the next cycle at the next :33 — anti-scheduler-starvation (GitHub dropped 7 hourly firings 06:27→13:33 on 2026-10-08). Manual dispatches spawn a chain ONLY with chain=true.'
         required: false
         default: 'false'
         type: choice
@@ -169,9 +169,9 @@ jobs:
       # המדידה (2026-10-08): GitHub הרעיב את ה-cron — הריצה המתוכננת
       # האחרונה 06:27Z ואז 7 הפעלות שעתיות נשמטו (07:33→13:33).
       # השער הזה הופך כל ריצה לחוליה: הוא ישן עד :33 הבא, בודק שאין
-      # חוליה חיה אחרת (ריצה אחרונה < 50 דק'), ומשגר את המחזור הבא
+      # חוליה חיה אחרת (ריצה-חיה = in_progress/queued'), ומשגר את המחזור הבא
       # בעצמו — הקצב כבר לא תלוי במתזמן של GitHub. דקות-ציבוריות = חינם.
-      - name: Cadence self-recall keeper (anti-scheduler-starvation, R251)
+      - name: Cadence self-recall keeper (anti-scheduler-starvation, R251.2)
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
@@ -182,21 +182,18 @@ jobs:
           if [ "$EVENT" = "workflow_dispatch" ] && [ "$CHAIN_INPUT" != "true" ]; then
             echo "הפעלה ידנית ללא chain=true — לא נולדת חוליה (מכוון)"; exit 0
           fi
-          LAST=$(gh api "repos/roshpinacare-sys/Domain/actions/workflows/weave-anchor-lines.yml/runs?per_page=2" \
-            --jq '.workflow_runs[] | select(.id != '$GITHUB_RUN_ID') | .created_at' 2>/dev/null | head -1 || true)
-          if [ -n "$LAST" ]; then
-            LASTTS=$(date -u -d "$LAST" +%s || echo 0)
-            NOW=$(date -u +%s)
-            AGE=$(( (NOW - LASTTS) / 60 ))
-            if [ "$AGE" -lt 50 ]; then
-              echo "חוליה אחרת חיה (ריצה אחרונה לפני ${AGE} דק') — לא מכפילים שרשרת"; exit 0
-            fi
-          fi
           S=$(( (33*60 - 10#$(date -u +%M)*60 - 10#$(date -u +%S) + 86400) % 3600 ))
           [ "$S" -lt 30 ] && S=$((S + 3600))
           JITTER=$(( (RANDOM % 50) + 20 ))
           TOTAL=$((S + JITTER))
-          echo "ישן ${TOTAL}s עד :33 הבא +jitter, ואז משגר את החוליה הבאה"
+          echo "ישן ${TOTAL}s עד :33 הבא +jitter"
           sleep "$TOTAL"
+          # השער-נגד-הכפלה: מספיק קיום-ריצה חיה (שומר-ישן = in_progress/queued).
+          # קבוצת-ה-concurrency מבטיחה שרק-ריצה אחת רצה — לכן זה השער המדויק.
+          PENDING=$(gh api "repos/roshpinacare-sys/Domain/actions/workflows/weave-anchor-lines.yml/runs?per_page=5&status=in_progress" --jq '.total_count' 2>/dev/null || echo 1)
+          QUEUED=$(gh api "repos/roshpinacare-sys/Domain/actions/workflows/weave-anchor-lines.yml/runs?per_page=5&status=queued" --jq '.total_count' 2>/dev/null || echo 1)
+          if [ "${PENDING:-1}" != "0" ] || [ "${QUEUED:-1}" != "0" ]; then
+            echo "שומר-חי אחר קיים (in_progress/queued) — לא מכפילים שרשרת"; exit 0
+          fi
           gh workflow run weave-anchor-lines --ref "${GITHUB_REF_NAME}" -f mode=auto -f chain=true -f recover=""
-          echo "חוליה R251 הועברה — הקצב חי בלי המתזמן"
+          echo "חוליה R251.2 הועברה — הקצב חי בלי המתזמן"
