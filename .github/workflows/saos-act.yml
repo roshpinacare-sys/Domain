@@ -61,6 +61,11 @@ jobs:
         working-directory: mini-services/saos-engine
         env:
           SAOS_ACCOUNT: headcorner
+          # R276 (Task 22): the LIVE headcorner credential — chain-proven 4/4
+          # from the git vault (KEYS-ZIP-2026-10-08, judge matrix 2026-10-08):
+          # headcorner STEEM owner/active/posting/memo all match live authorities.
+          # Until now this env was honestly absent (no held key matched the chain).
+          CI_HEADCORNER_CRED: ${{ secrets.HEADCORNER_CRED }}
           CI_MAIN_KEY: ${{ secrets.MAIN_KEY }}
           CI_STEEM_POSTING_WIF: ${{ secrets.STEEM_POSTING_WIF }}
           CI_STEEM_ACTIVE_WIF: ${{ secrets.STEEM_ACTIVE_WIF }}
