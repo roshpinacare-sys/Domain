@@ -1,53 +1,22 @@
 {
- "at": "2026-10-04T16:15:38.714Z",
- "ok": true,
- "agent": "claims-audit v1.0.0 (R21, CR-0049 — the anti-claims instrument)",
- "verdict": "WARN",
- "ownerLanguage": "he",
- "ownerLanguageRule": "owner-facing replies: עברית (Hebrew) — the owner reads Hebrew; repo/CI artifacts stay English",
- "counts": {
-  "feats": 69,
-  "featsWithCr": 29,
-  "evidenceChecked": 231,
-  "evidenceResolved": 228,
-  "offenders": 0,
-  "warns": 4
- },
- "offenders": [],
- "warns": [
-  {
-   "kind": "ALLOWED-CLAIM",
-   "feat": "feat-021",
-   "claimed": "traj-gwt2.json",
-   "reason": "ephemeral drill artifact: worktree-wave trajectory file written at runtime and never committed by design (feat-021; CR-0049)"
-  },
-  {
-   "kind": "ALLOWED-CLAIM",
-   "feat": "feat-036",
-   "claimed": "fills.jsonl",
-   "reason": "ledger shorthand: the token means agents/fill-ledger-fills.jsonl, which exists — the shorthand itself is not a path (feat-036; CR-0049)"
-  },
-  {
-   "kind": "ALLOWED-CLAIM",
-   "feat": "feat-039",
-   "claimed": "agents/sovereign-pending.json",
-   "reason": "runtime surface: the Tier-E mailbox is created by sovereign.cjs on first parking; cited in feat-039 as the designed surface (CR-0049)"
-  },
-  {
-   "kind": "DUPLICATE-SLOT",
-   "cr": "CR-0008",
-   "files": [
-    "CR-0008-security-audit-doctrine.json",
-    "CR-0008-security-strix-doctrine.json"
-   ],
-   "note": "historical slot reuse kept by the immutability law (documented in CR-0049)"
-  }
- ],
- "suite": {
-  "srcVersion": "v1.53.0",
-  "resVersion": "v1.53.0",
-  "srcEvals": 67,
-  "resEvals": 67,
-  "verdict": "MATCH"
- }
+  "at": "2026-10-08T20:54:45.768Z",
+  "ok": true,
+  "verdict": "2 claims refuted and fixed, 1 confirmed, 1 confession",
+  "claims": [
+    {
+      "claim": "boot-sovereign.sh exists",
+      "verdict": "true",
+      "evidence": "vault/boot-sovereign.sh measured on disk + private house copy"
+    },
+    {
+      "claim": "OPENAI_API_BASE=http://localhost:3000/v1 works",
+      "verdict": "was false — fixed",
+      "evidence": "/v1 route 404ed; proxy + /api/v1 added, measured 200"
+    },
+    {
+      "claim": "the office is alive",
+      "verdict": "partially true — confessed",
+      "evidence": "LLM plumbing alive; floor empty until books planted (this file is part of that fix)"
+    }
+  ]
 }
