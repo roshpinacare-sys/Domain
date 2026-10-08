@@ -1,27 +1,34 @@
 {
  "ok": true,
- "at": "2026-10-07T04:58:45.201Z",
- "ms": 3820,
+ "at": "2026-10-08T04:58:01.320Z",
+ "ms": 5991,
  "agent": "ci-hands v1.0.0 (Task 26 — trycua/cua adoption: the fleet gets HANDS on its own CI estate; cua-bench contract: trajectory + result + pass-rate; read-only actuator, STASIS-safe, tier law kept)",
  "reposDeclared": 16,
  "reposReached": 2,
  "reposUnreachable": 14,
  "window": 30,
  "sampledRuns": 60,
- "lanes": 25,
- "green": 25,
- "activeRed": 0,
+ "lanes": 26,
+ "green": 20,
+ "activeRed": 6,
  "selfHealed": 0,
  "historyTransient": 0,
  "recurring": 0,
  "startupFailures": 0,
- "passRate": 100,
+ "passRate": 77,
  "stasis": {
   "parseable": true,
   "active": true
  },
  "tokenMode": "env-token (redacted)",
- "proposals": [],
+ "proposals": [
+  "Domain/.github/workflows/saos-act.yml: ACTIVE-RED — diagnose via jobs+logs (Task 25 method), fix, prove by dispatch/push",
+  "Domain/.github/workflows/daily-digest.yml: ACTIVE-RED — diagnose via jobs+logs (Task 25 method), fix, prove by dispatch/push",
+  "Domain/.github/workflows/cloud-pulse.yml: ACTIVE-RED — diagnose via jobs+logs (Task 25 method), fix, prove by dispatch/push",
+  "Domain/.github/workflows/ladder-refresh.yml: ACTIVE-RED — diagnose via jobs+logs (Task 25 method), fix, prove by dispatch/push",
+  "Domain/.github/workflows/weave-anchor-lines.yml: ACTIVE-RED — diagnose via jobs+logs (Task 25 method), fix, prove by dispatch/push",
+  "Console/.github/workflows/line-agreement.yml: ACTIVE-RED — diagnose via jobs+logs (Task 25 method), fix, prove by dispatch/push"
+ ],
  "results": [
   {
    "repo": "saos-sovereign-platform",
@@ -43,12 +50,55 @@
    "repo": "Domain",
    "status": "REACHED",
    "sampled": 30,
-   "failures": [],
+   "failures": [
+    {
+     "id": 37717114743,
+     "lane": ".github/workflows/saos-act.yml",
+     "event": "schedule",
+     "at": "2026-10-08T02:17:08Z",
+     "class": "STEP-FAILURE"
+    },
+    {
+     "id": 37711905659,
+     "lane": ".github/workflows/daily-digest.yml",
+     "event": "schedule",
+     "at": "2026-10-08T01:14:17Z",
+     "class": "STEP-FAILURE"
+    },
+    {
+     "id": 37710289675,
+     "lane": ".github/workflows/cloud-pulse.yml",
+     "event": "schedule",
+     "at": "2026-10-08T00:55:37Z",
+     "class": "STEP-FAILURE"
+    },
+    {
+     "id": 37704309814,
+     "lane": ".github/workflows/ladder-refresh.yml",
+     "event": "schedule",
+     "at": "2026-10-07T23:48:16Z",
+     "class": "STEP-FAILURE"
+    },
+    {
+     "id": 37703587040,
+     "lane": ".github/workflows/weave-anchor-lines.yml",
+     "event": "schedule",
+     "at": "2026-10-07T23:40:28Z",
+     "class": "STEP-FAILURE"
+    },
+    {
+     "id": 37690601210,
+     "lane": ".github/workflows/saos-act.yml",
+     "event": "schedule",
+     "at": "2026-10-07T21:36:26Z",
+     "class": "STEP-FAILURE"
+    }
+   ],
    "lanes": {
     ".github/workflows/recruit.yml": {
      "display": "recruit",
      "latest": null,
-     "latestAt": "2026-10-07T04:57:28Z",
+     "latestAt": "2026-10-08T04:56:57Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
@@ -56,15 +106,7 @@
     ".github/workflows/proof-pipeline.yml": {
      "display": "proof-pipeline",
      "latest": "success",
-     "latestAt": "2026-10-07T04:53:54Z",
-     "failures": 0,
-     "verdict": "GREEN",
-     "classes": {}
-    },
-    ".github/workflows/weave-anchor-lines.yml": {
-     "display": "weave-anchor-lines",
-     "latest": "success",
-     "latestAt": "2026-10-07T04:46:26Z",
+     "latestAt": "2026-10-08T04:52:28Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
@@ -72,47 +114,7 @@
     ".github/workflows/dex-grid.yml": {
      "display": "dex-grid",
      "latest": "success",
-     "latestAt": "2026-10-07T03:57:38Z",
-     "failures": 0,
-     "verdict": "GREEN",
-     "classes": {}
-    },
-    ".github/workflows/org-selftests.yml": {
-     "display": "org-selftests",
-     "latest": "success",
-     "latestAt": "2026-10-07T03:38:30Z",
-     "failures": 0,
-     "verdict": "GREEN",
-     "classes": {}
-    },
-    "dynamic/pages/pages-build-deployment": {
-     "display": "pages build and deployment",
-     "latest": "success",
-     "latestAt": "2026-10-07T03:24:25Z",
-     "failures": 0,
-     "verdict": "GREEN",
-     "classes": {}
-    },
-    ".github/workflows/mirror-from-console.yml": {
-     "display": "mirror-from-console",
-     "latest": "success",
-     "latestAt": "2026-10-07T03:24:14Z",
-     "failures": 0,
-     "verdict": "GREEN",
-     "classes": {}
-    },
-    ".github/workflows/canary.yml": {
-     "display": "canary",
-     "latest": "success",
-     "latestAt": "2026-10-07T03:20:15Z",
-     "failures": 0,
-     "verdict": "GREEN",
-     "classes": {}
-    },
-    ".github/workflows/agent-verify.yml": {
-     "display": "agent-verify",
-     "latest": "success",
-     "latestAt": "2026-10-07T03:01:29Z",
+     "latestAt": "2026-10-08T03:57:43Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
@@ -120,7 +122,7 @@
     ".github/workflows/daily-claim.yml": {
      "display": "daily-claim",
      "latest": "success",
-     "latestAt": "2026-10-07T02:49:33Z",
+     "latestAt": "2026-10-08T02:48:14Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
@@ -128,31 +130,98 @@
     ".github/workflows/fleet-census-cron.yml": {
      "display": "fleet-census-cron",
      "latest": "success",
-     "latestAt": "2026-10-07T02:28:51Z",
+     "latestAt": "2026-10-08T02:27:03Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
     },
-    ".github/workflows/dex-beat.yml": {
-     "display": "dex-beat",
+    ".github/workflows/saos-act.yml": {
+     "display": "saos-act",
+     "latest": "failure",
+     "latestAt": "2026-10-08T02:17:08Z",
+     "failures": 2,
+     "verdict": "ACTIVE-RED",
+     "classes": {
+      "37717114743": "STEP-FAILURE",
+      "37690601210": "STEP-FAILURE"
+     }
+    },
+    ".github/workflows/canary.yml": {
+     "display": "canary",
      "latest": "success",
-     "latestAt": "2026-10-07T02:01:48Z",
+     "latestAt": "2026-10-08T01:56:15Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
     },
     ".github/workflows/daily-digest.yml": {
      "display": "daily-digest",
+     "latest": "failure",
+     "latestAt": "2026-10-08T01:14:17Z",
+     "failures": 1,
+     "verdict": "ACTIVE-RED",
+     "classes": {
+      "37711905659": "STEP-FAILURE"
+     }
+    },
+    "dynamic/pages/pages-build-deployment": {
+     "display": "pages build and deployment",
      "latest": "success",
-     "latestAt": "2026-10-07T01:14:04Z",
+     "latestAt": "2026-10-08T00:56:21Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/mirror-from-console.yml": {
+     "display": "mirror-from-console",
+     "latest": "success",
+     "latestAt": "2026-10-08T00:56:10Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
     },
     ".github/workflows/cloud-pulse.yml": {
      "display": "cloud-pulse",
+     "latest": "failure",
+     "latestAt": "2026-10-08T00:55:37Z",
+     "failures": 1,
+     "verdict": "ACTIVE-RED",
+     "classes": {
+      "37710289675": "STEP-FAILURE"
+     }
+    },
+    ".github/workflows/agent-verify.yml": {
+     "display": "agent-verify",
      "latest": "success",
-     "latestAt": "2026-10-07T00:55:32Z",
+     "latestAt": "2026-10-08T00:28:02Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/ladder-refresh.yml": {
+     "display": "ladder-refresh",
+     "latest": "failure",
+     "latestAt": "2026-10-07T23:48:16Z",
+     "failures": 1,
+     "verdict": "ACTIVE-RED",
+     "classes": {
+      "37704309814": "STEP-FAILURE"
+     }
+    },
+    ".github/workflows/weave-anchor-lines.yml": {
+     "display": "weave-anchor-lines",
+     "latest": "failure",
+     "latestAt": "2026-10-07T23:40:28Z",
+     "failures": 1,
+     "verdict": "ACTIVE-RED",
+     "classes": {
+      "37703587040": "STEP-FAILURE"
+     }
+    },
+    ".github/workflows/econ-desk.yml": {
+     "display": "econ-desk",
+     "latest": "success",
+     "latestAt": "2026-10-07T22:27:54Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
@@ -163,84 +232,27 @@
    "repo": "Console",
    "status": "REACHED",
    "sampled": 30,
-   "failures": [],
+   "failures": [
+    {
+     "id": 37715255875,
+     "lane": ".github/workflows/line-agreement.yml",
+     "event": "schedule",
+     "at": "2026-10-08T01:54:43Z",
+     "class": "STEP-FAILURE"
+    },
+    {
+     "id": 37688347045,
+     "lane": ".github/workflows/line-agreement.yml",
+     "event": "schedule",
+     "at": "2026-10-07T21:17:34Z",
+     "class": "STEP-FAILURE"
+    }
+   ],
    "lanes": {
     "dynamic/pages/pages-build-deployment": {
      "display": "pages build and deployment",
      "latest": "success",
-     "latestAt": "2026-10-07T04:56:46Z",
-     "failures": 0,
-     "verdict": "GREEN",
-     "classes": {}
-    },
-    ".github/workflows/agents-watch.yml": {
-     "display": "agents-watch",
-     "latest": "success",
-     "latestAt": "2026-10-07T04:53:57Z",
-     "failures": 0,
-     "verdict": "GREEN",
-     "classes": {}
-    },
-    ".github/workflows/money-watch.yml": {
-     "display": "money-watch",
-     "latest": "success",
-     "latestAt": "2026-10-07T04:44:05Z",
-     "failures": 0,
-     "verdict": "GREEN",
-     "classes": {}
-    },
-    ".github/workflows/dex-watch.yml": {
-     "display": "dex-watch",
-     "latest": "success",
-     "latestAt": "2026-10-07T04:34:46Z",
-     "failures": 0,
-     "verdict": "GREEN",
-     "classes": {}
-    },
-    ".github/workflows/line-agreement.yml": {
-     "display": "line-agreement",
-     "latest": "success",
-     "latestAt": "2026-10-07T04:30:15Z",
-     "failures": 0,
-     "verdict": "GREEN",
-     "classes": {}
-    },
-    ".github/workflows/weave-census.yml": {
-     "display": "weave-census",
-     "latest": "success",
-     "latestAt": "2026-10-07T04:20:02Z",
-     "failures": 0,
-     "verdict": "GREEN",
-     "classes": {}
-    },
-    ".github/workflows/console-publish.yml": {
-     "display": "console-publish",
-     "latest": "success",
-     "latestAt": "2026-10-07T03:58:55Z",
-     "failures": 0,
-     "verdict": "GREEN",
-     "classes": {}
-    },
-    ".github/workflows/trigger-mesh.yml": {
-     "display": "trigger-mesh",
-     "latest": "success",
-     "latestAt": "2026-10-07T03:36:52Z",
-     "failures": 0,
-     "verdict": "GREEN",
-     "classes": {}
-    },
-    ".github/workflows/truth-gate.yml": {
-     "display": "truth-gate",
-     "latest": "success",
-     "latestAt": "2026-10-07T03:24:00Z",
-     "failures": 0,
-     "verdict": "GREEN",
-     "classes": {}
-    },
-    ".github/workflows/grid-pulse.yml": {
-     "display": "grid-pulse",
-     "latest": "success",
-     "latestAt": "2026-10-07T03:18:35Z",
+     "latestAt": "2026-10-08T04:52:43Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
@@ -248,7 +260,82 @@
     ".github/workflows/chain-vitals.yml": {
      "display": "chain-vitals",
      "latest": "success",
-     "latestAt": "2026-10-07T02:58:53Z",
+     "latestAt": "2026-10-08T02:17:45Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/money-watch.yml": {
+     "display": "money-watch",
+     "latest": "success",
+     "latestAt": "2026-10-08T02:08:39Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/dex-watch.yml": {
+     "display": "dex-watch",
+     "latest": "success",
+     "latestAt": "2026-10-08T01:59:27Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/line-agreement.yml": {
+     "display": "line-agreement",
+     "latest": "failure",
+     "latestAt": "2026-10-08T01:54:43Z",
+     "failures": 2,
+     "verdict": "ACTIVE-RED",
+     "classes": {
+      "37715255875": "STEP-FAILURE",
+      "37688347045": "STEP-FAILURE"
+     }
+    },
+    ".github/workflows/weave-census.yml": {
+     "display": "weave-census",
+     "latest": "success",
+     "latestAt": "2026-10-08T01:46:21Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/trigger-mesh.yml": {
+     "display": "trigger-mesh",
+     "latest": "success",
+     "latestAt": "2026-10-08T01:03:40Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/console-publish.yml": {
+     "display": "console-publish",
+     "latest": "success",
+     "latestAt": "2026-10-07T23:51:24Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/agents-watch.yml": {
+     "display": "agents-watch",
+     "latest": "success",
+     "latestAt": "2026-10-07T23:17:35Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/truth-gate.yml": {
+     "display": "truth-gate",
+     "latest": "success",
+     "latestAt": "2026-10-07T23:01:03Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/agent-verify.yml": {
+     "display": "agent-verify",
+     "latest": "success",
+     "latestAt": "2026-10-07T21:38:35Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
@@ -354,116 +441,172 @@
  ],
  "trajectory": [
   {
-   "ts": "2026-10-07T04:58:45.496Z",
+   "ts": "2026-10-08T04:58:01.630Z",
    "action": "list-runs",
    "target": "saos-sovereign-platform",
    "outcome": 404,
-   "ms": 294
+   "ms": 309
   },
   {
-   "ts": "2026-10-07T04:58:45.711Z",
+   "ts": "2026-10-08T04:58:01.889Z",
    "action": "list-runs",
    "target": "steem",
    "outcome": 404,
-   "ms": 215
+   "ms": 260
   },
   {
-   "ts": "2026-10-07T04:58:46.388Z",
+   "ts": "2026-10-08T04:58:02.615Z",
    "action": "list-runs",
    "target": "Domain",
    "outcome": 200,
-   "ms": 677
+   "ms": 725
   },
   {
-   "ts": "2026-10-07T04:58:47.076Z",
+   "ts": "2026-10-08T04:58:02.915Z",
+   "action": "probe-jobs",
+   "target": "Domain/37717114743",
+   "outcome": 200,
+   "ms": 265
+  },
+  {
+   "ts": "2026-10-08T04:58:03.195Z",
+   "action": "probe-jobs",
+   "target": "Domain/37711905659",
+   "outcome": 200,
+   "ms": 280
+  },
+  {
+   "ts": "2026-10-08T04:58:03.471Z",
+   "action": "probe-jobs",
+   "target": "Domain/37710289675",
+   "outcome": 200,
+   "ms": 275
+  },
+  {
+   "ts": "2026-10-08T04:58:03.764Z",
+   "action": "probe-jobs",
+   "target": "Domain/37704309814",
+   "outcome": 200,
+   "ms": 293
+  },
+  {
+   "ts": "2026-10-08T04:58:04.025Z",
+   "action": "probe-jobs",
+   "target": "Domain/37703587040",
+   "outcome": 200,
+   "ms": 260
+  },
+  {
+   "ts": "2026-10-08T04:58:04.309Z",
+   "action": "probe-jobs",
+   "target": "Domain/37690601210",
+   "outcome": 200,
+   "ms": 283
+  },
+  {
+   "ts": "2026-10-08T04:58:04.988Z",
    "action": "list-runs",
    "target": "Console",
    "outcome": 200,
-   "ms": 659
+   "ms": 678
   },
   {
-   "ts": "2026-10-07T04:58:47.244Z",
+   "ts": "2026-10-08T04:58:05.250Z",
+   "action": "probe-jobs",
+   "target": "Console/37715255875",
+   "outcome": 200,
+   "ms": 258
+  },
+  {
+   "ts": "2026-10-08T04:58:05.512Z",
+   "action": "probe-jobs",
+   "target": "Console/37688347045",
+   "outcome": 200,
+   "ms": 261
+  },
+  {
+   "ts": "2026-10-08T04:58:05.659Z",
    "action": "list-runs",
    "target": "Zip",
    "outcome": 404,
-   "ms": 162
+   "ms": 146
   },
   {
-   "ts": "2026-10-07T04:58:47.416Z",
+   "ts": "2026-10-08T04:58:05.826Z",
    "action": "list-runs",
    "target": "roshpina",
    "outcome": 404,
-   "ms": 172
+   "ms": 167
   },
   {
-   "ts": "2026-10-07T04:58:47.623Z",
+   "ts": "2026-10-08T04:58:05.965Z",
    "action": "list-runs",
    "target": "anchor-baseline",
    "outcome": 404,
-   "ms": 207
+   "ms": 139
   },
   {
-   "ts": "2026-10-07T04:58:47.807Z",
+   "ts": "2026-10-08T04:58:06.124Z",
    "action": "list-runs",
    "target": "Saosmartwallet",
    "outcome": 404,
-   "ms": 184
+   "ms": 159
   },
   {
-   "ts": "2026-10-07T04:58:47.967Z",
+   "ts": "2026-10-08T04:58:06.298Z",
    "action": "list-runs",
    "target": "Sdk",
    "outcome": 404,
-   "ms": 160
+   "ms": 174
   },
   {
-   "ts": "2026-10-07T04:58:48.123Z",
+   "ts": "2026-10-08T04:58:06.461Z",
    "action": "list-runs",
    "target": "Project-files",
    "outcome": 404,
-   "ms": 156
+   "ms": 163
   },
   {
-   "ts": "2026-10-07T04:58:48.302Z",
+   "ts": "2026-10-08T04:58:06.629Z",
    "action": "list-runs",
    "target": "Adsmarket",
    "outcome": 404,
-   "ms": 179
+   "ms": 168
   },
   {
-   "ts": "2026-10-07T04:58:48.471Z",
+   "ts": "2026-10-08T04:58:06.786Z",
    "action": "list-runs",
    "target": "Defi",
    "outcome": 404,
-   "ms": 169
+   "ms": 157
   },
   {
-   "ts": "2026-10-07T04:58:48.592Z",
+   "ts": "2026-10-08T04:58:06.916Z",
    "action": "list-runs",
    "target": "saos-dex",
    "outcome": 404,
-   "ms": 121
+   "ms": 130
   },
   {
-   "ts": "2026-10-07T04:58:48.748Z",
+   "ts": "2026-10-08T04:58:07.047Z",
    "action": "list-runs",
    "target": "saos-jummper",
    "outcome": 404,
-   "ms": 156
+   "ms": 131
   },
   {
-   "ts": "2026-10-07T04:58:48.895Z",
+   "ts": "2026-10-08T04:58:07.187Z",
    "action": "list-runs",
    "target": "saos-control-center",
    "outcome": 404,
-   "ms": 147
+   "ms": 140
   },
   {
-   "ts": "2026-10-07T04:58:49.021Z",
+   "ts": "2026-10-08T04:58:07.311Z",
    "action": "list-runs",
    "target": "saos-sovereign-foundry",
    "outcome": 404,
-   "ms": 126
+   "ms": 124
   }
  ],
  "verdict": "CI-HANDS keyless floor: 2/16 reached — the rest booked UNREACHABLE (never invented)"
