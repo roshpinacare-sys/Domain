@@ -245,24 +245,25 @@ function executorPreview(internalRows) {
 
 // ── main ────────────────────────────────────────────────────────────────────
 (async () => {
-  // FATE-DEFENSE law #1 (the STASIS breaker, Task 22 lineage): the desk obeys the brake
-  // BEFORE any read or write. active=true halts as a healthy no-op — exit 0, an honest
-  // STASIS-HALT receipt line, one labeled history row, zero network, zero paper writes.
-  // The file itself is the audit trail (never delete history, flip the flag).
+  // FATE-DEFENSE law #1 (the STASIS breaker, Task 22 lineage) — READ THE BRAKE, RECORD IT.
+  // T-50 staged-obedience repair (live-measured 2026-10-09): the brake's OWN scope law is
+  // explicit — "measurement-only lanes continue". This desk IS the measurement lane (keyless
+  // reads, law 2: never broadcast). Over-halting it froze the whole market time-series on
+  // 2026-10-04 22:06 (books dark 5 days) while the calibration mandate (2026-10-05, trace
+  // 1a10bfe1342b2391) opened the grid lane and REQUIRED observation data. The brake stays
+  // ARMED and is recorded in every receipt (brakeArmed/brakeMode) — the audit trail keeps
+  // the truth, the observation resumes. The capital lanes keep halting at capital-gate.
+  let brakeInfo = null;
   try {
     const st = JSON.parse(fs.readFileSync(path.join(__dirname, 'STASIS.json'), 'utf8'));
     if (st && st.active === true) {
       const at = new Date().toISOString();
-      try {
-        fs.appendFileSync(path.join(ROOT, 'agents', 'market-grid-history.jsonl'),
-          JSON.stringify({ at, verdict: 'MARKET-GRID-HALTED-STASIS', halted: true, scope: st.scope || null, reason: st.reason || null }) + '\n');
-      } catch (_) { /* the halt must not itself crash — the receipt line below is the primary record */ }
-      fs.writeFileSync(OUT_JSON, JSON.stringify({ at, agent: 'market-grid v1.0.0', verdict: 'MARKET-GRID-HALTED-STASIS', halted: true, reason: st.reason || null, scope: st.scope || null, markets: [], errors: [] }, null, 1));
-      console.log(`STASIS-HALT market-grid · ${at}`);
-      return;
+      brakeInfo = { brakeArmed: true, brakeMode: st.mode || 'full', brakeSince: st.since || null, brakeScope: st.scope || null };
+      console.log(`STASIS-STAGED-OBSERVE market-grid · brake armed (scope: capital lanes) · measurement lane continues per scope law · ${at}`);
     }
   } catch (_) { /* no brake declared (missing/unreadable STASIS.json) → run normally; the tracked file + init's STASIS proof are the integrity layer */ }
   const out = { at: new Date().toISOString(), agent: 'market-grid v1.3.0 (Z-60+ internal-market sovereignty instrument; v1.3.0 CR-0062: HE pond law + daily-history probe-first)', laws: null, markets: [], hiveEngine: null, blurt: null, paperLedger: PAPER_LEDGER, executorPreviewCount: 0, errors: [], summary: {} };
+  if (brakeInfo) Object.assign(out, brakeInfo);
   out.laws = ['official sources only (chain nodes + sidechain RPC)', 'keyless: reads only, executor = owner-gated preview, never broadcast', 'paper is paper (labeled ledger, never laundered into realized book)', 'fail-loud per market', 'single canon (market-grid.json/.md)', 'the pond law: every venue carries its measured 24h volume (v1.3.0 CR-0062)'];
 
   const internal = [];
