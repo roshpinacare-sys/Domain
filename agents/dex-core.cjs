@@ -1629,12 +1629,15 @@ function lawFeeFor(pool, book, nowMs) {
   if (fee > Math.min(base * FEE_LAW_CAP_FACTOR, Number(FEE_LAW_CAP_ABS_BPS))) return null; // out-of-law row refuses
   return fee;
 }
-/** trade-time adoption: a pool COPY with the law fee (the ledger fee stays base — the law rides on top) */
-function withLawFee(pool, book) {
-  const fee = lawFeeFor(pool, book);
+/** trade-time adoption: a pool COPY with the law fee (the ledger fee stays base — the law rides on top).
+ *  T-49: nowMs is THREADED from the settle call — freshness judged at TRADE time, not wall-clock time
+ *  (the selftest fixture publishedAt is fixed in the past; judging it by Date.now() was a time bomb
+ *  that fired exactly at publishedAt+30h and turned the R77 selftest red in the cloud). */
+function withLawFee(pool, book, nowMs) {
+  const fee = lawFeeFor(pool, book, nowMs);
   return fee == null ? pool : { ...pool, baseFeeBps: pool.feeBps, feeBps: fee, lawFeeBps: fee };
 }
-function withLawFees(pools, book) { return (pools || []).map((p) => withLawFee(p, book)); }
+function withLawFees(pools, book, nowMs) { return (pools || []).map((p) => withLawFee(p, book, nowMs)); }
 
 // ── the APPROVED batch settlement (R77-A) ──────────────────────────────────
 /** settleBatch (pure, gate/stasis/feeBook injectable for the selftest): measures the queue
@@ -1665,7 +1668,9 @@ function settleBatch(prev, queue, feed, now, gate, lane, feeBook) {
   const processedBatches = Array.isArray(prev.processedBatches) ? [...prev.processedBatches] : [];
   if (batch && processedBatches.includes(batch)) return refusal('SETTLED-ALREADY (idempotency law — no double settle)', { ledger: { seq: prev.seq } });
   // measurement == application: measure ON the law-fee pools this lane applies
-  const lawPools = withLawFees(prev.pools, fb);
+  // T-49: freshness is judged at the SETTLE's trade time (threaded) — never wall-clock
+  const settleNowMs = Number.isFinite(Date.parse(now)) ? Date.parse(now) : Date.now();
+  const lawPools = withLawFees(prev.pools, fb, settleNowMs);
   const m = clearBatchUniform({ ...prev, pools: lawPools }, queue, feed, now);
   // apply on copies — atomic across the WHOLE batch (the walk runs on the SAME law-fee pools,
   // so the uniform clearing price INCLUDES the engine fee law; the BASE fee is restored at commit)
