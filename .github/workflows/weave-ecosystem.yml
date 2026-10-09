@@ -51,7 +51,10 @@ jobs:
       - name: Measure the ecosystem (full dup scan via ops PAT)
         run: |
           set -e
-          git remote set-url origin "https://x-access-token:${{ secrets.WEAVE_OPS_PAT }}@github.com/roshpinacare-sys/Zip.git"
+          # T-49: SBX_FLEET_PAT (ולא WEAVE_OPS_PAT) — מוכח-חי-קורא-תוכן-מלא-גם-של-steem
+          # (fine-grained עם-מטא-בלבד מחזיר-עצים-אך-403-על-בלובים — נמדד 18:13/19:24);
+          # ומאז-T-49-הסריקה-חיה-על-שיבוטי-git — קריאת-API-אחת-בלבד (רשימת-ריפואים).
+          git remote set-url origin "https://x-access-token:${{ secrets.SBX_FLEET_PAT }}@github.com/roshpinacare-sys/Zip.git"
           bun scripts/weave-ecosystem.ts --dup-scan --json sovereign/reports/ecosystem-dup-latest.json
           DUP=$(jq -r '.totals.dupRatio' sovereign/reports/ecosystem-dup-latest.json)
           REDUNDANT=$(jq -r '.totals.redundantCopies' sovereign/reports/ecosystem-dup-latest.json)
