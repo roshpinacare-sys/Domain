@@ -954,3 +954,53 @@
 {"ts":1791512518473,"type":"log","agentId":"gal","kind":"say","text":"קורא fleet-indicators למדדי תקשורת."}
 {"ts":1791512518473,"type":"log","agentId":"gal","kind":"tool","text":"read_book(fleet-indicators)"}
 {"ts":1791512519124,"type":"log","agentId":"gal","kind":"result","text":"shape: {at, ok, totals, families, source} full: {\"at\":\"2026-10-08T21:06:44.486Z\",\"ok\":true,\"totals\":{\"requests\":36,\"answered\":36,\"failed\":0,\"compactions\":0},\"families\":[{\"family\":\"cloudflare-ai\",\"build_index\":2,\"priority_rank\":1,\"score\":1,\"window_minutes\":60,\"total\":36,\"ok\":36,\"rate429\":0,\"hard\":0,\"net\":0,\"avg_latency_ms\":2618,\"cooldown_multiplier\":1},{\"family\":\"kilo\",\"build_index\":3,\"priority_ran"}
+{"ts":1791512525751,"type":"usage","agent":"gal","phase":"work","provider":"sovereign-gateway/auto","prompt_tokens":2742,"completion_tokens":35,"prompt_chars":12384,"completion_chars":137}
+{"ts":1791512525752,"type":"log","agentId":"gal","kind":"say","text":"קורא deep-audit — אודיט עמוק של תקשורת."}
+{"ts":1791512525752,"type":"log","agentId":"gal","kind":"tool","text":"read_book(deep-audit)"}
+{"ts":1791512526402,"type":"log","agentId":"gal","kind":"result","text":"shape: {protocol, at, stasis, estate, counts, totalFindings, findings, secret_census_note, duration_ms} full: {\"protocol\":\"SAOS-DEEP-AUDIT/1\",\"at\":\"2026-10-04T00:40:19.269Z\",\"stasis\":false,\"estate\":{\"workflows\":48,\"agents\":64,\"booksMeasured\":31,\"secretNames\":\"unavailable-keyless\"},\"counts\":{\"F4-stale-book\":1},\"totalFindings\":1,\"findings\":[{\"kind\":\"F4-stale-book\",\"id\":\"fill-ledger-cron.yml\",\"eviden"}
+{"ts":1791512526403,"type":"task","event":"patch","id":"t121","title":"סיור רשת: בדוק את תקשורת בין-הסוכנים ורשום שתיקות או ניתוקים חריגים","status":"review","assignee":"gal"}
+{"ts":1791512526403,"type":"log","agentId":"gal","kind":"say","text":"המשימה שלי מוכנה לביקורת."}
+{"ts":1791512528060,"type":"log","agentId":"aluf","kind":"tool","text":"review(t121 by gal)"}
+{"ts":1791512529261,"type":"log","agentId":"aluf","kind":"text","text":"relevance gate: 1 (רשת, תקשורת, בין, סוכנים, תיקות)"}
+{"ts":1791512538400,"type":"usage","agent":"erez","phase":"cross-check","provider":"sovereign-gateway/auto","prompt_tokens":139,"completion_tokens":190,"prompt_chars":631,"completion_chars":758}
+{"ts":1791512568063,"type":"usage","agent":"erez","phase":"cross-check","provider":"sovereign-gateway/auto","prompt_tokens":198,"completion_tokens":27,"prompt_chars":931,"completion_chars":107}
+{"ts":1791512568064,"type":"log","agentId":"erez","kind":"result","text":"cross-check(confirm): The summary matches the information found in the relevant books."}
+{"ts":1791512579751,"type":"usage","agent":"aluf","phase":"review","provider":"sovereign-gateway/auto","prompt_tokens":157,"completion_tokens":15,"prompt_chars":702,"completion_chars":59}
+{"ts":1791512579751,"type":"task","event":"patch","id":"t121","title":"סיור רשת: בדוק את תקשורת בין-הסוכנים ורשום שתיקות או ניתוקים חריגים","status":"done","assignee":"gal"}
+{"ts":1791512579751,"type":"log","agentId":"aluf","kind":"result","text":"approved: סיור רשת: בדוק את תקשורת בין-הסוכנים ורשום שתיקות או ניתוקים חריגים"}
+{"ts":1791512579751,"type":"log","agentId":"aluf","kind":"say","text":"אושר. עבודה טובה, גל."}
+{"ts":1791512580862,"type":"goal","event":"status","id":"g119","status":"review","text":"סיור רשת: בדוק את תקשורת בין-הסוכנים ורשום שתיקות או ניתוקים חריגים"}
+{"ts":1791512589345,"type":"usage","agent":"aluf","phase":"report","provider":"sovereign-gateway/auto","prompt_tokens":605,"completion_tokens":23,"prompt_chars":2503,"completion_chars":89}
+{"ts":1791512589345,"type":"log","agentId":"aluf","kind":"error","text":"final report parse failed"}
+{"ts":1791512589345,"type":"goal","event":"status","id":"g119","status":"done","text":"סיור רשת: בדוק את תקשורת בין-הסוכנים ורשום שתיקות או ניתוקים חריגים"}
+{"ts":1791512589345,"type":"log","agentId":"aluf","kind":"say","text":"היעד הושלם. הסיכום בספרייה."}
+{"ts":1791512615658,"type":"usage","agent":"aluf","phase":"lessons","provider":"sovereign-gateway/auto","prompt_tokens":611,"completion_tokens":21,"prompt_chars":2538,"completion_chars":82}
+{"ts":1791512964748,"type":"usage","agent":"aluf","phase":"operator","provider":"sovereign-gateway/auto","prompt_tokens":833,"completion_tokens":405,"prompt_chars":3448,"completion_chars":1620}
+{"ts":1791512964748,"type":"goal","event":"set","id":"g132","text":"סיור לקחים: עבור על פנקס הלקחים והצע שיפור מוחשי אחד למשרד","origin":"patrol"}
+{"ts":1791512964748,"type":"log","agentId":"aluf","kind":"text","text":"shift scheduled by the office itself (anti-fixation operator)"}
+{"ts":1791512964749,"type":"log","agentId":"aluf","kind":"say","text":"לא נתקעים על אותה זווית — משמרת חדשה יוצאת לדרך."}
+{"ts":1791512965650,"type":"log","agentId":"aluf","kind":"text","text":"planning goal: סיור לקחים: עבור על פנקס הלקחים והצע שיפור מוחשי אחד למשרד"}
+{"ts":1791513000303,"type":"usage","agent":"aluf","phase":"plan","provider":"sovereign-gateway/auto","prompt_tokens":741,"completion_tokens":292,"prompt_chars":3086,"completion_chars":1165}
+{"ts":1791513000303,"type":"log","agentId":"aluf","kind":"error","text":"plan empty/off-goal → JSON-only nudge retry"}
+{"ts":1791513031599,"type":"usage","agent":"aluf","phase":"plan-nudge","provider":"sovereign-gateway/auto","prompt_tokens":948,"completion_tokens":190,"prompt_chars":4051,"completion_chars":758}
+{"ts":1791513031599,"type":"task","event":"add","id":"t134","title":"סיור לקחים: עבור על פנקס הלקחים והצע שיפור מוחשי אחד למשרד","status":"todo","assignee":"gal"}
+{"ts":1791513031600,"type":"log","agentId":"aluf","kind":"error","text":"plan unusable → goal-derived task (fit: gal)"}
+{"ts":1791513031600,"type":"goal","event":"status","id":"g132","status":"active","text":"סיור לקחים: עבור על פנקס הלקחים והצע שיפור מוחשי אחד למשרד"}
+{"ts":1791513031600,"type":"task","event":"patch","id":"t134","title":"סיור לקחים: עבור על פנקס הלקחים והצע שיפור מוחשי אחד למשרד","status":"doing","assignee":"gal"}
+{"ts":1791513032701,"type":"log","agentId":"gal","kind":"text","text":"task: סיור לקחים: עבור על פנקס הלקחים והצע שיפור מוחשי אחד למשרד"}
+{"ts":1791513042093,"type":"usage","agent":"gal","phase":"work","provider":"sovereign-gateway/auto","prompt_tokens":410,"completion_tokens":13,"prompt_chars":1752,"completion_chars":50}
+{"ts":1791513042093,"type":"log","agentId":"gal","kind":"tool","text":"read_book(truth-history)"}
+{"ts":1791513042744,"type":"log","agentId":"gal","kind":"result","text":"shape: {format, runs} head: {\"format\":\"truth-gate-history-v1\",\"runs\":[{\"at\":\"2026-09-27T08:22:47.172Z\",\"verdict\":\"ALL-GREEN\",\"pass\":7,\"fail\":0,\"skip\":2,\"runUrl\":\"https://github.com/roshpinacare-sys/Console/actions/runs/36305993349\"},{\"at\":\"2026-09-27T09:22:00.100Z\",\"verdict\":\"ALL-GREEN\",\"pass\":7,\"fail\":0,\"skip\":2,\"runUrl\":\"https://github.com/roshpinacare-sys/Console/actions/runs/36309122917\"},{\"at"}
+{"ts":1791513051438,"type":"usage","agent":"gal","phase":"work","provider":"sovereign-gateway/auto","prompt_tokens":1272,"completion_tokens":13,"prompt_chars":5643,"completion_chars":50}
+{"ts":1791513051439,"type":"log","agentId":"gal","kind":"tool","text":"read_book(truth-history)"}
+{"ts":1791513052089,"type":"log","agentId":"gal","kind":"result","text":"shape: {format, runs} head: {\"format\":\"truth-gate-history-v1\",\"runs\":[{\"at\":\"2026-09-27T08:22:47.172Z\",\"verdict\":\"ALL-GREEN\",\"pass\":7,\"fail\":0,\"skip\":2,\"runUrl\":\"https://github.com/roshpinacare-sys/Console/actions/runs/36305993349\"},{\"at\":\"2026-09-27T09:22:00.100Z\",\"verdict\":\"ALL-GREEN\",\"pass\":7,\"fail\":0,\"skip\":2,\"runUrl\":\"https://github.com/roshpinacare-sys/Console/actions/runs/36309122917\"},{\"at"}
+{"ts":1791513073792,"type":"usage","agent":"gal","phase":"work","provider":"sovereign-gateway/auto","prompt_tokens":2134,"completion_tokens":631,"prompt_chars":9534,"completion_chars":2524}
+{"ts":1791513073792,"type":"log","agentId":"gal","kind":"error","text":"unparseable reply → reprompt"}
+{"ts":1791513099258,"type":"usage","agent":"gal","phase":"work","provider":"sovereign-gateway/auto","prompt_tokens":2224,"completion_tokens":73,"prompt_chars":9960,"completion_chars":290}
+{"ts":1791513099259,"type":"log","agentId":"gal","kind":"tool","text":"write_report(שיפור מוחשי: התראת כשל אוטומטית)"}
+{"ts":1791513099959,"type":"log","agentId":"gal","kind":"report","text":"שיפור מוחשי: התראת כשל אוטומטית"}
+{"ts":1791513123797,"type":"usage","agent":"gal","phase":"work","provider":"sovereign-gateway/auto","prompt_tokens":2315,"completion_tokens":52,"prompt_chars":10400,"completion_chars":206}
+{"ts":1791513123797,"type":"task","event":"patch","id":"t134","title":"סיור לקחים: עבור על פנקס הלקחים והצע שיפור מוחשי אחד למשרד","status":"review","assignee":"gal","summary":"הצעתי שיפור מוחשי: הוספת webhook התראת כשל אוטומטי לערוץ המשרד. מבוסס על truth-history (גיל 282.1 שעות) שהראה כשל אחרון ב־2026-10-06T21:22:15.524Z (1 RED מתוך 7 בדיקות). הדו״ח נשמר."}
+{"ts":1791513123798,"type":"log","agentId":"gal","kind":"say","text":"המשימה שלי מוכנה לביקורת."}
+{"ts":1791513124309,"type":"log","agentId":"aluf","kind":"tool","text":"review(t134 by gal)"}
+{"ts":1791513125510,"type":"log","agentId":"aluf","kind":"text","text":"relevance gate: 1 (קחים, פנקס, הצע, יפור, חשי)"}
