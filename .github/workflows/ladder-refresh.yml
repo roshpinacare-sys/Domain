@@ -26,7 +26,7 @@ name: ladder-refresh
 
 on:
   schedule:
-    - cron: '36 23 * * *' # R67-C: 6h -> daily 23:36  # כל-6 שעות :33 UTC (Task 16-b — קצב-מוגבר; מקוזז מהפעימות-העגולות ומה-economy-engine :17)
+    - cron: '36 */4 * * *' # T-51: 4h :36 on public minutes  # כל-6 שעות :33 UTC (Task 16-b — קצב-מוגבר; מקוזז מהפעימות-העגולות ומה-economy-engine :17)
   workflow_dispatch:
     inputs:
       arm:
