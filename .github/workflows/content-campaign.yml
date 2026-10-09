@@ -63,6 +63,40 @@ jobs:
       - name: Steem client (steem@0.7.11 — the home signing template)
         run: npm install --prefix /tmp/steemjs steem@0.7.11 --omit=dev --no-audit --no-fund --loglevel=error
 
+      # T-49: שרשרת-ההתחברות-העצמית (T-47) — הסוכן משיג-את-ה-WIF בעצמו מן-הכספת:
+      # קרדנשל-ה-runner (SBX_FLEET_PAT) → שיבוט-כספת → auto-unseal → rails.env.enc →
+      # VAULT_STEEM_POSTING_WIF. אפס-דפוס-על-המסך · אפס-קובץ-פלטה-שנותר · כישלון
+      # כנה = המשך-לסודות-הריפו (שער-הביט-מול-ביט מכריע-בכל-מקרה — אפס-זיוף).
+      - name: Vault self-auth (T-47 chain — the agent fetches its own WIF)
+        continue-on-error: true
+        env:
+          FLEET_PAT: ${{ secrets.SBX_FLEET_PAT }}
+        run: |
+          set -uo pipefail
+          rm -rf /tmp/fleet-vault
+          if [ -z "$FLEET_PAT" ]; then echo "[vault-selfauth] no PAT secret — honest skip"; exit 0; fi
+          if ! git clone --depth 1 "https://x-access-token:${FLEET_PAT}@github.com/roshpinacare-sys/fleet-vault.git" /tmp/fleet-vault 2>/dev/null; then
+            echo "[vault-selfauth] clone failed — honest skip to repo secrets"
+            exit 0
+          fi
+          if ! (cd /tmp/fleet-vault && bash auto-unseal.sh); then
+            echo "[vault-selfauth] unseal failed — honest skip to repo secrets"
+            exit 0
+          fi
+          SP="/tmp/fleet-vault/.session-pass"
+          [ -s "$SP" ] || { echo "[vault-selfauth] no session pass — honest skip"; exit 0; }
+          VAULT_TMP_P="$(cat "$SP")" openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 \
+            -in /tmp/fleet-vault/rails.env.enc -out /tmp/.rails.wif -pass env:VAULT_TMP_P 2>/dev/null || exit 0
+          W="$(grep -E '^STEEM_POSTING_WIF=' /tmp/.rails.wif | head -1 | cut -d= -f2- | tr -d '\"')"
+          if [ -n "$W" ]; then
+            echo "VAULT_STEEM_POSTING_WIF=$W" >> "$GITHUB_ENV"
+            echo "[vault-selfauth] WIF exported from vault — bit-for-bit gate decides downstream"
+          else
+            echo "[vault-selfauth] WIF slot absent — honest skip"
+          fi
+          shred -u /tmp/.rails.wif "$SP" 2>/dev/null || rm -f /tmp/.rails.wif "$SP"
+          rm -rf /tmp/fleet-vault
+
       - name: Daily themed post (posting-only, measured, idempotent)
         env:
           STEEM_POSTING_WIF: ${{ secrets.STEEM_POSTING_WIF }}
