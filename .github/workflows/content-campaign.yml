@@ -83,7 +83,10 @@ jobs:
             echo "[vault-selfauth] unseal failed — honest skip to repo secrets"
             exit 0
           fi
-          SP="/tmp/fleet-vault/.session-pass"
+          # vaultlib.sh: VAULT_DIR="$VAULT_ROOT/vault" — session-pass חי-באח-של-השיבוט,
+          # לא-בתוך-השיבוט (נמדד-חי-בענן 19:24: unseal-OK אך-הנתיב-שנבדק-היה-שגוי)
+          SP="/tmp/vault/.session-pass"
+          [ -s "$SP" ] || SP="$(find /tmp -maxdepth 3 -name '.session-pass' 2>/dev/null | head -1)"
           [ -s "$SP" ] || { echo "[vault-selfauth] no session pass — honest skip"; exit 0; }
           VAULT_TMP_P="$(cat "$SP")" openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 \
             -in /tmp/fleet-vault/rails.env.enc -out /tmp/.rails.wif -pass env:VAULT_TMP_P 2>/dev/null || exit 0
@@ -95,7 +98,7 @@ jobs:
             echo "[vault-selfauth] WIF slot absent — honest skip"
           fi
           shred -u /tmp/.rails.wif "$SP" 2>/dev/null || rm -f /tmp/.rails.wif "$SP"
-          rm -rf /tmp/fleet-vault
+          rm -rf /tmp/fleet-vault /tmp/vault
 
       - name: Daily themed post (posting-only, measured, idempotent)
         env:
