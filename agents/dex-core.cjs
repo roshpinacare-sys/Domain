@@ -2044,8 +2044,10 @@ function selftestFeeLaw() {
   ok('lawfee-peg-refuses', lawFeeFor(core.pools.find((p) => p.id === 'P1'), { publishedAt: '2026-10-07T12:00:00.000Z', pools: [{ pool: 'P1', sigmaBps: 25, feeBps: 50 }] }, nowMs) === null);
   ok('lawfee-unknown-pool-base', lawFeeFor(core.pools.find((p) => p.id === 'P3'), { publishedAt: '2026-10-07T12:00:00.000Z', pools: [{ pool: 'PX', sigmaBps: 25, feeBps: 50 }] }, nowMs) === null);
   // withLawFee keeps the ledger object untouched (copy, Meteora model)
+  // T-49: trade-time injected — the fixed-publishedAt fixture must be judged at ITS OWN
+  // trade time, never wall-clock (the same time-bomb class the batch-settle lane had)
   const p3src = core.pools.find((p) => p.id === 'P3');
-  const wrapped = withLawFee(p3src, { publishedAt: '2026-10-07T12:00:00.000Z', pools: [{ pool: 'P3', sigmaBps: 25, feeBps: 50 }] });
+  const wrapped = withLawFee(p3src, { publishedAt: '2026-10-07T12:00:00.000Z', pools: [{ pool: 'P3', sigmaBps: 25, feeBps: 50 }] }, Date.parse('2026-10-07T12:30:00.000Z'));
   ok('withlawfee-copy-not-mutate', wrapped !== p3src && wrapped.feeBps === 50 && wrapped.lawFeeBps === 50 && p3src.feeBps === 25);
   const pass = c.filter((x) => x.ok).length;
   console.log(`DEX-CORE-SELFTEST-FEE-LAW-OK ${pass}/${c.length}`);
