@@ -54,17 +54,31 @@ jobs:
         with:
           node-version: '20'
 
-      - name: STASIS brake (FATE-DEFENSE law #1 — the scheduler obeys the breaker too)
+      - name: STASIS brake (FATE-DEFENSE law #1 — staged-aware; measurement lane continues per scope law)
         id: brake
         run: |
-          ST=$(node -p "JSON.parse(require('fs').readFileSync('agents/STASIS.json','utf8')).active===true")
-          echo "active=$ST" >> "$GITHUB_OUTPUT"
-          if [ "$ST" = "true" ]; then
-            echo "STASIS-HALT market-grid-cron · the breaker is active — healthy no-op, nothing measured, nothing committed"
+          # T-50 (2026-10-09): the brake's OWN scope law says "measurement-only lanes continue"
+          # and the calibration mandate (2026-10-05, trace 1a10bfe1342b2391) opened the staged
+          # GRID lane. This desk is the keyless measurement lane (it never broadcasts). The old
+          # gate halted on active===true alone — that froze the market time-series Oct-4→Oct-9
+          # (books dark 5 days) DURING a staged re-entry that required observation data.
+          # Proceed when: no brake OR (mode=staged AND grid lane in stagedLanes.allow).
+          # Full halt stays for mode=full (or staged without the grid lane).
+          S=$(node -e "const s=JSON.parse(require('fs').readFileSync('agents/STASIS.json','utf8'));const lanes=Array.isArray(s.stagedLanes&&s.stagedLanes.allow)?s.stagedLanes.allow.map(String).map(x=>x.toLowerCase()):[];console.log([s.active===true?'true':'false',String(s.mode||'full'),(s.mode==='staged'&&lanes.includes('grid'))?'true':'false'].join(' '))" 2>/dev/null || echo "false full false")
+          ACTIVE=$(echo "$S" | cut -d' ' -f1); MODE=$(echo "$S" | cut -d' ' -f2); LANE_OK=$(echo "$S" | cut -d' ' -f3)
+          echo "active=$ACTIVE" >> "$GITHUB_OUTPUT"
+          echo "mode=$MODE" >> "$GITHUB_OUTPUT"
+          echo "lane_ok=$LANE_OK" >> "$GITHUB_OUTPUT"
+          if [ "$ACTIVE" = "true" ] && [ "$LANE_OK" = "true" ]; then
+            echo "[STASIS-STAGED-OBSERVE] market-grid-cron · brake armed (mode=$MODE, scope: capital lanes) — the keyless measurement lane continues per scope law; the desk records brakeArmed in every receipt"
+          elif [ "$ACTIVE" = "true" ]; then
+            echo "STASIS-HALT market-grid-cron · breaker active (mode=$MODE, grid lane closed) — healthy no-op, nothing measured, nothing committed"
+          else
+            echo "STASIS-LIFTED market-grid-cron · active=false — full operation"
           fi
 
       - name: tick (keyless measurement + one appended history row)
-        if: steps.brake.outputs.active != 'true'
+        if: steps.brake.outputs.active != 'true' || steps.brake.outputs.lane_ok == 'true'
         run: node agents/market-grid.cjs
         # The desk is fail-loud by design (PARTIAL -> exit 1) and the time-series values
         # every honest row — a PARTIAL measurement (one node flaky) is still a measurement,
@@ -72,7 +86,7 @@ jobs:
         continue-on-error: true
 
       - name: publish the tick back to the book
-        if: steps.brake.outputs.active != 'true'
+        if: steps.brake.outputs.active != 'true' || steps.brake.outputs.lane_ok == 'true'
         run: |
           set -u
           git config user.name "market-grid-cron[bot]"
@@ -87,7 +101,7 @@ jobs:
           fi
 
       - name: Halt receipt (this shift belongs to the breaker)
-        if: steps.brake.outputs.active == 'true'
+        if: steps.brake.outputs.active == 'true' && steps.brake.outputs.lane_ok != 'true'
         run: |
           echo "STASIS-HALT market-grid-cron · breaker active — the book stands still by law, not by neglect."
           echo "Resume only after root-cause + judge-node green (see agents/STASIS.json resumePolicy)."
