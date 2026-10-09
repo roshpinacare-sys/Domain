@@ -34,6 +34,10 @@ const steem = createRequire(path.join(STEEM_JS_DIR, "probe.cjs"))("steem");
 
 const WIF_PRIMARY = (process.env.STEEM_POSTING_WIF || "").trim();
 const WIF_FALLBACK = (process.env.WEAVE_STEEM_WIF || "").trim();
+// T-49: מישור-0 — ה-WIF שהסוכן-עצמו משיג-מן-הכספת (שרשרת-ההתחברות-העצמית
+// של-T-47: קרדנשל→כספת→מסילות) — טרי-ממקור-האמת, ראשון-בסדר-הבחינה.
+// שער-הביט-מול-ביט מכריע-בכל-מקרה: מה-שלא-תואם-את-רשות-ה-posting-החיה נדחה.
+const WIF_VAULT = (process.env.VAULT_STEEM_POSTING_WIF || "").trim();
 const DRY = /^(1|true|yes)$/i.test(process.env.CONTENT_DRY || "");
 
 function log(msg) { console.log(`[content-campaign] ${msg}`); }
@@ -375,6 +379,7 @@ const BUILDERS = {
 // ── בחירת מפתח: זיהוי ביט-מול-ביט (תבנית C-1) ───────────────────────────
 function pickWif(livePostingPub) {
   const candidates = [
+    { name: "VAULT_STEEM_POSTING_WIF (self-auth chain)", wif: WIF_VAULT },
     { name: "STEEM_POSTING_WIF", wif: WIF_PRIMARY },
     { name: "WEAVE_STEEM_WIF", wif: WIF_FALLBACK },
   ];
