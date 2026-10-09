@@ -1,6 +1,6 @@
 # CI Hands — the fleet's hands on its own CI estate (trycua/cua adoption)
 
-_ci-hands v1.0.0 · 2026-10-08T04:58:01.320Z · env-token (redacted) · stasis BRAKE ON_
+_ci-hands v1.0.0 · 2026-10-09T11:32:21.408Z · env-token (redacted) · stasis BRAKE ON_
 
 **CI-HANDS keyless floor: 2/16 reached — the rest booked UNREACHABLE (never invented)**
 
@@ -8,8 +8,8 @@ _ci-hands v1.0.0 · 2026-10-08T04:58:01.320Z · env-token (redacted) · stasis B
 |---|---|---|---|---|---|---|
 | saos-sovereign-platform | — | — | — | — | — | UNREACHABLE (HTTP 404) |
 | steem | — | — | — | — | — | UNREACHABLE (HTTP 404) |
-| Domain | 15 | 10 | 5 | 0 | 0 | measured |
-| Console | 11 | 10 | 1 | 0 | 0 | measured |
+| Domain | 15 | 12 | 3 | 0 | 0 | measured |
+| Console | 12 | 11 | 1 | 0 | 0 | measured |
 | Zip | — | — | — | — | — | UNREACHABLE (HTTP 404) |
 | roshpina | — | — | — | — | — | UNREACHABLE (HTTP 404) |
 | anchor-baseline | — | — | — | — | — | UNREACHABLE (HTTP 404) |
@@ -24,11 +24,9 @@ _ci-hands v1.0.0 · 2026-10-08T04:58:01.320Z · env-token (redacted) · stasis B
 | saos-sovereign-foundry | — | — | — | — | — | UNREACHABLE (HTTP 404) |
 
 **Proposals (booked, not auto-opened — tier law):**
-- Domain/.github/workflows/saos-act.yml: ACTIVE-RED — diagnose via jobs+logs (Task 25 method), fix, prove by dispatch/push
 - Domain/.github/workflows/daily-digest.yml: ACTIVE-RED — diagnose via jobs+logs (Task 25 method), fix, prove by dispatch/push
 - Domain/.github/workflows/cloud-pulse.yml: ACTIVE-RED — diagnose via jobs+logs (Task 25 method), fix, prove by dispatch/push
 - Domain/.github/workflows/ladder-refresh.yml: ACTIVE-RED — diagnose via jobs+logs (Task 25 method), fix, prove by dispatch/push
-- Domain/.github/workflows/weave-anchor-lines.yml: ACTIVE-RED — diagnose via jobs+logs (Task 25 method), fix, prove by dispatch/push
 - Console/.github/workflows/line-agreement.yml: ACTIVE-RED — diagnose via jobs+logs (Task 25 method), fix, prove by dispatch/push
 
 _cua-bench contract adopted: this book IS the summary.json; results + trajectory are in ci-hands.json. GUI layer = future tier-C rung (CUA-ADOPTION.md)._
