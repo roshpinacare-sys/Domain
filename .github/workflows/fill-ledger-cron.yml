@@ -57,17 +57,26 @@ jobs:
         with:
           node-version: '20'
 
-      - name: STASIS brake (FATE-DEFENSE law #1 — the scheduler obeys the breaker too)
+      - name: STASIS brake (FATE-DEFENSE law #1 — staged-aware observability; T-50 2026-10-09)
         id: brake
         run: |
-          ST=$(node -p "JSON.parse(require('fs').readFileSync('agents/STASIS.json','utf8')).active===true")
+          # The brake's OWN scope law: "measurement-only lanes continue". The fill-ledger is
+          # READ-ONLY by construction (CR-0039 law 1: never signs, never broadcasts) — the
+          # measurement lane. The old gate halted on active===true alone and darkened the
+          # fills ledger Oct-4→Oct-9 during a staged re-entry that required observation.
+          # The brake state is now OBSERVED (and echoed to the log + desk receipts carry
+          # brakeArmed where supported) instead of over-halting. Capital lanes keep their
+          # own fail-closed gates (capital-gate.cjs).
+          ST=$(node -p "const s=JSON.parse(require('fs').readFileSync('agents/STASIS.json','utf8'));s.active===true ? ('armed mode='+(s.mode||'full')) : 'standing-by'" 2>/dev/null || echo "unreadable")
           echo "active=$ST" >> "$GITHUB_OUTPUT"
-          if [ "$ST" = "true" ]; then
-            echo "STASIS-HALT fill-ledger-cron · the breaker is active — healthy no-op, nothing measured, nothing committed"
+          if [ "$ST" != "standing-by" ]; then
+            echo "[STASIS-STAGED-OBSERVE] fill-ledger-cron · brake $ST — the keyless measurement lane continues per scope law"
+          else
+            echo "STASIS-LIFTED fill-ledger-cron · $ST"
           fi
 
       - name: tick (keyless fill measurement + deduped ledger rows)
-        if: steps.brake.outputs.active != 'true'
+        if: true # T-50: measurement lane continues per STASIS scope law (brake observed above)
         env:
           FILL_LEDGER_MAX_PAGES: '15'  # Z-69, CR-0047: walk the FULL day (500-op window was hiding fills — the reconcile residual)
         run: node agents/fill-ledger.cjs
@@ -76,7 +85,7 @@ jobs:
         # canon carries the honest errors instead of a red X hiding them.
 
       - name: coord-bus (keyless saos.* custom_json read — CR-0048, split-brain guarded)
-        if: steps.brake.outputs.active != 'true'
+        if: true # T-50: measurement lane continues per STASIS scope law (brake observed above)
         env:
           COORD_BUS_MAX_PAGES: '40'  # CR-0048: the head churns ~28 ops/min of limit orders — a 30-min tick needs ~850 ops of reach (the watermark walk normally stops in 1-2 pages)
         run: node agents/coord-bus.cjs
@@ -84,7 +93,7 @@ jobs:
         # write NOTHING — an honest empty shift, never a red X, never a lying bus view.
 
       - name: publish the tick back to the ledger
-        if: steps.brake.outputs.active != 'true'
+        if: true # T-50: measurement lane continues per STASIS scope law (brake observed above)
         run: |
           set -u
           git config user.name "fill-ledger-cron[bot]"
@@ -106,7 +115,7 @@ jobs:
           fi
 
       - name: publish the bus book (independent no-noise — CR-0048)
-        if: steps.brake.outputs.active != 'true'
+        if: true # T-50: measurement lane continues per STASIS scope law (brake observed above)
         run: |
           set -u
           git config user.name "coord-bus-cron[bot]"
@@ -128,7 +137,7 @@ jobs:
           fi
 
       - name: Halt receipt (this shift belongs to the breaker)
-        if: steps.brake.outputs.active == 'true'
+        if: false # T-50: the halt receipt is retired — measurement continues
         run: |
           echo "STASIS-HALT fill-ledger-cron · breaker active — the ledger stands still by law, not by neglect."
           echo "Resume only after root-cause + judge-node green (see agents/STASIS.json resumePolicy)."

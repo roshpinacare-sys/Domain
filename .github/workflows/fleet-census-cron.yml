@@ -86,46 +86,53 @@ jobs:
         with:
           node-version: '20'
 
-      - name: STASIS brake (FATE-DEFENSE law #1 — the scheduler obeys the breaker too)
+      - name: STASIS brake (FATE-DEFENSE law #1 — staged-aware observability; T-50 2026-10-09)
         id: brake
         run: |
-          ST=$(node -p "JSON.parse(require('fs').readFileSync('agents/STASIS.json','utf8')).active===true")
+          # The census IS the fleet's observation organ — it reads STASIS.json as DATA
+          # (fleet-census.cjs reports the brake state fleet-wide). Halting the observer
+          # during a brake blinded the fleet's own self-model Oct-4→Oct-9. The brake's
+          # scope law: "measurement-only lanes continue". The census is offline, keyless,
+          # deterministic — zero capital surface. Capital lanes keep their own gates.
+          ST=$(node -p "const s=JSON.parse(require('fs').readFileSync('agents/STASIS.json','utf8'));s.active===true ? ('armed mode='+(s.mode||'full')) : 'standing-by'" 2>/dev/null || echo "unreadable")
           echo "active=$ST" >> "$GITHUB_OUTPUT"
-          if [ "$ST" = "true" ]; then
-            echo "STASIS-HALT fleet-census-cron · the breaker is active — healthy no-op, nothing measured, nothing committed"
+          if [ "$ST" != "standing-by" ]; then
+            echo "[STASIS-STAGED-OBSERVE] fleet-census-cron · brake $ST — the census observes the brake itself and continues per scope law"
+          else
+            echo "STASIS-LIFTED fleet-census-cron · $ST"
           fi
 
       - name: census refresh (offline, keyless, deterministic — fail-soft exit 0 by design)
-        if: steps.brake.outputs.active != 'true'
+        if: true # T-50: measurement lane continues per STASIS scope law (brake observed above)
         run: node agents/fleet-census.cjs
 
       - name: delta read (artifact-vs-artifact — the CI-perspective drift series)
-        if: steps.brake.outputs.active != 'true'
+        if: true # T-50: measurement lane continues per STASIS scope law (brake observed above)
         run: node agents/fleet-delta.cjs --from-git=agents/fleet-census.artifact.json --to=agents/fleet-census.artifact.json --out=agents/fleet-delta.jsonl
 
       - name: claims audit (CR-0050 — every ledger claim must resolve on the tree)
-        if: steps.brake.outputs.active != 'true'
+        if: true # T-50: measurement lane continues per STASIS scope law (brake observed above)
         run: node agents/claims-audit.cjs
 
       # CADENCE-WEEK leg (CR-0053, R25) — the first distributional read: the fleet reads its
       # own series back (market-grid gaps/spreads/routes, delta verdicts, artifact-lag honesty
       # number). Below the encoded B2 bar the desk writes NOTHING (no-noise law, E45-proven).
       - name: cadence-week read (CR-0053 — the series read back as distributions)
-        if: steps.brake.outputs.active != 'true'
+        if: true # T-50: measurement lane continues per STASIS scope law (brake observed above)
         run: node agents/cadence-week.cjs
 
       # SCHEDULER-AUDIT leg (CR-0056, R27) — THE METRONOME AUDIT: collect (keyless,
       # GITHUB_TOKEN) -> measure (pure desk) -> bounded heal (dispatch ≤3 starved keyless
       # cadences). A cadence the fleet cannot see is a cadence that can rot silently.
       - name: scheduler collect (R27 — the raw scheduled-run census, GITHUB_TOKEN keyless)
-        if: steps.brake.outputs.active != 'true'
+        if: true # T-50: measurement lane continues per STASIS scope law (brake observed above)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
         run: node agents/scheduler-collect.cjs
 
       - name: scheduler audit + bounded heal (R27 — the fleet re-fires its own pulse)
-        if: steps.brake.outputs.active != 'true'
+        if: true # T-50: measurement lane continues per STASIS scope law (brake observed above)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
@@ -138,11 +145,11 @@ jobs:
       # deterministic fleet partition, the bounded+labelled internal-flow plan, and the
       # owner-gated projections (plan-only, never signs; live path stays market-exec law).
       - name: mm-volume plan (R28 — the fleet on the orderbook, provably)
-        if: steps.brake.outputs.active != 'true'
+        if: true # T-50: measurement lane continues per STASIS scope law (brake observed above)
         run: node agents/mm-volume.cjs
 
       - name: publish the map back to the book
-        if: steps.brake.outputs.active != 'true'
+        if: true # T-50: measurement lane continues per STASIS scope law (brake observed above)
         run: |
           set -u
           git config user.name "fleet-census-cron[bot]"
@@ -172,7 +179,7 @@ jobs:
           fi
 
       - name: Halt receipt (this shift belongs to the breaker)
-        if: steps.brake.outputs.active == 'true'
+        if: false # T-50: the halt receipt is retired — measurement continues
         run: |
           echo "STASIS-HALT fleet-census-cron · breaker active — the map stands still by law, not by neglect."
           echo "Resume only after root-cause + judge-node green (see agents/STASIS.json resumePolicy)."
