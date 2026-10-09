@@ -122,29 +122,47 @@ const seal = openSeal();
 log('seal opened in-runner (sha gates outer+inner ok) · ' + seal.openedAt);
 
 // resolve @headcorner ACTIVE key from the vault (memory only — never printed)
+// T-50 (custody truth): shape-compat across vault generations — the R245-ROT2 re-seal
+// flattened accounts to keys.{role}.{wif,pub} + chains:[…], while this script was written
+// against the legacy keys.steem.{role}.wif shape. Both shapes are read here; the seal
+// (T50-TRUTH1) carries both. A null active wif is a CUSTODY BOUNDARY, not a breakage:
+// the executor's DRY doctrine takes over (plan-only SHAPE receipt, exit 0) and the daily
+// cadence stays green — the day the owner deposits the active key, broadcasting resumes
+// automatically without any code change.
 const head = (seal.vault.accounts || []).find((a) => String(a.username || '').toLowerCase() === ACCOUNT);
-const activeWif = head && head.keys && head.keys.steem && head.keys.steem.active && head.keys.steem.active.wif;
-if (!activeWif) die('no active-key material for @' + ACCOUNT + ' in the seal vault — refusing');
-const derivedPub = steem.auth.wifToPublic(activeWif);
-const chainPubs = await liveActiveAuthority(ACCOUNT);
-if (!chainPubs.includes(derivedPub)) die('resolved active key does NOT match @' + ACCOUNT + ' live chain authority — refusing (fingerprint ' + fp(derivedPub) + ')');
-log('active key verified live for @' + ACCOUNT + ' (fingerprint ' + fp(derivedPub) + ')');
+const activeWif =
+  (head && head.keys && head.keys.steem && head.keys.steem.active && head.keys.steem.active.wif) ||
+  (head && head.keys && head.keys.active && head.keys.active.wif) ||
+  null;
+let CUSTODY_BOUNDARY = false;
+if (!activeWif) {
+  CUSTODY_BOUNDARY = true;
+  log('LADDER-CUSTODY-BOUNDARY: no active-key material for @' + ACCOUNT + ' in the seal vault — PLAN-ONLY by design (owner-gated custody; executor DRY doctrine produces the plan receipt)');
+}
+if (activeWif) {
+  const derivedPub = steem.auth.wifToPublic(activeWif);
+  const chainPubs = await liveActiveAuthority(ACCOUNT);
+  if (!chainPubs.includes(derivedPub)) die('resolved active key does NOT match @' + ACCOUNT + ' live chain authority — refusing (fingerprint ' + fp(derivedPub) + ')');
+  log('active key verified live for @' + ACCOUNT + ' (fingerprint ' + fp(derivedPub) + ')');
+}
 
 // the executor is the single source of truth for caps/plan/broadcast/receipt
 const execPath = path.join(STEEM_DIR, 'agent', 'ladder_refresh.cjs');
 if (!fs.existsSync(execPath)) die('executor missing in private checkout: agent/ladder_refresh.cjs (pin a steem main commit that has it)');
 
-log('mode=' + (ARMED ? 'ARMED (broadcast allowed under executor caps)' : 'PLAN-ONLY (no broadcast)'));
+// T-50: never ARMED without key material in hand — the arm flag alone must not arm.
+const EFFECTIVE_ARM = ARMED && !CUSTODY_BOUNDARY;
+log('mode=' + (EFFECTIVE_ARM ? 'ARMED (broadcast allowed under executor caps)' : 'PLAN-ONLY (no broadcast)') + (CUSTODY_BOUNDARY ? ' · custody-boundary downgrade (armed=' + ARMED + ' → effective=false)' : ''));
 const child = spawnSync(process.execPath, [execPath], {
   cwd: STEEM_DIR,
   stdio: 'inherit', // executor prints SHAPE-ONLY lines (no secret material by construction)
   env: {
     ...process.env,
     AGENT_ACCOUNT: ACCOUNT,
-    ACTIVE_WIF: activeWif,                    // memory-only env inheritance, never logged
-    LADDER_ARM: ARMED ? '1' : '0',
-    HE_LIVE: ARMED ? '1' : '0',               // 28-b live-gate agrees with the task gate
-    HE_LIVE_CONFIRM: ARMED ? ACCOUNT : '',
+    ACTIVE_WIF: activeWif || '',              // memory-only env inheritance, never logged; empty = DRY doctrine
+    LADDER_ARM: EFFECTIVE_ARM ? '1' : '0',    // T-50: never armed without custody
+    HE_LIVE: EFFECTIVE_ARM ? '1' : '0',       // 28-b live-gate agrees with the task gate
+    HE_LIVE_CONFIRM: EFFECTIVE_ARM ? ACCOUNT : '',
     LADDER_NODE: RPC,
     STEEMJS_DIR,
   },
@@ -171,11 +189,11 @@ if (fresh) {
 }
 
 if (PUSH_RECEIPT) {
-  const msg = 'ladder-refresh: ' + nowIso() + ' · ' + (ARMED ? 'armed' : 'plan-only') + ' · ' + (shape.status || 'no-receipt') + ' · caps enforced';
+  const msg = 'ladder-refresh: ' + nowIso() + ' · ' + (EFFECTIVE_ARM ? 'armed' : 'plan-only' + (CUSTODY_BOUNDARY ? ' (custody-boundary)' : '')) + ' · ' + (shape.status || 'no-receipt') + ' · caps enforced';
   const files = pushLadderReceipts(msg);
   log('receipt pushed to steem (pull --rebase first, no force): ' + files.join(', '));
 }
 
 // zero secrets in the summary — orderids/prices/txids are chain-public
-console.log('SUMMARY ' + JSON.stringify({ armed: ARMED, executorExit: child.status, ...shape, pushed: PUSH_RECEIPT }));
+console.log('SUMMARY ' + JSON.stringify({ armed: EFFECTIVE_ARM, armedRequested: ARMED, custodyBoundary: CUSTODY_BOUNDARY, executorExit: child.status, ...shape, pushed: PUSH_RECEIPT }));
 if (child.status !== 0) process.exit(child.status || 1);

@@ -72,7 +72,22 @@ function payloadSeal(grids) {
 }
 
 function stasisCheck() {
-  try { const st = JSON.parse(fs.readFileSync(STASIS_FILE, 'utf8')); return st && st.active === true ? st : null; } catch (_) { return null; }
+  // T-50 staged-obedience repair (2026-10-09, live-measured): the brake's own scope law is
+  // "measurement-only lanes continue" + the calibration mandate (trace 1a10bfe1342b2391)
+  // opened the staged GRID lane. The counter-grid twin is keyless and NEVER broadcasts (its
+  // verdict is permission-shaped: GATED-ARMED-BROADCAST-READY) — a lane being open is
+  // permission, not activation. So: staged + grid lane open → the book builds (with the
+  // brake RECORDED in the book: brakeArmed/brakeMode); full halt stays for mode=full or a
+  // staged state without the grid lane. Unreadable file → no brake declared → run normally
+  // (the file is git-tracked; capital lanes keep their own fail-closed gate).
+  try {
+    const st = JSON.parse(fs.readFileSync(STASIS_FILE, 'utf8'));
+    if (!st || st.active !== true) return { halt: false, info: null };
+    const lanes = Array.isArray(st.stagedLanes && st.stagedLanes.allow) ? st.stagedLanes.allow.map(String).map((x) => x.toLowerCase()) : [];
+    const stagedOpen = st.mode === 'staged' && lanes.includes('grid');
+    if (stagedOpen) return { halt: false, info: { brakeArmed: true, brakeMode: 'staged', gridLaneOpen: true } };
+    return { halt: true, info: { brakeArmed: true, brakeMode: st.mode || 'full' } };
+  } catch (_) { return { halt: false, info: null }; }
 }
 
 function writeBook(obj) {
@@ -101,6 +116,7 @@ function book() {
   const book = {
     protocol: PROTOCOL, at: now, agent: VERSION,
     gate,
+    brake: stasisCheck().info,
     coreBookAt: core ? core.at : null,
     coreBookStale: core ? (Date.now() - new Date(core.at).getTime()) > 26 * 3600 * 1000 : true,
     summary: {
@@ -185,8 +201,8 @@ if (require.main === module) {
   const arg = process.argv[2] || 'status';
   if (arg === 'selftest') process.exit(selftest());
   try {
-    const st = stasisCheck();
-    if (st) { console.log(`STASIS-HALT counter-grid · ${new Date().toISOString()}`); process.exit(0); }
+    const g = stasisCheck();
+    if (g.halt) { console.log(`STASIS-HALT counter-grid (mode=${g.info.brakeMode}) · ${new Date().toISOString()}`); process.exit(0); }
     process.exit(book());
   } catch (e) {
     console.log(`counter-grid: ERROR (booked honestly, exit 0) ${e.message}`);
