@@ -1,6 +1,6 @@
 # Hands Book — the sovereignty's execution surfaces, probed (Z-43)
 
-_hands-book v1.0.0 · 2026-10-09T11:32:03.216Z · cua-pattern adoption (probe-before-trust · permission-at-launch · action ladder)_
+_hands-book v1.0.0 · 2026-10-10T10:49:36.870Z · cua-pattern adoption (probe-before-trust · permission-at-launch · action ladder)_
 
 **hands green: 3 LIVE (receipted) · 1 ABSENT (honest) · 1 cross-ref · 3 tier-C locks — surfaces probed, never claimed**
 
@@ -11,7 +11,7 @@ _hands-book v1.0.0 · 2026-10-09T11:32:03.216Z · cua-pattern adoption (probe-be
 | H3 browser-gui | agent-browser CLI computer-use (open/snapshot/screenshot) | ABSENT | agent-browser CLI absent in this context (honest CI answer — the hand exists as a pattern, not here) |
 | H4 web-keyless | keyless public HTTP(S) fetch (reads, public data only) | LIVE | GET https://example.com → HTTP 200 (keyless) |
 | H5 vm-container-stack | docker/podman/qemu/gvisor/VMX — the VM-sandbox runtime class | UNREACHABLE | docker/podman/qemu/runsc: present:docker,podman · cpu vmx/svm: yes — cua's Lume/VM runtime class does not exist in this sandbox (measured 20 |
-| H6 inference-rails | LLM/VLM/TTS/ASR rails — owned canon: rail-ledger.json | REF | cross-ref agents/rail-ledger.json (one canon per question — this desk does not duplicate the rail desk): ledger stamped 2026-10-09T11:31:50Z |
+| H6 inference-rails | LLM/VLM/TTS/ASR rails — owned canon: rail-ledger.json | REF | cross-ref agents/rail-ledger.json (one canon per question — this desk does not duplicate the rail desk): ledger stamped 2026-10-10T10:49:29Z |
 
 **Tier-C policy locks (decided by law, not probes):**
 - **LK1 cloud computer-use fleets (cua Fleet class):** new external account + key = tier C, operator gate (sovereignty §3); the pattern is adopted, the vendor is not
