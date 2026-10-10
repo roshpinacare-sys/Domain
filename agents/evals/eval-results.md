@@ -1,6 +1,6 @@
 # Desk Evals — runnable expectations (fresh-process judge, Z-36)
 
-_run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48 + R27 metronome-audit E49 + R28 mm-volume E50 + R29 share-ladder E51 + R30 calibrated-engine E52 + R31 tape-calibration/venue-expansion E53 + R32 sidechain-pond E54 + R33 pnl-verdict E55 + sovereign-hands E56 + R34 fill-through-evolution E57 + R35 human-cadence E58 + R36 community-home E59 + R37 community-breath E60 + R38 chain-proof E61 + R39 swap-net E62 + R40 exchange-core E63 + R41 mesh-market E64 + R42 multi-network-vault E65 + R43 intent-gates E66 + R44 opposing-hands E67, parallel-convergence superset) · 2026-10-09T11:32:05.511Z_
+_run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48 + R27 metronome-audit E49 + R28 mm-volume E50 + R29 share-ladder E51 + R30 calibrated-engine E52 + R31 tape-calibration/venue-expansion E53 + R32 sidechain-pond E54 + R33 pnl-verdict E55 + sovereign-hands E56 + R34 fill-through-evolution E57 + R35 human-cadence E58 + R36 community-home E59 + R37 community-breath E60 + R38 chain-proof E61 + R39 swap-net E62 + R40 exchange-core E63 + R41 mesh-market E64 + R42 multi-network-vault E65 + R43 intent-gates E66 + R44 opposing-hands E67, parallel-convergence superset) · 2026-10-10T10:49:40.599Z_
 
 **evals RED: 19 fail — booked honestly, the fails are the next work**
 
@@ -61,7 +61,7 @@ _run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - 200+data → REACHABLE with model count; 401/403 → AUTH-WALL; network error → UNREACHABLE (no hopeful green)
 - probing a nonexistent provider exits 0 with zero probes booked (fail-soft, no invention)
 - rail-ledger.json stamped (BOOKS-STAMP law)
-- _measured: live probes booked=67_
+- _measured: live probes booked=70_
 
 ## E12 · rail policy: FORBIDDEN row enabled as LIVE fails the gate — PASS
 - a catalog where cohere (ToS FORBIDDEN) is flipped to LIVE is rejected — ok:false with the FORBIDDEN reason named
@@ -81,7 +81,7 @@ _run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - every injected fault class caught: faults_caught === faults_total >= 4 (registry corruption, guard neutered, book stamps stripped, forbidden rail LIVE)
 - receipts fresh < 168h — the drill runs on the CI schedule, containment proof is not a one-time trophy
 - CI summary ledger agrees (collapse-drill.json stamped)
-- _measured: caught=4/4 ageH=31 head=a955068d7c89_
+- _measured: caught=4/4 ageH=23 head=d18bf4e312b2_
 
 ## E15 · one-bloc: whole-git convergence map measured, never invented — PASS
 - one-bloc.cjs runs in a fresh process (exit 0, fail-soft)
@@ -110,14 +110,14 @@ _run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - fresh-process desk run: exit 0 (fail-soft), book stamped fresh (<30min)
 - honest reach floor: 16 repos declared, >=1 reached OR every unreached booked honestly as HTTP 4xx refusal (rate-limit is environment, not defect) — never invented
 - cua-bench contract: trajectory booked (every action logged) + STASIS state travels with the receipt
-- _measured: reached=2/16 lanes=27 green=23 activeRed=4 startup=0 mode=keyless_
+- _measured: reached=2/16 lanes=33 green=31 activeRed=2 startup=0 mode=keyless_
 
 ## E19 · hands book: honest verdict derivation + fresh receipts, zero hopeful greens — PASS
 - white-box: probe-ok → LIVE; absent → ABSENT; POLICY LOCK BEATS A GREEN PROBE → LOCKED-TIER-C (the cua permission-at-launch lesson); cross-ref → REF; probe-fail → UNREACHABLE
 - black-box: fresh-process desk exits 0 (fail-soft), ≥5 hands booked, ≥2 LIVE in any healthy context
 - every LIVE hand carries evidence+probeAt — a capability claimed without a receipt is a story
 - verdict enum closed (LIVE/ABSENT/UNREACHABLE/REF/LOCKED-TIER-C) — no hopeful greens possible
-- _measured: hands=6 live=3 receipted=true at=2026-10-09T11:32:03.216Z_
+- _measured: hands=6 live=3 receipted=true at=2026-10-10T10:49:36.870Z_
 
 ## E20 · skill-library gate: expertise as governed data with a mandatory Evidence Artifact — PASS
 - white-box: the predicate flags a bare built-in name (help), a missing Evidence Artifact section, and short/no-trigger descriptions — and PASSES the legal package
@@ -186,7 +186,7 @@ _run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - one labeled history row MARKET-GRID-HALTED-STASIS (append-only audit trail — the file is the receipt)
 - workflow market-grid-cron.yml: 30-min offset cadence 21,51 (Z-70 minute-map reslot), STASIS gate before the tick, keyless desk invocation, append-only publish with [skip ci], concurrency guard
 - YAML parseability + the broken-idiom predicate (E16 lineage) holds line-by-line
-- _measured: fails: wf:cadence 21,51 (minute-map reslot)_
+- _measured: fails: stasis-halt status=0 out=STASIS-STAGED-OBSERVE market-grid · brak book=undefined; halted history row rows=1; wf:cadence 21,51 (minute-map reslot)_
 
 ## E30 · fill-ledger + market-cycle: direction law, µ-unit average-cost P&L, dedupe, recycle thresholds, cycle decision, eval-context black-box — PASS
 - white-box: asset-form tolerance — string and NAI assets resolve by nai/symbol, unknown → null (never by position)
@@ -214,7 +214,7 @@ _run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - workflow: concurrency guard + timeout + deterministic publish (clean exit on no-drift, no noise commits) + [skip ci] + pull --rebase push idiom
 - desk: STASIS-HALT in code BEFORE any lane read — fresh-process sandbox with an ACTIVE breaker books verdict=STASIS-HALT with NO inventory section (zero reads beyond the breaker file), exit 0
 - desk: the shared book is restored on the real estate after the sandbox run (16/16 lanes, no verdict field)
-- _measured: fails: stasisHalt-normal; book-restore_
+- _measured: fails: stasis-gated-steps; stasisHalt-normal; book-restore_
 
 ## E33 · flow-catch planner: marketable-sell floor law, proceeds-funded buy ladder, anti self-cross stack, dust discipline, determinism — PASS
 - white-box: taker ≤ 50% liquid, min price = bid×(1−0.1%), precision scan exact at 3dp, realized ≥ floor
@@ -374,7 +374,7 @@ _run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 
 ## E50 · volume engine — FAIL
 - 
-- _measured: eval crashed: ENOENT: no such file or directory, open '/tmp/mmv50-7hIoWX/mm-volume-plan.jsonl'_
+- _measured: eval crashed: ENOENT: no such file or directory, open '/tmp/mmv50-1kzvje/mm-volume-plan.jsonl'_
 
 ## E51 · the share ladder (CR-0059): get_volume parsing exact over both chains’ response shapes with invalid drop, sharePct edge-exact with honest invalid-nulls, the share ladder monotonic with the saturates flag (the pond caps the capacity ladder), realized24h metered over a window RELATIVE to the last fill (determinism law) with micro-exact sums, the six-failure doctrine map, black-box share+realized live on a rich fixture with byte-stable payload, enhancement sections null-honest without blocking the plan, and the real-tree share measured from the chain itself — FAIL
 - white-box: parseVolume steem/hive naming + malformed/negative/null drops
@@ -385,7 +385,7 @@ _run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - black-box: rich fixture (live book + fills) → MMV-PLAN-LIVE, share 23.9286%, realized measured + accuracy, stable payload byte-identical
 - black-box: no live book/fills → sections null with honest nullReason, plan still MMV-PLAN-LIVE
 - white-box: the real-tree book carries the chain-measured share + realized metering
-- _measured: fails: mmv51-blackbox-live; mmv51-share-live-calibrated; mmv51-realized-live; mmv51-accuracy; mmv51-fallback-still-live; mmv51-enhancements-null-honest_
+- _measured: fails: mmv51-blackbox-live; mmv51-share-live-calibrated; mmv51-realized-live; mmv51-accuracy; mmv51-fallback-still-live; mmv51-enhancements-null-honest; mmv51-real-tree-share_
 
 ## E52 · the calibrated engine (CR-0060) — FAIL
 - white-box: calibratedAvgSize µ-exact over classified fills, unclassified ignored, prior size + source carried side-by-side
@@ -394,7 +394,7 @@ _run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - black-box: pre-seeded plan ledger → calibration live (0.068 → 0.4115, lift > 0) + series live from the desk’s own past (1 point, 23.9286%) + projection on BOTH measured dials (capture 2/day × 0.4115 = 0.823 SBD, binding capture — evolved from the 237.024 capture-null era WITH the desk) + tape calibration live (prior 10 fpm carried)
 - black-box: byte-stable payload with the time-born `series` namespace excluded
 - white-box: the real tree runs calibrated on the REAL fill ledger (0.691 SBD measured, n=130) and the plan-ledger series grows
-- _measured: fails: mmv52-blackbox-live; mmv52-calibration-live; mmv52-series-live-from-past; mmv52-projection-on-both-dials; mmv52-tape-calibration-live_
+- _measured: fails: mmv52-blackbox-live; mmv52-calibration-live; mmv52-series-live-from-past; mmv52-projection-on-both-dials; mmv52-tape-calibration-live; mmv52-real-tree-calibrated; mmv52-real-tree-series_
 
 ## E53 · measured binding & venue expansion — FAIL
 - 

@@ -1,6 +1,6 @@
 # Workflow Audit (Z-30 workflow-pruner desk)
 
-Updated: 2026-10-09T11:31:18.567Z UTC. Domain workflows: 58 · Console workflows: 0
+Updated: 2026-10-10T10:49:00.575Z UTC. Domain workflows: 58 · Console workflows: 0
 
 ## Twin groups (same script-set, same repo)
 - `Domain`: economy-engine.yml, ladder-refresh.yml
