@@ -83,7 +83,15 @@ async function main() {
       key_auths: [...(posting.key_auths || []), [newPub, 1]]
     };
     try {
-      await bcast('accountUpdate', found.wif, account, a.owner, a.active, newPosting, a.memo_key || '', a.json_metadata || {});
+      const op = ['account_update', {
+        account,
+        owner: a.owner,
+        active: a.active,
+        posting: newPosting,
+        memo_key: a.memo_key || '',
+        json_metadata: typeof a.json_metadata === 'string' ? a.json_metadata : JSON.stringify(a.json_metadata || {})
+      }];
+      await blurt.broadcast.sendAsync({ operations: [op], extensions: [] }, { active: found.wif });
       let verified = false;
       for (let i = 0; i < 6 && !verified; i++) {
         await new Promise(r => setTimeout(r, 4000));
@@ -123,7 +131,16 @@ async function main() {
   ].join('\n');
   const json = JSON.stringify({ tags: ['blurt', 'saos', 'verification'], app: 'saos-grid-connect/2' });
   try {
-    await bcast('comment', postingWif, '', 'blurt', connectedTo, permlink, title, body, json);
+    const op2 = ['comment', {
+      parent_author: '',
+      parent_permlink: 'blurt',
+      author: connectedTo,
+      permlink,
+      title,
+      body,
+      json_metadata: json
+    }];
+    await blurt.broadcast.sendAsync({ operations: [op2], extensions: [] }, { posting: postingWif });
     let verified = false;
     for (let i = 0; i < 5 && !verified; i++) {
       await new Promise(r => setTimeout(r, 4000));

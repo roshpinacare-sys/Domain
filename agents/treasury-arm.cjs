@@ -63,7 +63,7 @@ async function main() {
   const CENSUS = require('./key-census.cjs');
   const candidates = (cfg.census_candidates || []).map(n => ({ name: n }));
   const found = await CENSUS.resolve({ rpc, account: cfg.source, role: 'active', steem, candidates });
-  if (!found) { row('gate', 'no candidate secret matches live active authority of ' + cfg.source + ' — owner must provision (see CENSUS lines)', 'refused'); book(); process.exit(0); }
+  if (!found) { row('gate', 'no candidate secret matches live active authority of ' + cfg.source + ' — owner must provision (see CENSUS lines)', 'refused'); saveState(loadState()); book(); process.exit(0); }
   const wif = found.wif;
 
   const state = loadState();
