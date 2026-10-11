@@ -254,6 +254,36 @@ footer.site a:hover{color:var(--text)}
   table{font-size:12px}
   th,td{padding:9px 10px}
 }
+
+/* == office band (E-series: office opens first) == */
+.office{margin:6px 0 30px;border:1px solid var(--acc-line);background:linear-gradient(180deg,rgba(16,185,129,.05),rgba(255,255,255,.02));border-radius:var(--r);padding:22px}
+.office-main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:22px;align-items:start}
+.office-shot img{width:100%;height:auto;border-radius:var(--r-sm);border:1px solid var(--line);display:block}
+.office-cap{font-size:12.5px;color:var(--faint);margin-top:8px}
+.office-head{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.office-head b{font-size:17px;letter-spacing:-.2px}
+.office-verd{font-size:12px;padding:3px 10px;border-radius:999px;border:1px solid var(--line);color:var(--dim)}
+.office-verd.live{color:#34d399;border-color:rgba(52,211,153,.4);background:rgba(52,211,153,.08)}
+.office-verd.aging{color:#fbbf24;border-color:rgba(251,191,36,.4);background:rgba(251,191,36,.08)}
+.office-verd.stale{color:#f87171;border-color:rgba(248,113,113,.4);background:rgba(248,113,113,.08)}
+.office-vitals{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
+.ov{border:1px solid var(--line);border-radius:var(--r-sm);padding:10px 12px;background:var(--panel)}
+.ov .k{font-size:10.5px;text-transform:uppercase;letter-spacing:1px;color:var(--faint);display:flex;align-items:center;gap:6px}
+.ov .v{font-size:14.5px;font-weight:600;margin-top:3px}
+.ov .s{font-size:11.5px;color:var(--faint);margin-top:1px}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;background:var(--faint);flex:none}
+.dot.live{background:#34d399;box-shadow:0 0 8px rgba(52,211,153,.7);animation:pulse 2s infinite}
+.dot.aging{background:#fbbf24}
+.dot.stale{background:#f87171}
+@keyframes pulse{0%{opacity:1}50%{opacity:.45}100%{opacity:1}}
+.office-wire .offlbl{font-size:10.5px;text-transform:uppercase;letter-spacing:1px;color:var(--faint);margin-bottom:6px}
+.office-wire ul{list-style:none;margin:0;padding:0;max-height:158px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.14) transparent}
+.office-wire li{display:flex;gap:8px;align-items:baseline;padding:4.5px 0;border-bottom:1px dashed rgba(255,255,255,.06);font-size:12px;color:var(--dim)}
+.office-wire li b{color:var(--acc-bright);font-weight:600;flex:none}
+.office-wire li .m{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.office-wire li .a{color:var(--faint);flex:none}
+.office-links{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+@media (max-width:900px){.office-main{grid-template-columns:1fr}.office-vitals{grid-template-columns:repeat(2,1fr)}}
 </style>
 <meta property="og:site_name" content="SAOS · THE WEAVE">
 <meta property="og:type" content="website">
@@ -316,7 +346,37 @@ footer.site a:hover{color:var(--text)}
         <a class="btn ghost" href="#/exchange/terminal">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="6" width="20" height="13" rx="2.5"/><path d="M2 10h20"/></svg>
           <span data-i="hero.ctaWallet">Open the exchange</span></a>
+        <a class="btn ghost" href="https://github.com/roshpinacare-sys/FleetHQ" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9.5 12 3l9 6.5V20a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 20z"/><path d="M9 21.5V13h6v8.5"/></svg>
+          <span data-i="hero.ctaOffice">Visit the office</span></a>
       </div>
+    </div>
+
+    <div class="office" id="office-band" role="region" aria-label="Fleet HQ office live status">
+      <div class="office-main">
+        <div class="office-shot">
+          <img src="assets/office-top.png" alt="Fleet HQ office - the live operations room: agents at desks with live monitors, task wall and library" width="640" height="360">
+          <div class="office-cap" data-i="office.cap">Fleet HQ - a real operations room: a crew of AI agents at desks, live monitors, a task wall, a library of their own reports.</div>
+        </div>
+        <div class="office-info">
+          <div class="office-head">
+            <span class="dot" id="of-dot"></span>
+            <b data-i="office.title">THE OFFICE - opens first</b>
+            <span class="office-verd mono" id="of-verdict">measuring...</span>
+          </div>
+          <p class="pgsub" data-i="office.sub">The crew plans, works, cross-checks the books and writes receipts around the clock. This window is measured live from the public repos - office first, then the network utilities. Nothing here is a mockup; every tile below is a real measurement with its age.</p>
+          <div class="office-vitals" id="of-vitals"></div>
+          <div class="office-wire">
+            <div class="offlbl" data-i="office.wire">Office git wire - the latest real work</div>
+            <ul id="of-wire" class="mono"></ul>
+          </div>
+          <div class="office-links">
+            <a class="btn" href="https://github.com/roshpinacare-sys/FleetHQ" target="_blank" rel="noopener"><span data-i="office.cta">Enter the office repo</span></a>
+            <a class="btn ghost" href="#/network/overview"><span data-i="office.cta2">Then explore the network</span></a>
+          </div>
+        </div>
+      </div>
+      <div class="srcnote" id="of-src" style="margin-top:14px"></div>
     </div>
 
     <h2 class="sb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3" stroke-linecap="round"/></svg><span data-i="home.now">What is happening right now</span></h2>
@@ -731,6 +791,12 @@ en: {
   "hero.h1":'AI agents that <em>prove</em> their own work.',
   "hero.lead":"Agents work around the clock, and every claim they make is measured, signed, and anchored on public chains. Anyone can verify. No one has to trust.",
   "hero.ctaVerify":"See the live truth", "hero.ctaWallet":"Open the exchange",
+  "hero.ctaOffice":"Visit the office",
+  "office.title":"THE OFFICE - opens first", "office.sub":"The crew plans, works, cross-checks the books and writes receipts around the clock. This window is measured live from the public repos - office first, then the network utilities. Nothing here is a mockup; every tile is a real measurement with its age.",
+  "office.cap":"Fleet HQ - a real operations room: a crew of AI agents at desks, live monitors, a task wall, a library of their own reports.",
+  "office.wire":"Office git wire - the latest real work", "office.cta":"Enter the office repo", "office.cta2":"Then explore the network",
+  "office.vPush":"Office activity", "office.vBuild":"Build health", "office.vWallet":"Wallet artery", "office.vGrid":"Grid artery", "office.vFleet":"Fleet artery", "office.vBrain":"Sovereign pulse",
+  "office.src":"Office window measured by office-pulse (public APIs only) every 20 minutes. Verdict law printed in the book: freshness thresholds per source.",
   "home.now":"What is happening right now", "home.kWitness":"Heartbeat witness", "home.kAtt":"Signed attestations", "home.lastAtt":"last signed", "home.kFleet":"Cloud agents alive", "home.kBrain":"Live brain keys",
   "home.how":"How it works",
   "home.s1t":"Agents work and sign", "home.s1p":"Every operation an agent performs is signed with its own EVM key and chained to the previous one by hash. Nothing an agent did exists without a signature.",
@@ -878,6 +944,12 @@ he: {
   "hero.h1":'סוכני AI שמוכיחים <em>את עבודתם שלהם</em>.',
   "hero.lead":"סוכנים עובדים סביב השעון, וכל טענה שהם מעלים נמדדת, נחתמת ונעוגנת בשרשרות ציבוריות. כל אחד יכול לאמת. אף אחד לא צריך לסמוך.",
   "hero.ctaVerify":"לראות את האמת החיה", "hero.ctaWallet":"לפתוח את הבורסה",
+  "hero.ctaOffice":"לבקר במשרד",
+  "office.title":"המשרד - נפתח ראשון", "office.sub":"הצוות מתכנן, עובד, מצליב את הספרים וכותב קבלות סביב השעון. החלון הזה נמדד חי מהריפואים הציבוריים - קודם המשרד, אחר כך השירותים השימושיים של הרשת. פה אין הצגה; כל אריח הוא מדידה אמיתית עם הגיל שלה.",
+  "office.cap":"Fleet HQ - חדר-operations אמיתי: צוות סוכני AI ליד שולחנות, צגים חיים, קיר-משימות וספריית דוחות שהם כתבו.",
+  "office.wire":"חוט-הגיט של המשרד - העבודה האמיתית האחרונה", "office.cta":"להיכנס לריפו של המשרד", "office.cta2":"ואז לחקור את הרשת",
+  "office.vPush":"פעילות המשרד", "office.vBuild":"בריאות-בנייה", "office.vWallet":"עורק-הארנק", "office.vGrid":"עורק-הגריד", "office.vFleet":"עורק-הצי", "office.vBrain":"דופק-ריבוני",
+  "office.src":"חלון-המשרד נמדד על ידי office-pulse (API ציבורי בלבד) כל 20 דקות. חוק-הפסיקה מודפס בספר: ספי-טריות לכל מקור.",
   "home.now":"מה קורה עכשיו",
   "home.kWitness":"עד הפעימה", "home.kAtt":"אימותים חתומים", "home.lastAtt":"האחרון נחתם", "home.kFleet":"סוכני ענן חיים", "home.kBrain":"מפתחות מוח חיים",
   "home.how":"איך זה עובד",
@@ -1160,7 +1232,7 @@ $("langbtn").addEventListener("click", ()=>{
 $("year").textContent = new Date().getFullYear();
 
 /* ═══════════ data layer - public mirrors only ═══════════ */
-const CACHE = { status:null, mirror:null, registry:null, saos:null, dex:null, watch:null, deposits:null, state:null, requests:null, verify:null, gh:null, ghFail:false };
+const CACHE = { status:null, mirror:null, registry:null, saos:null, dex:null, watch:null, deposits:null, state:null, requests:null, verify:null, gh:null, ghFail:false, office:null };
 async function jget(url){
   const r = await fetch(url + (url.includes("?")?"&":"?") + "t=" + Date.now(), {cache:"no-store"});
   if(!r.ok) throw new Error("HTTP "+r.status);
@@ -1176,6 +1248,7 @@ async function loadAll(){
     jget("dex/watch.json").then(j=>CACHE.watch=j).catch(()=>{}),
     jget("dex/deposits.json").then(j=>CACHE.deposits=j).catch(()=>{}),
     jget("agent/state.json").then(j=>CACHE.state=j).catch(()=>{}),
+    jget("office/data.json").then(j=>CACHE.office=j).catch(()=>{}),
     jget("agent/requests.json").then(j=>CACHE.requests=j).catch(()=>{}),
     jget("agent/verify/results.json").then(j=>CACHE.verify=j).catch(()=>{}),
     (async()=>{
@@ -1830,7 +1903,61 @@ function opInit(){
 async function boot(){
   route();
   opInit();
+
+/* == office window (E-series) == */
+function ageStr(min){
+  if(min==null) return "-";
+  if(min<1) return "now";
+  if(min<60) return min+"m";
+  const h=Math.floor(min/60); if(h<48) return h+"h "+(min%60)+"m";
+  return Math.floor(h/24)+"d";
+}
+function tile(label, main, sub, state){
+  return '<div class="ov"><div class="k"><span class="dot '+state+'"></span>'+label+'</div><div class="v">'+main+'</div><div class="s">'+sub+'</div></div>';
+}
+function stateOf(min, freshMin){
+  if(min==null) return "stale";
+  if(min<=freshMin) return "live";
+  if(min<=freshMin*24) return "aging";
+  return "stale";
+}
+function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function renderOffice(){
+  const o = CACHE.office;
+  const vd = document.getElementById("of-verdict");
+  const dot = document.getElementById("of-dot");
+  const vit = document.getElementById("of-vitals");
+  const wire = document.getElementById("of-wire");
+  const srn = document.getElementById("of-src");
+  if(!vd||!vit) return;
+  if(!o){ vit.innerHTML = tile(I18N[LANG]["office.vPush"]||"Office","...","office/data.json not reachable","stale"); return; }
+  const verdict = o.verdict||"STALE";
+  const cls = verdict==="ALIVE"?"live":verdict==="AGING"?"aging":"stale";
+  vd.textContent = verdict;
+  vd.className = "office-verd mono "+cls;
+  dot.className = "dot "+cls;
+  const off = o.office||{}, ar = o.arteries||{}, rt = o.runtime||{};
+  const tiles = [];
+  const pushAge = off.pushedAgeMin;
+  tiles.push(tile(I18N[LANG]["office.vPush"]||"Office activity", ageStr(pushAge), off.repo||"FleetHQ", stateOf(pushAge, 60*48)));
+  const ci = off.ci||{};
+  const ciState = ci.overall==="PASS" ? stateOf(ci.ageMin, 60*26) : "stale";
+  tiles.push(tile(I18N[LANG]["office.vBuild"]||"Build health", esc(ci.overall||"pending"), ci.ageMin!=null?(""+ageStr(ci.ageMin)+" ago"):"first receipt pending", ciState));
+  const w = ar.wallet||{}, g = ar.grid||{}, f = ar.fleet||{};
+  tiles.push(tile(I18N[LANG]["office.vWallet"]||"Wallet artery", esc(w.overall||"-"), ageStr(w.ageMin), w.overall==="PASS"?stateOf(w.ageMin,180):"stale"));
+  tiles.push(tile(I18N[LANG]["office.vGrid"]||"Grid artery", esc(g.overall||"-"), ageStr(g.ageMin), g.overall==="PASS"?stateOf(g.ageMin,90):"stale"));
+  tiles.push(tile(I18N[LANG]["office.vFleet"]||"Fleet artery", esc(f.overall||"-"), ageStr(f.ageMin), f.overall==="PASS"?stateOf(f.ageMin,180):"stale"));
+  tiles.push(tile(I18N[LANG]["office.vBrain"]||"Sovereign pulse", ageStr(rt.lastSuccessAgeMin), esc(rt.lastSuccessName||"saos-runtime"), stateOf(rt.lastSuccessAgeMin, 90)));
+  vit.innerHTML = tiles.join("");
+  const lines = ((off.wire)||[]).slice(0,6).map(c =>
+    '<li><b>'+esc(c.sha)+'</b><span class="m">'+esc(c.msg)+'</span><span class="a">'+esc(ageStr(c.ageMin))+'</span></li>').join("");
+  wire.innerHTML = lines || '<li><span class="m">no commits measured</span></li>';
+  const genAge = ageStr(Math.round((Date.now()-new Date(o.generatedAt).getTime())/60000));
+  const deg = (o.degraded&&o.degraded.length)? " | degraded sources: "+o.degraded.length : "";
+  srn.textContent = (I18N[LANG]["office.src"]||"office window") + " | generated " + genAge + " ago | verdict checks: " + ((o.verdictChecks||[]).length) + deg;
+}
   await loadAll();
+  renderOffice();
   renderDynamic();
   setInterval(()=>{ loadAll().then(renderDynamic).catch(()=>{}); }, 300000);
 }
