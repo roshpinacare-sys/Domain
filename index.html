@@ -138,6 +138,12 @@ ul.runs .st.ok{color:#86efac}.st.bad{color:#fca5a5}.st.wait{color:#fde047}
 footer{border-top:1px solid var(--line);padding:26px 0 34px;font-size:12.5px;color:var(--faint);line-height:1.8}
 footer a{color:var(--dim);text-decoration:underline;text-underline-offset:3px}
 footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:ltr;unicode-bidi:embed}
+
+/* office3d-hero-v1: the 3D room entry — T12 lane */
+.shot a.shot3d{position:relative;display:block;text-decoration:none}
+.shot a.shot3d::after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(to top,rgba(24,18,10,.42),rgba(24,18,10,0) 45%)}
+.shot .shot3d-btn{position:absolute;z-index:2;inset-inline-start:14px;bottom:14px;display:inline-flex;align-items:center;gap:8px;background:#1f1810;color:#ffe9c9;border:1px solid #5c4326;border-radius:999px;padding:10px 16px;font-weight:700;font-size:14px;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+.shot .shot3d-btn small{display:block;font-weight:500;color:#d8c39a;font-size:11px}
 </style>
 </head>
 <body>
@@ -167,12 +173,15 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
         הכול בהרצה רציפה ומתועדת, בלי דלתות סגורות.
       </p>
       <div class="cta-row">
-        <a class="btn" href="https://roshpinacare-sys.github.io/FleetHQ/" target="_blank" rel="noopener">כניסה למשרד החי →</a>
+        <a class="btn" href="office3d/" data-office3d="hero-v1">🏛️ היכנסו למשרד התלת-ממדי החי ←</a>
+        <a class="btn ghost" href="https://roshpinacare-sys.github.io/FleetHQ/" target="_blank" rel="noopener">ממשק הפורמן ↗</a>
         <a class="btn ghost" href="#live">הצצה לפאנלים החיים ↓</a>
       </div>
 
       <div class="shot">
-        <img src="assets/office-top.png" alt="משרד הצי — חדר התפעול החי: סוכנים מול צגים חיים, קיר-משימות וספרייה" width="640" height="360">
+        <a class="shot3d" href="office3d/" aria-label="היכנסו למשרד התלת-ממדי החי (חדר תלת-ממדי חי)">
+          <img src="assets/office-top.png" alt="משרד הצי — חדר התפעול החי: סוכנים מול צגים חיים, קיר-משימות וספרייה" width="640" height="360">
+          <span class="shot3d-btn">🏛️ המשרד התלת-ממדי<small>חדר חי · צוות אמיתי · אמת מהשרשרת</small></span></a>
         <p class="cap">משרד אמיתי, לא מוקאפ: צוות סוכני AI מול צגים חיים, קיר-משימות מתעדכן וספריית דוחות שהם כותבים בעצמם. החלון הזה נמדד חי מהריפואים הציבוריים — משרד קודם, רשת אחרי.</p>
       </div>
 
