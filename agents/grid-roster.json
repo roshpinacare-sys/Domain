@@ -1,0 +1,49 @@
+{
+  "schema": "saos/grid-roster/1",
+  "generatedAt": "2026-10-11T13:50:00Z",
+  "by": "zai-sec-1a12af86",
+  "chains": {
+    "steem": {
+      "rpc": "https://api.steemit.com",
+      "accounts": [
+        {"name": "headcorner", "role": "treasury+poster+grid"},
+        {"name": "cornerstone", "role": "legacy-treasury"},
+        {"name": "haran", "role": "worker-active"},
+        {"name": "cashmachine", "role": "worker-active"},
+        {"name": "wic", "role": "worker-active"},
+        {"name": "woq", "role": "worker-active"},
+        {"name": "tov", "role": "worker-active"},
+        {"name": "hcsoldier4", "role": "worker-active"},
+        {"name": "hcsoldier5", "role": "worker-active"},
+        {"name": "hcsoldier6", "role": "worker-active"},
+        {"name": "spaminator", "role": "quarantine-vp-empty"},
+        {"name": "hcsoldier1", "role": "keyless-stranded"},
+        {"name": "hcsoldier2", "role": "keyless-stranded"},
+        {"name": "hcsoldier3", "role": "keyless-stranded"},
+        {"name": "saos", "role": "shell"},
+        {"name": "powerspan", "role": "shell"},
+        {"name": "ynet", "role": "dead"}
+      ]
+    },
+    "hive": {
+      "rpc": "https://api.hive.blog",
+      "accounts": [
+        {"name": "cornerstone", "role": "treasury-primary"},
+        {"name": "headcorner", "role": "worker-active"}
+      ]
+    },
+    "blurt": {
+      "rpc": "https://blurt-rpc.saboin.com",
+      "accounts": [
+        {"name": "cornerstone", "role": "connect-target"},
+        {"name": "headcorner", "role": "worker-active"}
+      ]
+    }
+  },
+  "expectations": {
+    "vp_floor_pct": 20,
+    "active_post_max_age_days": 7,
+    "treasury_liquid_floor": {"steem:headcorner": 90, "hive:cornerstone": 10000, "blurt:cornerstone": 60},
+    "keyless_no_liquid_above": 1
+  }
+}

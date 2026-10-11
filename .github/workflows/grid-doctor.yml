@@ -1,0 +1,32 @@
+name: grid-doctor
+on:
+  schedule: [{cron: '19 * * * *'}]
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency:
+  group: grid-doctor
+  cancel-in-progress: false
+jobs:
+  truth:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 1}
+      - uses: actions/setup-node@v4
+        with: {node-version: 20}
+      - name: live chain audit (read-only, no secrets, no broadcasts)
+        run: node agents/grid-doctor.cjs
+      - name: commit truth book
+        run: |
+          git config user.name "grid-doctor[bot]"
+          git config user.email "grid-doctor[bot]@users.noreply.github.com"
+          git add agents/grid-truth.json agents/grid-truth.md
+          if git diff --cached --quiet; then echo "no truth changes"; else
+            for i in 1 2 3; do
+              git -c rebase.autoStash=true pull --rebase origin main >/dev/null 2>&1 || true
+              git commit -m "grid-doctor: live fleet truth $(date -u +%Y-%m-%dT%H:%M:%SZ) [skip ci]" >/dev/null 2>&1 && break || sleep 5
+            done
+            git push origin main >/dev/null 2>&1 || true
+          fi
