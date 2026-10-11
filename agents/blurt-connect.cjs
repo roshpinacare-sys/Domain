@@ -55,8 +55,10 @@ async function main() {
   if (GATE.stasisHalt('account_update')) { row('gate', 'STASIS halt on account_update', 'gated'); book(); process.exit(0); }
 
   blurt.config.set('url', RPC);
+  blurt.config.set('websocket', RPC);
   blurt.config.set('chain_id', BLURT.chain_id);
   blurt.config.set('address_prefix', 'BLT');
+  blurt.api.setOptions({ url: RPC, websocket: RPC, transport: 'http', useAppbase: false });
   row('config', 'chain_id=' + String(BLURT.chain_id).slice(0, 10) + '… (official blurtjs config)', 'ok');
 
   const CENSUS = require('./key-census.cjs');
