@@ -1,6 +1,6 @@
 {
   "protocol": "SAOS-SELFMODEL/1",
-  "generatedAt": "2026-10-11T14:23:33.697Z",
+  "generatedAt": "2026-10-11T14:29:14.051Z",
   "homes": {
     "Domain": {
       "repo": "roshpinacare-sys/Domain",
@@ -10,7 +10,7 @@
         {
           "source": "GitHub API",
           "ref": "repo exists, Actions active",
-          "at": "2026-10-11T14:23:33.697Z"
+          "at": "2026-10-11T14:29:14.051Z"
         }
       ]
     },
@@ -22,7 +22,7 @@
         {
           "source": "GitHub API",
           "ref": "repo exists",
-          "at": "2026-10-11T14:23:33.697Z"
+          "at": "2026-10-11T14:29:14.051Z"
         }
       ]
     },
@@ -34,7 +34,7 @@
         {
           "source": "GitHub API",
           "ref": "repo exists",
-          "at": "2026-10-11T14:23:33.697Z"
+          "at": "2026-10-11T14:29:14.051Z"
         }
       ]
     },
@@ -46,7 +46,7 @@
         {
           "source": "GitHub API",
           "ref": "repo exists",
-          "at": "2026-10-11T14:23:33.697Z"
+          "at": "2026-10-11T14:29:14.051Z"
         }
       ]
     }
@@ -56,13 +56,18 @@
       "id": "grid-doctor",
       "home": "Domain",
       "lane": "measurement",
-      "status": "STAGED",
+      "status": "REAL",
       "epistemic": "OBSERVED",
       "evidence": [
         {
+          "source": "GitHub Actions runs API",
+          "ref": "grid-doctor run 38146168753 success at 2026-10-11T14:11:22Z https://github.com/roshpinacare-sys/Domain/actions/runs/38146168753",
+          "at": "2026-10-11T14:11:22Z"
+        },
+        {
           "source": "agents/grid-truth.json",
-          "ref": "generatedAt 2026-10-11T14:11:09.301Z ageH=0.2",
-          "at": "2026-10-11T14:11:09.301Z"
+          "ref": "generatedAt 2026-10-11T14:11:37.320Z ageH=0.3",
+          "at": "2026-10-11T14:11:37.320Z"
         }
       ],
       "note": "fleet truth machine (read-only RPC) — hourly in cloud",
@@ -77,8 +82,8 @@
       "evidence": [
         {
           "source": "this beat",
-          "ref": "generatedAt=2026-10-11T14:23:33.697Z",
-          "at": "2026-10-11T14:23:33.697Z"
+          "ref": "generatedAt=2026-10-11T14:29:14.051Z",
+          "at": "2026-10-11T14:29:14.051Z"
         }
       ],
       "note": "self-model regeneration in cloud — shrink-only, never opens lanes",
@@ -98,9 +103,15 @@
       "id": "claims-lane",
       "home": "Domain",
       "lane": "claims",
-      "status": "HALTED",
-      "epistemic": "INFERRED",
-      "evidence": [],
+      "status": "STAGED",
+      "epistemic": "OBSERVED",
+      "evidence": [
+        {
+          "source": "GitHub Actions runs API",
+          "ref": "daily-claim run 38127712199 success at 2026-10-11T09:15:19Z https://github.com/roshpinacare-sys/Domain/actions/runs/38127712199",
+          "at": "2026-10-11T09:15:19Z"
+        }
+      ],
       "note": "reward harvesting — posting-only, no capital exit",
       "ageHours": 0
     },
@@ -109,8 +120,14 @@
       "home": "saos-dex",
       "lane": "grid",
       "status": "STAGED",
-      "epistemic": "INFERRED",
-      "evidence": [],
+      "epistemic": "OBSERVED",
+      "evidence": [
+        {
+          "source": "GitHub Actions runs API",
+          "ref": "dex-grid run 38144052862 success at 2026-10-11T13:39:34Z https://github.com/roshpinacare-sys/Domain/actions/runs/38144052862",
+          "at": "2026-10-11T13:39:34Z"
+        }
+      ],
       "note": "limit-order ladder — STASIS-staged; NOTE: unguarded money-family-live actor also signs here (C-002 family)",
       "ageHours": 0
     },
@@ -122,9 +139,9 @@
       "epistemic": "INFERRED",
       "evidence": [
         {
-          "source": "agents/change-requests/CR-0076-owner-approval.json",
-          "ref": "owner directive traces 1a12af86d9b689d5 + 1a12b495f6707275 (2026-10-11)",
-          "at": "2026-10-11T14:23:33.697Z"
+          "source": "GitHub Actions runs API",
+          "ref": "treasury-arm run 38147358384 null at 2026-10-11T14:29:04Z https://github.com/roshpinacare-sys/Domain/actions/runs/38147358384",
+          "at": "2026-10-11T14:29:04Z"
         }
       ],
       "note": "capped powerup/delegation under owner-directives chain; first runs pending — will flip to OBSERVED with tx evidence",
@@ -138,9 +155,9 @@
       "epistemic": "INFERRED",
       "evidence": [
         {
-          "source": "agents/change-requests/CR-0076-owner-approval.json",
-          "ref": "owner directive 2026-10-11 (trace 1a12af86d9b689d5): connect blurt accounts",
-          "at": "2026-10-11T14:23:33.697Z"
+          "source": "GitHub Actions runs API",
+          "ref": "blurt-connect run 38147360100 null at 2026-10-11T14:29:06Z https://github.com/roshpinacare-sys/Domain/actions/runs/38147360100",
+          "at": "2026-10-11T14:29:06Z"
         }
       ],
       "note": "blurt connectivity bootstrap; first runs pending — will flip to OBSERVED with post/tx evidence",
@@ -156,7 +173,7 @@
         {
           "source": "saos-runtime T-61",
           "ref": "arming via CI_SOCIAL_ARMED secret; run evidence pending",
-          "at": "2026-10-11T14:23:33.697Z"
+          "at": "2026-10-11T14:29:14.051Z"
         }
       ],
       "note": "continuous posting stream",
@@ -173,7 +190,7 @@
         {
           "source": "GitHub Actions",
           "ref": "this run regenerates organism.json",
-          "at": "2026-10-11T14:23:33.697Z"
+          "at": "2026-10-11T14:29:14.051Z"
         }
       ]
     },
@@ -184,9 +201,9 @@
       "epistemic": "OBSERVED",
       "evidence": [
         {
-          "source": "pending",
-          "ref": "awaiting first cloud run",
-          "at": "2026-10-11T14:23:33.697Z"
+          "source": "GitHub Actions runs API",
+          "ref": "grid-doctor run 38146168753 success at 2026-10-11T14:11:22Z https://github.com/roshpinacare-sys/Domain/actions/runs/38146168753",
+          "at": "2026-10-11T14:11:22Z"
         }
       ]
     },
@@ -199,7 +216,7 @@
         {
           "source": "Sandbox/ops/AGENT-LEDGER.md",
           "ref": "zai-code-agent + zai-code-2 + zai-sec-1a12af86 registered 2026-10-11",
-          "at": "2026-10-11T14:23:33.697Z"
+          "at": "2026-10-11T14:29:14.051Z"
         }
       ]
     },
@@ -212,7 +229,7 @@
         {
           "source": "chain forensics R29",
           "ref": "batched-order fingerprint measured again 2026-10-11T12:56Z; machine identity UNKNOWN",
-          "at": "2026-10-11T14:23:33.697Z"
+          "at": "2026-10-11T14:29:14.051Z"
         }
       ]
     }
@@ -249,7 +266,7 @@
         {
           "source": "agents/grid-truth.json",
           "ref": "live RPC totals per run",
-          "at": "2026-10-11T14:23:33.697Z"
+          "at": "2026-10-11T14:29:14.051Z"
         }
       ]
     },
@@ -261,7 +278,7 @@
         {
           "source": "agents/grid-truth.json",
           "ref": "STRANDED-CAPITAL alerts + balances",
-          "at": "2026-10-11T14:23:33.697Z"
+          "at": "2026-10-11T14:29:14.051Z"
         }
       ]
     }
@@ -289,9 +306,9 @@
         "justification": "read-only public RPC — no capital exposure",
         "evidence": [
           {
-            "source": "pending",
-            "ref": "awaiting run",
-            "at": "2026-10-11T14:23:33.697Z"
+            "source": "GitHub Actions runs API",
+            "ref": "grid-doctor run 38146168753 success at 2026-10-11T14:11:22Z https://github.com/roshpinacare-sys/Domain/actions/runs/38146168753",
+            "at": "2026-10-11T14:11:22Z"
           }
         ]
       },
@@ -300,9 +317,9 @@
         "justification": "posting-only harvesting, STASIS-staged since 2026-10-05",
         "evidence": [
           {
-            "source": "STASIS.json",
-            "ref": "stagedLanes.allow includes claims",
-            "at": "2026-10-04T22:06:00Z"
+            "source": "GitHub Actions runs API",
+            "ref": "daily-claim run 38127712199 success at 2026-10-11T09:15:19Z https://github.com/roshpinacare-sys/Domain/actions/runs/38127712199",
+            "at": "2026-10-11T09:15:19Z"
           }
         ]
       },
@@ -324,7 +341,7 @@
           {
             "source": "agents/change-requests/CR-0076-owner-approval.json",
             "ref": "directive chain i=3 staged-open",
-            "at": "2026-10-11T14:23:33.697Z"
+            "at": "2026-10-11T14:29:14.051Z"
           }
         ]
       },
@@ -335,7 +352,7 @@
           {
             "source": "agents/change-requests/CR-0076-owner-approval.json",
             "ref": "directive chain i=3 staged-open",
-            "at": "2026-10-11T14:23:33.697Z"
+            "at": "2026-10-11T14:29:14.051Z"
           }
         ]
       },
@@ -346,12 +363,12 @@
           {
             "source": "agents/change-requests/CR-0076-owner-approval.json",
             "ref": "directive chain i=3 staged-open",
-            "at": "2026-10-11T14:23:33.697Z"
+            "at": "2026-10-11T14:29:14.051Z"
           }
         ]
       }
     },
-    "computedAt": "2026-10-11T14:23:33.697Z",
+    "computedAt": "2026-10-11T14:29:14.051Z",
     "rule": "REAL requires: gate-authenticity green + >=N observed cycles + zero open contradictions on lane + writer attributed"
   },
   "custody": {
@@ -365,7 +382,7 @@
         {
           "source": "fleet audit 2026-10-11",
           "ref": "vault sha256-wrap breakable from public material; rotation = owner action pending",
-          "at": "2026-10-11T14:23:33.697Z"
+          "at": "2026-10-11T14:29:14.051Z"
         }
       ]
     },
@@ -378,7 +395,7 @@
         {
           "source": "fleet audit 2026-10-11",
           "ref": "no raw key shapes in git HEAD trees (measured)",
-          "at": "2026-10-11T14:23:33.697Z"
+          "at": "2026-10-11T14:29:14.051Z"
         }
       ]
     },
@@ -391,7 +408,7 @@
         {
           "source": "Domain secrets API",
           "ref": "BLURT_ACTIVE_WIF exists",
-          "at": "2026-10-11T14:23:33.697Z"
+          "at": "2026-10-11T14:29:14.051Z"
         }
       ]
     }
@@ -407,7 +424,7 @@
   ],
   "sovereignty": {
     "protocol": "SAOS-SOVEREIGNTY/1",
-    "computedAt": "2026-10-11T14:23:33.697Z",
+    "computedAt": "2026-10-11T14:29:14.051Z",
     "haltSemantics": {
       "measured": "A",
       "meaning": "HALTED means: (A) the organism’s own registered lanes will not sign. It does NOT mean (B) no actor inside the sovereignty domain can act, and does NOT mean (C) no actor in the world can act.",
