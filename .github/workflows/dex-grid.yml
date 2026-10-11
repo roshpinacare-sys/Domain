@@ -183,3 +183,36 @@ jobs:
             git push origin HEAD:main
           fi
 
+
+      # zai-audit 2026-10-11 · רגל-ההאצלות (owner directives: trace 1a12af43fc4d7489
+      # "אני רוצה להאציל SP לכלל החשבונות" + trace 1a12b258c9776305 "יש לך אישור להכל"):
+      # הצבת כוח-העבודה של הצי — delegate_vesting_shares אבסולוטיים לפי
+      # grids/state/delegation-plan.json (SAOS-DELEGATION-PLAN/1). אידמפוטנטי
+      # (דלתא-בלבד מול המצב-החי; יעד-שהושג = אפס-אופים) — בטוח לריצה-כפולה מול
+      # הבית-המקורי. שער-STASIS פנימי (grids/brake.mjs → lane=delegations, נפתח
+      # ב-STASIS.json stagedLanes.allow עם רישום-היסטוריה מלא) + מפתח-מאומת-מול-
+      # רשות-ה-active-החיה (אותו-משטר של community.mjs) + קריאה-אחרי-כתיבה פר-האצלה.
+      # הרגל הזאת אינה תלוית-משמרת: גם כשהמקור חי (verify-only shift) ההאצלה
+      # מתבצעת — אידמפוטנטיות היא השער, לא התור.
+      - name: Delegation leg (owner-mandated SP deployment — staged lane, in-code brake re-checks)
+        if: always()
+        env:
+          SAOS_RELAY_AGENT_ACCOUNT: headcorner
+          STEEM_ACTIVE_WIF: ${{ secrets.STEEM_ACTIVE_WIF }}
+        run: node grids/delegate-plan.mjs --execute
+        continue-on-error: true
+
+      - name: Delegation evidence commit (receipt = commit)
+        if: always()
+        run: |
+          set -u
+          git config user.name "delegations[bot]"
+          git config user.email "delegations[bot]@users.noreply.github.com"
+          git add grids/state/delegation-receipt.jsonl grids/state/events.jsonl 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "no delegation evidence change — clean exit"
+          else
+            git commit -m "delegations: owner-mandated SP deployment receipt $(date -u +%FT%TZ) [skip ci]"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
