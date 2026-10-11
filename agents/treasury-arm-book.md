@@ -61,3 +61,24 @@
 |---|---|---|---|---|---|
 | 2026-10-11T15:24:24.776Z | blurt | gate | no candidate secret matches live active authority of cornerstone — owner must provision (see CENSUS lines) | refused |  |
 
+
+## TREASURY-ARM RUN · 2026-10-11T16:25:49.673Z · chain=steem
+
+| at | chain | op | detail | status | extra |
+|---|---|---|---|---|---|
+| 2026-10-11T16:25:49.672Z | steem | gate | no candidate secret matches live active authority of headcorner — owner must provision (see CENSUS lines) | refused |  |
+
+
+## TREASURY-ARM RUN · 2026-10-11T16:25:50.263Z · chain=hive
+
+| at | chain | op | detail | status | extra |
+|---|---|---|---|---|---|
+| 2026-10-11T16:25:50.262Z | hive | gate | no candidate secret matches live active authority of cornerstone — owner must provision (see CENSUS lines) | refused |  |
+
+
+## TREASURY-ARM RUN · 2026-10-11T16:25:50.891Z · chain=blurt
+
+| at | chain | op | detail | status | extra |
+|---|---|---|---|---|---|
+| 2026-10-11T16:25:50.891Z | blurt | gate | no candidate secret matches live active authority of cornerstone — owner must provision (see CENSUS lines) | refused |  |
+
