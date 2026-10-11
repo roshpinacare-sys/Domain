@@ -309,6 +309,19 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
 
         <div class="panel" id="p-research">
           <div class="ph"><h3><span class="ico">🔬</span> מחקר וגילוי</h3><span class="chip" id="pr-chip">טוען…</span></div>
+          <div style="margin:2px 0 12px">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+              <b style="font-size:12.5px">רווחיות (מדיד-יומי)</b>
+              <span class="chip" id="pp-verdict">טוען…</span>
+              <span class="chip" id="pp-fresh">—</span>
+            </div>
+            <div class="kv">
+              <b>שווי-נטו (SBD-שקול)</b><i class="mono" id="pp-net">—</i>
+              <b>שינוי מול הסבב-הקודם</b><i class="mono" id="pp-delta">—</i>
+              <b>פסק-הגריד</b><i class="mono" id="pp-grid">—</i>
+            </div>
+            <div class="pfoot" style="margin-top:8px"><span>עודכן: <span class="upd" id="pp-upd">—</span></span><span class="src">Sandbox/receipts/profit-oracle-latest.json</span></div>
+          </div>
           <ul class="runs" id="pr-runs"><li class="err">טוען ממצאי-מחקר אחרונים…</li></ul>
           <div class="pfoot"><span>עודכן: <span class="upd" id="pr-upd">—</span></span><span class="src">Sandbox/research/findings-*.json · מחזור שבועי · LEDGER.md</span></div>
         </div>
@@ -824,9 +837,63 @@ function loadResearch(){
   })(0);
 }
 
+/* ── 10b. PROFITABILITY (14-d lane: the economy's pulse, public — owner word "פתח הכל".
+   Source: Sandbox/receipts/profit-oracle-latest.json (daily measurement receipt).
+   Defensive law: missing/failing/shapeless feed → honest "אין-נתון", never fake.
+   XSS law: every fetched value reaches the DOM via textContent only — no innerHTML. ── */
+function loadProfit(){
+  var vChip = $('pp-verdict'), fChip = $('pp-fresh');
+  function honest(why){
+    if(vChip){ vChip.className='chip'; vChip.textContent='לא-ידוע'; }
+    if(fChip){ fChip.className='chip bad'; fChip.textContent='אין-נתון'; }
+    if($('pp-net')) $('pp-net').textContent = '—';
+    if($('pp-delta')) $('pp-delta').textContent = '—';
+    if($('pp-grid')) $('pp-grid').textContent = '—';
+    if($('pp-upd')) $('pp-upd').textContent = why ? ('— (' + why + ')') : '—';
+  }
+  function num(x){
+    if(typeof x === 'number' && isFinite(x)) return x.toLocaleString('en-US',{maximumFractionDigits:2});
+    return null;
+  }
+  function render(d){
+    if(!d || !d.summary || typeof d.summary !== 'object'){ honest('מבנה-לא-מוכר'); return; }
+    var s = d.summary;
+    var MAP = { PROFIT:['chip ok','רווח'], FLAT:['chip','שטוח'], LOSS:['chip bad','הפסד'], UNKNOWN:['chip','לא-ידוע'] };
+    var v = MAP[String(s.verdict == null ? '' : s.verdict).toUpperCase()] || MAP.UNKNOWN;
+    vChip.className = v[0]; vChip.textContent = v[1];
+    var net = num(s.netWorthSbdEquiv);
+    $('pp-net').textContent = (net !== null) ? net : (typeof s.netWorthSbdEquiv === 'string' && s.netWorthSbdEquiv ? s.netWorthSbdEquiv : '—');
+    var dl = (typeof s.deltaVsPriorPct === 'number' && isFinite(s.deltaVsPriorPct))
+      ? ((s.deltaVsPriorPct > 0 ? '+' : '') + s.deltaVsPriorPct.toFixed(2) + '%') : null;
+    $('pp-delta').textContent = (dl !== null) ? dl : (typeof s.deltaVsPriorPct === 'string' && s.deltaVsPriorPct ? s.deltaVsPriorPct : '—');
+    var g = s.gridVerdict, gt = '—';
+    if(typeof g === 'string' && g) gt = g;
+    else if(typeof g === 'number' && isFinite(g)) gt = String(g);
+    else if(g && typeof g === 'object'){
+      var cand = g.verdict || g.state || g.status || null;
+      if(typeof cand === 'string' && cand) gt = cand;
+      else if(typeof g.ok === 'boolean') gt = g.ok ? 'תקין' : 'חריג';
+    }
+    $('pp-grid').textContent = gt;
+    var at = d.at ? new Date(d.at) : null;
+    if(at && !isNaN(at.getTime())){
+      var stale = (Date.now() - at.getTime()) > 48*3600e3; /* daily receipt — 48h honest-warning law */
+      fChip.className = stale ? 'chip stale' : 'chip ok';
+      fChip.textContent = 'עודכן ' + ago(at.toISOString()) + (stale ? ' (ישן)' : '');
+      $('pp-upd').textContent = utcClock(at.toISOString());
+    } else {
+      fChip.className = 'chip bad'; fChip.textContent = 'אין-תאריך';
+      $('pp-upd').textContent = '—';
+    }
+  }
+  jget('https://raw.githubusercontent.com/roshpinacare-sys/Sandbox/main/receipts/profit-oracle-latest.json?ts=' + Date.now(), 10000)
+    .then(render)
+    .catch(function(){ honest('המקור-לא-זמין'); });
+}
+
 /* ── refresh loop: 5 minutes, one polite batch per source ── */
 function refreshAll(){
-  loadOffice(); loadPulse(); loadGrid(); loadSteem(); loadProbes(); loadWorld(); loadCrew(); loadLessons(); loadFlow(); loadIntegrity(); loadResearch(); loadDecisions();
+  loadOffice(); loadPulse(); loadGrid(); loadSteem(); loadProbes(); loadWorld(); loadCrew(); loadLessons(); loadFlow(); loadIntegrity(); loadResearch(); loadDecisions(); loadProfit();
 }
 refreshAll();
 setInterval(refreshAll, 5*60*1000);
