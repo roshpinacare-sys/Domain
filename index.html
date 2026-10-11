@@ -290,6 +290,12 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
           <div class="pfoot"><span>עודכן: <span class="upd" id="pf-upd">—</span></span><span class="src">Sandbox/ops/flow/flow-map.json · כל-3-שעות</span></div>
         </div>
 
+        <div class="panel" id="p-research">
+          <div class="ph"><h3><span class="ico">🔬</span> מחקר וגילוי</h3><span class="chip" id="pr-chip">טוען…</span></div>
+          <ul class="runs" id="pr-runs"><li class="err">טוען ממצאי-מחקר אחרונים…</li></ul>
+          <div class="pfoot"><span>עודכן: <span class="upd" id="pr-upd">—</span></span><span class="src">Sandbox/research/findings-*.json · מחזור שבועי · LEDGER.md</span></div>
+        </div>
+
       </div>
     </div>
   </section>
@@ -357,10 +363,13 @@ function ago(ts){
   return 'לפני ' + Math.round(h/24) + ' ימ׳';
 }
 function isStale(ts){ if(!ts) return true; return ((Date.now() - new Date(ts).getTime()) > STALE_HOURS*3600e3); }
-function setChip(id, ts, okTxt){
+function setChip(id, ts, okTxt, staleHours){
   var el = $(id); if(!el) return;
+  var H = staleHours || STALE_HOURS;
   if(ts == null){ el.className='chip bad'; el.textContent='אין נתון'; return; }
-  if(isStale(ts)){ el.className='chip stale'; el.textContent='ישן מ-24h · ' + ago(ts); }
+  if((Date.now() - new Date(ts).getTime()) > H*3600e3){
+    el.className='chip stale'; el.textContent=(H===STALE_HOURS ? 'ישן מ-24h' : 'ישן מ-' + H + 'h') + ' · ' + ago(ts);
+  }
   else { el.className='chip ok'; el.textContent = okTxt || ('חי · ' + ago(ts)); }
 }
 function noData(id, why){
@@ -706,9 +715,47 @@ function loadFlow(){
     });
 }
 
+/* ── 10. RESEARCH (11-c lane: Sandbox research findings — weekly, date-named findings-{utc-date}.json,
+   resolved latest-first up to 9 days back, exactly like the probes date-failover of 10-b.
+   Honesty law: renders what the feed says — hypothesis → measurement → verdict → next. ── */
+function loadResearch(){
+  var chip = $('pr-chip');
+  function urlFor(back){
+    var d = new Date(Date.now() - back*86400e3);
+    var p = function(x){ return (x<10?'0':'')+x; };
+    return 'https://raw.githubusercontent.com/roshpinacare-sys/Sandbox/main/research/findings-' +
+      d.getUTCFullYear() + '-' + p(d.getUTCMonth()+1) + '-' + p(d.getUTCDate()) + '.json?ts=' + Date.now();
+  }
+  function failEmpty(why){
+    chip.className='chip bad'; chip.textContent='אין נתון';
+    $('pr-runs').innerHTML = '<li class="err">אין נתון' + (why ? ' — ' + why : '') + '</li>';
+    $('pr-upd').textContent = '—';
+  }
+  function render(d){
+    if(!d || !Array.isArray(d.experiments) || !d.experiments.length){ failEmpty('קובץ-הממצאים ריק או במבנה-לא-מוכר'); return; }
+    function esc(s){ var el=document.createElement('div'); el.textContent=String(s==null?'':s); return el.innerHTML; }
+    var h = '';
+    d.experiments.slice(0, 4).forEach(function(e){
+      var mark = e.ok === true ? '<span class="st ok">✅</span>' : e.ok === false ? '<span class="st bad">❌</span>' : '<span class="st wait">⏳</span>';
+      h += '<li>' + mark + ' <b>' + esc(e.id) + ' · ' + esc(e.name) + '</b>' +
+        (e.verdict ? '<br><span style="font-size:12px">' + esc(e.verdict) + '</span>' : '') +
+        (e.next ? '<br><span style="font-size:11px;color:var(--faint)">צעד-הבא: ' + esc(e.next) + '</span>' : '') + '</li>';
+    });
+    h += '<li style="font-size:11px"><a href="https://github.com/roshpinacare-sys/Sandbox/blob/main/research/LEDGER.md" target="_blank" rel="noopener">פנקס-המחקר (LEDGER.md) — השערה → מדידה → פסק → צעד-הבא</a></li>';
+    $('pr-runs').innerHTML = h;
+    var at = d.at || null;
+    if(at){ setChip('pr-chip', at, 'מחקר חי', 192); $('pr-upd').textContent = utcClock(at); }
+    else { chip.className='chip ok'; chip.textContent='ממצאים'; $('pr-upd').textContent = utcClock(new Date()); }
+  }
+  (function attempt(back){
+    if(back > 8){ failEmpty('לא נמצא קובץ-ממצאים מ-9 הימים האחרונים (מחזור שבועי · ב\' 05:23 UTC)'); return; }
+    jget(urlFor(back), 10000).then(render).catch(function(){ attempt(back + 1); });
+  })(0);
+}
+
 /* ── refresh loop: 5 minutes, one polite batch per source ── */
 function refreshAll(){
-  loadOffice(); loadPulse(); loadGrid(); loadSteem(); loadProbes(); loadWorld(); loadCrew(); loadLessons(); loadFlow();
+  loadOffice(); loadPulse(); loadGrid(); loadSteem(); loadProbes(); loadWorld(); loadCrew(); loadLessons(); loadFlow(); loadResearch();
 }
 refreshAll();
 setInterval(refreshAll, 5*60*1000);
