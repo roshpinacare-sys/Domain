@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>מפקדת הצי — חדר v2 החי (3D buildless)</title>
+<meta name="description" content="המשרד התלת-ממדי החי של הריבונות — מוזן ישירות מהפידים האמיתיים: פורמן, דופק, משואה. אפס נתונים פיקטיביים." />
+<style>
+  :root{
+    --bg:#ddd6c8; --surface:#171310; --surface2:#221c16; --line:#3a3128;
+    --ink:#f3ede2; --ink2:#c9bfae; --ink3:#948a79;
+    --ok:#2fae63; --warn:#d9a13b; --err:#d95c4a; --sleep:#7f8ea3; --coffee:#a1794f;
+    --accent:#e0a458;
+  }
+  *{box-sizing:border-box} html,body{margin:0;height:100%;overflow:hidden;background:var(--bg)}
+  body{font-family:system-ui,-apple-system,"Segoe UI","Noto Sans Hebrew",Arial,sans-serif;color:var(--ink)}
+  #app{position:fixed;inset:0}
+  canvas{display:block}
+  .hud{position:fixed;z-index:10;pointer-events:none}
+  .hud *{pointer-events:auto}
+  #topbar{top:0;right:0;left:0;display:flex;flex-wrap:wrap;gap:6px;align-items:center;
+    padding:8px 12px;padding-top:max(8px,env(safe-area-inset-top));
+    background:linear-gradient(180deg,rgba(23,19,16,.88),rgba(23,19,16,0));}
+  .chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;
+    background:var(--surface2);border:1px solid var(--line);border-radius:999px;padding:4px 10px;color:var(--ink2)}
+  .chip b{color:var(--ink)}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok)}
+  .dot.pulse{animation:pulse 1.6s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  .chip .val{font-variant-numeric:tabular-nums}
+  #title{font-size:14px;font-weight:800;letter-spacing:.2px;color:var(--ink);margin-left:4px}
+  #subtitle{font-size:11px;color:var(--ink3)}
+  #viewbar{bottom:14px;left:50%;transform:translateX(-50%);display:flex;gap:6px;flex-wrap:wrap;justify-content:center;
+    padding-bottom:env(safe-area-inset-bottom)}
+  .vbtn{font-size:12px;font-weight:700;color:var(--ink2);background:rgba(34,28,22,.92);
+    border:1px solid var(--line);border-radius:10px;padding:7px 12px;cursor:pointer;transition:.15s}
+  .vbtn:hover{color:var(--ink);border-color:var(--accent)}
+  .vbtn.active{background:var(--accent);color:#191410;border-color:var(--accent)}
+  #legend{bottom:14px;right:12px;display:flex;flex-direction:column;gap:4px;font-size:11px;color:var(--ink2);
+    background:rgba(23,19,16,.82);border:1px solid var(--line);border-radius:12px;padding:8px 10px;max-width:220px}
+  #legend .row{display:flex;align-items:center;gap:6px}
+  #legend .sw{width:9px;height:9px;border-radius:3px}
+  #card{top:64px;left:12px;width:250px;display:none;background:rgba(23,19,16,.95);border:1px solid var(--line);
+    border-radius:14px;padding:12px 14px;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+  #card h3{margin:0 0 2px;font-size:15px}
+  #card .desk{font-size:12px;color:var(--ink2);margin-bottom:8px}
+  #card .kv{display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-top:1px dashed var(--line)}
+  #card .kv span:first-child{color:var(--ink3)}
+  #card .act{font-size:12px;color:var(--ink2);margin-top:8px;line-height:1.5}
+  #card .x{position:absolute;top:6px;left:8px;background:none;border:none;color:var(--ink3);cursor:pointer;font-size:15px}
+  #feeds{top:52px;right:12px;display:flex;flex-direction:column;gap:4px;font-size:11px}
+  #feeds .f{display:flex;gap:6px;align-items:center;background:rgba(23,19,16,.85);border:1px solid var(--line);
+    border-radius:8px;padding:3px 8px;color:var(--ink2)}
+  #feeds .f b{color:var(--ink);font-weight:700}
+  #nolink{position:fixed;inset:0;display:none;place-items:center;background:rgba(23,19,16,.9);z-index:50;text-align:center;padding:24px}
+  #nolink .box{max-width:420px;border:1px solid var(--line);border-radius:16px;padding:24px;background:var(--surface2)}
+  #nolink h2{margin:0 0 8px;font-size:17px;color:var(--err)}
+  #nolink p{margin:0;font-size:13px;color:var(--ink2);line-height:1.7}
+  #glfail{position:fixed;inset:0;display:none;place-items:center;background:var(--surface);z-index:60;text-align:center;padding:24px}
+  #glfail .box{max-width:440px}
+  #glfail h2{color:var(--err);font-size:17px;margin:0 0 8px}
+  #glfail p{color:var(--ink2);font-size:13px;line-height:1.7;margin:0}
+  #brand{position:fixed;bottom:14px;left:12px;z-index:10;font-size:11px;color:var(--ink3)}
+  #brand a{color:var(--ink2);text-decoration:none;border-bottom:1px dotted var(--ink3)}
+  @media (max-width:820px){ #feeds{display:none} #legend{display:none} #card{width:210px} }
+</style>
+<script type="importmap">
+{ "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<div id="app"></div>
+
+<div class="hud" id="topbar">
+  <span id="title">מפקדת הצי — החדר החי v2</span>
+  <span class="chip"><span class="dot pulse" id="verdict-dot"></span><b id="verdict">טוען…</b></span>
+  <span class="chip">צוות <b class="val" id="crew-count">—</b></span>
+  <span class="chip">ספרים <b class="val" id="books-count">—</b></span>
+  <span class="chip">משמרות <b class="val" id="shifts">—</b></span>
+  <span class="chip"><b class="val" id="clock">—</b></span>
+  <span id="subtitle">נתונים אמיתיים בלבד · דופק 45 שניות · אפס הדגמות</span>
+</div>
+
+<div class="hud" id="feeds">
+  <div class="f"><span class="dot" id="fd-foreman"></span>פורמן <b id="fd-foreman-v">—</b></div>
+  <div class="f"><span class="dot" id="fd-pulse"></span>דופק <b id="fd-pulse-v">—</b></div>
+  <div class="f"><span class="dot" id="fd-live"></span>ספרים <b id="fd-live-v">—</b></div>
+</div>
+
+<div class="hud" id="legend"></div>
+
+<div class="hud" id="card">
+  <button class="x" id="card-x" aria-label="סגור">✕</button>
+  <h3 id="c-name">—</h3>
+  <div class="desk" id="c-desk">—</div>
+  <div class="kv"><span>מצב</span><b id="c-state">—</b></div>
+  <div class="kv"><span>מאז</span><b id="c-since">—</b></div>
+  <div class="kv"><span>קרדיטים</span><b id="c-credits">—</b></div>
+  <div class="kv"><span>משימה</span><b id="c-task">—</b></div>
+  <div class="act" id="c-activity"></div>
+</div>
+
+<div class="hud" id="viewbar">
+  <button class="vbtn active" data-v="0">פנורמה</button>
+  <button class="vbtn" data-v="1">מעל הכתף</button>
+  <button class="vbtn" data-v="2">קיר-המשימות</button>
+  <button class="vbtn" data-v="3">פינת הקפה</button>
+  <button class="vbtn" data-v="4">מצלמת-עורך</button>
+  <button class="vbtn" id="daynight">🌙/☀️</button>
+</div>
+
+<div id="brand">ריבונות אוטונומית · <a href="../" >← רשת חיה</a> · <a href="../">המשרד</a> · v2-buildless</div>
+
+<div id="nolink"><div class="box"><h2>אין חיבור לפידים</h2>
+  <p>החדר מציג נתונים אמיתיים בלבד — וכרגע אף מקור לא עונה. אין נתוני-דמה במערכת הזו, מעולם. ניסיון חוזר אוטומטי כל 30 שניות.</p>
+</div></div>
+
+<div id="glfail"><div class="box"><h2>הדפדפן לא מאפשר WebGL</h2>
+  <p>החדר התלת-ממדי דורש WebGL. הפאנלים החיים ממשיכים לעבוד ב<a href="../">עמוד הרשת החיה</a>.</p>
+</div></div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+/* ============ הגדרות-אמת ============ */
+const FEEDS = {
+  foreman: 'https://raw.githubusercontent.com/roshpinacare-sys/FleetHQ/main/office/state/office-state.json',
+  pulse:   '../office/data.json',
+  live:    '../agents/office-live.json',
+};
+const POLL_MS = 45000, RETRY_MS = 30000;
+const STATE_COLOR = { working:0x2fae63, idle:0xd9a13b, error:0xd95c4a, asleep:0x7f8ea3, coffee:0xa1794f };
+const STATE_HE = { working:'עובד', idle:'פנוי', error:'תקלה', asleep:'ישן', coffee:'הפסקת קפה' };
+const isLite = matchMedia('(max-width: 820px)').matches || (navigator.hardwareConcurrency ?? 8) <= 4;
+
+/* ============ מצב-עולם ============ */
+const W = { agents:new Map(), books:[], verdict:'UNKNOWN', feeds:{foreman:{ok:false},pulse:{ok:false},live:{ok:false}},
+            shifts:0, night:false, ready:false, sel:null, t0:performance.now() };
+
+/* ============ בסיס ============ */
+let renderer, scene, camera, controls, raycaster, pointer;
+const lampLights = [], agentGroups = new Map(), dynamics = [];
+
+function initGL(){
+  try{
+    renderer = new THREE.WebGLRenderer({ antialias:!isLite, powerPreference:'high-performance' });
+  }catch(e){ document.getElementById('glfail').style.display='grid'; throw e; }
+  renderer.setPixelRatio(Math.min(devicePixelRatio, isLite?1.2:1.75));
+  renderer.setSize(innerWidth, innerHeight);
+  renderer.shadowMap.enabled = !isLite;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.12;
+  document.getElementById('app').appendChild(renderer.domElement);
+
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color('#ddd6c8');
+  scene.fog = new THREE.Fog('#ddd6c8', 26, 62);
+  camera = new THREE.PerspectiveCamera(50, innerWidth/innerHeight, .1, 80);
+  camera.position.set(9.5, 7.2, 12.5);
+
+  controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true; controls.dampingFactor = .08;
+  controls.maxPolarAngle = Math.PI/2 - .04;
+  controls.minDistance = 3; controls.maxDistance = 26;
+  controls.target.set(0, .9, 0);
+
+  raycaster = new THREE.Raycaster(); pointer = new THREE.Vector2();
+  buildRoom(); buildStaticLight();
+  renderer.domElement.addEventListener('pointerdown', onDown);
+  renderer.domElement.addEventListener('pointerup', onUp);
+  addEventListener('resize', onResize);
+  document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) renderer.setAnimationLoop(loop); else renderer.setAnimationLoop(null); });
+  renderer.setAnimationLoop(loop);
+}
+
+/* ============ הארכיטקטורה ============ */
+function mat(c, r=.85, m=0){ return new THREE.MeshStandardMaterial({color:c, roughness:r, metalness:m}); }
+function box(w,h,d,c,x,y,z,ry=0,parent=scene,shadow=true){
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), mat(c));
+  m.position.set(x,y,z); m.rotation.y = ry;
+  if(shadow && !isLite){ m.castShadow = true; m.receiveShadow = true; }
+  parent.add(m); return m;
+}
+function buildRoom(){
+  // רצפה
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(20,13), mat(0xe8ddcc,.95));
+  floor.rotation.x = -Math.PI/2; floor.receiveShadow = !isLite; scene.add(floor);
+  box(8.5,.02,5.5,0xc9b8a0,0,.011,0); // שטיח
+  // קירות
+  box(20,3.6,.25,0xefe7da,0,1.8,-5.5);   // אחורי
+  box(.25,3.6,13,0xefe7da,-9.9,1.8,0);   // שמאלי
+  box(.25,3.6,13,0xefe7da, 9.9,1.8,0);   // ימני
+  // קורות-תקרה
+  for(let i=0;i<5;i++) box(20,.22,.5,0xd9cdb9,0,3.55,-4.2+i*2.1);
+  // חלונות (קיר-אחורי) — שמש-ביום, ירח-בלילה
+  W.windows = [];
+  for(let i=-1;i<=1;i++){
+    const g = new THREE.Group(); g.position.set(i*5.4, 2.1, -5.36);
+    box(3.4,1.9,.06,0x9aa7b5,0,0,0,0,g,false);           // מסגרת-פנים
+    const sky = new THREE.Mesh(new THREE.PlaneGeometry(3.2,1.7),
+      new THREE.MeshBasicMaterial({color:0xdfe9f3}));
+    sky.position.z = .045; g.add(sky); W.windows.push(sky);
+    scene.add(g);
+    box(3.6,.12,.3,0xd9cdb9,i*5.4,1.1,-5.32); box(3.6,.12,.3,0xd9cdb9,i*5.4,3.1,-5.32);
+  }
+  // קיר-המשימות (תחנת wall) — קיר-ימני
+  W.taskBoardTex = null;
+  const board = box(.08,1.7,3.4,0x2f3a4a,9.75,1.9,0);
+  W.boardMesh = board;
+  // ספרייה (קיר-שמאלי) — 13 ספרים חיים
+  W.bookSpines = [];
+  const shelfX = -9.75;
+  for(let s=0;s<4;s++){
+    box(.5,.05,4.2,0xb98d5f,shelfX,0.9+s*.62,0);
+    for(let b=0;b<4;b++){
+      const idx = s*4+b; if(idx>=13) break;
+      const spine = box(.3,.4,.16,0x9aa0a6,shelfX+.05,1.12+s*.62,-1.5+b*.42,0,scene,false);
+      W.bookSpines.push(spine);
+    }
+  }
+  // שולחנות 2×3
+  W.desks = [];
+  const dx = [-6,-2,2,6, -4,2], dz = [-2.6,-2.6,-2.6,-2.6, 2.6,2.6];
+  for(let i=0;i<6;i++){
+    const g = new THREE.Group(); g.position.set(dx[i],0,dz[i]);
+    box(1.7,.07,.85,0xb98d5f,0,.74,0,0,g);                       // משטח
+    [[-.75,-.32],[.75,-.32],[-.75,.32],[.75,.32]].forEach(([lx,lz])=> box(.07,.74,.07,0x8a6a45,lx,.37,lz,0,g));
+    // מסך — אמיסיב לפי מצב-חי
+    const scr = new THREE.Mesh(new THREE.PlaneGeometry(.95,.55),
+      new THREE.MeshStandardMaterial({color:0x22262c, emissive:0xd9a13b, emissiveIntensity:.8, roughness:.4}));
+    scr.position.set(0,1.22,-.12); scr.rotation.y = Math.PI; g.add(scr);
+    box(.08,.28,.08,0x5c4a33,0,.9,-.12,0,g);
+    // כיסא
+    box(.5,.06,.5,0x6b573d,0,.46,.75,0,g); box(.5,.55,.06,0x6b573d,0,.78,1.0,0,g);
+    // מנורה
+    box(.16,.03,.16,0x444444,.6,.78,.2,0,g,false);
+    const bulb = new THREE.Mesh(new THREE.SphereGeometry(.05), new THREE.MeshBasicMaterial({color:0xffe3ad}));
+    bulb.position.set(.6,.86,.2); g.add(bulb);
+    let pl = null;
+    if(!isLite && i<3){ pl = new THREE.PointLight(0xffd9a0, 0, 3.2, 2); pl.position.set(.6,1.05,.2); g.add(pl); lampLights.push(pl); }
+    W.desks.push({g, scr, lamp:pl, bulb});
+    scene.add(g);
+  }
+  // פינת-קפה
+  const ck = new THREE.Group(); ck.position.set(7.6,0,3.9);
+  box(1.1,.9,.7,0x8a6a45,0,.45,0,0,ck);
+  box(.5,.55,.45,0x33383f,-.15,1.18,0,0,ck);
+  const cm = new THREE.Mesh(new THREE.PlaneGeometry(.3,.2), new THREE.MeshBasicMaterial({color:0xff9d5c}));
+  cm.position.set(-.15,1.2,.24); cm.rotation.y=Math.PI; ck.add(cm);
+  scene.add(ck);
+  // צמחים
+  if(!isLite) [[-8.9,4.6],[8.9,-4.4]].forEach(([x,z])=>{
+    const g = new THREE.Group(); g.position.set(x,0,z);
+    box(.4,.5,.4,0x9c6b4b,0,.25,0,0,g);
+    const leaf = new THREE.Mesh(new THREE.ConeGeometry(.55,1.3,7), mat(0x4d7a4f,.9));
+    leaf.position.y = 1.15; leaf.castShadow = true; g.add(leaf); scene.add(g);
+  });
+}
+
+/* ============ אור ============ */
+let sun, hemi;
+function buildStaticLight(){
+  hemi = new THREE.HemisphereLight(0xfff6e8, 0xcbbfae, .8); scene.add(hemi);
+  sun = new THREE.DirectionalLight(0xfff2dd, 2.1);
+  sun.position.set(6,9,-4);
+  if(!isLite){ sun.castShadow = true; sun.shadow.mapSize.set(1024,1024);
+    Object.assign(sun.shadow.camera,{left:-12,right:12,top:10,bottom:-8,far:40}); }
+  scene.add(sun);
+  const fill = new THREE.DirectionalLight(0xdfe8ff,.35); fill.position.set(-6,5,8); scene.add(fill);
+}
+
+/* ============ סוכנים חיים ============ */
+function textSprite(lines, accent='#e0a458', w=512, h=128){
+  const cv = document.createElement('canvas'); cv.width=w; cv.height=h;
+  const ctx = cv.getContext('2d');
+  ctx.fillStyle = 'rgba(20,16,12,.78)';
+  const r=18; ctx.beginPath(); ctx.roundRect(2,2,w-4,h-4,r); ctx.fill();
+  ctx.strokeStyle = accent; ctx.lineWidth=3; ctx.stroke();
+  ctx.fillStyle='#f3ede2'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.font = `600 ${lines.length>1?38:46}px system-ui, Arial`;
+  lines.forEach((ln,i)=> ctx.fillText(ln, w/2, h*(i+1)/(lines.length+1)+6));
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace;
+  const sp = new THREE.Sprite(new THREE.SpriteMaterial({map:t, depthTest:false}));
+  sp.renderOrder = 5; return sp;
+}
+function buildAgent(id, deskHe, credits){
+  const g = new THREE.Group();
+  const body = new THREE.Mesh(new THREE.CapsuleGeometry(.21,.5,4,10), mat(0x5f6c7b,.7));
+  body.position.y = .55; body.castShadow = !isLite; g.add(body);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(.155,18,14), mat(0xe8c39e,.65));
+  head.position.y = 1.06; g.add(head);
+  const ring = new THREE.Mesh(new THREE.RingGeometry(.34,.42,32),
+    new THREE.MeshBasicMaterial({color:0xd9a13b, transparent:true, opacity:.65, side:THREE.DoubleSide}));
+  ring.rotation.x = -Math.PI/2; ring.position.y = .02; g.add(ring);
+  const name = textSprite([id, `${credits??0} קרדיטים`]); name.scale.set(1.5,.375,1); name.position.y = 1.62; g.add(name);
+  const act = textSprite(['…'], '#d9a13b', 640, 128); act.scale.set(1.9,.38,1); act.position.y = 1.95; act.visible = false; g.add(act);
+  const A = {id, g, body, head, ring, name, act, state:'idle', station:'desk', deskHe, credits,
+             base:null, phase:Math.random()*Math.PI*2};
+  agentGroups.set(id, A); scene.add(g); return A;
+}
+function stationPose(A){
+  // תחנות אמיתיות מהפורמן: desk | wall | coffee
+  if(A.station==='wall'){ A.base = new THREE.Vector3(9.1,0,-.4); A.g.rotation.y = -Math.PI/2; }
+  else if(A.station==='coffee'){ A.base = new THREE.Vector3(7.6,0,3.1); A.g.rotation.y = Math.PI; }
+  else{
+    const i = A.deskIndex ?? [...agentGroups.values()].indexOf(A);
+    const spots = [[-6,-1.5],[-2,-1.5],[2,-1.5],[6,-1.5],[-4,1.7],[2,1.7]];
+    const s = spots[i % spots.length];
+    A.base = new THREE.Vector3(s[0],0,s[1]); A.g.rotation.y = Math.PI;
+  }
+}
+function refreshAgents(){
+  // איחוד: roster-מהספרים (תיאור-תפקיד+קרדיטים) ⊕ מצב-מהפורמן
+  const seen = new Set();
+  for(const A of agentGroups.values()) A.__seen = false;
+  const mk = (id, deskHe, credits, deskIndex)=>{ const A = buildAgent(id,deskHe,credits); A.deskIndex = deskIndex; stationPose(A); return A; };
+  const liveIds = [];
+  (W.roster||[]).forEach((c,i)=>{ liveIds.push(c.id); seen.add(c.id);
+    const A = agentGroups.get(c.id) || mk(c.id, c.desk||'—', c.credits, i);
+    A.deskHe = c.desk||A.deskHe; A.credits = c.credits??A.credits; A.__seen = true; stationPose(A); });
+  for(const [id,st] of (W.stateAgents||new Map())){
+    let A = agentGroups.get(id);
+    if(!A){ A = mk(id, 'מהפורמן', 0, agentGroups.size); A.__seen = true; }
+    A.__seen = true;
+    A.state = st.state||'idle'; A.activity = st.activity||''; A.station = st.station||'desk';
+    A.since = st.since; A.taskId = st.taskId||'';
+    stationPose(A);
+  }
+  for(const [id,A] of agentGroups) if(!A.__seen){ scene.remove(A.g); agentGroups.delete(id); }
+  // צבעים/מסכים/מנורות לפי מצב-חי
+  for(const A of agentGroups.values()){
+    const col = STATE_COLOR[A.state] ?? STATE_COLOR.idle;
+    A.ring.material.color.setHex(col);
+    A.body.material.color.setHex(A.state==='error'?0x8a4a42:0x5f6c7b);
+    const d = W.desks[A.deskIndex ?? 0];
+    if(A.station==='desk' && d){
+      d.scr.material.emissive.setHex(col);
+      if(d.lamp) d.lamp.intensity = (A.state==='working'||A.state==='error') ? (W.night?2.4:1.1) : 0;
+      d.bulb.material.color.setHex((A.state==='working'||A.state==='error')?0xffe3ad:0x777777);
+    }
+    if(A.activity && A.activity.trim()){ A.act.visible = true;
+      const t = A.activity.length>34 ? A.activity.slice(0,33)+'…' : A.activity;
+      A.act.material.map.dispose(); const sp = textSprite([t], '#'+col.toString(16).padStart(6,'0'), 640,128);
+      A.act.material = sp.material; A.act.scale.set(1.9,.38,1);
+    } else A.act.visible = false;
+  }
+  // לגנדה
+  const counts = {};
+  for(const A of agentGroups.values()) counts[A.state] = (counts[A.state]||0)+1;
+  document.getElementById('legend').innerHTML = Object.entries(counts).map(([s,n])=>
+    `<div class="row"><span class="sw" style="background:#${(STATE_COLOR[s]??0xd9a13b).toString(16).padStart(6,'0')}"></span>${STATE_HE[s]??s} · ${n}</div>`).join('')
+    || '<div class="row">אין צוות בפיד</div>';
+  document.getElementById('crew-count').textContent = agentGroups.size || '—';
+  // ספרים: טרי/ישן אמיתי
+  if(W.books?.length){
+    W.bookSpines.forEach((sp,i)=>{ const b = W.books[i]; if(!b) return;
+      sp.material.color.setHex(b.fresh?0x2fae63:0x9aa0a6); });
+    document.getElementById('books-count').textContent = `${W.books.filter(b=>b.fresh).length}/${W.books.length}`;
+  }
+  // קיר-משימות: מספר-אמת
+  if(W.taskCount!=null){
+    const cv = document.createElement('canvas'); cv.width=512; cv.height=256;
+    const c = cv.getContext('2d'); c.fillStyle='#2f3a4a'; c.fillRect(0,0,512,256);
+    c.strokeStyle='#46586e'; for(let i=1;i<4;i++){c.beginPath();c.moveTo(i*128,0);c.lineTo(i*128,256);c.stroke();}
+    c.fillStyle='#f3ede2'; c.font='700 92px system-ui,Arial'; c.textAlign='center';
+    c.fillText(String(W.taskCount),256,132);
+    c.font='600 34px system-ui,Arial'; c.fillText('משימות בקיר',256,205);
+    const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace;
+    const pl = new THREE.Mesh(new THREE.PlaneGeometry(3.3,1.65),
+      new THREE.MeshBasicMaterial({map:t}));
+    pl.position.set(9.7,1.9,0); pl.rotation.y = -Math.PI/2; scene.add(pl);
+  }
+}
+
+/* ============ פידים ============ */
+async function jget(url, ms=8000){
+  const ac = new AbortController(); const to = setTimeout(()=>ac.abort(), ms);
+  try{ const r = await fetch(url, {signal:ac.signal, cache:'no-store'});
+       if(!r.ok) throw new Error('HTTP '+r.status); return await r.json(); }
+  finally{ clearTimeout(to); }
+}
+function ageMin(iso){ return iso? Math.max(0, Math.round((Date.now()-Date.parse(iso))/60000)) : null; }
+function setFeed(id, ok, note){
+  const dot = document.getElementById('fd-'+id), v = document.getElementById('fd-'+id+'-v');
+  if(dot){ dot.style.background = ok? 'var(--ok)':'var(--err)'; dot.style.boxShadow = ok? '0 0 8px var(--ok)':'none'; }
+  if(v) v.textContent = note;
+  W.feeds[id] = {ok, note};
+}
+async function poll(){
+  let any = false;
+  try{ const s = await jget(FEEDS.foreman);
+    const m = new Map();
+    (s.agents||[]).forEach(a=> m.set(a.id, a));
+    W.stateAgents = m; W.taskCount = s?.counts?.tasks ?? (s?.tasks?.total ?? null);
+    W.foremanAt = s.capturedAt;
+    setFeed('foreman', true, `${ageMin(s.capturedAt)??'?'} ד׳`); any = true;
+  }catch{ setFeed('foreman', false, 'נפל'); }
+  try{ const p = await jget(FEEDS.pulse);
+    W.verdict = p.verdict||'UNKNOWN'; W.pulseChecks = p.verdictChecks||[];
+    const v = document.getElementById('verdict'); v.textContent = W.verdict;
+    document.getElementById('verdict-dot').style.background = W.verdict==='ALIVE'?'var(--ok)': W.verdict==='AGING'?'var(--warn)':'var(--err)';
+    setFeed('pulse', true, `${ageMin(p.generatedAt)??'?'} ד׳`); any = true;
+  }catch{ setFeed('pulse', false, 'נפל');
+    const v=document.getElementById('verdict'); v.textContent='אין-דופק';
+    document.getElementById('verdict-dot').style.background='var(--err)'; }
+  try{ const l = await jget(FEEDS.live);
+    W.roster = l?.crew?.workers || []; W.books = l?.books?.list || []; W.shifts = l?.shifts?.total ?? 0;
+    document.getElementById('shifts').textContent = W.shifts || '—';
+    setFeed('live', true, `${ageMin(l.generatedAt)??'?'} ד׳`); any = true;
+  }catch{ setFeed('live', false, 'נפל'); }
+  refreshAgents();
+  document.getElementById('nolink').style.display = any? 'none':'grid';
+  setTimeout(poll, any? POLL_MS : RETRY_MS);
+}
+
+/* ============ אינטראקציה ============ */
+let downXY = null;
+function onDown(e){ downXY = [e.clientX, e.clientY]; }
+function onUp(e){
+  if(!downXY) return;
+  const dx = e.clientX-downXY[0], dy = e.clientY-downXY[1]; downXY = null;
+  if(dx*dx+dy*dy > 36) return; // זה היה גרירה
+  pointer.set((e.clientX/innerWidth)*2-1, -(e.clientY/innerHeight)*2+1);
+  raycaster.setFromCamera(pointer, camera);
+  const hits = raycaster.intersectObjects([...agentGroups.values()].map(A=>A.body));
+  if(hits.length){
+    for(const [id,A] of agentGroups) if(A.body===hits[0].object) return showCard(A);
+  }
+  hideCard();
+}
+function showCard(A){
+  W.sel = A;
+  document.getElementById('card').style.display = 'block';
+  document.getElementById('c-name').textContent = A.id;
+  document.getElementById('c-desk').textContent = A.deskHe||'—';
+  document.getElementById('c-state').textContent = (STATE_HE[A.state]??A.state) + (A.station?` · תחנה: ${A.station}`:'');
+  document.getElementById('c-since').textContent = A.since? `${Math.max(0,Math.round((Date.now()-A.since)/60000))} ד׳` : '—';
+  document.getElementById('c-credits').textContent = A.credits??'—';
+  document.getElementById('c-task').textContent = A.taskId||'—';
+  document.getElementById('c-activity').textContent = A.activity||'';
+}
+function hideCard(){ document.getElementById('card').style.display='none'; W.sel=null; }
+document.getElementById('card-x').onclick = hideCard;
+
+/* נקודות-תצפית אדריכליות */
+const VIEWS = [
+  {p:[9.5,7.2,12.5], t:[0,.9,0]},
+  {p:[-5.2,2.1,1.6], t:[2,1,-2]},
+  {p:[4.6,2.4,4.6],  t:[9.4,1.8,0]},
+  {p:[3.4,1.9,7.4],  t:[7.6,1,3.9]},
+  {p:[.5,3.2,-3.8],  t:[0,.8,3]},
+];
+let tween = null;
+document.querySelectorAll('.vbtn[data-v]').forEach(b=> b.onclick = ()=>{
+  document.querySelectorAll('.vbtn').forEach(x=>x.classList.remove('active')); b.classList.add('active');
+  const v = VIEWS[+b.dataset.v];
+  tween = {p0:camera.position.clone(), t0:controls.target.clone(),
+           p1:new THREE.Vector3(...v.p), t1:new THREE.Vector3(...v.t), s:performance.now()};
+});
+document.getElementById('daynight').onclick = ()=>{ W.night = !W.night; applyDayNight(); };
+function applyDayNight(){
+  const k = W.night?1:0;
+  scene.background.lerpColors(new THREE.Color('#ddd6c8'), new THREE.Color('#1d232e'), k);
+  scene.fog.color.copy(scene.background);
+  W.windows.forEach(w=> w.material.color.lerpColors(new THREE.Color(0xdfe9f3), new THREE.Color(0x35415a), k));
+  hemi.intensity = .8 - .55*k;
+  sun.intensity = 2.1 - 1.9*k;
+  sun.color.lerpColors(new THREE.Color(0xfff2dd), new THREE.Color(0x9db4d8), k);
+}
+
+/* ============ לופ ============ */
+const clock3 = new THREE.Clock();
+function loop(){
+  const dt = clock3.getDelta(), t = performance.now()/1000;
+  // שמש-נודדת לאט
+  if(!W.night){ const a = .18*Math.sin((t-W.t0/1000)/60); sun.position.set(6*Math.cos(a), 9, -4 + 3*Math.sin(a)); }
+  for(const A of agentGroups.values()){
+    if(!A.base) continue;
+    A.g.position.lerp(A.base, .08);
+    const st = A.state;
+    if(st==='working'){ A.g.position.y = Math.sin(t*9+A.phase)*.012; A.head.rotation.x = Math.sin(t*4+A.phase)*.08; }
+    else if(st==='idle'){ A.g.position.y = Math.sin(t*1.2+A.phase)*.02; A.head.rotation.z = Math.sin(t*.8+A.phase)*.05; }
+    else if(st==='error'){ A.ring.material.opacity = .4+.4*Math.abs(Math.sin(t*5)); }
+    else if(st==='coffee'){ A.g.position.y = Math.sin(t*2+A.phase)*.03; }
+    else A.g.position.y = 0;
+  }
+  if(tween){
+    const k = Math.min(1,(performance.now()-tween.s)/1200), e = 1-Math.pow(1-k,3);
+    camera.position.lerpVectors(tween.p0, tween.p1, e);
+    controls.target.lerpVectors(tween.t0, tween.t1, e);
+    if(k>=1) tween = null;
+  }
+  controls.update();
+  renderer.render(scene, camera);
+  if(!W.ready && renderer.info.render.calls > 6){
+    W.ready = true;
+    window.__office3d = { ready:true, version:'v2-buildless', agents:agentGroups.size,
+      feeds:W.feeds, verdict:W.verdict, lite:isLite };
+    console.info('[office3d-v2] ready — drawCalls', renderer.info.render.calls);
+  }
+}
+function onResize(){
+  camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+}
+
+/* שעון-ירושלים */
+setInterval(()=>{ try{
+  document.getElementById('clock').textContent =
+    new Intl.DateTimeFormat('he-IL',{timeZone:'Asia/Jerusalem',hour:'2-digit',minute:'2-digit'}).format(new Date());
+}catch{} }, 1000);
+
+initGL(); refreshAgents(); poll();
+</script>
+</body>
+</html>
