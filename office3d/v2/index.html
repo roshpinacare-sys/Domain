@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>מפקדת הצי — חדר v2.6 החי (3D buildless · אפס-CDN)</title>
-<meta name="description" content="המשרד התלת-ממדי החי של הריבונות — צוות מפרקים שהולך ויושב ועובד, קיר-משימות + פקודות-עבודה אמיתיות, במת-פיקוד (מה פתוח/מה נדרש/מה הפוטנציאל/מה נותן ערך), אמת-מכונה (שומר-השלמות), שערי-עולמות, עולם-עסקים וגינת-מטאפורה. מוזן מ-8 פידים אמיתיים. אפס נתונים פיקטיביים, אפס תלות CDN." />
+<title>מפקדת הצי — המפקדה החיה (3D buildless · אפס-CDN · חדר אחד)</title>
+<meta name="description" content="המשרד התלת-ממדי החי של הריבונות — צוות מפרקים שהולך ויושב ועובד, קיר-משימות + פקודות-עבודה אמיתיות, במת-פיקוד (מה פתוח/מה נדרש/מה המוצר/מה הפוטנציאל/מה נותן ערך), אמת-מכונה (שומר-השלמות), שערי-עולמות ושער-המוצר, עולם-עסקים וגינת-מטאפורה. מוזן מ-9 פידים אמיתיים — ביניהם קטלוג-המוצרים החי. אפס נתונים פיקטיביים, אפס תלות CDN." />
 <style>
   :root{
     --bg:#ddd6c8; --surface:#171310; --surface2:#221c16; --line:#3a3128;
@@ -115,10 +115,11 @@
   <span class="chip">משמרות <b class="val" id="shifts">—</b></span>
   <span class="chip">הון <b class="val" id="capital">—</b></span>
   <span class="chip" id="truth-chip" title="שומר-השלמות — אימות-מכונה של קבלות-האמת בכל-הריפואים (Sandbox ops/integrity)"><span class="dot" id="truth-dot" style="background:var(--sleep)"></span>אמת <b class="val" id="truth-val">—</b></span>
+  <span class="chip" title="קטלוג-המוצרים החי — מהתיאור למעשה (Domain/marketing)">מוצרים <b class="val" id="products-count">—</b></span>
   <span class="chip"><b class="val" id="clock">—</b></span>
   <button class="chip" id="cmd-btn" style="cursor:pointer">🧭 פיקוד</button>
   <a class="chip" href="../worlds/" title="עולם עסקים + עולם מקביל מטפורי — רינדור חי מהפידים האמיתיים">🌌 עולמות ←</a>
-  <span id="subtitle">נתונים אמיתיים בלבד · 8 פידים · אפס-CDN · אמת-הכול בעצמך</span>
+  <span id="subtitle">נתונים אמיתיים בלבד · 9 פידים · אפס-CDN · אמת-הכול בעצמך</span>
 </div>
 
 <div class="hud" id="feeds">
@@ -130,6 +131,7 @@
   <div class="f"><span class="dot" id="fd-ventures"></span>מיזמים <b id="fd-ventures-v">—</b></div>
   <div class="f"><span class="dot" id="fd-orders"></span>פקודות <b id="fd-orders-v">—</b></div>
   <div class="f"><span class="dot" id="fd-integrity"></span>שלמות <b id="fd-integrity-v">—</b></div>
+  <div class="f"><span class="dot" id="fd-products"></span>מוצר <b id="fd-products-v">—</b></div>
 </div>
 
 <div class="hud" id="legend"></div>
@@ -150,6 +152,7 @@
   <h2>🧭 מרכז-הפיקוד הריבוני <button class="x" id="cmd-x">סגור</button></h2>
   <div class="sec" id="cmd-open"><h3>מה פתוח? — תפקידים וגיוס</h3><div class="note">טוען מפיד הגיוס…</div></div>
   <div class="sec" id="cmd-orders"><h3>מה נדרש עכשיו? — פקודות-עבודה</h3><div class="note">טוען ממנוע-הצמיחה…</div></div>
+  <div class="sec" id="cmd-products"><h3>מה המוצר? — ההצעה החיה</h3><div class="note">טוען את קטלוג-המוצרים…</div></div>
   <div class="sec" id="cmd-truth"><h3>אמת-מכונה — שומר-השלמות</h3><div class="note">טוען חותם-שלמות…</div></div>
   <div class="sec" id="cmd-potential"><h3>מה הפוטנציאל? — מיזמים ומסילות</h3><div class="note">טוען מפיד המיזמים…</div></div>
   <div class="sec" id="cmd-value"><h3>מה נותן ערך עכשיו? — יעדים ולקחים</h3><div class="note">טוען מפיד המשרד החי…</div></div>
@@ -202,10 +205,11 @@ const FEEDS = {
   ventures:rel('../../agents/ventures.json'),
   orders:  'https://raw.githubusercontent.com/roshpinacare-sys/Sandbox/main/ops/office/work-orders.json',
   integrity:'https://raw.githubusercontent.com/roshpinacare-sys/Sandbox/main/ops/integrity/verdict.json',
+  products: rel('../../marketing/products.json'),
 };
 const POLL_MS = 45000, RETRY_MS = 30000;
-const FRESH_MIN = { foreman:130, pulse:30, live:150, grid:95, recruit:1600, ventures:1600, orders:35, integrity:95 };
-const FEED_HE   = { foreman:'פורמן', pulse:'דופק', live:'ספרים', grid:'הון', recruit:'גיוס', ventures:'מיזמים', orders:'פקודות', integrity:'שלמות' };
+const FRESH_MIN = { foreman:130, pulse:30, live:150, grid:95, recruit:1600, ventures:1600, orders:35, integrity:95, products:2880 };
+const FEED_HE   = { foreman:'פורמן', pulse:'דופק', live:'ספרים', grid:'הון', recruit:'גיוס', ventures:'מיזמים', orders:'פקודות', integrity:'שלמות', products:'מוצר' };
 const STATE_COLOR = { working:0x2fae63, idle:0xd9a13b, error:0xd95c4a, asleep:0x7f8ea3, coffee:0xa1794f };
 const STATE_HE = { working:'עובד', idle:'פנוי', error:'תקלה', asleep:'ישן', coffee:'הפסקת קפה' };
 const nf = new Intl.NumberFormat('en-US');
@@ -384,8 +388,8 @@ function buildRoom(P){
      aph:'כל-עיר נבנית מפגישות אמת — עבור בשער וראה בעצמך'},
     {x:-0.4, z:5.75, color:0x9db86a, he:'חדר-הצמיחה', sub:'הפוטנציאל נמדד, לא מדומיין', dest:'../growth/',
      aph:'צמיחה אמיתית מתחילה במדידה כנה — גם כשהיא מציגה אדום'},
-    {x:6.6,  z:5.45, color:0xc9a15e, he:'החדר-המקורי', sub:'המשרד שהכול ממנו צומח', dest:'../',
-     aph:'המקור אינו נשכח — הוא השורש שממנו אנחנו'},
+    {x:6.6,  z:5.45, color:0xc9a15e, he:'חדר-המוצר', sub:'מהתיאור למעשה — ההצעה החיה', dest:'../../marketing/',
+     aph:'מה שמתואר — נעשה. עבור בשער וראה את המוצר חי'},
   ];
   for(const gd of GATES){
     const g = new THREE.Group(); g.position.set(gd.x,0,gd.z);
@@ -820,8 +824,8 @@ function drawKanban(){
 }
 
 /* ============ במת-הפיקוד: השאלות שנשאלות כל-הזמן ============ */
-const POD_PANELS = ['open','required','potential','value','progress'];
-const POD_HE = { open:'מה פתוח?', required:'מה נדרש עכשיו?', potential:'מה הפוטנציאל?', value:'מה נותן ערך עכשיו?', progress:'מה ההתקדמות?' };
+const POD_PANELS = ['open','required','product','potential','value','progress'];
+const POD_HE = { open:'מה פתוח?', required:'מה נדרש עכשיו?', product:'מה המוצר?', potential:'מה הפוטנציאל?', value:'מה נותן ערך עכשיו?', progress:'מה ההתקדמות?' };
 function drawPodium(){
   if(!W.podCanvas) return;
   const c = W.podCanvas.getContext('2d');
@@ -865,6 +869,18 @@ function drawPodium(){
     (W.goals||[]).slice(0,3).forEach(g=> lines.push('🎯 ' + (g.length>62? g.slice(0,61)+'…' : g)));
     if(W.lesson) lines.push('💡 ' + (W.lesson.length>62? W.lesson.slice(0,61)+'…' : W.lesson));
     if(!lines.length) lines = [W.feeds.live?.ok? 'אין יעדים בפיד' : 'פיד-המשרד נפל — אמת בעצמך'];
+  } else if(kind==='product'){
+    const ps = W.products||[];
+    if(!ps.length) lines = [W.feeds.products?.ok? 'הקטלוג נטען — רגע' : 'פיד-המוצר נפל — אמת בעצמך בפאנל הפיקוד'];
+    else{
+      lines = [`ההצעה החיה: ${ps.length} מוצרים · מהתיאור למעשה`];
+      ps.slice(0,4).forEach(p=>{
+        const st = (p.status||'').includes('live')? '🟢' : '🟡';
+        lines.push(`${st} ${p.nameHe||p.id} — ${p.statusHe||p.status||'?'}`);
+      });
+      if(ps.length>4) lines.push(`…ועוד ${ps.length-4} בקטלוג`);
+      lines.push('שער-המוצר ← הקטלוג החי עם קיר-קבלות');
+    }
   } else {
     const tc = W.taskCounts, tot = W.tasks.length;
     lines = [];
@@ -949,6 +965,11 @@ async function poll(){
     W.ventures = vv?.ventures || []; W.venturesCounts = vv?.counts || {};
     setFeed('ventures', true, feedNote(vv.at, FRESH_MIN.ventures)); any = true;
   }catch{ setFeed('ventures', false, 'נפל'); }
+  try{ const pr = await jget(FEEDS.products);
+    W.products = pr?.products || []; W.productsMeta = pr||{};
+    const pc = document.getElementById('products-count'); if(pc) pc.textContent = W.products.length || '—';
+    setFeed('products', true, feedNote(pr.generatedAt, FRESH_MIN.products)); any = true;
+  }catch{ setFeed('products', false, 'נפל'); }
   try{ const wo = await jget(FEEDS.orders);
     W.workOrders = Array.isArray(wo)? wo : [];
     setFeed('orders', true, `${W.workOrders.length} פתוחות`); any = true;
@@ -1055,6 +1076,19 @@ function renderCommand(){
   }
   ordHtml += `<div class="note" style="margin-top:6px">מקור: Sandbox ops/office/work-orders.json — מנוע office-growth סורק ומודד כל-6-דקות; החדר הזה צרכן מוצהר, לא מפיק.</div>`;
   document.getElementById('cmd-orders').innerHTML = `<h3>מה נדרש עכשיו? — פקודות-עבודה אמת</h3>` + ordHtml;
+  // מה המוצר — ההצעה החיה (קטלוג T-60, קבלות אמת)
+  const ps = W.products||[];
+  let prodHtml = '';
+  if(!ps.length) prodHtml = `<div class="note">${W.feeds.products?.ok? 'הקטלוג נטען…' : 'פיד-המוצר נפל — אמת בעצמך: <a href="../../marketing/" target="_blank" rel="noreferrer">הקטלוג החי</a>'}</div>`;
+  else{
+    prodHtml = ps.map(p=>{
+      const ms = (p.measured||[]).slice(0,2).map(m=>`${m.label}=${m.value}`).join(' · ');
+      const lnk = (p.links||[])[0];
+      return `<div class="li"><b>${p.nameHe||p.id}</b> <span class="tag filled">${p.statusHe||p.status||'?'}</span><div>${p.whatHe||''}</div>${ms?`<div style="opacity:.75">${ms}</div>`:''}${lnk?`<div><a href="${lnk}" target="_blank" rel="noreferrer">ראיה ומסירה ↗</a></div>`:''}</div>`;
+    }).join('');
+    prodHtml += `<div class="note"><a href="../../marketing/" target="_blank" rel="noreferrer">הקטלוג המלא עם קיר-הקבלות ←</a></div>`;
+  }
+  document.getElementById('cmd-products').innerHTML = `<h3>מה המוצר? — ההצעה החיה (מהתיאור למעשה)</h3>` + prodHtml;
   // אמת-מכונה — שומר-השלמות (zai-code-3 G-series) — כל-דגל = ראיה-מדידה-עם-מקור
   let truthHtml = '';
   const iv = W.integrity;
