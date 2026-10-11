@@ -32,6 +32,7 @@ const DATA = [
   { path: "agents/registry.json", ts: (d) => d.generatedAt },
   { path: "agents/gh-snapshot.json", ts: (d) => d.generatedAt },
   { path: "dex/money.json", ts: (d) => d.publishedAt },
+  { path: "dex/pnl-desk.json", ts: (d) => d.generatedAt },
   { path: "dex/deposits.json", ts: (d) => d.updatedAt || d.generatedAt || d.publishedAt },
   { path: "dex/watch.json", ts: (d) => d.publishedAt },
   { path: "truth/latest.json", ts: (d) => d.at },

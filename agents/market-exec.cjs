@@ -383,6 +383,26 @@ async function verifyAuthority(node, steem, wif) {
   return { ok, onchain: auths.map((k) => k[0]).join(','), derived: pub, account: acc };
 }
 
+// WEEKLY-EDGE GOVERNOR feed (T2, master plan 2026-10-11): the Console pnl-desk book is
+// mirrored hourly into dex/pnl-desk.json (keyless, chain truth). Verdicts:
+//   EDGE-POSITIVE-GRID-MAY-RUN  — trailing-7d edge >= +1%: the lane may operate
+//   EDGE-NEGATIVE-GRID-HOLD     — the weekly ledger refuses: zero placements this run
+//   GOVERNOR-UNAVAILABLE-*      — missing/stale/corrupt mirror: fail-open WITH a receipt
+//                                 line (per-order BUY-PREMIUM/SELL-FLOOR laws + STASIS
+//                                 stay the primary brakes; the governor is the weekly
+//                                 aggregate above them)
+function governorVerdict() {
+  try {
+    const j = JSON.parse(fs.readFileSync(path.join(ROOT, 'dex', 'pnl-desk.json'), 'utf8'));
+    const ageH = (Date.now() - Date.parse(j.generatedAt)) / 3.6e6;
+    if (!Number.isFinite(ageH) || ageH > 48) return { verdict: 'GOVERNOR-UNAVAILABLE-STALE', ageH: Number.isFinite(ageH) ? Math.round(ageH) : null, generatedAt: j.generatedAt || null };
+    if (j.verdict === 'EDGE-NEGATIVE-GRID-HOLD' || j.verdict === 'EDGE-POSITIVE-GRID-MAY-RUN') {
+      return { verdict: j.verdict, edgePct: j.trailing7d && j.trailing7d.edgePct, fills: j.trailing7d && j.trailing7d.fills, generatedAt: j.generatedAt };
+    }
+    return { verdict: 'GOVERNOR-UNAVAILABLE-UNKNOWN-VERDICT', raw: String(j.verdict || '').slice(0, 40) };
+  } catch (e) { return { verdict: 'GOVERNOR-UNAVAILABLE-MISSING', err: String(e.message || e).slice(0, 60) }; }
+}
+
 function buildOpFromPlacement(p, expiry, orderid) {
   // create2 wire form (chain assert, run #6): exchange_rate = {base: SELL asset, quote: RECEIVE asset};
   // chain derives min_to_receive = amount_to_sell * rate — exact by construction
@@ -529,6 +549,15 @@ async function main() {
       : buildPlan({ liquidSteem, liquidSbd, bid: book.bid, ask: book.ask, ownOrders: ownPre, sellVwap, avgCost });
     row.mid = plan.mid; row.planned = [...plan.sells, ...plan.buys].map((p) => ({ ...p }));
     row.skipped = plan.skipped;
+    // 4.5 WEEKLY-EDGE GOVERNOR (T2): the aggregate verdict above the per-order laws.
+    row.governor = governorVerdict();
+    if (row.governor.verdict === 'EDGE-NEGATIVE-GRID-HOLD') {
+      row.skipped.push(...placements.map((p) => ({ kind: 'GOVERNOR-HOLD', level: p.level, target: p.target, reason: `trailing-7d edge ${row.governor.edgePct}% < +1% — the weekly ledger refuses` })));
+      console.log('[GOVERNOR] EDGE-NEGATIVE-GRID-HOLD — placements suppressed (weekly edge below +1%)');
+      placements.length = 0;
+    } else if (row.governor.verdict !== 'EDGE-POSITIVE-GRID-MAY-RUN') {
+      console.log('[GOVERNOR] ' + row.governor.verdict + ' — no mirror truth this run; per-order laws remain the brakes');
+    }
     // 5. execute
     const expiry = new Date(Date.now() + DEFAULTS.EXPIRY_DAYS * 864e5).toISOString().slice(0, 19);
     const ops = [];
@@ -621,5 +650,5 @@ const f = (s) => parseFloat(String(s || '0'));
 if (require.main === module) {
   main().catch((e) => { console.error('[market-exec] FATAL', String(e.message || e).slice(0, 200)); process.exit(0); });
 } else {
-  module.exports = { mid, spreadPct, inBand, r3, r6, resolveMode, scanSellAmount, stacked, buildPlan, buildFlowCatchPlan, DEFAULTS, HEAD, OUT_JSON };
+  module.exports = { mid, spreadPct, inBand, r3, r6, resolveMode, scanSellAmount, stacked, buildPlan, buildFlowCatchPlan, governorVerdict, DEFAULTS, HEAD, OUT_JSON };
 }
