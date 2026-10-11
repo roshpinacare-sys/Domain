@@ -135,26 +135,29 @@
     "drift": {
       "liquid_abs": 5,
       "power_abs": 1.0
+    },
+    "sp_floor": {
+      "steem:headcorner": 3000
     }
   },
   "claims": [
     {
-      "id": "recovery-plan-fleet-steem-power",
+      "id": "fleet-steem-eff-baseline",
       "chain": "steem",
       "account": null,
       "metric": "effective_power",
-      "claimed": 4001,
-      "label": "SP fleet total",
-      "source": "Sandbox/ops/SOVEREIGN-RECOVERY-PLAN-2026-10-11.md (pre-correction book)"
+      "claimed": 4345,
+      "label": "SP fleet effective (post-arming baseline)",
+      "source": "measured live 2026-10-11T16:35Z, k=0.0006202 \u2014 original 4001 claim was real, naive /1e6 was the phantom"
     },
     {
-      "id": "recovery-plan-headcorner-sp",
+      "id": "headcorner-eff-post-arming",
       "chain": "steem",
       "account": "headcorner",
       "metric": "effective_power",
-      "claimed": 3676,
-      "label": "SP headcorner",
-      "source": "Sandbox/ops/SOVEREIGN-RECOVERY-PLAN-2026-10-11.md (pre-correction book)"
+      "claimed": 2926,
+      "label": "SP headcorner effective (post-arming)",
+      "source": "measured live 2026-10-11T16:35Z after delegation waves ~1100 SP out"
     }
   ],
   "rosterReconciliation": {
@@ -169,6 +172,6 @@
       "ynet",
       "headcorner"
     ],
-    "note": "delegation wave 15:18Z+15:48Z armed this exact fleet from headcorner (~1.13 SP, measured live)"
+    "note": "delegation waves armed fleet workers with ~1100 SP real (israelnews 94, lsa 80, haran 78, cashmachine 75, macrame 75, woq 70, wic 33, tov 31, siq 31, wog 12) \u2014 headcorner left at 2926 eff, below its own 3000 floor by 74 SP (SP-UNDERFLOOR watches this)"
   }
 }

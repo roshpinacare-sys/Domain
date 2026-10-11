@@ -53,8 +53,44 @@ async function rpc(chain, base, method, params, timeoutMs = 20000) {
 }
 
 function vestsToToken(v) { return Number(String(v).split(' ')[0]) / 1e6; }
-function tok(v) { return Number(String(v).split(' ')[0]); }
+// v2.2.1: robust asset number — handles legacy "123.456 HIVE" strings, NAI
+// objects {amount, precision}, raw numbers; NaN on garbage (never lies).
+function assetNum(v) {
+  if (v == null) return NaN;
+  if (typeof v === 'number') return v;
+  if (typeof v === 'string') { const n = Number(v.trim().split(/\s+/)[0]); return Number.isFinite(n) ? n : NaN; }
+  if (typeof v === 'object') {
+    if (v.amount !== undefined) { const p = Math.pow(10, Number(v.precision || 0)); const n = Number(v.amount) / p; return Number.isFinite(n) ? n : NaN; }
+    return NaN;
+  }
+  return NaN;
+}
+function tok(v) { const n = assetNum(v); return Number.isFinite(n) ? n : 0; }
 function r3(x) { return Math.round(x * 1000) / 1000; }
+
+// ---- v2.2: REAL vests->SP conversion ----
+// DISEASE FIXED (owner directive: verify, train, refine): the naive vests/1e6
+// conversion reported the fleet as ~7 SP when the chain holds ~4,345 SP.
+// 1 SP = total_vesting_shares / total_vesting_fund_steem vests (measured
+// 2026-10-11: 1612 vests/SP, k=0.0006202). condenser legacy asset strings are
+// already human units, so SP = vests * k. k is fetched LIVE every run per chain.
+const K = {}; // chain -> {k, vestsPerSP, at}
+async function loadK(chain, base) {
+  try {
+    const g = await rpcRetry(chain, base, 'condenser_api.get_dynamic_global_properties', [], 2);
+    const tvf = assetNum(g.total_vesting_fund_steem || g.total_vesting_fund_hive || g.total_vesting_fund_shares);
+    const tvs = assetNum(g.total_vesting_shares);
+    if (Number.isFinite(tvf) && Number.isFinite(tvs) && tvs > 0 && tvf > 0) {
+      K[chain] = { k: tvf / tvs, vestsPerSP: tvs / tvf, at: nowIso() };
+      return;
+    }
+  } catch (e) { /* fallthrough */ }
+  K[chain] = { k: 1e-6, vestsPerSP: 1e6, at: nowIso(), fallback: true };
+}
+function toSP(chain, vests) {
+  const kk = K[chain] || { k: 1e-6 };
+  return vests * kk.k;
+}
 
 // ---- v2: open orders (locked capital is a fact, measure it) ----
 // for_sale is in satoshi units (precision 3); sell_price.base is the formatted asset
@@ -204,11 +240,12 @@ async function auditAccount(chain, base, spec, exp) {
     if (!a) { out.alerts.push({ kind: 'ACCOUNT-MISSING', detail: 'not found on ' + chain }); return out; }
     const ves = tok(a.vesting_shares), del = tok(a.delegated_vesting_shares), rec = tok(a.received_vesting_shares);
     const effVes = ves - del + rec;
-    out.effective_power = r3(effVes / 1e6); // SP / HP / BP
+    out.effective_power = r3(toSP(chain, effVes)); // SP / HP / BP — real k conversion (v2.2)
+    out.own_power = r3(toSP(chain, ves));
     out.liquid = tok(a.balance);
     out.sbd_like = tok(a.sbd_balance);
-    out.delegated_out = r3(del / 1e6);
-    out.delegated_in = r3(rec / 1e6);
+    out.delegated_out = r3(toSP(chain, del));
+    out.delegated_in = r3(toSP(chain, rec));
     out.created = a.created;
     out.last_post = a.last_post;
     // v2: locked capital measured, not guessed
@@ -230,6 +267,12 @@ async function auditAccount(chain, base, spec, exp) {
     const isActive = /worker-active|treasury|poster|connect-target/.test(spec.role);
     if (isActive && vp !== null && vp < (exp.vp_floor_pct || 20)) {
       out.alerts.push({ kind: 'VP-EMPTY', detail: 'vp=' + out.voting_power_pct + '% below floor ' + (exp.vp_floor_pct || 20) + '% — auto-voting drains mana' });
+    }
+    // v2.2: SP floor (e.g. treasury head must keep 3000 SP per delegation plan)
+    const spFloorKey = chain + ':' + name;
+    const spFloor = exp.sp_floor && exp.sp_floor[spFloorKey];
+    if (spFloor !== undefined && out.effective_power < spFloor) {
+      out.alerts.push({ kind: 'SP-UNDERFLOOR', detail: 'effective ' + out.effective_power + ' SP below floor ' + spFloor + ' — arming waves must respect the treasury floor' });
     }
     if (isActive && daysSincePost !== null && daysSincePost > (exp.active_post_max_age_days || 7)) {
       out.alerts.push({ kind: 'INACTIVE', detail: 'last post ' + out.days_since_post + 'd ago (role expects activity)' });
@@ -264,6 +307,10 @@ async function main() {
   const chainsOut = {};
   const allAlerts = [];
   for (const [chain, cfg] of Object.entries(ROSTER.chains)) {
+    await loadK(chain, cfg.rpc); // v2.2: live vests->SP rate per chain, every run
+    if (K[chain] && K[chain].fallback) {
+      allAlerts.push('k ' + chain + ' K-FALLBACK — dynamic global properties unavailable, naive /1e6 in use, numbers may be off by ~1612x');
+    }
     const results = [];
     for (const spec of cfg.accounts) {
       const r = await auditAccount(chain, cfg.rpc, spec, exp);
@@ -298,10 +345,11 @@ async function main() {
   for (const al of rosterAl) allAlerts.push('roster ' + al.kind + ' — ' + al.detail);
 
   const book = {
-    schema: 'saos/grid-truth/2',
+    schema: 'saos/grid-truth/3',
     generatedAt: nowIso(),
-    by: 'grid-doctor v2',
+    by: 'grid-doctor v2.2',
     source: 'live chain RPC (api.steemit.com, api.hive.blog, blurt-rpc.saboin.com) — zero self-reports',
+    kRates: K,
     driftVs: prev && prev.generatedAt ? prev.generatedAt : null,
     totals,
     chains: chainsOut,
