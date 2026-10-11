@@ -1,12 +1,10 @@
 # exposure-gate — P0-1 enforcement (master plan T6)
-# Runs on every push + daily. Fails and files an issue if key-structure,
-# custody narratives, rosters or sealed bundles reappear on the public surface.
 name: exposure-gate
 on:
   push:
     branches: [main]
   schedule:
-    - cron: '36 5 * * *'
+    - cron: '54 5 * * *'
   workflow_dispatch:
 
 permissions:

@@ -1,23 +1,12 @@
-# DEX-ROUTER (R39 / CR-0069) — THE SWAP NET, hourly.
 #
-# The owner directed the DEX to swap STEEM/HIVE/BLURT + pegs to real value, to run
-# opposing grids on our side of the book, and to build a networked arbitrage market.
-# This lane measures the whole venue graph hourly: the internal markets (steem/hive),
-# the Hive-Engine wrapped pools (multi-mirror), the SAOS internal AMM mirror, the
-# public CEX reference feeds (Binance/MEXC/HTX), and the inherited Z-27 verdict books.
-# It quotes the 12-route catalog with honest verdicts, runs the arb net (FLOOR law +
-# 1.5% peg-drift halt), and plans the counter-grids anchored to the CEX-implied fair.
 #
-# KEYLESS BY LAW: the router plans; market-exec / grid-beat (owner-gated) are the only
-# signing surfaces. Fail-soft exit 0; STASIS halt-before-read; single-writer atomic
-# book (agents/dex-router.json/.md) + append-only history jsonl. [skip ci] book commits,
 # rebase-first push (parallel runtimes are real).
 
 name: dex-router
 
 on:
   schedule:
-    - cron: '23 */2 * * *' # T-51: 2h :23 on public minutes
+    - cron: '46 */2 * * *'
   workflow_dispatch:
 
 permissions:

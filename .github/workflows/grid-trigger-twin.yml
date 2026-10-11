@@ -1,24 +1,12 @@
-# GRID-TRIGGER-TWIN (Z-10, R130) — דופק רשת-הטריגרים + הצעות-פאריטי שורדים מות-מכסה
 #
-# האבחנה (סוויף-בריאות AGENT-Z, 2026-09-28): 11 ריפואים פרטיים מול 3 ציבוריים;
-# מכסת-ה-Actions של הפרטיים מוצתה (חתימת BlobNotFound) → הפעימה המקורית
-# ב-saos-dex מתה (ריצה 36424447674 failure). הפעימה הזאת היא הלב של
-# "דבר-גורר-דבר": מדידת-אמת דטרמיניסטית כל 30 דק' + הצעת-פאריטי חוץ (B-1/B-3).
-# אותה-מכונה מהבית-הציבורי Domain — אותם-סקריפטים, אותו-בית-קנוני אחד (saos-dex).
 #
-# שומר-המשמרת (תבנית dex-beat r68): לפני כל פעימה התאום שואל את הרשת מה
-# היתה ריצת-המקור האחרונה בביתו. הצלחה בפחות מ-90 דק' → המקור חי, התאום
-# לא נוטל את המשמרת. אחרת (כולל כשל-מכסה) → התאום נוטל. הזנקה ידנית
-# (workflow_dispatch) עוקפת את השומר בכוונה.
 #
-# אפס-סודות-מפעיל: ZIP_PAT בלבד (כבר בכספת, מוכח ב-dex-beat/foundry-mesh).
-# המכונה עצמה חסרת-מפתחות מהיסוד (דוקטרינת R83/B-1): מודדת ומציעה, לא חותמת.
 
 name: grid-trigger-twin
 
 on:
   schedule:
-    - cron: '9,39 * * * *' # T-51: restored bi-hourly :09/:39 — own doctrine: the public twin IS the machine
+    - cron: '27,57 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -86,7 +74,7 @@ jobs:
       - name: peg offer (B-1/B-3 — internal grid params -> external offer)
         if: steps.guard.outputs.takeover == '1' || github.event_name == 'workflow_dispatch'
         run: node grids/peg.mjs
-        continue-on-error: true # ההצעה לא מפילה את הטיק — חסימה-כנה מתפרסמת כ-offer.json
+        continue-on-error: true
 
       - name: publish heartbeat back to saos-dex
         if: steps.guard.outputs.takeover == '1' || github.event_name == 'workflow_dispatch'

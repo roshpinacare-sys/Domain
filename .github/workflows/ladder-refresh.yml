@@ -1,32 +1,12 @@
-# LADDER-REFRESH (Task 16-b) — רגל-הסולם של הבורסה הפנימית, על דקות-Actions ציבוריות
 #
-# הבעלים: "אני לא רוצה לחכות — הרבה-יותר-מהר, הרבה-יותר; עוד-מסחרים, עוד-דרכים-להזרים-נזילות."
-# הזרימה הזאת היא התשובה-הממושמעת: רענון-סולם @headcorner בשוק-הפנימי STEEM/SBD —
-# ביטול+פריסה-מחדש של פקודות-מיושנות בלבד. אנחנו מתמחרים-מחדש נזילות-קיימת —
-# לעולם לא מזרימים-הון-חדש, לעולם לא נוגעים ברצפה (2 המכירות-הנמוכות + 2 הקניות-הגבוהות),
-# לעולם לא מרוקנים את-הסולם, לעולם לא יותר מ-3 זוגות-ביטול+פריסה לריצה.
 #
-# ארכיטקטורה (אותו-דבר שהוכח ב-economy-engine 15-c, עתה לשוק-הפנימי):
-#   - checkout Domain (הבית-הציבורי) — לוגיקה-בלבד, אפס-חומר-מפתח
-#   - checkout פרטי של steem עם ZIP_PAT — כאן חי-החותם
-#   - החותם נפתח בתוך-הראנר (keys_zip_v2: AES-256-CBC pbkdf2-300k + שערי-sha חוץ-ופנים)
-#   - מפתח-ה-active של @headcorner נשלף מהכספת ומאומת-חי מול-הרשאה-על-השרשרת
-#   - הרצת אותו-מבצע בדיוק (steem/agent/ladder_refresh.cjs — מקור-האמת-היחיד למכסות:
-#     ≤3 זוגות/ריצה · מיושנות >7d AND >2% מה-mid · פריסה-מחדש ב-mid±1.5% בתוך פס-±2% ·
-#     רצפה-בלתי-נגישה · ≥4 פקודות-עומדות · בסיס-זהה-בכל-החלפה · עצירה-על-שגיאה ·
-#     הדפסת-תוכנית-לפני-שידור · אישורים-מ-account-history · קבלה-JSON)
-#   - הקבלה נדחפת ל-steem (pull --rebase תחילה — לעולם לא force)
-#   - כל-כשל = הראן נכשל בכנות (exit nonzero → אדום)
 #
-# מכסות-בקוד-ובריצה-גם-יחד — המכסות מנצחות את התיאבון.
-# DRY: dispatch ברירת-מחדל arm=false (תוכנית-בלבד); ריצות-מתוכננות (cron) חמושות —
-# הריצה-החמושה עדיין מחויבת בכל-המכסות ובשערי-המבצע, וכשהסולם בריא היא מדווחת no-op בכנות.
 
 name: ladder-refresh
 
 on:
   schedule:
-    - cron: '36 */4 * * *' # T-51: 4h :36 on public minutes  # כל-6 שעות :33 UTC (Task 16-b — קצב-מוגבר; מקוזז מהפעימות-העגולות ומה-economy-engine :17)
+    - cron: '52 */4 * * *'
   workflow_dispatch:
     inputs:
       arm:
@@ -51,11 +31,6 @@ jobs:
         with:
           fetch-depth: 1
 
-      # T-B (owner directive 2026-10-05, trace 1a10bfe1342b2391 — staged re-entry):
-      # lane-aware preflight for the grid lane: emits active AND the mode + whether the
-      # grid lane is open. fail-closed: unreadable/missing brake file fails this step
-      # and the job. The private steem checkout re-checks the SAME law at sign-time
-      # (steem/agent/lib/capital_gate.cjs laneOf('ladder-refresh') = 'grid').
       - name: STASIS gate (mechanical, FATE-DEFENSE law #1 — lane-aware staged preflight)
         id: brake
         run: |
@@ -80,7 +55,7 @@ jobs:
           ref: main
           token: ${{ secrets.ZIP_PAT }}
           path: steem
-          fetch-depth: 0  # full history so the receipt push can pull --rebase safely
+          fetch-depth: 0
 
       - name: git identity for the steem receipt commit
         run: |
@@ -100,8 +75,6 @@ jobs:
           STEEM_DIR: ${{ github.workspace }}/steem
           STEEMJS_DIR: /tmp/steemjs
           PUSH_RECEIPT: 'true'
-          # scheduled runs are ARMED by design (the executor's hard caps are the protection);
-          # dispatches default to plan-only (opt-in to real).
           # COERCION TRAP (15-c fix): type:boolean inputs are real booleans, and GitHub coerces
           # mixed-type == to numbers (false→0, 'false'→NaN ⇒ never equal) — format('{0}', …)
           # stringifies before comparing (observed live: economy-engine run 37009080091).

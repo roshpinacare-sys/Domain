@@ -1,26 +1,15 @@
-# DEX-XC (R43 / CR-0073) — THE INTENT GATES, hourly.
 #
-# The owner demanded the DEX open to more smart networks with routers that can
-# receive and swap LARGE sums on every network — "לפתוח את הדקס לעוד רשתות חכמות
-# לכולן ושיהיה לנו ראוטרים שנוכל לקבל ולהחליף גם כבר סכומים גדולים על כל רשת".
 # This lane ticks the cross-chain intent doors: the door registry (8 networks,
-# measured hard-finality clocks, honest bands), the ERC-7683-shaped lifecycle
-# (open → resolve → fill → settle/timeout/refund) over ONE deterministic ledger,
 # the escrow-identity law, the 2:1 HTLC clock interlock, the bond law (exposure
 # ≤ 2× custody), the solver competition (our pools default, P2P roster outbids),
-# and the pegout corridor queue (keyless code never broadcasts).
 #
-# KEYLESS BY LAW: the doors price and gate; the core settles our OWN ledger
-# atomically; chain payouts are QUEUED to dex/pegout-queue.json with the corridor
-# named — the keyed desks own every broadcast. Fail-soft exit 0; STASIS
-# halt-before-read; single-writer atomic books. [skip ci] book commits,
 # rebase-first push (parallel runtimes are real).
 
 name: dex-xc
 
 on:
   schedule:
-    - cron: '53 */2 * * *' # T-51: 2h :53 on public minutes
+    - cron: '4 */2 * * *'
   workflow_dispatch:
 
 permissions:

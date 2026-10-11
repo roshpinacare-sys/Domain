@@ -1,24 +1,12 @@
-# HUMAN-CADENCE (CR-0065) — the single publisher of the ten soldiers, hourly.
 #
-# Why hourly: the old stack burst 10 posts in one run (~500ms apart), voted in perfect
-# 18-21s cadence, and followed at exact 3s intervals — mechanically detectable, and the
-# owner measured it before we did. The cadence desk spreads every social op across
-# persona-owned UTC windows (agents/persona-slots.json v2), with seeded per-day jitter,
-# quiet hours 00:00-04:59 UTC, and catch-up windows instead of bursts. Most invocations
-# are no-ops by design; the public repo's free minutes make that cheap.
 #
-# Laws carried: STASIS gate (in-code halt-before-read) · verify-then-sign · read-back
-# after every op · fail-soft exit 0 · zero secrets in output · internal-only engagement
 # until the quality bar lifts · the PROBE-B LAW (never engage posts under 800 chars of
-# body, never the word probe) · THE COMMUNITY BREATH (CR-0067: posts land inside
-# hive-177702, subscribes are their own staggered lane) · single-writer atomic books
-# (agents/human-cadence.json/.md).
 
 name: human-cadence
 
 on:
   schedule:
-    - cron: '13 17 * * *' # R67-C: 3h -> daily 17:13 - cadence change is intentional while the minutes quota is scarce; manual dispatch anytime
+    - cron: '16 17 * * *'
   workflow_dispatch:
     inputs:
       mode:
@@ -47,7 +35,7 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: STASIS gate (mechanical, FATE-DEFENSE law #1 — R24-a, owner directive 2026-10-04)
+      - name: STASIS gate (mechanical, FATE-DEFENSE law
         id: brake
         run: |
           ST=$(node -p "JSON.parse(require('fs').readFileSync('agents/STASIS.json','utf8')).active===true")

@@ -1,6 +1,6 @@
 name: econ-desk
 on:
-  schedule: [{cron: '14 22 * * *'}] # R67-C: 4h -> daily 22:14
+  schedule: [{cron: '14 22 * * *'}]
   workflow_dispatch: {}
 permissions:
   contents: write
@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with: {fetch-depth: 1}
-      - name: STASIS gate (mechanical, FATE-DEFENSE law #1 — R24-a, owner directive 2026-10-04)
+      - name: STASIS gate (mechanical, FATE-DEFENSE law
         id: brake
         run: |
           ST=$(node -p "JSON.parse(require('fs').readFileSync('agents/STASIS.json','utf8')).active===true")

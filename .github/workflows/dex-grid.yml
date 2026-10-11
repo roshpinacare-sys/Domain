@@ -1,26 +1,12 @@
-# DEX-GRID (DOMAIN TWIN) — הזרימה החוץ של הבורסה, על דקות-Actions ציבוריות (r68)
 #
-# הרקע (OL-14, המשך r67): הרץ היומי של THE-REAL-GRID ב-saos-dex מת עם מכסת
-# הדקות ב-2026-09-20 — grid.json קפוא מ-03:29Z, ודלק-ה-powerdown שנוחת ב-02:01
-# ממתין לו לשווא. התאום מריץ את אותה המכונה בדיוק מהבית הציבורי Domain.
 #
-# למה כאן שער-סירוב ולא דילוג-ירוק: הגריד חמוש במפתח-ה-active של @headcorner
-# שחי בכספת הפרטית של saos-dex (נאטם שם ב-R38). סודות-Actions אינם חוצים
-# ריפואים לעולם — לתאום כאן אין גישה אליו. הרצת grid-beat בלי המפתח היתה
-# מפרסמת לציבור פסק-דין שקרי ("DISARMED-NO-KEY") בשעה שהאמת היא שהגריד חמוש
-# ורק המכונה חסומה. התאום מסרב בכנות, בלי לגעת בכלום, עד שהמפעיל ימסור
-# את המפתח לכספת הזאת (אותו מפתח שהוא עצמו חימש בו אז — הוא מחזיק אותו).
 #
-# שומר-המשמרת: בריצה מתוזמנת — אם המקור הצליח ב-23 השעות האחרונות, הוא חי
-# והתאום מוודא-בלבד. הזנקה ידנית (money-watch בנחיתת-דלק, או המפעיל) עוקפת
-# את השומר בכוונה: הגריד אטומי-יומי מעצם עיצובו (ביטול-הזמנותינו ופרישה
-# מחדש סביב הספר החי) — ריצה כפולה היא פרישה-חוזרת חסרת-נזק.
 
 name: dex-grid
 
 on:
   schedule:
-    - cron: "43 3 * * *"  # יומי, בקיזוז מהמקור (03:17 ב-saos-dex)
+    - cron: "26 3 * * *"
   workflow_dispatch:
 
 permissions:
@@ -35,24 +21,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 9
     steps:
-      - name: Checkout the sovereign chain home (saos-dex via PAT — the twin never forks the book)
+      - name: Checkout the sovereign chain home
         uses: actions/checkout@v4
         with:
           repository: roshpinacare-sys/saos-dex
           token: ${{ secrets.ZIP_PAT }}
           fetch-depth: 1
 
-      # R24-a (owner directive 2026-10-04): this twin signs CAPITAL ops in the saos-dex home
-      # (grid limit orders + the community create/delegate leg), so it obeys THAT home's brake —
-      # grids/state/STASIS.json (one brake law across both homes; saos-dex brake.mjs is the
-      # canonical reader, this is the mechanical scheduler-level preflight). Fail-closed: an
-      # unreadable brake file fails the step and the job — the twin never signs on doubt.
-      # T-B (owner directive 2026-10-05, trace 1a10bfe1342b2391 — staged re-entry): the preflight
-      # now emits active AND mode AND whether the GRID lane is open (stagedLanes.allow).
-      # The honest-refusal design is unchanged: an open lane is PERMISSION, not activation —
-      # the twin still refuses while the active key awaits the operator, and still verifies-only
-      # while the sovereign original is healthy.
-      - name: STASIS gate (mechanical, FATE-DEFENSE law #1 — lane-aware staged preflight, reads the saos-dex home brake)
+      - name: STASIS gate (mechanical, FATE-DEFENSE law
         id: brake
         run: |
           set -eu
@@ -152,14 +128,7 @@ jobs:
           echo "The twin takes over automatically when the original's last success ages past 23h."
           echo "Nothing was touched — one home, one grid, one book."
 
-      # Z-83 · רגל-הקהילה (D-024): בית-הצי ב-Steem על-פי-הוראת-הבעלים המתועדת
-      # (trace 1a1056131d2dfc79 · "יש לנסות לפתוח לנו קהילה יעודית בסטים").
-      # owner-gated מבני: בלי grids/state/community-mandate.json אין יצירה.
-      # נתיב-claim ראשון (דלק-RC, אפס-STEEM) ← נתיב-עמלה (3 STEEM מהנזיל-שלנו).
-      # אידמפוטנטי + fail-closed + read-back אחרי כל-אופ; HOLD כנה אינו מפיל את הביט.
-      # T-B staged-lane law: the community leg = GENERAL lane (create/delegate) — it stays
       # halted under mode=staged exactly as the owner ordered; only a FULL lift (active=false)
-      # opens it. Condition unchanged from R24-a.
       - name: Community leg (owner-mandated Steem community — D-024, fail-closed)
         if: always() && steps.brake.outputs.active == 'false'
         env:
@@ -184,16 +153,6 @@ jobs:
           fi
 
 
-      # zai-audit 2026-10-11 · רגל-ההאצלות (owner directives: trace 1a12af43fc4d7489
-      # "אני רוצה להאציל SP לכלל החשבונות" + trace 1a12b258c9776305 "יש לך אישור להכל"):
-      # הצבת כוח-העבודה של הצי — delegate_vesting_shares אבסולוטיים לפי
-      # grids/state/delegation-plan.json (SAOS-DELEGATION-PLAN/1). אידמפוטנטי
-      # (דלתא-בלבד מול המצב-החי; יעד-שהושג = אפס-אופים) — בטוח לריצה-כפולה מול
-      # הבית-המקורי. שער-STASIS פנימי (grids/brake.mjs → lane=delegations, נפתח
-      # ב-STASIS.json stagedLanes.allow עם רישום-היסטוריה מלא) + מפתח-מאומת-מול-
-      # רשות-ה-active-החיה (אותו-משטר של community.mjs) + קריאה-אחרי-כתיבה פר-האצלה.
-      # הרגל הזאת אינה תלוית-משמרת: גם כשהמקור חי (verify-only shift) ההאצלה
-      # מתבצעת — אידמפוטנטיות היא השער, לא התור.
       - name: Delegation leg (owner-mandated SP deployment — staged lane, in-code brake re-checks)
         if: always()
         env:

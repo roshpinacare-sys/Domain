@@ -1,66 +1,23 @@
-# FLEET-CENSUS CRON (CR-0041, fleet Rung 15) — the estate map cadence, WIRED (CR-0040/R14
-# booking: "census-cron wiring — the census joins the Actions cadence so the estate map
 # self-updates").
 #
-# fleet-census.cjs is the OFFLINE/KEYLESS/DETERMINISTIC estate-wide census (CR-0040):
-# 16 lanes x capability markers, sovereignty counters, blockers with live evidence, wiring
-# map, edge series from our own ledgers, 18 sha256 receipts. Until now the map refreshed
-# only when a lane ran the desk by hand; this workflow makes the map SELF-UPDATING: one
-# honest refresh per day, enough for a sovereignty/blocker drift record that cannot rot.
 #
-# Laws carried here (all pre-existing, now mechanically enforced on the cadence):
-#  · FATE-DEFENSE law #1 — the STASIS breaker is obeyed TWICE: the scheduler checks
-#    agents/STASIS.json before the run (healthy no-op, nothing measured, nothing
 #    committed), AND the desk itself halts in code BEFORE any lane read on the same
 #    file (E32 proves the fresh-process halt). Two independent gates, one law.
-#  · KEYLESS — zero operator secrets: the desk reads the LOCAL estate only (no network,
-#    no keys); the push back to the book rides the built-in GITHUB_TOKEN (contents: write,
-#    same repo). The census never broadcasts, never signs, never touches custody.
 #  · DETERMINISTIC + [skip ci] — the desk's stable payload is byte-identical for the same
-#    tree (E31 determinism law), so the daily commit is a pure freshness stamp: if nothing
 #    drifted, the publish step books a clean exit instead of a noise commit.
-#  · CENSUS-DELTA (CR-0042) — after the refresh, fleet-delta.cjs diffs the just-written
-#    map against the last COMMITTED map of the SAME perspective and books a drift row into
-#    agents/fleet-delta.jsonl ONLY on a real transition (FIRST-DELTA baseline or DRIFT;
-#    NO-DRIFT days book nothing — the event-ledger law composes with the no-noise publish
-#    law). Blocker transitions key on (id, status); live evidence is excluded, so honest
-#    growth (cadence rows) never masquerades as drift. The drift record IS the
-#    sovereignty/blocker transition series — the third measurement surface.
 #  · SINGLE-LANE-WORKSPACE LAW (CR-0042, found live by the delta desk on its first run) —
 #    a checkout of THIS repo alone shows exactly 1/16 lanes: a CI CHECKOUT ARTIFACT, never
-#    a real estate state. The census books that diminished view to
-#    agents/fleet-census.artifact.json and NEVER touches the canonical 16-lane map; the
 #    delta step diffs artifact-vs-artifact (git HEAD), so the CI-perspective drift series
-#    is honest and the perspective flip (CI book over full-estate book) can never
-#    masquerade as estate drift again — the delta desk refuses cross-estate diffs by law.
-#  · Cadence `14 2 * * *` — daily 02:14 UTC, off the whole org minute map (the :00/:30
-#    dex pulse, :9/:39 twins, :23/:53 grid ticks, the 03:xx/04:xx/05:xx/06:xx daily block)
-#    so the fleet's Actions minutes never collide (reslotted by the minute-map law, R21).
-#  · CLAIMS-AUDIT leg (CR-0050, R21) — claims-audit.cjs rides this cadence: every
-#    feature_list evidence path must resolve on the tree, the CR-slot law, the suite
-#    version/count invariant — the anti-claims instrument the owner demanded ("בדוק את
-#    כל הטענות שלך"). The OWNER-LANGUAGE LAW (owner-facing replies = עברית) is encoded
 #    in the desk as data and printed on every run.
 #  · NO-NOISE COMPARATOR (CR-0050) — the published books carry a moving `at` freshness
 #    stamp; the publish step compares STABLE payloads (at stripped) against HEAD and
-#    books a clean exit when only stamps moved. The R21 roast caught the latent defect:
-#    the old plain `git diff --cached --quiet` would have committed daily timestamp
 #    noise, making the "clean exit" claim above a lie — now it is true.
-#  · SCHEDULER-AUDIT leg (CR-0056, R27) — THE METRONOME AUDIT: the fleet measures its
-#    own time. GitHub's scheduler stopped firing scheduled events on this repo (R27
-#    finding: every schedule added after 2026-10-03T18:36Z never fired; the old 30-min
-#    grid-trigger-twin schedule stopped at 18:36:46Z). The leg collects the raw
-#    scheduled-run census keyless (built-in GITHUB_TOKEN), the pure desk books
-#    expected-vs-observed slots with PULSE/DEGRADED/STARVED verdicts + the repo-wide
-#    scheduler boundary, and the bounded heal re-fires up to 3 STARVED ∧ KEYLESS
-#    cadences via workflow_dispatch (actions:write) — the self-healing fleet is the
-#    keyless fleet; secret-carrying legs stay owner/keeper territory.
 
 name: fleet-census-cron
 
 on:
   schedule:
-    - cron: "14 2 * * *"
+    - cron: "24 2 * * *"
   workflow_dispatch:
 
 permissions:
@@ -86,13 +43,9 @@ jobs:
         with:
           node-version: '20'
 
-      - name: STASIS brake (FATE-DEFENSE law #1 — staged-aware observability; T-50 2026-10-09)
+      - name: STASIS brake (FATE-DEFENSE law
         id: brake
         run: |
-          # The census IS the fleet's observation organ — it reads STASIS.json as DATA
-          # (fleet-census.cjs reports the brake state fleet-wide). Halting the observer
-          # during a brake blinded the fleet's own self-model Oct-4→Oct-9. The brake's
-          # scope law: "measurement-only lanes continue". The census is offline, keyless,
           # deterministic — zero capital surface. Capital lanes keep their own gates.
           ST=$(node -p "const s=JSON.parse(require('fs').readFileSync('agents/STASIS.json','utf8'));s.active===true ? ('armed mode='+(s.mode||'full')) : 'standing-by'" 2>/dev/null || echo "unreadable")
           echo "active=$ST" >> "$GITHUB_OUTPUT"
@@ -103,36 +56,31 @@ jobs:
           fi
 
       - name: census refresh (offline, keyless, deterministic — fail-soft exit 0 by design)
-        if: true # T-50: measurement lane continues per STASIS scope law (brake observed above)
+        if: true
         run: node agents/fleet-census.cjs
 
       - name: delta read (artifact-vs-artifact — the CI-perspective drift series)
-        if: true # T-50: measurement lane continues per STASIS scope law (brake observed above)
+        if: true
         run: node agents/fleet-delta.cjs --from-git=agents/fleet-census.artifact.json --to=agents/fleet-census.artifact.json --out=agents/fleet-delta.jsonl
 
       - name: claims audit (CR-0050 — every ledger claim must resolve on the tree)
-        if: true # T-50: measurement lane continues per STASIS scope law (brake observed above)
+        if: true
         run: node agents/claims-audit.cjs
 
-      # CADENCE-WEEK leg (CR-0053, R25) — the first distributional read: the fleet reads its
-      # own series back (market-grid gaps/spreads/routes, delta verdicts, artifact-lag honesty
       # number). Below the encoded B2 bar the desk writes NOTHING (no-noise law, E45-proven).
       - name: cadence-week read (CR-0053 — the series read back as distributions)
-        if: true # T-50: measurement lane continues per STASIS scope law (brake observed above)
+        if: true
         run: node agents/cadence-week.cjs
 
-      # SCHEDULER-AUDIT leg (CR-0056, R27) — THE METRONOME AUDIT: collect (keyless,
-      # GITHUB_TOKEN) -> measure (pure desk) -> bounded heal (dispatch ≤3 starved keyless
-      # cadences). A cadence the fleet cannot see is a cadence that can rot silently.
       - name: scheduler collect (R27 — the raw scheduled-run census, GITHUB_TOKEN keyless)
-        if: true # T-50: measurement lane continues per STASIS scope law (brake observed above)
+        if: true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
         run: node agents/scheduler-collect.cjs
 
       - name: scheduler audit + bounded heal (R27 — the fleet re-fires its own pulse)
-        if: true # T-50: measurement lane continues per STASIS scope law (brake observed above)
+        if: true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
@@ -140,16 +88,14 @@ jobs:
           node agents/scheduler-audit.cjs
           node agents/scheduler-heal.cjs || true
 
-      # MM-VOLUME leg (CR-0058, R28) — THE VOLUME ENGINE: the fleet-scale market-making
-      # planner — venue economics from the fee doctrine + measured spreads, the
       # deterministic fleet partition, the bounded+labelled internal-flow plan, and the
       # owner-gated projections (plan-only, never signs; live path stays market-exec law).
       - name: mm-volume plan (R28 — the fleet on the orderbook, provably)
-        if: true # T-50: measurement lane continues per STASIS scope law (brake observed above)
+        if: true
         run: node agents/mm-volume.cjs
 
       - name: publish the map back to the book
-        if: true # T-50: measurement lane continues per STASIS scope law (brake observed above)
+        if: true
         run: |
           set -u
           git config user.name "fleet-census-cron[bot]"
@@ -179,7 +125,7 @@ jobs:
           fi
 
       - name: Halt receipt (this shift belongs to the breaker)
-        if: false # T-50: the halt receipt is retired — measurement continues
+        if: false
         run: |
           echo "STASIS-HALT fleet-census-cron · breaker active — the map stands still by law, not by neglect."
           echo "Resume only after root-cause + judge-node green (see agents/STASIS.json resumePolicy)."

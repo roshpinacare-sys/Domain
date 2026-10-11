@@ -1,38 +1,18 @@
-# FILL-LEDGER CRON (CR-0042, fleet Rung 14) — the EYES cadence, wired as the twin of
-# market-grid-cron.yml (CR-0038). The operator directive of 2026-10-03: "בוא נקדם עכשיו
-# ממש חזק קדימה כל הסוכנים ביחד ... ובסוף צריך לחבר ולחווט הכל" — push all agents together
 # and WIRE everything. The sibling wired the observer (:23/:53); this wires the MEASUREMENT
 # leg: every fill_order of the fleet's trading account is captured, deduped, and replayed
-# into the µ-unit average-cost ledger within 30 minutes of the chain recording it — keyless.
 #
-# LAWS carried here (same family as the twin, mechanically enforced):
-#  · FATE-DEFENSE law #1 — the STASIS breaker is obeyed by the scheduler (healthy no-op on
 #    active) AND by the desks themselves; two independent gates, one law.
-#  · KEYLESS — the fill-ledger is READ-ONLY by construction (CR-0039 law 1): it never signs,
-#    never broadcasts; it reads api.steemit.com public surfaces only. The SIGNED legs stay
 #    session-side, owner-gated (MARKET_CYCLE_LIVE=1 remains a human decision).
-#  · APPEND-ONLY + [skip ci] — the tick commits its own books (fill-ledger.json/.md +
-#    fill-ledger-fills.jsonl, the replay source of truth) with the twin publish idiom;
-#    the composer book (market-cycle.json) is NOT touched here (no cycle runs keyless).
 #  · DEDUPE — the desk's fill registry makes re-runs idempotent: a fill already in
-#    fill-ledger-fills.jsonl is never double-booked, so 30-min ticks compose safely with
-#    lane-side runs into ONE ledger.
-#  · COORDINATION BUS (CR-0048, R19) — this cadence is the fleet's CHAIN-EYES tick, so
 #    the keyless coord-bus reader rides it as an independent leg: every saos.*
 #    custom_json op on the head account (weave checkpoints, platform snapshots, future
-#    namespaces) is captured into agents/coord-bus.json with the split-brain guard
 #    (primary+cross fingerprints must match or nothing is written). TWO independent
-#    no-noise publishes — each desk commits its own book only when ITS fingerprint
-#    changed; one chain read cadence, two lenses, zero extra Actions minutes.
-#  · Cadence `17,47 * * * *` — every 30 minutes, offset from every sibling cadence
-#    (market-grid :23/:53, grid-trigger-twin :9/:39, dex-grid :48, saos-dex :00/:30) so
-#    the fleet's Actions minutes never collide.
 
 name: fill-ledger-cron
 
 on:
   schedule:
-    - cron: '48 */3 * * *' # T-51: 3h :48 on public minutes
+    - cron: '39 */3 * * *'
   workflow_dispatch:
 
 permissions:
@@ -57,16 +37,10 @@ jobs:
         with:
           node-version: '20'
 
-      - name: STASIS brake (FATE-DEFENSE law #1 — staged-aware observability; T-50 2026-10-09)
+      - name: STASIS brake (FATE-DEFENSE law
         id: brake
         run: |
-          # The brake's OWN scope law: "measurement-only lanes continue". The fill-ledger is
-          # READ-ONLY by construction (CR-0039 law 1: never signs, never broadcasts) — the
           # measurement lane. The old gate halted on active===true alone and darkened the
-          # fills ledger Oct-4→Oct-9 during a staged re-entry that required observation.
-          # The brake state is now OBSERVED (and echoed to the log + desk receipts carry
-          # brakeArmed where supported) instead of over-halting. Capital lanes keep their
-          # own fail-closed gates (capital-gate.cjs).
           ST=$(node -p "const s=JSON.parse(require('fs').readFileSync('agents/STASIS.json','utf8'));s.active===true ? ('armed mode='+(s.mode||'full')) : 'standing-by'" 2>/dev/null || echo "unreadable")
           echo "active=$ST" >> "$GITHUB_OUTPUT"
           if [ "$ST" != "standing-by" ]; then
@@ -76,24 +50,21 @@ jobs:
           fi
 
       - name: tick (keyless fill measurement + deduped ledger rows)
-        if: true # T-50: measurement lane continues per STASIS scope law (brake observed above)
+        if: true
         env:
-          FILL_LEDGER_MAX_PAGES: '15'  # Z-69, CR-0047: walk the FULL day (500-op window was hiding fills — the reconcile residual)
+          FILL_LEDGER_MAX_PAGES: '15'
         run: node agents/fill-ledger.cjs
         # The desk is fail-soft by law (CR-0039 law 9): every error lands in the run row
         # and the process exits 0 — the tick always reaches the publish step, and the
-        # canon carries the honest errors instead of a red X hiding them.
 
       - name: coord-bus (keyless saos.* custom_json read — CR-0048, split-brain guarded)
-        if: true # T-50: measurement lane continues per STASIS scope law (brake observed above)
+        if: true
         env:
           COORD_BUS_MAX_PAGES: '40'  # CR-0048: the head churns ~28 ops/min of limit orders — a 30-min tick needs ~850 ops of reach (the watermark walk normally stops in 1-2 pages)
         run: node agents/coord-bus.cjs
-        # Same fail-soft law: unreachable nodes or a split brain book a clean exit and
-        # write NOTHING — an honest empty shift, never a red X, never a lying bus view.
 
       - name: publish the tick back to the ledger
-        if: true # T-50: measurement lane continues per STASIS scope law (brake observed above)
+        if: true
         run: |
           set -u
           git config user.name "fill-ledger-cron[bot]"
@@ -115,7 +86,7 @@ jobs:
           fi
 
       - name: publish the bus book (independent no-noise — CR-0048)
-        if: true # T-50: measurement lane continues per STASIS scope law (brake observed above)
+        if: true
         run: |
           set -u
           git config user.name "coord-bus-cron[bot]"
@@ -137,7 +108,7 @@ jobs:
           fi
 
       - name: Halt receipt (this shift belongs to the breaker)
-        if: false # T-50: the halt receipt is retired — measurement continues
+        if: false
         run: |
           echo "STASIS-HALT fill-ledger-cron · breaker active — the ledger stands still by law, not by neglect."
           echo "Resume only after root-cause + judge-node green (see agents/STASIS.json resumePolicy)."
