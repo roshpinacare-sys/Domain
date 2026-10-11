@@ -82,3 +82,24 @@
 |---|---|---|---|---|---|
 | 2026-10-11T16:25:50.891Z | blurt | gate | no candidate secret matches live active authority of cornerstone — owner must provision (see CENSUS lines) | refused |  |
 
+
+## TREASURY-ARM RUN · 2026-10-11T23:08:13.723Z · chain=steem
+
+| at | chain | op | detail | status | extra |
+|---|---|---|---|---|---|
+| 2026-10-11T23:08:13.723Z | steem | gate | no candidate secret matches live active authority of headcorner — owner must provision (see CENSUS lines) | refused |  |
+
+
+## TREASURY-ARM RUN · 2026-10-11T23:08:14.602Z · chain=hive
+
+| at | chain | op | detail | status | extra |
+|---|---|---|---|---|---|
+| 2026-10-11T23:08:14.601Z | hive | gate | no candidate secret matches live active authority of cornerstone — owner must provision (see CENSUS lines) | refused |  |
+
+
+## TREASURY-ARM RUN · 2026-10-11T23:08:14.986Z · chain=blurt
+
+| at | chain | op | detail | status | extra |
+|---|---|---|---|---|---|
+| 2026-10-11T23:08:14.986Z | blurt | fatal | Unexpected token 'S', "Server is "... is not valid JSON | RED-FATAL |  |
+
