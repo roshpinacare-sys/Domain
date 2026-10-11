@@ -28,3 +28,13 @@
 | 2026-10-11T14:47:49.152Z | account_update | @headcorner broadcast refused: transaction.operations = account_update,[object Object] cause: account_update.posting_json_metadata = undefined cause: v | no-authority-or-error |
 | 2026-10-11T14:47:49.152Z | summary | no blurt account connected this run — census lines above say exactly which secrets were tried | RED-UNCONNECTED |
 
+
+## BLURT-CONNECT RUN · 2026-10-11T14:49:37.789Z
+
+| at | op | detail | status |
+|---|---|---|---|
+| 2026-10-11T14:49:36.841Z | config | chain_id=cd8d90f29a… (official blurtjs config) | ok |
+| 2026-10-11T14:49:37.301Z | census | @cornerstone no candidate secret matches live active authority | refused |
+| 2026-10-11T14:49:37.777Z | account_update | @headcorner broadcast refused: missing required owner authority:Missing Owner Authority headcorner | no-authority-or-error |
+| 2026-10-11T14:49:37.777Z | summary | no blurt account connected this run — census lines above say exactly which secrets were tried | RED-UNCONNECTED |
+
