@@ -75,7 +75,7 @@ const rpc = (method, params) => new Promise((res, rej) => {
 });
 
 const CARDS = (() => { try { return JSON.parse(fs.readFileSync(path.join(__dirname, 'knowledge-cards-en.json'), 'utf8')); } catch (_) { return []; } })();
-const PERSONAS = (() => { try { return JSON.parse(fs.readFileSync(path.join(__dirname, 'personas.json'), 'utf8')); } catch (_) { return []; } })();
+const PERSONAS = require('./persona-store.cjs').personas(); // T3: doctrine sealed (persona-store)
 const personaOf = (who) => PERSONAS.find(p => p.account === who) || { desk: 'journal', brief: 'Notes from the network.' };
 
 // Language discipline: English-only, zero AI-telltale markers. A card that fails the
@@ -238,7 +238,7 @@ async function main() {
   try { if (require('./capital-gate.cjs').stasisHalt('soldiers-blog')) return; } catch (e) { console.log('[CAPITAL-GATE] soldiers-blog — gate module error, lane halts fail-closed: ' + String(e.message || e).slice(0, 80)); return; }
   // CR-0065: the human cadence desk owns publishing now — burst stacks defer (FORCE_LEGACY=1 overrides)
   try {
-    const slots = JSON.parse(fs.readFileSync(path.join(__dirname, 'persona-slots.json'), 'utf8'));
+    const slots = require('./persona-store.cjs').slots(); // T3: doctrine sealed (persona-store)
     if (slots.version >= 2 && process.env.FORCE_LEGACY !== '1') { console.log('[soldiers-blog] DEFER — publishing owned by human-cadence.cjs (persona-slots v2, CR-0065)'); return; }
   } catch (_) {}
   const t0 = new Date().toISOString();

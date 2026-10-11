@@ -49,7 +49,7 @@ const HEAD = 'headcorner';
 const LEFINANCE_COMMUNITY = 'hive-167922';
 const SUPPORT_VOTERS = 2;   // fleet voters per verified crosspost
 const SUPPORT_WEIGHT = 2500; // 25% vote weight
-const PERSONAS = (() => { try { return JSON.parse(fs.readFileSync(path.join(__dirname, 'personas.json'), 'utf8')); } catch (_) { return []; } })();
+const PERSONAS = require('./persona-store.cjs').personas(); // T3: doctrine sealed (persona-store)
 const personaOf = (who) => PERSONAS.find(p => p.account === who) || { desk: 'journal', brief: 'Notes from the network.' };
 // Nothing signed may carry an AI-telltale marker.
 const sanity = (s) => typeof s === 'string' && s.length > 0 && !/[—–]/.test(s) && !/\bdelve\b|\bmoreover\b|\bin conclusion\b|\bit'?s important to note\b/i.test(s);

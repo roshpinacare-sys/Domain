@@ -543,7 +543,7 @@ async function modeCreate(run, book) {
   const propsTx = await broadcast([updatePropsOpAdmin(name, props)], [activeWif]);
   run.txids.push({ op: 'updateProps', hint: propsTx.txid_hint });
   run.steps.push('updateProps hint=' + propsTx.txid_hint);
-  for (const m of memberRoles([HEAD].concat(Object.keys(require('./persona-slots.json').soldiers))).filter((x) => x.role === 'member')) {
+  for (const m of memberRoles([HEAD].concat(Object.keys(require('./persona-store.cjs').slots().soldiers || {}))).filter((x) => x.role === 'member')) { // T3: sealed doctrine
     const tx = await broadcast([setRoleOp(name, m.account, m.role)], [commWif]);
     run.txids.push({ op: 'setRole:member:' + m.account, hint: tx.txid_hint });
     run.steps.push('setRole member ' + m.account + ' hint=' + tx.txid_hint);
@@ -746,7 +746,7 @@ async function modeHive(run, book) {
   const props = await H('condenser_api.get_chain_properties', []);
   const fee = props && props.account_creation_fee ? String(props.account_creation_fee) : null;
   if (!fee) { run.verdict = 'READ-BACK-FAIL'; run.why = 'hive chain props unavailable'; return run; }
-  const fleet = [HEAD].concat(Object.keys(require('./persona-slots.json').soldiers));
+  const fleet = [HEAD].concat(Object.keys(require('./persona-store.cjs').slots().soldiers || {})); // T3: sealed doctrine
   const accs = await H('condenser_api.get_accounts', [fleet]);
   const byName = Object.fromEntries((accs || []).filter(Boolean).map((a) => [a.name, a]));
   const head = byName[HEAD];

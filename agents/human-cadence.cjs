@@ -47,13 +47,16 @@ function steemInit() {
 }
 const ROOT = path.resolve(__dirname, '..');
 const AG = path.join(ROOT, 'agents');
-const SLOTS = JSON.parse(fs.readFileSync(path.join(AG, 'persona-slots.json'), 'utf8'));
+// T3/P0-1: persona doctrine is SEALED (persona-store.cjs) — plaintext gone from the public tree.
+const personaStore = require('./persona-store.cjs');
+const SLOTS = personaStore.slots();
+const dedupe = require('./social-dedupe.cjs');
 const LIB = (() => { try { return JSON.parse(fs.readFileSync(path.join(AG, 'content-library.json'), 'utf8')); } catch (_) { return { desks: {} }; } })();
 const MEMORY_FILE = path.join(AG, 'cadence-memory.json');
 const BOOK_JSON = path.join(AG, 'human-cadence.json');
 const BOOK_MD = path.join(AG, 'human-cadence.md');
 const STASIS_FILE = path.join(AG, 'STASIS.json');
-const SOLDIERS = Object.keys(SLOTS.soldiers);
+const SOLDIERS = Object.keys((SLOTS && SLOTS.soldiers) || {});
 const FLEET = SOLDIERS.concat(['headcorner']);
 const HEAD = 'headcorner';
 const MIN_RC_PCT = 25;
@@ -252,11 +255,15 @@ async function getContent(a, p) { try { return await P((cb) => steemInit().api.g
 
 // ---------- modes ----------
 
-async function modeBlog(now, keys, memory, run) {
+async function modeBlog(now, keys, memory, run, posts) {
   const doy = Math.floor((now.getTime() - Date.UTC(now.getUTCFullYear(), 0, 0)) / 864e5);
   const weekday = now.getUTCDay();
   const hour = now.getUTCHours(), minute = now.getUTCMinutes();
   const eligible = [];
+  // T3: the fleet's recent post bodies (live chain pre-pass) + everything accepted in THIS
+  // run — one list, so cross-account near-dups can never sign.
+  const recentBodies = (posts || []).map((p) => ({ author: p.author, body: p.body }));
+  const runBodies = [];
   for (const who of SOLDIERS) {
     const cfg = SLOTS.soldiers[who];
     const w = blogWindow(cfg, weekday);
@@ -271,6 +278,11 @@ async function modeBlog(now, keys, memory, run) {
     if (!piece) { run.blog.push({ author: who, status: 'SKIP-NO-FRESH-PIECE' }); continue; }
     const gate = contentGate(piece);
     if (!gate.ok) { run.blog.push({ author: who, piece: piece.id, status: 'SKIP-GATE', why: gate.why.join(',') }); continue; }
+    // T3 HARD GATE: near-duplicate post vs the fleet's recent posts or this run's accepted
+    // bodies => the piece NEVER signs (the audit's byte-identical pairs die here).
+    // Fail-closed on missing recent list (null) — no chain truth, no broadcast.
+    const dup = dedupe.gatePost(piece.body, recentBodies.concat(runBodies));
+    if (!dup.ok) { run.blog.push({ author: who, piece: piece.id, status: 'SKIP-NEAR-DUP', sim: dup.bestSim, against: dup.partner, why: dup.why }); continue; }
     eligible.push({ who, piece, w });
   }
   eligible.sort((a, b) => a.w.start - b.w.start);
@@ -303,6 +315,7 @@ async function modeBlog(now, keys, memory, run) {
               ['comment_options', { author: e.who, permlink, max_accepted_payout: '1000000.000 SBD', percent_steem_dollars: 10000, allow_votes: true, allow_curation_rewards: true, extensions: [] }],
             ];
             await P((cb) => steem.broadcast.send({ operations: ops, extensions: [] }, [wif], cb));
+            runBodies.push({ author: e.who, body: e.piece.body }); // this run's own truth feeds the next candidate's gate
             await sleep(2500 + Math.floor(Math.random() * 3500));
             const chk = await getContent(e.who, permlink);
             R.status = chk && chk.author === e.who && chk.body === e.piece.body ? 'POSTED-VERIFIED' : 'BROADCAST-NO-READBACK';
@@ -432,10 +445,25 @@ async function modeSocial(now, keys, memory, run, posts, memoryCommentDoy) {
         if (!body) R.comment = { status: 'SKIP-NO-VOICE' };
         else {
           try {
-            await P((cb) => steem.broadcast.send({ operations: [['comment', { parent_author: target.p.author, parent_permlink: target.p.permlink, author: who, permlink: target.cPermlink, title: '', body, json_metadata: JSON.stringify({ tags: ['saos'], app: 'saos-human-cadence/1' }) }]], extensions: [] }, [wif], cb));
-            await sleep(3000 + Math.floor(Math.random() * 5000));
-            const back = await getContent(who, target.cPermlink);
-            R.comment = { on: target.p.author, permlink: target.cPermlink, status: back && back.author === who && back.body === body ? 'COMMENTED-VERIFIED' : 'COMMENTED-READBACK-PENDING' };
+            // T3 THREAD LOCK: one fleet voice per thread per hour — the second voice defers.
+            // Fail-closed: replies unavailable => no comment (the measured fingerprint dies here).
+            let replies = null;
+            try { replies = await rpc('condenser_api.get_content_replies', [target.p.author, target.p.permlink]); } catch (_) {}
+            const lock = dedupe.threadLockVerdict(replies, { author: who });
+            if (!lock.ok) { R.comment = { status: 'SKIP-THREAD-LOCKED', on: target.p.author, by: lock.by, ageMin: lock.ageMin }; }
+            else {
+              // T3 comment dedupe: the same gateCast hard gate fleet-social obeys (0.6).
+              let mem = null;
+              try { mem = await dedupe.buildMemory(false); } catch (_) { mem = null; }
+              const cast = dedupe.gateCast(who, body, mem, doy);
+              if (cast.verdict === 'SKIP') { R.comment = { status: 'SKIP-NEAR-DUP', sim: cast.bestSim, reason: cast.reason }; }
+              else {
+                await P((cb) => steem.broadcast.send({ operations: [['comment', { parent_author: target.p.author, parent_permlink: target.p.permlink, author: who, permlink: target.cPermlink, title: '', body, json_metadata: JSON.stringify({ tags: ['saos'], app: 'saos-human-cadence/1' }) }]], extensions: [] }, [wif], cb));
+                await sleep(3000 + Math.floor(Math.random() * 5000));
+                const back = await getContent(who, target.cPermlink);
+                R.comment = { on: target.p.author, permlink: target.cPermlink, status: back && back.author === who && back.body === body ? 'COMMENTED-VERIFIED' : 'COMMENTED-READBACK-PENDING' };
+              }
+            }
           } catch (err) { R.comment = { status: 'FAIL', err: String(err.message || err).slice(0, 80) }; }
         }
         // support vote beside the comment (probe-b law already filtered the target)
@@ -568,10 +596,17 @@ async function main(modeArg) {
   const memory = loadMemory();
   const memoryVotesDoy = memory.votesDoy || (memory.votesDoy = {});
   const memoryCommentDoy = memory.commentDoy || (memory.commentDoy = {});
+  if (!SLOTS || !SLOTS.soldiers || !SOLDIERS.length) {
+    // T3/P0-1: the persona doctrine is sealed; without the key the cadence halts fail-closed —
+    // no doctrine, no coordinated publishing.
+    console.log('uman-cadence] PERSONAS-UNAVAILABLE — doctrine sealed and key missing; fail-closed halt');
+    run.halt = 'PERSONAS-UNAVAILABLE';
+    writeBooks(run); process.exit(0);
+  }
   let posts = [];
-  if (mode === 'all' || mode === 'curate' || mode === 'social') { try { posts = await fleetPosts(now); } catch (_) {} run.fleetPostsScanned = posts.length; }
+  if (mode === 'all' || mode === 'blog' || mode === 'curate' || mode === 'social') { try { posts = await fleetPosts(now); } catch (_) {} run.fleetPostsScanned = posts.length; }
   if (mode === 'all' || mode === 'community') await modeCommunity(now, keys, run, memory); // join before post — the founder order
-  if (mode === 'all' || mode === 'blog') await modeBlog(now, keys, memory, run);
+  if (mode === 'all' || mode === 'blog') await modeBlog(now, keys, memory, run, posts);
   if (mode === 'all' || mode === 'curate') await modeCurate(now, keys, run, posts, memoryVotesDoy);
   if (mode === 'all' || mode === 'social') await modeSocial(now, keys, memory, run, posts, memoryCommentDoy);
   saveMemory(memory);

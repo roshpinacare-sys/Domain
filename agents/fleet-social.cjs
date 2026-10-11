@@ -104,7 +104,7 @@ async function alreadyReblogged(who, author, permlink) {
   try { if (require('./capital-gate.cjs').stasisHalt('fleet-social')) return; } catch (e) { console.log('[CAPITAL-GATE] fleet-social — gate module error, lane halts fail-closed: ' + String(e.message || e).slice(0, 80)); return; }
   // CR-0065: comments/votes/follows/reblogs owned by the human cadence desk now — burst stacks defer
   try {
-    const slots = JSON.parse(fs.readFileSync(path.join(__dirname, 'persona-slots.json'), 'utf8'));
+    const slots = require('./persona-store.cjs').slots(); // T3: doctrine sealed (persona-store)
     if (slots.version >= 2 && process.env.FORCE_LEGACY !== '1') { console.log(JSON.stringify({ state: 'defer', why: 'social ops owned by human-cadence.cjs (persona-slots v2, CR-0065)' })); process.exit(0); }
   } catch (_) {}
   const t0 = new Date().toISOString();

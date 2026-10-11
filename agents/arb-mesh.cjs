@@ -71,7 +71,7 @@ const CORE_STALE_HOURS = 30;        // a core book older than this is stale — 
 function meshRoster() {
   let soldiers = [];
   try {
-    const p = JSON.parse(fs.readFileSync(ROSTER_FILE, 'utf8'));
+    const p = require('./persona-store.cjs').slots(); // T3: doctrine sealed (persona-store)
     soldiers = Object.keys(p.soldiers || {}).sort();
   } catch (_) { /* honest: operator-only mesh */ }
   return ['headcorner', ...soldiers];

@@ -84,7 +84,7 @@ async function main() {
   // CR-0065: soldier cross-votes moved into the human cadence desk (spread hourly) —
   // this burst engine keeps ONLY headcorner's lane (flagship + flag-pole self-vote).
   try {
-    const slots = JSON.parse(fs.readFileSync(path.join(__dirname, 'persona-slots.json'), 'utf8'));
+    const slots = require('./persona-store.cjs').slots(); // T3: doctrine sealed (persona-store)
     if (slots.version >= 2 && process.env.FORCE_LEGACY !== '1') { HEAD_ONLY = true; console.log('[self-audience] HEAD-ONLY — soldier cross-votes owned by human-cadence.cjs (CR-0065)'); }
   } catch (_) {}
   const t0 = new Date().toISOString();

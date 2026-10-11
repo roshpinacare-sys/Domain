@@ -11,6 +11,8 @@ const FORBIDDEN_PATHS = [
   /^agent\/inspections\/INS-R\d+.*\.json$/,          // inspection receipts narrate custody
   /^receipts\/key-check(\.json|-log\.jsonl)$/,        // key-verification receipts
   /^about\/team\.json$/,                              // fleet desk roster
+  /^agents\/personas\.json$/,                         // T3/P0-1: coordination doctrine (roster+desks) — sealed store only
+  /^agents\/persona-slots\.json$/,                    // T3/P0-1: cadence windows/weights/budgets — sealed store only
   /(^|\/)ssh-keys\.tar\.enc$/,                        // sealed key bundles
   /(^|\/)keys\.env(\.enc|\.bak.*)?$/,
   /(^|\/)vault\/.*\.enc$/,

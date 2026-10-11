@@ -123,7 +123,7 @@ async function main() {
   // This legacy engine defers to inspection-only unless FORCE_LEGACY=1: it still logs DRYRUN
   // candidates for visibility, but never casts while the cadence owns the lane.
   try {
-    const slots = JSON.parse(fs.readFileSync(path.join(__dirname, 'persona-slots.json'), 'utf8'));
+    const slots = require('./persona-store.cjs').slots(); // T3: doctrine sealed (persona-store)
     if (slots.version >= 2 && process.env.FORCE_LEGACY !== '1') {
       console.log('[soldiers-curate] DEFER-TO-CADENCE — curation owned by human-cadence.cjs (CR-0065, internal-only). Running as inspection DRYRUN.');
       process.env.DRYRUN = '1';

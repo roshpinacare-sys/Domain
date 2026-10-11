@@ -950,7 +950,7 @@ function settle(prev, feed, custodyProbe, now, networkProbe, gridGate) {
 function rosterLaw() {
   let soldiers = [];
   try {
-    const p = JSON.parse(fs.readFileSync(ROSTER_FILE, 'utf8'));
+    const p = require('./persona-store.cjs').slots(); // T3: doctrine sealed (persona-store)
     soldiers = Object.keys(p.soldiers || {}).sort(); // sorted — the law never depends on file order
   } catch (_) { /* no roster file → operator-only mesh, honest */ }
   return ['headcorner', ...soldiers];

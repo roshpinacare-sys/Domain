@@ -20,6 +20,13 @@ const fs = require('fs');
 const path = require('path');
 
 const NEAR_DUP_THRESHOLD = 0.6;
+// T3 hard gate (master plan 2026-10-11): POSTS get their own, tighter bar — the audit
+// measured byte-identical post pairs (sim=1.0) crossing the old advisory layer. 0.85 is
+// the plan's number: at/above it the post NEVER signs, no matter which desk built it.
+const POST_DUP_THRESHOLD = 0.85;
+// T3 thread-lock: two fleet voices inside one thread within the window is the measured
+// coordination fingerprint — the second voice defers (one account per thread per hour).
+const THREAD_LOCK_WINDOW_MIN = 60;
 const MEMORY_WINDOW = 50;
 const MEMORY_CACHE = path.join(__dirname, 'social-memory-cache.json');
 const MEMORY_REFRESH_MS = 90 * 60 * 1000;
@@ -138,6 +145,49 @@ function gateCast(account, text, memory, slot) {
   return { verdict: 'PASS', reason: `max cross-account sim ${bestSim.toFixed(3)} < ${NEAR_DUP_THRESHOLD}`, bestSim: Number(bestSim.toFixed(3)), partner, profile: { tone: prof.tone, opener: prof.opener, closer: prof.closer } };
 }
 
+// ── 4b) T3 POST gate — the hard crossing point before any blog broadcast ──
+// Pure (no IO, no network): the caller feeds the fleet's recent post bodies (live chain
+// in the engine). FAIL-CLOSED: a missing recent list blocks, it never waves through.
+function gatePost(body, recentPosts) {
+  if (!Array.isArray(recentPosts)) {
+    return { ok: false, why: 'recent-unavailable-fail-closed', bestSim: null, partner: null };
+  }
+  const mine = contentTokens(String(body || ''));
+  let bestSim = 0, partner = null;
+  for (const p of recentPosts) {
+    if (!p || !p.body || typeof p.body !== 'string') continue;
+    const sim = jaccard(mine, contentTokens(p.body)); // normalized token overlap (stopword-stripped)
+    if (sim > bestSim) { bestSim = sim; partner = p.author || null; }
+  }
+  if (bestSim >= POST_DUP_THRESHOLD) {
+    return { ok: false, why: `near-duplicate-post ${bestSim.toFixed(3)} >= ${POST_DUP_THRESHOLD}`, bestSim: Number(bestSim.toFixed(3)), partner };
+  }
+  return { ok: true, why: `max fleet-post sim ${bestSim.toFixed(3)} < ${POST_DUP_THRESHOLD}`, bestSim: Number(bestSim.toFixed(3)), partner };
+}
+
+// ── 4c) T3 THREAD LOCK — one fleet voice per thread per hour ──
+// Pure: caller passes get_content_replies(author, permlink) rows. Another fleet
+// account inside the window => the candidate DEFERS (that's the measured fingerprint
+// killer). Own replies and non-fleet repliers never lock. Fail-closed on bad input.
+function threadLockVerdict(replies, opts = {}) {
+  const author = opts.author;
+  const windowMin = Number.isFinite(opts.windowMin) ? opts.windowMin : THREAD_LOCK_WINDOW_MIN;
+  const nowMs = Number.isFinite(opts.nowMs) ? opts.nowMs : Date.now();
+  if (!Array.isArray(replies)) return { ok: false, why: 'replies-unavailable-fail-closed', by: null };
+  for (const r of replies) {
+    if (!r || !r.author || r.author === author) continue;
+    if (!FLEET_ACCOUNTS.includes(r.author)) continue; // external humans never lock
+    const raw = String(r.created || '');
+    const ts = Date.parse(raw.includes('T') ? (raw.endsWith('Z') ? raw : raw + 'Z') : raw.replace(' ', 'T') + 'Z');
+    if (!Number.isFinite(ts)) continue;
+    const ageMin = (nowMs - ts) / 60000;
+    if (ageMin >= 0 && ageMin <= windowMin) {
+      return { ok: false, why: `thread-locked ${ageMin.toFixed(1)}min <= ${windowMin}min`, by: r.author, ageMin: Number(ageMin.toFixed(1)), windowMin };
+    }
+  }
+  return { ok: true, why: 'no-fleet-voice-in-window', by: null, windowMin };
+}
+
 // ── 5) comment builder — the target's real fragment in the speaker's own hand ──
 function buildComment({ account, slot, targetTitle, fragment, insight }) {
   const prof = voiceProfileFor(account, slot);
@@ -192,6 +242,33 @@ async function selftest() {
   const a = voiceProfileFor('wic', 3), b = voiceProfileFor('wic', 3);
   t('rotation deterministic', a.opener === b.opener && a.closer === b.closer);
 
+  // 9 (T3): POST gate — near-duplicate post is refused, fresh post passes
+  const recent = [
+    { author: 'haran', body: 'Old roads repeat themselves: the silk route cities grew exactly where water and toll met. The arithmetic of caravans still explains logistics parks.' },
+    { author: 'cashmachine', body: 'Ran the numbers again: a 4% fill rate at 1.3% spread is positive only if the round trip clears both fees. The ledger decides, not the mood.' },
+  ];
+  const dupBlock = gatePost(recent[0].body, recent);
+  t('post-gate blocks near-dup', dupBlock.ok === false && dupBlock.bestSim >= POST_DUP_THRESHOLD, JSON.stringify(dupBlock));
+  const dupPass = gatePost('Quiet hours: the kettle, the page, and the first light. Nothing loud happened and that was the point of it.', recent);
+  t('post-gate passes fresh post', dupPass.ok === true && dupPass.bestSim < POST_DUP_THRESHOLD, JSON.stringify(dupPass));
+  const dupClosed = gatePost('anything at all', null);
+  t('post-gate fail-closed on missing recent', dupClosed.ok === false && dupClosed.why === 'recent-unavailable-fail-closed');
+
+  // 10 (T3): thread lock — a fleet voice inside the window locks, an external voice does not
+  const now = Date.now();
+  const locked = threadLockVerdict([
+    { author: 'haran', created: new Date(now - 12 * 60000).toISOString().replace('T', ' ').slice(0, 19) },
+    { author: 'stranger1', created: new Date(now - 5 * 60000).toISOString().replace('T', ' ').slice(0, 19) },
+  ], { author: 'wic', nowMs: now });
+  t('thread-lock blocks recent fleet voice', locked.ok === false && locked.by === 'haran', JSON.stringify(locked));
+  const open = threadLockVerdict([
+    { author: 'haran', created: new Date(now - 3 * 3600000).toISOString().replace('T', ' ').slice(0, 19) },
+    { author: 'stranger1', created: new Date(now - 5 * 60000).toISOString().replace('T', ' ').slice(0, 19) },
+  ], { author: 'wic', nowMs: now });
+  t('thread-lock passes stale/external only', open.ok === true, JSON.stringify(open));
+  const closed = threadLockVerdict(null, { author: 'wic' });
+  t('thread-lock fail-closed on bad replies', closed.ok === false && closed.why === 'replies-unavailable-fail-closed');
+
   for (const r of out.results) console.log(r);
   console.log(JSON.stringify({ pass: out.pass, fail: out.fail }));
   return out.fail === 0;
@@ -202,6 +279,6 @@ if (require.main === module && process.argv.includes('--selftest')) {
 }
 
 module.exports = {
-  NEAR_DUP_THRESHOLD, MEMORY_WINDOW, FLEET_ACCOUNTS, VOICE_PROFILES, QUOTE_LINES,
-  voiceProfileFor, contentTokens, jaccard, containment, buildMemory, gateCast, buildComment, selftest,
+  NEAR_DUP_THRESHOLD, POST_DUP_THRESHOLD, THREAD_LOCK_WINDOW_MIN, MEMORY_WINDOW, FLEET_ACCOUNTS, VOICE_PROFILES, QUOTE_LINES,
+  voiceProfileFor, contentTokens, jaccard, containment, buildMemory, gateCast, gatePost, threadLockVerdict, buildComment, selftest,
 };

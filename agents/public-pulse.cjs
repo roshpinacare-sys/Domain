@@ -172,7 +172,7 @@ function composeCoordination() {
 }
 
 function composeTeam() {
-  const personas = readJson('agents/personas.json') || [];
+  const personas = require('./persona-store.cjs').personas(); // T3: doctrine sealed (persona-store)
   const cap = readJson('agents/capability-matrix.json');
   const chains = (cap && cap.chains) || {};
   const steem = chains.steem || {};
