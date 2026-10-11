@@ -62,6 +62,8 @@ async function dynProps() { return rpc('condenser_api.get_dynamic_global_propert
 async function main() {
   const CENSUS = require('./key-census.cjs');
   const candidates = (cfg.census_candidates || []).map(n => ({ name: n }));
+  const PFX = chain === 'steem' ? 'STM' : chain === 'hive' ? 'HIVE' : 'BLT';
+  try { steem.config.set('address_prefix', PFX); } catch (_) { /* older steem-js */ }
   const found = await CENSUS.resolve({ rpc, account: cfg.source, role: 'active', steem, candidates });
   if (!found) { row('gate', 'no candidate secret matches live active authority of ' + cfg.source + ' — owner must provision (see CENSUS lines)', 'refused'); saveState(loadState()); book(); process.exit(0); }
   const wif = found.wif;

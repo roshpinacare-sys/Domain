@@ -16,6 +16,29 @@
 'use strict';
 const WIF_RE = /^[5JK][1-9A-HJ-NP-Za-km-z]{50}$/;
 
+const crypto = require('crypto');
+const B58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+function b58check(buf) {
+  const h = crypto.createHash('sha256').update(crypto.createHash('sha256').update(buf).digest()).digest();
+  const all = Buffer.concat([buf, h.slice(0, 4)]);
+  let n = BigInt('0x' + all.toString('hex')), s = '';
+  while (n > 0n) { s = B58[Number(n % 58n)] + s; n /= 58n; }
+  for (const b of all) { if (b === 0) s = '1' + s; else break; }
+  return s;
+}
+/* saos-engine seed law: wifFor(seed) = base58check(0x80 + sha256(seed) + 0x01) */
+function sha256Wif(seedStr) {
+  const body = Buffer.concat([Buffer.from([0x80]), crypto.createHash('sha256').update(Buffer.from(seedStr, 'utf8')).digest(), Buffer.from([0x01])]);
+  return b58check(body);
+}
+/* prefix-agnostic pubkey compare: STM/HIVE/BLT all 53 chars, body bit-equal */
+function pubEq(a, b) {
+  if (a === b) return true;
+  if (typeof a !== 'string' || typeof b !== 'string') return false;
+  return a.length === 53 && b.length === 53 && a.slice(3) === b.slice(3);
+}
+
+
 function collectWifs(node, out) {
   out = out || [];
   if (typeof node === 'string') {
@@ -70,16 +93,31 @@ async function resolve(opts) {
     const wifs = collectWifs(raw);
     for (const w of wifs) {
       try {
-        if (steem.auth.wifToPublic(w) === live) {
+        if (pubEq(steem.auth.wifToPublic(w), live)) {
           console.log('CENSUS-MATCH ' + c.name + ' → ' + account + ':' + role + ' (bit-exact vs live authority)');
           return { secretName: c.name, wif: w };
         }
       } catch (_) { /* not a valid wif */ }
     }
+    /* saos-engine seed-orders derivation (mini-services/saos-engine/steemtx.mjs SEED_ORDERS) */
+    const ORDERS = [
+      (a, r, p) => a + r + p, (a, r, p) => p + r + a,
+      (a, r, p) => a + p + r, (a, r, p) => p + a + r,
+      (a, r, p) => r + a + p, (a, r, p) => r + p + a
+    ];
+    for (let oi = 0; oi < ORDERS.length; oi++) {
+      try {
+        const swif = sha256Wif(ORDERS[oi](account, role, raw));
+        if (pubEq(steem.auth.wifToPublic(swif), live)) {
+          console.log('CENSUS-MATCH ' + c.name + ' (seed-order derivation o' + oi + ') -> ' + account + ':' + role);
+          return { secretName: c.name, wif: swif };
+        }
+      } catch (_) { /* derive fail */ }
+    }
     /* master-password derivation */
     try {
       const keys = steem.auth.getPrivateKeys(account, raw, [role]);
-      if (keys && keys[role] && steem.auth.wifToPublic(keys[role]) === live) {
+      if (keys && keys[role] && pubEq(steem.auth.wifToPublic(keys[role]), live)) {
         console.log('CENSUS-MATCH ' + c.name + ' (master-password derivation) → ' + account + ':' + role);
         return { secretName: c.name, wif: keys[role] };
       }
