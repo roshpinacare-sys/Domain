@@ -222,6 +222,32 @@ const W = { agents:new Map(), books:[], verdict:'UNKNOWN', feeds:{}, shifts:0, n
             workOrders:[], integrity:null, gates:[],
             podPanel:0, podAt:0 };
 
+/* ============ STASIS — תצוגת-אמת (R30, trace 1a12d295c7da9241) ============ */
+function stasisLabel(s){
+  if(!s) return '';
+  if(!s.active) return '🔓 מסילות-הון פתוחות (בלם מוסר)';
+  if(s.mode==='staged'){
+    const al=(s.allow||[]).map(x=>String(x).toLowerCase());
+    if(al.includes('general') && al.length>=7) return '🔓 כל-המסילות פתוחות · בלם-חירום חמוש (R30)';
+    if(al.length) return '🔓 '+al.length+' מסילות פתוחות · בלם חמוש';
+    return '🔓 מסילות מדורגות · בלם חמוש';
+  }
+  return '🔒 מסילות-הון נעולות (בלם מלא)';
+}
+function applyStasisGate(){
+  const s = W.stasis; if(!s || !W.gateSign) return;
+  let open = false;
+  if(!s.active) open = true;
+  else if(s.mode==='staged'){
+    const al=(s.allow||[]).map(x=>String(x).toLowerCase());
+    open = al.includes('general') && al.length>=7;
+  }
+  if(W.stasisLock) W.stasisLock.visible = !open;
+  if(W.stasisShackle) W.stasisShackle.visible = !open;
+  W.gateSign.material.map.dispose();
+  W.gateSign.material = textSprite(open? ['STASIS — נפתח לפי מילת-בעלים','כל-המסילות פתוחות · הבלם חמוש (R30)'] : ['STASIS — ממתין-בעלים','מסילות-הון נעולות לפי הוראת בעלים'], open? '#2fae63' : '#d9a13b', 880,160).material;
+}
+
 /* ============ בסיס ============ */
 let renderer, scene, camera, controls, raycaster, pointer;
 const dynamics = [];
@@ -482,7 +508,7 @@ function buildGarden(P){
     P.add(g);
     W.beds.push({fl, fresh:null});
   }
-  // שער-ה-STASIS — האמת: מסילות-הון נעולות לפי הוראת בעלים
+  // שער-ה-STASIS — האמת החיה: נעול/פתוח לפי מצב-הבלם האמיתי (R30: מילת-הבעלים פתחה הכל)
   const gate = new THREE.Group(); gate.position.set(0,0,-7);
   box(.28,2.6,.28,0xc9a13b,-1.6,1.3,0,0,gate); box(.28,2.6,.28,0xc9a13b,1.6,1.3,0,0,gate);
   box(3.5,.3,.22,0xc9a13b,0,2.5,0,0,gate);
@@ -490,6 +516,7 @@ function buildGarden(P){
   lock.position.set(0,1.35,0); gate.add(lock);
   const sh = new THREE.Mesh(new THREE.TorusGeometry(.12,.045,8,18), mat(0xd95c4a,.5,.4));
   sh.position.set(0,1.6,0); gate.add(sh);
+  W.stasisLock = lock; W.stasisShackle = sh;
   W.gateSign = textSprite(['STASIS — ממתין-בעלים','מסילות-הון נעולות לפי הוראת בעלים'], '#d9a13b', 880,160);
   W.gateSign.scale.set(4.6,1.05,1); W.gateSign.position.set(0,3.4,0); gate.add(W.gateSign);
   P.add(gate);
@@ -862,7 +889,7 @@ function drawPodium(){
     if(W.venturesCounts && Object.keys(W.venturesCounts).length)
       lines.push('מיזמים: ' + Object.entries(W.venturesCounts).map(([k,v])=>`${k}=${v}`).join(' · '));
     else lines.push(W.feeds.ventures?.ok? 'מיזמים: אין רשומות בפיד' : 'פיד-המיזמים נפל — אמת בעצמך');
-    if(W.stasis) lines.push(`STASIS ${W.stasis.active? '🔒 מסילות-הון נעולות (הוראת-בעלים)' : '🔓 מסילות-הון פתוחות'}`);
+    if(W.stasis) lines.push('STASIS ' + stasisLabel(W.stasis));
     if(W.treasury) lines.push(`הון-מדוד: STEEM ${nf.format(Math.round(W.treasury.steem?.effective_power||0))} SP · HIVE ${nf.format(Math.round(W.treasury.hive?.effective_power||0))} HP`);
   } else if(kind==='value'){
     lines = [];
@@ -944,6 +971,7 @@ async function poll(){
     W.roster = l?.crew?.workers || []; if(l?.crew?.lead) W.roster = [l.crew.lead, ...W.roster];
     W.books = l?.books?.list || []; W.shifts = l?.shifts?.total ?? 0;
     W.goals = l?.nextGoals || []; W.lesson = l?.lesson || ''; W.stasis = l?.stasis || null;
+    applyStasisGate();
     document.getElementById('shifts').textContent = W.shifts || '—';
     setFeed('live', true, feedNote(l.generatedAt, FRESH_MIN.live)); any = true;
   }catch{ setFeed('live', false, 'נפל'); }
@@ -1045,7 +1073,7 @@ function renderCommand(){
   if(W.venturesCounts && Object.keys(W.venturesCounts).length)
     pot += `<div class="kv"><span>מיזמים (Z-31)</span><b>${Object.entries(W.venturesCounts).map(([k,v])=>`${k}=${v}`).join(' · ')}</b></div>`;
   else pot += `<div class="note">${W.feeds.ventures?.ok? 'הפיד חי — אין מיזמים רשומים כרגע.' : 'פיד-המיזמים נפל — אין נתונים, ולא נמציא.'}</div>`;
-  if(W.stasis) pot += `<div class="li"><b>STASIS: ${W.stasis.active? '🔒 מסילות-הון נעולות' : '🔓 פתוחות'}</b> — ${W.stasis.note||''}</div>`;
+  if(W.stasis) pot += `<div class="li"><b>STASIS: ${stasisLabel(W.stasis)}</b> — ${W.stasis.note||''}</div>`;
   if(W.treasury) pot += `<div class="li">הון-מדוד (grid-truth): STEEM <b>${nf.format(Math.round(W.treasury.steem?.effective_power||0))} SP</b> + ${nf.format(Math.round(W.treasury.steem?.liquid||0))} נזיל · HIVE <b>${nf.format(Math.round(W.treasury.hive?.effective_power||0))} HP</b> + ${nf.format(Math.round(W.treasury.hive?.liquid||0))} נזיל · BLURT ${Math.round(W.treasury.blurt?.liquid||0)} נזיל</div>`;
   document.getElementById('cmd-potential').innerHTML = `<h3>מה הפוטנציאל? — מיזמים ומסילות</h3>` + pot;
   // מה נותן ערך — יעדים + לקח + עורקים

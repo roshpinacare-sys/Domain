@@ -208,7 +208,8 @@ const feed = {
   stasis: {
     active: !!stasis.active,
     mode: stasis.mode || 'unknown',
-    note: 'מסילות-הון נעולות-לפי-הוראת-בעלים; המשרד = מדידה-וספרים-בלבד, אפס-שידורים',
+    allow: Array.isArray(stasis.stagedLanes && stasis.stagedLanes.allow) ? stasis.stagedLanes.allow.map(String) : [],
+    note: 'R30 (owner trace 1a12d295c7da9241): פתיחה-מלאה לפי מילת-בעלים — כל-המסילות פתוחות תחת השערים המכניים (roster/journal/caps); הבלם נשאר חמוש (active=true, mode=staged); ביטול = halt-all בשרשרת',
   },
   llm: {
     available: false,
