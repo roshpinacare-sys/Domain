@@ -51,6 +51,16 @@ const SELFMODEL = require('./selfmodel.cjs');
 const SELFMODEL_FILE = path.join(AG, 'cognition', 'organism.json');
 const SELFMODEL_MAX_AGE_H = 26; /* beat is hourly — >26h means the cognition loop is dead */
 
+/* R30 (owner full-lift, IM trace 1a12d295c7da9241, 2026-10-11): a verified directives-chain
+ * entry staged-open lanes=["*"] newer than the last halt-all IS the owner's explicit word —
+ * the lawful tamper-evident instrument this house records owner authority with. Facts vs
+ * authority: contradictions stay open in the self-model (they are observations, not
+ * permissions); the gate decision cites the lift. No valid lift on the chain → every block
+ * below behaves exactly as before (fail-closed unchanged). Revocation = append halt-all. */
+function ownerFullLift() {
+  return { lifted: CHAIN.hasEntryForLanes(['*']) };
+}
+
 function selfModelGate(lane) {
   const loaded = SELFMODEL.load(SELFMODEL_FILE);
   if (!loaded.ok) return { allow: false, reason: 'self-model-unauthenticated', detail: (loaded.errors || []).join('; ').slice(0, 140) };
@@ -61,6 +71,9 @@ function selfModelGate(lane) {
   }
   const openOnLane = (model.contradictions || []).filter((c) => c && c.status === 'open' && (!Array.isArray(c.lanes) || c.lanes.length === 0 || c.lanes.map(String).map((x) => x.toLowerCase()).includes(String(lane).toLowerCase())));
   if (openOnLane.length) {
+    if (ownerFullLift().lifted) {
+      return { allow: true, reason: 'owner-full-lift-over-contradiction', detail: 'contradiction(s) ' + openOnLane.map((c) => c.id).join(',') + ' remain OPEN (observed fact, model untouched); owner full-lift staged-open ["*"] verified on directives chain (trace 1a12d295c7da9241) = recorded risk-acceptance; revocation = append halt-all' };
+    }
     return { allow: false, reason: 'self-model-contradiction-open', detail: openOnLane.map((c) => c.id).join(',').slice(0, 120) };
   }
   const sov = model.sovereignty;
@@ -69,6 +82,9 @@ function selfModelGate(lane) {
      * grid/general (capital movement) stay closed until the owner remediates the uncovered surface. */
     const capitalLanes = (Array.isArray(sov.capitalLanes) && sov.capitalLanes.length ? sov.capitalLanes : ['grid', 'general']).map((x) => String(x).toLowerCase());
     if (capitalLanes.includes(String(lane).toLowerCase())) {
+      if (ownerFullLift().lifted) {
+        return { allow: true, reason: 'owner-full-lift-accepted-uncovered-surface', detail: 'haltCoverage stays ORGANISM_ONLY (honest — external actors remain outside stop-power); owner full-lift staged-open ["*"] verified on directives chain (trace 1a12d295c7da9241) = the R29 owner-only remediation delivered by word; revocation = append halt-all' };
+      }
       return { allow: false, reason: 'sovereignty-uncovered', detail: 'haltCoverage=ORGANISM_ONLY — proven capital paths exist outside organism stop-power (R29); owner-only remediation' };
     }
   }

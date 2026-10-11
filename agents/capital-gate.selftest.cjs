@@ -56,6 +56,14 @@ function sandbox(opts = {}) {
     else fs.writeFileSync(path.join(root, 'agents', 'STASIS.json'), typeof opts.stasis === 'string' ? opts.stasis : JSON.stringify(opts.stasis, null, 2));
   }
   if (opts.chain === 'seed') {
+    /* R30: seed = the live chain MINUS any owner full-lift ([*]) entries — the legacy
+     * vectors below describe the no-lift world and stay meaningful regardless of what
+     * the live house records. Use 'seed-lift' for the raw live chain (lift included). */
+    fs.mkdirSync(path.join(root, 'agents', 'receipts'), { recursive: true });
+    const raw = fs.readFileSync(path.join(ROOT, 'receipts', 'owner-directives.jsonl'), 'utf8');
+    const noLift = raw.split('\n').filter(Boolean).filter((l) => { try { return !((JSON.parse(l).lanes || []).includes('*')); } catch (_) { return true; } });
+    fs.writeFileSync(path.join(root, 'agents', 'receipts', 'owner-directives.jsonl'), noLift.join('\n') + '\n');
+  } else if (opts.chain === 'seed-lift') {
     fs.mkdirSync(path.join(root, 'agents', 'receipts'), { recursive: true });
     fs.writeFileSync(path.join(root, 'agents', 'receipts', 'owner-directives.jsonl'), fs.readFileSync(path.join(ROOT, 'receipts', 'owner-directives.jsonl'), 'utf8'));
   } else if (Array.isArray(opts.chain)) {
@@ -265,10 +273,21 @@ t('EMPTY template is valid (zero claims = zero risk)', sm.validate(sm.EMPTY()).o
 /* ═════════ 10) תאימות: הבית-החי (קורא-קבצים-אמיתיים; מנקה-אחרי-עצמו) ═════════ */
 const liveJournalExisted = fs.existsSync(LIVE_JOURNAL);
 const live = require(SRC);
-t('live home: staged lanes REFUSED — the live mirror self-model carries open contradictions + ORGANISM_ONLY coverage (R29 behavior change, mechanically proven on Domain too)', live.stasisHalt('market-exec') === true && live.stasisHalt('daily-claim') === true && (() => { const smv = live.selfModelGate('grid'); return smv.allow === false; })());
-t('live home file: general lane still halts (head-delegate)', live.stasisHalt('head-delegate') === true);
+/* R30 (owner full-lift, trace 1a12d295c7da9241): the live house now carries the owner's
+ * full-lift staged-open [*] on the directives chain — every canonical lane opens and the
+ * WRITTEN receipt cites the lift. The lift is authority, not fact-editing: C-002 stays
+ * open in the model, haltCoverage stays ORGANISM_ONLY, and the receipts say so. */
+t('live home: full-lift state — staged lanes OPEN (market-exec, daily-claim, head-delegate)', live.stasisHalt('market-exec') === false && live.stasisHalt('daily-claim') === false && live.stasisHalt('head-delegate') === false);
+t('live home: written allow receipts cite the owner lift (policy-gated evidence carries owner-full-lift)', (() => {
+  try {
+    const lines = fs.readFileSync(LIVE_JOURNAL, 'utf8').split('\n').filter(Boolean);
+    const tail = lines.slice(-8).map((l) => JSON.parse(l));
+    return tail.some((r) => r.decision === 'allow' && r.authority === 'policy-gated' && JSON.stringify(r.evidence).includes('owner-full-lift'));
+  } catch (_) { return false; }
+})());
+t('live home: selfModelGate cites the lift (facts untouched in the model)', live.selfModelGate('grid').allow === true && live.selfModelGate('grid').reason === 'owner-full-lift-over-contradiction' && live.selfModelGate('general').allow === true && live.selfModelGate('general').reason === 'owner-full-lift-accepted-uncovered-surface');
 const liveChain = require(path.join(ROOT, 'directivesChain.cjs')).verifyChain();
-t('live directives chain verifies (>=3 entries, genesis→halt-all→staged-open)', liveChain.ok === true && liveChain.entries.length >= 3 && liveChain.entries[1].type === 'halt-all' && liveChain.entries[2].type === 'staged-open');
+t('live directives chain verifies (>=6 entries, genesis→halt-all→staged-open→…→full-lift [*])', liveChain.ok === true && liveChain.entries.length >= 6 && liveChain.entries[1].type === 'halt-all' && liveChain.entries[2].type === 'staged-open' && liveChain.entries[liveChain.entries.length - 1].lanes.includes('*'));
 const GENESIS_HASH = '61419a4cf79ca81e9d6a774e72645ca3bde43626e89612b2dbf59d2ade8d7ae3'; /* sha256(JSON.stringify({i:0,at:"2026-10-05T00:00:00Z",type:"genesis",note:"SAOS-DIRECTIVES-CHAIN/1"})) — shared-contract constant */
 t('live directives chain genesis hash_0 equals the SAOS-DIRECTIVES-CHAIN/1 contract constant (interop with V-b beat)', liveChain.entries[0].hash === GENESIS_HASH);
 const liveGuards = require(path.join(ROOT, 'loopguard.cjs')).guardHalt('grid');
@@ -313,6 +332,38 @@ if (!liveJournalExisted && fs.existsSync(LIVE_JOURNAL)) {
   fs.rmSync(LIVE_JOURNAL);
   ORIG_LOG(' ✓ live test receipts cleaned (journal is a runtime artifact — born with the first real decision)');
 }
+
+/* ═════════ 12) R30 — owner FULL-LIFT vectors (trace 1a12d295c7da9241) ═════════ */
+const CHAINMOD = require(path.join(ROOT, 'directivesChain.cjs'));
+function chainLinesWith(appendEntries, stripLift) {
+  let base = fs.readFileSync(path.join(ROOT, 'receipts', 'owner-directives.jsonl'), 'utf8').split('\n').filter(Boolean);
+  if (stripLift) base = base.filter((l) => { try { return !((JSON.parse(l).lanes || []).includes('*')); } catch (_) { return true; } });
+  if (!base.length) throw new Error('selftest: empty chain base — cannot build R30 fixtures');
+  let prev = JSON.parse(base[base.length - 1]).hash;
+  let i = base.length;
+  const lines = base.slice();
+  for (const e of appendEntries) {
+    const entry = Object.assign({ i }, e);
+    const h = CHAINMOD.entryHash(prev, entry);
+    lines.push(JSON.stringify(Object.assign({ hash: h }, entry)));
+    prev = h; i++;
+  }
+  return lines;
+}
+const LIFT = () => [{ at: new Date().toISOString(), type: 'staged-open', trace: '1a12d295c7da9241', source: 'selftest R30', lanes: ['*'], note: 'owner full-lift' }];
+const OPEN_C_ON_GRID = () => [{ id: 'C-x', status: 'open', epistemic: 'OBSERVED', confidence: 0.9, lanes: ['grid'], a: 'a', b: 'b', kind: 'k', title: 't', detail: 'd', firstSeen: new Date().toISOString() }];
+
+c = sandbox({ stasis: STAGED(['grid', 'claims']), chain: chainLinesWith(LIFT()), guards: 'empty', selfmodel: CLEAN_SELFMODEL({ contradictions: OPEN_C_ON_GRID() }) });
+t('R30-A: owner full-lift lifts an OPEN contradiction — grid ALLOW, receipt cites lift-over-contradiction (the fact stays open in the model)', c.g.stasisHalt('market-exec') === false && receiptsOf(c.root).some((r) => r.decision === 'allow' && JSON.stringify(r.evidence).includes('owner-full-lift-over-contradiction')));
+
+c = sandbox({ stasis: STAGED(['grid', 'general']), chain: chainLinesWith(LIFT()), guards: 'empty', selfmodel: CLEAN_SELFMODEL({ sovereignty: { protocol: 'SAOS-SOVEREIGNTY/1', haltCoverage: 'ORGANISM_ONLY', cannotStop: ['money-family-live'], capitalPaths: [], capitalLanes: ['grid', 'general'] } }) });
+t('R30-B: full-lift accepts the uncovered surface — general (head-delegate) ALLOW via lift-accepted-uncovered-surface', c.g.stasisHalt('head-delegate') === false && receiptsOf(c.root).some((r) => r.decision === 'allow' && JSON.stringify(r.evidence).includes('owner-full-lift-accepted-uncovered-surface')));
+
+c = sandbox({ stasis: STAGED(['grid']), chain: chainLinesWith([...LIFT(), { at: new Date().toISOString(), type: 'halt-all', trace: 'owner-stop', source: 'selftest R30', note: 'owner re-freeze after the lift' }]), guards: 'empty', selfmodel: CLEAN_SELFMODEL({ contradictions: OPEN_C_ON_GRID() }) });
+t('R30-C: a halt-all AFTER the lift kills it mechanically — grid REFUSED again (shrink always wins, staged-open must be newer)', c.g.stasisHalt('market-exec') === true && linesOf(c).some((l) => /staged-lane-lacks-directive-entry/.test(l)));
+
+c = sandbox({ stasis: STAGED(['grid']), chain: chainLinesWith([{ at: new Date().toISOString(), type: 'staged-open', trace: '', source: 'selftest R30', lanes: ['*'], note: 'trace-less lift attempt — must be rejected' }], true), guards: 'empty', selfmodel: CLEAN_SELFMODEL({ contradictions: OPEN_C_ON_GRID() }) });
+t('R30-D: a [*] entry WITHOUT trace is not authority — grid REFUSED (fail-closed, no silent lift)', c.g.stasisHalt('market-exec') === true && linesOf(c).some((l) => /self-model-contradiction-open/.test(l)));
 
 console.log = ORIG_LOG;
 for (const s of SANDBOXES) fs.rmSync(s, { recursive: true, force: true });
