@@ -49,6 +49,7 @@ jobs:
           : > /tmp/probe.tsv
           measure() {
             local name="$1" pat="$2" loud="$3"
+            pat=$(printf '%s' "${pat}" | tr -d '[:space:][:cntrl:]')
             if [ -z "${pat}" ]; then
               printf '%s\tMISSING\t-\t-\t-\t-\t-\n' "${name}" >> /tmp/probe.tsv
               [ "${loud}" = "1" ] && echo "::error::${name} secret missing in Domain — add it in repo Settings→Secrets→Actions"
@@ -101,6 +102,7 @@ jobs:
           import base64, json, os, urllib.request
           name = os.environ["SRC_NAME"]
           val = os.environ.get("SRC_" + name, "")
+          val = "".join(val.split())  # defensive: strip whitespace/newlines from paste
           def api(method, url, tok, payload=None):
               data = json.dumps(payload).encode() if payload is not None else None
               r = urllib.request.Request(url, data=data, method=method)
