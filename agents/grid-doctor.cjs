@@ -10,11 +10,18 @@
  *
  * Lane: measurement-only. STASIS explicitly keeps measurement lanes running.
  * Outputs:
- *   agents/grid-truth.json — machine book (append-per-run schema, latest wins)
- *   agents/grid-truth.md   — human book with per-account table + alerts
+ *   agents/grid-truth.json          — machine book (append-per-run schema, latest wins)
+ *   agents/grid-truth.md            — human book with per-account table + alerts
+ *   agents/grid-truth-history.jsonl — append-only compact history (drift math + training)
+ * v2 certainty layer (owner directive: verify, train, refine until certain):
+ *   + DRIFT alerts — per-account liquid/power delta vs previous committed snapshot
+ *   + open-order measurement (condenser_api.get_open_orders) — locked funds are measured,
+ *     not guessed; TREASURY-UNDERFLOOR now discounts locked funds before alarming
+ *   + PHANTOM-CLAIM reconciliation — roster.claims holds numbers asserted by plans/books;
+ *     anything that contradicts live chain is flagged as phantom (the 4001-SP disease)
  * Alert kinds:
  *   ACCOUNT-MISSING | VP-EMPTY | VP-LOW | INACTIVE | STRANDED-CAPITAL |
- *   TREASURY-UNDERFLOOR | RPC-DEAD
+ *   TREASURY-UNDERFLOOR | RPC-DEAD | DRIFT-LIQUID | DRIFT-POWER | PHANTOM-CLAIM
  * Exit code: always 0 (observability must never be gated) — alerts are in the book.
  */
 'use strict';
@@ -47,6 +54,126 @@ async function rpc(chain, base, method, params, timeoutMs = 20000) {
 
 function vestsToToken(v) { return Number(String(v).split(' ')[0]) / 1e6; }
 function tok(v) { return Number(String(v).split(' ')[0]); }
+function r3(x) { return Math.round(x * 1000) / 1000; }
+
+// ---- v2: open orders (locked capital is a fact, measure it) ----
+// for_sale is in satoshi units (precision 3); sell_price.base is the formatted asset
+// string (e.g. "4.621 STEEM") — parse from there, fall back to for_sale/1000.
+async function openOrders(chain, base, name) {
+  try {
+    const res = await rpcRetry(chain, base, 'condenser_api.get_open_orders', [name], 2);
+    const rows = Array.isArray(res) ? res : [];
+    const byAsset = {};
+    for (const o of rows) {
+      const m = String((o.sell_price && o.sell_price.base) || '').match(/^([\d.]+)\s+(\S+)$/);
+      const sym = m ? m[2] : (chain === 'hive' ? 'HIVE' : 'STEEM');
+      const val = m ? Number(m[1]) : (Number(o.for_sale) || 0) / 1000;
+      byAsset[sym] = r3((byAsset[sym] || 0) + val);
+    }
+    return { count: rows.length, locked: byAsset };
+  } catch (e) {
+    return { count: null, locked: {}, error: String(e.message || e).slice(0, 80) };
+  }
+}
+
+function lockedOf(acc, chain) {
+  const lk = (acc.orders && acc.orders.locked) || {};
+  const base = chain === 'hive' ? 'HIVE' : 'STEEM';
+  const debt = chain === 'hive' ? 'HBD' : 'SBD';
+  return { base: lk[base] || 0, debt: lk[debt] || 0 };
+}
+
+// ---- v2: drift vs previous snapshot ----
+function driftAlerts(chain, acc, prev) {
+  const alerts = [];
+  if (!prev) return alerts;
+  const exp = (ROSTER.expectations && ROSTER.expectations.drift) || {};
+  const liqAbs = Number(exp.liquid_abs != null ? exp.liquid_abs : 5);
+  const powAbs = Number(exp.power_abs != null ? exp.power_abs : 1.0);
+  const chainPrev = prev.chains && prev.chains[chain];
+  const prevAcc = chainPrev && (chainPrev.accounts || []).find(a => a.account === acc.account);
+  if (!prevAcc) return alerts;
+  if (acc.liquid !== undefined && prevAcc.liquid !== undefined) {
+    // v2.1: drift on AVAILABLE capital (liquid + locked-in-orders) — raw liquid
+    // bounces every grid-lane tick as orders lock/unlock, which is noise, not signal.
+    const curAvail = acc.liquid + lockedOf(acc, chain).base;
+    const prevAvail = prevAcc.liquid + lockedOf(prevAcc, chain).base;
+    const d = r3(curAvail - prevAvail);
+    if (Math.abs(d) >= liqAbs) {
+      alerts.push({ kind: 'DRIFT-LIQUID', detail: 'available (liquid+locked) ' + r3(prevAvail) + ' -> ' + r3(curAvail) + ' (delta ' + (d > 0 ? '+' : '') + d + ' ' + chain.toUpperCase() + ') — verify this movement is ours (grid lane / arming) else investigate' });
+    }
+  }
+  if (acc.effective_power !== undefined && prevAcc.effective_power !== undefined) {
+    const d = r3(acc.effective_power - prevAcc.effective_power);
+    if (Math.abs(d) >= powAbs) {
+      alerts.push({ kind: 'DRIFT-POWER', detail: 'eff power ' + prevAcc.effective_power + ' -> ' + acc.effective_power + ' (delta ' + (d > 0 ? '+' : '') + d + ' ' + chain.toUpperCase() + 'P) — expected only from arming/delegation, else investigate' });
+    }
+  }
+  return alerts;
+}
+
+// ---- v2: phantom-claim reconciliation ----
+function claimAlerts(chainsOut) {
+  const alerts = [];
+  const claims = (ROSTER.claims) || [];
+  for (const c of claims) {
+    let measured = null;
+    try {
+      measured = 0;
+      const chainScope = (!c.chain || c.chain === 'fleet') ? Object.keys(chainsOut) : [c.chain];
+      for (const chain of chainScope) {
+        const cfg = chainsOut[chain];
+        if (!cfg) continue;
+        for (const a of cfg.accounts) {
+          if (c.account && a.account !== c.account) continue;
+          measured += (a[c.metric] || 0);
+        }
+      }
+    } catch (e) { continue; }
+    if (c.claimed === undefined) continue;
+    const ratio = c.claimed === 0 ? (measured === 0 ? 1 : Infinity) : measured / c.claimed;
+    if (ratio < 0.9 || ratio > 1.1) {
+      alerts.push({
+        kind: 'PHANTOM-CLAIM',
+        detail: 'claim "' + (c.id || 'unnamed') + '" asserts ' + c.claimed + ' ' + (c.label || c.metric) +
+          ' but chain measures ' + r3(measured) + ' (ratio ' + (ratio === Infinity ? 'infinite' : Math.round(ratio * 100) + '%') + ')' +
+          (c.source ? ' — source: ' + c.source : '') + ' — book is a ghost, correct the plan'
+      });
+    }
+  }
+  return alerts;
+}
+
+// ---- v2: roster-vs-roster reconciliation (the two-books disease) ----
+function rosterAlerts(chainsOut) {
+  const alerts = [];
+  try {
+    const fr = JSON.parse(fs.readFileSync(path.join(AG, 'fleet-roster.json'), 'utf8'));
+    const fleet = (fr.steemFleet || []).map(String);
+    const banned = (fr.bannedCapital || []).map(b => String(b.name || b));
+    const audited = new Set((chainsOut.steem && chainsOut.steem.accounts || []).map(a => a.account));
+    for (const n of fleet) {
+      if (!audited.has(n)) {
+        alerts.push({ kind: 'ROSTER-DIVERGENCE', detail: 'fleet-roster member "' + n + '" (owner-authorized) is NOT audited by grid-roster — add it, the chain referees between books' });
+      }
+    }
+    for (const b of banned) {
+      if (!audited.has(b)) {
+        alerts.push({ kind: 'ROSTER-DIVERGENCE', detail: 'bannedCapital account "' + b + '" (owner-authorized) is NOT audited by grid-roster — add it' });
+        continue;
+      }
+      // bannedCapital semantics: capital must never FLOW INTO these accounts.
+      const acc = (chainsOut.steem.accounts || []).find(a => a.account === b);
+      if (acc && (acc.delegated_in || 0) > 0.001) {
+        alerts.push({ kind: 'BANNED-CAPITAL-INFLOW', detail: 'banned account "' + b + '" holds ' + acc.delegated_in + ' SP delegated IN — capital lane violated the ban, reclaim or justify' });
+      }
+    }
+    if (fr.head && chainsOut.steem && !audited.has(fr.head)) {
+      alerts.push({ kind: 'ROSTER-DIVERGENCE', detail: 'fleet head "' + fr.head + '" not audited' });
+    }
+  } catch (e) { /* fleet-roster unreadable — skip silently, audit must never gate */ }
+  return alerts;
+}
 
 async function rcPct(chain, base, name) {
   if (chain === 'blurt') return null; // no rc_api assumed
@@ -77,13 +204,15 @@ async function auditAccount(chain, base, spec, exp) {
     if (!a) { out.alerts.push({ kind: 'ACCOUNT-MISSING', detail: 'not found on ' + chain }); return out; }
     const ves = tok(a.vesting_shares), del = tok(a.delegated_vesting_shares), rec = tok(a.received_vesting_shares);
     const effVes = ves - del + rec;
-    out.effective_power = effVes / 1e6; // SP / HP / BP
+    out.effective_power = r3(effVes / 1e6); // SP / HP / BP
     out.liquid = tok(a.balance);
     out.sbd_like = tok(a.sbd_balance);
-    out.delegated_out = del / 1e6;
-    out.delegated_in = rec / 1e6;
+    out.delegated_out = r3(del / 1e6);
+    out.delegated_in = r3(rec / 1e6);
     out.created = a.created;
     out.last_post = a.last_post;
+    // v2: locked capital measured, not guessed
+    out.orders = chain === 'blurt' ? { count: null, locked: {}, error: 'blurt open-orders api not assumed' } : await openOrders(chain, base, name);
     // voting power from manabar relative to effective vesting
     let vp = null;
     if (a.voting_manabar && effVes > 0) {
@@ -108,10 +237,16 @@ async function auditAccount(chain, base, spec, exp) {
     if (/keyless/.test(spec.role) && out.liquid > (exp.keyless_no_liquid_above || 1)) {
       out.alerts.push({ kind: 'STRANDED-CAPITAL', detail: 'keyless account holds ' + out.liquid + ' ' + chain.toUpperCase() + ' liquid — no custody, unrecoverable without key recovery' });
     }
+    // v2: floor check now discounts measured locked funds (orders are liquid capital in waiting)
     const floorKey = chain + ':' + name;
     const floor = exp.treasury_liquid_floor && exp.treasury_liquid_floor[floorKey];
-    if (floor !== undefined && out.liquid < floor) {
-      out.alerts.push({ kind: 'TREASURY-UNDERFLOOR', detail: 'liquid ' + out.liquid + ' below floor ' + floor + ' (note: grid ladder locks funds in open orders — check orders before panicking)' });
+    if (floor !== undefined) {
+      const lockedSym = chain === 'hive' ? 'HIVE' : 'STEEM';
+      const locked = (out.orders && out.orders.locked && out.orders.locked[lockedSym]) || 0;
+      const available = out.liquid + locked;
+      if (available < floor) {
+        out.alerts.push({ kind: 'TREASURY-UNDERFLOOR', detail: 'liquid ' + out.liquid + ' + locked-in-orders ' + locked + ' = ' + r3(available) + ' below floor ' + floor });
+      }
     }
   } catch (e) {
     out.alerts.push({ kind: 'RPC-DEAD', detail: String(e.message || e).slice(0, 120) });
@@ -119,14 +254,21 @@ async function auditAccount(chain, base, spec, exp) {
   return out;
 }
 
+const HISTORY_MAX_LINES = 500;
+
 async function main() {
   const exp = ROSTER.expectations || {};
+  // v2: snapshot previous book BEFORE overwrite — drift is measured against it
+  let prev = null;
+  try { prev = JSON.parse(fs.readFileSync(OUT_JSON, 'utf8')); } catch (e) { prev = null; }
   const chainsOut = {};
   const allAlerts = [];
   for (const [chain, cfg] of Object.entries(ROSTER.chains)) {
     const results = [];
     for (const spec of cfg.accounts) {
       const r = await auditAccount(chain, cfg.rpc, spec, exp);
+      // v2: drift vs previous committed snapshot
+      for (const al of driftAlerts(chain, r, prev)) r.alerts.push(al);
       results.push(r);
       for (const al of r.alerts) allAlerts.push(chain + ':' + r.account + ' ' + al.kind + ' — ' + al.detail);
     }
@@ -136,42 +278,81 @@ async function main() {
   const totals = {};
   for (const [chain, c] of Object.entries(chainsOut)) {
     totals[chain] = {
-      effective_power: Math.round(c.accounts.reduce((s, a) => s + (a.effective_power || 0), 0) * 1000) / 1000,
-      liquid: Math.round(c.accounts.reduce((s, a) => s + (a.liquid || 0), 0) * 1000) / 1000,
+      effective_power: r3(c.accounts.reduce((s, a) => s + (a.effective_power || 0), 0)),
+      liquid: r3(c.accounts.reduce((s, a) => s + (a.liquid || 0), 0)),
+      locked_in_orders: r3(c.accounts.reduce((s, a) => {
+        const sym = chain === 'hive' ? 'HIVE' : 'STEEM';
+        const sbdLike = chain === 'hive' ? 'HBD' : 'SBD';
+        const lk = (a.orders && a.orders.locked) || {};
+        return s + (lk[sym] || 0);
+      }, 0)),
       accounts_alive: c.accounts.filter(a => !a.alerts.some(x => x.kind === 'ACCOUNT-MISSING')).length
     };
   }
 
+  // v2: reconcile asserted claims against measured reality
+  const phantomAlerts = claimAlerts(chainsOut);
+  for (const al of phantomAlerts) allAlerts.push('claims ' + al.kind + ' — ' + al.detail);
+  // v2: roster-vs-roster divergence (fleet-roster is owner-authorized canon)
+  const rosterAl = rosterAlerts(chainsOut);
+  for (const al of rosterAl) allAlerts.push('roster ' + al.kind + ' — ' + al.detail);
+
   const book = {
-    schema: 'saos/grid-truth/1',
+    schema: 'saos/grid-truth/2',
     generatedAt: nowIso(),
-    by: 'grid-doctor',
+    by: 'grid-doctor v2',
     source: 'live chain RPC (api.steemit.com, api.hive.blog, blurt-rpc.saboin.com) — zero self-reports',
+    driftVs: prev && prev.generatedAt ? prev.generatedAt : null,
     totals,
     chains: chainsOut,
+    claims: phantomAlerts,
     alerts: allAlerts
   };
   fs.writeFileSync(OUT_JSON, JSON.stringify(book, null, 2) + '\n');
+
+  // v2: append-only compact history (drift math + grid training over time)
+  const histPath = path.join(AG, 'grid-truth-history.jsonl');
+  try {
+    const histLine = JSON.stringify({
+      at: book.generatedAt,
+      totals,
+      alertCount: allAlerts.length,
+      alertKinds: allAlerts.map(a => a.split(' ')[1]).filter(Boolean)
+    }) + '\n';
+    let old = '';
+    try { old = fs.readFileSync(histPath, 'utf8'); } catch (e) {}
+    const lines = (old ? old.trim().split('\n') : []).concat(histLine.trim());
+    fs.writeFileSync(histPath, lines.slice(-HISTORY_MAX_LINES).join('\n') + '\n');
+  } catch (e) { console.error('history-append-failed', e.message); }
 
   const lines = [];
   lines.push('# GRID-TRUTH · ' + book.generatedAt + ' (live RPC, read-only)');
   lines.push('');
   lines.push('The anti-phantom book: every number below was measured from the chain this run.');
+  if (book.driftVs) lines.push('Drift measured vs previous snapshot: ' + book.driftVs);
   lines.push('');
-  lines.push('| chain | total effective power | total liquid | accounts alive |');
-  lines.push('|---|---|---|---|');
+  lines.push('| chain | total effective power | total liquid | locked in orders | accounts alive |');
+  lines.push('|---|---|---|---|---|');
   for (const [c, t] of Object.entries(totals)) {
-    lines.push('| ' + c + ' | ' + t.effective_power + ' | ' + t.liquid + ' | ' + t.accounts_alive + ' |');
+    lines.push('| ' + c + ' | ' + t.effective_power + ' | ' + t.liquid + ' | ' + (t.locked_in_orders || 0) + ' | ' + t.accounts_alive + ' |');
   }
   lines.push('');
   for (const [c, cfg] of Object.entries(chainsOut)) {
     lines.push('## ' + c.toUpperCase());
     lines.push('');
-    lines.push('| account | role | eff power | liquid | VP% | RC% | last post | alerts |');
-    lines.push('|---|---|---|---|---|---|---|---|');
+    lines.push('| account | role | eff power | liquid | locked | VP% | RC% | last post | alerts |');
+    lines.push('|---|---|---|---|---|---|---|---|---|');
     for (const a of cfg.accounts) {
-      lines.push('| ' + a.account + ' | ' + (a.role || '') + ' | ' + (a.effective_power !== undefined ? a.effective_power : '—') + ' | ' + (a.liquid !== undefined ? a.liquid : '—') + ' | ' + (a.voting_power_pct === null || a.voting_power_pct === undefined ? '—' : a.voting_power_pct) + ' | ' + (a.rc_pct === null || a.rc_pct === undefined ? '—' : a.rc_pct) + ' | ' + (a.last_post || '—').slice(0, 10) + ' | ' + a.alerts.map(x => x.kind).join(',') + ' |');
+      const sym = c === 'hive' ? 'HIVE' : 'STEEM';
+      const locked = a.orders && a.orders.locked ? Object.entries(a.orders.locked).map(([k, v]) => v + ' ' + k).join('+') : '—';
+      lines.push('| ' + a.account + ' | ' + (a.role || '') + ' | ' + (a.effective_power !== undefined ? a.effective_power : '—') + ' | ' + (a.liquid !== undefined ? a.liquid : '—') + ' | ' + locked + ' | ' + (a.voting_power_pct === null || a.voting_power_pct === undefined ? '—' : a.voting_power_pct) + ' | ' + (a.rc_pct === null || a.rc_pct === undefined ? '—' : a.rc_pct) + ' | ' + (a.last_post || '—').slice(0, 10) + ' | ' + a.alerts.map(x => x.kind).join(',') + ' |');
     }
+    lines.push('');
+  }
+  if (phantomAlerts.length) {
+    lines.push('## PHANTOM-CLAIMS (books that contradict the chain)');
+    lines.push('');
+    for (const al of phantomAlerts) lines.push('- ' + al.detail);
     lines.push('');
   }
   lines.push('## ALERTS (' + allAlerts.length + ')');
@@ -181,7 +362,7 @@ async function main() {
   lines.push('');
   fs.writeFileSync(OUT_MD, lines.join('\n') + '\n');
 
-  console.log('GRID-DOCTOR-DONE accounts=' + Object.values(chainsOut).reduce((s, c) => s + c.accounts.length, 0) + ' alerts=' + allAlerts.length);
+  console.log('GRID-DOCTOR-DONE accounts=' + Object.values(chainsOut).reduce((s, c) => s + c.accounts.length, 0) + ' alerts=' + allAlerts.length + ' phantomClaims=' + phantomAlerts.length);
   for (const al of allAlerts) console.log('GRID-ALERT ' + al);
 }
 

@@ -6,44 +6,169 @@
     "steem": {
       "rpc": "https://api.steemit.com",
       "accounts": [
-        {"name": "headcorner", "role": "treasury+poster+grid"},
-        {"name": "cornerstone", "role": "legacy-treasury"},
-        {"name": "haran", "role": "worker-active"},
-        {"name": "cashmachine", "role": "worker-active"},
-        {"name": "wic", "role": "worker-active"},
-        {"name": "woq", "role": "worker-active"},
-        {"name": "tov", "role": "worker-active"},
-        {"name": "hcsoldier4", "role": "worker-active"},
-        {"name": "hcsoldier5", "role": "worker-active"},
-        {"name": "hcsoldier6", "role": "worker-active"},
-        {"name": "spaminator", "role": "quarantine-vp-empty"},
-        {"name": "hcsoldier1", "role": "keyless-stranded"},
-        {"name": "hcsoldier2", "role": "keyless-stranded"},
-        {"name": "hcsoldier3", "role": "keyless-stranded"},
-        {"name": "saos", "role": "shell"},
-        {"name": "powerspan", "role": "shell"},
-        {"name": "ynet", "role": "dead"}
+        {
+          "name": "headcorner",
+          "role": "treasury"
+        },
+        {
+          "name": "cornerstone",
+          "role": "legacy-treasury"
+        },
+        {
+          "name": "haran",
+          "role": "worker-active"
+        },
+        {
+          "name": "cashmachine",
+          "role": "worker-active"
+        },
+        {
+          "name": "wic",
+          "role": "worker-active"
+        },
+        {
+          "name": "woq",
+          "role": "worker-active"
+        },
+        {
+          "name": "tov",
+          "role": "worker-active"
+        },
+        {
+          "name": "hcsoldier4",
+          "role": "worker-active"
+        },
+        {
+          "name": "hcsoldier5",
+          "role": "worker-active"
+        },
+        {
+          "name": "hcsoldier6",
+          "role": "worker-active"
+        },
+        {
+          "name": "spaminator",
+          "role": "quarantine-vp-empty"
+        },
+        {
+          "name": "hcsoldier1",
+          "role": "keyless-stranded"
+        },
+        {
+          "name": "hcsoldier2",
+          "role": "keyless-stranded"
+        },
+        {
+          "name": "hcsoldier3",
+          "role": "keyless-stranded"
+        },
+        {
+          "name": "saos",
+          "role": "shell"
+        },
+        {
+          "name": "powerspan",
+          "role": "shell"
+        },
+        {
+          "name": "ynet",
+          "role": "dead"
+        },
+        {
+          "name": "israelnews",
+          "role": "worker-active"
+        },
+        {
+          "name": "lsa",
+          "role": "worker-active"
+        },
+        {
+          "name": "macrame",
+          "role": "worker-active"
+        },
+        {
+          "name": "siq",
+          "role": "worker-active"
+        },
+        {
+          "name": "wog",
+          "role": "worker-active"
+        }
       ]
     },
     "hive": {
       "rpc": "https://api.hive.blog",
       "accounts": [
-        {"name": "cornerstone", "role": "treasury-primary"},
-        {"name": "headcorner", "role": "worker-active"}
+        {
+          "name": "cornerstone",
+          "role": "treasury-primary"
+        },
+        {
+          "name": "headcorner",
+          "role": "worker-active"
+        }
       ]
     },
     "blurt": {
       "rpc": "https://blurt-rpc.saboin.com",
       "accounts": [
-        {"name": "cornerstone", "role": "connect-target"},
-        {"name": "headcorner", "role": "worker-active"}
+        {
+          "name": "cornerstone",
+          "role": "connect-target"
+        },
+        {
+          "name": "headcorner",
+          "role": "worker-active"
+        }
       ]
     }
   },
   "expectations": {
     "vp_floor_pct": 20,
     "active_post_max_age_days": 7,
-    "treasury_liquid_floor": {"steem:headcorner": 90, "hive:cornerstone": 10000, "blurt:cornerstone": 60},
-    "keyless_no_liquid_above": 1
+    "treasury_liquid_floor": {
+      "steem:headcorner": 90,
+      "hive:cornerstone": 10000,
+      "blurt:cornerstone": 60
+    },
+    "keyless_no_liquid_above": 1,
+    "drift": {
+      "liquid_abs": 5,
+      "power_abs": 1.0
+    }
+  },
+  "claims": [
+    {
+      "id": "recovery-plan-fleet-steem-power",
+      "chain": "steem",
+      "account": null,
+      "metric": "effective_power",
+      "claimed": 4001,
+      "label": "SP fleet total",
+      "source": "Sandbox/ops/SOVEREIGN-RECOVERY-PLAN-2026-10-11.md (pre-correction book)"
+    },
+    {
+      "id": "recovery-plan-headcorner-sp",
+      "chain": "steem",
+      "account": "headcorner",
+      "metric": "effective_power",
+      "claimed": 3676,
+      "label": "SP headcorner",
+      "source": "Sandbox/ops/SOVEREIGN-RECOVERY-PLAN-2026-10-11.md (pre-correction book)"
+    }
+  ],
+  "rosterReconciliation": {
+    "at": "2026-10-11T16:30:00Z",
+    "by": "zai-sec-1a12af86",
+    "authority": "agents/fleet-roster.json (owner directive 2026-10-04, trace 1a108e28015b0451)",
+    "union": "grid-roster \u222a fleet-roster.steemFleet \u2014 chain is the referee",
+    "bannedCapital": [
+      "hcsoldier1",
+      "hcsoldier2",
+      "hcsoldier3",
+      "ynet",
+      "headcorner"
+    ],
+    "note": "delegation wave 15:18Z+15:48Z armed this exact fleet from headcorner (~1.13 SP, measured live)"
   }
 }
