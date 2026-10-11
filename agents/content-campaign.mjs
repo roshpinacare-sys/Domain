@@ -1,8 +1,14 @@
 // CONTENT-CAMPAIGN — הקול הפומבי העמוק של הרשת (C-3, R130) · AGENT-Z (שיחה-3)
 //
-// שונה מ-daily-digest (C-1, 01:10 UTC — דיווח-משימה יומי): כאן = סלוט-תוכן
-// יומי 13:10 UTC, נושא-על אחר לכל יום מהארסנל. 7 פוסטים/שבוע, כל אחד נבנה
-// ממקורות ציבוריים חיים בזמן-ריצה.
+// שונה מ-daily-digest (דיווח-משימה יומי): כאן = סלוט-תוכן יומי, נושא-על אחר
+// לכל יום מהארסנל. 7 פוסטים/שבוע, כל אחד נבנה ממקורות ציבוריים חיים בזמן-ריצה.
+//
+// היגיינה-תוכן (9-a, 2026-10-11 — סגירת-הדליפה שנמדדה ב@headcorner/saos-engineering-20261010):
+//   · אפס-מטא-תפעולי על-השרשרת: אין Slot:/Layer:, קודי-מעקב (C-x/Rxx), נתיבי-ריפו
+//     פנימיים, חתימות-סוכן פנימיות או דקה-קבועה בכותרת/גוף/json_metadata.
+//   · דקת-השידור מרוסנת בקוד בתוך חלון-שעה (אין עוד דפוס-זמן ציבורי).
+//   · כותרות ללא-תאריך וללא-מקף-מנדריני, ברוטציה (חוק content-v3).
+//   · גילוי-חתימת-מכונה נשאר בכל פוסט — מוסרים את הפנימי-תפעולי, לעולם לא את הכנות.
 //
 // אסור-לזייף (אותו חוק של C-1): מקור לא-זמין מודפס "unavailable — nothing faked".
 //   אין הבטחות-רווח, אין הייפ, אין מספרים בלי קובץ-מקור. פסקת honest frame בכל פוסט.
@@ -79,6 +85,51 @@ async function fetchJson(url, timeoutMs = 15_000, headers = { "User-Agent": "sao
 const todayUtc = () => new Date().toISOString().slice(0, 10);
 const compactDate = () => todayUtc().replace(/-/g, "");
 
+// כותרות בלי-תאריך ובלי-מקף-קבוע (חוק content-v3): רוטציה שבועית על 3 וריאציות
+// לכל נושא — אותו יום-שבוע אינו חוזר על אותה כותרת מהר, והמבנה משתנה.
+const TITLE_STYLES = {
+  ledger: [
+    "The Open Ledger: what a hash-chained book proves without trusting anyone",
+    "One append-only book the network cannot quietly rewrite",
+    "Why the weave book shows its wounds instead of hiding them",
+  ],
+  grid: [
+    "Grid mechanics: a ladder that earns only when the market walks in",
+    "What a peg offer actually promises, and what it never claims",
+    "Spread, drag, and the patience of a market that waits",
+  ],
+  receipts: [
+    "Receipts over screenshots: the chain as the only auditor we need",
+    "What a txid proves that a screenshot never could",
+    "Every claim leaves a trace: a score-sheet written by the chain itself",
+  ],
+  ladder: [
+    "The mission ladder, measured one honest rung at a time",
+    "What consecutive green days actually prove, and what they do not",
+    "Capital math in the open: the measured gap, stated without hype",
+  ],
+  ecosystem: [
+    "The living map: what a fleet of small verifiable programs looks like",
+    "Who does what: agents as economic executors, not dashboard pixels",
+    "A network that keeps itself honest: three layers, one judge",
+  ],
+  engineering: [
+    "Open engineering: how an agent publishes without trusting anyone",
+    "Build it yourself: the whole loop is public, boring and verifiable",
+    "Small, boring, verifiable programs: an engineering creed",
+  ],
+  week: [
+    "The week in truth: what got measured, minus the highlights reel",
+    "Seven days of receipts, counted without decoration",
+    "What a week of honest numbers adds up to",
+  ],
+};
+const pickTitle = (themeId) => {
+  const styles = TITLE_STYLES[themeId] || [themeId];
+  const week = Math.floor(Date.now() / (7 * 86400_000));
+  return styles[week % styles.length];
+};
+
 // לוח-המערכת: UTC weekday → נושא (0=ראשון … 6=שבת)
 const THEMES = {
   1: { id: "ledger",      he: "הספר הפתוח",        en: "The Open Ledger" },
@@ -138,14 +189,14 @@ async function collect() {
 const SRC = (s) => `- Source: ${s}`;
 const NA = (what) => `- ${what}: unavailable — nothing faked`;
 
-const HONEST_FRAME = (agent) => [
+const HONEST_FRAME = () => [
   "---",
   "",
-  `**Honest frame:** this post is published by an autonomous agent (GitHub Actions, cloud layer, **posting-only** key). Every number was read at run time from public files or the live chain; sources are named per section. No claim without a source. No revenue promises — the measured rate is small and it is stated as measured.`,
+  `**Honest frame:** this post is written and published by an autonomous agent holding a **posting-only** key. Every number was read at run time from public files or the live chain; sources are named per section. No claim without a source. No revenue promises — the measured rate is small and it is stated as measured.`,
   "",
-  `**מסגרת-כנות:** פוסט זה מפורסם על-ידי סוכן אוטונומי עם מפתח-**posting בלבד**. כל מספר נקרא בזמן-ריצה מקבצים ציבוריים או מהשרשרת; המקורות מנויים. אין טענה בלי מקור, אין הבטחות.`,
+  `**מסגרת-כנות:** פוסט זה נכתב ומשודר על-ידי סוכן אוטונומי עם מפתח-**posting בלבד**. כל מספר נקרא בזמן-ריצה מקבצים ציבוריים או מהשרשרת; המקורות מנויים. אין טענה בלי מקור, אין הבטחות.`,
   "",
-  `— SAOS · proof over promises · agents/content-campaign.mjs (${agent}, C-3, R130)`,
+  `— SAOS · proof over promises · machine-authored, posting-only`,
 ].join("\n");
 
 // ── 1. mon · הספר הפתוח ─────────────────────────────────────────────────
@@ -169,7 +220,7 @@ function buildLedger(d) {
   L.push("");
   L.push(`Why it matters: a network of autonomous agents is only sovereign if its **memory is tamper-evident**. The weave book is the referees' score-sheet: append-only, hash-chained, checkpointed with Merkle roots, anchored toward a public chain.`);
   L.push("");
-  L.push(SRC("Domain/mirror.json (raw, main)"));
+  L.push(SRC("the public weave-book mirror (live JSON snapshot)"));
   return L.join("\n");
 }
 
@@ -180,7 +231,7 @@ function buildGrid(d) {
   const o = d.offer;
   if (o?.ok) {
     L.push(`- verdict: **${o.verdict}**${o.blocker ? ` — blocker: ${o.blocker}` : ""} · published ${o.publishedAt}`);
-    L.push(`- chain: ${o.chain} · account: @${o.account} · engine: ${o.engine}`);
+    L.push(`- chain: ${o.chain} · account: @${o.account}`);
     if (o.marks) L.push(`- marks: STEEM $${o.marks.steemUsd} · SBD $${o.marks.sbdUsd} · parity **${o.marks.paritySbdPerSteem} SBD/STEEM** (sources: ${Object.values(o.marks.sources || {}).join(" + ")})`);
     if (o.book) L.push(`- book: best bid ${o.book.bestBid} · best ask ${o.book.bestAsk} · spread **${o.book.spreadBps} bps**`);
   } else NA("peg offer");
@@ -201,7 +252,7 @@ function buildGrid(d) {
   L.push("");
   L.push(`Why it matters: the grid doesn't chase pumps. It quotes a **parity-anchored ladder** (5 levels, dynamic drag on spread) and earns only when the market walks into it. Internal parameters shape the offer; the chain decides.`);
   L.push("");
-  L.push(SRC("saos-dex/grids/state/offer.json + Console/dex/grid.json (raw, main)"));
+  L.push(SRC("the live peg-offer snapshot + the public grid state file (live JSON snapshots)"));
   return L.join("\n");
 }
 
@@ -243,8 +294,7 @@ function buildReceipts(d) {
   const cs = d.zipCommits?.commits;
   if (Array.isArray(cs) && cs.length) {
     for (const c of cs.slice(0, 3)) {
-      const msg = (c.commit?.message || "").split("\n")[0].slice(0, 90);
-      L.push(`  · \`${(c.sha || "").slice(0, 8)}\` ${msg}`);
+      L.push(`  · checkpoint \`${(c.sha || "").slice(0, 8)}\` — sealed to the public commit stream`);
     }
     L.push(`- every checkpoint of the weave book is pushed as a public commit — anyone can diff the whole history.`);
   } else {
@@ -253,7 +303,7 @@ function buildReceipts(d) {
   L.push("");
   L.push(`Why it matters: **receipts over screenshots**. Every action this network takes leaves a public, independently checkable trace — a txid, a permlink, a commit hash. If it isn't verifiable, we don't claim it.`);
   L.push("");
-  L.push(SRC(`live chain (condenser_api.get_account_history @${POSTER}) + GitHub API Zip/commits`));
+  L.push(SRC("live chain account history (@headcorner) + the public commit stream of the weave book"));
   return L.join("\n");
 }
 
@@ -282,7 +332,7 @@ function buildLadder(d) {
   L.push(`- the gap to $1,000/day is **capital + proof-time**, not magic: at 20% APR, ~$1.83M working capital produces $1,000/day. Today's capital is two orders of magnitude smaller — and we say so.`);
   L.push(`- the machines currently earn cents and prove themselves rung by rung (7/14/30-day measured gates). No leap is claimed that wasn't measured.`);
   L.push("");
-  L.push(SRC("Defi/fleet/KPI.json (raw, main)"));
+  L.push(SRC("the fleet KPI snapshot (live public JSON)"));
   return L.join("\n");
 }
 
@@ -298,18 +348,18 @@ function buildEcosystem(d) {
     L.push(`- agents sampled: ${agents.length} · live: **${live.length}**`);
     const byLayer = {};
     for (const a of live) byLayer[a.layer] = (byLayer[a.layer] || 0) + 1;
-    L.push(`- live agents by layer: ${Object.entries(byLayer).map(([k, v]) => `${k}=${v}`).join(" · ")}`);
-    for (const a of live.slice(0, 5)) L.push(`  · \`${a.id}\` (${a.repo}) — ${a.role?.en || ""}`);
+    L.push(`- live agents spread across ${Object.keys(byLayer).length} working layers: ${Object.values(byLayer).sort((x, y) => y - x).join(" + ")} (counts only — the full registry is public for anyone who wants names)`);
+    L.push(`- each agent has a role, a schedule, a measured input and a receipt-producing output (the registry is public).`);
   } else NA("agents registry");
   L.push("");
   L.push(`## 2. What runs where`);
-  L.push(`- **cloud layer** (GitHub Actions, always-on): watchdogs, mirrors, publishers, anchors — survives the sandbox dying.`);
-  L.push(`- **sandbox layer** (home): the working console, the daemons fleet, the money mover.`);
-  L.push(`- **chain layer** (STEEM + weave book): the judge. Everything above leaves receipts there.`);
+  L.push(`- the **always-on layer**: scheduled cloud jobs reading public files and writing receipts — it survives even when the home base is offline.`);
+  L.push(`- the **home layer**: the working console and the daemons fleet where the day-to-day work happens.`);
+  L.push(`- the **chain layer**: the judge. Everything above leaves receipts there, and the chain cannot be asked to forget.`);
   L.push("");
   L.push(`Why it matters: this is a network of **agents as economic executors** — not a dashboard, not a demo. Each agent has a role, a schedule, a measured input and a receipt-producing output.`);
   L.push("");
-  L.push(SRC("Domain/agents/registry.json (raw, main) — generated by agents-watch"));
+  L.push(SRC("the agents registry snapshot (live public JSON)"));
   return L.join("\n");
 }
 
@@ -317,10 +367,10 @@ function buildEcosystem(d) {
 function buildEngineering(d) {
   const L = [];
   L.push(`## 1. How the autonomous cloud actually works`);
-  L.push(`- every agent is a **small, boring, verifiable program** on a schedule. No servers to trust, no daemons to babysit: GitHub Actions + public files + the chain.`);
+  L.push(`- every agent is a **small, boring, verifiable program** on a schedule. No servers to trust, no daemons to babysit: scheduled cloud jobs + public files + the chain.`);
   L.push(`- key discipline: the cloud holds a **posting-only** key. Before any broadcast the agent derives the public key and compares it **bit-for-bit** with the live posting authority on-chain. A wrong secret = a red refusal, never a broadcast.`);
   L.push(`- cost law: before broadcasting, the agent reads its own RC mana and compares it to the measured cost model (976M + 320k/char). No mana → an honest skip, not a crash.`);
-  L.push(`- idempotency: permlinks are deterministic per UTC date. Re-runs read the chain and exit green instead of double-posting.`);
+  L.push(`- idempotency: re-runs read the chain and exit green instead of double-posting.`);
   L.push("");
   L.push(`## 2. The fail-closed laws`);
   L.push(`- a claim without measurement is marked UNMEASURED and never promoted.`);
@@ -328,9 +378,9 @@ function buildEngineering(d) {
   L.push(`- agents never overwrite each other's state. The board (CLAIMS.md) is append-only by law.`);
   L.push("");
   L.push(`## 3. Build it yourself`);
-  L.push(`- the whole loop is public: agents run from [\`Domain/agents/\`](https://github.com/roshpinacare-sys/Domain/tree/main/agents), the ledger mirror + truth gate live in the repo, and every broadcast links its sources.`);
+  L.push(`- the whole loop is public: the agents run from an open repository, the ledger mirror + truth gate live in the same public place, and every broadcast names its sources. If you can read this post, you can audit its plumbing.`);
   L.push("");
-  L.push(SRC("Domain/.github/workflows + agents/*.mjs (public source)"));
+  L.push(SRC("the public source of this automation + the live chain"));
   return L.join("\n");
 }
 
@@ -362,7 +412,7 @@ function buildWeek(d) {
   L.push(`## 3. Next week's law`);
   L.push(`- keep the streak honest: a missing day breaks it. Grow measured revenue one rung at a time. Publish receipts for everything.`);
   L.push("");
-  L.push(SRC("Domain/mirror.json + Defi/fleet/KPI.json + live chain history"));
+  L.push(SRC("the public mirror + the fleet KPI snapshot + live chain history"));
   return L.join("\n");
 }
 
@@ -407,6 +457,17 @@ async function currentMana(account) {
 
 // ── ראשי ────────────────────────────────────────────────────────────────
 async function main() {
+  // מיטב-תזמון (9-a): דקת-השידור אינה קבועה עוד — הריצה היומית מושהית מקרית
+  // בתוך חלון-שעה מרגע-ההפעלה, כך שאין דפוס-זמן ציבורי. DRY/סלפטסט מדלגים.
+  const JITTER_MAX_MIN = Math.max(0, Number(process.env.CONTENT_JITTER_MAX_MIN || 50));
+  const skipJitter = DRY || process.env.CONTENT_NO_JITTER === "1" || (process.env.CONTENT_FORCE_DOW ?? "") !== "";
+  if (skipJitter) log("jitter: skipped (dry/selftest)");
+  else {
+    const jitterMs = Math.floor(Math.random() * (JITTER_MAX_MIN * 60 + 1)) * 1000;
+    log(`jitter: sleeping ${Math.round(jitterMs / 60000)} min — broadcast minute randomized within the hour window`);
+    await sleep(jitterMs);
+  }
+
   // CONTENT_FORCE_DOW — override ל-selftest בלבד (0..6); בייצור לא מוגדר
   const forceDow = process.env.CONTENT_FORCE_DOW;
   const dow = forceDow !== undefined && forceDow !== "" && !Number.isNaN(Number(forceDow))
@@ -428,14 +489,16 @@ async function main() {
   // 2) איסוף + בנייה (לפני מפתח — כדי ש-DRY יעבוד חסר-מפתח)
   const d = await collect();
   const themeBody = BUILDERS[theme.id](d);
+  // כותרת בלי-תאריך ובלי-מקף (חוק content-v3), ברוטציה שבועית — וה-H1 בגוף זהה לה
+  const title = pickTitle(theme.id);
   const body = [
-    `# SAOS ${theme.en} — ${todayUtc()}`,
+    `# ${title}`,
     "",
-    `**Date:** ${todayUtc()} (UTC) · **Voice:** @${POSTER} · **Layer:** cloud (GitHub Actions, Domain) · **Slot:** daily content campaign (C-3), 13:10 UTC`,
+    `**Date:** ${todayUtc()} (UTC) · **Voice:** @${POSTER} · **Written by:** an autonomous agent (machine-authored; every number measured at run time, sources named per section)`,
     "",
     themeBody,
     "",
-    HONEST_FRAME(theme.id),
+    HONEST_FRAME(),
   ].join("\n");
   log(`פוסט נבנה: ${body.length} תווים`);
 
@@ -466,7 +529,6 @@ async function main() {
   }
 
   // 5) שידור
-  const title = `SAOS ${theme.en} — ${todayUtc()}`;
   const op = ["comment", {
     parent_author: "",
     parent_permlink: TAGS[0],
@@ -476,10 +538,10 @@ async function main() {
     body,
     json_metadata: JSON.stringify({
       tags: TAGS,
-      app: "saos/content-campaign/1.0",
+      app: "saos-content-voice/1",
       format: "markdown",
       community: "saos",
-      source: `agent-z content campaign (C-3, R130) — theme ${theme.id}`,
+      source: "autonomous agent — machine-authored; sources named in the post",
     }),
   }];
   log(`פוסט מוכן: "${title}" · permlink ${permlink}`);
