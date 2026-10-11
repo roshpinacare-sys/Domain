@@ -107,7 +107,7 @@
 <div id="app"></div>
 
 <div class="hud" id="topbar">
-  <span id="title">מפקדת הצי — החדר החי v2.6</span>
+  <span id="title">מפקדת הצי — המפקדה החיה</span>
   <span class="chip"><span class="dot pulse" id="verdict-dot"></span><b id="verdict">טוען…</b></span>
   <span class="chip">צוות <b class="val" id="crew-count">—</b></span>
   <span class="chip">משימות <b class="val" id="tasks-count">—</b></span>
@@ -178,14 +178,14 @@
 
 <div id="threshold"><div class="inner"><div id="th-text"></div><div id="th-dest"></div></div></div>
 
-<div id="brand">ריבונות אוטונומית · <a href="../">← רשת חיה</a> · <a href="../">המשרד</a> · v2.6-מפקדת-ריבונות · אפס-CDN</div>
+<div id="brand">ריבונות אוטונומית · <a href="../../">← רשת חיה</a> · <a href="../../">המשרד</a> · מפקדת-ריבונות · אפס-CDN</div>
 
 <div id="nolink"><div class="box"><h2>אין חיבור לפידים</h2>
   <p>החדר מציג נתונים אמיתיים בלבד — וכרגע אף מקור לא עונה. אין נתוני-דמה במערכת הזו, מעולם. ניסיון חוזר אוטומטי כל 30 שניות.</p>
 </div></div>
 
 <div id="glfail"><div class="box"><h2>הדפדפן לא מאפשר WebGL</h2>
-  <p>החדר התלת-ממדי דורש WebGL. הפאנלים החיים ממשיכים לעבוד ב<a href="../">עמוד הרשת החיה</a>.</p>
+  <p>החדר התלת-ממדי דורש WebGL. הפאנלים החיים ממשיכים לעבוד ב<a href="../../">עמוד הרשת החיה</a>.</p>
 </div></div>
 
 <script type="module">
@@ -1262,7 +1262,7 @@ function loop(){
       orders:(W.workOrders||[]).length, integrity:W.integrity?.overall||null, gates:(W.gates||[]).length,
       roles:{filled:(W.roles||[]).filter(r=>r.status==='FILLED').length, total:(W.roles||[]).length},
       treasury:W.treasury? {steem:Math.round(W.treasury.steem?.effective_power||0), hive:Math.round(W.treasury.hive?.effective_power||0)} : null };
-    console.info('[office3d-v2.6] ready — drawCalls', renderer.info.render.calls);
+    console.info('[office3d-command] ready — drawCalls', renderer.info.render.calls);
     setInterval(()=>{ const h = window.__office3d; if(!h) return;
       h.agents=agentGroups.size; h.verdict=W.verdict; h.feeds=W.feeds; h.world=W.world;
       h.tasks={...W.taskCounts}; h.goals=(W.goals||[]).length;
