@@ -41,6 +41,7 @@ jobs:
         run: |
           git config user.name "public-pulse"
           git config user.email "public-pulse@users.noreply.github.com"
+          node agents/redact-telemetry.mjs about/team.json public/pulse.json agents/receipts/public-pulse-receipt.json
           git add public/pulse.json about/team.json agents/receipts/public-pulse-receipt.json
           if git diff --cached --quiet; then
             echo "books unchanged"

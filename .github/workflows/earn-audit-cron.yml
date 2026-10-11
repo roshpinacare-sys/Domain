@@ -40,6 +40,7 @@ jobs:
         run: |
           git config user.name "saos-earn-audit"
           git config user.email "audit@saos.local"
+          node agents/redact-telemetry.mjs agents/earn-audit.json
           git add agents/earn-audit.json agents/earn-audit.md
           if git diff --cached --quiet; then
             echo "no audit changes"

@@ -38,6 +38,7 @@ jobs:
         run: |
           git config user.name "saos-dex-router"
           git config user.email "dex-router@fleet.local"
+          node agents/redact-telemetry.mjs agents/dex-router.json
           git add agents/dex-router.json agents/dex-router.md agents/dex-router-history.jsonl
           if git diff --cached --quiet; then
             echo "no book delta — quiet tick"
