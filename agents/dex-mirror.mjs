@@ -16,25 +16,31 @@
 //   - כתיבה רק כשיש שינוי אמיתי (בתים) — בלי קומיטים ריקים.
 //   - אפס מפתחות, אפס הזנקות: הסוכן רואה ומשקף, לא חותם ולא מזיז.
 //
-// תזמון: שעתי ב-:52 (מפת-הדקות של הצי ללא חפיפה אחת: money :02/:17/:32/:47
-// · dex-watch :09/:29/:49 · truth-gate :07 · moment :12/:42 · agents-watch :37
-// · console-publish :45 · agent-verify :55 דו-שעתי).
+// תזמון: היומי 12:50 UTC (R67-C: 3h -> daily) — כותרת-ה"שעתי :52" שבמפת-הדקות
+// (minute-map.json) וב-watch.mjs אינה תואמת עוד את ה-workflow; הפער דגל לסוכן-המסילה.
+// (סוכן 13-a, 2026-10-11: לא נגעתי בתזמון — R67-C היא החלטה מוצהרת; רק תיקנתי את התיעוד.)
 
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 
 const SRC = "https://roshpinacare-sys.github.io/Console/dex";
 const OUT_DIR = "dex";
-const FILES = ["grid.json", "world.json", "state.json", "credits.json", "portfolio.json"];
+const FILES = ["grid.json", "world.json", "state.json", "credits.json", "portfolio.json",
+               "onramp.json", "showcase.json", "relay.json"]; // 13-a: סגירת פער 528ש' (WO-unwired-dex-mirror P1) — העותקים ב-Domain קפאו ב-09-19 כי הרשימה דילגה עליהם
 const MAX_SOURCE_AGE_H = 48; // מקור מעופש מזה = צינור מת, לא משקפים אותו
 
 const r2 = (v) => Math.round(v * 100) / 100;
 
 function timestampOf(doc) {
   // grid/world/state/credits: publishedAt בשורש. portfolio: generatedAt (epoch-ms)
-  // בתוך אובייקט portfolio. שניהם נתמכים בכנות.
+  // בתוך אובייקט portfolio. onramp: onramp.at (ISO). showcase: at (epoch-ms בשורש).
+  // relay: relay.lastActivityAt (epoch-ms). כל-הצורות נתמכות בכנות (13-a:
+  // הצורות של onramp/showcase/relay נמדדו חי מול המקור ב-Console — ראה WO-unwired-dex-mirror).
   if (doc.publishedAt) return Date.parse(doc.publishedAt);
   if (doc.generatedAt) return Date.parse(doc.generatedAt);
   if (doc.portfolio && doc.portfolio.generatedAt) return Number(doc.portfolio.generatedAt);
+  if (doc.onramp && doc.onramp.at) return Date.parse(doc.onramp.at);
+  if (typeof doc.at === "number") return doc.at;
+  if (doc.relay && typeof doc.relay.lastActivityAt === "number") return doc.relay.lastActivityAt;
   return NaN;
 }
 

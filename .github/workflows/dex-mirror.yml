@@ -36,14 +36,14 @@ jobs:
         run: |
           git config user.name "dex-mirror"
           git config user.email "dex-mirror@users.noreply.github.com"
-          node agents/redact-telemetry.mjs dex/grid.json dex/world.json dex/state.json dex/credits.json dex/portfolio.json
+          node agents/redact-telemetry.mjs dex/grid.json dex/world.json dex/state.json dex/credits.json dex/portfolio.json dex/onramp.json dex/showcase.json dex/relay.json
           git add dex/
           if git diff --cached --quiet; then
             echo "mirror unchanged - the live book is already ours"
             exit 0
           fi
           for attempt in 1 2 3; do
-            node agents/redact-telemetry.mjs dex/grid.json dex/world.json dex/state.json dex/credits.json dex/portfolio.json
+            node agents/redact-telemetry.mjs dex/grid.json dex/world.json dex/state.json dex/credits.json dex/portfolio.json dex/onramp.json dex/showcase.json dex/relay.json
           git add dex/
             git commit -m "dex-mirror: $(date -u +%Y-%m-%dT%H:%M:%SZ) · live engine book mirrored from the live Console mirror (keyless) [skip ci]"
             git pull --rebase origin main
@@ -52,7 +52,7 @@ jobs:
             git checkout -- .
             git reset --hard origin/main
             node agents/dex-mirror.mjs
-            node agents/redact-telemetry.mjs dex/grid.json dex/world.json dex/state.json dex/credits.json dex/portfolio.json
+            node agents/redact-telemetry.mjs dex/grid.json dex/world.json dex/state.json dex/credits.json dex/portfolio.json dex/onramp.json dex/showcase.json dex/relay.json
           git add dex/
             if git diff --cached --quiet; then
               echo "after re-mirror there is nothing to commit - the live book is already ours"
