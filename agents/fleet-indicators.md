@@ -1,4 +1,4 @@
-# FLEET WORLD INDICATORS (FWI) — 2026-10-10T10:49:29.403Z
+# FLEET WORLD INDICATORS (FWI) — 2026-10-11T11:02:07.595Z
 
 Verdict: **DEGRADED** · GROW=4 HELD=1 DECLINE=4
 
@@ -10,7 +10,7 @@ Verdict: **DEGRADED** · GROW=4 HELD=1 DECLINE=4
 | F4 | Governance Conformity | 71/76 CRs judged · registry 57 rows (53 LIVE) | 100% judged + ≥20 rows | DECLINE | `agents/change-requests/*.json verdict fields + role-registry.csv row count` |
 | F5 | Public Expression | 45 posts · 291 samples | ≥20 posts | GROW | `agents/learning-ledger.json keys + samples[]` |
 | F6 | Social Fabric & Diversity | tiers=4 lanes=24 ownedBooks=29 | ≥2 tiers · ≥5 lanes · ≥5 books | GROW | `role-registry.csv columns tier(7)/ci(3)/books(7) distinct counts` |
-| F7 | Economic Vitality & Equity | headcorner: 3.652 STEEM liquid · 1392.409 SP · book 133.8h old | ledger fresh + executor-identified | DECLINE | `agents/money-ledger.json .book{executor,headSteemLiquid,headSteemStake} fresh <48h` |
+| F7 | Economic Vitality & Equity | headcorner: 3.652 STEEM liquid · 1392.409 SP · book 158h old | ledger fresh + executor-identified | DECLINE | `agents/money-ledger.json .book{executor,headSteemLiquid,headSteemStake} fresh <48h` |
 | F8 | Constitutional Growth | law v1.0.6 · features 31/69 done · 1 commits/7d | law versioned + ≤2 open features + ≥20 commits/7d | DECLINE | `agents/sovereignty.md version + feature_list.json status counts + git rev-list 7d` |
 | F9 | Sovereign Autonomy | verify ALL_PASS=0 · econ receipts=0 · anchors=0 → score 0 | ≥5 receipts / 7d | HELD | `git log --grep receipts (agent-verify/econ/anchor), last 7 days` |
 
