@@ -294,6 +294,18 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
           <div class="pfoot"><span>עודכן: <span class="upd" id="pf-upd">—</span></span><span class="src">Sandbox/ops/flow/flow-map.json · כל-3-שעות</span></div>
         </div>
 
+        <div class="panel" id="p-decisions">
+          <div class="ph"><h3><span class="ico">⚖️</span> הכרעות-הריבונות — מתיאור למעשים</h3><span class="chip" id="pd-chip">טוען…</span></div>
+          <div class="kv">
+            <b>דופק-המכריע</b><i class="mono" id="pd-heart">—</i>
+            <b>מאומתות</b><i class="mono" id="pd-verified">—</i>
+            <b>ממתינות-ביצוע</b><i class="mono" id="pd-unex">—</i>
+            <b>עדויות-מיושנות</b><i class="mono" id="pd-stale">—</i>
+          </div>
+          <ul class="runs" id="pd-runs"><li class="err">טוען אמת-הכרעות…</li></ul>
+          <div class="pfoot"><span>עוכן: <span class="upd" id="pd-upd">—</span></span><span class="src">Sandbox/ops/decision-truth/verdict.json · כל-30-דקות</span></div>
+        </div>
+
         <div class="panel" id="p-research">
           <div class="ph"><h3><span class="ico">🔬</span> מחקר וגילוי</h3><span class="chip" id="pr-chip">טוען…</span></div>
           <ul class="runs" id="pr-runs"><li class="err">טוען ממצאי-מחקר אחרונים…</li></ul>
@@ -740,6 +752,39 @@ function loadIntegrity(){
     .catch(function(){ var ig = $('pf-ig'); ig.textContent = 'אין נתון'; });
 }
 
+/* ── 11. DECISIONS (H-series lane: sovereign decisions truth — description-vs-action measured every 30min.
+   Honesty law: VERIFIED = evidence re-measured independently + consumer present; UNEXECUTED = enforced without a measured consumer;
+   STALE-TRUTH = world moved past evidence; UNVERIFIABLE = source down (honest, never forged). ── */
+function loadDecisions(){
+  var chip = $('pd-chip');
+  jget('https://raw.githubusercontent.com/roshpinacare-sys/Sandbox/main/ops/decision-truth/verdict.json?ts=' + Date.now(), 10000)
+    .then(function(v){
+      var decs = Array.isArray(v.decisions) ? v.decisions : [];
+      var c = { VERIFIED: 0, UNEXECUTED: 0, 'STALE-TRUTH': 0, UNVERIFIABLE: 0 };
+      decs.forEach(function(d){ if(c[d.truth] !== undefined) c[d.truth]++; });
+      $('pd-verified').textContent = c.VERIFIED;
+      $('pd-unex').textContent = c.UNEXECUTED;
+      $('pd-stale').textContent = c['STALE-TRUTH'];
+      var hb = v.decider && v.decider.heartbeat ? v.decider.heartbeat : null;
+      var h = $('pd-heart');
+      h.textContent = hb ? (hb.stalled === true ? 'תקוע' : (hb.stalled === null ? 'לא-ניתן-לאימות' : 'חי')) : '—';
+      h.style.color = hb && hb.stalled === true ? '#b91c1c' : '#15803d';
+      chip.className = 'chip ' + (v.overall === 'PASS' ? 'good' : 'warn');
+      chip.textContent = v.overall === 'PASS' ? 'הכל-מאומת' : 'דורש-מעשים';
+      var items = decs.map(function(d){
+        var mark = d.truth === 'VERIFIED' ? '✅' : (d.truth === 'UNEXECUTED' ? '⏳' : (d.truth === 'STALE-TRUTH' ? '🕰️' : '❔'));
+        var note = d.truth === 'UNEXECUTED' ? 'ההכרעה פורסמה — המעשה עדיין לא נמדד (מנותב לליין-הבעלים)'
+          : d.truth === 'STALE-TRUTH' ? 'העולם התקדם מעבר לעדויות — RE-MEASURE נדרש'
+          : d.truth === 'VERIFIED' ? 'עדויות נמדדו מחדש באופן-עצמאי + צרכן קיים'
+          : 'מקור-נפל — כנות';
+        return '<li style="font-size:12px;opacity:.9">' + mark + ' <b>' + String(d.id) + '</b> · ' + String(d.area || '') + ' — ' + note + '</li>';
+      });
+      $('pd-runs').innerHTML = items.join('') || '<li class="err">אין הכרעות בפנקס.</li>';
+      $('pd-upd').textContent = String(v.generatedAt || '').replace('T',' ').slice(0,16) + 'Z';
+    })
+    .catch(function(){ chip.className = 'chip bad'; chip.textContent = 'אין נתון'; });
+}
+
 /* ── 10. RESEARCH (11-c lane: Sandbox research findings — weekly, date-named findings-{utc-date}.json,
    resolved latest-first up to 9 days back, exactly like the probes date-failover of 10-b.
    Honesty law: renders what the feed says — hypothesis → measurement → verdict → next. ── */
@@ -780,7 +825,7 @@ function loadResearch(){
 
 /* ── refresh loop: 5 minutes, one polite batch per source ── */
 function refreshAll(){
-  loadOffice(); loadPulse(); loadGrid(); loadSteem(); loadProbes(); loadWorld(); loadCrew(); loadLessons(); loadFlow(); loadIntegrity(); loadResearch();
+  loadOffice(); loadPulse(); loadGrid(); loadSteem(); loadProbes(); loadWorld(); loadCrew(); loadLessons(); loadFlow(); loadIntegrity(); loadResearch(); loadDecisions();
 }
 refreshAll();
 setInterval(refreshAll, 5*60*1000);
