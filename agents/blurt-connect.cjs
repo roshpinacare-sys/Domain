@@ -85,10 +85,10 @@ async function main() {
       key_auths: [...(posting.key_auths || []), [newPub, 1]]
     };
     try {
+      /* owner/active fields are OMITTED — in steemd-family consensus, the mere
+       * presence of the owner field requires an owner signature. Omission = unchanged. */
       const op = ['account_update', {
         account,
-        owner: a.owner,
-        active: a.active,
         posting: newPosting,
         memo_key: a.memo_key || '',
         json_metadata: typeof a.json_metadata === 'string' ? a.json_metadata : JSON.stringify(a.json_metadata || {}),
