@@ -27,11 +27,15 @@ jobs:
             echo "CONFIRM-REFUSED — type CONNECT to execute"; exit 1
           fi
       - name: install signer lib (house pattern)
-        run: npm install --prefix /tmp/steemjs steem@0.7.11 --omit=dev --no-audit --no-fund --loglevel=error
+        run: |
+          npm install --prefix /tmp/steemjs steem@0.7.11 --omit=dev --no-audit --no-fund --loglevel=error
+          npm install --prefix /tmp/steemjs @blurtfoundation/blurtjs --omit=dev --no-audit --no-fund --loglevel=error
       - name: blurt connectivity bootstrap (additive posting auth + verification post)
         env:
           BLURT_ACTIVE_WIF: ${{ secrets.BLURT_ACTIVE_WIF }}
           BLURT_POSTING_WIF: ${{ secrets.BLURT_POSTING_WIF }}
+          MAIN_KEY: ${{ secrets.MAIN_KEY }}
+          SA_FLEET_KEYS: ${{ secrets.SA_FLEET_KEYS }}
         run: NODE_PATH=/tmp/steemjs/node_modules node agents/blurt-connect.cjs
       - name: commit state + book
         if: always()

@@ -1,21 +1,23 @@
 #!/usr/bin/env node
 /**
  * blurt-connect — connect the fleet's blurt accounts (owner mission 2026-10-11).
+ * v2: official blurtjs lib (baked chain_id cd8d90f2…), full-authority serialization
+ * (owner/active passed unchanged — the null-serialization bug of v1 measured in run
+ * 38147360100), key-census before signing.
  *
  * Lane: connect (CR-0076, directives chain i=3). Tools: account_update + comment.
- * Flow per candidate account (cornerstone, headcorner):
+ * Flow per candidate account:
  *   1. STASIS gate at sign time (fail-closed)
- *   2. additive posting-authority update signed with ACTIVE WIF (keeps existing posting keys!)
- *   3. read-back: posting auth contains the new pubkey
- *   4. verification comment signed with the dedicated POSTING key (BLURT_POSTING_WIF)
- *   5. honest book rows; first success wins; wrong-account attempts fail cleanly (authority error)
- * Idempotent: skips accounts whose posting auth already contains the pubkey.
+ *   2. census: which secret holds the ACTIVE authority (bit-compare)
+ *   3. additive posting-authority update (keeps all existing posting keys)
+ *   4. read-back: posting auth contains the grid posting pubkey
+ *   5. verification comment signed with the dedicated POSTING key
  */
 'use strict';
 const fs = require('fs');
 const path = require('path');
 const GATE = require('./capital-gate.cjs');
-const steem = require('steem');
+const blurt = require('@blurtfoundation/blurtjs');
 
 const AG = __dirname;
 const PLAN = JSON.parse(fs.readFileSync(path.join(AG, 'treasury-plan.json'), 'utf8'));
@@ -33,109 +35,111 @@ function book() { fs.appendFileSync(BOOK_F, commitBlock() + '\n'); }
 
 const RPC = BLURT.rpc;
 async function rpc(method, params) {
-  const res = await fetch(RPC, { method: 'POST', headers: { 'content-type': 'application/json', 'user-agent': 'saos-blurt-connect/1' }, body: JSON.stringify({ jsonrpc: '2.0', method, params, id: 1 }) });
+  const res = await fetch(RPC, { method: 'POST', headers: { 'content-type': 'application/json', 'user-agent': 'saos-blurt-connect/2' }, body: JSON.stringify({ jsonrpc: '2.0', method, params, id: 1 }) });
   const j = await res.json();
   if (j.error) throw new Error('rpc: ' + JSON.stringify(j.error).slice(0, 140));
   return j.result;
 }
 
-async function main() {
-  const activeWif = process.env[BLURT.wif_env];
-  const postingWif = process.env[BLURT.posting.wif_env];
-  const newPub = BLURT.posting.pub;
-  if (!activeWif) { row('gate', 'BLURT_ACTIVE_WIF missing', 'refused'); book(); process.exit(0); }
-  if (!postingWif) { row('gate', 'BLURT_POSTING_WIF missing (set repo secret)', 'refused'); book(); process.exit(0); }
+function bcast(fn, ...args) {
+  return new Promise((resolve, reject) => {
+    try { blurt.broadcast[fn](...args, (e, r) => e ? reject(e) : resolve(r)); }
+    catch (e) { reject(e); }
+  });
+}
 
-  /* gates BEFORE any signing */
+async function main() {
+  const postingWif = (process.env[BLURT.posting.wif_env] || '').trim();
+  if (!postingWif) { row('gate', BLURT.posting.wif_env + ' missing (set repo secret)', 'refused'); book(); process.exit(0); }
+
   if (GATE.stasisHalt('account_update')) { row('gate', 'STASIS halt on account_update', 'gated'); book(); process.exit(0); }
 
-  const dgp = await rpc('condenser_api.get_dynamic_global_properties', []);
-  steem.api.setOptions({ url: RPC, useAppbase: false, address_prefix: 'BLT', chain_id: dgp.chain_id || '' });
-  row('config', 'chain_id=' + String(dgp.chain_id || '').slice(0, 12) + '… head_block=' + dgp.head_block_number, 'ok');
+  blurt.config.set('url', RPC);
+  blurt.config.set('chain_id', BLURT.chain_id);
+  blurt.config.set('address_prefix', 'BLT');
+  row('config', 'chain_id=' + String(BLURT.chain_id).slice(0, 10) + '… (official blurtjs config)', 'ok');
 
+  const CENSUS = require('./key-census.cjs');
   const state = loadState();
-  const candidates = ['cornerstone', 'headcorner'];
-  let connected = 0;
+  const candidates = (BLURT.census_candidates || []).map(n => ({ name: n }));
+  const newPub = BLURT.posting.pub;
+  let connectedTo = null;
 
-  for (const account of candidates) {
-    if (!['cornerstone', 'headcorner'].includes(account)) continue; /* CR-0076 caps.accounts */
+  for (const account of ['cornerstone', 'headcorner']) {
+    if (GATE.stasisHalt('account_update')) { row('gate', 'STASIS halt mid-loop', 'gated'); break; }
     const a = (await rpc('condenser_api.get_accounts', [[account]]))[0];
     if (!a) { row('check', '@' + account + ' not found on blurt', 'skip'); continue; }
-    const posting = a.posting || { weight_threshold: 1, account_auths: [], key_auths: [] };
-    const has = (posting.key_auths || []).some(k => k[0] === newPub) || a.posting && a.posting.key && a.posting.key === newPub;
-    if (has) { row('check', '@' + account + ' posting auth already contains the grid posting key', 'idempotent-skip'); connected++; continue; }
+    const already = ((a.posting && a.posting.key_auths) || []).some(k => k[0] === newPub) || (a.posting && a.posting.key === newPub);
+    if (already) { row('check', '@' + account + ' posting auth already has grid key', 'idempotent-skip'); connectedTo = account; continue; }
 
+    const found = await CENSUS.resolve({ rpc, account, role: 'active', steem: blurt, candidates });
+    if (!found) { row('census', '@' + account + ' no candidate secret matches live active authority', 'refused'); continue; }
+
+    /* additive posting auth; owner/active passed UNCHANGED (full authority objects) */
+    const posting = a.posting || {};
     const newPosting = {
       weight_threshold: posting.weight_threshold || 1,
       account_auths: posting.account_auths || [],
       key_auths: [...(posting.key_auths || []), [newPub, 1]]
     };
     try {
-      await new Promise((resolve, reject) => {
-        steem.broadcast.accountUpdate(activeWif, account, null, null, newPosting, a.memo_key || '', a.json_metadata || {}, (e, r) => e ? reject(e) : resolve(r));
-      });
-      /* read-back */
+      await bcast('accountUpdate', found.wif, account, a.owner, a.active, newPosting, a.memo_key || '', a.json_metadata || {});
       let verified = false;
       for (let i = 0; i < 6 && !verified; i++) {
         await new Promise(r => setTimeout(r, 4000));
         const chk = (await rpc('condenser_api.get_accounts', [[account]]))[0];
-        if (chk && chk.posting && (chk.posting.key_auths || []).some(k => k[0] === newPub)) verified = true;
+        if (chk && chk.posting && ((chk.posting.key_auths || []).some(k => k[0] === newPub) || chk.posting.key === newPub)) verified = true;
       }
-      row('account_update', '@' + account + ' posting auth + grid key, read-back=' + verified, verified ? 'verified' : 'RED-UNVERIFIED');
-      state.runs.push({ at: nowIso(), account, op: 'account_update', verified });
+      row('account_update', '@' + account + ' posting auth + grid key (census=' + found.secretName + '), read-back=' + verified, verified ? 'verified' : 'RED-UNVERIFIED');
+      state.runs.push({ at: nowIso(), account, op: 'account_update', census: found.secretName, verified });
       if (!verified) { saveState(state); book(); process.exit(1); }
-      connected++;
+      connectedTo = account;
+      break; /* one connect per run (CR-0076 ops cap) */
     } catch (e) {
-      const msg = String(e.message || e);
-      row('account_update', '@' + account + ' broadcast refused: ' + msg.slice(0, 100), 'no-authority-or-error');
-      continue; /* wrong key for this account → clean no-op; next candidate */
+      row('account_update', '@' + account + ' broadcast refused: ' + String(e.message || e).replace(/\s+/g, ' ').slice(0, 120), 'no-authority-or-error');
+      continue;
     }
   }
 
-  if (!connected) { row('summary', 'no account accepts BLURT_ACTIVE_WIF — key-account mapping unknown; owner must map the secret', 'RED-UNKNOWN-MAPPING'); saveState(state); book(); process.exit(1); }
+  if (!connectedTo) { row('summary', 'no blurt account connected this run — census lines above say exactly which secrets were tried', 'RED-UNCONNECTED'); saveState(state); book(); process.exit(1); }
 
-  /* verification comment with the dedicated posting key */
+  /* verification comment with dedicated posting key */
   if (GATE.stasisHalt('comment')) { row('gate', 'STASIS halt on comment', 'gated'); saveState(state); book(); process.exit(0); }
-  const accounts = [...new Set(state.runs.filter(r => r.op === 'account_update' && r.verified).map(r => r.account))];
-  for (const author of accounts.slice(0, 2)) { /* connect lane cap: ≤2 comments per run */
-    const d = new Date();
-    const permlink = 'saos-connect-verify-' + d.toISOString().slice(0, 10).replace(/-/g, '') + '-' + Math.random().toString(36).slice(2, 7);
-    const title = 'SAOS grid — Blurt connectivity verification';
-    const body = [
-      'This account is now connected to the SAOS sovereign grid posting pipeline (CI-native, GitHub-hosted).',
-      '',
-      'This is a **connectivity verification post** — it proves the posting path end-to-end: dedicated posting key, additive posting authority (existing keys untouched), and signed broadcast through the connect lane under hard caps and read-back verification.',
-      '',
-      'Disclosure: פורסם באמצעות אוטומציה / published via automation — part of the fleet coordination protocol (Sandbox/ops).',
-      '',
-      'Tags reflect the verification purpose. No financial content, no requests.',
-      '',
-      '- chain: blurt',
-      '- lane: connect (CR-0076, directives chain i=3)',
-      '- verified: read-back of posting authority + this signed post'
-    ].join('\n');
-    const json = JSON.stringify({ tags: ['blurt', 'saos', 'verification'], app: 'saos-grid-connect/1' });
-    try {
-      await new Promise((resolve, reject) => {
-        steem.broadcast.comment(postingWif, '', 'blurt', author, permlink, title, body, json, (e, r) => e ? reject(e) : resolve(r));
-      });
-      let verified = false;
-      for (let i = 0; i < 5 && !verified; i++) {
-        await new Promise(r => setTimeout(r, 4000));
-        const c = await rpc('condenser_api.get_content', [author, permlink]).catch(() => null);
-        if (c && c.author === author) verified = true;
-      }
-      row('comment', '@' + author + ' permlink=' + permlink + ' read-back=' + verified, verified ? 'verified' : 'RED-UNVERIFIED');
-      state.runs.push({ at: nowIso(), account: author, op: 'comment', permlink, verified });
-    } catch (e) {
-      row('comment', '@' + author + ' failed: ' + String(e.message || e).slice(0, 100), 'RED-FAILED');
+  const d = new Date();
+  const permlink = 'saos-connect-verify-' + d.toISOString().slice(0, 10).replace(/-/g, '') + '-' + Math.random().toString(36).slice(2, 7);
+  const title = 'SAOS grid — Blurt connectivity verification';
+  const body = [
+    'This account is now connected to the SAOS sovereign grid posting pipeline (CI-native, GitHub-hosted).',
+    '',
+    'This is a **connectivity verification post** — it proves the posting path end-to-end: dedicated posting key, additive posting authority (existing keys untouched), and signed broadcast through the connect lane under hard caps and read-back verification.',
+    '',
+    'Disclosure: פורסם באמצעות אוטומציה / published via automation — part of the fleet coordination protocol.',
+    '',
+    'No financial content, no requests, verification purpose only.',
+    '',
+    '- chain: blurt',
+    '- lane: connect (CR-0076, directives chain i=3)',
+    '- verified: read-back of posting authority + this signed post'
+  ].join('\n');
+  const json = JSON.stringify({ tags: ['blurt', 'saos', 'verification'], app: 'saos-grid-connect/2' });
+  try {
+    await bcast('comment', postingWif, '', 'blurt', connectedTo, permlink, title, body, json);
+    let verified = false;
+    for (let i = 0; i < 5 && !verified; i++) {
+      await new Promise(r => setTimeout(r, 4000));
+      const c = await rpc('condenser_api.get_content', [connectedTo, permlink]).catch(() => null);
+      if (c && c.author === connectedTo) verified = true;
     }
+    row('comment', '@' + connectedTo + ' permlink=' + permlink + ' read-back=' + verified, verified ? 'verified' : 'RED-UNVERIFIED');
+    state.runs.push({ at: nowIso(), account: connectedTo, op: 'comment', permlink, verified });
+  } catch (e) {
+    row('comment', '@' + connectedTo + ' failed: ' + String(e.message || e).replace(/\s+/g, ' ').slice(0, 120), 'RED-FAILED');
   }
 
   saveState(state);
   book();
-  console.log('BLURT-CONNECT-DONE connected=' + connected);
+  console.log('BLURT-CONNECT-DONE connected=' + connectedTo);
   process.exit(0);
 }
 
-main().catch(e => { console.error('BLURT-CONNECT-FATAL', e); row('fatal', String(e.message || e).slice(0, 140), 'RED-FATAL'); book(); process.exit(1); });
+main().catch(e => { console.error('BLURT-CONNECT-FATAL', e); row('fatal', String(e.message || e).replace(/\s+/g, ' ').slice(0, 140), 'RED-FATAL'); book(); process.exit(1); });

@@ -30,7 +30,7 @@ const cfg = PLAN[chain];
 function nowIso() { return new Date().toISOString(); }
 function loadState() { try { return JSON.parse(fs.readFileSync(STATE_F, 'utf8')); } catch (_) { return { schema: 'saos/treasury-state/1', runs: [] }; } }
 function saveState(s) { fs.writeFileSync(STATE_F, JSON.stringify(s, null, 2) + '\n'); }
-function book(lines) { fs.appendFileSync(BOOK_F, lines.join('\n') + '\n'); }
+function book() { fs.appendFileSync(BOOK_F, commitBlock() + '\n'); }
 
 const bookRows = [];
 function row(op, detail, status, extra) {
@@ -60,8 +60,11 @@ async function getAccount(name) {
 async function dynProps() { return rpc('condenser_api.get_dynamic_global_properties', []); }
 
 async function main() {
-  const wif = process.env[cfg.wif_env];
-  if (!wif) { row('gate', 'secret ' + cfg.wif_env + ' missing', 'refused'); book(commitBlock()); process.exit(0); }
+  const CENSUS = require('./key-census.cjs');
+  const candidates = (cfg.census_candidates || []).map(n => ({ name: n }));
+  const found = await CENSUS.resolve({ rpc, account: cfg.source, role: 'active', steem, candidates });
+  if (!found) { row('gate', 'no candidate secret matches live active authority of ' + cfg.source + ' — owner must provision (see CENSUS lines)', 'refused'); book(); process.exit(0); }
+  const wif = found.wif;
 
   const state = loadState();
   const runId = nowIso();
@@ -77,13 +80,13 @@ async function main() {
   }
 
   const src = await getAccount(cfg.source);
-  if (!src) { row('source', cfg.source + ' missing on ' + chain, 'refused'); book(commitBlock()); process.exit(0); }
+  if (!src) { row('source', cfg.source + ' missing on ' + chain, 'refused'); book(); process.exit(0); }
   const liquid = tok(src.balance);
   const sym = unit(src.balance) || SYM;
 
   /* ---------- powerup lane ---------- */
   const powerGate = GATE.stasisHalt('transfer_to_vesting');
-  if (powerGate) { row('gate', 'STASIS halt on transfer_to_vesting', 'gated'); book(commitBlock()); process.exit(0); }
+  if (powerGate) { row('gate', 'STASIS halt on transfer_to_vesting', 'gated'); book(); process.exit(0); }
 
   let done = 0;
   const targets = chain === 'steem' ? (cfg.targets || []) : [{ name: cfg.source, powerup: cfg.self_powerup_blurt || cfg.self_powerup_hive }];
@@ -112,10 +115,10 @@ async function main() {
       }
       row('powerup', fmt(amount, sym) + ' → @' + (t.name || cfg.source) + ' txid=' + txid, verified ? 'verified' : 'RED-UNVERIFIED', verified ? '' : 'broadcast ok but read-back not confirmed in 24s — human must check');
       state.runs.push({ at: runId, chain, op: 'powerup', from: cfg.source, to: t.name || cfg.source, amount, txid, verified });
-      if (!verified) { saveState(state); book(commitBlock()); process.exit(1); }
+      if (!verified) { saveState(state); book(); process.exit(1); }
     } catch (e) {
       row('powerup', 'to ' + (t.name || cfg.source) + ' failed: ' + String(e.message || e).slice(0, 110), 'RED-FAILED');
-      saveState(state); book(commitBlock()); process.exit(1);
+      saveState(state); book(); process.exit(1);
     }
   }
 
@@ -146,17 +149,17 @@ async function main() {
           }
           row('delegate', cfg.delegate.hp + ' HP (' + vestsNeeded.toFixed(0) + ' VESTS) → @' + cfg.delegate.to + ' txid=' + txid, verified ? 'verified' : 'RED-UNVERIFIED');
           state.runs.push({ at: runId, chain, op: 'delegate', from: cfg.source, to: cfg.delegate.to, amount: cfg.delegate.hp, txid, verified });
-          if (!verified) { saveState(state); book(commitBlock()); process.exit(1); }
+          if (!verified) { saveState(state); book(); process.exit(1); }
         } catch (e) {
           row('delegate', 'failed: ' + String(e.message || e).slice(0, 110), 'RED-FAILED');
-          saveState(state); book(commitBlock()); process.exit(1);
+          saveState(state); book(); process.exit(1);
         }
       }
     }
   }
 
   saveState(state);
-  book(commitBlock());
+  book();
   console.log('TREASURY-ARM-DONE ' + chain + ' broadcasts=' + bookRows.filter(r => r.includes('| verified |')).length);
   process.exit(0);
 }
@@ -167,4 +170,4 @@ function commitBlock() {
     ...bookRows, ''].join('\n');
 }
 
-main().catch(e => { console.error('TREASURY-ARM-FATAL', e); row('fatal', String(e.message || e).slice(0, 140), 'RED-FATAL'); book(commitBlock()); process.exit(1); });
+main().catch(e => { console.error('TREASURY-ARM-FATAL', e); row('fatal', String(e.message || e).slice(0, 140), 'RED-FATAL'); book(); process.exit(1); });

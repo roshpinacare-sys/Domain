@@ -31,14 +31,26 @@ jobs:
       - name: steem powerup lane (capped, idempotent, read-back verified)
         env:
           STEEM_ACTIVE_WIF: ${{ secrets.STEEM_ACTIVE_WIF }}
+          SA_HEAD_ACTIVE: ${{ secrets.SA_HEAD_ACTIVE }}
+          HEADCORNER_CRED: ${{ secrets.HEADCORNER_CRED }}
+          MAIN_KEY: ${{ secrets.MAIN_KEY }}
+          SA_FLEET_KEYS: ${{ secrets.SA_FLEET_KEYS }}
         run: NODE_PATH=/tmp/steemjs/node_modules node agents/treasury-arm.cjs steem
       - name: hive powerup + delegation lane
         env:
           HIVE_ACTIVE_WIF: ${{ secrets.HIVE_ACTIVE_WIF }}
+          SA_HEAD_ACTIVE: ${{ secrets.SA_HEAD_ACTIVE }}
+          HEADCORNER_CRED: ${{ secrets.HEADCORNER_CRED }}
+          MAIN_KEY: ${{ secrets.MAIN_KEY }}
+          SA_FLEET_KEYS: ${{ secrets.SA_FLEET_KEYS }}
         run: NODE_PATH=/tmp/steemjs/node_modules node agents/treasury-arm.cjs hive
       - name: blurt powerup lane
         env:
           BLURT_ACTIVE_WIF: ${{ secrets.BLURT_ACTIVE_WIF }}
+          SA_HEAD_ACTIVE: ${{ secrets.SA_HEAD_ACTIVE }}
+          HEADCORNER_CRED: ${{ secrets.HEADCORNER_CRED }}
+          MAIN_KEY: ${{ secrets.MAIN_KEY }}
+          SA_FLEET_KEYS: ${{ secrets.SA_FLEET_KEYS }}
         run: NODE_PATH=/tmp/steemjs/node_modules node agents/treasury-arm.cjs blurt
       - name: commit state + book
         if: always()
