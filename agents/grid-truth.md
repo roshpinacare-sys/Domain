@@ -1,10 +1,10 @@
-# GRID-TRUTH · 2026-10-11T14:11:09.301Z (live RPC, read-only)
+# GRID-TRUTH · 2026-10-11T14:11:37.320Z (live RPC, read-only)
 
 The anti-phantom book: every number below was measured from the chain this run.
 
 | chain | total effective power | total liquid | accounts alive |
 |---|---|---|---|
-| steem | 7.82 | 240.48 | 17 |
+| steem | 7.82 | 247.156 | 17 |
 | hive | 164.667 | 13036.523 | 2 |
 | blurt | 0.026 | 233.94 | 2 |
 
@@ -12,7 +12,7 @@ The anti-phantom book: every number below was measured from the chain this run.
 
 | account | role | eff power | liquid | VP% | RC% | last post | alerts |
 |---|---|---|---|---|---|---|---|
-| headcorner | treasury+poster+grid | 5.926703272269 | 132.199 | 100 | 96.7 | 2026-10-11 |  |
+| headcorner | treasury+poster+grid | 5.926703272269 | 138.875 | 100 | 96.8 | 2026-10-11 |  |
 | cornerstone | legacy-treasury | 1.354234487371 | 49.771 | 100 | 100 | 2020-03-28 | INACTIVE |
 | haran | worker-active | 0.12636396128 | 0.01 | 100 | 88.6 | 2026-10-11 |  |
 | cashmachine | worker-active | 0.121313864671 | 0.01 | 100 | 75.9 | 2026-10-11 |  |
