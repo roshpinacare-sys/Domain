@@ -116,6 +116,10 @@ function stasisState() {
 const LANES = Object.freeze({
   claims: Object.freeze(['daily-claim', 'fleet-claim']),
   grid: Object.freeze(['market-exec']),
+  /* R78 (2026-10-11, CR-0076): owner-directed capped lanes — see directives chain i=3 */
+  powerup: Object.freeze(['transfer_to_vesting']),
+  delegation: Object.freeze(['delegate_vesting_shares']),
+  connect: Object.freeze(['account_update', 'comment']),
 });
 
 function laneOf(tool) {

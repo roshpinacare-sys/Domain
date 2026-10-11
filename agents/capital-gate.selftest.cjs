@@ -268,7 +268,7 @@ const live = require(SRC);
 t('live home: staged lanes REFUSED — the live mirror self-model carries open contradictions + ORGANISM_ONLY coverage (R29 behavior change, mechanically proven on Domain too)', live.stasisHalt('market-exec') === true && live.stasisHalt('daily-claim') === true && (() => { const smv = live.selfModelGate('grid'); return smv.allow === false; })());
 t('live home file: general lane still halts (head-delegate)', live.stasisHalt('head-delegate') === true);
 const liveChain = require(path.join(ROOT, 'directivesChain.cjs')).verifyChain();
-t('live directives chain verifies (3 entries, genesis→halt-all→staged-open)', liveChain.ok === true && liveChain.entries.length === 3 && liveChain.entries[1].type === 'halt-all' && liveChain.entries[2].type === 'staged-open');
+t('live directives chain verifies (>=3 entries, genesis→halt-all→staged-open)', liveChain.ok === true && liveChain.entries.length >= 3 && liveChain.entries[1].type === 'halt-all' && liveChain.entries[2].type === 'staged-open');
 const GENESIS_HASH = '61419a4cf79ca81e9d6a774e72645ca3bde43626e89612b2dbf59d2ade8d7ae3'; /* sha256(JSON.stringify({i:0,at:"2026-10-05T00:00:00Z",type:"genesis",note:"SAOS-DIRECTIVES-CHAIN/1"})) — shared-contract constant */
 t('live directives chain genesis hash_0 equals the SAOS-DIRECTIVES-CHAIN/1 contract constant (interop with V-b beat)', liveChain.entries[0].hash === GENESIS_HASH);
 const liveGuards = require(path.join(ROOT, 'loopguard.cjs')).guardHalt('grid');
