@@ -14,6 +14,17 @@
  * If a source cannot be read, the field is null and ok:false is recorded —
  * the page shows honest "אין נתון".
  *
+ * [zai-12a] UNWIRED-ASSETS wiring (census sovereign/UNWIRED-ASSETS-2026-10-11.md):
+ *   - learning: knowledge-cards.json (HE, 39 cards — census found ZERO machine
+ *     consumers) gets its first public consumer: one card of the day, rotated
+ *     deterministically by UTC day (id/title/tag only — titles measured clean
+ *     against the banned-token list, 0 hits). learning-summary.json gains a
+ *     public aggregate consumer (counts + stamp only).
+ *   - mirror: honest age of the dex/{onramp,showcase,relay}.json local copies
+ *     vs the 48h law — the census measured 528h-stale copies (Console source
+ *     fresh, dex-mirror FILES skips them; work-order WO-unwired-dex-mirror).
+ *     Until that lands, the gap is VISIBLE here — a site never lies about age.
+ *
  * Usage:
  *   node agents/office-feed.mjs             # live run, writes dex/office-feed.json
  *   node agents/office-feed.mjs --selftest  # offline validation, no network
@@ -77,6 +88,8 @@ async function main() {
     deposits: null,
     probes: { hive: null, blurt: null },
     actions: { recentRuns: null },
+    learning: null,
+    mirror: null,
   };
 
   // 1) FleetHQ office digest (may not exist yet — honest null)
@@ -158,6 +171,36 @@ async function main() {
       : { ok: false, at: null, endpoint: null };
   }
 
+  // 6.5) [zai-12a] Learning pulse — unwired-assets wiring (tier-A aggregates)
+  const cards = readJsonSafe(join(ROOT, 'agents', 'knowledge-cards.json'));
+  const learn = readJsonSafe(join(ROOT, 'agents', 'learning-summary.json'));
+  if (Array.isArray(cards) && cards.length) {
+    const day = Math.floor(Date.now() / 86400e3);
+    const c = cards[day % cards.length] || null;
+    out.learning = {
+      cardsCount: cards.length,
+      today: c && c.id ? { id: String(c.id), title: String(c.title || ''), tag: String(c.tag || '') } : null,
+      external: learn && learn.byCard
+        ? { cards: Object.keys(learn.byCard).length, at: learn.at || null }
+        : null,
+    };
+  }
+
+  // 6.6) [zai-12a] Mirror-age honesty — local dex copies vs the 48h law, measured
+  const mirrorFiles = {
+    onramp: (j) => Date.parse((j.onramp && j.onramp.at) || '') || null,
+    showcase: (j) => (typeof j.at === 'number' ? j.at : Date.parse(j.at || '')) || null,
+    relay: (j) => (j.relay && typeof j.relay.lastActivityAt === 'number' ? j.relay.lastActivityAt : null),
+  };
+  const mirror = {};
+  for (const [name, tsOf] of Object.entries(mirrorFiles)) {
+    const j = readJsonSafe(join(ROOT, 'dex', `${name}.json`));
+    let ageH = null;
+    if (j) { const ts = tsOf(j); if (Number.isFinite(ts)) ageH = Math.round(((Date.now() - ts) / 3.6e6) * 10) / 10; }
+    mirror[name] = { ageH, stale48: ageH == null ? null : ageH > 48 };
+  }
+  out.mirror = { law: 'local copies older than 48h mean a dead mirror pipe (see dex-mirror.mjs)', files: mirror };
+
   // 7) Actions runs (public repo, unauthenticated, ONE polite batch)
   try {
     const j = await jget('https://api.github.com/repos/roshpinacare-sys/Domain/actions/runs?per_page=8');
@@ -190,12 +233,14 @@ function selftest() {
     deposits: { count: 0, updatedAt: 'u' },
     probes: { hive: { ok: true, at: 'a', endpoint: 'e' }, blurt: { ok: false, at: null, endpoint: null } },
     actions: { recentRuns: [{ name: 'n', status: 'completed', conclusion: 'success', createdAt: 'c' }] },
+    learning: { cardsCount: 39, today: { id: 'verify-then-sign', title: 't', tag: 'security' }, external: { cards: 8, at: 'a' } },
+    mirror: { law: 'l', files: { onramp: { ageH: 1.2, stale48: false }, showcase: { ageH: null, stale48: null }, relay: { ageH: 52.0, stale48: true } } },
   };
   const banned = [/STM[0-9A-Za-z]{10,}/, /5[HJK][0-9A-Za-z]{10,}/, /0x[0-9a-fA-F]{6,}/, /TG[0-9A-Za-z]{8,}/, /WIF/i, /\bsteem_active\b/i, /\bcommitPct\b/, /\bspreadBps\b/];
   const blob = JSON.stringify(fixture);
   const hits = banned.filter(rx => rx.test(blob));
   if (hits.length) { console.error('selftest FAIL: redaction tokens present', hits.map(String)); process.exit(2); }
-  for (const k of ['schema', 'publishedAt', 'office', 'chain', 'grid', 'world', 'deposits', 'probes', 'actions']) {
+  for (const k of ['schema', 'publishedAt', 'office', 'chain', 'grid', 'world', 'deposits', 'probes', 'actions', 'learning', 'mirror']) {
     if (!(k in fixture)) { console.error('selftest FAIL: missing key', k); process.exit(2); }
   }
   if (fixture.chain.steem.headcornerLatest[0].pendingPayout !== '0.000 SBD') { console.error('selftest FAIL: payout shape'); process.exit(2); }
