@@ -1,36 +1,24 @@
-# AUDIENCE-ANALYST — daily audience-engagement digest on public content (r145-b)
 #
 # What it does (read-only on the chain, one committed digest per run):
-#   1. agents/audience-analyst.mjs pulls the published posts of the community
 #      accounts (same roster as content-reviewer) from the last 48h via the
-#      public Steem API (zero keys).
 #   2. Measures per post: votes, external votes (bot-filtered), external
 #      rshares, replies + external repliers, pending payout; aggregates topic
 #      resonance by primary tag; ranks top posts and topics.
-#   3. Writes audience/digest-YYYY-MM-DD.json + audience/latest.json (stable
 #      path consumed by the home curation layer) + a markdown digest, commits.
-#   4. Zero engagement is recorded honestly (a zero is a measurement). Only
 #      after 3 consecutive all-zero digest days does it open an issue
 #      "audience: zero external engagement 3 days running" — a real curation
 #      signal, not a cosmetic alert.
 #
-# R26 (CR-0054) KEYLESS WAVE: every operation here targets THIS repo (checkout,
 # push, the zero-signal issue) under the declared permissions, so the tokens are
-# the built-in github.token. The ZIP_PAT convention was never a capability here;
-# zero owner secrets remain in this file (the issue loop keeps skipping empty
 # tokens by design).
 #
-# Relationship to the learning loop (no duplication): agents/measure-learn.cjs
-# keeps the longitudinal per-knowledge-card ledger feeding content priorities;
-# this role produces the daily windowed digest (replies + topics + latest.json)
-# consumed downstream. Cadence kept off the minute map (BLOC.md), after the
 # content-reviewer slot.
 
 name: audience-analyst
 
 on:
   schedule:
-    - cron: '31 5 * * 5' # R67-C: daily -> weekly Friday   # daily 05:37 UTC — off-peak, off the minute map
+    - cron: '0 5 * * 5'
   workflow_dispatch:
 
 permissions:

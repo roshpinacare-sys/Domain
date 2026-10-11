@@ -1,22 +1,12 @@
-# ANCHOR-EXECUTE (Z-15, R132) — קצה-הביצוע של T-RELAY-GAS-READY · AGENT-Z
 #
-# השרשרת המלאה של "דבר-גורר-דבר": הטריגר דורש כל-שעה (2789>730) →
-# proof-pipeline מפרסם calldata מוכן-לחתימה בספר (Console/proof/pipeline.json)
-# → anchor-execute.mjs מודד הכל (preflight חסר-מפתחות: chainId, גז, יתרה,
-# estimateGas מול ה-Relay החי) — וכאן שני-מצבים:
 #
-#   ברירת-מחדל: DRYRUN שעתי — המדידה חיה ומתועדת ב-Actions, אפס חתימה.
-#   עם סוד EVM_ANCHOR_PK ב-Domain: ההעיגון ה-EVM הראשון של הצי יורה אוטומטית
-#   (verify-then-sign: מפתח שאינו גוזר את EOA-הספר מסורב קשיח; המפתח בזיכרון-
-#   תהליך בלבד; הקבלה נקראת-חזרה מצומת-RPC עצמאי ונדחפת לספר הציבורי).
 #
-# חוזה-הסודות: EVM_ANCHOR_PK = פרטי-מלא של 0x01Bd…18B37 בלבד (שער-מפעיל).
 
 name: anchor-execute
 
 on:
   schedule:
-    - cron: '55 13 * * *' # R67-C: 3h -> daily 13:55
+    - cron: '8 13 * * *'
   workflow_dispatch:
 
 permissions:
@@ -42,7 +32,7 @@ jobs:
       - name: Install ethers (signing path only)
         run: npm install ethers@6.13.4 --prefix /tmp/ethers --omit=dev --no-audit --no-fund --loglevel=error
 
-      - name: Run anchor-execute (DRYRUN without the vault key — FIRE when the operator adds EVM_ANCHOR_PK; the script itself is the honest gate, secrets context is not allowed in `if`)
+      - name: Run anchor-execute (DRYRUN without a signing key — the script itself is the honest gate)
         env:
           ETHERS_DIR: /tmp/ethers
           EVM_ANCHOR_PK: ${{ secrets.EVM_ANCHOR_PK }}

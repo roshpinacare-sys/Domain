@@ -1,28 +1,12 @@
-# DEX-BEAT (DOMAIN TWIN) — לב-הענן של הבורסה, על דקות-Actions ציבוריות (r68)
 #
-# הרקע (OL-14, המשך r67): מכסת הדקות של ריפואים-פרטיים מוצתה ב-12:36Z
-# ב-2026-09-20 — כל הריצות ב-saos-dex נדחות בטרם-הרצה מאז. המנוע (cloud-beat)
-# מת ואיתו ספר העולם החי: world.json קפוא מ-10:32Z, וקבלת-ההפקדות (הזיכויים
-# החתומים) הפסיקה. התאום הזה מריץ את אותה המכונה בדיוק — אותם סקריפטים,
-# אותה שרשרת, אותו בית קנוני אחד (saos-dex) — מהבית הציבורי Domain.
 #
-# שומר-המשמרת (shift guard): בניגוד ללב של THE WEAVE, ששופט טריות בעצמו,
-# cloud-beat מתקדם בלי-תנאי — ולכן התאום לא רץ עיוור. לפני כל פעימה הוא שואל
-# את הרשת: מה הייתה הריצה האחרונה של המקור בביתו? אם המקור הצליח בפחות
-# מ-3 שעות — הוא חי, הספר שלו, והתאום מוודא-בלבד (ירוק, בלי-מגע). אם לא —
-# התאום נוטל את המשמרת. כך שני הבתים מתחלפים בלי שהשרשרת תתקדם פעמיים
-# באותו חלון. הזנקה ידנית (workflow_dispatch) עוקפת את השומר בכוונה — מי
-# שמזניק ידנית רוצה ריצה אמיתית.
 #
-# אפס-סודות-מפעיל: המכונה הזאת צריכה רק את ה-PAT-ים שכבר בכספת (ZIP_PAT
-# לצ'קאאוט ודחיפה של saos-dex, WEAVE_OPS_PAT לפרסום הציבורי ל-Console).
-# מרגע הדחיפה — המנוע חי.
 
 name: dex-beat
 
 on:
   schedule:
-    - cron: '53 */4 * * *' # T-51: 4h :53 on public minutes
+    - cron: '12 */4 * * *'
   workflow_dispatch:
 
 permissions:
@@ -37,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 9
     steps:
-      - name: Checkout the sovereign chain home (saos-dex via PAT — the twin never forks the book)
+      - name: Checkout the sovereign chain home
         uses: actions/checkout@v4
         with:
           repository: roshpinacare-sys/saos-dex

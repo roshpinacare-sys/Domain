@@ -1,29 +1,20 @@
-# CONTENT-REVIEWER — duplication + staleness watchdog on public content (r144-i2)
 #
 # What it does (read-only on the chain, one committed report per run):
-#   1. agents/content-reviewer.mjs pulls the last 24h public comments and posts of
-#      the community accounts via the public Steem API (zero keys).
 #   2. Runs the same cross-account duplication logic as the home curation daemon's
 #      dedupe layer (normalized token-overlap, near-duplicate threshold 0.6) plus a
 #      24h staleness check per account.
-#   3. Writes content-review/report-YYYY-MM-DD.json in this repo and commits it.
 #   4. If cross-account duplication > 30%, opens an issue
 #      "content-review: duplication X%" (issues:write on the built-in
 #      github.token — the desk's token loop skips empty fallbacks by design).
 #
-# Conventions kept: Node 20, commit with a neutral identity, no secrets in
-# output. Scheduled off-peak so it never overlaps the minute map in BLOC.md.
 #
-# R26 (CR-0054) KEYLESS WAVE: every operation here targets THIS repo (checkout,
 # push, the duplication issue) under the declared permissions, so the tokens are
-# the built-in github.token. The ZIP_PAT convention was never a capability here;
-# zero owner secrets remain in this file.
 
 name: content-reviewer
 
 on:
   schedule:
-    - cron: '4 5 * * *'   # daily 05:07 UTC — off-peak, off the minute map
+    - cron: '3 5 * * *'
   workflow_dispatch:
 
 permissions:

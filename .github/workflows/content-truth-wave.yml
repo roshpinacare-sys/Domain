@@ -1,15 +1,8 @@
-# CONTENT-TRUTH WAVE (r145-c) — errors fixed, dedupe wired into the real posting path,
-# and a wave of high-quality public posts. Dispatch-only: the operator wave runs when
-# the network decides to run it; the daily self-audience keeps its own cadence.
 #
 # Order matters:
-#   1. social-dedupe selftest — the gate must prove itself BEFORE anything can broadcast.
 #   2. truth-sweep — keyless claim audit of published content (chain reads; home truth APIs
 #      fail-soft when unreachable from CI).
-#   3. truth-fix — applies the measured corrections (same-permlink Steem edits),
 #      verify-then-sign, truth values from live TRUTH_URL or the committed baseline snapshot.
-#   4. public-wave — five public knowledge posts (one per desk) through the same gate.
-#   5. Receipts committed secretless — every fix and every post with its on-chain readback.
 
 name: content-truth-wave
 

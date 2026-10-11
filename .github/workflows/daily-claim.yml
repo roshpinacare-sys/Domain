@@ -1,10 +1,8 @@
 name: daily-claim
-# Z-18e · דריסת-תשואה יומית — claim_reward_balance (posting-only, אידמפוטנטי, fail-soft)
-# קיזוז מה-digest של 01:10 ומהפעימה של :13; אין קומיטים — הסטטוס הכנה הוא התוצר.
 
 on:
   schedule:
-    - cron: '34 2 * * *'
+    - cron: '42 2 * * *'
   workflow_dispatch:
     inputs:
       dry:
@@ -29,9 +27,6 @@ jobs:
         with:
           fetch-depth: 1
 
-      # T-B (owner directive 2026-10-05, trace 1a10bfe1342b2391 — staged re-entry):
-      # lane-aware preflight: emits active AND the mode + whether the claims lane is open.
-      # fail-closed: unreadable/missing brake file fails this step and the job.
       - name: STASIS gate (mechanical, FATE-DEFENSE law #1 — lane-aware staged preflight)
         id: brake
         run: |

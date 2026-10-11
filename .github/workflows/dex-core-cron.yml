@@ -1,25 +1,13 @@
-# DEX-CORE (R40 / CR-0070) — THE EXCHANGE CORE, hourly.
 #
-# The owner demanded real swaps on our own network — "באמת להחליף למטבע האמיתי
-# עם ערך ולא סתם שקר" — opposing grids on our side, a networked arbitrage market,
-# and a vault that holds real coins. This lane ticks the settlement engine: the
-# atomic deterministic core with CPMM volatile pools + Curve stableswap peg pools,
-# the reserve-backed wrapped vault (mint 1:1, redeem always honored 1:1), the
 # conservation identity, the rebalance FLOOR law on our own pool, the pool-side
-# counter-grids, and the drip-fuel loop (custody deltas book as ops the hour the
-# powerdown lands — zero new code on drip day).
 #
-# KEYLESS BY LAW: the core settles our OWN ledger atomically; external rails stay
-# with the owner-gated signing surfaces (market-exec / grid-beat / operator CEX).
-# Fail-soft exit 0; STASIS halt-before-read; single-writer atomic book
-# (agents/dex-core.json/.md) + append-only op-log jsonl. [skip ci] book commits,
 # rebase-first push (parallel runtimes are real).
 
 name: dex-core
 
 on:
   schedule:
-    - cron: '41 * * * *' # T-51 (owner directive 2026-10-09: 24/7 sovereignty on unmetered public minutes): hourly :41 — THE EXCHANGE CORE lives
+    - cron: '18 * * * *'
   workflow_dispatch:
 
 permissions:
