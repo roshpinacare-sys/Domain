@@ -48,3 +48,12 @@
 | 2026-10-11T14:52:00.710Z | account_update | @headcorner broadcast refused: Assert Exception:acnt.balance >= fee: Account does not have sufficient funds for transaction fee. | no-authority-or-error |
 | 2026-10-11T14:52:00.710Z | summary | no blurt account connected this run — census lines above say exactly which secrets were tried | RED-UNCONNECTED |
 
+
+## BLURT-CONNECT RUN · 2026-10-11T16:26:16.019Z
+
+| at | op | detail | status |
+|---|---|---|---|
+| 2026-10-11T16:26:14.657Z | config | chain_id=cd8d90f29a… (official blurtjs config) | ok |
+| 2026-10-11T16:26:15.377Z | census | @cornerstone no candidate secret matches live active authority | refused |
+| 2026-10-11T16:26:16.019Z | account_update | @headcorner signature ACCEPTED but blurt charges an account_update fee above liquid balance — funding gap, not a machine failure (provision: fund the account or set the cornerstone active key) | BLUE-NEEDS-FUNDING |
+
