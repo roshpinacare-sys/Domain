@@ -1,23 +1,11 @@
-# WEAVE-ANCHOR-LINES (DOMAIN TWIN) — קווי העדות על דקות-Actions ציבוריות
 #
-# תאום של קווי-העדות של Zip (OL-14): אותם סקריפטים, אותו ספר —
-# מהבית הציבורי Domain, על checkout של Zip דרך ZIP_PAT.
-# הקדנס הדו-שעתי מוסט ל-:33 (המקור ב-Zip: :20); ההנעה העיקרית —
-# הלב-התאום שמשגר את הקווים בעקבות כל פעימה.
 #
-# שקיפות-יכולת בכנות (מצב הכספת, עדכני ל-2026-09-21T08:28:30Z):
-#   · WEAVE_SEAL_PASSPHRASE — נמסר על-ידי המפעיל תחת השם MAIN_KEY
-#     (רישום הכספת, שמות-בלבד). שני השמות מתקבלים: הקנוני מועדף
-#     אם יימסר, MAIN_KEY ככינוי שהמפעיל בחר. קו ה-ZERO רץ ב-auto
-#     מלא (החותם מה-seal — אפס סוד נוסף).
-#   · קו Steem/Hive בלי WEAVE_STEEM_WIF ⇒ הסקריפט עצמו עובר ל-dry-כנה
-#     ("NO-WIF honest dry") — ירוק, ללא שידור.
 
 name: weave-anchor-lines
 
 on:
   schedule:
-    - cron: '33 * * * *' # r68-e: daily -> hourly at :33 - R67-C moved this line to daily and the anchor line went silent for 4h+ (last dispatch 21:45, anchor 21:46, nothing until the 01:52 manual dispatch). The measured protocol cadence is 29-40min (census doctrine); this workflow runs on the PUBLIC repo - zero paid minutes were ever saved by the daily move, only the protocol freshness was lost. Hourly at :33 restores the live line the census reads. weave-heart's daily 16:13 backstop dispatch stays.
+    - cron: '20 * * * *'
   workflow_dispatch:
     inputs:
       mode:
@@ -55,7 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
-      - name: Checkout the sovereign home (Zip via PAT — the twin never forks the book)
+      - name: Checkout the sovereign home
         uses: actions/checkout@v4
         with:
           repository: roshpinacare-sys/Zip
@@ -86,7 +74,7 @@ jobs:
             echo "דואר נכנס ריק — הקווים פועלים כסדרם"
           fi
 
-      - name: Refuse honestly while the seal passphrase awaits the operator
+      - name: Refuse honestly while the signing secret is absent
         id: sealguard
         env:
           SEAL_PP: ${{ secrets.WEAVE_SEAL_PASSPHRASE || secrets.MAIN_KEY }}
@@ -119,9 +107,9 @@ jobs:
         env:
           DATABASE_URL: 'file:${{ github.workspace }}/db/custom.db'
           WEAVE_STEEM_WIF: ${{ secrets.WEAVE_STEEM_WIF }}
-          WEAVE_HIVE_WIF: ${{ secrets.WEAVE_HIVE_WIF || secrets.HIVE_POSTING_WIF }}   # r181: קשירת-שם — HIVE_POSTING_WIF בכספת זו מאז 2026-09-23 (נמדד); המסילה-השנייה מתעוררת, fallback ל-WIF-ה-Steem
+          WEAVE_HIVE_WIF: ${{ secrets.WEAVE_HIVE_WIF || secrets.HIVE_POSTING_WIF }}
           WEAVE_SEAL_PASSPHRASE: ${{ secrets.WEAVE_SEAL_PASSPHRASE || secrets.MAIN_KEY }}
-          BLURT_ACTIVE_WIF: ${{ secrets.BLURT_ACTIVE_WIF }}   # r184: המסילה-השלישית — בכספת-Domain מאז 2026-09-23 (נמדד); חתימת-blurtjs (op-id 12)
+          BLURT_ACTIVE_WIF: ${{ secrets.BLURT_ACTIVE_WIF }}
 
       - name: Line 2 — Zero-gas EVM anchor on Z Chain 9369
         id: zero
@@ -165,12 +153,6 @@ jobs:
           retention-days: 30
           if-no-files-found: ignore
 
-      # ── R251 · CADENCE SELF-RECALL KEEPER ─────────────────────────────
-      # המדידה (2026-10-08): GitHub הרעיב את ה-cron — הריצה המתוכננת
-      # האחרונה 06:27Z ואז 7 הפעלות שעתיות נשמטו (07:33→13:33).
-      # השער הזה הופך כל ריצה לחוליה: הוא ישן עד :33 הבא, בודק שאין
-      # חוליה חיה אחרת (ריצה-חיה = in_progress/queued'), ומשגר את המחזור הבא
-      # בעצמו — הקצב כבר לא תלוי במתזמן של GitHub. דקות-ציבוריות = חינם.
       - name: Cadence self-recall keeper (anti-scheduler-starvation, R251.2)
         if: always()
         env:
@@ -188,8 +170,6 @@ jobs:
           TOTAL=$((S + JITTER))
           echo "ישן ${TOTAL}s עד :33 הבא +jitter"
           sleep "$TOTAL"
-          # השער-נגד-הכפלה: מספיק קיום-ריצה חיה (שומר-ישן = in_progress/queued).
-          # קבוצת-ה-concurrency מבטיחה שרק-ריצה אחת רצה — לכן זה השער המדויק.
           PENDING=$(gh api "repos/roshpinacare-sys/Domain/actions/workflows/weave-anchor-lines.yml/runs?per_page=5&status=in_progress" --jq '.total_count' 2>/dev/null || echo 1)
           QUEUED=$(gh api "repos/roshpinacare-sys/Domain/actions/workflows/weave-anchor-lines.yml/runs?per_page=5&status=queued" --jq '.total_count' 2>/dev/null || echo 1)
           if [ "${PENDING:-1}" != "0" ] || [ "${QUEUED:-1}" != "0" ]; then

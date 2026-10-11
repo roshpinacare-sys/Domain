@@ -1,17 +1,11 @@
-# SAOS TRI-BRIDGE on Domain (public repo — free Actions) — Z-23
 #
-# הסוכן-הצולב: כל-פוסט-חייל-שפורסם-היום-על-steem מופץ-ל-hive (חינם, RC) ול-blurt
-# (עמלה ~0.3 BLURT, מוזנת-מקופת-הראש בתקרה-קשוחה). שתי-השרשראות אומתו-בייטים
-# (מפתחות-posting של-steem הם-מפתחות-hive/blurt: hive 9/10 · blurt 10/10, 2026-09-30).
 #
-# דוקטרינה: verify-then-sign (קריאה-חוזרת-בייטים) · אידמפוטנציה (get_content קודם)
-# · fail-soft (exit 0 תמיד) · אפס-סודות-בקבלות · ynet פרש (רשימה-חיה = 10 חיילים+ראש).
 
 name: tri-bridge
 
 on:
   schedule:
-    - cron: '5 15 * * *'   # 15:05 UTC — אחרי self-audience (14:30), על-פוסטי-היום
+    - cron: '1 15 * * *'
   workflow_dispatch: {}
 
 permissions:
@@ -33,7 +27,7 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: STASIS gate (mechanical, FATE-DEFENSE law #1 — R24-a, owner directive 2026-10-04)
+      - name: STASIS gate (mechanical, FATE-DEFENSE law
         id: brake
         run: |
           ST=$(node -p "JSON.parse(require('fs').readFileSync('agents/STASIS.json','utf8')).active===true")

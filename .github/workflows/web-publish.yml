@@ -1,18 +1,11 @@
-# WEB-PUBLISH (DOMAIN TWIN) — סוכן הענן של רשת-האחסון הריבונית, על דקות ציבוריות
 #
-# תאום של web-publish של Zip (OL-14): לוקח חבילות מהדואר הנכנס
-# (sovereign/web/inbox של הבית הריבוני) ומעלה אותן לשרשרת Steem
-# בסמכות posting בלבד. הקדנס מוסט ל-:03/:23/:43 (המקור: :00/:20/:40).
 #
-# בלי WEAVE_STEEM_WIF בכספת הזאת, הסוכן עצמו מדלג בכנות ("no-wif")
-# והריצה ירוקה — הדואר ממתין, שום דבר לא אובד. מרגע שהמפעיל
-# ישלים את הסוד — השידור מתחדש בלי שינוי קוד.
 
 name: web-publish
 
 on:
   schedule:
-    - cron: '46 7 * * *' # R67-C: 2h -> daily 07:46 - one verified pulse/day; Zip+roshpina paid dispatches 12/day -> 2/day
+    - cron: '53 7 * * *'
   workflow_dispatch:
 
 permissions:
@@ -27,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
-      - name: Checkout the sovereign home (Zip via PAT — the twin never forks the book)
+      - name: Checkout the sovereign home
         uses: actions/checkout@v4
         with:
           repository: roshpinacare-sys/Zip

@@ -1,24 +1,15 @@
-# TWIN-AUDIT (r147-c) — the domain-differentiation watchdog.
 #
-# The operator's standing complaint (measured 2026-10-02): the public properties
 # served near-identical pages (12 cross-repo pairs at text Jaccard 1.0 + intra-Domain
-# pairs at 0.981/0.9575). r147-c differentiated the two worst pairs; this flow keeps
-# that differentiation honest forever: it re-measures the LIVE sites daily, checks
-# every registered pair's distinct-capability evidence, and opens an issue when an
 # unregistered pair drifts into near-duplication or a registered pair loses its
-# evidence. Keyless against the sites; report committed as a public receipt.
 #
 # Conventions kept: Node 20, neutral commit identity, node exits 0 and the shell
-# decides the issue gate. R26 (CR-0054) KEYLESS WAVE: this flow works ONLY on this
 # repo (checkout, push, issues — all under the declared permissions), so the
-# checkout/issue tokens are the built-in github.token; the ZIP_PAT convention was
-# never a capability here. Zero owner secrets remain in this file.
 
 name: twin-audit
 
 on:
   schedule:
-    - cron: '19 6 * * *'   # daily 06:19 UTC — off-peak, off the minute map
+    - cron: '47 6 * * *'
   workflow_dispatch:
 
 permissions:
@@ -68,13 +59,7 @@ jobs:
           echo "could not publish the report after 3 attempts"
           exit 1
 
-      # R22 (CR-0052): the old inline-bash gate DIED on its first fire — backticks inside
       # the double-quoted node -e JS were executed by bash as command substitution
-      # (`syntax error near unexpected token 'done'`), so the watchdog's alarm was silent
-      # since day one. The gate is now agents/twin-issue-gate.cjs — a Node desk, no
-      # quoting tricks, fail-loud on a corrupt marker, honest exit 0 when both tokens fail.
-      # R26 (CR-0054): the ZIP_PAT fallback env is gone — the gate desk keeps its
-      # fail-soft token loop (empty tokens are skipped), GH_TOKEN carries issues:write.
       - name: Issue gate (unknown near-dup pair, or lost capability evidence)
         if: always()
         env:

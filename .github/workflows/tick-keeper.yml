@@ -1,23 +1,7 @@
-# TICK-KEEPER — הדופק שמרפא את עצמו (Z-70, CR-0048)
 #
-# המדידה (2026-10-03, GitHub API חסר-מפתח): המתזמן של GitHub מרעיב את הריפו הזה —
-# sovereign-tick-cron (:12/:42) ו-earn-audit-cron (:07/:37) נרשמו עם אפס אירועי
-# schedule מאז החימוש (3 ריצות, כולן workflow_dispatch), וריצות מתוזמנות שכן ירדו —
-# באיחור של שעות (treasury-route: חריץ 16:20 ירד 20:09). קצב שאי-אפשר לסמוך עליו —
-# אינו קצב. Dispatch לעומתן מתחיל ב-~15-30 שניות (נמדד: 21:15:04 → החלטה 21:15:22).
 #
-# החוק: השומר מודד את הקבלות העצמיות של קשת-הרפלקס (decisions jsonl / earn-audit /
-# fill-ledger — הדסקים עצמן דוחפות אותן ל-main) ומצית מחדש כל דסק שספרו הזדקן,
-# דרך workflow_dispatch עם PAT (אירועי PAT כן מדליקים workflows — חסימת-הרקורסיה
-# של GITHUB_TOKEN לא חלה כאן).
 #
-#   STASIS קודם (FATE-DEFENSE #1 — גם המרפא מציית לשובר) · cooldown לכל דסק ·
-#   טוקן בסביבה-בלבד, לעולם לא מודפס · כותב-יחיד לשני קבצי הספר שלו בלבד ·
-#   fail-soft exit 0 עם fail-loud book.
 #
-# המשמעות הריבונית: הרשת מחזיקה את עצמה בדופק גם כשהמתזמן החיצוני מתעלם — בלי
-# מפעיל, בלי סשן, בלי תלות בזמינות של GitHub schedule. השער הכפול נשאר שלם:
-# ה-keeper מצית טיקים; הטיק עצמו עדיין כבול למדיניות (caps, band, verify-then-sign).
 
 name: tick-keeper
 
@@ -61,7 +45,7 @@ jobs:
       - name: keep (measure the arc, re-fire stale desks)
         if: steps.brake.outputs.active != 'true'
         env:
-          KEEPER_GH_TOKEN: ${{ secrets.SA_KEEPER_DISPATCH_TOKEN }} # Z-70: WEAVE_OPS_PAT 404'd on dispatches (run 37156544364 booked it fail-loud) — the deploy-grade token is 204-proven (tick-keeper + earn-audit dispatches)
+          KEEPER_GH_TOKEN: ${{ secrets.SA_KEEPER_DISPATCH_TOKEN }}
           KEEPER_REPO: ${{ github.repository }}
         run: node agents/tick-keeper.cjs
 

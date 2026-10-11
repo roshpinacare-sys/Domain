@@ -1,19 +1,11 @@
-# WEAVE-ECOSYSTEM (DOMAIN TWIN) — האכיפה היומית של G6, על דקות ציבוריות
 #
-# תאום של weave-ecosystem של Zip (OL-14): מדידת שכפול מלאה על
-# כל הריפואים (~1550 קריאות contents-API) דרך WEAVE_OPS_PAT,
-# דוח כמשואה בבית הריבוני, ריצה אדומה בכנות אם dup ≥ 0.2.
-# הקדנס מוסט ל-06:30 (המקור: 05:30) כדי לא להתנגש עם מחזור מקורי
-# שיחודש אם המפעיל יחזיר את החיוב.
 #
-# התאמה מהותית אחת: ה-remote מוגדר לבית הריבוני Zip במפורש
-# (github.repository כאן הוא Domain — הסריקה והדוח שייכים ל-Zip).
 
 name: weave-ecosystem
 
 on:
   schedule:
-    - cron: '30 6 * * *'
+    - cron: '55 6 * * *'
   workflow_dispatch:
 
 permissions:
@@ -28,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Checkout the sovereign home (Zip via PAT — the twin never forks the book)
+      - name: Checkout the sovereign home
         uses: actions/checkout@v4
         with:
           repository: roshpinacare-sys/Zip
@@ -51,9 +43,6 @@ jobs:
       - name: Measure the ecosystem (full dup scan via ops PAT)
         run: |
           set -e
-          # T-49: SBX_FLEET_PAT (ולא WEAVE_OPS_PAT) — מוכח-חי-קורא-תוכן-מלא-גם-של-steem
-          # (fine-grained עם-מטא-בלבד מחזיר-עצים-אך-403-על-בלובים — נמדד 18:13/19:24);
-          # ומאז-T-49-הסריקה-חיה-על-שיבוטי-git — קריאת-API-אחת-בלבד (רשימת-ריפואים).
           git remote set-url origin "https://x-access-token:${{ secrets.SBX_FLEET_PAT }}@github.com/roshpinacare-sys/Zip.git"
           bun scripts/weave-ecosystem.ts --dup-scan --json sovereign/reports/ecosystem-dup-latest.json
           DUP=$(jq -r '.totals.dupRatio' sovereign/reports/ecosystem-dup-latest.json)

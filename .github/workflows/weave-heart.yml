@@ -1,35 +1,12 @@
-# WEAVE-HEART (DOMAIN TWIN) — הלב הענן של THE WEAVE, על דקות-Actions ציבוריות
 #
-# רקע (OL-14, 2026-09-20 12:36Z): מכסת הדקות של ריפואים-פרטיים מוצתה
-# בחשבון ה-Free — כל מכונות-הייצור ב-Zip נדחות בטרם-הרצה (כישלון
-# מיידי, בלי צעדים ובלי לוגים). ריפואים ציבוריים חיים בדקות בלתי-
-# מוגבלות ובחינם. התאום הזה מריץ את אותה המכונה בדיוק — אותם
-# סקריפטים, אותו ספר, אותה שרשרת — מהבית הציבורי Domain, על
-# checkout של הבית הריבוני Zip דרך ZIP_PAT (Actions Secret).
 #
-# מה זה משנה ומה לא:
-#   · הספר נשאר אחד — sovereign/ חי ב-Zip בלבד; התאום לא מעתיק
-#     מצב, הוא מזמין אותו מהמקור ודוחף חזרה אליו (pull-rebase
-#     למרוצים, שער-סודות קנוני על כל diff).
-#   · הקדנס מוסט ל-:13 — לעולם לא באותה דקה עם הלב המקורי ב-Zip
-#     (:00), כך שגם אם המפעיל יחזיר את החיוב והלב המקורי יקום —
-#     שני הלבבות מתחלפים במשמרות בלי התנגשות על אותה דחיפה.
-#   · אידמפוטנטיות היא הקו הקנוני: root שכבר עוגן ⇒ ALREADY-ANCHORED
-#     בכנות; שער ה-RC שופט שידורים; ההיסטוריה השופטת היחידה — השרשרת.
 #
-# שני סודות מפעיל — מצב הכספת (ראה README של התאום):
-#   · WEAVE_STEEM_WIF — טרם נמסר; בלעדיו קו Steem רץ ב-dry-כנה
-#     וג'נזיס ה-SAOS מדלג; כל שאר הפעימה (אימות, קיפול, פרסום
-#     הספרים לקונסולה) חסר-מפתחות וממשיך לרוץ.
-#   · WEAVE_SEAL_PASSPHRASE — נמסר על-ידי המפעיל ב-2026-09-21T08:28:30Z
-#     תחת השם MAIN_KEY (רישום הכספת, שמות-בלבד). שני השמות מתקבלים:
-#     הקנוני מועדף אם יימסר, MAIN_KEY ככינוי שהמפעיל בחר.
 
 name: weave-heart
 
 on:
   schedule:
-    - cron: '13 16 * * *' # R67-C: 3h -> daily 16:13 - the daily grid pulse is the documented baseline (money-watch.mjs: the 03:17 daily run remains the safety net)
+    - cron: '29 16 * * *'
   workflow_dispatch:
     inputs:
       mode:
@@ -54,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: Checkout the sovereign home (Zip via PAT — the twin never forks the book)
+      - name: Checkout the sovereign home
         uses: actions/checkout@v4
         with:
           repository: roshpinacare-sys/Zip

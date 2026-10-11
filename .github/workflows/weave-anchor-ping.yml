@@ -1,33 +1,12 @@
-# WEAVE-ANCHOR-PING (DOMAIN HUB) — sovereign cadence for the external-witness anchor line
 #
-# 2026-10-06 · senior-engineer round (measured): the hourly dispatch into Zip's
-# weave-anchor-lines became a false alarm. Private-repo Actions minutes are
-# exhausted since 09-20 (OL-14, owner-level billing fix pending), so every
-# dispatched run dies at startup (zero steps, no logs) while the SAME machine
-# runs green twice an hour as the Domain twin (weave-anchor-lines.yml HERE, on
-# checkout of Zip via ZIP_PAT) plus weave-heart's backstop dispatch after every
-# beat. Red-in-Zip stopped meaning "the chain is unattended" — the line IS
-# attended, on public minutes.
 #
-# The ping keeps its covenant — hourly, fail-honest, red = the chain needs
 # attention — but it now measures the truth directly instead of knocking on a
-# door with no minutes:
-#   1. NUDGE the live twin in this repo (same inputs forwarded; public minutes;
-#      the twin's concurrency group dedupes, a redundant nudge is harmless).
-#   2. VERDICT from measured freshness: the twin's most recent SUCCESSFUL
-#      anchor-lines run must be within the freshness window (default 3.5h —
-#      the bi-hourly cadence + one fully missed cycle of margin). Stale ⇒
-#      exit 1 — honest red, exactly like before, only now it can only mean
-#      "the anchor chain is actually stale".
-# It still holds no keys and touches no chains. The dispatch target moved from
-# the minutes-dead private copy to the living twin — one line of doctrine:
-# ping the machine that can actually run.
 
 name: weave-anchor-ping
 
 on:
   schedule:
-    - cron: '9 18 * * *' # R67-C: 6h -> daily 18:09
+    - cron: '6 18 * * *'
   workflow_dispatch:
     inputs:
       mode:
@@ -51,7 +30,7 @@ on:
 
 permissions:
   contents: read
-  actions: write # nudge the twin + read its run history (write implies read)
+  actions: write
 
 concurrency:
   group: weave-anchor-ping
@@ -82,10 +61,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           FRESH_H="${{ inputs.fresh_h || '3.5' }}"
-          # R244 robustness: a transient API empty/error must never fake "no run
           # exists" (measured 2026-10-06 — false reds from bare `curl -s` while
-          # the twin was green in the same minute). gh api is authenticated and
-          # surfaces errors; an API failure = INCONCLUSIVE (honest, distinct
           # verdict — never mistaken for staleness). Still red either way.
           if ! CREATED=$(gh api "repos/roshpinacare-sys/Domain/actions/workflows/weave-anchor-lines.yml/runs?status=success&per_page=1" --jq '.workflow_runs[0].created_at // ""' 2>/tmp/ping-api.err); then
             echo "API-ERROR (inconclusive — the freshness judge could not read the twin, this is NOT a staleness verdict): $(cat /tmp/ping-api.err)"; exit 1
@@ -93,9 +69,7 @@ jobs:
           if [ -z "$CREATED" ]; then
             echo "no successful anchor-lines run found — the chain is unattended"; exit 1
           fi
-          # R244: GNU date rejects decimal hours ("3.5 hours ago") — bash -e then
           # killed the step and faked a red verdict (the real root cause of the
-          # 2026-10-06 reds). Convert hours→integer minutes and guard the result.
           MIN=$(awk -v h="$FRESH_H" 'BEGIN{printf "%d", h*60+0.5}')
           CUT=$(date -u -d "$MIN minutes ago" +%Y-%m-%dT%H:%M:%SZ) || { echo "VERDICT-ERROR (inconclusive — CUT could not be computed)"; exit 1; }
           echo "last-success=$CREATED · window=$FRESH_H h=$MIN min (older than $CUT = stale)"
