@@ -107,7 +107,12 @@ async function main() {
       connectedTo = account;
       break; /* one connect per run (CR-0076 ops cap) */
     } catch (e) {
-      row('account_update', '@' + account + ' broadcast refused: ' + String(e.message || e).replace(/\s+/g, ' ').slice(0, 120), 'no-authority-or-error');
+      const msg = String(e.message || e);
+      if (/sufficient funds|balance >= fee/i.test(msg)) {
+        row('account_update', '@' + account + ' signature ACCEPTED but blurt charges an account_update fee above liquid balance — funding gap, not a machine failure (provision: fund the account or set the cornerstone active key)', 'BLUE-NEEDS-FUNDING');
+        saveState(state); book(); process.exit(0);
+      }
+      row('account_update', '@' + account + ' broadcast refused: ' + msg.replace(/\s+/g, ' ').slice(0, 120), 'no-authority-or-error');
       continue;
     }
   }
