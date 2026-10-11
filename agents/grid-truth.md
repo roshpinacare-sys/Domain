@@ -1,7 +1,7 @@
-# GRID-TRUTH · 2026-10-11T16:23:34.599Z (live RPC, read-only)
+# GRID-TRUTH · 2026-10-11T16:24:17.306Z (live RPC, read-only)
 
 The anti-phantom book: every number below was measured from the chain this run.
-Drift measured vs previous snapshot: 2026-10-11T16:22:42.171Z
+Drift measured vs previous snapshot: 2026-10-11T16:23:34.599Z
 
 | chain | total effective power | total liquid | locked in orders | accounts alive |
 |---|---|---|---|---|
@@ -13,7 +13,7 @@ Drift measured vs previous snapshot: 2026-10-11T16:22:42.171Z
 
 | account | role | eff power | liquid | locked | VP% | RC% | last post | alerts |
 |---|---|---|---|---|---|---|---|---|
-| headcorner | treasury | 4.717 | 19.824 | 27.95 STEEM+91.875 SBD | 100 | 99.9 | 2026-10-11 | TREASURY-UNDERFLOOR |
+| headcorner | treasury | 4.717 | 19.824 | 27.95 STEEM+92.065 SBD | 100 | 99.8 | 2026-10-11 | TREASURY-UNDERFLOOR |
 | cornerstone | legacy-treasury | 1.354 | 49.771 |  | 100 | 100 | 2020-03-28 | INACTIVE |
 | haran | worker-active | 0.126 | 0.01 |  | 100 | 100 | 2026-10-11 |  |
 | cashmachine | worker-active | 0.121 | 0.01 |  | 100 | 98.6 | 2026-10-11 |  |
