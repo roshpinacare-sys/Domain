@@ -1,43 +1,43 @@
 {
  "schema": "office.pulse/1",
- "generatedAt": "2026-10-11T19:15:57.376Z",
+ "generatedAt": "2026-10-11T19:36:28.562Z",
  "generatedAgeNote": "this file is rewritten by the office-pulse workflow; judge freshness by generatedAt",
- "verdict": "AGING",
+ "verdict": "ALIVE",
  "verdictChecks": [
   {
    "name": "office-push",
    "state": "fresh",
-   "detail": "0min <= 2880min"
+   "detail": "3min <= 2880min"
   },
   {
    "name": "office-ci",
-   "state": "pending",
-   "detail": "HTTP 404 raw:receipts/office-ci/verdict.json"
+   "state": "fresh",
+   "detail": "9min <= 1560min"
   },
   {
    "name": "wallet-artery",
    "state": "fresh",
-   "detail": "50min <= 180min"
+   "detail": "70min <= 180min"
   },
   {
    "name": "grid-artery",
    "state": "fresh",
-   "detail": "1min <= 90min"
+   "detail": "22min <= 90min"
   },
   {
    "name": "fleet-artery",
    "state": "fresh",
-   "detail": "11min <= 180min"
+   "detail": "32min <= 180min"
   },
   {
    "name": "sovereign-tick",
    "state": "fresh",
-   "detail": "1min <= 60min"
+   "detail": "7min <= 60min"
   },
   {
    "name": "runtime-heartbeat",
    "state": "fresh",
-   "detail": "19min <= 90min"
+   "detail": "29min <= 90min"
   }
  ],
  "degraded": [],
@@ -51,51 +51,51 @@
  },
  "office": {
   "repo": "roshpinacare-sys/FleetHQ",
-  "pushedAt": "2026-10-11T19:15:37Z",
-  "pushedAgeMin": 0,
+  "pushedAt": "2026-10-11T19:33:19Z",
+  "pushedAgeMin": 3,
   "openIssues": 0,
   "wire": [
    {
-    "sha": "3e880f8",
-    "msg": "office-ci (E-series): the office's own truth artery - install+prisma+tsc+build each RAN an",
-    "at": "2026-10-11T19:15:35Z",
-    "ageMin": 0,
-    "author": "Z User"
-   },
-   {
-    "sha": "e779744",
-    "msg": "governance(T-56): write-log self-receipt — law demonstrated in-action",
-    "at": "2026-10-11T19:12:52Z",
+    "sha": "2635dd7",
+    "msg": "office-heartbeat: public office state captured [skip ci]",
+    "at": "2026-10-11T19:33:18Z",
     "ageMin": 3,
-    "author": "roshpinacare-sys"
+    "author": "fleet-office-bot"
    },
    {
-    "sha": "56c4daa",
-    "msg": "governance(T-56): inter-agent write-log law + fleet roles map (release-not-archive) — owne",
-    "at": "2026-10-11T19:12:48Z",
-    "ageMin": 3,
-    "author": "roshpinacare-sys"
+    "sha": "96145ca",
+    "msg": "office-ci receipt: build pass, types pass [skip ci]",
+    "at": "2026-10-11T19:27:20Z",
+    "ageMin": 9,
+    "author": "office-ci-bot"
    },
    {
-    "sha": "9dad94d",
-    "msg": "P1-containment (zai-code-4): remove last nested-console test page leftover",
-    "at": "2026-10-11T14:57:50Z",
-    "ageMin": 258,
-    "author": "zai-code-4"
+    "sha": "782e698",
+    "msg": "[zai] office-window (10-a): gitignore dist/ — rendered artifacts live only on office-pages",
+    "at": "2026-10-11T19:26:09Z",
+    "ageMin": 10,
+    "author": "fleet-office-bot"
    },
    {
-    "sha": "cd255f3",
-    "msg": "P1-containment (zai-code-4): remove leftover vault tools, R2 bridge paths, recovery-task30",
-    "at": "2026-10-11T14:55:40Z",
-    "ageMin": 260,
-    "author": "zai-code-4"
+    "sha": "b389f41",
+    "msg": "office-heartbeat: the office works ALWAYS — 2h crew shifts in Actions (live mode, GitHub M",
+    "at": "2026-10-11T19:22:50Z",
+    "ageMin": 14,
+    "author": "zai-sec-1a12af86"
    },
    {
-    "sha": "1a4ef85",
-    "msg": "security(zai-code-2): P1 — vault unseal choreography off the public tree (the recipe dies ",
-    "at": "2026-10-11T13:36:46Z",
-    "ageMin": 339,
-    "author": "roshpinacare-sys"
+    "sha": "0ee2833",
+    "msg": "office-ci receipt: build pass, types pass [skip ci]",
+    "at": "2026-10-11T19:22:39Z",
+    "ageMin": 14,
+    "author": "office-ci-bot"
+   },
+   {
+    "sha": "bfc2b79",
+    "msg": "[zai] office-window (10-a): publish via throwaway worktree — branch switch was deleting th",
+    "at": "2026-10-11T19:21:24Z",
+    "ageMin": 15,
+    "author": "fleet-office-bot"
    }
   ],
   "worklog": {
@@ -115,10 +115,10 @@
     }
    ]
   },
-  "worklogLastTouchAgeMin": 1613,
+  "worklogLastTouchAgeMin": 1633,
   "boot": {
    "at": "2026-10-08T21:50:46Z",
-   "ageMin": 4165,
+   "ageMin": 4186,
    "office": {
     "reception_3000": "up",
     "foreman_3010": "up",
@@ -127,40 +127,49 @@
    "allOk": true
   },
   "ci": {
-   "pending": "first office-ci receipt not landed yet",
-   "error": "HTTP 404 raw:receipts/office-ci/verdict.json"
+   "overall": "PASS",
+   "at": "2026-10-11T19:27:20.082Z",
+   "ageMin": 9,
+   "reason": "all four checks ran and passed",
+   "runUrl": "https://github.com/roshpinacare-sys/FleetHQ/actions/runs/38168008222",
+   "checks": {
+    "install": "pass",
+    "prismaGenerate": "pass",
+    "typecheck": "pass",
+    "productionBuild": "pass"
+   }
   }
  },
  "arteries": {
   "wallet": {
    "at": "2026-10-11T18:26:18.163Z",
-   "ageMin": 50,
+   "ageMin": 70,
    "overall": "PASS",
    "alerts": 1,
    "runUrl": "https://github.com/roshpinacare-sys/Sandbox/actions/runs/38163792454"
   },
   "grid": {
    "at": "2026-10-11T19:14:55.045Z",
-   "ageMin": 1,
+   "ageMin": 22,
    "overall": "PASS",
    "alerts": 0
   },
   "fleet": {
    "at": "2026-10-11T19:04:35.537Z",
-   "ageMin": 11,
+   "ageMin": 32,
    "overall": "PASS",
    "alerts": 3
   },
   "tick": {
-   "at": "2026-10-11T19:14:36.323Z",
-   "ageMin": 1,
-   "chain": "ea308da1d092"
+   "at": "2026-10-11T19:29:20.427Z",
+   "ageMin": 7,
+   "chain": "545a45f377ed"
   }
  },
  "runtime": {
-  "lastSuccessAt": "2026-10-11T18:56:33Z",
-  "lastSuccessAgeMin": 19,
-  "lastSuccessName": "blurt-revival",
+  "lastSuccessAt": "2026-10-11T19:07:34Z",
+  "lastSuccessAgeMin": 29,
+  "lastSuccessName": "sovereign-runtime",
   "lastConclusion": "success"
  }
 }
