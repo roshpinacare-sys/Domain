@@ -145,7 +145,13 @@ try {
       row = { at, mode: d.mode, status: "WINDOW-RUN-NO-BOOK", detail: `child exited 0 but its book is absent/stale (at=${childBook ? childBook.at : "none"})`, durationMs: dur };
     } else {
       const oc = classifyOutcome(childBook);
-      row = { at, mode: d.mode, status: "WINDOW-COMPLETE", durationMs: dur, ...oc,
+      // [zai-main-1a12d2e9 2026-10-11] status-clobber fix (measured, not assumed):
+      // the first measured window (4/4 REWARD-1) booked row.status=INCUMBENT-RETAINED
+      // because `...oc` spread AFTER status clobbered "WINDOW-COMPLETE" — so
+      // completeCount stayed 0, lastComplete stayed null, and the pulse's carry-law
+      // (which finds rows by status === "WINDOW-COMPLETE") could NEVER carry a
+      // measured outcome. The informative label survives as `outcome`.
+      row = { at, mode: d.mode, durationMs: dur, ...oc, outcome: oc.status, status: "WINDOW-COMPLETE",
         detail: `winner=${oc.winner} meanReward=${oc.meanReward} meanTurns=${oc.meanTurns} leak=${oc.leakCheck} (${Math.round(dur / 1000)}s)` };
       if (oc.leakCheck === "LEAK-DETECTED") log("WARNING: serve-window leak detected in the child book — booked, never silenced");
     }
