@@ -212,6 +212,12 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
           <div class="pfoot"><span>עודכן: <span class="upd" id="po-upd">—</span></span><span class="src">FleetHQ/digest.json</span></div>
         </div>
 
+        <div class="panel" id="p-crew">
+          <div class="ph"><h3><span class="ico">🧑‍💻</span> הצוות — חי מהמשרד</h3><span class="chip" id="pc-chip">טוען…</span></div>
+          <ul class="runs" id="pc-runs"><li class="err">טוען מצב-צוות…</li></ul>
+          <div class="pfoot"><span>עודכן: <span class="upd" id="pc-upd">—</span></span><span class="src">FleetHQ/office-state.json · דופק 2-שעות</span></div>
+        </div>
+
         <div class="panel" id="p-grid">
           <div class="ph"><h3><span class="ico">📶</span> פס-הגריד</h3><span class="chip" id="pg-chip">טוען…</span></div>
           <div class="verdict" id="pg-verdict">—</div>
@@ -563,9 +569,54 @@ function chipMerge(id, ts){
   setChip(id, at);
 }
 
+/* ── crew panel: live from the office's own heartbeat (office-heartbeat.yml, every 2h).
+   Honesty law: renders ONLY what the captured office state actually says —
+   no data = an honest "no data", never a fake. ── */
+function loadCrew(){
+  var el = function(id){ return document.getElementById(id); };
+  function esc(s){ var d=document.createElement('div'); d.textContent=String(s==null?'':s); return d.innerHTML; }
+  function agoStr(iso){ try{ var m=Math.round((Date.now()-new Date(iso).getTime())/60000);
+    if(m<1) return 'עכשיו'; if(m<60) return m+' ד׳'; if(m<1440) return Math.round(m/60)+' ש׳'; return Math.round(m/1440)+' ימים'; }catch(e){ return ''; } }
+  fetch('https://raw.githubusercontent.com/roshpinacare-sys/FleetHQ/main/office/state/office-state.json?ts='+Date.now())
+    .then(function(r){ if(!r.ok) throw 0; return r.json(); })
+    .then(function(s){
+      var mem = s.memory || {};
+      var tasks = s.tasks || [];
+      var open = tasks.filter(function(t){ return t.status !== 'done'; });
+      var ageMin = Math.round((Date.now() - new Date(s.capturedAt).getTime())/60000);
+      var chip = el('pc-chip');
+      chip.textContent = ageMin > 150 ? 'מיושן' : 'חי';
+      chip.classList.toggle('ok', ageMin <= 150);
+      chip.classList.toggle('stale', ageMin > 150);
+      var lessons = Array.isArray(mem.lessons) ? mem.lessons.length : (mem.lessons || 0);
+      var h = '<li><b>' + ((s.agents || []).length) + '</b> סוכנים על הכורסאות · <b>' + (mem.shifts || 0) + '</b> משמרות · <b>' + lessons + '</b> לקחים · <b>' + (s.books || 0) + '</b> ספרים</li>';
+      if (open.length) {
+        open.slice(0, 4).forEach(function(t){
+          h += '<li><code>' + esc(t.id) + '</code> ' + esc(t.status) + ' — ' + esc(String(t.title || '').slice(0, 90)) + '</li>';
+        });
+      } else if (tasks.length) {
+        h += '<li>אין משימות פתוחות — המשמרת נסגרה. הדופק הבא בתוך שעתיים.</li>';
+      } else {
+        h += '<li class="err">המשרד בין משמרות — אין מצב-משימות בדופק האחרון.</li>';
+      }
+      (s.feed || []).slice(0, 3).forEach(function(f){
+        h += '<li style="opacity:.75">' + esc(f.kind) + ': ' + esc(String(f.text || '').slice(0, 90)) + '</li>';
+      });
+      el('pc-runs').innerHTML = h;
+      el('pc-upd').textContent = agoStr(s.capturedAt);
+    })
+    .catch(function(){
+      var chip = el('pc-chip');
+      chip.textContent = 'אין-דופק';
+      chip.classList.remove('ok'); chip.classList.add('stale');
+      el('pc-runs').innerHTML = '<li class="err">אין עדיין מדידת-צוות חיה — כאן שום דבר לא מזויף. הדופק הראשון מואץ עכשיו.</li>';
+      el('pc-upd').textContent = '—';
+    });
+}
+
 /* ── refresh loop: 5 minutes, one polite batch per source ── */
 function refreshAll(){
-  loadOffice(); loadPulse(); loadGrid(); loadSteem(); loadProbes(); loadWorld();
+  loadOffice(); loadPulse(); loadGrid(); loadSteem(); loadProbes(); loadWorld(); loadCrew();
 }
 refreshAll();
 setInterval(refreshAll, 5*60*1000);
