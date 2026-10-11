@@ -1,22 +1,13 @@
-# PUBLIC-PULSE (r147-c) — refreshes the public pulse books (public/pulse.json +
-# about/team.json) that only the Domain faces serve. Keyless: composes from the
-# committed books of this repository (audience/latest.json, agents/scout-latest.json,
-# agents/truth-baseline.json, moment/moment.json, agents/capability-matrix.json).
 #
-# R26 (CR-0054) KEYLESS WAVE: the workflow passes NO secret env anymore. The old
-# PULSE_URL secret-env reference was DEAD WEIGHT — verified via the GitHub API
-# (R26) that no PULSE_URL secret is configured on this repo, so it resolved to an
 # empty string on every run since day one while miscounting this flow as
-# owner-secret. The optional env hook stays in agents/public-pulse.cjs (if a
 # home-platform feed is ever declared, wire it as a vars. reference — the desk
-# still refreshes from it first and says so in the book; honesty over
 # freshness-faking, every run). Same-repo checkout/push = built-in github.token.
 
 name: public-pulse
 
 on:
   schedule:
-    - cron: '4 6 * * *'    # daily 06:04 UTC — before twin-audit (06:19) so the books it checks are fresh
+    - cron: '21 6 * * *'
   workflow_dispatch:
 
 permissions:

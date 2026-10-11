@@ -1,35 +1,16 @@
-# MARKET-GRID CRON (CR-0038, fleet Rung 13) — the history cadence, WIRED (CR-0035/R11 booking:
-# "history cadence wiring into Actions cron").
 #
-# The market-grid desk is the KEYLESS cross-market observer layer of the three-layer grid
-# composition law (CR-0034): it reads the chains' OWN official surfaces (api.hive.blog,
-# api.steemit.com condenser_api, api.hive-engine.com JSON-RPC) and appends ONE measured
-# history row per invocation (the evo-windows pulled-schedule pattern — no daemon, per the
 # sibling's LAUNCH-CONTEXT law). Until now the history advanced only when a lane happened
-# to run the desk by hand (2 rows in 3 minutes proved the drift is minute-scale); this
-# workflow turns the snapshot instrument into a SCHEDULED time-series: ~48 rows/day,
 # enough for a real distribution of the internal-market edge.
 #
-# Laws carried here (all pre-existing, now mechanically enforced on the cadence):
-#  · FATE-DEFENSE law #1 — the STASIS breaker is obeyed TWICE: the scheduler checks
-#    agents/STASIS.json before the tick (healthy no-op, nothing measured, nothing
 #    committed), AND the desk itself halts on the same file (E29 proves the fresh-process
 #    halt). Two independent gates, one law.
-#  · KEYLESS — zero operator secrets: the desk reads public chain surfaces only; the
-#    executor stays the OWNER-GATED preview (nothing is ever broadcast here). The push
-#    back to the book rides the built-in GITHUB_TOKEN (contents: write, same repo).
-#  · APPEND-ONLY + [skip ci] — every tick commits its own books (market-grid.json/.md,
-#    paper + history ledgers) exactly like the grid-heartbeat twins commit theirs; no
 #    laundering, no daemon, no cross-repo forks.
-#  · Cadence `23,53 * * * *` — every 30 minutes, offset from every sibling pulse
-#    (grid-trigger-twin :9/:39, dex-grid :48, the saos-dex original :00/:30) so the
-#    fleet's Actions minutes never collide.
 
 name: market-grid-cron
 
 on:
   schedule:
-    - cron: '21 */3 * * *' # T-51: 3h :21 on public minutes
+    - cron: '41 */3 * * *'
   workflow_dispatch:
 
 permissions:
@@ -57,13 +38,8 @@ jobs:
       - name: STASIS brake (FATE-DEFENSE law #1 — staged-aware; measurement lane continues per scope law)
         id: brake
         run: |
-          # T-50 (2026-10-09): the brake's OWN scope law says "measurement-only lanes continue"
-          # and the calibration mandate (2026-10-05, trace 1a10bfe1342b2391) opened the staged
-          # GRID lane. This desk is the keyless measurement lane (it never broadcasts). The old
           # gate halted on active===true alone — that froze the market time-series Oct-4→Oct-9
           # (books dark 5 days) DURING a staged re-entry that required observation data.
-          # Proceed when: no brake OR (mode=staged AND grid lane in stagedLanes.allow).
-          # Full halt stays for mode=full (or staged without the grid lane).
           S=$(node -e "const s=JSON.parse(require('fs').readFileSync('agents/STASIS.json','utf8'));const lanes=Array.isArray(s.stagedLanes&&s.stagedLanes.allow)?s.stagedLanes.allow.map(String).map(x=>x.toLowerCase()):[];console.log([s.active===true?'true':'false',String(s.mode||'full'),(s.mode==='staged'&&lanes.includes('grid'))?'true':'false'].join(' '))" 2>/dev/null || echo "false full false")
           ACTIVE=$(echo "$S" | cut -d' ' -f1); MODE=$(echo "$S" | cut -d' ' -f2); LANE_OK=$(echo "$S" | cut -d' ' -f3)
           echo "active=$ACTIVE" >> "$GITHUB_OUTPUT"
@@ -81,8 +57,6 @@ jobs:
         if: steps.brake.outputs.active != 'true' || steps.brake.outputs.lane_ok == 'true'
         run: node agents/market-grid.cjs
         # The desk is fail-loud by design (PARTIAL -> exit 1) and the time-series values
-        # every honest row — a PARTIAL measurement (one node flaky) is still a measurement,
-        # its row is still labeled PARTIAL in the ledger, and the tick must still publish.
         continue-on-error: true
 
       - name: publish the tick back to the book

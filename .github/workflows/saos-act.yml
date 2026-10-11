@@ -1,27 +1,14 @@
-# SAOS-ACT (R243) — the sovereignty bridge: the saos-cockpit engine RUNS HERE.
 #
 # The endless loop, killed: the sandbox dies ~5x/day; the private repo's
-# Actions minutes are billing-walled (measured 2026-10-07 — even `echo hello`
-# fails in 3s, zero steps). THIS repo runs on FREE public minutes and ALREADY
-# holds the relayed key vault (vault-transfer, 2026-09-29).
 #
 # What happens here (every 2h + manual):
-#   1. checkout the LAW repo (roshpinacare-sys/steem @ saos-cockpit) via ZIP_PAT
-#   2. selftest gate — fail-closed (a red selftest = no run, honest alarm)
-#   3. ci-act.mjs: CHAIN-JUDGED credential adoption (the chain is the only
-#      judge; key material never printed) → ONE engine daily cycle → durable
-#      custody anchor (≤1/h, state-stamped) → agent-bus receipts on chain
-#   4. engine state flows BACK into saos-cockpit (the book lives in git)
 #
-# Laws carried: T-80 custody gates (dead soldiers never sign), thinkGate,
-# SPAMGATE v1 (docs/ANTI-SPAM-LAW.md — steem-only rails, measured thresholds),
-# agent-bus v1 (chain-native mail), zero secret material in any log.
 
 name: saos-act
 
 on:
   schedule:
-    - cron: '51 */2 * * *'
+    - cron: '11 */2 * * *'
   workflow_dispatch: {}
 
 permissions:
@@ -61,10 +48,6 @@ jobs:
         working-directory: mini-services/saos-engine
         env:
           SAOS_ACCOUNT: headcorner
-          # R276 (Task 22): the LIVE headcorner credential — chain-proven 4/4
-          # from the git vault (KEYS-ZIP-2026-10-08, judge matrix 2026-10-08):
-          # headcorner STEEM owner/active/posting/memo all match live authorities.
-          # Until now this env was honestly absent (no held key matched the chain).
           CI_HEADCORNER_CRED: ${{ secrets.HEADCORNER_CRED }}
           CI_MAIN_KEY: ${{ secrets.MAIN_KEY }}
           CI_STEEM_POSTING_WIF: ${{ secrets.STEEM_POSTING_WIF }}

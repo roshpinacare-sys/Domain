@@ -1,33 +1,14 @@
-# SOVEREIGN-TICK-CRON — 24/7 SOVEREIGNTY (Z-66, CR-0044)
 #
-# The operator directive transferred the last two operator-held decisions to
-# sovereignty ("תן לריבונות להחליט החלטות שהשארת לי ... ריבונות אוטונומית ללא
-# תלות") and fixed the gate law: the gate exists BOTH WITHOUT and WITH the
-# operator ("צריך גם ללא וגם כולל השער שלי").
 #
 # This workflow is that law, 24/7:
-#   KEYLESS (the default here): every :12/:42 the sovereign tick reads the
-#     local canon, decides by agents/sovereign-policy.json, routes a DRY cycle,
-#     and books append-only decision receipts. Honest, zero signatures.
-#   ARMED (dual-gate's "with the key" path): if STEEM_ACTIVE_WIF is present in
-#     this repository's vault, the tick materializes the derived-keys vault
-#     (presence-only check, content never logged) and the SAME receipt path
 #     fires LIVE — verify-then-sign + caps + band + ADD-ONLY still bind inside
-#     market-exec at fire time. One secret, no code change.
-#   OPERATOR OVERLAY (always armed): agents/STASIS.json active=true halts the
-#     tick BEFORE any read; SOVEREIGN_MODE=operator routes every LIVE intent
-#     to sovereign-pending.json instead of executing. One file flip, no code.
 #
-# Cadence law: :12/:42 sits OFF the whole org minute map (:00/:30 dex pulse,
-# :09/:39 twins, :17/:47 fill-ledger, :23/:53 market grid, 02:11 census,
-# 03:48 dex-grid, 16:20 treasury). STASIS-braked twice (step-gate + in-code
-# halt-before-read). Append-only publish, [skip ci], rebase-push twin idiom.
 
 name: sovereign-tick-cron
 
 on:
   schedule:
-    - cron: '11 10 * * *' # R67-C: 2h -> daily 10:11
+    - cron: '49 10 * * *'
   workflow_dispatch: {}
 
 permissions:

@@ -1,36 +1,13 @@
-# MIRROR-FROM-CONSOLE — שיקוף פלטי-האמת מהבלוק האחד (r144-h)
 #
-# החוק (BLOC.md, שני הריפואים): כל קיפול-אמת מחושב פעם אחת, ב-Console
-# (מרכז-אמת-המפעיל). עד r144-h הריצו כאן זרימות-תאומות שחישבו את אותן
-# האמתות פעמיים (agents-watch · money-watch · dex-watch · console-publish
-# · truth-gate · key-verify) — הוסרו מהבית הזה, והפלטים שלהן מגיעים
-# בשיקוף שעתי חסר-מפתחות מהמראה הציבורית החיה של Console.
 #
-# מה משוקף (מלא ב-agents/mirror-from-console.mjs):
-#   DATA  — agents/registry.json · agents/gh-snapshot.json · dex/money.json
-#           dex/deposits.json · dex/watch.json · truth/latest.json ·
-#           truth/history.json · truth/slo.json · weave/census.json ·
-#           weave/vitals.json · weave/agreement.json (r68)
-#   HTML  — (הוסר ב-Task 14-b, 2026-10-02) אפס שטחי-HTML: Domain היא החזית
-#           הציבורית הריבונית ועורכת את דפיה בביתה; Console מרכז-ההפעלה.
-#           הפיצול מתועד ב-README.md · דוקטרינת הפיצול. ההגנה הכנה (DRIFT)
-#           נשארת רדומה ב-agents/mirror-from-console.mjs.
-#   דוח   — mirror-report.json (פומבי, בכל ריצה)
 #
-# תזמון (r68-d): דו-שעתי ב-:11 של השעות האי-זוגיות — אחרי ש-Console
-# השלים את מחזור המנועים של השעה הזוגית (census :08 · agreement :14 ·
-# vitals :50), כך שכל ריצה משקפת את שלושת ספרי הרשת הטריים, והפיגור
-# המרבי של ספר בבית הזה יורד מכ-24ש' לכ-שעה. keyless וציבורי —
-# אפס צריכת-דקות. מפת-הדקות ב-Domain: אין התנגשות ב-:11 אי-זוגי
-# (agent-verify :56 זוגי · watchdog 15:10 · שאר היומיים מפוזרים).
-# הזנקה ידנית אפשרית בכל רגע (workflow_dispatch).
 
 name: mirror-from-console
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: '11 1-23/2 * * *'
+    - cron: '48 1-23/2 * * *'
 permissions:
   contents: write
 

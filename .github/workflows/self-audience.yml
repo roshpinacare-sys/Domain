@@ -1,26 +1,13 @@
-# SAOS SELF-AUDIENCE on Domain (public repo — free Actions, no minutes quota) — Z-20
 #
-# למה-כאן: הריפו-הפרטי (steem) אזל-מינוטים-פרטיים (מכסה-חודשית, חזרה 10-01).
-# הרכבת-הריבונית עוברת לרכבת-הציבורית: אותו-צינור, מפתחות-דרך-סודות-ריפו
-# (אותה-דוקטרינה כמו EVM_ANCHOR_PK), סורגי-בייטים לפני-כל-חתימה.
 #
-# צינור מלא (fail-soft — סוכן לעולם לא מפיל-את-הרכבת):
-#   1. fleet-claim   — הצי תובע את פרסי-עצמו (posting-only, אידמפוטנטי, גילגול)
-#   2. head-delegate — הון-עצמי חלקי-שוויון: חוק-הנתח-השווה v2 (CR-0065, אידמפוטנטי)
-#   3. self-audience — דגלול-הראש בלבד (חיילים מצביעים דרך human-cadence, CR-0065)
-#   4. fleet-doctor  — אבחון-עצמי נטול-מפתחות · STATE-REPORT יומי
 #
-# CR-0065: soldiers-blog + fleet-social הוסרו מהרכבת הזו — פרסום ותגובות בבעלות
-# human-cadence.yml (שעתי, חלונות-אישיים, אין-פיצוצים). FORCE_LEGACY=1 עוקף רק-ליד.
 #
-# סודות: SA_FLEET_KEYS (בסיס64 של מפת-posting-WIFs ×11) · SA_HEAD_ACTIVE (בסיס64)
-# אפס-סודות-בפלט/בקבלות/בקומיטים. קבלות-נטולות-סודות בלבד.
 
 name: self-audience
 
 on:
   schedule:
-    - cron: '30 14 * * *'   # 14:30 UTC
+    - cron: '32 14 * * *'
   workflow_dispatch: {}
 
 permissions:
@@ -37,7 +24,7 @@ jobs:
     env:
       NODE_PATH: /tmp/steemjs/node_modules
     steps:
-      - name: STASIS gate (mechanical, FATE-DEFENSE law #1 — Z-71 deep-audit F7)
+      - name: STASIS gate (mechanical, FATE-DEFENSE law
         id: brake
         run: |
           if [ -f agents/STASIS.json ]; then
@@ -82,14 +69,8 @@ jobs:
       - name: fleet doctor (keyless self-diagnosis)
         run: node agents/fleet-doctor.cjs
 
-      # R22 (CR-0052) root-cause fix, measured from run 37144830642's log: the desk measured
-      # fine, committed 9 files (3181 insertions) — and DIED at push, 3 scheduled runs in a
       # row. Chain: the add list MISSED files the measure steps wrote (left unstaged) →
-      # `git pull --rebase` refused ("You have unstaged changes"), the `|| true` swallowed
-      # it, then `git push` hit the remote-move race and failed. The receipts of a full day
-      # were written and then thrown away, daily. Fix: stage the whole measured surface
       # (git add -A), rebase WITH autoStash, and the house 3-attempt retry idiom (same as
-      # twin-audit's publish loop).
       - name: commit receipts (secretless)
         run: |
           git config user.name "saos-self-audience"

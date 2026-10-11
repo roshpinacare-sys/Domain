@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with: {fetch-depth: 1}
-      - name: STASIS gate (mechanical, FATE-DEFENSE law #1 — R24-a, owner directive 2026-10-04)
+      - name: STASIS gate (mechanical, FATE-DEFENSE law
         id: brake
         run: |
           ST=$(node -p "JSON.parse(require('fs').readFileSync('agents/STASIS.json','utf8')).active===true")
