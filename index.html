@@ -286,6 +286,8 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
             <b>יתומים (אף-קורא)</b><i class="mono" id="pf-orph">—</i>
             <b>רפאים (מפיק-מת)</b><i class="mono" id="pf-gh">—</i>
             <b>סטיית-תוכן</b><i class="mono" id="pf-div">—</i>
+            <b>אנטי-זיוף (L0..L7)</b><i class="mono" id="pf-ig">—</i>
+            <b>טענות-שאומתו מול Actions</b><i class="mono" id="pf-igv">—</i>
           </div>
           <ul class="runs" id="pf-runs"><li class="err">טוען מפת-זרימה…</li></ul>
           <div class="pfoot"><span>עודכן: <span class="upd" id="pf-upd">—</span></span><span class="src">Sandbox/ops/flow/flow-map.json · כל-3-שעות</span></div>
@@ -716,6 +718,27 @@ function loadFlow(){
     });
 }
 
+/* ── 9b. INTEGRITY GUARD (G-series lane: Sandbox ops/integrity/verdict.json — anti-forgery verdict, live) ── */
+function loadIntegrity(){
+  jget('https://raw.githubusercontent.com/roshpinacare-sys/Sandbox/main/ops/integrity/verdict.json?ts=' + Date.now(), 10000)
+    .then(function(v){
+      var s = v.summary || {};
+      var ig = $('pf-ig');
+      ig.textContent = v.overall + ' · ממצאים ' + (s.findings || 0);
+      ig.style.color = v.overall === 'FAIL' ? '#b91c1c' : (v.overall === 'PASS' ? '#15803d' : '#a16207');
+      $('pf-igv').textContent = (s.verified || 0) + ' / ' + (s.sources || 0) + ' מקורות';
+      var items = (v.verified || []).slice(0, 2).map(function(x){
+        return '<li style="font-size:12px;opacity:.85">✅ ' + String(x.where) + ' — ' + String(x.detail || '') + '</li>';
+      });
+      (v.findings || []).filter(function(f){ return f.level === 'CRITICAL' || f.level === 'HIGH'; }).slice(0, 2).forEach(function(f){
+        items.push('<li class="err" style="font-size:12px">🚩 ' + f.level + ': ' + String(f.where) + ' — ' + String(f.law) + '</li>');
+      });
+      if (v.overall === 'FAIL') items.unshift('<li class="err" style="font-size:12px">חשד-זיוף מדוד — בקשו מקור לפני שסומכים</li>');
+      $('pf-runs').innerHTML = items.join('') || '<li style="font-size:12px;opacity:.7">אין ממצאים.</li>';
+    })
+    .catch(function(){ var ig = $('pf-ig'); ig.textContent = 'אין נתון'; });
+}
+
 /* ── 10. RESEARCH (11-c lane: Sandbox research findings — weekly, date-named findings-{utc-date}.json,
    resolved latest-first up to 9 days back, exactly like the probes date-failover of 10-b.
    Honesty law: renders what the feed says — hypothesis → measurement → verdict → next. ── */
@@ -756,7 +779,7 @@ function loadResearch(){
 
 /* ── refresh loop: 5 minutes, one polite batch per source ── */
 function refreshAll(){
-  loadOffice(); loadPulse(); loadGrid(); loadSteem(); loadProbes(); loadWorld(); loadCrew(); loadLessons(); loadFlow(); loadResearch();
+  loadOffice(); loadPulse(); loadGrid(); loadSteem(); loadProbes(); loadWorld(); loadCrew(); loadLessons(); loadFlow(); loadIntegrity(); loadResearch();
 }
 refreshAll();
 setInterval(refreshAll, 5*60*1000);
