@@ -219,8 +219,9 @@ async function main() {
     fs.mkdirSync(path.join(ROOT, 'public'), { recursive: true });
     fs.writeFileSync(path.join(ROOT, 'public', 'pulse.json'), JSON.stringify(pulse, null, 1) + '\n');
     receipt.wrote.push('public/pulse.json');
-    fs.writeFileSync(path.join(ROOT, 'about', 'team.json'), JSON.stringify(team, null, 1) + '\n');
-    receipt.wrote.push('about/team.json');
+    // P0-1 fix (master-plan T6, 2026-10-11): the 11-account desk roster is
+    // "internal operating procedures" per hub/disclosure-policy.html — no longer
+    // published. Only the aggregate desk count is reported.
     receipt.summary = {
       truthMeasuredAt: pulse.truth.measuredAt,
       audienceRunAt: pulse.audience.runAt,

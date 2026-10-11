@@ -15,7 +15,7 @@
 // רק פסק-דין, מפתח-ציבורי נגזר (מידע ציבורי ממילא) וחותמות-זמן.
 // אי-התאמה = שום דבר לא נכתב לשום כספת.
 
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, existsSync, appendFileSync } from "node:fs";
 import path from "node:path";
 import { createRequire } from "node:module";
 import Gate from "../gate-crypto.js";
@@ -58,17 +58,16 @@ const receipt = {
 };
 
 function writeReceipt() {
-  mkdirSync(path.join(process.cwd(), "receipts"), { recursive: true });
-  writeFileSync(
-    path.join(process.cwd(), "receipts", "key-check.json"),
-    JSON.stringify(receipt, null, 2) + "\n"
-  );
-  const logPath = path.join(process.cwd(), "receipts", "key-check-log.jsonl");
-  const prev = existsSync(logPath) ? readFileSync(logPath, "utf8").trimEnd() : "";
-  writeFileSync(logPath, (prev ? prev + "\n" : "") + JSON.stringify(receipt) + "\n");
-  console.log(
-    `[key-verify] receipt → receipts/key-check.json · verdict=${receipt.verdict}`
-  );
+  // P0-1 fix (master-plan T6, 2026-10-11): receipts are NO LONGER persisted to the
+  // public repo. The receipt shape (which secrets exist, which repo/account) is itself
+  // key-structure disclosure per hub/disclosure-policy.html. Verdict goes to the run
+  // summary only (Actions log is ephemeral and auth-gated).
+  const summary = process.env.GITHUB_STEP_SUMMARY;
+  const line = `| ${receipt.generatedAt} | ${receipt.account} | ${receipt.verdict} | ${receipt.detail} |`;
+  if (summary) {
+    appendFileSync(summary, `### key-verify receipt (summary-only, not persisted)\n\n${line}\n`);
+  }
+  console.log(`[key-verify] verdict=${receipt.verdict} · detail=${receipt.detail} · NOT persisted (P0-1 law)`);
 }
 
 function fail(verdict, detail) {
