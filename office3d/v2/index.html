@@ -129,8 +129,8 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 /* ============ הגדרות-אמת ============ */
 const FEEDS = {
   foreman: 'https://raw.githubusercontent.com/roshpinacare-sys/FleetHQ/main/office/state/office-state.json',
-  pulse:   '../office/data.json',
-  live:    '../agents/office-live.json',
+  pulse:   '../../office/data.json',
+  live:    '../../agents/office-live.json',
 };
 const POLL_MS = 45000, RETRY_MS = 30000;
 const STATE_COLOR = { working:0x2fae63, idle:0xd9a13b, error:0xd95c4a, asleep:0x7f8ea3, coffee:0xa1794f };
@@ -502,6 +502,8 @@ function loop(){
     window.__office3d = { ready:true, version:'v2-buildless', agents:agentGroups.size,
       feeds:W.feeds, verdict:W.verdict, lite:isLite };
     console.info('[office3d-v2] ready — drawCalls', renderer.info.render.calls);
+    setInterval(()=>{ if(window.__office3d){ window.__office3d.agents=agentGroups.size;
+      window.__office3d.verdict=W.verdict; window.__office3d.feeds=W.feeds; } }, 5000);
   }
 }
 function onResize(){
