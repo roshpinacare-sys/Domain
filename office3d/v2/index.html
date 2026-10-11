@@ -1256,7 +1256,7 @@ function loop(){
   renderer.render(scene, camera);
   if(!W.ready && renderer.info.render.calls > 6){
     W.ready = true;
-    window.__office3d = { ready:true, version:'v2.6-command', world:W.world, crewMode:'jointed',
+    window.__office3d = { ready:true, version:'command', world:W.world, crewMode:'jointed',
       agents:agentGroups.size, feeds:W.feeds, verdict:W.verdict, lite:isLite,
       tasks:{...W.taskCounts}, goals:(W.goals||[]).length,
       orders:(W.workOrders||[]).length, integrity:W.integrity?.overall||null, gates:(W.gates||[]).length,
