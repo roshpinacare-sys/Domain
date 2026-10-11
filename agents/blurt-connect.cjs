@@ -91,7 +91,8 @@ async function main() {
         active: a.active,
         posting: newPosting,
         memo_key: a.memo_key || '',
-        json_metadata: typeof a.json_metadata === 'string' ? a.json_metadata : JSON.stringify(a.json_metadata || {})
+        json_metadata: typeof a.json_metadata === 'string' ? a.json_metadata : JSON.stringify(a.json_metadata || {}),
+        posting_json_metadata: typeof a.posting_json_metadata === 'string' && a.posting_json_metadata ? a.posting_json_metadata : JSON.stringify({ profile: {} })
       }];
       await blurt.broadcast.sendAsync({ operations: [op], extensions: [] }, { active: found.wif });
       let verified = false;
