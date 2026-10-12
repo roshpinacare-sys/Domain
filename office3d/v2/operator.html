@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>קונסולת-מפעיל · המפקדה</title>
+<style>
+  :root{--bg:#070d0a;--panel:#0c1511;--line:#1d3a2c;--green:#43d17f;--amber:#e0b34a;--red:#e06550;--txt:#cfe8d8;--dim:#7fa38e;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--txt);font:14px/1.6 "Segoe UI",system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:24px 14px 60px}
+  h1{font-size:19px;font-weight:600;letter-spacing:.4px;margin-bottom:4px}
+  .sub{color:var(--dim);font-size:12px;margin-bottom:22px;max-width:640px;text-align:center}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;width:100%;max-width:640px;margin-bottom:16px}
+  .card h2{font-size:13px;font-weight:600;color:var(--green);margin-bottom:14px;letter-spacing:.5px}
+  label{display:block;font-size:11.5px;color:var(--dim);margin:10px 0 5px}
+  input,textarea{width:100%;background:#08110c;border:1px solid var(--line);border-radius:9px;color:var(--txt);padding:10px 12px;font:13.5px/1.4 monospace;outline:none}
+  input:focus,textarea:focus{border-color:var(--green)}
+  textarea{resize:vertical;min-height:64px}
+  button{background:#122b1e;border:1px solid var(--green);color:var(--green);border-radius:9px;padding:11px 22px;font:600 13.5px/1 inherit;cursor:pointer;margin-top:14px;min-height:44px}
+  button:hover{background:#173626}
+  button:disabled{opacity:.45;cursor:wait}
+  .status{margin-top:12px;font-size:12.5px;line-height:1.7;word-break:break-word}
+  .ok{color:var(--green)} .warn{color:var(--amber)} .bad{color:var(--red)}
+  .txid{font-family:monospace;font-size:11px;color:var(--dim);direction:ltr;text-align:left;word-break:break-all}
+  .feed{list-style:none}
+  .feed li{border-top:1px dashed var(--line);padding:9px 2px;font-size:12.5px}
+  .feed li:first-child{border-top:none}
+  .meta{color:var(--dim);font-size:11px;font-family:monospace;direction:ltr;text-align:left}
+  .empty{color:var(--dim);font-size:12.5px;padding:8px 2px}
+  .note{font-size:11.5px;color:var(--dim);margin-top:12px;line-height:1.7}
+  a.back{color:var(--dim);font-size:12px;text-decoration:none;margin-top:8px}
+  a.back:hover{color:var(--green)}
+</style>
+</head>
+<body>
+  <h1>קונסולת-מפעיל</h1>
+  <div class="sub">חתימה ושידור פקודות ישירות מהדפדפן אל שרשרת-הציבור · המפתח לעולם לא עוזב את הדפדפן — רק חתימות נשלחות · ההיסטוריה של השרשרת היא הקבלה</div>
+
+  <div class="card">
+    <h2>① הזדהות</h2>
+    <label for="acc">חשבון מפעיל</label>
+    <input id="acc" autocomplete="off" spellcheck="false">
+    <label for="sec">מפתח-מנהל</label>
+    <input id="sec" type="password" autocomplete="off">
+    <button id="btnAuth">אמת הזדהות</button>
+    <div class="status" id="authStatus"></div>
+  </div>
+
+  <div class="card">
+    <h2>② פקודה</h2>
+    <label for="cmd">פקודה (לדוגמה: מצב? · פתח גריד נוסף · דווחו · open:grid)</label>
+    <textarea id="cmd" placeholder="כתוב כאן את הפקודה בחופשיות — האורגניזם יקרא ויצמד"></textarea>
+    <label for="note">הערה חופשית (רשות)</label>
+    <input id="note" autocomplete="off">
+    <button id="btnSend" disabled>חתום ושדר</button>
+    <div class="status" id="cmdStatus"></div>
+    <div class="note">מבנה מומלץ: פקודת-פתיחת-מסילה מתחילה ב-<b>open:</b> ואחריה שמות-מסילות מופרדות בפסיק · סוף-פקודה עם <b>#מסילה</b> מכוון-את-הרשומה אל-מסילה-קיימת · כל-שאר = דיבור-חופשי-אל-האורגניזם.</div>
+  </div>
+
+  <div class="card">
+    <h2>③ מה האורגניזם ביצע</h2>
+    <ul class="feed" id="feed"><li class="empty">טוען…</li></ul>
+    <div class="note">הפקודות נאספות מהשרשרת הציבורית פעמיים בשעה ונרשמות לשרשרת-הנחיות-הבעלים עם זיהוי-עסקה מלא. מקור האמת: קבצי-הקבלה בגיט.</div>
+  </div>
+
+  <a class="back" href="index.html">← חזרה למפקדה</a>
+
+<script src="../../gate-crypto.js"></script>
+<script>
+const NODES = ["https://api.steemit.com", "https://api.justyy.com", "https://steem.61bts.com"];
+const OP_ID = "saos.weave.ops.v1";
+const $ = (id) => document.getElementById(id);
+const state = { acc: null, posting: null };
+
+function esc(s){const d=document.createElement("div");d.textContent=String(s);return d.innerHTML;}
+async function rpc(method, params){
+  let lastErr=null;
+  for(const node of NODES){
+    try{
+      const ctrl=new AbortController(); const tm=setTimeout(()=>ctrl.abort(),20000);
+      const res=await fetch(node,{method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({jsonrpc:"2.0",id:1,method,params}),signal:ctrl.signal});
+      clearTimeout(tm);
+      if(!res.ok) throw new Error("http "+res.status);
+      const j=await res.json();
+      if(j.error) throw new Error("rpc "+JSON.stringify(j.error).slice(0,120));
+      return j.result;
+    }catch(e){lastErr=e;}
+  }
+  throw lastErr||new Error("all-nodes-failed");
+}
+
+$("btnAuth").onclick = async () => {
+  const acc=$("acc").value.trim(), sec=$("sec").value;
+  const st=$("authStatus");
+  if(!acc||!sec){ st.className="status bad"; st.textContent="נא למלא חשבון ומפתח-מנהל."; return; }
+  st.className="status warn"; st.textContent="גוזר מפתח מקומית ומאמת מול הרשות החיה…";
+  $("btnAuth").disabled=true;
+  try{
+    const derived=await GateCrypto.deriveAny(sec,acc,"posting");
+    const accounts=await rpc("condenser_api.get_accounts",[[acc]]);
+    if(!accounts||!accounts.length) throw new Error("חשבון לא נמצא בשרשרת");
+    const live=accounts[0].posting && accounts[0].posting.key;
+    if(derived.pub!==live) throw new Error("אימות נכשל — הזהות אינה תואמת את הרשות החיה");
+    state.acc=acc; state.posting=derived;
+    st.className="status ok"; st.textContent="הזדהות אומתה מול הרשות החיה. הפקודות יחתמו ברשות-הפרסום בלבד (אפס-סיכון-הון).";
+    $("btnSend").disabled=false;
+  }catch(e){
+    st.className="status bad"; st.textContent="כשל: "+esc(e.message||e);
+  }finally{ $("btnAuth").disabled=false; $("sec").value=""; }
+};
+
+$("btnSend").onclick = async () => {
+  const cmd=$("cmd").value.trim().slice(0,300), note=$("note").value.trim().slice(0,180);
+  const st=$("cmdStatus");
+  if(!state.posting){ st.className="status bad"; st.textContent="אמת הזדהות תחילה."; return; }
+  if(!cmd){ st.className="status bad"; st.textContent="פקודה ריקה."; return; }
+  $("btnSend").disabled=true;
+  st.className="status warn"; st.innerHTML='<span>בונה עסקה וחותם מקומית…</span>';
+  try{
+    const payload={v:1,id:Array.from(crypto.getRandomValues(new Uint8Array(8)),b=>b.toString(16).padStart(2,"0")).join(""),cmd,at:new Date().toISOString()};
+    if(note) payload.note=note;
+    const op=["custom_json",{required_auths:[],required_posting_auths:[state.acc],id:OP_ID,json:JSON.stringify(payload)}];
+    const signed=await GateCrypto.buildSignedTx([op],state.posting.priv,
+      ()=>rpc("condenser_api.get_dynamic_global_properties",[]),
+      (n)=>rpc("condenser_api.get_block_header",[n]));
+    await rpc("condenser_api.broadcast_transaction",[signed]);
+    st.className="status ok";
+    st.innerHTML='הפקודה שודרה וחתומה. <div class="txid">sig '+esc(signed.signatures[0].slice(0,44))+'…</div>ההיסטוריה של השרשרת היא הקבלה — האורגניזם יאסוף בפעימה הקרובה (עד חצי שעה).';
+    $("cmd").value=""; $("note").value="";
+    loadFeed();
+  }catch(e){
+    st.className="status bad"; st.textContent="כשל שידור: "+esc(e.message||e);
+  }finally{ $("btnSend").disabled=false; }
+};
+
+async function loadFeed(){
+  const ul=$("feed");
+  try{
+    const res=await fetch("https://raw.githubusercontent.com/roshpinacare-sys/Domain/main/agents/operator/receipt.json?t="+Date.now(),{cache:"no-store"});
+    if(!res.ok) throw new Error("receipt "+res.status);
+    const r=await res.json();
+    if(!r.directives||!r.directives.length){
+      ul.innerHTML='<li class="empty">אין פקודות-שנאספו עדיין בחלון-הנוכחי · סריקה אחרונה: '+esc((r.at||"").slice(0,16).replace("T"," "))+' UTC</li>';
+      return;
+    }
+    ul.innerHTML=r.directives.slice(-8).reverse().map(d=>
+      '<li><div>#'+esc(d.i)+' · '+esc(d.type)+' · מסילות: '+esc((d.lanes||[]).join(", "))+'</div>'+
+      '<div>'+esc(d.cmd||"")+'</div><div class="meta">'+esc(d.txid||"")+'</div></li>').join("");
+  }catch(e){
+    ul.innerHTML='<li class="empty">קבלה עדיין לא זמינה (הפעימה הראשונה טרם רצה) — '+esc(e.message||e)+'</li>';
+  }
+}
+loadFeed(); setInterval(loadFeed, 120000);
+</script>
+</body>
+</html>
