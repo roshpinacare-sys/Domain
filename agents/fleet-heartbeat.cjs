@@ -25,8 +25,11 @@
  * Public repos whose last scheduled run is >36h old get one bounded pulse dispatch,
  * cap 3/run, cooldown carried in the book.
  *
- * LAWS: STASIS first (the breaker halts the heal, never the measuring) · keyless
- * measuring (GITHUB_TOKEN); the keeper token touches nothing but enable/dispatch ·
+ * LAWS: STASIS first (the breaker halts the heal, never the measuring) · measuring
+ * with the widest-visible token (FLEET_GH_TOKEN first — the repo-scoped GITHUB_TOKEN
+ * sees ZERO sibling repos, measured live 23:02 run: 0/0 zeros committed; the keeper
+ * token reads ONLY engine metadata: names/counts/states, never code content, never
+ * secret material) · the keeper token touches nothing but read/enable/dispatch ·
  * secrets never printed · single writer (this desk writes ONLY its three files) ·
  * fail-soft per repo (an API error books the row, never crashes the run) ·
  * determinism (the window is fixed; rows sorted by repo) · exit 0 always.
@@ -98,7 +101,10 @@ function stasisHalt() {
 async function main() {
   const t0 = Date.now();
   if (process.env.FLEET_HEARTBEAT_SKIP === '1') { console.log('FLEET-HEARTBEAT SKIP'); return; }
-  const measureToken = process.env.GH_TOKEN || process.env.GITHUB_TOKEN || '';
+  // Token priority law (measured 23:02 CI run): the repo-scoped GITHUB_TOKEN enumerates
+  // ZERO sibling repos on /user/repos — the book would carry honest-looking zeros.
+  // The keeper PAT sees the whole account; it reads engine metadata only.
+  const measureToken = process.env.FLEET_GH_TOKEN || process.env.KEEPER_GH_TOKEN || process.env.GH_TOKEN || process.env.GITHUB_TOKEN || '';
   const healToken = process.env.FLEET_GH_TOKEN || process.env.KEEPER_GH_TOKEN || '';
   const book = {
     protocol: 'SAOS-FLEET-HEARTBEAT/1',
@@ -295,7 +301,7 @@ async function main() {
   const quietRows = book.repos.filter((r) => ['QUIET', 'NEVER-RAN', 'NO-WORKFLOWS', 'AUTO-DISABLED'].includes(r.verdict));
   if (!quietRows.length) md.push('- אף-אחד. הצי כולו נושם.');
   for (const r of quietRows) md.push(`- ${r.repo} — ${r.verdict}${r.staleHours !== null ? ` · שקט ${r.staleHours} שעות` : ''}${r.note ? ` · ${r.note}` : ''}`);
-  md.push('', '_המדידה חסרת-מפתחות; אסימון-המשמר משמש רק להפעלה-מחדש מוגבלת. אפס-חומר-סוד בפלט._');
+  md.push('', '_המדידה קוראת מטא-מנועים בלבד (שמות, מצבים, ספירות) באסימון-המשמר; אסור-תוכן-קוד ואסור-חומר-סוד בפלט. הריפוי מוגבל ומתועד._');
   fs.writeFileSync(OUT_MD, md.join('\n') + '\n');
 
   console.log(`FLEET-HEARTBEAT: ${book.summary.repos} repos · PULSING ${book.summary.PULSING} · QUIET ${book.summary.QUIET} · AUTO-DISABLED ${book.summary.AUTO_DISABLED} · heal ${book.heal.reEnabled.length}+${book.heal.dispatched.length} · ${book.duration_ms}ms`);
