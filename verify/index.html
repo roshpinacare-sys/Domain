@@ -155,9 +155,9 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
   <section id="tool">
     <div class="wrap">
       <div class="tabs" role="tablist" aria-label="סוגי-בדיקה">
-        <button class="tab active" id="tab-hash" role="tab" aria-selected="true">🧬 Hash / חומר-מפתח</button>
-        <button class="tab" id="tab-post" role="tab" aria-selected="false">📝 פוסט Steem</button>
-        <button class="tab" id="tab-acc" role="tab" aria-selected="false">👤 חשבון</button>
+        <button class="tab active" id="tab-hash" role="tab" aria-selected="true">Hash · חומר-מפתח</button>
+        <button class="tab" id="tab-post" role="tab" aria-selected="false">פוסט Steem</button>
+        <button class="tab" id="tab-acc" role="tab" aria-selected="false">חשבון</button>
       </div>
 
       <div class="mode active" id="mode-hash" role="tabpanel" aria-labelledby="tab-hash">
@@ -189,7 +189,7 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
 
       <div id="vp-result" aria-live="polite">
         <div class="res">
-          <h3><span>🔍</span> מוכן לבדיקה</h3>
+          <h3>מוכן לבדיקה</h3>
           <p class="expl">בחרו מצב למעלה, הדביקו קלט, ולחצו "בדקו". הכול רץ בדפדפן שלכם מול מקורות ציבוריים — אנחנו לא רואים, לא שומרים ולא שולחים את הקלט לשום מקום משלנו.</p>
         </div>
       </div>
@@ -201,9 +201,9 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
       <h2 class="sec">איך זה עובד</h2>
       <p class="sub">שלושה מקורות ציבוריים, אפס-מתווכים. הדף עצמו מדגים את חוק-הרשת: אין-נתון → נאמר "אין-נתון".</p>
       <div class="grid g3">
-        <div class="card"><span class="ico">🧬</span><h3>מאגר-ההוכחות (hash)</h3><p>כל שבוע המכונה סורקת את ההיסטוריה-הציבורית של 5 הריפואים, מזהה חומר-מפתחות שנחשף, גוזרת ממנו מפתח-ציבורי, ובודקת מול השרשרת אם הוא עדיין חי. מת = לא גוזר אף רשות-חיה. הפסקים מפורסמים כאן כמו שהם.</p></div>
-        <div class="card"><span class="ico">📝</span><h3>פוסטים (שרשרת)</h3><p>פוסט Steem הוא רשומת-ציבור. הכלי קורא את הרשומה כמו שהיא, מציג את המספרים שלה, ובודק אם היא נושאת את גילוי-חתימת-המכונה — כנות על-פי חוק-היסוד של הרשת: מכונה שמצהירה שהיא מכונה.</p></div>
-        <div class="card"><span class="ico">👤</span><h3>חשבונות (שרשרת)</h3><p>כרטיס קריא-בלבד: מתי נוצר, כמה SP אפקטיבי מוחזק (מחושב חי ממשקלי-ה-vests של השרשרת), כמה מפתחות לכל רשות — ספירה בלבד, אף ערך-מפתח — וכמה פרסומים.</p></div>
+        <div class="card"><span class="ico" style="font-size:10px">hash</span><h3>מאגר-ההוכחות (hash)</h3><p>כל שבוע המכונה סורקת את ההיסטוריה-הציבורית של 5 הריפואים, מזהה חומר-מפתחות שנחשף, גוזרת ממנו מפתח-ציבורי, ובודקת מול השרשרת אם הוא עדיין חי. מת = לא גוזר אף רשות-חיה. הפסקים מפורסמים כאן כמו שהם.</p></div>
+        <div class="card"><span class="ico" style="font-size:10px">פוסט</span><h3>פוסטים (שרשרת)</h3><p>פוסט Steem הוא רשומת-ציבור. הכלי קורא את הרשומה כמו שהיא, מציג את המספרים שלה, ובודק אם היא נושאת את גילוי-חתימת-המכונה — כנות על-פי חוק-היסוד של הרשת: מכונה שמצהירה שהיא מכונה.</p></div>
+        <div class="card"><span class="ico" style="font-size:10px">חשבון</span><h3>חשבונות (שרשרת)</h3><p>כרטיס קריא-בלבד: מתי נוצר, כמה SP אפקטיבי מוחזק (מחושב חי ממשקלי-ה-vests של השרשרת), כמה מפתחות לכל רשות — ספירה בלבד, אף ערך-מפתח — וכמה פרסומים.</p></div>
       </div>
     </div>
   </section>
@@ -376,12 +376,12 @@ function renderChecking(label){
   resultBox.innerHTML = '<div class="res"><div class="checking"><span class="spin"></span> ' + esc(label) + ' — בדיקה חיה מהמקורות הציבוריים…</div></div>';
 }
 function renderError(why, srcLabel){
-  renderCard('<div class="res"><h3><span>⚠️</span> אין-תשובה מאומת</h3>' +
+  renderCard('<div class="res"><h3>אזהרה · אין-תשובה מאומת</h3>' +
     '<p class="expl">' + esc(why) + '</p>' + stampAndSrc(null, srcLabel || '—') + '</div>');
 }
 function renderRefusal(){
   /* law: never echo private-shaped input */
-  renderCard('<div class="res"><h3><span>🛑</span> סירוב — לא להדביק כאן</h3>' +
+  renderCard('<div class="res"><h3>סירוב — לא להדביק כאן</h3>' +
     '<p class="expl">זה נראה כמו חומר-פרטי (מפתח-פרטי בפורמט WIF) — אין להדביק כאן. הדף הזה מריץ בדיקות בדפדפן שלכם מול רשת-ציבורית, ולכן המקום לחומר-כזה אינו בשום שדה-קלט. אם מדובר בחומר-מפתח שנחשף בעבר בהיסטוריה-ציבורית — אתם זקוקים ל-hash שלו (sha256), לא לחומר עצמו; hash כזה מותר ובטוח להדבקה במצב Hash.</p>' +
     stampAndSrc(null, 'client-side guard · ללא קריאת-רשת') + '</div>');
 }
@@ -434,8 +434,8 @@ function runResearchId(rid){
     var hit = null;
     exps.forEach(function(e){ if(e && String(e.id).toUpperCase() === rid.toUpperCase()) hit = e; });
     if(!hit){ renderError('לא נמצא ניסוי במזהה "' + rid + '" בקובץ-הממצאים האחרון.', 'Sandbox/research/findings-*.json'); return; }
-    var mark = hit.ok === true ? '✅' : hit.ok === false ? '❌' : '⏳';
-    renderCard('<div class="res"><div class="ph"><h3><span>🔬</span> מחקר וגילוי — ' + esc(hit.id) + ' · ' + esc(hit.name) + '</h3><span class="chip ok">ממצא-מחקר</span></div>' +
+    var mark = hit.ok === true ? 'תקין' : hit.ok === false ? 'נכשל' : 'בבדיקה';
+    renderCard('<div class="res"><div class="ph"><h3>מחקר וגילוי — ' + esc(hit.id) + ' · ' + esc(hit.name) + '</h3><span class="chip ok">ממצא-מחקר</span></div>' +
       '<div class="vbig unknown">' + mark + ' ' + esc(hit.verdict || '—') + '</div>' +
       (hit.next ? '<p class="expl">צעד-הבא: ' + esc(hit.next) + '</p>' : '') +
       (hit.hypothesis ? '<p class="expl">השערה: ' + esc(hit.hypothesis) + '</p>' : '') +
@@ -464,8 +464,8 @@ function runHash(){
     var scanned = (a.scan || {});
     var artUtc = utcStamp(c.checkedAt);
     if(c.verdict === 'DEAD'){
-      renderCard('<div class="res"><div class="ph"><h3><span>🧬</span> hash16 <span class="mono">' + esc(n.hash16) + '</span></h3><span class="chip ok">חומר-מת מאומת</span></div>' +
-        '<div class="vbig dead">✅ חומר-זה נבדק ומת — DEAD</div>' +
+      renderCard('<div class="res"><div class="ph"><h3>hash16 <span class="mono">' + esc(n.hash16) + '</span></h3><span class="chip ok">חומר-מת מאומת</span></div>' +
+        '<div class="vbig dead">תקין: חומר-זה נבדק ומת — DEAD</div>' +
         '<p class="expl">החומר שנחשף בהיסטוריה-ציבורית (נמדד ב-hash בלבד — אף תוכן לא נשמר) נגזר למפתח-ציבורי, והשרשרת מאשרת: <b>אינו גוזר אף רשות-חיה</b> (get_key_references + רשויות-חיות של חשבונות-הצי). שער-החשיפה מתמוסס בהוכחה-עומדת.</p>' +
         '<div class="kv">' +
         '<b>מפתח-ציבורי נגזר</b><i class="mono">' + esc(c.pubkey || '—') + '</i>' +
@@ -475,19 +475,19 @@ function runHash(){
         '<b>סריקה אחרונה</b><i>' + esc(String(scanned.totalBlobs != null ? scanned.totalBlobs + ' blobs · ' + (scanned.repos && scanned.repos.length ? scanned.repos.length + ' repos' : '') : '—')) + '</i>' +
         '</div>' + stampAndSrc(new Date(), 'Sandbox/proof/out/KEY-PROOF-LATEST.json') + '</div>');
     } else if(c.verdict === 'ALIVE-ALERT'){
-      renderCard('<div class="res"><div class="ph"><h3><span>🚨</span> hash16 <span class="mono">' + esc(n.hash16) + '</span></h3><span class="chip bad">אזעקה</span></div>' +
-        '<div class="vbig alert">🚨 אזעקה: חומר זה חי בשרשרת — ALIVE-ALERT</div>' +
+      renderCard('<div class="res"><div class="ph"><h3>hash16 <span class="mono">' + esc(n.hash16) + '</span></h3><span class="chip bad">אזעקה</span></div>' +
+        '<div class="vbig alert">אזעקה: חומר זה חי בשרשרת — ALIVE-ALERT</div>' +
         '<p class="expl">החומר עדיין גוזר רשות-חיה. זהו דיווח-מצב-כנה מהמאגר; נדרש רוטציה מיידית על-ידי הבעלים.</p>' +
         '<div class="kv"><b>מפתח-ציבורי נגזר</b><i class="mono">' + esc(c.pubkey || '—') + '</i><b>נבדק (מאגר)</b><i>' + esc(artUtc || '—') + '</i></div>' +
         stampAndSrc(new Date(), 'Sandbox/proof/out/KEY-PROOF-LATEST.json') + '</div>');
     } else if(c.verdict === 'UNKNOWN' || c.verdict === 'UNKNOWN-NOT-CHAIN-TESTABLE'){
-      renderCard('<div class="res"><div class="ph"><h3><span>🧬</span> hash16 <span class="mono">' + esc(n.hash16) + '</span></h3><span class="chip stale">לא-ניתן-לבדיקת-שרשרת</span></div>' +
-        '<div class="vbig unknown">⚠️ נמצא במאגר — אך לא-ניתן-לבדיקת-שרשרת (' + esc(c.verdict) + ')</div>' +
+      renderCard('<div class="res"><div class="ph"><h3>hash16 <span class="mono">' + esc(n.hash16) + '</span></h3><span class="chip stale">לא-ניתן-לבדיקת-שרשרת</span></div>' +
+        '<div class="vbig unknown">אזהרה: נמצא במאגר — אך לא-ניתן-לבדיקת-שרשרת (' + esc(c.verdict) + ')</div>' +
         '<p class="expl">החומר נמצא בסריקה (' + esc(c.kind || 'kind לא-מדווח') + ' · ' + esc(c.whereCount) + ' מקומות), אך סוגו אינו נבדק-על-השרשרת (למשל: ארכיון-מוצפן שמעולם לא נפתח, או פס-מעבר). הרשת לא טוענת שהוא בטוח ולא טוענת שהוא חי — כנות מעל הכול.</p>' +
         '<div class="kv"><b>נבדק (מאגר)</b><i>' + esc(artUtc || '—') + '</i><b>מופיע ב</b><i>' + esc(c.whereFirst || '—') + '</i></div>' +
         stampAndSrc(new Date(), 'Sandbox/proof/out/KEY-PROOF-LATEST.json') + '</div>');
     } else {
-      renderCard('<div class="res"><div class="ph"><h3><span>🧬</span> hash16 <span class="mono">' + esc(n.hash16) + '</span></h3><span class="chip">אין-התאמה</span></div>' +
+      renderCard('<div class="res"><div class="ph"><h3>hash16 <span class="mono">' + esc(n.hash16) + '</span></h3><span class="chip">אין-התאמה</span></div>' +
         '<div class="vbig nomatch">אין-התאמה במאגר-ההוכחות</div>' +
         '<p class="expl">ה-hash אינו מופיע בסריקה האחרונה של מאגר-ההוכחות (' + esc(String(summary.DEAD != null ? (String(summary.DEAD) + ' מתים · ' + String(summary.UNKNOWN || 0) + ' לא-ניתנים-לבדיקה') : 'מבנה-מסכום לא-מוכר')) + ' — מתעדכן שבועית, יום-ד׳ 04:23 UTC). <b>חשוב:</b> זו אינה טענת-ביטחון — רק קנות שהחומר לא נמצא בסריקה האחרונה של 5 הריפואים הציבוריים. חומר שמעולם לא דלף, או שנסרק לפני שהופיע, ייתן תשובה זו בדיוק.</p>' +
         stampAndSrc(new Date(), 'Sandbox/proof/out/KEY-PROOF-LATEST.json') + '</div>');
@@ -521,10 +521,10 @@ function runPost(){
     var tags = Array.isArray(meta.tags) ? meta.tags.map(function(t){ return String(t); }).join(' · ') : '';
     var excerpt = String(post.body || '').replace(/\s+/g, ' ').trim().slice(0, 200);
     var steemUrl = 'https://steemit.com/@' + encodeURIComponent(p.author) + '/' + encodeURIComponent(p.permlink);
-    renderCard('<div class="res"><div class="ph"><h3><span>📝</span> פוסט — ' + esc(post.title || '(ללא כותרת)') + '</h3>' +
+    renderCard('<div class="res"><div class="ph"><h3>פוסט — ' + esc(post.title || '(ללא כותרת)') + '</h3>' +
       (disc.yes ? '<span class="chip ok">חתימת-מכונה: כן</span>' : '<span class="chip bad">חתימת-מכונה: לא</span>') + '</div>' +
       (disc.yes
-        ? '<p class="expl">✅ הפוסט נושא גילוי-חתימת-מכונה גלוי (' + esc(disc.markers.join(' · ')) + ') — על-פי חוק-הגילוי של הרשת: המכונה מצהירה שהיא מכונה.</p>'
+        ? '<p class="expl">תקין: הפוסט נושא גילוי-חתימת-מכונה גלוי (' + esc(disc.markers.join(' · ')) + ') — על-פי חוק-הגילוי של הרשת: המכונה מצהירה שהיא מכונה.</p>'
         : '<p class="expl">הפוסט אינו נושא את מילות-הגילוי המוכרות של חתימת-מכונה בגוף/במטא. זה אינו שיפוט-איכות — רק בדיקת-נוכחות של המילים ברשימה המוכרת; פוסט-אדם או פורמט-אחר ייתנו "לא".</p>') +
       '<div class="kv">' +
       '<b>מחבר</b><i>' + esc(post.author) + '</i>' +
@@ -576,7 +576,7 @@ function runAccount(){
     var dele = vestStrToSp(a.delegated_vesting_shares, vps) || 0;
     var eff = (own != null) ? (own + recv - dele) : null;
     function fmtSp(x){ return (x == null) ? '—' : (x >= 1000 ? Math.round(x).toLocaleString('en-US') : x.toFixed(3)); }
-    renderCard('<div class="res"><div class="ph"><h3><span>👤</span> חשבון @' + esc(a.name) + '</h3><span class="chip ok">קיים בשרשרת</span></div>' +
+    renderCard('<div class="res"><div class="ph"><h3>חשבון @' + esc(a.name) + '</h3><span class="chip ok">קיים בשרשרת</span></div>' +
       '<div class="kv">' +
       '<b>נוצר</b><i>' + esc(utcStamp(a.created ? a.created + 'Z' : null) || '—') + '</i>' +
       '<b>SP אפקטיבי</b><i class="num">' + esc(fmtSp(eff)) + '</i>' +
