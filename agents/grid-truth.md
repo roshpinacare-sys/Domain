@@ -1,24 +1,24 @@
-# GRID-TRUTH · 2026-10-11T22:57:38.757Z (live RPC, read-only)
+# GRID-TRUTH · 2026-10-12T01:24:21.939Z (live RPC, read-only)
 
 The anti-phantom book: every number below was measured from the chain this run.
-Drift measured vs previous snapshot: 2026-10-11T18:57:47.369Z
+Drift measured vs previous snapshot: 2026-10-11T22:57:38.757Z
 
 | chain | total effective power | total liquid | locked in orders | accounts alive |
 |---|---|---|---|---|
-| steem | 4470.056 | 136.817 | 26.95 | 22 |
-| hive | 102467.466 | 13036.523 | 0 | 2 |
+| steem | 4470.085 | 131.622 | 29.028 | 22 |
+| hive | 102468.257 | 13036.523 | 0 | 2 |
 | blurt | 0 | 0 | 0 | 2 |
 
 ## STEEM
 
 | account | role | eff power | liquid | locked | VP% | RC% | last post | alerts |
 |---|---|---|---|---|---|---|---|---|
-| headcorner | treasury | 2925.627 | 28.261 | 26.95 STEEM+91.195 SBD | 100 | 97.1 | 2026-10-11 | SP-UNDERFLOOR,TREASURY-UNDERFLOOR |
-| cornerstone | legacy-treasury | 839.906 | 49.771 |  | 100 | 100 | 2020-03-28 | INACTIVE |
+| headcorner | treasury | 2925.647 | 23.066 | 29.028 STEEM+91.195 SBD | 100 | 99.7 | 2026-10-11 | SP-UNDERFLOOR,TREASURY-UNDERFLOOR |
+| cornerstone | legacy-treasury | 839.911 | 49.771 |  | 100 | 100 | 2020-03-28 | INACTIVE |
 | haran | worker-active | 78.372 | 0.01 |  | 100 | 88 | 2026-10-11 |  |
-| cashmachine | worker-active | 75.24 | 0.01 |  | 100 | 91.1 | 2026-10-11 |  |
+| cashmachine | worker-active | 75.24 | 0.01 |  | 100 | 93.3 | 2026-10-11 |  |
 | wic | worker-active | 32.656 | 0.01 |  | 100 | 68.3 | 2026-10-11 |  |
-| woq | worker-active | 69.988 | 0.01 |  | 100 | 84.7 | 2026-10-11 |  |
+| woq | worker-active | 69.989 | 0.01 |  | 100 | 84.7 | 2026-10-11 |  |
 | tov | worker-active | 31.185 | 0.209 |  | 100 | 72.9 | 2026-10-11 |  |
 | hcsoldier4 | worker-active | 17 | 1 |  | 100 | 8 | 2026-10-11 |  |
 | hcsoldier5 | worker-active | 17 | 0.2 |  | 100 | 21.9 | 2026-10-11 |  |
@@ -30,9 +30,9 @@ Drift measured vs previous snapshot: 2026-10-11T18:57:47.369Z
 | saos | shell | 5.051 | 0 |  | 100 | 100 | 1970-01-01 |  |
 | powerspan | shell | 0 | 0 |  | 0 | 100 | 1970-01-01 |  |
 | ynet | dead | 0.105 | 0.06 |  | 100 | 100 | 2024-02-10 |  |
-| israelnews | worker-active | 93.986 | 0.235 |  | 100 | 87.7 | 2026-10-11 |  |
-| lsa | worker-active | 79.819 | 0.01 |  | 100 | 87.4 | 2026-10-11 |  |
-| macrame | worker-active | 75.147 | 0.01 |  | 100 | 84.2 | 2026-10-11 |  |
+| israelnews | worker-active | 93.987 | 0.235 |  | 100 | 87.7 | 2026-10-11 |  |
+| lsa | worker-active | 79.82 | 0.01 |  | 100 | 87.4 | 2026-10-11 |  |
+| macrame | worker-active | 75.148 | 0.01 |  | 100 | 84.2 | 2026-10-11 |  |
 | siq | worker-active | 31.147 | 0.01 |  | 100 | 95.9 | 2026-10-11 |  |
 | wog | worker-active | 11.855 | 0.01 |  | 100 | 15.8 | 2026-10-11 |  |
 
@@ -40,7 +40,7 @@ Drift measured vs previous snapshot: 2026-10-11T18:57:47.369Z
 
 | account | role | eff power | liquid | locked | VP% | RC% | last post | alerts |
 |---|---|---|---|---|---|---|---|---|
-| cornerstone | treasury-primary | 102442.062 | 13036.489 |  | 100 | 100 | 2026-08-19 | INACTIVE,DRIFT-POWER |
+| cornerstone | treasury-primary | 102442.853 | 13036.489 |  | 100 | 100 | 2026-08-19 | INACTIVE |
 | headcorner | worker-active | 25.404 | 0.034 |  | 100 | 0 | 2026-10-10 |  |
 
 ## BLURT
@@ -50,18 +50,17 @@ Drift measured vs previous snapshot: 2026-10-11T18:57:47.369Z
 | cornerstone | connect-target | — | — | — | — | — | — | RPC-DEAD |
 | headcorner | worker-active | — | — | — | — | — | — | RPC-DEAD |
 
-## ALERTS (12)
+## ALERTS (11)
 
-- steem:headcorner SP-UNDERFLOOR — effective 2925.627 SP below floor 3000 — arming waves must respect the treasury floor
-- steem:headcorner TREASURY-UNDERFLOOR — liquid 28.261 + locked-in-orders 26.95 = 55.211 below floor 90
-- steem:cornerstone INACTIVE — last post 2388.5d ago (role expects activity)
+- steem:headcorner SP-UNDERFLOOR — effective 2925.647 SP below floor 3000 — arming waves must respect the treasury floor
+- steem:headcorner TREASURY-UNDERFLOOR — liquid 23.066 + locked-in-orders 29.028 = 52.094 below floor 90
+- steem:cornerstone INACTIVE — last post 2388.6d ago (role expects activity)
 - steem:hcsoldier1 STRANDED-CAPITAL — keyless account holds 18.667 STEEM liquid — no custody, unrecoverable without key recovery
 - steem:hcsoldier2 STRANDED-CAPITAL — keyless account holds 18.667 STEEM liquid — no custody, unrecoverable without key recovery
 - steem:hcsoldier3 STRANDED-CAPITAL — keyless account holds 18.667 STEEM liquid — no custody, unrecoverable without key recovery
-- hive:cornerstone INACTIVE — last post 53d ago (role expects activity)
-- hive:cornerstone DRIFT-POWER — eff power 102433.205 -> 102442.062 (delta +8.857 HIVEP) — expected only from arming/delegation, else investigate
+- hive:cornerstone INACTIVE — last post 53.1d ago (role expects activity)
 - k blurt K-FALLBACK — dynamic global properties unavailable, naive /1e6 in use, numbers may be off by ~1612x
 - blurt:cornerstone RPC-DEAD — Unexpected token 'S', "Server is "... is not valid JSON
 - blurt:headcorner RPC-DEAD — Unexpected token 'S', "Server is "... is not valid JSON
-- roster BANNED-CAPITAL-INFLOW — banned account "headcorner" holds 244.2 SP delegated IN — capital lane violated the ban, reclaim or justify
+- roster BANNED-CAPITAL-INFLOW — banned account "headcorner" holds 244.202 SP delegated IN — capital lane violated the ban, reclaim or justify
 
