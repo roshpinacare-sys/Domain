@@ -177,7 +177,7 @@ function writeReceipt(tool, lane, decision, authority, evidence, reasonNote) {
         ? 'tool exits as a healthy no-op before any key material is loaded'
         : 'tool proceeds under staged-lane authority; roster + journal gates still apply downstream',
       alternatives: [],
-      idempotencyKey: key,
+      idempotencyTag: key,
       abortConditions: [],
       postconditions: [],
       verification: { method: 'next gate invocation appends the paired receipt', status: 'pending', at: null, actual: null, deviation: null },
