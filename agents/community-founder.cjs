@@ -52,6 +52,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const { refOf } = require('./refs.cjs'); // estate pseudonym layer — books never carry the account map (hub/disclosure-policy.html)
 // lazy steem: the pure helper surface must import cleanly in evals/keyless environments
 let steem = null;
 function steemInit() {
@@ -191,6 +192,26 @@ function hiveProbeVerdict({ nameFree, liquidHive, need, authority }) {
   return 'CREATE-READY';
 }
 
+/**
+ * estate law (hub/disclosure-policy.html): the public book never carries the fleet's
+ * account map. Chain role rows are re-spoken for the book: the community account stays
+ * (the house's public identity), the head row speaks the generic alias 'owner' (matches
+ * the booked setRole:admin:owner txid), roster-resolved names speak their refs, and
+ * unresolved names fall back to generic worker rows — a real name is never written.
+ */
+function bookRoleRows(roles, commName) {
+  let worker = 0;
+  return (roles || []).map((r) => {
+    const name = String((r && r[0]) || '');
+    const role = r && r[1];
+    if (commName && name === commName) return { account: name, role };
+    if (role === 'admin' || name === HEAD) return { account: 'owner', role };
+    const ref = refOf(name);
+    if (ref !== name) return { account: ref, role };
+    return { account: 'fleet-worker-' + String(++worker).padStart(2, '0'), role };
+  });
+}
+
 /** the founding roles: owner admin (the measured creator pattern), soldiers members */
 function memberRoles(fleet) {
   const out = [];
@@ -273,7 +294,7 @@ function rcTopUpOp(community, vests) {
 // exported pure surface (E59+E60 white-box + evals) — zero secrets, zero chain I/O
 module.exports = {
   communityProps, propsGate, validName, nameCandidates, spToVests, vestsToSp,
-  fundingPlan, memberRoles, accountCreateOp, setRoleOp, updatePropsOp, updatePropsOpAdmin, cancelOp,
+  fundingPlan, memberRoles, bookRoleRows, accountCreateOp, setRoleOp, updatePropsOp, updatePropsOpAdmin, cancelOp,
   COMMUNITY_RC_SP, FEE_MARGIN, MAX_CANCELS, HEAD,
   gestsToVests, parseAvailableVests, rcTopUpPlan, rcTopUpOp,
   chainRegistry, chainBadge, hiveAuthorityVerdict, hiveProbeVerdict, HIVE_KEYS,
@@ -545,8 +566,8 @@ async function modeCreate(run, book) {
   run.steps.push('updateProps hint=' + propsTx.txid_hint);
   for (const m of memberRoles([HEAD].concat(Object.keys(require('./persona-store.cjs').slots().soldiers || {}))).filter((x) => x.role === 'member')) { // T3: sealed doctrine
     const tx = await broadcast([setRoleOp(name, m.account, m.role)], [commWif]);
-    run.txids.push({ op: 'setRole:member:' + m.account, hint: tx.txid_hint });
-    run.steps.push('setRole member ' + m.account + ' hint=' + tx.txid_hint);
+    run.txids.push({ op: 'setRole:member:' + refOf(m.account), hint: tx.txid_hint });
+    run.steps.push('setRole member ' + refOf(m.account) + ' hint=' + tx.txid_hint);
     await new Promise((r) => setTimeout(r, 400));
   }
 
@@ -564,7 +585,7 @@ async function modeCreate(run, book) {
       name, title: props.title, about: props.about, desc: props.desc, lang: props.lang,
       createdAt: new Date().toISOString(), creator: HEAD, feeAsset,
       delegatedSp: rcSp, delegatedSpTarget: COMMUNITY_RC_SP, receivedSp: +receivedSp.toFixed(2),
-      members: roles.map((r) => ({ account: r[0], role: r[1] })),
+      members: bookRoleRows(roles, name),
       subscriberCount: subs.length,
       txids: Object.fromEntries(run.txids.map((t) => [t.op, t.hint])),
     };
@@ -651,7 +672,7 @@ async function modeStatus(run, book) {
       createdAt: (ceremonyRuns[0] && ceremonyRuns[0].at) || run.at, creator: HEAD,
       feeAsset: '3.000 STEEM',
       delegatedSp: Math.round(receivedSp), delegatedSpTarget: COMMUNITY_RC_SP, receivedSp: +receivedSp.toFixed(2),
-      members: roles.map((r) => ({ account: r[0], role: r[1] })),
+      members: bookRoleRows(roles, name),
       subscriberCount: subs.length,
       txids: mergedTxids,
       finalizedBy: 'status-adoption',
@@ -660,7 +681,7 @@ async function modeStatus(run, book) {
     book.community = Object.assign({}, book.community, {
       title: (comm && comm.title) || book.community.title,
       subscriberCount: subs.length,
-      members: (roles && roles.length ? roles.map((r) => ({ account: r[0], role: r[1] })) : book.community.members),
+      members: (roles && roles.length ? bookRoleRows(roles, name) : book.community.members),
       receivedSp: +receivedSp.toFixed(2),
       lastStatusAt: new Date().toISOString(),
     });
