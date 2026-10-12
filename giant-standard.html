@@ -126,6 +126,12 @@ footer .fl{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:10px}
         <div class="s" id="pulse-sub"></div>
         <div class="stale">הספר ישן מ-24 שעות — מסומן בכנות, לא מוצג כחי</div>
       </div>
+      <div class="card" id="c-fleet">
+        <div class="k">FLEET · דופק-המנועים של כל-הריפואים</div>
+        <div class="v wait">טוען truth/fleet.json…</div>
+        <div class="s" id="fleet-sub"></div>
+        <div class="stale">ספר-הצי ישן מ-26 שעות — המטרונום לא פעם; נבדק בכנות</div>
+      </div>
     </div>
   </section>
 
@@ -276,7 +282,7 @@ footer .fl{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:10px}
 <script>
 (function(){
   var DAY = 86400000, now = Date.now();
-  function stale(el, ts){ if (ts && now - ts > DAY) el.classList.add('stale-on'); }
+  function stale(el, ts, limit){ if (ts && now - ts > (limit || DAY)) el.classList.add('stale-on'); }
   function set(id, html){ document.querySelector('#'+id+' .v').innerHTML = html; document.querySelector('#'+id+' .v').classList.remove('wait'); }
   function sub(id, t){ var e = document.querySelector('#'+id+' .s'); if (e) e.textContent = t; }
   function fmtAge(ts){ return Math.round((now - ts) / 60000) + ' דקות'; }
@@ -301,6 +307,23 @@ footer .fl{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:10px}
     el.classList.add(v === 'ALL-GREEN' ? 'ok' : (v === '?' ? 'err' : 'warn'));
     stale(el, ts);
   }).catch(function(){ set('c-truth', 'לא נטען'); document.querySelector('#c-truth').classList.add('err'); sub('c-truth', 'truth/latest.json לא זמין עכשיו'); });
+
+  fetch('truth/fleet.json').then(function(r){ return r.ok ? r.json() : Promise.reject(r.status); }).then(function(d){
+    var s = d.summary || {};
+    var ts = Date.parse(d.at || '');
+    var el = document.querySelector('#c-fleet');
+    var pulsing = s.PULSING != null ? s.PULSING : '?';
+    var total = s.repos != null ? s.repos : '?';
+    set('c-fleet', pulsing + ' / ' + total);
+    var wall = s.WALL_BLOCKED || 0, quiet = s.QUIET || 0, nw = s.NO_WORKFLOWS || 0, nr = s.NEVER_RAN || 0;
+    var bits = ['פועמים ' + pulsing, 'חסומי-קיר-מכסה ' + wall, 'שקטים ' + quiet, 'ללא-מנוע ' + (nw + nr)];
+    if (d.voice && d.voice.boundary) bits.push('קול-הרשת: גבול-משמורת');
+    if (d.boundaries && d.boundaries.length) bits.push('גבולות-מדודים ' + d.boundaries.length);
+    bits.push(ts ? 'נמדד לפני ' + fmtAge(ts) : '');
+    sub('c-fleet', bits.join(' · '));
+    el.classList.add((wall + quiet + nw + nr) > 0 ? 'warn' : 'ok');
+    if (ts) stale(el, ts, 26 * 3600 * 1000);
+  }).catch(function(){ set('c-fleet', 'לא נטען'); document.querySelector('#c-fleet').classList.add('err'); sub('c-fleet', 'truth/fleet.json לא זמין עכשיו — הניראות למה-שלא-רואים נפלה, מוצג בכנות'); });
 
   fetch('public/pulse.json').then(function(r){ return r.ok ? r.json() : Promise.reject(r.status); }).then(function(d){
     var t = d.truth || {};

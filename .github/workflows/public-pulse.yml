@@ -42,7 +42,12 @@ jobs:
           git config user.name "public-pulse"
           git config user.email "public-pulse@users.noreply.github.com"
           node agents/redact-telemetry.mjs about/team.json public/pulse.json agents/receipts/public-pulse-receipt.json
-          git add public/pulse.json about/team.json agents/receipts/public-pulse-receipt.json
+          # T-55 (tolerant-add law): about/team.json was retired from the tree — a git add
+          # on an absent path exits 128 and killed this desk every run (measured 20:42/21:51/22:04).
+          # The desk adds only what exists; the redact step already skips absent files.
+          for _p in public/pulse.json about/team.json agents/receipts/public-pulse-receipt.json; do
+            [ -e "$_p" ] && git add "$_p" || true
+          done
           if git diff --cached --quiet; then
             echo "books unchanged"
             exit 0

@@ -22,7 +22,7 @@
 // והמשבצת :52 פנויה. רישום-מלא בכותרת dex-mirror.yml. (13-a תיקן-תיעוד בלבד; 15c הכריע-בגבולות-האצלה trace 1a1…4671.)
 
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
-import { scrub } from "./agents/refs.mjs"; // exposure law: mirrored books never carry estate names
+import { scrub } from "./refs.mjs"; // exposure law: mirrored books never carry estate names
 
 const SRC = "https://roshpinacare-sys.github.io/Console/dex";
 const OUT_DIR = "dex";

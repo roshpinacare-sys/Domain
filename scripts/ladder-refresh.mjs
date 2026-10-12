@@ -85,9 +85,36 @@ function openSeal() {
   execFileSync('unzip', ['-q', '-o', innerZip, '-d', work], { stdio: 'pipe' });
   fs.rmSync(innerZip, { force: true }); // no plaintext archive lingering
 
+  // T-52 (layout-compat law): three seal generations live in the wild —
+  //   GEN-legacy: agent/keys/vault.json · accounts: [{username, keys:{steem:{role:{wif}}}}]
+  //   GEN-R245:   agent/keys/vault.json · accounts: [{username, keys:{role:{wif}}} + chains]
+  //   GEN-ROT2:   rot2-keys.json        · accounts: {chain: {name: {role: {wif, pub}}}}
+  // the desk reads ALL generations through one legacy-shaped view (synthesized, memory-only;
+  // the synthesized view is never written anywhere — the seal stays the only material).
   const vaultPath = path.join(work, 'agent', 'keys', 'vault.json');
-  if (!fs.existsSync(vaultPath)) die('materialized vault.json absent from seal — cannot operate');
-  const vault = JSON.parse(fs.readFileSync(vaultPath, 'utf8'));
+  const rot2Path = path.join(work, 'rot2-keys.json');
+  let vault;
+  if (fs.existsSync(vaultPath)) {
+    vault = JSON.parse(fs.readFileSync(vaultPath, 'utf8'));
+  } else if (fs.existsSync(rot2Path)) {
+    const rot2 = JSON.parse(fs.readFileSync(rot2Path, 'utf8'));
+    const chains = rot2 && rot2.accounts && typeof rot2.accounts === 'object' && !Array.isArray(rot2.accounts) ? rot2.accounts : {};
+    const accounts = [];
+    for (const [chain, roster] of Object.entries(chains)) {
+      if (!roster || typeof roster !== 'object' || Array.isArray(roster)) continue;
+      for (const [name, roles] of Object.entries(roster)) {
+        if (!roles || typeof roles !== 'object' || Array.isArray(roles)) continue;
+        accounts.push({
+          username: String(name),
+          chains: [chain],
+          keys: { [chain]: roles, active: roles.active || null, posting: roles.posting || null },
+        });
+      }
+    }
+    vault = { format: 'vault-view/rot2-compat/1', sealedAt: rot2.at || null, accounts };
+  } else {
+    die('materialized vault.json absent from seal — cannot operate (no rot2-keys.json either)');
+  }
   return { vault, work, openedAt: nowIso() };
 }
 

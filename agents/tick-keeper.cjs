@@ -51,6 +51,7 @@ const ARC = {
   'twin-audit.yml':          { receipt: 'twin-audit/latest.json',                   max_gap_min: 1560, cooldown_min: 240 }, // daily 06:19
   'self-audience.yml':       { receipt: 'agents/receipts/self-audience-receipt.json', max_gap_min: 1560, cooldown_min: 240 }, // daily
   'public-pulse.yml':        { receipt: 'agents/pulse-book.json',                   max_gap_min: 1560, cooldown_min: 240 }, // daily
+  'fleet-heartbeat.yml':     { receipt: 'agents/fleet-heartbeat.json',              max_gap_min: 90,   cooldown_min: 60  }, // hourly T-56 — the fleet metronome, kept alive by the arc (GitHub starves new schedules on this repo, R27 law)
   'audience-analyst.yml':    { receipt: 'audience/latest.json',                     max_gap_min: 1560, cooldown_min: 240 }, // daily 05:31
 };
 for (const k of Object.keys(ARC)) if (!ARC[k]) delete ARC[k]; // the resurrection arc must never carry ghost rows

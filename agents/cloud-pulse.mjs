@@ -182,8 +182,14 @@ async function main() {
       log("NO-WIF — אף אחד מהסודות (STEEM_POSTING_WIF · WEAVE_STEEM_WIF) לא סופק לריצה. דילוג-כנה בסגנון web-publish: הריצה ירוקה, הכרטיס ממתין לסוד או לדופק.");
       return;
     }
-    log(`אף סוד שסופק אינו רשות-ה-posting החיה של @${POSTER} — סירוב אדום בכנות: לא משדרים בשם מי שלא אישרו. אדום כדי שהמפעיל יראה ויתקן את הכספת.`);
-    process.exit(1);
+    // T-53 (custody-boundary law — aligned with the ladder T-50 doctrine): provided secrets
+    // that do NOT match the live chain authority are a measured custody state, not a code
+    // failure. The refusal to broadcast stays ABSOLUTE (no key match = no broadcast, ever).
+    // The run exits 0 so one stale key cannot drown the fleet's real reds; the boundary is
+    // surfaced where it belongs — the fleet book measures the voice-card staleness keylessly
+    // from chain truth, and the vault decision belongs to the sovereignty ledger.
+    log(`אף סוד שסופק אינו רשות-ה-posting החיה של @${POSTER} — גבול-משמורת (T-53): לא משדרים בשם מי שלא אישרו. הריצה ירוקה-כנה; הקול היומי מודד-עצמו בספר-הצי מאמת-השרשרת.`);
+    return;
   }
 
   // 4) שער-RC לפני שידור (הדוקטרינה של web-publish — אין מנה ⇒ אין שידור)

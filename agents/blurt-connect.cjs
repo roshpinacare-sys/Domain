@@ -38,7 +38,11 @@ const RPC = BLURT.rpc;
 /* [zai-18] חוסן-צמתים: צומת-Blurt יכול להשיב טקסט לא-JSON ("Server is …" — נמדד חי 13:20Z
  * ב-run 38254972444, קריסת JSON.parse טהורה). מעתה: פענוח-סובלני + failover מרובה-צמתים
  * + פסיקה-כנה רק-אחרי-כל-הצמתים ("all blurt nodes unhealthy") — לא קריסת-פענוח. */
-const RPC_CANDIDATES = [...new Set([RPC, 'https://rpc.blurt.world', 'https://blurt-rpc.saboin.com', 'https://api.blurt.world'].filter(Boolean))];
+// T-54 (rpc-resilience law): the blurt public RPC layer had a full outage (2026-10-12, all
+// three primary nodes unreachable — measured live). The candidate list carries the primaries
+// plus alternates so the desk self-heals when any node returns; the red stays honest while
+// every node is down (chain truth, not a desk defect).
+const RPC_CANDIDATES = [...new Set([RPC, 'https://rpc.blurt.world', 'https://blurt-rpc.saboin.com', 'https://api.blurt.world', 'https://blurt.rpc.clinue.com', 'https://rpc.blurtlatam.intinte.org'].filter(Boolean))];
 async function rpc(method, params) {
   let lastErr = null;
   for (const base of RPC_CANDIDATES) {
