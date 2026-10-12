@@ -143,6 +143,7 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
     <span class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"/><circle cx="12" cy="12" r="3"/></svg></span>
     <div class="brand">SAOS Network<small>הרשת המאמתת לסוכני AI</small></div>
     <nav class="top" aria-label="ניווט ראשי">
+      <a href="standard.html">תקן-ההפעלה</a>
       <a href="#office">המשרד</a>
       <a href="#live">הרשת החיה</a>
       <a href="#why">מה ולמה</a>
@@ -332,8 +333,8 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
       </div>
       <div class="why-links">
         <a href="https://roshpinacare-sys.github.io/Console/" target="_blank" rel="noopener">Console<small>roshpinacare-sys.github.io/Console</small></a>
-        <a href="https://roshpinacare-sys.github.io/sovereign-lighthouse/" target="_blank" rel="noopener">Lighthouse<small>roshpinacare-sys.github.io/sovereign-lighthouse</small></a>
-        <a href="https://github.com/roshpinacare-sys/TruthRail" target="_blank" rel="noopener">TruthRail<small>github.com/roshpinacare-sys/TruthRail</small></a>
+        <a href="https://github.com/roshpinacare-sys/sovereign-runner-kit" target="_blank" rel="noopener">Runner-Kit<small>github.com/roshpinacare-sys/sovereign-runner-kit</small></a>
+        <a href="https://github.com/roshpinacare-sys/Autonomy" target="_blank" rel="noopener">Autonomy<small>github.com/roshpinacare-sys/Autonomy</small></a>
       </div>
     </div>
   </section>
@@ -341,8 +342,7 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
 
 <footer>
   <div class="wrap">
-    <b>הערת-היסטוריה:</b> הגרסה הקודמת של דף זה (כפי שהוצגה עד 2026-10-11) נשמרה וניתנת לעיון ב-
-    .
+    <b>הערת-היסטוריה:</b> הגרסה הקודמת של דף זה (כפי שהוצגה עד 2026-10-11) נשמרה וניתנת לעיון ב-<a href="archive/2026-10-11/">ארכיון 2026-10-11</a>.
     <br>
     כל מספר בדף זה נמדד ממקור חי עם חותמת-זמן גלויה. אין נתון — נכתב "אין נתון". אין כאן הבטחת רווח; יש כאן מדידה.
     <div class="frow">
@@ -866,7 +866,7 @@ function loadResearch(){
         (e.verdict ? '<br><span style="font-size:12px">' + esc(e.verdict) + '</span>' : '') +
         (e.next ? '<br><span style="font-size:11px;color:var(--faint)">צעד-הבא: ' + esc(e.next) + '</span>' : '') + '</li>';
     });
-    h += '<li style="font-size:11px"><a href="https://github.com/roshpinacare-sys/Sandbox/blob/main/research/LEDGER.md" target="_blank" rel="noopener">פנקס-המחקר (LEDGER.md) — השערה  מדידה  פסק  צעד-הבא</a></li>';
+    h += '<li style="font-size:11px"><a href="agents/work-orders.json" target="_blank" rel="noopener">ספר-הפקודות החי (work-orders.json) — השערה · מדידה · פסק · צעד-הבא</a></li>';
     $('pr-runs').innerHTML = h;
     var at = d.at || null;
     if(at){ setChip('pr-chip', at, 'מחקר חי', 192); $('pr-upd').textContent = utcClock(at); }
