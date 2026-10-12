@@ -1,9 +1,9 @@
 'use strict';
 /**
- * recruit.cjs — Z-29 ARMY SELF-RECRUITMENT DESK.
+ * recruit.cjs — army self-recruitment desk (public openings board).
  *
- * The operator directive (msg 26): the autonomy must develop the army and recruit
- * new roles BY ITSELF, not wait for operator suggestions. This desk codifies that:
+ * The desk keeps a professional Hebrew jobs manifest in sync with live fleet
+ * needs and registers a role only with mechanism evidence. It codifies that:
  *   1. read LIVE fleet signals (receipts freshness, econ book, books inventory,
  *      mechanism markers in the agent sources);
  *   2. run a RULE TABLE where every fleet gap opens a ROLE with a contract
@@ -38,50 +38,57 @@ const RULES = [
   {
     id: 'rail-sentinel',
     title: { en: 'Chain-rail sentinel', he: 'סנטינל נתיבי-שרשרת' },
-    gap: 'an unverified contract id and an ignored sort parameter made a healthy rail look dead; ops signed blind are mined but never applied (Z-29 lesson, corrected in Z-30 by the research team)',
-    mission: 'validate every rail before any signature: contract id copied character-for-character from an APPLIED third-party op, settlement read from sidechain state, never from a mined trx alone',
+    gap: 'נדרש אימות שוטף של נתיבי השידור בשרשראות הציבוריות לפני כל חתימה',
+    req: 'ניסיון ב-API של שרשראות ציבוריות, דיוק גבוה בפרטי חוזה, תיעוד מסודר בקבלות',
+    mission: 'אימות כל נתיב לפני חתימה: מזהה חוזה מועתק אות-באות מפעולה צד-שלישית שיושמה, וקריאת הסדרת התשלום מתוך מצב ה-sidechain בלבד',
     evidence: () => { const src = read('econ-desk.cjs'); return src && src.includes("ENGINE_ID = 'ssc-mainnet-hive'") && src.includes('rail-health') ? 'agents/econ-desk.cjs contract-id law + rail-health gate' : null; },
   },
   {
     id: 'liquidity-cultivator',
     title: { en: 'Liquidity cultivator', he: 'מגדל-נזילות' },
-    gap: 'idle inventory and dust either rot or get noise-sold; the economy needs every routable unit working',
-    mission: 'two-sided engine desk: harvest inventory above keep-reserves at live bids, route proceeds into maker orders, hold dust honestly',
+    gap: 'ההון העומד במקום נדרש לעבודה מסודרת בשוק במקום להישאר בטל',
+    req: 'הבנת ספרי פקודות ומסחר maker, משמעת סיכונים, עבודה מול נתוני שוק חיים',
+    mission: 'דסק דו-צדדי: גיוס מלאי מעל רזרבות-שימור במחירי bid חיים, ניתוב התקבלויות לפקודות maker והחזקת שאריות בכנות',
     evidence: () => { const src = read('econ-desk.cjs'); return src && src.includes('SELL_BOOKS') && src.includes('DUST-HELD') ? 'agents/econ-desk.cjs sell/buy sides' : null; },
   },
   {
     id: 'community-liaison',
     title: { en: 'Community liaison', he: 'קשרית-קהילה' },
-    gap: 'broadcast-only presence reads as a press agency, not a community; networks reward dialogue',
-    mission: 'daily self-audience pass: read, reply and curate across steem/hive/blurt in per-account voices (support the public, never expose the fleet)',
+    gap: 'נוכחות ציבורית פעילה דורשת דו-שיח, לא שידור חד-כיווני בלבד',
+    req: 'עברית ואנגלית ברמת שפת-אם, נימוסים דיגיטליים, סבלנות ואמינות',
+    mission: 'מעבר יומי על ערוצי הקהילה ברשתות steem/hive/blurt: קריאה, תגובה ואצירת תוכן בקול ציבורי אדיב ומקצועי',
     evidence: () => { const h = newestReceiptAgeH(); const has = read('self-audience.cjs'); return has && h != null && h < 30 ? 'agents/receipts (newest ' + h.toFixed(1) + 'h old)' : null; },
   },
   {
     id: 'content-diversity-officer',
     title: { en: 'Content diversity officer', he: 'קצינת-גיוון-תוכן' },
-    gap: 'ten accounts posting identical skeletons reads as spam and kills reach (operator msg 26: duplications and errors in content)',
-    mission: 'per-account renderers, alternating formats, chain-native summaries, zero verbatim twins across chains',
+    gap: 'גיוון בפורמטים ובקולות שומר על איכות ועניין ציבורי לאורך זמן',
+    req: 'כתיבה עריכתית טובה, הבנת קהלים שונים, בקרת איכות ולוחות זמנים',
+    mission: 'רינדור נפרד לכל חשבון, פורמטים מתחלפים, סיכומים ילידי-שרשרת, ואפס שכפול מילולי בין רשתות',
     evidence: () => { const src = read('soldiers-blog.cjs'); return src && src.includes('persona') ? 'agents/soldiers-blog.cjs persona renderers' : null; },
   },
   {
     id: 'books-consul',
     title: { en: 'Books consul', he: 'קונסול-הספרים' },
-    gap: 'several money books were written by different agents and disagreed; a sovereign unit needs one ledger per truth',
-    mission: 'single-writer rule per book topic; cross-book reconciliation daily; contradictions tombstoned, not argued',
+    gap: 'פנקס כספים ריבוני דורש כותב יחיד לכל נושא והצלבה יומית בין הספרים',
+    req: 'דיוק חשבונאי, קור רוח מול סתירות, שקיפות מלאה בתיעוד',
+    mission: 'כלל כותב-יחיד לכל נושא פנקס, התאמה בין-ספרית יומית, וסתימת סתירות בפומבי ובמסמך',
     evidence: () => (read('reconcile.cjs') && read('reconciliation.md') ? 'agents/reconcile.cjs single-writer manifest + live-truth cross-check' : null),
   },
   {
     id: 'workflow-pruner',
     title: { en: 'Workflow pruner', he: 'גוזרת-הזרימות' },
-    gap: '30+ workflows spawned by bootstrap commits, twins across Console/Domain burning public-Actions minutes and muddying authorship',
-    mission: 'one canonical home per duty; dispatch-only tombstones on the duplicates; the repo reads as one body, not layers',
+    gap: 'בית תוכנה בריא דורש בית קנוני אחד לכל תפקיד ותחזוקה שוטפת של זרימות העבודה',
+    req: 'היכרות עם GitHub Actions, קריאת YAML, גישה שמרנית לשינויים',
+    mission: 'בית קנוני אחד לכל תפקיד; מצבות-זיכרון ל-dispatch בלבד על כפילויות; הריפו נקרא כגוף אחד',
     evidence: () => (read('workflow-audit.cjs') && read('workflow-audit.md') ? 'agents/workflow-audit.cjs twin scan + reviewable prune plan' : null),
   },
   {
     id: 'mobile-steward',
     title: { en: 'Mobile steward', he: 'סדרנית-נייד' },
-    gap: 'the operator found pages broken on mobile; every public page must hold at 390px with a menu that actually closes',
-    mission: 'browser-verify every public page at 390x844 after each UI wave; menus close on route/tap; tables scroll; no horizontal bleed',
+    gap: 'כל עמוד ציבורי נדרש להחזיק בתצוגת מובייל באופן מלא',
+    req: 'כלי בדיקת דפדפן, עין עיצובית, סבלנות לפרטים קטנים',
+    mission: 'בדיקת דפדפן של כל עמוד ציבורי ב-390x844 אחרי כל גל UI; תפריטים שנסגרים בנגיעה, טבלאות שגוללות, ואפס גלישת-רוחב',
     evidence: () => { try { const j = JSON.parse(read('page-laws.json') || 'null'); return (read('page-laws.cjs') && j && j.allPass) ? 'agents/page-laws.cjs — all public pages hold the five mobile laws' : null; } catch (_) { return null; } },
   },
 ];
@@ -95,7 +102,8 @@ const RULES = [
   const board = {
     at: new Date(t0).toISOString(),
     agent: 'recruit',
-    doctrine: 'roles are opened by live fleet gaps and registered only with mechanism evidence; PROPOSED roles carry a contract and wait for implementation, never a claim',
+    doctrine: 'תפקידים נפתחים מתוך צורך שנמדד בשטח, ונרשמים רק עם הוכחת מנגנון קיימת; תפקיד PROPOSED נושא הגדרה וממתין למימוש — אין טענות בלי ראיות',
+    contact: 'הגשת מועמדות ופניות: דרך issues בריפו בלבד',
     signals: {
       railFrontierAgeHours: econ && econ.rail ? econ.rail.frontierAgeHours : null,
       railState: econ && econ.rail ? (econ.rail.frontierAgeHours > 24 ? 'STALL' : 'FRESH') : 'UNKNOWN',
@@ -111,20 +119,21 @@ const RULES = [
       title: r.title,
       openedBy: r.gap,
       contract: r.mission,
+      requirements: r.req,
       status: ev ? 'FILLED' : 'PROPOSED',
-      mechanismEvidence: ev || 'none yet — role stands open until a mechanism exists (honest board)',
+      mechanismEvidence: ev || 'טרם קיים מנגנון — התפקיד עומד פתוח בכנות עד למימוש',
     });
   }
   fs.writeFileSync(OUT_JSON, JSON.stringify(board, null, 1));
   const md = [
-    '# Army Recruitment Board (Z-29 self-recruitment desk)', '',
-    'Updated: ' + board.at + ' UTC. The autonomy opens its own roles from live gaps. FILLED = mechanism evidence in-repo. PROPOSED = contract drafted, no implementation yet — the board does not lie.', '',
+    '# לוח משרות פתוחות', '',
+    'עודכן: ' + board.at + ' UTC. התפקידים נפתחים מצורך מדידה בשטח. FILLED = הוכחת מנגנון בריפו. PROPOSED = הגדרה מוכנה, טרם מומש. פניות והגשת מועמדות: issues בריפו בלבד.', '',
     'Signals: rail=' + JSON.stringify(board.signals.railState) + ' (frontier ' + board.signals.railFrontierAgeHours + 'h) · newest receipt ' + board.signals.newestReceiptAgeHours + 'h', '',
-    '| role | status | opened by gap | contract | evidence |',
-    '|---|---|---|---|---|',
-    ...board.roles.map((r) => '| ' + r.title.en + ' (' + r.id + ') | ' + r.status + ' | ' + r.openedBy.slice(0, 110) + ' | ' + r.contract.slice(0, 130) + ' | ' + String(r.mechanismEvidence).slice(0, 90) + ' |'),
+    '| תפקיד | סטטוס | רציונל פתיחה | תחום אחריות | דרישות | הוכחת מנגנון |',
+    '|---|---|---|---|---|---|',
+    ...board.roles.map((r) => '| ' + r.title.he + ' (' + r.id + ') | ' + r.status + ' | ' + r.openedBy.slice(0, 90) + ' | ' + r.contract.slice(0, 110) + ' | ' + String(r.requirements || '').slice(0, 90) + ' | ' + String(r.mechanismEvidence).slice(0, 90) + ' |'),
     '',
-    'Open PROPOSED roles are the army\'s own to-do list — recruited by building the mechanism, not by naming it. Generated by agents/recruit.cjs.', '',
+    'תפקידי PROPOSED הם רשימת העבודה של היחידה — המימוש הוא הגיוס. נוצר על ידי agents/recruit.cjs.', '',
   ].join('\n');
   fs.writeFileSync(OUT_MD, md);
   console.log(JSON.stringify({ state: 'ok', filled: board.roles.filter((r) => r.status === 'FILLED').length, proposed: board.roles.filter((r) => r.status === 'PROPOSED').length }));
