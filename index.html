@@ -280,7 +280,7 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
             <b>טענות-שאומתו מול Actions</b><i class="mono" id="pf-igv">—</i>
           </div>
           <ul class="runs" id="pf-runs"><li class="err">טוען מפת-זרימה…</li></ul>
-          <div class="pfoot"><span>עודכן: <span class="upd" id="pf-upd">—</span></span><span class="src">Sandbox/ops/flow/flow-map.json · כל-3-שעות</span></div>
+          <div class="pfoot"><span>עודכן: <span class="upd" id="pf-upd">—</span></span><span class="src">מקור נסגר (Sandbox פרטי מ-T-66) · יחזור דרך מראה ציבורית</span></div>
         </div>
 
         <div class="panel" id="p-decisions">
@@ -292,7 +292,7 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
             <b>עדויות-מיושנות</b><i class="mono" id="pd-stale">—</i>
           </div>
           <ul class="runs" id="pd-runs"><li class="err">טוען אמת-הכרעות…</li></ul>
-          <div class="pfoot"><span>עוכן: <span class="upd" id="pd-upd">—</span></span><span class="src">Sandbox/ops/decision-truth/verdict.json · כל-30-דקות</span></div>
+          <div class="pfoot"><span>עוכן: <span class="upd" id="pd-upd">—</span></span><span class="src">מקור נסגר (Sandbox פרטי מ-T-66) · יחזור דרך מראה ציבורית</span></div>
         </div>
 
         <div class="panel" id="p-research">
@@ -308,10 +308,10 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
               <b>שינוי מול הסבב-הקודם</b><i class="mono" id="pp-delta">—</i>
               <b>פסק-הגריד</b><i class="mono" id="pp-grid">—</i>
             </div>
-            <div class="pfoot" style="margin-top:8px"><span>עודכן: <span class="upd" id="pp-upd">—</span></span><span class="src">Sandbox/receipts/profit-oracle-latest.json</span></div>
+            <div class="pfoot" style="margin-top:8px"><span>עודכן: <span class="upd" id="pp-upd">—</span></span><span class="src">מקור נסגר (Sandbox פרטי מ-T-66)</span></div>
           </div>
           <ul class="runs" id="pr-runs"><li class="err">טוען ממצאי-מחקר אחרונים…</li></ul>
-          <div class="pfoot"><span>עודכן: <span class="upd" id="pr-upd">—</span></span><span class="src">Sandbox/research/findings-*.json · מחזור שבועי · LEDGER.md</span></div>
+          <div class="pfoot"><span>עודכן: <span class="upd" id="pr-upd">—</span></span><span class="src">מקור נסגר (Sandbox פרטי מ-T-66) · יחזור דרך מראה ציבורית</span></div>
         </div>
 
       </div>
@@ -356,6 +356,12 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
 
 <script>
 'use strict';
+/* T-67b hotfix: global escape-hatch esc() — lane .catch blocks called a scope-local esc and
+   threw ReferenceError (double-dead panels). One global definition serves every lane. */
+window.esc = function(s){ var d=document.createElement('div'); d.textContent=String(s==null?'':s); return d.innerHTML; };
+function esc(s){ return window.esc(s); }
+function retireChip(id, text){ var c=document.getElementById(id); if(c){ c.className='chip stale'; c.textContent=text; } }
+function retireRuns(id, html){ var r=document.getElementById(id); if(r) r.innerHTML = '<li class="err" style="font-size:12px">' + html + '</li>'; }
 /* ═══════════ SAOS Domain live page — minimal, honest, measured ═══════════ */
 var $ = function(id){ return document.getElementById(id); };
 var STALE_HOURS = 24;
@@ -551,6 +557,9 @@ function loadSteem(){
 }
 
 /* ── 4. PROBES: Sandbox digests (try today  yesterday) ── */
+/* T-67b: lane RETIRED — Sandbox went private at T-66 (exposure closure), so every
+   raw.githubusercontent read 404s. Honest closed-source state instead of doomed fetches.
+   The lane returns when a public mirror carries the probes (BLOC law: one truth, mirrored). */
 function probeFile(kind){
   var days = [0, 1];
   var tries = days.map(function(back){
@@ -562,6 +571,10 @@ function probeFile(kind){
   return jget(tries[0], 12000).catch(function(){ return jget(tries[1], 12000); });
 }
 function loadProbes(){
+  retireChip('pp-chip', 'מקור נסגר');
+  ['pp-hive','pp-blurt','pp-hive-ep','pp-blurt-ep'].forEach(function(id){ var x=$(id); if(x) x.textContent='—'; });
+  var u=$('pp-upd'); if(u) u.textContent='—';
+  return; /* retired — see note above */
   var upd = utcClock(new Date());
   $('pp-upd').textContent = upd;
   var done = 0, failed = 0, latest = null;
@@ -669,6 +682,10 @@ function loadCrew(){
 
 /* ── 8. LESSONS (F-series lane: Sandbox ops/lessons/ledger.md — what the brain learned, daily) ── */
 function loadLessons(){
+  retireChip('pl-chip', 'מקור נסגר');
+  retireRuns('pl-runs', 'פנקס-הלקחים נסגר לציבור: Sandbox הפך פרטי (T-66, 12.10) כדי לסגור משטח-חשיפה. הלקחים ממשיכים להירשם ברשת הסגורה — הפאנל יחזור כשמראה ציבורית תישא אותם.');
+  var u=$('pl-upd'); if(u) u.textContent='—';
+  return; /* retired — Sandbox private since T-66 */
   var chip = $('pl-chip');
   fetch('https://raw.githubusercontent.com/roshpinacare-sys/Sandbox/main/ops/lessons/ledger.md?ts=' + Date.now())
     .then(function(r){ if(!r.ok) throw new Error('http ' + r.status); return r.text(); })
@@ -699,6 +716,11 @@ function loadLessons(){
 
 /* ── 9. FLOW MAP (F-series lane: Sandbox ops/flow/flow-map.json — who feeds whom, measured) ── */
 function loadFlow(){
+  retireChip('pf-chip', 'מקור נסגר');
+  ['pf-ne','pf-int','pf-pi','pf-orph','pf-gh','pf-div'].forEach(function(id){ var x=$(id); if(x) x.textContent='—'; });
+  retireRuns('pf-runs', 'מפת-הזרימה ושומר-השלמות נסגרו לציבור — Sandbox הפך פרטי (T-66, 12.10). הזרימה והמאמת עצמם חיים ברשת הסגורה; הפאנל יחזור כשמראה ציבורית תישא אותם.');
+  var u=$('pf-upd'); if(u) u.textContent='—';
+  return; /* retired — Sandbox private since T-66 */
   jget('https://raw.githubusercontent.com/roshpinacare-sys/Sandbox/main/ops/flow/flow-map.json?ts=' + Date.now(), 10000)
     .then(function(m){
       var s = m.summary || {};
@@ -733,6 +755,9 @@ function loadFlow(){
 
 /* ── 9b. INTEGRITY GUARD (G-series lane: Sandbox ops/integrity/verdict.json — anti-forgery verdict, live) ── */
 function loadIntegrity(){
+  var ig=$('pf-ig'); if(ig){ ig.textContent='מקור נסגר'; ig.style.color=''; }
+  var igv=$('pf-igv'); if(igv) igv.textContent='—';
+  return; /* retired — flow lane owns the shared pf-runs list (T-67b) */
   jget('https://raw.githubusercontent.com/roshpinacare-sys/Sandbox/main/ops/integrity/verdict.json?ts=' + Date.now(), 10000)
     .then(function(v){
       var s = v.summary || {};
@@ -756,6 +781,11 @@ function loadIntegrity(){
    Honesty law: VERIFIED = evidence re-measured independently + consumer present; UNEXECUTED = enforced without a measured consumer;
    STALE-TRUTH = world moved past evidence; UNVERIFIABLE = source down (honest, never forged). ── */
 function loadDecisions(){
+  retireChip('pd-chip', 'מקור נסגר');
+  ['pd-verified','pd-unex','pd-stale','pd-heart'].forEach(function(id){ var x=$(id); if(x){ x.textContent='—'; x.style.color=''; } });
+  retireRuns('pd-runs', 'מדידת תיאור-מול-מעשה נסגרה לציבור: Sandbox פרטי (T-66). החוק עצמו חי — פנקס-הוודאות ממשיך למדוד הכרעות ברשת הסגורה.');
+  var u=$('pd-upd'); if(u) u.textContent='—';
+  return; /* retired — Sandbox private since T-66 */
   var chip = $('pd-chip');
   jget('https://raw.githubusercontent.com/roshpinacare-sys/Sandbox/main/ops/decision-truth/verdict.json?ts=' + Date.now(), 10000)
     .then(function(v){
@@ -789,6 +819,10 @@ function loadDecisions(){
    resolved latest-first up to 9 days back, exactly like the probes date-failover of 10-b.
    Honesty law: renders what the feed says — hypothesis  measurement  verdict  next. ── */
 function loadResearch(){
+  retireChip('pr-chip', 'מקור נסגר');
+  retireRuns('pr-runs', 'ממצאי-המחקר נסגרו לציבור: Sandbox הפך פרטי (T-66, 12.10). המחקר עצמו ממשיך — הפרסום יחזור דרך מראה ציבורית.');
+  var u=$('pr-upd'); if(u) u.textContent='—';
+  return; /* retired — Sandbox private since T-66 */
   var chip = $('pr-chip');
   function urlFor(back){
     var d = new Date(Date.now() - back*86400e3);
@@ -828,6 +862,12 @@ function loadResearch(){
    Defensive law: missing/failing/shapeless feed  honest "אין-נתון", never fake.
    XSS law: every fetched value reaches the DOM via textContent only — no innerHTML. ── */
 function loadProfit(){
+  /* T-67b: retired like the other Sandbox lanes — honest closed-source, zero doomed fetches. */
+  var v0=$('pp-verdict'); if(v0){ v0.className='chip stale'; v0.textContent='מקור נסגר'; }
+  var f0=$('pp-fresh'); if(f0){ f0.className='chip stale'; f0.textContent='Sandbox פרטי (T-66)'; }
+  ['pp-net','pp-delta','pp-grid'].forEach(function(id){ var x=$(id); if(x) x.textContent='—'; });
+  var u0=$('pp-upd'); if(u0) u0.textContent='—';
+  return; /* retired — Sandbox private since T-66 */
   var vChip = $('pp-verdict'), fChip = $('pp-fresh');
   function honest(why){
     if(vChip){ vChip.className='chip'; vChip.textContent='לא-ידוע'; }
