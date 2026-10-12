@@ -1,21 +1,24 @@
 {
  "schema": "integrity-guard/2",
  "scope": "public-twin (Domain home)",
- "at": "2026-10-12T19:38:52.194Z",
- "overall": "FAIL",
+ "at": "2026-10-12T19:39:47.605Z",
+ "overall": "PASS",
  "summary": {
   "sources": 7,
-  "verified": 8,
-  "findings": 1,
-  "counts": {
-   "missing": 1
-  }
+  "verified": 9,
+  "findings": 0,
+  "counts": {}
  },
  "verified": [
   {
    "where": "self:agents/integrity-verdict.json",
    "law": "L0-verified",
    "detail": "פסק-קודם תקין (FAIL) מלפני 0ש'"
+  },
+  {
+   "where": "Domain:agents/work-orders.json",
+   "law": "fresh+parsed",
+   "detail": "גיל 0ש' ≤ SLA 4ש'"
   },
   {
    "where": "Domain:agents/grid-truth.json",
@@ -35,7 +38,7 @@
   {
    "where": "FleetHQ:office/state/office-state.json",
    "law": "fresh+parsed",
-   "detail": "גיל 3.5ש' ≤ SLA 4ש'"
+   "detail": "גיל 0ש' ≤ SLA 4ש'"
   },
   {
    "where": "sovereign-runner-kit:results/receipts.jsonl",
@@ -45,23 +48,17 @@
   {
    "where": "Domain:office/data.json",
    "law": "producer-green",
-   "detail": "ריצת-יצרן ירוקה לפני 134 דק'"
+   "detail": "ריצת-יצרן ירוקה לפני 135 דק'"
   },
   {
    "where": "Domain:agents/work-orders.json",
    "law": "published",
-   "detail": "? פקודות-פתוחות · schema legacy"
+   "detail": "2 פקודות-פתוחות · schema work-orders/2"
   }
  ],
- "findings": [
-  {
-   "where": "Domain:agents/work-orders.json",
-   "law": "missing",
-   "detail": "HTTP 404 — ספר-חי לא נקרא"
-  }
- ],
+ "findings": [],
  "provenance": {
-  "runUrl": null,
+  "runUrl": "https://github.com/roshpinacare-sys/Domain/actions/runs/38299102323",
   "workflow": "artery-integrity-twin"
  }
 }
