@@ -22,6 +22,7 @@
 // והמשבצת :52 פנויה. רישום-מלא בכותרת dex-mirror.yml. (13-a תיקן-תיעוד בלבד; 15c הכריע-בגבולות-האצלה trace 1a1…4671.)
 
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
+import { scrub } from "./agents/refs.mjs"; // exposure law: mirrored books never carry estate names
 
 const SRC = "https://roshpinacare-sys.github.io/Console/dex";
 const OUT_DIR = "dex";
@@ -80,9 +81,9 @@ for (const f of FILES) {
     } catch { changed = true; /* local copy corrupt - replace it */ }
   }
   if (changed) {
-    writeFileSync(local, JSON.stringify(doc, null, 1) + "\n");
+    writeFileSync(local, scrub(JSON.stringify(doc, null, 1)) + "\n");
     updated++;
-    lines.push(`MIRRORED ${f}: ${r2(ageH)}h old at source, bytes written`);
+    lines.push(`MIRRORED ${f}: ${r2(ageH)}h old at source, bytes written (refs-scrubbed)`);
   } else {
     kept++;
     lines.push(`OK ${f}: identical to the live mirror (${r2(ageH)}h old at source)`);
