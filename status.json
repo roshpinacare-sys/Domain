@@ -1,13 +1,13 @@
 {
  "schema": "saos/grid-status/1",
- "generatedAt": "2026-10-12T20:53:54.820Z",
+ "generatedAt": "2026-10-12T21:22:33.181Z",
  "pulse": {
-  "beatArteries": 104,
-  "totalArteries": 254,
-  "repos": 31
+  "beatArteries": 37,
+  "totalArteries": 263,
+  "repos": 32
  },
  "summary": {
-  "ALIVE": 26,
+  "ALIVE": 27,
   "STALE": 1,
   "QUOTA-DEAD": 1,
   "IDLE": 3
@@ -17,31 +17,19 @@
   "reLit": [
    {
     "repo": "Domain",
-    "wf": "dex-beat.yml",
+    "wf": "dex-xc-cron.yml",
     "ok": true,
     "err": null
    },
    {
     "repo": "Domain",
-    "wf": "dex-core-cron.yml",
+    "wf": "fleet-census-cron.yml",
     "ok": true,
     "err": null
    },
    {
     "repo": "Domain",
-    "wf": "earn-audit-cron.yml",
-    "ok": true,
-    "err": null
-   },
-   {
-    "repo": "Autonomy",
-    "wf": "artery-wallet.yml",
-    "ok": true,
-    "err": null
-   },
-   {
-    "repo": "Autonomy",
-    "wf": "artery-watch.yml",
+    "wf": "human-cadence.yml",
     "ok": true,
     "err": null
    }
@@ -57,22 +45,22 @@
    "arteries": [
     {
      "p": "claims-guard.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 38,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "gitleaks.yml",
      "v": "SILENT",
-     "last": 9209,
+     "last": 9237,
      "concl": "failure",
      "st": "disabled_manually"
     },
     {
      "p": "workflow-yaml-guard.yml",
      "v": "SILENT",
-     "last": 9209,
+     "last": 9237,
      "concl": "failure",
      "st": "disabled_manually"
     }
@@ -85,29 +73,29 @@
    "arteries": [
     {
      "p": "baseline-integrity.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 38,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "conformance-selftest.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 38,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "gitleaks.yml",
      "v": "SILENT",
-     "last": 9204,
+     "last": 9233,
      "concl": "failure",
      "st": "disabled_manually"
     },
     {
      "p": "workflow-yaml-guard.yml",
      "v": "SILENT",
-     "last": 9204,
+     "last": 9233,
      "concl": "failure",
      "st": "disabled_manually"
     }
@@ -121,57 +109,71 @@
     {
      "p": "artery-catchup.yml",
      "v": "BEAT",
-     "last": 14,
+     "last": 10,
+     "concl": "success",
+     "st": "active"
+    },
+    {
+     "p": "artery-decision-truth.yml",
+     "v": "BEAT",
+     "last": 7,
      "concl": "success",
      "st": "active"
     },
     {
      "p": "artery-fleet.yml",
-     "v": "BEAT",
-     "last": 14,
+     "v": "WARM",
+     "last": 42,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "artery-flow.yml",
-     "v": "BEAT",
-     "last": 14,
+     "v": "WARM",
+     "last": 42,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "artery-grid.yml",
-     "v": "BEAT",
-     "last": 14,
+     "v": "WARM",
+     "last": 42,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "artery-integrity.yml",
+     "v": "WARM",
+     "last": 42,
+     "concl": "success",
+     "st": "active"
+    },
+    {
+     "p": "artery-participation.yml",
      "v": "BEAT",
-     "last": 14,
+     "last": 6,
      "concl": "success",
      "st": "active"
     },
     {
      "p": "artery-scribe.yml",
-     "v": "BEAT",
-     "last": 14,
+     "v": "WARM",
+     "last": 42,
      "concl": "success",
      "st": "active"
     },
     {
      "p": "artery-wallet.yml",
-     "v": "RE-LIT",
-     "last": null,
-     "concl": null,
+     "v": "BEAT",
+     "last": 28,
+     "concl": "failure",
      "st": "active"
     },
     {
      "p": "artery-watch.yml",
-     "v": "RE-LIT",
-     "last": null,
-     "concl": null,
+     "v": "BEAT",
+     "last": 28,
+     "concl": "success",
      "st": "active"
     },
     {
@@ -183,8 +185,8 @@
     },
     {
      "p": "federation.yml",
-     "v": "BEAT",
-     "last": 14,
+     "v": "WARM",
+     "last": 43,
      "concl": "failure",
      "st": "active"
     },
@@ -196,6 +198,13 @@
      "st": "active"
     },
     {
+     "p": "fleet-yield.yml",
+     "v": "BEAT",
+     "last": 6,
+     "concl": "success",
+     "st": "active"
+    },
+    {
      "p": "fresh-oracle.yml",
      "v": "NEVER",
      "last": null,
@@ -204,9 +213,16 @@
     },
     {
      "p": "hive-probe.yml",
-     "v": "BEAT",
-     "last": 14,
+     "v": "WARM",
+     "last": 43,
      "concl": "failure",
+     "st": "active"
+    },
+    {
+     "p": "key-proof.yml",
+     "v": "BEAT",
+     "last": 6,
+     "concl": "success",
      "st": "active"
     },
     {
@@ -214,6 +230,20 @@
      "v": "NEVER",
      "last": null,
      "concl": null,
+     "st": "active"
+    },
+    {
+     "p": "profit-oracle.yml",
+     "v": "BEAT",
+     "last": 6,
+     "concl": "success",
+     "st": "active"
+    },
+    {
+     "p": "research-lane.yml",
+     "v": "BEAT",
+     "last": 6,
+     "concl": "failure",
      "st": "active"
     },
     {
@@ -232,15 +262,15 @@
     },
     {
      "p": "sovereign-state.yml",
-     "v": "BEAT",
-     "last": 14,
+     "v": "WARM",
+     "last": 43,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "sovereign.yml",
      "v": "BEAT",
-     "last": 15,
+     "last": 10,
      "concl": "success",
      "st": "active"
     },
@@ -252,9 +282,16 @@
      "st": "active"
     },
     {
-     "p": "verifier.yml",
+     "p": "value-scan.yml",
      "v": "BEAT",
-     "last": 14,
+     "last": 6,
+     "concl": "success",
+     "st": "active"
+    },
+    {
+     "p": "verifier.yml",
+     "v": "WARM",
+     "last": 43,
      "concl": "failure",
      "st": "active"
     }
@@ -268,56 +305,56 @@
     {
      "p": "agent-verify.yml",
      "v": "WARM",
-     "last": 146,
+     "last": 175,
      "concl": "success",
      "st": "active"
     },
     {
      "p": "agents-watch.yml",
      "v": "COOL",
-     "last": 292,
+     "last": 321,
      "concl": "success",
      "st": "active"
     },
     {
      "p": "chain-vitals.yml",
      "v": "COOL",
-     "last": 276,
+     "last": 305,
      "concl": "success",
      "st": "active"
     },
     {
      "p": "console-publish.yml",
      "v": "COOL",
-     "last": 289,
+     "last": 318,
      "concl": "success",
      "st": "active"
     },
     {
      "p": "dex-watch.yml",
      "v": "COOL",
-     "last": 305,
+     "last": 334,
      "concl": "success",
      "st": "active"
     },
     {
      "p": "estate-scrub.yml",
-     "v": "BEAT",
-     "last": 5,
+     "v": "WARM",
+     "last": 34,
      "concl": "success",
      "st": "active"
     },
     {
      "p": "fee-law.yml",
      "v": "COOL",
-     "last": 288,
+     "last": 317,
      "concl": "success",
      "st": "active"
     },
     {
      "p": "giants-beat.yml",
      "v": "COOL",
-     "last": 471,
+     "last": 500,
      "concl": "success",
      "st": "active"
     },
@@ -331,35 +368,35 @@
     {
      "p": "grid-pulse.yml",
      "v": "COOL",
-     "last": 603,
+     "last": 632,
      "concl": "success",
      "st": "active"
     },
     {
      "p": "key-verify.yml",
      "v": "BEAT",
-     "last": 5,
+     "last": 27,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "line-agreement.yml",
      "v": "WARM",
-     "last": 62,
+     "last": 91,
      "concl": "success",
      "st": "active"
     },
     {
      "p": "money-watch.yml",
      "v": "COOL",
-     "last": 222,
+     "last": 250,
      "concl": "success",
      "st": "active"
     },
     {
      "p": "pnl-desk.yml",
      "v": "COOL",
-     "last": 446,
+     "last": 475,
      "concl": "success",
      "st": "active"
     },
@@ -373,21 +410,21 @@
     {
      "p": "trigger-mesh.yml",
      "v": "COOL",
-     "last": 290,
+     "last": 319,
      "concl": "success",
      "st": "active"
     },
     {
      "p": "truth-gate.yml",
      "v": "COOL",
-     "last": 337,
+     "last": 366,
      "concl": "success",
      "st": "active"
     },
     {
      "p": "weave-census.yml",
-     "v": "BEAT",
-     "last": 5,
+     "v": "WARM",
+     "last": 33,
      "concl": "success",
      "st": "active"
     },
@@ -401,7 +438,7 @@
     {
      "p": "dynamic/pages/pages-build-deployment",
      "v": "BEAT",
-     "last": 2,
+     "last": 27,
      "concl": "success",
      "st": "active"
     }
@@ -414,22 +451,22 @@
    "arteries": [
     {
      "p": "canary.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 38,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "gitleaks.yml",
      "v": "SILENT",
-     "last": 9184,
+     "last": 9212,
      "concl": "failure",
      "st": "disabled_manually"
     },
     {
      "p": "workflow-yaml-guard.yml",
      "v": "SILENT",
-     "last": 9184,
+     "last": 9212,
      "concl": "failure",
      "st": "disabled_manually"
     }
@@ -463,15 +500,15 @@
     },
     {
      "p": "arb-mesh-cron.yml",
-     "v": "BEAT",
-     "last": 11,
+     "v": "WARM",
+     "last": 40,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "artery-integrity-twin.yml",
-     "v": "WARM",
-     "last": 74,
+     "v": "BEAT",
+     "last": 14,
      "concl": "success",
      "st": "active"
     },
@@ -484,16 +521,16 @@
     },
     {
      "p": "blurt-connect.yml",
-     "v": "BEAT",
-     "last": 11,
+     "v": "WARM",
+     "last": 40,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "book-audit.yml",
-     "v": "WARM",
-     "last": 89,
-     "concl": "success",
+     "v": "NEVER",
+     "last": null,
+     "concl": null,
      "st": "active"
     },
     {
@@ -519,15 +556,15 @@
     },
     {
      "p": "cloud-pulse.yml",
-     "v": "BEAT",
-     "last": 11,
+     "v": "WARM",
+     "last": 40,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "cognition-beat.yml",
      "v": "WARM",
-     "last": 55,
+     "last": 83,
      "concl": "success",
      "st": "active"
     },
@@ -575,16 +612,16 @@
     },
     {
      "p": "dex-beat.yml",
-     "v": "RE-LIT",
-     "last": null,
-     "concl": null,
+     "v": "BEAT",
+     "last": 28,
+     "concl": "success",
      "st": "active"
     },
     {
      "p": "dex-core-cron.yml",
-     "v": "RE-LIT",
-     "last": null,
-     "concl": null,
+     "v": "BEAT",
+     "last": 28,
+     "concl": "success",
      "st": "active"
     },
     {
@@ -596,30 +633,30 @@
     },
     {
      "p": "dex-mirror.yml",
-     "v": "BEAT",
-     "last": 11,
+     "v": "WARM",
+     "last": 40,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "dex-router-cron.yml",
      "v": "WARM",
-     "last": 42,
+     "last": 71,
      "concl": "success",
      "st": "active"
     },
     {
      "p": "dex-xc-cron.yml",
-     "v": "WARM",
-     "last": 62,
-     "concl": "success",
+     "v": "RE-LIT",
+     "last": null,
+     "concl": null,
      "st": "active"
     },
     {
      "p": "earn-audit-cron.yml",
-     "v": "RE-LIT",
-     "last": null,
-     "concl": null,
+     "v": "BEAT",
+     "last": 28,
+     "concl": "success",
      "st": "active"
     },
     {
@@ -653,22 +690,22 @@
     {
      "p": "exposure-gate.yml",
      "v": "BEAT",
-     "last": 4,
+     "last": 1,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "fill-ledger-cron.yml",
      "v": "WARM",
-     "last": 42,
+     "last": 71,
      "concl": "success",
      "st": "active"
     },
     {
      "p": "fleet-census-cron.yml",
-     "v": "WARM",
-     "last": 62,
-     "concl": "success",
+     "v": "RE-LIT",
+     "last": null,
+     "concl": null,
      "st": "active"
     },
     {
@@ -688,7 +725,7 @@
     {
      "p": "grid-doctor.yml",
      "v": "WARM",
-     "last": 35,
+     "last": 64,
      "concl": "success",
      "st": "active"
     },
@@ -701,36 +738,36 @@
     },
     {
      "p": "grid-trigger-twin.yml",
-     "v": "WARM",
-     "last": 89,
-     "concl": "success",
+     "v": "NEVER",
+     "last": null,
+     "concl": null,
      "st": "active"
     },
     {
      "p": "human-cadence.yml",
-     "v": "WARM",
-     "last": 62,
-     "concl": "success",
+     "v": "RE-LIT",
+     "last": null,
+     "concl": null,
      "st": "active"
     },
     {
      "p": "ladder-refresh.yml",
-     "v": "BEAT",
-     "last": 11,
+     "v": "WARM",
+     "last": 40,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "market-grid-cron.yml",
      "v": "WARM",
-     "last": 42,
+     "last": 71,
      "concl": "success",
      "st": "active"
     },
     {
      "p": "mirror-from-console.yml",
-     "v": "BEAT",
-     "last": 28,
+     "v": "WARM",
+     "last": 57,
      "concl": "success",
      "st": "active"
     },
@@ -743,8 +780,8 @@
     },
     {
      "p": "office-artery.yml",
-     "v": "WARM",
-     "last": 101,
+     "v": "BEAT",
+     "last": 14,
      "concl": "success",
      "st": "active"
     },
@@ -757,36 +794,36 @@
     },
     {
      "p": "office-orders-twin.yml",
-     "v": "WARM",
-     "last": 75,
-     "concl": "success",
+     "v": "NEVER",
+     "last": null,
+     "concl": null,
      "st": "active"
     },
     {
      "p": "office-pulse-twin.yml",
      "v": "WARM",
-     "last": 61,
+     "last": 90,
      "concl": "success",
      "st": "active"
     },
     {
      "p": "office-pulse.yml",
-     "v": "WARM",
-     "last": 103,
+     "v": "BEAT",
+     "last": 14,
      "concl": "success",
      "st": "active"
     },
     {
      "p": "operator-console.yml",
-     "v": "WARM",
-     "last": 141,
-     "concl": "success",
+     "v": "NEVER",
+     "last": null,
+     "concl": null,
      "st": "active"
     },
     {
      "p": "org-gitleaks.yml",
-     "v": "BEAT",
-     "last": 11,
+     "v": "WARM",
+     "last": 40,
      "concl": "failure",
      "st": "active"
     },
@@ -806,8 +843,8 @@
     },
     {
      "p": "public-pulse.yml",
-     "v": "BEAT",
-     "last": 12,
+     "v": "WARM",
+     "last": 40,
      "concl": "failure",
      "st": "active"
     },
@@ -827,15 +864,15 @@
     },
     {
      "p": "saos-act.yml",
-     "v": "WARM",
-     "last": 66,
-     "concl": "success",
+     "v": "NEVER",
+     "last": null,
+     "concl": null,
      "st": "active"
     },
     {
      "p": "seal-adopt.yml",
-     "v": "BEAT",
-     "last": 11,
+     "v": "WARM",
+     "last": 40,
      "concl": "failure",
      "st": "active"
     },
@@ -849,7 +886,7 @@
     {
      "p": "site-link-audit.yml",
      "v": "BEAT",
-     "last": 4,
+     "last": 21,
      "concl": "success",
      "st": "active"
     },
@@ -877,7 +914,7 @@
     {
      "p": "sovereign-pulse.yml",
      "v": "WARM",
-     "last": 61,
+     "last": 90,
      "concl": "success",
      "st": "active"
     },
@@ -891,7 +928,7 @@
     {
      "p": "sovereign-tick-cron.yml",
      "v": "WARM",
-     "last": 54,
+     "last": 82,
      "concl": "success",
      "st": "active"
     },
@@ -905,7 +942,7 @@
     {
      "p": "tick-keeper.yml",
      "v": "WARM",
-     "last": 56,
+     "last": 85,
      "concl": "success",
      "st": "active"
     },
@@ -919,7 +956,7 @@
     {
      "p": "treasury-arm.yml",
      "v": "WARM",
-     "last": 34,
+     "last": 62,
      "concl": "success",
      "st": "active"
     },
@@ -960,8 +997,8 @@
     },
     {
      "p": "weave-anchor-lines.yml",
-     "v": "BEAT",
-     "last": 12,
+     "v": "WARM",
+     "last": 40,
      "concl": "failure",
      "st": "active"
     },
@@ -974,8 +1011,8 @@
     },
     {
      "p": "weave-ecosystem.yml",
-     "v": "BEAT",
-     "last": 12,
+     "v": "WARM",
+     "last": 40,
      "concl": "failure",
      "st": "active"
     },
@@ -1010,7 +1047,7 @@
     {
      "p": "dynamic/pages/pages-build-deployment",
      "v": "BEAT",
-     "last": 3,
+     "last": 1,
      "concl": "success",
      "st": "active"
     }
@@ -1023,29 +1060,29 @@
    "arteries": [
     {
      "p": "fresh-oracle.yml",
-     "v": "WARM",
-     "last": 174,
+     "v": "COOL",
+     "last": 203,
      "concl": "success",
      "st": "active"
     },
     {
      "p": "office-3d.yml",
      "v": "WARM",
-     "last": 44,
+     "last": 73,
      "concl": "success",
      "st": "active"
     },
     {
      "p": "office-ci.yml",
-     "v": "BEAT",
-     "last": 9,
+     "v": "WARM",
+     "last": 38,
      "concl": "success",
      "st": "active"
     },
     {
      "p": "office-heartbeat.yml",
      "v": "WARM",
-     "last": 83,
+     "last": 112,
      "concl": "success",
      "st": "active"
     },
@@ -1059,35 +1096,35 @@
     {
      "p": "office-window.yml",
      "v": "COOL",
-     "last": 318,
+     "last": 347,
      "concl": "success",
      "st": "active"
     },
     {
      "p": "opens-closer.yml",
      "v": "BEAT",
-     "last": 29,
+     "last": 27,
      "concl": "success",
      "st": "active"
     },
     {
      "p": "sovereign-decider.yml",
      "v": "BEAT",
-     "last": 29,
+     "last": 27,
      "concl": "success",
      "st": "active"
     },
     {
      "p": "value-scan.yml",
      "v": "BEAT",
-     "last": 29,
+     "last": 27,
      "concl": "success",
      "st": "active"
     },
     {
      "p": "dynamic/pages/pages-build-deployment",
      "v": "WARM",
-     "last": 42,
+     "last": 71,
      "concl": "success",
      "st": "active"
     }
@@ -1100,15 +1137,15 @@
    "arteries": [
     {
      "p": "flow-map.yml",
-     "v": "BEAT",
-     "last": 3,
+     "v": "WARM",
+     "last": 32,
      "concl": "success",
      "st": "active"
     },
     {
      "p": "grid-watch.yml",
-     "v": "BEAT",
-     "last": 6,
+     "v": "WARM",
+     "last": 35,
      "concl": "success",
      "st": "active"
     }
@@ -1121,8 +1158,8 @@
    "arteries": [
     {
      "p": "heartbeat.yml",
-     "v": "BEAT",
-     "last": 2,
+     "v": "WARM",
+     "last": 31,
      "concl": "success",
      "st": "active"
     }
@@ -1135,31 +1172,45 @@
    "arteries": [
     {
      "p": "controls-audit.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 38,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "fee-engine.yml",
-     "v": "WARM",
-     "last": 101,
+     "v": "BEAT",
+     "last": 3,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "gitleaks.yml",
      "v": "SILENT",
-     "last": 9208,
+     "last": 9236,
      "concl": "failure",
      "st": "disabled_manually"
     },
     {
      "p": "workflow-yaml-guard.yml",
      "v": "SILENT",
-     "last": 9208,
+     "last": 9236,
      "concl": "failure",
      "st": "disabled_manually"
+    }
+   ]
+  },
+  {
+   "repo": "roshpinacare-sys.github.io",
+   "vis": "public",
+   "verdict": "ALIVE",
+   "arteries": [
+    {
+     "p": "dynamic/pages/pages-build-deployment",
+     "v": "BEAT",
+     "last": 4,
+     "concl": "success",
+     "st": "active"
     }
    ]
   },
@@ -1170,8 +1221,8 @@
    "arteries": [
     {
      "p": "agent-access.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 39,
      "concl": "failure",
      "st": "active"
     },
@@ -1184,50 +1235,50 @@
     },
     {
      "p": "artery-catchup.yml",
-     "v": "BEAT",
-     "last": 2,
+     "v": "WARM",
+     "last": 31,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "artery-decision-truth.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 39,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "artery-fleet.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 39,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "artery-flow.yml",
-     "v": "BEAT",
-     "last": 7,
+     "v": "WARM",
+     "last": 35,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "artery-grid.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 39,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "artery-integrity.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 39,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "artery-participation.yml",
      "v": "BEAT",
-     "last": 10,
+     "last": 7,
      "concl": "failure",
      "st": "active"
     },
@@ -1240,15 +1291,15 @@
     },
     {
      "p": "artery-wallet.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 39,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "artery-watch.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 39,
      "concl": "failure",
      "st": "active"
     },
@@ -1261,22 +1312,22 @@
     },
     {
      "p": "federation.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 39,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "fleet-heal.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 39,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "fleet-yield.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 39,
      "concl": "failure",
      "st": "active"
     },
@@ -1289,8 +1340,8 @@
     },
     {
      "p": "hive-probe.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 39,
      "concl": "failure",
      "st": "active"
     },
@@ -1303,57 +1354,57 @@
     },
     {
      "p": "office-growth.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 39,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "pages.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 39,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "profit-oracle.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 39,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "research-lane.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 39,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "retro.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 39,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "sovereign-decider.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 39,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "sovereign-state.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 39,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "sovereign.yml",
-     "v": "BEAT",
-     "last": 2,
+     "v": "WARM",
+     "last": 31,
      "concl": "failure",
      "st": "active"
     },
@@ -1366,22 +1417,22 @@
     },
     {
      "p": "token-watchdog.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 39,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "value-scan.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 39,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "verifier.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 39,
      "concl": "failure",
      "st": "active"
     }
@@ -1394,8 +1445,8 @@
    "arteries": [
     {
      "p": "sovereign-heart.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 38,
      "concl": "failure",
      "st": "active"
     }
@@ -1408,8 +1459,8 @@
    "arteries": [
     {
      "p": "gitleaks.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 38,
      "concl": "failure",
      "st": "active"
     },
@@ -1429,22 +1480,22 @@
    "arteries": [
     {
      "p": "control-center-build.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 38,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "gitleaks.yml",
      "v": "SILENT",
-     "last": 9207,
+     "last": 9235,
      "concl": "failure",
      "st": "disabled_manually"
     },
     {
      "p": "workflow-yaml-guard.yml",
      "v": "SILENT",
-     "last": 9207,
+     "last": 9235,
      "concl": "failure",
      "st": "disabled_manually"
     }
@@ -1457,64 +1508,64 @@
    "arteries": [
     {
      "p": "arb-scan.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 38,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "ci.yml",
      "v": "BEAT",
-     "last": 10,
+     "last": 28,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "dex-beat.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 39,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "dex-grid.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 39,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "gitleaks.yml",
      "v": "BEAT",
-     "last": 10,
+     "last": 28,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "grid-trigger.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 38,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "llm-bridge.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 38,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "mm-supremacy.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 38,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "workflow-yaml-guard.yml",
      "v": "BEAT",
-     "last": 10,
+     "last": 28,
      "concl": "failure",
      "st": "active"
     }
@@ -1528,7 +1579,7 @@
     {
      "p": "gitleaks.yml",
      "v": "SILENT",
-     "last": 9212,
+     "last": 9240,
      "concl": "failure",
      "st": "disabled_manually"
     },
@@ -1541,8 +1592,8 @@
     },
     {
      "p": "jumpper-tests.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 38,
      "concl": "failure",
      "st": "active"
     },
@@ -1556,7 +1607,7 @@
     {
      "p": "workflow-yaml-guard.yml",
      "v": "SILENT",
-     "last": 9212,
+     "last": 9240,
      "concl": "failure",
      "st": "disabled_manually"
     }
@@ -1570,7 +1621,14 @@
     {
      "p": "blurt-revival.yml",
      "v": "COOL",
-     "last": 325,
+     "last": 354,
+     "concl": "success",
+     "st": "active"
+    },
+    {
+     "p": "custody-recover.yml",
+     "v": "BEAT",
+     "last": 17,
      "concl": "success",
      "st": "active"
     },
@@ -1583,64 +1641,64 @@
     },
     {
      "p": "fee-engine.yml",
-     "v": "WARM",
-     "last": 101,
+     "v": "BEAT",
+     "last": 3,
      "concl": "success",
      "st": "active"
     },
     {
      "p": "fleet-rotation-a.yml",
-     "v": "BEAT",
-     "last": 11,
+     "v": "WARM",
+     "last": 40,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "gen2-rotation.yml",
      "v": "COOL",
-     "last": 313,
+     "last": 342,
      "concl": "success",
      "st": "active"
     },
     {
      "p": "grid-watchdog.yml",
-     "v": "WARM",
-     "last": 42,
+     "v": "BEAT",
+     "last": 12,
      "concl": "success",
      "st": "active"
     },
     {
      "p": "owner-key-adopt.yml",
      "v": "COOL",
-     "last": 245,
+     "last": 274,
      "concl": "success",
      "st": "active"
     },
     {
      "p": "repair-rot2-custody.yml",
      "v": "BEAT",
-     "last": 23,
-     "concl": "success",
+     "last": 12,
+     "concl": "failure",
      "st": "active"
     },
     {
      "p": "sovereign-evolution.yml",
      "v": "COOL",
-     "last": 288,
+     "last": 317,
      "concl": "success",
      "st": "active"
     },
     {
      "p": "sovereign-runtime.yml",
      "v": "RUNNING",
-     "last": 14,
+     "last": 12,
      "concl": null,
      "st": "active"
     },
     {
      "p": "treasury-ladder.yml",
-     "v": "BEAT",
-     "last": 11,
+     "v": "WARM",
+     "last": 40,
      "concl": "failure",
      "st": "active"
     }
@@ -1653,22 +1711,22 @@
    "arteries": [
     {
      "p": "ci.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 38,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "gitleaks.yml",
      "v": "SILENT",
-     "last": 8397,
+     "last": 8426,
      "concl": "failure",
      "st": "disabled_manually"
     },
     {
      "p": "workflow-yaml-guard.yml",
      "v": "SILENT",
-     "last": 8397,
+     "last": 8426,
      "concl": "failure",
      "st": "disabled_manually"
     }
@@ -1681,29 +1739,29 @@
    "arteries": [
     {
      "p": "foundry-tests.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 38,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "gitleaks.yml",
      "v": "SILENT",
-     "last": 9206,
+     "last": 9234,
      "concl": "failure",
      "st": "disabled_manually"
     },
     {
      "p": "platform-selftest.yml",
      "v": "SILENT",
-     "last": 10501,
+     "last": 10529,
      "concl": "success",
      "st": "active"
     },
     {
      "p": "workflow-yaml-guard.yml",
      "v": "SILENT",
-     "last": 9206,
+     "last": 9234,
      "concl": "failure",
      "st": "disabled_manually"
     }
@@ -1717,21 +1775,21 @@
     {
      "p": "gitleaks.yml",
      "v": "SILENT",
-     "last": 9210,
+     "last": 9239,
      "concl": "failure",
      "st": "disabled_manually"
     },
     {
      "p": "wallet-verify.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 38,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "workflow-yaml-guard.yml",
      "v": "SILENT",
-     "last": 9210,
+     "last": 9239,
      "concl": "failure",
      "st": "disabled_manually"
     }
@@ -1745,7 +1803,7 @@
     {
      "p": "gitleaks.yml",
      "v": "SILENT",
-     "last": 9210,
+     "last": 9238,
      "concl": "failure",
      "st": "disabled_manually"
     },
@@ -1758,15 +1816,15 @@
     },
     {
      "p": "sdk-verify.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 38,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "workflow-yaml-guard.yml",
      "v": "SILENT",
-     "last": 9210,
+     "last": 9238,
      "concl": "failure",
      "st": "disabled_manually"
     }
@@ -1780,14 +1838,14 @@
     {
      "p": "beacon-pulse.yml",
      "v": "WARM",
-     "last": 34,
+     "last": 63,
      "concl": "success",
      "st": "active"
     },
     {
      "p": "dynamic/pages/pages-build-deployment",
      "v": "COOL",
-     "last": 588,
+     "last": 616,
      "concl": "success",
      "st": "active"
     }
@@ -1801,14 +1859,14 @@
     {
      "p": "lighthouse-pulse.yml",
      "v": "WARM",
-     "last": 67,
+     "last": 96,
      "concl": "success",
      "st": "active"
     },
     {
      "p": "dynamic/pages/pages-build-deployment",
      "v": "COOL",
-     "last": 579,
+     "last": 607,
      "concl": "success",
      "st": "active"
     }
@@ -1822,42 +1880,42 @@
     {
      "p": "cloud-heart.yml",
      "v": "SILENT",
-     "last": 6659,
+     "last": 6688,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "gitleaks.yml",
-     "v": "BEAT",
-     "last": 11,
+     "v": "WARM",
+     "last": 40,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "social-cadence.yml",
-     "v": "BEAT",
-     "last": 11,
+     "v": "WARM",
+     "last": 40,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "sovereign-cycle.yml",
-     "v": "BEAT",
-     "last": 11,
+     "v": "WARM",
+     "last": 40,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "ci-probe.yml",
-     "v": "BEAT",
-     "last": 11,
+     "v": "WARM",
+     "last": 40,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "token-forge.yml",
-     "v": "BEAT",
-     "last": 11,
+     "v": "WARM",
+     "last": 40,
      "concl": "failure",
      "st": "active"
     }
@@ -1870,15 +1928,15 @@
    "arteries": [
     {
      "p": "exposure-gate.yml",
-     "v": "BEAT",
-     "last": 10,
+     "v": "WARM",
+     "last": 39,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "dynamic/pages/pages-build-deployment",
      "v": "COOL",
-     "last": 1276,
+     "last": 1305,
      "concl": "success",
      "st": "active"
     }
@@ -1891,15 +1949,15 @@
    "arteries": [
     {
      "p": "fleet-audit.yml",
-     "v": "BEAT",
-     "last": 11,
+     "v": "WARM",
+     "last": 40,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "gitleaks.yml",
-     "v": "BEAT",
-     "last": 11,
+     "v": "WARM",
+     "last": 40,
      "concl": "failure",
      "st": "active"
     },
@@ -1912,8 +1970,8 @@
     },
     {
      "p": "weave-anchor-lines.yml",
-     "v": "BEAT",
-     "last": 11,
+     "v": "WARM",
+     "last": 40,
      "concl": "failure",
      "st": "active"
     },
@@ -1933,50 +1991,50 @@
     },
     {
      "p": "weave-brain-restore.yml",
-     "v": "BEAT",
-     "last": 11,
+     "v": "WARM",
+     "last": 40,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "weave-ecosystem.yml",
-     "v": "BEAT",
-     "last": 11,
+     "v": "WARM",
+     "last": 40,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "weave-heart.yml",
-     "v": "BEAT",
-     "last": 11,
+     "v": "WARM",
+     "last": 40,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "web-probe.yml",
-     "v": "BEAT",
-     "last": 11,
+     "v": "WARM",
+     "last": 40,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "web-probe2.yml",
-     "v": "BEAT",
-     "last": 11,
+     "v": "WARM",
+     "last": 40,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "web-publish.yml",
-     "v": "BEAT",
-     "last": 11,
+     "v": "WARM",
+     "last": 40,
      "concl": "failure",
      "st": "active"
     },
     {
      "p": "workflow-yaml-guard.yml",
-     "v": "BEAT",
-     "last": 11,
+     "v": "WARM",
+     "last": 40,
      "concl": "failure",
      "st": "active"
     }
@@ -2004,21 +2062,21 @@
     {
      "p": "archive-keeper.yml",
      "v": "SILENT",
-     "last": 10628,
+     "last": 10657,
      "concl": "success",
      "st": "active"
     },
     {
      "p": "gitleaks.yml",
      "v": "SILENT",
-     "last": 9205,
+     "last": 9233,
      "concl": "failure",
      "st": "disabled_manually"
     },
     {
      "p": "workflow-yaml-guard.yml",
      "v": "SILENT",
-     "last": 9205,
+     "last": 9233,
      "concl": "failure",
      "st": "disabled_manually"
     }
