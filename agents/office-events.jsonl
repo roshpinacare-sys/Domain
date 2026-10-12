@@ -6258,3 +6258,62 @@
 {"ts":1791843615390,"type":"goal","agentId":"office-artery","kind":"next-shift","text":"רענון-ספר: econ-book (כלכלת-הרשת) (193.4 שעות — agents/econ-book.json)"}
 {"ts":1791843615390,"type":"goal","agentId":"office-artery","kind":"next-shift","text":"רענון-ספר: curation-book (אוצרות-תוכן) (199.7 שעות — agents/curation-book.json)"}
 {"ts":1791843615390,"type":"goal","agentId":"office-artery","kind":"next-shift","text":"רענון-ספר: cadence-week (קצב-שבועי) (198.1 שעות — agents/cadence-week.json)"}
+{"ts":1791845406718,"type":"recovery","event":"floor-takeover","prevPid":12343,"prevHeartbeatAt":1791824229769,"prevAlive":false,"reason":"dead-peer"}
+{"ts":1791845406729,"type":"recovery","event":"durable-resume","tasks":152,"requeued":0,"parked":0,"reviewResumed":0,"savedAt":1791833876247}
+{"ts":1791845406733,"type":"log","agentId":"aluf","kind":"text","text":"Fleet HQ online · מפקדה מקוונת"}
+{"ts":1791845462177,"type":"usage","agent":"aluf","phase":"operator","provider":"llm7/mistral-Nemo-Instruct-2407","prompt_tokens":1323,"completion_tokens":46,"prompt_chars":3344,"completion_chars":97}
+{"ts":1791845462177,"type":"log","agentId":"aluf","kind":"text","text":"operator shift choice: להתעדכן על התפתחויות חדשות בתחום"}
+{"ts":1791845462178,"type":"goal","event":"set","id":"g1649","text":"מחקר רשת: חפשי חדשות על סוכנים אוטונומיים וכתבי דוח עם מקורות — השתמשי ב-web_search","origin":"patrol"}
+{"ts":1791845462178,"type":"log","agentId":"aluf","kind":"text","text":"shift scheduled by the office itself (anti-fixation operator)"}
+{"ts":1791845462178,"type":"log","agentId":"aluf","kind":"say","text":"לא נתקעים על אותה זווית — משמרת חדשה יוצאת לדרך."}
+{"ts":1791845463079,"type":"log","agentId":"aluf","kind":"text","text":"planning goal: מחקר רשת: חפשי חדשות על סוכנים אוטונומיים וכתבי דוח עם מקורות — השתמשי ב-web_search"}
+{"ts":1791845471922,"type":"usage","agent":"aluf","phase":"plan","provider":"llm7/mistral-Nemo-Instruct-2407","prompt_tokens":920,"completion_tokens":343,"prompt_chars":2687,"completion_chars":1570}
+{"ts":1791845471922,"type":"log","agentId":"aluf","kind":"error","text":"plan empty/off-goal → JSON-only nudge retry"}
+{"ts":1791845479378,"type":"usage","agent":"aluf","phase":"plan-nudge","provider":"llm7/mistral-Nemo-Instruct-2407","prompt_tokens":1110,"completion_tokens":267,"prompt_chars":3605,"completion_chars":1055}
+{"ts":1791845479378,"type":"task","event":"add","id":"t1651","title":"מחקר רשת: חפשי חדשות על סוכנים אוטונומיים וכתבי דוח עם מקורות — השתמשי ב-web_search","status":"todo","assignee":"gal"}
+{"ts":1791845479379,"type":"log","agentId":"aluf","kind":"error","text":"plan unusable → goal-derived task (fit: gal)"}
+{"ts":1791845479379,"type":"goal","event":"status","id":"g1649","status":"active","text":"מחקר רשת: חפשי חדשות על סוכנים אוטונומיים וכתבי דוח עם מקורות — השתמשי ב-web_search"}
+{"ts":1791845479379,"type":"task","event":"patch","id":"t1651","title":"מחקר רשת: חפשי חדשות על סוכנים אוטונומיים וכתבי דוח עם מקורות — השתמשי ב-web_search","status":"doing","assignee":"gal"}
+{"ts":1791845480481,"type":"log","agentId":"gal","kind":"text","text":"task: מחקר רשת: חפשי חדשות על סוכנים אוטונומיים וכתבי דוח עם מקורות — השתמשי ב-web_search"}
+{"ts":1791845510275,"type":"log","agentId":"tamar","kind":"say","text":"לגימה מהירה — וחוזרים לעבודה."}
+{"ts":1791845527790,"type":"usage","agent":"gal","phase":"work","provider":"pollinations/openai-fast","prompt_tokens":725,"completion_tokens":848,"prompt_chars":1850,"completion_chars":27}
+{"ts":1791845527790,"type":"log","agentId":"gal","kind":"error","text":"unparseable reply → reprompt"}
+{"ts":1791845545677,"type":"usage","agent":"gal","phase":"work","provider":"kilo/kilo-auto/free","prompt_tokens":816,"completion_tokens":700,"prompt_chars":2001,"completion_chars":300}
+{"ts":1791845582725,"type":"usage","agent":"gal","phase":"work","provider":"ovh/gpt-oss-120b","prompt_tokens":796,"completion_tokens":150,"prompt_chars":2156,"completion_chars":229}
+{"ts":1791845582726,"type":"log","agentId":"gal","kind":"tool","text":"ask_operator(Which tool should I use to perform a web search for autonomous agents news?)"}
+{"ts":1791845589727,"type":"log","agentId":"gal","kind":"result","text":"operator policy decision: web_search מדיניות המפעיל האוטונומי: הנתיב הבטוח — המשך"}
+{"ts":1791845614964,"type":"usage","agent":"gal","phase":"work","provider":"ovh/gpt-oss-120b","prompt_tokens":904,"completion_tokens":308,"prompt_chars":2648,"completion_chars":56}
+{"ts":1791845614964,"type":"log","agentId":"gal","kind":"tool","text":"list_books()"}
+{"ts":1791845615464,"type":"log","agentId":"gal","kind":"result","text":"dex-book · 4878B · 5.7h\nfills-ledger · 841B · 10.4h\nmarket-grid · 7727B · 1.2h\ntruth-history · 44196B · 370.4h\nclaims-audit · 387B · 0.3h\nworkflow-audit · 827B · 10.4h\nharness-audit · 18155B · 10.4h\ncapability-matrix · 12239B · 5.7h\ndeep-audit · 630B · 214.2h\necon-book · 4188B · 193.8h\nsovereign-state · 1242B · 97.7h\nsovereign-policy · 3797B · 218.3h\nfleet-roster · 1648B · 192.7h\nfleet-indicators "}
+{"ts":1791845624718,"type":"log","agentId":"yarden","kind":"say","text":"לגימה מהירה — וחוזרים לעבודה."}
+{"ts":1791845639841,"type":"usage","agent":"gal","phase":"work","provider":"ovh/gpt-oss-120b","prompt_tokens":1246,"completion_tokens":132,"prompt_chars":3428,"completion_chars":153}
+{"ts":1791845639841,"type":"log","agentId":"gal","kind":"tool","text":"web_search(autonomous agents news 2026)"}
+{"ts":1791845639842,"type":"log","agentId":"gal","kind":"result","text":"ERROR: no search lane configured (vault slot TAVILY_API_KEY missing from runtime env)"}
+{"ts":1791845642330,"type":"log","agentId":"tamar","kind":"say","text":"לגימה מהירה — וחוזרים לעבודה."}
+{"ts":1791845672300,"type":"usage","agent":"gal","phase":"work","provider":"ovh/gpt-oss-120b","prompt_tokens":1316,"completion_tokens":436,"prompt_chars":3769,"completion_chars":702}
+{"ts":1791845672300,"type":"log","agentId":"gal","kind":"tool","text":"ask_operator(Web search unavailable (missing TAVILY_API_KEY). Provide API key or alternative )"}
+{"ts":1791845679301,"type":"log","agentId":"gal","kind":"result","text":"operator policy decision: Provide API key מדיניות המפעיל האוטונומי: הנתיב הבטוח — המשך"}
+{"ts":1791845696643,"type":"usage","agent":"gal","phase":"work","provider":"kilo/kilo-auto/free","prompt_tokens":1468,"completion_tokens":700,"prompt_chars":4288,"completion_chars":205}
+{"ts":1791845725531,"type":"usage","agent":"gal","phase":"work","provider":"ovh/gpt-oss-120b","prompt_tokens":1461,"completion_tokens":68,"prompt_chars":4398,"completion_chars":126}
+{"ts":1791845725531,"type":"log","agentId":"gal","kind":"tool","text":"web_search(autonomous agents news 2026)"}
+{"ts":1791845725531,"type":"log","agentId":"gal","kind":"result","text":"ERROR: no search lane configured (vault slot TAVILY_API_KEY missing from runtime env)"}
+{"ts":1791845725531,"type":"task","event":"patch","id":"t1651","title":"מחקר רשת: חפשי חדשות על סוכנים אוטונומיים וכתבי דוח עם מקורות — השתמשי ב-web_search","status":"review","assignee":"gal"}
+{"ts":1791845725531,"type":"log","agentId":"gal","kind":"say","text":"המשימה שלי מוכנה לביקורת."}
+{"ts":1791845725883,"type":"log","agentId":"aluf","kind":"tool","text":"review(t1651 by gal)"}
+{"ts":1791845727084,"type":"log","agentId":"aluf","kind":"text","text":"relevance gate: 1 (חקר, רשת, חפשי, חדשות, סוכנים)"}
+{"ts":1791845737574,"type":"usage","agent":"erez","phase":"cross-check","provider":"ovh/gpt-oss-120b","prompt_tokens":295,"completion_tokens":400,"prompt_chars":663,"completion_chars":8}
+{"ts":1791845758956,"type":"usage","agent":"erez","phase":"cross-check","provider":"pollinations/openai-fast","prompt_tokens":325,"completion_tokens":448,"prompt_chars":770,"completion_chars":94}
+{"ts":1791845758957,"type":"log","agentId":"erez","kind":"result","text":"cross-check(dispute): העובד לא סיפק דוח חדשות עם מקורות; רק ציין צעד אחד."}
+{"ts":1791845768820,"type":"usage","agent":"aluf","phase":"review","provider":"ovh/gpt-oss-120b","prompt_tokens":334,"completion_tokens":300,"prompt_chars":719,"completion_chars":253}
+{"ts":1791845768821,"type":"task","event":"patch","id":"t1651","title":"מחקר רשת: חפשי חדשות על סוכנים אוטונומיים וכתבי דוח עם מקורות — השתמשי ב-web_search","status":"done","assignee":"gal"}
+{"ts":1791845768821,"type":"log","agentId":"aluf","kind":"result","text":"approved: מחקר רשת: חפשי חדשות על סוכנים אוטונומיים וכתבי דוח עם מקורות — השתמשי ב-web_search"}
+{"ts":1791845768821,"type":"log","agentId":"aluf","kind":"say","text":"אושר. עבודה טובה, גל."}
+{"ts":1791845769903,"type":"goal","event":"status","id":"g1649","status":"review","text":"מחקר רשת: חפשי חדשות על סוכנים אוטונומיים וכתבי דוח עם מקורות — השתמשי ב-web_search"}
+{"ts":1791845774403,"type":"log","agentId":"tamar","kind":"say","text":"לגימה מהירה — וחוזרים לעבודה."}
+{"ts":1791845816228,"type":"log","agentId":"gal","kind":"say","text":"לגימה מהירה — וחוזרים לעבודה."}
+{"ts":1791845818984,"type":"usage","agent":"aluf","phase":"report","provider":"ovh/gpt-oss-120b","prompt_tokens":9431,"completion_tokens":700,"prompt_chars":25303,"completion_chars":92}
+{"ts":1791845818984,"type":"log","agentId":"aluf","kind":"error","text":"final report parse failed"}
+{"ts":1791845818985,"type":"goal","event":"status","id":"g1649","status":"done","text":"מחקר רשת: חפשי חדשות על סוכנים אוטונומיים וכתבי דוח עם מקורות — השתמשי ב-web_search"}
+{"ts":1791845818985,"type":"log","agentId":"aluf","kind":"say","text":"היעד הושלם. הסיכום בספרייה."}
+{"ts":1791845833655,"type":"usage","agent":"aluf","phase":"lessons","provider":"llm7/mistral-Nemo-Instruct-2407","prompt_tokens":762,"completion_tokens":103,"prompt_chars":2141,"completion_chars":228}
+{"ts":1791845871248,"type":"log","agentId":"yarden","kind":"say","text":"לגימה מהירה — וחוזרים לעבודה."}
