@@ -46,9 +46,21 @@ function b58encode(buf) {
 }
 const sha256b = (b) => createHash("sha256").update(b).digest();
 
+// ---------- runtime-discovered paths (no handles committed) ----------
+const HOME = process.env.HOME || homedir();
+const P = (...a) => a.join("/");
+// 25-a fix (TDZ crash): P was used by the secp loader BEFORE its old definition
+// site — `Cannot access 'P' before initialization` killed the tool at startup
+// (measured 2026-10-12 21:0xZ). Paths/P now live above every use.
+const KEYS_DIR = P(HOME, ".secrets/keys");
+const VAULT = P(HOME, ".secrets/vault-unsealed/agent/keys/vault.json");
+const ESTATE_ENV = P(HOME, "estate/.env.local");
+const GATE_CONFIG = P(HOME, ".operator/config.json");
+const RECEIPTS = P(process.cwd(), "agents/receipts");
+
 // ---------- pubkey derivation ----------
 let secp = null;
-for (const p of ["@noble/secp256k1", process.env.NOBLE_SECP256K1_PATH, P("file://", homedir(), "/estate/steem/mini-services/saos-engine/node_modules/@noble/secp256k1/index.js")].filter(Boolean)) {
+for (const p of ["@noble/secp256k1", process.env.NOBLE_SECP256K1_PATH, P("file://", HOME, "/estate/steem/mini-services/saos-engine/node_modules/@noble/secp256k1/index.js")].filter(Boolean)) {
   try { secp = await import(p); break; } catch {}
 }
 if (!secp) { console.log("FATAL: no secp256k1 lib — run `bun add @noble/secp256k1` in this repo"); process.exit(0); }
@@ -72,13 +84,7 @@ function decodeAny(t) {
 }
 
 // ---------- runtime-discovered paths (no handles committed) ----------
-const HOME = process.env.HOME || homedir();
-const P = (...a) => a.join("/");
-const KEYS_DIR = P(HOME, ".secrets/keys");
-const VAULT = P(HOME, ".secrets/vault-unsealed/agent/keys/vault.json");
-const ESTATE_ENV = P(HOME, "estate/.env.local");
-const GATE_CONFIG = P(HOME, ".operator/config.json");
-const RECEIPTS = P(process.cwd(), "agents/receipts");
+// (paths moved ABOVE the secp loader — 25-a TDZ fix; see comment there)
 
 // ---------- collect secrets + raw credential candidates ----------
 const secrets = []; // {label, sec}
@@ -135,30 +141,60 @@ if (existsSync(ESTATE_ENV)) {
 const seenVal = new Set();
 const creds = rawCreds.filter(c => { const k = c.val; if (seenVal.has(k)) return false; seenVal.add(k); return true; });
 
-// ---------- live authorities for ALL vault accounts (+ self-discovery) ----------
-const CANDS = [...new Set([...vaultAccounts.map(a => a.name).filter(n => /^[a-z0-9-]{3,20}$/.test(n))])];
-const RPCS = { STEEM: "https://api.steemit.com", HIVE: "https://api.hive.blog" };
-async function rpc(url, method, params) {
-  const r = await fetch(url, { method: "POST", headers: { "content-type": "application/json", "user-agent": "keys-census" }, body: JSON.stringify({ jsonrpc: "2.0", method, params, id: 1 }), signal: AbortSignal.timeout(15000) });
-  const j = await r.json();
-  if (j.error) throw new Error(JSON.stringify(j.error).slice(0, 60));
-  return j.result;
+// ---------- live authorities for ALL candidate accounts ----------
+// candidates: vault usernames (when the vault is unsealed) + CENSUS_CANDIDATES
+// env (comma-separated, runtime-supplied — zero names committed in code).
+const envCands = (process.env.CENSUS_CANDIDATES || "")
+  .split(",").map(s => s.trim().toLowerCase()).filter(n => /^[a-z0-9-]{3,20}$/.test(n));
+const CANDS = [...new Set([...vaultAccounts.map(a => a.name).filter(n => /^[a-z0-9-]{3,20}$/.test(n)), ...envCands])];
+if (!CANDS.length) {
+  console.log("CANDIDATES: none discovered (vault.json missing AND no CENSUS_CANDIDATES env) —");
+  console.log("  the counts below would be an EMPTY shell, not a census. Fail-loud: supply the roster");
+  console.log("  via CENSUS_CANDIDATES (comma-separated names) or unseal the vault, then re-run.");
+  process.exit(0);
+}
+
+// 25-a hardening (HIVE=0 drift): the old rpc() was ONE attempt against ONE
+// endpoint — a single condenser flake zeroed the whole channel and the census
+// printed HIVE=0 as if measured (Task 23 vs Round-16 drift). Now: per-channel
+// endpoint fallback + retry round + recorded rpcErrors (fail-loud, no silent 0).
+const ENDPOINTS = {
+  STEEM: ["https://api.steemit.com", "https://api.steemitdev.com"],
+  HIVE: ["https://api.hive.blog", "https://api.openhive.network"],
+};
+const rpcErrors = {};
+async function rpc(ch, method, params) {
+  const errs = [];
+  for (let round = 1; round <= 2; round++) {
+    for (const url of ENDPOINTS[ch]) {
+      try {
+        const r = await fetch(url, { method: "POST", headers: { "content-type": "application/json", "user-agent": "keys-census" }, body: JSON.stringify({ jsonrpc: "2.0", method, params, id: 1 }), signal: AbortSignal.timeout(15000) });
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        const j = await r.json();
+        if (j.error) throw new Error(JSON.stringify(j.error).slice(0, 60));
+        return j.result;
+      } catch (e) { errs.push(`${url.replace("https://", "")}: ${String(e.message).slice(0, 50)}`); }
+    }
+    if (round === 1) await new Promise(res => setTimeout(res, 2000)); // backoff before the retry round
+  }
+  rpcErrors[ch] = errs.join(" | ").slice(0, 200);
+  throw new Error(`all ${ENDPOINTS[ch].length} endpoints x2 rounds failed`);
 }
 const live = {};
-for (const [ch, url] of Object.entries(RPCS)) {
+for (const ch of Object.keys(ENDPOINTS)) {
   live[ch] = {};
   try {
-    const accs = await rpc(url, "condenser_api.get_accounts", [CANDS]);
+    const accs = await rpc(ch, "condenser_api.get_accounts", [CANDS]);
     for (const a of accs.filter(Boolean)) live[ch][a.name] = {
       posting: a.posting.key_auths.map(k => k[0]), active: a.active.key_auths.map(k => k[0]),
       owner: a.owner.key_auths.map(k => k[0]), memo: [a.memo_key],
     };
-  } catch (e) { console.log(ch + " RPC-ERR " + e.message.slice(0, 40)); }
+  } catch (e) { console.log(ch + " RPC-ERR " + e.message.slice(0, 60)); }
 }
 
 // ---------- 1) held keys vs chain ----------
 console.log("=== KEYS-CENSUS " + new Date().toISOString() + " (runtime-discovered, zero committed handles) ===");
-console.log(`secrets decoded: ${secrets.length} | credential candidates: ${creds.length} | vault accounts discovered: ${vaultAccounts.length} | live on chain: STEEM=${Object.keys(live.STEEM).length} HIVE=${Object.keys(live.HIVE).length}`);
+console.log(`secrets decoded: ${secrets.length} | credential candidates: ${creds.length} | candidates discovered: ${CANDS.length} (vault=${vaultAccounts.length} env=${envCands.length}) | live on chain: STEEM=${Object.keys(live.STEEM).length} HIVE=${Object.keys(live.HIVE).length}${rpcErrors.STEEM ? " | STEEM RPC-ERR (see receipt)" : ""}${rpcErrors.HIVE ? " | HIVE RPC-ERR (see receipt)" : ""}`);
 const matchLines = [];
 for (const s of secrets) {
   const pub = chainPub(s.sec);
@@ -205,6 +241,8 @@ const receipt = {
   credentialCandidates: creds.length,
   vaultAccounts: vaultAccounts.map(a => ref(a.name)),
   liveOnChain: Object.fromEntries(Object.entries(live).map(([ch, m]) => [ch, Object.keys(m).map(ref)])),
+  rpcErrors, // 25-a: channel failures recorded in the receipt — a flake must never masquerade as a measured 0
+  candidateSources: { vault: vaultAccounts.length, env: envCands.length },
   heldAuthority: matchLines,
   steemitLogin: loginProofs,
   gate: gateProof,
