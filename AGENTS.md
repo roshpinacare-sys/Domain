@@ -112,3 +112,18 @@ restartable from this file + `./init.sh`.
 2. Record unresolved risks in `session-handoff.md`.
 3. Commit with a fact-bearing message; push with `git pull --rebase` first.
 4. Leave the repo clean enough for the next session to run `./init.sh`.
+
+## Landing link law (hard, added T-15 after 4 measured regressions)
+The home page (`index.html`) had the same 3 dead links re-introduced 4 times by
+agents editing from stale bases. These targets are BANNED at HEAD and must never
+return, because every public visitor gets a 404:
+- `github.com/roshpinacare-sys/Sandbox/blob/main/research/LEDGER.md` (private repo)
+  -> use `agents/work-orders.json` (public book, same function).
+- `github.com/roshpinacare-sys/TruthRail` (private repo)
+  -> use `github.com/roshpinacare-sys/Autonomy` (public, live-200).
+- `roshpinacare-sys.github.io/sovereign-lighthouse/` (Pages never published)
+  -> use `github.com/roshpinacare-sys/sovereign-runner-kit` (public, live-200).
+Before pushing any edit that touches `index.html`: `grep -c "TruthRail\|sovereign-lighthouse\|research/LEDGER.md" index.html`
+must print `0`. If it prints anything else, you built on a stale base — re-apply
+the canonical targets above. The daily `site-link-audit` FAIL verdict is the
+enforcement receipt; a red verdict on these URLs means the law was violated.
