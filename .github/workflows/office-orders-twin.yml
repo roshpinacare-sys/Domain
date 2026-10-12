@@ -133,6 +133,22 @@ jobs:
                   wos.append({'id': f"WO-feed-{f['tag'].split('/')[-1]}", 'area': 'feeds', 'priority': 'P1',
                       'title': f"ספר-חי חסום: {f['tag']} (HTTP {f['http']})",
                       'why': 'ספר-שאינו-נקרא = עורק-עיוור', 'acceptance': 'HTTP 200 + טריות-מדודה'})
+          # engine-sync law (AGENTS.md office world law): office/engine.mjs must be
+          # byte-identical to office3d/src/engine.js — drift = a wave changed one
+          # copy without the other (the world would lie differently per viewer).
+          try:
+              ea = open('office/engine.mjs','rb').read()
+              eb = open('office3d/src/engine.js','rb').read()
+              if ea != eb:
+                  wos.append({'id': 'WO-office-engine-sync', 'area': 'office', 'priority': 'P1',
+                      'title': 'סטיית-מנוע: office/engine.mjs ≠ office3d/src/engine.js',
+                      'why': 'שני עותקים של מנוע-אחד — סטייה = עולם-שונה-לכל-צופה',
+                      'acceptance': 'שני הקבצים זהים בייט-בייט'})
+          except FileNotFoundError as e:
+              wos.append({'id': 'WO-office-engine-missing', 'area': 'office', 'priority': 'P1',
+                  'title': f'קובץ-מנוע חסר: {e.filename}',
+                  'why': 'העולם המתמשך חייב שני עותקים מסונכרנים',
+                  'acceptance': 'הקובץ קיים בשני הבתים'})
           book = {'schema': 'work-orders/2', 'at': now.isoformat(),
                   'scope': 'public-twin (Domain home; private repos PAT-verified when token present)',
                   'totals': {'open': len(wos)}, 'orders': wos}
