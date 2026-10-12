@@ -47,5 +47,10 @@ jobs:
             echo "no verdict change"
           else
             git commit -m "site-audit: $(node -p "JSON.parse(require('fs').readFileSync('agents/site-audit.json','utf8')).overall") $(date -u +%Y-%m-%dT%H:%M:%SZ) [skip ci]"
-            git push
+            ok=0
+            for i in 1 2 3 4; do
+              if git pull --rebase -q origin main && git push -q origin main; then ok=1; echo "PUSH-OK attempt $i"; break; fi
+              echo "push attempt $i rejected (grid race) — rebasing on the freshest main"; sleep 4
+            done
+            if [ "$ok" != "1" ]; then echo "PUSH-FAILED after retries"; exit 1; fi
           fi
