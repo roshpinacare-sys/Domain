@@ -103,3 +103,24 @@
 |---|---|---|---|---|---|
 | 2026-10-11T23:08:14.986Z | blurt | fatal | Unexpected token 'S', "Server is "... is not valid JSON | RED-FATAL |  |
 
+
+## TREASURY-ARM RUN · 2026-10-12T01:47:44.493Z · chain=steem
+
+| at | chain | op | detail | status | extra |
+|---|---|---|---|---|---|
+| 2026-10-12T01:47:44.493Z | steem | gate | no candidate secret matches live active authority of headcorner — owner must provision (see CENSUS lines) | refused |  |
+
+
+## TREASURY-ARM RUN · 2026-10-12T01:47:45.636Z · chain=hive
+
+| at | chain | op | detail | status | extra |
+|---|---|---|---|---|---|
+| 2026-10-12T01:47:45.635Z | hive | gate | no candidate secret matches live active authority of cornerstone — owner must provision (see CENSUS lines) | refused |  |
+
+
+## TREASURY-ARM RUN · 2026-10-12T01:47:46.012Z · chain=blurt
+
+| at | chain | op | detail | status | extra |
+|---|---|---|---|---|---|
+| 2026-10-12T01:47:46.012Z | blurt | fatal | Unexpected token 'S', "Server is "... is not valid JSON | RED-FATAL |  |
+
