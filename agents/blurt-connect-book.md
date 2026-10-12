@@ -57,3 +57,11 @@
 | 2026-10-11T16:26:15.377Z | census | @cornerstone no candidate secret matches live active authority | refused |
 | 2026-10-11T16:26:16.019Z | account_update | @owner signature ACCEPTED but blurt charges an account_update fee above liquid balance — funding gap, not a machine failure (provision: fund the account or set the cornerstone active key) | BLUE-NEEDS-FUNDING |
 
+
+## BLURT-CONNECT RUN · 2026-10-12T13:20:28.291Z
+
+| at | op | detail | status |
+|---|---|---|---|
+| 2026-10-12T13:20:28.085Z | config | chain_id=cd8d90f29a… (official blurtjs config) | ok |
+| 2026-10-12T13:20:28.291Z | fatal | Unexpected token 'S', "Server is "... is not valid JSON | RED-FATAL |
+
