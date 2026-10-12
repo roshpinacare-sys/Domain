@@ -144,6 +144,7 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
     <div class="brand">SAOS Network<small>הרשת המאמתת לסוכני AI</small></div>
     <nav class="top" aria-label="ניווט ראשי">
       <a href="#office">המשרד</a>
+      <a href="standard.html">תקן-ההפעלה</a>
       <a href="#live">הרשת החיה</a>
       <a href="#why">מה ולמה</a>
       <a href="verify/">אמת-בעצמך</a>
@@ -283,7 +284,7 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
             <b>טענות-שאומתו מול Actions</b><i class="mono" id="pf-igv">—</i>
           </div>
           <ul class="runs" id="pf-runs"><li class="err">טוען מפת-זרימה…</li></ul>
-          <div class="pfoot"><span>עודכן: <span class="upd" id="pf-upd">—</span></span><span class="src">מקור נסגר (Sandbox פרטי מ-T-66) · יחזור דרך מראה ציבורית</span></div>
+          <div class="pfoot"><span>עודכן: <span class="upd" id="pf-upd">—</span></span><span class="src">מקור: מראת-Pulse — CI ציבורי (roshpinacare-sys/Pulse §7)</span></div>
         </div>
 
         <div class="panel" id="p-decisions">
@@ -295,7 +296,7 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
             <b>עדויות-מיושנות</b><i class="mono" id="pd-stale">—</i>
           </div>
           <ul class="runs" id="pd-runs"><li class="err">טוען אמת-הכרעות…</li></ul>
-          <div class="pfoot"><span>עוכן: <span class="upd" id="pd-upd">—</span></span><span class="src">מקור נסגר (Sandbox פרטי מ-T-66) · יחזור דרך מראה ציבורית</span></div>
+          <div class="pfoot"><span>עודכן: <span class="upd" id="pd-upd">—</span></span><span class="src">מקור: מראת-Pulse — CI ציבורי (roshpinacare-sys/Pulse §7)</span></div>
         </div>
 
         <div class="panel" id="p-research">
@@ -311,10 +312,10 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
               <b>שינוי מול הסבב-הקודם</b><i class="mono" id="pp-delta">—</i>
               <b>פסק-הגריד</b><i class="mono" id="pp-grid">—</i>
             </div>
-            <div class="pfoot" style="margin-top:8px"><span>עודכן: <span class="upd" id="pp-upd">—</span></span><span class="src">מקור נסגר (Sandbox פרטי מ-T-66)</span></div>
+            <div class="pfoot" style="margin-top:8px"><span>עודכן: <span class="upd" id="pp-upd">—</span></span><span class="src">מקור: מראת-Pulse — CI ציבורי (roshpinacare-sys/Pulse §7)</span></div>
           </div>
           <ul class="runs" id="pr-runs"><li class="err">טוען ממצאי-מחקר אחרונים…</li></ul>
-          <div class="pfoot"><span>עודכן: <span class="upd" id="pr-upd">—</span></span><span class="src">מקור נסגר (Sandbox פרטי מ-T-66) · יחזור דרך מראה ציבורית</span></div>
+          <div class="pfoot"><span>עודכן: <span class="upd" id="pr-upd">—</span></span><span class="src">מקור: מראת-Pulse — CI ציבורי (roshpinacare-sys/Pulse §7)</span></div>
         </div>
 
       </div>
@@ -702,16 +703,36 @@ function loadCrew(){
     });
 }
 
-/* ── 8. LESSONS (F-series lane: Sandbox ops/lessons/ledger.md — what the brain learned, daily) ── */
+/* ── T-69: PUBLIC MIRROR — the closed lanes come back alive via roshpinacare-sys/Pulse
+   (public §7 shell): CI carries the public-grade Sandbox ledgers back to light every 30min.
+   Provenance law: chips show the MIRROR freshness; per-source gaps stay honest, never forged. ── */
+var MIRROR_URL = 'https://raw.githubusercontent.com/roshpinacare-sys/Pulse/main/mirror/lanes.json';
+var _mirrorCache = null, _mirrorAt = 0;
+function mirror(){
+  var ts = Date.now();
+  if(_mirrorCache && ts - _mirrorAt < 5*60*1000) return Promise.resolve(_mirrorCache);
+  return jget(MIRROR_URL + '?ts=' + ts, 12000).then(function(j){
+    if(!j || j.schema !== 'pulse-mirror-v1') throw new Error('mirror: bad schema');
+    _mirrorCache = j; _mirrorAt = ts;
+    return j;
+  });
+}
+function mirrorStamp(updId, j){ var u=$(updId); if(u) u.textContent = 'מראת-Pulse · ' + ago(j.generatedAt); }
+function mirrorFail(chipId, runsId, e){
+  var chip=$(chipId); if(chip){ chip.className='chip bad'; chip.textContent='המראה לא נגישה'; }
+  if(runsId && $(runsId)) $(runsId).innerHTML = '<li class="err">מראת-Pulse טרם נגישה — כנות, לא זיוף.</li>';
+}
+
+/* ── 8. LESSONS (F-series lane: REVIVED T-69 via Pulse mirror — what the brain learned, daily) ── */
 function loadLessons(){
-  retireChip('pl-chip', 'מקור נסגר');
-  retireRuns('pl-runs', 'פנקס-הלקחים נסגר לציבור: Sandbox הפך פרטי (T-66, 12.10) כדי לסגור משטח-חשיפה. הלקחים ממשיכים להירשם ברשת הסגורה — הפאנל יחזור כשמראה ציבורית תישא אותם.');
-  var u=$('pl-upd'); if(u) u.textContent='—';
-  return; /* retired — Sandbox private since T-66 */
   var chip = $('pl-chip');
-  fetch('https://raw.githubusercontent.com/roshpinacare-sys/Sandbox/main/ops/lessons/ledger.md?ts=' + Date.now())
-    .then(function(r){ if(!r.ok) throw new Error('http ' + r.status); return r.text(); })
-    .then(function(t){
+  mirror().then(function(j){
+    var s = j.sources && j.sources.lessons;
+    if(!s || !s.text) throw new Error((s && s.error) || 'no lessons in mirror');
+    setChip('pl-chip', j.generatedAt);
+    mirrorStamp('pl-upd', j);
+    return s.text;
+  }).then(function(t){
       var entries = t.split(/\n(?=## )/).filter(function(e){ return e.indexOf('## ') === 0; });
       if(!entries.length){ chip.className='chip bad'; chip.textContent='אין לקחים'; return; }
       var last = entries[entries.length - 1];
@@ -729,22 +750,18 @@ function loadLessons(){
       if(ts){ setChip('pl-chip', ts); $('pl-upd').textContent = ago(ts); }
       else { chip.className='chip ok'; chip.textContent='נטען-רשומה'; $('pl-upd').textContent='—'; }
     })
-    .catch(function(e){
-      chip.className='chip bad'; chip.textContent='אין נתון';
-      $('pl-runs').innerHTML = '<li class="err">אין נתון — ledger לא נגיש (' + esc(String(e && e.message || e)) + ')</li>';
-      $('pl-upd').textContent = '—';
-    });
+    .catch(function(e){ mirrorFail('pl-chip', 'pl-runs', e); });
 }
 
-/* ── 9. FLOW MAP (F-series lane: Sandbox ops/flow/flow-map.json — who feeds whom, measured) ── */
+/* ── 9. FLOW MAP (F-series lane: REVIVED T-69 via Pulse mirror — who feeds whom, measured) ── */
 function loadFlow(){
-  retireChip('pf-chip', 'מקור נסגר');
-  ['pf-ne','pf-int','pf-pi','pf-orph','pf-gh','pf-div'].forEach(function(id){ var x=$(id); if(x) x.textContent='—'; });
-  retireRuns('pf-runs', 'מפת-הזרימה ושומר-השלמות נסגרו לציבור — Sandbox הפך פרטי (T-66, 12.10). הזרימה והמאמת עצמם חיים ברשת הסגורה; הפאנל יחזור כשמראה ציבורית תישא אותם.');
-  var u=$('pf-upd'); if(u) u.textContent='—';
-  return; /* retired — Sandbox private since T-66 */
-  jget('https://raw.githubusercontent.com/roshpinacare-sys/Sandbox/main/ops/flow/flow-map.json?ts=' + Date.now(), 10000)
-    .then(function(m){
+  mirror().then(function(j){
+    var s = j.sources && j.sources.flowMap;
+    if(!s || !s.data) throw new Error((s && s.error) || 'no flowMap in mirror');
+    setChip('pf-chip', j.generatedAt);
+    mirrorStamp('pf-upd', j);
+    return s.data;
+  }).then(function(m){
       var s = m.summary || {};
       $('pf-ne').textContent = (s.nodes || 0) + ' / ' + (s.edges || 0);
       $('pf-int').textContent = s.integrated || 0;
@@ -767,50 +784,38 @@ function loadFlow(){
       setChip('pf-chip', m.generatedAt);
       $('pf-upd').textContent = ago(m.generatedAt);
     })
-    .catch(function(){
-      var chip = $('pf-chip');
-      chip.className='chip bad'; chip.textContent='אין נתון';
-      $('pf-runs').innerHTML = '<li class="err">אין נתון — מפת-הזרימה טרם נוצרה (עורק-artery-flow ראשון בטיסה).</li>';
-      $('pf-upd').textContent = '—';
-    });
+    .catch(function(e){ mirrorFail('pf-chip', 'pf-runs', e); });
 }
 
-/* ── 9b. INTEGRITY GUARD (G-series lane: Sandbox ops/integrity/verdict.json — anti-forgery verdict, live) ── */
+/* ── 9b. INTEGRITY GUARD (G-series lane: REVIVED T-69 via Pulse mirror — anti-forgery verdict.
+   Single-writer law kept: flow owns pf-runs; integrity sets only its ig/igv kv. ── */
 function loadIntegrity(){
-  var ig=$('pf-ig'); if(ig){ ig.textContent='מקור נסגר'; ig.style.color=''; }
-  var igv=$('pf-igv'); if(igv) igv.textContent='—';
-  return; /* retired — flow lane owns the shared pf-runs list (T-67b) */
-  jget('https://raw.githubusercontent.com/roshpinacare-sys/Sandbox/main/ops/integrity/verdict.json?ts=' + Date.now(), 10000)
-    .then(function(v){
-      var s = v.summary || {};
-      var ig = $('pf-ig');
-      ig.textContent = v.overall + ' · ממצאים ' + (s.findings || 0);
-      ig.style.color = v.overall === 'FAIL' ? '#b91c1c' : (v.overall === 'PASS' ? '#15803d' : '#a16207');
-      $('pf-igv').textContent = (s.verified || 0) + ' / ' + (s.sources || 0) + ' מקורות';
-      var items = (v.verified || []).slice(0, 2).map(function(x){
-        return '<li style="font-size:12px;opacity:.85"> ' + String(x.where) + ' — ' + String(x.detail || '') + '</li>';
-      });
-      (v.findings || []).filter(function(f){ return f.level === 'CRITICAL' || f.level === 'HIGH'; }).slice(0, 2).forEach(function(f){
-        items.push('<li class="err" style="font-size:12px"> ' + f.level + ': ' + String(f.where) + ' — ' + String(f.law) + '</li>');
-      });
-      if (v.overall === 'FAIL') items.unshift('<li class="err" style="font-size:12px">חשד-זיוף מדוד — בקשו מקור לפני שסומכים</li>');
-      $('pf-runs').innerHTML = items.join('') || '<li style="font-size:12px;opacity:.7">אין ממצאים.</li>';
-    })
-    .catch(function(){ var ig = $('pf-ig'); ig.textContent = 'אין נתון'; });
+  mirror().then(function(j){
+    var s = j.sources && j.sources.integrity;
+    if(!s || !s.data) throw new Error((s && s.error) || 'no integrity in mirror');
+    return s.data;
+  }).then(function(v){
+    var s = v.summary || {};
+    var ig = $('pf-ig');
+    if(!ig) return;
+    ig.textContent = v.overall + ' · ממצאים ' + (s.findings || 0);
+    ig.style.color = v.overall === 'FAIL' ? '#b91c1c' : (v.overall === 'PASS' ? '#15803d' : '#a16207');
+    var igv = $('pf-igv');
+    if(igv) igv.textContent = (s.verified || 0) + ' / ' + (s.sources || 0) + ' מקורות';
+  })
+  .catch(function(){ var ig=$('pf-ig'); if(ig){ ig.textContent='המראה לא נגישה'; } });
 }
 
 /* ── 11. DECISIONS (H-series lane: sovereign decisions truth — description-vs-action measured every 30min.
    Honesty law: VERIFIED = evidence re-measured independently + consumer present; UNEXECUTED = enforced without a measured consumer;
    STALE-TRUTH = world moved past evidence; UNVERIFIABLE = source down (honest, never forged). ── */
 function loadDecisions(){
-  retireChip('pd-chip', 'מקור נסגר');
-  ['pd-verified','pd-unex','pd-stale','pd-heart'].forEach(function(id){ var x=$(id); if(x){ x.textContent='—'; x.style.color=''; } });
-  retireRuns('pd-runs', 'מדידת תיאור-מול-מעשה נסגרה לציבור: Sandbox פרטי (T-66). החוק עצמו חי — פנקס-הוודאות ממשיך למדוד הכרעות ברשת הסגורה.');
-  var u=$('pd-upd'); if(u) u.textContent='—';
-  return; /* retired — Sandbox private since T-66 */
   var chip = $('pd-chip');
-  jget('https://raw.githubusercontent.com/roshpinacare-sys/Sandbox/main/ops/decision-truth/verdict.json?ts=' + Date.now(), 10000)
-    .then(function(v){
+  mirror().then(function(j){
+    var s = j.sources && j.sources.decisionTruth;
+    if(!s || !s.data) throw new Error((s && s.error) || 'no decisionTruth in mirror');
+    return s.data;
+  }).then(function(v){
       var decs = Array.isArray(v.decisions) ? v.decisions : [];
       var c = { VERIFIED: 0, UNEXECUTED: 0, 'STALE-TRUTH': 0, UNVERIFIABLE: 0 };
       decs.forEach(function(d){ if(c[d.truth] !== undefined) c[d.truth]++; });
@@ -834,24 +839,14 @@ function loadDecisions(){
       $('pd-runs').innerHTML = items.join('') || '<li class="err">אין הכרעות בפנקס.</li>';
       $('pd-upd').textContent = String(v.generatedAt || '').replace('T',' ').slice(0,16) + 'Z';
     })
-    .catch(function(){ chip.className = 'chip bad'; chip.textContent = 'אין נתון'; });
+    .catch(function(e){ chip.className = 'chip bad'; chip.textContent = 'המראה לא נגישה'; });
 }
 
-/* ── 10. RESEARCH (11-c lane: Sandbox research findings — weekly, date-named findings-{utc-date}.json,
-   resolved latest-first up to 9 days back, exactly like the probes date-failover of 10-b.
+/* ── 10. RESEARCH (11-c lane: REVIVED T-69 via Pulse mirror — the mirror itself resolves the
+   latest findings file up to 9 days back, so the page renders what CI found, never a guess.
    Honesty law: renders what the feed says — hypothesis  measurement  verdict  next. ── */
 function loadResearch(){
-  retireChip('pr-chip', 'מקור נסגר');
-  retireRuns('pr-runs', 'ממצאי-המחקר נסגרו לציבור: Sandbox הפך פרטי (T-66, 12.10). המחקר עצמו ממשיך — הפרסום יחזור דרך מראה ציבורית.');
-  var u=$('pr-upd'); if(u) u.textContent='—';
-  return; /* retired — Sandbox private since T-66 */
   var chip = $('pr-chip');
-  function urlFor(back){
-    var d = new Date(Date.now() - back*86400e3);
-    var p = function(x){ return (x<10?'0':'')+x; };
-    return 'https://raw.githubusercontent.com/roshpinacare-sys/Sandbox/main/research/findings-' +
-      d.getUTCFullYear() + '-' + p(d.getUTCMonth()+1) + '-' + p(d.getUTCDate()) + '.json?ts=' + Date.now();
-  }
   function failEmpty(why){
     chip.className='chip bad'; chip.textContent='אין נתון';
     $('pr-runs').innerHTML = '<li class="err">אין נתון' + (why ? ' — ' + why : '') + '</li>';
@@ -873,10 +868,11 @@ function loadResearch(){
     if(at){ setChip('pr-chip', at, 'מחקר חי', 192); $('pr-upd').textContent = utcClock(at); }
     else { chip.className='chip ok'; chip.textContent='ממצאים'; $('pr-upd').textContent = utcClock(new Date()); }
   }
-  (function attempt(back){
-    if(back > 8){ failEmpty('לא נמצא קובץ-ממצאים מ-9 הימים האחרונים (מחזור שבועי · ב\' 05:23 UTC)'); return; }
-    jget(urlFor(back), 10000).then(render).catch(function(){ attempt(back + 1); });
-  })(0);
+  mirror().then(function(j){
+    var s = j.sources && j.sources.research;
+    if(!s || !s.data){ failEmpty((s && s.error) || 'אין ממצאים במראה'); return; }
+    render(s.data);
+  }).catch(function(){ failEmpty('המראה לא נגישה'); });
 }
 
 /* ── 10b. PROFITABILITY (14-d lane: the economy's pulse, public — owner directive on record.
@@ -884,12 +880,6 @@ function loadResearch(){
    Defensive law: missing/failing/shapeless feed  honest "אין-נתון", never fake.
    XSS law: every fetched value reaches the DOM via textContent only — no innerHTML. ── */
 function loadProfit(){
-  /* T-67b: retired like the other Sandbox lanes — honest closed-source, zero doomed fetches. */
-  var v0=$('pp-verdict'); if(v0){ v0.className='chip stale'; v0.textContent='מקור נסגר'; }
-  var f0=$('pp-fresh'); if(f0){ f0.className='chip stale'; f0.textContent='Sandbox פרטי (T-66)'; }
-  ['pp-net','pp-delta','pp-grid'].forEach(function(id){ var x=$(id); if(x) x.textContent='—'; });
-  var u0=$('pp-upd'); if(u0) u0.textContent='—';
-  return; /* retired — Sandbox private since T-66 */
   var vChip = $('pp-verdict'), fChip = $('pp-fresh');
   function honest(why){
     if(vChip){ vChip.className='chip'; vChip.textContent='לא-ידוע'; }
@@ -934,9 +924,13 @@ function loadProfit(){
       $('pp-upd').textContent = '—';
     }
   }
-  jget('https://raw.githubusercontent.com/roshpinacare-sys/Sandbox/main/receipts/profit-oracle-latest.json?ts=' + Date.now(), 10000)
+  mirror().then(function(j){
+    var s = j.sources && j.sources.profitOracle;
+    if(!s || !s.data) throw new Error((s && s.error) || 'no oracle in mirror');
+    return s.data;
+  })
     .then(render)
-    .catch(function(){ honest('המקור-לא-זמין'); });
+    .catch(function(){ honest('המראה-לא-זמינה'); });
 }
 
 /* ── refresh loop: 5 minutes, one polite batch per source ── */
