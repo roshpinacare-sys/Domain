@@ -167,7 +167,17 @@ export class UI {
     const modeTxt = this.$('#modeTxt');
     const fmt = (m) => (Number.isFinite(m) ? `${Math.max(0, Math.round(m))} דק'` : '—');
 
-    if (mode === 'live') {
+    if (mode === 'broadcast') {
+      pulse.className = 'chip ok';
+      pulseTxt.textContent = 'שידור חי · העולם חי כל הזמן';
+      modeChip.className = 'chip ok';
+      modeTxt.textContent = 'LIVE BROADCAST — עולם מתמשך, לא סימולציה מקומית';
+    } else if (mode === 'world') {
+      pulse.className = 'chip ok';
+      pulseTxt.textContent = 'עולם מתמשך · פעימת-גריד לפני ' + fmt(stateAgeMin);
+      modeChip.className = 'chip ok';
+      modeTxt.textContent = 'PERSISTENT WORLD — ממשיכים את המשמרת מהפעימה הקנונית';
+    } else if (mode === 'live') {
       pulse.className = 'chip ok';
       pulseTxt.textContent = `המשרד חי · עודכן לפני ${fmt(stateAgeMin)}`;
       modeChip.className = 'chip ok';
@@ -186,8 +196,8 @@ export class UI {
       pulseTxt.textContent = 'מתחבר…';
     }
     if (verdict) pulseTxt.title = `פעימת-המשרד: ${verdict} · פעימה עודכנה לפני ${fmt(pulseAgeMin)}`;
-    this.$('#rosterMode').textContent = mode === 'live' ? 'LIVE' : mode === 'stale' ? 'STALE' : 'SIM';
-    this.$('#tickMode').textContent = mode === 'live' ? 'חי' : mode === 'stale' ? 'ישן' : 'הדגמה';
+    this.$('#rosterMode').textContent = mode === 'broadcast' || mode === 'world' || mode === 'live' ? 'LIVE' : mode === 'stale' ? 'STALE' : 'SIM';
+    this.$('#tickMode').textContent = mode === 'broadcast' ? 'שידור חי' : mode === 'world' ? 'עולם חי' : mode === 'live' ? 'חי' : mode === 'stale' ? 'ישן' : 'הדגמה';
   }
 
   // ───── טיקר ─────

@@ -205,6 +205,8 @@ class Agent {
     this.lookTarget = null;
     this.ambientAt = 8 + Math.random() * 14;
     this.carryBook = false;
+    this.extTarget = null; // פריים-שידור חי
+    this.extUntil = 0;
 
     // יעדי-מבט שימושיים
     if (!def.lead) {
@@ -229,6 +231,7 @@ class Agent {
   setLive(activity, mode) {
     this.liveActivity = activity || '';
     this.mode = mode;
+    if (this.extUntil > Date.now()) return; // בזמן שידור — השרת מחליט, לא הפעילות מהספר
     if (activity && !this.moving && this.state !== 'chat' && this.state !== 'sit-down') {
       const a = activity;
       if (/קפה/.test(a) && this.state !== 'coffee') this.dispatch('coffee');
@@ -237,6 +240,42 @@ class Agent {
         this.say('תקלה — רואים ביומן. חוזרים בעוד רגע.');
       }
     }
+  }
+
+  // ───── שידור-חי ─────
+  /** קבלת פריים מהשרת: יעד-תנועה + מצב; המקומי מחליק אליו */
+  applyExternal(f) {
+    this.extTarget = f;
+    this.extUntil = Date.now() + 2600; // גרייס: 2.6ש בלי פריים → חזרה כנה למקומי
+    if (f.label) this.label = f.label;
+    if (f.activity) this.liveActivity = f.activity;
+  }
+
+  stepExternal(dt) {
+    const f = this.extTarget;
+    if (!f) return;
+    const dx = f.x - this.pos.x, dz = f.z - this.pos.y;
+    const dist = Math.hypot(dx, dz);
+    if (dist > 2.5) {
+      // פער גדול (הצטרפות לשידור/סנכרון) — הצמדה ישירה
+      this.pos.x = f.x; this.pos.y = f.z;
+      this.face = f.face;
+      this.moving = !!f.moving;
+    } else if (dist > 0.07) {
+      const step = Math.min(this.speed * 1.18 * dt, dist);
+      this.pos.x += (dx / dist) * step;
+      this.pos.y += (dz / dist) * step;
+      this.face = lerpAngle(this.face, f.face, 1 - Math.exp(-6 * dt));
+      this.walkPhase += dt * this.speed * 7.4;
+      this.moving = true;
+    } else {
+      this.pos.x = f.x; this.pos.y = f.z;
+      this.face = lerpAngle(this.face, f.face, 1 - Math.exp(-6 * dt));
+      this.moving = false;
+    }
+    this.state = f.state || this.state;
+    this.typing = f.typing ? 1 : 0;
+    this.carryBook = !!f.carry;
   }
 
   // ───── ניווט ─────
@@ -282,20 +321,23 @@ class Agent {
     const dx = target.x - this.pos.x;
     const dz = target.z - this.pos.y;
     const dist = Math.hypot(dx, dz);
-    const stopAt = p.i === p.pts.length - 1 ? (p.approach ?? 0.46) : 0.05;
-    if (dist <= stopAt) {
-      p.i++;
-      if (p.i >= p.pts.length) {
+    const last = p.i === p.pts.length - 1;
+    const stopAt = last ? (p.approach ?? 0.46) : 0.05;
+    if (dist <= stopAt + this.speed * dt) {
+      // חוק-הגעה: צעד עוקף → הצמדה; מונע לכידת-זנו (צעד מתחת לדיוק-צף)
+      if (last) {
+        this.pos.x = target.x; this.pos.y = target.z;
         this.path = null;
         this.moving = false;
         if (p.faceAtEnd != null) this.face = p.faceAtEnd;
         if (p.onArrive) p.onArrive();
         return;
       }
+      p.i++;
       return;
     }
-    const step = Math.min(this.speed * dt, dist - stopAt);
     const nx = dx / dist, nz = dz / dist;
+    const step = this.speed * dt;
     let goX = this.pos.x + nx * step;
     let goZ = this.pos.y + nz * step;
     // הימנעות-קשה מליבת להבת-הריבונות
@@ -396,8 +438,12 @@ class Agent {
     const b = this.body;
     const j = b.j;
 
-    // FSM
-    if (!this.moving) {
+    // ───── שידור-חי: פריים טרי מהשרת קובע; ה-FSM המקומי מושהה בכנות ─────
+    if (this.extUntil > Date.now()) {
+      this.stepExternal(dt);
+    } else {
+      // FSM
+      if (!this.moving) {
       this.stateUntil -= dt;
       if (this.stateUntil <= 0) {
         switch (this.state) {
@@ -447,10 +493,11 @@ class Agent {
         }, 0.42);
         this.setLabel('הולך לשיחה');
       }
+      }
     }
 
     // תנועה
-    if (this.moving) this.stepMove(dt);
+    if (this.extUntil <= Date.now() && this.moving) this.stepMove(dt);
 
     // ישיבה/קימה (בלנד)
     const sitGoal = (this.state === 'desk' || this.state === 'sit-down') && !this.moving ? (this.state === 'sit-down' ? 1 - this.stateUntil / 0.95 : 1) : 0;
@@ -726,6 +773,19 @@ export class Crew {
     for (const a of this.agents) a.setLive(activities?.[a.id] || '', mode);
   }
 
+  /** פריים-שידור חי: הפצה לסוכנים (השרת קובע, הלקוח מחליק) */
+  applyExternalFrame(frame) {
+    if (!frame || !Array.isArray(frame.ag)) return;
+    for (const f of frame.ag) {
+      const a = this.agents.find((x) => x.id === f.id);
+      if (a) a.applyExternal(f);
+    }
+  }
+
+  anyExternal() {
+    return this.agents.some((a) => a.extUntil > Date.now());
+  }
+
   focusTarget(id) {
     const a = this.agents.find((x) => x.id === id);
     if (!a) return null;
@@ -733,9 +793,9 @@ export class Crew {
   }
 
   update(dt, t) {
-    // מפגש-צוות מתוזמן: שני עובדים נפגשים באמצע
+    // מפגש-צוות מתוזמן: שני עובדים נפגשים באמצע (רק בלי שידור-חי — בשידור השרת מנהל)
     this.meetAt -= dt;
-    if (this.meetAt <= 0 && this.invites.length === 0) {
+    if (this.meetAt <= 0 && this.invites.length === 0 && !this.anyExternal()) {
       this.meetAt = 75 + Math.random() * 70;
       const free = this.agents.filter((a) => !a.def.lead && !a.moving && ['desk', 'coffee', 'gitwall'].includes(a.state));
       if (free.length >= 2) {

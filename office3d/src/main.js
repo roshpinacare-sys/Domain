@@ -8,6 +8,7 @@ import { buildWorld } from './world.js';
 import { Crew } from './crew.js';
 import { Director, VIEWS } from './director.js';
 import { DataBridge } from './data.js';
+import { LiveBridge } from './live.js';
 import { UI } from './ui.js';
 import { buildAtmosphere } from './atmosphere.js';
 import { CREW, ROOM_W, ROOM_D, WALL_H } from './canon.js';
@@ -89,17 +90,38 @@ const crew = new Crew(scene, {
 
 const director = new Director(camera, renderer.domElement);
 
-// ───────── גשר-נתונים ─────────
+// ───────── גשר-נתונים + שידור-חי ─────────
 const data = new DataBridge();
 let lastBubbleAt = {};
+let broadcastMode = null; // 'broadcast' כשיש שידור · null = הגשר המקומי קובע
+
+// צגי-שולחן מפעילות-השידור (אותו פורמט כמו הגשר, בלי ציורים מיותרים)
+function setDeskScreens(activities, screenMode) {
+  for (const [id, scr] of Object.entries(world.screens.desks)) {
+    const c = CREW.find((x) => x.id === id);
+    scr.set([
+      { text: 'שידור חי: ' + (activities[id] || 'במשמרת'), ok: true },
+    ], `${c?.he} · ${c?.role}`, screenMode);
+  }
+}
+
+const live = new LiveBridge({
+  crew,
+  ui,
+  data,
+  setBroadcastMode: (m) => { broadcastMode = m; },
+  onDeskScreens: setDeskScreens,
+});
 
 data.on((snap) => {
   try {
-    ui.setMode(snap.mode, snap);
+    const eff = broadcastMode || snap.mode;
+    const screenMode = eff === 'broadcast' || eff === 'live' ? 'live' : eff === 'stale' ? 'stale' : 'sim';
+    ui.setMode(eff, snap);
     crew.setLive(snap.activities, snap.mode);
     // לוח-משימות
     const cols = taskColumns(snap);
-    world.screens.task.set(cols, snap.mode === 'sim' ? 'sim' : 'live');
+    world.screens.task.set(cols, screenMode);
     // קיר-הגיט
     const wireRows = snap.wire.slice(0, 11).map((w) => ({
       sha: (w.sha || '').slice(0, 7),
@@ -107,11 +129,13 @@ data.on((snap) => {
       age: w.ageMin != null ? `${Math.round(w.ageMin)} דק'` : (w.at ? timeAgo(w.at) : ''),
       color: '#6ee7a0',
     }));
-    world.screens.git.set(wireRows, snap.mode === 'sim' ? 'sim' : 'live');
-    // צגי-שולחן
-    for (const [id, scr] of Object.entries(world.screens.desks)) {
-      const c = CREW.find((x) => x.id === id);
-      scr.set(data.deskLines(id), `${c?.he} · ${c?.role}`, snap.mode === 'sim' ? 'sim' : 'live');
+    world.screens.git.set(wireRows, screenMode);
+    // צגי-שולחן — רק כשאין שידור (בשידור: setDeskScreens מהפריימים)
+    if (!broadcastMode) {
+      for (const [id, scr] of Object.entries(world.screens.desks)) {
+        const c = CREW.find((x) => x.id === id);
+        scr.set(data.deskLines(id), `${c?.he} · ${c?.role}`, screenMode);
+      }
     }
     // בועות חיות מהפיד (פעם לכל אירוע)
     for (const f of snap.bubbles) {
@@ -125,7 +149,7 @@ data.on((snap) => {
     const f0 = snap.bubbles[0];
     if (f0) ui.pushTicker(f0.text, `${(f0.kind || '').replace('bubble:', '')} · ${timeAgo(f0.at)}`);
     else if (snap.wire[0]) ui.pushTicker(`קומיט חדש בצי: ${snap.wire[0].msg?.slice(0, 46)}`, snap.wire[0].sha);
-    else if (snap.mode === 'sim') ui.pushTicker('אין חיבור חי — המשרד רץ במצב הדגמה מסומן', 'חוק-האמת: לא נראה ירוק-מזויף');
+    else if (snap.mode === 'sim' && !broadcastMode) ui.pushTicker('אין חיבור חי — המשרד רץ במצב הדגמה מסומן', 'חוק-האמת: לא נראה ירוק-מזויף');
   } catch (err) {
     console.warn('[office] data-callback failure (honest):', err?.message || err);
   }
@@ -247,6 +271,7 @@ addEventListener('error', (e) => {
   }
 });
 
-// התחלת הגשר
+// התחלת הגשר + השידור החי (השידור קובע כשהוא קיים; בלעדיו — כנות הגשר)
 setLoad(20, 'מתחבר לספרי-הצי…');
 data.start();
+live.start();
