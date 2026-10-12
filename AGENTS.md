@@ -127,3 +127,15 @@ Before pushing any edit that touches `index.html`: `grep -c "TruthRail\|sovereig
 must print `0`. If it prints anything else, you built on a stale base — re-apply
 the canonical targets above. The daily `site-link-audit` FAIL verdict is the
 enforcement receipt; a red verdict on these URLs means the law was violated.
+## Office world law (office-worldbeat, 2026-10-12)
+- `office/world-state.json` is the CANONICAL persistent world of the live
+  office — the world never resets; every runtime (browser, broadcast service,
+  this grid) continues from the latest state.
+- `office/engine.mjs` is a synced copy of the office product engine
+  (`public/office3d/src/engine.js` in the console repo). `ENGINE_VERSION`
+  must match in BOTH copies — change one → change both in the same wave.
+  `office-world-tick.mjs` exits 1 on any mismatch (fail loud, never skip).
+- The worldbeat commit is plain (NO `[skip ci]`) — the push-sensor law applies.
+- grid-guard measures `worldAgeH` (cadence 10min → stale at 0.7h) and
+  re-ignites `office-worldbeat.yml` — the office world is never allowed to
+  go silent.

@@ -1,0 +1,53 @@
+# office-worldbeat — פעימת-העולם הקנונית (הלב של המשרד החי, בלי תלות בסנדבוקס)
+#
+# העולם של מפקדת הצי חי כל הזמן: office/world-state.json מותקדם כל 10 דק'
+# לפי זמן-אמת על ידי המנוע המשותף (office/engine.mjs — אותו מנוע בדפדפן
+# ובשירות-השידור). כל פתיחת דף מציגה עולם בעיצומה, לא סימולציה שנולדה מחדש.
+#
+# חוקים: קומיט ישיר same-repo (github.token) · אין [skip ci] · fail loud על
+# אי-התאמת מנורסיון · מציל-הגריד (grid-guard) מודד את גיל העולם ומצית מחדש.
+
+name: office-worldbeat
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: office-worldbeat
+  cancel-in-progress: false
+
+jobs:
+  beat:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Checkout (keyless — same-repo only)
+        uses: actions/checkout@v4
+        with:
+          token: ${{ github.token }}
+          fetch-depth: 1
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Advance the world
+        run: node agents/office-world-tick.mjs
+
+      - name: Commit the world state
+        run: |
+          git config user.name "office-worldbeat"
+          git config user.email "office-worldbeat@users.noreply.github.com"
+          git add office/world-state.json office/world-journal.jsonl
+          if git diff --cached --quiet; then
+            echo "world unchanged — nothing to commit (honest)"
+          else
+            git commit -m "office-worldbeat: advance the persistent world"
+            git push origin main
+          fi

@@ -173,6 +173,7 @@ async function rpcHive(method, params) {
       { key: 'ordersAgeH', file: 'agents/work-orders.json', twin: 'office-orders-twin.yml', staleH: 4, tsKeys: ['at'] },
       { key: 'integrityAgeH', file: 'agents/integrity-verdict.json', twin: 'artery-integrity-twin.yml', staleH: 4, tsKeys: ['at'] },
       { key: 'siteAuditAgeH', file: 'agents/site-audit.json', twin: 'site-link-audit.yml', staleH: 26, tsKeys: ['at'] }, // יומי × 1 + רווח
+      { key: 'worldAgeH', file: 'office/world-state.json', twin: 'office-worldbeat.yml', staleH: 0.7, tsKeys: ['t'] }, // פעימת-עולם 10דק' × 3 + רווח — המשרד החי לא שקט
     ];
     for (const b of OFFICE_BOOKS) {
       try {
@@ -181,7 +182,11 @@ async function rpcHive(method, params) {
         // (b.file is repo-root-relative; AG = agents/ → join with '..')
         const local = JSON.parse(fs.readFileSync(path.join(AG, '..', b.file), 'utf8'));
         let at = null;
-        for (const k of b.tsKeys) { const t = Date.parse(local?.[k] ?? ''); if (Number.isFinite(t)) { at = t; break; } }
+        for (const k of b.tsKeys) {
+          const v = local?.[k];
+          const t = typeof v === 'number' ? v : Date.parse(v ?? '');
+          if (Number.isFinite(t)) { at = t; break; }
+        }
         if (at != null) {
           const ageH = Math.round(((Date.now() - at) / 36e5) * 10) / 10;
           res[b.key] = ageH;
@@ -190,6 +195,10 @@ async function rpcHive(method, params) {
         // פסק-אדום של מציל-האתר = סיבה בפני עצמה (לא רק גיל הספר)
         if (b.key === 'siteAuditAgeH' && local?.overall === 'FAIL') {
           res.reasons.push(`site-audit FAIL (${local?.summary?.findings ?? '?'} findings) — re-ignite`);
+        }
+        // עולם-תקוע: אם גיל-העולם תקין אבל הפעימה לא זזה בין ריצות — זה מצב-שקט אחר
+        if (b.key === 'worldAgeH' && local?.engine !== 'office-world') {
+          res.reasons.push('world-engine mismatch — the office world is not ours');
         }
       } catch (e) { res.errors.push(`${b.key}: ${e.message}`); }
     }
@@ -235,6 +244,11 @@ async function rpcHive(method, params) {
           const s4 = await dispatch('Domain', 'artery-integrity-twin.yml', GH_TOKEN || TOKEN);
           if (s4 === 204) res.dispatched.push('Domain/artery-integrity-twin');
           else res.errors.push('dispatch Domain/artery-integrity-twin HTTP ' + s4);
+        }
+        if (res.reasons.some((x) => x.startsWith('world-book-stale') || x.startsWith('world-engine'))) {
+          const s5 = await dispatch('Domain', 'office-worldbeat.yml', GH_TOKEN || TOKEN);
+          if (s5 === 204) res.dispatched.push('Domain/office-worldbeat');
+          else res.errors.push('dispatch Domain/office-worldbeat HTTP ' + s5);
         }
         if (res.dispatched.length) {
           state.lastDispatchAt = res.at;
