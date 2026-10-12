@@ -117,7 +117,8 @@ data.on((snap) => {
   try {
     const eff = broadcastMode || snap.mode;
     const screenMode = eff === 'broadcast' || eff === 'live' ? 'live' : eff === 'stale' ? 'stale' : 'sim';
-    ui.setMode(eff, snap);
+    // צ'יפ-המצב: בשידור/עולם — הגשר-החי הוא הבעלים (live.js); הגשר-הספרים לא יורש אותו
+    if (!broadcastMode) ui.setMode(eff, snap);
     crew.setLive(snap.activities, snap.mode);
     // לוח-משימות
     const cols = taskColumns(snap);

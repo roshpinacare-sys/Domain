@@ -25,6 +25,7 @@ export class LiveBridge {
     this.localLoop = null;
     this.lastEvTs = 0;
     this.gaveUpSocket = false;
+    this.canonT = 0; // זמן-פעימת-הגריד שאנחנו מוצמדים אליה (לצ'יפ הכנה)
   }
 
   /** צגי-שולחן רק כשהפעילות באמת השתנתה — אין ציור-קנבס בכל פריים */
@@ -112,6 +113,7 @@ export class LiveBridge {
         } catch { /* המקור הבא */ }
       }
       if (!w) throw new Error('no canon source reachable');
+      this.canonT = w.t;
       const ageMin = Math.max(0, Math.round((Date.now() - w.t) / 60000));
       mod.advanceWorld(w, Date.now());
       this.world = w;
@@ -134,8 +136,13 @@ export class LiveBridge {
           for (const a of f.ag) acts2[a.id] = a.activity || '';
           this.maybeDeskScreens(acts2, 'live');
           for (const ev of f.ev) this.surfaceEvent(ev);
-          // פעימה-קנונית חדשה נחתה? נצמדים אליה (קומיט חדש של worldbeat)
-          if (this.ticks % 240 === 0) this.refreshCanon(mod);
+          // פעימה-קנונית חדשה נחתה? נצמדים אליה (קומיט חדש של worldbeat) + צ'יפ-כנה
+          if (this.ticks % 240 === 0) {
+            this.refreshCanon(mod);
+            try {
+              this.ui.setMode('world', { stateAgeMin: Math.max(0, Math.round((Date.now() - this.canonT) / 60000)) });
+            } catch { /* כנה */ }
+          }
         } catch { /* כנה */ }
       }, 250);
     } catch (e) {
@@ -152,6 +159,7 @@ export class LiveBridge {
         const fresh = mod.fromJSON(await res.json());
         if (fresh.t > this.world.t) {
           // הגריד הקדים אותנו — מתאחדים עם השושלת הקנונית
+          this.canonT = fresh.t;
           this.world = fresh;
         }
         return;
