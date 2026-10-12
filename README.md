@@ -122,7 +122,7 @@ source of truth, one chain.
 - `weave-anchor-lines` (bi-hourly at :33) — both evidence lines
   (Steem/Hive anchor, zero-gas EVM anchor); refuses honestly until the
   passphrase arrives (measured: even --verify-only needs the seal), then
-  Steem runs full with WEAVE_STEEM_WIF or honest-dry without it
+  network runs full with the fleet signing key or honest-dry without it
 - `web-publish` (every 20 min at :03/:23/:43) — the sovereign storage
   network publisher (posts inbox packages to Steem); green no-op while
   the inbox is empty, honest no-wif skip once packages arrive
@@ -139,9 +139,10 @@ source of truth, one chain.
   Revived world.json end-to-end on 2026-09-21 (chain advanced and
   published to Console; this home's :52 dex-mirror carries it here)
 - `dex-grid` (daily at 03:48, r68) — the outer grid (THE-REAL-GRID) from
-  the sovereign saos-dex home. Refuses honestly until STEEM_ACTIVE_WIF
+  the sovereign saos-dex home. Refuses honestly until the manager operating-key is provisioned
   arrives (below): running keyless would publish a false DISARMED-NO-KEY
-  verdict while the true state is armed. Shift-guarded on schedule
+  verdict while the true state is armed (the key lives in the private
+  saos-dex vault, which secrets never cross). Shift-guarded on schedule
   (23h window); a fuel-landing dispatch (money-watch) or a manual dispatch
   runs it immediately — the grid is atomically re-centering by design,
   so a double dispatch across two living homes is a harmless re-center
@@ -196,33 +197,37 @@ variables > Actions) — the gated twins refuse honestly with a clear
 message (the key-verify precedent) and say so in their logs:
 
 1. `WEAVE_SEAL_PASSPHRASE` — **delivered and ADOPTED (r72,
-   2026-09-21)**: the operator delivered a secret value twice
-   (08:28:30Z and a new value 12:30:42Z, vault listing, names
-   only). Both were tested to exhaustion, every rung receipted:
-   neither matched any on-chain key material of any network
-   account (12 derivations × 2 chains, 0 matches — receipt
-   `receipts/key-check.json`, verdict `unidentified`), and neither
-   opened the seal as delivered (BEAT-ERROR authentication). The
-   second delivery was then ADOPTED as the seal passphrase by the
-   `seal-adopt` machine (run 35602602107, commit ff3260a): the
-   same keys (cloud `0xaB07…`, network `0xe376…` — unchanged, the
-   live ledger's own signer) re-encrypted under the operator's own
-   password, recovered from the sovereign lineage (the G3 gap is
-   documented in TRUTH-AUDIT §16). Measured proof: the heart
-   opened the seal and beat (LEDGER-VALID 295/295, att 296,
-   cp#289), the ZERO anchor landed on-chain (block 35247391,
-   gas 0), and the book advanced 293 → 297. The operator holds
-   the passphrase by construction (they typed it); pasting the
-   same value under `WEAVE_SEAL_PASSPHRASE` in the private Zip
-   vault is the 30-second operator step that re-arms that home's
-   backup path.
-2. `WEAVE_STEEM_WIF` — a Steem signing secret. Without it: no
-   Steem/Hive broadcasts (honest dry), no SAOS live genesis
-   placement (honest skip). The ZERO anchor line does NOT need it
-   (zero-gas Z Chain).
-3. `STEEM_ACTIVE_WIF` — a Steem signing secret (the grid signer's
-   operator secret, r38). GitHub secrets never cross repositories,
-   so the dex-grid twin needs its own copy. Without it the
+   2026-09-21)**: the operator delivered a master passphrase (2026-09-21,
+   08:28:30Z and a second value 12:30:42Z; secret names withheld by
+   disclosure policy). Both were tested to exhaustion, every rung
+   receipted: none is a private key or master password of any fleet
+   account (12 derivations × 2 chains, 0 matches —
+   receipt `receipts/key-check.json`, verdict `unidentified`), and
+   neither opened the seal as delivered (BEAT-ERROR authentication).
+   Per the operator's recorded intent ("from it one can get all the
+   keys"), the second delivery was then ADOPTED as the seal
+   passphrase by the `seal-adopt` machine (run 35602602107, commit
+   ff3260a): the same keys (cloud `0xaB07…`, network `0xe376…` —
+   unchanged, the live ledger's own signer) re-encrypted under the
+   operator's own password, recovered from the sovereign lineage
+   (the G3 gap is documented in TRUTH-AUDIT §16). Measured proof:
+   the heart opened the seal and beat (LEDGER-VALID 295/295, att
+   296, cp#289), the ZERO anchor landed on-chain (block 35247391,
+   gas 0), and the book advanced 293 → 297. The twins read
+   the seal passphrase (delivered value now
+   feeds them all. The operator holds the passphrase by
+   construction (they typed it); pasting the same value under
+   `WEAVE_SEAL_PASSPHRASE` in the private Zip vault is the
+   30-second operator step that re-arms that home's backup path.
+2. `WEAVE_SIGNING_KEY` — the fleet witness signing key (held only
+   in system secrets; account identity withheld by disclosure
+   policy). Without it: no network broadcasts (honest dry), no SAOS
+   live genesis placement (honest skip). The ZERO anchor line does
+   NOT need it (zero-gas Z Chain).
+3. `MANAGER_OPERATING_KEY` — the manager operating-key that arms the
+   grid (r38). It already lives in the private saos-dex vault — but
+   GitHub secrets never cross repositories, so the dex-grid twin needs
+   its own copy. Without it the
    outer grid stays frozen (its state ages in honest red); with it, the
    grid trades again on public minutes. After delivering it, dispatch
    `dex-grid` once manually (Actions > dex-grid > Run workflow) or wait
@@ -253,11 +258,11 @@ honest in red. Since r68 the engine behind those books is itself alive
 again: the `dex-beat` twin (above) advances the canonical chain on
 public minutes and publishes to Console, which the :52 mirror carries
 here — `dex/grid.json` remains the one frozen plane, honestly, until
-`STEEM_ACTIVE_WIF` arrives (its machine signs real external orders).
+the manager key arrives (its machine signs real external orders).
 
 Activation (operator steps, in order):
 
-1. Secrets: add AGENTS_WATCH_TOKEN (and, when needed, the operator's secret) under
+1. Secrets: add AGENTS_WATCH_TOKEN (and, when needed, HEADCORNER) under
    Settings > Secrets and variables > Actions, then port agents-watch,
    money-watch and key-verify from the Console repository.
 2. Data planes: decide whether the sovereign heart dual-publishes to both
