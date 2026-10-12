@@ -65,3 +65,11 @@
 | 2026-10-12T13:20:28.085Z | config | chain_id=cd8d90f29a… (official blurtjs config) | ok |
 | 2026-10-12T13:20:28.291Z | fatal | Unexpected token 'S', "Server is "... is not valid JSON | RED-FATAL |
 
+
+## BLURT-CONNECT RUN · 2026-10-12T20:43:03.646Z
+
+| at | op | detail | status |
+|---|---|---|---|
+| 2026-10-12T20:42:57.579Z | config | chain_id=cd8d90f29a… (official blurtjs config) | ok |
+| 2026-10-12T20:43:03.646Z | fatal | all blurt nodes unhealthy (3 tried) — last: fetch failed | RED-FATAL |
+
