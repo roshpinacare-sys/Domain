@@ -92,6 +92,22 @@ jobs:
           done
           if [ "$ok" != "1" ]; then echo "PUSH-FAILED"; exit 1; fi
 
+      - name: World re-ignite — the office world is never silent (independent of the takeover gate)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ ! -f office/world-state.json ]; then echo "no world book — nothing to guard"; exit 0; fi
+          T=$(node -e "const w=require('./office/world-state.json');console.log(typeof w.t==='number'?w.t:Date.parse(w.t))")
+          AGE_MIN=$(( ($(date +%s) - T / 1000) / 60 ))
+          echo "world age: ${AGE_MIN} min (SLA 25)"
+          if [ "$AGE_MIN" -gt 25 ]; then
+            ok=$(gh api -X POST "repos/${GITHUB_REPOSITORY}/actions/workflows/office-worldbeat.yml/dispatches" -f ref=main -w '%{http_code}' -o /dev/null || echo 0)
+            echo "world beat stale — re-ignite office-worldbeat (HTTP ${ok})"
+          else
+            echo "world beat is fresh — no action"
+          fi
+
       - name: Verify-only (this shift belongs to the living original)
         if: steps.guard.outputs.takeover != '1' && github.event_name != 'workflow_dispatch'
         run: |
