@@ -26,7 +26,7 @@ import { readFileSync, writeFileSync, existsSync } from "node:fs";
 const SRC = "https://roshpinacare-sys.github.io/Console/dex";
 const OUT_DIR = "dex";
 const FILES = ["grid.json", "world.json", "state.json", "credits.json", "portfolio.json",
-               "onramp.json", "showcase.json", "relay.json"]; // 13-a: סגירת פער 528ש' (WO-unwired-dex-mirror P1) — העותקים ב-Domain קפאו ב-09-19 כי הרשימה דילגה עליהם
+               "onramp.json", "showcase.json", "relay.json", "money.json"]; // 13-a: סגירת פער 528ש' (WO-unwired-dex-mirror P1) — העותקים ב-Domain קפאו ב-09-19 כי הרשימה דילגה עליהם; 10-12: money.json נוסף — המקור (money-watch 2ש') טרי אבל העותק ב-Domain קפא כי הרשימה עדיין דילגה עליו (נמדד: מקור 23:52 מול עותק 20:29 אחרי ריצת-מראה 01:06 שהעתיקה 7 קבצים ודילגה עליו)
 const MAX_SOURCE_AGE_H = 48; // מקור מעופש מזה = צינור מת, לא משקפים אותו
 
 const r2 = (v) => Math.round(v * 100) / 100;
