@@ -550,13 +550,13 @@ function loadSteem(){
     $('ps-chip').className='chip bad'; $('ps-chip').textContent='אין נתון';
     $('ps-upd').textContent = utcClock(new Date());
   });
-  rpc('condenser_api.get_discussions_by_blog', [{tag:'headcorner', limit:3}]).then(function(posts){
+  rpc('condenser_api.get_discussions_by_blog', [{tag:'israelnews', limit:3}]).then(function(posts){
     var ul = $('ps-posts');
     ul.innerHTML = posts.map(function(p){
       var pay = p.pending_payout_value && parseFloat(p.pending_payout_value) > 0
         ? 'pending ' + p.pending_payout_value
         : (p.total_payout_value && parseFloat(p.total_payout_value) > 0 ? 'paid ' + p.total_payout_value : 'pending ' + (p.pending_payout_value || '0.000 SBD'));
-      var url = 'https://steemit.com/@headcorner/' + String(p.permlink).replace(/[^a-z0-9-]/g,'');
+      var url = 'https://steemit.com/@israelnews/' + String(p.permlink).replace(/[^a-z0-9-]/g,'');
       return '<li><a class="pt" href="' + url + '" target="_blank" rel="noopener">' +
         String(p.title).replace(/[<>&]/g,'') + '</a><span class="pm">' +
         '<span class="mono num">' + pay.replace(/[<>&]/g,'') + '</span><span>' + ago(p.created ? p.created + 'Z' : null) + '</span></span></li>';
