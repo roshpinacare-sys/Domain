@@ -70,5 +70,5 @@ jobs:
           else
             git commit -m "proof-pipeline: day book $(date -u +%F) · ready-to-sign anchor calldata (keyless) [skip ci]"
             git -c rebase.autoStash=true pull --rebase origin main
-            git push origin HEAD:main
+            bash scripts/safe-push.sh
           fi

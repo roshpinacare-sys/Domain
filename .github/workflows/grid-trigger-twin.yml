@@ -89,7 +89,7 @@ jobs:
           else
             git commit -m "grid-heartbeat(twin): tick $(date -u +%FT%TZ) [skip ci]"
             git pull --rebase origin main
-            git push origin HEAD:main
+            bash scripts/safe-push.sh
           fi
 
       - name: Verify-only (this shift belongs to the living original)

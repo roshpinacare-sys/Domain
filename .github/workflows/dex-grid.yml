@@ -160,7 +160,7 @@ jobs:
           else
             git commit -m "community-leg: owner-mandated Steem community evidence $(date -u +%FT%TZ) [skip ci]"
             git pull --rebase origin main
-            git push origin HEAD:main
+            bash scripts/safe-push.sh
           fi
 
 
@@ -184,5 +184,5 @@ jobs:
           else
             git commit -m "delegations: owner-mandated SP deployment receipt $(date -u +%FT%TZ) [skip ci]"
             git pull --rebase origin main
-            git push origin HEAD:main
+            bash scripts/safe-push.sh
           fi

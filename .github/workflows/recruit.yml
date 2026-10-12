@@ -84,5 +84,5 @@ jobs:
               git -c rebase.autoStash=true pull --rebase origin main >/dev/null 2>&1 || true
               git commit -m "recruit+ventures: army openings + two-sided ledger board $(date -u +%Y-%m-%dT%H:%M:%SZ) [skip ci]" >/dev/null 2>&1 && break || sleep 5
             done
-            git push origin main >/dev/null 2>&1 || true
+            bash scripts/safe-push.sh
           fi

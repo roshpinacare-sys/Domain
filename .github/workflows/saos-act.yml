@@ -74,5 +74,5 @@ jobs:
             echo "no state changes to persist — honest no-op"
           else
             git commit -m "saos-ci: engine state persistence (public-minutes runner; FF law)"
-            git push origin saos-cockpit && echo "STATE-PERSISTED" || echo "PUSH-REFUSED-HONEST-FAIL (state already on chain + logs)"
+            bash scripts/safe-push.sh 5 saos-cockpit && echo "STATE-PERSISTED" || echo "PUSH-REFUSED-HONEST-FAIL (state already on chain + logs)"
           fi

@@ -126,7 +126,7 @@ jobs:
           else
             git commit -m "fleet-census(ci): artifact+delta+claims $(date -u +%FT%TZ) [skip ci]"
             git -c rebase.autoStash=true pull --rebase origin main
-            git push origin HEAD:main
+            bash scripts/safe-push.sh
           fi
 
       - name: Halt receipt (this shift belongs to the breaker)
