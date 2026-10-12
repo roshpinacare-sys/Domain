@@ -122,7 +122,7 @@ exit 0, booked to `agents/fleet-indicators.json` + `.md`:
 | F4 | Governance Conformity | M5 voting conformity | CR verdicts 100% + registry rows | 2/2 judged, 48 rows → GROW |
 | F5 | Public Expression | M6 expression | learning-ledger posts + chain-measured samples | 35 posts · 62 samples → GROW |
 | F6 | Social Fabric & Diversity | M7 relationships | registry tiers/lanes/books distinct | 3 tiers · 23 lanes · 19 books → GROW |
-| F7 | Economic Vitality & Equity | M8 credits/Gini | money-ledger (executor-identified, fresh) | headcorner (balances withheld from public per hub/disclosure-policy.html — internal metric) → GROW |
+| F7 | Economic Vitality & Equity | M8 credits/Gini | money-ledger (executor-identified, fresh) | main treasury (balances withheld from public per hub/disclosure-policy.html — internal metric) → GROW |
 | F8 | Constitutional Growth | M9 constitution articles | law version + feature ledger + commits/7d | v1.0.1 · 8/9 · 2032 commits → GROW |
 | F9 | **Sovereign Autonomy** | **(none — they cannot score this)** | git-grepped self-run receipts, 7d | score 14 (≥5) → GROW |
 
