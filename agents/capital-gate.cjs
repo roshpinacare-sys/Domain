@@ -3,7 +3,7 @@
  * CAPITAL-GATE — שער-המחשבה-לפני-חתימה (owner directive 2026-10-04, IM trace 1a1…0451)
  * ═══════════════════════════════════════════════════════════════════════════════════════════
  * הבעלים מדד חי ומצא: האוטונומיה רצה "בלי שכל ואינטילגנציה" — כולל האצלות-SP אוטומטיות
- * ל-hcsoldier1/2/3 (חשבונות שאין לאף-אחד את המפתחות שלהם — LOST-NO-CUSTODY, קבלה
+ * לחשבונות-חיילים 1/2/3 (חשבונות שאין לאף-אחד את המפתחות שלהם — LOST-NO-CUSTODY, קבלה
  * מדודה 2026-10-04) ופלאפינג-האצלות באותו-יום מכמה-כותבים בלי תיאום.
  *
  * החוק החדש (מהיום): כל-חותם-על-השרשרת חייב לעבור שלושה-שערים לפני-חתימה:
@@ -34,6 +34,9 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const { R, refOf, scrub, resolved: refsResolved } = require('./refs.cjs');
+const REF_IDS = Array.from({ length: 20 }, (_, i) => 'acct-' + String(i).padStart(2, '0'));
+const refScrub = (t) => { let out = scrub(String(t)); if (refsResolved()) { for (const ref of REF_IDS) { const n = R(ref); if (n) out = out.replace(new RegExp('\\b' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'g'), ref); } } return out; };
 
 const AG = __dirname;
 const STASIS_FILE = path.join(AG, 'STASIS.json');
@@ -183,7 +186,7 @@ function writeReceipt(tool, lane, decision, authority, evidence, reasonNote) {
       verification: { method: 'next gate invocation appends the paired receipt', status: 'pending', at: null, actual: null, deviation: null },
       note: String(reasonNote || '').slice(0, 200),
     };
-    fs.appendFileSync(JOURNAL, JSON.stringify(receipt) + '\n');
+    fs.appendFileSync(JOURNAL, refScrub(JSON.stringify(receipt)) + '\n');
     journalHealthState = { ok: true, lastError: null, lastWriteAt: receipt.at };
     return key;
   } catch (e) {
@@ -334,14 +337,18 @@ function guardTargets(tool, targets) {
     return out;
   }
   out.rosterLoaded = true;
-  const banned = new Map((roster.bannedCapital || []).map((b) => [String(b.name || '').toLowerCase(), b.reason || 'banned']));
-  const fleet = new Set((roster.steemFleet || []).map((n) => String(n).toLowerCase()));
+  /* The canonical roster speaks in public refs (acct-00..acct-19). Callers hand us
+   * real chain names → compare refOf(target) against the roster's ref entries.
+   * Refusal semantics are byte-identical to the pre-refs law (banned / not-in-roster). */
+  const banned = new Map((roster.bannedCapital || []).map((b) => [String(refOf(b.name || '')).toLowerCase(), b.reason || 'banned']));
+  const fleet = new Set((roster.steemFleet || []).map((n) => String(refOf(n)).toLowerCase()));
   for (const name of list) {
-    if (banned.has(name)) out.refused.push({ name, reason: 'banned: ' + banned.get(name) });
-    else if (fleet.has(name)) out.allowed.push(name);
+    const ref = String(refOf(name)).toLowerCase();
+    if (banned.has(ref)) out.refused.push({ name, reason: 'banned: ' + banned.get(ref) });
+    else if (fleet.has(ref)) out.allowed.push(name);
     else out.refused.push({ name, reason: 'not-in-canonical-roster' });
   }
-  for (const x of out.refused) console.log(`[CAPITAL-GATE] REFUSED ${tool} → @${x.name} · ${x.reason}`);
+  for (const x of out.refused) console.log(`[CAPITAL-GATE] REFUSED ${tool} → @${refOf(x.name)} · ${x.reason}`);
   return out;
 }
 
@@ -350,7 +357,7 @@ function guardTargets(tool, targets) {
 function journal(tool, row) {
   try {
     fs.mkdirSync(path.dirname(JOURNAL), { recursive: true });
-    fs.appendFileSync(JOURNAL, JSON.stringify({ at: new Date().toISOString(), tool, ...row }) + '\n');
+    fs.appendFileSync(JOURNAL, refScrub(JSON.stringify({ at: new Date().toISOString(), tool, ...row })) + '\n');
     journalHealthState = { ok: true, lastError: null, lastWriteAt: new Date().toISOString() };
   } catch (e) {
     journalHealthState = { ok: false, lastError: String((e && e.message) || e).slice(0, 120), lastWriteAt: journalHealthState.lastWriteAt };

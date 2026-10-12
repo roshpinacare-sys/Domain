@@ -30,7 +30,7 @@
  *   PUSH_RECEIPT    'true' = git commit+push receipt into the steem repo
  *
  * HARD DISCIPLINE: owner-ONLY (the executor hard-locks the account); never touch
- * ynet-* / owner-hive; no secret ever printed/logged (fingerprints only); every failure = red run.
+ * acct-19-* / owner-hive; no secret ever printed/logged (fingerprints only); every failure = red run.
  */
 'use strict';
 

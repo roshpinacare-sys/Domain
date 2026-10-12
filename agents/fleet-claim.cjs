@@ -13,12 +13,16 @@ const fs = require('fs');
 const path = require('path');
 const { execFileSync } = require('child_process');
 const steem = require('steem');
+const { R, refOf, scrub, resolved: refsResolved } = require('./refs.cjs');
+const REF_IDS = Array.from({ length: 20 }, (_, i) => 'acct-' + String(i).padStart(2, '0'));
+const refScrub = (t) => { let out = scrub(String(t)); if (refsResolved()) { for (const ref of REF_IDS) { const n = R(ref); if (n) out = out.replace(new RegExp('\\b' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'g'), ref); } } return out; };
 
 steem.api.setOptions({ url: 'https://api.steemit.com' });
 const ROOT = path.resolve(__dirname, '..');
 const OUT = process.env.RECEIPT_OUT || path.join(ROOT, 'agent', 'fleet-claim-receipt.json');
 const DRY = process.env.DRY === '1';
-const FLEET = ['cashmachine', 'haran', 'israelnews', 'lsa', 'macrame', 'siq', 'tov', 'wic', 'wog', 'woq', 'owner']; // 11 — ynet פרש 2026-09-29 (פנדינג 0.014 SP שלו נשאר-לא-נתבע: אין-מפתח)
+const FLEET = ['acct-01', 'acct-02', 'acct-03', 'acct-04', 'acct-05', 'acct-06', 'acct-07', 'acct-08', 'acct-09', 'acct-10', 'owner'].map(x => x.startsWith('acct-') ? R(x) : x).filter(Boolean); // 11 — one operator retired 2026-09-29 (its 0.014 SP pending stays unclaimed: no key)
+if (!refsResolved()) console.log('[refs] roster-unresolved — fleet refs unresolved; claim work is skipped this run (fail-honest, never guessed)');
 
 function recoverVault() {
   const out = '/tmp/fc-keys';
@@ -80,31 +84,31 @@ async function main() {
 
   const results = []; let claimed = 0, skipped = 0, failed = 0;
   for (const a of accts) {
-    const R = { account: a.name };
+    const row = { account: a.name };
     const rs = a.reward_steem_balance, sbd = a.reward_sbd_balance, rv = a.reward_vesting_balance;
     const hasPending = parseFloat(rs) > 0 || parseFloat(sbd) > 0 || parseFloat(rv) > 0;
-    if (!hasPending) { R.status = 'SKIP-NOTHING-PENDING'; skipped++; }
-    else if (!keymap[a.name]) { R.status = 'SKIP-NO-KEY'; R.pending = { rs, sbd, rv }; skipped++; }
+    if (!hasPending) { row.status = 'SKIP-NOTHING-PENDING'; skipped++; }
+    else if (!keymap[a.name]) { row.status = 'SKIP-NO-KEY'; row.pending = { rs, sbd, rv }; skipped++; }
     else {
       // סורג-אמת גם-כאן: נגזרת מול posting.key_auths
       let gate = false;
       try { gate = steem.auth.wifToPublic(keymap[a.name]) === a.posting.key_auths[0][0]; } catch (_) {}
-      if (!gate) { R.status = 'SKIP-KEY-MISMATCH'; skipped++; }
-      else if (DRY) { R.status = 'DRY-WOULD-CLAIM'; R.pending = { rs, sbd, rv }; }
+      if (!gate) { row.status = 'SKIP-KEY-MISMATCH'; skipped++; }
+      else if (DRY) { row.status = 'DRY-WOULD-CLAIM'; row.pending = { rs, sbd, rv }; }
       else {
         try {
           await P(cb => steem.broadcast.claimRewardBalance(keymap[a.name], a.name, rs, sbd, rv, cb));
           await sleep(2000);
           const a2 = (await P(cb => steem.api.getAccounts([a.name], cb)))[0];
           const cleared = parseFloat(a2.reward_steem_balance) === 0 && parseFloat(a2.reward_sbd_balance) === 0 && parseFloat(a2.reward_vesting_balance) === 0;
-          R.status = cleared ? 'CLAIMED-VERIFIED' : 'NO-READBACK';
-          R.claimed = { rs, sbd, rv };
+          row.status = cleared ? 'CLAIMED-VERIFIED' : 'NO-READBACK';
+          row.claimed = { rs, sbd, rv };
           cleared ? claimed++ : failed++;
-        } catch (e) { R.status = 'FAIL'; R.err = String(e.message || e).slice(0, 90); failed++; }
+        } catch (e) { row.status = 'FAIL'; row.err = String(e.message || e).slice(0, 90); failed++; }
       }
     }
-    results.push(R);
-    console.log(`[${R.status}] @${a.name}${R.pending ? ` pending=${R.pending.rs} ${R.pending.sbd} ${R.pending.rv} (≈${(parseFloat(R.pending.rs) + parseFloat(R.pending.rv) * ratio).toFixed(2)} SP)` : ''}`);
+    results.push(row);
+    console.log(`[${row.status}] @${refOf(a.name)}${row.pending ? ` pending=${row.pending.rs} ${row.pending.sbd} ${row.pending.rv} (≈${(parseFloat(row.pending.rs) + parseFloat(row.pending.rv) * ratio).toFixed(2)} SP)` : ''}`);
     await sleep(300);
   }
 
@@ -115,7 +119,7 @@ async function main() {
     results,
   };
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
-  fs.writeFileSync(OUT, JSON.stringify(receipt, null, 2));
+  fs.writeFileSync(OUT, refScrub(JSON.stringify(receipt, null, 2)));
   console.log(`[fleet-claim] DONE · claimed=${claimed} skip=${skipped} fail=${failed} · receipt → ${OUT}`);
 }
 main().catch(e => { console.error('[fleet-claim] fatal:', String(e.message || e).slice(0, 180)); process.exit(0); }); // fail-soft

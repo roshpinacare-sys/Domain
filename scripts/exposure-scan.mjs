@@ -22,6 +22,23 @@ const SIMA = ["סיסמת", "-האב"].join("");
 const HZ = ["/home", "/z/"].join("");
 const TR = ["trace-1a", "12"].join("");
 const TRHEX = ["1a12", "fff10c"].join("");
+// v3 (19-a): estate-name law — no estate account names anywhere in the public tree.
+// Distinctive tokens scan bare; short collision-prone tokens (wic/woq/wog/siq/tov/lsa)
+// are scrubbed by the engines' refs layer (agents/refs.mjs) and checked contextually here.
+const RX = (parts, flags = "i") => new RegExp(parts.map((p) => p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join(""), flags);
+const ESTATE_NAMES = [
+  { parts: ["cash", "machine"], why: "estate account name (fleet worker)" },
+  { parts: ["hcs", "oldier"], re: null, why: "estate account name (soldier fleet)" },
+  { parts: ["headc", "oner"], why: "estate account name (typo twin)" },
+  { parts: ["israel", "news"], why: "estate account name (fleet worker)" },
+  { parts: ["ha", "ran"], word: true, why: "estate account name (fleet worker)" },
+  { parts: ["y", "net"], word: true, why: "estate account name (retired)" },
+  { parts: ["corner", "stone"], word: true, why: "estate account name (legacy treasury)" },
+].map(({ parts, word, why }) => ({ re: word ? new RegExp("\\b" + RX(parts).source + "\\b", "i") : RX(parts), why }));
+// short tokens: only in identity-bearing contexts (@handle, quoted keys/values)
+// (macrame is also a legitimate craft topic in post bodies — identity contexts only)
+const SHORT_ESTATE = ["wic", "woq", "wog", "siq", "tov", "lsa", "macrame"]
+  .map((n) => ({ re: new RegExp("[@\"']" + n + "[@\"':,\\s\\])}]", "i"), why: "estate account handle (short token, identity context)" }));
 
 const FORBIDDEN_PATHS = [
   /^agent\/inspections\/INS-R\d+.*\.json$/,          // inspection receipts narrate custody
@@ -39,6 +56,8 @@ const FORBIDDEN_CONTENT = [
   { re: new RegExp(HC, "i"), why: "owner account handle (any case/inflection)" },
   { re: new RegExp(TOVH, "i"), why: "owner-only key identity" },
   { re: new RegExp(CASHM, "i"), why: "owner-tied account @handle in narrative" },
+  ...ESTATE_NAMES,
+  ...SHORT_ESTATE,
   { re: new RegExp(UPLOAD_HC, "i"), why: "key-file path" },
   { re: new RegExp(MP, "i"), why: "master-password narrative" },
   { re: new RegExp(MPH, "i"), why: "master-password classification label" },

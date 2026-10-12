@@ -8,7 +8,7 @@
  * so every account has a desk, a voice, and a role.
  *
  * מה-חדש ב-v2:
- *   · תוכן לכל-10 החיילים ברוטציה (v1 כיסה 6 — lsa/macrame/cashmachine/wog היו חסומים)
+ *   · תוכן לכל-10 החיילים ברוטציה (v1 כיסה 6 — ארבעה-שולחנות היו חסומים)
  *   · תוכן נתוני-אמת: מדידה-חיה לפני-פרסום (SP/VP/RC/כיסוי-האצלות) מוזרמת לתוכן —
  *     כל-מספר בפוסט הוא מספר-אמת שנמדד רגע-קודם, לא טענה-סטטית
  *   · תיקון-כנות: עדכון סטטוס-מפתחות-הראש (חיים מאז 2026-09-29)
@@ -23,6 +23,9 @@ const fs = require('fs');
 const path = require('path');
 const { execFileSync } = require('child_process');
 const steem = require('steem');
+const { R, refOf, scrub, resolved: refsResolved } = require('./refs.cjs');
+const REF_IDS = Array.from({ length: 20 }, (_, i) => 'acct-' + String(i).padStart(2, '0'));
+const refScrub = (t) => { let out = scrub(String(t)); if (refsResolved()) { for (const ref of REF_IDS) { const n = R(ref); if (n) out = out.replace(new RegExp('\\b' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'g'), ref); } } return out; };
 
 steem.api.setOptions({ url: 'https://api.steemit.com' });
 const ROOT = path.resolve(__dirname, '..');
@@ -143,7 +146,7 @@ function measuredLine(mode, sp, del, vpReady) {
 
 // ── מדידה-חיה: נתוני-אמת לתוכן ──
 async function measure() {
-  const FLEET = ['cashmachine', 'haran', 'israelnews', 'lsa', 'macrame', 'siq', 'tov', 'wic', 'wog', 'woq', 'owner'];
+  const FLEET = ['acct-01', 'acct-02', 'acct-03', 'acct-04', 'acct-05', 'acct-06', 'acct-07', 'acct-08', 'acct-09', 'acct-10', 'owner'].map(x => x.startsWith('acct-') ? R(x) : x).filter(Boolean);
   const g = await P(cb => steem.api.getDynamicGlobalProperties(cb));
   const ratio = parseFloat(g.total_vesting_fund_steem) / parseFloat(g.total_vesting_shares); // SP ל-VESTS
   const accts = await P(cb => steem.api.getAccounts(FLEET, cb));
@@ -232,7 +235,7 @@ function contentFor(who, day, ctx) {
   return { title: card.title, tags, body };
 }
 
-const ROTATION = ['haran', 'wic', 'woq', 'siq', 'tov', 'israelnews', 'lsa', 'macrame', 'cashmachine', 'wog'];
+const ROTATION = ['acct-02', 'acct-08', 'acct-10', 'acct-06', 'acct-07', 'acct-03', 'acct-04', 'acct-05', 'acct-01', 'acct-09'].map(x => x.startsWith('acct-') ? R(x) : x).filter(Boolean);
 
 async function main() {
   try { if (require('./capital-gate.cjs').stasisHalt('soldiers-blog')) return; } catch (e) { console.log('[CAPITAL-GATE] soldiers-blog — gate module error, lane halts fail-closed: ' + String(e.message || e).slice(0, 80)); return; }
@@ -264,48 +267,49 @@ async function main() {
   const pick = [];
   for (let i = 0; pick.length < POSTS_PER_DAY && i < ROTATION.length; i++) {
     const who = ROTATION[(doy + i) % ROTATION.length];
+    if (!who) { console.log('[refs] roster-unresolved — skipping a rotation slot (no chain identity, never broadcast a guess)'); continue; }
     if (keymap[who] && contentFor(who, day, ctx)) pick.push(who);
   }
-  console.log(`[soldiers-blog] day ${day} · rotation picks: ${pick.join(', ')}`);
+  console.log(`[soldiers-blog] day ${day} · rotation picks: ${pick.map(refOf).join(', ')}`);
 
   // שער-יומן: אל תפרסם פעמיים (permlink קבוע לפי-תאריך)
   const results = [];
   for (const who of pick) {
     const c = contentFor(who, day, ctx);
     const permlink = `saos-${who}-${day.replace(/-/g, '')}`;
-    const R = { author: who, permlink, title: c.title };
+    const row = { author: refOf(who), permlink: refScrub(permlink), title: c.title };
     try {
       const acc = (await rpc('condenser_api.get_accounts', [[who]]))[0];
       let rcPct = null;
       try { const rc = await rpc('rc_api.find_rc_accounts', { accounts: [who] }); const m = rc.rc_accounts[0].rc_manabar; rcPct = 100 * Number(m.current_mana) / Number(rc.rc_accounts[0].max_rc); } catch (_) {}
-      R.rcPct = rcPct == null ? null : Math.round(rcPct);
-      if (rcPct != null && rcPct < MIN_RC) { R.status = `SKIP-RC-LOW(${R.rcPct})`; }
+      row.rcPct = rcPct == null ? null : Math.round(rcPct);
+      if (rcPct != null && rcPct < MIN_RC) { row.status = `SKIP-RC-LOW(${row.rcPct})`; }
       else {
         const existing = await P(cb => steem.api.getContent(who, permlink, cb)).catch(() => null);
-        if (existing && existing.author) { R.status = 'SKIP-ALREADY-POSTED'; }
+        if (existing && existing.author) { row.status = 'SKIP-ALREADY-POSTED'; }
         else {
-          let pub; try { pub = steem.auth.wifToPublic(keymap[who]); } catch (e2) { R.status = 'SKIP-KEY-PARSE'; results.push(R); console.log(`[${R.status}] ${who}`); continue; }
-          const onchain = acc.posting.key_auths[0][0];
-          if (pub !== onchain) { R.status = 'SKIP-KEY-MISMATCH'; }
+        let pub; try { pub = steem.auth.wifToPublic(keymap[who]); } catch (e2) { row.status = 'SKIP-KEY-PARSE'; results.push(row); console.log(`[${row.status}] ${refOf(who)}`); continue; }
+        const onchain = acc.posting.key_auths[0][0];
+        if (pub !== onchain) { row.status = 'SKIP-KEY-MISMATCH'; }
           else {
             const ops = [['comment', { parent_author: '', parent_permlink: c.tags[0], author: who, permlink, title: c.title, body: c.body, json_metadata: JSON.stringify({ tags: c.tags, app: 'saos-soldiers-blog/3', format: 'markdown' }) }],
               ['comment_options', { author: who, permlink, max_accepted_payout: '1000000.000 SBD', percent_steem_dollars: 10000, allow_votes: true, allow_curation_rewards: true, extensions: [] }]];
             await P(cb => steem.broadcast.send({ operations: ops, extensions: [] }, [keymap[who]], cb));
             await sleep(2000);
             const chk = await P(cb => steem.api.getContent(who, permlink, cb));
-            R.status = (chk && chk.author === who) ? 'POSTED-VERIFIED' : 'BROADCAST-NO-READBACK';
-            R.url = `https://steemit.com/@${who}/${permlink}`;
+            row.status = (chk && chk.author === who) ? 'POSTED-VERIFIED' : 'BROADCAST-NO-READBACK';
+            row.url = `https://steemit.com/@${who}/${permlink}`;
           }
         }
       }
-    } catch (e) { R.status = 'FAIL'; R.err = String(e.message || e).slice(0, 100); }
-    results.push(R);
-    console.log(`[${R.status}] ${who} → ${R.url || permlink}`);
+    } catch (e) { row.status = 'FAIL'; row.err = String(e.message || e).slice(0, 100); }
+    results.push(row);
+    console.log(`[${row.status}] ${refOf(who)} → ${row.url || permlink}`);
     await sleep(500);
   }
   const receipt = { ok: true, tool: 'soldiers-blog.cjs', version: 3, doctrine: 'soldiers publish measured truth in their own English voice: verify-then-sign, keys in memory only, zero AI-telltale markers', at: t0, day, tally: { posted: results.filter(r => r.status === 'POSTED-VERIFIED').length, total: results.length }, results };
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
-  fs.writeFileSync(OUT, JSON.stringify(receipt, null, 2));
+  fs.writeFileSync(OUT, refScrub(JSON.stringify(receipt, null, 2)));
   console.log(`[soldiers-blog] DONE · receipt → ${OUT}`);
 }
 main().catch(e => { console.error('[soldiers-blog] fatal:', String(e.message || e).slice(0, 160)); process.exit(0); });

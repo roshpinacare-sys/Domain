@@ -64,7 +64,7 @@ The reported "RC block" was **our own stale-read bug**: rc_api returns a snapsho
 | Component | Measured |
 |---|---|
 | Public rejection counters | **383,836** edge skips · **130,499** rejections · 109,919µ leakage measured and settled |
-| Trading and PnL | 5,606 trades · **9,935,250µ** cumulative PnL to the treasury · 282 trades today · per-soldier PnL (wog +163,295µ) |
+| Trading and PnL | 5,606 trades · **9,935,250µ** cumulative PnL to the treasury · 282 trades today · per-soldier PnL (acct-09 +163,295µ) |
 | Backed floor ladder | 9 steps · every step with an exact µ backup in the records · ≤0.5% per step · floor 0.01688->0.017567 |
 | Fees | 30bps · 70% LP / 30% treasury · harvest rail with a public txid (`1d148959...`) |
 | Wrappers | **20 assets · supply==locked as an invariant** · mint cites the locking txid (WSTEEM `2ad481ac...`) · 9 TRC20 contracts verified live on TRON · mint-coverage ≤99% enforced |

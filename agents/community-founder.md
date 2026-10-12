@@ -8,7 +8,7 @@
 - חברים: 12 (admin: המפעיל, חיילים: member)
 - SP שהואצל ל-RC: 10
 - נוצרה: 2026-10-04T06:12:57.656Z · עמלה: 3.000 STEEM
-- txids: {"account_create:hive-177702":"201f2c3852…","delegate_vesting_shares:10SP":"1f1616b334…","setRole:admin:המפעיל":"201c29f519…","updateProps":"1f2c57b9e4…","setRole:member:wic":"1f38326d89…","setRole:member:haran":"201c5e8989…","setRole:member:israelnews":"200a78a76a…","setRole:member:siq":"2025dcfd09…","setRole:member:cashmachine":"1f4b7e68ff…","setRole:member:lsa":"2064a07977…","setRole:member:macrame":"1f17caedae…","setRole:member:woq":"1f6ad0387b…","setRole:member:tov":"20787921f6…","setRole:member:wog":"206c95d6d4…"}
+- txids: {"account_create:hive-177702":"201f2c3852…","delegate_vesting_shares:10SP":"1f1616b334…","setRole:admin:המפעיל":"201c29f519…","updateProps":"1f2c57b9e4…","setRole:member:acct-08":"1f38326d89…","setRole:member:acct-02":"201c5e8989…","setRole:member:acct-03":"200a78a76a…","setRole:member:acct-06":"2025dcfd09…","setRole:member:acct-01":"1f4b7e68ff…","setRole:member:acct-04":"2064a07977…","setRole:member:acct-05":"1f17caedae…","setRole:member:acct-10":"1f6ad0387b…","setRole:member:acct-07":"20787921f6…","setRole:member:acct-09":"206c95d6d4…"}
 
 ## שרשרת-האם (הוכחה חיה, R38)
 - פס-דין: STEEM-CHAIN

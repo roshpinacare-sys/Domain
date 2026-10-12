@@ -16,6 +16,9 @@
 const https = require('https');
 const fs = require('fs');
 const path = require('path');
+const { R, refOf, scrub, resolved: refsResolved } = require('./refs.cjs');
+const REF_IDS = Array.from({ length: 20 }, (_, i) => 'acct-' + String(i).padStart(2, '0'));
+const refScrub = (t) => { let out = scrub(String(t)); if (refsResolved()) { for (const ref of REF_IDS) { const n = R(ref); if (n) out = out.replace(new RegExp('\\b' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'g'), ref); } } return out; };
 
 const ROOT = path.resolve(__dirname, '..');
 const OUT_JSON = process.env.MATRIX_JSON || path.join(ROOT, 'agents', 'capability-matrix.json');
@@ -27,9 +30,9 @@ const NODES = {
   blurt: 'https://rpc.beblurt.com',
 };
 const PREFIX = { steem: 'STM', hive: 'STM', blurt: 'BLT' };
-const RETIRED = new Set(['ynet']);
+const RETIRED = new Set(['acct-19'].map(x => x.startsWith('acct-') ? R(x) : x).filter(Boolean));
 const HEAD = 'owner';
-const HIVE_SKIP = new Set(['tov']); // posting authority not ours (byte-verified 09-30)
+const HIVE_SKIP = new Set(['acct-07'].map(x => x.startsWith('acct-') ? R(x) : x).filter(Boolean)); // posting authority not ours (byte-verified 09-30)
 
 // capital floors for "worth calling idle" (dust does not count)
 const CAPITAL_FLOOR = {
@@ -268,12 +271,12 @@ function idleFlags({ chain, eff, liquid, vp, tally, postingOurs, activeOurs }) {
   ].join('\n');
 
   fs.mkdirSync(path.dirname(OUT_JSON), { recursive: true });
-  fs.writeFileSync(OUT_JSON, JSON.stringify(receipt, null, 1));
-  fs.writeFileSync(OUT_MD, md);
+  fs.writeFileSync(OUT_JSON, refScrub(JSON.stringify(receipt, null, 1)));
+  fs.writeFileSync(OUT_MD, refScrub(md));
   console.log(JSON.stringify({ state: 'ok', summary: receipt.summary }));
   process.exit(0);
 })().catch(e => {
-  try { fs.mkdirSync(path.dirname(OUT_JSON), { recursive: true }); fs.writeFileSync(OUT_JSON, JSON.stringify({ at: new Date().toISOString(), agent: 'capability-matrix', fatal: String(e.message || e).slice(0, 200) }, null, 1)); } catch (_) {}
+  try { fs.mkdirSync(path.dirname(OUT_JSON), { recursive: true }); fs.writeFileSync(OUT_JSON, refScrub(JSON.stringify({ at: new Date().toISOString(), agent: 'capability-matrix', fatal: String(e.message || e).slice(0, 200) }, null, 1))); } catch (_) {}
   console.log(JSON.stringify({ state: 'fail-soft', msg: String(e.message || e).slice(0, 160) }));
   process.exit(0);
 });

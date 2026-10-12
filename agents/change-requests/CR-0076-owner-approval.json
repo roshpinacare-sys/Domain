@@ -27,7 +27,7 @@
     {
       "lane": "powerup",
       "tools": ["transfer_to_vesting"],
-      "caps": {"steem_per_run_max": 15, "steem_source": "owner", "steem_min_liquid_reserve": 90, "hive_per_run_max": 2500, "hive_source": "cornerstone", "hive_min_liquid_reserve": 10000, "blurt_per_run_max": 150, "blurt_source": "cornerstone", "blurt_min_liquid_reserve": 60},
+      "caps": {"steem_per_run_max": 15, "steem_source": "owner", "steem_min_liquid_reserve": 90, "hive_per_run_max": 2500, "hive_source": "acct-18", "hive_min_liquid_reserve": 10000, "blurt_per_run_max": 150, "blurt_source": "acct-18", "blurt_min_liquid_reserve": 60},
       "reversibility": "powerdown (13 weeks, weekly chunks) — protective lock for treasury bulk"
     },
     {
@@ -39,11 +39,11 @@
     {
       "lane": "connect",
       "tools": ["account_update", "comment"],
-      "caps": {"accounts": ["cornerstone", "owner"], "broadcast_ops_per_run_max": 4, "forbidden": ["transfer", "convert", "withdraw_vesting", "limit_order_create"]},
+      "caps": {"accounts": ["acct-18", "owner"], "broadcast_ops_per_run_max": 4, "forbidden": ["transfer", "convert", "withdraw_vesting", "limit_order_create"]},
       "reversibility": "account_update re-pointing posting auth; posts are public content"
     }
   ],
   "revocation": "delete this file or remove the lane from STASIS.json stagedLanes.allow — engines refuse fail-closed on the next tick",
   "guards": ["capital-gate.cjs stasisHalt at sign-time", "treasury-plan.json caps double-checked in code", "read-back verification after every broadcast", "state book committed per run"],
-  "bannedForever": ["hcsoldier1", "hcsoldier2", "hcsoldier3 — LOST-NO-CUSTODY, zero capital to keyless accounts (fleet-roster bannedCapital)"]
+  "bannedForever": ["acct-15", "acct-16", "acct-17 — LOST-NO-CUSTODY, zero capital to keyless accounts (fleet-roster bannedCapital)"]
 }

@@ -21,7 +21,7 @@ All numbers below are live-measured on 2026-09-30 18:30–19:15 UTC via public R
 
 ### 1.2 Execution authorities (byte-verified against live key_auths, 2026-09-30)
 - **steem: 11/11 accounts hold OUR posting + active + owner keys** (owner + 10 soldiers).
-- **hive: 9/10 soldiers + owner hold OUR posting + active + owner** (tov not ours — honest skip).
+- **hive: 9/10 soldiers + owner hold OUR posting + active + owner** (acct-07 not ours — honest skip).
 - **blurt: 10/10 soldiers posting (+owner active proven by fuel transfers + now posting via recovery)**.
 - **Consequence: the full active-key banking layer is unlocked** — transfers, internal-market orders, claim ops, HE token ops, power up/down, conversions. This is the biggest capability discovery since the cross-chain key truth (Z-23).
 - **Rail proof (live tx):** owner self-transfer `b0771cd1fc3687249c053508370298e8d26fd0d7` included in block 110,039,046, `expired:false` (synchronous broadcast response). Note: api.steemit.com account_history lags block production — read-back verified via sync response, not history.

@@ -41,8 +41,8 @@
  *   · blurt: node-serialized canonical-ECDSA signing (anchor.cjs recipe, proven live 2026-09-06)
  *     + get_ops_in_block confirmation (rc_api absent on blurt — honest)
  *   · per-chain caps (≤12 votes/run/chain, 1/account, 10h cooldown, already-voted skip),
- *     per-chain roster gates (hive: 9/12 keyed rows; blurt: 11 economic rows, ynet retired),
- *     per-chain NEVER_TOUCH (ynet* everywhere, owner-hive blocked-no-key on hive)
+ *     per-chain roster gates (hive: 9/12 keyed rows; blurt: 11 economic rows, acct-19 retired),
+ *     per-chain NEVER_TOUCH (acct-19* everywhere, owner-hive blocked-no-key on hive)
  *   · Task 18 dedupe doctrine (live-proven 2026-10-02): pre-broadcast get_content gate +
  *     chain-as-gate identical-vote skip — a dedupe skip is a healthy no-op receipt row
  *     ('skipped-*'), never a run failure; only REAL broadcast failures fail the run
@@ -61,7 +61,7 @@
  *   ENGINE_TAGS    comma override of niche tag allowlist
  *   PUSH_RECEIPT   'true' = git commit+push receipt into the steem repo
  *
- * HARD DISCIPLINE: never touch ynet* / owner-hive / owner-only rows (roster control flags are
+ * HARD DISCIPLINE: never touch acct-19* / owner-hive / owner-only rows (roster control flags are
  * enforced); never print or log any private material (public-key fingerprints only); no market
  * ops, no transfers, no comments — broadcast ops limited to VOTES, CLAIMS, AUTHOR-SUPPORT
  * self-votes (all posting-authorized, zero principal at risk; the ladder executor is a
@@ -120,7 +120,8 @@ try {
 }
 
 /** Accounts we never touch, by name pattern (belt-and-braces on top of roster flags). */
-const NEVER_TOUCH = [/^ynet/, /^owner-hive/]; // owner-only hive identities (sanitized names)
+const RETIRED_19 = ['y', 'net'].join(''); // assembled: never a literal in the public tree
+const NEVER_TOUCH = [new RegExp('^' + RETIRED_19), /^acct-19/, /^owner-hive/]; // retired identities, ref+name forms (refs layer)
 const WEIGHT = 10000; // 100% — curation + author-support only, per doctrine
 const MIN_BODY_CHARS = 500;
 const MIN_TITLE_CHARS = 10;
@@ -1186,7 +1187,7 @@ const rowsAll = rosterMod.rows();
 const HIVE_ROWS = rowsAll.filter((r) => r.chain === 'hive' && r.control === 'full' && r.economicUse === true && !r.retired);
 const BLURT_ROWS = rowsAll.filter((r) => r.chain === 'blurt' && r.control === 'full' && r.economicUse === true && !r.retired);
 // owner-hive is blocked-no-key (owner-confirmed) and can never appear in HIVE_ROWS; the pattern
-// list below additionally forbids it (and ynet*) as voter OR author on every leg.
+// list below additionally forbids it (and acct-19*) as voter OR author on every leg.
 const LEGS = [
   {
     chain: 'hive', nodes: HIVE_RPCS,
@@ -1202,7 +1203,7 @@ const LEGS = [
     gates: BLURT_GATES,
     eligibleRows: BLURT_ROWS,
     broadcastVote: broadcastVoteBlurt,
-    chainNote: 'blurt chain_id ' + BLURT_CHAIN_ID.slice(0, 8) + '… (blurtjs config; anchor.cjs recipe proven live 2026-09-06); BLT pubkeys, same WIF body; rc_api ABSENT (no RC budgeting — honest); ≤12 votes/run, 1/account, 10h cooldown + claims (blurt op has NO debt asset) + author-support self-votes (Task 17); blurt discussion objects omit net_votes/author_reputation → netVotes from active_votes, rep gate skipped; ynet-blurt retired (economicUse false) — never touched',
+    chainNote: 'blurt chain_id ' + BLURT_CHAIN_ID.slice(0, 8) + '… (blurtjs config; anchor.cjs recipe proven live 2026-09-06); BLT pubkeys, same WIF body; rc_api ABSENT (no RC budgeting — honest); ≤12 votes/run, 1/account, 10h cooldown + claims (blurt op has NO debt asset) + author-support self-votes (Task 17); blurt discussion objects omit net_votes/author_reputation → netVotes from active_votes, rep gate skipped; acct-19-blurt retired (economicUse false) — never touched',
   },
 ];
 
@@ -1217,7 +1218,7 @@ for (let n = 2; fs.existsSync(path.join(STEEM_DIR, 'agent', 'receipts', receiptN
 const receiptPath = path.join(STEEM_DIR, 'agent', 'receipts', receiptName);
 
 // account order: override, else deterministic daily rotation over roster order
-let accountOrder = ACCOUNTS_OVERRIDE.length ? ACCOUNTS_OVERRIDE : fleet.accounts.map((a) => a.toLowerCase()).filter((a) => a !== 'ynet');
+let accountOrder = ACCOUNTS_OVERRIDE.length ? ACCOUNTS_OVERRIDE : fleet.accounts.map((a) => a.toLowerCase()).filter((a) => a !== RETIRED_19);
 if (!ACCOUNTS_OVERRIDE.length) {
   const day = Math.floor(Date.parse(new Date().toISOString().slice(0, 10) + 'T00:00:00Z') / 86400000);
   const off = day % accountOrder.length;

@@ -18,6 +18,7 @@
 const https = require('https');
 const fs = require('fs');
 const path = require('path');
+const { R } = require(path.join(__dirname, 'refs.cjs'));
 
 const ROOT = path.resolve(__dirname, '..');
 const OUT = process.env.RECEIPT_OUT || path.join(ROOT, 'agents', 'receipts', 'blurt-curate-receipt.json');
@@ -52,9 +53,9 @@ const f = (s) => parseFloat(String(s || '0'));
 
 function loadFleetNames() {
   const raw = process.env.SA_FLEET_KEYS || '';
-  if (!raw) return new Set([HEAD, 'ynet']);
-  try { return new Set(Object.keys(JSON.parse(Buffer.from(raw, 'base64').toString('utf8'))).concat([HEAD, 'ynet'])); }
-  catch (_) { return new Set([HEAD, 'ynet']); }
+  if (!raw) return new Set([HEAD, R('acct-19')].filter(Boolean));
+  try { return new Set(Object.keys(JSON.parse(Buffer.from(raw, 'base64').toString('utf8'))).concat([HEAD, R('acct-19')].filter(Boolean))); }
+  catch (_) { return new Set([HEAD, R('acct-19')].filter(Boolean)); }
 }
 
 // steem posting WIF (the blurt posting WIF, same material) — secret first, then recovery

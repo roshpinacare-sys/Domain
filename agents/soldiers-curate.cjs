@@ -29,14 +29,18 @@ const path = require('path');
 const { execFileSync } = require('child_process');
 const https = require('https');
 const steem = require('steem');
+const { R, refOf, scrub, resolved: refsResolved } = require('./refs.cjs');
+const REF_IDS = Array.from({ length: 20 }, (_, i) => 'acct-' + String(i).padStart(2, '0'));
+const refScrub = (t) => { let out = scrub(String(t)); if (refsResolved()) { for (const ref of REF_IDS) { const n = R(ref); if (n) out = out.replace(new RegExp('\\b' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'g'), ref); } } return out; };
 
 steem.api.setOptions({ url: 'https://api.steemit.com' });
 const ROOT = path.resolve(__dirname, '..');
 const OUT_JSON = path.join(ROOT, 'agents', 'curation-book.json');
 const OUT_MD = path.join(ROOT, 'agents', 'curation-book.md');
 
-const SOLDIERS = ['cashmachine', 'haran', 'israelnews', 'lsa', 'macrame', 'siq', 'tov', 'wic', 'wog', 'woq'];
+const SOLDIERS = ['acct-01', 'acct-02', 'acct-03', 'acct-04', 'acct-05', 'acct-06', 'acct-07', 'acct-08', 'acct-09', 'acct-10'].map(x => x.startsWith('acct-') ? R(x) : x).filter(Boolean);
 const FLEET = SOLDIERS.concat(['owner']);
+if (!refsResolved()) console.log('[refs] roster-unresolved — soldier refs unresolved; curation votes are skipped this run (fail-honest, never guessed)');
 const VOTE_WEIGHT = 10000;           // 100% (≈2% VP at soldier scale)
 const MAX_VOTES_PER_SOLDIER = Number(process.env.MAXVOTES || 2);
 const MIN_RC_PCT = 25;
@@ -131,13 +135,13 @@ async function main() {
   } catch (_) {}
   const t0 = new Date().toISOString();
   // INCIDENT (2026-10-02, chain-verified): the first run of this desk cast 41 votes
-// (cashmachine 14, haran 14, israelnews 13) at 100% weight — the read-back rpc
+// (the three heaviest voters cast 14/14/13) at 100% weight — the read-back rpc
 // asserted (4-arg get_account_history) so cast-counting never advanced and the
 // pre-fix quality band admitted template bots. Votes are irrevocable; VP regen
 // restores in ~5d. Recorded here as standing evidence; fixes: 3-arg read-back,
 // attempt-counting law, REP_FLOOR 35, MIN_ACTIVE_VOTES 3, BOT_RX fingerprints,
 // DRYRUN gate before any live run. This book therefore opens in debt, honestly.
-const INCIDENT = { at: '2026-10-02T11:41-11:48Z', what: 'read-back-throws repeat-cast loop + weak bot filter', cast: 41, perSoldier: { cashmachine: 14, haran: 14, israelnews: 13 }, corrected: '3-arg read-back, attempts-count, quality band, DRYRUN gate' };
+const INCIDENT = { at: '2026-10-02T11:41-11:48Z', what: 'read-back-throws repeat-cast loop + weak bot filter', cast: 41, perSoldier: { [R('acct-01') || 'acct-01']: 14, [R('acct-02') || 'acct-02']: 14, [R('acct-03') || 'acct-03']: 13 }, corrected: '3-arg read-back, attempts-count, quality band, DRYRUN gate' };
 const book0 = (() => { try { return JSON.parse(fs.readFileSync(OUT_JSON, 'utf8')); } catch (_) { return { votes: [] }; } })();
   const cutoff = Date.now() - DEDUPE_DAYS * 864e5;
   const recentVotes = (book0.votes || []).filter((v) => v.status !== 'DRYRUN-CANDIDATE' && Date.parse(v.at || 0) > cutoff); // dry-run rows are inspection, not casts
@@ -267,7 +271,7 @@ const book0 = (() => { try { return JSON.parse(fs.readFileSync(OUT_JSON, 'utf8')
       await sleep(5000);
     }
     R.status = R.status || (cast > 0 ? (DRYRUN ? `DRYRUN-${cast}` : `CAST-${cast}`) : 'NO-CANDIDATE');
-    console.log(`[${R.status}] ${who} lane=${R.lane} sp=${R.sp} picks=${R.picks.length}`);
+    console.log(`[${R.status}] ${refOf(who)} lane=${R.lane} sp=${R.sp} picks=${R.picks.length}`);
   }
 
   const book = {
@@ -281,12 +285,12 @@ const book0 = (() => { try { return JSON.parse(fs.readFileSync(OUT_JSON, 'utf8')
   // markdown face
   const lines = [`# Soldiers curation book · ${book.day}`, '', `run ${t0} · verified ${book.tally.verified}/${book.tally.attempted} · keys ${book.tally.soldiersWithKey}/10`, '', `> INCIDENT 2026-10-02: first run cast 41 repeat votes (read-back-throws loop + weak bot filter) — standing evidence, corrected in v1.1`, ''];
   for (const r of results) {
-    lines.push(`- **${r.voter}** (${r.lane}, ${r.sp == null ? '?' : r.sp} SP) — ${r.status}${r.rcPct != null ? ` rc=${r.rcPct}%` : ''}`);
+    lines.push(`- **${refOf(r.voter)}** (${r.lane}, ${r.sp == null ? '?' : r.sp} SP) — ${r.status}${r.rcPct != null ? ` rc=${r.rcPct}%` : ''}`);
     for (const p of r.picks) lines.push(`  - ${p.status} @${p.author} ${p.permlink} w=${p.weight} score=${p.score || '-'}${p.trx ? ` trx=${p.trx}` : ''}${p.err ? ` err=${p.err}` : ''}`);
   }
   fs.mkdirSync(path.dirname(OUT_JSON), { recursive: true });
-  fs.writeFileSync(OUT_JSON, JSON.stringify(book, null, 2));
-  fs.writeFileSync(OUT_MD, lines.join('\n') + '\n');
+  fs.writeFileSync(OUT_JSON, refScrub(JSON.stringify(book, null, 2)));
+  fs.writeFileSync(OUT_MD, refScrub(lines.join('\n') + '\n'));
   console.log(`[soldiers-curate] DONE · verified ${book.tally.verified}/${book.tally.attempted} → curation-book.json/.md`);
 }
 

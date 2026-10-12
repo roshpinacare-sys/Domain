@@ -17,13 +17,15 @@
 
 import fs from "fs";
 import { fileURLToPath } from "url";
+import { scrub } from "../agents/refs.mjs";
 
-/* ── כתובות-ההפקדה: ארנקי-הצבא (רשומים-על-שרשרת-הרשת, בעלות-האוצר) ── */
+/* ── כתובות-ההפקדה: ארנקי-הצבא (רשומים-על-שרשרת-הרשת, בעלות-האוצר) ──
+ * (הכתובות פומביות-מטבען; הקישור כתובת←חשבון נשמר במפה-הפרטית בלבד) */
 const ADDR = {
-  tron: "TVESRr1TX1RaKzsN6TKszutJBFDPEGPx1e", // ynet · USDT/USDC-TRC20 + TRX
-  evm: "0x9978ab0f642bbf0b75e92db0e639ee863e053ac4", // woq · USDT/USDC-ERC20
-  sol: "8SGkrAjepscF3ttD5UzxyFwX8DgREUBD3cjNe5ZEmnCk", // wog · USDT/USDC-SPL + SOL
-  btc: "bc1qpgfuznfxncqqvs3j20p3p38kesu4ljsqhha58c", // wic · BTC
+  tron: "TVESRr1TX1RaKzsN6TKszutJBFDPEGPx1e", // estate deposit address · USDT/USDC-TRC20 + TRX
+  evm: "0x9978ab0f642bbf0b75e92db0e639ee863e053ac4", // estate deposit address · USDT/USDC-ERC20
+  sol: "8SGkrAjepscF3ttD5UzxyFwX8DgREUBD3cjNe5ZEmnCk", // estate deposit address · USDT/USDC-SPL + SOL
+  btc: "bc1qpgfuznfxncqqvs3j20p3p38kesu4ljsqhha58c", // estate deposit address · BTC
 };
 
 const TRC20 = {
@@ -223,7 +225,7 @@ ledger.deposits = ledger.deposits
   .sort((a, b) => (b.ts ?? 0) - (a.ts ?? 0))
   .slice(0, CAP);
 ledger.updatedAt = new Date().toISOString();
-fs.writeFileSync(DEPOSITS_FILE, JSON.stringify(ledger, null, 1));
+fs.writeFileSync(DEPOSITS_FILE, scrub(JSON.stringify(ledger, null, 1)));
 
 const watch = {
   publishedAt: new Date().toISOString(),
@@ -235,6 +237,6 @@ const watch = {
   note: "keyless public watcher - reads public RPCs, writes the open deposit book; the dex heart matches signed claims against this book and credits USDS",
   ...(evmHead ? { lastEvmBlock: evmHead } : {}),
 };
-fs.writeFileSync(WATCH_FILE, JSON.stringify(watch, null, 1));
+fs.writeFileSync(WATCH_FILE, scrub(JSON.stringify(watch, null, 1)));
 console.log(`[dex-watch] ${((Date.now() - t0) / 1000).toFixed(1)}s · total ${ledger.deposits.length} · fresh ${fresh.length} · ${JSON.stringify(status)}`);
 for (const f of fresh.slice(0, 10)) console.log(`  + ${f.asset} ${f.amount} @${f.chain} ${String(f.txid).slice(0, 16)}…`);

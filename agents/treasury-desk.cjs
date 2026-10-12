@@ -14,6 +14,9 @@ const steem = require('steem');
 const https = require('https');
 const fs = require('fs');
 const path = require('path');
+const { R, refOf, scrub, resolved: refsResolved } = require('./refs.cjs');
+const REF_IDS = Array.from({ length: 20 }, (_, i) => 'acct-' + String(i).padStart(2, '0'));
+const refScrub = (t) => { let out = scrub(String(t)); if (refsResolved()) { for (const ref of REF_IDS) { const n = R(ref); if (n) out = out.replace(new RegExp('\\b' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'g'), ref); } } return out; };
 
 steem.api.setOptions({ url: 'https://api.steemit.com' });
 const ROOT = path.resolve(__dirname, '..');
@@ -31,7 +34,8 @@ const HIVE_TAGS = ['life', 'blog', 'photography', 'food', 'travel', 'story', 'na
 const CUR_VOTE_MAX_HIVE = 2;
 const HIVE_MIN_REP = 40;   // Z-33 calibrated: the hive 'created' feed is small-account heavy; 55 zeroed all 20 candidates. 40 still requires raw rep ≥ ~4.6e10.
 const HIVE_MAX_AGE_MIN = 480;
-const RETIRED = new Set(['ynet']);
+const RETIRED = new Set(['acct-19'].map(x => x.startsWith('acct-') ? R(x) : x).filter(Boolean));
+const HIVE_SKIP_T = R('acct-07'); // posting authority not ours on hive (byte-verified 09-30)
 const HEAD = 'owner';
 const TRON_CUSTODY = 'TYVwwuvdDmfy3shxT3cb3RKLrRCshaZxTy';
 // curation policy: bounded, quality-gated, VP-gated
@@ -471,7 +475,7 @@ async function headCurateBlurt(headWif) {
 
   // ---- BOOK ----
   try { receipt.book.steem = await chainBook('steem', STEEM_NODE, [HEAD, ...soldiers]); } catch (e) { receipt.book.steem = { error: String(e.message || e).slice(0, 100) }; }
-  try { receipt.book.hive = await chainBook('hive', HIVE_NODE, [HEAD, ...soldiers.filter(n => n !== 'tov')]); } catch (e) { receipt.book.hive = { error: String(e.message || e).slice(0, 100) }; }
+  try { receipt.book.hive = await chainBook('hive', HIVE_NODE, [HEAD, ...soldiers.filter(n => n !== HIVE_SKIP_T)]); } catch (e) { receipt.book.hive = { error: String(e.message || e).slice(0, 100) }; }
   try { receipt.book.blurt = await chainBook('blurt', BLURT_NODE, [HEAD, ...soldiers]); } catch (e) { receipt.book.blurt = { error: String(e.message || e).slice(0, 100) }; }
   try { receipt.book.tron = await tronBook(); } catch (_) { receipt.book.tron = { error: 'x' }; }
   try { receipt.book.hiveEngine = await heBook([HEAD, ...soldiers]); } catch (_) {}
@@ -481,7 +485,7 @@ async function headCurateBlurt(headWif) {
   try { receipt.claims.push(...await claimChain({ chain: 'blurt', node: BLURT_NODE, chainId: BLURT_CHAIN_ID, names: [HEAD, ...soldiers], keys })); } catch (e) { receipt.claims.push({ chain: 'blurt', op: 'ERR', msg: String(e.message || e).slice(0, 90) }); }
 
   // ---- HEAD CURATION (steem) ----
-  try { receipt.curation = await headCurate(headPosting, new Set([HEAD, ...soldiers, 'ynet', 'tov'])); }
+  try { receipt.curation = await headCurate(headPosting, new Set([HEAD, ...soldiers, ...RETIRED, HIVE_SKIP_T].filter(Boolean))); }
   catch (e) { receipt.curation = [{ op: 'ERR', msg: String(e.message || e).slice(0, 100) }]; }
   try { receipt.curationBlurt = await headCurateBlurt(headPosting); }
   catch (e) { receipt.curationBlurt = [{ op: 'ERR', msg: String(e.message || e).slice(0, 100) }]; }
@@ -508,11 +512,11 @@ async function headCurateBlurt(headWif) {
   };
   let ledger = { updated: receipt.at, book, history: [] };
   try { const prev = JSON.parse(fs.readFileSync(LEDGER, 'utf8')); ledger.history = (prev.history || []).slice(-29); const pb = prev.book || {}; ledger.history.push({ at: prev.updated, headSteemLiquid: pb.headSteemLiquid, headSteemStake: pb.headSteemStake, curated: pb.curated, claimsDone: pb.claimsDone }); } catch (_) {}
-  fs.writeFileSync(LEDGER, JSON.stringify(ledger, null, 1));
+  fs.writeFileSync(LEDGER, refScrub(JSON.stringify(ledger, null, 1)));
 
   // receipt
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
-  fs.writeFileSync(OUT, JSON.stringify(receipt, null, 1));
+  fs.writeFileSync(OUT, refScrub(JSON.stringify(receipt, null, 1)));
   console.log(JSON.stringify({
     state: 'ok',
     headSteem: receipt.book.steem && receipt.book.steem.head ? receipt.book.steem.head.liquid : null,
@@ -524,7 +528,7 @@ async function headCurateBlurt(headWif) {
   }));
   process.exit(0);
 })().catch(e => {
-  try { fs.mkdirSync(path.dirname(OUT), { recursive: true }); fs.writeFileSync(OUT, JSON.stringify({ at: new Date().toISOString(), agent: 'treasury-desk', fatal: String(e.message || e).slice(0, 200) }, null, 1)); } catch (_) {}
+  try { fs.mkdirSync(path.dirname(OUT), { recursive: true }); fs.writeFileSync(OUT, refScrub(JSON.stringify({ at: new Date().toISOString(), agent: 'treasury-desk', fatal: String(e.message || e).slice(0, 200) }, null, 1))); } catch (_) {}
   console.log(JSON.stringify({ state: 'fail-soft', msg: String(e.message || e).slice(0, 160) }));
   process.exit(0);
 });

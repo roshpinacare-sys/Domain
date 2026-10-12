@@ -14,12 +14,16 @@ const fs = require('fs');
 const path = require('path');
 const { execFileSync } = require('child_process');
 const steem = require('steem');
+const { R, refOf, scrub, resolved: refsResolved } = require('./refs.cjs');
+const REF_IDS = Array.from({ length: 20 }, (_, i) => 'acct-' + String(i).padStart(2, '0'));
+const refScrub = (t) => { let out = scrub(String(t)); if (refsResolved()) { for (const ref of REF_IDS) { const n = R(ref); if (n) out = out.replace(new RegExp('\\b' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'g'), ref); } } return out; };
 
 steem.api.setOptions({ url: 'https://api.steemit.com', useAppbaseApi: false });
 
 const ROOT = path.resolve(__dirname, '..');
 const OUT = process.env.RECEIPT_OUT || path.join(ROOT, 'agent', 'self-audience-receipt.json');
-const FLEET = ['cashmachine','haran','israelnews','lsa','macrame','siq','tov','wic','wog','woq','owner']; // 11 — ynet פרש 2026-09-29 (החלטת-ריבון: אין-מפתח, מוותרים)
+const FLEET = ['acct-01', 'acct-02', 'acct-03', 'acct-04', 'acct-05', 'acct-06', 'acct-07', 'acct-08', 'acct-09', 'acct-10', 'owner'].map(x => x.startsWith('acct-') ? R(x) : x).filter(Boolean); // 11 — one operator retired 2026-09-29 (sovereign decision: no key, waived)
+if (!refsResolved()) console.log('[refs] roster-unresolved — fleet refs unresolved; vote work is skipped this run (fail-honest, never guessed)');
 const MIN_VP = 20;   // סף-כוח-הצבעה (%)
 const MIN_RC = 30;   // סף-RC (%)
 const SOLDIER_WEIGHT = 10000; // חיילים: 100% (SP-אבק — מקסום-אות)
@@ -128,10 +132,10 @@ async function main() {
         const ageDays = (now - Date.parse(p.created + 'Z')) / 864e5;
         if (ageDays >= 0 && ageDays <= 7) posts.push({ author: p.author, permlink: p.permlink, created: p.created, votes: p.active_votes.map(v => v.voter) });
       }
-    } catch (e) { console.log(`[self-aud] ${ac} feed error: ${String(e.message || e).slice(0, 60)}`); }
+    } catch (e) { console.log(`[self-aud] ${refOf(ac)} feed error: ${String(e.message || e).slice(0, 60)}`); }
   }
   console.log(`[self-aud] live posts (7d): ${posts.length}`);
-  posts.forEach(p => console.log(`   · ${p.author}/${p.permlink.slice(0, 40)} (${p.votes.length} votes)`));
+  posts.forEach(p => console.log(`   · ${refOf(p.author)}/${p.permlink.slice(0, 40)} (${p.votes.length} votes)`));
 
   // ── 3. מטריצת-הצבעה ──
   const jobs = [];
@@ -171,7 +175,7 @@ async function main() {
       }
     }
     results.push(R);
-    console.log(`[${R.status}] ${j.voter} → ${j.author}/${j.permlink.slice(0, 32)} w=${j.weight}`);
+    console.log(`[${R.status}] ${refOf(j.voter)} → ${refOf(j.author)}/${j.permlink.slice(0, 32)} w=${j.weight}`);
     await sleep(300);
   }
 
@@ -183,7 +187,7 @@ async function main() {
     results,
   };
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
-  fs.writeFileSync(OUT, JSON.stringify(receipt, null, 2));
+  fs.writeFileSync(OUT, refScrub(JSON.stringify(receipt, null, 2)));
   fs.chmodSync(OUT, 0o644);
   console.log(`[self-aud] DONE · voted=${ok} skip=${skip} fail=${fail} · receipt → ${OUT}`);
 }

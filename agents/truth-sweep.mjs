@@ -20,9 +20,13 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
+import { R, refOf, scrub, resolved as refsResolved } from './refs.mjs';
+
+const REF_IDS = Array.from({ length: 20 }, (_, i) => 'acct-' + String(i).padStart(2, '0'));
+const refScrub = (t) => { let out = scrub(String(t)); if (refsResolved()) { for (const ref of REF_IDS) { const n = R(ref); if (n) out = out.replace(new RegExp('\\b' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'g'), ref); } } return out; };
 
 const RPC = 'https://api.steemit.com';
-const FLEET = ['cashmachine', 'haran', 'israelnews', 'lsa', 'macrame', 'siq', 'tov', 'wic', 'wog', 'woq', 'owner'];
+const FLEET = ['acct-01', 'acct-02', 'acct-03', 'acct-04', 'acct-05', 'acct-06', 'acct-07', 'acct-08', 'acct-09', 'acct-10', 'owner'].map(x => x.startsWith('acct-') ? R(x) : x).filter(Boolean);
 const TRUTH_URL = (process.env.TRUTH_URL || 'http://localhost:3000').replace(/\/$/, '');
 const OUT = process.env.RECEIPT_OUT || path.resolve('agents/receipts/truth-sweep-receipt.json');
 const STALE_DRIFT = Number(process.env.STALE_DRIFT || 0.15);
@@ -230,21 +234,22 @@ function verdictForStatus(hit, item, truth) {
 
   for (const item of items) {
     const { claims, statusHits, text } = extractClaims(item);
+    const refAuthor = refOf(item.author);
     for (const c of claims) {
       const ctx = text.slice(Math.max(0, c.at - 70), c.at + 70);
       const v = verdictFor(c, truth, ctx);
       receipt.claims.push({
-        author: item.author, permlink: item.permlink, kind: item.kind, created: item.created,
+        author: refAuthor, permlink: refScrub(item.permlink), kind: item.kind, created: item.created,
         claim: c.raw, type: c.type, verdict: v.verdict, why: v.why, context: ctx.replace(/\s+/g, ' '),
-        url: `https://steemit.com/@${item.author}/${item.permlink}`,
+        url: `https://steemit.com/@${refAuthor}/${item.permlink}`,
       });
     }
     for (const h of statusHits) {
       const v = verdictForStatus(h, item, truth);
       receipt.claims.push({
-        author: item.author, permlink: item.permlink, kind: item.kind, created: item.created,
+        author: refAuthor, permlink: refScrub(item.permlink), kind: item.kind, created: item.created,
         claim: h.raw, type: 'status', verdict: v.verdict, why: v.why,
-        url: `https://steemit.com/@${item.author}/${item.permlink}`,
+        url: `https://steemit.com/@${refAuthor}/${item.permlink}`,
       });
     }
   }
@@ -253,7 +258,7 @@ function verdictForStatus(hit, item, truth) {
   for (const c of receipt.claims) summary[c.verdict] = (summary[c.verdict] || 0) + 1;
   receipt.summary = { claimsTotal: receipt.claims.length, ...summary };
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
-  fs.writeFileSync(OUT, JSON.stringify(receipt, null, 1));
+  fs.writeFileSync(OUT, refScrub(JSON.stringify(receipt, null, 1)));
   console.log(JSON.stringify({ state: 'ok', summary: receipt.summary, sources: receipt.sources }));
 })().catch(e => {
   console.log(JSON.stringify({ state: 'fail-soft', msg: String(e.message || e).slice(0, 160) }));

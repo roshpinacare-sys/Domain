@@ -4,8 +4,8 @@ Updated: 2026-10-12T12:56:29.133Z UTC. Read-only; derived from live key_auths + 
 
 ## Posting authority: OURS (byte-verified per run)
 
-- steem: 11 accounts [cashmachine, haran, israelnews, lsa, macrame, siq, tov, wic, wog, woq, owner-treasury]
-- hive: 9 accounts [cashmachine, haran, israelnews, lsa, macrame, siq, wic, wog, woq]
+- steem: 11 accounts [acct-01, acct-02, acct-03, acct-04, acct-05, acct-06, acct-07, acct-08, acct-09, acct-10, owner-treasury]
+- hive: 9 accounts [acct-01, acct-02, acct-03, acct-04, acct-05, acct-06, acct-08, acct-09, acct-10]
 - blurt: 0 accounts []
 
 ## Active authority: OURS (banking layer, byte-verified per run)

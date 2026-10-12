@@ -48,7 +48,7 @@ const sha256b = (b) => createHash("sha256").update(b).digest();
 
 // ---------- pubkey derivation ----------
 let secp = null;
-for (const p of ["@noble/secp256k1", "file:///home/z/estate/steem/mini-services/saos-engine/node_modules/@noble/secp256k1/index.js"]) {
+for (const p of ["@noble/secp256k1", process.env.NOBLE_SECP256K1_PATH, P("file://", homedir(), "/estate/steem/mini-services/saos-engine/node_modules/@noble/secp256k1/index.js")].filter(Boolean)) {
   try { secp = await import(p); break; } catch {}
 }
 if (!secp) { console.log("FATAL: no secp256k1 lib — run `bun add @noble/secp256k1` in this repo"); process.exit(0); }
@@ -109,6 +109,18 @@ try {
   walk(v, "");
   vaultAccounts = (v.accounts || []).map(a => ({ name: (a.username || a.name || "?").toLowerCase(), mode: a.mode || "?" }));
 } catch {}
+
+// ---------- pseudonym refs (exposure law: no account-name maps in committed receipts or public logs) ----------
+// Stable refs derive from vault order (deterministic on the same machine); the true-name
+// mapping never leaves this process — the receipt/proofs stay readable per vault index.
+const REFS = new Map();
+function ref(name) {
+  if (!REFS.has(name)) REFS.set(name, "acct-" + String(REFS.size).padStart(2, "0"));
+  return REFS.get(name);
+}
+function refHits(hits) {
+  return hits.map((h) => { const [ch, acct, role] = h.split(":"); return ch + ":" + ref(acct) + ":" + role; });
+}
 if (existsSync(ESTATE_ENV)) {
   for (const ln of readFileSync(ESTATE_ENV, "utf8").split(/\r?\n/)) {
     const m = ln.match(/^([A-Za-z_0-9]+)=(.*)$/);
@@ -153,7 +165,7 @@ for (const s of secrets) {
   const hits = [];
   for (const ch of Object.keys(live)) for (const acct of Object.keys(live[ch])) for (const role of Object.keys(live[ch][acct]))
     if (live[ch][acct][role].includes(pub)) hits.push(`${ch}:${acct}:${role}`);
-  if (hits.length) matchLines.push(`${s.label} pub:${pub.slice(0, 12)}… → ${hits.join(", ")}`);
+  if (hits.length) matchLines.push(`${s.label} pub:${pub.slice(0, 12)}… → ${refHits(hits).join(", ")}`);
 }
 console.log(matchLines.length ? "HELD AUTHORITY:\n  " + matchLines.join("\n  ") : "HELD AUTHORITY: none of the decoded keys control any live account");
 
@@ -168,7 +180,7 @@ for (const acct of vaultAccounts.filter(a => a.mode.includes("password"))) {
         const seed = sha256b(Buffer.from(acct.name + role + c.val));
         if (live[ch][acct.name][role].includes(chainPub(seed))) matched.push(role);
       }
-      if (matched.length) loginProofs.push(`STEEMIT-LOGIN ${c.label} → ${ch}:${acct.name} ${matched.join(",")} (law: sha256(name+role+password))`);
+      if (matched.length) loginProofs.push(`STEEMIT-LOGIN ${c.label} → ${ch}:${ref(acct.name)} ${matched.join(",")} (law: sha256(name+role+password))`);
     }
   }
 }
@@ -186,17 +198,17 @@ try {
 } catch {}
 console.log(gateProof);
 
-// ---------- receipt (labels/fingerprints only; account names are public chain data) ----------
+// ---------- receipt (labels/fingerprints only; accounts appear as stable pseudonym refs) ----------
 const receipt = {
   at: new Date().toISOString(),
   decodedSecrets: secrets.length,
   credentialCandidates: creds.length,
-  vaultAccounts: vaultAccounts.map(a => a.name),
-  liveOnChain: Object.fromEntries(Object.entries(live).map(([ch, m]) => [ch, Object.keys(m)])),
+  vaultAccounts: vaultAccounts.map(a => ref(a.name)),
+  liveOnChain: Object.fromEntries(Object.entries(live).map(([ch, m]) => [ch, Object.keys(m).map(ref)])),
   heldAuthority: matchLines,
   steemitLogin: loginProofs,
   gate: gateProof,
-  note: "zero secret material; account names are public on-chain data; paths discovered at runtime",
+  note: "zero secret material; zero account names (stable pseudonym refs, vault-order deterministic; true mapping stays on the operator machine); paths discovered at runtime",
 };
 try {
   mkdirSync(RECEIPTS, { recursive: true });

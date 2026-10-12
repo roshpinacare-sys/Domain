@@ -9,17 +9,25 @@
 // read, no credential exists, no trust in GitHub is involved.
 //
 // R75 — the line is multi-signer: the anchor machines and the sovereign
-// page sign as the account the key declares (cashmachine / owner /
-// lsa — the fleet matrix). The reader scans every fleet account's history
-// and merges the anchors into one line, deduped by checkpoint; each row
-// records its witness. A owner-signed anchor now refreshes the line
-// exactly like a cashmachine one.
+// page sign as the account the key declares (the fleet matrix — resolved at
+// runtime from the estate refs layer). The reader scans every fleet account's
+// history and merges the anchors into one line, deduped by checkpoint; each row
+// records its witness. Any fleet-signed anchor refreshes the line equally.
 //
 // Output: status.json next to this file. The workflow commits it and
 // deploys GitHub Pages from the same content.
 // ─────────────────────────────────────────────────────────────────────
 
-const FLEET = ["cashmachine", "owner", "lsa"].map((a) => a.toLowerCase()); // R75: the key declares who signs
+import { R, refOf, scrub, resolved as refsResolved } from "./agents/refs.mjs";
+
+const REF_IDS = Array.from({ length: 20 }, (_, i) => 'acct-' + String(i).padStart(2, '0'));
+const refScrub = (t) => { let out = scrub(String(t)); if (refsResolved()) { for (const ref of REF_IDS) { const n = R(ref); if (n) out = out.replace(new RegExp('\\b' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'g'), ref); } } return out; };
+const FLEET_DECLARED = ["acct-01", "owner", "acct-04"];
+const FLEET = FLEET_DECLARED.map((x) => x.startsWith("acct-") ? R(x) : x).filter(Boolean).map((a) => a.toLowerCase()); // R75: the key declares who signs
+if (FLEET.length < FLEET_DECLARED.length) {
+  // roster-unresolved law: an unmapped fleet ref is skipped loudly, never guessed
+  console.log(`[refs] roster-unresolved — ${FLEET_DECLARED.length - FLEET.length} fleet ref(s) unresolved in this run; scanning the resolved set only (${FLEET.map(refOf).join(", ")})`);
+}
 const OP_ID = process.env.WEAVE_OP_ID || "saos.weave.core.v1";
 // Z-14 hardening: a 2-node ladder died on a transient blip (run 36432539809:
 // "all public RPC nodes failed - Upstream temporarily unavailable"). The
@@ -108,7 +116,7 @@ async function readAnchorLine() {
         }
       }
       if (anchors.length === 0) {
-        throw new Error(`no ${OP_ID} checkpoint anchors in fleet history (${FLEET.join(", ")}; ${MAX_PAGES} pages each)`);
+        throw new Error(`no ${OP_ID} checkpoint anchors in fleet history (${FLEET.map(refOf).join(", ")}; ${MAX_PAGES} pages each)`);
       }
       anchors.sort((a, b) => (a.at < b.at ? 1 : a.at > b.at ? -1 : 0));
       // התאמת-שכפול (Task 26): אותו checkpoint שעוגן מחדש (ניסיון חוזר,
@@ -144,20 +152,20 @@ try {
   const unreachable = {
     format: "weave-console-chain-v1",
     generatedAt: new Date().toISOString(),
-    source: { kind: "steem-public-rpc-unreachable", node: null, accounts: FLEET, account: null, opId: OP_ID },
+    source: { kind: "steem-public-rpc-unreachable", node: null, accounts: FLEET.map(refOf), account: null, opId: OP_ID },
     freshness: { verdict: "UNREACHABLE", ageHours: null, thresholdHours: FRESH_THRESHOLD_H, cadence: "1h" },
     witness: { account: null, opId: OP_ID, txid: "", block: null, explorer: "", at: null, checkpoint: null, root: "", attFrom: null, attTo: null, attestations: null, headHash: "", commit: "" },
     recent: [],
     unreachable: { message: String((readErr && readErr.message) || "all public RPC nodes unreachable"), nodesTried: NODES.length, rounds: ROUNDS },
   };
   const { writeFileSync } = await import("fs");
-  writeFileSync(new URL("./status.json", import.meta.url), JSON.stringify(unreachable, null, 2) + "\n");
+  writeFileSync(new URL("./status.json", import.meta.url), refScrub(JSON.stringify(unreachable, null, 2)) + "\n");
   console.log(`[render] beacon committed as UNREACHABLE (${NODES.length} nodes × ${ROUNDS} rounds tried) - honest red on the page, beacon stays alive`);
   process.exit(0);
 }
 const { node, anchors } = read;
 if (anchors.length === 0) {
-  throw new Error(`no ${OP_ID} anchors found in fleet history (${FLEET.join(", ")}): the chain is the source, an empty read is a red run`);
+  throw new Error(`no ${OP_ID} anchors found in fleet history (${FLEET.map(refOf).join(", ")}): the chain is the source, an empty read is a red run`);
 }
 const last = anchors[0];
 const ageHours = (Date.now() - new Date(last.at).getTime()) / 3600000;
@@ -168,7 +176,7 @@ const explorer = (txid) => `https://steemscan.com/transaction/${txid}`;
 const status = {
   format: "weave-console-chain-v1",
   generatedAt: new Date().toISOString(),
-  source: { kind: "steem-public-rpc", node: new URL(node).hostname, accounts: FLEET, account: last.witness, opId: OP_ID },
+  source: { kind: "steem-public-rpc", node: new URL(node).hostname, accounts: FLEET.map(refOf), account: refOf(last.witness), opId: OP_ID },
   freshness: {
     verdict,
     ageHours: Math.round(ageHours * 10) / 10,
@@ -176,7 +184,7 @@ const status = {
     cadence: "1h",
   },
   witness: {
-    account: last.witness,
+    account: refOf(last.witness),
     opId: OP_ID,
     txid: last.txid,
     block: last.block,
@@ -197,14 +205,14 @@ const status = {
     attTo: a.attTo,
     at: a.at,
     txid: a.txid,
-    witness: a.witness,
+    witness: refOf(a.witness),
     explorer: explorer(a.txid),
   })),
 };
 
 // שער הסודות של הקונסולה - שום מפתח/טוקן לא עולה לריפו הציבורי.
 // hash-ים ציבוריים (root/headHash: 0x+64hex בשדות קנוניים) אינם סוד.
-const text = JSON.stringify(status, null, 2);
+const text = refScrub(JSON.stringify(status, null, 2));
 const PATTERNS = [
   ["steem/hive WIF", /\b5[1-9A-HJ-NP-Za-km-z]{50}\b/],
   ["blurt WIF", /\bB[1-9A-HJ-NP-Za-km-z]{50}\b/],
@@ -227,7 +235,7 @@ writeFileSync(new URL("./status.json", import.meta.url), text + "\n");
 
 console.log(
   `[render] ${OP_ID} · latest anchor cp#${last.checkpoint} · root ${last.root.slice(0, 18)}… · ` +
-    `txid ${last.txid.slice(0, 12)}… · witness @${last.witness} · age ${Math.round(ageHours * 10) / 10}h (${verdict}) · ` +
+    `txid ${last.txid.slice(0, 12)}… · witness @${refOf(last.witness)} · age ${Math.round(ageHours * 10) / 10}h (${verdict}) · ` +
     `${anchors.length} anchors read from ${new URL(node).hostname} (${FLEET.length} fleet accounts scanned)`
 );
 if (verdict === "STALE") {

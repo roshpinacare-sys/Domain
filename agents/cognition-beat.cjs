@@ -21,6 +21,9 @@
 const fs = require('fs');
 const path = require('path');
 const CHAIN = require('./directivesChain.cjs');
+const { R, refOf, scrub, resolved: refsResolved } = require('./refs.cjs');
+const REF_IDS = Array.from({ length: 20 }, (_, i) => 'acct-' + String(i).padStart(2, '0'));
+const refScrub = (t) => { let out = scrub(String(t)); if (refsResolved()) { for (const ref of REF_IDS) { const n = R(ref); if (n) out = out.replace(new RegExp('\\b' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'g'), ref); } } return out; };
 
 const AG = __dirname;
 const OUT = path.join(AG, 'cognition', 'organism.json');
@@ -194,7 +197,7 @@ async function main() {
     },
     canonicalTruths: [
       { id: 'T-phantom-refuted', claim: 'fleet Steem SP ≈ 6.5 (live RPC 2026-10-11), NOT ~4001 — phantom numbers existed in an agent plan; grid-doctor is the countermeasure', epistemic: 'OBSERVED', evidence: [{ source: 'agents/grid-truth.json', ref: 'live RPC totals per run', at: nowIso() }] },
-      { id: 'T-real-treasury', claim: 'real treasury = cornerstone on Hive (13,036 HIVE liquid + ~165 HP); Steem liquid ≈ 125 STEEM on owner + 56 STEEM stranded on keyless hcsoldier1/2/3', epistemic: 'OBSERVED', evidence: [{ source: 'agents/grid-truth.json', ref: 'STRANDED-CAPITAL alerts + balances', at: nowIso() }] }
+      { id: 'T-real-treasury', claim: 'real treasury = acct-18 on Hive (13,036 HIVE liquid + ~165 HP); Steem liquid ≈ 125 STEEM on owner + 56 STEEM stranded on keyless soldier accounts (1/2/3)', epistemic: 'OBSERVED', evidence: [{ source: 'agents/grid-truth.json', ref: 'STRANDED-CAPITAL alerts + balances', at: nowIso() }] }
     ],
     contradictions,
     frontier: {
@@ -247,7 +250,7 @@ async function main() {
     process.exit(3);
   }
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
-  fs.writeFileSync(OUT, JSON.stringify(model, null, 2) + '\n');
+  fs.writeFileSync(OUT, refScrub(JSON.stringify(model, null, 2)) + '\n');
   const book = [
     '# COGNITION-BEAT · ' + nowIso(),
     '',
@@ -260,7 +263,7 @@ async function main() {
     '- workflows seen (24h): ' + Object.keys(m.runs).filter(k => k !== 'error').join(', '),
     ''
   ].join('\n');
-  fs.writeFileSync(path.join(AG, 'cognition', 'beat-book.md'), book + '\n');
+  fs.writeFileSync(path.join(AG, 'cognition', 'beat-book.md'), refScrub(book + '\n'));
   console.log('COGNITION-BEAT-DONE capabilities=' + capabilities.length + ' contradictions_open=' + contradictions.length + ' chain=' + (m.chainVerify.ok ? 'OK' : 'BROKEN'));
 }
 

@@ -12,6 +12,9 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
+const { R, refOf, scrub, resolved: refsResolved } = require('./refs.cjs');
+const REF_IDS = Array.from({ length: 20 }, (_, i) => 'acct-' + String(i).padStart(2, '0'));
+const refScrub = (t) => { let out = scrub(String(t)); if (refsResolved()) { for (const ref of REF_IDS) { const n = R(ref); if (n) out = out.replace(new RegExp('\\b' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'g'), ref); } } return out; };
 const AG = __dirname;
 const UA = 'saos-book-auditor/1';
 
@@ -86,9 +89,9 @@ async function auditStateFile(file, chain, accounts) {
 async function main() {
   const all = [];
   /* treasury claims live on steem+hive+blurt; account fields vary per chain */
-  try { all.push(...await auditStateFile('treasury-state.json', 'steem', ['owner', 'haran', 'cashmachine', 'wic', 'woq', 'tov'])); } catch (e) { all.push({ file: 'treasury-state.json', verdict: 'AUDIT-ERROR', detail: String(e.message || e).slice(0, 100) }); }
-  try { all.push(...await auditStateFile('treasury-state.json', 'hive', ['cornerstone', 'owner'])); } catch (e) { all.push({ file: 'treasury-state.json(hive)', verdict: 'AUDIT-ERROR', detail: String(e.message || e).slice(0, 100) }); }
-  try { all.push(...await auditStateFile('blurt-connect-state.json', 'blurt', ['cornerstone', 'owner'])); } catch (e) { all.push({ file: 'blurt-connect-state.json', verdict: 'AUDIT-ERROR', detail: String(e.message || e).slice(0, 100) }); }
+  try { all.push(...await auditStateFile('treasury-state.json', 'steem', ['owner', 'acct-02', 'acct-01', 'acct-08', 'acct-10', 'acct-07'].map(x => x.startsWith('acct-') ? R(x) : x).filter(Boolean))); } catch (e) { all.push({ file: 'treasury-state.json', verdict: 'AUDIT-ERROR', detail: String(e.message || e).slice(0, 100) }); }
+  try { all.push(...await auditStateFile('treasury-state.json', 'hive', ['acct-18', 'owner'].map(x => x.startsWith('acct-') ? R(x) : x).filter(Boolean))); } catch (e) { all.push({ file: 'treasury-state.json(hive)', verdict: 'AUDIT-ERROR', detail: String(e.message || e).slice(0, 100) }); }
+  try { all.push(...await auditStateFile('blurt-connect-state.json', 'blurt', ['acct-18', 'owner'].map(x => x.startsWith('acct-') ? R(x) : x).filter(Boolean))); } catch (e) { all.push({ file: 'blurt-connect-state.json', verdict: 'AUDIT-ERROR', detail: String(e.message || e).slice(0, 100) }); }
 
   const fabricated = all.filter(f => f.verdict === 'FABRICATED');
   const verified = all.filter(f => f.verdict === 'VERIFIED-ON-CHAIN');
@@ -106,13 +109,13 @@ async function main() {
   if (fabricated.length) {
     lines.push('## FABRICATION ALERT', '', 'The books claimed work the chain never recorded. Every FABRICATED row above is', 'a claim that must be treated as false until a real txid appears. This is the', 'exact disease the owner reported for a month — now caught mechanically.', '');
   }
-  fs.writeFileSync(path.join(AG, 'book-audit.md'), lines.join('\n') + '\n');
-  fs.writeFileSync(path.join(AG, 'book-audit-state.json'), JSON.stringify({
+  fs.writeFileSync(path.join(AG, 'book-audit.md'), refScrub(lines.join('\n') + '\n'));
+  fs.writeFileSync(path.join(AG, 'book-audit-state.json'), refScrub(JSON.stringify({
     schema: 'saos/book-audit/1', at: new Date().toISOString(),
     verified: verified.length, fabricated: fabricated.length, findings: all
-  }, null, 2) + '\n');
+  }, null, 2) + '\n'));
   console.log('BOOK-AUDIT-DONE verified=' + verified.length + ' fabricated=' + fabricated.length);
-  for (const f of fabricated) console.log('FABRICATED ' + f.file + ' ' + (f.op || '') + ' ' + (f.to || '') + ' txid=' + (f.txid || 'none'));
+  for (const f of fabricated) console.log('FABRICATED ' + f.file + ' ' + (f.op || '') + ' ' + refOf(f.to || '') + ' txid=' + (f.txid || 'none'));
   /* loud: fabrications must be visible, but the auditor itself must not gate the fleet */
   process.exit(0);
 }

@@ -22,6 +22,12 @@ const fs = require('fs');
 const path = require('path');
 const steem = require('steem');
 steem.api.setOptions({ url: 'https://api.steemit.com' });
+const { R, refOf, scrub, resolved: refsResolved } = require('./refs.cjs');
+const REF_IDS = Array.from({ length: 20 }, (_, i) => 'acct-' + String(i).padStart(2, '0'));
+const refScrub = (t) => { let out = scrub(String(t)); if (refsResolved()) { for (const ref of REF_IDS) { const n = R(ref); if (n) out = out.replace(new RegExp('\\b' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'g'), ref); } } return out; };
+/* historical chain identifiers (authors/permlinks of past content) are stored as
+ * {acct-XX} tokens here and resolved at runtime — the public tree never carries the map */
+const fillRefs = (s) => String(s).replace(/\{(acct-\d{2})\}/g, (_, ref) => R(ref) || '');
 const ROOT = path.resolve(__dirname, '..');
 const OUT = process.env.RECEIPT_OUT || path.join(ROOT, 'agents', 'receipts', 'dedup-corrections-receipt.json');
 const dedupe = require('./social-dedupe.cjs');
@@ -58,14 +64,14 @@ function realFragment(body) {
 // ── the corrections (each: rewrite ONE side of a measured near-dup pair) ──
 const CORRECTIONS = [
   {
-    id: 'DEDUP-1-reply-cashmachine',
+    id: 'DEDUP-1-reply',
     kind: 'comment',
-    author: 'cashmachine',
-    permlink: 're-re-cashmachine-saos-cashmachine-20261001-mupq2yr5-cashmachine',
+    ref: 'acct-01',
+    permlink: 're-re-{acct-01}-saos-{acct-01}-20261001-mupq2yr5-{acct-01}',
     oldMarker: 'Short answer from the',
     partners: [
-      { author: 'israelnews', permlink: 're-re-israelnews-saos-israelnews-20261001-mupwjh2h-israelnews' },
-      { author: 'israelnews', permlink: 're-re-israelnews-saos-israelnews-20260930-20260930t145045826z-israelnews' },
+      { ref: 'acct-03', permlink: 're-re-{acct-03}-saos-{acct-03}-20261001-mupwjh2h-{acct-03}' },
+      { ref: 'acct-03', permlink: 're-re-{acct-03}-saos-{acct-03}-20260930-20260930t145045826z-{acct-03}' },
     ],
     why: 'the 2026-10-01 support pass stamped one shared reply template on 3 desks — measured 0.957/0.898 cross-account Jaccard. Rewritten in the speaker own voice, answering the real question (how to check a link on a phone).',
     build: () => [
@@ -77,12 +83,12 @@ const CORRECTIONS = [
     ].join('\n'),
   },
   {
-    id: 'DEDUP-2-hebrew-legacy-israelnews',
+    id: 'DEDUP-2-hebrew-legacy',
     kind: 'comment',
-    author: 'israelnews',
-    permlink: 're-saos-siq-20260930-israelnews',
+    ref: 'acct-03',
+    permlink: 're-saos-{acct-06}-20260930-{acct-03}',
     oldMarker: 'עצר אותי',
-    partners: [{ author: 'cashmachine', permlink: 're-saos-siq-20260930-cashmachine' }],
+    partners: [{ ref: 'acct-01', permlink: 're-saos-{acct-06}-20260930-{acct-01}' }],
     why: 'the measured Hebrew legacy-template pair (r144-i2 audit example: sim 0.629, containment 1.0) — the last pre-Z-25 shared template still live in the window. Rewritten in the speaker own Hebrew hand.',
     build: () => [
       'סימון-משלי: «11 חשבונ» במחזור-האימות של 2026-09-30 הוא המספר שאני חוזר אליו.',
@@ -93,13 +99,13 @@ const CORRECTIONS = [
     ].join('\n'),
   },
   {
-    id: 'DEDUP-3-v2-template-wog',
+    id: 'DEDUP-3-v2-template',
     kind: 'comment',
-    author: 'wog',
-    permlink: 're-saos-wic-20261001-wog',
+    ref: 'acct-09',
+    permlink: 're-saos-{acct-08}-20261001-{acct-09}',
     oldMarker: 'stopped me, specifically the part with',
-    partners: [{ author: 'tov', permlink: 're-saos-lsa-20261001-tov' }],
-    needsParent: { author: 'wic', permlink: 'saos-wic-20261001' },
+    partners: [{ ref: 'acct-07', permlink: 're-saos-{acct-04}-20261001-{acct-07}' }],
+    needsParent: { ref: 'acct-08', permlink: 'saos-{acct-08}-20261001' },
     why: 'the measured English Z-25 pair (sim 0.654) — two accounts carrying the same v2 template + the same quoted fleet stat. Rewritten in the speaker own voice quoting the parent post own fragment.',
     build: (ctx) => {
       const t = ctx.parent && !HEB.test(ctx.parent.title || '') ? String(ctx.parent.title).replace(/\s+/g, ' ').trim() : 'the post';
@@ -115,20 +121,20 @@ const CORRECTIONS = [
     },
   },
   {
-    id: 'DEDUP-4-fleet-report-wic',
+    id: 'DEDUP-4-fleet-report',
     kind: 'post',
-    author: 'wic',
-    permlink: 'saos-fleet-report-20260905-wic',
+    ref: 'acct-08',
+    permlink: 'saos-fleet-report-20260905-{acct-08}',
     oldMarker: 'Autonomous status log from soldier account',
     partners: [
-      { author: 'haran', permlink: 'saos-fleet-report-20260905-haran' },
-      { author: 'woq', permlink: 'saos-fleet-report-20260905-woq' },
+      { ref: 'acct-02', permlink: 'saos-fleet-report-20260905-{acct-02}' },
+      { ref: 'acct-10', permlink: 'saos-fleet-report-20260905-{acct-10}' },
     ],
     why: 'three accounts published one identical fleet-report template on 2026-09-05 (measured 0.959-0.967 pairwise) — the deepest past duplication still live, and it carried identical collective wording across accounts. Fix: this account keeps ITS OWN measured numbers and points to the anchor log for the shared system block (the shared block itself is the duplication — it now lives in exactly one place, on the same date).',
     build: (ctx) => {
       const p = ctx.parsed; if (!p) return null;
       return [
-        `Status log — @wic, ${ctx.created} (measured before the day got loud)`,
+        `Status log — @${ctx.name}, ${ctx.created} (measured before the day got loud)`,
         '',
         'The quiet hours are when a system tells the truth about itself. Read the state files the way one reads a rope in the dark: slowly, by feel. What follows is this account own slice of that morning, read from local state files at posting time — nothing estimated.',
         '',
@@ -147,20 +153,20 @@ const CORRECTIONS = [
     },
   },
   {
-    id: 'DEDUP-5-fleet-report-woq',
+    id: 'DEDUP-5-fleet-report',
     kind: 'post',
-    author: 'woq',
-    permlink: 'saos-fleet-report-20260905-woq',
+    ref: 'acct-10',
+    permlink: 'saos-fleet-report-20260905-{acct-10}',
     oldMarker: 'Autonomous status log from soldier account',
     partners: [
-      { author: 'haran', permlink: 'saos-fleet-report-20260905-haran' },
-      { author: 'wic', permlink: 'saos-fleet-report-20260905-wic' },
+      { ref: 'acct-02', permlink: 'saos-fleet-report-20260905-{acct-02}' },
+      { ref: 'acct-08', permlink: 'saos-fleet-report-20260905-{acct-08}' },
     ],
     why: 'same measured template trio as DEDUP-4; rewritten question-first in this account own voice, own measured numbers kept, shared system block referenced to the anchor log instead of copied.',
     build: (ctx) => {
       const p = ctx.parsed; if (!p) return null;
       return [
-        `Status log — @woq, ${ctx.created}: what can a single account actually verify?`,
+        `Status log — @${ctx.name}, ${ctx.created}: what can a single account actually verify?`,
         '',
         'A question worth holding, then the measured answer. Everything below was read from local state files at posting time — nothing estimated.',
         '',
@@ -179,20 +185,20 @@ const CORRECTIONS = [
     },
   },
   {
-    id: 'DEDUP-6-fleet-report-haran',
+    id: 'DEDUP-6-fleet-report',
     kind: 'post',
-    author: 'haran',
-    permlink: 'saos-fleet-report-20260905-haran',
+    ref: 'acct-02',
+    permlink: 'saos-fleet-report-20260905-{acct-02}',
     oldMarker: 'Autonomous status log from soldier account',
     partners: [
-      { author: 'wic', permlink: 'saos-fleet-report-20260905-wic' },
-      { author: 'woq', permlink: 'saos-fleet-report-20260905-woq' },
+      { ref: 'acct-08', permlink: 'saos-fleet-report-20260905-{acct-08}' },
+      { ref: 'acct-10', permlink: 'saos-fleet-report-20260905-{acct-10}' },
     ],
     why: 'same measured template trio as DEDUP-4; this account hosts the ANCHOR record — the shared system block stays here once, verbatim and date-pinned, and the sibling posts now reference it instead of copying it.',
     build: (ctx) => {
       const p = ctx.parsed; if (!p) return null;
       return [
-        `Status log — @haran, ${ctx.created}`,
+        `Status log — @${ctx.name}, ${ctx.created}`,
         '',
         'Old roads teach the same lesson: a ledger you cannot verify is a story, not a record. What follows is a record. Every number below was read from local state files at posting time — nothing estimated.',
         '',
@@ -242,6 +248,14 @@ async function main() {
   let memory = [];
   try { memory = await dedupe.buildMemory(true); receipt.memory = memory.length; } catch (e) { receipt.memoryError = String(e.message || e).slice(0, 80); }
 
+  // resolve the estate refs once — fail-honest: an unresolved desk is skipped, never guessed
+  for (const fix of CORRECTIONS) {
+    fix.author = fix.ref.startsWith('acct-') ? R(fix.ref) : fix.ref;
+    fix.permlink = fillRefs(fix.permlink);
+    for (const pt of fix.partners || []) { pt.author = pt.ref.startsWith('acct-') ? R(pt.ref) : pt.ref; pt.permlink = fillRefs(pt.permlink); }
+    if (fix.needsParent) { fix.needsParent.author = fix.needsParent.ref.startsWith('acct-') ? R(fix.needsParent.ref) : fix.needsParent.ref; fix.needsParent.permlink = fillRefs(fix.needsParent.permlink); }
+  }
+
   // live partner bodies for the sim checks (bodies corrected earlier in this run take
   // precedence, so the anchor's sim is measured against the SIBLINGS' NEW bodies)
   const partnerBodies = new Map();
@@ -271,53 +285,54 @@ async function main() {
 
   const keys = loadKeys();
   for (const fix of CORRECTIONS) {
-    const R = { id: fix.id, kind: fix.kind, author: fix.author, permlink: fix.permlink, url: `https://steemit.com/@${fix.author}/${fix.permlink}` };
+    const edit = { id: fix.id, kind: fix.kind, author: fix.author, permlink: fix.permlink, url: `https://steemit.com/@${fix.author}/${fix.permlink}` };
     try {
+      if (!fix.author) { edit.status = 'SKIP-ROSTER-UNRESOLVED'; console.log(`[refs] roster-unresolved — skipping ${fix.id}`); receipt.edits.push(edit); continue; }
       const c = partnersAll.get(fix.permlink) || await gc(fix.author, fix.permlink);
-      if (!c || c.author !== fix.author) { R.status = 'SKIP-NOT-FOUND'; }
-      else if (!c.body.includes(fix.oldMarker)) { R.status = 'ALREADY-DIFFERENT'; }
+      if (!c || c.author !== fix.author) { edit.status = 'SKIP-NOT-FOUND'; }
+      else if (!c.body.includes(fix.oldMarker)) { edit.status = 'ALREADY-DIFFERENT'; }
       else {
-        const ctx = { created: String(c.created || '').slice(0, 10), parsed: null, parent: null };
+        const ctx = { created: String(c.created || '').slice(0, 10), parsed: null, parent: null, name: fix.author };
         if (fix.needsParent) ctx.parent = await gc(fix.needsParent.author, fix.needsParent.permlink);
         if (fix.id.startsWith('DEDUP-4') || fix.id.startsWith('DEDUP-5') || fix.id.startsWith('DEDUP-6')) {
           ctx.parsed = parseFleetReport(c.body);
-          if (!ctx.parsed) { R.status = 'SKIP-UNPARSEABLE'; receipt.edits.push(R); console.log(`[${R.status}] ${fix.id}`); continue; }
+          if (!ctx.parsed) { edit.status = 'SKIP-UNPARSEABLE'; receipt.edits.push(edit); console.log(`[${edit.status}] ${fix.id}`); continue; }
         }
         const newBody = fix.build(ctx);
-        if (!newBody || newBody.length < 60) { R.status = 'SKIP-BUILD-EMPTY'; }
+        if (!newBody || newBody.length < 60) { edit.status = 'SKIP-BUILD-EMPTY'; }
         else {
           // pre-flight sims: vs each partner body (must be < threshold)
-          R.sims = {};
+          edit.sims = {};
           let worst = 0, worstPartner = null;
           for (const pt of fix.partners || []) {
             const key = `${pt.author}/${pt.permlink}`;
             let pb = editedBodies.has(pt.permlink) ? editedBodies.get(pt.permlink) : partnerBodies.get(key);
-            if (pb == null) { R.sims[`${pt.author}/*`] = 'partner-unreachable'; continue; }
+            if (pb == null) { edit.sims[`${refOf(pt.author)}/*`] = 'partner-unreachable'; continue; }
             const s = Number(dedupe.jaccard(dedupe.contentTokens(newBody), dedupe.contentTokens(pb)).toFixed(3));
-            R.sims[pt.author] = s;
-            if (s > worst) { worst = s; worstPartner = pt.author; }
+            edit.sims[refOf(pt.author)] = s;
+            if (s > worst) { worst = s; worstPartner = refOf(pt.author); }
           }
-          R.worstSimAfter = worst; R.worstPartnerAfter = worstPartner;
+          edit.worstSimAfter = worst; edit.worstPartnerAfter = worstPartner;
           // comment edits also cross the live pre-cast gate
           if (fix.kind === 'comment') {
             const gate = dedupe.gateCast(fix.author, newBody, memory, 3);
-            R.gate = { verdict: gate.verdict, bestSim: gate.bestSim, partner: gate.partner ? gate.partner.author : null };
+            edit.gate = { verdict: gate.verdict, bestSim: gate.bestSim, partner: gate.partner ? refOf(gate.partner.author) : null };
           }
           const passSims = worst < dedupe.NEAR_DUP_THRESHOLD;
-          const passGate = fix.kind !== 'comment' || (R.gate && R.gate.verdict === 'PASS');
-          if (!passSims || !passGate) { R.status = 'SKIP-STILL-SIMILAR'; }
+          const passGate = fix.kind !== 'comment' || (edit.gate && edit.gate.verdict === 'PASS');
+          if (!passSims || !passGate) { edit.status = 'SKIP-STILL-SIMILAR'; }
           else {
             // success path: remember the new body so later corrections measure against it
             editedBodies.set(fix.permlink, newBody);
-            if (DRY) { R.status = 'DRY-OK'; R.bodyLen = newBody.length; }
+            if (DRY) { edit.status = 'DRY-OK'; edit.bodyLen = newBody.length; }
             else {
               const wif = keys[fix.author] || null;
-              if (!wif) { R.status = 'SKIP-NO-KEY'; }
+              if (!wif) { edit.status = 'SKIP-NO-KEY'; }
               else {
                 const acc = (await P(cb => steem.api.getAccounts([fix.author], cb)))[0];
                 const livePub = acc && acc.posting && acc.posting.key_auths && acc.posting.key_auths[0] && acc.posting.key_auths[0][0];
                 let pub; try { pub = steem.auth.wifToPublic(wif); } catch (_) { pub = null; }
-                if (!livePub || pub !== livePub) { R.status = 'SKIP-KEY-MISMATCH'; }
+                if (!livePub || pub !== livePub) { edit.status = 'SKIP-KEY-MISMATCH'; }
                 else {
                   const ops = [['comment', {
                     parent_author: c.parent_author || '', parent_permlink: c.parent_permlink || fix.permlink,
@@ -328,8 +343,8 @@ async function main() {
                   await P(cb => steem.broadcast.send({ operations: ops, extensions: [] }, [wif], cb));
                   await sleep(2500);
                   const back = await gc(fix.author, fix.permlink);
-                  R.status = (back && back.body && back.body.includes(newBody.slice(0, 80))) ? 'CORRECTED-VERIFIED' : 'CORRECTED-READBACK-PENDING';
-                  R.bodyLenBefore = c.body.length; R.bodyLenAfter = newBody.length;
+                  edit.status = (back && back.body && back.body.includes(newBody.slice(0, 80))) ? 'CORRECTED-VERIFIED' : 'CORRECTED-READBACK-PENDING';
+                  edit.bodyLenBefore = c.body.length; edit.bodyLenAfter = newBody.length;
                   // the edited body joins the memory so later edits in this run see it
                   memory.push({ author: fix.author, permlink: fix.permlink, created: c.created, body: newBody, source: 'dedup-corrections' });
                 }
@@ -338,13 +353,13 @@ async function main() {
           }
         }
       }
-    } catch (e) { R.status = 'ERR'; R.msg = String(e.message || e).slice(0, 120); }
-    receipt.edits.push(R);
-    console.log(`[${R.status}] ${fix.id}${R.worstSimAfter != null ? ` worstSim=${R.worstSimAfter}` : ''}`);
+    } catch (e) { edit.status = 'ERR'; edit.msg = String(e.message || e).slice(0, 120); }
+    receipt.edits.push(edit);
+    console.log(`[${edit.status}] ${fix.id}${edit.worstSimAfter != null ? ` worstSim=${edit.worstSimAfter}` : ''}`);
   }
 
   for (const e of receipt.edits) receipt.tally[e.status] = (receipt.tally[e.status] || 0) + 1;
-  if (!DRY) { fs.mkdirSync(path.dirname(OUT), { recursive: true }); fs.writeFileSync(OUT, JSON.stringify(receipt, null, 1)); }
+  if (!DRY) { fs.mkdirSync(path.dirname(OUT), { recursive: true }); fs.writeFileSync(OUT, refScrub(JSON.stringify(receipt, null, 1))); }
   console.log(JSON.stringify({ state: DRY ? 'dry' : 'ok', tally: receipt.tally, measuredCorrectionsSet: measuredNow }));
   process.exit(0);
 }

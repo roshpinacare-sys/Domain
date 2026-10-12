@@ -16,6 +16,9 @@
 const steem = require('steem');
 const fs = require('fs');
 const path = require('path');
+const { R, refOf, scrub, resolved: refsResolved } = require('./refs.cjs');
+const REF_IDS = Array.from({ length: 20 }, (_, i) => 'acct-' + String(i).padStart(2, '0'));
+const refScrub = (t) => { let out = scrub(String(t)); if (refsResolved()) { for (const ref of REF_IDS) { const n = R(ref); if (n) out = out.replace(new RegExp('\\b' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'g'), ref); } } return out; };
 
 steem.api.setOptions({ url: 'https://api.steemit.com' });
 const ROOT = path.resolve(__dirname, '..');
@@ -43,7 +46,8 @@ async function crossStat(node, who, permlink) {
     return { votes: (r.active_votes || []).length, replies: r.children || 0 };
   } catch (_) { return null; }
 }
-const ROTATION = ['haran', 'wic', 'woq', 'siq', 'tov', 'israelnews', 'lsa', 'macrame', 'cashmachine', 'wog'];
+const ROTATION = ['acct-02', 'acct-08', 'acct-10', 'acct-06', 'acct-07', 'acct-03', 'acct-04', 'acct-05', 'acct-01', 'acct-09'].map(x => x.startsWith('acct-') ? R(x) : x).filter(Boolean);
+if (!refsResolved()) console.log('[refs] roster-unresolved — rotation refs unresolved; the ledger scan covers the resolved set only this run (fail-honest, never guessed)');
 const FLEET_ALL = new Set([...ROTATION, 'owner']);
 const NON_SIGNAL = new Set(['steem.history', 'trailbot', 'appreciator', 'postpromoter', 'upme', 'buildawhale', 'upmewhale', 'rocky1', 'boomerang', 'dlike', 'krwhale', 'steem-echo', 'smartsteem', 'tipu', 'cardboard']);
 const CARDS = (() => { try { return JSON.parse(fs.readFileSync(path.join(__dirname, 'knowledge-cards-en.json'), 'utf8')); } catch (_) { return []; } })();
@@ -63,8 +67,10 @@ function cardIdFromTitle(title) {
   for (let i = 0; i < 7; i++) { const d = new Date(Date.now() - i * 864e5).toISOString().slice(0, 10).replace(/-/g, ''); days.push(d); }
   let scanned = 0;
   for (const who of ROTATION) {
+    if (!who) continue; // fail-honest: unresolved ref never becomes a chain query
     for (const d of days) {
-      const permlink = `saos-${who}-${d}`;
+      const permlink = `saos-${who}-${d}`;       // chain identifier (real name)
+      const bookKey = `saos-${refOf(who)}-${d}`; // ledger key (public ref — matches the committed book)
       let c = null;
       try { c = await P(cb => steem.api.getContent(who, permlink, cb)); } catch (_) { continue; }
       if (!c || c.author !== who || !c.body) continue;
@@ -73,7 +79,7 @@ function cardIdFromTitle(title) {
       const external = votes.filter(v => !FLEET_ALL.has(v.voter));
       const externalReal = external.filter(v => !NON_SIGNAL.has(v.voter) && Math.abs(parseInt(v.rshares || '0', 10)) > 0);
       const extRsh = externalReal.reduce((s, v) => s + parseInt(v.rshares || '0', 10), 0);
-      const rec = ledger[permlink] || { author: who, day: d, title: c.title, cardId: cardIdFromTitle(c.title), samples: [] };
+      const rec = ledger[bookKey] || { author: refOf(who), day: d, title: c.title, cardId: cardIdFromTitle(c.title), samples: [] };
       rec.title = c.title;
       rec.cardId = rec.cardId || cardIdFromTitle(c.title);
       rec.lastAt = now;
@@ -90,7 +96,7 @@ function cardIdFromTitle(title) {
         if (st) rec.cross[name] = st;
         await new Promise(r => setTimeout(r, 120));
       }
-      ledger[permlink] = rec;
+      ledger[bookKey] = rec;
       await new Promise(r => setTimeout(r, 120));
     }
   }
@@ -109,8 +115,8 @@ function cardIdFromTitle(title) {
   ledger.at = now;
   ledger.updated = now;
   fs.mkdirSync(path.dirname(OUT_LEDGER), { recursive: true });
-  fs.writeFileSync(OUT_LEDGER, JSON.stringify(ledger, null, 1));
-  fs.writeFileSync(OUT_SUMMARY, JSON.stringify(summary, null, 1));
+  fs.writeFileSync(OUT_LEDGER, refScrub(JSON.stringify(ledger, null, 1)));
+  fs.writeFileSync(OUT_SUMMARY, refScrub(JSON.stringify(summary, null, 1)));
   console.log(JSON.stringify({ state: 'ok', posts: scanned, cards: Object.keys(byCard).length }));
   process.exit(0);
 })().catch(e => { console.log(JSON.stringify({ state: 'fail-soft', msg: String(e.message || e).slice(0, 160) })); process.exit(0); });

@@ -23,6 +23,9 @@ const fs = require('fs');
 const path = require('path');
 const { execFileSync } = require('child_process');
 const steem = require('steem');
+const { R, refOf, scrub, resolved: refsResolved } = require('./refs.cjs');
+const REF_IDS = Array.from({ length: 20 }, (_, i) => 'acct-' + String(i).padStart(2, '0'));
+const refScrub = (t) => { let out = scrub(String(t)); if (refsResolved()) { for (const ref of REF_IDS) { const n = R(ref); if (n) out = out.replace(new RegExp('\\b' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'g'), ref); } } return out; };
 
 steem.api.setOptions({ url: 'https://api.steemit.com' });
 const ROOT = path.resolve(__dirname, '..');
@@ -57,10 +60,15 @@ async function rpc(method, params) {
   return j.result;
 }
 
+// desk identities resolve at runtime from the estate refs layer (owner is not a secret)
+const CM = R('acct-01');
+const IN = R('acct-03');
+const WQ = R('acct-10');
+
 // ── the wave: five desks, five evergreen pieces, zero invented numbers ──
 const WAVE = [
   {
-    account: 'cashmachine',
+    account: CM,
     title: 'How to read a public order book in ten minutes',
     tags: ['trading', 'tutorial', 'finance', 'blog'],
     body: [
@@ -82,7 +90,7 @@ const WAVE = [
     ].join('\n'),
   },
   {
-    account: 'israelnews',
+    account: IN,
     title: 'Three sources, one claim: a verification habit anyone can run',
     tags: ['media', 'tutorial', 'blog'],
     body: [
@@ -104,7 +112,7 @@ const WAVE = [
     ].join('\n'),
   },
   {
-    account: 'woq',
+    account: WQ,
     title: 'Can a small account matter on a public chain? A working answer',
     tags: ['blockchain', 'questions', 'blog'],
     body: [
@@ -124,7 +132,7 @@ const WAVE = [
     ].join('\n'),
   },
   {
-    account: 'macrame',
+    account: R('acct-05'),
     title: 'Patterns that do not lie: what knotwork teaches about hash chains',
     tags: ['craft', 'technology', 'blog'],
     body: [
@@ -169,7 +177,7 @@ const WAVE = [
 // measurement time inline. No machinery talk, no coordinated-speak, no invented figures.
 const WAVE_R147C = [
   {
-    account: 'israelnews',
+    account: IN,
     title: 'לפני שמשתפים מחיר: איך בודקים טענת מחיר אחת בשלוש דקות',
     tags: ['hebrew', 'crypto', 'tutorial', 'blog'],
     body: [
@@ -191,7 +199,7 @@ const WAVE_R147C = [
     ].join('\n'),
   },
   {
-    account: 'cashmachine',
+    account: CM,
     title: 'What a tiny real trading ledger teaches that no course will',
     tags: ['defi', 'trading', 'finance', 'blog'],
     body: [
@@ -249,21 +257,21 @@ const DESK_FRAMES = {
     '',
     'The beat continues.',
   ].join('\n'),
-  cashmachine: (asker) => [
+  [CM]: (asker) => [
     `The ledger line reads: ${asker} asked the right kind of question.`,
     '',
     'Public records let you test a claim yourself before trusting anyone. Pick one number, find the public source behind it, read it live. If it holds, you learned the method. If it breaks, a correction with the evidence beats a quiet edit.',
     '',
     'Small positions, honest math.',
   ].join('\n'),
-  israelnews: (asker) => [
+  [IN]: (asker) => [
     `Checked the question from ${asker}:`,
     '',
     'The verifiable habit is the same either way: take one number, find the public source behind it, and read it live before trusting anyone. What checks out becomes knowledge; what does not gets a labeled hole, published.',
     '',
     'Facts first, the rest follows.',
   ].join('\n'),
-  woq: (asker) => [
+  [WQ]: (asker) => [
     `A question worth holding, ${asker} — so hold it against the record:`,
     '',
     'Pick one number in the post, find the public source behind it, and read it live. That test costs nothing and it either teaches you the method or hands you a correction to publish. Both outcomes are wins.',
@@ -288,7 +296,7 @@ async function supportPass(day, keys, memory, receipt) {
   // (a) r147-c: questions ON outside users' own posts, under the community's core
   //     tags (newest first). This is the genuine support surface: help where asked.
   const TAGS = ['hebrew', 'security', 'defi'];
-  const ROUTE_BY_TAG = { hebrew: 'israelnews', security: 'owner', defi: 'cashmachine' };
+  const ROUTE_BY_TAG = { hebrew: IN, security: 'owner', defi: CM };
   const outsideSeen = new Set();
   const onePerAuthor = new Set();
   const FRESH_MS = 36 * 3600 * 1000;
@@ -318,7 +326,7 @@ async function supportPass(day, keys, memory, receipt) {
   }
   receipt.outsideScan = { tags: TAGS, found: outside.length };
   // (b) the original surface: questions from outside authors under OUR recent posts
-  for (const who of ['owner', 'cashmachine', 'israelnews']) {
+  for (const who of ['owner', CM, IN].filter(Boolean)) {
     if (outside.length >= 5) break;
     try {
       const rows = await rpc('bridge.get_account_posts', { sort: 'posts', account: who, limit: 5 });
@@ -349,8 +357,9 @@ async function supportPass(day, keys, memory, receipt) {
   // the Hebrew voice; everything stays inside the 3-reply budget of this wave
   for (const q of outside.slice(0, 3)) {
     const responder = q.surface === 'outside-post'
-      ? (ROUTE_BY_TAG[q.tag] || 'woq')
-      : (q.parentAuthor === 'owner' ? 'owner' : q.parentAuthor === 'cashmachine' ? 'cashmachine' : q.parentAuthor === 'israelnews' ? 'israelnews' : 'woq');
+      ? (ROUTE_BY_TAG[q.tag] || WQ)
+      : (q.parentAuthor === 'owner' ? 'owner' : q.parentAuthor === CM ? CM : q.parentAuthor === IN ? IN : WQ);
+    if (!responder) { console.log('[refs] roster-unresolved — skipping a support reply (no desk identity, never broadcast a guess)'); continue; }
     const wif = keys[responder];
     if (!wif) continue;
     const rPermlink = `re-${q.qPermlink || `${q.parentPermlink}-${q.qAuthor}`}-${responder}`.slice(0, 255).replace(/[^a-z0-9-]/gi, '-');
@@ -360,7 +369,7 @@ async function supportPass(day, keys, memory, receipt) {
       if (existing && existing.author === responder) { R.status = 'ALREADY'; }
       else {
         const hebrew = HEB.test(String(q.qBody || ''));
-        let body = hebrew && responder === 'israelnews' ? HE_FRAME(q.qAuthor) : (DESK_FRAMES[responder] || DESK_FRAMES.woq)(q.qAuthor);
+        let body = hebrew && responder === IN ? HE_FRAME(q.qAuthor) : (DESK_FRAMES[responder] || DESK_FRAMES[WQ])(q.qAuthor);
         // r147-c: the reply quotes the asker's own line, so help is specific, not a form
         const qfrag = String(q.qBody || '').replace(/\s+/g, ' ').replace(/[—–]/g, ',').trim().slice(0, 110);
         if (qfrag) body = body.replace(/\n\n/, `\n\nQuoting you: "${qfrag}"\n\n`);
@@ -381,7 +390,7 @@ async function supportPass(day, keys, memory, receipt) {
       }
     } catch (e) { R.status = 'ERR'; R.msg = String(e.message || e).slice(0, 90); }
     receipt.support.push(R);
-    console.log(`[${R.status}] ${responder} → @${q.qAuthor}`);
+    console.log(`[${R.status}] ${refOf(responder)} → @${refOf(q.qAuthor)}`);
   }
 }
 
@@ -398,8 +407,9 @@ async function main() {
   try { memory = await dedupe.buildMemory(false); receipt.memory = memory.length; } catch (e) { receipt.memoryError = String(e.message || e).slice(0, 80); }
 
   for (const w of [...WAVE, ...WAVE_R147C]) {
+    if (!w.account) { console.log('[refs] roster-unresolved — skipping a wave desk (no chain identity, never broadcast a guess)'); continue; }
     const permlink = `saos-wave-${w.account}-${day.replace(/-/g, '')}`;
-    const R = { author: w.account, permlink, title: w.title, url: `https://steemit.com/@${w.account}/${permlink}` };
+    const R = { author: refOf(w.account), permlink: refScrub(permlink), title: w.title, url: `https://steemit.com/@${w.account}/${permlink}` };
     try {
       if (!sanity(w.title) || !sanity(w.body)) { R.status = 'SKIP-SANITY'; receipt.posts.push(R); continue; }
       const wif = keys[w.account];
@@ -429,7 +439,7 @@ async function main() {
       }
     } catch (e) { R.status = 'FAIL'; R.msg = String(e.message || e).slice(0, 100); }
     receipt.posts.push(R);
-    console.log(`[${R.status}] ${w.account} → ${R.url || permlink}`);
+    console.log(`[${R.status}] ${refOf(w.account)} → ${R.url || permlink}`);
     await sleep(700);
   }
 
@@ -438,14 +448,14 @@ async function main() {
 
   for (const k of ['posts', 'support']) for (const r of receipt[k]) receipt.tally[r.status || 'UNKNOWN'] = (receipt.tally[r.status || 'UNKNOWN'] || 0) + 1;
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
-  fs.writeFileSync(OUT, JSON.stringify(receipt, null, 1));
+  fs.writeFileSync(OUT, refScrub(JSON.stringify(receipt, null, 1)));
   console.log(JSON.stringify({ state: 'ok', tally: receipt.tally, questionsFound: receipt.questionsFound }));
   process.exit(0);
 }
 
 if (require.main === module) {
   main().catch(e => {
-    try { fs.mkdirSync(path.dirname(OUT), { recursive: true }); fs.writeFileSync(OUT, JSON.stringify({ at: new Date().toISOString(), tool: 'public-wave.cjs', fatal: String(e.message || e).slice(0, 200) }, null, 1)); } catch (_) {}
+    try { fs.mkdirSync(path.dirname(OUT), { recursive: true }); fs.writeFileSync(OUT, refScrub(JSON.stringify({ at: new Date().toISOString(), tool: 'public-wave.cjs', fatal: String(e.message || e).slice(0, 200) }, null, 1))); } catch (_) {}
     console.log(JSON.stringify({ state: 'fail-soft', msg: String(e.message || e).slice(0, 160) }));
     process.exit(0);
   });

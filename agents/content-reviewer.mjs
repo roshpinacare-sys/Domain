@@ -24,6 +24,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { R, refOf, scrub, resolved as refsResolved } from './refs.mjs';
+
+const REF_IDS = Array.from({ length: 20 }, (_, i) => 'acct-' + String(i).padStart(2, '0'));
+const refScrub = (t) => { let out = scrub(String(t)); if (refsResolved()) { for (const ref of REF_IDS) { const n = R(ref); if (n) out = out.replace(new RegExp('\\b' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'g'), ref); } } return out; };
 
 const RPC = 'https://api.steemit.com';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -31,7 +35,8 @@ const OUT_DIR = path.join(ROOT, 'content-review');
 
 // Community accounts roster — measured from the live publishing machinery of this
 // repo (the social engine's rotation + head account) and agents/personas.json.
-const ACCOUNTS = ['cashmachine', 'haran', 'israelnews', 'lsa', 'macrame', 'siq', 'tov', 'wic', 'wog', 'woq', 'owner'];
+// Refs resolve at runtime via the estate refs layer; unresolved refs drop out.
+const ACCOUNTS = ['acct-01', 'acct-02', 'acct-03', 'acct-04', 'acct-05', 'acct-06', 'acct-07', 'acct-08', 'acct-09', 'acct-10', 'owner'].map(x => x.startsWith('acct-') ? R(x) : x).filter(Boolean);
 
 const WINDOW_H = 24;
 const NEAR_DUP_THRESHOLD = 0.6;   // same threshold as the home dedupe layer
@@ -84,7 +89,7 @@ const containment = (a, b) => {
           items.push({ kind: sort === 'posts' ? 'post' : 'comment', author: p.author || acc, permlink: p.permlink, created, body: String(p.body || ''), title: String(p.title || '') });
         }
       } catch (e) {
-        errors.push({ account: acc, sort, error: String(e.message || e).slice(0, 120) });
+        errors.push({ account: refOf(acc), sort, error: String(e.message || e).slice(0, 120) });
       }
     }
   }
@@ -159,6 +164,6 @@ const containment = (a, b) => {
 
   fs.mkdirSync(OUT_DIR, { recursive: true });
   const out = path.join(OUT_DIR, `report-${day}.json`);
-  fs.writeFileSync(out, JSON.stringify(report, null, 1) + '\n');
-  console.log(JSON.stringify({ out: path.relative(ROOT, out), items: items.length, pairDuplicationPct, commentLevelPct, nearDuplicatePairs: nearDups.length, silent24h: silent, gateTripped: report.duplication.gateTripped, errors: errors.length }, null, 1));
+  fs.writeFileSync(out, refScrub(JSON.stringify(report, null, 1)) + '\n');
+  console.log(JSON.stringify({ out: path.relative(ROOT, out), items: items.length, pairDuplicationPct, commentLevelPct, nearDuplicatePairs: nearDups.length, silent24h: silent.map(refOf), gateTripped: report.duplication.gateTripped, errors: errors.length }, null, 1));
 })().catch((e) => { console.error('content-reviewer failed honestly:', String(e.message || e).slice(0, 200)); process.exit(1); });

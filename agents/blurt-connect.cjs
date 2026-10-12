@@ -16,6 +16,7 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
+const { R } = require(path.join(__dirname, 'refs.cjs'));
 const GATE = require('./capital-gate.cjs');
 const blurt = require('@blurtfoundation/blurtjs');
 
@@ -81,7 +82,7 @@ async function main() {
   const newPub = BLURT.posting.pub;
   let connectedTo = null;
 
-  for (const account of ['cornerstone', 'owner']) {
+  for (const account of [R('acct-18') || null, 'owner'].filter(Boolean)) {
     if (GATE.stasisHalt('account_update')) { row('gate', 'STASIS halt mid-loop', 'gated'); break; }
     const a = (await rpc('condenser_api.get_accounts', [[account]]))[0];
     if (!a) { row('check', '@' + account + ' not found on blurt', 'skip'); continue; }
@@ -123,7 +124,7 @@ async function main() {
     } catch (e) {
       const msg = String(e.message || e);
       if (/sufficient funds|balance >= fee/i.test(msg)) {
-        row('account_update', '@' + account + ' signature ACCEPTED but blurt charges an account_update fee above liquid balance — funding gap, not a machine failure (provision: fund the account or set the cornerstone active key)', 'BLUE-NEEDS-FUNDING');
+        row('account_update', '@' + account + ' signature ACCEPTED but blurt charges an account_update fee above liquid balance — funding gap, not a machine failure (provision: fund the account or install the legacy-treasury active key)', 'BLUE-NEEDS-FUNDING');
         saveState(state); book(); process.exit(0);
       }
       row('account_update', '@' + account + ' broadcast refused: ' + msg.replace(/\s+/g, ' ').slice(0, 120), 'no-authority-or-error');

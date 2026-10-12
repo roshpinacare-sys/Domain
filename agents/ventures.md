@@ -41,7 +41,7 @@ Born from the clodfarm study (Z-31): they built the best stop-spending governor 
 - **Kill rule:** 3 consecutive playbooks with zero engagement → PIVOT lane
 - **Evidence:** knowledge-cards-en.json ✓ · public-wave.cjs ✓ → mechanism PROVEN in-repo
 - **earn:** leading indicators only for now (engagement), no fake USD
-- **latestSample:** {"post":"saos-wog-20261003","votes":11,"payout":"0.001 SBD","at":"2026-10-09T19:39:24.984Z"}
+- **latestSample:** {"post":"saos-acct-09-20261003","votes":11,"payout":"0.001 SBD","at":"2026-10-09T19:39:24.984Z"}
 
 ## V4 · Content house — PROPOSED
 - **Thesis:** per-persona expert lanes, zero AI-smell, English public content — support the public, never the echo

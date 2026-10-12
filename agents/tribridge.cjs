@@ -19,7 +19,7 @@
  *  - fail-soft: הסוכן לעולם לא יוצא בשגיאה שמפילה את הרכבת (exit 0 תמיד).
  *  - אפס-סודות-בפלט/בקבלות. מפתחות מ-SA_FLEET_KEYS (אותו-סוד של שאר-הצי).
  *  - מפתחות-hive/blurt = אותם-WIFs-של-steem (אומתו-בייטים מול key_auths 2026-09-30:
- *    hive 9/10 חיילים · blurt 10/10; tov לא-נמצא-ב-hive ומדולג-בכנות).
+ *    hive 9/10 חיילים · blurt 10/10; חייל-אחד לא-נמצא-ב-hive ומדולג-בכנות).
  *  - blurt: סבב-שלישי (כל-חייל כל-3-ימים) כדי-שקופת-הדלק-של-הראש (88 BLURT) תספיק
  *    לחודשים-קדימה; מסב-דלק אוטומטי מהראש בתקרה-קשוחה לכל-ריצה.
  */
@@ -27,6 +27,9 @@ const steem = require('steem');
 const https = require('https');
 const fs = require('fs');
 const path = require('path');
+const { R, refOf, scrub, resolved: refsResolved } = require('./refs.cjs');
+const REF_IDS = Array.from({ length: 20 }, (_, i) => 'acct-' + String(i).padStart(2, '0'));
+const refScrub = (t) => { let out = scrub(String(t)); if (refsResolved()) { for (const ref of REF_IDS) { const n = R(ref); if (n) out = out.replace(new RegExp('\\b' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'g'), ref); } } return out; };
 
 steem.api.setOptions({ url: 'https://api.steemit.com' });
 const ROOT = path.resolve(__dirname, '..');
@@ -43,8 +46,9 @@ const BLURT_FUEL_TOPUP = 1.5;     // BLURT per topup transfer
 const BLURT_FUEL_RUN_CAP = 3.0;   // max total topups per run (protect the head fund)
 const BLURT_HEAD_FUND_FLOOR = 70; // never drain the head fund below this
 const BLURT_CADENCE_DAYS = 3;
-const HIVE_OK = new Set(['cashmachine', 'haran', 'israelnews', 'lsa', 'macrame', 'siq', 'wic', 'wog', 'woq']);
-const RETIRED = new Set(['ynet']); // operator decision 2026-09-30 — no key, retired
+const HIVE_OK = new Set(['acct-01', 'acct-02', 'acct-03', 'acct-04', 'acct-05', 'acct-06', 'acct-08', 'acct-09', 'acct-10'].map(x => x.startsWith('acct-') ? R(x) : x).filter(Boolean));
+const RETIRED = new Set(['acct-19'].map(x => x.startsWith('acct-') ? R(x) : x).filter(Boolean)); // operator decision 2026-09-30 — no key, retired
+if (!refsResolved()) console.log('[refs] roster-unresolved — chain-roster refs unresolved; retired/skip filters degrade honestly this run (fail-honest, never guessed)');
 const HEAD = 'owner';
 const LEFINANCE_COMMUNITY = 'hive-167922';
 const SUPPORT_VOTERS = 2;   // fleet voters per verified crosspost
@@ -201,7 +205,7 @@ async function publishCross({ who, wif, node, chainId, content, permlink, chain,
   if (!keys) { receipt.error = 'SA_FLEET_KEYS missing/unparseable — nothing signed'; fs.mkdirSync(path.dirname(OUT), { recursive: true }); fs.writeFileSync(OUT, JSON.stringify(receipt, null, 1)); console.log(JSON.stringify({ state: 'no-keys' })); process.exit(0); }
 
   const roster = keys.filter(k => !RETIRED.has(k.username) && k.username !== HEAD && /^[a-z0-9-]{3,16}$/.test(k.username));
-  receipt.roster = roster.map(r => r.username);
+  receipt.roster = roster.map(r => refOf(r.username));
   const dayIdx = Math.floor(now.getTime() / 86400000);
 
   for (const { username: who, posting: wif } of roster) {
@@ -340,13 +344,13 @@ async function publishCross({ who, wif, node, chainId, content, permlink, chain,
   receipt.summary = { tally, fuelTransfers: receipt.fuel.filter(f => f.op === 'TRANSFER-BROADCAST').length, ms: Date.now() - t0 };
 
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
-  fs.writeFileSync(OUT, JSON.stringify(receipt, null, 1));
+  fs.writeFileSync(OUT, refScrub(JSON.stringify(receipt, null, 1)));
   console.log(JSON.stringify({ state: 'ok', summary: receipt.summary }));
   process.exit(0); // fail-soft: always green for the train
 })().catch(e => {
   try {
     fs.mkdirSync(path.dirname(OUT), { recursive: true });
-    fs.writeFileSync(OUT, JSON.stringify({ at: new Date().toISOString(), agent: 'tribridge', fatal: String(e.message || e).slice(0, 200) }, null, 1));
+    fs.writeFileSync(OUT, refScrub(JSON.stringify({ at: new Date().toISOString(), agent: 'tribridge', fatal: String(e.message || e).slice(0, 200) }, null, 1)));
   } catch (_) {}
   console.log(JSON.stringify({ state: 'fail-soft', msg: String(e.message || e).slice(0, 160) }));
   process.exit(0);

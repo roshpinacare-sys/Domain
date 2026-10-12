@@ -15,10 +15,13 @@
 const fs = require('fs');
 const path = require('path');
 const steem = require('steem');
+const { R, refOf, scrub, resolved: refsResolved } = require('./refs.cjs');
+const REF_IDS = Array.from({ length: 20 }, (_, i) => 'acct-' + String(i).padStart(2, '0'));
+const refScrub = (t) => { let out = scrub(String(t)); if (refsResolved()) { for (const ref of REF_IDS) { const n = R(ref); if (n) out = out.replace(new RegExp('\\b' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'g'), ref); } } return out; };
 
 steem.api.setOptions({ url: 'https://api.steemit.com' });
 const ROOT = path.resolve(__dirname, '..');
-const FLEET = ['cashmachine', 'haran', 'israelnews', 'lsa', 'macrame', 'siq', 'tov', 'wic', 'wog', 'woq', 'owner'];
+const FLEET = ['acct-01', 'acct-02', 'acct-03', 'acct-04', 'acct-05', 'acct-06', 'acct-07', 'acct-08', 'acct-09', 'acct-10', 'owner'].map(x => x.startsWith('acct-') ? R(x) : x).filter(Boolean);
 const SOLDIERS = FLEET.filter(a => a !== 'owner');
 const MIN_VP = 20, MIN_RC = 30;
 
@@ -71,8 +74,8 @@ async function main() {
   const vpFull = fleet.filter(x => x.vp >= 90).length;
   const vpReady = fleet.filter(x => x.vp >= MIN_VP).length;
   const vpZero = fleet.filter(x => x.vp < MIN_VP && x.name !== 'owner');
-  console.log(`[doctor] capital: total net SP=${totalSP} · VP≥90%: ${vpFull}/12 · VP≥${MIN_VP}%: ${vpReady}/12 · soldiers VP-low: ${vpZero.map(x => x.name).join(',') || 'none'}`);
-  console.log('[doctor] retired: ynet (2026-09-29, sovereign decision — no key in any vault generation) — excluded from active fleet gauges');
+  console.log(`[doctor] capital: total net SP=${totalSP} · VP≥90%: ${vpFull}/12 · VP≥${MIN_VP}%: ${vpReady}/12 · soldiers VP-low: ${vpZero.map(x => refOf(x.name)).join(',') || 'none'}`);
+  console.log('[doctor] retired: one operator account retired 2026-09-29 (sovereign decision — no key in any vault generation) — excluded from active fleet gauges');
 
   // ── 2. תוכן-חי (7d) + כיסוי-קהל ──
   const now = Date.now();
@@ -95,7 +98,7 @@ async function main() {
           });
         }
       }
-    } catch (e) { console.log(`[doctor] feed ${ac}: ${String(e.message || e).slice(0, 50)}`); }
+    } catch (e) { console.log(`[doctor] feed ${refOf(ac)}: ${String(e.message || e).slice(0, 50)}`); }
   }
   // כיסוי: על כל-פוסט — כמה מהצי-האפשרי הצביע (כולל-מחבר-כפול-הצבעה-עצמית-חלקית)
   let possible = 0, done = 0;
@@ -105,19 +108,19 @@ async function main() {
   }
   const coverage = possible ? Math.round(done / possible * 100) : 0;
   console.log(`[doctor] content: ${posts.length} live posts (7d) · audience coverage ${done}/${possible} = ${coverage}%`);
-  posts.forEach(p => console.log(`   · ${p.author}/${p.permlink.slice(0, 36)} votes=${p.totalVotes} fleet=${p.fleetVotes} ext=${p.externalVotes} missing=${p.missingFleetVotes.length}`));
+  posts.forEach(p => console.log(`   · ${refOf(p.author)}/${p.permlink.slice(0, 36)} votes=${p.totalVotes} fleet=${p.fleetVotes} ext=${p.externalVotes} missing=${p.missingFleetVotes.length}`));
 
   // ── 3. פנדינג-וכספים ──
   const pendingPayout = posts.reduce((s, p) => s + parseFloat(p.pendingPayout) || 0, 0);
   const liquidSteem = Math.round(fleet.reduce((s, x) => s + x.steem, 0) * 1000) / 1000;
   const claimsPending = fleet.filter(x => x.pendingClaim > 0.0001).map(x => x.name);
-  console.log(`[doctor] economy: pending on live posts ≈ ${pendingPayout.toFixed(3)} SBD · liquid STEEM fleet-wide = ${liquidSteem} · pending claims: ${claimsPending.join(',') || 'none'}`);
+  console.log(`[doctor] economy: pending on live posts ≈ ${pendingPayout.toFixed(3)} SBD · liquid STEEM fleet-wide = ${liquidSteem} · pending claims: ${claimsPending.map(refOf).join(',') || 'none'}`);
 
   // ── 4. פערים-כנים ──
   const gaps = [];
-  if (vpZero.length) gaps.push(`VP-regen: ${vpZero.length} soldiers below ${MIN_VP}% (${vpZero.map(x => `${x.name}@${x.vp}%`).join(', ')}) — natural ~20%/day recovery, engine gates re-admit them automatically`);
+  if (vpZero.length) gaps.push(`VP-regen: ${vpZero.length} soldiers below ${MIN_VP}% (${vpZero.map(x => `${refOf(x.name)}@${x.vp}%`).join(', ')}) — natural ~20%/day recovery, engine gates re-admit them automatically`);
   const undel = SOLDIERS.filter(s => { const f = fleet.find(x => x.name === s); return f && f.delInSp < 29; });
-  if (undel.length) gaps.push(`delegation gap: ${undel.join(',')} below 30 SP from head`);
+  if (undel.length) gaps.push(`delegation gap: ${undel.map(refOf).join(',')} below 30 SP from head`);
   const unvoted = posts.filter(p => p.missingFleetVotes.length > 0);
   if (unvoted.length) gaps.push(`audience gap: ${unvoted.length} posts with missing fleet votes (next sweep fills idempotently)`);
   if (!posts.length) gaps.push('content gap: no live posts in 7d window');
@@ -142,7 +145,7 @@ async function main() {
   };
   const jr = path.join(ROOT, 'agent', 'state-report.json');
   fs.mkdirSync(path.dirname(jr), { recursive: true });
-  fs.writeFileSync(jr, JSON.stringify(report, null, 2));
+  fs.writeFileSync(jr, refScrub(JSON.stringify(report, null, 2)));
 
   // דוח-מקצועי (markdown) → fleet-outbox
   const lines = [
@@ -154,19 +157,19 @@ async function main() {
     ``,
     `| חשבון | SP נטו | VP% | RC% | מואצל-אליו | מאציל |`,
     `|---|---|---|---|---|---|`,
-    ...fleet.map(f => `| @${f.name} | ${f.spNet} | ${f.vp} | ${f.rc == null ? 'n/a' : f.rc} | ${f.delInSp} | ${f.delOutSp} |`),
+    ...fleet.map(f => `| @${refOf(f.name)} | ${f.spNet} | ${f.vp} | ${f.rc == null ? 'n/a' : f.rc} | ${f.delInSp} | ${f.delOutSp} |`),
     ``,
     `**סה"כ SP נטו: ${totalSP}** · VP≥90%: ${vpFull}/12 · VP≥${MIN_VP}%: ${vpReady}/12`,
     ``,
     `## תוכן-חי (7 ימים) — כיסוי-קהל ${coverage}%`,
     ``,
-    ...posts.map(p => `- @${p.author}/${p.permlink} — קולות ${p.totalVotes} (צי ${p.fleetVotes} · חוץ ${p.externalVotes}) · פנדינג ${p.pendingPayout}`),
+    ...posts.map(p => `- @${refOf(p.author)}/${p.permlink} — קולות ${p.totalVotes} (צי ${p.fleetVotes} · חוץ ${p.externalVotes}) · פנדינג ${p.pendingPayout}`),
     ``,
     `## כלכלה`,
     ``,
     `- פנדינג על פוסטים-חיים: ≈ ${pendingPayout.toFixed(3)} SBD`,
     `- STEEM נזיל בצי: ${liquidSteem}`,
-    `- תביעות-ממתינות: ${claimsPending.join(', ') || 'אין'}`,
+    `- תביעות-ממתינות: ${claimsPending.map(refOf).join(', ') || 'אין'}`,
     ``,
     `## פערים-כנים`,
     ``,
@@ -181,7 +184,7 @@ async function main() {
   ];
   const md = process.env.STATE_OUT || path.join(ROOT, `STATE-REPORT-${day.replace(/-/g, '')}.md`);
   fs.mkdirSync(path.dirname(md), { recursive: true });
-  fs.writeFileSync(md, lines.join('\n') + '\n');
+  fs.writeFileSync(md, refScrub(lines.join('\n') + '\n'));
   console.log(`[doctor] DONE · state-report → ${jr} · STATE-REPORT → ${md}`);
 }
 main().catch(e => { console.error('[doctor] fatal:', String(e.message || e).slice(0, 180)); process.exit(0); }); // fail-soft

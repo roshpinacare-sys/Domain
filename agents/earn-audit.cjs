@@ -28,6 +28,9 @@
 const fs = require('fs');
 const path = require('path');
 const https = require('https');
+const { R, refOf, scrub, resolved: refsResolved } = require('./refs.cjs');
+const REF_IDS = Array.from({ length: 20 }, (_, i) => 'acct-' + String(i).padStart(2, '0'));
+const refScrub = (t) => { let out = scrub(String(t)); if (refsResolved()) { for (const ref of REF_IDS) { const n = R(ref); if (n) out = out.replace(new RegExp('\\b' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'g'), ref); } } return out; };
 const { vestsToSp } = require(path.join(__dirname, 'drip-canon.cjs'));
 
 const ROOT = path.resolve(__dirname, '..');
@@ -35,7 +38,7 @@ const OUT_JSON = process.env.EARN_AUDIT_JSON || path.join(ROOT, 'agents', 'earn-
 const OUT_MD = OUT_JSON.replace(/\.json$/, '.md');
 const NODE = 'https://api.steemit.com';
 const NODE_CROSS = 'https://api.justyy.com';
-const ROSTER = ['owner', 'cashmachine', 'haran', 'israelnews', 'lsa', 'macrame', 'siq', 'tov', 'wic', 'wog', 'woq'];
+const ROSTER = ['owner', 'acct-01', 'acct-02', 'acct-03', 'acct-04', 'acct-05', 'acct-06', 'acct-07', 'acct-08', 'acct-09', 'acct-10'].map(x => x.startsWith('acct-') ? R(x) : x).filter(Boolean);
 const MAX_PAGES = +(process.env.EARN_AUDIT_MAX_PAGES || 30); // Z-70 CR-0048: 4 pages (400 ops) hid the drip on rotation days — owner's 7d window covered only ~404 ops; 30 pages = ~3000 ops/account
 const CONVERT_MATURITY_DAYS = 3.5; // STEEM chain law: SBD→STEEM conversion matures 3.5 days after open (Z-72 CR-0054 — computed from the op timestamp, never guessed)
 const WINDOW_DAYS = +(process.env.EARN_AUDIT_DAYS || 7);
@@ -140,7 +143,7 @@ async function main() {
     const t = await walkAccount(acc, sinceTs, gp).catch((e) => ({ error: String(e.message).slice(0, 90), ops: 0 }));
     const x = usdOf(t, gp, feed);
     const w = t.__walk || {};
-    rows.push({ account: acc, window_days: WINDOW_DAYS, ...(({ __walk, ...rest }) => rest)(t), curation_sp: +x.curation_sp.toFixed(6), author_vests_sp: +x.author_vests_sp.toFixed(6), claimed_vests_sp: +x.claimed_vests_sp.toFixed(6), walk_pages: w.pages_used || 0, oldest_scanned_ts: w.oldest_scanned_ts || null, truncated: !!w.truncated, error: t.error || null });
+    rows.push({ account: refOf(acc), window_days: WINDOW_DAYS, ...(({ __walk, ...rest }) => rest)(t), curation_sp: +x.curation_sp.toFixed(6), author_vests_sp: +x.author_vests_sp.toFixed(6), claimed_vests_sp: +x.claimed_vests_sp.toFixed(6), walk_pages: w.pages_used || 0, oldest_scanned_ts: w.oldest_scanned_ts || null, truncated: !!w.truncated, error: t.error || null });
   }
   const totals = rows.reduce((a, r) => {
     for (const k of Object.keys(r)) if (typeof r[k] === 'number' && k !== 'account' && k !== 'window_days') a[k] = +( (a[k] || 0) + r[k] ).toFixed(6);
@@ -156,12 +159,12 @@ async function main() {
     duration_ms: Date.now() - t0,
     law: 'chain-truth: tallied from account_history ops only — a book claiming income the chain does not show is exposed here',
   };
-  fs.writeFileSync(OUT_JSON, JSON.stringify(book, null, 1) + '\n');
+  fs.writeFileSync(OUT_JSON, refScrub(JSON.stringify(book, null, 1)) + '\n');
   const md = [`# Earn audit · ${book.at} (window ${WINDOW_DAYS}d, keyless chain-truth)`, '',
     '| account | author SBD | author STEEM | curation SP | claimed vests SP | drip arrived STEEM | sold STEEM | recv SBD | bought STEEM | spent SBD | converts SBD | fills | votes | posts |', '|---|---|---|---|---|---|---|---|---|---|---|---|---|---|'];
   for (const r of rows) md.push(`| ${r.account}${r.truncated ? ' ⚠TRUNC' : ''} | ${r.author_sbd} | ${r.author_steem} | ${r.curation_sp} | ${r.claimed_vests_sp} | ${r.drip_arrived_steem} | ${r.sold_steem} | ${r.recv_sbd} | ${r.bought_steem} | ${r.spent_sbd} | ${r.converts_sbd} | ${r.fills} | ${r.votes} | ${r.posts} |`);
   md.push('', `**fleet totals:** ${JSON.stringify(totals)}`, '', `_feed: ${JSON.stringify(book.feed)} — every number above is counted from chain ops, not from books_`);
-  fs.writeFileSync(OUT_MD, md.join('\n') + '\n');
+  fs.writeFileSync(OUT_MD, refScrub(md.join('\n') + '\n'));
   console.log(`[earn-audit] booked ${rows.length} accounts · fills ${totals.fills} · sold ${totals.sold_steem} STEEM → ${totals.recv_sbd} SBD · bought ${totals.bought_steem} STEEM for ${totals.spent_sbd} SBD · votes ${totals.votes} · curation ${totals.curation_sp} SP · drip ${totals.drip_arrived_steem} STEEM · converts ${totals.converts_sbd} SBD in ${book.duration_ms}ms`);
 }
 

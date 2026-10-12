@@ -24,13 +24,14 @@ const dhive = require("@hiveio/dhive");
 const sodium = require("libsodium-wrappers");
 const bs58 = require("bs58");
 const crypto = require("crypto");
+const { R, refOf } = require("./refs.cjs");
 
 const PAT = process.env.WEAVE_OPS_PAT || "";
 const MODE = (process.env.REPAIR_MODE || "check").toLowerCase();
 const REPO = process.env.REPAIR_REPO || "roshpinacare-sys/Domain";
 const TARGET_SECRET = process.env.REPAIR_TARGET || "WEAVE_STEEM_WIF";
 const DISPATCH_WF = process.env.REPAIR_DISPATCH || "weave-anchor-lines.yml";
-const ANCHOR_FLEET = ["cashmachine", "owner", "lsa"];
+const ANCHOR_FLEET = [R("acct-01"), "owner", R("acct-04")].filter(Boolean);
 
 function fail(code, he) {
   console.log(`[repair] ✗ ${code} — ${he}`);
@@ -102,6 +103,12 @@ async function steemAccounts(names) {
   const entries = Object.entries(map).filter(([, w]) => typeof w === "string" && w.length > 40);
   if (!entries.length) fail("vault-empty", "no usable entries in the vault map");
 
+  // roster-unresolved law (refs layer): a matcher never guesses chain identities
+  if (!R("acct-01") || !R("acct-04")) {
+    console.log("[repair] roster-unresolved — the estate map is unavailable in this run; refusing to match identities against guesses");
+    process.exit(0);
+  }
+
   // derive public keys (public information — safe to print)
   const cands = [];
   for (const [username, wif] of entries) {
@@ -137,13 +144,13 @@ async function steemAccounts(names) {
       ).digest().subarray(0, 4);
       chkOk = chk.equals(decoded.subarray(decoded.length - 4));
     } catch { /* not base58 */ }
-    console.log(`  · shape @${username}: strlen=${wif.length} head="${wif.slice(0, 2)}" b58bytes=${decoded ? decoded.length : "no"} checksum=${chkOk ? "ok" : "bad"}`);
+    console.log(`  · shape @${refOf(username)}: strlen=${wif.length} head="${wif.slice(0, 2)}" b58bytes=${decoded ? decoded.length : "no"} checksum=${chkOk ? "ok" : "bad"}`);
   }
   console.log("[repair] MATCH TABLE (public keys + chain authorities only):");
   const matched = [];
   for (const c of cands) {
     if (!c.pub) {
-      console.log(`  · @${c.username}: unparsable-as-STEEM (probably another chain's encoding)`);
+      console.log(`  · @${refOf(c.username)}: unparsable-as-STEEM (probably another chain's encoding)`);
       continue;
     }
     let hit = null;
@@ -151,7 +158,7 @@ async function steemAccounts(names) {
       if (a.posting.includes(c.pub)) { hit = { account: acc, role: "posting" }; break; }
       if (a.active.includes(c.pub)) { hit = { account: acc, role: "active" }; break; }
     }
-    console.log(`  · @${c.username}: ${c.pub.slice(0, 14)}… → ${hit ? `LIVE ${hit.role} of @${hit.account}` : "no live match"}`);
+    console.log(`  · @${refOf(c.username)}: ${c.pub.slice(0, 14)}… → ${hit ? `LIVE ${hit.role} of @${refOf(hit.account)}` : "no live match"}`);
     if (hit && hit.role === "posting" && ANCHOR_FLEET.includes(hit.account)) {
       matched.push({ username: c.username, account: hit.account, pub: c.pub });
     }
@@ -166,12 +173,13 @@ async function steemAccounts(names) {
 
   if (!matched.length) fail("no-eligible", "repair refused — no vault WIF is a live posting authority of the anchor trio");
 
-  // prefer owner, then cashmachine, then lsa (anchor trio order)
+  // prefer owner, then the anchor witness, then the publishing authority (anchor trio order)
   const pick = matched.find((m) => m.account === "owner")
-    || matched.find((m) => m.account === "cashmachine")
+    || matched.find((m) => m.account === R("acct-01"))
+    || matched.find((m) => m.account === R("acct-04"))
     || matched[0];
   const wif = map[pick.username];
-  console.log(`[repair] selected: vault @${pick.username} → LIVE posting of @${pick.account} (${pick.pub.slice(0, 14)}…)`);
+  console.log(`[repair] selected: vault @${refOf(pick.username)} → LIVE posting of @${refOf(pick.account)} (${pick.pub.slice(0, 14)}…)`);
 
   // sealed-box relay into the target secret
   const pkRes = await gh(`/repos/${REPO}/actions/secrets/public-key`);

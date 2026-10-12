@@ -37,7 +37,7 @@ function sandbox(opts = {}) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'capgate-selftest-'));
   SANDBOXES.push(root);
   fs.mkdirSync(path.join(root, 'agents'), { recursive: true });
-  for (const f of ['capital-gate.cjs', 'directivesChain.cjs', 'loopguard.cjs', 'selfmodel.cjs']) {
+  for (const f of ['capital-gate.cjs', 'directivesChain.cjs', 'loopguard.cjs', 'selfmodel.cjs', 'refs.cjs']) {
     fs.writeFileSync(path.join(root, 'agents', f), fs.readFileSync(path.join(ROOT, f), 'utf8'));
   }
   /* R29: sandbox self-model — opts.selfmodel: 'seed' (live file), object, 'corrupt', or undefined (missing) */

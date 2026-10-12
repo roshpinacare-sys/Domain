@@ -22,10 +22,10 @@ function selftest() {
   const r = load();
   t('protocol SAOS-FLEET-ROSTER/1', r.protocol === 'SAOS-FLEET-ROSTER/1');
   t('head present (sanitized surface)', typeof r.head === 'string' && r.head.length >= 3);
-  t('fleet has 13 members (10 operators + hcsoldier4/5/6)', Array.isArray(r.steemFleet) && r.steemFleet.length === 13);
+  t('fleet has 13 members (10 operators + 3 soldier accounts)', Array.isArray(r.steemFleet) && r.steemFleet.length === 13);
   t('no banned name inside the fleet', r.steemFleet.every((n) => !r.bannedCapital.some((b) => b.name === n)));
-  t('ban list carries hcsoldier1/2/3 (LOST-NO-CUSTODY)', ['hcsoldier1', 'hcsoldier2', 'hcsoldier3'].every((n) => r.bannedCapital.some((b) => b.name === n && /LOST-NO-CUSTODY/.test(b.reason))));
-  t('ban list carries ynet (retired)', r.bannedCapital.some((b) => b.name === 'ynet'));
+  t('ban list carries the 3 lost-custody soldier refs (LOST-NO-CUSTODY)', ['acct-15', 'acct-16', 'acct-17'].every((n) => r.bannedCapital.some((b) => b.name === n && /LOST-NO-CUSTODY/.test(b.reason))));
+  t('ban list carries the retired operator ref', r.bannedCapital.some((b) => b.name === 'acct-19'));
   t('every ban carries a reason', r.bannedCapital.every((b) => typeof b.reason === 'string' && b.reason.length > 10));
   t('law statement present', typeof r.law === 'string' && r.law.length > 20);
   console.log(process.exitCode === 1 ? 'FLEET-ROSTER SELFTEST: FAIL' : 'FLEET-ROSTER SELFTEST: PASS');

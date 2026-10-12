@@ -56,6 +56,10 @@
 const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
+const { R } = require('../refs.cjs');
+/* eval fixtures speak in public refs resolved at runtime — the map must be present
+ * for fleet-identity-sensitive asserts; unresolved refs fall through honestly */
+const RN = (ref) => (ref.startsWith('acct-') ? (R(ref) || ref) : ref);
 
 const AG = path.resolve(__dirname, '..'); // agents/
 const OUT_DIR = __dirname;
@@ -2608,8 +2612,8 @@ function accumulateInMemory(bookRows, seed) {
     const c58 = (cond, name) => { if (!cond) why58.push(name); };
     const hc = require(path.join(AG, 'human-cadence.cjs'));
     // determinism: same (doy, account, mode) same jitter, always inside the span
-    c58(hc.jitterMinute(280, 'wic', 'blog', 22) === hc.jitterMinute(280, 'wic', 'blog', 22), 'jitter-deterministic');
-    const j58 = hc.jitterMinute(280, 'wic', 'blog', 22);
+    c58(hc.jitterMinute(280, RN('acct-08'), 'blog', 22) === hc.jitterMinute(280, RN('acct-08'), 'blog', 22), 'jitter-deterministic');
+    const j58 = hc.jitterMinute(280, RN('acct-08'), 'blog', 22);
     c58(j58 >= 0 && j58 <= 22, 'jitter-bounds');
     // windows: blog window = first hour .. last hour + 2 (catch-up, never burst); off-day null
     c58(JSON.stringify(hc.blogWindow({ blogDaysUTC: [0, 1], blogHoursUTC: [5, 6] }, 1)) === '{"start":5,"end":8}', 'blog-window-shape');
@@ -2630,27 +2634,27 @@ function accumulateInMemory(bookRows, seed) {
     const fleetStats = hc.contentGate({ title: 'A good piece', body: 'c'.repeat(500) + ' measured 3810 SP across the operation', tags: ['blog', 'saos'] });
     c58(fleetStats.why.includes('fleet-stats-in-soldier-post'), 'gate-fleet-stats');
     // piece cooldown: all used today -> null; fresh pool deterministic pick, never inside cooldown
-    const pool58 = (lib58.desks.haran || []);
+    const pool58 = (lib58.desks['acct-02'] || []);
     c58(hc.pickPiece(pool58, { pieceUse: Object.fromEntries(pool58.map((p) => [p.id, 280])) }, 280) === null, 'piece-cooldown-blocks');
     const got58 = hc.pickPiece(pool58, { pieceUse: {} }, 280);
     c58(got58 && pool58.includes(got58), 'piece-pick-fresh');
     c58(hc.pickPiece(pool58, { pieceUse: {} }, 280).id === got58.id, 'piece-pick-deterministic');
     // THE PROBE-B LAW on engagement candidates
-    const goodPost = { author: 'haran', permlink: 'x-1', created: new Date(Date.now() - 5 * 3600000).toISOString().replace('Z', ''), body: 'd'.repeat(500) + ' The bold line here is **the part that carries the whole argument of the piece** and more follows after it, enough depth for the floor. ' + 'd'.repeat(400), title: 'A real piece', children: 2, active_votes: [] };
-    const badPost = { author: 'haran', permlink: 'x-2', created: new Date(Date.now() - 5 * 3600000).toISOString().replace('Z', ''), body: 'probe B', title: 'SAOS WEB probe B', children: 0, active_votes: [] };
-    c58(hc.candidateEligible(goodPost, { now: Date.now(), voter: 'tov' }).ok === true, 'candidate-good');
-    c58(String(hc.candidateEligible(badPost, { now: Date.now(), voter: 'tov' }).why).startsWith('probe-b-law'), 'candidate-probe-b-floor');
-    c58(hc.candidateEligible({ ...goodPost, author: 'outsider' }, { now: Date.now(), voter: 'tov' }).why === 'internal-only-law', 'internal-only-law');
-    c58(hc.candidateEligible({ ...goodPost, author: 'tov' }, { now: Date.now(), voter: 'tov' }).why === 'not-external-or-self', 'no-self-engagement');
-    c58(hc.candidateEligible({ ...goodPost, active_votes: [{ voter: 'tov' }] }, { now: Date.now(), voter: 'tov' }).why === 'already-voted', 'no-repeat-vote');
-    const young = hc.candidateEligible({ ...goodPost, created: new Date(Date.now() - 0.5 * 3600000).toISOString().replace('Z', '') }, { now: Date.now(), voter: 'tov' });
+    const goodPost = { author: RN('acct-02'), permlink: 'x-1', created: new Date(Date.now() - 5 * 3600000).toISOString().replace('Z', ''), body: 'd'.repeat(500) + ' The bold line here is **the part that carries the whole argument of the piece** and more follows after it, enough depth for the floor. ' + 'd'.repeat(400), title: 'A real piece', children: 2, active_votes: [] };
+    const badPost = { author: RN('acct-02'), permlink: 'x-2', created: new Date(Date.now() - 5 * 3600000).toISOString().replace('Z', ''), body: 'probe B', title: 'SAOS WEB probe B', children: 0, active_votes: [] };
+    c58(hc.candidateEligible(goodPost, { now: Date.now(), voter: RN('acct-07') }).ok === true, 'candidate-good');
+    c58(String(hc.candidateEligible(badPost, { now: Date.now(), voter: RN('acct-07') }).why).startsWith('probe-b-law'), 'candidate-probe-b-floor');
+    c58(hc.candidateEligible({ ...goodPost, author: 'outsider' }, { now: Date.now(), voter: RN('acct-07') }).why === 'internal-only-law', 'internal-only-law');
+    c58(hc.candidateEligible({ ...goodPost, author: RN('acct-07') }, { now: Date.now(), voter: RN('acct-07') }).why === 'not-external-or-self', 'no-self-engagement');
+    c58(hc.candidateEligible({ ...goodPost, active_votes: [{ voter: RN('acct-07') }] }, { now: Date.now(), voter: RN('acct-07') }).why === 'already-voted', 'no-repeat-vote');
+    const young = hc.candidateEligible({ ...goodPost, created: new Date(Date.now() - 0.5 * 3600000).toISOString().replace('Z', '') }, { now: Date.now(), voter: RN('acct-07') });
     c58(young.why === 'age-window', 'age-floor-2h');
     // curation score prefers depth, deterministic
     c58(hc.curateScore({ ...goodPost, body: 'e'.repeat(6000) }) > hc.curateScore({ ...goodPost, body: 'f'.repeat(900) }), 'score-prefers-depth');
     // comment builder: deterministic, references a real fragment, never an AI marker
-    const cm58 = hc.buildComment(goodPost, 'tov', 280);
+    const cm58 = hc.buildComment(goodPost, RN('acct-07'), 280);
     c58(typeof cm58 === 'string' && cm58.length > 40, 'comment-built');
-    c58(hc.buildComment(goodPost, 'tov', 280) === cm58, 'comment-deterministic');
+    c58(hc.buildComment(goodPost, RN('acct-07'), 280) === cm58, 'comment-deterministic');
     // the day plan: every soldier planned, blogs land on their days only, jitter inside the span
     const plan58 = hc.dayPlan(280, 0);
     c58(Object.keys(plan58).length === hc.SOLDIERS.length, 'plan-covers-fleet');
@@ -2708,7 +2712,7 @@ function accumulateInMemory(bookRows, seed) {
     const two59 = cf.fundingPlan(0.012, 8.05, [mk(1, 4750, 51148, '@@000000021'), mk(2, 4750, 51372, '@@000000021'), mk(3, 4750, 51625, '@@000000021')], 2);
     c59(two59.cancels.length === 2 && two59.cancels[0] === 3 && two59.cancels[1] === 2, 'funding-cap-two');
     // the founding roles: owner admin (measured creator pattern), soldiers member
-    const roles59 = cf.memberRoles(['owner', 'wic', 'haran']);
+    const roles59 = cf.memberRoles(['owner', RN('acct-08'), RN('acct-02')]);
     c59(roles59[0].role === 'admin' && roles59[1].role === 'member' && roles59[2].role === 'member', 'founding-roles');
     // op shapes byte-match the measured ground truth (hive-153176 op 0/1/2)
     const op59 = cf.accountCreateOp('hive-177701', { owner: 'OW', active: 'AC', posting: 'PO', memo: 'ME' }, '3.000 STEEM');
@@ -2769,25 +2773,25 @@ function accumulateInMemory(bookRows, seed) {
     c60(rb60.length === 3 && rb60[0].account === 'aaa' && rb60[1].role === 'guest' && rb60[2].joined === null, 'readback-parse-sort');
     c60(hc60.subscribersReadBack('junk').length === 0 && hc60.subscribersReadBack([[null], [42]]).length === 0, 'readback-junk-null');
     // join eligibility: every refusal has a name, the window law rules
-    const cfg60 = slots60.soldiers.haran;
-    c60(hc60.subscribeEligible('haran', cfg60, { hour: 9, weekday: 6, subscribedSet: new Set(['haran']), hasKey: true }).why === 'already-subscribed', 'join-already');
-    c60(hc60.subscribeEligible('haran', cfg60, { hour: 9, weekday: 6, hasKey: true, memorySub: { haran: 280 } }).why === 'budget-used', 'join-budget-used');
-    c60(hc60.subscribeEligible('haran', cfg60, { hour: 9, weekday: 6, hasKey: false }).why === 'no-key', 'join-no-key');
-    c60(hc60.subscribeEligible('haran', cfg60, { hour: 23, weekday: 6, hasKey: true }).why === 'outside-window', 'join-window');
+    const cfg60 = slots60.soldiers[RN('acct-02')];
+    c60(hc60.subscribeEligible(RN('acct-02'), cfg60, { hour: 9, weekday: 6, subscribedSet: new Set([RN('acct-02')]), hasKey: true }).why === 'already-subscribed', 'join-already');
+    c60(hc60.subscribeEligible(RN('acct-02'), cfg60, { hour: 9, weekday: 6, hasKey: true, memorySub: { [RN('acct-02')]: 280 } }).why === 'budget-used', 'join-budget-used');
+    c60(hc60.subscribeEligible(RN('acct-02'), cfg60, { hour: 9, weekday: 6, hasKey: false }).why === 'no-key', 'join-no-key');
+    c60(hc60.subscribeEligible(RN('acct-02'), cfg60, { hour: 23, weekday: 6, hasKey: true }).why === 'outside-window', 'join-window');
     // quiet-hours: needs a window that CONTAINS the quiet hour — the check order is window first (measured)
     c60(hc60.subscribeEligible('x', { commentHoursUTC: [1, 2] }, { hour: 2, weekday: 6, hasKey: true }).why === 'quiet-hours', 'join-quiet');
     c60(hc60.subscribeEligible('x', { commentHoursUTC: [1, 2] }, { hour: 2, weekday: 6, hasKey: true, subscribedSet: new Set(['x']) }).why === 'already-subscribed', 'join-order-truth-first');
-    c60(hc60.subscribeEligible('haran', cfg60, { hour: 10, weekday: 6, hasKey: true }).ok === true, 'join-ok');
+    c60(hc60.subscribeEligible(RN('acct-02'), cfg60, { hour: 10, weekday: 6, hasKey: true }).ok === true, 'join-ok');
     // the plan: founder first, then soldiers by window start (2026-10-04 is a SUNDAY, weekday 0 —
-    // wic's comment window [7,8] catches hour 9 via the +1h catch-up law, before haran's [9,10]); capped; already-subscribed skipped
+    // the second desk's comment window [7,8] catches hour 9 via the +1h catch-up law, before the next desk's [9,10]); capped; already-subscribed skipped
     const now60 = new Date('2026-10-04T09:17:00Z');
-    const keys60 = Object.fromEntries(['owner', 'haran', 'israelnews', 'wic', 'tov'].map((k) => [k, 'wif']));
+    const keys60 = Object.fromEntries(['owner', RN('acct-02'), RN('acct-03'), RN('acct-08'), RN('acct-07')].map((k) => [k, 'wif']));
     const plan60 = hc60.subscribePlan(now60, new Set(), { subscribeDone: {} }, keys60);
-    c60(plan60.length === 2 && plan60[0].who === 'owner' && plan60[1].who === 'wic', 'plan-founder-first-window-order');
-    const planSub = hc60.subscribePlan(now60, new Set(['owner', 'wic']), { subscribeDone: {} }, keys60);
-    c60(planSub.length === 1 && planSub[0].who === 'haran', 'plan-skips-subscribed');
-    const planMem = hc60.subscribePlan(now60, new Set(), { subscribeDone: { owner: 280, wic: 280 } }, keys60);
-    c60(planMem.length === 1 && planMem[0].who === 'haran', 'plan-budget-memory');
+    c60(plan60.length === 2 && plan60[0].who === 'owner' && plan60[1].who === RN('acct-08'), 'plan-founder-first-window-order');
+    const planSub = hc60.subscribePlan(now60, new Set(['owner', RN('acct-08')]), { subscribeDone: {} }, keys60);
+    c60(planSub.length === 1 && planSub[0].who === RN('acct-02'), 'plan-skips-subscribed');
+    const planMem = hc60.subscribePlan(now60, new Set(), { subscribeDone: { owner: 280, [RN('acct-08')]: 280 } }, keys60);
+    c60(planMem.length === 1 && planMem[0].who === RN('acct-02'), 'plan-budget-memory');
     c60(JSON.stringify(hc60.subscribePlan(now60, new Set(), { subscribeDone: {} }, keys60)) === JSON.stringify(plan60), 'plan-deterministic');
     // RC top-up desk: GESTS units law + the assert truth + the floor-protected plan
     c60(Math.abs(cf60.gestsToVests(3070814041830) - 3070814.04183) < 1e-4, 'gests-units-law');
@@ -3367,10 +3371,10 @@ function accumulateInMemory(bookRows, seed) {
     if (oneSide67.verdict !== 'REFUSED-ONE-SIDED') why67.push('a one-sided grid must be REFUSED-ONE-SIDED');
     // 4. white-box: the pegout hand — allowlist law (the live 'treasury' row is the refusal), floor law, queue purity, serializer golden vector
     if (!(ph67.validateRow({ asset: 'STEEM', amount: '9358', account: 'treasury', corridor: 'KEYED-DESK' }).refused === 'REFUSED-DEST-NOT-ESTATE')) why67.push('the dest-allowlist law broken (treasury must be refused)');
-    if (!(ph67.validateRow({ asset: 'STEEM', amount: '1000', account: 'cashmachine', corridor: 'KEYED-DESK' }).verdict === 'FIREABLE-KEYED')) why67.push('an estate dest must be FIREABLE-KEYED');
+    if (!(ph67.validateRow({ asset: 'STEEM', amount: '1000', account: RN('acct-01'), corridor: 'KEYED-DESK' }).verdict === 'FIREABLE-KEYED')) why67.push('an estate dest must be FIREABLE-KEYED');
     if (!(ph67.muToSatoshi('9358', 3) === 9n && ph67.muToSatoshi('999', 3) === 0n)) why67.push('the µ→chain floor law broken');
     if (ph67.satoshiToAmount(9n, 'STEEM') !== '0.009 STEEM') why67.push('satoshi→chain amount form broken');
-    const q67 = { rows: [{ intentId: 'A', asset: 'STEEM', amount: '1000', account: 'cashmachine' }] };
+    const q67 = { rows: [{ intentId: 'A', asset: 'STEEM', amount: '1000', account: RN('acct-01') }] };
     const q67b = ph67.applyResult(q67, 'A', { fired: true });
     if (!(q67.rows[0].fired === undefined && q67b.rows[0].fired === true)) why67.push('applyResult must be pure (input untouched)');
     const gv67 = ph67.serializeTransferTx({ ref_block_num: 44000, ref_block_prefix: 305419896, expiration: '2026-10-04T16:00:00', operations: [['transfer', { from: 'owner', to: 'owner', amount: '0.001 STEEM', memo: 'SAOS-PEGOUT-HAND/1 rail-proof R44' }]], extensions: [] });

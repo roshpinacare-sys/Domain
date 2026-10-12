@@ -19,9 +19,12 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
+const { R, refOf, scrub, resolved: refsResolved } = require('../refs.cjs');
+const REF_IDS = Array.from({ length: 20 }, (_, i) => 'acct-' + String(i).padStart(2, '0'));
+const refScrub = (t) => { let out = scrub(String(t)); if (refsResolved()) { for (const ref of REF_IDS) { const n = R(ref); if (n) out = out.replace(new RegExp('\\b' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'g'), ref); } } return out; };
 
 const RPC = process.env.STEEM_RPC || 'https://api.steemit.com';
-const FLEET = ['owner', 'cashmachine', 'haran', 'israelnews', 'lsa', 'macrame', 'siq', 'tov', 'wic', 'wog', 'woq', 'ynet'];
+const FLEET = ['owner', 'acct-01', 'acct-02', 'acct-03', 'acct-04', 'acct-05', 'acct-06', 'acct-07', 'acct-08', 'acct-09', 'acct-10', 'acct-19'].map(x => x.startsWith('acct-') ? R(x) : x).filter(Boolean);
 const OUT_DIR = path.join(__dirname);
 
 function argNum(name, dflt) { const i = process.argv.indexOf(name); return i > -1 ? (parseInt(process.argv[i + 1], 10) || dflt) : dflt; }
@@ -72,7 +75,7 @@ function brokenChecks(title, body) {
 /* ── main ── */
 async function main() {
   const t0 = new Date().toISOString();
-  console.log('[audit] fleet=' + FLEET.join(',') + ' days=' + DAYS);
+  console.log('[audit] fleet=' + FLEET.map(refOf).join(',') + ' days=' + DAYS);
 
   /* M5 raw: accounts state */
   const accts = await retry(() => rpc('condenser_api.get_accounts', [FLEET]));
@@ -136,8 +139,8 @@ async function main() {
         pages++;
         if (pages % 10 === 0) await sleep(300);
       }
-      console.log('[audit] history ' + name + ': pages=' + pages);
-    } catch (e) { console.log('[audit] history fail ' + name + ': ' + e.message); }
+      console.log('[audit] history ' + refOf(name) + ': pages=' + pages);
+    } catch (e) { console.log('[audit] history fail ' + refOf(name) + ': ' + e.message); }
     await sleep(200);
   }
   events.sort((a, b) => a.at - b.at);
@@ -210,11 +213,11 @@ async function main() {
   }
 
   /* M5: fairness */
-  const eff = FLEET.filter((n) => n !== 'ynet').map((n) => accState[n].vestsM);
+  const eff = FLEET.filter((n) => n !== 'acct-19').map((n) => accState[n].vestsM);
   const fairness = {
     effVestsGini: gini(eff),
-    soldiersWithDelegation: FLEET.filter((n) => n !== 'owner' && n !== 'ynet' && accState[n].receivedM > 0).length,
-    soldiersNoDelegation: FLEET.filter((n) => n !== 'owner' && n !== 'ynet' && accState[n].receivedM <= 0),
+    soldiersWithDelegation: FLEET.filter((n) => n !== 'owner' && n !== 'acct-19' && accState[n].receivedM > 0).length,
+    soldiersNoDelegation: FLEET.filter((n) => n !== 'owner' && n !== 'acct-19' && accState[n].receivedM <= 0),
     idleHighVp: FLEET.filter((n) => accState[n].vpPct >= 85 && events.filter((e) => e.account === n && e.kind === 'vote').length === 0),
     vpByAccount: Object.fromEntries(FLEET.map((n) => [n, accState[n].vpPct])),
     spByAccount: Object.fromEntries(FLEET.map((n) => [n, accState[n].sp])),
@@ -243,7 +246,7 @@ async function main() {
 
   const receipt = { ok: true, tool: 'agent/social/audit_activity.cjs', at: t0, rpc: RPC, totals, perAcc, fairness, broken: broken.slice(0, 60), accState, zeroSecrets: true };
   fs.mkdirSync(OUT_DIR, { recursive: true });
-  fs.writeFileSync(path.join(OUT_DIR, 'social-audit-receipt.json'), JSON.stringify(receipt, null, 1));
+  fs.writeFileSync(path.join(OUT_DIR, 'social-audit-receipt.json'), refScrub(JSON.stringify(receipt, null, 1)));
 
   /* Hebrew MD report */
   const L = [];
@@ -286,7 +289,7 @@ async function main() {
   L.push('');
   L.push('---');
   L.push('כלה: קבלה-מלאה ב-`social-audit-receipt.json`. המבדק אינו-שיפוט — הוא קו-בסיס: אחרי-התיקון-המבני (קדנס-יומי-מפוזר · תוכן-v3 · שומר-תגובות) המדדים האלה חייבים לרדת, והירידה עצמה נמדדת באותו-כלי.');
-  fs.writeFileSync(path.join(OUT_DIR, 'SOCIAL-AUDIT-REPORT.md'), L.join('\n'));
+  fs.writeFileSync(path.join(OUT_DIR, 'SOCIAL-AUDIT-REPORT.md'), refScrub(L.join('\n')));
 
   console.log('[audit] totals: ' + JSON.stringify(totals));
   console.log('[audit] receipts → social-audit-receipt.json + SOCIAL-AUDIT-REPORT.md');

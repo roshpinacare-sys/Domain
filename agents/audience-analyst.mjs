@@ -32,14 +32,19 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { R, refOf, scrub, resolved as refsResolved } from './refs.mjs';
+
+const REF_IDS = Array.from({ length: 20 }, (_, i) => 'acct-' + String(i).padStart(2, '0'));
+const refScrub = (t) => { let out = scrub(String(t)); if (refsResolved()) { for (const ref of REF_IDS) { const n = R(ref); if (n) out = out.replace(new RegExp('\\b' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'g'), ref); } } return out; };
 
 const RPC = 'https://api.steemit.com';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT_DIR = path.join(ROOT, 'audience');
 
 // Community accounts roster — same as agents/content-reviewer.mjs (measured
-// from the live publishing machinery of this repo).
-const ACCOUNTS = ['cashmachine', 'haran', 'israelnews', 'lsa', 'macrame', 'siq', 'tov', 'wic', 'wog', 'woq', 'owner'];
+// from the live publishing machinery of this repo). Refs resolve at runtime
+// via the estate refs layer; unresolved refs are dropped (fail-honest).
+const ACCOUNTS = ['acct-01', 'acct-02', 'acct-03', 'acct-04', 'acct-05', 'acct-06', 'acct-07', 'acct-08', 'acct-09', 'acct-10', 'owner'].map(x => x.startsWith('acct-') ? R(x) : x).filter(Boolean);
 
 const WINDOW_H = 48;
 const MAX_PER_ACCOUNT = 12;       // pagination cap per account (feed is newest-first)
@@ -198,9 +203,9 @@ const extEngagement = (m) => m.externalRshares + m.externalRepliersCount * 1e9; 
   };
 
   fs.mkdirSync(OUT_DIR, { recursive: true });
-  fs.writeFileSync(path.join(OUT_DIR, `digest-${day}.json`), JSON.stringify(digest, null, 1));
-  fs.writeFileSync(path.join(OUT_DIR, 'latest.json'), JSON.stringify(digest, null, 1));
-  fs.writeFileSync(path.join(OUT_DIR, `digest-${day}.md`), md(digest));
+  fs.writeFileSync(path.join(OUT_DIR, `digest-${day}.json`), refScrub(JSON.stringify(digest, null, 1)));
+  fs.writeFileSync(path.join(OUT_DIR, 'latest.json'), refScrub(JSON.stringify(digest, null, 1)));
+  fs.writeFileSync(path.join(OUT_DIR, `digest-${day}.md`), refScrub(md(digest)));
   console.log(JSON.stringify({ state: 'ok', posts: measured.length, externalVotes: totals.externalVotesTotal, replies: totals.repliesTotal, topics: topics.length, gateTripped }));
   process.exit(0);
 })().catch(e => { console.log(JSON.stringify({ state: 'fail-soft', msg: String(e.message || e).slice(0, 200) })); process.exit(0); });

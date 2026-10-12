@@ -10,13 +10,16 @@
  *   → treasury-plan.json caps double-checked here
  *   → read-back verification after every broadcast (RED book row on failure, exit 1)
  *
- * Zero capital to keyless accounts (hcsoldier1/2/3 = bannedCapital, LOST-NO-CUSTODY).
+ * Zero capital to keyless soldier accounts 1/2/3 (= bannedCapital, LOST-NO-CUSTODY).
  * Usage: node agents/treasury-arm.cjs <steem|hive|blurt>
  */
 'use strict';
 const fs = require('fs');
 const path = require('path');
 const GATE = require('./capital-gate.cjs');
+const { R, refOf, scrub, resolved: refsResolved } = require('./refs.cjs');
+const REF_IDS = Array.from({ length: 20 }, (_, i) => 'acct-' + String(i).padStart(2, '0'));
+const refScrub = (t) => { let out = scrub(String(t)); if (refsResolved()) { for (const ref of REF_IDS) { const n = R(ref); if (n) out = out.replace(new RegExp('\\b' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'g'), ref); } } return out; };
 const steem = require('steem');
 
 const AG = __dirname;
@@ -29,11 +32,12 @@ const cfg = PLAN[chain];
 
 function nowIso() { return new Date().toISOString(); }
 function loadState() { try { return JSON.parse(fs.readFileSync(STATE_F, 'utf8')); } catch (_) { return { schema: 'saos/treasury-state/1', runs: [] }; } }
-function saveState(s) { fs.writeFileSync(STATE_F, JSON.stringify(s, null, 2) + '\n'); }
-function book() { fs.appendFileSync(BOOK_F, commitBlock() + '\n'); }
+function saveState(s) { fs.writeFileSync(STATE_F, refScrub(JSON.stringify(s, null, 2)) + '\n'); }
+function book() { fs.appendFileSync(BOOK_F, refScrub(commitBlock()) + '\n'); }
 
 const bookRows = [];
 function row(op, detail, status, extra) {
+  detail = refScrub(String(detail));
   bookRows.push('| ' + nowIso() + ' | ' + chain + ' | ' + op + ' | ' + detail + ' | ' + status + ' | ' + (extra || '') + ' |');
   console.log('TREASURY-' + status.toUpperCase() + ' ' + chain + ' ' + op + ' ' + detail + (extra ? ' · ' + extra : ''));
 }
@@ -61,11 +65,16 @@ async function dynProps() { return rpc('condenser_api.get_dynamic_global_propert
 
 async function main() {
   const CENSUS = require('./key-census.cjs');
+  /* plan data speaks in public refs — resolve to real chain names before any RPC
+   * (fail-honest: an unresolved source/target refuses the leg, never broadcasts a guess) */
+  const planName = (x) => (String(x).startsWith('acct-') ? R(x) : x);
+  if (!planName(cfg.source)) { row('gate', 'source ref unresolved — roster map unavailable in this run; refusing (fail-honest)', 'refused'); saveState(loadState()); book(); process.exit(0); }
+  const source = planName(cfg.source);
   const candidates = (cfg.census_candidates || []).map(n => ({ name: n }));
   const PFX = chain === 'steem' ? 'STM' : chain === 'hive' ? 'HIVE' : 'BLT';
   try { steem.config.set('address_prefix', PFX); } catch (_) { /* older steem-js */ }
-  const found = await CENSUS.resolve({ rpc, account: cfg.source, role: 'active', steem, candidates });
-  if (!found) { row('gate', 'no candidate secret matches live active authority of ' + cfg.source + ' — owner must provision (see CENSUS lines)', 'refused'); saveState(loadState()); book(); process.exit(0); }
+  const found = await CENSUS.resolve({ rpc, account: source, role: 'active', steem, candidates });
+  if (!found) { row('gate', 'no candidate secret matches live active authority of ' + refOf(source) + ' — owner must provision (see CENSUS lines)', 'refused'); saveState(loadState()); book(); process.exit(0); }
   const wif = found.wif;
 
   const state = loadState();
@@ -81,8 +90,8 @@ async function main() {
     row('config', 'chain_id=' + String(cid).slice(0, 12) + '…', 'ok');
   }
 
-  const src = await getAccount(cfg.source);
-  if (!src) { row('source', cfg.source + ' missing on ' + chain, 'refused'); book(); process.exit(0); }
+  const src = await getAccount(source);
+  if (!src) { row('source', refOf(source) + ' missing on ' + chain, 'refused'); book(); process.exit(0); }
   const liquid = tok(src.balance);
   const sym = unit(src.balance) || SYM;
 
@@ -91,20 +100,22 @@ async function main() {
   if (powerGate) { row('gate', 'STASIS halt on transfer_to_vesting', 'gated'); book(); process.exit(0); }
 
   let done = 0;
-  const targets = chain === 'steem' ? (cfg.targets || []) : [{ name: cfg.source, powerup: cfg.self_powerup_blurt || cfg.self_powerup_hive }];
+  const targets = chain === 'steem' ? (cfg.targets || []) : [{ name: source, powerup: cfg.self_powerup_blurt || cfg.self_powerup_hive }];
   for (const t of targets) {
+    const tName = planName(t.name) || source;
+    if (!tName) { row('powerup', 'target ref unresolved — roster map unavailable; refusing (fail-honest)', 'refused'); continue; }
     const amount = t.powerup_steem !== undefined ? t.powerup_steem : t.powerup;
-    if (!amount || done + amount > cfg.per_run_cap) { row('powerup', 'to ' + (t.name || cfg.source) + ' amount ' + amount + ' exceeds per-run cap remaining', 'skipped'); continue; }
-    if (liquid - done - amount < cfg.min_liquid_reserve) { row('powerup', 'to ' + (t.name || cfg.source) + ' would breach reserve floor ' + cfg.min_liquid_reserve, 'skipped'); continue; }
+    if (!amount || done + amount > cfg.per_run_cap) { row('powerup', 'to ' + refOf(tName) + ' amount ' + amount + ' exceeds per-run cap remaining', 'skipped'); continue; }
+    if (liquid - done - amount < cfg.min_liquid_reserve) { row('powerup', 'to ' + refOf(tName) + ' would breach reserve floor ' + cfg.min_liquid_reserve, 'skipped'); continue; }
     if (chain === 'steem') {
-      const g = GATE.guardTargets('transfer_to_vesting', [t.name]);
-      if (!g.allowed.length) { row('powerup', 'target ' + t.name + ' refused by canonical roster', 'refused'); continue; }
+      const g = GATE.guardTargets('transfer_to_vesting', [tName]);
+      if (!g.allowed.length) { row('powerup', 'target ' + refOf(tName) + ' refused by canonical roster', 'refused'); continue; }
     }
-    const dup = state.runs.find(r => r.chain === chain && r.op === 'powerup' && r.to === (t.name || cfg.source) && r.amount === amount && r.verified);
-    if (dup) { row('powerup', 'to ' + (t.name || cfg.source) + ' already done (txid ' + dup.txid + ')', 'idempotent-skip'); continue; }
+    const dup = state.runs.find(r => r.chain === chain && r.op === 'powerup' && r.to === tName && r.amount === amount && r.verified);
+    if (dup) { row('powerup', 'to ' + refOf(tName) + ' already done (txid ' + dup.txid + ')', 'idempotent-skip'); continue; }
     try {
       const res = await new Promise((resolve, reject) => {
-        steem.broadcast.transferToVesting(wif, cfg.source, (t.name || cfg.source), fmt(amount, sym), (e, r) => e ? reject(e) : resolve(r));
+        steem.broadcast.transferToVesting(wif, source, tName, fmt(amount, sym), (e, r) => e ? reject(e) : resolve(r));
       });
       const txid = res && res.id ? res.id : 'unknown';
       done += amount;
@@ -112,14 +123,14 @@ async function main() {
       let verified = false;
       for (let i = 0; i < 6 && !verified; i++) {
         await new Promise(r => setTimeout(r, 4000));
-        const chk = await getAccount(t.name || cfg.source);
-        if (chk && tok(chk.vesting_shares) > tok(t.name === cfg.source ? src.vesting_shares : 0) - 0.000001) verified = tok(chk.vesting_shares) > (t.name === cfg.source ? tok(src.vesting_shares) : 0);
+        const chk = await getAccount(tName);
+        if (chk && tok(chk.vesting_shares) > tok(tName === source ? src.vesting_shares : 0) - 0.000001) verified = tok(chk.vesting_shares) > (tName === source ? tok(src.vesting_shares) : 0);
       }
-      row('powerup', fmt(amount, sym) + ' → @' + (t.name || cfg.source) + ' txid=' + txid, verified ? 'verified' : 'RED-UNVERIFIED', verified ? '' : 'broadcast ok but read-back not confirmed in 24s — human must check');
-      state.runs.push({ at: runId, chain, op: 'powerup', from: cfg.source, to: t.name || cfg.source, amount, txid, verified });
+      row('powerup', fmt(amount, sym) + ' → @' + refOf(tName) + ' txid=' + txid, verified ? 'verified' : 'RED-UNVERIFIED', verified ? '' : 'broadcast ok but read-back not confirmed in 24s — human must check');
+      state.runs.push({ at: runId, chain, op: 'powerup', from: refOf(source), to: refOf(tName), amount, txid, verified });
       if (!verified) { saveState(state); book(); process.exit(1); }
     } catch (e) {
-      row('powerup', 'to ' + (t.name || cfg.source) + ' failed: ' + String(e.message || e).slice(0, 110), 'RED-FAILED');
+      row('powerup', 'to ' + refOf(tName) + ' failed: ' + String(e.message || e).slice(0, 110), 'RED-FAILED');
       saveState(state); book(); process.exit(1);
     }
   }
@@ -129,33 +140,37 @@ async function main() {
     const delGate = GATE.stasisHalt('delegate_vesting_shares');
     if (delGate) { row('gate', 'STASIS halt on delegate_vesting_shares', 'gated'); }
     else {
-      const dup = state.runs.find(r => r.chain === chain && r.op === 'delegate' && r.to === cfg.delegate.to && r.verified);
-      if (dup) row('delegate', 'to @' + cfg.delegate.to + ' already done (txid ' + dup.txid + ')', 'idempotent-skip');
+      const delegateTo = planName(cfg.delegate.to);
+      if (!delegateTo) row('delegate', 'delegate target ref unresolved — roster map unavailable; refusing (fail-honest)', 'refused');
+      else {
+      const dup = state.runs.find(r => r.chain === chain && r.op === 'delegate' && r.to === delegateTo && r.verified);
+      if (dup) row('delegate', 'to @' + refOf(delegateTo) + ' already done (txid ' + dup.txid + ')', 'idempotent-skip');
       else {
         try {
-          const tgt = await getAccount(cfg.delegate.to);
+          const tgt = await getAccount(delegateTo);
           const dgp = await dynProps();
           const vsp = dgp.vesting_share_price;
           const vestsPerHive = tok(vsp.base) / tok(vsp.quote); // base VESTS / quote HIVE
           const vestsNeeded = cfg.delegate.hp * vestsPerHive;
           const before = tgt ? tok(tgt.received_vesting_shares) : 0;
           const res = await new Promise((resolve, reject) => {
-            steem.broadcast.delegateVestingShares(wif, cfg.source, cfg.delegate.to, vestsNeeded.toFixed(6) + ' VESTS', (e, r) => e ? reject(e) : resolve(r));
+            steem.broadcast.delegateVestingShares(wif, source, delegateTo, vestsNeeded.toFixed(6) + ' VESTS', (e, r) => e ? reject(e) : resolve(r));
           });
           const txid = res && res.id ? res.id : 'unknown';
           let verified = false;
           for (let i = 0; i < 6 && !verified; i++) {
             await new Promise(r => setTimeout(r, 4000));
-            const chk = await getAccount(cfg.delegate.to);
+            const chk = await getAccount(delegateTo);
             if (chk && tok(chk.received_vesting_shares) >= before + vestsNeeded * 0.99) verified = true;
           }
-          row('delegate', cfg.delegate.hp + ' HP (' + vestsNeeded.toFixed(0) + ' VESTS) → @' + cfg.delegate.to + ' txid=' + txid, verified ? 'verified' : 'RED-UNVERIFIED');
-          state.runs.push({ at: runId, chain, op: 'delegate', from: cfg.source, to: cfg.delegate.to, amount: cfg.delegate.hp, txid, verified });
+          row('delegate', cfg.delegate.hp + ' HP (' + vestsNeeded.toFixed(0) + ' VESTS) → @' + refOf(delegateTo) + ' txid=' + txid, verified ? 'verified' : 'RED-UNVERIFIED');
+          state.runs.push({ at: runId, chain, op: 'delegate', from: refOf(source), to: refOf(delegateTo), amount: cfg.delegate.hp, txid, verified });
           if (!verified) { saveState(state); book(); process.exit(1); }
         } catch (e) {
           row('delegate', 'failed: ' + String(e.message || e).slice(0, 110), 'RED-FAILED');
           saveState(state); book(); process.exit(1);
         }
+      }
       }
     }
   }

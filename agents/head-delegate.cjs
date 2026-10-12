@@ -15,14 +15,18 @@ const path = require('path');
 const { execFileSync } = require('child_process');
 const steem = require('steem');
 const capGate = require('./capital-gate.cjs'); // owner directive 2026-10-04: think-before-sign (STASIS + roster + journal)
+const { R, refOf, scrub, resolved: refsResolved } = require('./refs.cjs');
+const REF_IDS = Array.from({ length: 20 }, (_, i) => 'acct-' + String(i).padStart(2, '0'));
+const refScrub = (t) => { let out = scrub(String(t)); if (refsResolved()) { for (const ref of REF_IDS) { const n = R(ref); if (n) out = out.replace(new RegExp('\\b' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'g'), ref); } } return out; };
 
 steem.api.setOptions({ url: 'https://api.steemit.com' });
 const ROOT = path.resolve(__dirname, '..');
 const OUT = process.env.RECEIPT_OUT || path.join(ROOT, 'agent', 'head-delegate-receipt.json');
 const DRY = process.env.DRY === '1';
-const SOLDIERS = ['cashmachine', 'haran', 'israelnews', 'lsa', 'macrame', 'siq', 'tov', 'wic', 'wog', 'woq']; // 10 — ynet retired 2026-09-29 (keyless by sovereign decision)
+const SOLDIERS = ['acct-01', 'acct-02', 'acct-03', 'acct-04', 'acct-05', 'acct-06', 'acct-07', 'acct-08', 'acct-09', 'acct-10'].map(x => x.startsWith('acct-') ? R(x) : x).filter(Boolean); // 10 — one operator retired 2026-09-29 (keyless by sovereign decision)
 const SP_PER_SOLDIER = 30;   // תקרה-קשיחה
-const RETIRED = ['ynet']; // retired 2026-09-29 — keyless by sovereign decision; idle 30 SP delegation is reclaimed below (capital efficiency)
+const RETIRED = ['acct-19'].map(x => x.startsWith('acct-') ? R(x) : x).filter(Boolean); // retired 2026-09-29 — keyless by sovereign decision; idle 30 SP delegation is reclaimed below (capital efficiency)
+if (!refsResolved()) console.log('[refs] roster-unresolved — soldier refs unresolved; delegation work is skipped this run (fail-honest, never guessed)');
 const HEAD = 'owner';
 
 function recoverVault() {
@@ -109,53 +113,53 @@ async function main() {
   console.log(`head-del] equal-share law: own=${ownSP.toFixed(1)} SP · powerdown-committed=${committedSP.toFixed(1)} SP · reserve=${HEAD_RESERVE_SP} SP → ${targetSP} SP per soldier (×${SOLDIERS.length})`);
 
   const results = []; let delegated = 0, skipped = 0, failed = 0, reclaimed = 0, refused = 0;
-  for (const x of roster.refused) { results.push({ to: x.name, target: 'n/a', status: 'REFUSED-ROSTER', why: x.reason }); refused++; console.log(`[REFUSED-ROSTER] owner → @${x.name} · ${x.reason}`); }
+  for (const x of roster.refused) { results.push({ to: x.name, target: 'n/a', status: 'REFUSED-ROSTER', why: x.reason }); refused++; console.log(`[REFUSED-ROSTER] owner → @${refOf(x.name)} · ${x.reason}`); }
   for (const s of roster.allowed) {
-    const R = { to: s, target: `${targetSP} SP` };
+    const row = { to: s, target: `${targetSP} SP` };
     try {
       const sa = (await P(cb => steem.api.getAccounts([s], cb)))[0];
       const have = parseFloat(sa.received_vesting_shares);
       const haveSp = have * ratio;
       const want = targetSP / ratio;
-      if (have >= want * 0.95 && have <= want * 1.05) { R.status = 'SKIP-ALREADY'; R.haveSp = Math.round(haveSp * 10) / 10; skipped++; }
-      else if (DRY) { R.status = have < want ? 'DRY-WOULD-DELEGATE' : 'DRY-WOULD-RECLAIM'; R.haveSp = Math.round(haveSp * 10) / 10; R.targetSp = targetSP; }
+      if (have >= want * 0.95 && have <= want * 1.05) { row.status = 'SKIP-ALREADY'; row.haveSp = Math.round(haveSp * 10) / 10; skipped++; }
+      else if (DRY) { row.status = have < want ? 'DRY-WOULD-DELEGATE' : 'DRY-WOULD-RECLAIM'; row.haveSp = Math.round(haveSp * 10) / 10; row.targetSp = targetSP; }
       else {
         await P(cb => steem.broadcast.delegateVestingShares(actWif, HEAD, s, vestsTarget, cb));
         await sleep(2500);
         const sa2 = (await P(cb => steem.api.getAccounts([s], cb)))[0];
         const got = parseFloat(sa2.received_vesting_shares);
-        R.readbackSp = Math.round(got * ratio * 10) / 10;
+        row.readbackSp = Math.round(got * ratio * 10) / 10;
         const withinBand = got >= want * 0.95 && got <= want * 1.05;
-        if (have < want) { R.status = withinBand ? 'DELEGATED-VERIFIED' : 'NO-READBACK'; R.status === 'DELEGATED-VERIFIED' ? delegated++ : failed++; }
-        else { R.status = withinBand ? 'RECLAIMED-VERIFIED' : 'NO-READBACK'; R.status === 'RECLAIMED-VERIFIED' ? reclaimed++ : failed++; }
+        if (have < want) { row.status = withinBand ? 'DELEGATED-VERIFIED' : 'NO-READBACK'; row.status === 'DELEGATED-VERIFIED' ? delegated++ : failed++; }
+        else { row.status = withinBand ? 'RECLAIMED-VERIFIED' : 'NO-READBACK'; row.status === 'RECLAIMED-VERIFIED' ? reclaimed++ : failed++; }
       }
-    } catch (e) { R.status = 'FAIL'; R.err = String(e.message || e).slice(0, 90); failed++; }
-    results.push(R);
-    console.log(`[${R.status}] owner → @${s} (${R.haveSp != null ? R.haveSp + ' SP have' : 'have=?'} → ${targetSP} SP)`);
+    } catch (e) { row.status = 'FAIL'; row.err = String(e.message || e).slice(0, 90); failed++; }
+    results.push(row);
+    console.log(`[${row.status}] owner → @${refOf(s)} (${row.haveSp != null ? row.haveSp + ' SP have' : 'have=?'} → ${targetSP} SP)`);
     await sleep(1500 + Math.floor(Math.random() * 1500));
   }
 
 
-  // ── retirement: reclaim idle delegations from retired accounts (ynet) — idle capital back to head voting power ──
+  // ── retirement: reclaim idle delegations from retired accounts — idle capital back to head voting power ──
   for (const s of RETIRED) {
-    const R = { to: s, action: 'reclaim-retired-delegation' };
+    const row = { to: s, action: 'reclaim-retired-delegation' };
     try {
       const sa = (await P(cb => steem.api.getAccounts([s], cb)))[0];
       const have = parseFloat(sa.received_vesting_shares);
-      if (!have || have < 1e3) { R.status = 'SKIP-NO-DELEGATION'; skipped++; }
-      else if (DRY) { R.status = 'DRY-WOULD-RECLAIM'; R.haveSp = Math.round(have * ratio * 10) / 10; }
+      if (!have || have < 1e3) { row.status = 'SKIP-NO-DELEGATION'; skipped++; }
+      else if (DRY) { row.status = 'DRY-WOULD-RECLAIM'; row.haveSp = Math.round(have * ratio * 10) / 10; }
       else {
         await P(cb => steem.broadcast.delegateVestingShares(actWif, HEAD, s, '0.000000 VESTS', cb));
         await sleep(2000);
         const sa2 = (await P(cb => steem.api.getAccounts([s], cb)))[0];
         const left = parseFloat(sa2.received_vesting_shares);
-        R.status = left < have * 0.5 ? 'RECLAIMED-VERIFIED' : 'NO-READBACK';
-        R.reclaimedSp = Math.round(have * ratio * 10) / 10;
-        R.status === 'RECLAIMED-VERIFIED' ? delegated++ : failed++;
+        row.status = left < have * 0.5 ? 'RECLAIMED-VERIFIED' : 'NO-READBACK';
+        row.reclaimedSp = Math.round(have * ratio * 10) / 10;
+        row.status === 'RECLAIMED-VERIFIED' ? delegated++ : failed++;
       }
-    } catch (e) { R.status = 'FAIL'; R.err = String(e.message || e).slice(0, 90); failed++; }
-    results.push(R);
-    console.log(`[${R.status}] owner ↩ @${s} (reclaim idle delegation — 7-day return)`);
+    } catch (e) { row.status = 'FAIL'; row.err = String(e.message || e).slice(0, 90); failed++; }
+    results.push(row);
+    console.log(`[${row.status}] owner ↩ @${refOf(s)} (reclaim idle delegation — 7-day return)`);
     await sleep(400);
   }
   capGate.journal('head-delegate', { dry: DRY, targetSPPerSoldier: targetSP, rosterLoaded: roster.rosterLoaded, allowed: roster.allowed, refused: roster.refused, delegated, reclaimed, skipped, failed, refusedCount: refused });
@@ -169,7 +173,7 @@ async function main() {
     results,
   };
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
-  fs.writeFileSync(OUT, JSON.stringify(receipt, null, 2));
+  fs.writeFileSync(OUT, refScrub(JSON.stringify(receipt, null, 2)));
   console.log(`[head-del] DONE · del=${delegated} skip=${skipped} fail=${failed} · receipt → ${OUT}`);
 }
 main().catch(e => { console.error('[head-del] fatal:', String(e.message || e).slice(0, 180)); process.exit(0); }); // fail-soft

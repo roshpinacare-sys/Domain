@@ -12,6 +12,12 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { R, refOf, scrub, resolved as refsResolved } from "../../agents/refs.mjs";
+
+const REF_IDS = Array.from({ length: 20 }, (_, i) => 'acct-' + String(i).padStart(2, '0'));
+const refScrub = (t) => { let out = scrub(String(t)); if (refsResolved()) { for (const ref of REF_IDS) { const n = R(ref); if (n) out = out.replace(new RegExp('\\b' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'g'), ref); } } return out; };
+/* assertion account values may speak in public refs — resolve before any chain query */
+const resolveAccount = (x) => { const s = String(x); return s.startsWith("acct-") ? R(s) : s.toLowerCase(); };
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ASSERTIONS_PATH = join(HERE, "assertions.json");
@@ -114,8 +120,12 @@ async function evaluate(a, baseUrl) {
   // witness, not a page fetch.
   if (a.kind === "steem_priority") {
     const accounts = (Array.isArray(a.accounts) && a.accounts.length
-      ? a.accounts.map((x) => String(x).toLowerCase())
-      : [String(a.account ?? "cashmachine").toLowerCase()]);
+      ? a.accounts.map(resolveAccount)
+      : [resolveAccount(a.account ?? "acct-01")]).filter(Boolean);
+    if (!accounts.length) {
+      // fail-honest: an unresolved roster ref never becomes a chain query against a guess
+      return { id, ok: null, suspended: true, details: "roster-unresolved: chain identity unavailable in this run — assertion parked honestly, never guessed" };
+    }
     const coreOp = String(a.coreOp ?? "saos.weave.core.v1");
     const staleHours = Number(a.staleHours ?? 26);
     if (!Number.isFinite(staleHours)) return { id, ok: false, details: "invalid assertion: staleHours is not a number" };
@@ -615,7 +625,7 @@ async function evaluate(a, baseUrl) {
 
 // ── Output ───────────────────────────────────────────────────────────────────
 function writeResults(payload) {
-  writeFileSync(RESULTS_PATH, JSON.stringify(payload, null, 2) + "\n", "utf8");
+  writeFileSync(RESULTS_PATH, refScrub(JSON.stringify(payload, null, 2)) + "\n", "utf8");
 }
 
 function emptyResults(note, durationMs) {

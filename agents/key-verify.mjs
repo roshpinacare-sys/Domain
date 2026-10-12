@@ -19,6 +19,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync, appendFileSync } fr
 import path from "node:path";
 import { createRequire } from "node:module";
 import Gate from "../gate-crypto.js";
+import { R, refOf } from "../agents/refs.mjs";
 
 const OWNER = "roshpinacare-sys";
 const ACCOUNT = "owner";
@@ -35,9 +36,9 @@ const STEEM_RPC = "https://api.steemit.com";
 // אחר. הזיהוי נעשה מול השרשרת החיה בלבד, ללא שידור וללא כתיבה.
 const DOCUMENTED_ACCOUNTS = [
   { name: process.env.FLEET_ACCOUNT || "owner", note: "grid signer - active -> engine vault (saos-dex)" },
-  { name: "cashmachine", note: "anchor witness - posting -> this repo's vault (WEAVE_STEEM_WIF)" },
-  { name: "lsa", note: "publishing authority - no machine consumer today" },
-];
+  { name: R("acct-01"), note: "anchor witness - posting -> this repo's vault (WEAVE_STEEM_WIF)" },
+  { name: R("acct-04"), note: "publishing authority - no machine consumer today" },
+].filter((a) => a.name);
 const ROLES = ["owner", "active", "posting", "memo"];
 
 const value = (process.env.owner || "").trim();
@@ -160,8 +161,9 @@ async function identifyMatrix(v) {
       if (chainPub && derived === chainPub) matches.push({ account: acct.name, role });
     }
   }
-  const door = matches.some((m) => m.account === "cashmachine" && m.role === "posting")
-    ? "cashmachine/posting"
+  const ANCHOR = R("acct-01");
+  const door = matches.some((m) => m.account === ANCHOR && m.role === "posting")
+    ? "anchor/posting"
     : matches.some((m) => m.account === "owner" && m.role === "active")
       ? "owner/active"
       : null;
@@ -177,7 +179,11 @@ async function armSteemWitness(matrix) {
     fail("no-relay-token", "המפתח זוהה כמפתח עד-העיגון ✓ אך AGENTS_WATCH_TOKEN חסר — לא בוצעה העברה");
   }
   const homeRepo = (process.env.GITHUB_REPOSITORY || `${OWNER}/Domain`).split("/").slice(0, 2).join("/");
-  const posting = await Gate.deriveAny(value, "cashmachine", "posting");
+  const ANCHOR = R("acct-01");
+  if (!ANCHOR) {
+    fail("roster-unresolved", "המפתח זוהה כמפתח עד-העיגון אך מפת-האחזורות אינה זמינה בריצה זו — לא ניתן לגזור את מפתח-העד ביושר; שום דבר לא נכתב");
+  }
+  const posting = await Gate.deriveAny(value, ANCHOR, "posting");
   const pk = await gh(`/repos/${homeRepo}/actions/secrets/public-key`).catch((e) => {
     fail("relay-public-key", `קריאת מפתח-הציבורי של הכספת הזו נכשלה: ${String(e.message).slice(0, 90)}`);
   });
@@ -222,6 +228,12 @@ async function main() {
   console.log(`[key-verify] boot · reading ${SOURCE_SECRET} from this repo's vault only`);
 
   if (!value) fail("no-secret", `הסוד ${SOURCE_SECRET} לא סופק לריצה — אין מה לבדוק`);
+
+  // roster-unresolved law (refs layer): a verification tool never guesses identities.
+  if (!R("acct-01") || !R("acct-04")) {
+    console.log("[key-verify] roster-unresolved — the estate map is unavailable in this run; refusing to identify accounts against guesses");
+    process.exit(0);
+  }
 
   // אבחון קלט-שגוי הנפוץ ביותר: הדבקת מפתח-ציבורי במקום פרטי
   if (/^STM[1-9A-HJ-NP-Za-km-z]{40,}/.test(value)) {
@@ -274,7 +286,7 @@ async function main() {
     // ביט-מול-ביט מול הרשות החיה.
     const matrix = await identifyMatrix(value);
     receipt.identification = matrix;
-    if (matrix.door === "cashmachine/posting") {
+    if (matrix.door === "anchor/posting") {
       await armSteemWitness(matrix);
       return;
     }
@@ -282,12 +294,12 @@ async function main() {
       if (matrix.matches.length > 0) {
         fail(
           "identified-no-consumer",
-          `הערך זוהה כמפתח/סיסמת-אב של ${matrix.matches.map((m) => "@" + m.account + "/" + m.role).join(", ")} — אף מכונה לא צורכת רשות זו כיום; שום דבר לא נכתב`
+          `הערך זוהה כמפתח/סיסמת-אב של ${matrix.matches.map((m) => "@" + refOf(m.account) + "/" + m.role).join(", ")} — אף מכונה לא צורכת רשות זו כיום; שום דבר לא נכתב`
         );
       }
       fail(
         "unidentified",
-        `המפתח שהוזן אינו ה-active החי של @${ACCOUNT}, ואינו מפתח/סיסמת-אב של אף חשבון מתועד (${DOCUMENTED_ACCOUNTS.map((a) => "@" + a.name).join(", ")}). הנגזר: ${pub.slice(0, 12)}… · בשרשרת: ${chain.active.slice(0, 12)}… · המטריצה המלאה בקבלה · שום דבר לא נכתב`
+        `המפתח שהוזן אינו ה-active החי של @${ACCOUNT}, ואינו מפתח/סיסמת-אב של אף חשבון מתועד (${DOCUMENTED_ACCOUNTS.map((a) => "@" + refOf(a.name)).join(", ")}). הנגזר: ${pub.slice(0, 12)}… · בשרשרת: ${chain.active.slice(0, 12)}… · המטריצה המלאה בקבלה · שום דבר לא נכתב`
       );
     }
     // matrix.door === "owner/active" — המשך לנתיב החימוש להלן

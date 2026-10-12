@@ -32,11 +32,15 @@ const steem = require('steem');
 const fs = require('fs');
 const path = require('path');
 const dedupe = require('./social-dedupe.cjs');
+const { R, refOf, scrub, resolved: refsResolved } = require('./refs.cjs');
+const REF_IDS = Array.from({ length: 20 }, (_, i) => 'acct-' + String(i).padStart(2, '0'));
+const refScrub = (t) => { let out = scrub(String(t)); if (refsResolved()) { for (const ref of REF_IDS) { const n = R(ref); if (n) out = out.replace(new RegExp('\\b' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'g'), ref); } } return out; };
 
 steem.api.setOptions({ url: 'https://api.steemit.com' });
 const ROOT = path.resolve(__dirname, '..');
 const OUT = process.env.RECEIPT_OUT || path.join(ROOT, 'agents', 'receipts', 'fleet-social-receipt.json');
-const ROTATION = ['haran', 'wic', 'woq', 'siq', 'tov', 'israelnews', 'lsa', 'macrame', 'cashmachine', 'wog'];
+const ROTATION = ['acct-02', 'acct-08', 'acct-10', 'acct-06', 'acct-07', 'acct-03', 'acct-04', 'acct-05', 'acct-01', 'acct-09'].map(x => x.startsWith('acct-') ? R(x) : x).filter(Boolean);
+if (!refsResolved()) console.log('[refs] roster-unresolved — rotation refs unresolved; social casts are skipped this run (fail-honest, never guessed)');
 const HEAD = 'owner';
 const FLEET_ALL = [...ROTATION, HEAD];
 const MAX_FOLLOWS_PER_RUN = 60;
@@ -120,7 +124,7 @@ async function alreadyReblogged(who, author, permlink) {
     const c = await getContent(who, permlink);
     if (c && c.author === who) todays.push({ who, permlink, title: c.title, body: c.body });
   }
-  receipt.fleetPostsToday = todays.map(t => t.who);
+  receipt.fleetPostsToday = todays.map(t => refOf(t.who));
 
   // 2) Substantive comments: each soldier on one sibling post. English only, a real
   //    fragment quoted IN THE SPEAKER'S OWN PHRASING (voice profile), one related
@@ -138,10 +142,10 @@ async function alreadyReblogged(who, author, permlink) {
     if (!targets.length) break;
     const target = targets[(ROTATION.indexOf(src) + 1) % targets.length];
     const cPermlink = `re-${target.permlink}-${src}`.slice(0, 255);
-    const R = { by: src, on: target.who, permlink: cPermlink };
+    const crow = { by: refOf(src), on: refOf(target.who), permlink: refScrub(cPermlink) };
     try {
       const existing = await getContent(src, cPermlink);
-      if (existing && existing.author === src) { R.status = 'ALREADY'; }
+      if (existing && existing.author === src) { crow.status = 'ALREADY'; }
       else {
         const frag = realFragment(target.body);
         const fragEn = frag && !HEB.test(frag) ? frag : null; // a Hebrew quote inside an English comment reads mechanical, drop it
@@ -151,27 +155,27 @@ async function alreadyReblogged(who, author, permlink) {
         if (!body) { R.status = 'SKIP-NO-VOICE'; }
         else {
           const gate = dedupe.gateCast(src, body, memory, ROTATION.indexOf(src));
-          R.gate = { verdict: gate.verdict, bestSim: gate.bestSim, partner: gate.partner ? gate.partner.author : null, reason: gate.reason };
-          if (gate.verdict === 'SKIP') { R.status = 'SKIP-DUP-GATE'; }
+          crow.gate = { verdict: gate.verdict, bestSim: gate.bestSim, partner: gate.partner ? refOf(gate.partner.author) : null, reason: gate.reason };
+          if (gate.verdict === 'SKIP') { crow.status = 'SKIP-DUP-GATE'; }
           else {
             const ops = [['comment', { parent_author: target.who, parent_permlink: target.permlink, author: src, permlink: cPermlink, title: '', body, json_metadata: JSON.stringify({ tags: ['blog'], app: 'saos-fleet-social/3' }) }]];
             await P(cb => steem.broadcast.send({ operations: ops, extensions: [] }, [wif], cb));
             await sleep(1800 + Math.floor(Math.random() * 1200)); // human pacing
             const back = await getContent(src, cPermlink);
-            R.status = (back && back.author === src && back.body === body) ? 'COMMENTED-VERIFIED' : 'COMMENTED-READBACK-PENDING';
+            crow.status = (back && back.author === src && back.body === body) ? 'COMMENTED-VERIFIED' : 'COMMENTED-READBACK-PENDING';
             // r145-c: a freshly cast comment joins the memory so the NEXT comment in
             // this run is gated against it, not only against the pre-run snapshot
-            if (R.status === 'COMMENTED-VERIFIED') memory.push({ author: src, permlink: cPermlink, created: new Date().toISOString(), body, source: 'fleet-social' });
+            if (crow.status === 'COMMENTED-VERIFIED') memory.push({ author: src, permlink: cPermlink, created: new Date().toISOString(), body, source: 'fleet-social' });
           }
         }
       }
-    } catch (e) { R.status = 'ERR'; R.msg = String(e.message || e).slice(0, 90); }
-    receipt.comments.push(R);
-    console.log(`[${R.status}] ${src} → @${target.who}${R.gate ? ` (sim ${R.gate.bestSim})` : ''}`);
+    } catch (e) { crow.status = 'ERR'; crow.msg = String(e.message || e).slice(0, 90); }
+    receipt.comments.push(crow);
+    console.log(`[${crow.status}] ${refOf(src)} → @${refOf(target.who)}${crow.gate ? ` (sim ${crow.gate.bestSim})` : ''}`);
 
     // support vote on the same post (comment + vote is how a reader behaves)
-    if (R.status === 'COMMENTED-VERIFIED' || R.status === 'ALREADY') {
-      const V = { by: src, on: target.who, permlink: target.permlink };
+    if (crow.status === 'COMMENTED-VERIFIED' || crow.status === 'ALREADY') {
+      const V = { by: refOf(src), on: refOf(target.who), permlink: refScrub(target.permlink) };
       try {
         const post = await getContent(target.who, target.permlink);
         const voted = post && (post.active_votes || []).some(v => v.voter === src);
@@ -190,7 +194,7 @@ async function alreadyReblogged(who, author, permlink) {
         }
       } catch (e) { V.status = 'ERR'; V.msg = String(e.message || e).slice(0, 90); }
       receipt.votes.push(V);
-      console.log(`[${V.status}] ${src} ⭢ @${target.who}`);
+      console.log(`[${V.status}] ${refOf(src)} ⭢ @${refOf(target.who)}`);
     }
   }
 
@@ -207,12 +211,12 @@ async function alreadyReblogged(who, author, permlink) {
         const json = JSON.stringify(['follow', { follower: src, following: t, what: ['blog'] }]);
         const ops = [['custom_json', { required_auths: [], required_posting_auths: [src], id: 'follow', json }]];
         await P(cb => steem.broadcast.send({ operations: ops, extensions: [] }, [wif], cb));
-        receipt.follows.push({ by: src, following: t, status: 'FOLLOW-SENT' });
+        receipt.follows.push({ by: refOf(src), following: refOf(t), status: 'FOLLOW-SENT' });
         followBudget--;
         await sleep(300 + Math.floor(Math.random() * 400));
       }
-      if (missing.length) receipt.follows.push({ by: src, pending: Math.max(0, missing.length - (MAX_FOLLOWS_PER_RUN - followBudget)) });
-    } catch (e) { receipt.follows.push({ by: src, status: 'ERR', msg: String(e.message || e).slice(0, 90) }); }
+      if (missing.length) receipt.follows.push({ by: refOf(src), pending: Math.max(0, missing.length - (MAX_FOLLOWS_PER_RUN - followBudget)) });
+    } catch (e) { receipt.follows.push({ by: refOf(src), status: 'ERR', msg: String(e.message || e).slice(0, 90) }); }
   }
 
   // 4) reblog — כל חייל מעלה פוסט-עומק אחד של אח (אידמפוטנטי)
@@ -224,18 +228,18 @@ async function alreadyReblogged(who, author, permlink) {
       const target = todays.find(t => t.who !== src && (doy + ROTATION.indexOf(t.who)) % 3 === 0)
         || todays.find(t => t.who !== src);
       if (!target) break;
-      const R = { by: src, on: target.who, permlink: target.permlink };
-      if (await alreadyReblogged(src, target.who, target.permlink)) R.status = 'ALREADY';
+      const R2 = { by: refOf(src), on: refOf(target.who), permlink: refScrub(target.permlink) };
+      if (await alreadyReblogged(src, target.who, target.permlink)) R2.status = 'ALREADY';
       else {
         const json = JSON.stringify(['reblog', { account: src, author: target.who, permlink: target.permlink }]);
         const ops = [['custom_json', { required_auths: [], required_posting_auths: [src], id: 'follow', json }]];
         await P(cb => steem.broadcast.send({ operations: ops, extensions: [] }, [wif], cb));
         await sleep(1200);
         const confirmed = await alreadyReblogged(src, target.who, target.permlink);
-        R.status = confirmed ? 'REBLOGGED-VERIFIED' : 'REBLOGGED-READBACK-PENDING';
+        R2.status = confirmed ? 'REBLOGGED-VERIFIED' : 'REBLOGGED-READBACK-PENDING';
       }
-      receipt.reblogs.push(R);
-    } catch (e) { receipt.reblogs.push({ by: src, status: 'ERR', msg: String(e.message || e).slice(0, 90) }); }
+      receipt.reblogs.push(R2);
+    } catch (e) { receipt.reblogs.push({ by: refOf(src), status: 'ERR', msg: String(e.message || e).slice(0, 90) }); }
   }
 
   // 5) Whole-number tally only
@@ -243,11 +247,11 @@ async function alreadyReblogged(who, author, permlink) {
   for (const k of ['comments', 'votes', 'follows', 'reblogs']) for (const r of receipt[k]) tally[r.status || 'UNKNOWN'] = (tally[r.status || 'UNKNOWN'] || 0) + 1;
   receipt.tally = tally;
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
-  fs.writeFileSync(OUT, JSON.stringify(receipt, null, 1));
+  fs.writeFileSync(OUT, refScrub(JSON.stringify(receipt, null, 1)));
   console.log(JSON.stringify({ state: 'ok', tally }));
   process.exit(0);
 })().catch(e => {
-  try { fs.mkdirSync(path.dirname(OUT), { recursive: true }); fs.writeFileSync(OUT, JSON.stringify({ at: new Date().toISOString(), tool: 'fleet-social.cjs', fatal: String(e.message || e).slice(0, 200) }, null, 1)); } catch (_) {}
+  try { fs.mkdirSync(path.dirname(OUT), { recursive: true }); fs.writeFileSync(OUT, refScrub(JSON.stringify({ at: new Date().toISOString(), tool: 'fleet-social.cjs', fatal: String(e.message || e).slice(0, 200) }, null, 1))); } catch (_) {}
   console.log(JSON.stringify({ state: 'fail-soft', msg: String(e.message || e).slice(0, 160) }));
   process.exit(0);
 });
