@@ -34,11 +34,25 @@ function commitBlock() { return ['', '## BLURT-CONNECT RUN · ' + nowIso(), '', 
 function book() { fs.appendFileSync(BOOK_F, commitBlock() + '\n'); }
 
 const RPC = BLURT.rpc;
+/* [zai-18] חוסן-צמתים: צומת-Blurt יכול להשיב טקסט לא-JSON ("Server is …" — נמדד חי 13:20Z
+ * ב-run 38254972444, קריסת JSON.parse טהורה). מעתה: פענוח-סובלני + failover מרובה-צמתים
+ * + פסיקה-כנה רק-אחרי-כל-הצמתים ("all blurt nodes unhealthy") — לא קריסת-פענוח. */
+const RPC_CANDIDATES = [...new Set([RPC, 'https://rpc.blurt.world', 'https://blurt-rpc.saboin.com', 'https://api.blurt.world'].filter(Boolean))];
 async function rpc(method, params) {
-  const res = await fetch(RPC, { method: 'POST', headers: { 'content-type': 'application/json', 'user-agent': 'saos-blurt-connect/2' }, body: JSON.stringify({ jsonrpc: '2.0', method, params, id: 1 }) });
-  const j = await res.json();
-  if (j.error) throw new Error('rpc: ' + JSON.stringify(j.error).slice(0, 140));
-  return j.result;
+  let lastErr = null;
+  for (const base of RPC_CANDIDATES) {
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      try {
+        const res = await fetch(base, { method: 'POST', headers: { 'content-type': 'application/json', 'user-agent': 'saos-blurt-connect/2' }, body: JSON.stringify({ jsonrpc: '2.0', method, params, id: 1 }) });
+        const txt = await res.text();
+        let j;
+        try { j = JSON.parse(txt); } catch (_) { throw new Error('non-json node answer (' + base.replace(/^https?:\/\//, '') + '): ' + txt.slice(0, 60)); }
+        if (j.error) throw new Error('rpc: ' + JSON.stringify(j.error).slice(0, 140));
+        return j.result;
+      } catch (e) { lastErr = e; if (attempt === 2) break; await new Promise(r => setTimeout(r, 1500)); }
+    }
+  }
+  throw new Error('all blurt nodes unhealthy (' + RPC_CANDIDATES.length + ' tried) — last: ' + String((lastErr && lastErr.message) || lastErr).slice(0, 120));
 }
 
 function bcast(fn, ...args) {
