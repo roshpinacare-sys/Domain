@@ -57,26 +57,27 @@ keyless - keeps the served dex books fresh from the live public Console mirror),
 weave-mirror (hourly at :57, keyless - keeps the served weave books
 mirror.json/saos-live.json fresh from the live Console home; gate G12 measures age
 and twin-lag), key-verify (dormant until the operator
-adds the operator's secret; refuses honestly without it), bootstrap-pages (documented
+adds the manager secret; refuses honestly without it), bootstrap-pages (documented
 403 evidence + retry button). The secret lives only in the vault - never in code,
 logs or receipts.
 
 The machine twins (OL-14 healing; r67 + r68 + r70, all on free public minutes,
 each checking out its sovereign home via ZIP_PAT and pushing back to the one
 canonical book): weave-heart (hourly :13 - seal-gated; the operator delivered
-the passphrase on 2026-09-21T08:28:30Z (both accepted names, canonical preferred)), weave-anchor-lines (bi-hourly :33 - same seal
-gate via either name; both lines publish live - the operator's signing secrets were delivered
-in full in R72-R75; the honest-dry phase is closed), web-publish
+operator verification recorded 2026-09-21T08:28:30Z (secret names withheld by disclosure policy) - both
+accepted, canonical preferred), weave-anchor-lines (bi-hourly :33 - same seal
+gate via either name; both lines publish live - the operator delivered
+the weave and operating keys in R72-R75; the honest-dry phase is closed), web-publish
 (every 20 min at :03/:23/:43 - green no-op without mail, honest no-wif skip),
 weave-ecosystem (daily 06:30 - verified end-to-end: dup beacon committed to Zip
 from this twin), dex-beat (bi-hourly :53 - SECRETLESS for the operator: revives
 the dex engine and world.json on vault PATs alone; shift-guarded: if the
 sovereign original succeeded within 3h the twin verifies only), dex-grid
-(daily 03:48 - refuses honestly until the operator's signing secret is delivered, because a
-keyless run would falsely publish DISARMED-NO-KEY while the true state is
-armed; shift-guarded on schedule, dispatches run immediately).
-Operator's secrets status: ALL DELIVERED (R72-R75 — the operator's secrets
-flowed in full). No remaining operator-side secrets are known; new needs open
+(daily 03:48 - refuses honestly until the manager key, because a keyless run
+would falsely publish DISARMED-NO-KEY while the true state is armed in the
+private vault; shift-guarded on schedule, dispatches run immediately).
+Operator's secrets status: ALL DELIVERED (R72-R75, incl. WEAVE_STEEM_WIF and
+STEEM_ACTIVE_WIF). No remaining operator-side secrets are known; new needs open
 as honest refuse-until-delivered gates.
 
 ## 4. How to work (the loop)
