@@ -15,7 +15,11 @@ name: dex-grid
 
 on:
   schedule:
-    - cron: "26 3 * * *"
+    # R16-a (2026-10-12, owner mandate trace 1a12dbe9812eff11 "תצית תפעיל שלא יהיו חסימות"):
+    # cadence 1→4×/day — 14-a measured 11 stale resting asks behind the market after the
+    # daily-only refresh; the grid re-arms around the live book 4×/day now (maker-only,
+    # brake + key-gate re-checked at every sign). Minutes: :26 slot kept (minute-map free).
+    - cron: "26 3,9,15,21 * * *"
   workflow_dispatch:
 
 permissions:
