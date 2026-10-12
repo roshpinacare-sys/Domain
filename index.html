@@ -150,7 +150,6 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
       <a href="verify/">אמת-בעצמך</a>
       <a href="reports.html">דוחות</a>
       <a href="giants.html">שולחן-הענקים</a>
-      <a href="standard.html">תקן-ההפעלה</a>
       <a href="sitemap.html">מפת-האתר</a>
     </nav>
   </div>
@@ -184,7 +183,7 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
 
       <div class="strip" id="office-strip" aria-live="polite">
         <div class="cell"><b class="mono" id="of-engines">—</b><span>מנועי צי · חיים / שקטים</span></div>
-        <div class="cell"><b class="mono" id="of-time">—</b><span>חותמת המשרד האחרונה (UTC)</span></div>
+        <div class="cell"><b class="mono" id="of-time">—</b><span>חותמת עדכון אחרונה · הטרי ביותר (UTC)</span></div>
         <div class="cell"><b class="mono" id="of-verdict">—</b><span>פס-המשרד · ALIVE/AGING/STALE</span></div>
         <div class="cell"><b class="mono" id="of-arteries">—</b><span>עורקי הצי · טריים / נבדקו</span></div>
         <div class="cell"><b class="mono" id="of-state">—</b><span>מצב חיבור למשרד</span></div>
@@ -416,6 +415,18 @@ function jget(url, ms){
   });
 }
 
+/* T-72 freshness law: the stamp cell renders the FRESHEST office timestamp seen
+   (digest publishedAt vs office.pushedAt measured from the repo API) — never the
+   older one, so a slow digest can never make a live office look quiet. */
+var officeStampTs = null;
+function setOfficeStamp(ts){
+  var t = ts ? Date.parse(ts) : null;
+  if (t && (!officeStampTs || t > officeStampTs)) {
+    officeStampTs = t;
+    $('of-time').textContent = utcClock(new Date(t).toISOString());
+  }
+}
+
 /* ── 1. OFFICE: FleetHQ digest (graceful 404) + office-feed fallback ── */
 function parseEngines(d){
   var keys = ['engines','fleet','repos','workers','units','jobs'];
@@ -467,7 +478,7 @@ function loadOffice(){
   jget(FH + '/digest.json', 12000).catch(function(){ return jget(FH, 12000); }).then(function(d){
     $('of-state').textContent = 'מחובר';
     var at = d.publishedAt || d.generatedAt || d.updatedAt || d.at || null;
-    $('of-time').textContent = at ? utcClock(at) : '—';
+    setOfficeStamp(at);
     setChip('po-chip', at, 'משרד חי');
     var eng = parseEngines(d);
     renderOfficeEngines(eng, 'פנקס-הצי · FleetHQ/digest.json');
@@ -475,7 +486,7 @@ function loadOffice(){
     /* graceful 404 — try our own merged feeder, else honest connecting state */
     jget('dex/office-feed.json', 10000).then(function(f){
       var at = (f.publishedAt) || null;
-      $('of-time').textContent = at ? utcClock(at) : '—';
+      setOfficeStamp(at);
       setChip('po-chip', at, 'מקור מקומי');
       renderOfficeEngines(parseEngines(f) || (f.actions && f.actions.recentRuns ? f.actions.recentRuns.map(function(r){
         return { name: r.name, ok: r.conclusion === 'success', status: r.conclusion || r.status };
@@ -485,7 +496,7 @@ function loadOffice(){
       /* the office page may not exist yet — show honest connecting state with retry */
       $('of-state').textContent = 'מתחבר…';
       $('of-engines').textContent = '—';
-      $('of-time').textContent = '—';
+      if (officeStampTs === null) $('of-time').textContent = '—'; // T-72: never erase a fresher stamp
       var chip = $('po-chip'); chip.className='chip wait'; chip.style.cssText='color:#fde047;border-color:rgba(234,179,8,.45);background:rgba(234,179,8,.08)';
       chip.textContent = 'המשרד מתחבר…';
       $('po-upd').textContent = utcClock(new Date());
@@ -499,6 +510,7 @@ function loadOffice(){
 /* ── 1b. OFFICE PULSE (E-series lane file: office/data.json, 20-min writer) ── */
 function loadPulse(){
   jget('office/data.json', 10000).then(function(d){
+    setOfficeStamp(d.office && d.office.pushedAt);
     var v = (d.verdict || 'STALE').toUpperCase();
     var ve = $('of-verdict');
     ve.textContent = v;

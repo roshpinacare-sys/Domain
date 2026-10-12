@@ -13,6 +13,7 @@ on:
 
 permissions:
   contents: write
+  actions: write # T-72: powers the self-relay dispatch (the writer carries its own clock)
 
 concurrency:
   group: office-pulse
@@ -21,7 +22,7 @@ concurrency:
 jobs:
   pulse:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 45 # self-relay sleeps up to 30 min before self-kick
     steps:
       - name: Checkout (keyless - same-repo only)
         uses: actions/checkout@v4
@@ -54,3 +55,24 @@ jobs:
             echo "push attempt $i failed, retrying"; sleep 3
           done
           if [ "$ok" != "1" ]; then echo "PUSH-FAILED"; exit 1; fi
+
+      - name: self-relay (the writer keeps itself alive — T-72 clock-redundancy, Pulse #9 pattern)
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -eu
+          now=$(date +%s)
+          next=$(( (now / 1800 + 1) * 1800 ))
+          wait=$(( next - now ))
+          [ "$wait" -gt 0 ] || wait=60
+          echo "relay: sleeping ${wait}s until next half-hour boundary"
+          sleep "$wait"
+          code=$(curl -s -o /tmp/relay.out -w '%{http_code}' -X POST \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            -H "User-Agent: office-pulse-relay" \
+            https://api.github.com/repos/roshpinacare-sys/Domain/actions/workflows/office-pulse.yml/dispatches \
+            -d '{"ref":"main"}')
+          echo "relay: next tick dispatched http=${code}"; cat /tmp/relay.out || true
+          [ "$code" = "204" ] || { echo "named terminal: relay-dispatch-failed"; exit 1; }
