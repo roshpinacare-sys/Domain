@@ -120,6 +120,8 @@ async function rpcHive(method, params) {
     mirrorAgeH: null,
     hive: null,
     hbd: null,
+    ordersAgeH: null,
+    integrityAgeH: null,
     reasons: [],
     dispatched: [],
     suppressed: [],
@@ -162,6 +164,37 @@ async function rpcHive(method, params) {
       res.errors.push('hive rpc: ' + e.message);
     }
 
+    // 3.5) office books watchdog (measured 2026-10-12: the private-Sandbox half of
+    //      the network died on quota — the books now live HERE, public; the guard
+    //      measures their age and re-ignites the same-repo twins when silent).
+    //      thresholds = twin cadence (2h) × 2 — one missed slot + margin.
+    const OFFICE_BOOKS = [
+      { key: 'ordersAgeH', file: 'agents/work-orders.json', twin: 'office-orders-twin.yml', staleH: 4, tsKeys: ['at'] },
+      { key: 'integrityAgeH', file: 'agents/integrity-verdict.json', twin: 'artery-integrity-twin.yml', staleH: 4, tsKeys: ['at'] },
+    ];
+    for (const b of OFFICE_BOOKS) {
+      try {
+        // the books live in THIS repo — prefer the fresh checkout, fall back to raw
+        let at = null;
+        try {
+          const local = JSON.parse(fs.readFileSync(path.join(AG, b.file), 'utf8'));
+          for (const k of b.tsKeys) { const t = Date.parse(local?.[k] ?? ''); if (Number.isFinite(t)) { at = t; break; } }
+        } catch { /* fall through to raw */ }
+        if (at == null) {
+          const rr = await api(`/repos/${OWNER}/Domain/contents/${b.file}`);
+          if (rr.ok) {
+            const dj = JSON.parse(Buffer.from((await rr.json()).content, 'base64').toString('utf8'));
+            for (const k of b.tsKeys) { const t = Date.parse(dj?.[k] ?? ''); if (Number.isFinite(t)) { at = t; break; } }
+          } else res.errors.push(`${b.file} read HTTP ${rr.status}`);
+        }
+        if (at != null) {
+          const ageH = Math.round(((Date.now() - at) / 36e5) * 10) / 10;
+          res[b.key] = ageH;
+          if (ageH > b.staleH) res.reasons.push(`${b.key.split('Age')[0]}-book-stale ${ageH}h > ${b.staleH}h`);
+        } else res.errors.push(`${b.file} has no parsable timestamp (honest)`);
+      } catch (e) { res.errors.push(`${b.key}: ${e.message}`); }
+    }
+
     // 4) decide (measured reasons only)
     if (res.beatAgeH != null && res.beatAgeH > STALE_H) res.reasons.push(`beat-stale ${res.beatAgeH}h > ${STALE_H}h`);
     if (res.mirrorAgeH != null && res.mirrorAgeH > MIRROR_STALE_H) res.reasons.push(`mirror-stale ${res.mirrorAgeH}h > ${MIRROR_STALE_H}h`);
@@ -191,6 +224,18 @@ async function rpcHive(method, params) {
             if (s2 === 204) res.dispatched.push('Console/grid-pulse');
             else res.errors.push('dispatch Console/grid-pulse HTTP ' + s2);
           }
+        }
+        // office books → same-repo twins (github.token, actions:write) — the
+        // never-stops law extended to the whole office (measured 2026-10-12)
+        if (res.reasons.some((x) => x.startsWith('orders-book-stale'))) {
+          const s3 = await dispatch('Domain', 'office-orders-twin.yml', GH_TOKEN || TOKEN);
+          if (s3 === 204) res.dispatched.push('Domain/office-orders-twin');
+          else res.errors.push('dispatch Domain/office-orders-twin HTTP ' + s3);
+        }
+        if (res.reasons.some((x) => x.startsWith('integrity-book-stale'))) {
+          const s4 = await dispatch('Domain', 'artery-integrity-twin.yml', GH_TOKEN || TOKEN);
+          if (s4 === 204) res.dispatched.push('Domain/artery-integrity-twin');
+          else res.errors.push('dispatch Domain/artery-integrity-twin HTTP ' + s4);
         }
         if (res.dispatched.length) {
           state.lastDispatchAt = res.at;

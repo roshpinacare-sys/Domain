@@ -1,0 +1,67 @@
+{
+ "schema": "integrity-guard/2",
+ "scope": "public-twin (Domain home)",
+ "at": "2026-10-12T19:38:52.194Z",
+ "overall": "FAIL",
+ "summary": {
+  "sources": 7,
+  "verified": 8,
+  "findings": 1,
+  "counts": {
+   "missing": 1
+  }
+ },
+ "verified": [
+  {
+   "where": "self:agents/integrity-verdict.json",
+   "law": "L0-verified",
+   "detail": "פסק-קודם תקין (FAIL) מלפני 0ש'"
+  },
+  {
+   "where": "Domain:agents/grid-truth.json",
+   "law": "fresh+parsed",
+   "detail": "גיל 0.1ש' ≤ SLA 2ש'"
+  },
+  {
+   "where": "Domain:office/data.json",
+   "law": "fresh+parsed",
+   "detail": "גיל 0.5ש' ≤ SLA 2ש'"
+  },
+  {
+   "where": "Domain:agents/office-live.json",
+   "law": "fresh+parsed",
+   "detail": "גיל 0.4ש' ≤ SLA 4ש'"
+  },
+  {
+   "where": "FleetHQ:office/state/office-state.json",
+   "law": "fresh+parsed",
+   "detail": "גיל 3.5ש' ≤ SLA 4ש'"
+  },
+  {
+   "where": "sovereign-runner-kit:results/receipts.jsonl",
+   "law": "fresh+parsed",
+   "detail": "גיל 3.6ש' ≤ SLA 72ש' · 1 קבלות"
+  },
+  {
+   "where": "Domain:office/data.json",
+   "law": "producer-green",
+   "detail": "ריצת-יצרן ירוקה לפני 134 דק'"
+  },
+  {
+   "where": "Domain:agents/work-orders.json",
+   "law": "published",
+   "detail": "? פקודות-פתוחות · schema legacy"
+  }
+ ],
+ "findings": [
+  {
+   "where": "Domain:agents/work-orders.json",
+   "law": "missing",
+   "detail": "HTTP 404 — ספר-חי לא נקרא"
+  }
+ ],
+ "provenance": {
+  "runUrl": null,
+  "workflow": "artery-integrity-twin"
+ }
+}
