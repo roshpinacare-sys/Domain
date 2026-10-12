@@ -16,21 +16,11 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8' fill='none' stroke='%2310b981' stroke-width='1.8' stroke-linecap='round'/%3E%3Ccircle cx='12' cy='12' r='3' fill='none' stroke='%2310b981' stroke-width='1.8'/%3E%3C/svg%3E">
 <style>
-:root{
-  --bg:#09090b; --bg2:#101013;
-  --panel:rgba(255,255,255,.03); --panel2:rgba(255,255,255,.055);
-  --line:rgba(255,255,255,.09); --line2:rgba(255,255,255,.16);
-  --acc:#10b981; --acc-bright:#34d399; --acc-bg:rgba(16,185,129,.10); --acc-line:rgba(16,185,129,.35);
-  --green:#22c55e; --red:#ef4444; --amber:#eab308;
-  --text:#fafafa; --dim:#a1a1aa; --faint:#71717a;
-  --mono:ui-monospace,'SF Mono','Cascadia Code','Consolas',Menlo,monospace;
-  --sans:-apple-system,'Segoe UI',Roboto,'Helvetica Neue','Noto Sans Hebrew',Arial,sans-serif;
-  --r:16px; --r-sm:12px;
-}
+:root{ --bg:#f5f3f1; --bg2:#efedea; --panel:#ffffff; --panel2:#fafaf9; --line:#e6e2dd; --line2:#d6d0c9; --acc:#0d9d6d; --acc-bright:#0b8a60; --acc-bg:rgba(13,157,109,.07); --acc-line:rgba(13,157,109,.30); --green:#0d9d6d; --red:#c2410c; --amber:#a16207; --text:#1d1d1f; --dim:#57534e; --faint:#8a8580; --mono:ui-monospace,'SF Mono','Cascadia Code',Consolas,Menlo,monospace; --sans:-apple-system,'Segoe UI',Roboto,'Helvetica Neue','Noto Sans Hebrew',Arial,sans-serif; --serif:Georgia,'Times New Roman','Noto Serif Hebrew',serif; --r:14px; --r-sm:10px; }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
-#bg{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.7;background:radial-gradient(640px 340px at 82% -60px,rgba(16,185,129,.09),transparent 70%),radial-gradient(520px 300px at 10% -80px,rgba(255,255,255,.05),transparent 70%)}
+#bg{display:none}
 main{position:relative;z-index:1}
 a{color:var(--acc-bright);text-decoration:none}
 a:hover{text-decoration:underline}
@@ -157,7 +147,7 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
       <a href="#live">הרשת החיה</a>
       <a href="#why">מה ולמה</a>
       <a href="verify/">אמת-בעצמך</a>
-      <a href="/Domain/archive/2026-10-11/">ארכיון הדף הקודם</a>
+      
     </nav>
   </div>
 </header>
@@ -174,17 +164,15 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
         הכול בהרצה רציפה ומתועדת, בלי דלתות סגורות.
       </p>
       <div class="cta-row">
-        <a class="btn" href="office3d/v2/">🏛️ היכנסו למפקדה החיה ←</a>
-        <a class="btn ghost" href="marketing/">🛒 המוצרים החיים — ההצעה עם קבלות ←</a>
-        <a class="btn ghost" href="office3d/worlds/">🌌 חדר העולמות — עסקים ועולם מקביל ←</a>
-        <a class="btn ghost" href="https://roshpinacare-sys.github.io/FleetHQ/" target="_blank" rel="noopener">ממשק הפורמן ↗</a>
-        <a class="btn ghost" href="#live">הצצה לפאנלים החיים ↓</a>
+        
+        <a class="btn ghost" href="marketing/"> המוצרים </a>
+        <a class="btn ghost" href="office3d/worlds/"> חדר העולמות </a>
+        <a class="btn ghost" href="https://roshpinacare-sys.github.io/FleetHQ/" target="_blank" rel="noopener">פאנלי הצי </a>
+        <a class="btn ghost" href="#live">הצצה לפאנלים החיים </a>
       </div>
 
       <div class="shot">
-        <a class="shot3d" href="office3d/v2/" aria-label="היכנסו למפקדה החיה (חדר תלת-ממדי חי)">
-          <img src="assets/office-top.png" alt="משרד הצי — חדר התפעול החי: סוכנים מול צגים חיים, קיר-משימות וספרייה" width="640" height="360">
-          <span class="shot3d-btn">🏛️ המשרד התלת-ממדי<small>חדר חי · צוות אמיתי · אמת מהשרשרת</small></span></a>
+        
         <p class="cap">משרד אמיתי, לא מוקאפ: צוות סוכני AI מול צגים חיים, קיר-משימות מתעדכן וספריית דוחות שהם כותבים בעצמם. החלון הזה נמדד חי מהריפואים הציבוריים — משרד קודם, רשת אחרי.</p>
       </div>
 
@@ -199,9 +187,9 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
       </div>
 
       <div class="grid g3" style="margin-top:18px">
-        <div class="card"><span class="ico">🧱</span><h3>קיר-המשימות</h3><p>כל תפקיד בצי מוצג פומבית: מה רץ עכשיו, מה הושלם, מה נחסם ולמה. כולל שורת-חסימה גלויה לכל עיכוב.</p></div>
-        <div class="card"><span class="ico">👷</span><h3>5 עובדים</h3><p>חמישה סוכני-עבודה מקיימים את המשמרת במקביל: בדיקות, תוכן, כלכלה, גריד ומחקר — כל אחד עם יומן ריצות מאומת.</p></div>
-        <div class="card"><span class="ico">📚</span><h3>הספרייה</h3><p>דוקטרינה, מפת-תפקידים לכל היחידות ותוכניות עבודה — קריא לכולם, כולל מסמכי-עדכון מתוארכים.</p></div>
+        <div class="card"><span class="ico"></span><h3>קיר-המשימות</h3><p>כל תפקיד בצי מוצג פומבית: מה רץ עכשיו, מה הושלם, מה נחסם ולמה. כולל שורת-חסימה גלויה לכל עיכוב.</p></div>
+        <div class="card"><span class="ico"></span><h3>5 עובדים</h3><p>חמישה סוכני-עבודה מקיימים את המשמרת במקביל: בדיקות, תוכן, כלכלה, גריד ומחקר — כל אחד עם יומן ריצות מאומת.</p></div>
+        <div class="card"><span class="ico"></span><h3>הספרייה</h3><p>דוקטרינה, מפת-תפקידים לכל היחידות ותוכניות עבודה — קריא לכולם, כולל מסמכי-עדכון מתוארכים.</p></div>
       </div>
     </div>
   </section>
@@ -218,51 +206,51 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
       <div class="grid g5" id="panels">
 
         <div class="panel" id="p-office">
-          <div class="ph"><h3><span class="ico">🏛️</span> מנועי הצי</h3><span class="chip" id="po-chip">טוען…</span></div>
+          <div class="ph"><h3><span class="ico"></span> מנועי הצי</h3><span class="chip" id="po-chip">טוען…</span></div>
           <ul class="runs" id="po-runs"><li class="err">טוען נתוני מנועים…</li></ul>
-          <div class="pfoot"><span>עודכן: <span class="upd" id="po-upd">—</span></span><span class="src">FleetHQ/digest.json</span></div>
+          <div class="pfoot"><span>עודכן: <span class="upd" id="po-upd">—</span></span><span class="src">פנקס-הצי</span></div>
         </div>
 
         <div class="panel" id="p-crew">
-          <div class="ph"><h3><span class="ico">🧑‍💻</span> הצוות — חי מהמשרד</h3><span class="chip" id="pc-chip">טוען…</span></div>
+          <div class="ph"><h3><span class="ico">‍</span> הצוות — חי מהמשרד</h3><span class="chip" id="pc-chip">טוען…</span></div>
           <ul class="runs" id="pc-runs"><li class="err">טוען מצב-צוות…</li></ul>
-          <div class="pfoot"><span>עודכן: <span class="upd" id="pc-upd">—</span></span><span class="src">FleetHQ/office-state.json · דופק 2-שעות</span></div>
+          <div class="pfoot"><span>עודכן: <span class="upd" id="pc-upd">—</span></span><span class="src">מצב-המשרד </span></div>
         </div>
 
         <div class="panel" id="p-grid">
-          <div class="ph"><h3><span class="ico">📶</span> פס-הגריד</h3><span class="chip" id="pg-chip">טוען…</span></div>
+          <div class="ph"><h3><span class="ico"></span> פס-הגריד</h3><span class="chip" id="pg-chip">טוען…</span></div>
           <div class="verdict" id="pg-verdict">—</div>
           <div class="kv">
             <b>רשתות</b><i id="pg-chains">—</i>
             <b>חוסם</b><i id="pg-blocker">—</i>
             <b>פורסם</b><i id="pg-pub">—</i>
           </div>
-          <div class="pfoot"><span>עודכן: <span class="upd" id="pg-upd">—</span></span><span class="src">Domain/dex/grid.json</span></div>
+          <div class="pfoot"><span>עודכן: <span class="upd" id="pg-upd">—</span></span><span class="src">ספר-הגריד</span></div>
         </div>
 
         <div class="panel" id="p-steem">
-          <div class="ph"><h3><span class="ico">⛓️</span> פולס Steem</h3><span class="chip" id="ps-chip">טוען…</span></div>
+          <div class="ph"><h3><span class="ico"></span> פולס Steem</h3><span class="chip" id="ps-chip">טוען…</span></div>
           <div class="kv">
             <b>בלוק ראש</b><i class="mono" id="ps-head">—</i>
             <b>זמן בלוק</b><i id="ps-time">—</i>
           </div>
           <ul class="posts" id="ps-posts"><li class="err">טוען פוסטים אחרונים…</li></ul>
-          <div class="pfoot"><span>עודכן: <span class="upd" id="ps-upd">—</span></span><span class="src">api.steemit.com</span></div>
+          <div class="pfoot"><span>עודכן: <span class="upd" id="ps-upd">—</span></span><span class="src">רשת-השרשרת</span></div>
         </div>
 
         <div class="panel" id="p-probe">
-          <div class="ph"><h3><span class="ico">📡</span> גששי רשת</h3><span class="chip" id="pp-chip">טוען…</span></div>
+          <div class="ph"><h3><span class="ico"></span> גששי רשת</h3><span class="chip" id="pp-chip">טוען…</span></div>
           <div class="kv">
             <b>Hive</b><i id="pp-hive">—</i>
             <b>Blurt</b><i id="pp-blurt">—</i>
             <b>קצה Hive</b><i class="mono" id="pp-hive-ep">—</i>
             <b>קצה Blurt</b><i class="mono" id="pp-blurt-ep">—</i>
           </div>
-          <div class="pfoot"><span>עודכן: <span class="upd" id="pp-upd">—</span></span><span class="src">Sandbox/probes</span></div>
+          <div class="pfoot"><span>עודכן: <span class="upd" id="pp-upd">—</span></span><span class="src">גששי-הרשת</span></div>
         </div>
 
         <div class="panel" id="p-world">
-          <div class="ph"><h3><span class="ico">🌐</span> ספר הרשת</h3><span class="chip" id="pw-chip">טוען…</span></div>
+          <div class="ph"><h3><span class="ico"></span> ספר הרשת</h3><span class="chip" id="pw-chip">טוען…</span></div>
           <div class="kv">
             <b>גובה שרשרת</b><i class="mono" id="pw-h">—</i>
             <b>ops מצטבר</b><i class="mono" id="pw-ops">—</i>
@@ -274,13 +262,13 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
         </div>
 
         <div class="panel" id="p-lessons">
-          <div class="ph"><h3><span class="ico">🧠</span> מה המוח למד</h3><span class="chip" id="pl-chip">טוען…</span></div>
+          <div class="ph"><h3><span class="ico"></span> מה המוח למד</h3><span class="chip" id="pl-chip">טוען…</span></div>
           <ul class="runs" id="pl-runs"><li class="err">טוען לקחים אחרונים…</li></ul>
-          <div class="pfoot"><span>עודכן: <span class="upd" id="pl-upd">—</span></span><span class="src">Sandbox/ops/lessons/ledger.md · יומי</span></div>
+          <div class="pfoot"><span>עודכן: <span class="upd" id="pl-upd">—</span></span><span class="src">פנקס-לקחים </span></div>
         </div>
 
         <div class="panel" id="p-flow">
-          <div class="ph"><h3><span class="ico">🔀</span> מפת הזרימה — הכל משתמש בהכל</h3><span class="chip" id="pf-chip">טוען…</span></div>
+          <div class="ph"><h3><span class="ico"></span> מפת הזרימה — הכל משתמש בהכל</h3><span class="chip" id="pf-chip">טוען…</span></div>
           <div class="kv">
             <b>צמתים / קשתות</b><i class="mono" id="pf-ne">—</i>
             <b>משולב-בדף</b><i class="mono" id="pf-int">—</i>
@@ -296,7 +284,7 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
         </div>
 
         <div class="panel" id="p-decisions">
-          <div class="ph"><h3><span class="ico">⚖️</span> הכרעות-הריבונות — מתיאור למעשים</h3><span class="chip" id="pd-chip">טוען…</span></div>
+          <div class="ph"><h3><span class="ico"></span> הכרעות-הריבונות — מתיאור למעשים</h3><span class="chip" id="pd-chip">טוען…</span></div>
           <div class="kv">
             <b>דופק-המכריע</b><i class="mono" id="pd-heart">—</i>
             <b>מאומתות</b><i class="mono" id="pd-verified">—</i>
@@ -308,7 +296,7 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
         </div>
 
         <div class="panel" id="p-research">
-          <div class="ph"><h3><span class="ico">🔬</span> מחקר וגילוי</h3><span class="chip" id="pr-chip">טוען…</span></div>
+          <div class="ph"><h3><span class="ico"></span> מחקר וגילוי</h3><span class="chip" id="pr-chip">טוען…</span></div>
           <div style="margin:2px 0 12px">
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px">
               <b style="font-size:12.5px">רווחיות (מדיד-יומי)</b>
@@ -336,9 +324,9 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
       <h2 class="sec">מה זה, ולמה זה קיים</h2>
       <p class="sub">עמדה קצרה וכנה — בלי קישוטים.</p>
       <div class="grid g3">
-        <div class="card"><span class="ico">🧾</span><h3>עבודה שניתנת לאימות</h3><p>כל סוכן מפרסם מה עשה, מתי, ובאיזה תוצר. לא נדרשת הרשאה מיוחדת כדי לבדוק — כל טענה נישאת עם מקור פומבי שאפשר לפתוח.</p></div>
-        <div class="card"><span class="ico">⚓</span><h3>הוכחות מעוגנות בשרשרת</h3><p>שורות-עוגן חתומות נשלחות לשרשרת ציבורית (Steem) עם hashes וחותמות-זמן. היסטוריה שאי-אפשר לשכתב בדיעבד.</p></div>
-        <div class="card"><span class="ico">🔍</span><h3>אף אחד לא צריך לסמוך</h3><p>המודל הוא אפס-אמון: מכונות מודדות מכונות, והציבור מוזמן להריץ את אותן בדיקות בעצמו. אם הנתון לא חי — נאמר זאת בגלוי.</p></div>
+        <div class="card"><span class="ico"></span><h3>עבודה שניתנת לאימות</h3><p>כל סוכן מפרסם מה עשה, מתי, ובאיזה תוצר. לא נדרשת הרשאה מיוחדת כדי לבדוק — כל טענה נישאת עם מקור פומבי שאפשר לפתוח.</p></div>
+        <div class="card"><span class="ico"></span><h3>הוכחות מעוגנות בשרשרת</h3><p>שורות-עוגן חתומות נשלחות לשרשרת ציבורית (Steem) עם hashes וחותמות-זמן. היסטוריה שאי-אפשר לשכתב בדיעבד.</p></div>
+        <div class="card"><span class="ico"></span><h3>אף אחד לא צריך לסמוך</h3><p>המודל הוא אפס-אמון: מכונות מודדות מכונות, והציבור מוזמן להריץ את אותן בדיקות בעצמו. אם הנתון לא חי — נאמר זאת בגלוי.</p></div>
       </div>
       <div class="why-links">
         <a href="https://roshpinacare-sys.github.io/Console/" target="_blank" rel="noopener">Console<small>roshpinacare-sys.github.io/Console</small></a>
@@ -352,13 +340,13 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
 <footer>
   <div class="wrap">
     <b>הערת-היסטוריה:</b> הגרסה הקודמת של דף זה (כפי שהוצגה עד 2026-10-11) נשמרה וניתנת לעיון ב-
-    <a href="/Domain/archive/2026-10-11/">ארכיון הדף</a>.
+    .
     <br>
     כל מספר בדף זה נמדד ממקור חי עם חותמת-זמן גלויה. אין נתון — נכתב "אין נתון". אין כאן הבטחת רווח; יש כאן מדידה.
     <div class="frow">
       <span>build: <span id="f-build">2026-10-11</span></span>
       <span>refresh: 5min</span>
-      <span>stale-law: &gt;24h ⇒ warning</span>
+      <span>stale-law: &gt;24h  warning</span>
       <span><a href="/Domain/status.json">status.json</a></span>
       <span><a href="/Domain/dex/world.json">dex/world.json</a></span>
       <span><a href="/Domain/dex/office-feed.json">dex/office-feed.json</a></span>
@@ -446,7 +434,7 @@ function renderOfficeEngines(eng, srcLabel){
   $('of-engines').textContent = alive + ' / ' + (dead || 0);
   ul.innerHTML = eng.map(function(e){
     var cls = e.ok === true ? 'ok' : e.ok === false ? 'bad' : 'wait';
-    var mark = e.ok === true ? '✅' : e.ok === false ? '❌' : '⏳';
+    var mark = e.ok === true ? '' : e.ok === false ? '' : '⏳';
     return '<li><span class="st ' + cls + '">' + mark + '</span> ' +
       '<span class="mono">' + String(e.name).replace(/[<>&]/g,'') + '</span>' +
       (e.status ? ' <span style="color:var(--faint)">' + String(e.status).replace(/[<>&]/g,'') + '</span>' : '') + '</li>';
@@ -454,14 +442,14 @@ function renderOfficeEngines(eng, srcLabel){
   ul.setAttribute('data-src', srcLabel || '');
 }
 function loadOffice(){
-  var FH = 'https://roshpinacare-sys.github.io/FleetHQ/digest.json';
+  var FH = 'https://roshpinacare-sys.github.io/FleetHQ';
   jget(FH, 12000).then(function(d){
     $('of-state').textContent = 'מחובר';
     var at = d.publishedAt || d.generatedAt || d.updatedAt || d.at || null;
     $('of-time').textContent = at ? utcClock(at) : '—';
     setChip('po-chip', at, 'משרד חי');
     var eng = parseEngines(d);
-    renderOfficeEngines(eng, 'FleetHQ/digest.json');
+    renderOfficeEngines(eng, 'פנקס-הצי');
   }).catch(function(){
     /* graceful 404 — try our own merged feeder, else honest connecting state */
     jget('dex/office-feed.json', 10000).then(function(f){
@@ -564,7 +552,7 @@ function loadSteem(){
   }).catch(function(){ noData('ps-posts','RPC לא זמין כרגע'); });
 }
 
-/* ── 4. PROBES: Sandbox digests (try today → yesterday) ── */
+/* ── 4. PROBES: Sandbox digests (try today  yesterday) ── */
 function probeFile(kind){
   var days = [0, 1];
   var tries = days.map(function(back){
@@ -588,7 +576,7 @@ function loadProbes(){
     }
   }
   probeFile('hive').then(function(d){
-    $('pp-hive').textContent = d.ok ? '✅ חי' : '❌ כשל';
+    $('pp-hive').textContent = d.ok ? ' חי' : ' כשל';
     $('pp-hive-ep').textContent = (d.endpoint_used || '—').replace(/^https:\/\//,'');
     settle(d.ok === true, d.at || null);
   }).catch(function(){
@@ -596,7 +584,7 @@ function loadProbes(){
     settle(false, null);
   });
   probeFile('blurt').then(function(d){
-    $('pp-blurt').textContent = d.ok ? '✅ חי' : '❌ כשל';
+    $('pp-blurt').textContent = d.ok ? ' חי' : ' כשל';
     $('pp-blurt-ep').textContent = (d.node_used || '—').replace(/^https:\/\//,'');
     settle(d.ok === true, d.at || null);
   }).catch(function(){
@@ -755,10 +743,10 @@ function loadIntegrity(){
       ig.style.color = v.overall === 'FAIL' ? '#b91c1c' : (v.overall === 'PASS' ? '#15803d' : '#a16207');
       $('pf-igv').textContent = (s.verified || 0) + ' / ' + (s.sources || 0) + ' מקורות';
       var items = (v.verified || []).slice(0, 2).map(function(x){
-        return '<li style="font-size:12px;opacity:.85">✅ ' + String(x.where) + ' — ' + String(x.detail || '') + '</li>';
+        return '<li style="font-size:12px;opacity:.85"> ' + String(x.where) + ' — ' + String(x.detail || '') + '</li>';
       });
       (v.findings || []).filter(function(f){ return f.level === 'CRITICAL' || f.level === 'HIGH'; }).slice(0, 2).forEach(function(f){
-        items.push('<li class="err" style="font-size:12px">🚩 ' + f.level + ': ' + String(f.where) + ' — ' + String(f.law) + '</li>');
+        items.push('<li class="err" style="font-size:12px"> ' + f.level + ': ' + String(f.where) + ' — ' + String(f.law) + '</li>');
       });
       if (v.overall === 'FAIL') items.unshift('<li class="err" style="font-size:12px">חשד-זיוף מדוד — בקשו מקור לפני שסומכים</li>');
       $('pf-runs').innerHTML = items.join('') || '<li style="font-size:12px;opacity:.7">אין ממצאים.</li>';
@@ -786,7 +774,7 @@ function loadDecisions(){
       chip.className = 'chip ' + (v.overall === 'PASS' ? 'good' : 'warn');
       chip.textContent = v.overall === 'PASS' ? 'הכל-מאומת' : 'דורש-מעשים';
       var items = decs.map(function(d){
-        var mark = d.truth === 'VERIFIED' ? '✅' : (d.truth === 'UNEXECUTED' ? '⏳' : (d.truth === 'STALE-TRUTH' ? '🕰️' : '❔'));
+        var mark = d.truth === 'VERIFIED' ? '' : (d.truth === 'UNEXECUTED' ? '⏳' : (d.truth === 'STALE-TRUTH' ? '' : ''));
         var note = d.truth === 'UNEXECUTED' ? 'ההכרעה פורסמה — המעשה עדיין לא נמדד (מנותב לליין-הבעלים)'
           : d.truth === 'STALE-TRUTH' ? 'העולם התקדם מעבר לעדויות — RE-MEASURE נדרש'
           : d.truth === 'VERIFIED' ? 'עדויות נמדדו מחדש באופן-עצמאי + צרכן קיים'
@@ -801,7 +789,7 @@ function loadDecisions(){
 
 /* ── 10. RESEARCH (11-c lane: Sandbox research findings — weekly, date-named findings-{utc-date}.json,
    resolved latest-first up to 9 days back, exactly like the probes date-failover of 10-b.
-   Honesty law: renders what the feed says — hypothesis → measurement → verdict → next. ── */
+   Honesty law: renders what the feed says — hypothesis  measurement  verdict  next. ── */
 function loadResearch(){
   var chip = $('pr-chip');
   function urlFor(back){
@@ -820,12 +808,12 @@ function loadResearch(){
     function esc(s){ var el=document.createElement('div'); el.textContent=String(s==null?'':s); return el.innerHTML; }
     var h = '';
     d.experiments.slice(0, 4).forEach(function(e){
-      var mark = e.ok === true ? '<span class="st ok">✅</span>' : e.ok === false ? '<span class="st bad">❌</span>' : '<span class="st wait">⏳</span>';
+      var mark = e.ok === true ? '<span class="st ok"></span>' : e.ok === false ? '<span class="st bad"></span>' : '<span class="st wait">⏳</span>';
       h += '<li>' + mark + ' <b>' + esc(e.id) + ' · ' + esc(e.name) + '</b>' +
         (e.verdict ? '<br><span style="font-size:12px">' + esc(e.verdict) + '</span>' : '') +
         (e.next ? '<br><span style="font-size:11px;color:var(--faint)">צעד-הבא: ' + esc(e.next) + '</span>' : '') + '</li>';
     });
-    h += '<li style="font-size:11px"><a href="https://github.com/roshpinacare-sys/Sandbox/blob/main/research/LEDGER.md" target="_blank" rel="noopener">פנקס-המחקר (LEDGER.md) — השערה → מדידה → פסק → צעד-הבא</a></li>';
+    h += '<li style="font-size:11px"><a href="https://github.com/roshpinacare-sys/Sandbox/blob/main/research/LEDGER.md" target="_blank" rel="noopener">פנקס-המחקר (LEDGER.md) — השערה  מדידה  פסק  צעד-הבא</a></li>';
     $('pr-runs').innerHTML = h;
     var at = d.at || null;
     if(at){ setChip('pr-chip', at, 'מחקר חי', 192); $('pr-upd').textContent = utcClock(at); }
@@ -839,7 +827,7 @@ function loadResearch(){
 
 /* ── 10b. PROFITABILITY (14-d lane: the economy's pulse, public — owner directive on record.
    Source: Sandbox/receipts/profit-oracle-latest.json (daily measurement receipt).
-   Defensive law: missing/failing/shapeless feed → honest "אין-נתון", never fake.
+   Defensive law: missing/failing/shapeless feed  honest "אין-נתון", never fake.
    XSS law: every fetched value reaches the DOM via textContent only — no innerHTML. ── */
 function loadProfit(){
   var vChip = $('pp-verdict'), fChip = $('pp-fresh');
