@@ -73,7 +73,7 @@ The reported "RC block" was **our own stale-read bug**: rc_api returns a snapsho
 
 ## 8. The fleet and the autonomous workforce
 
-- **13 accounts on Steem, live** (get_accounts verified 2026-09-08): the commander @headcorner + 12 soldiers (11 members + @powerspan). Live re-measure 2026-09-13: **12/12 soldiers above the RC floor (>10%)** on the public fleet dashboard (the soldier roster tracks the 12 non-commander accounts; the commander is verified separately by the identity-anchor verifier)
+- **13 accounts on Steem, live** (get_accounts verified 2026-09-08): the fleet commander + 12 soldiers (11 members + @powerspan). Live re-measure 2026-09-13: **12/12 soldiers above the RC floor (>10%)** on the public fleet dashboard (the soldier roster tracks the 12 non-commander accounts; the commander is verified separately by the identity-anchor verifier)
 - **23 autonomous operation loops** under a single beat.lock (zero file-races), claims, curation, trading, bridging, healing, sweeping
 - **fleet registry**: 12 agents × EVM(7 networks)+TRON+SOL+BTC · manifest anchored on-chain (`9f593bdc...`) · identical EVM identities across all networks -> CREATE2-ready
 - **planned threshold**: 7/11 for releases (EIP-712) · EIP-191 glass intents + gas-tank
@@ -110,7 +110,7 @@ The reported "RC block" was **our own stale-read bug**: rc_api returns a snapsho
 
 - **v24 (MAGEN):** fail-closed anti-phishing gate on every outbound link, live
 - **v23 (ROSES):** fleet-agent rotation every 120s cycle
-- **v22 CORNERSTONE:** the owner seed (24 words) signed as a dual operational root
+- **v22 SEED-VAULT:** the owner seed (24 words) signed as a dual operational root
 - **v21 FLOW:** liquidity radar (12 assets / 8 domains / live USD) + a value-flow map
 - **v20 MICROGRID:** grid98 on-chain (contract 9, mesh link #6)
 - **foundry task-23:** supply-chain scan, **0 foreign code in all 10 heals**
@@ -155,7 +155,7 @@ The SAOSExchange contract (mesh link #7, saos-mesh/v4, 11KB), an internal-book A
 | Arbitrage bot | deviation >0.8% against a live Binance oracle -> a correcting swap · **arb proof: the treasury sold WETH at a 5.04% deviation** |
 | Harvest out | live proof: **36.4 SAOS-M flowed to REAL WORK wages** (tx `0x2c1a078b...`) · every third cycle |
 | Router | a comparison panel against live quotes from Uniswap/Pancake/Sushi, "only against the big ones" |
-| Cornerstone treasury | **a real money map published in full: $258.46** (STEEM 534SP = $248.83 · TRX $5.97 · SOL $2.49 · HIVE · ETH), radical transparency as a brand |
+| Seed-vault treasury | **a real money map published in full: $258.46** (STEEM 534SP = $248.83 · TRX $5.97 · SOL $2.49 · HIVE · ETH), radical transparency as a brand |
 | Server on our network | a JSON-RPC check from the browser through the public door: eth_blockNumber 5300 · chainId 0x7a69 |
 | Honesty | real bugs caught live and documented (harvestAll internal-call NotOwner · fee display · the probe fallback) |
 
@@ -177,7 +177,7 @@ The SAOSExchange contract (mesh link #7, saos-mesh/v4, 11KB), an internal-book A
 
 Owner instruction: *"There is an Ethereum address with some dust, some BNB and some XRP, find it and connect it to the system so that nothing stays sitting in a wallet."* The result:
 
-- **The discovery:** the Cornerstone seed (24 words, sealed in the v22 vault) yields real money on the **legacy Coinomi derivation path (4 levels)**, not the standard path (5 levels). That is why all previous checks showed 0: they looked on the wrong path
+- **The discovery:** the vault seed (24 words, sealed in the v22 vault) yields real money on the **legacy Coinomi derivation path (4 levels)**, not the standard path (5 levels). That is why all previous checks showed 0: they looked on the wrong path
 - **What was found:** `0x97Ad...`, ETH dust 0.000264968 (mainnet) + BNB 0.000011485 (BSC, same address) · and XRP 1.299961 at `r3Tq66...` (XRPL livenet, an account with real history, 0.299961 spendable above the 1.0 base reserve, measured live)
 - **A live XRPL rail (the eighth network):** account_info + server_state with honest nulls · a live XRPUSDT price · the sovereign fix: ripple's own servers (port 51234) were blocked by the v24 anti-phishing gate, so xrplcluster.com (XRPL Labs, 443) was added to the official TRUSTED_HOSTS. **The gate worked as designed, and the system found a proper route instead of bypassing the protection**
 - **Sovereign 1:1 connection:** WBNB+WRXP registered on the live exchange (registerAsset, owner only) · **not a single unit leaves the wallet** · supply backed 1:1 from the live radar · pools #3 (WBNB/wSAOS) and #4 (WRXP/wSAOS) seeded 80/20 · WETH sync: the found dust (+0.00026175) was injected as market-maker capital into the treasury, supply follows the measured treasury every cycle
@@ -304,15 +304,15 @@ Our external audit (AUDIT-2026-09-10 on saos-dex) ignited a coordinated self-cri
 
 ## 10.28 v47 THE HARDENED BIT: one seed, five ecosystems (07:15Z)
 
-- **the living mathematical truth:** the 24 cornerstone words reproduce exactly: m/44'/501'/0'/0' -> SOL identity · m/44'/195'/0'/0/0 -> TRON identity (live triple verification) · m/44'/60'/0'/0/0 -> 0x01Bd (EVM) · + BTC/XRP derivations, **one seed = EVM+SOLANA+TRON+BTC/XRP**
-- **first mainnet SOLANA anchor from the cornerstone:** txid `5z46xVFc3cf8d6daeRhoe2VE1uxPtPQ3S2gPVw2iBSphJhZsFUMwKZiADGbjAb841j8PoRUazic9Bqgjuu5RwZr5` · slot 445,822,974 · fee 5,000 lamports · err=null · zero SOL moved · confirmed · verified independently from mainnet-beta
+- **the living mathematical truth:** the 24 seed words reproduce exactly: m/44'/501'/0'/0' -> SOL identity · m/44'/195'/0'/0/0 -> TRON identity (live triple verification) · m/44'/60'/0'/0/0 -> 0x01Bd (EVM) · + BTC/XRP derivations, **one seed = EVM+SOLANA+TRON+BTC/XRP**
+- **first mainnet SOLANA anchor from the seed:** txid `5z46xVFc3cf8d6daeRhoe2VE1uxPtPQ3S2gPVw2iBSphJhZsFUMwKZiADGbjAb841j8PoRUazic9Bqgjuu5RwZr5` · slot 445,822,974 · fee 5,000 lamports · err=null · zero SOL moved · confirmed · verified independently from mainnet-beta
 - **cryptographic bug fixed:** slip10Ed25519 wrote an index without the hardened bit (44 instead of 0x80000000|44) -> wrong key -> false diagnosis "SOL identity does not reproduce", fixed with >>>0; the lesson: triple verification refuses to lie, and the refusal itself was correct
 - **XRP honesty:** the m/44'/144' path yields a different address than the declared one, marked "declared only", not verified
 - internal roast: 17 gaps (svm-identity open->fixed)
 
 ## 10.29 v48 NETWORK MAP (08:00Z)
 
-- **22 identities from the cornerstone + a live balance census 18/18**, a full multi-chain map of the organism, measured not declared
+- **22 identities from the seed + a live balance census 18/18**, a full multi-chain map of the organism, measured not declared
 
 ## 10.30 THE ANCHOR WALL 5/5: v49->v51 (verified directly from commits, 17:40Z)
 
@@ -338,7 +338,7 @@ Infrastructure for adding bridges to more networks + a deployments book rebuilt 
 
 ## 10.32 The breakthrough engine + the live diagnosis: $0.94 (v52, measured 15:45Z)
 
-- **breakthrough.ts + /api/saos/breakthrough:** an engine that assembles **7 truth sources in parallel** and measures its own next step: live asset inventory in 6 groups · 6 quantified constraints (gas desert · modules · single key · live MB state inflation · headcorner window · internal paper) · **5 breakthrough candidates ranked by impact/effort** with how/why/impacts/efficiency/live-USD-cost · a weighted 5-dimension sovereignty score · zero keys · 10-minute cache
+- **breakthrough.ts + /api/saos/breakthrough:** an engine that assembles **7 truth sources in parallel** and measures its own next step: live asset inventory in 6 groups · 6 quantified constraints (gas desert · modules · single key · live MB state inflation · commander window · internal paper) · **5 breakthrough candidates ranked by impact/effort** with how/why/impacts/efficiency/live-USD-cost · a weighted 5-dimension sovereignty score · zero keys · 10-minute cache
 - **the live diagnosis (the important number):** 7 EVM doors pipeline-proven waiting for gas, **the whole breakthrough budget ≈ $0.94 at live gas prices** (BSC $0.07 · Polygon $0.04 · Arbitrum/Optimism/Base $0.27 each · Avalanche $0.001), **less than one dollar away from 8/8 relay-EVM live and doubling the anchor presence 5->12**
 - candidate ranking (by impact): gas irrigation ×11.9 (owner decision) -> automatic spreading ×4 -> the inheritance ambush ×3.3 -> module forging ×1.3 -> multi-signer anchoring ×1.3
 - **live sovereignty score: 43/100, "the identity is ready, the presence is waiting for gas"** (published, not hidden)
@@ -709,7 +709,7 @@ The fleet broadcast archive (pulses h16-h25, daily reports, broadcasts/, COIN-DO
 - **v84 THE TWIN PARITY:** the v83 privacy statement became a running measurement: 401 deterministic vectors
 - **r29 (wallet):** the JUMPPER HIVE rail opened live (block 109,849,406 · stale-read-immune RC reading: max-of-nodes over 2 nodes)
 - **Marketing meaning:** the $0.94 door is no longer the only cheap route: a full EVM rail at zero cost now hosts all 7 seals. Network presence: 10 public networks
-- **Honest owner gaps (documented in the commit):** the cornerstone seed missing from the reconstructed shell (one upload) · STEEM WIFs stale since 117o · HIVE rc 7.29% below the 8% threshold
+- **Honest owner gaps (documented in the commit):** the vault seed missing from the reconstructed shell (one upload) · STEEM WIFs stale since 117o · HIVE rc 7.29% below the 8% threshold
 
 ## 10.56 THE SELF-HEALING FIELD, THE RUNNING EDGE, and an audit journal caught empty (17:16-19:08Z, an additive completion on top of v3.32)
 
@@ -792,4 +792,4 @@ control-center R16: relay event-bus handshake auth (owner room + guest allowlist
 ## 12. Independent verification links
 
 steemworld.org (Steem) · hiveblocks.com (Hive) · etherscan.io (ETH) · solscan.com (SOL) · tronscan.org (TRON)
-Anchor account: @headcorner - the identity-anchor verifier is a live, math-only capability any third party can re-run. Live measurement 2026-09-13: the on-chain anchor (2026-09-09) is internally valid (EIP-191 recovers its claimed address), while live authorities are measured per chain on every run: key equality or drift is reported, never assumed. A fresh anchor signed by the current active authority closes a measured drift; that is a signing-gate action by design.
+Anchor account: the fleet commander - the identity-anchor verifier is a live, math-only capability any third party can re-run. Live measurement 2026-09-13: the on-chain anchor (2026-09-09) is internally valid (EIP-191 recovers its claimed address), while live authorities are measured per chain on every run: key equality or drift is reported, never assumed. A fresh anchor signed by the current active authority closes a measured drift; that is a signing-gate action by design.
