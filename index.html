@@ -449,13 +449,16 @@ function renderOfficeEngines(eng, srcLabel){
 }
 function loadOffice(){
   var FH = 'https://roshpinacare-sys.github.io/FleetHQ';
-  jget(FH, 12000).then(function(d){
+  /* trace-1a1312f4: the office digest lives at FleetHQ/digest.json (measured 200,
+   * fresh) — the old code fetched the Pages ROOT (HTML → parse-fail → eternal
+   * "FleetHQ טרם חשף digest"). digest.json first, root kept as legacy fallback. */
+  jget(FH + '/digest.json', 12000).catch(function(){ return jget(FH, 12000); }).then(function(d){
     $('of-state').textContent = 'מחובר';
     var at = d.publishedAt || d.generatedAt || d.updatedAt || d.at || null;
     $('of-time').textContent = at ? utcClock(at) : '—';
     setChip('po-chip', at, 'משרד חי');
     var eng = parseEngines(d);
-    renderOfficeEngines(eng, 'פנקס-הצי');
+    renderOfficeEngines(eng, 'פנקס-הצי · FleetHQ/digest.json');
   }).catch(function(){
     /* graceful 404 — try our own merged feeder, else honest connecting state */
     jget('dex/office-feed.json', 10000).then(function(f){
@@ -556,25 +559,29 @@ function loadSteem(){
   }).catch(function(){ noData('ps-posts','אין פרסומים להצגה כרגע'); });
 }
 
-/* ── 4. PROBES: Sandbox digests (try today  yesterday) ── */
-/* T-67b: lane RETIRED — Sandbox went private at T-66 (exposure closure), so every
-   raw.githubusercontent read 404s. Honest closed-source state instead of doomed fetches.
-   The lane returns when a public mirror carries the probes (BLOC law: one truth, mirrored). */
-function probeFile(kind){
-  var days = [0, 1];
-  var tries = days.map(function(back){
-    var d = new Date(Date.now() - back*86400e3);
-    var p = function(x){ return (x<10?'0':'')+x; };
-    return 'https://raw.githubusercontent.com/roshpinacare-sys/Sandbox/main/probes/' + kind + '/' +
-      d.getUTCFullYear() + '-' + p(d.getUTCMonth()+1) + '-' + p(d.getUTCDate()) + '.json';
+/* ── 4. PROBES: live from the browser (trace-1a1312f4 owner directive: הפעל הכל).
+   T-66 closed the Sandbox raw lane; the honest live source is the chains themselves —
+   public RPC queries with CORS, zero private content, measured client-side. ── */
+function chainRpc(url, method, params){
+  return fetch(url, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({jsonrpc:'2.0', method:method, params:params, id:1})
+  }).then(function(r){ return r.text(); }).then(function(t){
+    var j; try { j = JSON.parse(t.replace(/^\uFEFF/, '')); } catch(e){ throw new Error('non-json'); }
+    if(j.error) throw new Error(j.error.message || 'rpc error');
+    return j.result;
   });
-  return jget(tries[0], 12000).catch(function(){ return jget(tries[1], 12000); });
+}
+var HIVE_NODES = ['https://api.hive.blog','https://api.openhive.network','https://rpc.esteem.app'];
+var BLURT_NODES = ['https://blurt-rpc.saboin.com','https://rpc.blurt.world','https://blurt-rpc.senen.dev','https://rpc.blurt.buzz'];
+function probeChain(nodes, method, params){
+  var p = Promise.reject(new Error('start'));
+  nodes.forEach(function(node){
+    p = p.catch(function(){ return chainRpc(node, method, params); });
+  });
+  return p;
 }
 function loadProbes(){
-  retireChip('pp-chip', 'מקור נסגר');
-  ['pp-hive','pp-blurt','pp-hive-ep','pp-blurt-ep'].forEach(function(id){ var x=$(id); if(x) x.textContent='—'; });
-  var u=$('pp-upd'); if(u) u.textContent='—';
-  return; /* retired — see note above */
   var upd = utcClock(new Date());
   $('pp-upd').textContent = upd;
   var done = 0, failed = 0, latest = null;
@@ -583,23 +590,27 @@ function loadProbes(){
     if(at && (!latest || new Date(at) > new Date(latest))) latest = at;
     if(done >= 2){
       if(failed >= 2){ var c=$('pp-chip'); c.className='chip bad'; c.textContent='אין נתון'; }
-      else setChip('pp-chip', latest, 'גששים חיים');
+      else setChip('pp-chip', latest || new Date().toISOString().slice(0,19), 'גששים חיים');
     }
   }
-  probeFile('hive').then(function(d){
-    $('pp-hive').textContent = d.ok ? ' חי' : ' כשל';
-    $('pp-hive-ep').textContent = (d.endpoint_used || '—').replace(/^https:\/\//,'');
-    settle(d.ok === true, d.at || null);
+  probeChain(HIVE_NODES, 'condenser_api.get_dynamic_global_properties', []).then(function(d){
+    var ok = d && d.head_block_number > 0;
+    $('pp-hive').textContent = ok ? ' חי' : ' כשל';
+    $('pp-hive-ep').textContent = ok ? 'רשת-Hive · חי-מהדפדפן · גובה ' + String(d.head_block_number).replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '—';
+    settle(ok, new Date().toISOString().slice(0,19));
   }).catch(function(){
-    $('pp-hive').textContent = 'אין נתון';
+    $('pp-hive').textContent = 'אין תשובה';
+    $('pp-hive-ep').textContent = 'כל צמתי Hive שקטים כרגע';
     settle(false, null);
   });
-  probeFile('blurt').then(function(d){
-    $('pp-blurt').textContent = d.ok ? ' חי' : ' כשל';
-    $('pp-blurt-ep').textContent = (d.node_used || '—').replace(/^https:\/\//,'');
-    settle(d.ok === true, d.at || null);
+  probeChain(BLURT_NODES, 'condenser_api.get_dynamic_global_properties', []).then(function(d){
+    var ok = d && d.head_block_number > 0;
+    $('pp-blurt').textContent = ok ? ' חי' : ' כשל';
+    $('pp-blurt-ep').textContent = ok ? 'רשת-Blurt · חי-מהדפדפן · גובה ' + String(d.head_block_number).replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '—';
+    settle(ok, new Date().toISOString().slice(0,19));
   }).catch(function(){
-    $('pp-blurt').textContent = 'אין נתון';
+    $('pp-blurt').textContent = 'אין תשובה';
+    $('pp-blurt-ep').textContent = 'כל צמתי Blurt שקטים כרגע';
     settle(false, null);
   });
 }

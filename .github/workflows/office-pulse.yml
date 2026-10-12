@@ -37,6 +37,7 @@ jobs:
       - name: Measure the office + arteries (fail-marked, never silent)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ZIP_PAT: ${{ secrets.ZIP_PAT }}
         run: node agents/office-pulse.cjs
 
       - name: Publish the book

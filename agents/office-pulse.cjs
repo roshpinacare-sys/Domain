@@ -36,7 +36,11 @@ const HALF_LIFE = {
 const now = Date.now();
 const ageMin = (iso) => (iso ? Math.round((now - new Date(iso).getTime()) / 60000) : null);
 const H = { "User-Agent": "office-pulse", Accept: "application/vnd.github+json" };
-if (process.env.GITHUB_TOKEN) H.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
+// trace-1a1312f4: prefer ZIP_PAT (cross-repo read of the PRIVATE Sandbox receipts);
+// the repo-scoped GITHUB_TOKEN cannot see Sandbox → the four arteries degraded to
+// "age not measured" → verdict STALE forever. Measured live 2026-10-12.
+if (process.env.ZIP_PAT || process.env.GITHUB_TOKEN)
+  H.Authorization = `Bearer ${process.env.ZIP_PAT || process.env.GITHUB_TOKEN}`;
 
 async function gh(path) {
   const url = path.startsWith("http") ? path : `https://api.github.com${path}`;
@@ -46,7 +50,18 @@ async function gh(path) {
 }
 async function raw(repo, path, branch = "main") {
   const url = `https://raw.githubusercontent.com/${repo}/${branch}/${path}`;
-  const r = await fetch(url + `?t=${Date.now()}`, { headers: { "User-Agent": "office-pulse" }, cache: "no-store" });
+  // auth: private repos (Sandbox, T-66) 404 raw reads without a Bearer token
+  const r = await fetch(url + `?t=${Date.now()}`, { headers: { "User-Agent": "office-pulse", ...(H.Authorization ? { Authorization: H.Authorization } : {}) }, cache: "no-store" });
+  if (!r.ok && r.status === 404 && H.Authorization) {
+    // raw.githubusercontent occasionally refuses cross-repo auth — try the
+    // Contents API (same bearer), which is the reliable path for private blobs
+    const api = await fetch(`https://api.github.com/repos/${repo}/contents/${path}?ref=${branch}`, { headers: H, cache: "no-store" });
+    if (api.ok) {
+      const j = await api.json();
+      if (j.content && j.encoding === "base64") return Buffer.from(j.content, "base64").toString("utf8");
+    }
+    throw new Error(`HTTP ${api.status} contents:${path}`);
+  }
   if (!r.ok) throw new Error(`HTTP ${r.status} raw:${path}`);
   return r.text();
 }

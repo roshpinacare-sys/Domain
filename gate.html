@@ -329,7 +329,9 @@ async function connect() {
     state.matched = matched;
     $("whoAcc").textContent = "@" + acc;
     $("whoPub").textContent = roles.posting.pub;
-    $("whoRoles").textContent = matched.join(" · ");
+    /* trace-1a1312f4: visible n/4 role counter — the owner asked "why 4/3 and not 4/4";
+       the honest answer is now on-screen: master-derived keys must cover all 4 roles */
+    $("whoRoles").textContent = matched.length + "/4 · " + matched.join(" · ");
     document.body.className = "state-unlocked";
     setStatus("מחובר · המפתח הציבורי תואם לרשומות השרשרת", "ok");
     $("sec").value = "";
