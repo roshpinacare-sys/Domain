@@ -1,8 +1,9 @@
 {
-  "at": "2026-10-12T12:28:31.863Z",
+  "at": "2026-10-12T15:28:42.930Z",
   "decodedSecrets": 119,
+  "credentialCandidates": 137,
   "vaultAccounts": [
-    "owner-treasury",
+    "headcorner",
     "cashmachine",
     "haran",
     "israelnews",
@@ -18,11 +19,42 @@
     "hcsoldier6",
     "headconer"
   ],
+  "liveOnChain": {
+    "STEEM": [
+      "headcorner",
+      "cashmachine",
+      "haran",
+      "israelnews",
+      "lsa",
+      "macrame",
+      "siq",
+      "tov",
+      "wic",
+      "wog",
+      "woq",
+      "hcsoldier4",
+      "hcsoldier5",
+      "hcsoldier6"
+    ],
+    "HIVE": [
+      "headcorner",
+      "cashmachine",
+      "haran",
+      "israelnews",
+      "lsa",
+      "macrame",
+      "siq",
+      "tov",
+      "wic",
+      "wog",
+      "woq"
+    ]
+  },
   "heldAuthority": [
-    "vault:accounts[0].keys.owner.wif pub:STM5aUKyd9Lz… → STEEM:owner-treasury:owner",
-    "vault:accounts[0].keys.active.wif pub:STM5HhJD5WUX… → STEEM:owner-treasury:active",
-    "vault:accounts[0].keys.posting.wif pub:STM8m3rBLd8C… → STEEM:owner-treasury:posting",
-    "vault:accounts[0].keys.memo.wif pub:STM7mBK98NCE… → STEEM:owner-treasury:memo",
+    "vault:accounts[0].keys.owner.wif pub:STM5aUKyd9Lz… → STEEM:headcorner:owner",
+    "vault:accounts[0].keys.active.wif pub:STM5HhJD5WUX… → STEEM:headcorner:active",
+    "vault:accounts[0].keys.posting.wif pub:STM8m3rBLd8C… → STEEM:headcorner:posting",
+    "vault:accounts[0].keys.memo.wif pub:STM7mBK98NCE… → STEEM:headcorner:memo",
     "vault:accounts[1].keys.owner.wif pub:STM7Rp6auWyW… → STEEM:cashmachine:owner, HIVE:cashmachine:owner",
     "vault:accounts[2].keys.owner.wif pub:STM7LK2d2oHw… → STEEM:haran:owner, HIVE:haran:owner",
     "vault:accounts[3].keys.owner.wif pub:STM7t1VE72QD… → STEEM:israelnews:owner, HIVE:israelnews:owner",
@@ -44,51 +76,11 @@
     "vault:accounts[13].keys.owner.wif pub:STM62HQwpzVV… → STEEM:hcsoldier6:owner",
     "vault:accounts[13].keys.active.wif pub:STM57AX4ZeTp… → STEEM:hcsoldier6:active",
     "vault:accounts[13].keys.posting.wif pub:STM7jJXnJYqJ… → STEEM:hcsoldier6:posting",
-    "vault:accounts[13].keys.memo.wif pub:STM4zUMqzDjr… → STEEM:hcsoldier6:memo",
-    "env:STEEM_OWNER_WIF_A pub:STM5aUKyd9Lz… → STEEM:owner-treasury:owner",
-    "env:STEEM_ACTIVE_WIF_A pub:STM5HhJD5WUX… → STEEM:owner-treasury:active",
-    "env:STEEM_POSTING_WIF_A pub:STM8m3rBLd8C… → STEEM:owner-treasury:posting",
-    "env:STEEM_MEMO_WIF_A pub:STM7mBK98NCE… → STEEM:owner-treasury:memo"
+    "vault:accounts[13].keys.memo.wif pub:STM4zUMqzDjr… → STEEM:hcsoldier6:memo"
   ],
   "steemitLogin": [
-    "STEEMIT-LOGIN file:בלורט.evm → STEEM:owner-treasury posting,active,owner,memo (law: sha256(name+role+password))"
+    "STEEMIT-LOGIN keys-dir-cred → STEEM:headcorner posting,active,owner,memo (law: sha256(name+role+password))"
   ],
-  "gate": "GATE file:בלורט.evm → salted-sha256 MATCH (operator gate credential)",
-  "chainsScanned": {
-    "STEEM": [
-      "owner-treasury",
-      "hcsoldier1",
-      "hcsoldier2",
-      "hcsoldier3",
-      "hcsoldier4",
-      "hcsoldier5",
-      "hcsoldier6",
-      "cashmachine",
-      "cornerstone",
-      "haran",
-      "israelnews",
-      "lsa",
-      "macrame",
-      "siq",
-      "tov",
-      "wic",
-      "wog",
-      "woq"
-    ],
-    "HIVE": [
-      "owner-treasury",
-      "cashmachine",
-      "cornerstone",
-      "haran",
-      "israelnews",
-      "lsa",
-      "macrame",
-      "siq",
-      "tov",
-      "wic",
-      "wog",
-      "woq"
-    ]
-  },
-  "note": "fingerprints/labels only — zero secret material, by owner law"
+  "gate": "GATE keys-dir-cred → salted-sha256 MATCH (operator gate credential)",
+  "note": "zero secret material; account names are public on-chain data; paths discovered at runtime"
 }
