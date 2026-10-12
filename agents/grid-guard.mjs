@@ -174,19 +174,12 @@ async function rpcHive(method, params) {
     ];
     for (const b of OFFICE_BOOKS) {
       try {
-        // the books live in THIS repo — prefer the fresh checkout, fall back to raw
+        // the books live in THIS repo — grid-doctor checks out fresh main at run
+        // start, so the local checkout IS the freshest published truth.
+        // (b.file is repo-root-relative; AG = agents/ → join with '..')
+        const local = JSON.parse(fs.readFileSync(path.join(AG, '..', b.file), 'utf8'));
         let at = null;
-        try {
-          const local = JSON.parse(fs.readFileSync(path.join(AG, b.file), 'utf8'));
-          for (const k of b.tsKeys) { const t = Date.parse(local?.[k] ?? ''); if (Number.isFinite(t)) { at = t; break; } }
-        } catch { /* fall through to raw */ }
-        if (at == null) {
-          const rr = await api(`/repos/${OWNER}/Domain/contents/${b.file}`);
-          if (rr.ok) {
-            const dj = JSON.parse(Buffer.from((await rr.json()).content, 'base64').toString('utf8'));
-            for (const k of b.tsKeys) { const t = Date.parse(dj?.[k] ?? ''); if (Number.isFinite(t)) { at = t; break; } }
-          } else res.errors.push(`${b.file} read HTTP ${rr.status}`);
-        }
+        for (const k of b.tsKeys) { const t = Date.parse(local?.[k] ?? ''); if (Number.isFinite(t)) { at = t; break; } }
         if (at != null) {
           const ageH = Math.round(((Date.now() - at) / 36e5) * 10) / 10;
           res[b.key] = ageH;
