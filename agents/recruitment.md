@@ -1,17 +1,17 @@
-# Army Recruitment Board (Z-29 self-recruitment desk)
+# לוח משרות פתוחות
 
-Updated: 2026-10-12T12:27:45.617Z UTC. The autonomy opens its own roles from live gaps. FILLED = mechanism evidence in-repo. PROPOSED = contract drafted, no implementation yet — the board does not lie.
+עודכן: 2026-10-12T15:55:00.000Z UTC. התפקידים נפתחים מצורך מדידה בשטח. FILLED = הוכחת מנגנון בריפו. PROPOSED = הגדרה מוכנה, טרם מומש. פניות והגשת מועמדות: issues בריפו בלבד.
 
-Signals: rail="FRESH" (frontier 0h) · newest receipt 0h
+מדדים: rail="FRESH" (frontier 0h) · קבלה טרייה ביותר 0h
 
-| role | status | opened by gap | contract | evidence |
-|---|---|---|---|---|
-| Chain-rail sentinel (rail-sentinel) | FILLED | an unverified contract id and an ignored sort parameter made a healthy rail look dead; ops signed blind are mi | validate every rail before any signature: contract id copied character-for-character from an APPLIED third-party op, settlement re | agents/econ-desk.cjs contract-id law + rail-health gate |
-| Liquidity cultivator (liquidity-cultivator) | FILLED | idle inventory and dust either rot or get noise-sold; the economy needs every routable unit working | two-sided engine desk: harvest inventory above keep-reserves at live bids, route proceeds into maker orders, hold dust honestly | agents/econ-desk.cjs sell/buy sides |
-| Community liaison (community-liaison) | FILLED | broadcast-only presence reads as a press agency, not a community; networks reward dialogue | daily self-audience pass: read, reply and curate across steem/hive/blurt in per-account voices (support the public, never expose t | agents/receipts (newest 0.0h old) |
-| Content diversity officer (content-diversity-officer) | FILLED | ten accounts posting identical skeletons reads as spam and kills reach (operator msg 26: duplications and erro | per-account renderers, alternating formats, chain-native summaries, zero verbatim twins across chains | agents/soldiers-blog.cjs persona renderers |
-| Books consul (books-consul) | FILLED | several money books were written by different agents and disagreed; a sovereign unit needs one ledger per trut | single-writer rule per book topic; cross-book reconciliation daily; contradictions tombstoned, not argued | agents/reconcile.cjs single-writer manifest + live-truth cross-check |
-| Workflow pruner (workflow-pruner) | FILLED | 30+ workflows spawned by bootstrap commits, twins across Console/Domain burning public-Actions minutes and mud | one canonical home per duty; dispatch-only tombstones on the duplicates; the repo reads as one body, not layers | agents/workflow-audit.cjs twin scan + reviewable prune plan |
-| Mobile steward (mobile-steward) | PROPOSED | the operator found pages broken on mobile; every public page must hold at 390px with a menu that actually clos | browser-verify every public page at 390x844 after each UI wave; menus close on route/tap; tables scroll; no horizontal bleed | none yet — role stands open until a mechanism exists (honest board) |
+| תפקיד | סטטוס | רציונל פתיחה | תחום אחריות | דרישות | הוכחת מנגנון |
+|---|---|---|---|---|---|
+| סנטינל נתיבי-שרשרת (rail-sentinel) | FILLED | נדרש אימות שוטף של נתיבי השידור בשרשראות הציבוריות לפני כל חתימה | אימות כל נתיב לפני חתימה: מזהה חוזה מועתק אות-באות מפעולה צד-שלישית שיושמה, וקריאת הסדרת התשלום מתוך מצב ה-sid | ניסיון ב-API של שרשראות ציבוריות, דיוק גבוה בפרטי חוזה, תיעוד מסודר בקבלות | agents/econ-desk.cjs contract-id law + rail-health gate |
+| מגדל-נזילות (liquidity-cultivator) | FILLED | ההון העומד במקום נדרש לעבודה מסודרת בשוק במקום להישאר בטל | דסק דו-צדדי: גיוס מלאי מעל רזרבות-שימור במחירי bid חיים, ניתוב התקבלויות לפקודות maker והחזקת שאריות בכנות | הבנת ספרי פקודות ומסחר maker, משמעת סיכונים, עבודה מול נתוני שוק חיים | agents/econ-desk.cjs sell/buy sides |
+| קשרית-קהילה (community-liaison) | FILLED | נוכחות ציבורית פעילה דורשת דו-שיח, לא שידור חד-כיווני בלבד | מעבר יומי על ערוצי הקהילה ברשתות steem/hive/blurt: קריאה, תגובה ואצירת תוכן בקול ציבורי אדיב ומקצועי | עברית ואנגלית ברמת שפת-אם, נימוסים דיגיטליים, סבלנות ואמינות | agents/receipts (newest 0.0h old) |
+| קצינת-גיוון-תוכן (content-diversity-officer) | FILLED | גיוון בפורמטים ובקולות שומר על איכות ועניין ציבורי לאורך זמן | רינדור נפרד לכל חשבון, פורמטים מתחלפים, סיכומים ילידי-שרשרת, ואפס שכפול מילולי בין רשתות | כתיבה עריכתית טובה, הבנת קהלים שונים, בקרת איכות ולוחות זמנים | agents/soldiers-blog.cjs persona renderers |
+| קונסול-הספרים (books-consul) | FILLED | פנקס כספים ריבוני דורש כותב יחיד לכל נושא והצלבה יומית בין הספרים | כלל כותב-יחיד לכל נושא פנקס, התאמה בין-ספרית יומית, וסתימת סתירות בפומבי ובמסמך | דיוק חשבונאי, קור רוח מול סתירות, שקיפות מלאה בתיעוד | agents/reconcile.cjs single-writer manifest + live-truth cross-check |
+| גוזרת-הזרימות (workflow-pruner) | FILLED | בית תוכנה בריא דורש בית קנוני אחד לכל תפקיד ותחזוקה שוטפת של זרימות העבודה | בית קנוני אחד לכל תפקיד; מצבות-זיכרון ל-dispatch בלבד על כפילויות; הריפו נקרא כגוף אחד | היכרות עם GitHub Actions, קריאת YAML, גישה שמרנית לשינויים | agents/workflow-audit.cjs twin scan + reviewable prune plan |
+| סדרנית-נייד (mobile-steward) | PROPOSED | כל עמוד ציבורי נדרש להחזיק בתצוגת מובייל באופן מלא | בדיקת דפדפן של כל עמוד ציבורי ב-390x844 אחרי כל גל UI; תפריטים שנסגרים בנגיעה, טבלאות שגוללות, ואפס גלישת-רוחב | כלי בדיקת דפדפן, עין עיצובית, סבלנות לפרטים קטנים | טרם קיים מנגנון — התפקיד עומד פתוח בכנות עד למימוש |
 
-Open PROPOSED roles are the army's own to-do list — recruited by building the mechanism, not by naming it. Generated by agents/recruit.cjs.
+תפקידי PROPOSED הם רשימת העבודה של היחידה — המימוש הוא הגיוס. נוצר על ידי agents/recruit.cjs.
