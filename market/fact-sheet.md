@@ -565,7 +565,7 @@ The announcement script was published through agentMessage (id cmtwik14l...) to 
 
 ### The network pulse: cycles h19 and h20 (foundry task85/86, 14:05-14:49Z)
 - **h19 · the fourth cycle in a row:** 4/6 networks anchored live (STEEM 4b70d75c block 109,487,902 · BLURT 72774a43 block 63,550,49x)
-- **h20 · FIFTH CYCLE FULL MATRIX 6/6:** STEEM 00d4046f block 109,488,353 · BLURT f98a1285 block 63,551,154 · HIVE 543cd69b (from WOQ) · TRON · 2 more · every beat with a txid and a block per network
+- **h20 · FIFTH CYCLE FULL MATRIX 6/6:** STEEM 00d4046f block 109,488,353 · BLURT f98a1285 block 63,551,154 · HIVE 543cd69b (from acct-10) · TRON · 2 more · every beat with a txid and a block per network
 - The briefing system in rotation (chief-of-staff): scans 07:09-13:39 (14 briefs), old sets retired, latest.md advanced
 
 ### roast-81 (dex, 14:23Z) · thawing the economic freeze
