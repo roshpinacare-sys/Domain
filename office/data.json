@@ -1,8 +1,8 @@
 {
  "schema": "office.pulse/1",
- "generatedAt": "2026-10-12T23:30:18.736Z",
+ "generatedAt": "2026-10-12T23:43:45.017Z",
  "generatedAgeNote": "this file is rewritten by the office-pulse workflow; judge freshness by generatedAt",
- "verdict": "AGING",
+ "verdict": "STALE",
  "verdictChecks": [
   {
    "name": "office-push",
@@ -12,88 +12,93 @@
   {
    "name": "office-ci",
    "state": "fresh",
-   "detail": "4min <= 1560min"
+   "detail": "2min <= 1560min"
   },
   {
    "name": "wallet-artery",
-   "state": "aging",
-   "detail": "728min <= 2880min"
+   "state": "unknown",
+   "detail": "age not measured"
   },
   {
    "name": "grid-artery",
-   "state": "aging",
-   "detail": "322min <= 720min"
+   "state": "unknown",
+   "detail": "age not measured"
   },
   {
    "name": "fleet-artery",
-   "state": "aging",
-   "detail": "874min <= 2880min"
+   "state": "unknown",
+   "detail": "age not measured"
   },
   {
    "name": "sovereign-tick",
-   "state": "aging",
-   "detail": "322min <= 360min"
+   "state": "unknown",
+   "detail": "age not measured"
   },
   {
    "name": "runtime-heartbeat",
    "state": "fresh",
-   "detail": "30min <= 90min"
+   "detail": "34min <= 90min"
   }
  ],
- "degraded": [],
+ "degraded": [
+  "wallet",
+  "grid",
+  "fleet",
+  "tick"
+ ],
  "sources": {
   "fleetHQ": "ok",
-  "sbx-wallet": "ok",
-  "sbx-grid": "ok",
-  "sbx-fleet": "ok",
-  "sbx-tick": "ok",
+  "sbx-wallet": "error",
+  "sbx-grid": "error",
+  "sbx-fleet": "error",
+  "sbx-tick": "error",
   "runtime": "ok"
  },
  "office": {
   "repo": "roshpinacare-sys/FleetHQ",
-  "pushedAt": "2026-10-12T23:28:05Z",
+  "pushedAt": "2026-10-12T23:42:07Z",
   "pushedAgeMin": 2,
   "openIssues": 0,
   "wire": [
    {
-    "sha": "973ff75",
-    "msg": "opens-closer: measured freshness ledger + revival dispatches [skip ci]",
-    "at": "2026-10-12T23:30:15Z",
-    "ageMin": 0,
-    "author": "opens-closer-bot"
-   },
-   {
-    "sha": "b505163",
-    "msg": "silence-watchdog: all visible voices alive [skip ci]",
-    "at": "2026-10-12T23:28:04Z",
+    "sha": "6179222",
+    "msg": "office-ci receipt: build pass, types pass [skip ci]",
+    "at": "2026-10-12T23:42:06Z",
     "ageMin": 2,
-    "author": "silence-watchdog"
+    "author": "office-ci-bot"
    },
    {
-    "sha": "faf5417",
-    "msg": "[selfcheck] standing loop receipts: security+connectivity+fresh-oracle [skip ci]",
-    "at": "2026-10-12T23:27:01Z",
+    "sha": "4be537f",
+    "msg": "office-ci receipt: build pass, types pass [skip ci]",
+    "at": "2026-10-12T23:40:57Z",
     "ageMin": 3,
-    "author": "Z User"
+    "author": "office-ci-bot"
    },
    {
-    "sha": "65dfcac",
-    "msg": "[selfcheck] standing loop receipts: security+connectivity+fresh-oracle [skip ci]",
-    "at": "2026-10-12T23:26:51Z",
-    "ageMin": 3,
-    "author": "Z User"
-   },
-   {
-    "sha": "85dfea8",
-    "msg": "[selfcheck] standing loop receipts: security+connectivity+fresh-oracle [skip ci]",
-    "at": "2026-10-12T23:26:38Z",
+    "sha": "2f08fd1",
+    "msg": "flush: local heartbeat · 2026-10-12T23:39:53Z",
+    "at": "2026-10-12T23:39:53Z",
     "ageMin": 4,
-    "author": "Z User"
+    "author": "local-beats"
    },
    {
-    "sha": "9b08033",
+    "sha": "7c7cfb2",
+    "msg": "flush: local heartbeat · 2026-10-12T23:39:44Z",
+    "at": "2026-10-12T23:39:44Z",
+    "ageMin": 4,
+    "author": "local-beats"
+   },
+   {
+    "sha": "e720d85",
+    "msg": "flush: local heartbeat · 2026-10-12T23:39:34Z",
+    "at": "2026-10-12T23:39:34Z",
+    "ageMin": 4,
+    "author": "local-beats"
+   },
+   {
+    "sha": "71f0bb0",
     "msg": "[selfcheck] standing loop receipts: security+connectivity+fresh-oracle [skip ci]",
-    "at": "2026-10-12T23:26:12Z",
+    "at": "2026-10-12T23:39:33Z",
     "ageMin": 4,
     "author": "Z User"
    }
@@ -115,10 +120,10 @@
     }
    ]
   },
-  "worklogLastTouchAgeMin": 642,
+  "worklogLastTouchAgeMin": 655,
   "boot": {
    "at": "2026-10-11T23:36:39.484Z",
-   "ageMin": 1434,
+   "ageMin": 1447,
    "office": {
     "reception_3000": "up",
     "foreman_3010": "up",
@@ -128,10 +133,10 @@
   },
   "ci": {
    "overall": "PASS",
-   "at": "2026-10-12T23:26:34.529Z",
-   "ageMin": 4,
+   "at": "2026-10-12T23:42:05.565Z",
+   "ageMin": 2,
    "reason": "all five checks ran and passed",
-   "runUrl": "https://github.com/roshpinacare-sys/FleetHQ/actions/runs/38322019673",
+   "runUrl": "https://github.com/roshpinacare-sys/FleetHQ/actions/runs/38323324019",
    "checks": {
     "install": "pass",
     "prismaGenerate": "pass",
@@ -143,35 +148,22 @@
  },
  "arteries": {
   "wallet": {
-   "at": "2026-10-12T11:22:41.395Z",
-   "ageMin": 728,
-   "overall": "PASS",
-   "alerts": 1,
-   "runUrl": "https://github.com/roshpinacare-sys/Sandbox/actions/runs/38242234259"
+   "__error": "HTTP 404 contents:receipts/wallet/verdict.json"
   },
   "grid": {
-   "at": "2026-10-12T18:07:55.729Z",
-   "ageMin": 322,
-   "overall": "ERROR",
-   "alerts": 0
+   "__error": "HTTP 404 contents:receipts/grid/verdict.json"
   },
   "fleet": {
-   "at": "2026-10-12T08:56:37.698Z",
-   "ageMin": 874,
-   "overall": "FAIL",
-   "alerts": 2,
-   "runUrl": "https://github.com/roshpinacare-sys/Sandbox/actions/runs/38226675048"
+   "__error": "HTTP 404 contents:receipts/fleet/verdict.json"
   },
   "tick": {
-   "at": "2026-10-12T18:07:55.575Z",
-   "ageMin": 322,
-   "chain": "c508ca660faa"
+   "__error": "HTTP 404 contents:receipts/latest.json"
   }
  },
  "runtime": {
-  "lastSuccessAt": "2026-10-12T23:00:14Z",
-  "lastSuccessAgeMin": 30,
-  "lastSuccessName": "blurt-revival",
+  "lastSuccessAt": "2026-10-12T23:10:13Z",
+  "lastSuccessAgeMin": 34,
+  "lastSuccessName": "sovereign-runtime",
   "lastConclusion": "failure"
  }
 }
