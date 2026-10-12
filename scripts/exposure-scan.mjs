@@ -46,6 +46,7 @@ const FORBIDDEN_PATHS = [
   /^about\/team\.json$/,                              // fleet desk roster
   /^agents\/personas\.json$/,                         // T3/P0-1: coordination doctrine (roster+desks) — sealed store only
   /^agents\/persona-slots\.json$/,                    // T3/P0-1: cadence windows/weights/budgets — sealed store only
+  /^agents\/community-founder\.json$/,                // T-70: estate book (identity-bearing account names) — CI-workspace only, never committed
   /(^|\/)ssh-keys\.tar\.enc$/,                        // sealed key bundles
   /(^|\/)keys\.env(\.enc|\.bak.*)?$/,
   /(^|\/)vault\/.*\.enc$/,

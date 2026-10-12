@@ -77,7 +77,10 @@ jobs:
         run: |
           git config user.name "saos-human-cadence"
           git config user.email "human-cadence@saos.local"
-          git add agents/human-cadence.json agents/human-cadence.md agents/cadence-memory.json agents/human-cadence-status.json agents/community-founder.json agents/community-founder.md
+          git add agents/human-cadence.json agents/human-cadence.md agents/cadence-memory.json agents/human-cadence-status.json agents/community-founder.md
+          # agents/community-founder.json is INTENTIONALLY not committed (T-70 exposure law):
+          # the estate book carries identity-bearing account names — it lives in the CI
+          # workspace only; the .cjs regenerates it from chain read-back every run.
           if git diff --cached --quiet; then
             echo "no cadence changes"
           else

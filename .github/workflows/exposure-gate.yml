@@ -1,4 +1,11 @@
-# exposure-gate — P0-1 enforcement (master plan T6)
+# exposure-gate — P0-1 enforcement (master plan T6) — T-70: one-voice law
+# T-70 fixes (measured roast findings):
+#   1. `branches: ain]` was a mangled YAML literal — the push trigger watched a
+#      branch that can never exist. Now: main.
+#   2. The filing step opened a NEW issue on EVERY failing run (17 duplicates on
+#      2026-10-12) and its body said "Violations below" with nothing below.
+#      Now: ONE rolling issue per prefix — comment on repeat, close on recovery,
+#      scan output attached to the body.
 name: exposure-gate
 on:
   push:
@@ -28,13 +35,47 @@ jobs:
         run: |
           set -o pipefail
           node scripts/exposure-scan.mjs 2>&1 | tee exposure-scan-output.txt
-      - name: File violation issue
-        if: failure()
+      - name: One-voice filing (comment-or-create on violation, close on recovery)
+        if: always()
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh issue create \
-            --title "exposure-gate: public-surface violation detected $(date -u +%F)" \
-            --body "The exposure scan failed. See run ${{ github.run_id }}. Violations below — remove at HEAD and open a DecisionQueue item for history rewrite." \
-            || echo "issue creation failed (non-fatal)"
-
+          set -e
+          PREFIX='exposure-gate: public-surface violation'
+          EXISTING=$(gh issue list --state open --limit 60 --json number,title \
+            --jq '.[] | select(.title | startswith("exposure-gate: public-surface violation")) | .number' | head -1 || true)
+          OUTCOME="${{ steps.scan.outcome }}"
+          if [ "$OUTCOME" = "success" ]; then
+            if [ -n "$EXISTING" ]; then
+              gh issue close "$EXISTING" \
+                --comment "recovered: exposure scan passed at $(date -u +%FT%TZ) (run ${{ github.run_id }}) — closing per the one-voice law"
+              echo "closed #$EXISTING"
+            else
+              echo "scan clean, no open gate issue"
+            fi
+            exit 0
+          fi
+          # failure path — distinguish real violations (exit 1) from a scanner crash (honest gap)
+          if [ -f exposure-scan-output.txt ] && grep -q "EXPOSURE-GATE FAIL" exposure-scan-output.txt; then
+            KIND='violations found'
+            SHOW=$(tail -n 40 exposure-scan-output.txt)
+          else
+            KIND='scanner crashed (honest gap — NOT evidence of exposure, NOT a recovery either)'
+            SHOW=$(tail -n 20 exposure-scan-output.txt 2>/dev/null || echo 'scan output unavailable')
+          fi
+          {
+            echo "run ${{ github.run_id }} — $(date -u +%FT%TZ) — $KIND"
+            echo
+            echo '```'
+            echo "$SHOW"
+            echo '```'
+            echo
+            echo 'Remediation: remove at HEAD; history rewrite is an owner decision only.'
+            echo 'One-voice law: this issue updates instead of spawning duplicates; it closes only when a scan PASSES.'
+          } > gate-body.md
+          if [ -n "$EXISTING" ]; then
+            gh issue comment "$EXISTING" --body-file gate-body.md
+            echo "commented on #$EXISTING"
+          else
+            gh issue create --title "$PREFIX detected $(date -u +%F)" --body-file gate-body.md
+          fi
