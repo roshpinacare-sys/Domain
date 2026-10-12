@@ -9,10 +9,10 @@
  *
  * What it proves (fail-loud):
  *  1. Every decodable secret on this machine → which live account/role it controls (STEEM+HIVE).
- *  2. HEAD_CORNER_MASTER → sha256(name+role+pass) derivation vs live headcorner authorities (steemit.com login proof).
- *  3. Gate credential → salt+sha256 match vs /home/z/.operator/config.json (operator gate proof).
+ *  2. HEAD_CORNER_MASTER → sha256(name+role+pass) derivation vs live owner-treasury authorities (steemit.com login proof).
+ *  3. Gate credential → salt+sha256 match vs [host]/.operator/config.json (operator gate proof).
  *
- * Run:  bun /home/z/estate/Domain/agents/keys-census.mjs   (exit 0 always, verdict inside)
+ * Run:  bun [host]/estate/Domain/agents/keys-census.mjs   (exit 0 always, verdict inside)
  */
 import { readFileSync, readdirSync, mkdirSync, appendFileSync, existsSync } from "fs";
 import { createHash } from "crypto";
@@ -40,7 +40,7 @@ const fp = (s) => createHash("sha256").update(s).digest("hex").slice(0, 10);
 
 // ---------- pubkey derivation (noble via known-good estate install) ----------
 let _secp = null;
-for (const p of ["@noble/secp256k1", "file:///home/z/estate/steem/mini-services/saos-engine/node_modules/@noble/secp256k1/index.js"]) {
+for (const p of ["@noble/secp256k1", "file://[host]/estate/steem/mini-services/saos-engine/node_modules/@noble/secp256k1/index.js"]) {
   try { _secp = await import(p); break; } catch {}
 }
 if (!_secp) { console.log("FATAL: no secp256k1 library available — install @noble/secp256k1"); process.exit(0); }
@@ -83,12 +83,12 @@ const addFile = (label, txt) => {
     if (sec) secrets.push({ label: label + ":wif", sec });
   }
 };
-const KEYS_DIR = "/home/z/.secrets/keys";
+const KEYS_DIR = "[host]/.secrets/keys";
 for (const f of existsSync(KEYS_DIR) ? readdirSync(KEYS_DIR) : []) {
   try { const txt = readFileSync(KEYS_DIR + "/" + f, "utf8"); addFile("file:" + f, txt); const t = txt.trim(); if (t && t.length <= 120 && !t.includes("\n")) rawCreds.push({ label: "file:" + f, val: t }); } catch {}
 }
 // vault walk
-const VAULT = "/home/z/.secrets/vault-unsealed/agent/keys/vault.json";
+const VAULT = "[host]/.secrets/vault-unsealed/agent/keys/vault.json";
 let vaultAccounts = [];
 try {
   const v = JSON.parse(readFileSync(VAULT, "utf8"));
@@ -105,7 +105,7 @@ try {
 } catch (e) { console.log("vault: UNREADABLE (" + e.message.slice(0, 40) + ")"); }
 // .env.local scalar values
 try {
-  for (const ln of readFileSync("/home/z/estate/.env.local", "utf8").split(/\r?\n/)) {
+  for (const ln of readFileSync("[host]/estate/.env.local", "utf8").split(/\r?\n/)) {
     const m = ln.match(/^([A-Za-z_0-9]+)=(.*)$/);
     if (!m) continue;
     const val = m[2].trim().replace(/^["']|["']$/, "");
@@ -116,7 +116,7 @@ try {
 } catch {}
 
 // ---------- live authorities ----------
-const CANDS = [...new Set(["headcorner", "hcsoldier", "hcsoldier1", "hcsoldier2", "hcsoldier3", "hcsoldier4", "hcsoldier5", "hcsoldier6", "cashmachine", "cornerstone", ...vaultAccounts.map(a => a.toLowerCase()).filter(a => /^[a-z0-9-]{3,20}$/.test(a))])];
+const CANDS = [...new Set(["owner-treasury", "hcsoldier", "hcsoldier1", "hcsoldier2", "hcsoldier3", "hcsoldier4", "hcsoldier5", "hcsoldier6", "cashmachine", "cornerstone", ...vaultAccounts.map(a => a.toLowerCase()).filter(a => /^[a-z0-9-]{3,20}$/.test(a))])];
 const RPCS = { STEEM: "https://api.steemit.com", HIVE: "https://api.hive.blog" };
 const live = {};
 for (const [ch, url] of Object.entries(RPCS)) {
@@ -147,21 +147,21 @@ console.log(matchLines.length ? "HELD AUTHORITY:\n  " + matchLines.join("\n  ") 
 const loginProofs = [];
 for (const c of rawCreds) {
   for (const ch of Object.keys(live)) {
-    if (!live[ch].headcorner) continue;
+    if (!live[ch].owner-treasury) continue;
     const matched = [];
     for (const role of ["posting", "active", "owner", "memo"]) {
-      const seed = sha256b(Buffer.from("headcorner" + role + c.val));
-      if (live[ch].headcorner[role].includes(chainPub(seed))) matched.push(role);
+      const seed = sha256b(Buffer.from("owner-treasury" + role + c.val));
+      if (live[ch].owner-treasury[role].includes(chainPub(seed))) matched.push(role);
     }
-    if (matched.length) loginProofs.push(`STEEMIT-LOGIN ${c.label} → ${ch}:headcorner ${matched.join(",")} (law: sha256(name+role+password))`);
+    if (matched.length) loginProofs.push(`STEEMIT-LOGIN ${c.label} → ${ch}:owner-treasury ${matched.join(",")} (law: sha256(name+role+password))`);
   }
 }
-console.log(loginProofs.length ? loginProofs.join("\n") : "STEEMIT-LOGIN: no candidate derives headcorner's live authorities");
+console.log(loginProofs.length ? loginProofs.join("\n") : "STEEMIT-LOGIN: no candidate derives owner-treasury's live authorities");
 
 // ---------- 3) operator gate proof ----------
 let gateProof = "GATE: config missing";
 try {
-  const cfg = JSON.parse(readFileSync("/home/z/.operator/config.json", "utf8"));
+  const cfg = JSON.parse(readFileSync("[host]/.operator/config.json", "utf8"));
   for (const c of rawCreds) {
     if (createHash("sha256").update(cfg.salt + c.val).digest("hex") === cfg.hash) {
       gateProof = `GATE ${c.label} → salted-sha256 MATCH (operator gate credential)`;
@@ -182,8 +182,8 @@ const receipt = {
   note: "fingerprints/labels only — zero secret material, by owner law",
 };
 try {
-  mkdirSync("/home/z/estate/Domain/agents/receipts", { recursive: true });
-  const out = "/home/z/estate/Domain/agents/receipts/keys-census-" + new Date().toISOString().slice(0, 10) + ".json";
+  mkdirSync("[host]/estate/Domain/agents/receipts", { recursive: true });
+  const out = "[host]/estate/Domain/agents/receipts/keys-census-" + new Date().toISOString().slice(0, 10) + ".json";
   const { writeFileSync } = await import("fs");
   writeFileSync(out, JSON.stringify(receipt, null, 2));
   console.log("receipt → " + out);
