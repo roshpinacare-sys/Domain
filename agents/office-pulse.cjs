@@ -74,7 +74,7 @@ function parseWorklog(text) {
       let title = "";
       for (let j = i + 1; j < Math.min(i + 4, lines.length); j++) {
         const t = /^Task:\s*(.+?)\s*$/.exec(lines[j]);
-        if (t) { title = t[1].slice(0, 120); break; }
+        if (t) { title = t[1].slice(0, 120); title = title.replace(/^(הוראת-(?:בעלים|מפעיל)(?:\s*\([^)]*\))?:\s*).*/, "$1[הנוסח-המלא-בערוץ-הפרטי]"); break; }
       }
       ids.push({ id: m[1].slice(0, 40), title });
     }
