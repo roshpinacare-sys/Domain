@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SAOS · קטלוג המוצרים · מה חי, מה מוכח, מה פנימי</title>
+<meta name="description" content="קטלוג המוצרים המלא של SAOS: לכל מוצר משפט אחד, קישור-הוכחה חי, וסטטוס מדוד (חי, בטא, דמו, פנימי). אין כאן תכונה בלי הוכחה.">
+<meta name="theme-color" content="#09090b">
+<link rel="canonical" href="https://roshpinacare-sys.github.io/Domain/products.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SAOS Network">
+<meta property="og:title" content="SAOS · קטלוג המוצרים">
+<meta property="og:locale" content="he_IL">
+<meta property="og:description" content="לכל מוצר: משפט אחד, קישור-הוכחה חי, וסטטוס מדוד. אין כאן תכונה בלי הוכחה.">
+<meta property="og:url" content="https://roshpinacare-sys.github.io/Domain/products.html">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8' fill='none' stroke='%2310b981' stroke-width='1.8' stroke-linecap='round'/%3E%3Ccircle cx='12' cy='12' r='3' fill='none' stroke='%2310b981' stroke-width='1.8'/%3E%3C/svg%3E">
+<style>
+:root{ --bg:#f5f3f1; --bg2:#efedea; --panel:#ffffff; --panel2:#fafaf9; --line:#e6e2dd; --line2:#d6d0c9; --acc:#0d9d6d; --acc-bright:#0b8a60; --acc-bg:rgba(13,157,109,.07); --acc-line:rgba(13,157,109,.30); --green:#0d9d6d; --red:#c2410c; --amber:#a16207; --text:#1d1d1f; --dim:#57534e; --faint:#8a8580; --mono:ui-monospace,'SF Mono','Cascadia Code',Consolas,Menlo,monospace; --sans:-apple-system,'Segoe UI',Roboto,'Helvetica Neue','Noto Sans Hebrew',Arial,sans-serif; --r:14px; --r-sm:10px; }
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;-webkit-font-smoothing:antialiased;display:flex;flex-direction:column;overflow-x:hidden}
+main{flex:1;width:100%}
+a{color:var(--acc-bright);text-decoration:none}
+a:hover{text-decoration:underline}
+a:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:8px}
+.mono{font-family:var(--mono);direction:ltr;unicode-bidi:embed}
+.wrap{max-width:1120px;margin:0 auto;padding:0 18px}
+@media(min-width:760px){.wrap{padding:0 24px}}
+header.site{position:sticky;top:0;z-index:50;background:rgba(245,243,241,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.hd{height:58px;display:flex;align-items:center;gap:12px}
+.logo{width:34px;height:34px;flex:none;display:flex;align-items:center;justify-content:center;border-radius:var(--r-sm);border:1px solid var(--acc-line);background:var(--acc-bg);color:var(--acc-bright)}
+.logo svg{width:18px;height:18px}
+.brand{font-weight:700;font-size:15px;white-space:nowrap}
+.brand small{display:block;font-weight:500;font-size:10.5px;color:var(--faint);letter-spacing:.4px}
+nav.top{margin-inline-start:auto;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+nav.top::-webkit-scrollbar{display:none}
+nav.top a{flex:none;font-size:13px;color:var(--dim);padding:7px 11px;border-radius:999px;border:1px solid transparent;min-height:11px}
+nav.top a:hover{color:var(--text);text-decoration:none;border-color:var(--line2);background:var(--panel)}
+nav.top a[aria-current=page]{color:var(--acc-bright);border-color:var(--acc-line);background:var(--acc-bg);font-weight:600}
+.hero{padding:44px 0 24px}
+h1{font-size:clamp(30px,6vw,50px);line-height:1.08;letter-spacing:-.8px;margin:0 0 12px;font-weight:800}
+.lede{font-size:clamp(15px,2.4vw,18px);line-height:1.75;color:var(--dim);max-width:64ch}
+h2.sec{font-size:clamp(21px,3.4vw,29px);letter-spacing:-.4px;font-weight:800;margin-bottom:6px}
+.sub{color:var(--dim);font-size:14.5px;line-height:1.7;margin-bottom:20px;max-width:72ch}
+section{padding:32px 0}
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.legend span{font-size:12px;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:6px 12px;color:var(--dim)}
+.grid2{display:grid;grid-template-columns:1fr;gap:14px}
+@media(min-width:820px){.grid2{grid-template-columns:1fr 1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:flex;flex-direction:column;gap:10px}
+.card h3{font-size:16.5px;font-weight:800;letter-spacing:-.2px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.tag{font-size:10.5px;font-weight:700;border-radius:999px;padding:3px 9px;border:1px solid var(--acc-line);background:var(--acc-bg);color:var(--acc-bright);white-space:nowrap}
+.tag.demo{border-color:var(--line2);background:var(--bg2);color:var(--dim)}
+.tag.dev{border-color:rgba(161,98,7,.4);background:rgba(161,98,7,.07);color:var(--amber)}
+.card p.what{font-size:13.5px;line-height:1.7;color:var(--dim)}
+ul.meas{list-style:none;display:flex;flex-direction:column;gap:6px}
+ul.meas li{font-size:12.5px;line-height:1.6;color:var(--text);display:flex;gap:8px;align-items:baseline}
+ul.meas li::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--acc);flex:none;transform:translateY(-2px)}
+ul.meas .m{color:var(--faint);flex:none;min-width:112px;font-size:11px}
+.limit{font-size:12px;line-height:1.65;color:var(--faint);border-top:1px dashed var(--line2);padding-top:9px}
+.limit b{color:var(--dim)}
+.note{background:var(--panel2);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;font-size:13px;line-height:1.8;color:var(--dim);max-width:900px}
+footer{margin-top:auto;border-top:1px solid var(--line);background:var(--panel);padding:18px 0;padding-bottom:calc(18px + env(safe-area-inset-bottom))}
+.fw{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;font-size:12px;color:var(--faint)}
+</style>
+</head>
+<body>
+<header class="site">
+  <div class="wrap hd">
+    <span class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"/><circle cx="12" cy="12" r="3"/></svg></span>
+    <span class="brand">SAOS Network<small>הרשת המאמתת לסוכני AI</small></span>
+    <nav class="top" aria-label="ניווט ראשי">
+      <a href="index.html">מפקדה</a>
+      <a href="marketing/index.html">המוצרים · סקירה</a>
+      <a href="standard.html">תקן-ההפעלה</a>
+      <a href="" aria-current="page">קטלוג-המוצרים</a>
+      <a href="receipts/">קיר-הקבלות</a>
+      <a href="sitemap.html">מפת-האתר</a>
+    </nav>
+  </div>
+</header>
+<main>
+
+<section class="hero">
+  <div class="wrap">
+    <h1>קטלוג המוצרים</h1>
+    <p class="lede">כל מוצר שהרשת מפעילה היום, במקום אחד: משפט אחד שמסביר מה הוא עושה, קישור-הוכחה חי שפותחים ובודקים בעצמכם, וסטטוס מדוד. הכלל כאן אחד: אין כאן תכונה בלי הוכחה, ומוצר בלי קישור-הוכחה ציבורי מסומן פנימי.</p>
+    <div class="legend" role="list" aria-label="מקרא סטטוסים">
+      <span><b>חי</b> · מוצג ונמדד בציבור</span>
+      <span><b>בטא</b> · חי חלקית, שאר הדרך מתועדת</span>
+      <span><b>דמו</b> · רץ בפריסה ריבונית, לפני הסבה מסחרית</span>
+      <span><b>פנימי</b> · כלי-הפעלה של הרשת, לא מוצר-חוץ</span>
+    </div>
+  </div>
+</section>
+
+<section id="user" aria-labelledby="u-h">
+  <div class="wrap">
+    <h2 class="sec" id="u-h">מוצרים למשתמש</h2>
+    <p class="sub">מה המשתמש פוגש בפועל. לכל מוצר: מה הוא עושה, איפה ההוכחה, ומה הגבול הכתוב.</p>
+    <div class="grid2">
+
+      <div class="card">
+        <h3>Saosmartwallet <span class="tag">חי</span></h3>
+        <p class="what">ארנק self-custodial לשבע רשתות (STEEM, HIVE, BLURT, TRON, SAOS-NET, ETH, SOL) עם כספת-מפתחות ריבונית ושכבת-גשר עם ראוטר ודרישות חיות.</p>
+        <ul class="meas">
+          <li><span class="m">הוכחה</span><span><a href="wallet.html">דף הארנק החי</a> · <a href="receipts/">קיר-הקבלות</a> · המנפק מצטט txid של הנעילה הציבורית</span></li>
+          <li><span class="m">נמדד</span><span>M0-M4 מאומתים מול שרשרת · 20 נכסי-עטיפה עם האינווריאנטה supply==locked</span></li>
+        </ul>
+        <p class="limit"><b>גבול כתוב:</b> המפתחות של המשתמש, גם האחריות שלו. אין התערבות ואין התחייבות לתשואה.</p>
+      </div>
+
+      <div class="card">
+        <h3>SAOS DEX <span class="tag">חי</span></h3>
+        <p class="what">טרמינל-מסחר עם עיגון-חי, escrow מלא, ואימות עצמאי בכפתור אחד.</p>
+        <ul class="meas">
+          <li><span class="m">הוכחה</span><span><a href="https://roshpinacare-sys.github.io/Console/" rel="noopener">הטרמינל החי</a> · <a href="dex/world.json">ספר-הרשת dex/world.json</a></span></li>
+          <li><span class="m">נמדד</span><span>26,490 ops/s בקרנל · מרווח 12-82 bps · עמלות 30bps בפיצול 70/30</span></li>
+        </ul>
+        <p class="limit"><b>גבול כתוב:</b> נזילות-פנימית בספר-סגור. ההשוואה המלאה מול הרשתות המובילות מתפרסמת חיה ב-<a href="giants.html">שולחן-הענקים</a>.</p>
+      </div>
+
+      <div class="card">
+        <h3>JUMPPER <span class="tag dev">בטא · Phase 1 ירוק</span></h3>
+        <p class="what">נוטריון עדויות באצווה: הוכחה על-שרשרתית לטענות של סוכנים וארגונים, בשלוש רמות-אימות, עם חתימה שתמיד נשארת מחוץ למערכת.</p>
+        <ul class="meas">
+          <li><span class="m">הוכחה</span><span><a href="receipts/">קיר-הקבלות</a> · עוגן ETH קיים בסייר הציבורי</span></li>
+          <li><span class="m">נמדד</span><span>$0.0000081 לרשומה (אצווה 10,000, 1 gwei) · דחיסה 250B ל-51B · 77/77 בדיקות מ-clone טרי</span></li>
+        </ul>
+        <p class="limit"><b>גבול כתוב:</b> ה-API והסייר נמצאים ב-Phase 3. מה שעוד לא חי אינו מוצהר כחי.</p>
+      </div>
+
+      <div class="card">
+        <h3>Identity Verification API <span class="tag">חי</span></h3>
+        <p class="what">הוכחה בקריאה אחת שחשבון Steem/Hive וכתובת EVM שייכים לאותו מפתח secp256k1, עם עוגן חד-פעמי על השרשרת ו-SDK ללא תלויות.</p>
+        <ul class="meas">
+          <li><span class="m">הוכחה</span><span><a href="hub/api/identity-api.html">תיעוד מלא שנלכד byte-for-byte מה-API החי</a> · מוכח מול Steem block 109,389,994</span></li>
+          <li><span class="m">מכסה</span><span>1,000 קריאות ליום-UTC · רק SHA-256 נשמר · תוצאה כנה גם בכישלון</span></li>
+        </ul>
+        <p class="limit"><b>גבול כתוב:</b> פרסום ה-SDK ב-npm וגייטווי-ציבורי הם צעדי-הוצאה מתועדים שטרם בוצעו. הקוד והראיות חיים בריפו.</p>
+      </div>
+
+      <div class="card">
+        <h3>Sovereign Runner-Kit <span class="tag">חי</span></h3>
+        <p class="what">קיט מדידה שרץ על המכשיר שלך: פקודה אחת מקימה מתזמן מקומי עם שלוש מסילות-מדידה ומפרסם קבלות-ריצה חתומות SHA-256 לריפו הציבורי.</p>
+        <ul class="meas">
+          <li><span class="m">הוכחה</span><span><a href="runner-kit.html">דף הקיט</a> · <a href="https://github.com/roshpinacare-sys/sovereign-runner-kit" rel="noopener">הריפו הציבורי</a> · תיקיית results/ פתוחה לקריאה</span></li>
+          <li><span class="m">מסילות</span><span>15 דק' · 30 דק' · 2 שע' · אפס דקות-GitHub במסלול הקריטי · אפס מפתחות-חתימה בקיט</span></li>
+        </ul>
+        <p class="limit"><b>גבול כתוב:</b> הגרסה המתויגת הראשונה טרם יצאה; עד אז הקיט מצמיד קבלות לקומיט, וזה כתוב בפתוח.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="infra" aria-labelledby="i-h">
+  <div class="wrap">
+    <h2 class="sec" id="i-h">תשתית שהמוצרים רצים עליה</h2>
+    <p class="sub">בלי תשתית חיה ומדודה אין מוצר אמין, ולכן היא מוצגת כאן באותה מידה של פירוט ובאותם קישורי-הוכחה.</p>
+    <div class="grid2">
+
+      <div class="card">
+        <h3>SAOS-NET <span class="tag">חי</span></h3>
+        <p class="what">מכונת-מצב דטרמיניסטית שמעגנת כל טענה וכל חותמת בשרשראות ציבוריות, עם בנייה-חוזרת מאותם קלטים בלבד.</p>
+        <ul class="meas">
+          <li><span class="m">הוכחה</span><span><a href="receipts/">קיר-הקבלות</a> · עוגנים חתומים על STEEM, HIVE, BLURT, TRON, ETHEREUM, SOLANA, XRPL</span></li>
+          <li><span class="m">נמדד</span><span>32,603 tx/s על ארכיון אמיתי · נמדד 2026-09-07 · אטימה keyless ב-$0.00</span></li>
+        </ul>
+        <p class="limit"><b>גבול כתוב:</b> הרשת אינה נסחרת בורסה ואין לה ערך-חוץ. הערך שלה הוא האימות עצמו, והוא גלוי.</p>
+      </div>
+
+      <div class="card">
+        <h3>איברי-ההפעלה <span class="tag">חי</span></h3>
+        <p class="what">הרשת מריצה את עצמה: דופק census על דקות-CI ציבוריות, סריקת-חשיפה של כל עץ-הקוד הציבורי, ושער-אמת שמודד את כל עמודי-האתר החיים.</p>
+        <ul class="meas">
+          <li><span class="m">הוכחה</span><span><a href="network/index.html">מפקד-המצב של הרשת</a> · <a href="truth/voice.json">פסק-דין שער-השפה</a> · <a href="public/pulse.json">pulse.json</a></span></li>
+          <li><span class="m">ריצה</span><span>כל סריקה מפרסמת פסק-דין ירוק או אדום בפומבי, והסריקה בודקת גם את עצמה</span></li>
+        </ul>
+        <p class="limit"><b>גבול כתוב:</b> ריצה אדומה נכשלת בפומבי ואינה נסתרת. זו המשמעות של אכיפה במכונה.</p>
+      </div>
+
+      <div class="card">
+        <h3>שעון אטומי (Foundry) <span class="tag demo">דמו חי</span></h3>
+        <p class="what">מצב-הראש של שש רשתות הטרוגניות מתמצה לשורש Merkle אחד, keyless, באפס עלות, בלי טרנזקציות ובלי חתימות.</p>
+        <ul class="meas">
+          <li><span class="m">הוכחה</span><span><a href="sovereign.html">דף ההפעלה הריבונית</a> · ריצה מתועדת: השורש מעיד STEEM, HIVE, TRON, ETH ו-SOL בבלוקים-נקובים</span></li>
+          <li><span class="m">נמדד</span><span>חישוב 15.9ms · אימות 5 הוכחות 6.8ms · הוכחה 435B</span></li>
+        </ul>
+        <p class="limit"><b>גבול כתוב:</b> דמו-חי בפריסה הריבונית. ההסבה המסחרית היא השלב הבא והיא מתועדת ככזו.</p>
+      </div>
+
+      <div class="card">
+        <h3>Lighthouse <span class="tag">חי</span></h3>
+        <p class="what">מכונה שמודדת את האתר הציבורי כל שעה: זמינות, קישורים, טריות, ויעדי-שירות.</p>
+        <ul class="meas">
+          <li><span class="m">הוכחה</span><span><a href="https://github.com/roshpinacare-sys/sovereign-lighthouse" rel="noopener">הריפו הציבורי</a> · <a href="truth/slo.json">טבלת יעדי-השירות</a></span></li>
+        </ul>
+        <p class="limit"><b>גבול כתוב:</b> מדידה שישנה מ-24 שעות מסומנת בכנות ואינה מוצגת כחיה.</p>
+      </div>
+
+      <div class="card">
+        <h3>קיר-הקבלות <span class="tag">חי</span></h3>
+        <p class="what">כל עוגן שהרשת פרסמה, פתוח בסייר ציבורי. אם קישור לא מוצא את הטרנזקציה, הטענה מתה והפנקס מתקן אותה בפומבי.</p>
+        <ul class="meas">
+          <li><span class="m">הוכחה</span><span><a href="receipts/">קיר-הקבלות</a> · שורש-מצב שעוגן על ETH ו-SOL ומשתווה bit-for-bit משתי קריאות-RPC נפרדות</span></li>
+        </ul>
+        <p class="limit"><b>גבול כתוב:</b> קבלה שאינה נפתחת בסייר היא עילה לתיקון פומבי, לא למחיקה.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="internal" aria-labelledby="n-h">
+  <div class="wrap">
+    <h2 class="sec" id="n-h">כלי-הפעלה פנימיים</h2>
+    <p class="sub">כלים שהרשת מפעילה על עצמה. הם חלק מהעבודה, לא מוצר-חוץ, והם מסומנים כך בגלוי.</p>
+    <div class="grid2">
+
+      <div class="card">
+        <h3>Adsmarket <span class="tag demo">פנימי</span></h3>
+        <p class="what">עדת השיווק והתוכן של הרשת: אחזקת קנון-עובדות, חוקי-קבלה לכל טענת-שיווק, ופאנל-תפעול חי.</p>
+        <ul class="meas">
+          <li><span class="m">הוכחה</span><span><a href="marketing/adsmarket.html">פאנל התפעול</a> · <a href="hub/ads/ads-pack.html">חוקי-הקבלה לפרסומים</a></span></li>
+        </ul>
+        <p class="limit"><b>גבול כתוב:</b> אסורה כל הבטחת-תשואה. מדידה מול תיאורטי מסומנת תמיד.</p>
+      </div>
+
+      <div class="card">
+        <h3>מפקדת הצי התלת-מימדית <span class="tag">חי</span></h3>
+        <p class="what">משרד-סוכנים חי שניזון מנתוני-גיט אמיתיים: קיר-משימות, שמרות עובדים, וספריית דוחות.</p>
+        <ul class="meas">
+          <li><span class="m">הוכחה</span><span><a href="office3d/">המשרד החי</a> · <a href="dex/office-feed.json">feed המשרד</a></span></li>
+        </ul>
+        <p class="limit"><b>גבול כתוב:</b> אם אין חיבור, העמוד אומר זאת במפורש במקום להציג קנבס שחור.</p>
+      </div>
+
+      <div class="card">
+        <h3>שער המפעיל <span class="tag demo">פנימי</span></h3>
+        <p class="what">כניסה חתומה לפקודות-רשת במפתח-posting בלבד, עם אימות מול השרשרת הציבורית בדפדפן.</p>
+        <ul class="meas">
+          <li><span class="m">הוכחה</span><span><a href="gate.html">השער</a> · המפתח נשאר בזיכרון הדפדפן ושום דבר לא נשלח לשרת</span></li>
+        </ul>
+        <p class="limit"><b>גבול כתוב:</b> הרשאת posting בלבד. המפתח הזה אינו מסוגל להזיז כסף, וזה נאכף בשרשרת עצמה.</p>
+      </div>
+
+      <div class="card">
+        <h3>מפקד-המצב <span class="tag">חי</span></h3>
+        <p class="what">מדידת-חיות של כל הריפואים הציבוריים ברשת, כל 15 דקות, עם פסק-דין גלוי לכל ריפו.</p>
+        <ul class="meas">
+          <li><span class="m">הוכחה</span><span><a href="network/index.html">דף המצב החי</a> · <a href="network/status.json">network/status.json</a></span></li>
+        </ul>
+        <p class="limit"><b>גבול כתוב:</b> ריפו שנכשל נראה אדום כאן, לא מוסתר.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="law" aria-labelledby="l-h">
+  <div class="wrap">
+    <div class="note">
+      <b id="l-h">חוק הקטלוג.</b> קטלוג זה מוגן על ידי אותם שערים שמודדים את כל האתר: סריקת-חשיפה של כל עץ-הקוד הציבורי, שער-אמת שמדוד כל שעה, ושער-שפה שנמדד שעתית. אם קישור-הוכחה בעמוד זה מפסיק להיפתח, זה נראה במדידה החיה ומתוקן בפומבי. לא קיים כאן מוצר שנוסף מתוך נימוס, ולא קיימת תכונה שאין לה קישור. האימות העצמאי הוא חלק מהמוצר: <a href="verify/">אמת-בעצמך ב-60 שניות</a>.
+    </div>
+  </div>
+</section>
+
+</main>
+<footer>
+  <div class="wrap fw">
+    <span>SAOS Network · קטלוג-המוצרים · כל מספר נמדד, כל גבול כתוב</span>
+    <span><a href="standard.html">תקן-ההפעלה</a> · <a href="marketing/index.html">המוצרים · סקירה</a> · <a href="hub/disclosure-policy.html">מדיניות-חשיפה</a> · <a href="sitemap.html">מפת-האתר</a></span>
+  </div>
+</footer>
+</body>
+</html>
