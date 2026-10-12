@@ -31,7 +31,7 @@ const MEMORY_WINDOW = 50;
 const MEMORY_CACHE = path.join(__dirname, 'social-memory-cache.json');
 const MEMORY_REFRESH_MS = 90 * 60 * 1000;
 
-const FLEET_ACCOUNTS = ['cashmachine', 'haran', 'israelnews', 'lsa', 'macrame', 'siq', 'tov', 'wic', 'wog', 'woq', 'headcorner'];
+const FLEET_ACCOUNTS = ['cashmachine', 'haran', 'israelnews', 'lsa', 'macrame', 'siq', 'tov', 'wic', 'wog', 'woq', 'owner'];
 
 // ── 1) voice profiles — identical table to the home daemon (curation/dedupe.ts) ──
 const VOICE_PROFILES = [
@@ -45,7 +45,7 @@ const VOICE_PROFILES = [
   { account: 'siq', tone: 'field-note', structure: 'short, unadorned observation', openers: ['Field note:', 'Small thing noticed:'], closers: ['Noted without decoration.', 'That was the whole thing.'] },
   { account: 'lsa', tone: 'editor-precise', structure: 'one precise sentence, then one more', openers: ['One sentence at a time:', 'From the archive shelf:'], closers: ['Fewer words, same weight.', 'The sentence survives editing.'] },
   { account: 'tov', tone: 'constructive-roundup', structure: 'what worked, then why', openers: ['Things that worked this week:', 'One thing that held:'], closers: ['No cheerleading, just receipts.', 'It worked; the numbers agree.'] },
-  { account: 'headcorner', tone: 'operations-receipt', structure: 'cadence, fuel, logistics', openers: ['Operations log:', 'Cadence check:'], closers: ['The beat continues.', 'Fuel measured, course held.'] },
+  { account: 'owner', tone: 'operations-receipt', structure: 'cadence, fuel, logistics', openers: ['Operations log:', 'Cadence check:'], closers: ['The beat continues.', 'Fuel measured, course held.'] },
 ];
 
 // per-account quote-line patterns — the fix for the measured shared-template fingerprint:
@@ -62,7 +62,7 @@ const QUOTE_LINES = {
   siq: (t, f) => `Noted from "${t}": ${f}.`,
   lsa: (t, f) => `One line from "${t}" earns its place: ${f}.`,
   tov: (t, f) => `What held in "${t}": ${f}.`,
-  headcorner: (t, f) => `Operations note on "${t}": the measurable line is ${f}.`,
+  owner: (t, f) => `Operations note on "${t}": the measurable line is ${f}.`,
 };
 
 function dayIdx() { return Math.floor(Date.now() / 86400000); }

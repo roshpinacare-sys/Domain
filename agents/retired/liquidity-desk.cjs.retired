@@ -33,7 +33,7 @@ const OUT_MD = path.join(AG, 'liquidity-ladder.md');
 const DEFU_DIR = process.env.DEFU_DIR || path.resolve(AG, '..', '..', 'Defi');
 
 // fleet census list (steem FLEET law; ynet retired). Same names probed on hive+blurt.
-const FLEET = ['headcorner', 'cashmachine', 'haran', 'israelnews', 'lsa', 'macrame', 'siq', 'tov', 'wic', 'wog', 'woq'];
+const FLEET = ['owner', 'cashmachine', 'haran', 'israelnews', 'lsa', 'macrame', 'siq', 'tov', 'wic', 'wog', 'woq'];
 const RETIRED = new Set(['ynet']);
 const NODES = {
   steem: { url: 'https://api.steemit.com', symbol: 'STEEM', debt: 'SBD' },
@@ -139,7 +139,7 @@ function heBalances(account) {
   for (const chain of Object.keys(NODES)) {
     chains[chain] = await chainBook(chain, FLEET);
   }
-  const heNote = await heBalances('headcorner');
+  const heNote = await heBalances('owner');
 
   // ---- totals + ladder rows (one honest row per held asset class)
   const sum = (chain, sel) => chains[chain].reduce((s, a) => s + (a && sel(a) ? sel(a) : 0), 0);

@@ -27,19 +27,19 @@
     {
       "lane": "powerup",
       "tools": ["transfer_to_vesting"],
-      "caps": {"steem_per_run_max": 15, "steem_source": "headcorner", "steem_min_liquid_reserve": 90, "hive_per_run_max": 2500, "hive_source": "cornerstone", "hive_min_liquid_reserve": 10000, "blurt_per_run_max": 150, "blurt_source": "cornerstone", "blurt_min_liquid_reserve": 60},
+      "caps": {"steem_per_run_max": 15, "steem_source": "owner", "steem_min_liquid_reserve": 90, "hive_per_run_max": 2500, "hive_source": "cornerstone", "hive_min_liquid_reserve": 10000, "blurt_per_run_max": 150, "blurt_source": "cornerstone", "blurt_min_liquid_reserve": 60},
       "reversibility": "powerdown (13 weeks, weekly chunks) — protective lock for treasury bulk"
     },
     {
       "lane": "delegation",
       "tools": ["delegate_vesting_shares"],
-      "caps": {"hive_per_run_max": 500, "targets": ["headcorner"], "steem_targets": []},
+      "caps": {"hive_per_run_max": 500, "targets": ["owner"], "steem_targets": []},
       "reversibility": "undelegation after 7 days"
     },
     {
       "lane": "connect",
       "tools": ["account_update", "comment"],
-      "caps": {"accounts": ["cornerstone", "headcorner"], "broadcast_ops_per_run_max": 4, "forbidden": ["transfer", "convert", "withdraw_vesting", "limit_order_create"]},
+      "caps": {"accounts": ["cornerstone", "owner"], "broadcast_ops_per_run_max": 4, "forbidden": ["transfer", "convert", "withdraw_vesting", "limit_order_create"]},
       "reversibility": "account_update re-pointing posting auth; posts are public content"
     }
   ],

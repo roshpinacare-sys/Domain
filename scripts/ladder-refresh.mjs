@@ -3,7 +3,7 @@
  * ladder-refresh.mjs — Task 16-b: the 6-hourly ladder-refresh automation leg (STEEM internal market).
  *
  * Owner directive TODAY: "I don't want to wait — MUCH faster, MUCH more; more trades, more ways
- * to inject liquidity." This engine keeps the @headcorner STEEM/SBD ladder near the live mid —
+ * to inject liquidity." This engine keeps the @owner STEEM/SBD ladder near the live mid —
  * the DISCIPLINED way: it reprices EXISTING liquidity (cancel+replace of stale orders only),
  * never injects fresh capital, never empties the ladder.
  *
@@ -12,7 +12,7 @@
  *   (b) private checkout of steem via ZIP_PAT — the seal custody lives there
  *   (c) open the key seal IN-RUNNER per keys_zip_v2.cjs doctrine (AES-256-CBC, pbkdf2-300k,
  *       sha gates outer+inner vs agent/recovery-meta.json) — material never leaves the runner
- *   (d) resolve @headcorner's ACTIVE key from the seal vault + verify it LIVE against the
+ *   (d) resolve @owner's ACTIVE key from the seal vault + verify it LIVE against the
  *       chain active authority (public fingerprints only)
  *   (e) spawn THE SAME single-source-of-truth executor: steem/agent/ladder_refresh.cjs
  *       (caps live THERE, in code: ≤3 cancel+replace pairs/run, staleness >7d AND >2% from mid,
@@ -29,8 +29,8 @@
  *                   anything else = plan-only (receipt with status, exit 0)
  *   PUSH_RECEIPT    'true' = git commit+push receipt into the steem repo
  *
- * HARD DISCIPLINE: headcorner-ONLY (the executor hard-locks the account); never touch
- * ynet-* / tov-hive; no secret ever printed/logged (fingerprints only); every failure = red run.
+ * HARD DISCIPLINE: owner-ONLY (the executor hard-locks the account); never touch
+ * ynet-* / owner-hive; no secret ever printed/logged (fingerprints only); every failure = red run.
  */
 'use strict';
 
@@ -46,7 +46,7 @@ const STEEM_DIR = process.env.STEEM_DIR || path.join(process.cwd(), 'steem');
 const STEEMJS_DIR = process.env.STEEMJS_DIR || SCRIPT_DIR;
 const ARMED = String(process.env.LADDER_ARM || '0') === '1';
 const PUSH_RECEIPT = String(process.env.PUSH_RECEIPT || 'false').toLowerCase() === 'true';
-const ACCOUNT = 'headcorner'; // THE liquid ladder — the only account this engine may operate
+const ACCOUNT = 'owner'; // THE liquid ladder — the only account this engine may operate
 const RPC = process.env.LADDER_NODE || 'https://api.steemit.com';
 
 const nowIso = () => new Date().toISOString();
@@ -121,7 +121,7 @@ function pushLadderReceipts(commitMsg) {
 const seal = openSeal();
 log('seal opened in-runner (sha gates outer+inner ok) · ' + seal.openedAt);
 
-// resolve @headcorner ACTIVE key from the vault (memory only — never printed)
+// resolve @owner ACTIVE key from the vault (memory only — never printed)
 // T-50 (custody truth): shape-compat across vault generations — the R245-ROT2 re-seal
 // flattened accounts to keys.{role}.{wif,pub} + chains:[…], while this script was written
 // against the legacy keys.steem.{role}.wif shape. Both shapes are read here; the seal

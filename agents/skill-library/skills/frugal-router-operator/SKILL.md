@@ -20,10 +20,10 @@ verified IN-FILE at the pinned mirror: `LICENSE` 34,108 bytes, standard AGPL
 text with `SPDX-License-Identifier: AGPL-3.0-only`, "Copyright (c) 2026 Ali
 Khokhar"; the repo API reports NOASSERTION — a false negative this estate
 overrode by reading the file, per the Task 33 license-honesty rule) — pinned
-mirror sha `03aca36` at `/home/z/reference-mirrors/free-claude-code` —
+mirror sha `03aca36` at `<host>/reference-mirrors/free-claude-code` —
 evaluation + adoption wave Task 35. Second study source: trailhq/Graft (MIT,
 verified IN-FILE, "Copyright (c) 2026 Context Graph Engine contributors"),
-pinned mirror sha `fe30ead` at `/home/z/reference-mirrors/Graft` — Task 36
+pinned mirror sha `fe30ead` at `<host>/reference-mirrors/Graft` — Task 36
 five-repo sweep (the repo MOVED org NanoNets→trailhq; pin the current
 name). Both are HOUSE adaptations: zero upstream code or docs bodies were
 copied. Notices: `skill-library/THIRD-PARTY-NOTICES.md` §8 (FCC, AGPL
@@ -48,7 +48,7 @@ orchestration-ax-operator).
 | Situation | Route | Verdict here |
 |---|---|---|
 | Adopt the FCC doctrine on estate gates/books/proxies | doctrine tables below + triggers | 🟢 sovereignty-decided — zero cost, proven below |
-| Read upstream source as reference | mirror `/home/z/reference-mirrors/free-claude-code` @ `03aca36` | 🟢 keyless, pinned, AGPL-3.0-only verified in-file |
+| Read upstream source as reference | mirror `<host>/reference-mirrors/free-claude-code` @ `03aca36` | 🟢 keyless, pinned, AGPL-3.0-only verified in-file |
 | Install + run FCC itself (local proxy) | `fcc-server` + user-supplied provider keys (NVIDIA NIM free tier etc.) | 🟡 CONSULT — provider keys = credentials = possession = OWNER authority; also redundant here (desk model leg = z-ai SDK); never auto-booked |
 | Copy upstream code into an estate repo | any incorporation of FCC Python | 🔴 WALLET+LICENSE — AGPL-3.0-only: code-level incorporation triggers §13 network-source obligations estate-wide; the standing estate rule is ZERO-COPY doctrine adoption; incorporation requires an owner-gated license decision |
 | 59-provider free-tier catalog as "free compute" | free tiers controlled by each provider | 🟡 CLAIM — "1.3B+ free tokens/month" is an UPSTREAM claim; free-tier limits are provider-controlled and may change; booked as claim, not desk-verified fact |

@@ -2,7 +2,7 @@
 
 | account | author SBD | author STEEM | curation SP | claimed vests SP | drip arrived STEEM | sold STEEM | recv SBD | bought STEEM | spent SBD | converts SBD | fills | votes | posts |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| headcorner ⚠TRUNC | 0 | 0 | 0.323116 | 0 | 0 | 2 | 0.204 | 4.994 | 0.5 | 0 | 5 | 85 | 4 |
+| owner ⚠TRUNC | 0 | 0 | 0.323116 | 0 | 0 | 2 | 0.204 | 4.994 | 0.5 | 0 | 5 | 85 | 4 |
 | cashmachine | 0 | 0 | 0.005002 | 0 | 0 | 1.2 | 0.12000000000000001 | 0 | 0 | 0 | 6 | 140 | 7 |
 | haran | 0 | 0 | 0.002001 | 0 | 0 | 1.2 | 0.12000000000000001 | 0 | 0 | 0 | 6 | 130 | 5 |
 | israelnews | 0 | 0.223 | 0 | 0 | 0 | 1.2 | 0.12000000000000001 | 0 | 0 | 0 | 6 | 158 | 8 |

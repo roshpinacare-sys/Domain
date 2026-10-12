@@ -14,7 +14,7 @@ declarative doctrine as REFERENCE for fleet orchestration, and run AX itself onl
 feasibility is proven — never hope-based.
 
 **Provenance:** study source google/ax (Apache-2.0, pinned mirror sha `ac23328` at
-`/home/z/reference-mirrors/ax`) — evaluation + adoption wave Task 31. This package is a
+`<host>/reference-mirrors/ax`) — evaluation + adoption wave Task 31. This package is a
 HOUSE adaptation: zero upstream code, manifests, or docs bodies were copied. Apache-2.0
 notice: `skill-library/THIRD-PARTY-NOTICES.md` §4.
 
@@ -38,7 +38,7 @@ security-strix-operator), or authoring skills (see fleet-skill-author).
 | Run AX control plane | K8s cluster + Agent Substrate + `ko` + container registry | 🔴 BLOCKED — this sandbox has NO Docker/K8s (verified in-sandbox); a cluster is paid infrastructure = wallet/possession domain (owner authority per the Authority Map) |
 | Run `ax` CLI against a remote cluster the owner provides | owner-provisioned cluster | 🔴 WALLET until the owner books such a cluster; never auto-provisioned |
 | Adopt AX doctrine on existing estate tools | mini-services + dispatch waves + gates | 🟢 sovereignty-decided — zero cost, proven below |
-| Read upstream manifests/docs as reference | mirror `/home/z/reference-mirrors/ax` | 🟢 keyless, pinned |
+| Read upstream manifests/docs as reference | mirror `<host>/reference-mirrors/ax` | 🟢 keyless, pinned |
 
 ## The AX Doctrine (adopted as estate reference, with the parallel it proves)
 

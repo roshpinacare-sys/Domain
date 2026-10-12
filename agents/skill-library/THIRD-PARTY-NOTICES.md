@@ -7,7 +7,7 @@ MIT license requires (retain the license + copyright notice).
 
 - **Source:** https://github.com/alirezarezvani/claude-skills
 - **License:** MIT — https://github.com/alirezarezvani/claude-skills/blob/main/LICENSE
-- **Pinned mirror sha:** `19392f7a` (cloned keyless to `/home/z/reference-mirrors/claude-skills`,
+- **Pinned mirror sha:** `19392f7a` (cloned keyless to `<host>/reference-mirrors/claude-skills`,
   outside the 16-repo estate on purpose: the mirror is reference, not fleet)
 - **Author (upstream):** Alireza Rezvani and claude-skills contributors
 - **What was adopted:**
@@ -38,7 +38,7 @@ MIT license requires (retain the license + copyright notice).
 - **License:** Apache-2.0 — https://github.com/usestrix/strix/blob/main/LICENSE
   (Apache License, Version 2.0, January 2004; full text preserved at the pinned mirror's
   `LICENSE` file — a copy ships inside the mirror clone)
-- **Pinned mirror sha:** `99c0711` (cloned keyless to `/home/z/reference-mirrors/strix`,
+- **Pinned mirror sha:** `99c0711` (cloned keyless to `<host>/reference-mirrors/strix`,
   outside the 16-repo estate on purpose: the mirror is reference, not fleet; depth-50
   clone of HEAD 2026-10-02 — matches API commit 99c0711687)
 - **Author (upstream):** usestrix and strix contributors
@@ -66,7 +66,7 @@ MIT license requires (retain the license + copyright notice).
 - **License:** Apache-2.0 — https://github.com/google/ax/blob/main/LICENSE
   (Apache License, Version 2.0, January 2004; full text preserved at the pinned
   mirror's `LICENSE` file — a copy ships inside the mirror clone)
-- **Pinned mirror sha:** `ac23328` (cloned keyless to `/home/z/reference-mirrors/ax`,
+- **Pinned mirror sha:** `ac23328` (cloned keyless to `<host>/reference-mirrors/ax`,
   outside the 16-repo estate on purpose: the mirror is reference, not fleet;
   depth-50 clone of HEAD 2026-09-26 — matches API commit `ac2332829f22360ff97b0ba34d94dd0dd782f17e`)
 - **Author (upstream):** Google and ax contributors ("Google's open agentic
@@ -100,7 +100,7 @@ MIT license requires (retain the license + copyright notice).
   (2026-10-01). Until a real LICENSE file lands upstream, the repository is
   treated as **ALL RIGHTS RESERVED**.
 - **Mirror:** bare-blobless clone (184K, blobs on demand) at
-  `/home/z/reference-mirrors/hae-mirror.git` @ `da0091d6452e18dae9fd3119a194019f35306d27`
+  `<host>/reference-mirrors/hae-mirror.git` @ `da0091d6452e18dae9fd3119a194019f35306d27`
   — outside the 16-repo estate on purpose: the mirror is reference, not fleet.
   A full working-tree mirror was attempted and discarded (315 MB) in favor of the
   treeless form — disk-honest at 719 MB free.
@@ -130,7 +130,7 @@ MIT license requires (retain the license + copyright notice).
   the repo API independently reports spdx_id MIT. Unlike §5, the license
   claim is backed by the file itself.
 - **Pinned mirror sha:** `04d809c` (cloned keyless to
-  `/home/z/reference-mirrors/mini-swe-agent`, outside the 16-repo estate on
+  `<host>/reference-mirrors/mini-swe-agent`, outside the 16-repo estate on
   purpose: the mirror is reference, not fleet; depth-50 clone of main HEAD
   2026-09-03 — full sha `04d809ceab9df28f9adaed044884180159172930`)
 - **Author (upstream):** Kilian A. Lieret, Carlos E. Jimenez, and the
@@ -173,7 +173,7 @@ MIT license requires (retain the license + copyright notice).
   `672deb21e70e471e0536d5ad7a67c14b8359e97e`). Unbacked MIT claim → the
   repository is treated as **ALL RIGHTS RESERVED** → consult-only,
   zero-copy.
-- **Mirror:** shallow clone at `/home/z/reference-mirrors/openreview`
+- **Mirror:** shallow clone at `<host>/reference-mirrors/openreview`
   (outside the 16-repo estate on purpose: the mirror is reference, not
   fleet). Depth-50 clone of HEAD 2026-03-06 — the repo has been DORMANT for
   seven months and its README declares beta ("built as an internal project
@@ -214,7 +214,7 @@ MIT license requires (retain the license + copyright notice).
   NEGATIVE overridden by reading the file (the Task 33 rule: the file is the
   truth). Unlike §5/§7, the license claim is backed by the file itself.
 - **Pinned mirror sha:** `03aca36` (cloned keyless to
-  `/home/z/reference-mirrors/free-claude-code`, outside the 16-repo estate
+  `<host>/reference-mirrors/free-claude-code`, outside the 16-repo estate
   on purpose: the mirror is reference, not fleet; depth-50 clone of main
   HEAD 2026-10-02 — full sha
   `03aca36eb3b9f2bf07805b1c39ec4d61f6f740c1`; repo pushed_at 2026-10-03 ⇒
@@ -262,7 +262,7 @@ MIT license requires (retain the license + copyright notice).
 - **License:** MIT — verified IN-FILE at the pinned mirror (`LICENSE`,
   1,090 bytes, "Copyright (c) 2026 Context Graph Engine contributors").
 - **Pinned mirror sha:** `fe30ead` (keyless depth-50 clone at
-  `/home/z/reference-mirrors/Graft`, outside the 16-repo estate; main HEAD
+  `<host>/reference-mirrors/Graft`, outside the 16-repo estate; main HEAD
   2026-09-30).
 - **Author (upstream):** Trail (NanoNets) and Graft contributors.
 - **What was adopted (reference patterns, restated originally into
@@ -291,7 +291,7 @@ MIT license requires (retain the license + copyright notice).
 - **License:** MIT — verified IN-FILE at the pinned mirror (`LICENSE`,
   1,079 bytes, "Copyright (c) 2025 AgentLand Contributors").
 - **Pinned mirror sha:** `d3f71c4` (keyless depth-50 clone at
-  `/home/z/reference-mirrors/agency-agents`, outside the estate; main HEAD
+  `<host>/reference-mirrors/agency-agents`, outside the estate; main HEAD
   2026-10-01).
 - **Author (upstream):** Michael Sitarzewski and the AgentLand contributors.
 - **What was adopted (reference patterns, restated originally into the new
@@ -324,7 +324,7 @@ MIT license requires (retain the license + copyright notice).
 - **License:** MIT — verified IN-FILE at the pinned mirror (`LICENSE`,
   1,107 bytes, "Copyright (c) 2025 DeusData").
 - **Pinned mirror sha:** `96c3f41c` (keyless depth-50 clone at
-  `/home/z/reference-mirrors/codebase-memory-mcp`, outside the estate;
+  `<host>/reference-mirrors/codebase-memory-mcp`, outside the estate;
   main HEAD 2026-10-02).
 - **Author (upstream):** DeusData and codebase-memory-mcp contributors.
 - **What was adopted (reference patterns, restated originally into the new
@@ -361,7 +361,7 @@ MIT license requires (retain the license + copyright notice).
   code incorporation would trigger AGPL §13 obligations estate-wide and is
   owner-gated.
 - **Pinned mirror sha:** `08e2151` (keyless depth-50 clone at
-  `/home/z/reference-mirrors/OpenMontage`, outside the estate; main HEAD
+  `<host>/reference-mirrors/OpenMontage`, outside the estate; main HEAD
   2026-09-05 — the repo's last push, ~4 weeks before the sweep).
 - **Author (upstream):** calesthio and OpenMontage contributors.
 - **What was adopted (reference patterns, booked in CR-0016 — no house
@@ -387,7 +387,7 @@ MIT license requires (retain the license + copyright notice).
 - **License:** MIT — verified IN-FILE at the pinned mirror (`LICENSE`,
   1,070 bytes, "Copyright (c) 2026 Lovecast Inc.").
 - **Pinned mirror sha:** `843607b1` (keyless depth-50 clone at
-  `/home/z/reference-mirrors/orca`, outside the estate; main HEAD
+  `<host>/reference-mirrors/orca`, outside the estate; main HEAD
   2026-10-02).
 - **Author (upstream):** Stably AI (Lovecast Inc.) and orca contributors.
 - **What was adopted (reference patterns, booked in CR-0016; the parallel

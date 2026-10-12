@@ -82,7 +82,7 @@ jobs:
         run: |
           if [ -z "$KEY" ]; then
             echo "STEEM_ACTIVE_WIF is not set in this repository's vault (Settings > Secrets and variables > Actions)."
-            echo "The grid signs every external order with the active key of @headcorner — without it there is"
+            echo "The grid signs every external order with the active key of @owner — without it there is"
             echo "no placement at all. And running grid-beat keyless would publish a false DISARMED-NO-KEY"
             echo "verdict while the true state is armed (the key lives in the private saos-dex vault,"
             echo "which secrets never cross). The machine refuses honestly, touching nothing, until the"
@@ -129,7 +129,7 @@ jobs:
         if: (steps.brake.outputs.active != 'true' || steps.brake.outputs.lane_allowed == 'true') && (steps.guard.outputs.takeover == '1' || github.event_name == 'workflow_dispatch')
         run: bun run grid-beat.ts
         env:
-          SAOS_RELAY_AGENT_ACCOUNT: headcorner
+          SAOS_RELAY_AGENT_ACCOUNT: ${{ secrets.FLEET_ACCOUNT }}
           STEEM_ACTIVE_WIF: ${{ secrets.STEEM_ACTIVE_WIF }}
           HIVE_ACTIVE_WIF: ${{ secrets.HIVE_ACTIVE_WIF }}
           CONSOLE_TOKEN: ${{ secrets.WEAVE_OPS_PAT }}
@@ -145,7 +145,7 @@ jobs:
       - name: Community leg (owner-mandated Steem community — D-024, fail-closed)
         if: always() && steps.brake.outputs.active == 'false'
         env:
-          SAOS_RELAY_AGENT_ACCOUNT: headcorner
+          SAOS_RELAY_AGENT_ACCOUNT: ${{ secrets.FLEET_ACCOUNT }}
           STEEM_ACTIVE_WIF: ${{ secrets.STEEM_ACTIVE_WIF }}
         run: node grids/community.mjs --execute
         continue-on-error: true
@@ -169,7 +169,7 @@ jobs:
       - name: Delegation leg (owner-mandated SP deployment — staged lane, in-code brake re-checks)
         if: always()
         env:
-          SAOS_RELAY_AGENT_ACCOUNT: headcorner
+          SAOS_RELAY_AGENT_ACCOUNT: ${{ secrets.FLEET_ACCOUNT }}
           STEEM_ACTIVE_WIF: ${{ secrets.STEEM_ACTIVE_WIF }}
         run: node grids/delegate-plan.mjs --execute
         continue-on-error: true

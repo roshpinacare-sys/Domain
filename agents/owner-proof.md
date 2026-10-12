@@ -16,7 +16,7 @@ _מורכב מהפנקסים המחויבים בלבד (keyless, offline). כל 
 - **remainingSp**: 1903.609852 — _מקור: agents/sovereign-drip.json · נמדד: 2026-10-04T11:08:46.764Z_
 - **runwayDays**: 28 — _מקור: agents/sovereign-drip.json · נמדד: 2026-10-04T11:08:46.764Z · אחרי זה ה-stake נגמר — ההכנסה הזו היא החזר הון, לא תשואה_
 - **nextWithdrawal**: "2026-10-10T02:01:27" — _מקור: agents/sovereign-drip.json · נמדד: 2026-10-04T11:08:46.764Z_
-- **lastDripSteem**: 475.857 — _מקור: agents/earn-audit.json (headcorner drip_arrived_steem, chain truth) · ה-drip הקודם הגיע והוטל לשוק באותה שעה — הרוטציה האוטונומית הראשונה בהיסטוריה של הצי (CR-0046)_
+- **lastDripSteem**: 475.857 — _מקור: agents/earn-audit.json (owner drip_arrived_steem, chain truth) · ה-drip הקודם הגיע והוטל לשוק באותה שעה — הרוטציה האוטונומית הראשונה בהיסטוריה של הצי (CR-0046)_
 
 ## האמת על הכסף — רווח והפסד, בלי קישוט
 

@@ -8,7 +8,7 @@ _2026-10-03T19:24:08.005Z · keyless + offline · every reputation value carries
 - **market-cycle** — cycle composer (eyes → decision → hands) · file://agents/market-cycle.cjs · keyless-composer · registered CR-0039 · alive:true
 - **market-grid** — keyless cross-market observer (paper fills, history time-series) · file://agents/market-grid.cjs · keyless · registered CR-0034 · alive:true
 - **venture-desk** — venture harvest/kill governance · file://agents/venture-desk.cjs · keyless · registered Z-36 lineage · alive:true
-- **principal-headcorner** — fleet principal account (the only signer today) · steem://headcorner · custody-of-operator · registered fleet charter · alive:true
+- **principal-owner** — fleet principal account (the only signer today) · steem://owner · custody-of-operator · registered fleet charter · alive:true
 
 ## reputation (3) — evidence-derived only
 - **market-exec** clean-run-pct=62 (broadcast-ops-9) · endpoint agents/market-exec.json · hash 6c829dd0f3391b0a… · evidence {"runs":13,"ok":8,"broadcastOps":9}

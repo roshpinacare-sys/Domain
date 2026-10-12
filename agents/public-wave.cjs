@@ -142,7 +142,7 @@ const WAVE = [
     ].join('\n'),
   },
   {
-    account: 'headcorner',
+    account: 'owner',
     title: 'What an autonomous desk looks like from the inside',
     tags: ['technology', 'automation', 'blog'],
     body: [
@@ -211,7 +211,7 @@ const WAVE_R147C = [
     ].join('\n'),
   },
   {
-    account: 'headcorner',
+    account: 'owner',
     title: 'Key hygiene for small accounts: a checklist you can run today',
     tags: ['security', 'technology', 'blog'],
     body: [
@@ -242,7 +242,7 @@ module.exports = { WAVE, WAVE_R147C, sanity, MARKERS };
 // itself (receipt 2026-10-01). Each desk now answers in its own voice, and every
 // broadcast reply joins the gate memory so the next reply is measured against it.
 const DESK_FRAMES = {
-  headcorner: (asker) => [
+  owner: (asker) => [
     `Operations note for ${asker}:`,
     '',
     'The honest version is that public records let you test a claim yourself before trusting anyone. Pick one number in the post, find the public source behind it, and read it live. If it checks out, you learned the method, not just the fact. If it does not, say so in the comments; a correction with the evidence beats a quiet edit.',
@@ -288,7 +288,7 @@ async function supportPass(day, keys, memory, receipt) {
   // (a) r147-c: questions ON outside users' own posts, under the community's core
   //     tags (newest first). This is the genuine support surface: help where asked.
   const TAGS = ['hebrew', 'security', 'defi'];
-  const ROUTE_BY_TAG = { hebrew: 'israelnews', security: 'headcorner', defi: 'cashmachine' };
+  const ROUTE_BY_TAG = { hebrew: 'israelnews', security: 'owner', defi: 'cashmachine' };
   const outsideSeen = new Set();
   const onePerAuthor = new Set();
   const FRESH_MS = 36 * 3600 * 1000;
@@ -318,7 +318,7 @@ async function supportPass(day, keys, memory, receipt) {
   }
   receipt.outsideScan = { tags: TAGS, found: outside.length };
   // (b) the original surface: questions from outside authors under OUR recent posts
-  for (const who of ['headcorner', 'cashmachine', 'israelnews']) {
+  for (const who of ['owner', 'cashmachine', 'israelnews']) {
     if (outside.length >= 5) break;
     try {
       const rows = await rpc('bridge.get_account_posts', { sort: 'posts', account: who, limit: 5 });
@@ -350,7 +350,7 @@ async function supportPass(day, keys, memory, receipt) {
   for (const q of outside.slice(0, 3)) {
     const responder = q.surface === 'outside-post'
       ? (ROUTE_BY_TAG[q.tag] || 'woq')
-      : (q.parentAuthor === 'headcorner' ? 'headcorner' : q.parentAuthor === 'cashmachine' ? 'cashmachine' : q.parentAuthor === 'israelnews' ? 'israelnews' : 'woq');
+      : (q.parentAuthor === 'owner' ? 'owner' : q.parentAuthor === 'cashmachine' ? 'cashmachine' : q.parentAuthor === 'israelnews' ? 'israelnews' : 'woq');
     const wif = keys[responder];
     if (!wif) continue;
     const rPermlink = `re-${q.qPermlink || `${q.parentPermlink}-${q.qAuthor}`}-${responder}`.slice(0, 255).replace(/[^a-z0-9-]/gi, '-');

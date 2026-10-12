@@ -715,10 +715,10 @@ function accumulateInMemory(bookRows, seed) {
     const a1 = fl.assetInfo('0.121 SBD'), a2 = fl.assetInfo({ amount: '2510', precision: 3, nai: fl.NAI.STEEM }), a3 = fl.assetInfo('1.0 BTC'), a4 = fl.assetInfo('garbage');
     if (!(a1 && a1.sym === 'SBD' && a1.micro === 121000 && a2 && a2.sym === 'STEEM' && a2.micro === 2510000 && a3 === null && a4 === null)) { ok30 = false; why30.push('assetInfo'); }
     // direction law (law 2): ours-as-OPEN sells open_pays; ours-as-CURRENT sells current_pays
-    const sOpen = fl.parseFill({ open_owner: 'headcorner', open_orderid: 7, open_pays: '1.500 STEEM', current_owner: 'btsx', current_orderid: 9, current_pays: '0.157 SBD' });
-    const bCur = fl.parseFill({ open_owner: 'btsx', open_orderid: 9, open_pays: '2.510 STEEM', current_owner: 'headcorner', current_orderid: 7, current_pays: '0.250 SBD' });
+    const sOpen = fl.parseFill({ open_owner: 'owner', open_orderid: 7, open_pays: '1.500 STEEM', current_owner: 'btsx', current_orderid: 9, current_pays: '0.157 SBD' });
+    const bCur = fl.parseFill({ open_owner: 'btsx', open_orderid: 9, open_pays: '2.510 STEEM', current_owner: 'owner', current_orderid: 7, current_pays: '0.250 SBD' });
     const foreign = fl.parseFill({ open_owner: 'x', open_orderid: 1, open_pays: '1.000 STEEM', current_owner: 'y', current_orderid: 2, current_pays: '0.100 SBD' });
-    const unclass = fl.parseFill({ open_owner: 'headcorner', open_orderid: 7, open_pays: '1.000 STEEM', current_owner: 'y', current_orderid: 2, current_pays: '1.000 STEEM' });
+    const unclass = fl.parseFill({ open_owner: 'owner', open_orderid: 7, open_pays: '1.000 STEEM', current_owner: 'y', current_orderid: 2, current_pays: '1.000 STEEM' });
     if (!(sOpen && sOpen.leg === 'SELL' && sOpen.sold.sym === 'STEEM' && sOpen.recv.sym === 'SBD' && sOpen.price === 0.104667)) { ok30 = false; why30.push('dir-OPEN'); }
     if (!(bCur && bCur.leg === 'BUY' && bCur.sold.sym === 'SBD' && bCur.recv.sym === 'STEEM' && Math.abs(bCur.price - 0.099602) < 1e-6)) { ok30 = false; why30.push('dir-CURRENT'); }
     if (foreign !== null) { ok30 = false; why30.push('foreign-not-null'); }
@@ -1097,7 +1097,7 @@ function accumulateInMemory(bookRows, seed) {
     // days) and rate → 475.88228 SP/wk (matches measured 475.852 SP/wk). Fixture at 1 VESTS = 1e-4 SP.
     const dc = require(path.join(AG, 'drip-canon.cjs'));
     const GP = { total_vesting_fund_steem: '1000000.000 STEEM', total_vesting_shares: '10000000000.000000 VESTS' };
-    const dcanon = dc.dripCanonOf({ name: 'headcorner', vesting_shares: '39466060.000000 VESTS', to_withdraw: '1903529118.972142 VESTS', vesting_withdraw_rate: '4758822.800000 VESTS', next_vesting_withdrawal: '2026-10-10T02:01:27' }, GP);
+    const dcanon = dc.dripCanonOf({ name: 'owner', vesting_shares: '39466060.000000 VESTS', to_withdraw: '1903529118.972142 VESTS', vesting_withdraw_rate: '4758822.800000 VESTS', next_vesting_withdrawal: '2026-10-10T02:01:27' }, GP);
     chk(dcanon && !dcanon.unverified, 'drip-canon-verified');
     chk(dcanon.vesting_sp.toFixed(6) === '3946.606000', 'drip-canon-vesting-sp');
     chk(dcanon.remaining_sp.toFixed(6) === '0.190353', 'drip-canon-gests-law (µ-VESTS ÷1e6)');
@@ -1162,13 +1162,13 @@ function accumulateInMemory(bookRows, seed) {
     let ok37 = true; const why37 = [];
     const chk37 = (cond, tag) => { if (!cond) { ok37 = false; why37.push(tag); } };
     // DIRECTION LAW: ours-as-OPEN → we GAVE open_pays / RECEIVED current_pays
-    const t1 = ea.tallyOp(ea.freshTally(), ['fill_order', { current_pays: '0.058 SBD', open_pays: '0.576 STEEM', open_owner: 'headcorner', __account: 'headcorner' }]);
+    const t1 = ea.tallyOp(ea.freshTally(), ['fill_order', { current_pays: '0.058 SBD', open_pays: '0.576 STEEM', open_owner: 'owner', __account: 'owner' }]);
     chk37(t1.fills === 1 && Math.abs(t1.sold_steem - 0.576) < 1e-9 && Math.abs(t1.recv_sbd - 0.058) < 1e-9 && t1.spent_sbd === 0, 'direction-ours-as-open-sell');
     // ours-as-CURRENT (someone else is the maker) → we GAVE current_pays
-    const t2 = ea.tallyOp(ea.freshTally(), ['fill_order', { current_pays: '4.996 STEEM', open_pays: '0.500 SBD', open_owner: 'droida', __account: 'headcorner' }]);
+    const t2 = ea.tallyOp(ea.freshTally(), ['fill_order', { current_pays: '4.996 STEEM', open_pays: '0.500 SBD', open_owner: 'droida', __account: 'owner' }]);
     chk37(t2.fills === 1 && Math.abs(t2.sold_steem - 4.996) < 1e-9 && Math.abs(t2.recv_sbd - 0.500) < 1e-9, 'direction-ours-as-current-sell');
     // taker BUY: we paid SBD as the current side
-    const t3 = ea.tallyOp(ea.freshTally(), ['fill_order', { current_pays: '3.692 SBD', open_pays: '36.601 STEEM', open_owner: 'droida', __account: 'headcorner' }]);
+    const t3 = ea.tallyOp(ea.freshTally(), ['fill_order', { current_pays: '3.692 SBD', open_pays: '36.601 STEEM', open_owner: 'droida', __account: 'owner' }]);
     chk37(t3.fills === 1 && Math.abs(t3.bought_steem - 36.601) < 1e-9 && Math.abs(t3.spent_sbd - 3.692) < 1e-9 && t3.sold_steem === 0, 'direction-taker-buy');
     // unparseable body → honest skip, no fill counted
     const t4 = ea.tallyOp(ea.freshTally(), ['fill_order', {}]);
@@ -1191,7 +1191,7 @@ function accumulateInMemory(bookRows, seed) {
     chk37(process.env.EARN_AUDIT_SKIP !== '1', 'skip-switch-present');
     evalr('E37', 'earn-audit: from-nothing chain-truth — direction-law fill classification (ours-as-open vs ours-as-current vs taker), rewards/claims/drip/convert tallies, honest unparseable skip',
       ok37,
-      ['white-box: fill direction law — open_owner==us means we gave open_pays (maker sell booked 0.576 STEEM→0.058 SBD); open_owner!=us means we gave current_pays (taker sell 4.996 STEEM→0.500 SBD AND taker buy 3.692 SBD→36.601 STEEM both classified correctly)', 'white-box: author/curation/claim/drip/convert tallies exact on fixtures', 'white-box: unparseable fill body = honest skip (op counted, fill not)', 'live-measured: 1d headcorner — drip 475.857 STEEM deployed (50 fills: sold 525.2 STEEM → 52.56 SBD, bought 87.9 for 8.99), 14 converts 32.8 SBD; 7d fleet — 1421 votes / 56 posts → ZERO author+curation payouts lifetime (the content loop is measured dead)'],
+      ['white-box: fill direction law — open_owner==us means we gave open_pays (maker sell booked 0.576 STEEM→0.058 SBD); open_owner!=us means we gave current_pays (taker sell 4.996 STEEM→0.500 SBD AND taker buy 3.692 SBD→36.601 STEEM both classified correctly)', 'white-box: author/curation/claim/drip/convert tallies exact on fixtures', 'white-box: unparseable fill body = honest skip (op counted, fill not)', 'live-measured: 1d owner — drip 475.857 STEEM deployed (50 fills: sold 525.2 STEEM → 52.56 SBD, bought 87.9 for 8.99), 14 converts 32.8 SBD; 7d fleet — 1421 votes / 56 posts → ZERO author+curation payouts lifetime (the content loop is measured dead)'],
       why37.length ? 'fails: ' + why37.join('; ') : 'the proof surface is live: every claim about fleet income is now checkable against the chain');
   } catch (e) { evalr('E37', 'earn-audit', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
@@ -1260,7 +1260,7 @@ function accumulateInMemory(bookRows, seed) {
     chk(cb.pagePlan(3, 100).length === 3 && cb.pagePlan(3, 100)[0][0] === -1, 'page-plan-first-start-minus-one');
     chk(cb.nextStart(61960) === 61959 && cb.nextStart(1) === null && cb.nextStart(0) === null, 'next-start-walk');
     // white-box bus: normalize dedupe on (id,seq) keeps the later block, sorts ascending
-    const mk = (seq, id, block) => ({ seq, id, block, at: '2026-10-03T20:00:0' + (seq % 10) + 'Z', from: 'headcorner', known: true, payload: { seq } });
+    const mk = (seq, id, block) => ({ seq, id, block, at: '2026-10-03T20:00:0' + (seq % 10) + 'Z', from: 'owner', known: true, payload: { seq } });
     const norm = cb.normalizeRows([mk(3, 'a', 11), mk(1, 'b', 22), mk(3, 'a', 33)]);
     chk(norm.length === 2 && norm[0].seq === 1 && norm[1].seq === 3 && norm[1].block === 33, 'normalize-dedupe-sort');
     chk(cb.parsePayload('{"x":1}').x === 1 && cb.parsePayload('NOT-JSON{').raw === 'NOT-JSON{', 'parse-payload-honest-raw');
@@ -1274,7 +1274,7 @@ function accumulateInMemory(bookRows, seed) {
     // head (with a content digest), not the sliding window: deeper windows with the
     // same head agree (a hot account's limit-order churn must not book noise), and a
     // head-content LIE (same seq, different block/payload) still refuses.
-    const mkAt = (seq, id, block, at) => ({ seq, id, block, at, from: 'headcorner', known: true, payload: { seq } });
+    const mkAt = (seq, id, block, at) => ({ seq, id, block, at, from: 'owner', known: true, payload: { seq } });
     const wA = [mkAt(8, 'saos.weave.core.v1', 1, '2026-10-03T21:00:00Z'), mkAt(10, 'saos.weave.core.v1', 2, '2026-10-03T21:05:00Z')];
     const wB = [mkAt(10, 'saos.weave.core.v1', 2, '2026-10-03T21:05:00Z')];
     chk(cb.busFingerprint(wA) === cb.busFingerprint(wB), 'heads-window-stable');
@@ -1289,9 +1289,9 @@ function accumulateInMemory(bookRows, seed) {
     chk(roll['saos.weave.core.v1'].count === 2 && roll['saos.weave.core.v1'].lastSeq === 2 && roll['saos.snapshot.v1'].count === 1, 'namespace-rollup');
     // white-box bus: THE WATERMARK WALK — pages stop when the previous book's lowest
     // head is re-reached (continuous coverage of a hot account, cap still bounds)
-    const pageRange = (hi, lo) => { const rows = []; for (let s = hi; s >= lo; s--) rows.push([s, { block: s, timestamp: '2026-10-03T21:00:00Z', op: s % 7 === 0 ? ['custom_json', { id: 'saos.weave.core.v1', required_auths: ['headcorner'], json: '{"n":' + s + '}' }] : ['vote', { voter: 'x' }]}]); return rows; };
+    const pageRange = (hi, lo) => { const rows = []; for (let s = hi; s >= lo; s--) rows.push([s, { block: s, timestamp: '2026-10-03T21:00:00Z', op: s % 7 === 0 ? ['custom_json', { id: 'saos.weave.core.v1', required_auths: ['owner'], json: '{"n":' + s + '}' }] : ['vote', { voter: 'x' }]}]); return rows; };
     cb.setRpcImpl((node, method, params) => (String(params[1]) === '-1' ? pageRange(100, 61) : pageRange(60, 21)));
-    const walk = await cb.fetchBus('https://api.steemit.com/', 'headcorner', 5, 50);
+    const walk = await cb.fetchBus('https://api.steemit.com/', 'owner', 5, 50);
     chk(walk.scan.pages === 2 && walk.scan.watermarkReached === true && walk.scan.minSeq === 21 && walk.scan.maxSeq === 100, 'watermark-walk-stops');
     chk(walk.messages.length === 12, 'watermark-walk-captured'); // 6 custom_json ops per page (multiples of 7 in [61,100] and [21,60])
     cb.setRpcImpl(null);
@@ -1299,7 +1299,7 @@ function accumulateInMemory(bookRows, seed) {
     // transport seam (COORD_BUS_FIXTURE — the house eval idiom; the sandbox forbids
     // cross-process loopback TCP, so the canned condenser rides the seam instead —
     // the whole desk flow runs identically, only the transport is canned).
-    const cannedRow = (seq, id, block, json) => [[seq, { block, timestamp: '2026-10-03T20:38:30', op: ['custom_json', { id, required_auths: ['headcorner'], json }] }]];
+    const cannedRow = (seq, id, block, json) => [[seq, { block, timestamp: '2026-10-03T20:38:30', op: ['custom_json', { id, required_auths: ['owner'], json }] }]];
     const row1 = cannedRow(62256, 'saos.weave.core.v1', 881001, '{"protocol":"saos-weave-core/v1","checkpoint":1239}');
     const row2 = cannedRow(62256, 'saos.weave.core.v1', 881001, '{"protocol":"saos-weave-core/v1","checkpoint":9999}');
     const mkFixture = (obj) => { const p = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'e39f-')), 'fixture.json'); fs.writeFileSync(p, JSON.stringify(obj)); return p; };
@@ -1801,13 +1801,13 @@ function accumulateInMemory(bookRows, seed) {
     const cc45 = require(path.join(AG, 'convert-canon.cjs'));
     const NOW45 = '2026-10-03T23:59:00.000Z';
     // (a) THE MATURITY LAW — a walked convert with ts and NO date composes open+3.5d
-    const a45 = cc45.convertBook([{ seq: 62119, kind: 'convert', b: { owner: 'headcorner', requestid: 1791014973, amount: '1.400 SBD' }, ts: '2026-10-03T08:09:36Z' }], NOW45);
+    const a45 = cc45.convertBook([{ seq: 62119, kind: 'convert', b: { owner: 'owner', requestid: 1791014973, amount: '1.400 SBD' }, ts: '2026-10-03T08:09:36Z' }], NOW45);
     c45(a45.pending.length === 1 && a45.pending[0].conversion_date === '2026-10-06T20:09:36Z' && a45.undated === 0, 'maturity-law-computed');
     // (b) THE MEASURED REALITY — the 3-point ladder sample: 0.001@10-02T12:02:12, 7.611@12:02:30, 1.26@10-03T13:38:21 → wave 10-06T00:02:12 → 10-07T01:38:21
     const b45 = cc45.convertBook([
-      { seq: 61000, kind: 'convert', b: { owner: 'headcorner', requestid: 1790976163, amount: '0.001 SBD' }, ts: '2026-10-02T12:02:12Z' },
-      { seq: 61001, kind: 'convert', b: { owner: 'headcorner', requestid: 1790976165, amount: '7.611 SBD' }, ts: '2026-10-02T12:02:30Z' },
-      { seq: 62140, kind: 'convert', b: { owner: 'headcorner', requestid: 1791034699, amount: '1.260 SBD' }, ts: '2026-10-03T13:38:21Z' },
+      { seq: 61000, kind: 'convert', b: { owner: 'owner', requestid: 1790976163, amount: '0.001 SBD' }, ts: '2026-10-02T12:02:12Z' },
+      { seq: 61001, kind: 'convert', b: { owner: 'owner', requestid: 1790976165, amount: '7.611 SBD' }, ts: '2026-10-02T12:02:30Z' },
+      { seq: 62140, kind: 'convert', b: { owner: 'owner', requestid: 1791034699, amount: '1.260 SBD' }, ts: '2026-10-03T13:38:21Z' },
     ], NOW45);
     c45(b45.pending.length === 3 && b45.total_pending_sbd === 8.872, 'ladder-total-measured');
     c45(b45.next_maturity === '2026-10-06T00:02:12Z' && b45.pending[b45.pending.length - 1].conversion_date === '2026-10-07T01:38:21Z', 'wave-window-10-06-to-10-07');
@@ -1823,7 +1823,7 @@ function accumulateInMemory(bookRows, seed) {
     // (e) THE BROKEN WIRE, regression-pinned: the sensor compose reads per_account (both shapes legal)
     const ea45 = JSON.parse(fs.readFileSync(path.join(AG, 'earn-audit.json'), 'utf8'));
     c45(Array.isArray(ea45.per_account) && ea45.per_account.length >= 1, 'sensor-book-per-account-shape');
-    const freshSensor = (ea45.per_account || []).find((r) => r.account === 'headcorner');
+    const freshSensor = (ea45.per_account || []).find((r) => r.account === 'owner');
     c45(!!freshSensor && (freshSensor.convert_maturities || []).every((m) => typeof m.matures_at === 'string' && !isNaN(Date.parse(m.matures_at))), 'sensor-books-matures-at');
     // (f) THE LIVE CANON BOOK agrees with the composed law (the real schedule on the real tree)
     let live45 = null; try { live45 = JSON.parse(fs.readFileSync(path.join(AG, 'convert-canon.json'), 'utf8')); } catch (_) {}
@@ -1832,9 +1832,9 @@ function accumulateInMemory(bookRows, seed) {
     // (g) THE SENSOR DESK itself, white-box: tallyOp computes the maturity from the op timestamp
     const eaDesk45 = require(path.join(AG, 'earn-audit.cjs'));
     const t45 = eaDesk45.freshTally();
-    eaDesk45.tallyOp(t45, ['convert', { owner: 'headcorner', requestid: 42, amount: '1.400 SBD' }], '2026-10-03T08:09:36');
+    eaDesk45.tallyOp(t45, ['convert', { owner: 'owner', requestid: 42, amount: '1.400 SBD' }], '2026-10-03T08:09:36');
     c45(t45.convert_maturities[0].matures_at === '2026-10-06T20:09:36Z' && t45.convert_maturities[0].open_ts === '2026-10-03T08:09:36', 'sensor-tally-computes-maturity');
-    eaDesk45.tallyOp(t45, ['fill_convert_request', { owner: 'headcorner', requestid: 42 }]);
+    eaDesk45.tallyOp(t45, ['fill_convert_request', { owner: 'owner', requestid: 42 }]);
     c45(t45.convert_fills.length === 1 && t45.convert_fills[0].requestid === 42, 'sensor-books-closure');
 
     evalr('E46', 'the maturity-law suite: the convert schedule measured into existence — the broken wire (per_account) alive, the phantom date (chain ops carry none) replaced by the open+3.5d chain law, the seq-race date-laundering dead, undated rows honestly bucketed, and the REAL rotation wave (117.887 SBD, 2026-10-06T00:02Z → 2026-10-07T01:38Z) booked from chain measurement — not the 435-STEEM fiction',
@@ -2058,7 +2058,7 @@ function accumulateInMemory(bookRows, seed) {
     c50(new Set(allR).size === 10 && allR.reduce((s, x) => s + x, 0) === 45, 'partition-disjoint-complete');
     c50(mv.partitionLadder([], 10).covers === false && mv.partitionLadder(['a'], 0).covers === false, 'partition-empty-false');
     // white-box: selfFlowPlan — eligible ONLY at zero round-trip fee, cap math, guards as data
-    const sf50 = mv.selfFlowPlan({ accounts: ['headcorner'], projVolumeSbd: 100, feeBps: 0 });
+    const sf50 = mv.selfFlowPlan({ accounts: ['owner'], projVolumeSbd: 100, feeBps: 0 });
     c50(sf50.eligible === true && sf50.internalCapSbd === 25 && sf50.guards.some((g) => g.startsWith('VWAP-EXCLUSION')), 'selfflow-zero-fee-cap');
     const sf50b = mv.selfFlowPlan({ accounts: ['a'], projVolumeSbd: 100, feeBps: 75 });
     c50(sf50b.eligible === false && sf50b.blockedReason === 'FEE-ROUND-TRIP-NONZERO', 'selfflow-fee-blocked');
@@ -2075,7 +2075,7 @@ function accumulateInMemory(bookRows, seed) {
     fs.writeFileSync(path.join(fx50, 'market-grid-history.jsonl'), JSON.stringify({ at: '2026-10-04T00:00:00Z', spreads: [{ market: 'SBD/STEEM (internal steem)', spreadPct: 1.4736 }] }) + '\n');
     fs.writeFileSync(path.join(fx50, 'money-ledger.json'), JSON.stringify({ updated: '2026-10-04T00:00:00Z', book: { headSteemLiquid: '23.366 STEEM', headSteemDebt: '11.241 SBD' } }));
     fs.writeFileSync(path.join(fx50, 'market-exec.json'), '[]');
-    fs.writeFileSync(path.join(fx50, 'agent-registry.json'), JSON.stringify({ identity: [{ metadata: { owner: 'steem://headcorner' } }] }));
+    fs.writeFileSync(path.join(fx50, 'agent-registry.json'), JSON.stringify({ identity: [{ metadata: { owner: 'steem://owner' } }] }));
     const r50a = spawnSync(process.execPath, [path.join(AG, 'mm-volume.cjs')], { env: { ...process.env, MMV_DIR: fx50 }, cwd: AG, timeout: 60000, encoding: 'utf8' });
     const book50 = (() => { try { return JSON.parse(fs.readFileSync(path.join(fx50, 'mm-volume.json'), 'utf8')); } catch (_) { return null; } })();
     c50(r50a.status === 0 && book50 && book50.verdict === 'MMV-PLAN-LIVE', 'mmv-blackbox-live');
@@ -2159,7 +2159,7 @@ function accumulateInMemory(bookRows, seed) {
     fs.writeFileSync(path.join(fx51, 'market-grid-history.jsonl'), JSON.stringify({ at: '2026-10-04T00:00:00Z', spreads: [{ market: 'SBD/STEEM (internal steem)', spreadPct: 1.4736 }] }) + '\n');
     fs.writeFileSync(path.join(fx51, 'money-ledger.json'), JSON.stringify({ updated: '2026-10-04T00:00:00Z', book: { headSteemLiquid: '23.366 STEEM', headSteemDebt: '11.241 SBD' } }));
     fs.writeFileSync(path.join(fx51, 'market-exec.json'), JSON.stringify([{ mode: 'DRY_RUN', placed: [{ amount_to_sell: '0.680 STEEM', realized: 0.100 }] }]));
-    fs.writeFileSync(path.join(fx51, 'agent-registry.json'), JSON.stringify({ identity: [{ metadata: { owner: 'steem://headcorner' } }] }));
+    fs.writeFileSync(path.join(fx51, 'agent-registry.json'), JSON.stringify({ identity: [{ metadata: { owner: 'steem://owner' } }] }));
     fs.writeFileSync(path.join(fx51, 'market-grid.json'), JSON.stringify({ at: '2026-10-04T01:00:00Z', markets: [{ chain: 'steem', spreadPct: 1.4736, volume24hSbdTerm: 163.687 }, { chain: 'hive', spreadPct: 0.1645, volume24hSbdTerm: 958.712 }] }));
     fs.writeFileSync(path.join(fx51, 'fill-ledger-fills.jsonl'), fills51.slice(1, 4).map((f) => JSON.stringify(f)).join('\n') + '\n');
     const r51a = spawnSync(process.execPath, [path.join(AG, 'mm-volume.cjs')], { env: { ...process.env, MMV_DIR: fx51 }, cwd: AG, timeout: 60000, encoding: 'utf8' });
@@ -2182,7 +2182,7 @@ function accumulateInMemory(bookRows, seed) {
     fs.writeFileSync(path.join(fx51b, 'market-grid-history.jsonl'), JSON.stringify({ at: '2026-10-04T00:00:00Z', spreads: [{ market: 'SBD/STEEM (internal steem)', spreadPct: 1.4736 }] }) + '\n');
     fs.writeFileSync(path.join(fx51b, 'money-ledger.json'), JSON.stringify({ updated: '2026-10-04T00:00:00Z', book: { headSteemLiquid: '1 STEEM', headSteemDebt: '1 SBD' } }));
     fs.writeFileSync(path.join(fx51b, 'market-exec.json'), '[]');
-    fs.writeFileSync(path.join(fx51b, 'agent-registry.json'), JSON.stringify({ identity: [{ metadata: { owner: 'steem://headcorner' } }] }));
+    fs.writeFileSync(path.join(fx51b, 'agent-registry.json'), JSON.stringify({ identity: [{ metadata: { owner: 'steem://owner' } }] }));
     const r51c = spawnSync(process.execPath, [path.join(AG, 'mm-volume.cjs')], { env: { ...process.env, MMV_DIR: fx51b }, cwd: AG, timeout: 60000, encoding: 'utf8' });
     const book51c = (() => { try { return JSON.parse(fs.readFileSync(path.join(fx51b, 'mm-volume.json'), 'utf8')); } catch (_) { return null; } })();
     const st51c = book51c && book51c.venues.find((v) => String(v.venue).includes('steem'));
@@ -2239,7 +2239,7 @@ function accumulateInMemory(bookRows, seed) {
     fs.writeFileSync(path.join(fx52, 'market-grid-history.jsonl'), JSON.stringify({ at: '2026-10-04T00:00:00Z', spreads: [{ market: 'SBD/STEEM (internal steem)', spreadPct: 1.4736 }] }) + '\n');
     fs.writeFileSync(path.join(fx52, 'money-ledger.json'), JSON.stringify({ updated: '2026-10-04T00:00:00Z', book: { headSteemLiquid: '2 STEEM', headSteemDebt: '1 SBD' } }));
     fs.writeFileSync(path.join(fx52, 'market-exec.json'), JSON.stringify([{ mode: 'DRY_RUN', placed: [{ amount_to_sell: '0.680 STEEM', realized: 0.100 }] }]));
-    fs.writeFileSync(path.join(fx52, 'agent-registry.json'), JSON.stringify({ identity: [{ metadata: { owner: 'steem://headcorner' } }] }));
+    fs.writeFileSync(path.join(fx52, 'agent-registry.json'), JSON.stringify({ identity: [{ metadata: { owner: 'steem://owner' } }] }));
     fs.writeFileSync(path.join(fx52, 'market-grid.json'), JSON.stringify({ at: '2026-10-04T01:00:00Z', markets: [{ chain: 'steem', spreadPct: 1.4736, volume24hSbdTerm: 163.687 }] }));
     fs.writeFileSync(path.join(fx52, 'fill-ledger-fills.jsonl'), fills52.slice(0, 2).map((f) => JSON.stringify(f)).join('\n') + '\n');
     fs.writeFileSync(path.join(fx52, 'mm-volume-plan.jsonl'), JSON.stringify({ at: '2026-10-04T00:30:00Z', verdict: 'MMV-PLAN-LIVE', shares: [{ venue: 'SBD/STEEM (internal steem)', sharePct: 23.9286 }] }) + '\n');
@@ -2308,7 +2308,7 @@ function accumulateInMemory(bookRows, seed) {
     fs.writeFileSync(path.join(fx53, 'market-grid-history.jsonl'), JSON.stringify({ at: '2026-10-04T00:00:00Z', spreads: [{ market: 'SBD/STEEM (internal steem)', spreadPct: 1.4736 }] }) + '\n');
     fs.writeFileSync(path.join(fx53, 'money-ledger.json'), JSON.stringify({ updated: '2026-10-04T00:00:00Z', book: { headSteemLiquid: '2 STEEM', headSteemDebt: '1 SBD' } }));
     fs.writeFileSync(path.join(fx53, 'market-exec.json'), '[]');
-    fs.writeFileSync(path.join(fx53, 'agent-registry.json'), JSON.stringify({ identity: [{ metadata: { owner: 'steem://headcorner' } }] }));
+    fs.writeFileSync(path.join(fx53, 'agent-registry.json'), JSON.stringify({ identity: [{ metadata: { owner: 'steem://owner' } }] }));
     fs.writeFileSync(path.join(fx53, 'market-grid.json'), JSON.stringify({
       at: '2026-10-04T01:00:00Z',
       markets: [{ chain: 'steem', spreadPct: 1.4736, volume24hSbdTerm: 163.687 }],
@@ -2394,7 +2394,7 @@ function accumulateInMemory(bookRows, seed) {
     fs.writeFileSync(path.join(fx54, 'market-grid-history.jsonl'), JSON.stringify({ at: '2026-10-04T00:00:00Z', spreads: [{ market: 'SBD/STEEM (internal steem)', spreadPct: 1.4736 }] }) + '\n');
     fs.writeFileSync(path.join(fx54, 'money-ledger.json'), JSON.stringify({ updated: '2026-10-04T00:00:00Z', book: { headSteemLiquid: '2 STEEM', headSteemDebt: '1 SBD' } }));
     fs.writeFileSync(path.join(fx54, 'market-exec.json'), '[]');
-    fs.writeFileSync(path.join(fx54, 'agent-registry.json'), JSON.stringify({ identity: [{ metadata: { owner: 'steem://headcorner' } }] }));
+    fs.writeFileSync(path.join(fx54, 'agent-registry.json'), JSON.stringify({ identity: [{ metadata: { owner: 'steem://owner' } }] }));
     fs.writeFileSync(path.join(fx54, 'market-grid.json'), JSON.stringify({
       at: '2026-10-04T01:00:00Z',
       markets: [
@@ -2441,7 +2441,7 @@ function accumulateInMemory(bookRows, seed) {
     fs.writeFileSync(path.join(fx54b, 'market-grid-history.jsonl'), JSON.stringify({ at: '2026-10-04T00:00:00Z', spreads: [{ market: 'SBD/STEEM (internal steem)', spreadPct: 1.4736 }] }) + '\n');
     fs.writeFileSync(path.join(fx54b, 'money-ledger.json'), JSON.stringify({ updated: '2026-10-04T00:00:00Z', book: { headSteemLiquid: '1 STEEM', headSteemDebt: '1 SBD' } }));
     fs.writeFileSync(path.join(fx54b, 'market-exec.json'), '[]');
-    fs.writeFileSync(path.join(fx54b, 'agent-registry.json'), JSON.stringify({ identity: [{ metadata: { owner: 'steem://headcorner' } }] }));
+    fs.writeFileSync(path.join(fx54b, 'agent-registry.json'), JSON.stringify({ identity: [{ metadata: { owner: 'steem://owner' } }] }));
     fs.writeFileSync(path.join(fx54b, 'market-grid.json'), JSON.stringify({
       at: '2026-10-04T01:00:00Z',
       markets: [{ chain: 'steem', spreadPct: 1.4736, volume24hSbdTerm: 163.687 }],
@@ -2707,14 +2707,14 @@ function accumulateInMemory(bookRows, seed) {
     c59(cf.fundingPlan(5.0, 3.05, [mk(1, 4750, 51148, '@@000000021')], 2).armed === true && cf.fundingPlan(5.0, 3.05, [], 2).cancels.length === 0, 'funding-liquid-sufficient');
     const two59 = cf.fundingPlan(0.012, 8.05, [mk(1, 4750, 51148, '@@000000021'), mk(2, 4750, 51372, '@@000000021'), mk(3, 4750, 51625, '@@000000021')], 2);
     c59(two59.cancels.length === 2 && two59.cancels[0] === 3 && two59.cancels[1] === 2, 'funding-cap-two');
-    // the founding roles: headcorner admin (measured creator pattern), soldiers member
-    const roles59 = cf.memberRoles(['headcorner', 'wic', 'haran']);
+    // the founding roles: owner admin (measured creator pattern), soldiers member
+    const roles59 = cf.memberRoles(['owner', 'wic', 'haran']);
     c59(roles59[0].role === 'admin' && roles59[1].role === 'member' && roles59[2].role === 'member', 'founding-roles');
     // op shapes byte-match the measured ground truth (hive-153176 op 0/1/2)
     const op59 = cf.accountCreateOp('hive-177701', { owner: 'OW', active: 'AC', posting: 'PO', memo: 'ME' }, '3.000 STEEM');
-    c59(op59[0] === 'account_create' && op59[1].fee === '3.000 STEEM' && op59[1].creator === 'headcorner' && op59[1].new_account_name === 'hive-177701', 'op-account-create-shape');
+    c59(op59[0] === 'account_create' && op59[1].fee === '3.000 STEEM' && op59[1].creator === 'owner' && op59[1].new_account_name === 'hive-177701', 'op-account-create-shape');
     c59(op59[1].owner.weight_threshold === 1 && op59[1].owner.account_auths.length === 0 && op59[1].owner.key_auths[0][1] === 1 && op59[1].json_metadata === '', 'op-auth-shape');
-    const roleOp59 = cf.setRoleOp('hive-177701', 'headcorner', 'admin');
+    const roleOp59 = cf.setRoleOp('hive-177701', 'owner', 'admin');
     c59(roleOp59[0] === 'custom_json' && roleOp59[1].id === 'community' && roleOp59[1].required_posting_auths[0] === 'hive-177701' && roleOp59[1].required_auths.length === 0, 'op-customjson-posting-only');
     c59(JSON.parse(roleOp59[1].json)[0] === 'setRole' && JSON.parse(roleOp59[1].json)[1].role === 'admin', 'op-setrole-json');
     const propsOp59 = cf.updatePropsOp('hive-177701', props59);
@@ -2730,7 +2730,7 @@ function accumulateInMemory(bookRows, seed) {
       c59(cf.validName(comm59.name), 'book-name-type-law');
       c59(cf.propsGate({ title: comm59.title, about: comm59.about || props59.about, desc: comm59.desc || props59.desc, lang: comm59.lang }).ok === true, 'book-identity-clean');
       c59(Array.isArray(comm59.members) && comm59.members.length >= 11, 'book-members-11');
-      c59(comm59.members.some((m) => m.account === 'headcorner' && m.role === 'admin'), 'book-admin-role');
+      c59(comm59.members.some((m) => m.account === 'owner' && m.role === 'admin'), 'book-admin-role');
       c59(comm59.txids && comm59.txids['account_create:' + comm59.name], 'book-create-txid');
       c59(comm59.delegatedSp >= 8 && comm59.delegatedSp <= cf.COMMUNITY_RC_SP && comm59.receivedSp >= comm59.delegatedSp - 1, 'book-rc-confirmed');
       c59(Object.keys(comm59.txids || {}).length >= 13, 'book-ceremony-txids');
@@ -2740,7 +2740,7 @@ function accumulateInMemory(bookRows, seed) {
       c59(last59 && (last59.verdict === 'COMMUNITY-ABSENT' || last59.verdict === 'ARMED-WAITING' || last59.verdict === 'CREATE-READY' || last59.verdict === 'IDLE-CAPITAL-TOO-SMALL' || last59.verdict === 'VAULT-ABSENT-LOCAL' || last59.verdict === 'STASIS-HALT' || last59.verdict === 'NAME-NONE-FREE' || last59.verdict === 'ERROR' || last59.verdict === 'FUNDING-SHORT' || last59.verdict === 'MODE-DRY' || last59.verdict === 'ALREADY-CREATED' || last59.verdict === 'READ-BACK-FAIL' || last59.verdict === 'READ-BACK-WEAK' || last59.verdict === 'PROPS-GATE' || last59.verdict === 'DELEGATE-FAIL' || last59.verdict === 'VAULT-MISMATCH' || last59.verdict === 'VAULT-UNREADABLE'), 'honest-absence-verdict');
     }
     evalr('E59', 'the community home (CR-0066)', why59.length === 0,
-      ['white-box: the props gate passes the real identity and rejects em-dashes, probe-words and wrong lang by name — the house is born clean of the owner\'s robotic tells', 'white-box: TYPE LAW /^hive-1\\d{5}$/ enforced with dedupe; SP<->VESTS roundtrip exact with null guards; FUNDING LAW picks the farthest idle STEEM sell first, one-cancel coverage preferred, cap 2, SBD orders never touched, armed when liquid suffices', 'white-box: op builders byte-match the measured ground truth (account_create with measured fee + single-key auths + empty json_metadata; community customs signed by community POSTING only; setRole admin for headcorner, member for soldiers)', 'real-tree: the status book carries SAOS-COMMUNITY-FOUNDER/1; when a community exists the chain read-back must confirm it (title clean, >= 11 members, admin role, create txid, RC delegation confirmed, full ceremony txids); when absent, the verdict must be one of the honest absences'],
+      ['white-box: the props gate passes the real identity and rejects em-dashes, probe-words and wrong lang by name — the house is born clean of the owner\'s robotic tells', 'white-box: TYPE LAW /^hive-1\\d{5}$/ enforced with dedupe; SP<->VESTS roundtrip exact with null guards; FUNDING LAW picks the farthest idle STEEM sell first, one-cancel coverage preferred, cap 2, SBD orders never touched, armed when liquid suffices', 'white-box: op builders byte-match the measured ground truth (account_create with measured fee + single-key auths + empty json_metadata; community customs signed by community POSTING only; setRole admin for owner, member for soldiers)', 'real-tree: the status book carries SAOS-COMMUNITY-FOUNDER/1; when a community exists the chain read-back must confirm it (title clean, >= 11 members, admin role, create txid, RC delegation confirmed, full ceremony txids); when absent, the verdict must be one of the honest absences'],
       why59.length ? 'fails: ' + why59.join('; ') : 'the fleet owns its house: founded on measured ceremony, funded from idle capital, keys cold in the vault, and the chain itself confirms the read-back');
   } catch (e) { evalr('E59', 'the community home', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
@@ -2781,12 +2781,12 @@ function accumulateInMemory(bookRows, seed) {
     // the plan: founder first, then soldiers by window start (2026-10-04 is a SUNDAY, weekday 0 —
     // wic's comment window [7,8] catches hour 9 via the +1h catch-up law, before haran's [9,10]); capped; already-subscribed skipped
     const now60 = new Date('2026-10-04T09:17:00Z');
-    const keys60 = Object.fromEntries(['headcorner', 'haran', 'israelnews', 'wic', 'tov'].map((k) => [k, 'wif']));
+    const keys60 = Object.fromEntries(['owner', 'haran', 'israelnews', 'wic', 'tov'].map((k) => [k, 'wif']));
     const plan60 = hc60.subscribePlan(now60, new Set(), { subscribeDone: {} }, keys60);
-    c60(plan60.length === 2 && plan60[0].who === 'headcorner' && plan60[1].who === 'wic', 'plan-founder-first-window-order');
-    const planSub = hc60.subscribePlan(now60, new Set(['headcorner', 'wic']), { subscribeDone: {} }, keys60);
+    c60(plan60.length === 2 && plan60[0].who === 'owner' && plan60[1].who === 'wic', 'plan-founder-first-window-order');
+    const planSub = hc60.subscribePlan(now60, new Set(['owner', 'wic']), { subscribeDone: {} }, keys60);
     c60(planSub.length === 1 && planSub[0].who === 'haran', 'plan-skips-subscribed');
-    const planMem = hc60.subscribePlan(now60, new Set(), { subscribeDone: { headcorner: 280, wic: 280 } }, keys60);
+    const planMem = hc60.subscribePlan(now60, new Set(), { subscribeDone: { owner: 280, wic: 280 } }, keys60);
     c60(planMem.length === 1 && planMem[0].who === 'haran', 'plan-budget-memory');
     c60(JSON.stringify(hc60.subscribePlan(now60, new Set(), { subscribeDone: {} }, keys60)) === JSON.stringify(plan60), 'plan-deterministic');
     // RC top-up desk: GESTS units law + the assert truth + the floor-protected plan
@@ -2800,7 +2800,7 @@ function accumulateInMemory(bookRows, seed) {
     c60(poor60.verdict === 'RECLAIM-PENDING' && poor60.availableVests === 50000, 'rc-plan-reclaim-pending');
     c60(cf60.rcTopUpPlan({ ownVests: 0, delegatedVests: 0, toWithdrawGests: 0, withdrawnGests: 0, receivedVests: 0, targetSp: 50, fund: 0, sharesTotal: 0 }).verdict === 'RECLAIM-PENDING', 'rc-plan-null-guard');
     const op2_60 = cf60.rcTopUpOp('hive-177702', 80651.5306122449);
-    c60(op2_60[0] === 'delegate_vesting_shares' && op2_60[1].delegator === 'headcorner' && op2_60[1].delegatee === 'hive-177702' && op2_60[1].vesting_shares === '80651.530612 VESTS', 'rc-topup-op-absolute');
+    c60(op2_60[0] === 'delegate_vesting_shares' && op2_60[1].delegator === 'owner' && op2_60[1].delegatee === 'hive-177702' && op2_60[1].vesting_shares === '80651.530612 VESTS', 'rc-topup-op-absolute');
     // real-tree: the books carry the breath — book v2 with the community, the rc run booked honestly
     const book60 = JSON.parse(fs.readFileSync(path.join(AG, 'human-cadence.json'), 'utf8'));
     c60(book60.version === 2 && book60.community === 'hive-177702', 'cadence-book-v2-community');
@@ -2868,7 +2868,7 @@ function accumulateInMemory(bookRows, seed) {
       c61(hiveRun61.hivePlan.steemHouseOnHive !== true || proof61 == null, 'hive-house-absent-law');
     }
     evalr('E61', 'the chain proof (CR-0068)', why61.length === 0,
-      ['white-box: the registry carries both chains with their nodes and fee assets; the badge is derived ONLY from the live probe legs + booked fee asset — all six branches covered, and the flip law proves derivation (same name, flipped legs → flipped badge), never a hardcoded label', 'white-box: the Hive authority law refuses to pretend — NO-KEYS when no vault, KEY-MISMATCH when pubs diverge (measured live: headcorner hive pub STM8c9vp3… ≠ the held steem pub STM5HhJD…), READY only on exact match; the probe verdict gates authority BEFORE name and funding — an unkeyed desk answers HOME-ABSENT-UNKEYED even when rich', 'real-tree: the booked chain proof carries trivalent legs (absence asserts are evidence, unreachable is a gap) and the badge re-derives exactly from its own legs + the booked fee asset; the hive run verdict is from the honest set and the why is named when unkeyed; the Steem house must be absent on Hive'],
+      ['white-box: the registry carries both chains with their nodes and fee assets; the badge is derived ONLY from the live probe legs + booked fee asset — all six branches covered, and the flip law proves derivation (same name, flipped legs → flipped badge), never a hardcoded label', 'white-box: the Hive authority law refuses to pretend — NO-KEYS when no vault, KEY-MISMATCH when pubs diverge (measured live: owner hive pub STM8c9vp3… ≠ the held steem pub STM5HhJD…), READY only on exact match; the probe verdict gates authority BEFORE name and funding — an unkeyed desk answers HOME-ABSENT-UNKEYED even when rich', 'real-tree: the booked chain proof carries trivalent legs (absence asserts are evidence, unreachable is a gap) and the badge re-derives exactly from its own legs + the booked fee asset; the hive run verdict is from the honest set and the why is named when unkeyed; the Steem house must be absent on Hive'],
       why61.length ? 'fails: ' + why61.join('; ') : 'the chain, not the name, is the truth: STEEM-CHAIN measured live on both bridges (2026-10-04: steem=true, hive=false), the hive second-home desk states its empty hands by name, and the badge re-derives from evidence');
   } catch (e) { evalr('E61', 'the chain proof', false, [''], 'eval crashed: ' + String(e.message).slice(0, 80)); }
 
@@ -3069,13 +3069,13 @@ function accumulateInMemory(bookRows, seed) {
     // 1. refusals: roster-unknown / dust / gated-wire (naked short without treasury capital)
     const r64a = dc.settleIntents(mkCore64(), { batch: 'E64-UNK', intents: [{ agent: 'ghost', from: 'STEEM', to: 'SBD', amountIn: '20000' }] }, feed64, '2026-10-04T10:00:00.000Z');
     if (!(r64a.rejects.some((r) => r.why === 'ROSTER-UNKNOWN') && r64a.fills.length === 0)) why64.push('roster-unknown not refused');
-    const r64b = dc.settleIntents(mkCore64(), { batch: 'E64-DUST', intents: [{ agent: 'headcorner', from: 'STEEM', to: 'SBD', amountIn: '10' }] }, feed64, '2026-10-04T10:00:00.000Z');
+    const r64b = dc.settleIntents(mkCore64(), { batch: 'E64-DUST', intents: [{ agent: 'owner', from: 'STEEM', to: 'SBD', amountIn: '10' }] }, feed64, '2026-10-04T10:00:00.000Z');
     if (!r64b.rejects.some((r) => r.why === 'DUST')) why64.push('dust not refused');
     const broke64 = mkCore64(); broke64.accounts.treasury.claims.STEEM = '0';
-    const r64c = dc.settleIntents(broke64, { batch: 'E64-GATE', intents: [{ agent: 'headcorner', from: 'STEEM', to: 'SBD', amountIn: '20000' }] }, feed64, '2026-10-04T10:00:00.000Z');
+    const r64c = dc.settleIntents(broke64, { batch: 'E64-GATE', intents: [{ agent: 'owner', from: 'STEEM', to: 'SBD', amountIn: '20000' }] }, feed64, '2026-10-04T10:00:00.000Z');
     if (!(r64c.rejects.some((r) => r.why === 'GATED-WIRE-NO-CAPITAL') && r64c.fills.length === 0)) why64.push('gated-wire not honest');
     // 2. the real fill: wire + atomic settle + conservation + fee accrual + edge marked to the CEX fair
-    const f64 = dc.settleIntents(mkCore64(), { batch: 'E64-FILL', intents: [{ agent: 'headcorner', from: 'STEEM', to: 'SBD', amountIn: '20000', minOut: '1' }] }, feed64, '2026-10-04T10:00:00.000Z');
+    const f64 = dc.settleIntents(mkCore64(), { batch: 'E64-FILL', intents: [{ agent: 'owner', from: 'STEEM', to: 'SBD', amountIn: '20000', minOut: '1' }] }, feed64, '2026-10-04T10:00:00.000Z');
     if (!(f64.fills.length === 1 && f64.ops.some((o) => o.type === 'MESH-WIRE'))) why64.push('wire-then-fill did not settle');
     if (!(f64.consOk && f64.cons.every((r) => r.ok))) why64.push('conservation broke after fill');
     if (!(f64.fills[0].edgeMu != null && String(f64.fills[0].fairUsed).indexOf('CEX-FAIR') === 0)) why64.push('edge not marked to fair');
@@ -3084,31 +3084,31 @@ function accumulateInMemory(bookRows, seed) {
     if (!(ub64(p3After64.feeMeter) > 0n)) why64.push('pool feeMeter did not accrue (LP revenue is the point)');
     if (f64.att !== dc.attestationHash(f64.st.vault, f64.st.accounts, f64.st.pools, f64.st.seq)) why64.push('attestation does not recompute');
     // depth cap: a fill never exceeds 5% of first-hop depth
-    const big64 = dc.settleIntents(mkCore64(), { batch: 'E64-CAP', intents: [{ agent: 'headcorner', from: 'STEEM', to: 'SBD', amountIn: '999999999999', minOut: '1' }] }, feed64, '2026-10-04T10:00:00.000Z');
+    const big64 = dc.settleIntents(mkCore64(), { batch: 'E64-CAP', intents: [{ agent: 'owner', from: 'STEEM', to: 'SBD', amountIn: '999999999999', minOut: '1' }] }, feed64, '2026-10-04T10:00:00.000Z');
     if (!(big64.fills.length === 1 && ub64(big64.fills[0].amountIn) <= ub64('1555100') * 500n / 10000n)) why64.push('depth cap not enforced');
     // 3. idempotency: the same batch settles nothing twice
     const after64 = { ...mkCore64(), vault: f64.st.vault, accounts: f64.st.accounts, pools: f64.st.pools, seq: f64.st.seq, processedBatches: f64.processedBatches, meshPnl: f64.meshPnl };
-    const replay64 = dc.settleIntents(after64, { batch: 'E64-FILL', intents: [{ agent: 'headcorner', from: 'STEEM', to: 'SBD', amountIn: '20000' }] }, feed64, '2026-10-04T10:00:00.000Z');
+    const replay64 = dc.settleIntents(after64, { batch: 'E64-FILL', intents: [{ agent: 'owner', from: 'STEEM', to: 'SBD', amountIn: '20000' }] }, feed64, '2026-10-04T10:00:00.000Z');
     if (!(replay64.skipped === true && replay64.fills.length === 0 && replay64.ops.length === 0)) why64.push('batch replay not idempotent');
     // 4. minOut atomicity: refusal leaves the pools byte-unchanged and moves no claims
     const pre64 = mkCore64();
-    const ref64 = dc.settleIntents(pre64, { batch: 'E64-MIN', intents: [{ agent: 'headcorner', from: 'STEEM', to: 'SBD', amountIn: '20000', minOut: '999999999999' }] }, feed64, '2026-10-04T10:00:00.000Z');
+    const ref64 = dc.settleIntents(pre64, { batch: 'E64-MIN', intents: [{ agent: 'owner', from: 'STEEM', to: 'SBD', amountIn: '20000', minOut: '999999999999' }] }, feed64, '2026-10-04T10:00:00.000Z');
     if (!(ref64.rejects.some((r) => r.why === 'REFUSED-MINOUT') && JSON.stringify(ref64.st.pools) === JSON.stringify(pre64.pools) && JSON.stringify(ref64.st.accounts) === JSON.stringify(pre64.accounts))) why64.push('minOut refusal not atomic');
     // 5. determinism: same inputs → byte-identical fills + ops
-    const m64a = dc.settleIntents(mkCore64(), { batch: 'E64-DET', intents: [{ agent: 'headcorner', from: 'STEEM', to: 'SBD', amountIn: '15000' }] }, feed64, '2026-10-05T00:00:00.000Z');
-    const m64b = dc.settleIntents(mkCore64(), { batch: 'E64-DET', intents: [{ agent: 'headcorner', from: 'STEEM', to: 'SBD', amountIn: '15000' }] }, feed64, '2026-10-05T00:00:00.000Z');
+    const m64a = dc.settleIntents(mkCore64(), { batch: 'E64-DET', intents: [{ agent: 'owner', from: 'STEEM', to: 'SBD', amountIn: '15000' }] }, feed64, '2026-10-05T00:00:00.000Z');
+    const m64b = dc.settleIntents(mkCore64(), { batch: 'E64-DET', intents: [{ agent: 'owner', from: 'STEEM', to: 'SBD', amountIn: '15000' }] }, feed64, '2026-10-05T00:00:00.000Z');
     if (!(JSON.stringify(m64a.fills) === JSON.stringify(m64b.fills) && JSON.stringify(m64a.ops) === JSON.stringify(m64b.ops))) why64.push('settleIntents not byte-deterministic');
     // 6. mesh drafting laws: floor-law candidates only, direction = sell the rich side, keyed rails never
     const cands64 = am.meshCandidates(mkCore64(), '2026-10-04T10:00:00.000Z');
     if (!(cands64.length === 1 && cands64[0].from === 'STEEM' && cands64[0].to === 'SBD')) why64.push('candidate direction law broken (sell the rich side)');
-    const keyed64 = mkCore64(); keyed64.arb[0].railOwner = 'headcorner (STEEM active — LIVE)';
+    const keyed64 = mkCore64(); keyed64.arb[0].railOwner = 'owner (STEEM active — LIVE)';
     if (am.meshCandidates(keyed64, '2026-10-04T10:00:00.000Z').length !== 0) why64.push('a keyed rail became a keyless candidate');
     const below64 = mkCore64(); below64.arb[0].verdict = 'BELOW-FLOOR';
     if (am.meshCandidates(below64, '2026-10-04T10:00:00.000Z').length !== 0) why64.push('a below-floor row became a candidate');
     const inv64 = mkCore64(); inv64.arb[0].poolMidNano = '90000000';
     if (am.meshCandidates(inv64, '2026-10-04T10:00:00.000Z')[0].from !== 'SBD') why64.push('direction does not invert with the drift');
     // 7. mandates: budget = 1% of first-hop depth, operator 40%, soldiers split 60%
-    const roster64 = ['headcorner', 's1', 's2', 's3', 's4'];
+    const roster64 = ['owner', 's1', 's2', 's3', 's4'];
     const man64 = am.meshMandates(cands64[0], mkCore64(), roster64);
     if (ub64(man64.depth) !== 388775n) why64.push('first-hop depth is not the min over pools holding the input (P1 STEEM side)');
     if (ub64(man64.rowBudget) !== ub64(man64.depth) * 100n / 10000n) why64.push('row budget is not 1% of depth');
@@ -3132,7 +3132,7 @@ function accumulateInMemory(bookRows, seed) {
     const meshBook = JSON.parse(fs.readFileSync(path.join(AG, 'arb-mesh.json'), 'utf8'));
     if (meshBook.protocol === am.PROTOCOL) {
       const coreNow = JSON.parse(fs.readFileSync(path.join(AG, 'dex-core.json'), 'utf8'));
-      if (!(Array.isArray(meshBook.roster) && meshBook.roster[0] === 'headcorner' && meshBook.roster.join(',') === dc.rosterLaw().join(','))) why64.push('booked roster does not re-derive from persona-slots');
+      if (!(Array.isArray(meshBook.roster) && meshBook.roster[0] === 'owner' && meshBook.roster.join(',') === dc.rosterLaw().join(','))) why64.push('booked roster does not re-derive from persona-slots');
       const candsNow = am.meshCandidates(coreNow, meshBook.at);
       if (candsNow.length !== meshBook.candidates.length) why64.push('booked candidates do not re-derive from the core book');
       if (meshBook.verdict.indexOf('NO-EDGE') === 0 && candsNow.length > 0) why64.push('NO-EDGE booked over a live candidate');
@@ -3145,14 +3145,14 @@ function accumulateInMemory(bookRows, seed) {
         let hist65Lines = [];
         try { hist65Lines = fs.readFileSync(path.join(AG, 'dex-core-history.jsonl'), 'utf8').trim().split('\n'); } catch (_) {}
         const histOps = hist65Lines.slice(-600).map((l) => { try { return JSON.parse(l); } catch (_) { return null; } }).filter(Boolean);
-        const fillRow = histOps.find((o) => o.type === 'AGENT_FILL' && o.agent === 'headcorner' && o.amountIn === '5000' && o.to === 'WSTEEM');
-        const wireRow = histOps.find((o) => o.type === 'MESH-WIRE' && o.agent === 'headcorner' && o.asset === 'STEEM' && o.amount === '5000');
+        const fillRow = histOps.find((o) => o.type === 'AGENT_FILL' && o.agent === 'owner' && o.amountIn === '5000' && o.to === 'WSTEEM');
+        const wireRow = histOps.find((o) => o.type === 'MESH-WIRE' && o.agent === 'owner' && o.asset === 'STEEM' && o.amount === '5000');
         if (!(fillRow && wireRow)) why64.push('pipe-proof batch booked without its wire+fill ops');
         if (fillRow && !(ub64(fillRow.amountOut) <= ub64(fillRow.amountIn) && ub64(fillRow.amountIn) >= dc.MESH_DUST)) why64.push('booked fill violates the peg/dust laws');
         if (!(Array.isArray(coreNow.conservation) && coreNow.conservation.every((r) => r.ok))) why64.push('booked ledger conservation broken');
         if (dc.attestationHash(coreNow.vault, coreNow.accounts, coreNow.pools, coreNow.seq) !== coreNow.attestation) why64.push('booked attestation does not recompute');
         // idempotency on the BOOKED state: replaying the settled batch settles nothing
-        const replayBook = dc.settleIntents(coreNow, { batch: 'MESH-OPERATOR-PIPEPROOF-R41', intents: [{ agent: 'headcorner', from: 'STEEM', to: 'WSTEEM', amountIn: '5000' }] }, feed64, '2026-10-04T11:00:00.000Z');
+        const replayBook = dc.settleIntents(coreNow, { batch: 'MESH-OPERATOR-PIPEPROOF-R41', intents: [{ agent: 'owner', from: 'STEEM', to: 'WSTEEM', amountIn: '5000' }] }, feed64, '2026-10-04T11:00:00.000Z');
         if (!(replayBook.skipped === true && replayBook.fills.length === 0)) why64.push('booked batch replay is not idempotent');
       }
       if (meshBook.meshPnl && meshBook.meshPnl.lifetime) {
@@ -3373,7 +3373,7 @@ function accumulateInMemory(bookRows, seed) {
     const q67 = { rows: [{ intentId: 'A', asset: 'STEEM', amount: '1000', account: 'cashmachine' }] };
     const q67b = ph67.applyResult(q67, 'A', { fired: true });
     if (!(q67.rows[0].fired === undefined && q67b.rows[0].fired === true)) why67.push('applyResult must be pure (input untouched)');
-    const gv67 = ph67.serializeTransferTx({ ref_block_num: 44000, ref_block_prefix: 305419896, expiration: '2026-10-04T16:00:00', operations: [['transfer', { from: 'headcorner', to: 'headcorner', amount: '0.001 STEEM', memo: 'SAOS-PEGOUT-HAND/1 rail-proof R44' }]], extensions: [] });
+    const gv67 = ph67.serializeTransferTx({ ref_block_num: 44000, ref_block_prefix: 305419896, expiration: '2026-10-04T16:00:00', operations: [['transfer', { from: 'owner', to: 'owner', amount: '0.001 STEEM', memo: 'SAOS-PEGOUT-HAND/1 rail-proof R44' }]], extensions: [] });
     if (Buffer.from(gv67).toString('hex') !== 'e0ab785634120078c26a01020a68656164636f726e65720a68656164636f726e6572010000000000000003535445454d00002153414f532d5045474f55542d48414e442f31207261696c2d70726f6f662052343400') why67.push('the transfer serializer golden vector broken (steem-js byte law)');
     // 5. black-box: both desks' selftests in fresh processes (judge separation)
     const bb67a = spawnSync(process.execPath, [path.join(AG, 'counter-grid.cjs'), 'selftest'], { encoding: 'utf8', timeout: 30000 });

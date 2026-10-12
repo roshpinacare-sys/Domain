@@ -17,7 +17,7 @@ const https = require('https');
 const AG = __dirname;
 const OUT_JSON = path.join(AG, 'reconciliation.json');
 const OUT_MD = path.join(AG, 'reconciliation.md');
-const HEAD = 'headcorner';
+const HEAD = 'owner';
 
 // Single-writer law: exactly one desk may write each topic.
 const BOOKS = [
@@ -78,7 +78,7 @@ async function liveTruth() {
     if (ok) out.freshness.push(b.file + ':' + Math.round(ageH) + 'h');
   }
   out.live = await liveTruth();
-  // cross-check: every money-bearing book that mentions headcorner capital vs live
+  // cross-check: every money-bearing book that mentions owner capital vs live
   const checks = [
     { book: 'money-ledger.json', topic: 'capital-balances' },
     { book: 'econ-book.json', topic: 'engine-executions' },
@@ -88,7 +88,7 @@ async function liveTruth() {
     try { j = JSON.parse(fs.readFileSync(path.join(AG, c.book), 'utf8')); } catch (_) {}
     if (!j) { out.drift.push({ book: c.book, check: 'readable', verdict: 'MISSING' }); continue; }
     const blob = JSON.stringify(j);
-    const hasHead = blob.includes('headcorner');
+    const hasHead = blob.includes('owner');
     out.drift.push({ book: c.book, check: 'references executor account', verdict: hasHead ? 'OK' : 'NO-EXECUTOR-REF' });
     if (j.swapHive != null) {
       const claimed = num(j.swapHive), live = out.live.swapHive;

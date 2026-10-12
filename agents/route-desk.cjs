@@ -116,7 +116,7 @@ async function bridges() {
   const routes = { at: new Date().toISOString(), book: 'LEGACY-PROBE-FEEDER — verdict authority is dex-book.cjs + bridge-desk.cjs (Z-27). Path statuses below are legacy, do not decide from them.', oracles: { btc: px.btc, eth: px.eth, sol: px.sol, hive: px.hive, steem: px.steem, ltc: px.ltc, doge: px.doge }, heMarket: he, bridges: br, paths: [] };
 
   const P = (target, route, status, detail) => routes.paths.push({ target, route, status, detail });
-  // BTC ingress paths (from OUR capital base: headcorner STEEM/HIVE + fuel stream)
+  // BTC ingress paths (from OUR capital base: owner STEEM/HIVE + fuel stream)
   P('BTC', 'STEEM -> blocktrades(no-account) -> self-custody BTC wallet', br.blocktrades && br.blocktrades.reachable && br.blocktrades.steem ? 'OPEN' : 'PROBE-FAILED-FROM-NETWORK', 'probe from CI runner; TLS-blocked from sandbox on 09-30');
   P('BTC', 'STEEM -> MEXC account (deposit+sell) -> BTC withdraw', 'C-GATE-OPERATOR', 'needs MEXC account+API keys (operator one-time action)');
   P('BTC', 'HIVE -> Hive-Engine DEX -> SWAP.BTC', (Array.isArray(he) && he.find(x => x.symbol === 'SWAP.BTC')) ? 'OPEN-NEEDS-HIVE-CAPITAL' : 'MARKET-MISSING', 'active key held; HIVE liquid 1.34 = dust');

@@ -19,13 +19,13 @@ steem.api.setOptions({ url: 'https://api.steemit.com', useAppbaseApi: false });
 
 const ROOT = path.resolve(__dirname, '..');
 const OUT = process.env.RECEIPT_OUT || path.join(ROOT, 'agent', 'self-audience-receipt.json');
-const FLEET = ['cashmachine','haran','israelnews','lsa','macrame','siq','tov','wic','wog','woq','headcorner']; // 11 — ynet פרש 2026-09-29 (החלטת-ריבון: אין-מפתח, מוותרים)
+const FLEET = ['cashmachine','haran','israelnews','lsa','macrame','siq','tov','wic','wog','woq','owner']; // 11 — ynet פרש 2026-09-29 (החלטת-ריבון: אין-מפתח, מוותרים)
 const MIN_VP = 20;   // סף-כוח-הצבעה (%)
 const MIN_RC = 30;   // סף-RC (%)
 const SOLDIER_WEIGHT = 10000; // חיילים: 100% (SP-אבק — מקסום-אות)
 const HEAD_WEIGHT = 2000;     // ראש: 20% (4608 SP — פרס-משמעותי לחיילים, חיסכון-VP)
 const HEAD_SELF_WEIGHT = 100; // ראש: 1% עצמי על-דגלול-בלבד (אות-חיות)
-const HEAD_FLAGSHIP = (author, permlink) => author === 'headcorner' && /^saos-grid-\d{8}$/.test(permlink);
+const HEAD_FLAGSHIP = (author, permlink) => author === 'owner' && /^saos-grid-\d{8}$/.test(permlink);
 let HEAD_ONLY = false; // CR-0065: set true when persona-slots v2 exists — soldier cross-votes move to the cadence desk
 
 // ── שחזור-עצמי: פענוח-הכספת-מהריפו-הפרטי (דוקטרינת-משמורת-מערכת) ──
@@ -82,7 +82,7 @@ function rpc(method, params) {
 async function main() {
   try { if (require('./capital-gate.cjs').stasisHalt('self-audience')) return; } catch (e) { console.log('[CAPITAL-GATE] self-audience — gate module error, lane halts fail-closed: ' + String(e.message || e).slice(0, 80)); return; }
   // CR-0065: soldier cross-votes moved into the human cadence desk (spread hourly) —
-  // this burst engine keeps ONLY headcorner's lane (flagship + flag-pole self-vote).
+  // this burst engine keeps ONLY owner's lane (flagship + flag-pole self-vote).
   try {
     const slots = require('./persona-store.cjs').slots(); // T3: doctrine sealed (persona-store)
     if (slots.version >= 2 && process.env.FORCE_LEGACY !== '1') { HEAD_ONLY = true; console.log('[self-audience] HEAD-ONLY — soldier cross-votes owned by human-cadence.cjs (CR-0065)'); }
@@ -136,13 +136,13 @@ async function main() {
   // ── 3. מטריצת-הצבעה ──
   const jobs = [];
   for (const p of posts) for (const voter of FLEET) {
-    if (HEAD_ONLY && voter !== 'headcorner') continue; // CR-0065: soldiers vote via human-cadence
+    if (HEAD_ONLY && voter !== 'owner') continue; // CR-0065: soldiers vote via human-cadence
     if (voter === p.author) {
       if (HEAD_FLAGSHIP(p.author, p.permlink) && !p.votes.includes(voter)) jobs.push({ voter, ...p, weight: HEAD_SELF_WEIGHT, self: true });
       continue;
     }
     if (p.votes.includes(voter)) continue; // idempotency
-    jobs.push({ voter, ...p, weight: voter === 'headcorner' ? HEAD_WEIGHT : SOLDIER_WEIGHT, self: false });
+    jobs.push({ voter, ...p, weight: voter === 'owner' ? HEAD_WEIGHT : SOLDIER_WEIGHT, self: false });
   }
   console.log(`[self-aud] vote jobs: ${jobs.length}`);
 

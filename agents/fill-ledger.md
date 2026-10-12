@@ -1,6 +1,6 @@
 # fill-ledger — fill measurement leg (CR-0039)
 
-Last run: 2026-10-12T06:27:20.921Z · mode **READ-ONLY** · head **headcorner** · since 2026-10-03T00:00:00Z
+Last run: 2026-10-12T06:27:20.921Z · mode **READ-ONLY** · head **owner** · since 2026-10-03T00:00:00Z
 
 | metric | value |
 |---|---|

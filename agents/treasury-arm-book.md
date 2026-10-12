@@ -3,7 +3,7 @@
 
 | at | chain | op | detail | status | extra |
 |---|---|---|---|---|---|
-| 2026-10-11T14:43:33.440Z | steem | gate | no candidate secret matches live active authority of headcorner — owner must provision (see CENSUS lines) | refused |  |
+| 2026-10-11T14:43:33.440Z | steem | gate | no candidate secret matches live active authority of owner — owner must provision (see CENSUS lines) | refused |  |
 
 
 ## TREASURY-ARM RUN · 2026-10-11T14:43:34.043Z · chain=hive
@@ -24,7 +24,7 @@
 
 | at | chain | op | detail | status | extra |
 |---|---|---|---|---|---|
-| 2026-10-11T15:03:02.660Z | steem | gate | no candidate secret matches live active authority of headcorner — owner must provision (see CENSUS lines) | refused |  |
+| 2026-10-11T15:03:02.660Z | steem | gate | no candidate secret matches live active authority of owner — owner must provision (see CENSUS lines) | refused |  |
 
 
 ## TREASURY-ARM RUN · 2026-10-11T15:03:03.260Z · chain=hive
@@ -45,7 +45,7 @@
 
 | at | chain | op | detail | status | extra |
 |---|---|---|---|---|---|
-| 2026-10-11T15:24:23.373Z | steem | gate | no candidate secret matches live active authority of headcorner — owner must provision (see CENSUS lines) | refused |  |
+| 2026-10-11T15:24:23.373Z | steem | gate | no candidate secret matches live active authority of owner — owner must provision (see CENSUS lines) | refused |  |
 
 
 ## TREASURY-ARM RUN · 2026-10-11T15:24:24.082Z · chain=hive
@@ -66,7 +66,7 @@
 
 | at | chain | op | detail | status | extra |
 |---|---|---|---|---|---|
-| 2026-10-11T16:25:49.672Z | steem | gate | no candidate secret matches live active authority of headcorner — owner must provision (see CENSUS lines) | refused |  |
+| 2026-10-11T16:25:49.672Z | steem | gate | no candidate secret matches live active authority of owner — owner must provision (see CENSUS lines) | refused |  |
 
 
 ## TREASURY-ARM RUN · 2026-10-11T16:25:50.263Z · chain=hive
@@ -87,7 +87,7 @@
 
 | at | chain | op | detail | status | extra |
 |---|---|---|---|---|---|
-| 2026-10-11T23:08:13.723Z | steem | gate | no candidate secret matches live active authority of headcorner — owner must provision (see CENSUS lines) | refused |  |
+| 2026-10-11T23:08:13.723Z | steem | gate | no candidate secret matches live active authority of owner — owner must provision (see CENSUS lines) | refused |  |
 
 
 ## TREASURY-ARM RUN · 2026-10-11T23:08:14.602Z · chain=hive
@@ -108,7 +108,7 @@
 
 | at | chain | op | detail | status | extra |
 |---|---|---|---|---|---|
-| 2026-10-12T01:47:44.493Z | steem | gate | no candidate secret matches live active authority of headcorner — owner must provision (see CENSUS lines) | refused |  |
+| 2026-10-12T01:47:44.493Z | steem | gate | no candidate secret matches live active authority of owner — owner must provision (see CENSUS lines) | refused |  |
 
 
 ## TREASURY-ARM RUN · 2026-10-12T01:47:45.636Z · chain=hive

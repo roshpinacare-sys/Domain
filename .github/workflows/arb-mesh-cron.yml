@@ -36,21 +36,33 @@ jobs:
           node-version: 20
 
       - name: arb-mesh selftest (fresh process, zero network — the drafting laws judge themselves first)
+        env:
+          FLEET_ACCOUNT: ${{ secrets.FLEET_ACCOUNT }}
         run: node agents/arb-mesh.cjs selftest
 
       - name: dex-core selftest (the settlement engine the mesh leans on)
+        env:
+          FLEET_ACCOUNT: ${{ secrets.FLEET_ACCOUNT }}
         run: node agents/dex-core.cjs selftest
 
       - name: uniform batch clearing selftest (R76 · the CoW take judges itself — one price, order-invariance, netting, minOut exclusion)
+        env:
+          FLEET_ACCOUNT: ${{ secrets.FLEET_ACCOUNT }}
         run: node agents/dex-core.cjs selftest-batch
 
       - name: approved settlement selftest (R77 · the owner-gate lane judges itself — CR-0075 gate, staged-lane, conservation, idempotency, order-invariance)
+        env:
+          FLEET_ACCOUNT: ${{ secrets.FLEET_ACCOUNT }}
         run: node agents/dex-core.cjs selftest-batch-settle
 
       - name: engine fee-law selftest (R77 · the Meteora take judges itself — measured σ, caps, pegs untouched, no invention)
+        env:
+          FLEET_ACCOUNT: ${{ secrets.FLEET_ACCOUNT }}
         run: node agents/dex-core.cjs selftest-fee-law
 
       - name: mesh tick (mandates → intents queue → atomic settle → honest P&L + size ladder)
+        env:
+          FLEET_ACCOUNT: ${{ secrets.FLEET_ACCOUNT }}
         run: node agents/arb-mesh.cjs
 
       - name: uniform batch clearing proof (R76 · DRY lane — measures the queue as ONE batch, publishes agents/dex-batch.json, moves nothing)

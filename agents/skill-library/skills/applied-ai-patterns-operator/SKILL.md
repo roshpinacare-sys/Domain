@@ -16,7 +16,7 @@ stack where feasible, and stop at the wallet line otherwise.
 **Provenance (consult-only):** study source Sumanth077/Hands-On-AI-Engineering
 (3,832 stars, Python, ~50 demo projects across ai_agents / rag_apps / multimodal /
 audio / OCR / fine_tuning) — evaluation + adoption wave Task 32. Bare-blobless
-mirror `da0091d6` at `/home/z/reference-mirrors/hae-mirror.git` (184K — blobs
+mirror `da0091d6` at `<host>/reference-mirrors/hae-mirror.git` (184K — blobs
 fetched only at consult time; disk-honest).
 
 ## The License Honesty Block (read before ANY use)
@@ -109,7 +109,7 @@ Surface these WITHOUT being asked:
 |---|---|---|
 | Pattern decision receipt (family chosen, lanes touched, wallet check) | wave CR/worklog row | the consulting wave |
 | License status proof | `THIRD-PARTY-NOTICES.md` §5 (LICENSE-404 finding + consult-only state) | this package's wave |
-| Mirror proof | `/home/z/reference-mirrors/hae-mirror.git` @ `da0091d6` (bare-blobless, 184K) | Task 32 |
+| Mirror proof | `<host>/reference-mirrors/hae-mirror.git` @ `da0091d6` (bare-blobless, 184K) | Task 32 |
 
 ## Tier & Scope
 

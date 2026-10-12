@@ -21,7 +21,7 @@ const chain = require("./directivesChain.cjs");
 
 const OP_ID = "saos.weave.ops.v1"; // זהה-ל-gate.html (הצד-השולח) — שינוי-צריך-שני-צדדים
 // זהות-העוגן — זהות-ציבורית-מפורסמת (כמו ב-beacon/landing); המסלול-המנהלי-עצמו לא-נחשף-כאן
-const ANCHOR = (process.env.OPERATOR_ANCHOR || "headcorner").trim();
+const ANCHOR = (process.env.OPERATOR_ANCHOR || "owner").trim();
 const RPCS = ["https://api.steemit.com", "https://api.justyy.com"]; // 61bts dead (measured 2026-10-12: returns non-JSON error page)
 const DIR = path.join(__dirname, "operator");
 const CURSOR = path.join(DIR, "cursor.json");

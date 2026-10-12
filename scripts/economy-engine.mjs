@@ -42,7 +42,7 @@
  *     + get_ops_in_block confirmation (rc_api absent on blurt — honest)
  *   · per-chain caps (≤12 votes/run/chain, 1/account, 10h cooldown, already-voted skip),
  *     per-chain roster gates (hive: 9/12 keyed rows; blurt: 11 economic rows, ynet retired),
- *     per-chain NEVER_TOUCH (ynet* everywhere, tov-hive blocked-no-key on hive)
+ *     per-chain NEVER_TOUCH (ynet* everywhere, owner-hive blocked-no-key on hive)
  *   · Task 18 dedupe doctrine (live-proven 2026-10-02): pre-broadcast get_content gate +
  *     chain-as-gate identical-vote skip — a dedupe skip is a healthy no-op receipt row
  *     ('skipped-*'), never a run failure; only REAL broadcast failures fail the run
@@ -61,7 +61,7 @@
  *   ENGINE_TAGS    comma override of niche tag allowlist
  *   PUSH_RECEIPT   'true' = git commit+push receipt into the steem repo
  *
- * HARD DISCIPLINE: never touch ynet* / tov-hive / owner-only rows (roster control flags are
+ * HARD DISCIPLINE: never touch ynet* / owner-hive / owner-only rows (roster control flags are
  * enforced); never print or log any private material (public-key fingerprints only); no market
  * ops, no transfers, no comments — broadcast ops limited to VOTES, CLAIMS, AUTHOR-SUPPORT
  * self-votes (all posting-authorized, zero principal at risk; the ladder executor is a
@@ -120,7 +120,7 @@ try {
 }
 
 /** Accounts we never touch, by name pattern (belt-and-braces on top of roster flags). */
-const NEVER_TOUCH = [/^ynet/, /^tov-hive/];
+const NEVER_TOUCH = [/^ynet/, /^owner-hive/]; // owner-only hive identities (sanitized names)
 const WEIGHT = 10000; // 100% — curation + author-support only, per doctrine
 const MIN_BODY_CHARS = 500;
 const MIN_TITLE_CHARS = 10;
@@ -1185,7 +1185,7 @@ async function curationLeg(cfg) {
 const rowsAll = rosterMod.rows();
 const HIVE_ROWS = rowsAll.filter((r) => r.chain === 'hive' && r.control === 'full' && r.economicUse === true && !r.retired);
 const BLURT_ROWS = rowsAll.filter((r) => r.chain === 'blurt' && r.control === 'full' && r.economicUse === true && !r.retired);
-// tov-hive is blocked-no-key (owner-confirmed) and can never appear in HIVE_ROWS; the pattern
+// owner-hive is blocked-no-key (owner-confirmed) and can never appear in HIVE_ROWS; the pattern
 // list below additionally forbids it (and ynet*) as voter OR author on every leg.
 const LEGS = [
   {
@@ -1194,7 +1194,7 @@ const LEGS = [
     gates: { minNetVotes: MIN_NET_VOTES, repGate: true },
     eligibleRows: HIVE_ROWS,
     broadcastVote: broadcastVoteHive,
-    chainNote: 'hive chain_id ' + HIVE_CHAIN_ID.slice(0, 8) + '… (anchor.cjs, proven live); STM pubkeys; ≤12 votes/run, 1/account, 10h cooldown + claims + author-support self-votes (Task 17); NEVER_TOUCH incl. tov-hive (blocked-no-key)',
+    chainNote: 'hive chain_id ' + HIVE_CHAIN_ID.slice(0, 8) + '… (anchor.cjs, proven live); STM pubkeys; ≤12 votes/run, 1/account, 10h cooldown + claims + author-support self-votes (Task 17); NEVER_TOUCH incl. owner-hive (blocked-no-key)',
   },
   {
     chain: 'blurt', nodes: BLURT_RPCS,

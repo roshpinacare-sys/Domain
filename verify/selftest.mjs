@@ -52,7 +52,7 @@ check('esc() escapes script/quote injection " ><script> and attribute-breaker \'
   });
 check('esc() leaves plain text intact and returns string for null/undefined',
   () => {
-    assert(VP.esc('headcorner/saos-week-20261011') === 'headcorner/saos-week-20261011', 'plain text mangled');
+    assert(VP.esc('owner/saos-week-20261011') === 'owner/saos-week-20261011', 'plain text mangled');
     assert(VP.esc(null) === '' && VP.esc(undefined) === '', 'null/undefined not empty-string');
     assert(VP.esc('a&b') === 'a&amp;b', 'ampersand not escaped');
   });
@@ -84,7 +84,7 @@ check('isPrivateMaterial: WIF 5H…/K…/L… and BIP38 6P… refused · STM pub
     assert(VP.isPrivateMaterial('L' + 'y'.repeat(51)) === true, 'L WIF not detected');
     assert(VP.isPrivateMaterial('6P' + 'z'.repeat(48)) === true, 'BIP38 not detected');
     assert(VP.isPrivateMaterial('STM5jRfQH9DAF2474UQF1GVarShJZhpSPEYZFiZVr8MHV8cNSXDQf') === false, 'public STM key wrongly refused');
-    assert(VP.isPrivateMaterial('headcorner') === false, 'plain name wrongly refused');
+    assert(VP.isPrivateMaterial('owner') === false, 'plain name wrongly refused');
     assert(VP.isPrivateMaterial('68c891d39dce9928') === false, 'hash16 wrongly refused');
   });
 
@@ -124,19 +124,19 @@ check('classifyHash: UNKNOWN-NOT-CHAIN-TESTABLE passthrough · ALIVE-ALERT alert
 /* 8-9 · post-input parser: 3 accepted formats + rejections */
 check('parsePostInput: full URL (steemit/other domain, query-string) → author+permlink',
   () => {
-    const r = VP.parsePostInput('https://steemit.com/@headcorner/saos-week-20261011?utm=x');
-    assert(r.ok && r.author === 'headcorner' && r.permlink === 'saos-week-20261011', 'got ' + JSON.stringify(r));
-    const r2 = VP.parsePostInput('https://steemit.com/hive-1/@headcorner/saos-week-20261011');
-    assert(r2.ok && r2.author === 'headcorner' && r2.permlink === 'saos-week-20261011', 'tagged URL failed');
+    const r = VP.parsePostInput('https://steemit.com/@owner/saos-week-20261011?utm=x');
+    assert(r.ok && r.author === 'owner' && r.permlink === 'saos-week-20261011', 'got ' + JSON.stringify(r));
+    const r2 = VP.parsePostInput('https://steemit.com/hive-1/@owner/saos-week-20261011');
+    assert(r2.ok && r2.author === 'owner' && r2.permlink === 'saos-week-20261011', 'tagged URL failed');
   });
 check('parsePostInput: author/permlink and @author/permlink → same result · garbage → honest fail',
   () => {
-    const r1 = VP.parsePostInput('headcorner/saos-week-20261011');
-    const r2 = VP.parsePostInput('@headcorner/saos-week-20261011');
-    assert(r1.ok && r2.ok && r1.author === 'headcorner' && r2.permlink === 'saos-week-20261011', 'bare/@ formats');
+    const r1 = VP.parsePostInput('owner/saos-week-20261011');
+    const r2 = VP.parsePostInput('@owner/saos-week-20261011');
+    assert(r1.ok && r2.ok && r1.author === 'owner' && r2.permlink === 'saos-week-20261011', 'bare/@ formats');
     assert(!VP.parsePostInput('').ok, 'empty accepted');
-    assert(!VP.parsePostInput('headcorner').ok, 'bare author accepted (belongs to account mode)');
-    assert(!VP.parsePostInput('https://steemit.com/@headcorner/').ok, 'missing permlink accepted');
+    assert(!VP.parsePostInput('owner').ok, 'bare author accepted (belongs to account mode)');
+    assert(!VP.parsePostInput('https://steemit.com/@owner/').ok, 'missing permlink accepted');
   });
 
 /* 10 · machine-disclosure marker detection: positive (real campaign markers) / negative */

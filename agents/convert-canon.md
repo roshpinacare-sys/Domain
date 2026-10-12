@@ -1,6 +1,6 @@
 # Convert maturity canon · 2026-10-04T21:55:32.696Z
 
-account: headcorner · window 90d · pages 90 (floor reached)
+account: owner · window 90d · pages 90 (floor reached)
 **pending converts: 25 · 131.856 SBD maturing to STEEM at the feed price**
 next maturity: 2026-10-06T00:02:12Z (in 26.1h)
 

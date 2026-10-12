@@ -34,7 +34,7 @@
  *    printed, never committed). The books carry txids and public keys — nothing else.
  *  · COLD ACTIVE — the community account's owner/active keys are stored and never used;
  *    every community op is signed with the community POSTING key, exactly like the
- *    measured ground truth. headcorner's active key signs only account_create,
+ *    measured ground truth. owner's active key signs only account_create,
  *    delegate_vesting_shares and (funding) limit_order_cancel.
  *  · RC FIRST — a fresh account has no RC: the SP delegation to the community lands
  *    BEFORE the first community custom_json (community RC reserve, equal-share math
@@ -63,10 +63,10 @@ const AG = path.join(ROOT, 'agents');
 const STASIS_FILE = path.join(AG, 'STASIS.json');
 const BOOK_JSON = path.join(AG, 'community-founder.json');
 const BOOK_MD = path.join(AG, 'community-founder.md');
-const HC_DERIVED = process.env.HC_DERIVED || '/home/z/my-project/.fleet/headcorner-derived.json';
-const COMM_KEYS = process.env.COMM_KEYS || '/home/z/my-project/.fleet/community-keys.json';
-const HIVE_KEYS = process.env.HIVE_KEYS || '/home/z/my-project/.fleet/hive-keys.json';
-const HEAD = 'headcorner';
+const HC_DERIVED = process.env.HC_DERIVED || ((process.env.HOME || '/tmp') + '/.fleet/derived.json'); // host vault renamed from legacy per-operator name (2026-10-12 sanitize); host may export HC_DERIVED
+const COMM_KEYS = process.env.COMM_KEYS || ((process.env.HOME || '/tmp') + '/.fleet/community-keys.json');
+const HIVE_KEYS = process.env.HIVE_KEYS || ((process.env.HOME || '/tmp') + '/.fleet/hive-keys.json');
+const HEAD = 'owner';
 const NODE = process.env.STEEM_NODE || 'https://api.steemit.com';
 const FEE_MARGIN = 0.05;
 const MAX_CANCELS = 2;
@@ -172,7 +172,7 @@ function chainBadge({ existsSteem, existsHive, feeAsset }) {
 }
 
 /** the Hive second-home authority law: the desk cannot sign what it does not hold.
- *  Measured live 2026-10-04: headcorner's Hive active pubkey (STM8c9vp3…) differs from
+ *  Measured live 2026-10-04: owner's Hive active pubkey (STM8c9vp3…) differs from
  *  the Steem one we hold (STM5HhJD…) — the same WIF does NOT sign on Hive, and the
  *  fleet holds no Hive key material. NO-KEYS is the honest verdict today. */
 function hiveAuthorityVerdict(vaultPresent, chainPub, vaultPub) {
@@ -191,11 +191,11 @@ function hiveProbeVerdict({ nameFree, liquidHive, need, authority }) {
   return 'CREATE-READY';
 }
 
-/** the founding roles: headcorner admin (the measured creator pattern), soldiers members */
+/** the founding roles: owner admin (the measured creator pattern), soldiers members */
 function memberRoles(fleet) {
   const out = [];
   for (const who of fleet || []) {
-    if (who === 'headcorner') out.push({ account: who, role: 'admin' });
+    if (who === 'owner') out.push({ account: who, role: 'admin' });
     else out.push({ account: who, role: 'member' });
   }
   return out;
@@ -220,7 +220,7 @@ const setRoleOp = (community, account, role) =>
 const updatePropsOp = (community, props) =>
   ['custom_json', { required_auths: [], required_posting_auths: [community], id: 'community', json: JSON.stringify(['updateProps', { community, props }]) }];
 // MEASURED LAW (2026-10-04, live test): hivemind applies updateProps only from an ADMIN —
-// the community account's own signature sets roles but NOT props. headcorner signs the
+// the community account's own signature sets roles but NOT props. owner signs the
 // identity with its active authority (required_auths).
 const updatePropsOpAdmin = (community, props) =>
   ['custom_json', { required_auths: [HEAD], required_posting_auths: [], id: 'community', json: JSON.stringify(['updateProps', { community, props }]) }];
@@ -230,7 +230,7 @@ const cancelOp = (orderid) => ['limit_order_cancel', { owner: HEAD, orderid }];
 // ---------- RC top-up desk (CR-0067, E60 white-box surface) ----------
 
 /** measured units law (2026-10-04): account.to_withdraw / withdrawn are GESTS-scale
- *  (micro-vests) — divide by 1e6 to get VESTS. headcorner measured live:
+ *  (micro-vests) — divide by 1e6 to get VESTS. owner measured live:
  *  to_withdraw 3.070814e12 µv = 1903.5 SP scheduled, withdrawn 2.303111e12 µv = 1427.6 SP. */
 const gestsToVests = (g) => (Number(g) > 0 ? Number(g) / 1e6 : 0);
 
@@ -365,7 +365,7 @@ function bookToMd(b) {
     L.push('## הקהילה חיה');
     L.push('- שם-חשבון: ' + c.name);
     L.push('- כותרת: ' + c.title);
-    L.push('- חברים: ' + (c.members || []).length + ' (admin: headcorner, חיילים: member)');
+    L.push('- חברים: ' + (c.members || []).length + ' (admin: owner, חיילים: member)');
     L.push('- SP שהואצל ל-RC: ' + c.delegatedSp);
     L.push('- נוצרה: ' + c.createdAt + ' · עמלה: ' + c.feeAsset);
     L.push('- txids: ' + JSON.stringify(c.txids || {}));
@@ -539,7 +539,7 @@ async function modeCreate(run, book) {
   if (!gate.ok) { run.verdict = 'PROPS-GATE'; run.why = gate.why.join(','); return run; }
   const roleTx = await broadcast([setRoleOp(name, HEAD, 'admin')], [commWif]);
   run.txids.push({ op: 'setRole:admin:' + HEAD, hint: roleTx.txid_hint });
-  run.steps.push('setRole admin headcorner hint=' + roleTx.txid_hint);
+  run.steps.push('setRole admin owner hint=' + roleTx.txid_hint);
   const propsTx = await broadcast([updatePropsOpAdmin(name, props)], [activeWif]);
   run.txids.push({ op: 'updateProps', hint: propsTx.txid_hint });
   run.steps.push('updateProps hint=' + propsTx.txid_hint);
@@ -734,7 +734,7 @@ async function modeRc(run, book) {
 // ---------- hive mode (R38): the second-home desk, keyless honesty ----------
 // The owner directive "או אם יש גם ברשתות האחרות" books a home on Hive too. The desk
 // probes Hive keylessly every run: fee, fleet balances, open orders, name law, and the
-// AUTHORITY truth (we hold no Hive keys — measured: headcorner's Hive active pubkey
+// AUTHORITY truth (we hold no Hive keys — measured: owner's Hive active pubkey
 // differs from the Steem one). It cannot create, and it never pretends: the verdicts
 // HOME-ABSENT-UNKEYED / KEY-MISMATCH / NAME-TAKEN / FUNDING-SHORT / CREATE-READY are
 // the whole surface. When Hive key material + 3 HIVE arrive (operator upload like R33,
@@ -750,7 +750,7 @@ async function modeHive(run, book) {
   const accs = await H('condenser_api.get_accounts', [fleet]);
   const byName = Object.fromEntries((accs || []).filter(Boolean).map((a) => [a.name, a]));
   const head = byName[HEAD];
-  if (!head) { run.verdict = 'READ-BACK-FAIL'; run.why = 'headcorner absent on hive'; return run; }
+  if (!head) { run.verdict = 'READ-BACK-FAIL'; run.why = 'owner absent on hive'; return run; }
   const liquid = parseFloat(head.balance);
   const need = parseFloat(fee) + FEE_MARGIN;
   const chainPub = (head.active && head.active.key_auths && head.active.key_auths[0] && head.active.key_auths[0][0]) || null;
@@ -768,9 +768,9 @@ async function modeHive(run, book) {
   const verdict = hiveProbeVerdict({ nameFree: free.length > 0, liquidHive: liquid, need, authority });
   run.verdict = verdict;
   run.why = authority === 'NO-KEYS'
-    ? 'no Hive key material is held (measured: headcorner hive active pub ' + String(chainPub || '').slice(0, 9) + '… ≠ the held steem pub) — the desk cannot sign what it does not hold'
+    ? 'no Hive key material is held (measured: owner hive active pub ' + String(chainPub || '').slice(0, 9) + '… ≠ the held steem pub) — the desk cannot sign what it does not hold'
     : authority === 'KEY-MISMATCH' ? 'vault pub ≠ chain pub — wrong key generation, never guessed' : null;
-  run.steps.push('hive fee=' + fee + ' · headcorner liquid=' + liquid.toFixed(3) + ' · need=' + need.toFixed(3) + ' · orders=' + orders.length);
+  run.steps.push('hive fee=' + fee + ' · owner liquid=' + liquid.toFixed(3) + ' · need=' + need.toFixed(3) + ' · orders=' + orders.length);
   run.steps.push('soldiers-on-hive=' + fleet.slice(1).filter((s) => byName[s]).length + '/' + (fleet.length - 1) + ' · names-free=' + (free[0] || 'NONE') + ' · steem-house-on-hive=' + (houseOnHive === true ? 'yes' : houseOnHive === false ? 'no' : 'unreachable'));
   run.steps.push('authority=' + authority + ' · vault=' + (present ? 'present' : 'absent') + ' · stasis=' + (stasis() ? 'HALT' : 'clear'));
   run.hivePlan = { fee, liquid, need, authority, chainPubPrefix: String(chainPub || '').slice(0, 9), freeFirst: free[0] || null, soldiersOnHive: fleet.slice(1).filter((s) => byName[s]).length, steemHouseOnHive: houseOnHive };

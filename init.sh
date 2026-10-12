@@ -46,8 +46,9 @@ node agents/fleet-indicators.cjs || true   # fate-defense FWI scorecard (Task 22
 # committed; keyless-first preserved (token is the retry leg one-bloc
 # already implements). Rollback = delete this if-block (judge returns to
 # the standing keyless-reach WARN).
-if [ -f /home/z/my-project/upload/pat.env ]; then
-  ONE_BLOC_TOKEN="$(tr -d '\n\r ' < /home/z/my-project/upload/pat.env)"
+ONE_BLOC_TOKEN_FILE="${ONE_BLOC_TOKEN_FILE:-}"
+if [ -n "$ONE_BLOC_TOKEN_FILE" ] && [ -f "$ONE_BLOC_TOKEN_FILE" ]; then
+  ONE_BLOC_TOKEN="$(tr -d '\n\r ' < "$ONE_BLOC_TOKEN_FILE")"
   export ONE_BLOC_TOKEN
 fi
 node agents/one-bloc.cjs || true           # one-bloc whole-git convergence map (Task 23) — keyless-first, env-token fallback, fail-soft

@@ -67,7 +67,7 @@ async function main() {
   const newPub = BLURT.posting.pub;
   let connectedTo = null;
 
-  for (const account of ['cornerstone', 'headcorner']) {
+  for (const account of ['cornerstone', 'owner']) {
     if (GATE.stasisHalt('account_update')) { row('gate', 'STASIS halt mid-loop', 'gated'); break; }
     const a = (await rpc('condenser_api.get_accounts', [[account]]))[0];
     if (!a) { row('check', '@' + account + ' not found on blurt', 'skip'); continue; }

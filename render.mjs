@@ -9,17 +9,17 @@
 // read, no credential exists, no trust in GitHub is involved.
 //
 // R75 — the line is multi-signer: the anchor machines and the sovereign
-// page sign as the account the key declares (cashmachine / headcorner /
+// page sign as the account the key declares (cashmachine / owner /
 // lsa — the fleet matrix). The reader scans every fleet account's history
 // and merges the anchors into one line, deduped by checkpoint; each row
-// records its witness. A headcorner-signed anchor now refreshes the line
+// records its witness. A owner-signed anchor now refreshes the line
 // exactly like a cashmachine one.
 //
 // Output: status.json next to this file. The workflow commits it and
 // deploys GitHub Pages from the same content.
 // ─────────────────────────────────────────────────────────────────────
 
-const FLEET = ["cashmachine", "headcorner", "lsa"].map((a) => a.toLowerCase()); // R75: the key declares who signs
+const FLEET = ["cashmachine", "owner", "lsa"].map((a) => a.toLowerCase()); // R75: the key declares who signs
 const OP_ID = process.env.WEAVE_OP_ID || "saos.weave.core.v1";
 // Z-14 hardening: a 2-node ladder died on a transient blip (run 36432539809:
 // "all public RPC nodes failed - Upstream temporarily unavailable"). The

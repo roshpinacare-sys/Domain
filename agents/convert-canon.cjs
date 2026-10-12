@@ -31,7 +31,7 @@ const AG = __dirname;
 const OUT_JSON = path.join(AG, 'convert-canon.json');
 const OUT_MD = path.join(AG, 'convert-canon.md');
 const STASIS_JSON = path.join(AG, 'STASIS.json');
-const ACCOUNT = process.env.CONVERT_ACCOUNT || 'headcorner';
+const ACCOUNT = process.env.CONVERT_ACCOUNT || 'owner';
 const NODE = 'https://api.steemit.com';
 const MAX_PAGES = +(process.env.CONVERT_MAX_PAGES || 90); // Z-72 CR-0054: 30 pages (~13h at measured density) saw only the ladder's tail — the maturity horizon is open+84h, so the walk must reach ~2 days back to book EVERY pending convert (measured: the 10-02..03 ladder, 23 rows / 117.887 SBD, sits inside 60 pages; 90 = measured need + headroom, ~20s walk cost on the tick cadence)
 const WINDOW_DAYS = +(process.env.CONVERT_WINDOW_DAYS || 90); // converts mature in 3.5 days on Steem — 90d window is generous

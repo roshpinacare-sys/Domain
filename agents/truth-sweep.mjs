@@ -22,7 +22,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const RPC = 'https://api.steemit.com';
-const FLEET = ['cashmachine', 'haran', 'israelnews', 'lsa', 'macrame', 'siq', 'tov', 'wic', 'wog', 'woq', 'headcorner'];
+const FLEET = ['cashmachine', 'haran', 'israelnews', 'lsa', 'macrame', 'siq', 'tov', 'wic', 'wog', 'woq', 'owner'];
 const TRUTH_URL = (process.env.TRUTH_URL || 'http://localhost:3000').replace(/\/$/, '');
 const OUT = process.env.RECEIPT_OUT || path.resolve('agents/receipts/truth-sweep-receipt.json');
 const STALE_DRIFT = Number(process.env.STALE_DRIFT || 0.15);
@@ -58,7 +58,7 @@ async function liveFleetTruth() {
   const vp = {};
   for (const a of accs) {
     vp[a.name] = Math.round(a.voting_power / 100);
-    if (a.name !== 'headcorner') { soldiers++; if (parseFloat(a.received_vesting_shares) > 0) delegated++; }
+    if (a.name !== 'owner') { soldiers++; if (parseFloat(a.received_vesting_shares) > 0) delegated++; }
     totalSP += (parseFloat(a.vesting_shares) + parseFloat(a.received_vesting_shares) - parseFloat(a.delegated_vesting_shares)) * ratio;
   }
   return { totalSP: Math.round(totalSP), vpReady: FLEET.filter(n => vp[n] >= 20).length, delegated, soldiers, at: new Date().toISOString() };

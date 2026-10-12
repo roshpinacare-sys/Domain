@@ -1,7 +1,7 @@
 # V1 · Curation house — NOTEBOOK (Z-34 cycle, 2026-10-02)
 
 **Goal:** deterministic public-external curation earn across steem/hive/blurt
-(10 soldiers CI lane + headcorner head lanes); first measured accrual → per-day line.
+(10 soldiers CI lane + owner head lanes); first measured accrual → per-day line.
 
 **Done**
 - Z-34 audit: soldiers lane verified ALIVE by DRYRUN probe — 78 candidates across

@@ -29,7 +29,7 @@
  *    INSIDE The Clubhouse (first tag = the community), and joining is its own staggered
  *    lane (subscribe in persona windows, budget 1 per soldier ever, max 2 per run,
  *    read-back via bridge.list_subscribers, posting-key signature only — the measured
- *    ground-truth shape). Founder order: headcorner joins first.
+ *    ground-truth shape). Founder order: owner joins first.
  *  · verify-then-sign everywhere; read-back after every op; fail-soft exit 0; zero
  *    secrets printed; STASIS halt-before-read; single-writer atomic books.
  *
@@ -57,8 +57,8 @@ const BOOK_JSON = path.join(AG, 'human-cadence.json');
 const BOOK_MD = path.join(AG, 'human-cadence.md');
 const STASIS_FILE = path.join(AG, 'STASIS.json');
 const SOLDIERS = Object.keys((SLOTS && SLOTS.soldiers) || {});
-const FLEET = SOLDIERS.concat(['headcorner']);
-const HEAD = 'headcorner';
+const FLEET = SOLDIERS.concat(['owner']);
+const HEAD = 'owner';
 const MIN_RC_PCT = 25;
 const PROBE_RX = /\bprobe\b|\btest post\b|sandbox|lorem/i;
 const MAX_BLOG_PER_RUN = 2, MAX_SOCIAL_SOLDIERS_PER_RUN = 2, MAX_CURATE_SOLDIERS_PER_RUN = 3;
@@ -198,14 +198,14 @@ function subscribeEligible(who, cfg, { hour, weekday, subscribedSet, memorySub, 
   return { ok: true };
 }
 
-/** the join plan: headcorner (founder) first, then soldiers by window start — deterministic, capped */
+/** the join plan: owner (founder) first, then soldiers by window start — deterministic, capped */
 function subscribePlan(now, subscribedSet, memory, keys) {
   const hour = now.getUTCHours(), weekday = now.getUTCDay();
   const memSub = (memory && memory.subscribeDone) || {};
   const cand = [];
   for (const who of FLEET) {
     const cfg = SLOTS.soldiers[who];
-    if (!cfg) continue; // headcorner rides the founder slot below
+    if (!cfg) continue; // owner rides the founder slot below
     const e = subscribeEligible(who, cfg, { hour, weekday, subscribedSet, memorySub: memSub, hasKey: !!keys[who] });
     if (e.ok) cand.push({ who, start: Math.min(...cfg.commentHoursUTC) });
   }

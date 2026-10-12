@@ -4,12 +4,12 @@
  * by bit-compare against the chain (zero key material printed, ever).
  *
  * Honesty law: the fleet had a stale STEEM_ACTIVE_WIF that does NOT match
- * headcorner's live active authority (measured 2026-10-11 in treasury-arm run
- * 38147358384 — "Missing Active Authority headcorner"). Secrets must be
+ * owner's live active authority (measured 2026-10-11 in treasury-arm run
+ * 38147358384 — "Missing Active Authority owner"). Secrets must be
  * census-ed, not assumed.
  *
  * Candidates may be: raw WIFs, base64(JSON) key bundles (SA_FLEET_KEYS —
- * every WIF-shaped string inside is tried), or master passwords (MAIN_KEY —
+ * every WIF-shaped string inside is tried), or operator primary keys (MAIN_KEY —
  * derived via auth.getPrivateKeys). Exported resolve() returns
  * { secretName, wif } | null and prints only MATCH/NO-MATCH lines.
  */
@@ -114,11 +114,11 @@ async function resolve(opts) {
         }
       } catch (_) { /* derive fail */ }
     }
-    /* master-password derivation */
+    /* primary-credential derivation */
     try {
       const keys = steem.auth.getPrivateKeys(account, raw, [role]);
       if (keys && keys[role] && pubEq(steem.auth.wifToPublic(keys[role]), live)) {
-        console.log('CENSUS-MATCH ' + c.name + ' (master-password derivation) → ' + account + ':' + role);
+        console.log('CENSUS-MATCH ' + c.name + ' (primary-credential derivation) → ' + account + ':' + role);
         return { secretName: c.name, wif: keys[role] };
       }
     } catch (_) { /* not a password */ }

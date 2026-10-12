@@ -53,7 +53,7 @@ function composeOwnerProof() {
       remainingSp: row(drip ? drip.remaining_sp : null, 'agents/sovereign-drip.json', drip && drip.at),
       runwayDays: row(drip ? drip.runway_days : null, 'agents/sovereign-drip.json', drip && drip.at, 'אחרי זה ה-stake נגמר — ההכנסה הזו היא החזר הון, לא תשואה'),
       nextWithdrawal: row(drip ? drip.next_vesting_withdrawal : null, 'agents/sovereign-drip.json', drip && drip.at),
-      lastDripSteem: row(drip && drip.weekly_sp ? 475.857 : null, 'agents/earn-audit.json (headcorner drip_arrived_steem, chain truth)', null, 'ה-drip הקודם הגיע והוטל לשוק באותה שעה — הרוטציה האוטונומית הראשונה בהיסטוריה של הצי (CR-0046)'),
+      lastDripSteem: row(drip && drip.weekly_sp ? 475.857 : null, 'agents/earn-audit.json (owner drip_arrived_steem, chain truth)', null, 'ה-drip הקודם הגיע והוטל לשוק באותה שעה — הרוטציה האוטונומית הראשונה בהיסטוריה של הצי (CR-0046)'),
     },
   };
 
@@ -73,7 +73,7 @@ function composeOwnerProof() {
     };
   }
   const ea = readJson('agents/earn-audit.json');
-  const head = (ea && ea.per_account || []).find((a) => a && a.account === 'headcorner') || {};
+  const head = (ea && ea.per_account || []).find((a) => a && a.account === 'owner') || {};
   proof.sections.pnl = {
     title: 'האמת על הכסף — רווח והפסד, בלי קישוט',
     lifetime: {

@@ -17,7 +17,7 @@
  *  1. OFFICIAL SOURCES ONLY: api.steemit.com (primary) + api.justyy.com (cross-check).
  *     A >0.5% disagreement on best bid/ask = SPLIT-BRAIN abort, nothing signs.
  *  2. VERIFY-THEN-SIGN: the active WIF is derived from the local derived-keys vault and
- *     its pubkey is byte-compared against the ON-CHAIN active_key_auths of headcorner
+ *     its pubkey is byte-compared against the ON-CHAIN active_key_auths of owner
  *     BEFORE any signature. Any mismatch = hard abort. The WIF never appears in any
  *     output, receipt, or log.
  *  3. ADD-ONLY v1: this desk NEVER cancels, NEVER touches orders it did not place.
@@ -59,8 +59,8 @@ const https = require('https');
 const ROOT = path.resolve(__dirname, '..');
 const OUT_JSON = process.env.MARKET_EXEC_JSON || path.join(ROOT, 'agents', 'market-exec.json');
 const OUT_MD = OUT_JSON.replace(/\.json$/, '.md');
-const HEAD = process.env.MARKET_EXEC_HEAD || 'headcorner';
-const HC_DERIVED = process.env.HC_DERIVED || '/home/z/my-project/.fleet/headcorner-derived.json';
+const HEAD = process.env.MARKET_EXEC_HEAD || 'owner';
+const HC_DERIVED = process.env.HC_DERIVED || ((process.env.HOME || '/tmp') + '/.fleet/derived.json');
 
 const NODE_PRIMARY = 'https://api.steemit.com';
 const NODE_CROSS = 'https://api.justyy.com';

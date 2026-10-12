@@ -194,7 +194,7 @@ async function main() {
     },
     canonicalTruths: [
       { id: 'T-phantom-refuted', claim: 'fleet Steem SP ≈ 6.5 (live RPC 2026-10-11), NOT ~4001 — phantom numbers existed in an agent plan; grid-doctor is the countermeasure', epistemic: 'OBSERVED', evidence: [{ source: 'agents/grid-truth.json', ref: 'live RPC totals per run', at: nowIso() }] },
-      { id: 'T-real-treasury', claim: 'real treasury = cornerstone on Hive (13,036 HIVE liquid + ~165 HP); Steem liquid ≈ 125 STEEM on headcorner + 56 STEEM stranded on keyless hcsoldier1/2/3', epistemic: 'OBSERVED', evidence: [{ source: 'agents/grid-truth.json', ref: 'STRANDED-CAPITAL alerts + balances', at: nowIso() }] }
+      { id: 'T-real-treasury', claim: 'real treasury = cornerstone on Hive (13,036 HIVE liquid + ~165 HP); Steem liquid ≈ 125 STEEM on owner + 56 STEEM stranded on keyless hcsoldier1/2/3', epistemic: 'OBSERVED', evidence: [{ source: 'agents/grid-truth.json', ref: 'STRANDED-CAPITAL alerts + balances', at: nowIso() }] }
     ],
     contradictions,
     frontier: {
@@ -216,7 +216,7 @@ async function main() {
     },
     unknowns: [
       'which machine runs money-family-live (measured active again 2026-10-11 12:56Z)',
-      'holder census of current headcorner active key (rotation pending)',
+      'holder census of current owner active key (rotation pending)',
       'whether the 12:56Z batched-create writer will exceed the ladder pattern'
     ],
     measurementNotes: [
@@ -231,7 +231,7 @@ async function main() {
         evidence: [{ source: 'R29 forensics', ref: 'carried from 2026-10-05 model', at: nowIso() }]
       },
       haltCoverage: 'ORGANISM_ONLY',
-      haltCoverageReason: 'money-family-live (unknown machine, measured again 2026-10-11T12:56Z) + any external holder of headcorner active key sign outside organism stop-power. Owner remediation (key rotation / machine stop) pending. Per R29 law, capital lanes (grid/general) stay closed to NEW claims; claims (posting-only) and the owner-directed capped lanes (powerup/delegation/connect) open only under the directives chain with caps and read-back.',
+      haltCoverageReason: 'money-family-live (unknown machine, measured again 2026-10-11T12:56Z) + any external holder of owner active key sign outside organism stop-power. Owner remediation (key rotation / machine stop) pending. Per R29 law, capital lanes (grid/general) stay closed to NEW claims; claims (posting-only) and the owner-directed capped lanes (powerup/delegation/connect) open only under the directives chain with caps and read-back.',
       capitalLanes: ['grid', 'general'],
       capitalLanesRationale: 'lanes where an uncontrolled actor is observed signing or unknown tools land. powerup/delegation/connect are NOT in this list because: (1) no uncontrolled actor has ever been observed performing them (fingerprint census 2026-10-05/10-11 shows limit-order ops only); (2) they are hard-capped, idempotent, read-back verified, and recorded in the tamper-evident directives chain; (3) the owner explicitly directed them 2026-10-11 (traces 1a1…89d5, 1a1…7275). This is recorded reasoning, not silent re-labeling.',
       capitalPaths: (prev && prev.sovereignty && prev.sovereignty.capitalPaths) || [],

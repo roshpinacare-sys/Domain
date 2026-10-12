@@ -545,7 +545,7 @@ function selftest() {
 
   // P2P fills: escrow-first; roster only; must beat the pool; ledger-dest only.
   // The filler is a REAL roster name (rosterLaw — the law never depends on invented names).
-  const TEST_FILLER = dc.rosterLaw()[1] || 'headcorner';
+  const TEST_FILLER = dc.rosterLaw()[1] || 'owner';
   const p2pOpen = { batch: 'E66-P2P-OPEN', ops: [{ type: 'XC-OPEN', intentId: 'cc01', owner: 'treasury', origin: 'SBD', destKind: 'LEDGER', destAsset: 'STEEM', amountMu: '1000', minOutMu: '1' }] };
   const mkWithFiller = () => {
     const b = mkCore66();

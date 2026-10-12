@@ -71,7 +71,7 @@ const OWNER = 'roshpinacare-sys';
 const GH_TOKEN = (process.env.GH_TOKEN || '').trim();
 const TOKEN = (process.env.ZIP_PAT || '').trim();
 const UA = 'saos-grid-guard/1 (+https://github.com/roshpinacare-sys)';
-const ENGINE_ACCOUNT = 'headcorner';
+const ENGINE_ACCOUNT = 'owner';
 
 const J = (o) => JSON.stringify(o);
 const out = (m) => console.log('[grid-guard] ' + m);

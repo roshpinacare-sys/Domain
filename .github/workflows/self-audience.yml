@@ -64,6 +64,8 @@ jobs:
         run: node agents/head-delegate.cjs
 
       - name: learning loop (external engagement ledger — keyless)
+        env:
+          FLEET_ACCOUNT: ${{ secrets.FLEET_ACCOUNT }}
         run: node agents/measure-learn.cjs
 
       - name: fleet doctor (keyless self-diagnosis)

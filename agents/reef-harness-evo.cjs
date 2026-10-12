@@ -39,7 +39,7 @@
  *     (score contract) — no cherry-picking, the attempt curve books itself.
  *   - CI-SAFE: honest SKIPPED rows when the shim source or reef venv is absent.
  *
- * Env: SHIM_ENTRY (default /home/z/my-project/mini-services/zai-openai-shim/index.ts),
+ * Env: SHIM_ENTRY (default <sandbox-workbench>/mini-services/zai-openai-shim/index.ts),
  *      SHIM_EVO_PORT (default 3041), REEF_VENVPY, REEF_RUNG3_TIMEOUT_MS, EVO_VARIANTS (max 4).
  */
 "use strict";
@@ -52,7 +52,7 @@ const AG = __dirname;
 const WORK = "/tmp/reef-rung3";
 const REEF_PORT = 8900;
 const SHIM_EVO_PORT = parseInt(process.env.SHIM_EVO_PORT ?? "3041", 10) || 3041;
-const SHIM_ENTRY = process.env.SHIM_ENTRY || "/home/z/my-project/mini-services/zai-openai-shim/index.ts";
+const SHIM_ENTRY = process.env.SHIM_ENTRY || ((process.env.HOME || "/tmp") + "/my-project/mini-services/zai-openai-shim/index.ts");
 const VENVPY = process.env.REEF_VENVPY || "/tmp/reef-venv/bin/python";
 const EP_TIMEOUT = parseInt(process.env.REEF_RUNG3_TIMEOUT_MS ?? "240000", 10) || 240000;
 const MAX_VARIANTS = Math.min(4, parseInt(process.env.EVO_VARIANTS ?? "4", 10) || 4);
@@ -85,7 +85,7 @@ const alive = (pid) => { try { process.kill(pid, 0); return true; } catch (_) { 
 function scrubEnv(extra) {
   const env = {};
   for (const k of ["PATH", "HOME", "LANG", "TERM", "TMPDIR"]) if (process.env[k]) env[k] = process.env[k];
-  env.PATH = `${process.env.HOME || "/home/z"}/.local/bin:${env.PATH || "/usr/local/bin:/usr/bin:/bin"}`; // Z-58 git-lfs
+  env.PATH = `${process.env.HOME || "/tmp"}/.local/bin:${env.PATH || "/usr/local/bin:/usr/bin:/bin"}`; // Z-58 git-lfs
   env.DO_NOT_TRACK = "1";
   return { ...env, ...extra };
 }

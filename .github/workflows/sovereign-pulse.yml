@@ -52,7 +52,7 @@ jobs:
 
       - name: Sovereign pulse (posting-auth custom_json attestation; fail-closed on key)
         env:
-          SAOS_RELAY_AGENT_ACCOUNT: headcorner
+          SAOS_RELAY_AGENT_ACCOUNT: ${{ secrets.FLEET_ACCOUNT }}
           STEEM_POSTING_WIF: ${{ secrets.STEEM_POSTING_WIF }}
         run: |
           set -Eeuo pipefail

@@ -1,8 +1,8 @@
 'use strict';
 /**
- * blurt-curate.cjs — Z-27 IDLE-STAKE ACTIVATION: headcorner blurt curation.
+ * blurt-curate.cjs — Z-27 IDLE-STAKE ACTIVATION: owner blurt curation.
  *
- * Found live on 09-30 by capability-matrix: headcorner holds 8,727 BP on blurt with
+ * Found live on 09-30 by capability-matrix: owner holds 8,727 BP on blurt with
  * voting power at 0 and zero votes in recent history — real capital, fully idle.
  * This agent wakes it: bounded, quality-gated curation (same doctrine as the steem
  * head curation shipped in Z-26):
@@ -24,7 +24,7 @@ const OUT = process.env.RECEIPT_OUT || path.join(ROOT, 'agents', 'receipts', 'bl
 
 const BLURT_NODE = 'https://rpc.beblurt.com';
 const BLURT_CHAIN_ID = 'cd8d90f29ae273abec3eaa7731e25934c63eb654d55080caff2ebb7f5df6381f';
-const HEAD = 'headcorner';
+const HEAD = 'owner';
 const VP_FLOOR = 2500;           // 25% — regen is slow, never drain the VP
 const VOTE_WEIGHT = 5000;        // 50%
 const MAX_VOTES = 3;
@@ -136,7 +136,7 @@ const repScore = (raw) => { const r = f(String(raw).replace(/[^0-9.\-]/g, '')); 
   const pub = blurtPubOf(headWif);
   const ours = pub && (acc.posting.key_auths || []).some(k => k[0] === pub);
   receipt.keyCheck = { derivedPrefix: pub ? pub.slice(0, 8) : null, authorityMatch: !!ours, postingAuthCount: (acc.posting.key_auths || []).length };
-  if (!ours) { receipt.fatal = 'BLT public key does not match headcorner posting authority — ABORT (nothing signed)'; fs.mkdirSync(path.dirname(OUT), { recursive: true }); fs.writeFileSync(OUT, JSON.stringify(receipt, null, 1)); console.log(JSON.stringify({ state: 'key-mismatch', failSoft: true })); process.exit(0); }
+  if (!ours) { receipt.fatal = 'BLT public key does not match owner posting authority — ABORT (nothing signed)'; fs.mkdirSync(path.dirname(OUT), { recursive: true }); fs.writeFileSync(OUT, JSON.stringify(receipt, null, 1)); console.log(JSON.stringify({ state: 'key-mismatch', failSoft: true })); process.exit(0); }
 
   // Z-34: manabar-first canon — Z-33 proved beblurt's legacy voting_power field is
   // lazily stale (0 at 14:05Z, 9799 at 14:08Z); treasury-desk got the permanent fix,

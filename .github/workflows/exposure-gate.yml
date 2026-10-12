@@ -25,7 +25,9 @@ jobs:
         with: { node-version: 22 }
       - name: Scan public surface
         id: scan
-        run: node scripts/exposure-scan.mjs | tee exposure-scan-output.txt
+        run: |
+          set -o pipefail
+          node scripts/exposure-scan.mjs 2>&1 | tee exposure-scan-output.txt
       - name: File violation issue
         if: failure()
         env:

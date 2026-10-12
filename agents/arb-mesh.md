@@ -2,7 +2,7 @@
 
 At: 2026-10-04T21:24:40.643Z · Verdict: **GATED-WIRE (edge above floor but no free capital to arm the agents — named, never faked)** · batch: MESH-2026100421-3d45bf9e · protocol: SAOS-ARB-MESH/1
 
-Roster: 11 accounts (headcorner + 10 soldiers) · Edge candidates: 1 · Intents drafted: 0 · Fills settled: 0 · Refusals: 0
+Roster: 11 accounts (owner + 10 soldiers) · Edge candidates: 1 · Intents drafted: 0 · Fills settled: 0 · Refusals: 0
 
 
 | Edge row | Direction | Net bps | Floor | Source |
@@ -39,7 +39,7 @@ Roster: 11 accounts (headcorner + 10 soldiers) · Edge candidates: 1 · Intents 
 ## Mesh P&L (lifetime, from the ledger — the core book is the source of truth)
 
 Fills: 1 · Volume in: 5000µ · Edge captured: -7µ · Fees paid (LP revenue): 0µ
-- headcorner: 1 fills · vol 5000µ · edge -7µ · fees 0µ
+- owner: 1 fills · vol 5000µ · edge -7µ · fees 0µ
 
 Laws: L1 L2 L3 L4 L5 L6 L7 L8 L9 L10 L11 L12 L13 L14 L15 · Gate law: the counter-grid gate follows CR-0074 (open = GATED-ARMED-BROADCAST-READY, closed = PLAN-POOL-GATED-NOT-BROADCAST) — the mesh never fires a keyed rail either way.
 

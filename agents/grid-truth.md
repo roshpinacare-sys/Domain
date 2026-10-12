@@ -13,7 +13,7 @@ Drift measured vs previous snapshot: 2026-10-12T09:21:15.746Z
 
 | account | role | eff power | liquid | locked | VP% | RC% | last post | alerts |
 |---|---|---|---|---|---|---|---|---|
-| headcorner | treasury | 2925.726 | 30.12 | 40.82 STEEM+91.195 SBD | 100 | 100 | 2026-10-12 | SP-UNDERFLOOR,TREASURY-UNDERFLOOR |
+| owner | treasury | 2925.726 | 30.12 | 40.82 STEEM+91.195 SBD | 100 | 100 | 2026-10-12 | SP-UNDERFLOOR,TREASURY-UNDERFLOOR |
 | cornerstone | legacy-treasury | 839.934 | 49.771 |  | 100 | 100 | 2020-03-28 | INACTIVE |
 | haran | worker-active | 78.374 | 0.01 |  | 100 | 93 | 2026-10-12 |  |
 | cashmachine | worker-active | 75.242 | 0.01 |  | 100 | 96.9 | 2026-10-12 |  |
@@ -41,19 +41,19 @@ Drift measured vs previous snapshot: 2026-10-12T09:21:15.746Z
 | account | role | eff power | liquid | locked | VP% | RC% | last post | alerts |
 |---|---|---|---|---|---|---|---|---|
 | cornerstone | treasury-primary | 102453.638 | 13036.489 |  | 100 | 100 | 2026-08-19 | INACTIVE |
-| headcorner | worker-active | 25.405 | 0.034 |  | 100 | 0 | 2026-10-10 |  |
+| owner | worker-active | 25.405 | 0.034 |  | 100 | 0 | 2026-10-10 |  |
 
 ## BLURT
 
 | account | role | eff power | liquid | locked | VP% | RC% | last post | alerts |
 |---|---|---|---|---|---|---|---|---|
 | cornerstone | connect-target | — | — | — | — | — | — | RPC-DEAD |
-| headcorner | worker-active | — | — | — | — | — | — | RPC-DEAD |
+| owner | worker-active | — | — | — | — | — | — | RPC-DEAD |
 
 ## ALERTS (11)
 
-- steem:headcorner SP-UNDERFLOOR — effective 2925.726 SP below floor 3000 — arming waves must respect the treasury floor
-- steem:headcorner TREASURY-UNDERFLOOR — liquid 30.12 + locked-in-orders 40.82 = 70.94 below floor 90
+- steem:owner SP-UNDERFLOOR — effective 2925.726 SP below floor 3000 — arming waves must respect the treasury floor
+- steem:owner TREASURY-UNDERFLOOR — liquid 30.12 + locked-in-orders 40.82 = 70.94 below floor 90
 - steem:cornerstone INACTIVE — last post 2389d ago (role expects activity)
 - steem:hcsoldier1 STRANDED-CAPITAL — keyless account holds 18.667 STEEM liquid — no custody, unrecoverable without key recovery
 - steem:hcsoldier2 STRANDED-CAPITAL — keyless account holds 18.667 STEEM liquid — no custody, unrecoverable without key recovery
@@ -61,6 +61,6 @@ Drift measured vs previous snapshot: 2026-10-12T09:21:15.746Z
 - hive:cornerstone INACTIVE — last post 53.5d ago (role expects activity)
 - k blurt K-FALLBACK — dynamic global properties unavailable, naive /1e6 in use, numbers may be off by ~1612x
 - blurt:cornerstone RPC-DEAD — Unexpected token 'S', "Server is "... is not valid JSON
-- blurt:headcorner RPC-DEAD — Unexpected token 'S', "Server is "... is not valid JSON
-- roster BANNED-CAPITAL-INFLOW — banned account "headcorner" holds 244.209 SP delegated IN — capital lane violated the ban, reclaim or justify
+- blurt:owner RPC-DEAD — Unexpected token 'S', "Server is "... is not valid JSON
+- roster BANNED-CAPITAL-INFLOW — banned account "owner" holds 244.209 SP delegated IN — capital lane violated the ban, reclaim or justify
 

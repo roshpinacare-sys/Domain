@@ -14,7 +14,7 @@ pentesting against AUTHORIZED estate assets only, read the findings with their h
 caveats, and never let a tool label substitute for verification.
 
 **Provenance:** study source usestrix/strix (Apache-2.0, pinned mirror sha 99c0711 at
-`/home/z/reference-mirrors/strix`) — evaluation wave Task 28, adoption wave Task 29.
+`<host>/reference-mirrors/strix`) — evaluation wave Task 28, adoption wave Task 29.
 This package is a HOUSE adaptation: zero upstream SKILL.md bodies were copied; the
 structural ideas (honest exit codes, decision tables, digest-bound approvals) are
 referenced, and the 9 upstream consumer skills live in the mirror under `skills/`.

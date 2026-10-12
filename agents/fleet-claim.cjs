@@ -18,7 +18,7 @@ steem.api.setOptions({ url: 'https://api.steemit.com' });
 const ROOT = path.resolve(__dirname, '..');
 const OUT = process.env.RECEIPT_OUT || path.join(ROOT, 'agent', 'fleet-claim-receipt.json');
 const DRY = process.env.DRY === '1';
-const FLEET = ['cashmachine', 'haran', 'israelnews', 'lsa', 'macrame', 'siq', 'tov', 'wic', 'wog', 'woq', 'headcorner']; // 11 — ynet פרש 2026-09-29 (פנדינג 0.014 SP שלו נשאר-לא-נתבע: אין-מפתח)
+const FLEET = ['cashmachine', 'haran', 'israelnews', 'lsa', 'macrame', 'siq', 'tov', 'wic', 'wog', 'woq', 'owner']; // 11 — ynet פרש 2026-09-29 (פנדינג 0.014 SP שלו נשאר-לא-נתבע: אין-מפתח)
 
 function recoverVault() {
   const out = '/tmp/fc-keys';

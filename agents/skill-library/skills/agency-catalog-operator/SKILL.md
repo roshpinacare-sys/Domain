@@ -18,7 +18,7 @@ let the catalog drift from what is actually on disk.
 **Provenance:** study source msitarzewski/agency-agents (MIT, verified
 IN-FILE at the pinned mirror: `LICENSE` 1,079 bytes, "Copyright (c) 2025
 AgentLand Contributors") — pinned mirror sha `d3f71c4` at
-`/home/z/reference-mirrors/agency-agents` — evaluation + adoption wave
+`<host>/reference-mirrors/agency-agents` — evaluation + adoption wave
 Task 36 (owner five-repo directive). This package is a HOUSE adaptation:
 zero upstream markdown agent bodies were copied — the catalog SHAPE is
 restated originally. MIT notice:
@@ -42,7 +42,7 @@ operations (see fleet-desk-operator).
 | Situation | Route | Verdict here |
 |---|---|---|
 | Adopt the catalog doctrine on estate skill library | skill-library + gate + books | 🟢 sovereignty-decided — zero cost, proven below |
-| Read upstream source as reference | mirror `/home/z/reference-mirrors/agency-agents` @ `d3f71c4` | 🟢 keyless, pinned, MIT verified in-file |
+| Read upstream source as reference | mirror `<host>/reference-mirrors/agency-agents` @ `d3f71c4` | 🟢 keyless, pinned, MIT verified in-file |
 | Bulk-copy upstream agent markdowns into estate tools | 319+ files at the pinned sha | 🔴 ZERO-COPY RULE — MIT permits copying with attribution, but the estate adopts SHAPES, not bodies; each estate role is written originally (house voice, house law); bulk import needs a judged CR |
 | Install upstream agents into ~/.claude/agents/ or via the desktop app | install.sh / agency-agents-app | 🟡 CONSULT — writes into agent config dirs and installs an app = possession-adjacent; doctrine adopted instead; owner-gated |
 | Upstream count claims ("232 agents / 16 divisions") | mirror shows 319 division-level agent .md files across 13+ divisions at `d3f71c4` | 🟡 CLAIM vs MIRROR — counts drift upward; trust the pinned mirror, not the README |

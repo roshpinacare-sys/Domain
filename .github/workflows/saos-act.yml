@@ -47,8 +47,8 @@ jobs:
       - name: Chain-judged adoption → engine cycle → custody anchor → bus
         working-directory: mini-services/saos-engine
         env:
-          SAOS_ACCOUNT: headcorner
-          CI_HEADCORNER_CRED: ${{ secrets.HEADCORNER_CRED }}
+          SAOS_ACCOUNT: ${{ secrets.FLEET_ACCOUNT }}
+          CI_FLEET_CRED: ${{ secrets.FLEET_CRED }}
           CI_MAIN_KEY: ${{ secrets.MAIN_KEY }}
           CI_STEEM_POSTING_WIF: ${{ secrets.STEEM_POSTING_WIF }}
           CI_STEEM_ACTIVE_WIF: ${{ secrets.STEEM_ACTIVE_WIF }}

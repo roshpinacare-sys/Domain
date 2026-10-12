@@ -39,7 +39,7 @@ const OUT_DIR = path.join(ROOT, 'audience');
 
 // Community accounts roster — same as agents/content-reviewer.mjs (measured
 // from the live publishing machinery of this repo).
-const ACCOUNTS = ['cashmachine', 'haran', 'israelnews', 'lsa', 'macrame', 'siq', 'tov', 'wic', 'wog', 'woq', 'headcorner'];
+const ACCOUNTS = ['cashmachine', 'haran', 'israelnews', 'lsa', 'macrame', 'siq', 'tov', 'wic', 'wog', 'woq', 'owner'];
 
 const WINDOW_H = 48;
 const MAX_PER_ACCOUNT = 12;       // pagination cap per account (feed is newest-first)

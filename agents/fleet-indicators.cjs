@@ -165,7 +165,7 @@ function ind(id, name, measures, evidenceSource, value, breakEven, status, note)
   const sp = mb && (mb.headSteemStake || '').match(/[\d.]+/) ? parseFloat(mb.headSteemStake) : null;
   const executor = mb && mb.executor;
   const mlAgeH = r1(agoH(ml && ml.updated));
-  const f7ok = executor === 'headcorner' && liquid != null && sp != null && mlAgeH != null && mlAgeH < 48;
+  const f7ok = executor === 'owner' && liquid != null && sp != null && mlAgeH != null && mlAgeH < 48;
   ind('F7', 'Economic Vitality & Equity', 'real chain balances (liquid + effective SP) in an executor-identified ledger — equity via identity: one executor, one writer, no hoarding ambiguity',
     'agents/money-ledger.json .book{executor,headSteemLiquid,headSteemStake} fresh <48h',
     (executor || '?') + ': ' + (liquid != null ? liquid : '?') + ' STEEM liquid · ' + (sp != null ? sp : '?') + ' SP' + (mlAgeH != null ? ' · book ' + mlAgeH + 'h old' : ''),

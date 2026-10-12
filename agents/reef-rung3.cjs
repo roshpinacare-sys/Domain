@@ -65,7 +65,7 @@ function scrubEnv() {
   for (const k of keep) if (process.env[k]) env[k] = process.env[k];
   // reef's artifact backend shells out to `git lfs` — the sandbox PATH lacks the
   // user-local git-lfs 3.6.1 (Z-58 sovereign unpack at ~/.local/bin, no root)
-  env.PATH = `${process.env.HOME || "/home/z"}/.local/bin:${env.PATH || "/usr/local/bin:/usr/bin:/bin"}`;
+  env.PATH = `${process.env.HOME || "/tmp"}/.local/bin:${env.PATH || "/usr/local/bin:/usr/bin:/bin"}`;
   env.REEF_SERVICE_URL = `http://127.0.0.1:${REEF_PORT}`;
   env.REEF_TOKEN = "reef-rung3-local"; // local service token (reef auth, not a secret)
   env.REEF_UPSTREAM_API_KEY = "shim-keyless"; // CR-0015 shim is keyless — placeholder, same value the Z-58 run resolved

@@ -260,7 +260,7 @@
     },
     {
       "id": "T-real-treasury",
-      "claim": "real treasury = cornerstone on Hive (13,036 HIVE liquid + ~165 HP); Steem liquid ≈ 125 STEEM on headcorner + 56 STEEM stranded on keyless hcsoldier1/2/3",
+      "claim": "real treasury = cornerstone on Hive (13,036 HIVE liquid + ~165 HP); Steem liquid ≈ 125 STEEM on owner + 56 STEEM stranded on keyless hcsoldier1/2/3",
       "epistemic": "OBSERVED",
       "evidence": [
         {
@@ -403,7 +403,7 @@
   },
   "unknowns": [
     "which machine runs money-family-live (measured active again 2026-10-11 12:56Z)",
-    "holder census of current headcorner active key (rotation pending)",
+    "holder census of current owner active key (rotation pending)",
     "whether the 12:56Z batched-create writer will exceed the ladder pattern"
   ],
   "measurementNotes": [
@@ -425,7 +425,7 @@
       ]
     },
     "haltCoverage": "ORGANISM_ONLY",
-    "haltCoverageReason": "money-family-live (unknown machine, measured again 2026-10-11T12:56Z) + any external holder of headcorner active key sign outside organism stop-power. Owner remediation (key rotation / machine stop) pending. Per R29 law, capital lanes (grid/general) stay closed to NEW claims; claims (posting-only) and the owner-directed capped lanes (powerup/delegation/connect) open only under the directives chain with caps and read-back.",
+    "haltCoverageReason": "money-family-live (unknown machine, measured again 2026-10-11T12:56Z) + any external holder of owner active key sign outside organism stop-power. Owner remediation (key rotation / machine stop) pending. Per R29 law, capital lanes (grid/general) stay closed to NEW claims; claims (posting-only) and the owner-directed capped lanes (powerup/delegation/connect) open only under the directives chain with caps and read-back.",
     "capitalLanes": [
       "grid",
       "general"
@@ -434,7 +434,7 @@
     "capitalPaths": [
       {
         "id": "dex-grid-ci",
-        "path": "owner-directive→STASIS staged→dex-grid.yml dispatch→grid-beat.ts→brake.mjs(stasisHalt: STASIS+guards+directives)→realmarket.signAndBroadcast→headcorner",
+        "path": "owner-directive→STASIS staged→dex-grid.yml dispatch→grid-beat.ts→brake.mjs(stasisHalt: STASIS+guards+directives)→realmarket.signAndBroadcast→owner",
         "guarded": true,
         "kill": "guards+STASIS+cancel CI schedule",
         "owner": "organism (policy-gated expansion)",
@@ -449,7 +449,7 @@
       },
       {
         "id": "money-family-live",
-        "path": "money-mover v1.9.0 (60s check, 30min cooldown, reprice-on-drift)→/api/money (vault WIF)→steem.broadcast→headcorner; orderid=date-scheme (shared with CI)",
+        "path": "money-mover v1.9.0 (60s check, 30min cooldown, reprice-on-drift)→/api/money (vault WIF)→steem.broadcast→owner; orderid=date-scheme (shared with CI)",
         "guarded": false,
         "kill": "NONE reachable from organism — runs on a machine outside all homes, outside GitHub Actions",
         "owner": "OWNER-ONLY (identify machine, stop daemon or brake its signing route)",
@@ -509,7 +509,7 @@
       },
       {
         "id": "unknown-external",
-        "path": "any holder of the headcorner active key (R11-era broadcasts) → direct broadcast",
+        "path": "any holder of the owner active key (R11-era broadcasts) → direct broadcast",
         "guarded": false,
         "kill": "NONE — key-holder outside the fleet is unreachable",
         "owner": "OWNER-ONLY (key rotation is the only real kill)",

@@ -189,8 +189,8 @@ async function readInternalBook(node, chain) {
 }
 async function readBalances() {
   const [steem, hive] = await Promise.all([
-    post(STEEM_NODE, { jsonrpc: '2.0', method: 'condenser_api.get_accounts', params: [['headcorner']], id: 1 }),
-    post(HIVE_NODE, { jsonrpc: '2.0', method: 'condenser_api.get_accounts', params: [['headcorner']], id: 1 }),
+    post(STEEM_NODE, { jsonrpc: '2.0', method: 'condenser_api.get_accounts', params: [[HEAD_ACCOUNT]], id: 1 }),
+    post(HIVE_NODE, { jsonrpc: '2.0', method: 'condenser_api.get_accounts', params: [[HEAD_ACCOUNT]], id: 1 }),
   ]).catch(() => [null, null]);
   const s = steem && Array.isArray(steem.result) && steem.result[0] ? steem.result[0] : null;
   const h = hive && Array.isArray(hive.result) && hive.result[0] ? hive.result[0] : null;
@@ -279,10 +279,10 @@ function buildRoutes(ctx) {
   const { steem, hive, cex, he, saos, implied } = ctx;
   const routes = [];
   const topAsk = steem ? steem.ask : null, topBid = steem ? steem.bid : null;
-  // R1/R2 — the live signed rail (headcorner active key is held and verified by market-exec)
+  // R1/R2 — the live signed rail (owner active key is held and verified by market-exec)
   routes.push({ id: 'R1', from: 'SBD', to: 'STEEM', via: 'STEEM-INTERNAL', legs: [{ venue: 'steem-internal', pair: 'SBD/STEEM' }],
     sizeNote: '≤ 1.25 STEEM/rung ×3 (sovereign policy)', quote: topAsk ? { in: '1.000 SBD', out: +(1 / topAsk).toFixed(6) + ' STEEM', impliedPrice: +topAsk.toFixed(8), impactBps: null } : null,
-    verdict: 'LIVE-KEYED', unlock: null, why: 'the only rail the fleet can sign today (headcorner active key, verify-then-sign in market-exec)' });
+    verdict: 'LIVE-KEYED', unlock: null, why: 'the only rail the fleet can sign today (owner active key, verify-then-sign in market-exec)' });
   routes.push({ id: 'R2', from: 'STEEM', to: 'SBD', via: 'STEEM-INTERNAL', legs: [{ venue: 'steem-internal', pair: 'SBD/STEEM' }],
     sizeNote: '≤ 85% liquid STEEM, 3 levels', quote: topBid ? { in: '1.000 STEEM', out: +topBid.toFixed(6) + ' SBD', impliedPrice: +topBid.toFixed(8), impactBps: null } : null,
     verdict: 'LIVE-KEYED', unlock: null, why: 'same live rail, ask→bid side' });
@@ -349,9 +349,9 @@ function buildArb(ctx) {
       localMid: steem.mid, impliedFair: implied, grossBps: gross, feesBps: 0, slipBps: SLIP_BPS, netBps: net,
       thresholdBps: arbThreshold(steem.spreadPct), driftPct: null,
       verdict: arbVerdict(net, arbThreshold(steem.spreadPct), true, null),
-      railOwner: 'headcorner (STEEM active — LIVE)',
+      railOwner: 'owner (STEEM active — LIVE)',
       why: 'maker lead-lag: when the CEX leads, we re-center first (the counter-grid anchor) and get filled by local traders who lag' });
-  } else rows.push({ id: 'A1', name: 'SBD/STEEM internal vs CEX-implied fair', legs: ['steem-internal', 'cex'], verdict: 'FEED-STALE', railOwner: 'headcorner', why: 'a needed leg did not answer — never guessed' });
+  } else rows.push({ id: 'A1', name: 'SBD/STEEM internal vs CEX-implied fair', legs: ['steem-internal', 'cex'], verdict: 'FEED-STALE', railOwner: 'owner', why: 'a needed leg did not answer — never guessed' });
   // A2 — HBD/HIVE vs implied (HBD LAW: a real HBD/USDT leg is required; the SBD
   // price is refused as the HBD proxy — the name-is-not-the-asset law)
   if (hive && impliedHive != null) {
@@ -361,8 +361,8 @@ function buildArb(ctx) {
       localMid: hive.mid, impliedFair: impliedHive, grossBps: gross, feesBps: 0, slipBps: SLIP_BPS, netBps: net,
       thresholdBps: arbThreshold(hive.spreadPct), driftPct: null,
       verdict: arbVerdict(net, arbThreshold(hive.spreadPct), true, null),
-      railOwner: 'headcorner-hive (NO-KEYS — CR-0068 measured)', why: 'the rail is quoted but unkeyed — plan only' });
-  } else rows.push({ id: 'A2', name: 'HBD/HIVE internal vs CEX-implied fair', legs: ['hive-internal', 'cex'], verdict: 'FEED-STALE', railOwner: 'headcorner-hive',
+      railOwner: 'owner-hive-alt (NO-KEYS — CR-0068 measured)', why: 'the rail is quoted but unkeyed — plan only' });
+  } else rows.push({ id: 'A2', name: 'HBD/HIVE internal vs CEX-implied fair', legs: ['hive-internal', 'cex'], verdict: 'FEED-STALE', railOwner: 'owner-hive-alt',
     why: 'no readable HBD/USDT leg (SBD is refused as the HBD proxy — the assets are different dollars); never guessed' });
   // A3 — SWAP.HIVE:SWAP.BTC peg drift vs the CEX cross
   const btcRef = cexMid(cex, 'BTCUSDT'), hiveRef = cexMid(cex, 'HIVEUSDT');
@@ -375,10 +375,10 @@ function buildArb(ctx) {
     rows.push({ id: 'A3', name: 'SWAP.HIVE:SWAP.BTC pool vs CEX cross (peg drift)', legs: ['he-pool', 'cex:BTCUSDT+HIVEUSDT'],
       poolPriceHivePerBtc: btcPool.priceQuotePerBase, cexCrossHivePerBtc: +cross.toFixed(6), grossBps: gross,
       feesBps: +(HE_SWAP_FEE_BPS + 75).toFixed(2), slipBps: SLIP_BPS, netBps: net, thresholdBps: arbThreshold(0.4), driftPct: drift,
-      verdict: arbVerdict(net, arbThreshold(0.4), true, drift), railOwner: 'headcorner-hive (NO-KEYS + HE RPC)',
+      verdict: arbVerdict(net, arbThreshold(0.4), true, drift), railOwner: 'owner-hive-alt (NO-KEYS + HE RPC)',
       why: 'the custodial peg is real only while the pool hugs the cross — 1.5% drift halts the venue' });
   } else rows.push({ id: 'A3', name: 'SWAP.HIVE:SWAP.BTC pool vs CEX cross', legs: ['he-pool', 'cex'], verdict: 'FEED-STALE',
-    railOwner: 'headcorner-hive', why: he.alive ? 'a CEX leg did not answer' : (he.why || 'HE dark') });
+    railOwner: 'owner-hive-alt', why: he.alive ? 'a CEX leg did not answer' : (he.why || 'HE dark') });
   // A4 — SAOS/USDS vs its own ref (internal honesty probe)
   const saosPool = (saos.pools || []).find((p) => p.pair === 'SAOS/USDS');
   if (saosPool && saos.assets && saos.assets.SAOS > 0) {

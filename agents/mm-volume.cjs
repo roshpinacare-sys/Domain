@@ -448,7 +448,7 @@ async function run() {
   if (!dexBook) blockedReasons.push('NO-DEX-BOOK');
   if (!money || !money.book) blockedReasons.push('NO-TREASURY-BOOK');
 
-  // fleet accounts (steem:// owners from the registry; headcorner is the funded one)
+  // fleet accounts (steem:// owners from the registry; owner is the funded one)
   const accounts = [];
   if (registry && Array.isArray(registry.identity)) {
     for (const it of registry.identity) {
@@ -459,7 +459,7 @@ async function run() {
       }
     }
   }
-  if (!accounts.length) { accounts.push('headcorner'); blockedReasons.push('REGISTRY-EMPTY-DEFAULTED-HEAD'); }
+  if (!accounts.length) { accounts.push('owner'); blockedReasons.push('REGISTRY-EMPTY-DEFAULTED-HEAD'); }
 
   // measured spreads: live book first (market-grid v1.1.0), history fallback
   const mgSorted = mgHist.filter((r) => r && typeof r.at === 'string' && !isNaN(Date.parse(r.at))).sort((a, b) => Date.parse(a.at) - Date.parse(b.at));
@@ -599,7 +599,7 @@ async function run() {
   const partition = partitionLadder(accounts, 10);
   const fleet = {
     accountsNow: accounts.length,
-    fundedAccounts: accounts.includes('headcorner') ? ['headcorner'] : [],
+    fundedAccounts: accounts.includes('owner') ? ['owner'] : [],
     partition,
     growth: growthTable({ accounts, fillsPerMin: LAW.TAPE_FILLS_PER_MIN, avgSizeSbd: (venues[0] && venues[0].avgSizeSbd) || LAW.ASSUMED_AVG_SIZE_SBD }),
     rolloutPath: 'fleet rollout = fund + key-provision recruits (recruit.cjs contract path), one derived-key vault per account, each account re-runs market-exec law with its own caps; the partition above pre-assigns the rungs',
@@ -660,7 +660,7 @@ async function run() {
       planLedgerRows: planRows.length,
       shareSeries: venues.filter((v) => v.sharePct != null).map((v) => ({ venue: v.venue, points: shareSeries(planRows, v.layer === 'hive-engine-sidechain' ? v.venue.split('/')[0] : (String(v.venue).includes('hive') ? 'hive' : 'steem')) || [] })),
     },
-    ownerGate: { mode: 'PLAN-ONLY-OWNER-GATED', livePath: 'market-exec.cjs (headcorner) — fleet rollout per fleet.rolloutPath', previewNote: 'per-venue order previews are emitted by market-grid executorPreview; this book carries counts and prices only' },
+    ownerGate: { mode: 'PLAN-ONLY-OWNER-GATED', livePath: 'market-exec.cjs (owner) — fleet rollout per fleet.rolloutPath', previewNote: 'per-venue order previews are emitted by market-grid executorPreview; this book carries counts and prices only' },
     inputs: {
       feeDoctrine: feeDoctrine ? (feeDoctrine.format || 'present') : null,
       dexBookAt: dexBook && dexBook.at ? dexBook.at : null,

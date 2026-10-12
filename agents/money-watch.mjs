@@ -1,7 +1,7 @@
 // MONEY-WATCH — צופה נתיב הכסף (R39)
 //
 // שני צווארי-הבקבוק של נתיב הכסף לא היו תחת מעקב חי:
-//   1. כניסת-הדלק: תשלומי ה-powerdown של @headcorner הם עורק-החיים היחיד
+//   1. כניסת-הדלק: תשלומי ה-powerdown של @owner הם עורק-החיים היחיד
 //      של ערך חוץ (≈470 SP ≈ $25 לשבוע, עוד 4 תשלומים). הגריד החוץ רץ
 //      יומית ב-03:17 UTC — כלומר הדלק שנוחת ב-02:01 ממתין 76 דקות לפני
 //      שנכנס לשוק. הסוכן הזה קולט את הנחיתה בתוך רבע-שעה ומזניק את
@@ -23,7 +23,7 @@ import { readFileSync, writeFileSync, existsSync } from "node:fs";
 
 const OWNER = "roshpinacare-sys";
 const DEX_REPO = "saos-dex";
-const STEEM_ACCOUNT = "headcorner";
+const STEEM_ACCOUNT = "owner";
 const CUSTODY_TRON = "TYVwwuvdDmfy3shxT3cb3RKLrRCshaZxTy";
 const OUT_PATH = process.env.MONEY_PATH || "dex/money.json";
 const BANDWIDTH_COST_TRX = 0.35; // נמדד חי: שידור TRX מחשבון בלי רוחב-פס מסוגר ≈ 0.345-0.35 TRX
@@ -83,7 +83,7 @@ if (existsSync(OUT_PATH)) {
   try { prev = JSON.parse(readFileSync(OUT_PATH, "utf8")); } catch { prev = null; }
 }
 
-/* ═══ 1) דלק — הרשות החיה של headcorner ═══ */
+/* ═══ 1) דלק — הרשות החיה של owner ═══ */
 let fuel = null;
 let landing = null;
 try {

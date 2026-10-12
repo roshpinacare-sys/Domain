@@ -10,7 +10,7 @@ Born from the clodfarm study (Z-31): they built the best stop-spending governor 
 - **Price oracle (measured this run):** HIVE $0.054763 · STEEM $0.059809 · BLURT $0.00130526
 
 ## V1 · Curation house — OPEN
-- **Thesis:** disciplined public-external curation (10 soldiers lane; headcorner lanes steem/hive/blurt owned by the weave daemon) — our votes ARE the traffic
+- **Thesis:** disciplined public-external curation (10 soldiers lane; owner lanes steem/hive/blurt owned by the weave daemon) — our votes ARE the traffic
 - **Product → rail → traffic:** attention allocated by deterministic public scoring → HP/VP curation rewards (steem/hive/blurt) → native feeds of curated public authors
 - **Earn line:** pending accrual measured per cycle; per-day line set after 7d of book (honest TBD)
 - **Kill rule:** no measurable curation accrual in 3 consecutive cycles → weight→0 (IDLE)

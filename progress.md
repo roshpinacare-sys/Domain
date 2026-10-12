@@ -32,5 +32,5 @@ them.
 
 ## Next
 - Realized-revenue receipts over the coming days to prove the >1¢ KPI on chain.
-- Owner-only keys (tov-hive, headcorner-hive) — exist in no git folder, stay
+- Owner-only keys (owner-hive, owner-hive-alt) — exist in no git folder, stay
   blocked until the owner supplies them.

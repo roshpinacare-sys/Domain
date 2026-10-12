@@ -21,7 +21,7 @@ const fs = require('fs');
 const path = require('path');
 
 const RPC = process.env.STEEM_RPC || 'https://api.steemit.com';
-const FLEET = ['headcorner', 'cashmachine', 'haran', 'israelnews', 'lsa', 'macrame', 'siq', 'tov', 'wic', 'wog', 'woq', 'ynet'];
+const FLEET = ['owner', 'cashmachine', 'haran', 'israelnews', 'lsa', 'macrame', 'siq', 'tov', 'wic', 'wog', 'woq', 'ynet'];
 const OUT_DIR = path.join(__dirname);
 
 function argNum(name, dflt) { const i = process.argv.indexOf(name); return i > -1 ? (parseInt(process.argv[i + 1], 10) || dflt) : dflt; }
@@ -213,8 +213,8 @@ async function main() {
   const eff = FLEET.filter((n) => n !== 'ynet').map((n) => accState[n].vestsM);
   const fairness = {
     effVestsGini: gini(eff),
-    soldiersWithDelegation: FLEET.filter((n) => n !== 'headcorner' && n !== 'ynet' && accState[n].receivedM > 0).length,
-    soldiersNoDelegation: FLEET.filter((n) => n !== 'headcorner' && n !== 'ynet' && accState[n].receivedM <= 0),
+    soldiersWithDelegation: FLEET.filter((n) => n !== 'owner' && n !== 'ynet' && accState[n].receivedM > 0).length,
+    soldiersNoDelegation: FLEET.filter((n) => n !== 'owner' && n !== 'ynet' && accState[n].receivedM <= 0),
     idleHighVp: FLEET.filter((n) => accState[n].vpPct >= 85 && events.filter((e) => e.account === n && e.kind === 'vote').length === 0),
     vpByAccount: Object.fromEntries(FLEET.map((n) => [n, accState[n].vpPct])),
     spByAccount: Object.fromEntries(FLEET.map((n) => [n, accState[n].sp])),

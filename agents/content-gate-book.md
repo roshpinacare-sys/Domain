@@ -4,10 +4,10 @@ policy: <=7 posts/7d/account · >=600 chars · dup-ratio <=0.2 · disclosure on 
 
 | account | posts7d | short-bodies | disclosed | status |
 |---|---|---|---|---|
-| @headcorner | 20 | 0 | 0/20 | DENSITY-OVER |
+| @owner | 20 | 0 | 0/20 | DENSITY-OVER |
 | @cornerstone | 0 | 0 | 0/0 | ok |
 | @haran | 6 | 0 | 0/6 | ok |
-| @cashmachine | 7 | 1 | 0/7 | ok |
+| @fleet-anchor | 7 | 1 | 0/7 | ok |
 | @wic | 9 | 0 | 0/9 | DENSITY-OVER |
 | @woq | 8 | 0 | 0/8 | DENSITY-OVER |
 | @tov | 8 | 0 | 0/8 | DENSITY-OVER |
@@ -24,7 +24,7 @@ cross-account dup pairs: 41
 
 ## VIOLATIONS (50)
 
-- @headcorner posts7d=20 > 7 — the density disease is back
+- @owner posts7d=20 > 7 — the density disease is back
 - @wic posts7d=9 > 7 — the density disease is back
 - @woq posts7d=8 > 7 — the density disease is back
 - @tov posts7d=8 > 7 — the density disease is back
@@ -33,20 +33,20 @@ cross-account dup pairs: 41
 - @macrame posts7d=8 > 7 — the density disease is back
 - @siq posts7d=10 > 7 — the density disease is back
 - @wog posts7d=10 > 7 — the density disease is back
-- DUP @headcorner ≡ @woq permlink=how-do-you-evaluate-content-value-on-steem-20261006-0
-- DUP @headcorner ≡ @tov permlink=how-do-you-evaluate-content-value-on-ste-20261010-3c932d27
-- DUP @headcorner ≡ @wog permlink=how-do-you-evaluate-content-value-on-ste-20261010-3c932d27
-- DUP @headcorner ≡ @cashmachine permlink=the-drawer-audit-counting-what-the-tools-actually-earned-20261009-0
-- DUP @headcorner ≡ @hcsoldier4 permlink=i-tested-it-does-the-expensive-tool-actually-make-you-better-20261007-0
-- DUP @headcorner ≡ @wic permlink=streamlining-your-steem-workflow-tools-f-20261010-554fd345
-- DUP @headcorner ≡ @macrame permlink=streamlining-your-steem-workflow-tools-f-20261011-554fd345
-- DUP @headcorner ≡ @siq permlink=streamlining-your-steem-workflow-tools-for-efficiency-20261006-0
-- DUP @headcorner ≡ @israelnews permlink=how-effective-is-steem-s-curation-reward-system-20261006-0
+- DUP @owner ≡ @woq permlink=how-do-you-evaluate-content-value-on-steem-20261006-0
+- DUP @owner ≡ @tov permlink=how-do-you-evaluate-content-value-on-ste-20261010-3c932d27
+- DUP @owner ≡ @wog permlink=how-do-you-evaluate-content-value-on-ste-20261010-3c932d27
+- DUP @owner ≡ @fleet-anchor permlink=the-drawer-audit-counting-what-the-tools-actually-earned-20261009-0
+- DUP @owner ≡ @hcsoldier4 permlink=i-tested-it-does-the-expensive-tool-actually-make-you-better-20261007-0
+- DUP @owner ≡ @wic permlink=streamlining-your-steem-workflow-tools-f-20261010-554fd345
+- DUP @owner ≡ @macrame permlink=streamlining-your-steem-workflow-tools-f-20261011-554fd345
+- DUP @owner ≡ @siq permlink=streamlining-your-steem-workflow-tools-for-efficiency-20261006-0
+- DUP @owner ≡ @israelnews permlink=how-effective-is-steem-s-curation-reward-system-20261006-0
 - DUP @haran ≡ @lsa permlink=walking-is-how-i-think-on-routes-loops-and-ideas-that-arrive-20261008-0
-- DUP @cashmachine ≡ @israelnews permlink=seven-floors-of-small-talk-notes-from-the-elevator-20261011-0
-- DUP @cashmachine ≡ @siq permlink=the-waiting-room-is-the-most-honest-building-in-town-20261008-0
-- DUP @cashmachine ≡ @woq permlink=understanding-steem-s-dual-token-system-20261010-577d417d
-- DUP @cashmachine ≡ @tov permlink=understanding-steem-s-dual-token-system-20261011-577d417d
+- DUP @fleet-anchor ≡ @israelnews permlink=seven-floors-of-small-talk-notes-from-the-elevator-20261011-0
+- DUP @fleet-anchor ≡ @siq permlink=the-waiting-room-is-the-most-honest-building-in-town-20261008-0
+- DUP @fleet-anchor ≡ @woq permlink=understanding-steem-s-dual-token-system-20261010-577d417d
+- DUP @fleet-anchor ≡ @tov permlink=understanding-steem-s-dual-token-system-20261011-577d417d
 - DUP @wic ≡ @hcsoldier6 permlink=the-dish-that-remembers-on-food-that-carries-people-in-it-20261011-0
 - DUP @wic ≡ @wog permlink=walking-after-ten-the-town-sounds-differ-20261011-0a58514d
 - DUP @wic ≡ @siq permlink=tension-is-everything-what-knots-taught-me-about-steady-hand-20261011-0

@@ -6,7 +6,7 @@
  * always treat itself according to its CURRENT state — measured from live chain
  * RPCs, never from self-reports or simulation books. Phantom numbers found in a
  * parallel agent's "verified" plan (3676 SP claimed vs 5.93 SP live on
- * headcorner) are exactly the disease this machine cures.
+ * owner) are exactly the disease this machine cures.
  *
  * Lane: measurement-only. STASIS explicitly keeps measurement lanes running.
  * Outputs:

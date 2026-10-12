@@ -56,7 +56,7 @@ Surface these WITHOUT being asked:
 |---|---|---|
 | Gate battery output | `init.sh` transcript → judge book `agents/harness-audit.json` | the booting worker |
 | First-run book of your tool | `agents/<your-tool>.json` + `.md` | your tool |
-| Worklog wave entry | `/home/z/my-project/worklog.md` (operator-side ledger) | the wave |
+| Worklog wave entry | `<sandbox-workbench>/worklog.md` (operator-side ledger) | the wave |
 
 ## Tier & Scope
 

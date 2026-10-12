@@ -32,7 +32,7 @@ const CUR_VOTE_MAX_HIVE = 2;
 const HIVE_MIN_REP = 40;   // Z-33 calibrated: the hive 'created' feed is small-account heavy; 55 zeroed all 20 candidates. 40 still requires raw rep ≥ ~4.6e10.
 const HIVE_MAX_AGE_MIN = 480;
 const RETIRED = new Set(['ynet']);
-const HEAD = 'headcorner';
+const HEAD = 'owner';
 const TRON_CUSTODY = 'TYVwwuvdDmfy3shxT3cb3RKLrRCshaZxTy';
 // curation policy: bounded, quality-gated, VP-gated
 const CUR_VOTE_MAX = 4;
@@ -68,7 +68,7 @@ function loadKeys() {
 
 // Head posting key from the private steem repo vault (Z-21 self-recovery pattern,
 // proven live 3+ times). STEEM_REPO_DIR points at a checkout of roshpinacare-sys/steem.
-// Returns ONLY headcorner's posting WIF; nothing is printed, temp dir is 0700 and wiped.
+// Returns ONLY owner's posting WIF; nothing is printed, temp dir is 0700 and wiped.
 function recoverHeadPosting() {
   const dir = process.env.STEEM_REPO_DIR;
   if (!dir) return null;
@@ -105,7 +105,7 @@ function recoverHeadPosting() {
   return null;
 }
 
-// Z-33: headcorner's HIVE posting key — same private-vault pattern as recoverHeadPosting.
+// Z-33: owner's HIVE posting key — same private-vault pattern as recoverHeadPosting.
 // The hive key is DISTINCT from steem's (verified vault-side) and matches the on-chain
 // posting authority (STM6u99… — verified 2026-10-02 before first hive-lane run).
 function recoverHeadHive() {
@@ -495,7 +495,7 @@ async function headCurateBlurt(headWif) {
 
   // ---- LEDGER (committed, keyless) ----
   const book = {
-    executor: 'headcorner', // Task 18: the ledger names the account it describes — the reconcile cross-check (references executor account) reads this identity
+    executor: 'owner', // Task 18: the ledger names the account it describes — the reconcile cross-check (references executor account) reads this identity
     headSteemLiquid: receipt.book.steem && receipt.book.steem.head ? receipt.book.steem.head.liquid : null,
     headSteemDebt: receipt.book.steem && receipt.book.steem.head ? receipt.book.steem.head.debt : null,
     headSteemStake: receipt.book.steem && receipt.book.steem.head ? receipt.book.steem.head.effStake : null,

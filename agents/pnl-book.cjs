@@ -40,7 +40,7 @@ const LEDGER = require(path.join(__dirname, 'fill-ledger.cjs'));
 const OUT_JSON = process.env.PNL_BOOK_JSON || path.join(ROOT, 'agents', 'pnl-book.json');
 const OUT_MD = OUT_JSON.replace(/\.json$/, '.md');
 const FILLS_JSONL = process.env.FILL_LEDGER_FILLS || path.join(ROOT, 'agents', 'fill-ledger-fills.jsonl');
-const HEAD = process.env.PNL_BOOK_HEAD || LEDGER.HEAD || 'headcorner';
+const HEAD = process.env.PNL_BOOK_HEAD || LEDGER.HEAD || 'owner';
 const NODE = process.env.PNL_BOOK_NODE || 'https://api.steemit.com';
 const POST_LAW_SINCE = process.env.PNL_POST_LAW_SINCE || '2026-10-03T22:00:00Z'; // CR-0047 law time
 

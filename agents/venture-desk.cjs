@@ -144,7 +144,7 @@ const tokenOf = (s) => { const m = typeof s === 'string' ? s.match(/^([0-9.]+)\s
 const VENTURES = [
   {
     id: 'V1', name: 'Curation house',
-    thesis: 'disciplined public-external curation (10 soldiers lane; headcorner lanes steem/hive/blurt owned by the weave daemon) — our votes ARE the traffic',
+    thesis: 'disciplined public-external curation (10 soldiers lane; owner lanes steem/hive/blurt owned by the weave daemon) — our votes ARE the traffic',
     product: 'attention allocated by deterministic public scoring', rail: 'HP/VP curation rewards (steem/hive/blurt)',
     traffic: 'native feeds of curated public authors', earnLine: 'pending accrual measured per cycle; per-day line set after 7d of book (honest TBD)',
     killRule: 'no measurable curation accrual in 3 consecutive cycles → weight→0 (IDLE)',

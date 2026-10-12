@@ -48,7 +48,7 @@
  *  - LEDGER LAW (event sourcing): state = book snapshot; every state change is an
  *    append-only op in dex-core-history.jsonl with a monotonic seq. The chain probe
  *    (measure phase) is itself an op with provenance — the powerdown drip enters the DEX
- *    as a DEPOSIT-DELTA the same hour it lands on headcorner. No code needed on drip day.
+ *    as a DEPOSIT-DELTA the same hour it lands on owner. No code needed on drip day.
  *  - ARB / REBALANCE LAW (inherited from dex-router.cjs — single source of truth for the
  *    FLOOR math): when the pool's own price drifts from the CEX-implied fair beyond
  *    arbThreshold, the treasury rebalances AGAINST ITS OWN POOL — selling the overvalued
@@ -438,7 +438,7 @@ function nowIso() {
   if (process.env.DEX_CORE_NOW) { const t = Date.parse(process.env.DEX_CORE_NOW); if (isFinite(t)) return new Date(t).toISOString(); }
   return new Date().toISOString();
 }
-/** probeNetworks (R42): keyless condenser probes per network — headcorner's balances observed
+/** probeNetworks (R42): keyless condenser probes per network — owner's balances observed
  *  with node provenance, fail-soft per node, honest OBSERVED-ABSENT when unreachable.
  *  STEEM balances are the KEYED custody (the drip-fuel loop's ground truth); HIVE/BLURT
  *  balances are OBSERVED (not custody — the custody-class law decides). */
@@ -450,7 +450,7 @@ async function probeNetworks() {
     for (const node of nodes) {
       const ctl = new AbortController(); const t = setTimeout(() => ctl.abort(), 8000);
       try {
-        const r = await fetch(node, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', method: 'condenser_api.get_accounts', params: [['headcorner']], id: 1 }), signal: ctl.signal });
+        const r = await fetch(node, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', method: 'condenser_api.get_accounts', params: [[process.env.FLEET_ACCOUNT || 'owner']], id: 1 }), signal: ctl.signal });
         clearTimeout(t);
         const j = await r.json();
         const a = j && j.result && j.result[0];
@@ -776,17 +776,17 @@ function settle(prev, feed, custodyProbe, now, networkProbe, gridGate) {
       const booked = ub(st.vault.custody[a] || '0');
       const delta = m - booked;
       if (absb(delta) <= 1000n) { // dust threshold 0.001
-        st.vault.custodyProvenance[a] = `MEASURED condenser headcorner @${custodyProbe.node} ${now}`;
+        st.vault.custodyProvenance[a] = `MEASURED condenser owner @${custodyProbe.node} ${now}`;
       } else if (delta > 0n) {
         op('DEPOSIT_DELTA', { asset: a, amount: mu(delta), provenance: `chain disagrees by +${mu(delta)}µ — the drip-fuel loop books it (probe ${custodyProbe.node})` });
         st.vault.custody[a] = mu(m);
         st.accounts.treasury.claims[a] = mu(ub(st.accounts.treasury.claims[a] || '0') + delta);
-        st.vault.custodyProvenance[a] = `MEASURED condenser headcorner @${custodyProbe.node} ${now}`;
+        st.vault.custodyProvenance[a] = `MEASURED condenser owner @${custodyProbe.node} ${now}`;
         notes.push(`${a} custody delta +${mu(delta)}µ booked (chain is ground truth)`);
       } else {
         notes.push(`${a} custody DROP ${mu(delta)}µ measured — trading HALTED this tick (safety law: the vault never trades on shrinking custody)`);
         st.haltTrading = true;
-        st.vault.custodyProvenance[a] = `MEASURED condenser headcorner @${custodyProbe.node} ${now} (CUSTODY-DROP)`;
+        st.vault.custodyProvenance[a] = `MEASURED condenser owner @${custodyProbe.node} ${now} (CUSTODY-DROP)`;
       }
     }
   }
@@ -804,7 +804,7 @@ function settle(prev, feed, custodyProbe, now, networkProbe, gridGate) {
         const cls = CUSTODY_CLASSES[a];
         if (m !== booked) op('OBSERVE', { asset: a, network: row.network, node: row.node, amount: mu(m), prior: mu(booked), keyClass: cls, note: 'observed, NOT custody — minting and conservation never touch it' });
         st.vault.observed[a] = mu(m);
-        st.vault.observedProvenance[a] = `MEASURED ${row.network} headcorner @${row.node} ${now} (class ${cls})`;
+        st.vault.observedProvenance[a] = `MEASURED ${row.network} owner @${row.node} ${now} (class ${cls})`;
       } else {
         st.vault.observedProvenance[a] = `probe unreachable ${now} (class OBSERVED-ABSENT — booked observation stands)`;
       }
@@ -946,7 +946,9 @@ function settle(prev, feed, custodyProbe, now, networkProbe, gridGate) {
 }
 
 // ── R41 THE MESH MARKET: the fleet settles on this ledger ───────────────────
-/** roster law: headcorner (operator) + soldiers (persona-slots). Deterministic, no magic names.
+/** head account injected at runtime (FLEET_ACCOUNT) — never committed to the public surface. */
+const HEAD_ACCOUNT = process.env.FLEET_ACCOUNT || 'owner';
+/** roster law: owner (operator) + soldiers (persona-slots). Deterministic, no magic names.
  *  R80 fallback (2026-10-12, measured trace 1a1…bc29): persona-store came back with 0
  *  soldiers → 1-member roster → the batch selftest lost its 3-trader proof set → arb-mesh red ×3
  *  (15:34Z/20:31Z/23:55Z). Lawful fallback: when the persona store yields < 2 soldiers, the
@@ -964,12 +966,12 @@ function rosterLaw() {
       const banned = new Set((fr.bannedCapital || []).map((b) => String(b && b.name ? b.name : b).toLowerCase()));
       const fleet = (fr.steemFleet || [])
         .map((s) => String(s && s.name ? s.name : s).toLowerCase())
-        .filter((n) => n && n !== 'headcorner' && !banned.has(n))
+        .filter((n) => n && n !== HEAD_ACCOUNT && !banned.has(n))
         .sort();
       if (fleet.length > soldiers.length) soldiers = fleet; // the bigger measured roster wins — honest union
     } catch (_) { /* no fleet roster → keep the persona store as-is, honest */ }
   }
-  return ['headcorner', ...soldiers];
+  return [HEAD_ACCOUNT, ...soldiers];
 }
 
 /** MESH SETTLEMENT (R41): process a batch of agent intents ATOMICALLY on this ledger.
@@ -1174,8 +1176,8 @@ async function tick() {
       const provenance = {};
       if (probe.measured) {
         custody.STEEM = probe.steem; custody.SBD = probe.sbd;
-        provenance.STEEM = `MEASURED condenser headcorner @${probe.node} ${now}`;
-        provenance.SBD = `MEASURED condenser headcorner @${probe.node} ${now}`;
+        provenance.STEEM = `MEASURED condenser owner @${probe.node} ${now}`;
+        provenance.SBD = `MEASURED condenser owner @${probe.node} ${now}`;
       } else {
         const cg = ((feed.router || {}).counterGrid || {}).steem || {};
         const liq = cg.liquid || {};
@@ -2498,10 +2500,10 @@ function selftest() {
   const rej1 = settleIntents(meshBase, { batch: 'B-UNK', intents: [{ agent: 'ghost', from: 'STEEM', to: 'SBD', amountIn: '20000' }] }, feedMesh, nowIso());
   ok('mesh-roster-unknown-refused', rej1.rejects.some((r) => r.why === 'ROSTER-UNKNOWN') && rej1.fills.length === 0);
   // 2. dust refused
-  const rej2 = settleIntents(meshBase, { batch: 'B-DUST', intents: [{ agent: 'headcorner', from: 'STEEM', to: 'SBD', amountIn: '10' }] }, feedMesh, nowIso());
+  const rej2 = settleIntents(meshBase, { batch: 'B-DUST', intents: [{ agent: 'owner', from: 'STEEM', to: 'SBD', amountIn: '10' }] }, feedMesh, nowIso());
   ok('mesh-dust-refused', rej2.rejects.some((r) => r.why === 'DUST'));
   // 3. real fill via wire: agent has nothing, treasury has free STEEM → wire + fill settle atomically
-  const filled = settleIntents(meshBase, { batch: 'B-FILL', intents: [{ agent: 'headcorner', from: 'STEEM', to: 'SBD', amountIn: '20000', minOut: '1' }] }, feedMesh, nowIso());
+  const filled = settleIntents(meshBase, { batch: 'B-FILL', intents: [{ agent: 'owner', from: 'STEEM', to: 'SBD', amountIn: '20000', minOut: '1' }] }, feedMesh, nowIso());
   ok('mesh-wire-then-fill', filled.fills.length === 1 && filled.ops.some((o) => o.type === 'MESH-WIRE') && ub(filled.fills[0].amountOut) > 0n);
   ok('mesh-fill-conservation', filled.consOk && filled.cons.every((r) => r.ok));
   ok('mesh-fill-edge-marked', filled.fills[0].edgeMu != null && filled.fills[0].fairUsed.indexOf('CEX-FAIR') === 0);
@@ -2509,21 +2511,21 @@ function selftest() {
   ok('mesh-attestation-recomputes', filled.att === attestationHash(filled.st.vault, filled.st.accounts, filled.st.pools, filled.st.seq));
   // 4. idempotency: the same batch settles nothing twice
   const afterFill = { vault: filled.st.vault, accounts: filled.st.accounts, pools: filled.st.pools, seq: filled.st.seq, processedBatches: filled.processedBatches, meshPnl: filled.meshPnl };
-  const replay = settleIntents(afterFill, { batch: 'B-FILL', intents: [{ agent: 'headcorner', from: 'STEEM', to: 'SBD', amountIn: '20000' }] }, feedMesh, nowIso());
+  const replay = settleIntents(afterFill, { batch: 'B-FILL', intents: [{ agent: 'owner', from: 'STEEM', to: 'SBD', amountIn: '20000' }] }, feedMesh, nowIso());
   ok('mesh-batch-idempotent', replay.skipped === true && replay.ops.length === 0 && replay.fills.length === 0);
   // 5. minOut atomicity through the mesh: impossible minOut → refused, pools byte-unchanged, no claims moved
   const preMin = mkBook(1000000n, 120000n, null); preMin.processedBatches = [];
-  const meshRefused = settleIntents(preMin, { batch: 'B-MIN', intents: [{ agent: 'headcorner', from: 'STEEM', to: 'SBD', amountIn: '20000', minOut: '999999999999' }] }, feedMesh, nowIso());
+  const meshRefused = settleIntents(preMin, { batch: 'B-MIN', intents: [{ agent: 'owner', from: 'STEEM', to: 'SBD', amountIn: '20000', minOut: '999999999999' }] }, feedMesh, nowIso());
   ok('mesh-minout-atomic', meshRefused.rejects.some((r) => r.why === 'REFUSED-MINOUT') && meshRefused.fills.length === 0
     && JSON.stringify(meshRefused.st.pools.find((p) => p.id === 'P3')) === JSON.stringify(preMin.pools.find((p) => p.id === 'P3')));
   // 6. naked short without treasury capital: empty treasury → GATED-WIRE-NO-CAPITAL, no fill
   const broke = mkBook(1000000n, 120000n, null); broke.processedBatches = [];
   broke.accounts.treasury.claims.STEEM = '0'; // no free capital
-  const gated = settleIntents(broke, { batch: 'B-GATE', intents: [{ agent: 'headcorner', from: 'STEEM', to: 'SBD', amountIn: '20000' }] }, feedMesh, nowIso());
+  const gated = settleIntents(broke, { batch: 'B-GATE', intents: [{ agent: 'owner', from: 'STEEM', to: 'SBD', amountIn: '20000' }] }, feedMesh, nowIso());
   ok('mesh-gated-wire-honest', gated.rejects.some((r) => r.why === 'GATED-WIRE-NO-CAPITAL') && gated.fills.length === 0);
   // 7. determinism: same inputs → byte-identical fills
-  const m1 = settleIntents(mkBook(1000000n, 120000n, null), { batch: 'B-DET', intents: [{ agent: 'headcorner', from: 'STEEM', to: 'SBD', amountIn: '15000' }] }, feedMesh, '2026-10-05T00:00:00.000Z');
-  const m2 = settleIntents(mkBook(1000000n, 120000n, null), { batch: 'B-DET', intents: [{ agent: 'headcorner', from: 'STEEM', to: 'SBD', amountIn: '15000' }] }, feedMesh, '2026-10-05T00:00:00.000Z');
+  const m1 = settleIntents(mkBook(1000000n, 120000n, null), { batch: 'B-DET', intents: [{ agent: 'owner', from: 'STEEM', to: 'SBD', amountIn: '15000' }] }, feedMesh, '2026-10-05T00:00:00.000Z');
+  const m2 = settleIntents(mkBook(1000000n, 120000n, null), { batch: 'B-DET', intents: [{ agent: 'owner', from: 'STEEM', to: 'SBD', amountIn: '15000' }] }, feedMesh, '2026-10-05T00:00:00.000Z');
   ok('mesh-deterministic', JSON.stringify(m1.fills) === JSON.stringify(m2.fills) && JSON.stringify(m1.ops) === JSON.stringify(m2.ops));
 
   // ── R42 MULTI-NETWORK VAULT selftest ───────────────────────────────────────

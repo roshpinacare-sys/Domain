@@ -15,7 +15,7 @@ import { createRequire } from "node:module";
 import path from "node:path";
 
 const STEEM_RPC = "https://api.steemit.com";
-const POSTER = process.env.STEEM_ACCOUNT || "headcorner";
+const POSTER = process.env.FLEET_ACCOUNT || process.env.STEEM_ACCOUNT || "owner";
 const STEEM_JS_DIR = process.env.STEEM_JS_DIR || "/tmp/steemjs";
 const OUT = process.env.OUT || "./daily-claim-status.json";
 const steem = createRequire(path.join(STEEM_JS_DIR, "probe.cjs"))("steem");

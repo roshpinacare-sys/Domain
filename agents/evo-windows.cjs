@@ -58,7 +58,7 @@ const SHIM_PORT = parseInt(process.env.EVO_SHIM_PORT ?? "3052", 10) || 3052;
 const FORCE = /^(1|true|yes)$/i.test(process.env.EVO_WINDOWS_FORCE || "");
 const SKIP_RUN = /^(1|true|yes)$/i.test(process.env.EVO_WINDOWS_SKIP_RUN || "");
 const VENVPY = process.env.REEF_VENVPY || "/tmp/reef-venv/bin/python";
-const SHIM_ENTRY = process.env.SHIM_ENTRY || "/home/z/my-project/mini-services/zai-openai-shim/index.ts";
+const SHIM_ENTRY = process.env.SHIM_ENTRY || ((process.env.HOME || "/tmp") + "/my-project/mini-services/zai-openai-shim/index.ts");
 const EVO_BOOK = path.join(AG, "reef-harness-evo.json");
 const WIN_BOOK = path.join(AG, "evo-windows.json");
 

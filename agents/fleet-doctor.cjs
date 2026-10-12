@@ -18,8 +18,8 @@ const steem = require('steem');
 
 steem.api.setOptions({ url: 'https://api.steemit.com' });
 const ROOT = path.resolve(__dirname, '..');
-const FLEET = ['cashmachine', 'haran', 'israelnews', 'lsa', 'macrame', 'siq', 'tov', 'wic', 'wog', 'woq', 'headcorner'];
-const SOLDIERS = FLEET.filter(a => a !== 'headcorner');
+const FLEET = ['cashmachine', 'haran', 'israelnews', 'lsa', 'macrame', 'siq', 'tov', 'wic', 'wog', 'woq', 'owner'];
+const SOLDIERS = FLEET.filter(a => a !== 'owner');
 const MIN_VP = 20, MIN_RC = 30;
 
 const P = (fn) => new Promise((res, rej) => fn((e, r) => e ? rej(e) : res(r)));
@@ -70,7 +70,7 @@ async function main() {
   const totalSP = Math.round(fleet.reduce((s, x) => s + x.spNet, 0) * 10) / 10;
   const vpFull = fleet.filter(x => x.vp >= 90).length;
   const vpReady = fleet.filter(x => x.vp >= MIN_VP).length;
-  const vpZero = fleet.filter(x => x.vp < MIN_VP && x.name !== 'headcorner');
+  const vpZero = fleet.filter(x => x.vp < MIN_VP && x.name !== 'owner');
   console.log(`[doctor] capital: total net SP=${totalSP} · VP≥90%: ${vpFull}/12 · VP≥${MIN_VP}%: ${vpReady}/12 · soldiers VP-low: ${vpZero.map(x => x.name).join(',') || 'none'}`);
   console.log('[doctor] retired: ynet (2026-09-29, sovereign decision — no key in any vault generation) — excluded from active fleet gauges');
 
@@ -101,7 +101,7 @@ async function main() {
   let possible = 0, done = 0;
   for (const p of posts) {
     possible += FLEET.length - 1;
-    done += p.fleetVotes - (p.author === 'headcorner' && !FLEET.slice(0, -1).includes(p.author) ? 0 : 0);
+    done += p.fleetVotes - (p.author === 'owner' && !FLEET.slice(0, -1).includes(p.author) ? 0 : 0);
   }
   const coverage = possible ? Math.round(done / possible * 100) : 0;
   console.log(`[doctor] content: ${posts.length} live posts (7d) · audience coverage ${done}/${possible} = ${coverage}%`);

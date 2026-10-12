@@ -4,7 +4,7 @@
  * Booked by agents/sovereign-convergence.md §4.3: "(keyless, next rung) custom_json
  * coordination bus". Measured live 2026-10-04: the bus ALREADY CARRIES TRAFFIC —
  * `saos.weave.core.v1` (weave checkpoints: root hash + commit) and `saos.snapshot.v1`
- * (platform state digests) broadcast by headcorner every ~15-30 min — and the estate
+ * (platform state digests) broadcast by owner every ~15-30 min — and the estate
  * measured it NOWHERE. This desk acquires the READER: the fleet's coordination state
  * becomes a first-class book, readable by every lane and every CI run with zero keys.
  *
@@ -45,7 +45,7 @@
  *
  * Env:
  *   COORD_BUS_JSON        output path (default agents/coord-bus.json)
- *   COORD_BUS_ACCOUNT     default MARKET_EXEC_HEAD || 'headcorner' (the fleet head)
+ *   COORD_BUS_ACCOUNT     default MARKET_EXEC_HEAD || 'owner' (the fleet head)
  *   COORD_BUS_MAX_PAGES   backward page cap (default 10 → ≤ ~1000 ops; the cron sets 40 — the head account churns ~28 ops/min of limit-order traffic, so a 30-min tick needs ~850 ops of reach; the watermark walk normally stops in 1-2 pages, the cap only binds after long silence)
  *   COORD_BUS_PRIMARY     primary node (default https://api.steemit.com)
  *   COORD_BUS_CROSS       cross node   (default https://api.justyy.com)
@@ -66,7 +66,7 @@ const { stasisHalt } = require('./fleet-census.cjs');
 const ROOT = path.resolve(__dirname, '..');
 const AG = path.join(ROOT, 'agents');
 const OUT_JSON = process.env.COORD_BUS_JSON || path.join(AG, 'coord-bus.json');
-const ACCOUNT = process.env.COORD_BUS_ACCOUNT || process.env.MARKET_EXEC_HEAD || 'headcorner';
+const ACCOUNT = process.env.COORD_BUS_ACCOUNT || process.env.MARKET_EXEC_HEAD || 'owner';
 const NODE_PRIMARY = process.env.COORD_BUS_PRIMARY || 'https://api.steemit.com';
 const NODE_CROSS = process.env.COORD_BUS_CROSS || 'https://api.justyy.com';
 const MAX_PAGES = Math.max(1, Math.min(60, parseInt(process.env.COORD_BUS_MAX_PAGES || '10', 10) || 10));

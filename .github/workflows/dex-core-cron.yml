@@ -36,9 +36,13 @@ jobs:
         run: node agents/dex-core.cjs selftest
 
       - name: exchange-core tick (custody probe + settle + routes + arb + grids + attestation)
+        env:
+          FLEET_ACCOUNT: ${{ secrets.FLEET_ACCOUNT }}
         run: node agents/dex-core.cjs status
 
       - name: commit exchange-core books
+        env:
+          FLEET_ACCOUNT: ${{ secrets.FLEET_ACCOUNT }}
         run: |
           git config user.name "saos-dex-core"
           git config user.email "dex-core@fleet.local"

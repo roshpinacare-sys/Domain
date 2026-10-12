@@ -12,7 +12,7 @@
  *
  *  - MANDATE LAW (deterministic, from the books, zero magic numbers): for every live
  *    pool-side edge row (verdict CANDIDATE-FOK, the R39/R40 FLOOR law inherited) the mesh
- *    drafts intents for the roster (headcorner + soldiers from persona-slots): the operator
+ *    drafts intents for the roster (owner + soldiers from persona-slots): the operator
  *    commands 40% of the row's budget, the soldiers split 60% equally. The row budget is the
  *    catalog quote size (~1% of first-hop depth of the input asset) — a fill that IS the
  *    book is slippage theater.
@@ -60,21 +60,21 @@ const ub = (s) => { try { return BigInt(String(s)); } catch (_) { return 0n; } }
 const mu = (z) => z.toString();
 const NANO = dc.NANO, BPS = dc.BPS;
 
-const OPERATOR_SHARE_BPS = 4000n;   // headcorner commands 40% of a row's budget
+const OPERATOR_SHARE_BPS = 4000n;   // owner commands 40% of a row's budget
 const MESH_MAX_SLIP_BPS = 50n;      // minOut guard: quote −0.5% between drafting and settlement
 const LADDER_SIZES_BPS = [10n, 100n, 500n]; // 0.1% / 1% / 5% of input-side depth
 const CORE_STALE_HOURS = 30;        // a core book older than this is stale — the mesh reports, never guesses
 
 // ── laws (pure, deterministic, eval-recomputable) ───────────────────────────
 
-/** roster: headcorner first, soldiers sorted (the law never depends on file order). */
+/** roster: owner first, soldiers sorted (the law never depends on file order). */
 function meshRoster() {
   let soldiers = [];
   try {
     const p = require('./persona-store.cjs').slots(); // T3: doctrine sealed (persona-store)
     soldiers = Object.keys(p.soldiers || {}).sort();
   } catch (_) { /* honest: operator-only mesh */ }
-  return ['headcorner', ...soldiers];
+  return [process.env.FLEET_ACCOUNT || 'owner', ...soldiers];
 }
 
 /** edge candidates from the CORE book (pool-side rows only — the mesh trades OUR pools).
@@ -199,7 +199,7 @@ function writeMd(b) {
   const L = [];
   L.push(`# arb-mesh — THE MESH MARKET (R41, CR-0071)\n`);
   L.push(`At: ${b.at} · Verdict: **${b.verdict}** · batch: ${b.batch || '—'} · protocol: ${b.protocol}\n`);
-  L.push(`Roster: ${b.roster.length} accounts (headcorner + ${b.roster.length - 1} soldiers) · Edge candidates: ${b.candidates.length} · Intents drafted: ${b.intentsDrafted} · Fills settled: ${b.fills.length} · Refusals: ${b.rejects.length}\n`);
+  L.push(`Roster: ${b.roster.length} accounts (owner + ${b.roster.length - 1} soldiers) · Edge candidates: ${b.candidates.length} · Intents drafted: ${b.intentsDrafted} · Fills settled: ${b.fills.length} · Refusals: ${b.rejects.length}\n`);
   if (b.candidates.length) {
     L.push(`\n| Edge row | Direction | Net bps | Floor | Source |`);
     L.push(`|---|---|---|---|---|`);
@@ -352,7 +352,7 @@ function selftest() {
   });
   // roster: operator first, soldiers sorted (deterministic — the law never depends on file order)
   const rr = meshRoster();
-  ok('roster-operator-first-soldiers-sorted', rr[0] === 'headcorner' && rr.slice(1).every((x, i, a) => i === 0 || a[i - 1] <= x));
+  ok('roster-operator-first-soldiers-sorted', rr[0] === 'owner' && rr.slice(1).every((x, i, a) => i === 0 || a[i - 1] <= x));
   // candidates: only CANDIDATE-FOK pool-side rows; direction law mid > fair ⇒ sell base
   const cands = meshCandidates(mkCore(), '2026-10-04T10:00:00.000Z');
   ok('candidates-floor-law', cands.length === 1 && cands[0].id === 'A1');
@@ -360,13 +360,13 @@ function selftest() {
   const inverted = mkCore(); inverted.arb[0] = { ...inverted.arb[0], poolMidNano: '90000000', netBps: 1500, verdict: 'CANDIDATE-FOK' };
   ok('direction-inverts', meshCandidates(inverted, '2026-10-04T10:00:00.000Z')[0].from === 'SBD');
   // keyed rails never become candidates
-  const keyed = mkCore(); keyed.arb[0] = { ...keyed.arb[0], railOwner: 'headcorner (STEEM active — LIVE)' };
+  const keyed = mkCore(); keyed.arb[0] = { ...keyed.arb[0], railOwner: 'owner (STEEM active — LIVE)' };
   ok('keyed-rails-excluded', meshCandidates(keyed, '2026-10-04T10:00:00.000Z').length === 0);
   // below-floor rows never become candidates
   const below = mkCore(); below.arb[0] = { ...below.arb[0], verdict: 'BELOW-FLOOR' };
   ok('below-floor-excluded', meshCandidates(below, '2026-10-04T10:00:00.000Z').length === 0);
   // mandates: operator 40%, soldiers split 60%; row budget = 1% of depth
-  const roster = ['headcorner', 's1', 's2', 's3', 's4'];
+  const roster = ['owner', 's1', 's2', 's3', 's4'];
   const m = meshMandates(cands[0], mkCore(), roster);
   const depth = ub(m.depth); // min over pools holding STEEM: P1 rb=388775 < P3 ra=1555100
   ok('mandate-depth-is-first-hop', depth === 388775n);
@@ -378,7 +378,7 @@ function selftest() {
   const d1 = draftIntents(mkCore(), '2026-10-04T10:00:00.000Z');
   const d2 = draftIntents(mkCore(), '2026-10-04T10:00:00.000Z');
   ok('draft-byte-deterministic', JSON.stringify(d1) === JSON.stringify(d2));
-  ok('draft-dust-law-skips-honestly', d1.intents.length === 1 && d1.intents[0].agent === 'headcorner' && ub(d1.intents[0].amountIn) >= dc.MESH_DUST
+  ok('draft-dust-law-skips-honestly', d1.intents.length === 1 && d1.intents[0].agent === 'owner' && ub(d1.intents[0].amountIn) >= dc.MESH_DUST
     && d1.intents.every((i) => ub(i.amountIn) >= dc.MESH_DUST));
   // minOut guard: quote −0.5%
   const g = minOutFor(mkCore(), 'STEEM', 'SBD', '10000');

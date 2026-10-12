@@ -74,7 +74,7 @@ const DESKS = [
   { agentId: 'market-cycle', agentURI: 'file://agents/market-cycle.cjs', role: 'cycle composer (eyes → decision → hands)', capabilities: ['decideCycle', 'pulled-schedule', 'child-separation'], registered_in: 'CR-0039', keyMode: 'keyless-composer', srcFile: 'agents/market-cycle.cjs' },
   { agentId: 'market-grid', agentURI: 'file://agents/market-grid.cjs', role: 'keyless cross-market observer (paper fills, history time-series)', capabilities: ['official-surfaces-only', 'paper-ledger'], registered_in: 'CR-0034', keyMode: 'keyless', srcFile: 'agents/market-grid.cjs' },
   { agentId: 'venture-desk', agentURI: 'file://agents/venture-desk.cjs', role: 'venture harvest/kill governance', capabilities: ['kill-rules', 'fills-ledger-he'], registered_in: 'Z-36 lineage', keyMode: 'keyless', srcFile: 'agents/venture-desk.cjs' },
-  { agentId: 'principal-headcorner', agentURI: 'steem://headcorner', role: 'fleet principal account (the only signer today)', capabilities: ['active-authority', 'posting-authority'], registered_in: 'fleet charter', keyMode: 'custody-of-operator', srcFile: null },
+  { agentId: 'principal-owner', agentURI: 'steem://owner', role: 'fleet principal account (the only signer today)', capabilities: ['active-authority', 'posting-authority'], registered_in: 'fleet charter', keyMode: 'custody-of-operator', srcFile: null },
 ];
 
 // ── evidence extraction (reputation law 1) ──────────────────────────────────
@@ -147,7 +147,7 @@ function buildRegistry() {
     agentId: d.agentId, agentURI: d.agentURI,
     metadata: {
       role: d.role, capabilities: d.capabilities, registered_in: d.registered_in, keyMode: d.keyMode,
-      owner: 'steem://headcorner', alive: d.srcFile ? fs.existsSync(path.join(ROOT, d.srcFile)) : true,
+      owner: 'steem://owner', alive: d.srcFile ? fs.existsSync(path.join(ROOT, d.srcFile)) : true,
       stasisBreakerObeyed: true, // every desk carries the CR-0038 twin law — breaker checked per run
     },
   }));

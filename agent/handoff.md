@@ -20,15 +20,15 @@ The fix is standing order SO-1: **work that is not visible at the public URL doe
 ## 2. Boot sequence (every new session, no exceptions)
 
 ```
-1. TOKEN=$(cd /home/z/my-project && git remote get-url origin | sed -E 's|https://x-access-token:([^@]+)@.*|\1|')
+1. TOKEN=$(cd <sandbox-workbench> && git remote get-url origin | sed -E 's|https://x-access-token:([^@]+)@.*|\1|')
 2. git clone https://x-access-token:${TOKEN}@github.com/roshpinacare-sys/Domain.git /tmp/domain-repo
    (if /tmp/domain-repo exists: cd /tmp/domain-repo && git pull --rebase)
-3. cd /home/z/my-project && git pull --rebase origin main   # cloud is primary; local may lag
+3. cd <sandbox-workbench> && git pull --rebase origin main   # cloud is primary; local may lag
 4. Read, in order:
    a. /tmp/domain-repo/agent/state.json          <- where the work stands
    b. /tmp/domain-repo/agent/requests.json       <- what the operator asked, what is still open
    c. /tmp/domain-repo/agent/verify/results.json <- the network's last verdict on delivery
-   d. tail -c 15000 /home/z/my-project/worklog.md <- recent engineering history
+   d. tail -c 15000 <sandbox-workbench>/worklog.md <- recent engineering history
 5. Check the live site: curl -s https://roshpinacare-sys.github.io/Domain/ | head -5
 ```
 
@@ -41,7 +41,7 @@ The fix is standing order SO-1: **work that is not visible at the public URL doe
 | `roshpinacare-sys/Console` (public) | The previous public home - still live and fed by the heart, pending the operator's canonical-home decision (OL-12) | Parallel front |
 | `https://roshpinacare-sys.github.io/Domain/` | What the operator actually sees | **The scoreboard** |
 | Steem chain (`cashmachine`) | Anchored checkpoints - outside every server | Chain truth |
-| `/home/z/my-project` | Ephemeral sandbox workbench | Not truth - dies with the session |
+| `<sandbox-workbench>` | Ephemeral sandbox workbench | Not truth - dies with the session |
 
 Cloud machines on this home (all in GitHub Actions, sandbox-independent):
 console-publish (renders the status from the public chain, hourly at :45), truth-gate (measures the

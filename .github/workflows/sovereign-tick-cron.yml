@@ -63,7 +63,7 @@ jobs:
         if: steps.stasis.outputs.active != 'true'
         env:
           STEEM_ACTIVE_WIF: ${{ secrets.STEEM_ACTIVE_WIF }}
-          HC_DERIVED: ${{ github.workspace }}/.fleet/headcorner-derived.json
+          HC_DERIVED: ${{ github.workspace }}/.fleet/operator-derived.json
           SOVEREIGN_DRIP_JSON: ${{ github.workspace }}/agents/sovereign-drip.json
         run: |
           if [ -n "$STEEM_ACTIVE_WIF" ] && [ "${#STEEM_ACTIVE_WIF}" -ge 40 ]; then

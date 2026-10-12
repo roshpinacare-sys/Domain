@@ -199,7 +199,7 @@ message (the key-verify precedent) and say so in their logs:
    2026-09-21)**: the operator delivered a master passphrase (2026-09-21,
    08:28:30Z and a second value 12:30:42Z; secret names withheld by
    disclosure policy). Both were tested to exhaustion, every rung
-   receipted: none is a private key or master password of any fleet
+   receipted: none is a private key or operator primary key of any fleet
    account (12 derivations × 2 chains, 0 matches —
    receipt `receipts/key-check.json`, verdict `unidentified`), and
    neither opened the seal as delivered (BEAT-ERROR authentication).

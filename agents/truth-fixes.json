@@ -4,7 +4,7 @@
   "fixes": [
     {
       "id": "FIX-1-ladder-revday",
-      "author": "headcorner",
+      "author": "owner",
       "permlink": "saos-ladder-20261001",
       "find": "- real revenue/day: **$0.0052** — method: mission book usdPerDay7dAvg (/api/mission → sovereign/income/daily-*.json) — הכנסה ממומשת בלבד (תיקון D-012 · r132)",
       "replace": "- real revenue/day: **${{usdPerDay}}** — method: mission book usdPerDay7dAvg (/api/mission → sovereign/income/daily-*.json), re-measured at correction time (was published as $0.0052 on 2026-10-01; the live book now reads ${{usdPerDayLive}}) — הכנסה ממומשת בלבד (תיקון D-012 · r132)",
@@ -13,7 +13,7 @@
     },
     {
       "id": "FIX-2-ladder-fills",
-      "author": "headcorner",
+      "author": "owner",
       "permlink": "saos-ladder-20261001",
       "find": "  · lifetime external grid fills: $0.055606 (cumulative, not a rate)",
       "replace": "  · lifetime realized grid PnL: ${{realizedUsd}} ({{realizedSbd}} SBD, cumulative, not a rate — measured FIFO on real chain fills, {{trips}} closed trips; not profitable at closes yet. Corrected 2026-10-01: an earlier line claimed +$0.0556, which contradicted the measured ledger)",
@@ -22,7 +22,7 @@
     },
     {
       "id": "FIX-3-daily-revday",
-      "author": "headcorner",
+      "author": "owner",
       "permlink": "saos-daily-20261001",
       "find": "- **Real revenue/day: $0.0052** — method: mission book usdPerDay7dAvg (/api/mission → sovereign/income/daily-*.json) — הכנסה ממומשת בלבד (תיקון D-012 · r132)",
       "replace": "- **Real revenue/day: ${{usdPerDay}}** — method: mission book usdPerDay7dAvg (/api/mission → sovereign/income/daily-*.json), re-measured at correction time (was published as $0.0052 on 2026-10-01; the live book now reads ${{usdPerDayLive}}) — הכנסה ממומשת בלבד (תיקון D-012 · r132)",

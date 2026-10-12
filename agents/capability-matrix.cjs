@@ -28,7 +28,7 @@ const NODES = {
 };
 const PREFIX = { steem: 'STM', hive: 'STM', blurt: 'BLT' };
 const RETIRED = new Set(['ynet']);
-const HEAD = 'headcorner';
+const HEAD = 'owner';
 const HIVE_SKIP = new Set(['tov']); // posting authority not ours (byte-verified 09-30)
 
 // capital floors for "worth calling idle" (dust does not count)

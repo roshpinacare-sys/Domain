@@ -15,7 +15,7 @@
  *     separately. The recycle output is a SUGGESTION, never an action.
  *  2. DIRECTION LAW (fill_order semantics, steem_evaluator.cpp): in a match the
  *     OPEN order receives CURRENT_PAYS and the CURRENT order receives OPEN_PAYS.
- *     So for a headcorner fill:
+ *     So for a owner fill:
  *       open_owner    == HEAD → we SOLD open_pays    and RECEIVED current_pays
  *       current_owner == HEAD → we SOLD current_pays and RECEIVED open_pays
  *     A leg is SELL (sold STEEM, received SBD) or BUY (sold SBD, received STEEM).
@@ -56,7 +56,7 @@ const ROOT = path.resolve(__dirname, '..');
 const OUT_JSON = process.env.FILL_LEDGER_JSON || path.join(ROOT, 'agents', 'fill-ledger.json');
 const FILLS_JSONL = process.env.FILL_LEDGER_FILLS || path.join(ROOT, 'agents', 'fill-ledger-fills.jsonl');
 const OUT_MD = OUT_JSON.replace(/\.json$/, '.md');
-const HEAD = process.env.FILL_LEDGER_HEAD || 'headcorner';
+const HEAD = process.env.FILL_LEDGER_HEAD || 'owner';
 const NODE = process.env.FILL_LEDGER_NODE || 'https://api.steemit.com';
 const SINCE = process.env.FILL_LEDGER_SINCE || '2026-10-03T00:00:00Z';
 const MAX_PAGES = +(process.env.FILL_LEDGER_MAX_PAGES || 5);

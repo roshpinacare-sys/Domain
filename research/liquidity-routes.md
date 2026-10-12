@@ -9,25 +9,25 @@ All numbers below are live-measured on 2026-09-30 18:30–19:15 UTC via public R
 ### 1.1 Capital
 | Asset | Amount | Liquidity | Source of truth |
 |---|---|---|---|
-| headcorner STEEM (liquid) | ~309–353 STEEM (~$20–23) | spendable now | chain get_accounts (moves live — the grid trades it) |
-| headcorner powerdown | **475.78 SP/week** (next landing 2026-10-03 02:01 UTC, ~4 payments context) | streams weekly | vesting_withdraw_rate measured on-chain |
-| headcorner SP (effective) | 4,279 SP (~$277) | 13-wk powerdown if we choose | vesting − delegated + received |
-| headcorner HIVE | 1.344 HIVE + 24.4 HP (~$0.15) | spendable (dust) | chain |
-| headcorner BLURT fund | 72.16 BLURT liquid + 8,727 BP | fuel reserve (floor 70 doctrine) | chain |
+| owner STEEM (liquid) | ~309–353 STEEM (~$20–23) | spendable now | chain get_accounts (moves live — the grid trades it) |
+| owner powerdown | **475.78 SP/week** (next landing 2026-10-03 02:01 UTC, ~4 payments context) | streams weekly | vesting_withdraw_rate measured on-chain |
+| owner SP (effective) | 4,279 SP (~$277) | 13-wk powerdown if we choose | vesting − delegated + received |
+| owner HIVE | 1.344 HIVE + 24.4 HP (~$0.15) | spendable (dust) | chain |
+| owner BLURT fund | 72.16 BLURT liquid + 8,727 BP | fuel reserve (floor 70 doctrine) | chain |
 | soldiers | 11 steem (30–49 SP ea) · 9 hive (0.05–3.8 HP ea) · 10 blurt (~1.2–1.7 BLURT fuel ea) | fuel-sized | chain |
 | TRON custody | 2.000002 TRX | redemption gas | trongrid |
 | HE tokens | dust (WAIV/LOLZ/SWAP.HIVE fractions) | — | hive-engine API |
 | Self-custody wallets (NEW, Z-26) | BTC `1DG8Z7MrU4VH6odajyVg1wU6yjurhXc9VK` (P2PKH, WIF checksum-verified) · EVM `0x0457a4a5301deb5d3ada53c2aaa48bbb08292406` (keccak re-verified) | unfunded, ready to receive | vault (0700), keys never leave |
 
 ### 1.2 Execution authorities (byte-verified against live key_auths, 2026-09-30)
-- **steem: 11/11 accounts hold OUR posting + active + owner keys** (headcorner + 10 soldiers).
-- **hive: 9/10 soldiers + headcorner hold OUR posting + active + owner** (tov not ours — honest skip).
-- **blurt: 10/10 soldiers posting (+headcorner active proven by fuel transfers + now posting via recovery)**.
+- **steem: 11/11 accounts hold OUR posting + active + owner keys** (owner + 10 soldiers).
+- **hive: 9/10 soldiers + owner hold OUR posting + active + owner** (tov not ours — honest skip).
+- **blurt: 10/10 soldiers posting (+owner active proven by fuel transfers + now posting via recovery)**.
 - **Consequence: the full active-key banking layer is unlocked** — transfers, internal-market orders, claim ops, HE token ops, power up/down, conversions. This is the biggest capability discovery since the cross-chain key truth (Z-23).
-- **Rail proof (live tx):** headcorner self-transfer `b0771cd1fc3687249c053508370298e8d26fd0d7` included in block 110,039,046, `expired:false` (synchronous broadcast response). Note: api.steemit.com account_history lags block production — read-back verified via sync response, not history.
+- **Rail proof (live tx):** owner self-transfer `b0771cd1fc3687249c053508370298e8d26fd0d7` included in block 110,039,046, `expired:false` (synchronous broadcast response). Note: api.steemit.com account_history lags block production — read-back verified via sync response, not history.
 
 ### 1.3 What the money path already does (discovered this session)
-- headcorner's account history (300 ops): **81 limit_order_create + 52 cancels** (Sep 29–30) — the dex-grid **market-makes on the steem internal market with the powerdown fuel**, plus "grid soldier top-up" transfers (10 STEEM × 3). money-watch jumps the grid within 15 min of each fuel landing. **The capital capture loop already exists and runs** — Z-26 adds the treasury book + router map on top of it.
+- owner's account history (300 ops): **81 limit_order_create + 52 cancels** (Sep 29–30) — the dex-grid **market-makes on the steem internal market with the powerdown fuel**, plus "grid soldier top-up" transfers (10 STEEM × 3). money-watch jumps the grid within 15 min of each fuel landing. **The capital capture loop already exists and runs** — Z-26 adds the treasury book + router map on top of it.
 
 ---
 

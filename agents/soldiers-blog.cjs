@@ -143,14 +143,14 @@ function measuredLine(mode, sp, del, vpReady) {
 
 // ── מדידה-חיה: נתוני-אמת לתוכן ──
 async function measure() {
-  const FLEET = ['cashmachine', 'haran', 'israelnews', 'lsa', 'macrame', 'siq', 'tov', 'wic', 'wog', 'woq', 'headcorner'];
+  const FLEET = ['cashmachine', 'haran', 'israelnews', 'lsa', 'macrame', 'siq', 'tov', 'wic', 'wog', 'woq', 'owner'];
   const g = await P(cb => steem.api.getDynamicGlobalProperties(cb));
   const ratio = parseFloat(g.total_vesting_fund_steem) / parseFloat(g.total_vesting_shares); // SP ל-VESTS
   const accts = await P(cb => steem.api.getAccounts(FLEET, cb));
   const st = { vp: {}, delegated: 0, soldiers: 0, totalSP: 0 };
   for (const a of accts) {
     st.vp[a.name] = Math.round(a.voting_power / 100);
-    if (a.name !== 'headcorner') { st.soldiers++; if (parseFloat(a.received_vesting_shares) > 0) st.delegated++; }
+    if (a.name !== 'owner') { st.soldiers++; if (parseFloat(a.received_vesting_shares) > 0) st.delegated++; }
     st.totalSP += (parseFloat(a.vesting_shares) + parseFloat(a.received_vesting_shares) - parseFloat(a.delegated_vesting_shares)) * ratio;
   }
   st.totalSP = Math.round(st.totalSP);
@@ -251,7 +251,7 @@ async function main() {
   for (const a of vault.accounts) {
     const k = a.keys || {};
     const wif = (k.posting && k.posting.wif) || (k.steem && k.steem.posting && k.steem.posting.wif) || null;
-    if (wif && a.username !== 'headcorner') keymap[a.username] = wif; // ראש: מפרסם-דרך-מנוע-נפרד
+    if (wif && a.username !== 'owner') keymap[a.username] = wif; // ראש: מפרסם-דרך-מנוע-נפרד
   }
   console.log(`[soldiers-blog] keys: ${Object.keys(keymap).length} · zero secrets printed`);
 

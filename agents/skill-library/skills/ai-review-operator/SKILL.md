@@ -15,7 +15,7 @@ skill loading) as REFERENCE for any review automation the estate designs,
 and run the upstream bot only where feasibility is proven — never hope-based.
 
 **Provenance:** study source vercel-labs/openreview — CONSULT-ONLY reference
-(pinned mirror sha `672deb2` at `/home/z/reference-mirrors/openreview`),
+(pinned mirror sha `672deb2` at `<host>/reference-mirrors/openreview`),
 evaluation wave Task 34. **License honesty finding:** the upstream README
 claims "License: MIT" but NO LICENSE file exists in the repository (repo API
 reports license: null) at the pinned sha — the claim is unbacked, so the
@@ -43,7 +43,7 @@ swe-mini-operator).
 | Situation | Route | Verdict here |
 |---|---|---|
 | Adopt the review doctrine on existing estate gates | judge / evals / push-protocol / CR ladder | 🟢 sovereignty-decided — zero cost, proven below |
-| Read upstream source as reference | mirror `/home/z/reference-mirrors/openreview` @ `672deb2` | 🟢 keyless, pinned — consult-only, zero-copy |
+| Read upstream source as reference | mirror `<host>/reference-mirrors/openreview` @ `672deb2` | 🟢 keyless, pinned — consult-only, zero-copy |
 | Self-host OpenReview itself | Vercel deploy + Sandbox + Workflow + Upstash + GitHub App private key + ANTHROPIC_API_KEY | 🔴 WALLET — paid infra + credentials = owner authority; never auto-provisioned |
 | Wired into our own stack as a working bot | would need a model leg + a webhook surface | 🟡 BOOKED CANDIDATE — possible at zero marginal cost with z-ai legs, but only through a future judged CR; nothing silent |
 

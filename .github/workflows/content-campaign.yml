@@ -8,7 +8,7 @@
 # אין Slot:/Layer:/קודי-מעקב/נתיבי-ריפו בתוכן-על-השרשרת; גילוי-חתימת-מכונה נשאר.
 #
 # מפתח: posting בלבד — זיהוי ביט-מול-ביט מול רשות-ה-posting
-# החיה של @headcorner, שער-RC, אידמפוטנט מהשרשרת (saos-<theme>-<YYYYMMDD>).
+# החיה של @owner, שער-RC, אידמפוטנט מהשרשרת (saos-<theme>-<YYYYMMDD>).
 # אסור-לזייף: מקור לא-זמין = "unavailable — nothing faked".
 
 name: content-campaign
@@ -75,6 +75,7 @@ jobs:
         continue-on-error: true
         env:
           FLEET_PAT: ${{ secrets.SBX_FLEET_PAT }}
+          FLEET_ACCOUNT: ${{ secrets.FLEET_ACCOUNT }}
         run: |
           set -uo pipefail
           rm -rf /tmp/fleet-vault

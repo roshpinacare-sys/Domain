@@ -1,12 +1,12 @@
 // KEY-VERIFY — בדיקת מפתח-המפעיל שהוזן בגיטהאב (R38).
 //
-// רקע: המפעיל הוסיף בעצמו סוד בשם HEADCORNER לכספת של ריפו-הקונסולה
+// רקע: המפעיל הוסיף בעצמו סוד בשם owner לכספת של ריפו-הקונסולה
 // (GitHub → Settings → Secrets). רק Actions של הריפו הזה יכולים לקרוא
 // אותו — ולכן סוכן זה חי כאן. הוא עושה שלושה דברים, בכנות מלאה:
 //
 //   1. בודק מה באמת הוזן: מפתח-ציבורי בטעות? ה-posting במקום ה-active?
 //      WIF או סיסמת-אב — הכל נגזר עם הקריפטו הריבוני (gate-crypto.js).
-//   2. משווה ביט-מול-ביט מול הרשויות החיות של @headcorner בשרשרת Steem.
+//   2. משווה ביט-מול-ביט מול הרשויות החיות של @owner בשרשרת Steem.
 //   3. אם ורק אם יש התאמה מלאה ל-active — מאטם את ה-WIF (libsodium
 //      sealed-box ממפתח-הציבורי של ריפו-המנוע) אל כספת saos-dex בתור
 //      STEEM_ACTIVE_WIF, ומזניק את הגריד החוץ (dex-grid).
@@ -21,26 +21,26 @@ import { createRequire } from "node:module";
 import Gate from "../gate-crypto.js";
 
 const OWNER = "roshpinacare-sys";
-const ACCOUNT = "headcorner";
+const ACCOUNT = "owner";
 const DEX_REPO = "saos-dex";
 const SECRET_NAME = "STEEM_ACTIVE_WIF";
-const SOURCE_SECRET = "HEADCORNER";
+const SOURCE_SECRET = "owner";
 const GH_API = "https://api.github.com";
 const STEEM_RPC = "https://api.steemit.com";
 
 // ── r70: מטריצת הזיהוי — החשבונות המתועדים של הרשת (ספר הרשויות הפומבי:
 // agent/state.json -> authorities + חותם הגריד מ-door ה-README). ערך שאינו
-// ה-active של @headcorner יכול להיות סיסמת-אב של אחד מאלה — סיסמת-אב
+// ה-active של @owner יכול להיות סיסמת-אב של אחד מאלה — סיסמת-אב
 // גוזרת כל מפתח לפי (חשבון, תפקיד), וגזירה עם חשבון שגוי מפיקה מפתח
 // אחר. הזיהוי נעשה מול השרשרת החיה בלבד, ללא שידור וללא כתיבה.
 const DOCUMENTED_ACCOUNTS = [
-  { name: "headcorner", note: "grid signer - active -> engine vault (saos-dex)" },
+  { name: process.env.FLEET_ACCOUNT || "owner", note: "grid signer - active -> engine vault (saos-dex)" },
   { name: "cashmachine", note: "anchor witness - posting -> this repo's vault (WEAVE_STEEM_WIF)" },
   { name: "lsa", note: "publishing authority - no machine consumer today" },
 ];
 const ROLES = ["owner", "active", "posting", "memo"];
 
-const value = (process.env.HEADCORNER || "").trim();
+const value = (process.env.owner || "").trim();
 const relayToken = (process.env.AGENTS_WATCH_TOKEN || "").trim();
 const sodiumDir = process.env.SODIUM_DIR || "/tmp/sodium";
 const sodium = createRequire(path.join(sodiumDir, "probe.cjs"))("libsodium-wrappers");
@@ -162,13 +162,13 @@ async function identifyMatrix(v) {
   }
   const door = matches.some((m) => m.account === "cashmachine" && m.role === "posting")
     ? "cashmachine/posting"
-    : matches.some((m) => m.account === "headcorner" && m.role === "active")
-      ? "headcorner/active"
+    : matches.some((m) => m.account === "owner" && m.role === "active")
+      ? "owner/active"
       : null;
-  return { valueKind: isWif ? "wif" : "master-password", tested, matches, door };
+  return { valueKind: isWif ? "wif" : "primary-credential", tested, matches, door };
 }
 
-// הזיהוי הצליח: הערך הוא מפתח/סיסמת-אב של עד-העיגון (@cashmachine) —
+// הזיהוי הצליח: הערך הוא מפתח/סיסמת-אב של עד-העיגון (@fleet-anchor) —
 // גוזרים את WIF ה-posting, מאטמים אותו לכספת הזו בתור WEAVE_STEEM_WIF
 // (הדלת שקווי-העיגון ממתינים לה), ומזניקים אותם לריצה ראשונה.
 // הערך לעולם לא נכתב לדיסק, ללוג או לקבלה.
@@ -209,7 +209,7 @@ async function armSteemWitness(matrix) {
   }
   receipt.verdict = "armed-steem-witness";
   receipt.detail =
-    "הערך זוהה כמפתח/סיסמת-אב של @cashmachine — עד העיגון. WIF ה-posting נגזר, אומת מול הרשות החיה בשרשרת (ביט-מול-ביט), ונאטם לכספת זו (sealed-box) בתור WEAVE_STEEM_WIF. " +
+    "הערך זוהה כמפתח/סיסמת-אב של @fleet-anchor — עד העיגון. WIF ה-posting נגזר, אומת מול הרשות החיה בשרשרת (ביט-מול-ביט), ונאטם לכספת זו (sealed-box) בתור WEAVE_STEEM_WIF. " +
     (dispatched ? "קווי העיגון הוזנקו לריצה ראשונה." : "ההזנקה הידנית זמינה במרכז הפיקוד.");
   writeReceipt();
   console.log(`[key-verify] ✓ ARMED-STEEM-WITNESS · relay=${JSON.stringify(receipt.relay)} · dispatched=${dispatched}`);
@@ -278,7 +278,7 @@ async function main() {
       await armSteemWitness(matrix);
       return;
     }
-    if (matrix.door !== "headcorner/active") {
+    if (matrix.door !== "owner/active") {
       if (matrix.matches.length > 0) {
         fail(
           "identified-no-consumer",
@@ -290,7 +290,7 @@ async function main() {
         `המפתח שהוזן אינו ה-active החי של @${ACCOUNT}, ואינו מפתח/סיסמת-אב של אף חשבון מתועד (${DOCUMENTED_ACCOUNTS.map((a) => "@" + a.name).join(", ")}). הנגזר: ${pub.slice(0, 12)}… · בשרשרת: ${chain.active.slice(0, 12)}… · המטריצה המלאה בקבלה · שום דבר לא נכתב`
       );
     }
-    // matrix.door === "headcorner/active" — המשך לנתיב החימוש להלן
+    // matrix.door === "owner/active" — המשך לנתיב החימוש להלן
   }
 
   // התאמה מלאה ← העברה לכספת-המנוע (sealed-box — רק ה-Actions של saos-dex יכולים לפתוח)

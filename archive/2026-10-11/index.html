@@ -1686,7 +1686,7 @@ async function opLiveAuthority(){
   const r = await fetch("/Domain/https://api.steemit.com"), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "condenser_api.get_accounts", params: [["headcorner"]] })
+    body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "condenser_api.get_accounts", params: [["owner"]] })
   });
   if(!r.ok) throw new Error("HTTP " + r.status);
   const j = await r.json();
@@ -1704,7 +1704,7 @@ async function opConnect(){
   st.className = "opstatus";
   st.textContent = t("op.busy");
   try{
-    const d = await GateCrypto.deriveAny(input, "headcorner", "active");
+    const d = await GateCrypto.deriveAny(input, "owner", "active");
     $("op-key").value = ""; // המפתח לא נשאר אפילו בשדה
     let live = "";
     try{ live = await opLiveAuthority(); }

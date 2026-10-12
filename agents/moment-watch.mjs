@@ -24,7 +24,7 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
 
 const OUT_DIR = "moment";
-const STEEM_ACCOUNT = "headcorner";
+const STEEM_ACCOUNT = "owner";
 const GRID_URL = "https://roshpinacare-sys.github.io/Console/dex/grid.json"; // המראה החיה של המנוע
 const CALL_THRESHOLD_PCT = 3; // סף קריאת-כיוון: |±3%| STEEM ביממה
 const CALL_HORIZON_H = 6;    // אופק הכרעה: 6 שעות

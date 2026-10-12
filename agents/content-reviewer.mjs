@@ -31,7 +31,7 @@ const OUT_DIR = path.join(ROOT, 'content-review');
 
 // Community accounts roster — measured from the live publishing machinery of this
 // repo (the social engine's rotation + head account) and agents/personas.json.
-const ACCOUNTS = ['cashmachine', 'haran', 'israelnews', 'lsa', 'macrame', 'siq', 'tov', 'wic', 'wog', 'woq', 'headcorner'];
+const ACCOUNTS = ['cashmachine', 'haran', 'israelnews', 'lsa', 'macrame', 'siq', 'tov', 'wic', 'wog', 'woq', 'owner'];
 
 const WINDOW_H = 24;
 const NEAR_DUP_THRESHOLD = 0.6;   // same threshold as the home dedupe layer

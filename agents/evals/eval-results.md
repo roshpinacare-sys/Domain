@@ -261,7 +261,7 @@ _run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - white-box: fill direction law — open_owner==us means we gave open_pays (maker sell booked 0.576 STEEM→0.058 SBD); open_owner!=us means we gave current_pays (taker sell 4.996 STEEM→0.500 SBD AND taker buy 3.692 SBD→36.601 STEEM both classified correctly)
 - white-box: author/curation/claim/drip/convert tallies exact on fixtures
 - white-box: unparseable fill body = honest skip (op counted, fill not)
-- live-measured: 1d headcorner — drip 475.857 STEEM deployed (50 fills: sold 525.2 STEEM → 52.56 SBD, bought 87.9 for 8.99), 14 converts 32.8 SBD; 7d fleet — 1421 votes / 56 posts → ZERO author+curation payouts lifetime (the content loop is measured dead)
+- live-measured: 1d owner — drip 475.857 STEEM deployed (50 fills: sold 525.2 STEEM → 52.56 SBD, bought 87.9 for 8.99), 14 converts 32.8 SBD; 7d fleet — 1421 votes / 56 posts → ZERO author+curation payouts lifetime (the content loop is measured dead)
 - _measured: the proof surface is live: every claim about fleet income is now checkable against the chain_
 
 ## E38 · BUY-PREMIUM LAW: the ledger vwap is the realized-edge authority — executor caps every buy at sellVwap x (1-floor), below-band caps skip honest, the sovereign gate routes DRY while the window shows a premium, 3-buys minimum, clean windows still fire LIVE — PASS
@@ -434,7 +434,7 @@ _run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 ## E59 · the community home (CR-0066) — PASS
 - white-box: the props gate passes the real identity and rejects em-dashes, probe-words and wrong lang by name — the house is born clean of the owner's robotic tells
 - white-box: TYPE LAW /^hive-1\d{5}$/ enforced with dedupe; SP<->VESTS roundtrip exact with null guards; FUNDING LAW picks the farthest idle STEEM sell first, one-cancel coverage preferred, cap 2, SBD orders never touched, armed when liquid suffices
-- white-box: op builders byte-match the measured ground truth (account_create with measured fee + single-key auths + empty json_metadata; community customs signed by community POSTING only; setRole admin for headcorner, member for soldiers)
+- white-box: op builders byte-match the measured ground truth (account_create with measured fee + single-key auths + empty json_metadata; community customs signed by community POSTING only; setRole admin for owner, member for soldiers)
 - real-tree: the status book carries SAOS-COMMUNITY-FOUNDER/1; when a community exists the chain read-back must confirm it (title clean, >= 11 members, admin role, create txid, RC delegation confirmed, full ceremony txids); when absent, the verdict must be one of the honest absences
 - _measured: the fleet owns its house: founded on measured ceremony, funded from idle capital, keys cold in the vault, and the chain itself confirms the read-back_
 
@@ -444,7 +444,7 @@ _run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 
 ## E61 · the chain proof (CR-0068) — PASS
 - white-box: the registry carries both chains with their nodes and fee assets; the badge is derived ONLY from the live probe legs + booked fee asset — all six branches covered, and the flip law proves derivation (same name, flipped legs → flipped badge), never a hardcoded label
-- white-box: the Hive authority law refuses to pretend — NO-KEYS when no vault, KEY-MISMATCH when pubs diverge (measured live: headcorner hive pub STM8c9vp3… ≠ the held steem pub STM5HhJD…), READY only on exact match; the probe verdict gates authority BEFORE name and funding — an unkeyed desk answers HOME-ABSENT-UNKEYED even when rich
+- white-box: the Hive authority law refuses to pretend — NO-KEYS when no vault, KEY-MISMATCH when pubs diverge (measured live: owner hive pub STM8c9vp3… ≠ the held steem pub STM5HhJD…), READY only on exact match; the probe verdict gates authority BEFORE name and funding — an unkeyed desk answers HOME-ABSENT-UNKEYED even when rich
 - real-tree: the booked chain proof carries trivalent legs (absence asserts are evidence, unreachable is a gap) and the badge re-derives exactly from its own legs + the booked fee asset; the hive run verdict is from the honest set and the why is named when unkeyed; the Steem house must be absent on Hive
 - _measured: the chain, not the name, is the truth: STEEM-CHAIN measured live on both bridges (2026-10-04: steem=true, hive=false), the hive second-home desk states its empty hands by name, and the badge re-derives from evidence_
 

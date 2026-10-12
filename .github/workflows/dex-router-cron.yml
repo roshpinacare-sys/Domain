@@ -32,6 +32,8 @@ jobs:
           node-version: 20
 
       - name: swap-net tick (venue graph + routes + arb + counter-grids)
+        env:
+          FLEET_ACCOUNT: ${{ secrets.FLEET_ACCOUNT }}
         run: node agents/dex-router.cjs status
 
       - name: commit swap-net books

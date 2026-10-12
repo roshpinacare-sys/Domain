@@ -6,7 +6,7 @@
 //
 // משמעת מפתח זהה ל-cloud-pulse (מוכח-חי):
 //   · posting בלבד — המפתח נגזר לציבורי ומושווה ביט-מול-ביט מול רשות-ה-posting
-//     החיה של @headcorner מהשרשרת. סוד שגוי = סירוב אדום, לא שידור.
+//     החיה של @owner מהשרשרת. סוד שגוי = סירוב אדום, לא שידור.
 //   · שער-RC לפני שידור (מודל-העלות הנמדד של web-publish).
 //   · אידמפוטנטיות מהשרשרת עצמה: permlink דטרמיניסטי saos-daily-<YYYYMMDD>.
 //   · אפס קומיטים לריפו — הפעימה קוראת ומשדרת, אין state בגיט.
@@ -19,7 +19,7 @@ import { createRequire } from "node:module";
 import path from "node:path";
 
 const STEEM_RPC = "https://api.steemit.com";
-const POSTER = "headcorner";
+const POSTER = process.env.FLEET_ACCOUNT || "owner"; // account injected at runtime — never committed
 const TAGS = ["saos", "defi", "network"];
 const STEEM_JS_DIR = process.env.STEEM_JS_DIR || "/tmp/steemjs";
 const RC_COMMENT_BASE = 976_000_000; // נמדד ב-web-publish (Zip)

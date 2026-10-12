@@ -53,6 +53,7 @@ jobs:
       - name: Run the proof pipeline (measure, digest, ready-to-sign)
         env:
           ETHERS_DIR: /tmp/ethers
+          FLEET_ACCOUNT: ${{ secrets.FLEET_ACCOUNT }}
           GH_TOKEN: ${{ secrets.ZIP_PAT }}
         run: node agents/proof-pipeline.mjs
 

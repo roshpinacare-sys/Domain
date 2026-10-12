@@ -1,9 +1,9 @@
 'use strict';
 /**
- * econ-desk.cjs — Z-29 TWO-SIDED REAL-ECONOMY DESK (hive, headcorner active authority).
+ * econ-desk.cjs — Z-29 TWO-SIDED REAL-ECONOMY DESK (hive, owner active authority).
  *
  * Daily self-healing execution loop for the fleet's REAL DEX rail on Hive-Engine:
- *   1. poll the SWAP.HIVE wrapper credit (hiveswap owes headcorner if a verified
+ *   1. poll the SWAP.HIVE wrapper credit (hiveswap owes owner if a verified
  *      deposit is on chain but the token credit has not landed);
  *   2. SELL SIDE (Z-29): harvest engine inventory into routable capital —
  *      sell any sellable token balance above its keep-reserve when the live
@@ -25,7 +25,7 @@ const https = require('https');
 const fs = require('fs');
 const path = require('path');
 
-const HEAD = 'headcorner';
+const HEAD = 'owner';
 const HIVE_NODE = 'https://api.deathwing.me'; // Z-30-b: hive-js broadcasts failed twice on hive.blog this session; deathwing proven by the cancel-desk and probes
 const HIVE_CHAIN_ID = 'beeab0de00000000000000000000000000000000000000000000000000000000';
 const OUT_JSON = process.env.ECON_JSON || path.join(__dirname, 'econ-book.json');
@@ -111,7 +111,7 @@ async function findOp(opType, matcher, afterMs, tries = 7) {
 }
 
 // ---- R-ECON-1: hive compressed-WIF -> signable 51-char steem-family WIF ----
-// The vault stores headcorner's hive_active as a 52-char compressed WIF
+// The vault stores owner's hive_active as a 52-char compressed WIF
 // (L-prefix). steem-family libs cannot sign with it directly. The chain
 // authority corresponds to the scalar d = (k*256 + 1) mod N where k is the
 // 32-byte payload — re-derived in memory each run; the wif never persists.
@@ -219,7 +219,7 @@ function loadHeadHiveActive() {
 
   const wif = loadHeadHiveActive();
   if (!wif) {
-    book.error = 'could not derive headcorner hive wif51 from SA_FLEET_KEYS — nothing signed';
+    book.error = 'could not derive owner hive wif51 from SA_FLEET_KEYS — nothing signed';
     fs.writeFileSync(OUT_JSON, JSON.stringify(book, null, 1));
     console.log(JSON.stringify({ state: 'no-key' })); process.exit(0);
   }

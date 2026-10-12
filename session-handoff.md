@@ -1,7 +1,7 @@
 # Session Handoff — Domain
 
 ## Blockers
-- Owner-only keys: tov-hive + headcorner-hive exist in NO git folder (proven
+- Owner-only keys: owner-hive + owner-hive-alt exist in NO git folder (proven
   negative, Task 13) — cannot be wired from here; owner closes these.
 - Realized >1¢/day needs days of maturing receipts — cadence, not code.
 

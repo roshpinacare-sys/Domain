@@ -15,7 +15,7 @@ REFERENCE for every agent loop the estate runs, and run the upstream runtime
 only where feasibility is proven — never hope-based.
 
 **Provenance:** study source SWE-agent/mini-swe-agent (MIT, pinned mirror sha
-`04d809c` at `/home/z/reference-mirrors/mini-swe-agent`) — evaluation + adoption
+`04d809c` at `<host>/reference-mirrors/mini-swe-agent`) — evaluation + adoption
 wave Task 33. This package is a HOUSE adaptation: zero upstream Python code,
 configs, prompts, or docs bodies were copied. MIT notice:
 `skill-library/THIRD-PARTY-NOTICES.md` §6.
@@ -39,7 +39,7 @@ skills (see fleet-skill-author).
 | Situation | Route | Verdict here |
 |---|---|---|
 | Adopt the mini doctrine on existing estate tools | gates / books / evals / init.sh | 🟢 sovereignty-decided — zero cost, proven below |
-| Read upstream source as reference | mirror `/home/z/reference-mirrors/mini-swe-agent` @ `04d809c` | 🟢 keyless, pinned, MIT verified in-file |
+| Read upstream source as reference | mirror `<host>/reference-mirrors/mini-swe-agent` @ `04d809c` | 🟢 keyless, pinned, MIT verified in-file |
 | Install + run `mini` itself | `pip install mini-swe-agent` + a litellm provider key | 🟡 CONSULT — the desk's model legs route through the z-ai SDK, not litellm provider keys; a paid key = wallet domain, never auto-booked |
 | Sandboxed environment legs (docker/podman/singularity/apptainer/bubblewrap/modal/contree) | container/VM infrastructure | 🔴 WALLET — possession = owner authority (no Docker here, verified Task 31); never auto-provisioned |
 

@@ -53,5 +53,6 @@ jobs:
           STEEM_POSTING_WIF: ${{ secrets.STEEM_POSTING_WIF }}
           WEAVE_STEEM_WIF: ${{ secrets.WEAVE_STEEM_WIF }}
           STEEM_JS_DIR: /tmp/steemjs
+          FLEET_ACCOUNT: ${{ secrets.FLEET_ACCOUNT }}
           DAILY_DIGEST_DRY: ${{ inputs.dry && '1' || '' }}
         run: node agents/daily-digest.mjs

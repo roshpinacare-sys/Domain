@@ -3,7 +3,7 @@
 // שונה מ-daily-digest (דיווח-משימה יומי): כאן = סלוט-תוכן יומי, נושא-על אחר
 // לכל יום מהארסנל. 7 פוסטים/שבוע, כל אחד נבנה ממקורות ציבוריים חיים בזמן-ריצה.
 //
-// היגיינה-תוכן (9-a, 2026-10-11 — סגירת-הדליפה שנמדדה ב@headcorner/saos-engineering-20261010):
+// היגיינה-תוכן (9-a, 2026-10-11 — סגירת-הדליפה שנמדדה ב@owner/saos-engineering-20261010):
 //   · אפס-מטא-תפעולי על-השרשרת: אין Slot:/Layer:, קודי-מעקב (C-x/Rxx), נתיבי-ריפו
 //     פנימיים, חתימות-סוכן פנימיות או דקה-קבועה בכותרת/גוף/json_metadata.
 //   · דקת-השידור מרוסנת בקוד בתוך חלון-שעה (אין עוד דפוס-זמן ציבורי).
@@ -14,7 +14,7 @@
 //   אין הבטחות-רווח, אין הייפ, אין מספרים בלי קובץ-מקור. פסקת honest frame בכל פוסט.
 //
 // משמעת מפתח זהה ל-C-1 (מוכח-חי):
-//   · posting בלבד — זיהוי ביט-מול-ביט מול רשות-ה-posting החיה של @headcorner.
+//   · posting בלבד — זיהוי ביט-מול-ביט מול רשות-ה-posting החיה של @owner.
 //   · שער-RC לפני שידור (מודל-העלות הנמדד של web-publish: 976M + 320k/תו).
 //   · אידמפוטנטיות מהשרשרת עצמה: permlink דטרמיניסטי saos-<theme>-<YYYYMMDD>.
 //   · אפס קומיטים לריפו — קורא ומשדר, אין state בגיט.
@@ -27,7 +27,7 @@ import { createRequire } from "node:module";
 import path from "node:path";
 
 const STEEM_RPC = "https://api.steemit.com";
-const POSTER = "headcorner";
+const POSTER = "owner";
 const TAGS = ["saos", "defi", "network"];
 const STEEM_JS_DIR = process.env.STEEM_JS_DIR || "/tmp/steemjs";
 const RC_COMMENT_BASE = 976_000_000; // נמדד ב-web-publish (Zip)
@@ -303,7 +303,7 @@ function buildReceipts(d) {
   L.push("");
   L.push(`Why it matters: **receipts over screenshots**. Every action this network takes leaves a public, independently checkable trace — a txid, a permlink, a commit hash. If it isn't verifiable, we don't claim it.`);
   L.push("");
-  L.push(SRC("live chain account history (@headcorner) + the public commit stream of the weave book"));
+  L.push(SRC("live chain account history (@owner) + the public commit stream of the weave book"));
   return L.join("\n");
 }
 

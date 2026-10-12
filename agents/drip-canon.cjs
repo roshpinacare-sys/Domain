@@ -25,7 +25,7 @@
  *
  * Env:
  *   DRIP_CANON_JSON      output path (default agents/sovereign-drip.json)
- *   DRIP_CANON_ACCOUNT   default headcorner (or MARKET_EXEC_HEAD)
+ *   DRIP_CANON_ACCOUNT   default owner (or MARKET_EXEC_HEAD)
  *   DRIP_CANON_SKIP=1    eval off-switch
  */
 const fs = require('fs');
@@ -34,7 +34,7 @@ const https = require('https');
 
 const ROOT = path.resolve(__dirname, '..');
 const OUT = process.env.DRIP_CANON_JSON || path.join(ROOT, 'agents', 'sovereign-drip.json');
-const ACCOUNT = process.env.DRIP_CANON_ACCOUNT || process.env.MARKET_EXEC_HEAD || 'headcorner';
+const ACCOUNT = process.env.DRIP_CANON_ACCOUNT || process.env.MARKET_EXEC_HEAD || 'owner';
 const NODE_PRIMARY = 'https://api.steemit.com';
 const NODE_CROSS = 'https://api.justyy.com';
 

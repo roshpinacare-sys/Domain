@@ -86,9 +86,9 @@ async function auditStateFile(file, chain, accounts) {
 async function main() {
   const all = [];
   /* treasury claims live on steem+hive+blurt; account fields vary per chain */
-  try { all.push(...await auditStateFile('treasury-state.json', 'steem', ['headcorner', 'haran', 'cashmachine', 'wic', 'woq', 'tov'])); } catch (e) { all.push({ file: 'treasury-state.json', verdict: 'AUDIT-ERROR', detail: String(e.message || e).slice(0, 100) }); }
-  try { all.push(...await auditStateFile('treasury-state.json', 'hive', ['cornerstone', 'headcorner'])); } catch (e) { all.push({ file: 'treasury-state.json(hive)', verdict: 'AUDIT-ERROR', detail: String(e.message || e).slice(0, 100) }); }
-  try { all.push(...await auditStateFile('blurt-connect-state.json', 'blurt', ['cornerstone', 'headcorner'])); } catch (e) { all.push({ file: 'blurt-connect-state.json', verdict: 'AUDIT-ERROR', detail: String(e.message || e).slice(0, 100) }); }
+  try { all.push(...await auditStateFile('treasury-state.json', 'steem', ['owner', 'haran', 'cashmachine', 'wic', 'woq', 'tov'])); } catch (e) { all.push({ file: 'treasury-state.json', verdict: 'AUDIT-ERROR', detail: String(e.message || e).slice(0, 100) }); }
+  try { all.push(...await auditStateFile('treasury-state.json', 'hive', ['cornerstone', 'owner'])); } catch (e) { all.push({ file: 'treasury-state.json(hive)', verdict: 'AUDIT-ERROR', detail: String(e.message || e).slice(0, 100) }); }
+  try { all.push(...await auditStateFile('blurt-connect-state.json', 'blurt', ['cornerstone', 'owner'])); } catch (e) { all.push({ file: 'blurt-connect-state.json', verdict: 'AUDIT-ERROR', detail: String(e.message || e).slice(0, 100) }); }
 
   const fabricated = all.filter(f => f.verdict === 'FABRICATED');
   const verified = all.filter(f => f.verdict === 'VERIFIED-ON-CHAIN');

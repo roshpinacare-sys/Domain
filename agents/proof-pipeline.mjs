@@ -105,7 +105,7 @@ async function collect() {
 
   const digest = await fetchJson(RAW("Defi", "fleet/KPI.json")); // placeholder replaced below
   try {
-    const r = await rpc(STEEM_RPC, "condenser_api.get_content", ["headcorner", `saos-daily-${TODAY.replace(/-/g, "")}`]);
+    const r = await rpc(STEEM_RPC, "condenser_api.get_content", [process.env.FLEET_ACCOUNT || "owner", `saos-daily-${TODAY.replace(/-/g, "")}`]);
     if (r && r.id !== 0) {
       arts.push({ name: "daily-digest", rail: "STEEM", ref: r.permlink, value: `created=${r.created} chars=${r.body.length}` });
     } else {

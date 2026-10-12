@@ -57,10 +57,14 @@ jobs:
 
       - name: census refresh (offline, keyless, deterministic — fail-soft exit 0 by design)
         if: true
+        env:
+          FLEET_ACCOUNT: ${{ secrets.FLEET_ACCOUNT }}
         run: node agents/fleet-census.cjs
 
       - name: delta read (artifact-vs-artifact — the CI-perspective drift series)
         if: true
+        env:
+          FLEET_ACCOUNT: ${{ secrets.FLEET_ACCOUNT }}
         run: node agents/fleet-delta.cjs --from-git=agents/fleet-census.artifact.json --to=agents/fleet-census.artifact.json --out=agents/fleet-delta.jsonl
 
       - name: claims audit (CR-0050 — every ledger claim must resolve on the tree)

@@ -3,8 +3,8 @@
  * soldiers-curate.cjs — Z-30-c FLEET CURATION DESK (steem, SOLDIERS lane)
  *
  * Complementarity law (cross-agent mutual review, 2026-10-02): the weave
- * curation daemon on the home runtime owns headcorner's vote
- * (CURATION_VOTER = headcorner, DISCOVER-ONLY until operator-armed).
+ * curation daemon on the home runtime owns owner's vote
+ * (CURATION_VOTER = owner, DISCOVER-ONLY until operator-armed).
  * THIS desk owns the ten soldiers' voting power — measured idle:
  * 7/10 soldiers last vote 2026-09-12, ~337 SP fleet-wide, VP 100%.
  * Two lanes, one economy, zero double-voting overlap.
@@ -36,7 +36,7 @@ const OUT_JSON = path.join(ROOT, 'agents', 'curation-book.json');
 const OUT_MD = path.join(ROOT, 'agents', 'curation-book.md');
 
 const SOLDIERS = ['cashmachine', 'haran', 'israelnews', 'lsa', 'macrame', 'siq', 'tov', 'wic', 'wog', 'woq'];
-const FLEET = SOLDIERS.concat(['headcorner']);
+const FLEET = SOLDIERS.concat(['owner']);
 const VOTE_WEIGHT = 10000;           // 100% (≈2% VP at soldier scale)
 const MAX_VOTES_PER_SOLDIER = Number(process.env.MAXVOTES || 2);
 const MIN_RC_PCT = 25;
@@ -86,7 +86,7 @@ function recoverVault() {
       return vj;
     } catch (_) {}
   }
-  const roots = [ROOT, process.env.STEEM_REPO_DIR || '/home/z/fleet/steem'];
+  const roots = [ROOT, process.env.STEEM_REPO_DIR || ((process.env.HOME || '/tmp') + '/fleet/steem')];
   const out = '/tmp/sc-keys';
   fs.rmSync(out, { recursive: true, force: true });
   fs.mkdirSync(out, { recursive: true, mode: 0o700 });
@@ -272,7 +272,7 @@ const book0 = (() => { try { return JSON.parse(fs.readFileSync(OUT_JSON, 'utf8')
 
   const book = {
     ok: true, tool: 'soldiers-curate.cjs', version: 1,
-    doctrine: 'soldiers lane of the fleet curation: public external content only, deterministic scoring, verify-then-sign, fleet-wide 7d dedupe; headcorner lane owned by the weave curation daemon',
+    doctrine: 'soldiers lane of the fleet curation: public external content only, deterministic scoring, verify-then-sign, fleet-wide 7d dedupe; owner lane owned by the weave curation daemon',
     at: t0, day: t0.slice(0, 10), incident: book0.incident || INCIDENT,
     tally: { verified: results.reduce((n, r) => n + r.picks.filter((p) => p.status === 'VOTED-VERIFIED').length, 0), attempted: results.reduce((n, r) => n + r.picks.length, 0), soldiersWithKey: Object.keys(keymap).length },
     runs: (book0.runs || []).concat([{ at: t0, results }]).slice(-30),

@@ -37,7 +37,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = join(ROOT, 'dex', 'office-feed.json');
 const SCHEMA = 'roshpinacare.office-feed/1';
 const TIMEOUT_MS = 12000;
-const HEADCORNER = 'headcorner'; // public ops account (on-chain public identity)
+const owner = 'owner'; // public ops account (on-chain public identity)
 const STEEM_RPC = 'https://api.steemit.com';
 const FLEETHQ_DIGEST = 'https://roshpinacare-sys.github.io/FleetHQ/digest.json';
 const SANDBOX_RAW = 'https://raw.githubusercontent.com/roshpinacare-sys/Sandbox/main/probes';
@@ -108,13 +108,13 @@ async function main() {
   try {
     const [dgp, posts] = await Promise.all([
       steemRpc('condenser_api.get_dynamic_global_properties', []),
-      steemRpc('condenser_api.get_discussions_by_blog', [{ tag: HEADCORNER, limit: 3 }]),
+      steemRpc('condenser_api.get_discussions_by_blog', [{ tag: owner, limit: 3 }]),
     ]);
     out.chain.steem = {
       ok: true,
       headBlock: dgp.head_block_number ?? null,
       headTime: dgp.time ? dgp.time + 'Z' : null,
-      headcornerLatest: (Array.isArray(posts) ? posts : []).map(p => ({
+      ownerLatest: (Array.isArray(posts) ? posts : []).map(p => ({
         title: String(p.title || ''),
         permlink: String(p.permlink || ''),
         created: p.created ? p.created + 'Z' : null,
@@ -227,7 +227,7 @@ function selftest() {
   const fixture = {
     schema: SCHEMA, publishedAt: utcStamp(), redaction: 'x', staleHoursLaw: 24,
     office: { url: 'u', digestOk: false, error: 'http 404' },
-    chain: { steem: { ok: true, headBlock: 1, headTime: 't', headcornerLatest: [{ title: 't', permlink: 'p', created: 'c', pendingPayout: '0.000 SBD', totalPayout: '0.000 SBD' }] } },
+    chain: { steem: { ok: true, headBlock: 1, headTime: 't', ownerLatest: [{ title: 't', permlink: 'p', created: 'c', pendingPayout: '0.000 SBD', totalPayout: '0.000 SBD' }] } },
     grid: { verdict: 'ARMED-STABLE', blocker: null, chains: ['STEEM'], publishedAt: 'p' },
     world: { height: 1, tps: 2, opsTotal: 3, fills: 4, swaps: 5, publishedAt: 'p' },
     deposits: { count: 0, updatedAt: 'u' },
@@ -243,7 +243,7 @@ function selftest() {
   for (const k of ['schema', 'publishedAt', 'office', 'chain', 'grid', 'world', 'deposits', 'probes', 'actions', 'learning', 'mirror']) {
     if (!(k in fixture)) { console.error('selftest FAIL: missing key', k); process.exit(2); }
   }
-  if (fixture.chain.steem.headcornerLatest[0].pendingPayout !== '0.000 SBD') { console.error('selftest FAIL: payout shape'); process.exit(2); }
+  if (fixture.chain.steem.ownerLatest[0].pendingPayout !== '0.000 SBD') { console.error('selftest FAIL: payout shape'); process.exit(2); }
   console.log('selftest PASS (schema keys + redaction token guards, offline)');
 }
 

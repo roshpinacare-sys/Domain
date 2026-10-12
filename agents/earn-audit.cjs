@@ -35,8 +35,8 @@ const OUT_JSON = process.env.EARN_AUDIT_JSON || path.join(ROOT, 'agents', 'earn-
 const OUT_MD = OUT_JSON.replace(/\.json$/, '.md');
 const NODE = 'https://api.steemit.com';
 const NODE_CROSS = 'https://api.justyy.com';
-const ROSTER = ['headcorner', 'cashmachine', 'haran', 'israelnews', 'lsa', 'macrame', 'siq', 'tov', 'wic', 'wog', 'woq'];
-const MAX_PAGES = +(process.env.EARN_AUDIT_MAX_PAGES || 30); // Z-70 CR-0048: 4 pages (400 ops) hid the drip on rotation days — headcorner's 7d window covered only ~404 ops; 30 pages = ~3000 ops/account
+const ROSTER = ['owner', 'cashmachine', 'haran', 'israelnews', 'lsa', 'macrame', 'siq', 'tov', 'wic', 'wog', 'woq'];
+const MAX_PAGES = +(process.env.EARN_AUDIT_MAX_PAGES || 30); // Z-70 CR-0048: 4 pages (400 ops) hid the drip on rotation days — owner's 7d window covered only ~404 ops; 30 pages = ~3000 ops/account
 const CONVERT_MATURITY_DAYS = 3.5; // STEEM chain law: SBD→STEEM conversion matures 3.5 days after open (Z-72 CR-0054 — computed from the op timestamp, never guessed)
 const WINDOW_DAYS = +(process.env.EARN_AUDIT_DAYS || 7);
 

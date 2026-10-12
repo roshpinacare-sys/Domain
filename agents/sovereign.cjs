@@ -49,7 +49,7 @@ const STATE_JSON = process.env.SOVEREIGN_STATE_JSON || path.join(ROOT, 'agents',
 const DECISIONS_JSONL = process.env.SOVEREIGN_DECISIONS_JSONL || path.join(ROOT, 'agents', 'sovereign-decisions.jsonl');
 const PENDING_JSON = process.env.SOVEREIGN_PENDING_JSON || path.join(ROOT, 'agents', 'sovereign-pending.json');
 const STASIS_JSON = process.env.STASIS_JSON || path.join(ROOT, 'agents', 'STASIS.json');
-const HC_DERIVED = process.env.HC_DERIVED || '/home/z/my-project/.fleet/headcorner-derived.json';
+const HC_DERIVED = process.env.HC_DERIVED || ((process.env.HOME || '/tmp') + '/.fleet/derived.json');
 
 // ── canon readers (all fail-soft, presence-only for secrets) ────────────────
 function loadPolicy() {

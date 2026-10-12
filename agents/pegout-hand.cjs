@@ -22,8 +22,8 @@
  *     the chain dust (0.001) is refused DUST — no zero-amount broadcasts, ever.
  *  5. SINGLE-WRITER: the queue file is consumed atomically (tmp+rename), rows are marked
  *     IN PLACE (broadcast txid / refused reason) — the core's tick never sees a torn file.
- *  6. RAIL PROOF: the hand proves itself with a 0.001 STEEM SELF-TRANSFER (headcorner →
- *     headcorner — value-neutral, receipted with txid + block). One proof per day (history
+ *  6. RAIL PROOF: the hand proves itself with a 0.001 STEEM SELF-TRANSFER (owner →
+ *     owner — value-neutral, receipted with txid + block). One proof per day (history
  *     idempotency). The proof moves no value; it proves the hand can sign and broadcast.
  *  7. STASIS halt-before-read. FAIL-SOFT exit 0. Zero secrets printed — receipts carry
  *     public keys and txids only.
@@ -40,23 +40,23 @@ const Gate = require('../gate-crypto.js');
 const AG = __dirname;
 const QUEUE_FILE = path.join(AG, '..', 'dex', 'pegout-queue.json');
 const STASIS_FILE = path.join(AG, 'STASIS.json');
-const HC_DERIVED = process.env.HC_DERIVED || '/home/z/my-project/.fleet/headcorner-derived.json';
+const HC_DERIVED = process.env.HC_DERIVED || ((process.env.HOME || '/tmp') + '/.fleet/derived.json');
 const OUT_JSON = path.join(AG, 'pegout-hand.json');
 const OUT_MD = path.join(OUT_JSON.replace(/\.json$/, '.md'));
 const HISTORY = path.join(OUT_JSON.replace(/\.json$/, '-history.jsonl'));
 const RPC = process.env.STEEM_RPC || 'https://api.steemit.com';
 const PROTOCOL = 'SAOS-PEGOUT-HAND/1';
 const VERSION = 'pegout-hand v1.0.0 (R44 THE OPPOSING HANDS, CR-0074)';
-const OPERATOR = 'headcorner';
+const OPERATOR = 'owner';
 const CHAIN_PRECISION = 3;              // STEEM/SBD liquid precision
 const CHAIN_DUST = 1;                   // satoshi floor — below this a row is DUST
 const MEMO_MAX = 120;
 
-/** the estate roster — source of truth: /home/z/git-audit/steem/agent/soldier_auth_audit.json
+/** the estate roster — source of truth: <host>/git-audit/steem/agent/soldier_auth_audit.json
  *  (15 accounts, 10/10 old roster + hcsoldier4/5/6 at 4/4 key-MATCH, live-verified 2026-10-04).
  *  A chain payout to any account outside this list is REFUSED-DEST-NOT-ESTATE. */
 const ESTATE_ALLOWLIST = [
-  'headcorner', 'cashmachine', 'lsa',
+  'owner', 'cashmachine', 'lsa',
   'haran', 'israelnews', 'macrame', 'siq', 'tov', 'wic', 'wog', 'woq', 'ynet',
   'hcsoldier4', 'hcsoldier5', 'hcsoldier6',
 ];
@@ -352,17 +352,17 @@ function selftest() {
   ok('floor-1000mu', muToSatoshi('1000', 3) === 1n);
   ok('satoshi-to-amount', satoshiToAmount(9n, 'STEEM') === '0.009 STEEM' && satoshiToAmount(1n, 'STEEM') === '0.001 STEEM');
   // SERIALIZER GOLDEN VECTORS — byte-verified against steem-js transaction.toBuffer (2026-10-04)
-  const g1 = serializeTransferTx({ ref_block_num: 44000, ref_block_prefix: 305419896, expiration: '2026-10-04T16:00:00', operations: [['transfer', { from: 'headcorner', to: 'headcorner', amount: '0.001 STEEM', memo: 'SAOS-PEGOUT-HAND/1 rail-proof R44' }]], extensions: [] });
+  const g1 = serializeTransferTx({ ref_block_num: 44000, ref_block_prefix: 305419896, expiration: '2026-10-04T16:00:00', operations: [['transfer', { from: 'owner', to: 'owner', amount: '0.001 STEEM', memo: 'SAOS-PEGOUT-HAND/1 rail-proof R44' }]], extensions: [] });
   ok('golden-vector-1', Buffer.from(g1).toString('hex') === 'e0ab785634120078c26a01020a68656164636f726e65720a68656164636f726e6572010000000000000003535445454d00002153414f532d5045474f55542d48414e442f31207261696c2d70726f6f662052343400');
-  const g2 = serializeTransferTx({ ref_block_num: 1, ref_block_prefix: 2, expiration: '2026-10-05T00:00:00', operations: [['transfer', { from: 'headcorner', to: 'cashmachine', amount: '0.010 SBD', memo: 'x' }]], extensions: [] });
+  const g2 = serializeTransferTx({ ref_block_num: 1, ref_block_prefix: 2, expiration: '2026-10-05T00:00:00', operations: [['transfer', { from: 'owner', to: 'cashmachine', amount: '0.010 SBD', memo: 'x' }]], extensions: [] });
   ok('golden-vector-2', Buffer.from(g2).toString('hex') === '01000200000080e8c26a01020a68656164636f726e65720b636173686d616368696e650a000000000000000353424400000000017800');
   // dest-allowlist law
   ok('allowlist-estate-ok', validateRow({ asset: 'STEEM', amount: '1000', account: 'cashmachine', corridor: 'KEYED-DESK' }).verdict === 'FIREABLE-KEYED');
   ok('allowlist-treasury-refused', validateRow({ asset: 'STEEM', amount: '9358', account: 'treasury', corridor: 'KEYED-DESK' }).refused === 'REFUSED-DEST-NOT-ESTATE'); // the live queue row
   ok('allowlist-squatter-refused', validateRow({ asset: 'SBD', amount: '5000', account: 'satoshi', corridor: 'KEYED-DESK' }).refused === 'REFUSED-DEST-NOT-ESTATE');
   ok('dust-refused', validateRow({ asset: 'STEEM', amount: '999', account: 'cashmachine', corridor: 'KEYED-DESK' }).refused === 'DUST');
-  ok('plan-corridor', validateRow({ asset: 'BLURT', amount: '5000', account: 'headcorner', corridor: 'PLAN-PEGOUT-KEYED-OPERATOR' }).refused === 'UNSUPPORTED-ASSET');
-  ok('unsupported-asset', validateRow({ asset: 'BTC', amount: '5000', account: 'headcorner', corridor: 'KEYED-DESK' }).refused === 'UNSUPPORTED-ASSET');
+  ok('plan-corridor', validateRow({ asset: 'BLURT', amount: '5000', account: 'owner', corridor: 'PLAN-PEGOUT-KEYED-OPERATOR' }).refused === 'UNSUPPORTED-ASSET');
+  ok('unsupported-asset', validateRow({ asset: 'BTC', amount: '5000', account: 'owner', corridor: 'KEYED-DESK' }).refused === 'UNSUPPORTED-ASSET');
   // applyResult purity: the input doc is untouched, the row is patched in the copy
   const q = { rows: [{ intentId: 'A', asset: 'STEEM', amount: '1000', account: 'cashmachine' }] };
   const q2 = applyResult(q, 'A', { fired: true, tx: 'x' });

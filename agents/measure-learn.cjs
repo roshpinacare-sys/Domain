@@ -44,7 +44,7 @@ async function crossStat(node, who, permlink) {
   } catch (_) { return null; }
 }
 const ROTATION = ['haran', 'wic', 'woq', 'siq', 'tov', 'israelnews', 'lsa', 'macrame', 'cashmachine', 'wog'];
-const FLEET_ALL = new Set([...ROTATION, 'headcorner']);
+const FLEET_ALL = new Set([...ROTATION, 'owner']);
 const NON_SIGNAL = new Set(['steem.history', 'trailbot', 'appreciator', 'postpromoter', 'upme', 'buildawhale', 'upmewhale', 'rocky1', 'boomerang', 'dlike', 'krwhale', 'steem-echo', 'smartsteem', 'tipu', 'cardboard']);
 const CARDS = (() => { try { return JSON.parse(fs.readFileSync(path.join(__dirname, 'knowledge-cards-en.json'), 'utf8')); } catch (_) { return []; } })();
 const P = (fn) => new Promise((res, rej) => fn((e, r) => e ? rej(e) : res(r)));

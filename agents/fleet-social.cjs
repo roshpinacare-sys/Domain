@@ -37,7 +37,7 @@ steem.api.setOptions({ url: 'https://api.steemit.com' });
 const ROOT = path.resolve(__dirname, '..');
 const OUT = process.env.RECEIPT_OUT || path.join(ROOT, 'agents', 'receipts', 'fleet-social-receipt.json');
 const ROTATION = ['haran', 'wic', 'woq', 'siq', 'tov', 'israelnews', 'lsa', 'macrame', 'cashmachine', 'wog'];
-const HEAD = 'headcorner';
+const HEAD = 'owner';
 const FLEET_ALL = [...ROTATION, HEAD];
 const MAX_FOLLOWS_PER_RUN = 60;
 const CARDS = (() => { try { return JSON.parse(fs.readFileSync(path.join(__dirname, 'knowledge-cards-en.json'), 'utf8')); } catch (_) { return []; } })();

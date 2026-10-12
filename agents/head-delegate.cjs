@@ -23,7 +23,7 @@ const DRY = process.env.DRY === '1';
 const SOLDIERS = ['cashmachine', 'haran', 'israelnews', 'lsa', 'macrame', 'siq', 'tov', 'wic', 'wog', 'woq']; // 10 — ynet retired 2026-09-29 (keyless by sovereign decision)
 const SP_PER_SOLDIER = 30;   // תקרה-קשיחה
 const RETIRED = ['ynet']; // retired 2026-09-29 — keyless by sovereign decision; idle 30 SP delegation is reclaimed below (capital efficiency)
-const HEAD = 'headcorner';
+const HEAD = 'owner';
 
 function recoverVault() {
   const out = '/tmp/hd-keys';
@@ -96,7 +96,7 @@ async function main() {
   // The owner directed equal, full-power delegation: "האצלת כוח לחיילים בצורה שווה כדי
   // לקבל את מלוא סכום ההצבעות". The law shares the head's OWN stake equally after two
   // commitments: the powerdown (self-funding battery of the market lane, R33) and an RC
-  // reserve for headcorner's own operations. As the powerdown consumes capital weekly,
+  // reserve for owner's own operations. As the powerdown consumes capital weekly,
   // the target shrinks and delegations glide down with it — social power and market fuel
   // coexist by arithmetic, never by hand-tuning.
   const HEAD_RESERVE_SP = Number(process.env.HEAD_RESERVE_SP || 500);
@@ -109,7 +109,7 @@ async function main() {
   console.log(`head-del] equal-share law: own=${ownSP.toFixed(1)} SP · powerdown-committed=${committedSP.toFixed(1)} SP · reserve=${HEAD_RESERVE_SP} SP → ${targetSP} SP per soldier (×${SOLDIERS.length})`);
 
   const results = []; let delegated = 0, skipped = 0, failed = 0, reclaimed = 0, refused = 0;
-  for (const x of roster.refused) { results.push({ to: x.name, target: 'n/a', status: 'REFUSED-ROSTER', why: x.reason }); refused++; console.log(`[REFUSED-ROSTER] headcorner → @${x.name} · ${x.reason}`); }
+  for (const x of roster.refused) { results.push({ to: x.name, target: 'n/a', status: 'REFUSED-ROSTER', why: x.reason }); refused++; console.log(`[REFUSED-ROSTER] owner → @${x.name} · ${x.reason}`); }
   for (const s of roster.allowed) {
     const R = { to: s, target: `${targetSP} SP` };
     try {
@@ -131,7 +131,7 @@ async function main() {
       }
     } catch (e) { R.status = 'FAIL'; R.err = String(e.message || e).slice(0, 90); failed++; }
     results.push(R);
-    console.log(`[${R.status}] headcorner → @${s} (${R.haveSp != null ? R.haveSp + ' SP have' : 'have=?'} → ${targetSP} SP)`);
+    console.log(`[${R.status}] owner → @${s} (${R.haveSp != null ? R.haveSp + ' SP have' : 'have=?'} → ${targetSP} SP)`);
     await sleep(1500 + Math.floor(Math.random() * 1500));
   }
 
@@ -155,7 +155,7 @@ async function main() {
       }
     } catch (e) { R.status = 'FAIL'; R.err = String(e.message || e).slice(0, 90); failed++; }
     results.push(R);
-    console.log(`[${R.status}] headcorner ↩ @${s} (reclaim idle delegation — 7-day return)`);
+    console.log(`[${R.status}] owner ↩ @${s} (reclaim idle delegation — 7-day return)`);
     await sleep(400);
   }
   capGate.journal('head-delegate', { dry: DRY, targetSPPerSoldier: targetSP, rosterLoaded: roster.rosterLoaded, allowed: roster.allowed, refused: roster.refused, delegated, reclaimed, skipped, failed, refusedCount: refused });

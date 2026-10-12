@@ -30,7 +30,7 @@ const MODE = (process.env.REPAIR_MODE || "check").toLowerCase();
 const REPO = process.env.REPAIR_REPO || "roshpinacare-sys/Domain";
 const TARGET_SECRET = process.env.REPAIR_TARGET || "WEAVE_STEEM_WIF";
 const DISPATCH_WF = process.env.REPAIR_DISPATCH || "weave-anchor-lines.yml";
-const ANCHOR_FLEET = ["cashmachine", "headcorner", "lsa"];
+const ANCHOR_FLEET = ["cashmachine", "owner", "lsa"];
 
 function fail(code, he) {
   console.log(`[repair] ✗ ${code} — ${he}`);
@@ -166,8 +166,8 @@ async function steemAccounts(names) {
 
   if (!matched.length) fail("no-eligible", "repair refused — no vault WIF is a live posting authority of the anchor trio");
 
-  // prefer headcorner, then cashmachine, then lsa (anchor trio order)
-  const pick = matched.find((m) => m.account === "headcorner")
+  // prefer owner, then cashmachine, then lsa (anchor trio order)
+  const pick = matched.find((m) => m.account === "owner")
     || matched.find((m) => m.account === "cashmachine")
     || matched[0];
   const wif = map[pick.username];

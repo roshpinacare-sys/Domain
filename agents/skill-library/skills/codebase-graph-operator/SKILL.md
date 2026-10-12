@@ -18,7 +18,7 @@ a "quick look at the code" decay into unbounded file-by-file wandering.
 **Provenance:** study source DeusData/codebase-memory-mcp (MIT, verified
 IN-FILE at the pinned mirror: `LICENSE` 1,107 bytes, "Copyright (c) 2025
 DeusData") — pinned mirror sha `96c3f41c` at
-`/home/z/reference-mirrors/codebase-memory-mcp` — evaluation + adoption wave
+`<host>/reference-mirrors/codebase-memory-mcp` — evaluation + adoption wave
 Task 36 (owner five-repo directive). This package is a HOUSE adaptation:
 zero upstream C code or docs bodies were copied. MIT notice:
 `skill-library/THIRD-PARTY-NOTICES.md` §11.
@@ -42,7 +42,7 @@ authoring skills (see fleet-skill-author).
 | Situation | Route | Verdict here |
 |---|---|---|
 | Adopt the graph-first doctrine on estate exploration | books/gates/worklog queries | 🟢 sovereignty-decided — zero cost, proven below |
-| Read upstream source as reference | mirror `/home/z/reference-mirrors/codebase-memory-mcp` @ `96c3f41c` | 🟢 keyless, pinned, MIT verified in-file |
+| Read upstream source as reference | mirror `<host>/reference-mirrors/codebase-memory-mcp` @ `96c3f41c` | 🟢 keyless, pinned, MIT verified in-file |
 | Install + run `cbm` itself (native binary, MCP client config) | download → `install` → agent config writes | 🟡 CONSULT — installs upstream executables and writes agent-configuration files = possession-adjacent; the desk reads source, does not self-install binaries; owner-gated |
 | Copy upstream C into an estate repo | any incorporation | 🔴 LICENSE-FIRST — MIT permits it with attribution, but the standing estate rule is ZERO-COPY doctrine adoption; incorporation needs a judged CR |
 | Headline metrics (162 languages, 120× token reduction, 8,050 tests, SLSA 3) | upstream claims | 🟡 CLAIM — booked as claims; desk-verified facts are the source mechanics below |
