@@ -614,9 +614,9 @@ footer.site a:hover{color:var(--text)}
     <!-- כניסת מפעיל: המקום להתחבר עם המפתח -->
     <div id="op-login-card" class="opcard">
       <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:18px;height:18px;flex:none"><circle cx="7.5" cy="15.5" r="5.5"/><path d="M21 2l-9.6 9.6"/><path d="M15.5 7.5l3 3L22 7l-3-3"/></svg><span data-i="op.title">Operator login</span> <span class="en" style="color:var(--faint);font-size:12px;font-weight:400">the key never leaves the browser</span></h2>
-      <p class="opsub" data-i="op.sub">Connect with the commander's active key (WIF or Steemit master password). The public key is derived in your browser and matched bit-by-bit against the live on-chain authority of @headcorner. On match · the admin area unlocks. Nothing else is sent anywhere.</p>
+      <p class="opsub" data-i="op.sub">Operator identity verification against the live on-chain authority: the public key is derived in your browser and matched bit-by-bit against the live authority in the chain. On match · the admin area unlocks. Nothing else is sent anywhere.</p>
       <div class="oprow">
-        <input id="op-key" type="password" autocomplete="off" spellcheck="false" aria-label="active key" placeholder="5K… / L… / master password">
+        <input id="op-key" type="password" autocomplete="off" spellcheck="false" aria-label="operator secret" placeholder="••••••••">
         <button class="opbtn" id="op-connect-btn" type="button" data-i="op.connect">Connect</button>
       </div>
       <div class="opstatus" id="op-status" role="status" aria-live="polite"></div>
@@ -814,15 +814,15 @@ en: {
   "kn.doc6":"<b>Autonomy with safety.</b> Agents push forward by themselves, within published laws that keep the platform and the public safe.",
   "ad.h":"Admin - the sovereign control room",
   "op.title":"Operator login",
-  "op.sub":"Connect with the commander's active key (WIF or Steemit master password). The public key is derived in your browser and matched bit-by-bit against the live on-chain authority of @headcorner. On match · the admin area unlocks. Nothing else is sent anywhere.",
+  "op.sub":"Operator identity verification against the live on-chain authority: the public key is derived in your browser and matched bit-by-bit against the live authority in the chain. On match · the admin area unlocks. Nothing else is sent anywhere.",
   "op.connect":"Connect",
   "op.safe":"Security: the key is parsed by gate-crypto.js (sovereign, zero-dependency, tested against steem-js) inside this page only. It is never stored, logged, or transmitted · only the derived public key is compared against api.steemit.com. The session flag (public key + timestamp) lives in this tab's sessionStorage and dies with it.",
   "op.connected":"Connected as operator",
   "op.disconnect":"Disconnect",
   "op.busy":"Verifying against the live chain…",
-  "op.err.empty":"Enter the active key (WIF or master password). Nothing is stored.",
-  "op.err.mismatch":"This key is not the current on-chain active of @headcorner. Nothing was stored and nothing changed.",
-  "op.err.bad":"Could not derive a key from this input (WIF checksum failed). Nothing stored.",
+  "op.err.empty":"Enter the operator identification secret. Nothing is stored.",
+  "op.err.mismatch":"This key does not match the current live on-chain authority. Nothing was stored and nothing changed.",
+  "op.err.bad":"Could not derive a key from this input. Nothing stored.",
   "op.err.chain":"Could not read the live chain authority: ",
   "op.verifiedNote":(ts)=>"Identity verified against the live Steem chain at "+ts+". The admin panels below read only public mirrors · no secrets exist on this site.",
   "op.walletTitle":"Operator wallet · live",
@@ -962,15 +962,15 @@ he: {
   "kn.doc6":"<b>אוטונומיה עם בטיחות.</b> סוכנים דוחפים קדימה לבד, בתוך חוקים מפורסמים ששומרים על הפלטפורמה ועל הציבור.",
   "ad.h":"אדמין - חדר הבקרה הריבוני",
   "op.title":"כניסת מפעיל",
-  "op.sub":"התחברות עם מפתח ה-active של המפקד (WIF או סיסמת-אב של Steemit). המפתח-הציבורי נגזר בדפדפן שלך ונבדק ביט-מול-ביט מול הרשות החיה של @headcorner בשרשרת. בהתאמה · אזור האדמין נפתח. שום דבר אחר לא נשלח לשום מקום.",
+  "op.sub":"הזדהות-מפעיל מול רשות חיה בשרשרת: המפתח-הציבורי נגזר בדפדפן שלך ונבדק ביט-מול-ביט מול הרשות החיה בשרשרת. בהתאמה · אזור האדמין נפתח. שום דבר אחר לא נשלח לשום מקום.",
   "op.connect":"התחברות",
   "op.safe":"אבטחה: המפתח מפורש על-ידי gate-crypto.js (ריבוני, אפס תלות, מאומת מול steem-js) בתוך הדף הזה בלבד. הוא לעולם לא נשמר, לא נרשם בלוג ולא משודר · רק המפתח-הציבורי הנגזר מושווה מול api.steemit.com. דגל-הסשן (מפתח-ציבורי + חותמת-זמן) חי ב-sessionStorage של הלשונית ומתה איתה.",
   "op.connected":"מחובר כמפעיל",
   "op.disconnect":"התנתקות",
   "op.busy":"מאמת מול השרשרת החיה…",
-  "op.err.empty":"הזן את המפתח (WIF או סיסמת-אב). שום דבר לא נשמר.",
-  "op.err.mismatch":"המפתח שהוזן אינו ה-active הנוכחי של @headcorner כפי שרשום בשרשרת. שום דבר לא נשמר ושום דבר לא השתנה.",
-  "op.err.bad":"לא הצלחתי לגזור מפתח מהקלט (בדיקת checksum של WIF נכשלה). שום דבר לא נשמר.",
+  "op.err.empty":"הזן את פרטי-הזיהוי של המפעיל. שום דבר לא נשמר.",
+  "op.err.mismatch":"המפתח שהוזן אינו תואם את הרשות החיה הנוכחית בשרשרת. שום דבר לא נשמר ושום דבר לא השתנה.",
+  "op.err.bad":"לא הצלחתי לגזור מפתח מהקלט. שום דבר לא נשמר.",
   "op.err.chain":"קריאת הרשות החיה מהשרשרת נכשלה: ",
   "op.verifiedNote":(ts)=>"הזהות אומתה מול שרשרת Steem החיה ב-"+ts+". לוחות האדמין למטה קוראים מראות ציבוריות בלבד · אין סודות באתר הזה.",
   "op.walletTitle":"ארנק המפעיל · חי",

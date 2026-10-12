@@ -55,7 +55,7 @@ mesh contracts (Anvil-only), SAOS-NET (no Domain consumer), Saosmartwallet adapt
 | **3. FILL PROOF** | ✅ first proof landed this session: 10 fills captured, 0.508 SBD proceeds; our asks DO fill (0.100694 lifted by coin-raffle); buys rest behind the wall | edge proof = the seed of the compounding bridge math | fill-ledger cadence (now wired); flow-catch (now landed) | none |
 | 4. INFRA | shared-IP 429s; no GPU/Docker; 14/16 repos auth-walled keyless | measurement outages | retry ladders landed; per-runner token = operator infra call | operator |
 | 5. COORDINATION | TEN renumber collisions absorbed | 1-2 rebase rounds/session overhead | RESERVATIONS.jsonl read-lease proposal | both lanes |
-| 6. TRUST | headcorner concentration: ~all liquid + 4286 SP + only signer; soldiers posting-only dust | single-key compromise = fleet loss | subaccount split + threshold weights + public canon mirror | operator |
+| 6. TRUST | the operator's concentration: ~all liquid + 4286 SP + only signer; soldiers posting-only dust | single-key compromise = fleet loss | subaccount split + threshold weights + public canon mirror | operator |
 
 **The binding chain: capital ← needs edge-proof ← needs fills ← needs positioning ← needs
 the signed loop armed. Three of those four links are now closed (this session + CR-0039);
@@ -123,8 +123,8 @@ routes every LIVE intent to escalation. The gate exists both without and with th
 
 **24/7 arming:** `.github/workflows/sovereign-tick-cron.yml` ticks :12/:42 (off the whole
 org minute map, STASIS-braked twice). Keyless default = honest DRY decision receipts
-24/7; arming = set `STEEM_ACTIVE_WIF` (the same key runs #9–#14 were signed with — the
-keys exist, verified by the secret-name census) and the SAME receipt path fires LIVE.
+24/7; arming = deliver the operator's signing secret (verified by the
+secret-name census) and the SAME receipt path fires LIVE.
 
 _Live defect caught by the fail-loud book this rung: a tick referenced the ledger row
 outside its scope — the ERROR receipt fired, the fix landed, evals re-run green. That is

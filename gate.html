@@ -149,11 +149,11 @@ body.state-unlocked .unlocked-only{display:block}
         <div class="field">
           <label for="acc">חשבון Steem</label>
           <input type="text" id="acc" value="" autocomplete="off" spellcheck="false" placeholder="שם-חשבון">
-          <div class="hint">החשבון הראשי של המפעיל. הרשת מזהה אותו מול המפתחות שבשרשרת.</div>
+          <div class="hint">חשבון המפעיל. הרשת מזהה אותו מול המפתחות שבשרשרת.</div>
         </div>
         <div class="field">
-          <label for="sec">סיסמת-אב או מפתח WIF <span style="color:var(--dim)">(posting)</span></label>
-          <input type="password" id="sec" placeholder="P5… / 5…" autocomplete="off" spellcheck="false">
+          <label for="sec">פרטי-זיהוי מפעיל</label>
+          <input type="password" id="sec" placeholder="••••••••" autocomplete="off" spellcheck="false">
           <div class="hint">המפתח נשאר בזיכרון הדפדפן בלבד. גזירה, חתימה ושידור קורים כאן, מקומית. שום דבר לא נשלח לשרת.</div>
         </div>
         <button class="btn-main" id="connectBtn">התחבר לרשת</button>
@@ -366,9 +366,9 @@ async function connect() {
     const roles = {};
     const chainRoles = {};
     for (const role of ["owner", "active", "posting", "memo"]) {
-      try { roles[role] = await GateCrypto.deriveAny(sec, acc, role); } catch (e) { /* input is not a master password */ }
+      try { roles[role] = await GateCrypto.deriveAny(sec, acc, role); } catch (e) { /* input did not derive to a key */ }
     }
-    if (!roles.posting) { setStatus("הקלט לא התגלגל למפתח. נסה סיסמת-אב או WIF תקין", "err"); return; }
+    if (!roles.posting) { setStatus("הקלט לא התגלגל למפתח. נסה פרטי-זיהוי תקינים", "err"); return; }
     setStatus('<span class="spin"></span>קורא את החשבון מהשרשרת הציבורית…');
     const accounts = await rpc("condenser_api.get_accounts", [[acc]]);
     if (!accounts || !accounts.length) { setStatus("החשבון @" + esc(acc) + " לא נמצא בשרשרת", "err"); return; }
