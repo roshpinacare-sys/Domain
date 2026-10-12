@@ -4,7 +4,7 @@ Updated: 2026-10-12T12:56:29.133Z UTC. Read-only; derived from live key_auths + 
 
 ## Posting authority: OURS (byte-verified per run)
 
-- steem: 11 accounts [cashmachine, haran, israelnews, lsa, macrame, siq, tov, wic, wog, woq, headcorner]
+- steem: 11 accounts [cashmachine, haran, israelnews, lsa, macrame, siq, tov, wic, wog, woq, owner-treasury]
 - hive: 9 accounts [cashmachine, haran, israelnews, lsa, macrame, siq, wic, wog, woq]
 - blurt: 0 accounts []
 

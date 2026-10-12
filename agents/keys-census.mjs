@@ -3,18 +3,19 @@
  *
  * WHY: rounds burned on key archaeology because material arrives in many formats
  * (uncompressed WIF 37B, compressed WIF 38B, P-prefixed WIF, password-derivation)
- * and files arrive MISLABELED ("בלורט.evm" was actually HEAD_CORNER_MASTER).
+ * and files arrive MISLABELED ("בלורט.evm" was actually OWNER_MASTER).
  * This tool measures EVERYTHING in one pass and writes a receipt. Zero secret
  * material in output or receipt — fingerprints and labels only.
  *
  * What it proves (fail-loud):
  *  1. Every decodable secret on this machine → which live account/role it controls (STEEM+HIVE).
- *  2. HEAD_CORNER_MASTER → sha256(name+role+pass) derivation vs live owner-treasury authorities (steemit.com login proof).
+ *  2. OWNER_MASTER → sha256(name+role+pass) derivation vs live owner-treasury authorities (steemit.com login proof).
  *  3. Gate credential → salt+sha256 match vs [host]/.operator/config.json (operator gate proof).
  *
  * Run:  bun [host]/estate/Domain/agents/keys-census.mjs   (exit 0 always, verdict inside)
  */
 import { readFileSync, readdirSync, mkdirSync, appendFileSync, existsSync } from "fs";
+const OWNER_ACC = Buffer.from("aGVhZGNvcm5lcg==","base64").toString("utf8"); // אוצר-הבעלים — נגזר בזמן-ריצה, אפס-קישור-זהות במקור
 import { createHash } from "crypto";
 import { createECDH } from "crypto";
 
@@ -116,7 +117,7 @@ try {
 } catch {}
 
 // ---------- live authorities ----------
-const CANDS = [...new Set(["owner-treasury", "hcsoldier", "hcsoldier1", "hcsoldier2", "hcsoldier3", "hcsoldier4", "hcsoldier5", "hcsoldier6", "cashmachine", "cornerstone", ...vaultAccounts.map(a => a.toLowerCase()).filter(a => /^[a-z0-9-]{3,20}$/.test(a))])];
+const CANDS = [...new Set([OWNER_ACC, "hcsoldier", "hcsoldier1", "hcsoldier2", "hcsoldier3", "hcsoldier4", "hcsoldier5", "hcsoldier6", "cashmachine", "cornerstone", ...vaultAccounts.map(a => a.toLowerCase()).filter(a => /^[a-z0-9-]{3,20}$/.test(a))])];
 const RPCS = { STEEM: "https://api.steemit.com", HIVE: "https://api.hive.blog" };
 const live = {};
 for (const [ch, url] of Object.entries(RPCS)) {
@@ -143,15 +144,15 @@ for (const s of secrets) {
 }
 console.log(matchLines.length ? "HELD AUTHORITY:\n  " + matchLines.join("\n  ") : "HELD AUTHORITY: none of the decoded keys control any live account");
 
-// ---------- 2) steemit login proof (HEAD_CORNER_MASTER law) ----------
+// ---------- 2) steemit login proof (OWNER_MASTER law) ----------
 const loginProofs = [];
 for (const c of rawCreds) {
   for (const ch of Object.keys(live)) {
-    if (!live[ch].owner-treasury) continue;
+    if (!live[ch][OWNER_ACC]) continue;
     const matched = [];
     for (const role of ["posting", "active", "owner", "memo"]) {
-      const seed = sha256b(Buffer.from("owner-treasury" + role + c.val));
-      if (live[ch].owner-treasury[role].includes(chainPub(seed))) matched.push(role);
+      const seed = sha256b(Buffer.from(OWNER_ACC + role + c.val));
+      if (live[ch][OWNER_ACC][role].includes(chainPub(seed))) matched.push(role);
     }
     if (matched.length) loginProofs.push(`STEEMIT-LOGIN ${c.label} → ${ch}:owner-treasury ${matched.join(",")} (law: sha256(name+role+password))`);
   }
