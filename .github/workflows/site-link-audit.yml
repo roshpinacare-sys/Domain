@@ -1,0 +1,51 @@
+name: site-link-audit
+
+# ═══════════════════════════════════════════════════════════════════════════
+# SITE-LINK-AUDIT · מציל-האתר הציבורי — "מה שהמבקר רואה, נמדד" (G-series)
+# ───────────────────────────────────────────────────────────────────────────
+# נולד מהרפובליקה-ההנדסית של 2026-10-12 (roast: 75 עמודים, 134 קישורים,
+# 11 מתים על-פני-השטח הציבורי). החוק: כל עמוד חי נסרק, כל href/src נבדק,
+# כל קישור-מת = FINDING מפורסם ב-agents/site-audit.json. אין רקבון-שקט.
+# ═══════════════════════════════════════════════════════════════════════════
+
+on:
+  schedule:
+    - cron: "37 5 * * *" # יומית 05:37 UTC — רקבון-אתר לא מחכה לשבוע
+  workflow_dispatch: {}
+  push:
+    paths:
+      - "**/*.html"
+      - "manifest.webmanifest"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: site-link-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 1 }
+
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+
+      - name: audit live public surface (never trust, always verify)
+        run: node agents/site-auditor.mjs
+
+      - name: publish verdict (red stays red — honesty law)
+        run: |
+          git config user.name "site-auditor"
+          git config user.email "site-auditor@users.noreply.github.com"
+          git add agents/site-audit.json
+          if git diff --cached --quiet; then
+            echo "no verdict change"
+          else
+            git commit -m "site-audit: $(node -p "JSON.parse(require('fs').readFileSync('agents/site-audit.json','utf8')).overall") $(date -u +%Y-%m-%dT%H:%M:%SZ) [skip ci]"
+            git push
+          fi

@@ -122,6 +122,7 @@ async function rpcHive(method, params) {
     hbd: null,
     ordersAgeH: null,
     integrityAgeH: null,
+    siteAuditAgeH: null,
     reasons: [],
     dispatched: [],
     suppressed: [],
@@ -171,6 +172,7 @@ async function rpcHive(method, params) {
     const OFFICE_BOOKS = [
       { key: 'ordersAgeH', file: 'agents/work-orders.json', twin: 'office-orders-twin.yml', staleH: 4, tsKeys: ['at'] },
       { key: 'integrityAgeH', file: 'agents/integrity-verdict.json', twin: 'artery-integrity-twin.yml', staleH: 4, tsKeys: ['at'] },
+      { key: 'siteAuditAgeH', file: 'agents/site-audit.json', twin: 'site-link-audit.yml', staleH: 26, tsKeys: ['at'] }, // יומי × 1 + רווח
     ];
     for (const b of OFFICE_BOOKS) {
       try {
@@ -185,6 +187,10 @@ async function rpcHive(method, params) {
           res[b.key] = ageH;
           if (ageH > b.staleH) res.reasons.push(`${b.key.split('Age')[0]}-book-stale ${ageH}h > ${b.staleH}h`);
         } else res.errors.push(`${b.file} has no parsable timestamp (honest)`);
+        // פסק-אדום של מציל-האתר = סיבה בפני עצמה (לא רק גיל הספר)
+        if (b.key === 'siteAuditAgeH' && local?.overall === 'FAIL') {
+          res.reasons.push(`site-audit FAIL (${local?.summary?.findings ?? '?'} findings) — re-ignite`);
+        }
       } catch (e) { res.errors.push(`${b.key}: ${e.message}`); }
     }
 
