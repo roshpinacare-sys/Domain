@@ -421,19 +421,15 @@ function loadArtifact(){
     });
 }
 
-/* ── research findings: date-named walk-back ≤9 days, find experiment by id ── */
-function findingsUrl(back){
-  var d = new Date(Date.now() - back*86400e3);
-  var p = function(x){ return (x < 10 ? '0' : '') + x; };
-  return RAW + 'research/findings-' + d.getUTCFullYear() + '-' + p(d.getUTCMonth()+1) + '-' + p(d.getUTCDate()) + '.json?ts=' + Date.now();
-}
-function walkFindings(back){
-  if(back > 9) return Promise.reject(new Error('no findings in last 10 days'));
-  return jget(findingsUrl(back), 12000).catch(function(){ return walkFindings(back + 1); });
-}
+/* ── research findings: T-69 REVIVED via Pulse public mirror (CI carries the latest findings;
+   the page never guesses — what the mirror carries is what renders). ── */
+var VERIFY_MIRROR = 'https://raw.githubusercontent.com/roshpinacare-sys/Pulse/main/mirror/lanes.json';
 function runResearchId(rid){
   renderChecking('מזהה-מחקר ' + rid);
-  walkFindings(0).then(function(f){
+  jget(VERIFY_MIRROR + '?ts=' + Date.now(), 12000).then(function(j){
+    var s = j && j.sources && j.sources.research;
+    if(!s || !s.data) throw new Error((s && s.error) || 'mirror: no research carried');
+    var f = s.data;
     var exps = (f && Array.isArray(f.experiments)) ? f.experiments : [];
     var hit = null;
     exps.forEach(function(e){ if(e && String(e.id).toUpperCase() === rid.toUpperCase()) hit = e; });
@@ -444,9 +440,9 @@ function runResearchId(rid){
       (hit.next ? '<p class="expl">צעד-הבא: ' + esc(hit.next) + '</p>' : '') +
       (hit.hypothesis ? '<p class="expl">השערה: ' + esc(hit.hypothesis) + '</p>' : '') +
       '<p class="expl">פנקס-המחקר המלא נתון במשמורת-פרטית · קבלות-ציבוריות: <a href="../receipts/" target="_blank" rel="noopener">receipts ↗</a></p>' +
-      stampAndSrc(f.at || null, 'Sandbox/research/findings-*.json') + '</div>');
+      stampAndSrc(f.at || null, 'Pulse/mirror — findings carried by CI') + '</div>');
   }).catch(function(e){
-    renderError('אין-נתון — לא נמצא קובץ-ממצאים ב-9 הימים האחרונים (' + (e && e.message || e) + ').', 'Sandbox/research/findings-*.json');
+    renderError('אין-נתון — מראת-Pulse טרם נושאת ממצאים (' + (e && e.message || e) + ').', 'Pulse/mirror/lanes.json');
   });
 }
 
