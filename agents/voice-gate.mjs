@@ -7,10 +7,11 @@
 // scans every live page listed in sitemap.xml and publishes truth/voice.json.
 //
 // Verdict law:
-//   FAIL  — any typographic mark (curly quotes) or personal-directive quote
-//           in visible text (script/style excluded). Exit 1 ⇒ red run in public.
-//   PASS  — zero marks. Generic-AI vocabulary (banned list) is REPORTED as
-//           editorial findings with page+word counts, never hidden, never
+//   FAIL  — any typographic mark (curly quotes, visible or injected from JS
+//           string templates) or personal-directive quote in visible text
+//           (script/style excluded). Exit 1 ⇒ red run in public.
+//   PASS  — zero marks. Generic-AI vocabulary (banned list, EN+HE) is REPORTED
+//           as editorial findings with page+word counts, never hidden, never
 //           red on its own (word choice is editorial judgment, marks are law).
 //
 // Zero secret material. Measures the deployed site, never the repo.
@@ -25,8 +26,14 @@ const BASE = 'https://roshpinacare-sys.github.io/Domain/';
 const FETCH_TIMEOUT_MS = 15000;
 
 const CURLY = /[\u201c\u201d\u2018\u2019]/g;
-const PERSONAL = /(המפעיל ביקש|בהנחיית הבעלים|Owner instruction|ביקשתי|לפי בקשת|המפעיל שלי|האופרטור)/g;
-const VOCAB = ['מהפכני', 'חדשנות', 'חדשני', 'פורץ דרך', 'פורץ-דרך', 'אולטימטיבי', 'מדהים', 'מושלמת', 'מושלם'];
+const PERSONAL = /(המפעיל ביקש|בהנחיית הבעלים|Owner instruction|ביקשתי|לפי בקשת|המפעיל שלי|האופרטור|The owner asked|operator asked|owner decision|owner action|owner asked|בהחלטת בעלים|הוראת המפעיל|המפעיל שאל|במילים של הבעלים)/g;
+const VOCAB = [
+  // Hebrew hype vocabulary
+  'מהפכני', 'חדשנות', 'חדשני', 'פורץ דרך', 'פורץ-דרך', 'אולטימטיבי', 'מדהים', 'מושלמת', 'מושלם', 'אדיר', 'עוצמתי',
+  // English AI-tell vocabulary
+  'delve', 'robust', 'seamless', 'leverage', 'unlock', 'empower', 'journey', 'elevate', 'craft', 'comprehensive',
+  'game-changing', 'revolutionary', 'cutting-edge',
+];
 const SKIP_PATTERNS = [/archive\//]; // the dated archive keeps the voice of its day — history is not rewritten
 
 function visibleText(html) {
@@ -37,6 +44,13 @@ function visibleText(html) {
     .replace(/<!--[\s\S]*?-->/g, ' ')
     .replace(/<[^>]+>/g, ' ')
     .replace(/&nbsp;/g, ' ').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+}
+
+// JS string bodies: the gate.html class of blindness — typographic marks that the
+// visible-text scan never sees because a client-side template injects them into
+// the DOM. The rendered page carries them, so they are law exactly like visible marks.
+function scriptText(html) {
+  return [...html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/gi)].map(m => m[1]).join('\n');
 }
 
 async function fetchText(url) {
@@ -63,9 +77,12 @@ for (const u of urls) {
   try {
     const html = await fetchText(u + (u.includes('?') ? '&' : '?') + 'v=' + Date.now());
     const text = visibleText(html);
+    const js = scriptText(html);
     const c = (text.match(CURLY) || []).length;
+    const cj = (js.match(CURLY) || []).length;
     const p = (text.match(PERSONAL) || []).length;
     if (c) marks.push({ page, kind: 'curly-quotes', count: c });
+    if (cj) marks.push({ page, kind: 'curly-quotes-js', count: cj });
     if (p) marks.push({ page, kind: 'personal-directive', count: p });
     for (const w of VOCAB) {
       // negation-honesty: "לא-מושלם" (not-perfect) is the anti-hype — strip the
@@ -96,7 +113,7 @@ const report = {
   markTotal,
   vocabularyFindings: vocabulary,
   vocabularyTotal: vocabulary.reduce((s, v) => s + v.count, 0),
-  law: 'typographic marks and personal directives are law (red); generic-AI vocabulary is editorial (reported)',
+  law: 'typographic marks (visible and JS-injected) and personal directives are law (red); generic-AI vocabulary is editorial (reported)',
   prevVerdict: prev ? prev.verdict : null,
 };
 writeFileSync(OUT, JSON.stringify(report, null, 1) + '\n');
