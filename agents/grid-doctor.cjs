@@ -10,8 +10,10 @@
  *
  * Lane: measurement-only. STASIS explicitly keeps measurement lanes running.
  * Outputs:
- *   agents/grid-truth.json          — machine book (append-per-run schema, latest wins)
- *   agents/grid-truth.md            — human book with per-account table + alerts
+ *   agents/grid-truth.json          — machine book (AGGREGATE-ONLY public surface:
+ *                                     counts + power totals, zero account names —
+ *                                     exposure audit P0)
+ *   agents/grid-truth.md            — human book (aggregate-only, same P0 law)
  *   agents/grid-truth-history.jsonl — append-only compact history (drift math + training)
  * v2 certainty layer (owner directive: verify, train, refine until certain):
  *   + DRIFT alerts — per-account liquid/power delta vs previous committed snapshot
@@ -344,17 +346,39 @@ async function main() {
   const rosterAl = rosterAlerts(chainsOut);
   for (const al of rosterAl) allAlerts.push('roster ' + al.kind + ' — ' + al.detail);
 
+  // v2.3 exposure audit P0: the public book is AGGREGATE-ONLY — counts + power
+  // totals, zero account names/roles/balances/alert-details. Drift is measured
+  // at totals level; per-account truth never leaves the runner.
+  const totalsDrift = [];
+  if (prev && prev.totals) {
+    for (const [chain, t] of Object.entries(totals)) {
+      const p = prev.totals[chain];
+      if (!p) continue;
+      const dl = r3(t.liquid - (p.liquid || 0));
+      const dp = r3(t.effective_power - (p.effective_power || 0));
+      if (Math.abs(dl) >= 5) totalsDrift.push('totals DRIFT-LIQUID ' + chain + ' — available ' + (p.liquid || 0) + ' -> ' + t.liquid);
+      if (Math.abs(dp) >= 1) totalsDrift.push('totals DRIFT-POWER ' + chain + ' — eff power ' + (p.effective_power || 0) + ' -> ' + t.effective_power);
+    }
+  }
+  const kindCounts = {};
+  for (const al of allAlerts.concat(totalsDrift)) {
+    const k = al.split(' ')[1] || 'ALERT';
+    kindCounts[k] = (kindCounts[k] || 0) + 1;
+  }
+  const chainsAgg = {};
+  for (const [chain, c] of Object.entries(chainsOut)) {
+    chainsAgg[chain] = { rpc: c.rpc, accounts_audited: c.accounts.length, accounts_alive: totals[chain].accounts_alive };
+  }
   const book = {
-    schema: 'saos/grid-truth/3',
+    schema: 'saos/grid-truth/4-aggregate',
     generatedAt: nowIso(),
-    by: 'grid-doctor v2.2',
-    source: 'live chain RPC (api.steemit.com, api.hive.blog, blurt-rpc.saboin.com) — zero self-reports',
+    by: 'grid-doctor v2.3-aggregate',
+    source: 'live chain RPC (api.steemit.com, api.hive.blog, blurt-rpc.saboin.com) — zero self-reports; aggregate-only public book (exposure audit P0)',
     kRates: K,
     driftVs: prev && prev.generatedAt ? prev.generatedAt : null,
     totals,
-    chains: chainsOut,
-    claims: phantomAlerts,
-    alerts: allAlerts
+    chains: chainsAgg,
+    alertKinds: kindCounts
   };
   fs.writeFileSync(OUT_JSON, JSON.stringify(book, null, 2) + '\n');
 
@@ -385,33 +409,16 @@ async function main() {
     lines.push('| ' + c + ' | ' + t.effective_power + ' | ' + t.liquid + ' | ' + (t.locked_in_orders || 0) + ' | ' + t.accounts_alive + ' |');
   }
   lines.push('');
-  for (const [c, cfg] of Object.entries(chainsOut)) {
-    lines.push('## ' + c.toUpperCase());
-    lines.push('');
-    lines.push('| account | role | eff power | liquid | locked | VP% | RC% | last post | alerts |');
-    lines.push('|---|---|---|---|---|---|---|---|---|');
-    for (const a of cfg.accounts) {
-      const sym = c === 'hive' ? 'HIVE' : 'STEEM';
-      const locked = a.orders && a.orders.locked ? Object.entries(a.orders.locked).map(([k, v]) => v + ' ' + k).join('+') : '—';
-      lines.push('| ' + a.account + ' | ' + (a.role || '') + ' | ' + (a.effective_power !== undefined ? a.effective_power : '—') + ' | ' + (a.liquid !== undefined ? a.liquid : '—') + ' | ' + locked + ' | ' + (a.voting_power_pct === null || a.voting_power_pct === undefined ? '—' : a.voting_power_pct) + ' | ' + (a.rc_pct === null || a.rc_pct === undefined ? '—' : a.rc_pct) + ' | ' + (a.last_post || '—').slice(0, 10) + ' | ' + a.alerts.map(x => x.kind).join(',') + ' |');
-    }
-    lines.push('');
-  }
-  if (phantomAlerts.length) {
-    lines.push('## PHANTOM-CLAIMS (books that contradict the chain)');
-    lines.push('');
-    for (const al of phantomAlerts) lines.push('- ' + al.detail);
-    lines.push('');
-  }
-  lines.push('## ALERTS (' + allAlerts.length + ')');
+  const alertTotal = Object.values(kindCounts).reduce((s, n) => s + n, 0);
+  lines.push('## ALERTS (' + alertTotal + ') — aggregate-only (exposure audit P0: no per-account data)');
   lines.push('');
-  if (!allAlerts.length) lines.push('none — fleet matches expectations');
-  for (const al of allAlerts) lines.push('- ' + al);
+  if (!alertTotal) lines.push('none — fleet matches expectations');
+  for (const [k, n] of Object.entries(kindCounts).sort((a, b) => a[0].localeCompare(b[0]))) lines.push('- ' + k + ' ×' + n);
   lines.push('');
   fs.writeFileSync(OUT_MD, lines.join('\n') + '\n');
 
   console.log('GRID-DOCTOR-DONE accounts=' + Object.values(chainsOut).reduce((s, c) => s + c.accounts.length, 0) + ' alerts=' + allAlerts.length + ' phantomClaims=' + phantomAlerts.length);
-  for (const al of allAlerts) console.log('GRID-ALERT ' + al);
+  for (const al of allAlerts.concat(totalsDrift)) console.log('GRID-ALERT ' + al.split(' ').slice(0, 2).join(' '));
 }
 
 main().catch(e => { console.error('GRID-DOCTOR-FATAL', e); process.exit(0); });
