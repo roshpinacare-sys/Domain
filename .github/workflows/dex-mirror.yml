@@ -39,6 +39,13 @@ jobs:
   mirror:
     runs-on: ubuntu-latest
     timeout-minutes: 9
+    env:
+      # [25-d] FLEET_ROSTER_MAP wired (same as Console estate-scrub.yml) — measured fault:
+      # without it redact-telemetry ran roster-unresolved, estateScrubStr no-oped and the
+      # "belt-and-braces" redact step 4-char-masked account fields instead of ref-keying
+      # them ("acct…[redacted]" class measured at HEAD 2026-10-12T21:5xZ) — partial
+      # identity, not a pseudonym, and a book that lost its own refs.
+      FLEET_ROSTER_MAP: ${{ secrets.FLEET_ROSTER_MAP }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -81,3 +88,5 @@ jobs:
           done
           echo "ERROR: could not publish the mirror after 3 attempts"
           exit 1
+      - name: Exposure gate (one-law-two-enforcers — the tree the mirror just touched must PASS)
+        run: node scripts/exposure-scan.mjs

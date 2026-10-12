@@ -23,6 +23,7 @@
 
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { scrub } from "./refs.mjs"; // exposure law: mirrored books never carry estate names
+import { violations } from "../scripts/exposure-rules.mjs"; // one-law-two-enforcers: the producer runs the SAME detector as the gate (25-d)
 // 25-a fix: this import used to be "./agents/refs.mjs" — the script itself LIVES
 // in agents/, so the resolver looked for agents/agents/refs.mjs and EVERY beat
 // died with ERR_MODULE_NOT_FOUND before mirroring a single file (measured in
@@ -95,6 +96,18 @@ for (const f of FILES) {
     lines.push(`WARN ${f}: freshest source (${bestSrc}) ${r2(ageH)}h old (> ${MAX_SOURCE_AGE_H}h) - a dying pipeline is not mirrored, current copy kept`);
     continue;
   }
+  // PRODUCER GATE (one-law-two-enforcers, 25-d): the refs-scrub silently no-ops when
+  // the roster map is missing — so the exact detector the tree gate runs now judges
+  // every candidate BEFORE it touches the tree. A poisoned source is rejected, the
+  // current copy is kept, the rejection is logged by class (never by value). Poison
+  // cannot re-enter via mirror.
+  const candidate = scrub(JSON.stringify(doc, null, 1));
+  const hits = violations(candidate, `dex/${f}`);
+  if (hits.length) {
+    warned++;
+    lines.push(`REJECTED ${f}: poisoned source - ${hits.length} exposure-law hit(s): ${[...new Set(hits.map((h) => h.why))].join("; ").slice(0, 140)} - current copy kept`);
+    continue;
+  }
   const local = `${OUT_DIR}/${f}`;
   let changed = true;
   if (existsSync(local)) {
@@ -103,9 +116,9 @@ for (const f of FILES) {
     } catch { changed = true; /* local copy corrupt - replace it */ }
   }
   if (changed) {
-    writeFileSync(local, scrub(JSON.stringify(doc, null, 1)) + "\n");
+    writeFileSync(local, candidate + "\n");
     updated++;
-    lines.push(`MIRRORED ${f}: ${r2(ageH)}h old via ${bestSrc}, bytes written (refs-scrubbed)`);
+    lines.push(`MIRRORED ${f}: ${r2(ageH)}h old via ${bestSrc}, bytes written (refs-scrubbed + exposure-gated)`);
   } else {
     kept++;
     lines.push(`OK ${f}: identical to the live mirror (${r2(ageH)}h old via ${bestSrc})`);
