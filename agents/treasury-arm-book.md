@@ -124,3 +124,28 @@
 |---|---|---|---|---|---|
 | 2026-10-12T01:47:46.012Z | blurt | fatal | Unexpected token 'S', "Server is "... is not valid JSON | RED-FATAL |  |
 
+
+## TREASURY-ARM RUN · 2026-10-12T11:53:58.212Z · chain=steem
+
+| at | chain | op | detail | status | extra |
+|---|---|---|---|---|---|
+| 2026-10-12T11:53:58.212Z | steem | powerup | to haran would breach reserve floor 90 | skipped |  |
+| 2026-10-12T11:53:58.212Z | steem | powerup | to cashmachine would breach reserve floor 90 | skipped |  |
+| 2026-10-12T11:53:58.212Z | steem | powerup | to wic would breach reserve floor 90 | skipped |  |
+| 2026-10-12T11:53:58.212Z | steem | powerup | to woq would breach reserve floor 90 | skipped |  |
+| 2026-10-12T11:53:58.212Z | steem | powerup | to tov would breach reserve floor 90 | skipped |  |
+
+
+## TREASURY-ARM RUN · 2026-10-12T11:53:59.015Z · chain=hive
+
+| at | chain | op | detail | status | extra |
+|---|---|---|---|---|---|
+| 2026-10-12T11:53:59.014Z | hive | gate | no candidate secret matches live active authority of cornerstone — owner must provision (see CENSUS lines) | refused |  |
+
+
+## TREASURY-ARM RUN · 2026-10-12T11:53:59.511Z · chain=blurt
+
+| at | chain | op | detail | status | extra |
+|---|---|---|---|---|---|
+| 2026-10-12T11:53:59.511Z | blurt | fatal | Unexpected token 'S', "Server is "... is not valid JSON | RED-FATAL |  |
+
