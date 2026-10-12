@@ -76,8 +76,8 @@ sovereign original succeeded within 3h the twin verifies only), dex-grid
 (daily 03:48 - refuses honestly until the manager key, because a keyless run
 would falsely publish DISARMED-NO-KEY while the true state is armed in the
 private vault; shift-guarded on schedule, dispatches run immediately).
-Operator's secrets status: ALL DELIVERED (R72-R75, incl. WEAVE_STEEM_WIF and
-STEEM_ACTIVE_WIF). No remaining operator-side secrets are known; new needs open
+Operator's secrets status: ALL DELIVERED (R72-R75 — the operator's secrets
+flowed in full). No remaining operator-side secrets are known; new needs open
 as honest refuse-until-delivered gates.
 
 ## 4. How to work (the loop)

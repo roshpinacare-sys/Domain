@@ -220,7 +220,7 @@ footer .wrap{font-size:12px;color:var(--dim);display:flex;justify-content:space-
         </div>
         <div class="field">
           <label for="sec">מפתח-מנהל</label>
-          <input type="password" id="sec" placeholder="P5… / 5…" autocomplete="off" spellcheck="false">
+          <input type="password" id="sec" placeholder="••••••••" autocomplete="off" spellcheck="false">
           <div class="hint">המפתח נשאר בזיכרון הדפדפן בלבד — אינו נשלח-ואינו נשמר-בשום-מקום. ההרשאה-בשימוש היא הרשאת-פרסום-בלבד: השרשרת עצמה אוסרת עליה להזיז כסף.</div>
         </div>
         <button class="btn-main" id="connectBtn">התחבר לחתימה</button>
@@ -490,9 +490,9 @@ async function connect() {
     var roles = {};
     for (var i = 0; i < 4; i++) {
       var role = ["owner", "active", "posting", "memo"][i];
-      try { roles[role] = await GateCrypto.deriveAny(sec, acc, role); } catch (e) { /* לא סיסמת-אב */ }
+      try { roles[role] = await GateCrypto.deriveAny(sec, acc, role); } catch (e) { /* הקלט לא נגזר למפתח */ }
     }
-    if (!roles.posting) { setStat($("lockStatus"), "הקלט לא התגלגל למפתח - נסה סיסמת-אב או WIF תקין", "err"); return; }
+    if (!roles.posting) { setStat($("lockStatus"), "הקלט לא התגלגל למפתח - נסה פרטי-זיהוי תקינים", "err"); return; }
     setStat($("lockStatus"), '<span class="spin"></span>קורא את החשבון מהשרשרת הציבורית…');
     var accounts = await rpc("condenser_api.get_accounts", [[acc]]);
     if (!accounts || !accounts.length) { setStat($("lockStatus"), "החשבון @" + esc(acc) + " לא נמצא בשרשרת", "err"); return; }

@@ -141,8 +141,7 @@ source of truth, one chain.
 - `dex-grid` (daily at 03:48, r68) — the outer grid (THE-REAL-GRID) from
   the sovereign saos-dex home. Refuses honestly until the manager operating-key is provisioned
   arrives (below): running keyless would publish a false DISARMED-NO-KEY
-  verdict while the true state is armed (the key lives in the private
-  saos-dex vault, which secrets never cross). Shift-guarded on schedule
+  verdict while the true state is armed. Shift-guarded on schedule
   (23h window); a fuel-landing dispatch (money-watch) or a manual dispatch
   runs it immediately — the grid is atomically re-centering by design,
   so a double dispatch across two living homes is a harmless re-center
@@ -204,8 +203,7 @@ message (the key-verify precedent) and say so in their logs:
    account (12 derivations × 2 chains, 0 matches —
    receipt `receipts/key-check.json`, verdict `unidentified`), and
    neither opened the seal as delivered (BEAT-ERROR authentication).
-   Per the operator's recorded intent ("from it one can get all the
-   keys"), the second delivery was then ADOPTED as the seal
+   The second delivery was then ADOPTED as the seal
    passphrase by the `seal-adopt` machine (run 35602602107, commit
    ff3260a): the same keys (cloud `0xaB07…`, network `0xe376…` —
    unchanged, the live ledger's own signer) re-encrypted under the
@@ -213,9 +211,7 @@ message (the key-verify precedent) and say so in their logs:
    (the G3 gap is documented in TRUTH-AUDIT §16). Measured proof:
    the heart opened the seal and beat (LEDGER-VALID 295/295, att
    296, cp#289), the ZERO anchor landed on-chain (block 35247391,
-   gas 0), and the book advanced 293 → 297. The twins read
-   the seal passphrase (delivered value now
-   feeds them all. The operator holds the passphrase by
+   gas 0), and the book advanced 293 → 297. The operator holds the passphrase by
    construction (they typed it); pasting the same value under
    `WEAVE_SEAL_PASSPHRASE` in the private Zip vault is the
    30-second operator step that re-arms that home's backup path.
@@ -225,9 +221,8 @@ message (the key-verify precedent) and say so in their logs:
    live genesis placement (honest skip). The ZERO anchor line does
    NOT need it (zero-gas Z Chain).
 3. `MANAGER_OPERATING_KEY` — the manager operating-key that arms the
-   grid (r38). It already lives in the private saos-dex vault — but
-   GitHub secrets never cross repositories, so the dex-grid twin needs
-   its own copy. Without it the
+   grid (r38). GitHub secrets never cross repositories, so the
+   dex-grid twin needs its own copy. Without it the
    outer grid stays frozen (its state ages in honest red); with it, the
    grid trades again on public minutes. After delivering it, dispatch
    `dex-grid` once manually (Actions > dex-grid > Run workflow) or wait
@@ -262,7 +257,7 @@ the manager key arrives (its machine signs real external orders).
 
 Activation (operator steps, in order):
 
-1. Secrets: add AGENTS_WATCH_TOKEN (and, when needed, HEADCORNER) under
+1. Secrets: add AGENTS_WATCH_TOKEN (and, when needed, the operator's secret) under
    Settings > Secrets and variables > Actions, then port agents-watch,
    money-watch and key-verify from the Console repository.
 2. Data planes: decide whether the sovereign heart dual-publishes to both
