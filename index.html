@@ -419,13 +419,21 @@ function parseEngines(d){
     var v = d[keys[i]];
     if(Array.isArray(v) && v.length){
       return v.slice(0,6).map(function(e){
-        var ok = null;
+        /* trace-1a1312f4: FleetHQ/digest.json repos carry {name,pushedAt,lastRun}
+           — judge a repo by its latest workflow run, honestly unknown otherwise */
+        var ok = null, status = '';
+        if(typeof e === 'string'){ return { name: e, ok: null, status: 'seen' }; }
         if(typeof e.alive === 'boolean') ok = e.alive;
         else if(typeof e.ok === 'boolean') ok = e.ok;
         else if(typeof e.status === 'string') ok = /ok|alive|green|live|pass|stable|success|succeeded/i.test(e.status);
         else if(typeof e.conclusion === 'string') ok = e.conclusion === 'success';
+        else if(e.lastRun){
+          if(e.lastRun.conclusion) ok = e.lastRun.conclusion === 'success';
+          else if(e.lastRun.status === 'in_progress' || e.lastRun.status === 'queued') ok = null;
+          status = (e.lastRun.name || '') + (e.lastRun.status ? ' · ' + e.lastRun.status : '');
+        }
         return { name: e.name || e.repo || e.id || e.unit || e.title || '?', ok: ok,
-                 status: e.verdict || e.status || e.state || e.conclusion || '' };
+                 status: e.verdict || status || e.state || e.conclusion || '' };
       });
     }
   }
