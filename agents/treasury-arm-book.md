@@ -149,3 +149,24 @@
 |---|---|---|---|---|---|
 | 2026-10-12T11:53:59.511Z | blurt | fatal | Unexpected token 'S', "Server is "... is not valid JSON | RED-FATAL |  |
 
+
+## TREASURY-ARM RUN · 2026-10-12T20:20:40.353Z · chain=steem
+
+| at | chain | op | detail | status | extra |
+|---|---|---|---|---|---|
+| 2026-10-12T20:20:40.352Z | steem | gate | no candidate secret matches live active authority of owner — owner must provision (see CENSUS lines) | refused |  |
+
+
+## TREASURY-ARM RUN · 2026-10-12T20:20:40.452Z · chain=hive
+
+| at | chain | op | detail | status | extra |
+|---|---|---|---|---|---|
+| 2026-10-12T20:20:40.450Z | hive | gate | source ref unresolved — roster map unavailable in this run; refusing (fail-honest) | refused |  |
+
+
+## TREASURY-ARM RUN · 2026-10-12T20:20:40.549Z · chain=blurt
+
+| at | chain | op | detail | status | extra |
+|---|---|---|---|---|---|
+| 2026-10-12T20:20:40.547Z | blurt | gate | source ref unresolved — roster map unavailable in this run; refusing (fail-honest) | refused |  |
+
