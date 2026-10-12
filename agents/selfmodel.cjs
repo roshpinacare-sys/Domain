@@ -1,6 +1,6 @@
 'use strict';
 /**
- * selfmodel.cjs — סכימת-הדגם-העצמי SAOS-SELFMODEL/1 + מאמת + בונה · V-a, trace 1a10c90522120149
+ * selfmodel.cjs — סכימת-הדגם-העצמי SAOS-SELFMODEL/1 + מאמת + בונה · V-a, trace 1a1…0149
  * ═════════════════════════════════════════════════════════════════════════════════════════════════════
  * R27 מדד: לאורגניזם אין דגם-עצמי — התמונה חיה בסשני-LLM שמתים-עם-הסשן.
  * organism.json הוא הזיכרון-האפיסטמי: מה REAL / STAGED / HALTED / ORPHANED, מי כותב,
@@ -104,7 +104,7 @@ function validate(model) {
   if (!Array.isArray(model.measurementNotes)) warnings.push('measurementNotes missing — a self-model without documented measurement errors is not honest');
   if (!Array.isArray(model.unknowns)) warnings.push('unknowns missing — a self-model without declared unknowns is overclaiming');
 
-  /* R29 — SOVEREIGNTY/1 (trace 1a10d243868ffdc1): the sovereignty boundary section is
+  /* R29 — SOVEREIGNTY/1 (trace 1a1…fdc1): the sovereignty boundary section is
    * mechanically validated. The honesty law it enforces: **a REAL capital claim is
    * incompatible with haltCoverage=ORGANISM_ONLY** — if capital can move through signing
    * surfaces the organism cannot stop (proven 2026-10-05 17:07:36Z), no lane may claim REAL.

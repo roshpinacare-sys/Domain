@@ -1,6 +1,6 @@
 'use strict';
 /**
- * FLEET-ROSTER — כלי-הרוסטר-הקנון (owner directive 2026-10-04, trace 1a108e28015b0451)
+ * FLEET-ROSTER — כלי-הרוסטר-הקנון (owner directive 2026-10-04, trace 1a1…0451)
  * ═════════════════════════════════════════════════════════════════════════════════════
  * מצב: status (קריאה-חיה) | selftest (טהור, אופליין — 8 אסרטים)
  * ריצה: node agents/fleet-roster.cjs status|selftest

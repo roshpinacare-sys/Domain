@@ -28,9 +28,22 @@ const FORBIDDEN_CONTENT = [
   { re: /\b(?:mnemonic|seed[- ]phrase)\b[^\n]{0,40}\b(?:word|12|24)\b/i, why: "mnemonic phrase hint" },
 ];
 
+// TIER-A — OWNER-VOICE LAWS (2026-10-12, owner mandate trace 1a12fd1a55107275):
+// the owner's verbatim chat voice NEVER goes public — not in data, not in code, not in comments.
+// Applied to ALL files including engine code (engine legitimately holds regex literals;
+// it never needs the owner's words).
+const OWNER_VOICE = [
+  { re: /חייב לעצור ולבחון|Re-enable its autonomous|יש לך אישור להכל|מעולה תמשיך|תמשיך מאיפה שעצרת|חצוף תבדוק|אני מאשר זה המפתח|מיליון פעמים|פתח הכל הכל הכל|אשר בצע תמשיך|מאשר בצע תמשיך/i, why: "owner verbatim voice (law: sealed in private custody)" },
+  { re: /\bchat [0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/i, why: "IM chat identifier (entry-path exposure)" },
+  { re: /\b1a1[0-9a-f]{10,}\b/, why: "full IM trace id (map to the chat — shorten to tr-…suffix)" },
+];
+// TIER-B — MECHANISM LAWS (non-engine surface only, as before)
+const OWNER_VOICE_FIELDS = /"(ownerWords|verbatim|textHe|ownerWord)"\s*:\s*"(?!\[redacted|\[owner-directive)[^"]{8,}"/;
+
 const SCAN_GLOBS = [
   "receipts/**", "agent/inspections/**", "about/**", "public/**",
   "hub/**", "docs/**", "content/**", "press/**", "deck/**",
+  "agents/receipts/**", "agents/change-requests/**", "market/**", "dex/**", "office/**",
   "*.json", "*.jsonl", "*.md", "*.html",
 ];
 const SKIP_RE = /(^|\/)(node_modules|\.git|gate-crypto\.js)/;
@@ -54,6 +67,22 @@ const findings = [];
 
 for (const p of tracked) {
   for (const fp of FORBIDDEN_PATHS) if (fp.test(p)) findings.push({ p, why: "forbidden path" });
+}
+
+// TIER-A — owner-voice laws on EVERY tracked file (engine included; the scanner
+// itself is exempt: it holds the law's regex literals by necessity; sealed .enc
+// binaries are exempt — ciphertext is opaque, sealed stores are governed by
+// FORBIDDEN_PATHS law instead).
+const tierAFiles = tracked.filter((p) => !SKIP_RE.test(p) && !p.endsWith(".enc") && p !== "scripts/exposure-scan.mjs" && !/^\.github\//.test(p));
+for (const p of tierAFiles) {
+  let body = "";
+  try { body = readFileSync(p, "utf8"); } catch { continue; }
+  for (const { re, why } of OWNER_VOICE) {
+    if (re.test(body)) findings.push({ p, why: "TIER-A " + why });
+  }
+  if (/\.(json|jsonl)$/.test(p) && OWNER_VOICE_FIELDS.test(body)) {
+    findings.push({ p, why: "TIER-A unredacted owner-voice field" });
+  }
 }
 
 for (const p of targets) {

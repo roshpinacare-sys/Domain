@@ -2,7 +2,7 @@
 /**
  * office-feed — merged PUBLIC fleet+chain digest for the Domain landing page.
  *
- * Owner mandate (trace 1a12c59452cbc355): the Domain page must stay ALIVE —
+ * Owner mandate (trace 1a1…c355): the Domain page must stay ALIVE —
  * never silently stale. This feeder publishes one small same-origin file,
  * dex/office-feed.json, that the page can read even when the FleetHQ office
  * digest is not yet published. READ-ONLY across the network: no secrets, no

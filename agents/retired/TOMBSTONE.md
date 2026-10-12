@@ -4,6 +4,6 @@ Superseded by: treasury-desk.cjs (assets book incl. powerdown pacing) + market-e
 Revival path: `git mv agents/retired/liquidity-desk.cjs.retired agents/liquidity-desk.cjs` + wire into a cadence + white-box — never blind.
 
 ---
-TOMBSTONE — cmmq governed-client (R31, WO-unwired-cmmq-host, trace 1a12d4daf2926fd5)
+TOMBSTONE — cmmq governed-client (R31, WO-unwired-cmmq-host, trace 1a1…6fd5)
 cmmq.sh was the Rung-9 governed MCP client (CR-0032) for the governed host (mini-services/mcp-host, CR-0031). Measured 2026-10-11 across all 6 estate clones (Domain/FleetHQ/Sandbox/saos-dex/saos-runtime/steem): the host exists in ZERO of them — a client that cannot reach its server is misleading noise in agents/. JSONL destination question answered honestly: the host never ran anywhere, so the host-side deny-receipt JSONL stream NEVER EXISTED — there was no fork and nothing to relocate; the client itself is read-only (health/tools/tools-call only).
 Revival path: build CR-0031's governed host (analysis-profile belt, /health + /tools + POST /mcp tools/call on :3041, deny receipts to JSONL), then `git mv agents/retired/cmmq.sh.retired agents/cmmq/cmmq.sh && chmod +x` — never blind.

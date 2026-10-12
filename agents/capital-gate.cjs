@@ -1,6 +1,6 @@
 'use strict';
 /**
- * CAPITAL-GATE — שער-המחשבה-לפני-חתימה (owner directive 2026-10-04, IM trace 1a108e28015b0451)
+ * CAPITAL-GATE — שער-המחשבה-לפני-חתימה (owner directive 2026-10-04, IM trace 1a1…0451)
  * ═══════════════════════════════════════════════════════════════════════════════════════════
  * הבעלים מדד חי ומצא: האוטונומיה רצה "בלי שכל ואינטילגנציה" — כולל האצלות-SP אוטומטיות
  * ל-hcsoldier1/2/3 (חשבונות שאין לאף-אחד את המפתחות שלהם — LOST-NO-CUSTODY, קבלה
@@ -12,7 +12,7 @@
  *                 או-לא-מוכר → REFUSED עם נימוק (קבלה-כנה, לעולם לא דילוג-שקט).
  *   3. JOURNAL  — כל-החלטת-הון נרשמת ל-receipts/capital-decisions.jsonl (מה/למה/כמה).
  *
- * ══ V-a — החוזה-האפיסטמי (SOVEREIGN COGNITIVE ACTIVATION, trace 1a10c90522120149) ══
+ * ══ V-a — החוזה-האפיסטמי (SOVEREIGN COGNITIVE ACTIVATION, trace 1a1…0149) ══
  * R27 מדד: JSON-תקין-שקרי {"active":false} (או "active":"true" כמחרוזת) הרים-את-הבלם
  * גם-כאן. התיקון-המבני — אותו-חוזה בשני-הבתים:
  *   (1) אותנטיקה — STASIS חייב protocol='SAOS-FATE-DEFENSE-STASIS/1' + mode ∈ {full,staged}
@@ -43,7 +43,7 @@ const CHAIN = require('./directivesChain.cjs');
 const GUARDS = require('./loopguard.cjs');
 const SELFMODEL = require('./selfmodel.cjs');
 
-/* R29 (trace 1a10d243868ffdc1): staged-allow now CONSUMES the self-model — same contract
+/* R29 (trace 1a1…fdc1): staged-allow now CONSUMES the self-model — same contract
  * as the steem home. Fail-closed edges: unreadable/invalid model (E3), stale model (E4),
  * open contradiction on the lane (E1), haltCoverage=ORGANISM_ONLY (E10 — a proven capital
  * path exists that the organism cannot stop; lanes stay closed until owner remediates).
@@ -51,7 +51,7 @@ const SELFMODEL = require('./selfmodel.cjs');
 const SELFMODEL_FILE = path.join(AG, 'cognition', 'organism.json');
 const SELFMODEL_MAX_AGE_H = 26; /* beat is hourly — >26h means the cognition loop is dead */
 
-/* R30 (owner full-lift, IM trace 1a12d295c7da9241, 2026-10-11): a verified directives-chain
+/* R30 (owner full-lift, IM trace 1a1…9241, 2026-10-11): a verified directives-chain
  * entry staged-open lanes=["*"] newer than the last halt-all IS the owner's explicit word —
  * the lawful tamper-evident instrument this house records owner authority with. Facts vs
  * authority: contradictions stay open in the self-model (they are observations, not
@@ -72,7 +72,7 @@ function selfModelGate(lane) {
   const openOnLane = (model.contradictions || []).filter((c) => c && c.status === 'open' && (!Array.isArray(c.lanes) || c.lanes.length === 0 || c.lanes.map(String).map((x) => x.toLowerCase()).includes(String(lane).toLowerCase())));
   if (openOnLane.length) {
     if (ownerFullLift().lifted) {
-      return { allow: true, reason: 'owner-full-lift-over-contradiction', detail: 'contradiction(s) ' + openOnLane.map((c) => c.id).join(',') + ' remain OPEN (observed fact, model untouched); owner full-lift staged-open ["*"] verified on directives chain (trace 1a12d295c7da9241) = recorded risk-acceptance; revocation = append halt-all' };
+      return { allow: true, reason: 'owner-full-lift-over-contradiction', detail: 'contradiction(s) ' + openOnLane.map((c) => c.id).join(',') + ' remain OPEN (observed fact, model untouched); owner full-lift staged-open ["*"] verified on directives chain (trace 1a1…9241) = recorded risk-acceptance; revocation = append halt-all' };
     }
     return { allow: false, reason: 'self-model-contradiction-open', detail: openOnLane.map((c) => c.id).join(',').slice(0, 120) };
   }
@@ -83,7 +83,7 @@ function selfModelGate(lane) {
     const capitalLanes = (Array.isArray(sov.capitalLanes) && sov.capitalLanes.length ? sov.capitalLanes : ['grid', 'general']).map((x) => String(x).toLowerCase());
     if (capitalLanes.includes(String(lane).toLowerCase())) {
       if (ownerFullLift().lifted) {
-        return { allow: true, reason: 'owner-full-lift-accepted-uncovered-surface', detail: 'haltCoverage stays ORGANISM_ONLY (honest — external actors remain outside stop-power); owner full-lift staged-open ["*"] verified on directives chain (trace 1a12d295c7da9241) = the R29 owner-only remediation delivered by word; revocation = append halt-all' };
+        return { allow: true, reason: 'owner-full-lift-accepted-uncovered-surface', detail: 'haltCoverage stays ORGANISM_ONLY (honest — external actors remain outside stop-power); owner full-lift staged-open ["*"] verified on directives chain (trace 1a1…9241) = the R29 owner-only remediation delivered by word; revocation = append halt-all' };
       }
       return { allow: false, reason: 'sovereignty-uncovered', detail: 'haltCoverage=ORGANISM_ONLY — proven capital paths exist outside organism stop-power (R29); owner-only remediation' };
     }
@@ -117,7 +117,7 @@ function stasisState() {
 }
 
 /**
- * מסילת-הכלי — laneOf(tool) (owner directive 2026-10-05, trace 1a10bfe1342b2391 —
+ * מסילת-הכלי — laneOf(tool) (owner directive 2026-10-05, trace 1a1…2391 —
  * staged re-entry + calibration mandate). מיפוי-מפורש מהאודיט של R23/R24-a (כל-אתר-חתימה
  * נבדק-מול-האופ-שלו בקוד — לא לפי-שם-בלבד):
  *   'claims' — כלים שהאופ-שלהם claim_reward_balance (posting-only, אידמפוטנטי):

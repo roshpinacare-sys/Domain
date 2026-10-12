@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * grid-guard — the never-stops law for the grid (owner trace 1a12de036c1159b5).
+ * grid-guard — the never-stops law for the grid (owner trace 1a1…59b5).
  *
  * Owner law, verbatim: "חשוב לוודא פעילות של הגריד אין מצב כזה שהוא לא עובד" —
  * there is no scenario where the grid does not work. GitHub crons dilute under

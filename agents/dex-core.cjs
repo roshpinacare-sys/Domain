@@ -20,7 +20,7 @@
  *    dollar bridge) + P8 HIVE/STEEM (the cross-network bridge, cross-fair law) — appended to the
  *    live book by the deterministic reconcile law, arming the day key material verifies.
  *
- * Owner directive (2026-10-04, Hebrew, trace 1a105f6d58b6c3a5): "צריך לטפל בו היטב
+ * Owner directive (2026-10-04, Hebrew, trace 1a1…c3a5): "צריך לטפל בו היטב
  * לדאוג שנוכל לעשות שם החלפות swap וכו... חשוב שגם נוכל באמת להחליף למטבע האמיתי
  * עם ערך ולא סתם שקר... גרידים מתנגדים על הרשת שלנו מצד שני... שוק ארביטראז רישתי...
  * ראוטרים שנוכל לקבל ולהחליף גם כבר סכומים גדולים... משהו חכם על הרשת שלנו שתוכל
@@ -78,7 +78,7 @@
  * R44 (CR-0074) arms THE OPPOSING HANDS — the two things the owner's directive left gated:
  *  - COUNTER-GRID ARM LAW: the pool-side counter-grids were born PLAN-POOL-GATED-NOT-BROADCAST
  *    (R39/R40) — the owner has now given the gate twice ("אני רוצה לייצר עוד גרידים מתנגדים על
- *    הרשת שלנו מצד שני", trace 1a105f6d58b6c3a5, and the rung trigger 1a1076497144c3ed). The
+ *    הרשת שלנו מצד שני", trace 1a1…c3a5, and the rung trigger 1a1…c3ed). The
  *    gate is an ARTIFACT, not a boolean: agents/change-requests/CR-0074-counter-grids.json
  *    present in the repo = gate open. The arm adds the laws the broadcast needs: deterministic
  *    rung ids (sha256-16, idempotent re-arm), the CAP law (a grid's per-side notional ≤ 2% of
@@ -559,7 +559,7 @@ function counterGridGate(exists) {
     open: present,
     artifact: 'CR-0074-counter-grids.json',
     source: present
-      ? 'owner-directive-recorded (traces 1a105f6d58b6c3a5 + rung 1a1076497144c3ed) — the opposing grids are ordered to stand'
+      ? 'owner-directive-recorded (traces 1a1…c3a5 + rung 1a1…c3ed) — the opposing grids are ordered to stand'
       : 'gate-closed — the CR-0074 artifact is absent from the repo',
   };
 }
@@ -947,7 +947,7 @@ function settle(prev, feed, custodyProbe, now, networkProbe, gridGate) {
 
 // ── R41 THE MESH MARKET: the fleet settles on this ledger ───────────────────
 /** roster law: headcorner (operator) + soldiers (persona-slots). Deterministic, no magic names.
- *  R80 fallback (2026-10-12, measured trace 1a12d7cad62cbc29): persona-store came back with 0
+ *  R80 fallback (2026-10-12, measured trace 1a1…bc29): persona-store came back with 0
  *  soldiers → 1-member roster → the batch selftest lost its 3-trader proof set → arb-mesh red ×3
  *  (15:34Z/20:31Z/23:55Z). Lawful fallback: when the persona store yields < 2 soldiers, the
  *  roster falls back to the MEASURED fleet roster (fleet-roster.json steemFleet, sorted,
@@ -1485,9 +1485,9 @@ function clearBatchTick() {
 }
 
 // ── R77 THE OWNER GATES (batch settle + engine fee law) ────────────────────
-// The owner's word arrived twice: 2026-10-05 "Re-enable its autonomous capabilities
+// Owner directive on record 2026-10-05 (staged re-entry):
 // intelligently. Let it operate." (staged re-entry, limited exposure, observation,
-// increasing confidence) and 2026-10-07 "מאשר בצע תמשיך" (IM trace 1a117de3a33a3b25).
+// increasing confidence) and 2026-10-07 "[owner-directive]" (IM trace 1a1…3b25).
 // The gates are ARTIFACTS in the repo (the CR-0074 law: an artifact someone can audit in
 // git history, not a boolean an import can flip in memory):
 //   · CR-0075-owner-approval.json — presence + opens[] IS the open gate.
@@ -1948,7 +1948,7 @@ function selftestBatchSettle() {
     return { protocol: PROTOCOL, at: '2026-10-07T10:00:00.000Z', genesisDone: true, seq: 7, processedBatches: [], vault: vv, accounts, pools, ...(extra || {}) };
   };
   const feed = { fresh: true, fair: '105446700' }; // 0.1054467 SBD per STEEM
-  const gateOpen = ownerGate('BATCH-SETTLE', true, JSON.stringify({ ok: true, cr: 'CR-0075', opens: ['BATCH-SETTLE', 'ENGINE-FEE-LAW'], directive: 'מאשר בצע תמשיך', trace: '1a117de3a33a3b25' }));
+  const gateOpen = ownerGate('BATCH-SETTLE', true, JSON.stringify({ ok: true, cr: 'CR-0075', opens: ['BATCH-SETTLE', 'ENGINE-FEE-LAW'], directive: '[owner-directive]', trace: '1a1…3b25' }));
   const gateWrongKind = ownerGate('BATCH-SETTLE', true, JSON.stringify({ ok: true, cr: 'CR-0075', opens: ['SOMETHING-ELSE'] }));
   const gateBad = ownerGate('BATCH-SETTLE', true, '{broken');
   const gateAbsent = ownerGate('BATCH-SETTLE', false, null);
@@ -1956,7 +1956,7 @@ function selftestBatchSettle() {
   const laneShut = stagedLaneCheck('dex-batch-settle', { active: true, since: '2026-10-04T22:06:00Z', stagedLanes: { allow: ['grid', 'claims'] } });
   const laneNoStasis = stagedLaneCheck('dex-batch-settle', null);
   // 1 · the gate laws
-  ok('gate-open-by-artifact', gateOpen.open === true && gateOpen.cr.trace === '1a117de3a33a3b25');
+  ok('gate-open-by-artifact', gateOpen.open === true && gateOpen.cr.trace === '1a1…3b25');
   ok('gate-absent-closed', gateAbsent.open === false && gateAbsent.why.indexOf('ARTIFACT-ABSENT') === 0);
   ok('gate-wrong-kind-closed', gateWrongKind.open === false && gateWrongKind.why.indexOf('KIND-NOT-OPENED') === 0);
   ok('gate-malformed-closed', gateBad.open === false && gateBad.why.indexOf('ARTIFACT-UNPARSEABLE') === 0);
@@ -1981,7 +1981,7 @@ function selftestBatchSettle() {
   ok('pool-moved-once', BigInt(r.st.pools.find((p) => p.id === 'P3').ra) === BigInt('1595100') && r.st.pools.find((p) => p.id === 'P3').feeMeter !== '0');
   ok('agents-debited-credited', r.st.accounts[A].claims.SBD !== '50000' && r.st.accounts[A].claims.STEEM === '480000');
   ok('idempotency-marks-batch', r.processedBatches.includes('B77-1'));
-  ok('gate-trace-in-book', r.gate.cr === 'CR-0075' && r.gate.trace === '1a117de3a33a3b25');
+  ok('gate-trace-in-book', r.gate.cr === 'CR-0075' && r.gate.trace === '1a1…3b25');
   ok('sandwich-windows-zero', r.sandwich.batchWindows === 0);
   // 5 · two-sided flow nets internally: zero pool touch, tokens move agent-to-agent at the fair
   const twoSided = q([

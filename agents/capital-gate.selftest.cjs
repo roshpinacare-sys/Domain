@@ -6,7 +6,7 @@
  *    STASIS.json/owner-directives.jsonl/lane-guards.json פיקטיביים — המדינה-החיה לא נוגעת,
  *    למעט-וקטורי-התאימות-בסוף שקוראים-את-הבית-החי ומנקים-אחריהם).
  *
- * נולד ב-T-B (trace 1a10bfe1342b2391). הורחב ב-V-a (SOVEREIGN COGNITIVE ACTIVATION, trace 1a10c90522120149)
+ * נולד ב-T-B (trace 1a1…2391). הורחב ב-V-a (SOVEREIGN COGNITIVE ACTIVATION, trace 1a1…0149)
  * באותו-חוזה כמו בית-steem: אותנטיקת-פרוטוקול · סמכות-כיוונית (SHRINK מכני / EXPAND
  * מחייב-שרשרת-הנחיות-בעלים — tamper-EVIDENT) · צרכן-מכני לשומרי-הלופ (סוגרים-בלבד) ·
  * יומן-קבלות-קוגניטיביות אמיתי (idempotent, append-only) · כנות-מדידה.
@@ -111,7 +111,7 @@ let c = sandbox({ stasis: FULL(), chain: 'seed', guards: 'seed' });
 t('legacy full brake (valid protocol) halts even a claims tool', c.g.stasisHalt('daily-claim') === true);
 t('mode=full halts even a listed lane', sandbox({ stasis: FULL({ stagedLanes: { allow: ['claims'] } }), chain: 'seed' }).g.stasisHalt('daily-claim') === true);
 
-/* R29: a fresh, clean, sovereignty-covered self-model for allow-path vectors (trace 1a10d243868ffdc1). */
+/* R29: a fresh, clean, sovereignty-covered self-model for allow-path vectors (trace 1a1…fdc1). */
 function CLEAN_SELFMODEL(over = {}) {
   return Object.assign({
     protocol: 'SAOS-SELFMODEL/1',
@@ -273,7 +273,7 @@ t('EMPTY template is valid (zero claims = zero risk)', sm.validate(sm.EMPTY()).o
 /* ═════════ 10) תאימות: הבית-החי (קורא-קבצים-אמיתיים; מנקה-אחרי-עצמו) ═════════ */
 const liveJournalExisted = fs.existsSync(LIVE_JOURNAL);
 const live = require(SRC);
-/* R30 (owner full-lift, trace 1a12d295c7da9241): the live house now carries the owner's
+/* R30 (owner full-lift, trace 1a1…9241): the live house now carries the owner's
  * full-lift staged-open [*] on the directives chain — every canonical lane opens and the
  * WRITTEN receipt cites the lift. The lift is authority, not fact-editing: C-002 stays
  * open in the model, haltCoverage stays ORGANISM_ONLY, and the receipts say so. */
@@ -293,7 +293,7 @@ t('live directives chain genesis hash_0 equals the SAOS-DIRECTIVES-CHAIN/1 contr
 const liveGuards = require(path.join(ROOT, 'loopguard.cjs')).guardHalt('grid');
 t('live guards: honest state (whatever the beat last synced — halt/allow is still fail-closed either way)', (liveGuards.halt === true || liveGuards.halt === false) && Array.isArray(liveGuards.foreignFields));
 
-/* ═════════ 11) R29 — SOVEREIGN BOUNDARY vectors (trace 1a10d243868ffdc1) — Domain parity ═════════ */
+/* ═════════ 11) R29 — SOVEREIGN BOUNDARY vectors (trace 1a1…fdc1) — Domain parity ═════════ */
 c = sandbox({ stasis: STAGED(['grid']), chain: 'seed', guards: 'empty', selfmodel: 'corrupt' });
 t('E3: tampered self-model → REFUSED (self-model-unauthenticated)', c.g.stasisHalt('market-exec') === true && linesOf(c).some((l) => /self-model-unauthenticated/.test(l)));
 c = sandbox({ stasis: STAGED(['grid']), chain: 'seed', guards: 'empty', selfmodel: Object.assign(CLEAN_SELFMODEL(), { frontier: 'not-an-object' }) });
@@ -333,7 +333,7 @@ if (!liveJournalExisted && fs.existsSync(LIVE_JOURNAL)) {
   ORIG_LOG(' ✓ live test receipts cleaned (journal is a runtime artifact — born with the first real decision)');
 }
 
-/* ═════════ 12) R30 — owner FULL-LIFT vectors (trace 1a12d295c7da9241) ═════════ */
+/* ═════════ 12) R30 — owner FULL-LIFT vectors (trace 1a1…9241) ═════════ */
 const CHAINMOD = require(path.join(ROOT, 'directivesChain.cjs'));
 function chainLinesWith(appendEntries, stripLift) {
   let base = fs.readFileSync(path.join(ROOT, 'receipts', 'owner-directives.jsonl'), 'utf8').split('\n').filter(Boolean);
@@ -350,7 +350,7 @@ function chainLinesWith(appendEntries, stripLift) {
   }
   return lines;
 }
-const LIFT = () => [{ at: new Date().toISOString(), type: 'staged-open', trace: '1a12d295c7da9241', source: 'selftest R30', lanes: ['*'], note: 'owner full-lift' }];
+const LIFT = () => [{ at: new Date().toISOString(), type: 'staged-open', trace: '1a1…9241', source: 'selftest R30', lanes: ['*'], note: 'owner full-lift' }];
 const OPEN_C_ON_GRID = () => [{ id: 'C-x', status: 'open', epistemic: 'OBSERVED', confidence: 0.9, lanes: ['grid'], a: 'a', b: 'b', kind: 'k', title: 't', detail: 'd', firstSeen: new Date().toISOString() }];
 
 c = sandbox({ stasis: STAGED(['grid', 'claims']), chain: chainLinesWith(LIFT()), guards: 'empty', selfmodel: CLEAN_SELFMODEL({ contradictions: OPEN_C_ON_GRID() }) });

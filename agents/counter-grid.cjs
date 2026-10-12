@@ -2,7 +2,7 @@
 /**
  * counter-grid.cjs — R44 THE OPPOSING GRIDS DESK (CR-0074)
  *
- * Owner directive (2026-10-04, Hebrew, traces 1a105f6d58b6c3a5 + 1a1076497144c3ed):
+ * Owner directive (2026-10-04, Hebrew, traces 1a1…c3a5 + 1a1…c3ed):
  * "אני רוצה לייצר עוד גרידים מתנגדים על הרשת שלנו מצד שני" — MORE counter-grids on OUR
  * network, from the other side. R39/R40 planned them (PLAN-POOL-GATED-NOT-BROADCAST);
  * the owner's word is the gate and CR-0074 IS that gate as a repo artifact.
@@ -73,7 +73,7 @@ function payloadSeal(grids) {
 
 function stasisCheck() {
   // T-50 staged-obedience repair (2026-10-09, live-measured): the brake's own scope law is
-  // "measurement-only lanes continue" + the calibration mandate (trace 1a10bfe1342b2391)
+  // "measurement-only lanes continue" + the calibration mandate (trace 1a1…2391)
   // opened the staged GRID lane. The counter-grid twin is keyless and NEVER broadcasts (its
   // verdict is permission-shaped: GATED-ARMED-BROADCAST-READY) — a lane being open is
   // permission, not activation. So: staged + grid lane open → the book builds (with the

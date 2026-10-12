@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * adsmarket-panel.cjs — R31 (WO-unwired-adsmarket-marketing, trace 1a12d4daf2926fd5).
+ * adsmarket-panel.cjs — R31 (WO-unwired-adsmarket-marketing, trace 1a1…6fd5).
  *
  * The owner's law: quality content must not stay buried ("מרוב-שכבות-יש-דברים-איכותיים").
  * Adsmarket holds the full EN-HE marketing value (fact-sheet 93KB txid-backed, deck,

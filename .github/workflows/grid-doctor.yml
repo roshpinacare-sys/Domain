@@ -6,7 +6,7 @@ permissions:
   contents: write
   # grid-guard needs actions:write to re-ignite the engine twin (same-repo
   # workflow_dispatch) when the beat goes stale — the never-stops law
-  # (owner trace 1a12de036c1159b5).
+  # (owner trace 1a1…59b5).
   actions: write
 concurrency:
   group: grid-doctor
@@ -22,7 +22,7 @@ jobs:
         with: {node-version: 20}
       - name: live chain audit (read-only, no secrets, no broadcasts)
         run: node agents/grid-doctor.cjs
-      # grid-guard — never-stops law (owner trace 1a12de036c1159b5: "אין מצב כזה
+      # grid-guard — never-stops law (owner trace 1a1…59b5: "אין מצב כזה
       # שהוא לא עובד"). GitHub crons dilute under load (measured 48→12-24 runs/day),
       # so cadence alone is not a guarantee. The guard MEASURES beat age + Console
       # mirror age + HIVE working inventory every run and RE-IGNITES the engine

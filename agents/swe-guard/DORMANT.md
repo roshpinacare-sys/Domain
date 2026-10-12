@@ -1,6 +1,6 @@
 # DORMANT — swe-guard (CR-0019 GuardedLocalEnvironment), R31 measurement
 
-**Status: dormant local-lane asset — alive in-tree, zero deletion. Measured 2026-10-11 (WO-unwired-swe-guard, trace 1a12d4daf2926fd5).**
+**Status: dormant local-lane asset — alive in-tree, zero deletion. Measured 2026-10-11 (WO-unwired-swe-guard, trace 1a1…6fd5).**
 
 ## The chain (verified, in-tree, single-room law kept)
 

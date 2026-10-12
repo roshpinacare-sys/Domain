@@ -2,7 +2,7 @@
 /**
  * treasury-arm — capped, idempotent, read-back-verified treasury arming.
  *
- * Law chain: owner directives 2026-10-11 (traces 1a12af86d9b689d5 + 1a12b495f6707275)
+ * Law chain: owner directives 2026-10-11 (traces 1a1…89d5 + 1a1…7275)
  *   → directives chain i=3 (staged-open powerup/delegation/connect)
  *   → CR-0076-owner-approval.json (caps + revocation)
  *   → STASIS.json stagedLanes

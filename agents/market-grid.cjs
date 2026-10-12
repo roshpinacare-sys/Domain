@@ -250,7 +250,7 @@ function executorPreview(internalRows) {
   // explicit — "measurement-only lanes continue". This desk IS the measurement lane (keyless
   // reads, law 2: never broadcast). Over-halting it froze the whole market time-series on
   // 2026-10-04 22:06 (books dark 5 days) while the calibration mandate (2026-10-05, trace
-  // 1a10bfe1342b2391) opened the grid lane and REQUIRED observation data. The brake stays
+  // 1a1…2391) opened the grid lane and REQUIRED observation data. The brake stays
   // ARMED and is recorded in every receipt (brakeArmed/brakeMode) — the audit trail keeps
   // the truth, the observation resumes. The capital lanes keep halting at capital-gate.
   let brakeInfo = null;

@@ -2,7 +2,7 @@
 /**
  * grid-doctor — the fleet truth machine (read-only, no keys, no broadcasts).
  *
- * Purpose (owner directive 2026-10-11, trace 1a12af86d9b689d5): the grid must
+ * Purpose (owner directive 2026-10-11, trace 1a1…89d5): the grid must
  * always treat itself according to its CURRENT state — measured from live chain
  * RPCs, never from self-reports or simulation books. Phantom numbers found in a
  * parallel agent's "verified" plan (3676 SP claimed vs 5.93 SP live on

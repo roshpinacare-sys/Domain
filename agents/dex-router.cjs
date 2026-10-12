@@ -2,7 +2,7 @@
 /**
  * dex-router.cjs — R39 SWAP-NET DESK (the swap router + arb net + counter-grids)
  *
- * Owner directive (2026-10-04, Hebrew, trace 1a105f6d58b6c3a5): "צריך לטפל בו היטב
+ * Owner directive (2026-10-04, Hebrew, trace 1a1…c3a5): "צריך לטפל בו היטב
  * לדאוג שנוכל לעשות שם החלפות swap וכו לכמה שיותר רשתות... קודם חשוב שנוכל גם לעשות
  * לsteem hive blurt וכו מטבעות שגם ככה אנחנו עובדים איתם... גרידים מתנגדים על הרשת
  * שלנו מצד שני וגם כדי לפתח שוק ארביטראז רישתי... חשוב שגם נוכל באמת להחליף למטבע

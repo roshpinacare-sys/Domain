@@ -41,7 +41,7 @@ jobs:
           echo "mode=$MODE" >> "$GITHUB_OUTPUT"
           echo "lane_allowed=$LANE_OK" >> "$GITHUB_OUTPUT"
           if [ "$ACTIVE" = "true" ] && [ "$MODE" = "staged" ] && [ "$LANE_OK" = "true" ]; then
-            echo "[CAPITAL-GATE] STASIS-STAGED-ALLOW ladder-refresh (lane=grid) · owner directive 2026-10-05 trace 1a10bfe1342b2391 — staged grid lane open; the in-code gate (capital_gate.cjs) re-checks at sign-time"
+            echo "[CAPITAL-GATE] STASIS-STAGED-ALLOW ladder-refresh (lane=grid) · owner directive 2026-10-05 trace 1a1…2391 — staged grid lane open; the in-code gate (capital_gate.cjs) re-checks at sign-time"
           elif [ "$ACTIVE" = "true" ]; then
             echo "STASIS-HALT ladder-refresh (lane=grid) · the breaker is active (mode=$MODE) — capital lanes obey (internal-market limit orders)"
           else

@@ -137,10 +137,10 @@ async function main() {
   push('grid-lane', 'saos-dex', 'grid', 'STAGED', 'OBSERVED',
     [evRun('dex-grid', m)], 'limit-order ladder — STASIS-staged; NOTE: unguarded money-family-live actor also signs here (C-002 family)');
   push('treasury-arm', 'Domain', 'powerup+delegation', 'STAGED', 'INFERRED',
-    [evRun('treasury-arm', m) || { source: 'agents/change-requests/CR-0076-owner-approval.json', ref: 'owner directive traces 1a12af86d9b689d5 + 1a12b495f6707275 (2026-10-11)', at: nowIso() }],
+    [evRun('treasury-arm', m) || { source: 'agents/change-requests/CR-0076-owner-approval.json', ref: 'owner directive traces 1a1…89d5 + 1a1…7275 (2026-10-11)', at: nowIso() }],
     'capped powerup/delegation under owner-directives chain; first runs pending — will flip to OBSERVED with tx evidence');
   push('blurt-connect', 'Domain', 'connect', 'STAGED', 'INFERRED',
-    [evRun('blurt-connect', m) || { source: 'agents/change-requests/CR-0076-owner-approval.json', ref: 'owner directive 2026-10-11 (trace 1a12af86d9b689d5): connect blurt accounts', at: nowIso() }],
+    [evRun('blurt-connect', m) || { source: 'agents/change-requests/CR-0076-owner-approval.json', ref: 'owner directive 2026-10-11 (trace 1a1…89d5): connect blurt accounts', at: nowIso() }],
     'blurt connectivity bootstrap; first runs pending — will flip to OBSERVED with post/tx evidence');
   push('posting-stream', 'saos-runtime', 'social', wf('continuous-posting') ? 'STAGED' : 'HALTED', 'OBSERVED',
     [evRun('continuous-posting', m) || { source: 'saos-runtime T-61', ref: 'arming via CI_SOCIAL_ARMED secret; run evidence pending', at: nowIso() }],
@@ -202,7 +202,7 @@ async function main() {
         measurement: { level: 'REAL', justification: 'read-only public RPC — no capital exposure', evidence: [evRun('grid-doctor', m) || { source: 'pending', ref: 'awaiting run', at: nowIso() }] },
         claims: { level: 'STAGED', justification: 'posting-only harvesting, STASIS-staged since 2026-10-05', evidence: [evRun('daily-claim', m) || { source: 'STASIS.json', ref: 'stagedLanes.allow includes claims', at: STASIS.since }] },
         grid: { level: 'STAGED', justification: 'STASIS-staged; open contradiction C-002 scoped here; unguarded actor fingerprint present', evidence: [{ source: 'agents/STASIS.json', ref: 'stagedLanes.allow includes grid', at: STASIS.since }] },
-        powerup: { level: 'STAGED', justification: 'owner-directed 2026-10-11 (traces 1a12af86d9b689d5+1a12b495f6707275), hard caps, idempotent, read-back verified; no observed uncontrolled actor performs powerups', evidence: [{ source: 'agents/change-requests/CR-0076-owner-approval.json', ref: 'directive chain i=3 staged-open', at: nowIso() }] },
+        powerup: { level: 'STAGED', justification: 'owner-directed 2026-10-11 (traces 1a1…89d5+1a1…7275), hard caps, idempotent, read-back verified; no observed uncontrolled actor performs powerups', evidence: [{ source: 'agents/change-requests/CR-0076-owner-approval.json', ref: 'directive chain i=3 staged-open', at: nowIso() }] },
         delegation: { level: 'STAGED', justification: 'owner-directed 2026-10-11, 7-day-reversible, roster-gated targets, caps', evidence: [{ source: 'agents/change-requests/CR-0076-owner-approval.json', ref: 'directive chain i=3 staged-open', at: nowIso() }] },
         connect: { level: 'STAGED', justification: 'owner-directed 2026-10-11: account_update (posting auth) + verification comment only; no transfers beyond micro powerup within caps', evidence: [{ source: 'agents/change-requests/CR-0076-owner-approval.json', ref: 'directive chain i=3 staged-open', at: nowIso() }] }
       },
@@ -233,7 +233,7 @@ async function main() {
       haltCoverage: 'ORGANISM_ONLY',
       haltCoverageReason: 'money-family-live (unknown machine, measured again 2026-10-11T12:56Z) + any external holder of headcorner active key sign outside organism stop-power. Owner remediation (key rotation / machine stop) pending. Per R29 law, capital lanes (grid/general) stay closed to NEW claims; claims (posting-only) and the owner-directed capped lanes (powerup/delegation/connect) open only under the directives chain with caps and read-back.',
       capitalLanes: ['grid', 'general'],
-      capitalLanesRationale: 'lanes where an uncontrolled actor is observed signing or unknown tools land. powerup/delegation/connect are NOT in this list because: (1) no uncontrolled actor has ever been observed performing them (fingerprint census 2026-10-05/10-11 shows limit-order ops only); (2) they are hard-capped, idempotent, read-back verified, and recorded in the tamper-evident directives chain; (3) the owner explicitly directed them 2026-10-11 (traces 1a12af86d9b689d5, 1a12b495f6707275). This is recorded reasoning, not silent re-labeling.',
+      capitalLanesRationale: 'lanes where an uncontrolled actor is observed signing or unknown tools land. powerup/delegation/connect are NOT in this list because: (1) no uncontrolled actor has ever been observed performing them (fingerprint census 2026-10-05/10-11 shows limit-order ops only); (2) they are hard-capped, idempotent, read-back verified, and recorded in the tamper-evident directives chain; (3) the owner explicitly directed them 2026-10-11 (traces 1a1…89d5, 1a1…7275). This is recorded reasoning, not silent re-labeling.',
       capitalPaths: (prev && prev.sovereignty && prev.sovereignty.capitalPaths) || [],
       capabilityMatrix: (prev && prev.sovereignty && prev.sovereignty.capabilityMatrix) || [],
       cannotStop: ['money-family-live — live signing loop on an unreachable machine (measured again 2026-10-11T12:56Z)', 'any external holder of the active key (rotation pending)', 'owner-direct manual operations']

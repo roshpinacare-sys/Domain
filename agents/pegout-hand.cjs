@@ -2,7 +2,7 @@
 /**
  * pegout-hand.cjs — R44 THE PEGOUT HAND (CR-0074): the keyed consumer of the pegout queue.
  *
- * The real-value law's second half (owner directive 2026-10-04, trace 1a105f6d58b6c3a5):
+ * The real-value law's second half (owner directive 2026-10-04, trace 1a1…c3a5):
  * "חשוב שגם נוכל באמת להחליף למטבע האמיתי עם ערך ולא סתם שקר" — R42 minted the wrappers
  * 1:1 against measured custody and R43 queued the chain-side payouts (dex/pegout-queue.json,
  * "a keyed desk owns the broadcast, keyless code never fires one"). R44 lands THAT desk.

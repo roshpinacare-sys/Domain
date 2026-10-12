@@ -2,7 +2,7 @@
 /**
  * office-artery.mjs — THE SOVEREIGN OFFICE, GIT-BACKED HEARTBEAT (R-ARTERY/1)
  *
- * Owner directive 2026-10-11 (IM trace 1a12c58d6b7667d9): "המשרד ב-fleet חשוב מאוד —
+ * Owner directive 2026-10-11 (IM trace 1a1…67d9): "המשרד ב-fleet חשוב מאוד —
  * הוא חייב לשרת את הרשת והריבונות, לשפר את עצמו, לעבוד תמיד, וגם להעלות אותו לדף."
  *
  * Measured history (office-events.jsonl + FleetHQ/receipts): the office ran as a
@@ -209,7 +209,7 @@ const feed = {
     active: !!stasis.active,
     mode: stasis.mode || 'unknown',
     allow: Array.isArray(stasis.stagedLanes && stasis.stagedLanes.allow) ? stasis.stagedLanes.allow.map(String) : [],
-    note: 'R30 (owner trace 1a12d295c7da9241): פתיחה-מלאה לפי מילת-בעלים — כל-המסילות פתוחות תחת השערים המכניים (roster/journal/caps); הבלם נשאר חמוש (active=true, mode=staged); ביטול = halt-all בשרשרת',
+    note: 'R30 (owner trace 1a1…9241): פתיחה-מלאה לפי מילת-בעלים — כל-המסילות פתוחות תחת השערים המכניים (roster/journal/caps); הבלם נשאר חמוש (active=true, mode=staged); ביטול = halt-all בשרשרת',
   },
   llm: {
     available: false,
