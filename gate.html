@@ -482,7 +482,7 @@ async function loadHistory() {
         '<span class="cmdname">' + esc(r.pl.cmd || "?") + "</span>" +
         '<span class="when">' + esc(r.at) + "</span>" +
         '<a class="tx" href="https://steemscan.com/transaction/' + esc(r.txid) + '" target="_blank" rel="noopener">' + esc(r.txid.slice(0, 18)) + "…</a>" +
-        (r.pl.note ? '<span class="note">“' + esc(r.pl.note) + "”</span>" : "") +
+        (r.pl.note ? '<span class="note">\"' + esc(r.pl.note) + "\"</span>" : "") +
       "</div>"
     ).join("");
   } catch (e) {
