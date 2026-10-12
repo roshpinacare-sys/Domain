@@ -22,7 +22,7 @@ const chain = require("./directivesChain.cjs");
 const OP_ID = "saos.weave.ops.v1"; // זהה-ל-gate.html (הצד-השולח) — שינוי-צריך-שני-צדדים
 // זהות-העוגן — זהות-ציבורית-מפורסמת (כמו ב-beacon/landing); המסלול-המנהלי-עצמו לא-נחשף-כאן
 const ANCHOR = (process.env.OPERATOR_ANCHOR || "headcorner").trim();
-const RPCS = ["https://api.steemit.com", "https://api.justyy.com", "https://steem.61bts.com"];
+const RPCS = ["https://api.steemit.com", "https://api.justyy.com"]; // 61bts dead (measured 2026-10-12: returns non-JSON error page)
 const DIR = path.join(__dirname, "operator");
 const CURSOR = path.join(DIR, "cursor.json");
 const RECEIPT = path.join(DIR, "receipt.json");
@@ -34,7 +34,26 @@ async function rpc(method, params) {
   for (const node of RPCS) {
     try {
       const ctrl = new AbortController();
-      const tm = setTimeout(() => ctrl.abort(), 20000);
+      const tm = setTimeout(() => ctrl.abort(), 30000);
+      const res = await fetch(node, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "User-Agent": "operator-console-receiver" },
+        body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
+        signal: ctrl.signal,
+      });
+      clearTimeout(tm);
+      if (!res.ok) throw new Error("http " + res.status);
+      const j = await res.json();
+      if (j.error) throw new Error("rpc-error " + JSON.stringify(j.error).slice(0, 120));
+      return j.result;
+    } catch (e) { lastErr = e; }
+  }
+  // rate-limits from datacenter IPs are transient — one slow backoff round before honest FAIL
+  await new Promise((r) => setTimeout(r, 4000));
+  for (const node of RPCS) {
+    try {
+      const ctrl = new AbortController();
+      const tm = setTimeout(() => ctrl.abort(), 30000);
       const res = await fetch(node, {
         method: "POST",
         headers: { "Content-Type": "application/json", "User-Agent": "operator-console-receiver" },
@@ -119,7 +138,7 @@ async function main() {
   let cursor = { lastIndex: 0, lastTs: null, at: null };
   try { cursor = JSON.parse(fs.readFileSync(CURSOR, "utf8")); } catch (_) { /* first run */ }
 
-  const hist = await rpc("condenser_api.get_account_history", [ANCHOR, -1, 300]);
+  const hist = await rpc("condenser_api.get_account_history", [ANCHOR, -1, 100]); // node cap measured: limit>~100 silently returns 0 entries
   const entries = (hist || []).map((h) => ({ opIndex: h[0], ev: h[1] }));
   entries.sort((a, b) => a.opIndex - b.opIndex);
   const cutoff = Date.now() - LOOKBACK_H * 3600 * 1000;
