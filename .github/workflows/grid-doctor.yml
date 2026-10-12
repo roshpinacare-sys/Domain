@@ -37,7 +37,7 @@ jobs:
         run: |
           git config user.name "grid-doctor[bot]"
           git config user.email "grid-doctor[bot]@users.noreply.github.com"
-          git add agents/grid-truth.json agents/grid-truth.md agents/grid-truth-history.jsonl agents/grid-guard-state.json agents/grid-guard.jsonl
+          git add agents/grid-truth.json agents/grid-truth-history.jsonl agents/grid-guard-state.json agents/grid-guard.jsonl
           if git diff --cached --quiet; then echo "no truth changes"; else
             for i in 1 2 3; do
               git -c rebase.autoStash=true pull --rebase origin main >/dev/null 2>&1 || true
