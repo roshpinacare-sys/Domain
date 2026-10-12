@@ -106,7 +106,9 @@ export class LiveBridge {
       let w = null;
       for (const url of ['../office/world-state.json', '/api/office/world']) {
         try {
-          const res = await fetch(url, { cache: 'no-store' });
+          // פיצוח-מטמון CDN: Pages מחזיק עותק עד 10 דק' — בלי פיצוח הצופה
+          // מקבל פעימה ישנה פי שניים. הפיצוח מקצר את הגיל הנראה לפעימה עצמה.
+          const res = await fetch(url + (url.includes('?') ? '&' : '?') + '_=' + Date.now(), { cache: 'no-store' });
           if (!res.ok) continue;
           w = mod.fromJSON(await res.json());
           break;

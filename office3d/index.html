@@ -5,10 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>מפקדת הצי — המשרד התלת-מימדי החי</title>
 <meta name="description" content="המשרד החי של הריבונות האוטונומית: צוות סוכנים אמיתי עובד, מתפתח ומדייק את עצמו — ורואים הכול." />
-<meta property="og:title" content="מפקדת הצי — המשרד התלת-מימדי החי">
-<meta property="og:description" content="מפקדת הצי התלת-מימדית החיה — המשרד של SAOS בפנימה">
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="SAOS Network">
+<link rel="preconnect" href="/" />
 <style>
   :root {
     --bg: #efe9db;
@@ -175,6 +172,16 @@
   }
   #viewTitle.show { opacity: 1; }
 
+  /* ───── שבצ'יפ-יציאה ממיקוד ───── */
+  #focusChip {
+    position: fixed; top: 116px; inset-inline-start: 50%; transform: translateX(50%);
+    z-index: 27; display: none; border: 0; cursor: pointer;
+    font-family: inherit; font-size: 12.5px; font-weight: 800; color: var(--ink);
+    padding: 9px 18px; border-radius: 999px;
+  }
+  #focusChip.show { display: block; animation: chipIn .25s ease; }
+  @keyframes chipIn { from { opacity: 0; transform: translateX(50%) translateY(-6px); } to { opacity: 1; transform: translateX(50%) translateY(0); } }
+
   /* ───── טיקר ───── */
   #ticker {
     position: fixed; bottom: 64px; inset-inline-start: 14px; z-index: 22;
@@ -230,14 +237,21 @@
     #chips { padding: 5px 8px; gap: 5px; }
     #chipPulse, #chipMode { max-width: 46vw; overflow: hidden; }
     #chipPulse span, #chipMode span { overflow: hidden; text-overflow: ellipsis; }
-    #deck { bottom: 8px; }
+    #deck { bottom: calc(8px + env(safe-area-inset-bottom, 0px)); }
+    #topbar { top: calc(8px + env(safe-area-inset-top, 0px)); }
     #deckInner {
       flex-wrap: nowrap; overflow-x: auto; max-width: calc(100vw - 16px);
       scrollbar-width: none; -webkit-overflow-scrolling: touch;
     }
     #deckInner::-webkit-scrollbar { display: none; }
-    .vbtn { font-size: 11.5px; padding: 6px 10px; flex: none; }
+    .vbtn { min-height: 42px; padding: 10px 14px; font-size: 12.5px; flex: none; }
+    .iconbtn { width: 40px; height: 40px; font-size: 16px; }
+    #rosterToggle { width: 44px; height: 44px; }
     .sep { display: none; }
+    #roster.open .agentRow { padding: 12px 10px; }
+    #ticker { bottom: calc(64px + env(safe-area-inset-bottom, 0px)); }
+    #ticker.min #tickerLine, #ticker.min .sub { display: none; }
+    #focusChip { top: 84px; font-size: 13px; padding: 11px 20px; }
   }
 </style>
 </head>
@@ -293,6 +307,7 @@
   </div>
 
   <div id="viewTitle" class="glass"></div>
+  <button id="focusChip" class="glass">✕ יציאה מהמיקוד</button>
 
   <div id="ticker" class="glass">
     <div class="h"><span>הפיד של המשרד</span><span id="tickMode"></span></div>

@@ -17,11 +17,18 @@
  *   - כנות: העולם הזה הוא סימולציית-נוכחות של הצוות; הנתונים האמיתיים
  *     (קומיטים, ספרים, משימות) מגיעים מהגשר ב-data.js — לא מכאן.
  *
+ * סדר-יום v2: אף תנועה לא נולדת מהגרלה חופשית. לכל סוכן סדר-עדיפויות
+ * נגזר מתפקידו, בחירת-תחנה משוקללת עם הגבלי-תפוסה, משכי-שהייה אנושיים
+ * (דקות-עבודה, לא שניות-קפיצות), ומשמעת-קפה — הפסקה אחת לכל המוקדק
+ * 90 דק' זמן-עולם. התנועה תמיד עם מטרה: משימה, בדיקה, מסירה, או הפסקה
+ * שהגיע לה.
+ *
  * חוק-סנכרון: ENGINE_VERSION חייב להיות זהה בכל העותקים של הקובץ הזה
  * (public/office3d/src/engine.js ←→ Domain/office/engine.mjs). שינוי כאן = שינוי שם.
+ * עולם ישן (v1) עולה-גרסה במקום ב-fromJSON — העולם לעולם לא מתאפס.
  */
 
-export const ENGINE_VERSION = 1;
+export const ENGINE_VERSION = 2;
 export const ENGINE_ID = 'office-world';
 
 // ───── קואורדינטות (מטרים — זהה ל-canon.js; העתקה מבוקרת, המנוע עצמאי) ─────
@@ -215,6 +222,50 @@ export function findPath(x0, z0, x1, z1) {
   return [{ x: x1, z: z1 }]; // כשל-ניווט: הליכה ישרה (מסומנת בלוג האירועים)
 }
 
+// ───── תפוסת-תחנות: אין דוחק בתחנה אחת — המשרד מרווח כמו במציאות ─────
+const STATION_CAPS = { coffee: 2, library: 2, gitwall: 2, podium: 1, leadtable: 2, chat: 2 };
+
+function stationCount(w, state) {
+  let n = 0;
+  for (const b of w.agents) if (b.state === state || b.pendingState === state) n++;
+  return n;
+}
+function stationOpen(w, state) {
+  const cap = STATION_CAPS[state];
+  return cap == null || stationCount(w, state) < cap;
+}
+
+// ───── סדר-היום של כל תפקיד: משוקלל לפי אחריות אמיתית ─────
+// כל שורה: [תחנה, משקל]. המשקלים נגזרים מתפקיד הסוכן — לא הגרלה אחידה.
+const AGENDA = {
+  aluf:  [['board', 5], ['podium', 2], ['leadtable', 4], ['gitwall', 2], ['flame', 1]],
+  gal:   [['desk', 9], ['gitwall', 3], ['library', 2], ['leadtable', 2]],
+  erez:  [['desk', 9], ['gitwall', 3], ['podium', 2], ['library', 2]],
+  tamar: [['desk', 9], ['library', 3], ['leadtable', 2], ['podium', 1]],
+  shachar: [['desk', 9], ['gitwall', 4], ['library', 2]],
+  yarden: [['desk', 9], ['gitwall', 3], ['library', 2], ['leadtable', 1]],
+};
+
+// משכי-שהייה אנושיים בתחנות (מילישניות זמן-עולם)
+const DURATIONS = {
+  desk: [4 * 60_000, 12 * 60_000],
+  coffee: [2.5 * 60_000, 5 * 60_000],
+  library: [3 * 60_000, 7 * 60_000],
+  gitwall: [2.5 * 60_000, 6 * 60_000],
+  board: [3 * 60_000, 8 * 60_000],
+  podium: [2 * 60_000, 4.5 * 60_000],
+  leadtable: [3 * 60_000, 7 * 60_000],
+  chat: [1.2 * 60_000, 2.6 * 60_000],
+  flame: [5 * 60_000, 9 * 60_000],
+};
+function durOf(state) {
+  const d = DURATIONS[state] || [4 * 60_000, 10 * 60_000];
+  return d[0] + Math.random() * (d[1] - d[0]);
+}
+
+// משמעת-קפה: הפסקה אחת לכל 90 דק' זמן-עולה לפחות; בלילה כמעט ולא
+const COFFEE_GAP_MS = 90 * 60_000;
+
 // ───── שעת ירושלים (cache לפי דקה) ─────
 let tzCacheKey = -1, tzCache = { h: 10, m: 0 };
 function jerusalemHM(tMs) {
@@ -244,7 +295,7 @@ export function phaseOf(tMs) {
 // ───── טקסטים: קול-ארגוני, בלי סימני-AI, בלי ניסוח אישי ─────
 const LABELS = {
   desk: 'עובד על המשימה',
-  coffee: 'הפסקת קפה',
+  coffee: 'הפסקה קצרה בבר-הקפה',
   library: 'לימוד מהספרייה',
   gitwall: 'סורק את קיר-הגיט',
   board: 'מתפעל את לוח-המשימות',
@@ -253,14 +304,42 @@ const LABELS = {
   leadtable: 'עובד משולחן ראש-המטה',
   chat: 'שיחת עבודה',
 };
+
+// עבודת-שולחן פר-תפקיד: סבב קבוע על הספרים של הסוכן — לא הגרלה זרה
+const DESK_WORK = {
+  gal: ['סורק מילויים בdex-book', 'מתעד סגירות בfills-ledger', 'בודק פערי-מחיר בdex-book'],
+  erez: ['מבקר טענות בclaims-audit', 'סוגר חקירת-טענה פתוחה', 'מצליב ראיות בclaims-audit'],
+  tamar: ['מעדכן תזרים בecon-book', 'בוחן הוצאות הצי בecon-book', 'מחשב תשואה שוטפת'],
+  shachar: ['קורא חיוגי-צי בfleet-indicators', 'מסכם תצפית מודיעינית', 'בודק חריגות בfleet-indicators'],
+  yarden: ['מתחזק את registry', 'מעביר הודעות בcoord-bus', 'בודק בריאות תשתיות'],
+};
+const DESK_WORK_LEAD = ['מסדר את סדר-היום', 'כותב הנחיית-משמרת', 'סוקר את לוח-המשימות', 'מאשר החלטות פתוחות'];
+
+// עבודה בתחנות — כל תחנה עם מטרה מוצהרת
+const STATION_WORK = {
+  gitwall: ['סורק ריצות שנכשלו בקיר-הגיט', 'עוקב אחרי קומיטים חדשים בקיר-הגיט', 'מאתר עומקי-המתנה בקיר-הגיט'],
+  library: ['שולף נוהל מהספרייה', 'לומד מהספרייה לקראת המשימה הבאה', 'משווה גרסאות בספרייה'],
+  board: ['מסדר את לוח-המשימות לפי עדיפות', 'מזיז כרטיסים שהושלמו', 'כותב משימה חדשה על הלוח'],
+  podium: ['מציג ממצאים בדוכן-ההחלטות', 'מנסח החלטה בדוכן'],
+  leadtable: ['מתאם עבודה משולחן ראש-המטה', 'סוגר פינות פתוחות משולחן ראש-המטה'],
+  flame: ['מתאם כיוון מול להבת-הריבונות'],
+};
+
 function actLabel(state, def, world) {
-  if (state === 'desk' && def.books) {
-    const b = def.books[Math.floor(Math.random() * def.books.length)];
-    return { label: 'עובד על ' + b, activity: 'עובד על ' + b };
-  }
-  const base = LABELS[state] || 'במשמרת';
   const night = phaseOf(world.t).kind === 'night' ? ' · משמרת-לילה' : '';
-  return { label: base + night, activity: base };
+  if (state === 'desk') {
+    const pool = def.lead ? DESK_WORK_LEAD : (DESK_WORK[def.id] || ['עובד על המשימה']);
+    // סבב קבוע לפי dutyIdx — עבודה מתחלפת בסדר, לא בהגרלה זרה
+    const idx = (def.dutyIdx || 0) % pool.length;
+    const line = pool[idx];
+    return { label: line + night, activity: line };
+  }
+  if (state === 'coffee') {
+    return { label: LABELS.coffee + night, activity: LABELS.coffee };
+  }
+  const pool = STATION_WORK[state];
+  const line = pool ? pool[(def.dutyIdx || 0) % pool.length] : (LABELS[state] || 'במשמרת');
+  return { label: line + night, activity: line };
 }
 
 // ───── בניית/טעינת עולם ─────
@@ -278,11 +357,12 @@ export function createSeedWorld(tNow) {
       const a = {
         id: def.id, lead: !!def.lead, deskId: def.desk || null, books: def.books || [],
         x: home.x, z: home.z, face: home.face,
-        state: def.lead ? 'board' : 'desk', until: (6 + Math.random() * 10) * 1000,
+        state: def.lead ? 'board' : 'desk', until: durOf(def.lead ? 'board' : 'desk'),
         path: null, pathI: 0, faceEnd: null, approach: 0.46,
         typing: !def.lead, carryBook: false,
         spd: 1.0 + Math.random() * 0.16,
         seat: def.lead ? null : desk.seat, seatFace: def.lead ? null : desk.face,
+        dutyIdx: 0, lastCoffee: 0,
         label: def.lead ? LABELS.board : actLabel('desk', def, { t: tNow }).label,
         activity: def.lead ? LABELS.board : actLabel('desk', def, { t: tNow }).activity,
         walkPhase: Math.random() * Math.PI * 2,
@@ -294,12 +374,22 @@ export function createSeedWorld(tNow) {
   return w;
 }
 
+/** עליית-גרסה במקום: עולם v1 ממשיך כ-v2 — העולם לעולם לא מתאפס.
+ *  שדות חדשים מאופסים עם ברירות-מחדל כנות; שדה-זמן נשמר תמיד. */
 export function fromJSON(obj) {
   if (!obj || obj.engine !== ENGINE_ID) throw new Error('world: engine mismatch');
-  if (obj.v !== ENGINE_VERSION) throw new Error(`world: version ${obj.v} != ${ENGINE_VERSION}`);
+  if (obj.v !== 1 && obj.v !== 2) throw new Error(`world: unsupported version ${obj.v}`);
+  obj.v = ENGINE_VERSION;
   for (const a of obj.agents) {
     if (a.path) a.path = a.path.map((p) => ({ x: p.x, z: p.z }));
+    if (typeof a.dutyIdx !== 'number') a.dutyIdx = 0;
+    if (typeof a.lastCoffee !== 'number') a.lastCoffee = 0;
+    if (a.typing == null) a.typing = a.state === 'desk' ? 1 : 0;
   }
+  if (!Array.isArray(obj.events)) obj.events = [];
+  if (typeof obj.chatBusy !== 'object' || !Array.isArray(obj.chatBusy)) obj.chatBusy = [0, 0, 0, 0];
+  if (typeof obj.meetingUntil !== 'number') obj.meetingUntil = 0;
+  if (typeof obj.lastMeetingDay !== 'number') obj.lastMeetingDay = -1;
   return obj;
 }
 export function toJSON(w) { return w; }
@@ -352,13 +442,17 @@ function stepMove(w, a, dt) {
 }
 
 function arrive(w, a) {
-  const def = { books: a.books };
-  const L = actLabel(a.pendingState || a.state, def, w);
-  a.state = a.pendingState || a.state;
+  const state = a.pendingState || a.state;
+  const def = { books: a.books, id: a.id, lead: a.lead, dutyIdx: a.dutyIdx };
+  if (state === 'desk') a.dutyIdx = (a.dutyIdx || 0) + 1; // עבודת-שולחן מתחלפת בסבב
+  const L = actLabel(state, def, w);
+  a.state = state;
   a.pendingState = null;
-  a.until = a.pendingUntil || (6 + Math.random() * 10) * 1000;
+  if (state === 'coffee') a.lastCoffee = w.t;
+  a.until = a.pendingUntil || durOf(state);
   a.pendingUntil = null;
   a.label = L.label; a.activity = L.activity;
+  a.typing = state === 'desk' ? 1 : 0;
   pushEvent(w, a.id, L.label);
 }
 
@@ -396,20 +490,51 @@ function dispatch(w, a, state, opts = {}) {
   }
 }
 
+/** בחירת-תחנה משוקללת לפי סדר-היום של התפקיד — עם תפוסה, משמעת-קפה,
+ *  וגורם-שעה: צהריים מזיזים להפסקות, לילה מצמיד לשולחן. */
 function pickNext(w, a) {
   const ph = phaseOf(w.t).kind;
-  if (a.lead) {
-    const opts = ['board', 'podium', 'leadtable', 'flame', 'board'];
-    return opts[Math.floor(Math.random() * opts.length)];
+  const agenda = AGENDA[a.id] || [['desk', 6], ['gitwall', 2], ['library', 2]];
+  const coffeeDue = (w.t - (a.lastCoffee || 0)) >= COFFEE_GAP_MS;
+  const coffeeHour = ph === 'lunch' ? 1 : ph === 'night' ? 0.12 : 0.35;
+
+  // אסופת-מועמדים: תחנות פתוחות בלבד (תפוסה), בלי התחנה הנוכחית
+  const cand = [];
+  for (const [st, wt] of agenda) {
+    if (st === a.state) continue;
+    if (st !== 'desk' && !stationOpen(w, st)) continue;
+    cand.push([st, wt]);
   }
-  let opts;
-  if (ph === 'lunch') opts = ['coffee', 'library', 'chat', 'coffee', 'chat', 'desk'];
-  else if (ph === 'evening') opts = ['desk', 'library', 'gitwall', 'board', 'desk'];
-  else if (ph === 'night') opts = ['desk', 'desk', 'gitwall', 'coffee', 'library'];
-  else if (ph === 'open') opts = ['desk', 'desk', 'board', 'gitwall', 'coffee'];
-  else opts = ['coffee', 'library', 'gitwall', 'chat', 'desk', 'desk'];
-  return opts[Math.floor(Math.random() * opts.length)];
+  // קפה: רק כשהגיע הזמן ויש מקום — ואז משקל דומיננטי בשעת-הפסקה
+  if (coffeeDue && a.state !== 'coffee' && stationOpen(w, 'coffee')) {
+    cand.push(['coffee', 6 * coffeeHour]);
+  }
+  // שיחה: מסירה בין תפקידים — נדירה, רק ביום ובערב, ורק אם יש שותף פנוי
+  if ((ph === 'day' || ph === 'evening') && CHAT_PARTNERS[a.id]?.some((p) => w.agents.some((b) => b.id === p && !b.path && b.state === 'desk'))) {
+    cand.push(['chat', 0.5]);
+  }
+  if (!cand.length) return 'desk';
+
+  // הגרלה משוקללת אחת — המשקלים עצמם נגזרים מתפקיד ושעה (לא אחידה)
+  let sum = 0;
+  for (const [, wt] of cand) sum += wt;
+  let roll = Math.random() * sum;
+  for (const [st, wt] of cand) {
+    roll -= wt;
+    if (roll <= 0) return st;
+  }
+  return cand[cand.length - 1][0];
 }
+
+// מי נפגש עם מי — מסירות אמיתיות בין תפקידים (ראש-מטה עם כולם, שוק עם כלכלה, תשתיות עם ראש-מטה)
+const CHAT_PARTNERS = {
+  aluf: ['gal', 'erez', 'tamar', 'shachar', 'yarden'],
+  gal: ['tamar', 'aluf'],
+  tamar: ['gal', 'aluf'],
+  erez: ['aluf'],
+  shachar: ['aluf'],
+  yarden: ['aluf'],
+};
 
 /** תדריך 09:00 ירושלים — הצוות מתכנס סביב הלהבה ל-8 דק' */
 function maybeMeeting(w) {
@@ -424,16 +549,18 @@ function maybeMeeting(w) {
 }
 
 function tryChat(w, a) {
-  // שותף פנוי + מקום שיחה פנוי; אחרת — קיר-הגיט
+  // מסירה אמיתית: שותף מרשימת-הקשרים של התפקיד, פנוי, בשולחנו.
+  // אין שותף או מקום — המטלה נדחית בכנות לקיר-הגיט, לא שיחה סתם.
   const now = w.t;
   const freeSpots = CHAT_SPOTS.map((p, i) => ({ p, i })).filter((s) => w.chatBusy[s.i] <= now);
-  const partner = w.agents.find((b) =>
+  const partners = (CHAT_PARTNERS[a.id] || []).map((id) => w.agents.find((b) => b.id === id)).filter(Boolean);
+  const partner = partners.find((b) =>
     b !== a && !b.path && b.state !== 'chat' && b.state !== 'sit-down' &&
     (b.state === 'desk' || b.state === 'coffee' || b.state === 'gitwall'));
   if (!partner || !freeSpots.length) { dispatch(w, a, 'gitwall'); return; }
   const s = freeSpots[0];
-  w.chatBusy[s.i] = now + 26 * 1000;
-  const dur = (14 + Math.random() * 8) * 1000;
+  w.chatBusy[s.i] = now + 4 * 60_000;
+  const dur = durOf('chat');
   dispatch(w, a, 'chat', { spot: s.p[0], face: Math.atan2(s.p[1].x - s.p[0].x, s.p[1].z - s.p[0].z), until: dur });
   dispatch(w, partner, 'chat', { spot: s.p[1], face: Math.atan2(s.p[0].x - s.p[1].x, s.p[0].z - s.p[1].z), until: dur });
 }
@@ -467,15 +594,16 @@ export function stepWorld(w, dtSec) {
       switch (a.state) {
         case 'sit-down':
           a.state = 'desk'; a.typing = 1;
-          a.until = (18 + Math.random() * 26) * 1000;
-          { const L = actLabel('desk', { books: a.books }, w); a.label = L.label; a.activity = L.activity; }
+          a.until = durOf('desk');
+          { const L = actLabel('desk', { books: a.books, id: a.id, lead: a.lead, dutyIdx: (a.dutyIdx || 0) + 1 }, w); a.label = L.label; a.activity = L.activity; a.dutyIdx = (a.dutyIdx || 0) + 1; }
           break;
         case 'desk':
-          a.typing = 0;
-          if (Math.random() < 0.62) {
+          // קצב-עבודה אנושי: הקלדה נמשכת, החלפת-כיוון נדירה במקום קפיצות
+          a.typing = a.typing ? 0 : 1;
+          if (Math.random() < 0.72) {
             const nxt = pickNext(w, a);
             if (nxt === 'chat') tryChat(w, a); else dispatch(w, a, nxt);
-          } else a.until = (6 + Math.random() * 8) * 1000;
+          } else a.until = (2.5 + Math.random() * 4) * 60_000;
           break;
         case 'coffee': dispatch(w, a, 'desk'); break;
         case 'library':
@@ -492,8 +620,8 @@ export function stepWorld(w, dtSec) {
         case 'chat': dispatch(w, a, 'desk'); break;
         default: dispatch(w, a, 'desk');
       }
-    } else if (a.state === 'desk' && Math.random() < dtSec * 0.012) {
-      // פעימה אמביינטלית נדירה: סוכן משלים מטלה קצרה
+    } else if (a.state === 'desk' && Math.random() < dtSec * 0.004) {
+      // פעימה אמביינטלית נדירה: סוכן יוצא למטלת-ביניים בעודו במשמרת
       const nxt = pickNext(w, a);
       if (nxt !== 'desk' && nxt !== 'chat') dispatch(w, a, nxt);
     }

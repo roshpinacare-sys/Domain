@@ -32,6 +32,13 @@ export class UI {
     };
     tickClock();
     setInterval(tickClock, 15_000);
+
+    // מובייל: הטיקר מתקפל בהקשה — נוחות-מסך מלאה
+    if (matchMedia('(max-width: 900px)').matches) {
+      const t = this.$('#ticker');
+      t.style.pointerEvents = 'auto';
+      t.addEventListener('click', () => t.classList.toggle('min'));
+    }
   }
 
   // ───── סרגל-תצפית ─────
@@ -134,6 +141,10 @@ export class UI {
   }
 
   showCard(c) {
+    // במובייל: כרטיס ורוסטר חולקים את אותו מקום — הכרטיס גובר, הרוסטר נסגר
+    if (matchMedia('(max-width: 900px)').matches) {
+      this.$('#roster').classList.remove('open');
+    }
     const card = this.$('#card');
     this.$('#cardAvatar').style.background = c.color;
     this.$('#cardAvatar').textContent = c.he[0];

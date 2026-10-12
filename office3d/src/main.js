@@ -90,10 +90,61 @@ const crew = new Crew(scene, {
 
 const director = new Director(camera, renderer.domElement);
 
+// ───────── מיקוד-מגע: הקשה על סוכן בסצנה = מיקוד + כרטיס. גרירה = מצלמה. ─────────
+const raycaster = new THREE.Raycaster();
+const tapXY = new THREE.Vector2();
+let downAt = null;
+renderer.domElement.addEventListener('pointerdown', (e) => {
+  downAt = { x: e.clientX, y: e.clientY, t: Date.now() };
+}, { passive: true });
+renderer.domElement.addEventListener('pointerup', (e) => {
+  try {
+    if (!downAt) return;
+    const moved = Math.hypot(e.clientX - downAt.x, e.clientY - downAt.y);
+    const held = Date.now() - downAt.t;
+    downAt = null;
+    if (moved > 9 || held > 420) return; // גרירה או החזקה — ניווט-מצלמה, לא מיקוד
+    tapXY.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
+    raycaster.setFromCamera(tapXY, camera);
+    const roots = crew.agents.map((a) => a.body.root);
+    const hits = raycaster.intersectObjects(roots, true);
+    if (!hits.length) {
+      // הקשה על הרקע בזמן מיקוד — יציאה כנה חזרה למבט-על
+      if (director.follow) { director.unfocus(); ui.hideCard(); ui.setViewActive('overview'); }
+      return;
+    }
+    let node = hits[0].object;
+    while (node && !roots.includes(node)) node = node.parent;
+    const agent = crew.agents.find((a) => a.body.root === node);
+    if (!agent) return;
+    const def = CREW.find((c) => c.id === agent.id);
+    if (!def) return;
+    ui.selected = agent.id;
+    ui.showCard(def);
+    ui.markSelected();
+    director.focusAgent(agent);
+  } catch { /* כנה — הקשה לא תפיל את המשרד */ }
+});
+
 // ───────── גשר-נתונים + שידור-חי ─────────
 const data = new DataBridge();
 let lastBubbleAt = {};
 let broadcastMode = null; // 'broadcast' כשיש שידור · null = הגשר המקומי קובע
+
+// שביל-יציאה נראה ממיקוד: שבצ'יפ צף שמופיע רק כשעוקבים אחרי סוכן
+let focusShown = false;
+function syncFocusChip() {
+  const on = !!director.follow;
+  if (on === focusShown) return;
+  focusShown = on;
+  const el = document.getElementById('focusChip');
+  if (el) el.classList.toggle('show', on);
+}
+document.getElementById('focusChip')?.addEventListener('click', () => {
+  director.unfocus();
+  ui.hideCard();
+  ui.setViewActive('overview');
+});
 
 // צגי-שולחן מפעילות-השידור (אותו פורמט כמו הגשר, בלי ציורים מיותרים)
 function setDeskScreens(activities, screenMode) {
@@ -224,6 +275,7 @@ function animate() {
   atmosphere.update(dt);
   crew.update(dt, elapsed);
   director.update(dt);
+  syncFocusChip();
 
   // שמש עוקבת-קלות (עומק צל יציב)
   sun.target.position.set(0, 0, 0);
