@@ -1,101 +1,106 @@
 {
  "schema": "office.pulse/1",
- "generatedAt": "2026-10-12T22:20:20.715Z",
+ "generatedAt": "2026-10-12T22:49:02.690Z",
  "generatedAgeNote": "this file is rewritten by the office-pulse workflow; judge freshness by generatedAt",
- "verdict": "AGING",
+ "verdict": "STALE",
  "verdictChecks": [
   {
    "name": "office-push",
    "state": "fresh",
-   "detail": "14min <= 2880min"
+   "detail": "27min <= 2880min"
   },
   {
    "name": "office-ci",
    "state": "fresh",
-   "detail": "94min <= 1560min"
+   "detail": "123min <= 1560min"
   },
   {
    "name": "wallet-artery",
-   "state": "aging",
-   "detail": "658min <= 2880min"
+   "state": "unknown",
+   "detail": "age not measured"
   },
   {
    "name": "grid-artery",
-   "state": "aging",
-   "detail": "252min <= 720min"
+   "state": "unknown",
+   "detail": "age not measured"
   },
   {
    "name": "fleet-artery",
-   "state": "aging",
-   "detail": "804min <= 2880min"
+   "state": "unknown",
+   "detail": "age not measured"
   },
   {
    "name": "sovereign-tick",
-   "state": "aging",
-   "detail": "252min <= 360min"
+   "state": "unknown",
+   "detail": "age not measured"
   },
   {
    "name": "runtime-heartbeat",
    "state": "fresh",
-   "detail": "42min <= 90min"
+   "detail": "67min <= 90min"
   }
  ],
- "degraded": [],
+ "degraded": [
+  "wallet",
+  "grid",
+  "fleet",
+  "tick"
+ ],
  "sources": {
   "fleetHQ": "ok",
-  "sbx-wallet": "ok",
-  "sbx-grid": "ok",
-  "sbx-fleet": "ok",
-  "sbx-tick": "ok",
+  "sbx-wallet": "error",
+  "sbx-grid": "error",
+  "sbx-fleet": "error",
+  "sbx-tick": "error",
   "runtime": "ok"
  },
  "office": {
   "repo": "roshpinacare-sys/FleetHQ",
-  "pushedAt": "2026-10-12T22:06:34Z",
-  "pushedAgeMin": 14,
+  "pushedAt": "2026-10-12T22:22:27Z",
+  "pushedAgeMin": 27,
   "openIssues": 0,
   "wire": [
+   {
+    "sha": "71756cd",
+    "msg": "opens-closer: measured freshness ledger + revival dispatches [skip ci]",
+    "at": "2026-10-12T22:22:23Z",
+    "ageMin": 27,
+    "author": "opens-closer-bot"
+   },
+   {
+    "sha": "332cc4f",
+    "msg": "decide: sovereign decision cycle (SOV-POLICY/1) — sense/decide/record, evidence-anchored",
+    "at": "2026-10-12T22:22:21Z",
+    "ageMin": 27,
+    "author": "sovereign-decider"
+   },
    {
     "sha": "da9dd1d",
     "msg": "value-scan: opportunities from measured evidence [skip ci]",
     "at": "2026-10-12T22:06:30Z",
-    "ageMin": 14,
+    "ageMin": 43,
     "author": "value-scan-bot"
    },
    {
     "sha": "1dc8d22",
     "msg": "opens-closer: measured freshness ledger + revival dispatches [skip ci]",
     "at": "2026-10-12T22:06:23Z",
-    "ageMin": 14,
+    "ageMin": 43,
     "author": "opens-closer-bot"
    },
    {
     "sha": "4f5b061",
     "msg": "decide: sovereign decision cycle (SOV-POLICY/1) — sense/decide/record, evidence-anchored",
     "at": "2026-10-12T22:06:20Z",
-    "ageMin": 14,
+    "ageMin": 43,
     "author": "sovereign-decider"
    },
    {
     "sha": "0cd0021",
     "msg": "decide: sovereign decision cycle (SOV-POLICY/1) — sense/decide/record, evidence-anchored",
     "at": "2026-10-12T21:26:53Z",
-    "ageMin": 53,
+    "ageMin": 82,
     "author": "sovereign-decider"
-   },
-   {
-    "sha": "923af11",
-    "msg": "opens-closer: measured freshness ledger + revival dispatches [skip ci]",
-    "at": "2026-10-12T21:26:51Z",
-    "ageMin": 53,
-    "author": "opens-closer-bot"
-   },
-   {
-    "sha": "6e75eac",
-    "msg": "opens-closer: measured freshness ledger + revival dispatches [skip ci]",
-    "at": "2026-10-12T20:55:53Z",
-    "ageMin": 84,
-    "author": "opens-closer-bot"
    }
   ],
   "worklog": {
@@ -115,10 +120,10 @@
     }
    ]
   },
-  "worklogLastTouchAgeMin": 572,
+  "worklogLastTouchAgeMin": 601,
   "boot": {
    "at": "2026-10-11T23:36:39.484Z",
-   "ageMin": 1364,
+   "ageMin": 1392,
    "office": {
     "reception_3000": "up",
     "foreman_3010": "up",
@@ -129,7 +134,7 @@
   "ci": {
    "overall": "PASS",
    "at": "2026-10-12T20:46:22.344Z",
-   "ageMin": 94,
+   "ageMin": 123,
    "reason": "all five checks ran and passed",
    "runUrl": "https://github.com/roshpinacare-sys/FleetHQ/actions/runs/38306218422",
    "checks": {
@@ -143,35 +148,22 @@
  },
  "arteries": {
   "wallet": {
-   "at": "2026-10-12T11:22:41.395Z",
-   "ageMin": 658,
-   "overall": "PASS",
-   "alerts": 1,
-   "runUrl": "https://github.com/roshpinacare-sys/Sandbox/actions/runs/38242234259"
+   "__error": "HTTP 404 contents:receipts/wallet/verdict.json"
   },
   "grid": {
-   "at": "2026-10-12T18:07:55.729Z",
-   "ageMin": 252,
-   "overall": "ERROR",
-   "alerts": 0
+   "__error": "HTTP 404 contents:receipts/grid/verdict.json"
   },
   "fleet": {
-   "at": "2026-10-12T08:56:37.698Z",
-   "ageMin": 804,
-   "overall": "FAIL",
-   "alerts": 2,
-   "runUrl": "https://github.com/roshpinacare-sys/Sandbox/actions/runs/38226675048"
+   "__error": "HTTP 404 contents:receipts/fleet/verdict.json"
   },
   "tick": {
-   "at": "2026-10-12T18:07:55.575Z",
-   "ageMin": 252,
-   "chain": "c508ca660faa"
+   "__error": "HTTP 404 contents:receipts/latest.json"
   }
  },
  "runtime": {
-  "lastSuccessAt": "2026-10-12T21:38:10Z",
-  "lastSuccessAgeMin": 42,
-  "lastSuccessName": "custody-recover",
-  "lastConclusion": "failure"
+  "lastSuccessAt": "2026-10-12T21:41:44Z",
+  "lastSuccessAgeMin": 67,
+  "lastSuccessName": "sovereign-runtime",
+  "lastConclusion": "cancelled"
  }
 }
