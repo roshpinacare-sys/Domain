@@ -20,12 +20,19 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Checkout the sovereign home
+      - name: Checkout the sovereign home (Zip — the seal target, full lineage)
         uses: actions/checkout@v4
         with:
           repository: roshpinacare-sys/Zip
           token: ${{ secrets.ZIP_PAT }}
           fetch-depth: 0
+          path: zip
+
+      - name: Checkout the fleet home (Domain — the script lives here)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          path: domain
 
       - name: Node
         uses: actions/setup-node@v4
@@ -35,4 +42,5 @@ jobs:
       - name: Adopt the operator's delivered master key as the seal passphrase
         env:
           MAIN_KEY: ${{ secrets.MAIN_KEY }}
-        run: node scripts/seal-adopt.mjs
+        working-directory: zip
+        run: node ../domain/scripts/seal-adopt.mjs
