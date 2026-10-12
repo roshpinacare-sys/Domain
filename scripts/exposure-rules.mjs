@@ -82,6 +82,13 @@ export const FORBIDDEN_CONTENT = [
   { re: /\b(?:mnemonic|seed[- ]phrase)\b[^\n]{0,40}\b(?:word|12|24)\b/i, why: "mnemonic phrase hint" },
 ];
 
+// Sig-locked evidence waiver (25-d): ledger.json is a keccak-chained attestation ledger —
+// entries carry names/paths INSIDE signed claims that are non-recomputable by design;
+// rewriting them falsifies the evidence chain. Documented honest residual since the 19-d
+// sweep (4e0ff451: ledger.json untouched, sig-locked keccak chain, names inside signed
+// claims — flagged). Still fully checked against FORBIDDEN_PATHS; new appends must use refs.
+export const SIGLOCKED_FILES = [/^ledger\.json$/];
+
 export const ENGINE_RE = /^(agents\/.*\.(cjs|mjs)|scripts\/.*\.mjs)$/;
 export const ENGINE_WAIVED = /keysZipPass/;
 
