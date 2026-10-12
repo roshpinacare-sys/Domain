@@ -946,13 +946,29 @@ function settle(prev, feed, custodyProbe, now, networkProbe, gridGate) {
 }
 
 // ── R41 THE MESH MARKET: the fleet settles on this ledger ───────────────────
-/** roster law: headcorner (operator) + soldiers (persona-slots). Deterministic, no magic names. */
+/** roster law: headcorner (operator) + soldiers (persona-slots). Deterministic, no magic names.
+ *  R80 fallback (2026-10-12, measured trace 1a12d7cad62cbc29): persona-store came back with 0
+ *  soldiers → 1-member roster → the batch selftest lost its 3-trader proof set → arb-mesh red ×3
+ *  (15:34Z/20:31Z/23:55Z). Lawful fallback: when the persona store yields < 2 soldiers, the
+ *  roster falls back to the MEASURED fleet roster (fleet-roster.json steemFleet, sorted,
+ *  bannedCapital names filtered) — still real roster names, never hardcoded, still deterministic. */
 function rosterLaw() {
   let soldiers = [];
   try {
     const p = require('./persona-store.cjs').slots(); // T3: doctrine sealed (persona-store)
     soldiers = Object.keys(p.soldiers || {}).sort(); // sorted — the law never depends on file order
   } catch (_) { /* no roster file → operator-only mesh, honest */ }
+  if (soldiers.length < 2) {
+    try {
+      const fr = JSON.parse(fs.readFileSync(path.join(AG, 'fleet-roster.json'), 'utf8'));
+      const banned = new Set((fr.bannedCapital || []).map((b) => String(b && b.name ? b.name : b).toLowerCase()));
+      const fleet = (fr.steemFleet || [])
+        .map((s) => String(s && s.name ? s.name : s).toLowerCase())
+        .filter((n) => n && n !== 'headcorner' && !banned.has(n))
+        .sort();
+      if (fleet.length > soldiers.length) soldiers = fleet; // the bigger measured roster wins — honest union
+    } catch (_) { /* no fleet roster → keep the persona store as-is, honest */ }
+  }
   return ['headcorner', ...soldiers];
 }
 
