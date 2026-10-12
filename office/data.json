@@ -1,8 +1,8 @@
 {
  "schema": "office.pulse/1",
- "generatedAt": "2026-10-12T17:24:48.217Z",
+ "generatedAt": "2026-10-12T18:09:30.897Z",
  "generatedAgeNote": "this file is rewritten by the office-pulse workflow; judge freshness by generatedAt",
- "verdict": "STALE",
+ "verdict": "AGING",
  "verdictChecks": [
   {
    "name": "office-push",
@@ -12,94 +12,89 @@
   {
    "name": "office-ci",
    "state": "fresh",
-   "detail": "123min <= 1560min"
+   "detail": "167min <= 1560min"
   },
   {
    "name": "wallet-artery",
-   "state": "unknown",
-   "detail": "age not measured"
+   "state": "aging",
+   "detail": "407min <= 2880min"
   },
   {
    "name": "grid-artery",
-   "state": "unknown",
-   "detail": "age not measured"
+   "state": "fresh",
+   "detail": "2min <= 90min"
   },
   {
    "name": "fleet-artery",
-   "state": "unknown",
-   "detail": "age not measured"
+   "state": "aging",
+   "detail": "553min <= 2880min"
   },
   {
    "name": "sovereign-tick",
-   "state": "unknown",
-   "detail": "age not measured"
+   "state": "fresh",
+   "detail": "2min <= 60min"
   },
   {
    "name": "runtime-heartbeat",
    "state": "fresh",
-   "detail": "23min <= 90min"
+   "detail": "31min <= 90min"
   }
  ],
- "degraded": [
-  "wallet",
-  "grid",
-  "fleet",
-  "tick"
- ],
+ "degraded": [],
  "sources": {
   "fleetHQ": "ok",
-  "sbx-wallet": "error",
-  "sbx-grid": "error",
-  "sbx-fleet": "error",
-  "sbx-tick": "error",
+  "sbx-wallet": "ok",
+  "sbx-grid": "ok",
+  "sbx-fleet": "ok",
+  "sbx-tick": "ok",
   "runtime": "ok"
  },
  "office": {
   "repo": "roshpinacare-sys/FleetHQ",
-  "pushedAt": "2026-10-12T17:24:27Z",
+  "pushedAt": "2026-10-12T18:09:23Z",
   "pushedAgeMin": 0,
   "openIssues": 0,
   "wire": [
    {
-    "sha": "76e6f32",
-    "msg": "decide: sovereign decision cycle (SOV-POLICY/1) — sense/decide/record, evidence-anchored",
-    "at": "2026-10-12T17:23:31Z",
+    "sha": "f87d390",
+    "msg": "[selfcheck] standing loop receipts: security+connectivity+fresh-oracle [skip ci]",
+    "at": "2026-10-12T18:09:27Z",
+    "ageMin": 0,
+    "author": "Z User"
+   },
+   {
+    "sha": "cf05f1c",
+    "msg": "[selfcheck] standing loop receipts: security+connectivity+fresh-oracle [skip ci]",
+    "at": "2026-10-12T18:09:21Z",
+    "ageMin": 0,
+    "author": "Z User"
+   },
+   {
+    "sha": "068d27c",
+    "msg": "[selfcheck] standing loop receipts: security+connectivity+fresh-oracle [skip ci]",
+    "at": "2026-10-12T18:09:15Z",
+    "ageMin": 0,
+    "author": "Z User"
+   },
+   {
+    "sha": "2ff0c09",
+    "msg": "[selfcheck] standing loop receipts: security+connectivity+fresh-oracle [skip ci]",
+    "at": "2026-10-12T18:09:09Z",
+    "ageMin": 0,
+    "author": "Z User"
+   },
+   {
+    "sha": "a3faccd",
+    "msg": "[selfcheck] standing loop receipts: security+connectivity+fresh-oracle [skip ci]",
+    "at": "2026-10-12T18:09:04Z",
+    "ageMin": 0,
+    "author": "Z User"
+   },
+   {
+    "sha": "09050e0",
+    "msg": "[selfcheck] standing loop receipts: security+connectivity+fresh-oracle [skip ci]",
+    "at": "2026-10-12T18:08:58Z",
     "ageMin": 1,
-    "author": "sovereign-decider"
-   },
-   {
-    "sha": "57fe595",
-    "msg": "[selfcheck] standing loop receipts: security+connectivity+fresh-oracle [skip ci]",
-    "at": "2026-10-12T17:18:58Z",
-    "ageMin": 6,
-    "author": "Z User"
-   },
-   {
-    "sha": "e15346c",
-    "msg": "[selfcheck] standing loop receipts: security+connectivity+fresh-oracle [skip ci]",
-    "at": "2026-10-12T17:15:03Z",
-    "ageMin": 10,
-    "author": "Z User"
-   },
-   {
-    "sha": "46dca53",
-    "msg": "[selfcheck] standing loop receipts: security+connectivity+fresh-oracle [skip ci]",
-    "at": "2026-10-12T17:13:05Z",
-    "ageMin": 12,
-    "author": "Z User"
-   },
-   {
-    "sha": "b7195e1",
-    "msg": "[selfcheck] standing loop receipts: security+connectivity+fresh-oracle [skip ci]",
-    "at": "2026-10-12T17:12:58Z",
-    "ageMin": 12,
-    "author": "Z User"
-   },
-   {
-    "sha": "ec59c22",
-    "msg": "[selfcheck] standing loop receipts: security+connectivity+fresh-oracle [skip ci]",
-    "at": "2026-10-12T17:12:50Z",
-    "ageMin": 12,
     "author": "Z User"
    }
   ],
@@ -120,10 +115,10 @@
     }
    ]
   },
-  "worklogLastTouchAgeMin": 277,
+  "worklogLastTouchAgeMin": 321,
   "boot": {
    "at": "2026-10-11T23:36:39.484Z",
-   "ageMin": 1068,
+   "ageMin": 1113,
    "office": {
     "reception_3000": "up",
     "foreman_3010": "up",
@@ -134,7 +129,7 @@
   "ci": {
    "overall": "PASS",
    "at": "2026-10-12T15:22:04.608Z",
-   "ageMin": 123,
+   "ageMin": 167,
    "reason": "all five checks ran and passed",
    "runUrl": "https://github.com/roshpinacare-sys/FleetHQ/actions/runs/38269593418",
    "checks": {
@@ -148,22 +143,35 @@
  },
  "arteries": {
   "wallet": {
-   "__error": "HTTP 404 raw:receipts/wallet/verdict.json"
+   "at": "2026-10-12T11:22:41.395Z",
+   "ageMin": 407,
+   "overall": "PASS",
+   "alerts": 1,
+   "runUrl": "https://github.com/roshpinacare-sys/Sandbox/actions/runs/38242234259"
   },
   "grid": {
-   "__error": "HTTP 404 raw:receipts/grid/verdict.json"
+   "at": "2026-10-12T18:07:55.729Z",
+   "ageMin": 2,
+   "overall": "ERROR",
+   "alerts": 0
   },
   "fleet": {
-   "__error": "HTTP 404 raw:receipts/fleet/verdict.json"
+   "at": "2026-10-12T08:56:37.698Z",
+   "ageMin": 553,
+   "overall": "FAIL",
+   "alerts": 2,
+   "runUrl": "https://github.com/roshpinacare-sys/Sandbox/actions/runs/38226675048"
   },
   "tick": {
-   "__error": "HTTP 404 raw:receipts/latest.json"
+   "at": "2026-10-12T18:07:55.575Z",
+   "ageMin": 2,
+   "chain": "c508ca660faa"
   }
  },
  "runtime": {
-  "lastSuccessAt": "2026-10-12T17:01:46Z",
-  "lastSuccessAgeMin": 23,
+  "lastSuccessAt": "2026-10-12T17:38:25Z",
+  "lastSuccessAgeMin": 31,
   "lastSuccessName": "sovereign-runtime",
-  "lastConclusion": "cancelled"
+  "lastConclusion": "success"
  }
 }
