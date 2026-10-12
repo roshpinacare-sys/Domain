@@ -73,6 +73,7 @@ jobs:
           SA_HEAD_POSTING: ${{ secrets.SA_HEAD_POSTING }}
           STEEM_REPO_DIR: steem-repo
           RECEIPT_OUT: agents/receipts/treasury-desk-receipt.json
+          FLEET_ROSTER_MAP: ${{ secrets.FLEET_ROSTER_MAP }}
         run: node agents/treasury-desk.cjs
 
       - name: route desk (oracles + HE book + bridge probes)
@@ -85,6 +86,7 @@ jobs:
           SA_FLEET_KEYS: ${{ secrets.SA_FLEET_KEYS }}
           SA_HEAD_POSTING: ${{ secrets.SA_HEAD_POSTING }}
           STEEM_REPO_DIR: steem-repo
+          FLEET_ROSTER_MAP: ${{ secrets.FLEET_ROSTER_MAP }}
         run: node agents/capability-matrix.cjs
 
       - name: dex depth book (steem orderbook + HE depth, read-only)
@@ -100,6 +102,9 @@ jobs:
           STEEM_REPO_DIR: steem-repo
           RECEIPT_OUT: agents/receipts/blurt-curate-receipt.json
         run: node agents/blurt-curate.cjs
+
+      - name: exposure gate (fail-loud — raw names never publish)
+        run: node scripts/exposure-scan.mjs
 
       - name: commit ledger + routes + receipts (secretless)
         continue-on-error: true

@@ -4,7 +4,7 @@ Updated: 2026-10-12T23:13:10.664Z UTC. Read-only; derived from live key_auths + 
 
 ## Posting authority: OURS (byte-verified per run)
 
-- steem: 1 accounts [headcorner]
+- steem: 1 accounts [acct-00]
 - hive: 0 accounts []
 - blurt: 0 accounts []
 
