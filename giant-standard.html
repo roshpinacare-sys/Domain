@@ -308,7 +308,11 @@ footer .fl{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:10px}
     stale(el, ts);
   }).catch(function(){ set('c-truth', 'לא נטען'); document.querySelector('#c-truth').classList.add('err'); sub('c-truth', 'truth/latest.json לא זמין עכשיו'); });
 
-  fetch('truth/fleet.json').then(function(r){ return r.ok ? r.json() : Promise.reject(r.status); }).then(function(d){
+  // no-store law (measured 23:02-23:17): Pages max-age=600 served a WRONG stale book
+  // (the pre-fix zeros run) inside its 10-minute window — a truth-tower must never
+  // display a book it knows is superseded. The fleet book is tiny and hourly; the
+  // measured-age line stays the honesty display.
+  fetch('truth/fleet.json', {cache:'no-store'}).then(function(r){ return r.ok ? r.json() : Promise.reject(r.status); }).then(function(d){
     var s = d.summary || {};
     var ts = Date.parse(d.at || '');
     var el = document.querySelector('#c-fleet');
