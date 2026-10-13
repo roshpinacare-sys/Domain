@@ -349,24 +349,28 @@ async function tick() {
   try {
     const stasis = stasisCheck();
     if (stasis && !laneAllowed(stasis, LANE)) {
-      writeBook({ protocol: PROTOCOL, at: now, agent: VERSION, verdict: 'HALTED-STASIS (lane not in stagedLanes.allow — the staged-lane law, CR-0077)', stasisHalted: true, lane: LANE, intentsDrafted: 0, fills: [], rejects: [], measure24h: null, errors: [] });
+      const hb = { protocol: PROTOCOL, at: now, agent: VERSION, verdict: 'HALTED-STASIS (lane not in stagedLanes.allow — the staged-lane law, CR-0077)', stasisHalted: true, lane: LANE, intentsDrafted: 0, fills: [], rejects: [], measure24h: null, errors: [] };
+      writeBook(hb); writeMd(hb);
       console.log(`STASIS-HALT dex-activation · ${now}`);
       return 0;
     }
     const coreBook = readJson(CORE_BOOK);
     if (!coreBook || coreBook.protocol !== 'SAOS-DEX-CORE/1' || !coreBook.genesisDone) {
-      writeBook({ protocol: PROTOCOL, at: now, agent: VERSION, verdict: 'DRY (no live core ledger — the exchange core has not born yet)', stasisHalted: false, lane: LANE, coreStale: true, intentsDrafted: 0, fills: [], rejects: [], measure24h: measure24h(now), errors: [] });
+      const db = { protocol: PROTOCOL, at: now, agent: VERSION, verdict: 'DRY (no live core ledger — the exchange core has not born yet)', stasisHalted: false, lane: LANE, coreStale: true, intentsDrafted: 0, fills: [], rejects: [], measure24h: measure24h(now), errors: [] };
+      writeBook(db); writeMd(db);
       console.log(`dex-activation: DRY (no core) · ${now}`);
       return 0;
     }
     const coreAgeH = (Date.now() - Date.parse(coreBook.at)) / 3600000;
     if (coreAgeH > CORE_STALE_HOURS) {
-      writeBook({ protocol: PROTOCOL, at: now, agent: VERSION, verdict: `DRY (core book stale ${coreAgeH.toFixed(1)}h > ${CORE_STALE_HOURS}h — the desk reports, never guesses)`, stasisHalted: false, lane: LANE, coreStale: true, intentsDrafted: 0, fills: [], rejects: [], measure24h: measure24h(now), errors: [] });
+      const sb = { protocol: PROTOCOL, at: now, agent: VERSION, verdict: `DRY (core book stale ${coreAgeH.toFixed(1)}h > ${CORE_STALE_HOURS}h — the desk reports, never guesses)`, stasisHalted: false, lane: LANE, coreStale: true, intentsDrafted: 0, fills: [], rejects: [], measure24h: measure24h(now), errors: [] };
+      writeBook(sb); writeMd(sb);
       console.log(`dex-activation: DRY (stale core) · ${now}`);
       return 0;
     }
     if (coreBook.conservationOk === false) {
-      writeBook({ protocol: PROTOCOL, at: now, agent: VERSION, verdict: 'REFUSED-CONSERVATION (the core book is broken — the desk never trades on a broken book)', stasisHalted: false, lane: LANE, intentsDrafted: 0, fills: [], rejects: [], measure24h: measure24h(now), errors: [] });
+      const rb = { protocol: PROTOCOL, at: now, agent: VERSION, verdict: 'REFUSED-CONSERVATION (the core book is broken — the desk never trades on a broken book)', stasisHalted: false, lane: LANE, intentsDrafted: 0, fills: [], rejects: [], measure24h: measure24h(now), errors: [] };
+      writeBook(rb); writeMd(rb);
       console.log(`dex-activation: REFUSED-CONSERVATION · ${now}`);
       return 0;
     }

@@ -68,11 +68,17 @@ jobs:
         run: node agents/dex-activation.cjs
 
       - name: commit ignition books (+ the core ledger when a ladder settled)
+        env:
+          # the measured 25-d fault: without FLEET_ROSTER_MAP the estate scrub is a NO-OP
+          # (roster-unresolved) — every redaction run on this repo carries the map
+          FLEET_ROSTER_MAP: ${{ secrets.FLEET_ROSTER_MAP }}
         run: |
           git config user.name "roshpinacare-sys"
           git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
           node agents/redact-telemetry.mjs agents/dex-activation.json agents/dex-activation-queue.json agents/dex-core.json || true
-          git add agents/dex-activation.json agents/dex-activation.md agents/dex-activation-history.jsonl agents/dex-activation-queue.json agents/dex-core.json agents/dex-core.md agents/dex-core-history.jsonl
+          for f in agents/dex-activation.json agents/dex-activation.md agents/dex-activation-history.jsonl agents/dex-activation-queue.json agents/dex-core.json agents/dex-core.md agents/dex-core-history.jsonl; do
+            [ -e "$f" ] && git add "$f" || true
+          done
           if git diff --cached --quiet; then
             echo "no book delta — quiet tick"
           else
