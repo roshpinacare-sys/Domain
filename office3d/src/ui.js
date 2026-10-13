@@ -10,12 +10,12 @@ export class UI {
     this.onFocus = onFocus;
     this.onView = onView;
     this.$ = (s) => document.querySelector(s);
-    this.bubbles = new Map(); // id → {el, until, pos}
+    this.bubbles = new Map(); // id -> {el, until, pos}
     this.bubbleLayer = this.$('#bubbles');
     this.selected = null;
     this.viewBtns = new Map();
     this.tickerItems = [];
-    this.projector = null; // נקבע מ-main: (vec3) → {x,y,visible}
+    this.projector = null; // נקבע מ-main: (vec3) -> {x,y,visible}
     this.buildDeck();
     this.buildRoster();
 
@@ -41,7 +41,7 @@ export class UI {
     }
   }
 
-  // ───── סרגל-תצפית ─────
+  // ----- סרגל-תצפית -----
   buildDeck() {
     const views = [
       ['overview', 'מבט-על'], ['arc', 'קשת-הצוות'], ['flame', 'הלהבה'],
@@ -65,10 +65,10 @@ export class UI {
     inner.appendChild(sep);
     const tour = document.createElement('button');
     tour.className = 'vbtn';
-    tour.textContent = '▶ סיור אוטומטי';
+    tour.textContent = 'סיור אוטומטי';
     tour.addEventListener('click', () => {
       this.touring = !this.touring;
-      tour.textContent = this.touring ? '⏸ עוצר סיור' : '▶ סיור אוטומטי';
+      tour.textContent = this.touring ? 'עוצר סיור' : 'סיור אוטומטי';
       tour.classList.toggle('active', this.touring);
       this.onView?.(this.touring ? 'tour' : 'stop-tour');
     });
@@ -80,13 +80,13 @@ export class UI {
     for (const [vid, b] of this.viewBtns) b.classList.toggle('active', vid === id);
     if (this.touring && id) {
       this.touring = false;
-      this.tourBtn.textContent = '▶ סיור אוטומטי';
+      this.tourBtn.textContent = 'סיור אוטומטי';
       this.tourBtn.classList.remove('active');
     }
   }
 
   setTourActive() {
-    this.tourBtn.textContent = '⏸ עוצר סיור';
+    this.tourBtn.textContent = 'עוצר סיור';
     this.tourBtn.classList.add('active');
     for (const [, b] of this.viewBtns) b.classList.remove('active');
   }
@@ -99,7 +99,7 @@ export class UI {
     this._vt = setTimeout(() => el.classList.remove('show'), 3200);
   }
 
-  // ───── רוסטר ─────
+  // ----- רוסטר -----
   buildRoster() {
     const list = this.$('#rosterList');
     this.rows = new Map();
@@ -170,7 +170,7 @@ export class UI {
     this.markSelected();
   }
 
-  // ───── שבבי-מצב ─────
+  // ----- שבבי-מצב -----
   setMode(mode, { verdict, stateAgeMin, pulseAgeMin }) {
     const pulse = this.$('#chipPulse');
     const pulseTxt = this.$('#pulseTxt');
@@ -211,7 +211,7 @@ export class UI {
     this.$('#tickMode').textContent = mode === 'broadcast' ? 'שידור חי' : mode === 'world' ? 'עולם חי' : mode === 'live' ? 'חי' : mode === 'stale' ? 'ישן' : 'הדגמה';
   }
 
-  // ───── טיקר ─────
+  // ----- טיקר -----
   pushTicker(text, sub) {
     const line = this.$('#tickerLine');
     const subEl = this.$('#tickerSub');
@@ -223,7 +223,7 @@ export class UI {
     }, 220);
   }
 
-  // ───── בועות-דיבור ─────
+  // ----- בועות-דיבור -----
   bubble(agentId, text, ms = 4200, live = false) {
     const c = CREW.find((x) => x.id === agentId);
     const el = document.createElement('div');
