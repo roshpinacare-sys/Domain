@@ -23,9 +23,20 @@ jobs:
         with: { node-version: 20 }
 
       - name: measure the live publication ledger (keyless — public chain RPC only)
+        env:
+          FLEET_ROSTER_MAP: ${{ secrets.FLEET_ROSTER_MAP }}
         run: |
           cat > /tmp/ledger.cjs << 'ZEOF'
           const fs = require('fs');
+          // refs law (exposure-gate, 2026-10-13): the owner handle never appears in this
+          // public workflow or its emitted book. The chain-query author resolves at runtime
+          // from FLEET_ROSTER_MAP (ref→name); every emitted permlink passes the refs scrub.
+          const { R, refOf, scrub, resolved: refsResolved } = require('./agents/refs.cjs');
+          const REF_IDS = Array.from({ length: 20 }, (_, i) => 'acct-' + String(i).padStart(2, '0'));
+          const refScrub = (t) => { let out = scrub(String(t)); if (refsResolved()) { for (const ref of REF_IDS) { const n = R(ref); if (n) out = out.replace(new RegExp('\\b' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'g'), ref); } } return out; };
+          const OWNER_REF = 'acct-00';
+          const ownerName = refsResolved() ? R(OWNER_REF) : null;
+          if (!ownerName) { console.error('[published-ledger] roster unresolved — honest skip, no book written, no handle guessed'); process.exit(0); }
           const CHAINS = [
             { chain: 'STEEM', url: 'https://api.steemit.com' },
             { chain: 'HIVE',  url: 'https://api.hive.blog' },
@@ -44,11 +55,11 @@ jobs:
             for (const c of CHAINS) {
               try {
                 const rows = await rpc(c.url, 'condenser_api.get_discussions_by_author_before_date',
-                  [{ author: 'headcorner', limit: 10 }]);
+                  [{ author: ownerName, limit: 10 }]);
                 for (const p of rows) {
                   posts.push({
                     title: String(p.title || ''),
-                    permlink: String(p.permlink || ''),
+                    permlink: refScrub(String(p.permlink || '')),
                     chain: c.chain,
                     at: new Date(p.created + 'Z').toISOString(),
                     pendingPayout: String(p.pending_payout_value || '0.000').replace(/\s*SBD\s*$/i, '').trim(),
