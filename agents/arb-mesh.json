@@ -1,6 +1,6 @@
 {
   "protocol": "SAOS-ARB-MESH/1",
-  "at": "2026-10-13T20:51:06.369Z",
+  "at": "2026-10-13T22:04:54.062Z",
   "agent": "arb-mesh v1.0.0 (R41 MESH MARKET, CR-0071)",
   "mode": "KEYLESS-MESH-DEMAND",
   "stasisHalted": false,
@@ -22,25 +22,39 @@
     "multi-network vault (R42): custody classes — MEASURED-KEYED is the only mintable class; adjacent networks are OBSERVED (seen, never custody, never a reserve); redeem is ALWAYS honored 1:1 in-ledger (burn before payout); the chain payout is queued for the keyed desks — keyless code never fires a broadcast",
     "uniform batch clearing (R76): the queue clears as ONE batch - canonical order, two-sided netting at the measured fair, one uniform clearing price for every trader, the solver absorbs the remainder; order-invariance (a permuted queue clears byte-identical) is the anti-sandwich proof · the proof lane is DRY (moves nothing), the settle gate stays the owner's"
   ],
-  "verdict": "NO-EDGE (every row below the floor — the machinery waits, the floor law protects the P&L)",
-  "batch": null,
+  "verdict": "GATED-WIRE (edge above floor but no free capital to arm the agents — named, never faked)",
+  "batch": "MESH-2026101322-d20bfd74",
   "settledBatch": null,
   "coreLedger": {
-    "seq": 43,
-    "at": "2026-10-13T20:23:46.170Z",
-    "ageHours": 0.46,
+    "seq": 44,
+    "at": "2026-10-13T21:20:02.674Z",
+    "ageHours": 0.75,
     "conservationOk": true,
-    "attestation": "b6ead9364e3a45d5",
+    "attestation": "6bd11d1c0e3f3ff5",
     "feedFresh": true
   },
   "routerSeen": {
-    "at": "2026-10-13T19:38:42.861Z",
+    "at": "2026-10-13T21:34:46.354Z",
     "arbRows": 4
   },
   "roster": [
     "headcorner"
   ],
-  "candidates": [],
+  "candidates": [
+    {
+      "id": "A1",
+      "name": "P3 STEEM/SBD pool mid vs CEX-implied fair",
+      "poolMidNano": "24381606765",
+      "fairNano": "103075820",
+      "netBps": 2355370.07,
+      "thresholdBps": 100,
+      "from": "STEEM",
+      "to": "SBD",
+      "railOwner": "treasury (our own pool — atomic, no bridge)",
+      "source": "dex-core.json (our pool — atomic, no bridge)",
+      "at": "2026-10-13T22:04:54.062Z"
+    }
+  ],
   "keyedRailPlans": [],
   "intentsDrafted": 0,
   "intents": [],
