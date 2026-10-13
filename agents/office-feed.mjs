@@ -41,6 +41,51 @@ const owner = 'owner'; // public ops account (on-chain public identity)
 const STEEM_RPC = 'https://api.steemit.com';
 const FLEETHQ_DIGEST = 'https://roshpinacare-sys.github.io/FleetHQ/digest.json';
 const SANDBOX_RAW = 'https://raw.githubusercontent.com/roshpinacare-sys/Sandbox/main/probes';
+// core-engine liveness for the homepage engines panel (measured, never claimed):
+// [repo, workflow] pairs — every row carries its own measuredAt + honest null when unknown.
+const CORE_ENGINES = [
+  ['GridWatch', 'grid-watch.yml'],
+  ['Pulse', 'heartbeat.yml'],
+  ['Autonomy', 'artery-fleet.yml'],
+  ['Autonomy', 'artery-wallet.yml'],
+  ['Autonomy', 'sovereign-decider.yml'],
+  ['Autonomy', 'sovereign.yml'],
+  ['saos-runtime', 'sovereign-runtime.yml'],
+  ['FleetHQ', 'office-heartbeat.yml'],
+  ['FleetHQ', 'sovereign-decider.yml'],
+  ['FleetHQ', 'value-scan.yml'],
+  ['FleetHQ', 'runtime-pacemaker.yml'],
+  ['Domain', 'office-pulse.yml'],
+  ['Domain', 'exposure-gate.yml'],
+  ['Console', 'runtime-pacemaker.yml'],
+];
+
+async function measureEngines() {
+  const ghHeaders = { 'user-agent': 'saos-office-feed/1' };
+  if (process.env.GITHUB_TOKEN) ghHeaders.authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
+  const rows = [];
+  for (const [repo, wf] of CORE_ENGINES) {
+    try {
+      const d = await jget(`https://api.github.com/repos/roshpinacare-sys/${repo}/actions/workflows/${wf}/runs?per_page=1`, { headers: ghHeaders });
+      const r = (d.workflow_runs || [])[0] || null;
+      if (!r) { rows.push({ name: `${repo}/${wf.replace('.yml', '')}`, ok: null, status: 'never-run', lastRun: null, measuredAt: utcStamp() }); continue; }
+      const status = String(r.status || '');
+      const concl = r.conclusion || null;
+      const ok = status === 'in_progress' || status === 'queued' ? null : concl === 'success';
+      rows.push({
+        name: `${repo}/${wf.replace('.yml', '')}`,
+        ok,
+        status: concl ? String(concl) : status,
+        lastRun: { name: String(r.name || wf), status, conclusion: concl },
+        at: r.created_at ? String(r.created_at) : null,
+        measuredAt: utcStamp(),
+      });
+    } catch (e) {
+      rows.push({ name: `${repo}/${wf.replace('.yml', '')}`, ok: null, status: `unmeasured(${String(e.message).slice(0, 30)})`, lastRun: null, measuredAt: utcStamp() });
+    }
+  }
+  return rows;
+}
 
 const log = (...a) => console.log('[office-feed]', ...a);
 
@@ -81,6 +126,7 @@ async function main() {
     publishedAt: utcStamp(),
     redaction: 'tier-A keyless aggregates only — no addresses, no params, no roster (see sovereign/zai-audit/exposure-execution-2026-10-11.json)',
     staleHoursLaw: 24,
+    engines: [],
     office: null,
     chain: { steem: null },
     grid: null,
@@ -213,6 +259,14 @@ async function main() {
     out.actions.error = String(e.message).slice(0, 60);
   }
 
+  // engines panel — measured liveness of the fleet's core lanes (homepage po-runs)
+  try {
+    out.engines = await measureEngines();
+  } catch (e) {
+    out.engines = [];
+    out.enginesError = String(e.message).slice(0, 60);
+  }
+
   // atomic write
   const tmp = OUT + '.tmp';
   writeFileSync(tmp, JSON.stringify(out, null, 2) + '\n');
@@ -225,7 +279,7 @@ async function main() {
 /* ── offline selftest: schema shape + redaction guards, zero network ── */
 function selftest() {
   const fixture = {
-    schema: SCHEMA, publishedAt: utcStamp(), redaction: 'x', staleHoursLaw: 24,
+    schema: SCHEMA, publishedAt: utcStamp(), redaction: 'x', staleHoursLaw: 24, engines: [{ name: 'GridWatch/grid-watch', ok: true, status: 'success', lastRun: { name: 'grid-watch', status: 'completed', conclusion: 'success' }, at: 't', measuredAt: utcStamp() }],
     office: { url: 'u', digestOk: false, error: 'http 404' },
     chain: { steem: { ok: true, headBlock: 1, headTime: 't', ownerLatest: [{ title: 't', permlink: 'p', created: 'c', pendingPayout: '0.000 SBD', totalPayout: '0.000 SBD' }] } },
     grid: { verdict: 'ARMED-STABLE', blocker: null, chains: ['STEEM'], publishedAt: 'p' },

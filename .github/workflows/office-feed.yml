@@ -17,6 +17,8 @@ jobs:
       - uses: actions/setup-node@v4
         with: {node-version: 20}
       - name: build merged public office-feed digest (read-only, no secrets)
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: node agents/office-feed.mjs
       - name: commit digest
         run: |
