@@ -162,9 +162,14 @@ function parseWorklog(text) {
     tick: ["receipts/latest.json", "at", null],
   };
   for (const [k, [path, atKey, verdictKey]] of Object.entries(arteryFiles)) {
-    const label = `Autonomy/${path}`;
+    // primary home = Autonomy (public, free minutes); legacy Sandbox receipts kept as honest fallback
+    let j = await safeJson(AUT, path);
+    let label = `Autonomy/${path}`;
+    if (!ok(j)) {
+      const legacy = await safeJson(SBX, path);
+      if (ok(legacy)) { j = legacy; label = `Sandbox/${path} (legacy)`; }
+    }
     try {
-      const j = await safeJson(AUT, path);
       if (!ok(j)) throw new Error(j.__error);
       const at = atKey && j[atKey] ? j[atKey] : (j.at || null);
       artery[k] = {
@@ -172,6 +177,7 @@ function parseWorklog(text) {
         at,
         ageMin: ageMin(at),
         overall: verdictKey ? j[verdictKey] : undefined,
+        reason: j.reason || undefined,
         alerts: Array.isArray(j.alerts) ? j.alerts.length : undefined,
         chain: j.chain ? String(j.chain).slice(0, 12) : undefined,
         runUrl: j.provenance && j.provenance.runUrl,
@@ -214,10 +220,22 @@ function parseWorklog(text) {
   push("office-push", FRESH.officePush, HALF_LIFE.officePush, office.pushedAgeMin);
   if (office.ci && office.ci.overall) push("office-ci", FRESH.officeCi, HALF_LIFE.officeCi, office.ci.ageMin);
   else checks.push({ name: "office-ci", state: "pending", detail: office.ci && office.ci.error ? office.ci.error : "no receipt yet" });
-  push("wallet-artery", FRESH.artery, HALF_LIFE.artery, artery.wallet && artery.wallet.ageMin);
-  push("grid-artery", FRESH.grid, HALF_LIFE.grid, artery.grid && artery.grid.ageMin);
-  push("fleet-artery", FRESH.artery, HALF_LIFE.artery, artery.fleet && artery.fleet.ageMin);
-  push("sovereign-tick", FRESH.tick, HALF_LIFE.tick, artery.tick && artery.tick.ageMin);
+  // artery checks carry the artery's honest health: the pulse proves it BEATS, overall proves what it MEASURED
+  const pushHealth = (name, freshLimit, halfLimit, a) => {
+    const age = a && a.ageMin != null ? a.ageMin : null;
+    let detail = age == null ? (a && a.__error ? String(a.__error).slice(0, 90) : "age not measured") : `${age}min <= ${halfLimit}min`;
+    const overall = a && a.overall;
+    if (overall && overall !== "PASS" && overall !== "OK") detail += ` · ${overall}${a && a.reason ? `: ${String(a.reason).slice(0, 80)}` : ""}`;
+    else if (overall) detail += ` · ${overall}`;
+    if (age == null) checks.push({ name, state: "unknown", detail });
+    else if (age <= freshLimit) checks.push({ name, state: "fresh", detail });
+    else if (age <= halfLimit) checks.push({ name, state: "aging", detail });
+    else checks.push({ name, state: "stale", detail });
+  };
+  pushHealth("wallet-artery", FRESH.artery, HALF_LIFE.artery, artery.wallet);
+  pushHealth("grid-artery", FRESH.grid, HALF_LIFE.grid, artery.grid);
+  pushHealth("fleet-artery", FRESH.artery, HALF_LIFE.artery, artery.fleet);
+  pushHealth("sovereign-tick", FRESH.tick, HALF_LIFE.tick, artery.tick);
   push("runtime-heartbeat", FRESH.runtime, HALF_LIFE.runtime, runtime.lastSuccessAgeMin);
 
   const states = checks.map((c) => c.state);
