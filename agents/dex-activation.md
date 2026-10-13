@@ -1,65 +1,45 @@
 # dex-activation — THE IGNITION DESK (CR-0077)
 
-At: 2026-10-13T14:31:29.646Z · Verdict: **IGNITED (3/3 rounds filled)** · batch: ACT-2026101314-744cda73 · lane: dex-activation
+At: 2026-10-13T14:48:17.467Z · Verdict: **IGNITED (3/3 rounds filled)** · batch: ACT-2026101314-2e7f2848 · lane: dex-activation
 
 Owner word (trace 1a135897157a1d75): "saos dex עמלות 0 נפח כמעט 0 מצטבר כלום" — הדלפק הזה הוא התיקון: זרימה דו-צדדית רציפה סביב המיד של כל בריכה חיה, דרך חוקי-ה-settle של הליבה עצמה.
 
-Pools armed: P1, P2, P3 · Intents drafted: 38 · Fills settled: 38 · Refusals: 0 · Wires: 19
+Pools armed: P1, P2, P3 · Intents drafted: 18 · Fills settled: 18 · Refusals: 0 · Wires: 14
 
-Core ledger: seq 10 @ 2026-10-13T14:27:58.072Z · conservation true · att 1532ac690da1648c
+Core ledger: seq 10 @ 2026-10-13T14:18:05.832Z · conservation true · att 285b6ab36d5e8c22
 
 
 | Agent | Fill | Out | Edge (marked) | Fees |
 |---|---|---|---|---|
-| headcorner | WSTEEM 3423µ | 3407µ STEEM | -16µ | 0µ |
-| headcorner | STEEM 3253µ | 3268µ WSTEEM | 15µ | 0µ |
-| headcorner | WSBD 1115µ | 1114µ SBD | -1µ | 0µ |
-| headcorner | SBD 1115µ | 1115µ WSBD | 0µ | 0µ |
-| headcorner | WSBD 11157µ | 11144µ SBD | -13µ | 2µ |
-| headcorner | SBD 1444µ | 1447µ WSBD | 3µ | 0µ |
-| headcorner | WSBD 55785µ | 55433µ SBD | -352µ | 11µ |
-| headcorner | SBD 1444µ | 1459µ WSBD | 15µ | 0µ |
-| headcorner | STEEM 2739µ | 285µ SBD | null (honest) | 6µ |
-| headcorner | STEEM 3416µ | 347µ SBD | null (honest) | 8µ |
-| headcorner | SBD 1412µ | 13300µ STEEM | null (honest) | 3µ |
-| headcorner | WSBD 1115µ | 9422µ WSTEEM | null (honest) | 3µ |
-| headcorner | WSBD 11157µ | 50196µ WSTEEM | null (honest) | 39µ |
-| headcorner | STEEM 1456µ | 443µ WSTEEM | -1013µ | 0µ |
-| headcorner | STEEM 7280µ | 1840µ WSTEEM | -5440µ | 0µ |
-| headcorner | WSBD 1192µ | 1177µ SBD | -15µ | 0µ |
-| headcorner | SBD 1039µ | 1052µ WSBD | 13µ | 0µ |
-| headcorner | WSBD 11920µ | 11757µ SBD | -163µ | 2µ |
-| headcorner | SBD 2089µ | 2119µ WSBD | 30µ | 0µ |
-| headcorner | WSBD 59600µ | 58457µ SBD | -1143µ | 11µ |
-| headcorner | SBD 2089µ | 2140µ WSBD | 51µ | 0µ |
-| headcorner | STEEM 1894µ | 412µ SBD | null (honest) | 4µ |
-| headcorner | STEEM 7716µ | 1599µ SBD | null (honest) | 19µ |
-| headcorner | SBD 1988µ | 9453µ STEEM | null (honest) | 4µ |
-| headcorner | WSBD 1192µ | 984µ WSTEEM | null (honest) | 2µ |
-| headcorner | WSBD 11920µ | 3462µ WSTEEM | null (honest) | 31µ |
-| headcorner | STEEM 1986µ | 81µ WSTEEM | -1905µ | 0µ |
-| headcorner | STEEM 7264µ | 263µ WSTEEM | -7001µ | 0µ |
-| headcorner | WSBD 1272µ | 1238µ SBD | -34µ | 0µ |
-| headcorner | WSBD 12725µ | 12377µ SBD | -348µ | 2µ |
-| headcorner | SBD 2727µ | 2805µ WSBD | 78µ | 0µ |
-| headcorner | WSBD 63626µ | 61482µ SBD | -2144µ | 12µ |
-| headcorner | SBD 2727µ | 2837µ WSBD | 110µ | 0µ |
-| headcorner | STEEM 1452µ | 538µ SBD | null (honest) | 3µ |
-| headcorner | STEEM 7264µ | 2541µ SBD | null (honest) | 18µ |
-| headcorner | SBD 2573µ | 7314µ STEEM | null (honest) | 6µ |
-| headcorner | WSBD 1272µ | 101µ WSTEEM | null (honest) | 3µ |
-| headcorner | WSBD 12725µ | 584µ WSTEEM | null (honest) | 32µ |
+| headcorner | WSBD 1247µ | 1246µ SBD | -1µ | 0µ |
+| headcorner | WSBD 12474µ | 12459µ SBD | -15µ | 2µ |
+| headcorner | WSBD 62370µ | 61951µ SBD | -419µ | 12µ |
+| headcorner | WSBD 1247µ | 6377µ WSTEEM | -5685µ | 4µ |
+| headcorner | WSBD 12474µ | 801µ WSTEEM | -119864µ | 32µ |
+| headcorner | WSBD 1337µ | 1319µ SBD | -18µ | 0µ |
+| headcorner | WSBD 13372µ | 13178µ SBD | -194µ | 2µ |
+| headcorner | WSBD 66860µ | 65495µ SBD | -1365µ | 13µ |
+| headcorner | WSBD 1337µ | 2µ WSTEEM | -12931µ | 3µ |
+| headcorner | WSBD 13372µ | 11µ WSTEEM | -129341µ | 34µ |
+| headcorner | WSBD 1433µ | 1392µ SBD | -41µ | 0µ |
+| headcorner | SBD 1063µ | 1093µ WSBD | 30µ | 0µ |
+| headcorner | WSBD 14334µ | 13920µ SBD | -414µ | 2µ |
+| headcorner | SBD 1543µ | 1590µ WSBD | 47µ | 0µ |
+| headcorner | WSBD 71674µ | 69125µ SBD | -2549µ | 13µ |
+| headcorner | SBD 1543µ | 1608µ WSBD | 65µ | 0µ |
+| headcorner | SBD 1543µ | 134µ STEEM | -14792µ | 3µ |
+| headcorner | WSBD 14334µ | 3µ WSTEEM | -138655µ | 36µ |
 
 ## Rolling 24h (measured from the ledger — never invented)
 
-Fills: 38 · Volume in: 327563µ · Volume out: 338993µ · Fees accrued: 221µ
+Fills: 56 · Volume in: 621120µ · Volume out: 590697µ · Fees accrued: 377µ
 
 
 | Pool | Swaps 24h | In µ | Out µ | Fees µ |
 |---|---|---|---|---|
-| P2 | 23 | 272447 | 267499 | 46 |
-| P3 | 15 | 68800 | 186561 | 164 |
-| P1 | 12 | 175434 | 74051 | 11 |
+| P2 | 40 | 564461 | 553469 | 96 |
+| P3 | 21 | 111937 | 213669 | 269 |
+| P1 | 17 | 202408 | 81245 | 12 |
 
 Laws: keyless internal-only · staged-lane (CR-0077) · two-sided (never a direction bet) · 10/100/500bps depth ladder · dust 1000µ · minOut −0.5% · roster split op-40% · bounded 30 intents/run · single-writer queue (DEX_SETTLE_QUEUE) · idempotent batch · measured 24h only
 
