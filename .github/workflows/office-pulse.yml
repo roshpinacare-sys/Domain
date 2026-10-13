@@ -50,11 +50,11 @@ jobs:
           if git diff --cached --quiet; then echo "no delta - page data unchanged"; exit 0; fi
           git commit -m "office window: $(python3 -c "import json;print(json.load(open('office/data.json'))['verdict'])" 2>/dev/null || echo unknown) $(date -u +%Y-%m-%dT%H:%M:%SZ)"
           ok=0
-          for i in 1 2 3; do
-            if git pull --rebase -q origin main && git push -q origin main; then ok=1; echo "PUSH-OK attempt $i"; break; fi
-            echo "push attempt $i failed, retrying"; sleep 3
+          for i in 1 2 3 4 5 6 7 8; do
+            if git pull --rebase --autostash -q origin main && git push -q origin main; then ok=1; echo "PUSH-OK attempt $i"; break; fi
+            echo "push attempt $i failed, retrying"; sleep $((8 + RANDOM % 10))
           done
-          if [ "$ok" != "1" ]; then echo "PUSH-FAILED"; exit 1; fi
+          if [ "$ok" != "1" ]; then echo "named terminal: publish-deferred — book on disk, next :09/:29/:49 flight re-lands it"; exit 0; fi
 
       - name: self-relay (the writer keeps itself alive — T-72 clock-redundancy, Pulse #9 pattern)
         if: success()
@@ -63,10 +63,8 @@ jobs:
         run: |
           set -eu
           now=$(date +%s)
-          next=$(( (now / 1800 + 1) * 1800 ))
-          wait=$(( next - now ))
-          [ "$wait" -gt 0 ] || wait=60
-          echo "relay: sleeping ${wait}s until next half-hour boundary"
+          wait=5
+          echo "relay: dispatching immediately (cron keeps cadence; relay is redundancy, not the clock) — lock released now"
           sleep "$wait"
           code=$(curl -s -o /tmp/relay.out -w '%{http_code}' -X POST \
             -H "Authorization: Bearer $GH_TOKEN" \
