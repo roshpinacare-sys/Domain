@@ -109,7 +109,7 @@ footer .fl{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:10px}
     <p class="secsub">שלושה מקורות אמת ציבוריים. אם מקור לא נטען, זה נראה כאן, בלי הסתרה. אם מדידה ישנה מ-24 שעות, מופיעה אזהרה.</p>
     <div class="grid g3">
       <div class="card" id="c-grid">
-        <div class="k">GRID · הסנטינל מודד 31 ריפואים × 254 עורקים</div>
+        <div class="k">GRID · הסנטינל מודד <span id="grid-repos">…</span> ריפואים × <span id="grid-arteries">…</span> עורקים</div>
         <div class="v wait">טוען status.json…</div>
         <div class="s" id="grid-sub"></div>
         <div class="stale">המדידה ישנה מ-24 שעות. הרשת לא משתיקה, נבדק</div>
@@ -292,6 +292,9 @@ footer .fl{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:10px}
     var ts = Date.parse(d.generatedAt || '');
     set('c-grid', (g.beatArteries != null ? g.beatArteries : '?') + ' / ' + (g.totalArteries || '?'));
     sub('c-grid', 'עורקים פועמים · ' + (g.repos || '?') + ' ריפואים · נמדד לפני ' + (ts ? fmtAge(ts) : '?'));
+    var rk = document.getElementById('grid-repos'), ak = document.getElementById('grid-arteries');
+    if (rk && g.repos != null) rk.textContent = g.repos;
+    if (ak && (g.beatArteries != null || g.totalArteries != null)) ak.textContent = (g.beatArteries != null ? g.beatArteries : '?') + '/' + (g.totalArteries || '?');
     var alive = s.ALIVE || 0, dead = s['QUOTA-DEAD'] || 0;
     document.querySelector('#c-grid').classList.add(dead > 0 ? 'warn' : 'ok');
     stale(document.querySelector('#c-grid'), ts);

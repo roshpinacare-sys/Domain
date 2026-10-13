@@ -117,16 +117,32 @@ for (const b of BOOKS) {
   const abs = path.join(ROOT, b.p);
   const ts = bookTs(readJson(abs));
   const ageH = hoursSince(ts);
+  /* measured 4-main: freshness is NOT completeness — econ-book refreshed hourly into
+   * rows:[] with an error string while the gate called it green. A book that is fresh
+   * but EMPTY (no rows/content payload) is honest about one thing only: the writer ran.
+   * empty = ts fresh AND payload genuinely missing → reported, never silenced. */
+  const doc = readJson(abs);
+  let empty = false;
+  if (doc && typeof doc === 'object' && !Array.isArray(doc)) {
+    const payload = doc.rows ?? doc.entries ?? doc.items ?? doc.list ?? doc.posts ?? doc.votes ?? doc.snapshots ?? null;
+    const looksLedger = 'rows' in doc || 'entries' in doc || 'items' in doc || 'list' in doc || 'posts' in doc || 'votes' in doc || 'snapshots' in doc;
+    if (looksLedger) empty = !Array.isArray(payload) || payload.length === 0;
+    else if (doc.error && !doc.verdict && !doc.summary && !doc.state) empty = true;
+  } else if (doc === null) {
+    empty = true; // unreadable book = the emptiest book
+  }
   books.push({
     name: b.label,
     path: b.p,
     ts: ts ? ts.toISOString() : null,
     ageHours: ageH,
     fresh: ageH !== null ? ageH <= b.maxAgeH : false,
+    empty,
     maxAgeH: b.maxAgeH,
   });
 }
 const stale = books.filter((b) => !b.fresh);
+const emptyBooks = books.filter((b) => b.empty === true);
 const freshCount = books.length - stale.length;
 
 /* ── 2. LESSONS: exactly one, from measured facts ── */
@@ -211,7 +227,7 @@ const feed = {
      * room's six bodies and ending the "lead+6 = 7?" phantom roster. */
     workers: WORKERS.filter((w) => w.id !== lead.id).map((w) => ({ id: w.id, desk: w.desk, credits: economy[w.id] || 0 })),
   },
-  books: { total: books.length, fresh: freshCount, stale: stale.length, list: books },
+  books: { total: books.length, fresh: freshCount, stale: stale.length, empty: emptyBooks.length, emptyList: emptyBooks.map((b) => b.name), list: books },
   lesson,
   /* 3-b: the lessons BOOK is real (office-memory.json keeps up to 40) — the feed
    * now carries its measured size so "0 לקחים" readers get the true number. */
