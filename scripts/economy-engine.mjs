@@ -313,7 +313,13 @@ function openSeal() {
   fs.rmSync(innerZip, { force: true }); // no plaintext archive lingering
 
   const vaultPath = path.join(work, 'agent', 'keys', 'vault.json');
-  if (!fs.existsSync(vaultPath)) die('materialized vault.json absent from seal — cannot operate');
+  if (!fs.existsSync(vaultPath)) {
+    // T24: BLOCKED-SILENT law v2 (owner word 2026-10-13) — a missing seal is a DESIGNED
+    // WAITING STATE (keys live with the key-holder), not a code defect. Honest BLOCKED,
+    // run green: the red run emailed the owner every cycle for a state no agent can fix.
+    console.log('BLOCKED: materialized vault.json absent from seal — designed waiting state (BLOCKED-SILENT v2); nothing measured, nothing claimed; key-holder decides');
+    process.exit(0);
+  }
   const vault = JSON.parse(fs.readFileSync(vaultPath, 'utf8'));
 
   // soldiers: {role:{wif}} shape; the head (revived 09-29): chain-keyed {steem:{role:{wif}}} shape

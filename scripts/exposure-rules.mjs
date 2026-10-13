@@ -89,7 +89,7 @@ export const FORBIDDEN_CONTENT = [
 // claims — flagged). Still fully checked against FORBIDDEN_PATHS; new appends must use refs.
 export const SIGLOCKED_FILES = [/^ledger\.json$/];
 
-export const ENGINE_RE = /^(agents\/.*\.(cjs|mjs)|scripts\/.*\.mjs)$/;
+export const ENGINE_RE = /^(?:[\w.-]+\/)?(agents\/.*\.(cjs|mjs)|scripts\/.*\.mjs)$/; // T24: prefix-tolerant - the same engine waiver applies in every checkout context (one law, two enforcers, no path drift)
 export const ENGINE_WAIVED = /keysZipPass/;
 
 // violations(body, path?) → [{ why }] — the ONE detector every enforcer runs.

@@ -53,6 +53,14 @@ const RUNS_PER_REPO = 30;
 const REENABLE_CAP = 3;
 const DISPATCH_CAP = 3;
 const STALE_SCHEDULED_H = 36;
+// T24 4d — HOUSE DESKS: the hourly heartbeat watches the estate's own core books
+// (the keeper, the brain, the office) and re-ignites their writers when a book
+// goes stale. The watcher-of-the-watchers, bounded (3 desks), same-repo only.
+const HOUSE_DESKS = [
+  { desk: 'tick-keeper.yml',    receipt: 'agents/tick-keeper.json',        max_gap_min: 90,  tsKeys: ['at', 'generatedAt', 'measuredAt'] },
+  { desk: 'cognition-beat.yml', receipt: 'agents/cognition/organism.json', max_gap_min: 90,  tsKeys: ['generatedAt', 'at', 'measuredAt'] },
+  { desk: 'office-pulse.yml',   receipt: 'office/data.json',               max_gap_min: 90,  tsKeys: ['generatedAt', 'at'] },
+];
 
 function nowIso() { return new Date().toISOString(); }
 function hoursBetween(a, b) { return (new Date(b) - new Date(a)) / 36e5; }
@@ -256,6 +264,23 @@ async function main() {
       const fname = String(target.path || '').split('/').pop();
       const r = await api(healToken, `/repos/${ACCOUNT}/${s.repo}/actions/workflows/${encodeURIComponent(fname)}/dispatches`, 'POST');
       book.heal.dispatched.push({ repo: s.repo, workflow: fname, status: r.status, ok: r.status === 204, staleHours: s.staleHours });
+    }
+    // T24 4d: house desks — read the estate's own books; a stale core book re-ignites its writer
+    for (const d of HOUSE_DESKS) {
+      try {
+        const raw = fs.readFileSync(path.join(ROOT, d.receipt), 'utf8');
+        const j = JSON.parse(raw);
+        let ts = null;
+        for (const k of d.tsKeys) if (j && typeof j[k] === 'string' && Number.isFinite(Date.parse(j[k]))) { ts = Date.parse(j[k]); break; }
+        if (!ts && j && Array.isArray(j) && j.length && j[j.length - 1].ts) ts = Date.parse(j[j.length - 1].ts);
+        const ageMin = ts ? (Date.now() - ts) / 60000 : null;
+        if (ageMin != null && ageMin > d.max_gap_min) {
+          const rr = await api(healToken, `/repos/${ACCOUNT}/Domain/actions/workflows/${encodeURIComponent(d.desk)}/dispatches`, 'POST');
+          book.heal.dispatched.push({ repo: 'Domain', workflow: d.desk, houseDesk: true, receipt: d.receipt, ageMin: Math.round(ageMin), status: rr.status, ok: rr.status === 204 });
+        }
+      } catch (e) {
+        book.heal.skipped.push({ why: `house-desk ${d.desk}: ${String(e && e.message || e).slice(0, 80)}` });
+      }
     }
   } else if (!healToken) {
     book.heal.skipped.push({ why: 'no keeper token — heal stays booked, unfired (honest)' });

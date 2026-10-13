@@ -24,7 +24,7 @@ import { FORBIDDEN_PATHS, FORBIDDEN_CONTENT, ENGINE_RE, ENGINE_WAIVED, SIGLOCKED
 
 const SKIP_RE = /(^|\/)(node_modules|\.git)\//;
 const LANE_SKIP = /^office3d\//;        // parallel deployment lane (do-not-touch zone)
-const SELF = /^scripts\/exposure-(scan|rules)\.mjs$/;
+const SELF = /^(?:[\w.-]+\/)?scripts\/exposure-(scan|rules)\.mjs$/; // T24: prefix-tolerant self-carve - the law file never flags itself in any checkout context
 // Narrow waiver: engine code implements the custody contract of the PRIVATE checkout
 // (agent/recovery-meta.json lives in the private steem repo, never here). The field
 // name keysZipPass is that cross-repo contract — renaming it one-sidedly breaks

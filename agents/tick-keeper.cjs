@@ -52,6 +52,8 @@ const ARC = {
   'self-audience.yml':       { receipt: 'agents/receipts/self-audience-receipt.json', max_gap_min: 1560, cooldown_min: 240 }, // daily
   'public-pulse.yml':        { receipt: 'agents/pulse-book.json',                   max_gap_min: 1560, cooldown_min: 240 }, // daily
   'fleet-heartbeat.yml':     { receipt: 'agents/fleet-heartbeat.json',              max_gap_min: 90,   cooldown_min: 60  }, // hourly T-56 — the fleet metronome, kept alive by the arc (GitHub starves new schedules on this repo, R27 law)
+  'cognition-beat.yml':      { receipt: 'agents/cognition/organism.json',       max_gap_min: 90,   cooldown_min: 60  }, // the brain book, kept alive by the arc (T24: same law as T19, landed at the new home)
+  'office-pulse.yml':        { receipt: 'office/data.json',                      max_gap_min: 90,   cooldown_min: 60  }, // the office health book - frozen 642min on 10-13 while its writer starved (T24 measured)
   'audience-analyst.yml':    { receipt: 'audience/latest.json',                     max_gap_min: 1560, cooldown_min: 240 }, // daily 05:31
 };
 for (const k of Object.keys(ARC)) if (!ARC[k]) delete ARC[k]; // the resurrection arc must never carry ghost rows
@@ -96,7 +98,7 @@ function lastLineTs(p) { // jsonl → last parseable .ts ; json book → .at | l
     }
     const j = JSON.parse(raw);
     if (Array.isArray(j)) return j.length && j[j.length - 1].ts ? j[j.length - 1].ts : null;
-    return j.at || null;
+    return j.at || j.generatedAt || j.measuredAt || null; // 4b: books sign generatedAt/measuredAt too - a receipt must never read as no-receipt-yet
   } catch (_) { return null; }
 }
 

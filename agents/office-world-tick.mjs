@@ -51,6 +51,7 @@ try { w = fromJSON(raw); } catch (e) { fail('engine rejected world: ' + e.messag
 const r = advanceWorld(w, Date.now(), { maxCatchupMs: MAX_CATCHUP_MS, stepSec: STEP_SEC });
 const phase = phaseOf(w.t).he;
 
+w.t = Date.now(); w.at = new Date(w.t).toISOString(); w.generatedAt = w.at; // 4b: every reader (t|at|generatedAt) reads a live ts - no guardian misreads fresh as stale
 fs.writeFileSync(WORLD, JSON.stringify(w));
 
 // יומן-זנב: האירועים האחרונים עם הקשר-הפעימה (לצופים ולתחקיר)
