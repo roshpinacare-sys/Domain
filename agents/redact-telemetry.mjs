@@ -10,7 +10,7 @@ import fs from 'node:fs';
 const PREFIXES = ['TG6S', 'TYVw', '0x01Bd']; // personal redemption box, TRON guard, sovereign EOA (prefix-only by design)
 const RE_TRON = /\bT[1-9A-HJ-NP-Za-km-z]{33}\b/g;
 const RE_EVM = /\b0x[a-fA-F0-9]{40}\b/g; // exactly 40 hex — 32-byte digests (64 hex) are tier-A and survive
-const RE_STMKEY = /\bSTM[7-9A-HJ-NP-Za-km-z]{50,}\b/g;
+const RE_STMKEY = /\bSTM[1-9A-HJ-NP-Za-km-z]{50,}\b/g; // 24-e: true base58 digits 1-9 (the old 7-9 class never matched standard STM5... keys - version digit 5 - so the mask was dead code; measured live 2026-10-13)
 const RE_SOL = /\b[1-9A-HJ-NP-Za-km-z]{43,44}\b/g;
 const DEPOSIT_KEY = /deposit|receive|inbox|payee|payto/i; // deposit/receive addresses are public-by-design (tier A)
 const PARAM_KEY = /(commitPct|spread|stepBps|EdgeBps|edgePct|pegOut|threshold|feePct|requote|minEdge|expiryDays)/i;
