@@ -1,12 +1,12 @@
 {
  "schema": "site-audit/1",
- "at": "2026-10-13T23:11:06.075Z",
+ "at": "2026-10-13T23:16:08.561Z",
  "scope": "live-pages:https://roshpinacare-sys.github.io/Domain/",
  "pagesScanned": 82,
  "summary": {
   "findings": 0,
   "externalBlocked": 5,
-  "transientBlocked": 0,
+  "transientBlocked": 1,
   "checked": 169
  },
  "findings": [],
@@ -70,7 +70,15 @@
    ]
   }
  ],
- "transientBlocked": [],
+ "transientBlocked": [
+  {
+   "code": 429,
+   "url": "https://github.com/roshpinacare-sys/Domain/commits/main",
+   "sources": [
+    "giant-standard.html"
+   ]
+  }
+ ],
  "overall": "PASS",
  "note": "404 פנימי/חוץ = עמוד-מת (FINDING). 403/429/502 אצל צד-ג = חסימת-בוט (רמז בלבד). 429/503 מפני-ה-github.com-שלנו = חנק-מדידה (TRANSIENT — ריטרי-3 ואז רשום-בלי-הכשל). קישורים הנבנים ב-JS בזמן-ריצה אינם נסרקים כאן — הם אינם href סטטי."
 }
