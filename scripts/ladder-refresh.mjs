@@ -138,6 +138,13 @@ function pushLadderReceipts(commitMsg) {
   const files = fs.readdirSync(receiptsDir).filter((f) => f.startsWith(today + '-ladder-') && f.endsWith('.json'));
   if (!files.length) die('no ladder receipts to push today — refusing to commit blind');
   for (const f of files) execFileSync('git', ['add', path.join('agent', 'receipts', f)], { cwd: STEEM_DIR, stdio: 'pipe' });
+  // honest no-op: the same-day receipt may already be committed by an earlier cycle —
+  // an empty index is a CLEAN state, never a failure (measured red run 2026-10-13T12:13)
+  const staged = spawnSync('git', ['diff', '--cached', '--quiet'], { cwd: STEEM_DIR });
+  if (staged.status === 0) {
+    log('ladder receipts already committed — nothing new (honest no-op)');
+    return files;
+  }
   execFileSync('git', ['commit', '-m', commitMsg], { cwd: STEEM_DIR, stdio: 'pipe' });
   execFileSync('git', ['pull', '--rebase', 'origin', 'main'], { cwd: STEEM_DIR, stdio: 'pipe' });
   execFileSync('git', ['push', 'origin', 'main'], { cwd: STEEM_DIR, stdio: 'pipe' });
