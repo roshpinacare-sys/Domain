@@ -73,3 +73,12 @@
 | 2026-10-12T20:42:57.579Z | config | chain_id=cd8d90f29a… (official blurtjs config) | ok |
 | 2026-10-12T20:43:03.646Z | fatal | all blurt nodes unhealthy (3 tried) — last: fetch failed | RED-FATAL |
 
+
+## BLURT-CONNECT RUN · 2026-10-13T12:48:29.897Z
+
+| at | op | detail | status |
+|---|---|---|---|
+| 2026-10-13T12:48:29.226Z | config | chain_id=cd8d90f29a… (official blurtjs config) | ok |
+| 2026-10-13T12:48:29.896Z | census | @owner no candidate secret matches live active authority | refused |
+| 2026-10-13T12:48:29.896Z | summary | no blurt account connected this run — census lines above say exactly which secrets were tried | RED-UNCONNECTED |
+
