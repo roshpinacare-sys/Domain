@@ -58,6 +58,8 @@ jobs:
         run: node agents/proof-pipeline.mjs
 
       - name: Publish the book to Console (public truth shelf)
+        env:
+          FLEET_ROSTER_MAP: ${{ secrets.FLEET_ROSTER_MAP }}  # חוק-ה-refs: המנקה-בגבולת דורש את-המפה (no-op = סיכון)
         run: |
           set -u
           cd console-book
@@ -70,5 +72,5 @@ jobs:
           else
             git commit -m "proof-pipeline: day book $(date -u +%F) · ready-to-sign anchor calldata (keyless) [skip ci]"
             git -c rebase.autoStash=true pull --rebase origin main
-            bash scripts/safe-push.sh
+            bash "$GITHUB_WORKSPACE/scripts/safe-push.sh"   # הסקריפט חי-בריפו-הבית — לא ב-checkout-של-Console (127-root-fix)
           fi
