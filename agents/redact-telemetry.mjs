@@ -10,7 +10,17 @@ import fs from 'node:fs';
 const PREFIXES = ['TG6S', 'TYVw', '0x01Bd']; // personal redemption box, TRON guard, sovereign EOA (prefix-only by design)
 const RE_TRON = /\bT[1-9A-HJ-NP-Za-km-z]{33}\b/g;
 const RE_EVM = /\b0x[a-fA-F0-9]{40}\b/g; // exactly 40 hex — 32-byte digests (64 hex) are tier-A and survive
-const RE_STMKEY = /\bSTM[1-9A-HJ-NP-Za-km-z]{50,}\b/g; // 24-e: true base58 digits 1-9 (the old 7-9 class never matched standard STM5... keys - version digit 5 - so the mask was dead code; measured live 2026-10-13)
+// R31 (2026-10-13, trace 1a13797aa1a03d55): relay CONTRACT addresses are public-by-design
+// chain marks (tier-A) — protocol constants already published in Domain's anchor-execute.mjs.
+// They MUST survive redaction: pre-flight gates verify the proof book against them byte-exactly.
+// Measured failure: a rebuild baked the literal "0x56c9…[redacted]" into pipeline.json →
+// anchor-execute honestly refused (fail-closed) → red for hours.
+const RELAY_ALLOWLIST = new Set([
+  '0xa52D85cAa4C04C15cE60d0c582e8C138d16678E6', // ETHEREUM relay (SAOS anchor relay)
+  '0x56c9D54ea866e25916757903E51392BBEdeE2ECe', // OPTIMISM relay (SAOS anchor relay)
+  '0x279818b4c9Eddc02fB3DD036a5E77D8F7Dc1CF87', // BASE relay (SAOS anchor relay)
+]);
+const RE_STMKEY = /\bSTM[7-9A-HJ-NP-Za-km-z]{50,}\b/g;
 const RE_SOL = /\b[1-9A-HJ-NP-Za-km-z]{43,44}\b/g;
 const DEPOSIT_KEY = /deposit|receive|inbox|payee|payto/i; // deposit/receive addresses are public-by-design (tier A)
 const PARAM_KEY = /(commitPct|spread|stepBps|EdgeBps|edgePct|pegOut|threshold|feePct|requote|minEdge|expiryDays)/i;
@@ -95,7 +105,7 @@ function maskStr(key, s) {
   if (SECRET_KEY.test(key || '')) return '[redacted]';
   if (DEPOSIT_KEY.test(key || '')) return s; // tier A: public receive addresses stay
   let out = s.replace(RE_STMKEY, (m) => 'STM\u2026[redacted]');
-  out = out.replace(RE_EVM, (m) => m.slice(0, 6) + '\u2026[redacted]');
+  out = out.replace(RE_EVM, (m) => (RELAY_ALLOWLIST.has(m) ? m : m.slice(0, 6) + '\u2026[redacted]'));
   out = out.replace(RE_TRON, (m) => m.slice(0, 4) + '\u2026[redacted]');
   if (/address|wallet|pubkey/i.test(key || '')) out = out.replace(RE_SOL, (m) => m.slice(0, 4) + '\u2026[redacted]');
   return out;
@@ -104,7 +114,12 @@ function maskStr(key, s) {
 function walk(node, key, inRoster) {
   if (Array.isArray(node)) {
     if (ROSTER_KEY.test(key || '')) inRoster = true;
-    return node.map((x) => walk(x, key, inRoster));
+    // 3-c fix (measured): string ELEMENTS of arrays used to fall through this
+    // branch unscrubbed — status.json source.accounts survived the estate-scrub
+    // healer because of exactly this hole (run 38323191550). Array strings now
+    // get the estate-name scrub like object fields (names-only law — no
+    // address/id truncation here: array contexts hold public tier-A lists).
+    return node.map((x) => (typeof x === 'string' ? estateScrubStr(x) : walk(x, key, inRoster)));
   }
   if (node && typeof node === 'object') {
     const o = {};
@@ -112,6 +127,7 @@ function walk(node, key, inRoster) {
       if (v !== null && typeof v === 'object') { o[k] = walk(v, k, inRoster || ROSTER_KEY.test(k)); continue; }
       if (typeof v === 'string') {
         const scrubbed = estateScrubStr(v);
+        if (NAMES_ONLY) { o[k] = scrubbed; continue; } // 3-c: identity law only
         if (IS_REF.test(scrubbed)) { o[k] = scrubbed; continue; }
         if (ID_KEY.test(k) && /^[a-z0-9][a-z0-9.-]{2,24}$/i.test(v)) o[k] = v.slice(0, 4) + '\u2026[redacted]';
         else o[k] = maskStr(k, v);
@@ -123,8 +139,16 @@ function walk(node, key, inRoster) {
   return node;
 }
 
+// 3-c names-only mode: `node agents/redact-telemetry.mjs --names-only <file...>`
+// applies ONLY the estate-name scrub (identity law) with no other masking and no
+// numeric banding — for sig-locked/chain-evidence books (e.g. ledger.json) where
+// addresses, digests and parameters are public tier-A evidence that must survive
+// byte-faithfully, and only account names may never land.
+const NAMES_ONLY = process.argv.slice(2).includes('--names-only');
+const FILES = process.argv.slice(2).filter((f) => f !== '--names-only');
+
 let failed = 0;
-for (const f of process.argv.slice(2)) {
+for (const f of FILES) {
   try {
     const raw = fs.readFileSync(f, 'utf8');
     if (f.endsWith('.jsonl')) {
@@ -150,6 +174,21 @@ for (const f of process.argv.slice(2)) {
       const out = docs.map((d) => JSON.stringify(walk(d, '', false))).join('\n') + (docs.length ? '\n' : '');
       fs.writeFileSync(f, out);
       console.log(`[redact] ${f} ok (jsonl, ${docs.length} docs)`);
+      continue;
+    }
+    // T-78 (measured: estate-scrub reds, run 38482457461): names-only mode may be
+    // pointed at RAW non-JSON surfaces (saos-live.js, wallet.html) by the workflow.
+    // Those get the TEXT-LEVEL identity scrub only — estate names → refs and host
+    // paths, byte-faithful otherwise (chain evidence law 3-c). Structured .json
+    // stays fail-closed: a broken JSON book still fails the run loudly.
+    if (NAMES_ONLY && !/\.(json|jsonl)$/i.test(f)) {
+      const scrubbed = estateScrubStr(raw);
+      if (scrubbed !== raw) {
+        fs.writeFileSync(f, scrubbed);
+        console.log(`[redact] ${f} ok (names-only text-mode)`);
+      } else {
+        console.log(`[redact] ${f} ok (names-only text-mode, no hits)`);
+      }
       continue;
     }
     const obj = JSON.parse(raw);
