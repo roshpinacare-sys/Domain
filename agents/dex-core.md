@@ -1,14 +1,14 @@
 # dex-core — EXCHANGE CORE (R40, CR-0070)
 
-At: 2026-10-04T21:51:45.436Z · Verdict: **EXCHANGE-CORE-LIVE** · mode: KEYLESS-ATOMIC-INTERNAL · seq: 25 · attestation: `3c7a93f1abfcabc4`
+At: 2026-10-13T14:27:58.072Z · Verdict: **EXCHANGE-CORE-LIVE** · mode: KEYLESS-ATOMIC-INTERNAL · seq: 10 · attestation: `1532ac690da1648c`
 
-Feed: FEED-LIVE (router book @ 2026-10-04T21:46:07.808Z) · conservation: **OK** · custody probe: MEASURED @https://api.steemit.com
+Feed: FEED-LIVE (router book @ 2026-10-13T13:51:11.948Z) · conservation: **OK** · custody probe: MEASURED @https://api.steemit.com
 
 | Pool | Pair | Kind | Fee | Reserves (a/b µ) | Mid | Verdict |
 |---|---|---|---|---|---|---|
-| P1 | WSTEEM/STEEM | PEG | 2bps | 374424 / 403177 | 1.07679262 | LIVE-INTERNAL |
-| P2 | WSBD/SBD | PEG | 2bps | 27450 / 27450 | 1 | LIVE-INTERNAL |
-| P3 | STEEM/SBD | VOLATILE | 25bps | 1545698 / 164980 | 0.10673495 | LIVE-INTERNAL |
+| P1 | WSTEEM/STEEM | PEG | 2bps | 68475 / 68475 | 1 | LIVE-INTERNAL |
+| P2 | WSBD/SBD | PEG | 2bps | 1115700 / 1115700 | 1 | LIVE-INTERNAL |
+| P3 | STEEM/SBD | VOLATILE | 25bps | 273900 / 28881 | 0.10544359 | LIVE-INTERNAL |
 | P4 | SAOS/WSTEEM | VOLATILE | 25bps | 0 / 0 | — | PLANNED-NO-CLAIM |
 | P5 | WHIVE/HIVE | PEG | 2bps | 0 / 0 | — | AWAITING-CUSTODY |
 | P6 | WHBD/HBD | PEG | 2bps | 0 / 0 | — | AWAITING-CUSTODY |
@@ -20,12 +20,12 @@ Routes: 12 LIVE-INTERNAL (atomic settlement in our own ledger) · 70 planned/thi
 
 | Route | Path | Quote | Verdict |
 |---|---|---|---|
-| C-STEEM-SBD | P3 | 428 SBD for 4031 µ STEEM (~1% first-hop depth) | LIVE-INTERNAL |
-| C-STEEM-WSTEEM | P1 | 4000 WSTEEM for 4031 µ STEEM (~1% first-hop depth) | LIVE-INTERNAL |
-| C-STEEM-WSBD | P3→P2 | 427 WSBD for 4031 µ STEEM (~1% first-hop depth) | LIVE-INTERNAL |
-| C-SBD-STEEM | P3 | 2556 STEEM for 274 µ SBD (~1% first-hop depth) | LIVE-INTERNAL |
-| C-SBD-WSTEEM | P3→P1 | 2537 WSTEEM for 274 µ SBD (~1% first-hop depth) | LIVE-INTERNAL |
-| C-SBD-WSBD | P2 | 273 WSBD for 274 µ SBD (~1% first-hop depth) | LIVE-INTERNAL |
+| C-STEEM-SBD | P3 | 71 SBD for 684 µ STEEM (~1% first-hop depth) | LIVE-INTERNAL |
+| C-STEEM-WSTEEM | P1 | 682 WSTEEM for 684 µ STEEM (~1% first-hop depth) | LIVE-INTERNAL |
+| C-STEEM-WSBD | P3→P2 | 70 WSBD for 684 µ STEEM (~1% first-hop depth) | LIVE-INTERNAL |
+| C-SBD-STEEM | P3 | 2697 STEEM for 288 µ SBD (~1% first-hop depth) | LIVE-INTERNAL |
+| C-SBD-WSTEEM | P3→P1 | 2686 WSTEEM for 288 µ SBD (~1% first-hop depth) | LIVE-INTERNAL |
+| C-SBD-WSBD | P2 | 287 WSBD for 288 µ SBD (~1% first-hop depth) | LIVE-INTERNAL |
 | C-HIVE-STEEM | — | — | PLANNED-NO-CLAIM · unlock: the cross-network bridge pair arms when HIVE key material ve |
 | C-HIVE-SBD | — | — | PLANNED-NO-CLAIM · unlock: the cross-network bridge pair arms when HIVE key material ve |
 | C-HIVE-HBD | — | — | PLANNED-NO-CLAIM · unlock: the cross-network bridge pair arms when HIVE key material ve |
@@ -56,12 +56,12 @@ Routes: 12 LIVE-INTERNAL (atomic settlement in our own ledger) · 70 planned/thi
 | C-BLURT-WHBD | — | — | THIN-DEPTH-NO-QUOTE |
 | C-BLURT-WBLURT | — | — | THIN-DEPTH-NO-QUOTE |
 | C-BLURT-SAOS | — | — | PLANNED-NO-CLAIM · unlock: no measured SAOS claim exists in the estate books (dex/credi |
-| C-WSTEEM-STEEM | P1 | 3766 STEEM for 3744 µ WSTEEM (~1% first-hop depth) | LIVE-INTERNAL |
-| C-WSTEEM-SBD | P1→P3 | 399 SBD for 3744 µ WSTEEM (~1% first-hop depth) | LIVE-INTERNAL |
-| C-WSTEEM-WSBD | P1→P3→P2 | 398 WSBD for 3744 µ WSTEEM (~1% first-hop depth) | LIVE-INTERNAL |
-| C-WSBD-STEEM | P2→P3 | 2547 STEEM for 274 µ WSBD (~1% first-hop depth) | LIVE-INTERNAL |
-| C-WSBD-SBD | P2 | 273 SBD for 274 µ WSBD (~1% first-hop depth) | LIVE-INTERNAL |
-| C-WSBD-WSTEEM | P2→P3→P1 | 2528 WSTEEM for 274 µ WSBD (~1% first-hop depth) | LIVE-INTERNAL |
+| C-WSTEEM-STEEM | P1 | 682 STEEM for 684 µ WSTEEM (~1% first-hop depth) | LIVE-INTERNAL |
+| C-WSTEEM-SBD | P1→P3 | 71 SBD for 684 µ WSTEEM (~1% first-hop depth) | LIVE-INTERNAL |
+| C-WSTEEM-WSBD | P1→P3→P2 | 70 WSBD for 684 µ WSTEEM (~1% first-hop depth) | LIVE-INTERNAL |
+| C-WSBD-STEEM | P2→P3 | 76123 STEEM for 11157 µ WSBD (~1% first-hop depth) | LIVE-INTERNAL |
+| C-WSBD-SBD | P2 | 11144 SBD for 11157 µ WSBD (~1% first-hop depth) | LIVE-INTERNAL |
+| C-WSBD-WSTEEM | P2→P3→P1 | 59141 WSTEEM for 11157 µ WSBD (~1% first-hop depth) | LIVE-INTERNAL |
 | C-WHIVE-STEEM | — | — | PLANNED-NO-CLAIM · unlock: the cross-network bridge pair arms when HIVE key material ve |
 | C-WHIVE-SBD | — | — | THIN-DEPTH-NO-QUOTE |
 | C-WHIVE-HIVE | — | — | PLANNED-NO-CLAIM · unlock: the cross-network bridge pair arms when HIVE key material ve |
@@ -103,22 +103,22 @@ Routes: 12 LIVE-INTERNAL (atomic settlement in our own ledger) · 70 planned/thi
 | C-SAOS-WHBD | — | — | PLANNED-NO-CLAIM · unlock: no measured SAOS claim exists in the estate books (dex/credi |
 | C-SAOS-WBLURT | — | — | PLANNED-NO-CLAIM · unlock: no measured SAOS claim exists in the estate books (dex/credi |
 
-- A1 P3 STEEM/SBD pool mid vs CEX-implied fair: CANDIDATE-FOK · net 466.61bps vs threshold 120bps
-- A-P1 WSTEEM/STEEM peg guard: PEG-DRIFT-HALT · drift 7.67%
+- A1 P3 STEEM/SBD pool mid vs CEX-implied fair: FEED-STALE
+- A-P1 WSTEEM/STEEM peg guard: PEG-OK · drift 0%
 - A-P2 WSBD/SBD peg guard: PEG-OK · drift 0%
-- A2 P8 HIVE/STEEM cross-network bridge: NO-CUSTODY
+- A2 P8 HIVE/STEEM cross-network bridge: FEED-STALE
 
-- Counter-grid P1 WSTEEM/STEEM: anchor 1.07679262 (POOL-MID (our side of the book)) · skew 50bps · spacing 0.42% · rungs 6 · GATED-ARMED-BROADCAST-READY · size 4992µ/rung (cap 200bps) · gate OPEN
-- Counter-grid P2 WSBD/SBD: anchor 1 (POOL-MID (our side of the book)) · skew 50bps · spacing 0.42% · rungs 6 · GRID-TOO-THIN · size 0µ/rung (cap 200bps) · gate OPEN
-- Counter-grid P3 STEEM/SBD: anchor 0.10673495 (POOL-MID (our side of the book)) · skew 50bps · spacing 0.42% · rungs 6 · GATED-ARMED-BROADCAST-READY · size 20608µ/rung (cap 200bps) · gate OPEN
+- Counter-grid P1 WSTEEM/STEEM: anchor 1 (POOL-MID (our side of the book)) · skew 50bps · spacing 0.42% · rungs 6 · GRID-TOO-THIN · size 0µ/rung (cap 200bps) · gate OPEN
+- Counter-grid P2 WSBD/SBD: anchor 1 (POOL-MID (our side of the book)) · skew 50bps · spacing 0.42% · rungs 6 · GATED-ARMED-BROADCAST-READY · size 14876µ/rung (cap 200bps) · gate OPEN
+- Counter-grid P3 STEEM/SBD: anchor 0.10544359 (POOL-MID (our side of the book)) · skew 50bps · spacing 0.42% · rungs 6 · GATED-ARMED-BROADCAST-READY · size 3651µ/rung (cap 200bps) · gate OPEN
 
 Issuer: SAOS-DEX-ISSUER/1 — identity `d7ff39690365bfa8` · mint law 1:1 against MEASURED-KEYED custody only
 Peg-out corridors: STEEM=KEYED-DESK, SBD=KEYED-DESK, HIVE=PLAN-KEYED, HBD=PLAN-KEYED, BLURT=PLAN-KEYED, SAOS=INTERNAL
-Observed (adjacent networks — seen, never custody): HIVE 34000µ (OBSERVED-UNCONTROLLED) · HBD 3000µ (OBSERVED-UNCONTROLLED) · BLURT 66456000µ (OBSERVED-POST-KEYED)
+Observed (adjacent networks — seen, never custody): HIVE 34000µ (OBSERVED-UNCONTROLLED) · HBD 3000µ (OBSERVED-UNCONTROLLED) · BLURT 83000µ (OBSERVED-POST-KEYED)
 Custody classes: STEEM=MEASURED-KEYED · SBD=MEASURED-KEYED · HIVE=OBSERVED-UNCONTROLLED · HBD=OBSERVED-UNCONTROLLED · BLURT=OBSERVED-POST-KEYED · SAOS=PLANNED-NO-CLAIM
-Vault: minted WSTEEM 768192µ · WSBD 54900µ · WHIVE 0µ · WHBD 0µ · WBLURT 0µ · redeem is ALWAYS honored 1:1 (burn before payout) — the real-value law
+Vault: minted WSTEEM 136950µ · WSBD 2231400µ · WHIVE 0µ · WHBD 0µ · WBLURT 0µ · redeem is ALWAYS honored 1:1 (burn before payout) — the real-value law
 
-Treasury P&L: fees 3µ (LP revenue) · rebalance edges 0µ (marked to fair at execution — the LVR defense on our own pool)
+Treasury P&L: fees 0µ (LP revenue) · rebalance edges 0µ (marked to fair at execution — the LVR defense on our own pool)
 
-Attestation sha256(seq, custody, reserves, minted, claims) = `3c7a93f1abfcabc4` — recomputable by any node; the cron book commit is the publication.
+Attestation sha256(seq, custody, reserves, minted, claims) = `1532ac690da1648c` — recomputable by any node; the cron book commit is the publication.
 
