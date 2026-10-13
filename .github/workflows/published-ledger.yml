@@ -31,7 +31,7 @@ jobs:
           // refs law (exposure-gate, 2026-10-13): the owner handle never appears in this
           // public workflow or its emitted book. The chain-query author resolves at runtime
           // from FLEET_ROSTER_MAP (ref→name); every emitted permlink passes the refs scrub.
-          const { R, refOf, scrub, resolved: refsResolved } = require('./agents/refs.cjs');
+          const { R, refOf, scrub, resolved: refsResolved } = require((process.env.GITHUB_WORKSPACE || process.cwd()) + '/agents/refs.cjs');
           const REF_IDS = Array.from({ length: 20 }, (_, i) => 'acct-' + String(i).padStart(2, '0'));
           const refScrub = (t) => { let out = scrub(String(t)); if (refsResolved()) { for (const ref of REF_IDS) { const n = R(ref); if (n) out = out.replace(new RegExp('\\b' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'g'), ref); } } return out; };
           const OWNER_REF = 'acct-00';
