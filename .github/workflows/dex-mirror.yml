@@ -62,7 +62,7 @@ jobs:
         if: always()
         run: |
           git config user.name "dex-mirror"
-          git config user.email "dex-mirror@users.noreply.github.com"
+          git config user.email "dex-mirror@agents.roshpinacare-sys"
           node agents/redact-telemetry.mjs dex/grid.json dex/world.json dex/state.json dex/credits.json dex/portfolio.json dex/onramp.json dex/showcase.json dex/relay.json
           git add dex/
           if git diff --cached --quiet; then

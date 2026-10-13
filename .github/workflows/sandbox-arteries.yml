@@ -72,7 +72,7 @@ jobs:
           ZIP_PAT: ${{ secrets.ZIP_PAT }}
         run: |
           git config user.name  "domain-arteries"
-          git config user.email "domain-arteries@users.noreply.github.com"
+          git config user.email "domain-arteries@agents.roshpinacare-sys"
           git add receipts/
           if git diff --cached --quiet; then echo "no receipt delta"; exit 0; fi
           git commit -m "[arteries] domain-fed heartbeat: $(date -u +%FT%TZ)"

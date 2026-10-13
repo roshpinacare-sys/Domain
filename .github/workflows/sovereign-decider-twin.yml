@@ -48,7 +48,7 @@ jobs:
         run: |
           set -euo pipefail
           git config user.name "decider-twin[bot]"
-          git config user.email "decider-twin[bot]@users.noreply.github.com"
+          git config user.email "decider-twin[bot]@agents.roshpinacare-sys"
           git add ops/sovereign/DECIDER/state.json ops/sovereign/DECIDER/ledger.jsonl ops/sovereign/DIRECTIVES/board.json 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "no state change — honest skip"

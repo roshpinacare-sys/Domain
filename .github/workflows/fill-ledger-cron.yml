@@ -68,7 +68,7 @@ jobs:
         run: |
           set -u
           git config user.name "fill-ledger-cron[bot]"
-          git config user.email "fill-ledger-cron[bot]@users.noreply.github.com"
+          git config user.email "fill-ledger-cron[bot]@agents.roshpinacare-sys"
           git add -A 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "no ledger change — clean exit"
@@ -90,7 +90,7 @@ jobs:
         run: |
           set -u
           git config user.name "coord-bus-cron[bot]"
-          git config user.email "coord-bus-cron[bot]@users.noreply.github.com"
+          git config user.email "coord-bus-cron[bot]@agents.roshpinacare-sys"
           git add agents/coord-bus.json 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "bus unchanged — clean exit"

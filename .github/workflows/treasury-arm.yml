@@ -56,7 +56,7 @@ jobs:
         if: always()
         run: |
           git config user.name "treasury-arm[bot]"
-          git config user.email "treasury-arm[bot]@users.noreply.github.com"
+          git config user.email "treasury-arm[bot]@agents.roshpinacare-sys"
           git add agents/treasury-state.json agents/treasury-arm-book.md
           if git diff --cached --quiet; then echo "no treasury changes"; else
             for i in 1 2 3; do

@@ -36,7 +36,7 @@ jobs:
       - name: commit truth book
         run: |
           git config user.name "grid-doctor[bot]"
-          git config user.email "grid-doctor[bot]@users.noreply.github.com"
+          git config user.email "grid-doctor[bot]@agents.roshpinacare-sys"
           git add agents/grid-truth.json agents/grid-truth-history.jsonl agents/grid-guard-state.json agents/grid-guard.jsonl
           if git diff --cached --quiet; then echo "no truth changes"; else
             for i in 1 2 3; do

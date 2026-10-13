@@ -40,7 +40,7 @@ jobs:
         if: always()
         run: |
           git config user.name "public-pulse"
-          git config user.email "public-pulse@users.noreply.github.com"
+          git config user.email "public-pulse@agents.roshpinacare-sys"
           node agents/redact-telemetry.mjs about/team.json public/pulse.json agents/receipts/public-pulse-receipt.json
           # T-55 (tolerant-add law): about/team.json was retired from the tree — a git add
           # on an absent path exits 128 and killed this desk every run (measured 20:42/21:51/22:04).

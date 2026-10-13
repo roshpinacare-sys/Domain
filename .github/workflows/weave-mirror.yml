@@ -35,7 +35,7 @@ jobs:
         if: always()
         run: |
           git config user.name "weave-mirror"
-          git config user.email "weave-mirror@users.noreply.github.com"
+          git config user.email "weave-mirror@agents.roshpinacare-sys"
           git add mirror.json saos-live.json status.json
           if git diff --cached --quiet; then
             echo "mirror unchanged - the live books are already ours"

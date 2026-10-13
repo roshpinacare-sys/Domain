@@ -60,7 +60,7 @@ jobs:
         if: always()
         run: |
           git config user.name "saos-ci-bot"
-          git config user.email "saos-ci-bot@users.noreply.github.com"
+          git config user.email "saos-ci-bot@agents.roshpinacare-sys"
           git fetch origin saos-cockpit
           BEHIND=$(git rev-list --count HEAD..origin/saos-cockpit)
           if [ "$BEHIND" != "0" ]; then

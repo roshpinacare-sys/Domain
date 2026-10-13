@@ -39,7 +39,7 @@ jobs:
       - name: commit book
         run: |
           git config user.name "soldiers-curate[bot]"
-          git config user.email "soldiers-curate[bot]@users.noreply.github.com"
+          git config user.email "soldiers-curate[bot]@agents.roshpinacare-sys"
           git add agents/curation-book.json agents/curation-book.md 2>/dev/null || true
           if git diff --cached --quiet; then echo "no curation changes"; else
             for i in 1 2 3; do

@@ -39,7 +39,7 @@ jobs:
             REGIME="$(node -e 'try{const d=require("./moment/moment.json");process.stdout.write(d.regime?d.regime.label:"?")}catch{process.stdout.write("?")}')"
             EDGE="$(node -e 'try{const d=require("./moment/moment.json");process.stdout.write(d.liveBook&&d.liveBook.bidSurplusBps!=null?String(d.liveBook.bidSurplusBps)+"bps":"n/a")}catch{process.stdout.write("n/a")}')"
             git config user.name "moment-watch"
-            git config user.email "moment-watch@users.noreply.github.com"
+            git config user.email "moment-watch@agents.roshpinacare-sys"
             for attempt in 1 2 3; do
               git add moment/moment.json moment/history.json
               git commit -m "moment-watch: ${REGIME} · steem-edge ${EDGE} · $(date -u +%Y-%m-%dT%H:%M:%SZ) [skip ci]"

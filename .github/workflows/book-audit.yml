@@ -21,7 +21,7 @@ jobs:
       - name: commit audit book
         run: |
           git config user.name "book-auditor[bot]"
-          git config user.email "book-auditor[bot]@users.noreply.github.com"
+          git config user.email "book-auditor[bot]@agents.roshpinacare-sys"
           git add agents/book-audit.md agents/book-audit-state.json
           if git diff --cached --quiet; then echo "no audit changes"; else
             for i in 1 2 3; do

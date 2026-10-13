@@ -33,7 +33,7 @@ jobs:
       - name: Commit healed books
         run: |
           git config user.name "estate-scrub"
-          git config user.email "estate-scrub@users.noreply.github.com"
+          git config user.email "estate-scrub@agents.roshpinacare-sys"
           git add -A
           if ! git diff --cached --quiet; then
             git commit -m "estate-scrub: refs re-applied to regenerated books · $(date -u +%Y-%m-%dT%H:%M:%SZ)"

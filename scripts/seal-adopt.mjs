@@ -213,7 +213,7 @@ async function main() {
   // 6. commit + push with retries
   execSync("git add sovereign/weave-seal.enc sovereign/weave-seal.meta.json", { cwd: ROOT, stdio: "ignore" });
   execSync('git config user.name "seal-adopt"', { cwd: ROOT, stdio: "ignore" });
-  execSync('git config user.email "seal-adopt@users.noreply.github.com"', { cwd: ROOT, stdio: "ignore" });
+  execSync('git config user.email "seal-adopt@agents.roshpinacare-sys"', { cwd: ROOT, stdio: "ignore" });
   let pushed = false, lastErr = "";
   for (let attempt = 1; attempt <= 3 && !pushed; attempt++) {
     try {

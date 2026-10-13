@@ -64,7 +64,7 @@ jobs:
         run: |
           set -u
           git config user.name "market-grid-cron[bot]"
-          git config user.email "market-grid-cron[bot]@users.noreply.github.com"
+          git config user.email "market-grid-cron[bot]@agents.roshpinacare-sys"
           node agents/redact-telemetry.mjs agents/market-grid.json || true
           git add agents/market-grid.json agents/market-grid.md agents/market-grid-paper.jsonl agents/market-grid-history.jsonl 2>/dev/null || true
           if git diff --cached --quiet; then
