@@ -40,8 +40,8 @@ jobs:
       - name: commit state + book
         if: always()
         run: |
-          git config user.name "blurt-connect[bot]"
-          git config user.email "blurt-connect[bot]@agents.roshpinacare-sys"
+          git config user.name "roshpinacare-sys"
+          git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
           git add agents/blurt-connect-state.json agents/blurt-connect-book.md
           if git diff --cached --quiet; then echo "no connect changes"; else
             for i in 1 2 3; do

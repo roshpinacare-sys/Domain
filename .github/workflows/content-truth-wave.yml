@@ -74,8 +74,8 @@ jobs:
 
       - name: commit receipts (secretless)
         run: |
-          git config user.name "saos-content-truth"
-          git config user.email "content-truth@saos.local"
+          git config user.name "roshpinacare-sys"
+          git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
           mkdir -p agents/receipts
           for p in agents/receipts/truth-sweep-receipt.json agents/receipts/truth-fix-receipt.json agents/receipts/public-wave-receipt.json agents/receipts/dedup-corrections-receipt.json agents/social-memory-cache.json; do [ -e "$p" ] && git add "$p" || true; done
           if git diff --cached --quiet; then

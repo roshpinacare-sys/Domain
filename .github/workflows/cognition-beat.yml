@@ -20,8 +20,8 @@ jobs:
         run: node agents/cognition-beat.cjs
       - name: commit beat books
         run: |
-          git config user.name "cognition-beat[bot]"
-          git config user.email "cognition-beat[bot]@agents.roshpinacare-sys"
+          git config user.name "roshpinacare-sys"
+          git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
           git add agents/cognition/organism.json agents/cognition/beat-book.md
           if git diff --cached --quiet; then echo "no beat changes"; else
             for i in 1 2 3; do

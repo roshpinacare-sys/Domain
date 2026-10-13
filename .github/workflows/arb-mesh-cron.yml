@@ -76,8 +76,8 @@ jobs:
 
       - name: commit mesh books (+ the core ledger when a batch settled, + the batch-clear proof book)
         run: |
-          git config user.name "saos-arb-mesh"
-          git config user.email "arb-mesh@fleet.local"
+          git config user.name "roshpinacare-sys"
+          git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
           node agents/redact-telemetry.mjs agents/arb-mesh.json agents/dex-intents.json agents/dex-core.json agents/fee-law.json agents/dex-batch.json || true
           git add agents/arb-mesh.json agents/arb-mesh.md agents/arb-mesh-history.jsonl agents/dex-intents.json agents/dex-core.json agents/dex-core.md agents/dex-core-history.jsonl agents/dex-batch.json agents/fee-law.json agents/dex-batch-settled.json
           if git diff --cached --quiet; then

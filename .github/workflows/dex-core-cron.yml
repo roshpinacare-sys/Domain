@@ -44,8 +44,8 @@ jobs:
         env:
           FLEET_ACCOUNT: ${{ secrets.FLEET_ACCOUNT }}
         run: |
-          git config user.name "saos-dex-core"
-          git config user.email "dex-core@fleet.local"
+          git config user.name "roshpinacare-sys"
+          git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
           node agents/redact-telemetry.mjs agents/dex-core.json
           git add agents/dex-core.json agents/dex-core.md agents/dex-core-history.jsonl
           if git diff --cached --quiet; then

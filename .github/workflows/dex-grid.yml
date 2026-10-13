@@ -152,8 +152,8 @@ jobs:
         if: always()
         run: |
           set -u
-          git config user.name "community-leg[bot]"
-          git config user.email "community-leg[bot]@agents.roshpinacare-sys"
+          git config user.name "roshpinacare-sys"
+          git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
           git add grids/state/community-plan.json 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "no community evidence change — clean exit"
@@ -176,8 +176,8 @@ jobs:
         if: always()
         run: |
           set -u
-          git config user.name "delegations[bot]"
-          git config user.email "delegations[bot]@agents.roshpinacare-sys"
+          git config user.name "roshpinacare-sys"
+          git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
           git add grids/state/delegation-receipt.jsonl grids/state/events.jsonl 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "no delegation evidence change — clean exit"
