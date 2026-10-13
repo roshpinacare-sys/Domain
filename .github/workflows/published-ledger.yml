@@ -1,0 +1,92 @@
+name: published-ledger
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: '13,43 * * * *'
+permissions:
+  contents: write
+concurrency:
+  group: published-ledger
+  cancel-in-progress: false
+
+jobs:
+  ledger:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with: { fetch-depth: 1 }
+
+      - name: setup-node
+        uses: actions/setup-node@v4
+        with: { node-version: 20 }
+
+      - name: measure the live publication ledger (keyless — public chain RPC only)
+        run: |
+          cat > /tmp/ledger.mjs << 'ZEOF'
+          const fs = require('fs');
+          const CHAINS = [
+            { chain: 'STEEM', url: 'https://api.steemit.com' },
+            { chain: 'HIVE',  url: 'https://api.hive.blog' },
+          ];
+          async function rpc(url, method, params) {
+            const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ jsonrpc: '2.0', method, params, id: 1 }) });
+            if (!r.ok) throw new Error(`${url} http ${r.status}`);
+            const d = await r.json();
+            if (d.error) throw new Error(d.error.message || 'rpc error');
+            return d.result;
+          }
+          (async () => {
+            const posts = [];
+            const sources = [];
+            for (const c of CHAINS) {
+              try {
+                const rows = await rpc(c.url, 'condenser_api.get_discussions_by_author_before_date',
+                  [{ author: 'headcorner', limit: 10 }]);
+                for (const p of rows) {
+                  posts.push({
+                    title: String(p.title || ''),
+                    permlink: String(p.permlink || ''),
+                    chain: c.chain,
+                    at: new Date(p.created + 'Z').toISOString(),
+                    pendingPayout: String(p.pending_payout_value || '0.000').replace(/\s*SBD\s*$/i, '').trim(),
+                  });
+                }
+                sources.push(`${c.chain}:${rows.length}`);
+              } catch (e) {
+                sources.push(`${c.chain}:ERR(${String(e.message).slice(0, 40)})`);
+              }
+            }
+            posts.sort((a, b) => b.at.localeCompare(a.at));
+            const book = {
+              schema: 'roshpinacare.published/1',
+              note: 'titles + payout state only — no account linkage on the public face (disclosure policy); measured live from the public chain RPC, keyless',
+              generatedAt: new Date().toISOString(),
+              sources,
+              posts: posts.slice(0, 20),
+            };
+            fs.writeFileSync('content/published.json', JSON.stringify(book, null, 1) + '\n');
+            console.log('published-ledger:', sources.join(' '), 'posts:', book.posts.length);
+            if (!book.posts.length) { console.log('honest empty book — chains reachable but zero posts'); }
+          })().catch(e => { console.error('LEDGER-FAIL:', e.message); process.exit(1); });
+          ZEOF
+          node /tmp/ledger.mjs
+
+      - name: commit + push (rebase-safe, one-voice)
+        run: |
+          git config user.name "published-ledger"
+          git config user.email "published-ledger@agents.roshpinacare-sys"
+          git add content/published.json
+          if git diff --cached --quiet; then
+            echo "no ledger changes — honest skip"
+          else
+            git commit -m "published-ledger: live chain publications $(date -u +%FT%TZ) [skip ci]"
+            for i in 1 2 3; do
+              git pull --rebase -q origin main || true
+              if git push origin main; then echo "ledger published (attempt $i)"; exit 0; fi
+              sleep $((i * 5))
+            done
+            echo "push failed after retries — honest failure"; exit 1
+          fi
