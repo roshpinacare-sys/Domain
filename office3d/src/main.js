@@ -13,7 +13,7 @@ import { UI } from './ui.js';
 import { buildAtmosphere } from './atmosphere.js';
 import { CREW, ROOM_W, ROOM_D, WALL_H } from './canon.js';
 
-// ───────── רנדרר ─────────
+// --------- רנדרר ---------
 const stage = document.getElementById('stage');
 const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
 renderer.shadowMap.enabled = true;
@@ -32,7 +32,7 @@ scene.fog = new THREE.Fog('#e6dfcf', 34, 78);
 const camera = new THREE.PerspectiveCamera(50, innerWidth / innerHeight, 0.1, 160);
 camera.position.set(7.4, 4.7, 5.1);
 
-// ───────── תאורת יום ─────────
+// --------- תאורת יום ---------
 const hemi = new THREE.HemisphereLight('#cfe4f2', '#b09a78', 1.02);
 scene.add(hemi);
 const amb = new THREE.AmbientLight('#fff8ec', 0.28);
@@ -56,7 +56,7 @@ const fill2 = new THREE.PointLight('#ffe6bb', 8, 16, 1.7);
 fill2.position.set(6, 3.1, 0.5);
 scene.add(fill1, fill2);
 
-// ───────── עולם + צוות ─────────
+// --------- עולם + צוות ---------
 const world = buildWorld(scene);
 
 // שכבת-אטמוספירה: עמודי-אור + אבק-קרניים
@@ -90,7 +90,7 @@ const crew = new Crew(scene, {
 
 const director = new Director(camera, renderer.domElement);
 
-// ───────── מיקוד-מגע: הקשה על סוכן בסצנה = מיקוד + כרטיס. גרירה = מצלמה. ─────────
+// --------- מיקוד-מגע: הקשה על סוכן בסצנה = מיקוד + כרטיס. גרירה = מצלמה. ---------
 const raycaster = new THREE.Raycaster();
 const tapXY = new THREE.Vector2();
 let downAt = null;
@@ -126,7 +126,7 @@ renderer.domElement.addEventListener('pointerup', (e) => {
   } catch { /* כנה — הקשה לא תפיל את המשרד */ }
 });
 
-// ───────── גשר-נתונים + שידור-חי ─────────
+// --------- גשר-נתונים + שידור-חי ---------
 const data = new DataBridge();
 let lastBubbleAt = {};
 let broadcastMode = null; // 'broadcast' כשיש שידור · null = הגשר המקומי קובע
@@ -201,7 +201,7 @@ data.on((snap) => {
     const f0 = snap.bubbles[0];
     if (f0) ui.pushTicker(f0.text, `${(f0.kind || '').replace('bubble:', '')} · ${timeAgo(f0.at)}`);
     else if (snap.wire[0]) ui.pushTicker(`קומיט חדש בצי: ${snap.wire[0].msg?.slice(0, 46)}`, snap.wire[0].sha);
-    else if (snap.mode === 'sim' && !broadcastMode) ui.pushTicker('אין חיבור חי — המשרד רץ במצב הדגמה מסומן', 'חוק-האמת: לא נראה ירוק-מזויף');
+    else if (snap.mode === 'sim' && !broadcastMode) ui.pushTicker('אין חיבור חי — המשרד רץ במצב הדגמה מסומן', 'אין תצוגת-מצב מזויפת');
   } catch (err) {
     console.warn('[office] data-callback failure (honest):', err?.message || err);
   }
@@ -244,14 +244,14 @@ function timeAgo(ts) {
   return `${Math.round(min / 60)} שע'`;
 }
 
-// ───────── מסך-טעינה ─────────
+// --------- מסך-טעינה ---------
 const bar = document.querySelector('#bar > i');
 const loadState = document.getElementById('loadState');
 let loadP = 8;
 function setLoad(p, txt) { loadP = Math.max(loadP, p); bar.style.width = loadP + '%'; if (txt) loadState.textContent = txt; }
-setLoad(30, 'בונים את האולם…');
+setLoad(30, 'טוען את הסצנה…');
 
-// ───────── לולאה ─────────
+// --------- לולאה ---------
 const clock = new THREE.Clock();
 let elapsed = 0;
 let firstFrames = 0;
@@ -289,7 +289,7 @@ function animate() {
 
   if (firstFrames < 3) {
     firstFrames++;
-    setLoad(firstFrames === 1 ? 62 : firstFrames === 2 ? 84 : 100, 'מעירים את הצוות…');
+    setLoad(firstFrames === 1 ? 62 : firstFrames === 2 ? 84 : 100, 'מחבר את הצוות…');
     if (firstFrames === 3) {
       setTimeout(() => {
         document.getElementById('loader').classList.add('hide');
@@ -301,7 +301,7 @@ function animate() {
 
 animate();
 
-// ───────── שינוי-גודל ─────────
+// --------- שינוי-גודל ---------
 addEventListener('resize', () => {
   camera.aspect = innerWidth / innerHeight;
   camera.updateProjectionMatrix();
