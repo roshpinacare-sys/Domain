@@ -10,6 +10,9 @@ on:
     # פעילות-אוטונומית-חיה). הריפו-הפרטי-המקורי הוא dispatch-בלבד מאז-R71 —
     # התאום-הציבורי הזה הוא המכונה; השער-בשלבי-guard מונע-נגיסה-כפולה.
     - cron: '41 * * * *'
+    # [T25] גיבוי-קדנס — GitHub מדלג-זימונים-בעומס (נמדד: :41 של 13:41 לא ירה כלל);
+    # שני-חלונות-שעתיים מקטינים-דילוג. ה-guard מונע-נגיסה-כפולה.
+    - cron: '12 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -102,7 +105,7 @@ jobs:
         run: bun run cloud-beat.ts
         env:
           DATABASE_URL: 'file:${{ github.workspace }}/db/dex.db'
-          CLOUD_TICKS: '1440'
+          CLOUD_TICKS: '3600' # [T25-FORGE] פעימה-כבדה (המנוע מגביל 6000)
           CONSOLE_TOKEN: ${{ secrets.WEAVE_OPS_PAT }}
 
       - name: Verify-only (this shift belongs to the living original)
