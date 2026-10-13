@@ -24,7 +24,7 @@ jobs:
 
       - name: measure the live publication ledger (keyless — public chain RPC only)
         run: |
-          cat > /tmp/ledger.mjs << 'ZEOF'
+          cat > /tmp/ledger.cjs << 'ZEOF'
           const fs = require('fs');
           const CHAINS = [
             { chain: 'STEEM', url: 'https://api.steemit.com' },
@@ -72,7 +72,7 @@ jobs:
             if (!book.posts.length) { console.log('honest empty book — chains reachable but zero posts'); }
           })().catch(e => { console.error('LEDGER-FAIL:', e.message); process.exit(1); });
           ZEOF
-          node /tmp/ledger.mjs
+          node /tmp/ledger.cjs
 
       - name: commit + push (rebase-safe, one-voice)
         run: |
