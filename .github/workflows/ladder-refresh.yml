@@ -75,6 +75,9 @@ jobs:
           STEEM_DIR: ${{ github.workspace }}/steem
           STEEMJS_DIR: /tmp/steemjs
           PUSH_RECEIPT: 'true'
+          # T-REFS: the ladder account resolves from the roster map at runtime
+          # (acct-00 → real name, memory-only). Unresolved = honest plan-only skip.
+          FLEET_ROSTER_MAP: ${{ secrets.FLEET_ROSTER_MAP }}
           # COERCION TRAP (15-c fix): type:boolean inputs are real booleans, and GitHub coerces
           # mixed-type == to numbers (false→0, 'false'→NaN ⇒ never equal) — format('{0}', …)
           # stringifies before comparing (observed live: economy-engine run 37009080091).

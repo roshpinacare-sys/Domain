@@ -46,7 +46,28 @@ const STEEM_DIR = process.env.STEEM_DIR || path.join(process.cwd(), 'steem');
 const STEEMJS_DIR = process.env.STEEMJS_DIR || SCRIPT_DIR;
 const ARMED = String(process.env.LADDER_ARM || '0') === '1';
 const PUSH_RECEIPT = String(process.env.PUSH_RECEIPT || 'false').toLowerCase() === 'true';
-const ACCOUNT = 'owner'; // THE liquid ladder — the only account this engine may operate
+// T-REFS (restored 2026-10-13, measured FATAL 12:39): a refs-scrub replaced the ladder
+// account literal with the role word 'owner' and the private executor's hard lock
+// FATALed (requested: owner ≠ headcorner-only lock). The real name lives ONLY in the
+// roster-map secret — resolved at runtime, never written to the tree. The estate ref
+// for the owner treasury is acct-00 (estate refs law). Unresolved map = honest
+// custody-boundary skip (plan-only, exit 0) — never a guessed account, never a FATAL.
+const OWNER_REF = 'acct-00';
+function resolveLadderAccount() {
+  let obj;
+  try { obj = JSON.parse(process.env.FLEET_ROSTER_MAP || ''); } catch { obj = null; }
+  if (!obj || typeof obj !== 'object') return null;
+  const flat = {};
+  if (obj.refs && typeof obj.refs === 'object') Object.assign(flat, obj.refs);
+  if (obj.names && typeof obj.names === 'object') Object.assign(flat, obj.names);
+  for (const [k, v] of Object.entries(obj)) if (typeof k === 'string' && typeof v === 'string') flat[k] = v;
+  for (const [k, v] of Object.entries(flat)) {
+    if (k === OWNER_REF && typeof v === 'string' && v) return v;        // {acct-00: name}
+    if (v === OWNER_REF && typeof k === 'string' && k) return k;        // {name: acct-00}
+  }
+  return null;
+}
+const ACCOUNT = resolveLadderAccount(); // null = roster unresolved — honest skip path
 const RPC = process.env.LADDER_NODE || 'https://api.steemit.com';
 
 const nowIso = () => new Date().toISOString();
@@ -152,6 +173,15 @@ function pushLadderReceipts(commitMsg) {
 }
 
 // ═══════════════════════════════ MAIN ═══════════════════════════════
+// T-REFS honest skip: without the roster map the real account cannot be resolved —
+// spawning the executor would only re-produce the measured hard-lock FATAL. The
+// cadence stays green (plan-only, exit 0); the day the map is passed, arming resumes
+// automatically without any code change (same doctrine as the key-material boundary).
+if (!ACCOUNT) {
+  log('LADDER-CUSTODY-BOUNDARY: roster map unresolved (no FLEET_ROSTER_MAP) — honest plan-only skip, executor not spawned, nothing signed');
+  console.log('SUMMARY ' + JSON.stringify({ armed: false, armedRequested: ARMED, custodyBoundary: true, rosterUnresolved: true, status: 'plan-only-roster-unresolved-skip' }));
+  process.exit(0);
+}
 const seal = openSeal();
 log('seal opened in-runner (sha gates outer+inner ok) · ' + seal.openedAt);
 
