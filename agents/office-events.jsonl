@@ -6826,3 +6826,93 @@
 {"ts":1791884759721,"type":"goal","agentId":"office-artery","kind":"next-shift","text":"רענון-ספר: econ-book (כלכלת-הרשת) (204.8 שעות — agents/econ-book.json)"}
 {"ts":1791884759721,"type":"goal","agentId":"office-artery","kind":"next-shift","text":"רענון-ספר: curation-book (אוצרות-תוכן) (211.1 שעות — agents/curation-book.json)"}
 {"ts":1791884759721,"type":"goal","agentId":"office-artery","kind":"next-shift","text":"רענון-ספר: cadence-week (קצב-שבועי) (209.5 שעות — agents/cadence-week.json)"}
+{"ts":1791887409373,"type":"recovery","event":"floor-takeover","prevPid":12343,"prevHeartbeatAt":1791824229769,"prevAlive":false,"reason":"dead-peer"}
+{"ts":1791887409385,"type":"recovery","event":"durable-resume","tasks":158,"requeued":1,"parked":0,"reviewResumed":0,"savedAt":1791875465408}
+{"ts":1791887409389,"type":"log","agentId":"aluf","kind":"text","text":"Fleet HQ online · מפקדה מקוונת"}
+{"ts":1791887411591,"type":"task","event":"patch","id":"t1719","title":"סיור שגרה: סרוק את ספרי הצי ודווח מה ישן או דורש בדיקה","status":"doing","assignee":"shachar","summary":"[recovery: foreman restart interrupted execution — requeued]"}
+{"ts":1791887412693,"type":"log","agentId":"shachar","kind":"text","text":"task: סיור שגרה: סרוק את ספרי הצי ודווח מה ישן או דורש בדיקה"}
+{"ts":1791887419086,"type":"usage","agent":"shachar","phase":"work","provider":"kilo/kilo-auto/free","prompt_tokens":706,"completion_tokens":134,"prompt_chars":1754,"completion_chars":86}
+{"ts":1791887419086,"type":"log","agentId":"shachar","kind":"say","text":"מתחיל סיור שגרה"}
+{"ts":1791887419087,"type":"log","agentId":"shachar","kind":"tool","text":"list_books()"}
+{"ts":1791887419588,"type":"log","agentId":"shachar","kind":"result","text":"dex-book · 4873B · 9.9h\nfills-ledger · 841B · 22.0h\nmarket-grid · 7664B · 1.0h\ntruth-history · 44196B · 381.2h\nclaims-audit · 387B · 1.0h\nworkflow-audit · 827B · 22.0h\nharness-audit · 18155B · 22.0h\ncapability-matrix · 11573B · 9.9h\ndeep-audit · 630B · 225.8h\necon-book · 4188B · 205.5h\nsovereign-state · 1242B · 109.4h\nsovereign-policy · 3797B · 230.0h\nfleet-roster · 1648B · 204.4h\nfleet-indicators"}
+{"ts":1791887432590,"type":"usage","agent":"shachar","phase":"work","provider":"kilo/kilo-auto/free","prompt_tokens":1166,"completion_tokens":438,"prompt_chars":2601,"completion_chars":119}
+{"ts":1791887432590,"type":"log","agentId":"shachar","kind":"say","text":"קורא ספרי צי מרכזיים"}
+{"ts":1791887432590,"type":"log","agentId":"shachar","kind":"tool","text":"read_book(fleet-indicators)"}
+{"ts":1791887433241,"type":"log","agentId":"shachar","kind":"result","text":"shape: {protocol, at, agent, verdict, counts, indicators, books} head: {\"protocol\":\"SAOS-FATE-DEFENSE-FWI/1\",\"at\":\"2026-10-11T11:02:07.595Z\",\"agent\":\"fleet-indicators v1.0.0 (Task 22, study: Emergence World arXiv 2606.08367 + 2609.17320)\",\"verdict\":\"DEGRADED\",\"counts\":{\"DECLINE\":4,\"GROW\":4,\"HELD\":1},\"indicators\":[{\"id\":\"F1\",\"name\":\"Population Health\",\"measures\":\"persistent organs (live books) aliv"}
+{"ts":1791887436515,"type":"usage","agent":"shachar","phase":"work","provider":"kilo/kilo-auto/free","prompt_tokens":2261,"completion_tokens":68,"prompt_chars":6528,"completion_chars":105}
+{"ts":1791887436516,"type":"log","agentId":"shachar","kind":"say","text":"קורא fleet-census"}
+{"ts":1791887436516,"type":"log","agentId":"shachar","kind":"tool","text":"read_book(fleet-census)"}
+{"ts":1791887437167,"type":"log","agentId":"shachar","kind":"result","text":"shape: {at, ok, domain_files, repos, crew_members, sovereign_stack, memory} full: {\"at\":\"2026-10-08T21:06:44.486Z\",\"ok\":true,\"domain_files\":606,\"repos\":[\"roshpinacare-sys/FleetHQ (public)\",\"roshpinacare-sys/fleet-vault (private)\"],\"crew_members\":[\"aluf\",\"gal\",\"erez\",\"tamar\",\"shachar\",\"yarden\"],\"sovereign_stack\":\"parallel stdlib python rail (sovereign-stack/, selftest 9/9 — Task 28-a)\",\"memory\":{\"w"}
+{"ts":1791887441759,"type":"usage","agent":"shachar","phase":"work","provider":"kilo/kilo-auto/free","prompt_tokens":2502,"completion_tokens":102,"prompt_chars":7285,"completion_chars":98}
+{"ts":1791887441759,"type":"log","agentId":"shachar","kind":"say","text":"קורא pulse-book"}
+{"ts":1791887441759,"type":"log","agentId":"shachar","kind":"tool","text":"read_book(pulse-book)"}
+{"ts":1791887442410,"type":"log","agentId":"shachar","kind":"result","text":"shape: {ok, at, since, windowSince, agent, dayLedger, proposals, counts, gates, advisoryTriag, evoEvidence, laws} head: {\"ok\":true,\"at\":\"2026-10-12T12:28:26.817Z\",\"since\":\"2026-10-12T12:27:47.543Z\",\"windowSince\":\"2026-10-12T12:27:47.543Z\",\"agent\":\"pulse v1.2.0 (CR-0009 loop, Rung 1; CR-0028 consumes the laya advisory triage; CR-0033 consumes the scheduled evolution-window evidence — Z-48/Z-49/Z-60"}
+{"ts":1791887445940,"type":"usage","agent":"shachar","phase":"work","provider":"kilo/kilo-auto/free","prompt_tokens":3756,"completion_tokens":58,"prompt_chars":11234,"completion_chars":117}
+{"ts":1791887445940,"type":"log","agentId":"shachar","kind":"say","text":"קורא learning-summary"}
+{"ts":1791887445940,"type":"log","agentId":"shachar","kind":"tool","text":"read_book(learning-summary)"}
+{"ts":1791887446591,"type":"log","agentId":"shachar","kind":"result","text":"shape: {at, note, byCard} head: {\"at\":\"2026-10-12T22:11:50.657Z\",\"note\":\"external engagement per knowledge-card (last-sample per post) — feeds future content priorities\",\"byCard\":{\"unknown\":{\"posts\":8,\"lastExternalVotes\":9,\"lastExternalRshares\":350517527493,\"postsWithExternal\":5},\"custom-json\":{\"posts\":1,\"lastExternalVotes\":0,\"lastExternalRshares\":0,\"postsWithExternal\":0},\"verify-then-sign\":{\"post"}
+{"ts":1791887501739,"type":"usage","agent":"shachar","phase":"work","provider":"llm7/mistral-Nemo-Instruct-2407","prompt_tokens":2168,"completion_tokens":136,"prompt_chars":15171,"completion_chars":402}
+{"ts":1791887501740,"type":"log","agentId":"shachar","kind":"say","text":"סיימתי לסרוק את הספרים"}
+{"ts":1791887501923,"type":"log","agentId":"gal","kind":"say","text":"לגימה מהירה — וחוזרים לעבודה."}
+{"ts":1791887512924,"type":"log","agentId":"tamar","kind":"say","text":"לגימה מהירה — וחוזרים לעבודה."}
+{"ts":1791887516837,"type":"usage","agent":"shachar","phase":"work","provider":"ovh/gpt-oss-120b","prompt_tokens":4487,"completion_tokens":180,"prompt_chars":15701,"completion_chars":82}
+{"ts":1791887516838,"type":"log","agentId":"shachar","kind":"tool","text":"measure(fleet-indicators, agents/econ-book.json)"}
+{"ts":1791887517288,"type":"log","agentId":"shachar","kind":"result","text":"fleet-indicators.agents/econ-book.json = NOT FOUND"}
+{"ts":1791887567112,"type":"usage","agent":"shachar","phase":"work","provider":"ovh/gpt-oss-120b","prompt_tokens":4526,"completion_tokens":99,"prompt_chars":15892,"completion_chars":88}
+{"ts":1791887567112,"type":"log","agentId":"shachar","kind":"tool","text":"measure(fleet-indicators, agents/learning-ledger.json)"}
+{"ts":1791887567563,"type":"log","agentId":"shachar","kind":"result","text":"fleet-indicators.agents/learning-ledger.json = NOT FOUND"}
+{"ts":1791887567563,"type":"task","event":"patch","id":"t1719","title":"סיור שגרה: סרוק את ספרי הצי ודווח מה ישן או דורש בדיקה","status":"review","assignee":"shachar"}
+{"ts":1791887567563,"type":"log","agentId":"shachar","kind":"say","text":"המשימה שלי מוכנה לביקורת."}
+{"ts":1791887567843,"type":"log","agentId":"aluf","kind":"tool","text":"review(t1719 by shachar)"}
+{"ts":1791887569044,"type":"log","agentId":"aluf","kind":"text","text":"relevance gate: 1 (ספרי, הצי, ישן, דורש, דיקה)"}
+{"ts":1791887572506,"type":"usage","agent":"gal","phase":"cross-check","provider":"llm7/mistral-Nemo-Instruct-2407","prompt_tokens":224,"completion_tokens":66,"prompt_chars":604,"completion_chars":275}
+{"ts":1791887576289,"type":"usage","agent":"gal","phase":"cross-check","provider":"llm7/mistral-Nemo-Instruct-2407","prompt_tokens":271,"completion_tokens":43,"prompt_chars":958,"completion_chars":198}
+{"ts":1791887576289,"type":"log","agentId":"aluf","kind":"text","text":"cross-check skipped: checker loop exhausted"}
+{"ts":1791887580256,"type":"usage","agent":"aluf","phase":"review","provider":"llm7/mistral-Nemo-Instruct-2407","prompt_tokens":234,"completion_tokens":33,"prompt_chars":573,"completion_chars":159}
+{"ts":1791887580256,"type":"task","event":"patch","id":"t1719","title":"סיור שגרה: סרוק את ספרי הצי ודווח מה ישן או דורש בדיקה","status":"done","assignee":"shachar"}
+{"ts":1791887580256,"type":"log","agentId":"aluf","kind":"result","text":"approved: סיור שגרה: סרוק את ספרי הצי ודווח מה ישן או דורש בדיקה"}
+{"ts":1791887580256,"type":"log","agentId":"aluf","kind":"say","text":"אושר. עבודה טובה, שחר."}
+{"ts":1791887581046,"type":"goal","event":"status","id":"g1717","status":"review","text":"סיור שגרה: סרוק את ספרי הצי ודווח מה ישן או דורש בדיקה"}
+{"ts":1791887606995,"type":"usage","agent":"aluf","phase":"report","provider":"kilo/kilo-auto/free","prompt_tokens":11232,"completion_tokens":700,"prompt_chars":26372,"completion_chars":2157}
+{"ts":1791887606995,"type":"log","agentId":"aluf","kind":"error","text":"final report parse failed"}
+{"ts":1791887606996,"type":"goal","event":"status","id":"g1717","status":"done","text":"סיור שגרה: סרוק את ספרי הצי ודווח מה ישן או דורש בדיקה"}
+{"ts":1791887606996,"type":"log","agentId":"aluf","kind":"say","text":"היעד הושלם. הסיכום בספרייה."}
+{"ts":1791887620221,"type":"usage","agent":"aluf","phase":"lessons","provider":"kilo/kilo-auto/free","prompt_tokens":858,"completion_tokens":300,"prompt_chars":1973,"completion_chars":1059}
+{"ts":1791887627367,"type":"log","agentId":"yarden","kind":"say","text":"לגימה מהירה — וחוזרים לעבודה."}
+{"ts":1791887644979,"type":"log","agentId":"tamar","kind":"say","text":"לגימה מהירה — וחוזרים לעבודה."}
+{"ts":1791887666996,"type":"log","agentId":"gal","kind":"say","text":"לגימה מהירה — וחוזרים לעבודה."}
+{"ts":1791887753427,"type":"usage","agent":"aluf","phase":"operator","provider":"kilo/kilo-auto/free","prompt_tokens":1413,"completion_tokens":400,"prompt_chars":3210,"completion_chars":1123}
+{"ts":1791887753427,"type":"goal","event":"set","id":"g1730","text":"סיור שגרה: סרוק את ספרי הצי ודווח מה ישן או דורש בדיקה","origin":"patrol"}
+{"ts":1791887753427,"type":"log","agentId":"aluf","kind":"text","text":"shift scheduled by the office itself (anti-fixation operator)"}
+{"ts":1791887753427,"type":"log","agentId":"aluf","kind":"say","text":"לא נתקעים על אותה זווית — משמרת חדשה יוצאת לדרך."}
+{"ts":1791887754329,"type":"log","agentId":"aluf","kind":"text","text":"planning goal: סיור שגרה: סרוק את ספרי הצי ודווח מה ישן או דורש בדיקה"}
+{"ts":1791887777070,"type":"log","agentId":"tamar","kind":"say","text":"לגימה מהירה — וחוזרים לעבודה."}
+{"ts":1791887781584,"type":"usage","agent":"aluf","phase":"plan","provider":"kilo/kilo-auto/free","prompt_tokens":1025,"completion_tokens":900,"prompt_chars":2524,"completion_chars":564}
+{"ts":1791887781584,"type":"log","agentId":"aluf","kind":"error","text":"plan empty/off-goal → JSON-only nudge retry"}
+{"ts":1791887788077,"type":"log","agentId":"gal","kind":"say","text":"לגימה מהירה — וחוזרים לעבודה."}
+{"ts":1791887838392,"type":"usage","agent":"aluf","phase":"plan-nudge","provider":"llm7/mistral-Nemo-Instruct-2407","prompt_tokens":1023,"completion_tokens":224,"prompt_chars":3435,"completion_chars":667}
+{"ts":1791887838392,"type":"log","agentId":"aluf","kind":"error","text":"plan filter: \"Update 'truth-history'\" נפסלה — לא מקדמת את היעד (relevance 0)"}
+{"ts":1791887838392,"type":"log","agentId":"aluf","kind":"error","text":"plan filter: \"Audit 'deep-audit'\" נפסלה — לא מקדמת את היעד (relevance 0)"}
+{"ts":1791887838392,"type":"log","agentId":"aluf","kind":"error","text":"plan filter: \"Review 'fleet-roster'\" נפסלה — לא מקדמת את היעד (relevance 0)"}
+{"ts":1791887838392,"type":"log","agentId":"aluf","kind":"error","text":"plan filter: \"Analyze 'fleet-indicators'\" נפסלה — לא מקדמת את היעד (relevance 0)"}
+{"ts":1791887838392,"type":"task","event":"add","id":"t1732","title":"סיור שגרה: סרוק את ספרי הצי ודווח מה ישן או דורש בדיקה","status":"todo","assignee":"shachar"}
+{"ts":1791887838392,"type":"log","agentId":"aluf","kind":"error","text":"plan unusable → goal-derived task (fit: shachar)"}
+{"ts":1791887838392,"type":"goal","event":"status","id":"g1730","status":"active","text":"סיור שגרה: סרוק את ספרי הצי ודווח מה ישן או דורש בדיקה"}
+{"ts":1791887838392,"type":"task","event":"patch","id":"t1732","title":"סיור שגרה: סרוק את ספרי הצי ודווח מה ישן או דורש בדיקה","status":"doing","assignee":"shachar"}
+{"ts":1791887839493,"type":"log","agentId":"shachar","kind":"text","text":"task: סיור שגרה: סרוק את ספרי הצי ודווח מה ישן או דורש בדיקה"}
+{"ts":1791887852992,"type":"usage","agent":"shachar","phase":"work","provider":"ovh/gpt-oss-120b","prompt_tokens":683,"completion_tokens":300,"prompt_chars":1754,"completion_chars":31}
+{"ts":1791887852993,"type":"log","agentId":"shachar","kind":"tool","text":"list_books()"}
+{"ts":1791887853493,"type":"log","agentId":"shachar","kind":"result","text":"dex-book · 4873B · 9.9h\nfills-ledger · 841B · 22.1h\nmarket-grid · 7664B · 1.1h\ntruth-history · 44196B · 381.2h\nclaims-audit · 387B · 1.0h\nworkflow-audit · 827B · 22.1h\nharness-audit · 18155B · 22.1h\ncapability-matrix · 11573B · 10.0h\ndeep-audit · 630B · 225.9h\necon-book · 4188B · 205.6h\nsovereign-state · 1242B · 109.5h\nsovereign-policy · 3797B · 230.1h\nfleet-roster · 1648B · 204.5h\nfleet-indicator"}
+{"ts":1791887861346,"type":"usage","agent":"shachar","phase":"work","provider":"kilo/kilo-auto/free","prompt_tokens":1145,"completion_tokens":295,"prompt_chars":2539,"completion_chars":53}
+{"ts":1791887861346,"type":"log","agentId":"shachar","kind":"tool","text":"read_book(fleet-indicators)"}
+{"ts":1791887861997,"type":"log","agentId":"shachar","kind":"result","text":"shape: {protocol, at, agent, verdict, counts, indicators, books} head: {\"protocol\":\"SAOS-FATE-DEFENSE-FWI/1\",\"at\":\"2026-10-11T11:02:07.595Z\",\"agent\":\"fleet-indicators v1.0.0 (Task 22, study: Emergence World arXiv 2606.08367 + 2609.17320)\",\"verdict\":\"DEGRADED\",\"counts\":{\"DECLINE\":4,\"GROW\":4,\"HELD\":1},\"indicators\":[{\"id\":\"F1\",\"name\":\"Population Health\",\"measures\":\"persistent organs (live books) aliv"}
+{"ts":1791887864455,"type":"usage","agent":"shachar","phase":"work","provider":"kilo/kilo-auto/free","prompt_tokens":2213,"completion_tokens":31,"prompt_chars":6392,"completion_chars":49}
+{"ts":1791887864455,"type":"log","agentId":"shachar","kind":"tool","text":"read_book(fleet-census)"}
+{"ts":1791887865105,"type":"log","agentId":"shachar","kind":"result","text":"shape: {at, ok, domain_files, repos, crew_members, sovereign_stack, memory} full: {\"at\":\"2026-10-08T21:06:44.486Z\",\"ok\":true,\"domain_files\":606,\"repos\":[\"roshpinacare-sys/FleetHQ (public)\",\"roshpinacare-sys/fleet-vault (private)\"],\"crew_members\":[\"aluf\",\"gal\",\"erez\",\"tamar\",\"shachar\",\"yarden\"],\"sovereign_stack\":\"parallel stdlib python rail (sovereign-stack/, selftest 9/9 — Task 28-a)\",\"memory\":{\"w"}
+{"ts":1791887871605,"type":"usage","agent":"shachar","phase":"work","provider":"kilo/kilo-auto/free","prompt_tokens":2434,"completion_tokens":95,"prompt_chars":7085,"completion_chars":47}
+{"ts":1791887871605,"type":"log","agentId":"shachar","kind":"tool","text":"read_book(pulse-book)"}
+{"ts":1791887872256,"type":"log","agentId":"shachar","kind":"result","text":"shape: {ok, at, since, windowSince, agent, dayLedger, proposals, counts, gates, advisoryTriag, evoEvidence, laws} head: {\"ok\":true,\"at\":\"2026-10-12T12:28:26.817Z\",\"since\":\"2026-10-12T12:27:47.543Z\",\"windowSince\":\"2026-10-12T12:27:47.543Z\",\"agent\":\"pulse v1.2.0 (CR-0009 loop, Rung 1; CR-0028 consumes the laya advisory triage; CR-0033 consumes the scheduled evolution-window evidence — Z-48/Z-49/Z-60"}
+{"ts":1791887873926,"type":"log","agentId":"yarden","kind":"say","text":"לגימה מהירה — וחוזרים לעבודה."}
+{"ts":1791887877099,"type":"usage","agent":"shachar","phase":"work","provider":"kilo/kilo-auto/free","prompt_tokens":3670,"completion_tokens":65,"prompt_chars":10975,"completion_chars":53}
+{"ts":1791887877099,"type":"log","agentId":"shachar","kind":"tool","text":"read_book(learning-summary)"}
+{"ts":1791887877750,"type":"log","agentId":"shachar","kind":"result","text":"shape: {at, note, byCard} head: {\"at\":\"2026-10-12T22:11:50.657Z\",\"note\":\"external engagement per knowledge-card (last-sample per post) — feeds future content priorities\",\"byCard\":{\"unknown\":{\"posts\":8,\"lastExternalVotes\":9,\"lastExternalRshares\":350517527493,\"postsWithExternal\":5},\"custom-json\":{\"posts\":1,\"lastExternalVotes\":0,\"lastExternalRshares\":0,\"postsWithExternal\":0},\"verify-then-sign\":{\"post"}
