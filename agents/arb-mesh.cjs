@@ -333,6 +333,10 @@ async function tick() {
 
 // ── selftest (fresh process, zero network, deterministic) ───────────────────
 function selftest() {
+  // 3-a: CI injects the real FLEET_ACCOUNT (operator handle); the selftest measures
+  // the DEFAULT-world law (operator literal 'owner', dust thresholds) — pin the
+  // deterministic world so the laws judge the same bytes in CI and locally.
+  delete process.env.FLEET_ACCOUNT;
   const c = []; const ok = (name, cond) => c.push({ name, ok: !!cond });
   const mkCore = () => ({
     protocol: 'SAOS-DEX-CORE/1', at: '2026-10-04T10:00:00.000Z', genesisDone: true, seq: 7,
