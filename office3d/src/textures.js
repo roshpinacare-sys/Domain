@@ -20,7 +20,7 @@ function tex(c, { srgb = true, repeat = null, aniso = 4 } = {}) {
   return t;
 }
 
-// ───── רצפת אלון חמה ─────
+// ----- רצפת אלון חמה -----
 export function makeFloorTexture() {
   const { c, g } = canvas(1024, 1024);
   g.fillStyle = '#b08a5f'; g.fillRect(0, 0, 1024, 1024);
@@ -50,7 +50,7 @@ export function makeFloorTexture() {
   return tex(c, { repeat: [5, 3.2] });
 }
 
-// ───── טיח פנים חם ─────
+// ----- טיח פנים חם -----
 export function makePlasterTexture() {
   const { c, g } = canvas(512, 512);
   g.fillStyle = '#efe9dc'; g.fillRect(0, 0, 512, 512);
@@ -62,7 +62,7 @@ export function makePlasterTexture() {
   return tex(c, { repeat: [4, 2] });
 }
 
-// ───── שטיח מרכזי ─────
+// ----- שטיח מרכזי -----
 export function makeRugTexture() {
   const { c, g } = canvas(1024, 640);
   const grad = g.createRadialGradient(512, 320, 60, 512, 320, 520);
@@ -81,7 +81,7 @@ export function makeRugTexture() {
   return tex(c);
 }
 
-// ───── שמיים (כיפה) ─────
+// ----- שמיים (כיפה) -----
 export function makeSkyTexture(top, bottom) {
   const { c, g } = canvas(64, 512);
   const grad = g.createLinearGradient(0, 0, 0, 512);
@@ -92,7 +92,7 @@ export function makeSkyTexture(top, bottom) {
   return t;
 }
 
-// ───── מסך חי: לוח-המשימות (קנבס עם API ציור) ─────
+// ----- מסך חי: לוח-המשימות (קנבס עם API ציור) -----
 export function makeTaskWallScreen() {
   const { c, g } = canvas(1024, 560);
   const t = tex(c);
@@ -140,7 +140,7 @@ export function makeTaskWallScreen() {
   return { texture: t, set(cols, mode) { state.cols = cols; state.mode = mode; draw(); } };
 }
 
-// ───── מסך חי: קיר-הגיט ─────
+// ----- מסך חי: קיר-הגיט -----
 export function makeGitWallScreen() {
   const { c, g } = canvas(1024, 560);
   const t = tex(c);
@@ -174,7 +174,7 @@ export function makeGitWallScreen() {
   return { texture: t, set(rows, mode) { state.rows = rows; state.mode = mode; draw(); }, state };
 }
 
-// ───── מסך חי: צג שולחן של סוכן ─────
+// ----- מסך חי: צג שולחן של סוכן -----
 export function makeDeskScreen(color) {
   const { c, g } = canvas(512, 320);
   const t = tex(c);
@@ -215,7 +215,7 @@ export function makeDeskScreen(color) {
   };
 }
 
-// ───── שלט-שם מרחף (ספרייט) ─────
+// ----- שלט-שם מרחף (ספרייט) -----
 export function makeNameplate(he, role, color) {
   const { c, g } = canvas(512, 160);
   function draw() {
@@ -243,7 +243,7 @@ export function makeNameplate(he, role, color) {
   return sprite;
 }
 
-// ───── עזרים ─────
+// ----- עזרים -----
 function roundRect(g, x, y, w, h, r) {
   g.beginPath();
   g.moveTo(x + r, y);
@@ -287,6 +287,6 @@ function simCards(kind) {
 
 function simWire() {
   return [
-    { sha: '────────', msg: 'אין חיבור חי — מצב הדגמה מסומן', age: '', color: '#8a8378' },
+    { sha: '--------', msg: 'אין חיבור חי — מצב הדגמה מסומן', age: '', color: '#8a8378' },
   ];
 }
