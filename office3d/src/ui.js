@@ -74,6 +74,24 @@ export class UI {
     });
     this.tourBtn = tour;
     inner.appendChild(tour);
+    // ───── חדרי-המפקדה — ניווט בין החדרים החיים ─────
+    const rsep = document.createElement('div');
+    rsep.className = 'sep';
+    inner.appendChild(rsep);
+    const rooms = [
+      ['v2', 'חדר-הפיקוד', 'v2/index.html'],
+      ['worlds', 'העולמות', 'worlds/index.html'],
+      ['growth', 'חדר-הצמיחה', 'growth/index.html'],
+    ];
+    for (const [id, he, href] of rooms) {
+      const rb = document.createElement('a');
+      rb.className = 'vbtn';
+      rb.textContent = he;
+      rb.href = href;
+      rb.title = 'חדר נפרד במפקדה — נפתח בכרטיסייה עצמאית';
+      rb.id = `room-${id}`;
+      inner.appendChild(rb);
+    }
   }
 
   setViewActive(id) {

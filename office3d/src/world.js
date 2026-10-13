@@ -16,6 +16,9 @@ import {
 
 const M = (opts) => new THREE.MeshStandardMaterial({ roughness: 0.85, metalness: 0.04, ...opts });
 
+/** פקיד-הקבלה — מולל ב-buildReception, מנופף ב-api.update */
+const clerkRef = { wave: null };
+
 export function buildWorld(scene) {
   const api = { screens: {}, flameLight: null, flameMesh: null, update: () => {} };
 
@@ -166,6 +169,13 @@ export function buildWorld(scene) {
 
   // ───── עדכון-עולם שוטף ─────
   api.update = (t) => {
+    // פקיד-הקבלה: נפנוף-ברכה מחזורי — תנועה אחת מטרתית, לא קפיצות
+    if (clerkRef.wave) {
+      const w = Math.sin((performance.now() - clerkRef.wave.t0) / 1000 * 1.4);
+      clerkRef.wave.armR.rotation.x = -0.35 + w * 0.12;
+      clerkRef.wave.armR.rotation.z = 0.55 - w * 0.28;
+      clerkRef.wave.foreR.rotation.x = -0.9 - Math.max(0, w) * 0.5;
+    }
     // להבה
     if (api.flameMesh) {
       const s = 1 + Math.sin(t * 9.3) * 0.07 + Math.sin(t * 17.7) * 0.04;
@@ -562,6 +572,51 @@ function buildReception(scene) {
   g.add(mark);
   g.position.set(x, 0, z);
   scene.add(g);
+
+  // ───── פקיד-הקבלה — הפנים של המפקדה אל המבקרים ─────
+  const c = new THREE.Group();
+  const vest = '#2e6e52', pants = '#3a4150', skin = '#e8c39e';
+  const pelvis = new THREE.Mesh(new THREE.BoxGeometry(0.30, 0.16, 0.18), M({ color: pants, roughness: 0.75 }));
+  pelvis.position.y = 0.92; pelvis.castShadow = true; c.add(pelvis);
+  const torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.155, 0.30, 4, 10), M({ color: vest, roughness: 0.72 }));
+  torso.position.y = 1.22; torso.castShadow = true; c.add(torso);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.115, 16, 12), M({ color: skin, roughness: 0.65 }));
+  head.position.y = 1.52; head.castShadow = true; c.add(head);
+  // זרועות — הימנית תנפף בברכה
+  const limb = (parent, len, r, color, px, py, pz) => {
+    const grp = new THREE.Group(); grp.position.set(px, py, pz); parent.add(grp);
+    const mesh = new THREE.Mesh(new THREE.CapsuleGeometry(r, Math.max(0.02, len - 2 * r), 3, 8), M({ color, roughness: 0.7 }));
+    mesh.position.y = -len / 2; mesh.castShadow = true; grp.add(mesh);
+    return grp;
+  };
+  const armL = limb(c, 0.27, 0.048, vest, 0.21, 1.40, 0);
+  const armR = limb(c, 0.27, 0.048, vest, -0.21, 1.40, 0);
+  const foreL = limb(armL, 0.25, 0.042, skin, 0, -0.27, 0);
+  const foreR = limb(armR, 0.25, 0.042, skin, 0, -0.27, 0);
+  const legL = limb(c, 0.40, 0.058, pants, 0.095, 0.88, 0);
+  const legR = limb(c, 0.40, 0.058, pants, -0.095, 0.88, 0);
+  limb(legL, 0.38, 0.05, pants, 0, -0.40, 0);
+  limb(legR, 0.38, 0.05, pants, 0, -0.40, 0);
+  // שלט-הפקיד
+  const cv = document.createElement('canvas'); cv.width = 700; cv.height = 150;
+  const cx = cv.getContext('2d');
+  cx.fillStyle = 'rgba(20,16,12,.78)';
+  cx.beginPath(); cx.roundRect(2, 2, 696, 146, 18); cx.fill();
+  cx.strokeStyle = '#7fc39a'; cx.lineWidth = 3; cx.stroke();
+  cx.fillStyle = '#f3ede2'; cx.textAlign = 'center'; cx.textBaseline = 'middle';
+  cx.font = '600 44px system-ui, Arial';
+  cx.fillText('פקיד-הקבלה', 350, 50);
+  cx.font = '500 34px system-ui, Arial';
+  cx.fillText('ברוכים-הבאים למפקדת הצי', 350, 104);
+  const signTex = new THREE.CanvasTexture(cv); signTex.colorSpace = THREE.SRGBColorSpace;
+  const sign = new THREE.Sprite(new THREE.SpriteMaterial({ map: signTex, depthTest: false }));
+  sign.scale.set(2.2, 0.47, 1); sign.position.y = 2.06; sign.renderOrder = 5;
+  c.add(sign);
+  // עמידה מאחורי-הדלפק, פנים אל הכניסה
+  c.position.set(x - 1.35, 0, z);
+  c.rotation.y = Math.PI / 2;
+  scene.add(c);
+  clerkRef.wave = { armR, foreR, t0: performance.now() };
 }
 
 function buildPlant(scene, x, z) {
