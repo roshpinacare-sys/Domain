@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>מפקדת הצי — המשרד התלת-מימדי החי</title>
-<meta name="description" content="המשרד החי של הריבונות האוטונומית: צוות סוכנים אמיתי עובד, מתפתח ומדייק את עצמו — ורואים הכול." />
+<meta name="description" content="המשרד החי של הריבונות האוטונומית: צוות סוכנים אמיתי עובד, מתפתח ומדייק את עצמו; הפעילות גלויה במלואה." />
 <link rel="preconnect" href="/" />
 <style>
   :root {
@@ -29,13 +29,13 @@
   #stage { position: fixed; inset: 0; }
   canvas { display: block; }
 
-  /* ───── עומק צילומי (וינייטה עדינה) ───── */
+  /* ----- עומק צילומי (וינייטה עדינה) ----- */
   #vignette {
     position: fixed; inset: 0; z-index: 10; pointer-events: none;
     background: radial-gradient(ellipse 120% 90% at 50% 42%, transparent 58%, rgba(56,40,22,0.16) 100%);
   }
 
-  /* ───── מסך-טעינה ───── */
+  /* ----- מסך-טעינה ----- */
   #loader {
     position: fixed; inset: 0; z-index: 60;
     background: linear-gradient(160deg, #221d17 0%, #35291d 60%, #473122 100%);
@@ -51,7 +51,7 @@
   #bar > i { display: block; height: 100%; width: 8%; background: linear-gradient(90deg, #e0973f, #ffcf7a); border-radius: 3px; transition: width .4s ease; }
   #loadState { font-size: 12px; color: #a89a80; }
 
-  /* ───── שכבת-בועות ───── */
+  /* ----- שכבת-בועות ----- */
   #bubbles { position: fixed; inset: 0; z-index: 20; pointer-events: none; overflow: hidden; }
   .bubble {
     position: absolute; transform: translate(-50%, -110%);
@@ -69,7 +69,7 @@
   .bubble .who { font-weight: 800; font-size: 11px; margin-inline-start: 2px; }
   .bubble.live { border-color: var(--ok); }
 
-  /* ───── מסגרת-עליונה ───── */
+  /* ----- מסגרת-עליונה ----- */
   #topbar {
     position: fixed; top: 12px; inset-inline: 14px; z-index: 30;
     display: flex; align-items: center; justify-content: space-between; gap: 10px;
@@ -113,7 +113,7 @@
   .iconbtn:hover { background: #fff; box-shadow: 0 3px 10px rgba(40,30,15,0.12); transform: translateY(-1px); }
   .iconbtn:active { transform: translateY(0) scale(0.96); box-shadow: none; }
 
-  /* ───── רוסטר ───── */
+  /* ----- רוסטר ----- */
   #roster {
     position: fixed; top: 74px; inset-inline-end: 14px; z-index: 25;
     width: 264px; max-height: calc(100dvh - 200px);
@@ -147,7 +147,7 @@
   .st.idle { background: #9a938a; }
   @keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: .45 } }
 
-  /* ───── סרגל-תצפית תחתון ───── */
+  /* ----- סרגל-תצפית תחתון ----- */
   #deck {
     position: fixed; bottom: 14px; inset-inline: 0; z-index: 30;
     display: flex; justify-content: center; pointer-events: none; padding: 0 12px;
@@ -164,7 +164,7 @@
   .vbtn.active { background: var(--ink); color: #f5f1e8; box-shadow: 0 4px 12px rgba(28,26,23,0.3); }
   .sep { width: 1px; background: var(--line); margin: 4px 3px; }
 
-  /* ───── מציג-מצב (כותרת-סיור) ───── */
+  /* ----- מציג-מצב (כותרת-סיור) ----- */
   #viewTitle {
     position: fixed; top: 74px; inset-inline-start: 50%; transform: translateX(50%);
     z-index: 24; padding: 7px 18px; font-size: 13.5px; font-weight: 800; color: var(--ink);
@@ -172,7 +172,7 @@
   }
   #viewTitle.show { opacity: 1; }
 
-  /* ───── שבצ'יפ-יציאה ממיקוד ───── */
+  /* ----- שבצ'יפ-יציאה ממיקוד ----- */
   #focusChip {
     position: fixed; top: 116px; inset-inline-start: 50%; transform: translateX(50%);
     z-index: 27; display: none; border: 0; cursor: pointer;
@@ -182,7 +182,7 @@
   #focusChip.show { display: block; animation: chipIn .25s ease; }
   @keyframes chipIn { from { opacity: 0; transform: translateX(50%) translateY(-6px); } to { opacity: 1; transform: translateX(50%) translateY(0); } }
 
-  /* ───── טיקר ───── */
+  /* ----- טיקר ----- */
   #ticker {
     position: fixed; bottom: 64px; inset-inline-start: 14px; z-index: 22;
     width: min(330px, calc(100vw - 28px)); padding: 10px 14px; font-size: 12px; line-height: 1.65;
@@ -192,7 +192,7 @@
   #tickerLine { color: var(--ink); transition: opacity .35s; font-weight: 600; }
   #ticker .sub { color: var(--ink-2); font-weight: 500; font-size: 11px; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-  /* ───── כרטיס-סוכן ───── */
+  /* ----- כרטיס-סוכן ----- */
   #card {
     position: fixed; top: 74px; inset-inline-end: 292px; z-index: 26;
     width: 246px; padding: 14px 16px; display: none;
@@ -206,7 +206,7 @@
   #card .row b { color: var(--ink); font-weight: 700; }
   #card .close { position: absolute; top: 8px; inset-inline-start: 8px; }
 
-  /* ───── כשל-כנה ───── */
+  /* ----- כשל-כנה ----- */
   #fail {
     position: fixed; inset: 0; z-index: 55; display: none;
     place-items: center; background: #221d17; color: #f2ead8; text-align: center; padding: 24px;
@@ -219,7 +219,7 @@
     background: #f2c368; border: 0; border-radius: 12px; padding: 10px 22px; cursor: pointer;
   }
 
-  /* ───── מובייל ───── */
+  /* ----- מובייל ----- */
   #rosterToggle { display: none; }
   @media (max-width: 900px) {
     #roster { display: none; }
@@ -261,24 +261,22 @@
   <div id="bubbles"></div>
 
   <div id="loader">
-    <div class="flame">🔥</div>
     <h1>מפקדת הצי — המשרד החי</h1>
-    <p>מרכיבים את האולם, מדליקים את להבת-הריבונות ומעירים את הצוות.<br />הכול ניזון מהגיט האמיתי — ואם אין חיבור, נאמר זאת במפורש.</p>
+    <p>טוען את סביבת התלת-מימד של המשרד ומתחבר לצוות הסוכנים.<br />הנתונים ניזונים מה-Git האמיתי; אם אין חיבור, המצב מדווח במפורש.</p>
     <div id="bar"><i></i></div>
     <div id="loadState">מתחבר לספרי-הצי…</div>
   </div>
 
   <div id="fail">
     <div>
-      <h2>המשרד לא הצליח לקום</h2>
-      <p id="failMsg">כשל רינדור נרשם ביומן הדפדפן. לא נראה לך קנבס שחור בלי הסבר — זה חוק.</p>
+      <h2>טעינת המשרד נכשלה</h2>
+      <p id="failMsg">כשל רינדור נרשם ביומן הדפדפן. מסך שחור ללא הסבר אינו מצב תקין — כל כשל מדווח עם הסיבה שלו.</p>
       <button onclick="location.reload()">נסה שוב</button>
     </div>
   </div>
 
   <header id="topbar">
     <div id="brand" class="glass">
-      <div class="mark">🔥</div>
       <div class="t">
         <b>מפקדת הצי</b>
         <span>המשרד התלת-מימדי החי · ריבונות אוטונומית</span>
@@ -288,7 +286,7 @@
       <span class="chip" id="chipPulse"><i class="dot"></i><span id="pulseTxt">מתחבר…</span></span>
       <span class="chip hideSm" id="chipMode"><i class="dot"></i><span id="modeTxt">—</span></span>
       <span class="chip hideSm" id="clock">--:--</span>
-      <button class="iconbtn" id="rosterToggle" title="הצוות" aria-label="הצוות">👥</button>
+      <button class="iconbtn" id="rosterToggle" title="הצוות" aria-label="הצוות" style="font-size:12px">צוות</button>
     </div>
   </header>
 
@@ -298,7 +296,7 @@
   </aside>
 
   <div id="card" class="glass">
-    <button class="iconbtn close" id="cardClose" title="סגור" aria-label="סגור">✕</button>
+    <button class="iconbtn close" id="cardClose" title="סגור" aria-label="סגור">×</button>
     <div class="hd">
       <div class="avatar" id="cardAvatar">?</div>
       <div><b id="cardName">—</b><span id="cardRole">—</span></div>
@@ -307,7 +305,7 @@
   </div>
 
   <div id="viewTitle" class="glass"></div>
-  <button id="focusChip" class="glass">✕ יציאה מהמיקוד</button>
+  <button id="focusChip" class="glass">יציאה מהמיקוד</button>
 
   <div id="ticker" class="glass">
     <div class="h"><span>הפיד של המשרד</span><span id="tickMode"></span></div>
