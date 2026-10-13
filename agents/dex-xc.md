@@ -1,6 +1,6 @@
 # dex-xc — THE INTENT GATES (R43, CR-0073)
 
-At: 2026-10-04T21:59:27.265Z · Verdict: **XC-DOORS-LIVE** · mode: undefined · batch: — · attestation: `ac4e471ed75c7a81`
+At: 2026-10-13T14:49:23.865Z · Verdict: **XC-DOORS-LIVE** · mode: undefined · batch: — · attestation: `ac4e471ed75c7a81`
 
 Doors law: fill window 3600s · refund unlock 7200s (the 2:1 HTLC interlock) · bond exposure ≤ 2× custody · guard 0.5% · dust 1000µ
 
@@ -19,9 +19,7 @@ Intents: 1 booked · opened 0 / filled 0 / confirmed 1 / refunded 0 / refused 0
 
 | Intent | Owner | Order | Size (µ) | State | Corridor |
 |---|---|---|---|---|---|
-| 401c2409c4583ac5 | treasury | SBD→STEEM(chain) | 1000 | CONFIRMED | KEYED-DESK (steem active in the protected desks — operator-gated broadcast) |
-
-Corridor exposure (bonded ≤ 2× custody): STEEM 0µ
+| 401c2409c4583ac5 | trea…[redacted] | SBD→STEEM(chain) | 1000 | CONFIRMED | KEYED-DESK (steem active in the protected desks — operator-gated broadcast) |
 
 Every fill routes through OUR pools (the fees stay home); every chain payout is queued to dex/pegout-queue.json with the corridor named — keyless code never broadcasts; the escrow law + the 2:1 clock + the bond law hold in both directions.
 
