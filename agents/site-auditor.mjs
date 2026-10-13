@@ -11,6 +11,9 @@
  *  · נמדד מה שהמבקר רואה — האתר החי ב-Pages, לא ה-checkout.
  *  · קישור-פנימי 404/403/5xx = FINDING. קישור-חוץ 404 = FINDING (עמוד מת);
  *    403/429/502/timeout חוץ = EXTERNAL-BLOCKED (רמז, לא נפילה — אנטי-בוט שלהם).
+ *  · 429/503 מפני-ה-github.com-שלנו עצמו = חנק-מדידה (rate-limit) — מקבל-ריטרי-אמיתי
+ *    (3-ניסיונות · נסיגה) ואם-נשאר — TRANSIENT: נרשם-ונראה אבל-לא-מוכר-כעמוד-מת.
+ *    מדידה שלנו לא תיתן-אזעקת-שווא (נמדד 10:33: 429-על-commits-page = FAIL-שווא).
  *  · קישורים שנבנים ב-JS ('+esc(..)+' / ${..}) מסוננים — הם לא href-אמיתי ב-DOM.
  *  · פסק-כן תמיד: exit 0; ה-verdict נושא את האמת; FAIL לעולם לא מוסתר.
  */
@@ -47,8 +50,9 @@ const isOurs = (u) =>
 
 async function probe(url) {
   const ours = isOurs(url);
+  const throttled = (s) => s === 429 || s === 503;
   const ua = ours ? UA_OURS : UA_BROWSER; // אנטי-בוט של צד-ג' לא יזייף FINDING שלנו
-  for (let attempt = 1; attempt <= 2; attempt++) {
+  for (let attempt = 1; attempt <= 3; attempt++) {
     try {
       const r = await fetch(url, {
         headers: { 'user-agent': ua, accept: '*/*' },
@@ -56,14 +60,21 @@ async function probe(url) {
         signal: AbortSignal.timeout(15000),
       });
       // 404/410 = מצאו-עמוד-מת באמת (גם אצל צד-ג'); שאר-הכישלונות אצל חוץ =
-      // חסימת-בוט/רשת ולא בהכרח עמוד-מת.
+      // חסימת-בוט/רשת ולא בהכרח עמוד-מת. 429/503 אצלנו = חנק-מדידה — ריטרי-אמיתי.
       if (r.ok) return { status: r.status, cls: 'ok' };
       if (r.status === 404 || r.status === 410) return { status: r.status, cls: 'finding' };
+      if (throttled(r.status)) {
+        if (attempt < 3) {
+          await new Promise((res) => setTimeout(res, 3000 + attempt * 2000));
+          continue;
+        }
+        return { status: r.status, cls: 'transient' };
+      }
       if (ours) return { status: r.status, cls: 'finding' };
-      if (attempt === 2) return { status: r.status, cls: 'external-blocked' };
+      if (attempt === 3) return { status: r.status, cls: 'external-blocked' };
     } catch (e) {
-      if (ours) return { status: 0, cls: 'finding', err: String(e && e.message).slice(0, 120) };
-      if (attempt === 2) return { status: 0, cls: 'external-blocked', err: String(e && e.message).slice(0, 120) };
+      if (ours && attempt === 3) return { status: 0, cls: 'finding', err: String(e && e.message).slice(0, 120) };
+      if (attempt === 3) return { status: 0, cls: 'external-blocked', err: String(e && e.message).slice(0, 120) };
     }
     await new Promise((res) => setTimeout(res, 1500));
   }
@@ -74,9 +85,10 @@ const verdict = {
   at: new Date().toISOString(),
   scope: `live-pages:${PAGES}`,
   pagesScanned: pages.length,
-  summary: { findings: 0, externalBlocked: 0, checked: 0 },
+  summary: { findings: 0, externalBlocked: 0, transientBlocked: 0, checked: 0 },
   findings: [],
   externalBlocked: [],
+  transientBlocked: [],
 };
 
 const urlIndex = new Map(); // url -> sources[]
@@ -119,6 +131,7 @@ for (const u of urls) {
   const entry = { code: res.status, url: u, sources: urlIndex.get(u) };
   if (res.err) entry.note = res.err;
   if (res.cls === 'finding') verdict.findings.push(entry);
+  else if (res.cls === 'transient') verdict.transientBlocked.push(entry);
   else verdict.externalBlocked.push(entry);
   await new Promise((res) => setTimeout(res, 250)); // מנומס עם צד-ג'
 }
@@ -126,9 +139,11 @@ for (const u of urls) {
 verdict.summary.checked = urls.length;
 verdict.summary.findings = verdict.findings.length;
 verdict.summary.externalBlocked = verdict.externalBlocked.length;
+verdict.summary.transientBlocked = verdict.transientBlocked.length;
 verdict.overall = verdict.findings.length === 0 ? 'PASS' : 'FAIL';
 verdict.note =
   '404 פנימי/חוץ = עמוד-מת (FINDING). 403/429/502 אצל צד-ג = חסימת-בוט (רמז בלבד). ' +
+  '429/503 מפני-ה-github.com-שלנו = חנק-מדידה (TRANSIENT — ריטרי-3 ואז רשום-בלי-הכשל). ' +
   'קישורים הנבנים ב-JS בזמן-ריצה אינם נסרקים כאן — הם אינם href סטטי.';
 
 fs.writeFileSync('agents/site-audit.json', JSON.stringify(verdict, null, 1) + '\n');
