@@ -1,105 +1,100 @@
 {
  "schema": "office.pulse/1",
- "generatedAt": "2026-10-13T06:52:00.781Z",
+ "generatedAt": "2026-10-13T07:00:17.163Z",
  "generatedAgeNote": "this file is rewritten by the office-pulse workflow; judge freshness by generatedAt",
  "verdict": "STALE",
  "verdictChecks": [
   {
    "name": "office-push",
    "state": "fresh",
-   "detail": "5min <= 2880min"
+   "detail": "7min <= 2880min"
   },
   {
    "name": "office-ci",
    "state": "fresh",
-   "detail": "60min <= 1560min"
+   "detail": "68min <= 1560min"
   },
   {
    "name": "wallet-artery",
-   "state": "unknown",
-   "detail": "age not measured"
+   "state": "aging",
+   "detail": "1178min <= 2880min"
   },
   {
    "name": "grid-artery",
-   "state": "unknown",
-   "detail": "age not measured"
+   "state": "aging",
+   "detail": "367min <= 720min"
   },
   {
    "name": "fleet-artery",
-   "state": "unknown",
-   "detail": "age not measured"
+   "state": "aging",
+   "detail": "1324min <= 2880min"
   },
   {
    "name": "sovereign-tick",
-   "state": "unknown",
-   "detail": "age not measured"
+   "state": "stale",
+   "detail": "367min > 360min"
   },
   {
    "name": "runtime-heartbeat",
    "state": "fresh",
-   "detail": "3min <= 90min"
+   "detail": "6min <= 90min"
   }
  ],
- "degraded": [
-  "wallet",
-  "grid",
-  "fleet",
-  "tick"
- ],
+ "degraded": [],
  "sources": {
   "fleetHQ": "ok",
-  "sbx-wallet": "error",
-  "sbx-grid": "error",
-  "sbx-fleet": "error",
-  "sbx-tick": "error",
+  "sbx-wallet": "ok",
+  "sbx-grid": "ok",
+  "sbx-fleet": "ok",
+  "sbx-tick": "ok",
   "runtime": "ok"
  },
  "office": {
   "repo": "roshpinacare-sys/FleetHQ",
-  "pushedAt": "2026-10-13T06:46:57Z",
-  "pushedAgeMin": 5,
+  "pushedAt": "2026-10-13T06:53:00Z",
+  "pushedAgeMin": 7,
   "openIssues": 1,
   "wire": [
+   {
+    "sha": "b06874b",
+    "msg": "pacemaker receipt: 2026-10-13T06:52:59Z",
+    "at": "2026-10-13T06:52:59Z",
+    "ageMin": 7,
+    "author": "roshpinacare-sys"
+   },
    {
     "sha": "f949c43",
     "msg": "pacemaker receipt: 2026-10-13T06:46:56Z",
     "at": "2026-10-13T06:46:56Z",
-    "ageMin": 5,
+    "ageMin": 13,
     "author": "roshpinacare-sys"
    },
    {
     "sha": "7d02d00",
     "msg": "decide: sovereign decision cycle (SOV-POLICY/1) — sense/decide/record, evidence-anchored",
     "at": "2026-10-13T06:46:35Z",
-    "ageMin": 5,
+    "ageMin": 14,
     "author": "roshpinacare-sys"
    },
    {
     "sha": "c657192",
     "msg": "pacemaker receipt: 2026-10-13T06:44:18Z",
     "at": "2026-10-13T06:44:18Z",
-    "ageMin": 8,
+    "ageMin": 16,
     "author": "roshpinacare-sys"
    },
    {
     "sha": "ae845ba",
     "msg": "pacemaker receipt: 2026-10-13T06:41:04Z",
     "at": "2026-10-13T06:41:04Z",
-    "ageMin": 11,
+    "ageMin": 19,
     "author": "roshpinacare-sys"
    },
    {
     "sha": "b2704c7",
     "msg": "pacemaker receipt: 2026-10-13T06:30:26Z",
     "at": "2026-10-13T06:30:26Z",
-    "ageMin": 22,
-    "author": "roshpinacare-sys"
-   },
-   {
-    "sha": "b557cea",
-    "msg": "opens-closer: measured freshness ledger + revival dispatches [skip ci]",
-    "at": "2026-10-13T06:30:14Z",
-    "ageMin": 22,
+    "ageMin": 30,
     "author": "roshpinacare-sys"
    }
   ],
@@ -120,10 +115,10 @@
     }
    ]
   },
-  "worklogLastTouchAgeMin": 1084,
+  "worklogLastTouchAgeMin": 1092,
   "boot": {
    "at": "2026-10-11T23:36:39.484Z",
-   "ageMin": 1875,
+   "ageMin": 1884,
    "office": {
     "reception_3000": "up",
     "foreman_3010": "up",
@@ -134,7 +129,7 @@
   "ci": {
    "overall": "PASS",
    "at": "2026-10-13T05:52:28.398Z",
-   "ageMin": 60,
+   "ageMin": 68,
    "reason": "all five checks ran and passed",
    "runUrl": "https://github.com/roshpinacare-sys/FleetHQ/actions/runs/38353530208",
    "checks": {
@@ -148,22 +143,35 @@
  },
  "arteries": {
   "wallet": {
-   "__error": "HTTP 404 contents:receipts/wallet/verdict.json"
+   "at": "2026-10-12T11:22:41.395Z",
+   "ageMin": 1178,
+   "overall": "PASS",
+   "alerts": 1,
+   "runUrl": "https://github.com/roshpinacare-sys/Sandbox/actions/runs/38242234259"
   },
   "grid": {
-   "__error": "HTTP 404 contents:receipts/grid/verdict.json"
+   "at": "2026-10-13T00:53:23.023Z",
+   "ageMin": 367,
+   "overall": "ERROR",
+   "alerts": 0
   },
   "fleet": {
-   "__error": "HTTP 404 contents:receipts/fleet/verdict.json"
+   "at": "2026-10-12T08:56:37.698Z",
+   "ageMin": 1324,
+   "overall": "FAIL",
+   "alerts": 2,
+   "runUrl": "https://github.com/roshpinacare-sys/Sandbox/actions/runs/38226675048"
   },
   "tick": {
-   "__error": "HTTP 404 contents:receipts/latest.json"
+   "at": "2026-10-13T00:53:22.885Z",
+   "ageMin": 367,
+   "chain": "07ea08229494"
   }
  },
  "runtime": {
-  "lastSuccessAt": "2026-10-13T06:48:38Z",
-  "lastSuccessAgeMin": 3,
-  "lastSuccessName": "blurt-revival",
+  "lastSuccessAt": "2026-10-13T06:54:08Z",
+  "lastSuccessAgeMin": 6,
+  "lastSuccessName": "fee-engine",
   "lastConclusion": "success"
  }
 }
