@@ -490,7 +490,8 @@ footer .fr{display:flex;gap:14px;flex-wrap:wrap}
       "<td><span class='tierchip ours'>" + esc(t("tier.ours")) + "</span></td>" +
       "<td class='num'>$0.00</td><td class='num'>$0.00</td>" +
       "<td class='num' title='" + esc(t("lg.oursnote")) + "'>" + (o.lastPriceUsds ? "@" + o.lastPriceUsds : "-") + "</td>" +
-      "<td class='num' title='" + esc(t("lg.oursnote")) + "'>" + (o.feesAccruedMu !== undefined ? (o.feesAccruedMu.toLocaleString("en-US")) + " µ" : "-") + "</td></tr>";
+      "<td class='num' title='" + esc(t("lg.oursnote")) + "'>" + (o.feesAccruedMu !== undefined ? (o.feesAccruedMu.toLocaleString("en-US")) + " µ" : "-") +
+        (o.fills24h != null ? " · <span class='gchip'>" + (o.fills24h.toLocaleString("en-US")) + " fills/24h · " + (o.vol24h != null ? (o.vol24h.toLocaleString("en-US")) : "0") + " µ vol/24h</span>" : "") + "</td></tr>";
     h += "</tbody></table>";
     box.innerHTML = h;
     var chip = document.getElementById("freshchip");

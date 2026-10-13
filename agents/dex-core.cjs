@@ -547,6 +547,13 @@ function issuerRow() {
 function stasisCheck() {
   try { const st = JSON.parse(fs.readFileSync(STASIS_FILE, 'utf8')); return st && st.active === true ? st : null; } catch (_) { return null; }
 }
+// CR-0077 (2026-10-13, trace 1a135897157a1d75): the STAGED-LANE law arrives at the core —
+// STASIS active halts a lane ONLY when that lane is not named in STASIS.stagedLanes.allow.
+// Same doctrine the batch-settle desk already runs (CR-0075 pattern); the master brake
+// (active=true) never flips, and removing the lane name (or halt-all) re-halts fail-closed.
+function laneAllowed(st, lane) {
+  try { const a = ((st || {}).stagedLanes || {}).allow || []; return a.map(String).includes(String(lane)); } catch (_) { return false; }
+}
 
 // ── R44: the counter-grid ARM — the owner gate + the sizing/cap/dust/idempotency laws ──
 /** the owner gate: CR-0074's presence in the repo IS the open gate (the owner's directive
@@ -1130,9 +1137,9 @@ async function tick() {
   const now = nowIso();
   try {
     const stasis = stasisCheck();
-    if (stasis) {
+    if (stasis && !laneAllowed(stasis, 'dex-core')) {
       writeBook({ protocol: PROTOCOL, at: now, agent: VERSION, verdict: 'EXCHANGE-CORE-HALTED-STASIS', stasisHalted: true, stasisReason: stasis.reason || null, laws: LAWS, pools: [], routes: [], arb: [], counterGrids: {}, errors: [] });
-      console.log(`STASIS-HALT dex-core · ${now}`);
+      console.log(`STASIS-HALT dex-core · ${now} (lane 'dex-core' not in stagedLanes.allow — CR-0077 staged-lane law)`);
       return 0;
     }
     let prev = loadBook();
@@ -1215,23 +1222,28 @@ async function settleIntentsTick() {
   const now = nowIso();
   try {
     const stasis = stasisCheck();
-    if (stasis) {
+    if (stasis && !laneAllowed(stasis, 'dex-core')) {
       writeBook({ protocol: PROTOCOL, at: now, agent: VERSION, verdict: 'EXCHANGE-CORE-HALTED-STASIS', stasisHalted: true, stasisReason: stasis.reason || null, laws: LAWS, pools: [], routes: [], arb: [], counterGrids: {}, errors: [] });
-      console.log(`STASIS-HALT dex-core settle-intents · ${now} (the queue stays — the mesh owns it, settling resumes when STASIS lifts)`);
+      console.log(`STASIS-HALT dex-core settle-intents · ${now} (lane 'dex-core' not in stagedLanes.allow — the queue stays; CR-0077 staged-lane law)`);
       return 0;
     }
     const prev = loadBook();
     if (!prev || prev.protocol !== PROTOCOL || !prev.genesisDone) { console.log('dex-core: no genesis book — settle-intents refuses (nothing to settle on)'); return 0; }
+    // CR-0077: queue separation — single-writer per file. The mesh owns dex-intents.json;
+    // the activation desk owns dex-activation-queue.json and names it via DEX_SETTLE_QUEUE
+ // (basename only — no path escape; unknown names fall back to the mesh queue).
+    const qBase = process.env.DEX_SETTLE_QUEUE && /^[\w.-]+\.json$/.test(process.env.DEX_SETTLE_QUEUE) ? process.env.DEX_SETTLE_QUEUE : null;
+    const qFile = qBase ? path.join(AG, qBase) : INTENTS_FILE;
     let queue = null;
-    try { queue = JSON.parse(fs.readFileSync(INTENTS_FILE, 'utf8')); } catch (_) { queue = null; }
-    if (!queue || !Array.isArray(queue.intents) || queue.intents.length === 0) { console.log('dex-core: no intents in the queue'); return 0; }
+    try { queue = JSON.parse(fs.readFileSync(qFile, 'utf8')); } catch (_) { queue = null; }
+    if (!queue || !Array.isArray(queue.intents) || queue.intents.length === 0) { console.log(`dex-core: no intents in the queue (${qBase || 'dex-intents.json'})`); return 0; }
     const feed = loadRouterFeed();
     const mesh = settleIntents(prev, queue, feed, now);
     const book = assemble(prev, { st: mesh.st, ops: mesh.ops, routes: prev.routes || [], arb: prev.arb || [], counterGrids: prev.counterGrids || {}, cons: mesh.cons, consOk: mesh.consOk, att: mesh.att, feesMu: 0n, edgeMu: ub((prev.treasuryPnl || {}).rebalanceEdgeMu || '0'), notes: mesh.notes, rebalanceBooked: false }, feed, null, now, false, mesh.ops, mesh);
     writeBook(book); writeMd(book);
     appendHistory(mesh.ops);
-    // consume the queue (single-writer: the mesh wrote it, the core clears it)
-    try { fs.writeFileSync(INTENTS_FILE + '.tmp', JSON.stringify({ batch: null, at: now, intents: [], lastSettled: mesh.batchId }, null, 1) + '\n'); fs.renameSync(INTENTS_FILE + '.tmp', INTENTS_FILE); } catch (_) {}
+    // consume the queue (single-writer: its owner wrote it, the core clears it)
+    try { fs.writeFileSync(qFile + '.tmp', JSON.stringify({ batch: null, at: now, intents: [], lastSettled: mesh.batchId }, null, 1) + '\n'); fs.renameSync(qFile + '.tmp', qFile); } catch (_) {}
     console.log(`DEX-CORE-MESH-SETTLE batch=${mesh.batchId} fills=${mesh.fills.length} rejects=${mesh.rejects.length} wires=${mesh.ops.filter((o) => o.type === 'MESH-WIRE').length} cons=${mesh.consOk} att=${mesh.att}`);
     return 0;
   } catch (e) {

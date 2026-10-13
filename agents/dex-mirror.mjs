@@ -40,7 +40,8 @@ const HOME = process.env.HOME || "";
 const CONSOLE_DEX = process.env.CONSOLE_DEX_DIR || (HOME ? `${HOME}/estate/Console/dex` : null);
 const OUT_DIR = "dex";
 const FILES = ["grid.json", "world.json", "state.json", "credits.json", "portfolio.json",
-               "onramp.json", "showcase.json", "relay.json", "money.json"]; // 13-a: סגירת פער 528ש' (WO-unwired-dex-mirror P1) — העותקים ב-Domain קפאו ב-09-19 כי הרשימה דילגה עליהם; 10-12: money.json נוסף — המקור (money-watch 2ש') טרי אבל העותק ב-Domain קפא כי הרשימה עדיין דילגה עליו (נמדד: מקור 23:52 מול עותק 20:29 אחרי ריצת-מראה 01:06 שהעתיקה 7 קבצים ודילגה עליו)
+               "onramp.json", "showcase.json", "relay.json", "money.json",
+               "giants.json", "honest-econ.json"]; // CR-0077 (10-13, trace 1a135897157a1d75): giants.html fetches dex/giants.json + dex/honest-econ.json and BOTH were missing from this list — the giants table rendered "unmeasured 0" (404) while the books lived on Console. The our-row now loads: fees + volume of the SAOS DEX measured from the live engine books.
 const MAX_SOURCE_AGE_H = 48; // מקור מעופש מזה = צינור מת, לא משקפים אותו
 
 const r2 = (v) => Math.round(v * 100) / 100;

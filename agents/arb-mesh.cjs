@@ -190,6 +190,12 @@ function sizeLadder(coreBook) {
 function stasisCheck() {
   try { const s = JSON.parse(fs.readFileSync(STASIS_FILE, 'utf8')); return s && s.active ? s : null; } catch (_) { return null; }
 }
+// CR-0077 (2026-10-13, trace 1a135897157a1d75): the staged-lane law — STASIS active halts
+// the mesh ONLY when the 'arb-mesh' lane is not named in STASIS.stagedLanes.allow (the
+// batch-settle desk pattern); the master brake never flips, removal re-halts fail-closed.
+function laneAllowed(st, lane) {
+  try { const a = ((st || {}).stagedLanes || {}).allow || []; return a.map(String).includes(String(lane)); } catch (_) { return false; }
+}
 function writeBook(obj) {
   const tmp = OUT_JSON + '.tmp';
   fs.writeFileSync(tmp, JSON.stringify(obj, null, 1) + '\n');
@@ -245,9 +251,9 @@ async function tick() {
   const now = nowIso();
   try {
     const stasis = stasisCheck();
-    if (stasis) {
+    if (stasis && !laneAllowed(stasis, 'arb-mesh')) {
       writeBook({ protocol: PROTOCOL, at: now, agent: VERSION, verdict: 'HALTED-STASIS', stasisHalted: true, stasisReason: stasis.reason || null, roster: [], candidates: [], intentsDrafted: 0, fills: [], rejects: [], sizeLadder: [], meshPnl: { lifetime: { byAgent: {}, fills: 0, edgeMu: '0', feesMu: '0', volumeInMu: '0' } }, errors: [] });
-      console.log(`STASIS-HALT arb-mesh · ${now}`);
+      console.log(`STASIS-HALT arb-mesh · ${now} (lane 'arb-mesh' not in stagedLanes.allow — CR-0077 staged-lane law)`);
       return 0;
     }
     const coreBook = readJson(CORE_BOOK);
