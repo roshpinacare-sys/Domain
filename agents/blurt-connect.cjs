@@ -136,7 +136,13 @@ async function main() {
     }
   }
 
-  if (!connectedTo) { row('summary', 'no blurt account connected this run — census lines above say exactly which secrets were tried', 'RED-UNCONNECTED'); saveState(state); book(); process.exit(1); }
+  if (!connectedTo) { row('summary', 'no blurt account connected this run — census lines above say exactly which secrets were tried', 'BLOCKED-NO-BLURT-AUTHORITY'); saveState(state); book();
+    /* BLOCKED-SILENT law v2 (2026-10-13): no candidate secret matches the live blurt
+       active authority = the designed custody boundary (nothing signed, nothing sent,
+       owner words awaited) — the book keeps the truth, the run exits 0 (green) like
+       every other designed-boundary desk in this file (missing-wif / STASIS / funding).
+       A real broadcast or read-back defect above still exits 1. */
+    process.exit(0); }
 
   /* verification comment with dedicated posting key */
   if (GATE.stasisHalt('comment')) { row('gate', 'STASIS halt on comment', 'gated'); saveState(state); book(); process.exit(0); }
