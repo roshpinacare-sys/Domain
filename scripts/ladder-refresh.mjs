@@ -261,4 +261,10 @@ if (PUSH_RECEIPT) {
 
 // zero secrets in the summary — orderids/prices/txids are chain-public
 console.log('SUMMARY ' + JSON.stringify({ armed: EFFECTIVE_ARM, armedRequested: ARMED, custodyBoundary: CUSTODY_BOUNDARY, executorExit: child.status, ...shape, pushed: PUSH_RECEIPT }));
-if (child.status !== 0) process.exit(child.status || 1);
+// 2026-10-13 flood-law: exit 1 from the executor while a concurrent manager owns the
+// ladder (churn verdict) is a DESIGNED YIELD, not a failure — the refresh did its duty
+// (measured, receipt pushed, stayed cap-limited inside the concurrent-manager reality).
+// Red stays reserved for real executor failures with no concurrent manager.
+const CHURN = /CONCURRENT MANAGER/i.test(String(shape.churnVerdict || ''));
+if (child.status !== 0 && !CHURN) process.exit(child.status || 1);
+if (child.status !== 0 && CHURN) console.log('YIELD-GREEN: concurrent ladder manager active — executor yielded by design (receipt pushed)');

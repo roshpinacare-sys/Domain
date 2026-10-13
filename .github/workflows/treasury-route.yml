@@ -103,6 +103,14 @@ jobs:
           RECEIPT_OUT: agents/receipts/blurt-curate-receipt.json
         run: node agents/blurt-curate.cjs
 
+      # self-heal BEFORE the gate: the lane's own producers may emit raw names —
+      # measured 2026-10-13: the gate blocked a full run because a producer's fresh
+      # output carried them. Redaction now runs pre-gate; the gate still fails loud
+      # if redaction left anything raw.
+      - name: redact telemetry (pre-gate self-heal)
+        run: |
+          node agents/redact-telemetry.mjs agents/money-ledger.json agents/dex-book.json agents/bridge-book.json agents/capability-matrix.json agents/receipts/treasury-desk-receipt.json agents/receipts/blurt-curate-receipt.json || true
+
       - name: exposure gate (fail-loud — raw names never publish)
         run: node scripts/exposure-scan.mjs
 
