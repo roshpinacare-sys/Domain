@@ -67,8 +67,8 @@ jobs:
 
       - name: Commit sealed blob to vault-transfer branch
         run: |
-          git config user.name "weave-vault-bot"
-          git config user.email "weave-vault-bot@agents.roshpinacare-sys"
+          git config user.name "roshpinacare-sys"
+          git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
           git fetch origin vault-transfer || true
           if git rev-parse --verify origin/vault-transfer >/dev/null 2>&1; then
             git switch vault-transfer || git switch -c vault-transfer origin/vault-transfer

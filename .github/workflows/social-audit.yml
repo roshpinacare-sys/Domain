@@ -28,8 +28,8 @@ jobs:
 
       - name: commit audit receipts (secretless)
         run: |
-          git config user.name "saos-social-audit"
-          git config user.email "social-audit@saos.local"
+          git config user.name "roshpinacare-sys"
+          git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
           git add -A
           if ! git diff --cached --quiet; then
             git commit -m "social-audit: daily baseline measurement · $(date -u +%Y-%m-%dT%H:%M:%SZ) [skip ci]"

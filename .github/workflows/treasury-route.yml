@@ -109,8 +109,8 @@ jobs:
       - name: commit ledger + routes + receipts (secretless)
         continue-on-error: true
         run: |
-          git config user.name "saos-treasury"
-          git config user.email "treasury@saos.local"
+          git config user.name "roshpinacare-sys"
+          git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
           mkdir -p agents/receipts
           node agents/redact-telemetry.mjs agents/money-ledger.json agents/dex-book.json agents/bridge-book.json agents/capability-matrix.json agents/receipts/treasury-desk-receipt.json agents/receipts/blurt-curate-receipt.json || true
           for p in agents/money-ledger.json agents/routes.json agents/routes.md agents/receipts/treasury-desk-receipt.json agents/capability-matrix.json agents/capability-matrix.md agents/dex-book.json agents/dex-book.md agents/bridge-book.json agents/bridge-book.md agents/receipts/blurt-curate-receipt.json; do
