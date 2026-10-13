@@ -131,7 +131,7 @@ jobs:
           fi
           CODE=0
           for i in 1 2 3; do
-            CODE=$(ignite "$WF")
+            CODE=$(ignite "${WF%.yml}")
             [ "$CODE" = "204" ] && break
             sleep 10
           done
