@@ -16,6 +16,7 @@ on:
 
 permissions:
   contents: write
+  actions: write # נדרש להצתת office-worldbeat — נמדד 2026-10-12: בלעדיו ההצתה חזרה HTTP 0/403 והעולם שתק
 
 concurrency:
   group: office-pulse-twin
@@ -102,8 +103,14 @@ jobs:
           AGE_MIN=$(( ($(date +%s) - T / 1000) / 60 ))
           echo "world age: ${AGE_MIN} min (SLA 25)"
           if [ "$AGE_MIN" -gt 25 ]; then
-            ok=$(gh api -X POST "repos/${GITHUB_REPOSITORY}/actions/workflows/office-worldbeat.yml/dispatches" -f ref=main -w '%{http_code}' -o /dev/null || echo 0)
-            echo "world beat stale — re-ignite office-worldbeat (HTTP ${ok})"
+            CODE=0
+            for i in 1 2 3; do
+              CODE=$(gh api -X POST "repos/${GITHUB_REPOSITORY}/actions/workflows/office-worldbeat.yml/dispatches" -f ref=main -w '%{http_code}' -o /dev/null 2>/dev/null || echo 0)
+              [ "$CODE" = "204" ] && break
+              sleep 5
+            done
+            echo "world beat stale (${AGE_MIN} min) — re-ignite office-worldbeat (HTTP ${CODE})"
+            [ "$CODE" = "204" ] || { echo "re-ignite FAILED — the world must not stay silent"; exit 1; }
           else
             echo "world beat is fresh — no action"
           fi
