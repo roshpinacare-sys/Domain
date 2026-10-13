@@ -2492,6 +2492,11 @@ function selftest() {
   ok('dust-respects-user', cpmmOut(3n, 6n, 1n, 0) === 1n && (3n + 1n) * (6n - 1n) >= 3n * 6n);
 
   // ── R41 MESH MARKET selftest ──────────────────────────────────────────────
+  // 3-a pin (T23-C, mirrors arb-mesh.cjs): CI injects the real FLEET_ACCOUNT head
+  // account; the roster law (HEAD_ACCOUNT + soldiers) is the law — so the mesh tests
+  // address the operator THROUGH the roster law, never the hardcoded literal 'owner'
+  // (hardcoding made CI-world intents ROSTER-UNKNOWN and crashed the fill assertions).
+  const ME = rosterLaw()[0];
   // base book for mesh tests: treasury free claims for wiring, P3 live, an edge above floor
   const meshBase = mkBook(1000000n, 120000n, null); // mid 0.12 vs fair 0.1054467 → real edge
   meshBase.processedBatches = [];
@@ -2500,10 +2505,10 @@ function selftest() {
   const rej1 = settleIntents(meshBase, { batch: 'B-UNK', intents: [{ agent: 'ghost', from: 'STEEM', to: 'SBD', amountIn: '20000' }] }, feedMesh, nowIso());
   ok('mesh-roster-unknown-refused', rej1.rejects.some((r) => r.why === 'ROSTER-UNKNOWN') && rej1.fills.length === 0);
   // 2. dust refused
-  const rej2 = settleIntents(meshBase, { batch: 'B-DUST', intents: [{ agent: 'owner', from: 'STEEM', to: 'SBD', amountIn: '10' }] }, feedMesh, nowIso());
+  const rej2 = settleIntents(meshBase, { batch: 'B-DUST', intents: [{ agent: ME, from: 'STEEM', to: 'SBD', amountIn: '10' }] }, feedMesh, nowIso());
   ok('mesh-dust-refused', rej2.rejects.some((r) => r.why === 'DUST'));
   // 3. real fill via wire: agent has nothing, treasury has free STEEM → wire + fill settle atomically
-  const filled = settleIntents(meshBase, { batch: 'B-FILL', intents: [{ agent: 'owner', from: 'STEEM', to: 'SBD', amountIn: '20000', minOut: '1' }] }, feedMesh, nowIso());
+  const filled = settleIntents(meshBase, { batch: 'B-FILL', intents: [{ agent: ME, from: 'STEEM', to: 'SBD', amountIn: '20000', minOut: '1' }] }, feedMesh, nowIso());
   ok('mesh-wire-then-fill', filled.fills.length === 1 && filled.ops.some((o) => o.type === 'MESH-WIRE') && ub(filled.fills[0].amountOut) > 0n);
   ok('mesh-fill-conservation', filled.consOk && filled.cons.every((r) => r.ok));
   ok('mesh-fill-edge-marked', filled.fills[0].edgeMu != null && filled.fills[0].fairUsed.indexOf('CEX-FAIR') === 0);
@@ -2511,21 +2516,21 @@ function selftest() {
   ok('mesh-attestation-recomputes', filled.att === attestationHash(filled.st.vault, filled.st.accounts, filled.st.pools, filled.st.seq));
   // 4. idempotency: the same batch settles nothing twice
   const afterFill = { vault: filled.st.vault, accounts: filled.st.accounts, pools: filled.st.pools, seq: filled.st.seq, processedBatches: filled.processedBatches, meshPnl: filled.meshPnl };
-  const replay = settleIntents(afterFill, { batch: 'B-FILL', intents: [{ agent: 'owner', from: 'STEEM', to: 'SBD', amountIn: '20000' }] }, feedMesh, nowIso());
+  const replay = settleIntents(afterFill, { batch: 'B-FILL', intents: [{ agent: ME, from: 'STEEM', to: 'SBD', amountIn: '20000' }] }, feedMesh, nowIso());
   ok('mesh-batch-idempotent', replay.skipped === true && replay.ops.length === 0 && replay.fills.length === 0);
   // 5. minOut atomicity through the mesh: impossible minOut → refused, pools byte-unchanged, no claims moved
   const preMin = mkBook(1000000n, 120000n, null); preMin.processedBatches = [];
-  const meshRefused = settleIntents(preMin, { batch: 'B-MIN', intents: [{ agent: 'owner', from: 'STEEM', to: 'SBD', amountIn: '20000', minOut: '999999999999' }] }, feedMesh, nowIso());
+  const meshRefused = settleIntents(preMin, { batch: 'B-MIN', intents: [{ agent: ME, from: 'STEEM', to: 'SBD', amountIn: '20000', minOut: '999999999999' }] }, feedMesh, nowIso());
   ok('mesh-minout-atomic', meshRefused.rejects.some((r) => r.why === 'REFUSED-MINOUT') && meshRefused.fills.length === 0
     && JSON.stringify(meshRefused.st.pools.find((p) => p.id === 'P3')) === JSON.stringify(preMin.pools.find((p) => p.id === 'P3')));
   // 6. naked short without treasury capital: empty treasury → GATED-WIRE-NO-CAPITAL, no fill
   const broke = mkBook(1000000n, 120000n, null); broke.processedBatches = [];
   broke.accounts.treasury.claims.STEEM = '0'; // no free capital
-  const gated = settleIntents(broke, { batch: 'B-GATE', intents: [{ agent: 'owner', from: 'STEEM', to: 'SBD', amountIn: '20000' }] }, feedMesh, nowIso());
+  const gated = settleIntents(broke, { batch: 'B-GATE', intents: [{ agent: ME, from: 'STEEM', to: 'SBD', amountIn: '20000' }] }, feedMesh, nowIso());
   ok('mesh-gated-wire-honest', gated.rejects.some((r) => r.why === 'GATED-WIRE-NO-CAPITAL') && gated.fills.length === 0);
   // 7. determinism: same inputs → byte-identical fills
-  const m1 = settleIntents(mkBook(1000000n, 120000n, null), { batch: 'B-DET', intents: [{ agent: 'owner', from: 'STEEM', to: 'SBD', amountIn: '15000' }] }, feedMesh, '2026-10-05T00:00:00.000Z');
-  const m2 = settleIntents(mkBook(1000000n, 120000n, null), { batch: 'B-DET', intents: [{ agent: 'owner', from: 'STEEM', to: 'SBD', amountIn: '15000' }] }, feedMesh, '2026-10-05T00:00:00.000Z');
+  const m1 = settleIntents(mkBook(1000000n, 120000n, null), { batch: 'B-DET', intents: [{ agent: ME, from: 'STEEM', to: 'SBD', amountIn: '15000' }] }, feedMesh, '2026-10-05T00:00:00.000Z');
+  const m2 = settleIntents(mkBook(1000000n, 120000n, null), { batch: 'B-DET', intents: [{ agent: ME, from: 'STEEM', to: 'SBD', amountIn: '15000' }] }, feedMesh, '2026-10-05T00:00:00.000Z');
   ok('mesh-deterministic', JSON.stringify(m1.fills) === JSON.stringify(m2.fills) && JSON.stringify(m1.ops) === JSON.stringify(m2.ops));
 
   // ── R42 MULTI-NETWORK VAULT selftest ───────────────────────────────────────
