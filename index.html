@@ -755,47 +755,79 @@ function chipMerge(id, ts){
 
 /* -- crew panel: live from the office's own heartbeat (office-heartbeat.yml, every 2h).
    Honesty law: renders ONLY what the captured office state actually says —
-   no data = an honest "no data", never a fake. -- */
+   no data = an honest "no data", never a fake.
+   3-b fix (owner: "0 משמרות? 0 לקחים? זה לא מעודכן"): this panel read
+   FleetHQ office-state.json `memory` — which the capture never shipped
+   (the foreman puts it at status.memory) — so shifts/lessons rendered 0
+   forever while the real books said otherwise. Wiring now:
+     · PRIMARY: agents/office-live.json (same-origin, the ALWAYS-ON git artery)
+       → shifts.total, lessons.total, books.total, crew.total + generatedAt.
+     · FALLBACK: foreman office-state.json memory (root or status.memory).
+     · The foreman still owns agents/tasks/feed rows and its own chip age.
+     · Every number shows its source — git artery book vs foreman memory. -- */
 function loadCrew(){
   var el = function(id){ return document.getElementById(id); };
   function esc(s){ var d=document.createElement('div'); d.textContent=String(s==null?'':s); return d.innerHTML; }
   function agoStr(iso){ try{ var m=Math.round((Date.now()-new Date(iso).getTime())/60000);
     if(m<1) return 'עכשיו'; if(m<60) return m+' ד׳'; if(m<1440) return Math.round(m/60)+' ש׳'; return Math.round(m/1440)+' ימים'; }catch(e){ return ''; } }
-  fetch('https://raw.githubusercontent.com/roshpinacare-sys/FleetHQ/main/office/state/office-state.json?ts='+Date.now())
-    .then(function(r){ if(!r.ok) throw 0; return r.json(); })
-    .then(function(s){
-      var mem = s.memory || {};
-      var tasks = s.tasks || [];
+  var artery = null, foreman = null;
+  function render(){
+    if(!artery && !foreman){ // both dead — honest, never faked
+      var chip0 = el('pc-chip');
+      chip0.textContent = 'אין-דופק';
+      chip0.classList.remove('ok'); chip0.classList.add('stale');
+      el('pc-runs').innerHTML = '<li class="err">אין עדיין מדידת-צוות חיה — כאן שום דבר לא מזויף. הדופק הראשון מואץ עכשיו.</li>';
+      el('pc-upd').textContent = '—';
+      return;
+    }
+    // shifts/lessons/books: the artery book is the canonical always-on office;
+    // the foreman's git-restored memory (root or status.memory) is the fallback.
+    var fm = foreman ? (foreman.memory || (foreman.status && foreman.status.memory) || null) : null;
+    var shifts = artery && artery.shifts && artery.shifts.total != null ? artery.shifts.total
+               : (fm && fm.shifts) || 0;
+    var lessons = artery && artery.lessons && artery.lessons.total != null ? artery.lessons.total
+               : (fm && fm.lessons != null ? (Array.isArray(fm.lessons) ? fm.lessons.length : (fm.lessons || 0)) : 0);
+    var books = artery && artery.books && artery.books.total != null ? artery.books.total
+              : (foreman && foreman.books != null ? foreman.books : 0);
+    var crewN = artery && artery.crew && artery.crew.total != null ? artery.crew.total
+              : (foreman && Array.isArray(foreman.agents) ? foreman.agents.length : 0);
+    var src = artery ? 'עורק-הגיט' : (fm ? 'זיכרון-הפורמן' : '—');
+    var h = '<li><b>' + crewN + '</b> סוכנים בצוות · <b>' + shifts + '</b> משמרות · <b>' + lessons + '</b> לקחים · <b>' + books + '</b> ספרים <span style="opacity:.6">(' + esc(src) + ')</span></li>';
+    if (foreman) {
+      var tasks = foreman.tasks || [];
       var open = tasks.filter(function(t){ return t.status !== 'done'; });
-      var ageMin = Math.round((Date.now() - new Date(s.capturedAt).getTime())/60000);
-      var chip = el('pc-chip');
-      chip.textContent = ageMin > 150 ? 'מיושן' : 'חי';
-      chip.classList.toggle('ok', ageMin <= 150);
-      chip.classList.toggle('stale', ageMin > 150);
-      var lessons = Array.isArray(mem.lessons) ? mem.lessons.length : (mem.lessons || 0);
-      var h = '<li><b>' + ((s.agents || []).length) + '</b> סוכנים על הכורסאות · <b>' + (mem.shifts || 0) + '</b> משמרות · <b>' + lessons + '</b> לקחים · <b>' + (s.books || 0) + '</b> ספרים</li>';
       if (open.length) {
         open.slice(0, 4).forEach(function(t){
           h += '<li><code>' + esc(t.id) + '</code> ' + esc(t.status) + ' — ' + esc(String(t.title || '').slice(0, 90)) + '</li>';
         });
       } else if (tasks.length) {
-        h += '<li>אין משימות פתוחות — המשמרת נסגרה. הדופק הבא בתוך שעתיים.</li>';
+        h += '<li>אין משימות פתוחות — המשמרת נסגרה. הדופק הבא בתוך שעה.</li>';
       } else {
         h += '<li class="err">המשרד בין משמרות — אין מצב-משימות בדופק האחרון.</li>';
       }
-      (s.feed || []).slice(0, 3).forEach(function(f){
+      (foreman.feed || []).slice(0, 3).forEach(function(f){
         h += '<li style="opacity:.75">' + esc(f.kind) + ': ' + esc(String(f.text || '').slice(0, 90)) + '</li>';
       });
-      el('pc-runs').innerHTML = h;
-      el('pc-upd').textContent = agoStr(s.capturedAt);
-    })
-    .catch(function(){
-      var chip = el('pc-chip');
-      chip.textContent = 'אין-דופק';
-      chip.classList.remove('ok'); chip.classList.add('stale');
-      el('pc-runs').innerHTML = '<li class="err">אין עדיין מדידת-צוות חיה — כאן שום דבר לא מזויף. הדופק הראשון מואץ עכשיו.</li>';
-      el('pc-upd').textContent = '—';
-    });
+    } else {
+      h += '<li>הפורמן-החי לא נענה — הספרים למעלה הם ספר-העורק האמיתי (git-backed, תמיד-חי).</li>';
+    }
+    el('pc-runs').innerHTML = h;
+    var chip = el('pc-chip');
+    var atIso = foreman ? foreman.capturedAt : (artery && artery.generatedAt);
+    var ageMin = atIso ? Math.round((Date.now() - new Date(atIso).getTime())/60000) : null;
+    chip.textContent = ageMin == null ? '—' : (ageMin > 150 ? 'מיושן' : 'חי');
+    chip.classList.toggle('ok', ageMin != null && ageMin <= 150);
+    chip.classList.toggle('stale', ageMin == null || ageMin > 150);
+    el('pc-upd').textContent = atIso ? agoStr(atIso) : '—';
+  }
+  fetch('agents/office-live.json',{cache:'no-store'})
+    .then(function(r){ if(!r.ok) throw 0; return r.json(); })
+    .then(function(d){ if(d && d.status === 'ALIVE') artery = d; render(); })
+    .catch(function(){ render(); });
+  fetch('https://raw.githubusercontent.com/roshpinacare-sys/FleetHQ/main/office/state/office-state.json?ts='+Date.now())
+    .then(function(r){ if(!r.ok) throw 0; return r.json(); })
+    .then(function(s){ foreman = s; render(); })
+    .catch(function(){ render(); });
 }
 
 /* -- T-69: PUBLIC MIRROR — the closed lanes come back alive via roshpinacare-sys/Pulse

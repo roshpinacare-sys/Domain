@@ -101,9 +101,15 @@ const memPath = path.join(AG, 'office-memory.json');
 const mem = readJson(memPath) || { shifts: 0, lessons: [], recentGoals: [], economy: {}, updatedAt: 0 };
 const shiftNo = (mem.shifts || 0) + 1;
 
-/* deterministic worker rotation by shift number */
+/* deterministic worker rotation by shift number.
+ * 3-b roster law (owner complaint "lead+6 workers אבל בחדר רואים אחרת"):
+ * the shift lead was listed TWICE (as lead AND again inside workers), so the
+ * feed read "lead + 6 workers" = 7 rows for 6 real people. Measured truth:
+ * the office has exactly SIX sovereign workers (aluf, shachar, gal, erez,
+ * tamar, yarden) — one of them leads each shift. The feed now says so:
+ * lead + the OTHER FIVE. Same people, no ghost seventh, no vanished worker. */
 const lead = WORKERS[(shiftNo - 1) % WORKERS.length];
-const crew = [WORKERS[(shiftNo) % WORKERS.length], WORKERS[(shiftNo + 1) % WORKERS.length], WORKERS[(shiftNo + 2) % WORKERS.length]];
+const duty = [WORKERS[(shiftNo) % WORKERS.length], WORKERS[(shiftNo + 1) % WORKERS.length], WORKERS[(shiftNo + 2) % WORKERS.length]];
 
 /* ── 1. SCOUT SHIFT: book freshness ── */
 const books = [];
@@ -151,10 +157,10 @@ if (stale.length > 0) {
 
 /* ── 4. ECONOMY: credit only executed tasks (honest bookkeeping) ── */
 const tasks = [
-  { key: 'book-scan',  doer: lead.id,    text: `סריקת-טריות ${books.length} ספרים → ${stale.length} ישנים` },
-  { key: 'lessons',    doer: crew[0].id, text: 'גזירת-לקח אחד-מדיד' },
-  { key: 'goals',      doer: crew[1].id, text: `יעדים-חדשים: ${nextGoals.length}` },
-  { key: 'feed',       doer: crew[2].id, text: 'office-live.json פוד-עודכן' },
+  { key: 'book-scan',  doer: lead.id,      text: `סריקת-טריות ${books.length} ספרים → ${stale.length} ישנים` },
+  { key: 'lessons',    doer: duty[0].id, text: 'גזירת-לקח אחד-מדיד' },
+  { key: 'goals',      doer: duty[1].id, text: `יעדים-חדשים: ${nextGoals.length}` },
+  { key: 'feed',       doer: duty[2].id, text: 'office-live.json פוד-עודכן' },
 ];
 const economy = { ...(mem.economy || {}) };
 for (const t of tasks) economy[t.doer] = (economy[t.doer] || 0) + 1;
@@ -199,11 +205,17 @@ const feed = {
     journalEvents: (() => { try { return fs.readFileSync(eventsPath, 'utf8').split('\n').filter(Boolean).length; } catch (_) { return null; } })(),
   },
   crew: {
+    total: WORKERS.length, /* 3-b: the one honest crew size — 6 people, no double-listing */
     lead: { id: lead.id, desk: lead.desk },
-    workers: WORKERS.map((w) => ({ id: w.id, desk: w.desk, credits: economy[w.id] || 0 })),
+    /* 3-b: the lead is NOT re-listed as a worker — lead + 5 = 6, matching the
+     * room's six bodies and ending the "lead+6 = 7?" phantom roster. */
+    workers: WORKERS.filter((w) => w.id !== lead.id).map((w) => ({ id: w.id, desk: w.desk, credits: economy[w.id] || 0 })),
   },
   books: { total: books.length, fresh: freshCount, stale: stale.length, list: books },
   lesson,
+  /* 3-b: the lessons BOOK is real (office-memory.json keeps up to 40) — the feed
+   * now carries its measured size so "0 לקחים" readers get the true number. */
+  lessons: { total: (mem.lessons || []).length, last: lesson },
   nextGoals,
   stasis: {
     active: !!stasis.active,
@@ -216,7 +228,7 @@ const feed = {
     note: 'משמרות-LLM יחזרו בהצתת-סוד-בעלים (sovereign-gateway); עורק-חסר-מפתחות מחזיק-את-המשרד-חי-בינתיים',
   },
   marketing: {
-    tagline: 'משרד-ריבוני-אוטונומי: 6 עובדים, ספרים-חיים, לקחים-שמשתפרים כל-משמרת',
+    tagline: 'משרד-ריבוני-אוטונומי: צוות של 6 (ראש-משמרת מתחלף + 5 עובדים), ספרים-חיים, לקחים-שמשתפרים כל-משמרת',
     officeFirstHe: 'המשרד נפתח ראשון — משמרת חיה כל שעתיים, מתועדת בגיט, משתפרת מעצמה',
     source: 'agents/office-live.json',
   },

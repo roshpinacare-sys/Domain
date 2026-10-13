@@ -120,6 +120,10 @@ export class UI {
   // ----- רוסטר -----
   buildRoster() {
     const list = this.$('#rosterList');
+    // 3-b: הספירה האמיתית על השער — הצוות השלם תמיד נראה ברוסטר (6: ראש-מטה + 5),
+    // כדי ש"איפה העובדים שגויסו?" תענה במבט-אחד: כולם כאן, כל-אחד במה הוא עושה.
+    const headB = this.$('#roster header b');
+    if (headB) headB.textContent = `הצוות החי · ${CREW.length}`;
     this.rows = new Map();
     for (const c of CREW) {
       const row = document.createElement('button');
