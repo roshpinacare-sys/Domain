@@ -48,7 +48,8 @@ const ARMED = String(process.env.LADDER_ARM || '0') === '1';
 const PUSH_RECEIPT = String(process.env.PUSH_RECEIPT || 'false').toLowerCase() === 'true';
 // T-REFS (restored 2026-10-13, measured FATAL 12:39): a refs-scrub replaced the ladder
 // account literal with the role word 'owner' and the private executor's hard lock
-// FATALed (requested: owner ≠ headcorner-only lock). The real name lives ONLY in the
+// FATALed (requested: the scrubbed role word ≠ the executor's own hard-locked account).
+// The real name lives ONLY in the
 // roster-map secret — resolved at runtime, never written to the tree. The estate ref
 // for the owner treasury is acct-00 (estate refs law). Unresolved map = honest
 // custody-boundary skip (plan-only, exit 0) — never a guessed account, never a FATAL.
