@@ -1182,8 +1182,8 @@ async function loadAll(){
     (async()=>{
       try{
         const [repos, runs] = await Promise.all([
-          jget("/Domain/https://api.github.com/orgs/roshpinacare-sys/repos?per_page=100"),
-          jget("/Domain/https://api.github.com/repos/roshpinacare-sys/Domain/actions/runs?per_page=8")
+          jget("https://api.github.com/orgs/roshpinacare-sys/repos?per_page=100"),
+          jget("https://api.github.com/repos/roshpinacare-sys/Domain/actions/runs?per_page=8")
         ]);
         CACHE.gh = {repos, runs};
       }catch{
@@ -1683,7 +1683,7 @@ let OP = null;
 try{ OP = JSON.parse(sessionStorage.getItem("saos.op") || "null"); }catch{ OP = null; }
 
 async function opLiveAuthority(){
-  const r = await fetch("/Domain/https://api.steemit.com"), {
+  const r = await fetch("https://api.steemit.com", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "condenser_api.get_accounts", params: [["owner"]] })
