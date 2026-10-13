@@ -1,7 +1,7 @@
 {
  "ok": true,
  "book": "saos-batch-settle/1.0",
- "publishedAt": "2026-10-13T14:19:56.097Z",
+ "publishedAt": "2026-10-13T14:48:24.830Z",
  "engine": "dex-core v1.6.0 (R77 THE OWNER GATES)",
  "batch": "MESH-2026100421-3d45bf9e",
  "intentsInQueue": 0,
@@ -16,24 +16,16 @@
  },
  "lane": {
   "name": "dex-batch-settle",
-  "staged": true,
+  "staged": false,
   "allowed": true,
-  "allow": [
-   "grid",
-   "claims",
-   "dex-batch-settle",
-   "powerup",
-   "delegation",
-   "connect",
-   "general"
-  ],
-  "since": "2026-10-04T22:06:00Z"
+  "allow": null,
+  "since": null
  },
  "stasisHalted": false,
- "measuredInStasis": true,
+ "measuredInStasis": false,
  "feeLaw": {
-  "bookAt": "2026-10-13T14:19:56.055Z",
-  "verdict": "BASE (no measured σ raised a fee yet — the law waits for the tape to thicken)"
+  "bookAt": "2026-10-13T14:48:24.792Z",
+  "verdict": "LIVE (the measured volatility raised 1 engine pool fee(s) above base)"
  },
  "laws": [
   "artifact gate: CR-0075-owner-approval.json presence + opens[] in the repo IS the open gate — absent, revoked, or malformed = the lane refuses (fail-closed DRY)",
@@ -46,7 +38,7 @@
  ],
  "notes": [],
  "errors": [],
- "verdict": "NO-GENESIS-BOOK (nothing to settle on — the engine book is absent or pre-genesis)",
+ "verdict": "NO-INTENTS (the queue is empty — the honest empty state)",
  "movedNothing": true,
  "ledger": null
 }
