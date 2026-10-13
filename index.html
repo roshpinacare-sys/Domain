@@ -634,15 +634,22 @@ function loadGrid(){
   });
 }
 
-/* -- 3. STEEM pulse (public RPC, CORS *) -- */
+/* -- 3. STEEM pulse (public RPC, CORS *; fallback chain of public nodes) -- */
+var STEEM_NODES = ['https://api.steemit.com','https://api.steem.fans','https://steem-api.eofix.io'];
 function rpc(method, params){
-  return fetch('https://api.steemit.com', {
-    method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({jsonrpc:'2.0', method:method, params:params, id:1})
-  }).then(function(r){ return r.json(); }).then(function(j){
-    if(j.error) throw new Error(j.error.message || 'rpc error');
-    return j.result;
+  var p = Promise.reject(new Error('start'));
+  STEEM_NODES.forEach(function(node){
+    p = p.catch(function(){
+      return fetch(node, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({jsonrpc:'2.0', method:method, params:params, id:1})
+      }).then(function(r){ return r.json(); }).then(function(j){
+        if(j.error) throw new Error(j.error.message || 'rpc error');
+        return j.result;
+      });
+    });
   });
+  return p;
 }
 function loadSteem(){
   rpc('condenser_api.get_dynamic_global_properties', []).then(function(d){
@@ -654,16 +661,22 @@ function loadSteem(){
     $('ps-chip').className='chip bad'; $('ps-chip').textContent='אין נתון';
     $('ps-upd').textContent = utcClock(new Date());
   });
-  fetch('content/published.json', {cache:'no-store'}).then(function(r){ return r.ok ? r.json() : null; }).then(function(book){
-    var ul = $('ps-posts');
+  function bookMsg(msg){
+    var el = $('ps-posts'); if(!el) return;
+    el.innerHTML = '<li class="err">' + msg + '</li>';
+  }
+  fetch('content/published.json', {cache:'no-store'}).then(function(r){
+    if (!r.ok) throw new Error('book http ' + r.status);
+    return r.json();
+  }).then(function(book){
     var rows = (book && book.posts) || [];
-    if (!rows.length) { noData('ps-posts','אין פרסומים להצגה כרגע'); return; }
-    ul.innerHTML = rows.slice(0,3).map(function(p){
-      var pay = p.pendingPayout ? 'pending ' + p.pendingPayout : 'published';
+    if (!rows.length) { bookMsg('אין פרסומים — מסילת-התוכן טרם פרסמה (המתין למשמרת-תוכן)'); return; }
+    $('ps-posts').innerHTML = rows.slice(0,3).map(function(p){
+      var pay = p.state === 'pending-sign-gate' ? 'ממתין לשער-החתימה' : (p.pendingPayout ? 'pending ' + p.pendingPayout : 'published');
       return '<li><span class="pt">' + String(p.title).replace(/[<>&]/g,'') + '</span><span class="pm">' +
         '<span class="mono num">' + pay.replace(/[<>&]/g,'') + '</span><span>' + ago(p.at ? p.at : null) + '</span></span></li>';
     }).join('');
-  }).catch(function(){ noData('ps-posts','אין פרסומים להצגה כרגע'); });
+  }).catch(function(){ bookMsg('הספר אינו נגיש כרגע (שגיאת רשת)'); });
 }
 
 /* -- 4. PROBES: live from the browser (trace-1a1312f4 owner directive: הפעל הכל).
