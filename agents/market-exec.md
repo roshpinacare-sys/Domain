@@ -1,28 +1,29 @@
 # market-exec — SIGNED EXECUTOR canon (CR-0036)
 
-Last run: 2026-10-07T17:49:53.748Z · mode **DRY_RUN** · venue **SBD/STEEM internal (steem)** via https://api.steemit.com
+Last run: 2026-10-13T17:48:28.370Z · mode **DRY_RUN** · venue **SBD/STEEM internal (steem)** via https://api.steemit.com
 
 | metric | value |
 |---|---|
-| bid / ask / mid | 0.100002 / 0.10019309161124222 / 0.100098 |
-| spread | 0.1909% |
-| feed (SBD per STEEM) | 0.104096 |
+| bid / ask / mid | 0.10136928880815985 / 0.1030862007804186 / 0.102228 |
+| spread | 1.6795% |
+| feed (SBD per STEEM) | 0.104089 |
 | cross-check | {"ok":true,"dBid":0,"dAsk":0} |
-| liquid before | 18.069 STEEM / 10.138 SBD |
-| own orders on book (pre) | 10 |
+| liquid before | 0.000 STEEM / 0.001 SBD |
+| own orders on book (pre) | 0 |
 | authority check | skipped (DRY_RUN) |
 | EDGE-CURE (R33) | not armed |
 
-## placed (2)
-- L1 buy 0.500 SBD → 5.025 STEEM (target 0.099502, realized 0.099502, err 0.0005%) · DRY
-- L2 buy 0.500 SBD → 5.045 STEEM (target 0.099104, realized 0.099108, err 0.0041%) · DRY
+## placed (0)
 
-## skipped (4)
-- sell L1 @ 0.103452: OUT-OF-BAND
-- sell L2 @ 0.103866: OUT-OF-BAND
-- sell L3 @ 0.104281: OUT-OF-BAND
-- buy L3 @ 0.098708: STACK-EXISTS
+## skipped (6)
+- sell L1 @ 0.103036: CAP-REMAINING
+- sell L2 @ 0.103448: CAP-REMAINING
+- sell L3 @ 0.103862: CAP-REMAINING
+- buy L1 @ 0.100045: OUT-OF-BAND
+- buy L2 @ 0.100045: OUT-OF-BAND
+- buy L3 @ 0.100045: OUT-OF-BAND
 
-## errors (0)
+## errors (1)
+- Cannot access 'placements' before initialization
 
-Run history: 101 rows in canon.
+Run history: 102 rows in canon.
