@@ -1,13 +1,14 @@
 {
  "schema": "integrity-guard/2",
  "scope": "public-twin (Domain home)",
- "at": "2026-10-13T12:38:26.443Z",
+ "at": "2026-10-13T13:36:25.832Z",
  "overall": "FAIL",
  "summary": {
   "sources": 7,
-  "verified": 8,
-  "findings": 1,
+  "verified": 7,
+  "findings": 2,
   "counts": {
+   "stale": 1,
    "producer-red": 1
   }
  },
@@ -15,37 +16,32 @@
   {
    "where": "self:agents/integrity-verdict.json",
    "law": "L0-verified",
-   "detail": "פסק-קודם תקין (PASS) מלפני 2ש'"
+   "detail": "פסק-קודם תקין (FAIL) מלפני 1ש'"
   },
   {
    "where": "Domain:agents/work-orders.json",
    "law": "fresh+parsed",
-   "detail": "גיל 0.1ש' ≤ SLA 4ש'"
+   "detail": "גיל 1ש' ≤ SLA 4ש'"
   },
   {
    "where": "Domain:agents/grid-truth.json",
    "law": "fresh+parsed",
-   "detail": "גיל 1.6ש' ≤ SLA 2ש'"
-  },
-  {
-   "where": "Domain:office/data.json",
-   "law": "fresh+parsed",
-   "detail": "גיל 1.2ש' ≤ SLA 2ש'"
+   "detail": "גיל 0.1ש' ≤ SLA 2ש'"
   },
   {
    "where": "Domain:agents/office-live.json",
    "law": "fresh+parsed",
-   "detail": "גיל 1.2ש' ≤ SLA 4ש'"
+   "detail": "גיל 2.2ש' ≤ SLA 4ש'"
   },
   {
    "where": "FleetHQ:office/state/office-state.json",
    "law": "fresh+parsed",
-   "detail": "גיל 1.5ש' ≤ SLA 4ש'"
+   "detail": "גיל 0.1ש' ≤ SLA 4ש'"
   },
   {
    "where": "sovereign-runner-kit:results/receipts.jsonl",
    "law": "fresh+parsed",
-   "detail": "גיל 20.6ש' ≤ SLA 72ש' · 1 קבלות"
+   "detail": "גיל 21.5ש' ≤ SLA 72ש' · 1 קבלות"
   },
   {
    "where": "Domain:agents/work-orders.json",
@@ -56,12 +52,17 @@
  "findings": [
   {
    "where": "Domain:office/data.json",
+   "law": "stale",
+   "detail": "גיל 2.2ש' > SLA 2ש'"
+  },
+  {
+   "where": "Domain:office/data.json",
    "law": "producer-red",
    "detail": "היצרן רץ cancelled לפני 29 דק' — הספר חייב-בדיקה"
   }
  ],
  "provenance": {
-  "runUrl": "https://github.com/roshpinacare-sys/Domain/actions/runs/38398758322",
+  "runUrl": "https://github.com/roshpinacare-sys/Domain/actions/runs/38406303120",
   "workflow": "artery-integrity-twin"
  }
 }
