@@ -79,6 +79,7 @@ jobs:
           git config user.name "roshpinacare-sys"
           git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
           node agents/redact-telemetry.mjs agents/arb-mesh.json agents/dex-intents.json agents/dex-core.json agents/fee-law.json agents/dex-batch.json || true
+          node scripts/exposure-redact.mjs agents/arb-mesh.json agents/arb-mesh.md agents/arb-mesh-history.jsonl agents/dex-core.json agents/dex-core.md agents/dex-core-history.jsonl agents/dex-batch.json agents/dex-batch-settled.json agents/fee-law.json || true
           # THE LEDGER LAW (T-58 honest-custodian, CR-0077): seq never moves backwards.
           # A parallel writer that checked out earlier may hold a stale ledger — if HEAD's
           # core book carries a fresher seq than our working copy, we YIELD ours and commit

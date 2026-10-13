@@ -39,7 +39,7 @@ Roster: 1 accounts (owner + 0 soldiers) · Edge candidates: 1 · Intents drafted
 ## Mesh P&L (lifetime, from the ledger — the core book is the source of truth)
 
 Fills: 18 · Volume in: 293557µ · Edge captured: -426751µ · Fees paid (LP revenue): 156µ
-- headcorner: 18 fills · vol 898121337133726686013371337214331063143341543716741543154314334µ · edge -126173-18-194-1365-12949-129525-4130-41447-254965-14813-138852µ · fees 5002133340020130336µ
+- acct-00: 18 fills · vol 898121337133726686013371337214331063143341543716741543154314334µ · edge -126173-18-194-1365-12949-129525-4130-41447-254965-14813-138852µ · fees 5002133340020130336µ
 
 Laws: L1 L2 L3 L4 L5 L6 L7 L8 L9 L10 L11 L12 L13 L14 L15 L16 · Gate law: the counter-grid gate follows CR-0074 (open = GATED-ARMED-BROADCAST-READY, closed = PLAN-POOL-GATED-NOT-BROADCAST) — the mesh never fires a keyed rail either way.
 
