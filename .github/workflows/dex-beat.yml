@@ -88,6 +88,15 @@ jobs:
           echo "takeover=1" >> "$GITHUB_OUTPUT"
           echo "reason=the original is not healthy (last: ${CC:-unknown}) — the twin takes over the beat" >> "$GITHUB_OUTPUT"
 
+      - name: Sweep (SWEEP-1 · מכונת-השטיפה — נפח, עמלות, טריגרים על כל-השווקים)
+        if: steps.guard.outputs.takeover == '1' || github.event_name == 'workflow_dispatch'
+        continue-on-error: true
+        run: bun run scripts/sweep-cycle.ts
+        env:
+          DATABASE_URL: 'file:${{ github.workspace }}/db/dex.db'
+          SWEEP_TICKS: '240'
+          CONSOLE_TOKEN: ${{ secrets.WEAVE_OPS_PAT }}
+
       - name: Beat (advance the canonical chain, verify claims, credit, publish)
         if: steps.guard.outputs.takeover == '1' || github.event_name == 'workflow_dispatch'
         run: bun run cloud-beat.ts
