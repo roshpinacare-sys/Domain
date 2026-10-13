@@ -158,8 +158,8 @@ jobs:
 
       - name: Publish the book (same-repo push, GITHUB_TOKEN only)
         run: |
-          git config user.name "office-orders-twin-bot"
-          git config user.email "office-orders-twin-bot@agents.roshpinacare-sys"
+          git config user.name "roshpinacare-sys"
+          git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
           git add agents/work-orders.json
           if git diff --cached --quiet; then echo "no delta — orders book unchanged"; exit 0; fi
           git commit -qm "orders book (twin): $(jq -r '.totals.open' agents/work-orders.json) open $(date -u +%Y-%m-%dT%H:%M:%SZ)"

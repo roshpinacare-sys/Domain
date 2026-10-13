@@ -81,8 +81,8 @@ jobs:
       - name: Publish the book
         if: steps.guard.outputs.takeover == '1' || github.event_name == 'workflow_dispatch'
         run: |
-          git config user.name "office-pulse-twin-bot"
-          git config user.email "office-pulse-twin-bot@agents.roshpinacare-sys"
+          git config user.name "roshpinacare-sys"
+          git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
           git add office/data.json
           if git diff --cached --quiet; then echo "no delta - page data unchanged"; exit 0; fi
           git commit -m "office window (twin): $(python3 -c "import json;print(json.load(open('office/data.json'))['verdict'])" 2>/dev/null || echo unknown) $(date -u +%Y-%m-%dT%H:%M:%SZ)"

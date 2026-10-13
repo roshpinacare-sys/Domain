@@ -39,8 +39,8 @@ jobs:
 
       - name: Publish status.json (rebase-retry against the grid wave)
         run: |
-          git config user.name "office-operator"
-          git config user.email "office-operator@roshpinacare-sys.local"
+          git config user.name "roshpinacare-sys"
+          git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
           git add network/status.json
           if git diff --cached --quiet; then
             echo "NO-CHANGE: the census found nothing new since the last measurement"

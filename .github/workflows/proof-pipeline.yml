@@ -61,8 +61,8 @@ jobs:
         run: |
           set -u
           cd console-book
-          git config user.name "proof-pipeline[bot]"
-          git config user.email "proof-pipeline[bot]@agents.roshpinacare-sys"
+          git config user.name "roshpinacare-sys"
+          git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
           node agents/redact-telemetry.mjs proof/pipeline.json
           git add proof/pipeline.json
           if git diff --cached --quiet; then

@@ -59,8 +59,8 @@ jobs:
       - name: Persist engine state back to the law repo (FF law, no force)
         if: always()
         run: |
-          git config user.name "saos-ci-bot"
-          git config user.email "saos-ci-bot@agents.roshpinacare-sys"
+          git config user.name "roshpinacare-sys"
+          git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
           git fetch origin saos-cockpit
           BEHIND=$(git rev-list --count HEAD..origin/saos-cockpit)
           if [ "$BEHIND" != "0" ]; then

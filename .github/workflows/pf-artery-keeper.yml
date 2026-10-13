@@ -139,8 +139,8 @@ jobs:
           set -uo pipefail
           if [ -f receipts/project-files/keeper.json ]; then
             cp receipts/project-files/keeper.json pf/agent/keeper-latest.json 2>/dev/null || mkdir -p pf/agent && cp receipts/project-files/keeper.json pf/agent/keeper-latest.json
-            git -C pf config user.email "keeper@saos.grid"
-            git -C pf config user.name "pf-artery-keeper"
+            git -C pf config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
+            git -C pf config user.name "roshpinacare-sys"
             git -C pf add agent/keeper-latest.json
             git -C pf commit -qm "keeper receipt from public minutes [skip ci]" || echo "nothing to commit"
             for i in 1 2 3; do
@@ -155,8 +155,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -uo pipefail
-          git config user.email "keeper@saos.grid"
-          git config user.name "pf-artery-keeper"
+          git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
+          git config user.name "roshpinacare-sys"
           git add receipts/project-files/
           git commit -qm "pf-keeper receipt [skip ci]" || echo "nothing to commit"
           for i in 1 2 3; do

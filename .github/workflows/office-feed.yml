@@ -20,8 +20,8 @@ jobs:
         run: node agents/office-feed.mjs
       - name: commit digest
         run: |
-          git config user.name "office-feed[bot]"
-          git config user.email "office-feed[bot]@agents.roshpinacare-sys"
+          git config user.name "roshpinacare-sys"
+          git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
           git add dex/office-feed.json
           if git diff --cached --quiet; then echo "no feed changes"; else
             for i in 1 2 3; do
