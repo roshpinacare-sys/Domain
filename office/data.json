@@ -1,100 +1,105 @@
 {
  "schema": "office.pulse/1",
- "generatedAt": "2026-10-13T06:30:15.548Z",
+ "generatedAt": "2026-10-13T06:52:00.781Z",
  "generatedAgeNote": "this file is rewritten by the office-pulse workflow; judge freshness by generatedAt",
- "verdict": "AGING",
+ "verdict": "STALE",
  "verdictChecks": [
   {
    "name": "office-push",
    "state": "fresh",
-   "detail": "2min <= 2880min"
+   "detail": "5min <= 2880min"
   },
   {
    "name": "office-ci",
    "state": "fresh",
-   "detail": "38min <= 1560min"
+   "detail": "60min <= 1560min"
   },
   {
    "name": "wallet-artery",
-   "state": "aging",
-   "detail": "1148min <= 2880min"
+   "state": "unknown",
+   "detail": "age not measured"
   },
   {
    "name": "grid-artery",
-   "state": "aging",
-   "detail": "337min <= 720min"
+   "state": "unknown",
+   "detail": "age not measured"
   },
   {
    "name": "fleet-artery",
-   "state": "aging",
-   "detail": "1294min <= 2880min"
+   "state": "unknown",
+   "detail": "age not measured"
   },
   {
    "name": "sovereign-tick",
-   "state": "aging",
-   "detail": "337min <= 360min"
+   "state": "unknown",
+   "detail": "age not measured"
   },
   {
    "name": "runtime-heartbeat",
    "state": "fresh",
-   "detail": "2min <= 90min"
+   "detail": "3min <= 90min"
   }
  ],
- "degraded": [],
+ "degraded": [
+  "wallet",
+  "grid",
+  "fleet",
+  "tick"
+ ],
  "sources": {
   "fleetHQ": "ok",
-  "sbx-wallet": "ok",
-  "sbx-grid": "ok",
-  "sbx-fleet": "ok",
-  "sbx-tick": "ok",
+  "sbx-wallet": "error",
+  "sbx-grid": "error",
+  "sbx-fleet": "error",
+  "sbx-tick": "error",
   "runtime": "ok"
  },
  "office": {
   "repo": "roshpinacare-sys/FleetHQ",
-  "pushedAt": "2026-10-13T06:28:40Z",
-  "pushedAgeMin": 2,
+  "pushedAt": "2026-10-13T06:46:57Z",
+  "pushedAgeMin": 5,
   "openIssues": 1,
   "wire": [
    {
-    "sha": "9f743b0",
-    "msg": "pacemaker receipt: 2026-10-13T06:28:39Z",
-    "at": "2026-10-13T06:28:39Z",
-    "ageMin": 2,
+    "sha": "f949c43",
+    "msg": "pacemaker receipt: 2026-10-13T06:46:56Z",
+    "at": "2026-10-13T06:46:56Z",
+    "ageMin": 5,
     "author": "roshpinacare-sys"
    },
    {
-    "sha": "deeb8f8",
+    "sha": "7d02d00",
     "msg": "decide: sovereign decision cycle (SOV-POLICY/1) — sense/decide/record, evidence-anchored",
-    "at": "2026-10-13T06:28:12Z",
-    "ageMin": 2,
+    "at": "2026-10-13T06:46:35Z",
+    "ageMin": 5,
     "author": "roshpinacare-sys"
    },
    {
-    "sha": "cf2dfeb",
-    "msg": "pacemaker receipt: 2026-10-13T06:10:15Z",
-    "at": "2026-10-13T06:10:15Z",
-    "ageMin": 20,
+    "sha": "c657192",
+    "msg": "pacemaker receipt: 2026-10-13T06:44:18Z",
+    "at": "2026-10-13T06:44:18Z",
+    "ageMin": 8,
     "author": "roshpinacare-sys"
    },
    {
-    "sha": "f357cb7",
-    "msg": "decide: sovereign decision cycle (SOV-POLICY/1) — sense/decide/record, evidence-anchored",
-    "at": "2026-10-13T06:09:52Z",
-    "ageMin": 20,
+    "sha": "ae845ba",
+    "msg": "pacemaker receipt: 2026-10-13T06:41:04Z",
+    "at": "2026-10-13T06:41:04Z",
+    "ageMin": 11,
     "author": "roshpinacare-sys"
    },
    {
-    "sha": "ef145e4",
-    "msg": "value-scan: opportunities from measured evidence [skip ci]",
-    "at": "2026-10-13T06:00:29Z",
-    "ageMin": 30,
+    "sha": "b2704c7",
+    "msg": "pacemaker receipt: 2026-10-13T06:30:26Z",
+    "at": "2026-10-13T06:30:26Z",
+    "ageMin": 22,
     "author": "roshpinacare-sys"
    },
    {
-    "sha": "2cc9c95",
-    "msg": "pacemaker receipt: 2026-10-13T06:00:27Z",
-    "at": "2026-10-13T06:00:27Z",
-    "ageMin": 30,
+    "sha": "b557cea",
+    "msg": "opens-closer: measured freshness ledger + revival dispatches [skip ci]",
+    "at": "2026-10-13T06:30:14Z",
+    "ageMin": 22,
     "author": "roshpinacare-sys"
    }
   ],
@@ -115,10 +120,10 @@
     }
    ]
   },
-  "worklogLastTouchAgeMin": 1062,
+  "worklogLastTouchAgeMin": 1084,
   "boot": {
    "at": "2026-10-11T23:36:39.484Z",
-   "ageMin": 1854,
+   "ageMin": 1875,
    "office": {
     "reception_3000": "up",
     "foreman_3010": "up",
@@ -129,7 +134,7 @@
   "ci": {
    "overall": "PASS",
    "at": "2026-10-13T05:52:28.398Z",
-   "ageMin": 38,
+   "ageMin": 60,
    "reason": "all five checks ran and passed",
    "runUrl": "https://github.com/roshpinacare-sys/FleetHQ/actions/runs/38353530208",
    "checks": {
@@ -143,35 +148,22 @@
  },
  "arteries": {
   "wallet": {
-   "at": "2026-10-12T11:22:41.395Z",
-   "ageMin": 1148,
-   "overall": "PASS",
-   "alerts": 1,
-   "runUrl": "https://github.com/roshpinacare-sys/Sandbox/actions/runs/38242234259"
+   "__error": "HTTP 404 contents:receipts/wallet/verdict.json"
   },
   "grid": {
-   "at": "2026-10-13T00:53:23.023Z",
-   "ageMin": 337,
-   "overall": "ERROR",
-   "alerts": 0
+   "__error": "HTTP 404 contents:receipts/grid/verdict.json"
   },
   "fleet": {
-   "at": "2026-10-12T08:56:37.698Z",
-   "ageMin": 1294,
-   "overall": "FAIL",
-   "alerts": 2,
-   "runUrl": "https://github.com/roshpinacare-sys/Sandbox/actions/runs/38226675048"
+   "__error": "HTTP 404 contents:receipts/fleet/verdict.json"
   },
   "tick": {
-   "at": "2026-10-13T00:53:22.885Z",
-   "ageMin": 337,
-   "chain": "07ea08229494"
+   "__error": "HTTP 404 contents:receipts/latest.json"
   }
  },
  "runtime": {
-  "lastSuccessAt": "2026-10-13T06:28:03Z",
-  "lastSuccessAgeMin": 2,
-  "lastSuccessName": "grid-watchdog",
+  "lastSuccessAt": "2026-10-13T06:48:38Z",
+  "lastSuccessAgeMin": 3,
+  "lastSuccessName": "blurt-revival",
   "lastConclusion": "success"
  }
 }
