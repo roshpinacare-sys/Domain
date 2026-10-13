@@ -1,105 +1,100 @@
 {
  "schema": "office.pulse/1",
- "generatedAt": "2026-10-13T05:36:56.179Z",
+ "generatedAt": "2026-10-13T06:00:18.819Z",
  "generatedAgeNote": "this file is rewritten by the office-pulse workflow; judge freshness by generatedAt",
- "verdict": "STALE",
+ "verdict": "AGING",
  "verdictChecks": [
   {
    "name": "office-push",
    "state": "fresh",
-   "detail": "6min <= 2880min"
+   "detail": "7min <= 2880min"
   },
   {
    "name": "office-ci",
    "state": "fresh",
-   "detail": "58min <= 1560min"
+   "detail": "8min <= 1560min"
   },
   {
    "name": "wallet-artery",
-   "state": "unknown",
-   "detail": "age not measured"
+   "state": "aging",
+   "detail": "1118min <= 2880min"
   },
   {
    "name": "grid-artery",
-   "state": "unknown",
-   "detail": "age not measured"
+   "state": "aging",
+   "detail": "307min <= 720min"
   },
   {
    "name": "fleet-artery",
-   "state": "unknown",
-   "detail": "age not measured"
+   "state": "aging",
+   "detail": "1264min <= 2880min"
   },
   {
    "name": "sovereign-tick",
-   "state": "unknown",
-   "detail": "age not measured"
+   "state": "aging",
+   "detail": "307min <= 360min"
   },
   {
    "name": "runtime-heartbeat",
    "state": "fresh",
-   "detail": "24min <= 90min"
+   "detail": "11min <= 90min"
   }
  ],
- "degraded": [
-  "wallet",
-  "grid",
-  "fleet",
-  "tick"
- ],
+ "degraded": [],
  "sources": {
   "fleetHQ": "ok",
-  "sbx-wallet": "error",
-  "sbx-grid": "error",
-  "sbx-fleet": "error",
-  "sbx-tick": "error",
+  "sbx-wallet": "ok",
+  "sbx-grid": "ok",
+  "sbx-fleet": "ok",
+  "sbx-tick": "ok",
   "runtime": "ok"
  },
  "office": {
   "repo": "roshpinacare-sys/FleetHQ",
-  "pushedAt": "2026-10-13T05:30:38Z",
-  "pushedAgeMin": 6,
+  "pushedAt": "2026-10-13T05:52:53Z",
+  "pushedAgeMin": 7,
   "openIssues": 1,
   "wire": [
    {
-    "sha": "ae0449a",
-    "msg": "decide: sovereign decision cycle (SOV-POLICY/1) — sense/decide/record, evidence-anchored",
-    "at": "2026-10-13T05:30:37Z",
-    "ageMin": 6,
-    "author": "roshpinacare-sys"
-   },
-   {
-    "sha": "4c5b804",
-    "msg": "opens-closer: measured freshness ledger + revival dispatches [skip ci]",
-    "at": "2026-10-13T05:30:17Z",
+    "sha": "bbd3cdc",
+    "msg": "pacemaker receipt: 2026-10-13T05:52:52Z",
+    "at": "2026-10-13T05:52:52Z",
     "ageMin": 7,
     "author": "roshpinacare-sys"
    },
    {
-    "sha": "f21b933",
-    "msg": "pacemaker receipt: 2026-10-13T05:13:15Z",
-    "at": "2026-10-13T05:13:15Z",
-    "ageMin": 24,
+    "sha": "3c809a5",
+    "msg": "office-ci receipt: build pass, types pass [skip ci]",
+    "at": "2026-10-13T05:52:29Z",
+    "ageMin": 8,
     "author": "roshpinacare-sys"
    },
    {
-    "sha": "8fab607",
+    "sha": "1f84c31",
+    "msg": "grid-watch: fleet alert (73 new red)",
+    "at": "2026-10-13T05:51:07Z",
+    "ageMin": 9,
+    "author": "roshpinacare-sys"
+   },
+   {
+    "sha": "765f7eb",
+    "msg": "pacemaker receipt: 2026-10-13T05:49:37Z",
+    "at": "2026-10-13T05:49:37Z",
+    "ageMin": 11,
+    "author": "roshpinacare-sys"
+   },
+   {
+    "sha": "52b0113",
     "msg": "decide: sovereign decision cycle (SOV-POLICY/1) — sense/decide/record, evidence-anchored",
-    "at": "2026-10-13T05:12:51Z",
-    "ageMin": 24,
+    "at": "2026-10-13T05:49:16Z",
+    "ageMin": 11,
     "author": "roshpinacare-sys"
    },
    {
-    "sha": "65b8184",
-    "msg": "pacemaker receipt: 2026-10-13T05:00:26Z",
-    "at": "2026-10-13T05:00:26Z",
-    "ageMin": 36,
-    "author": "roshpinacare-sys"
-   },
-   {
-    "sha": "20192b6",
-    "msg": "opens-closer: measured freshness ledger + revival dispatches [skip ci]",
-    "at": "2026-10-13T05:00:18Z",
-    "ageMin": 37,
+    "sha": "2668f31",
+    "msg": "office-heartbeat: public office state captured [skip ci]",
+    "at": "2026-10-13T05:38:29Z",
+    "ageMin": 22,
     "author": "roshpinacare-sys"
    }
   ],
@@ -120,10 +115,10 @@
     }
    ]
   },
-  "worklogLastTouchAgeMin": 1009,
+  "worklogLastTouchAgeMin": 1032,
   "boot": {
    "at": "2026-10-11T23:36:39.484Z",
-   "ageMin": 1800,
+   "ageMin": 1824,
    "office": {
     "reception_3000": "up",
     "foreman_3010": "up",
@@ -133,10 +128,10 @@
   },
   "ci": {
    "overall": "PASS",
-   "at": "2026-10-13T04:39:14.499Z",
-   "ageMin": 58,
+   "at": "2026-10-13T05:52:28.398Z",
+   "ageMin": 8,
    "reason": "all five checks ran and passed",
-   "runUrl": "https://github.com/roshpinacare-sys/FleetHQ/actions/runs/38347382314",
+   "runUrl": "https://github.com/roshpinacare-sys/FleetHQ/actions/runs/38353530208",
    "checks": {
     "install": "pass",
     "prismaGenerate": "pass",
@@ -148,21 +143,34 @@
  },
  "arteries": {
   "wallet": {
-   "__error": "HTTP 404 contents:receipts/wallet/verdict.json"
+   "at": "2026-10-12T11:22:41.395Z",
+   "ageMin": 1118,
+   "overall": "PASS",
+   "alerts": 1,
+   "runUrl": "https://github.com/roshpinacare-sys/Sandbox/actions/runs/38242234259"
   },
   "grid": {
-   "__error": "HTTP 404 contents:receipts/grid/verdict.json"
+   "at": "2026-10-13T00:53:23.023Z",
+   "ageMin": 307,
+   "overall": "ERROR",
+   "alerts": 0
   },
   "fleet": {
-   "__error": "HTTP 404 contents:receipts/fleet/verdict.json"
+   "at": "2026-10-12T08:56:37.698Z",
+   "ageMin": 1264,
+   "overall": "FAIL",
+   "alerts": 2,
+   "runUrl": "https://github.com/roshpinacare-sys/Sandbox/actions/runs/38226675048"
   },
   "tick": {
-   "__error": "HTTP 404 contents:receipts/latest.json"
+   "at": "2026-10-13T00:53:22.885Z",
+   "ageMin": 307,
+   "chain": "07ea08229494"
   }
  },
  "runtime": {
-  "lastSuccessAt": "2026-10-13T05:12:45Z",
-  "lastSuccessAgeMin": 24,
+  "lastSuccessAt": "2026-10-13T05:49:14Z",
+  "lastSuccessAgeMin": 11,
   "lastSuccessName": "grid-watchdog",
   "lastConclusion": "success"
  }
