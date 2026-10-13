@@ -102,8 +102,8 @@ jobs:
         if: true
         run: |
           set -u
-          git config user.name "fleet-census-cron[bot]"
-          git config user.email "fleet-census-cron[bot]@agents.roshpinacare-sys"
+          git config user.name "roshpinacare-sys"
+          git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
           node agents/redact-telemetry.mjs agents/fleet-census.artifact.json agents/claims-audit.json agents/cadence-week.json agents/scheduler-audit.json agents/mm-volume.json || true
           git add agents/fleet-census.artifact.json agents/fleet-delta.jsonl agents/claims-audit.json agents/claims-audit.md agents/cadence-week.json agents/cadence-week.md agents/scheduler-raw.json agents/scheduler-audit.json agents/scheduler-audit.md agents/mm-volume.json agents/mm-volume.md agents/mm-volume-plan.jsonl 2>/dev/null || true
           NODRIFT=$(node -e '

@@ -40,8 +40,8 @@ jobs:
         run: node agents/econ-desk.cjs
       - name: commit book
         run: |
-          git config user.name "econ-desk[bot]"
-          git config user.email "econ-desk[bot]@agents.roshpinacare-sys"
+          git config user.name "roshpinacare-sys"
+          git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
           node agents/redact-telemetry.mjs agents/econ-book.json || true
           git add agents/econ-book.json agents/econ-book.md 2>/dev/null || true
           if git diff --cached --quiet; then echo "no book changes"; else

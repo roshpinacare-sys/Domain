@@ -34,8 +34,8 @@ jobs:
       - name: Publish the mirrored surfaces
         if: always()
         run: |
-          git config user.name "mirror-from-console"
-          git config user.email "mirror-from-console@agents.roshpinacare-sys"
+          git config user.name "roshpinacare-sys"
+          git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
           node agents/redact-telemetry.mjs agents/registry.json agents/gh-snapshot.json dex/pnl-desk.json dex/money.json dex/deposits.json dex/watch.json truth/latest.json truth/history.json truth/slo.json weave/census.json weave/vitals.json weave/agreement.json
           git add agents/registry.json agents/gh-snapshot.json dex/pnl-desk.json dex/money.json dex/deposits.json dex/watch.json truth/latest.json truth/history.json truth/slo.json mirror-report.json weave/census.json weave/vitals.json weave/agreement.json
           if git diff --cached --quiet; then

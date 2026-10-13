@@ -63,8 +63,8 @@ jobs:
         if: steps.brake.outputs.active != 'true' || steps.brake.outputs.lane_ok == 'true'
         run: |
           set -u
-          git config user.name "market-grid-cron[bot]"
-          git config user.email "market-grid-cron[bot]@agents.roshpinacare-sys"
+          git config user.name "roshpinacare-sys"
+          git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
           node agents/redact-telemetry.mjs agents/market-grid.json || true
           git add agents/market-grid.json agents/market-grid.md agents/market-grid-paper.jsonl agents/market-grid-history.jsonl 2>/dev/null || true
           if git diff --cached --quiet; then

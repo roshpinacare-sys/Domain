@@ -38,8 +38,8 @@ jobs:
         if: always()
         continue-on-error: true
         run: |
-          git config user.name "saos-earn-audit"
-          git config user.email "audit@saos.local"
+          git config user.name "roshpinacare-sys"
+          git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
           node agents/redact-telemetry.mjs agents/earn-audit.json
           git add agents/earn-audit.json agents/earn-audit.md
           if git diff --cached --quiet; then
