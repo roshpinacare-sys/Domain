@@ -18,6 +18,7 @@
 "use strict";
 
 import { createRequire } from "node:module";
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 
@@ -156,13 +157,19 @@ async function measureChains(ethers, calldata) {
     out[name] = {
       reachable: true,
       relay: c.relay,
+      // relayCommit (self-audit 2026-10-13): sha256 of the lowercase relay — a
+      // 64-hex digest is tier-A and survives the redaction boundary, so the
+      // anchor consumer can verify the book's target STRONGLY even though the
+      // published copy carries the address prefix-only. Additive field; the
+      // raw address stays (the publish step redacts it per law).
+      relayCommit: createHash("sha256").update(String(c.relay).toLowerCase()).digest("hex"),
       chainId: c.chainId,
       balanceEth: Number(bal) / 1e18,
       gasPriceGwei: Number(gasPrice) / 1e9,
       estimateGas: estHex ? Number(estHex) : null,
       costPerAnchorEth: Number(perAnchor) / 1e18,
       anchorsAffordable: Number(bal / perAnchor),
-      readyToSign: { to: c.relay, data: calldata, gasLimit: "0x" + gasLimit.toString(16), value: "0x0", chainId: c.chainId },
+      readyToSign: { to: c.relay, data: calldata, gasLimit: "0x" + gasLimit.toString(16), value: "0x0", chainId: c.chainId, relayCommit: createHash("sha256").update(String(c.relay).toLowerCase()).digest("hex") },
     };
     log(`  · ${name}: bal=${out[name].balanceEth} ETH · gas=${out[name].gasPriceGwei} gwei · affordable=${out[name].anchorsAffordable} daily anchors`);
   }
