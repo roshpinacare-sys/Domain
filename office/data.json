@@ -1,105 +1,100 @@
 {
  "schema": "office.pulse/1",
- "generatedAt": "2026-10-13T09:22:29.929Z",
+ "generatedAt": "2026-10-13T09:30:14.137Z",
  "generatedAgeNote": "this file is rewritten by the office-pulse workflow; judge freshness by generatedAt",
- "verdict": "STALE",
+ "verdict": "AGING",
  "verdictChecks": [
   {
    "name": "office-push",
    "state": "fresh",
-   "detail": "5min <= 2880min"
+   "detail": "13min <= 2880min"
   },
   {
    "name": "office-ci",
    "state": "fresh",
-   "detail": "60min <= 1560min"
+   "detail": "68min <= 1560min"
   },
   {
    "name": "wallet-artery",
-   "state": "unknown",
-   "detail": "age not measured"
+   "state": "aging",
+   "detail": "1328min <= 2880min"
   },
   {
    "name": "grid-artery",
-   "state": "unknown",
-   "detail": "age not measured"
+   "state": "aging",
+   "detail": "111min <= 720min"
   },
   {
    "name": "fleet-artery",
-   "state": "unknown",
-   "detail": "age not measured"
+   "state": "aging",
+   "detail": "1474min <= 2880min"
   },
   {
    "name": "sovereign-tick",
-   "state": "unknown",
-   "detail": "age not measured"
+   "state": "aging",
+   "detail": "111min <= 360min"
   },
   {
    "name": "runtime-heartbeat",
    "state": "fresh",
-   "detail": "27min <= 90min"
+   "detail": "35min <= 90min"
   }
  ],
- "degraded": [
-  "wallet",
-  "grid",
-  "fleet",
-  "tick"
- ],
+ "degraded": [],
  "sources": {
   "fleetHQ": "ok",
-  "sbx-wallet": "error",
-  "sbx-grid": "error",
-  "sbx-fleet": "error",
-  "sbx-tick": "error",
+  "sbx-wallet": "ok",
+  "sbx-grid": "ok",
+  "sbx-fleet": "ok",
+  "sbx-tick": "ok",
   "runtime": "ok"
  },
  "office": {
   "repo": "roshpinacare-sys/FleetHQ",
   "pushedAt": "2026-10-13T09:16:59Z",
-  "pushedAgeMin": 5,
+  "pushedAgeMin": 13,
   "openIssues": 1,
   "wire": [
    {
     "sha": "89b2db2",
     "msg": "pacemaker receipt: 2026-10-13T09:16:58Z",
     "at": "2026-10-13T09:16:58Z",
-    "ageMin": 6,
+    "ageMin": 13,
     "author": "roshpinacare-sys"
    },
    {
     "sha": "e5e476f",
     "msg": "decide: sovereign decision cycle (SOV-POLICY/1) — sense/decide/record, evidence-anchored",
     "at": "2026-10-13T09:16:33Z",
-    "ageMin": 6,
+    "ageMin": 14,
     "author": "roshpinacare-sys"
    },
    {
     "sha": "0760a60",
     "msg": "pacemaker receipt: 2026-10-13T09:00:25Z",
     "at": "2026-10-13T09:00:25Z",
-    "ageMin": 22,
+    "ageMin": 30,
     "author": "roshpinacare-sys"
    },
    {
     "sha": "898946c",
     "msg": "opens-closer: measured freshness ledger + revival dispatches [skip ci]",
     "at": "2026-10-13T09:00:16Z",
-    "ageMin": 22,
+    "ageMin": 30,
     "author": "roshpinacare-sys"
    },
    {
     "sha": "a4575d0",
     "msg": "pacemaker receipt: 2026-10-13T08:55:56Z",
     "at": "2026-10-13T08:55:56Z",
-    "ageMin": 27,
+    "ageMin": 34,
     "author": "roshpinacare-sys"
    },
    {
     "sha": "02eccbc",
     "msg": "decide: sovereign decision cycle (SOV-POLICY/1) — sense/decide/record, evidence-anchored",
     "at": "2026-10-13T08:55:29Z",
-    "ageMin": 27,
+    "ageMin": 35,
     "author": "roshpinacare-sys"
    }
   ],
@@ -120,10 +115,10 @@
     }
    ]
   },
-  "worklogLastTouchAgeMin": 1234,
+  "worklogLastTouchAgeMin": 1242,
   "boot": {
    "at": "2026-10-11T23:36:39.484Z",
-   "ageMin": 2026,
+   "ageMin": 2034,
    "office": {
     "reception_3000": "up",
     "foreman_3010": "up",
@@ -134,7 +129,7 @@
   "ci": {
    "overall": "PASS",
    "at": "2026-10-13T08:22:19.435Z",
-   "ageMin": 60,
+   "ageMin": 68,
    "reason": "all five checks ran and passed",
    "runUrl": "https://github.com/roshpinacare-sys/FleetHQ/actions/runs/38368672577",
    "checks": {
@@ -148,21 +143,34 @@
  },
  "arteries": {
   "wallet": {
-   "__error": "HTTP 404 contents:receipts/wallet/verdict.json"
+   "at": "2026-10-12T11:22:41.395Z",
+   "ageMin": 1328,
+   "overall": "PASS",
+   "alerts": 1,
+   "runUrl": "https://github.com/roshpinacare-sys/Sandbox/actions/runs/38242234259"
   },
   "grid": {
-   "__error": "HTTP 404 contents:receipts/grid/verdict.json"
+   "at": "2026-10-13T07:39:21.835Z",
+   "ageMin": 111,
+   "overall": "ERROR",
+   "alerts": 0
   },
   "fleet": {
-   "__error": "HTTP 404 contents:receipts/fleet/verdict.json"
+   "at": "2026-10-12T08:56:37.698Z",
+   "ageMin": 1474,
+   "overall": "FAIL",
+   "alerts": 2,
+   "runUrl": "https://github.com/roshpinacare-sys/Sandbox/actions/runs/38226675048"
   },
   "tick": {
-   "__error": "HTTP 404 contents:receipts/latest.json"
+   "at": "2026-10-13T07:39:21.725Z",
+   "ageMin": 111,
+   "chain": "fa7beeb67c25"
   }
  },
  "runtime": {
   "lastSuccessAt": "2026-10-13T08:55:24Z",
-  "lastSuccessAgeMin": 27,
+  "lastSuccessAgeMin": 35,
   "lastSuccessName": "grid-watchdog",
   "lastConclusion": "cancelled"
  }
