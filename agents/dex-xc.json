@@ -1,6 +1,6 @@
 {
   "protocol": "SAOS-DEX-XC/1",
-  "at": "2026-10-13T14:41:23.952Z",
+  "at": "2026-10-13T15:41:14.286Z",
   "agent": "dex-xc v1.0.0 (R43 INTENT GATES, CR-0073)",
   "intents": [
     {
@@ -41,72 +41,81 @@
     "refunded": 0,
     "refused": 0
   },
-  "TRON": {
-   "band": "PLAN-KEYED-DOOR",
-   "finalityHardS": 60,
-   "asset": null,
-   "source": "developers.tron.network — solidified at 19 distinct SRs (~57-60s)"
+  "processedOps": [],
+  "errors": [],
+  "doors": {
+    "EVM": {
+      "band": "PLAN-KEYED-DOOR",
+      "finalityHardS": 780,
+      "asset": null,
+      "source": "ethereum.org PoS 2-epoch 768s + pad; L2 rails settle via L1 — the conservative number governs large sums"
+    },
+    "TRON": {
+      "band": "PLAN-KEYED-DOOR",
+      "finalityHardS": 60,
+      "asset": null,
+      "source": "developers.tron.network — solidified at 19 distinct SRs (~57-60s)"
+    },
+    "SOL": {
+      "band": "PLAN-KEYED-DOOR",
+      "finalityHardS": 13,
+      "asset": null,
+      "source": "32 slots x 400ms = 12.8s (Circle CCTP ops table)"
+    },
+    "STEEM": {
+      "band": "KEYED-DESK",
+      "finalityHardS": 60,
+      "asset": "STEEM",
+      "source": "3s blocks (steem whitepaper); hard gate = 2/3-witness round (canonical-knowledge 45-63s, taken 60)"
+    },
+    "SBD": {
+      "band": "KEYED-DESK",
+      "finalityHardS": 60,
+      "asset": "SBD",
+      "source": "same chain clock as STEEM"
+    },
+    "HIVE": {
+      "band": "PLAN-PEGOUT-KEYED-OPERATOR",
+      "finalityHardS": 60,
+      "asset": "HIVE",
+      "source": "3s blocks; hive.io one-block \"irreversibility\" is SOFT finality — large sums gate on the 2/3-witness round (canonical-knowledge)"
+    },
+    "HBD": {
+      "band": "PLAN-PEGOUT-KEYED-OPERATOR",
+      "finalityHardS": 60,
+      "asset": "HBD",
+      "source": "same chain clock as HIVE"
+    },
+    "BLURT": {
+      "band": "PLAN-PEGOUT-KEYED-OPERATOR",
+      "finalityHardS": 63,
+      "asset": "BLURT",
+      "source": "blurtwallet FAQ — 3s blocks, full 21-witness round 63s"
+    }
   },
-  "SOL": {
-   "band": "PLAN-KEYED-DOOR",
-   "finalityHardS": 13,
-   "asset": null,
-   "source": "32 slots x 400ms = 12.8s (Circle CCTP ops table)"
+  "recovery": "state book rebuilt deterministically after the R43 persistence fix — the escrow was already booked on the core ledger (seq history is the authority)",
+  "stasisHalted": false,
+  "doorsLaw": {
+    "fillTimeoutS": 3600,
+    "refundUnlockS": 7200,
+    "bondExposureRatio": "2:1 (XC_BOND_EXPOSURE_RATIO, enforced by the core)",
+    "guardBps": 50,
+    "dustMu": "1000"
   },
   "core": {
     "seq": 11,
-    "at": "2026-10-13T14:41:21.329Z",
+    "at": "2026-10-13T15:41:10.285Z",
     "conservationOk": true,
     "attestation": "a1fec418d0589478"
   },
-  "SBD": {
-   "band": "KEYED-DESK",
-   "finalityHardS": 60,
-   "asset": "SBD",
-   "source": "same chain clock as STEEM"
+  "verdict": "XC-DOORS-LIVE",
+  "batchId": null,
+  "queueDrafted": {
+    "opens": 0,
+    "fills": 0,
+    "clock": 0,
+    "planNotes": []
   },
-  "HIVE": {
-   "band": "PLAN-PEGOUT-KEYED-OPERATOR",
-   "finalityHardS": 60,
-   "asset": "HIVE",
-   "source": "3s blocks; hive.io one-block \"irreversibility\" is SOFT finality — large sums gate on the 2/3-witness round (canonical-knowledge)"
-  },
-  "HBD": {
-   "band": "PLAN-PEGOUT-KEYED-OPERATOR",
-   "finalityHardS": 60,
-   "asset": "HBD",
-   "source": "same chain clock as HIVE"
-  },
-  "BLURT": {
-   "band": "PLAN-PEGOUT-KEYED-OPERATOR",
-   "finalityHardS": 63,
-   "asset": "BLURT",
-   "source": "blurtwallet FAQ — 3s blocks, full 21-witness round 63s"
-  }
- },
- "recovery": "state book rebuilt deterministically after the R43 persistence fix — the escrow was already booked on the core ledger (seq history is the authority)",
- "stasisHalted": false,
- "doorsLaw": {
-  "fillTimeoutS": 3600,
-  "refundUnlockS": 7200,
-  "bondExposureRatio": "2:1 (XC_BOND_EXPOSURE_RATIO, enforced by the core)",
-  "guardBps": 50,
-  "dustMu": "1000"
- },
- "core": {
-  "seq": 42,
-  "at": "2026-10-13T14:48:17.612Z",
-  "conservationOk": true,
-  "attestation": "609e6f04e8eceab9"
- },
- "verdict": "XC-DOORS-LIVE",
- "batchId": null,
- "queueDrafted": {
-  "opens": 0,
-  "fills": 0,
-  "clock": 0,
-  "planNotes": []
- },
- "exposure": {},
- "attestation": "ac4e471ed75c7a81"
+  "exposure": {},
+  "attestation": "ac4e471ed75c7a81"
 }
