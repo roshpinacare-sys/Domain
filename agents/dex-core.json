@@ -1,6 +1,6 @@
 {
   "protocol": "SAOS-DEX-CORE/1",
-  "at": "2026-10-13T15:18:33.049Z",
+  "at": "2026-10-13T14:41:21.329Z",
   "agent": "dex-core v1.6.0 (R77 THE OWNER GATES)",
   "mode": "KEYLESS-ATOMIC-INTERNAL",
   "stasisHalted": false,
@@ -114,8 +114,8 @@
       "SAOS": "0"
     },
     "custodyProvenance": {
-      "STEEM": "MEASURED condenser owner @https://api.steemit.com 2026-10-13T15:18:33.049Z",
-      "SBD": "MEASURED condenser owner @https://api.steemit.com 2026-10-13T15:18:33.049Z (CUSTODY-DROP)",
+      "STEEM": "MEASURED condenser owner @https://api.steemit.com 2026-10-13T14:41:21.329Z",
+      "SBD": "MEASURED condenser owner @https://api.steemit.com 2026-10-13T14:41:21.329Z (CUSTODY-DROP)",
       "HIVE": "CUSTODY-CLASS OBSERVED-UNCONTROLLED — observed on-chain, never custody, until key material verifies (R42/R38 law)",
       "HBD": "CUSTODY-CLASS OBSERVED-UNCONTROLLED — observed on-chain, never custody, until key material verifies (R42/R38 law)",
       "BLURT": "CUSTODY-CLASS OBSERVED-POST-KEYED — observed on-chain, never custody, until key material verifies (R42/R38 law)",
@@ -132,9 +132,9 @@
     "observedProvenance": {
       "STEEM": null,
       "SBD": null,
-      "HIVE": "MEASURED HIVE owner @https://api.hive.blog 2026-10-13T15:18:33.049Z (class OBSERVED-UNCONTROLLED)",
-      "HBD": "MEASURED HIVE owner @https://api.hive.blog 2026-10-13T15:18:33.049Z (class OBSERVED-UNCONTROLLED)",
-      "BLURT": "MEASURED BLURT owner @https://blurt-rpc.saboin.com 2026-10-13T15:18:33.049Z (class OBSERVED-POST-KEYED)",
+      "HIVE": "MEASURED HIVE owner @https://api.openhive.network 2026-10-13T14:41:21.329Z (class OBSERVED-UNCONTROLLED)",
+      "HBD": "MEASURED HIVE owner @https://api.openhive.network 2026-10-13T14:41:21.329Z (class OBSERVED-UNCONTROLLED)",
+      "BLURT": "MEASURED BLURT owner @https://blurt-rpc.saboin.com 2026-10-13T14:41:21.329Z (class OBSERVED-POST-KEYED)",
       "SAOS": null
     },
     "wrappedReserve": {
@@ -1837,6 +1837,13 @@
   "opsThisTick": [
     {
       "seq": 11,
+      "type": "DEPOSIT_DELTA",
+      "asset": "STEEM",
+      "amount": "2449000",
+      "provenance": "chain disagrees by +2449000µ — the drip-fuel loop books it (probe https://api.steemit.com)"
+    },
+    {
+      "seq": 11,
       "type": "GRID-ARM",
       "pool": "P2",
       "pair": "WSBD/SBD",
@@ -1864,7 +1871,8 @@
     "meshFills": 0,
     "meshBatch": null,
     "notes": [
-      "SBD custody DROP -1553000µ measured — trading HALTED this tick (safety law: the vault never trades on shrinking custody)"
+      "STEEM custody delta +2449000µ booked (chain is ground truth)",
+      "SBD custody DROP -1756000µ measured — trading HALTED this tick (safety law: the vault never trades on shrinking custody)"
     ]
   }
 }
