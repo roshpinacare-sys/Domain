@@ -51,7 +51,7 @@ jobs:
           git commit -m "office window: $(python3 -c "import json;print(json.load(open('office/data.json'))['verdict'])" 2>/dev/null || echo unknown) $(date -u +%Y-%m-%dT%H:%M:%SZ)"
           ok=0
           for i in 1 2 3 4 5 6 7 8; do
-            if git pull --rebase --autostash -q origin main && git push -q origin main; then ok=1; echo "PUSH-OK attempt $i"; break; fi
+            if git pull --rebase -X theirs --autostash --autostash -q origin main && git push -q origin main; then ok=1; echo "PUSH-OK attempt $i"; break; fi
             echo "push attempt $i failed, retrying"; sleep $((8 + RANDOM % 10))
           done
           if [ "$ok" != "1" ]; then echo "named terminal: publish-deferred — book on disk, next :09/:29/:49 flight re-lands it"; exit 0; fi

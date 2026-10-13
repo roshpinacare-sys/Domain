@@ -161,5 +161,5 @@ jobs:
           git commit -qm "pf-keeper receipt [skip ci]" || echo "nothing to commit"
           for i in 1 2 3; do
             if git push -q origin HEAD:main; then echo "receipt published"; break; fi
-            echo "push attempt $i failed"; sleep $((i*5)); git pull --rebase -q origin main || true
+            echo "push attempt $i failed"; sleep $((i*5)); git pull --rebase -X theirs --autostash -q origin main || true
           done

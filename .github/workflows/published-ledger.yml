@@ -95,7 +95,7 @@ jobs:
           else
             git commit -m "published-ledger: live chain publications $(date -u +%FT%TZ) [skip ci]"
             for i in 1 2 3; do
-              git pull --rebase -q origin main || true
+              git pull --rebase -X theirs --autostash -q origin main || true
               if git push origin main; then echo "ledger published (attempt $i)"; exit 0; fi
               sleep $((i * 5))
             done

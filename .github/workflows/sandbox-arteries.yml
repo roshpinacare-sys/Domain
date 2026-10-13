@@ -78,7 +78,7 @@ jobs:
           git commit -m "[arteries] domain-fed heartbeat: $(date -u +%FT%TZ)"
           ok=0
           for i in 1 2 3; do
-            if git pull --rebase --autostash -q "https://x-access-token:${ZIP_PAT}@github.com/roshpinacare-sys/Sandbox.git" main && git push -q "https://x-access-token:${ZIP_PAT}@github.com/roshpinacare-sys/Sandbox.git" main; then
+            if git pull --rebase -X theirs --autostash --autostash -q "https://x-access-token:${ZIP_PAT}@github.com/roshpinacare-sys/Sandbox.git" main && git push -q "https://x-access-token:${ZIP_PAT}@github.com/roshpinacare-sys/Sandbox.git" main; then
               ok=1; echo "pushed (attempt $i)"; break
             fi
             echo "push race (attempt $i)"; sleep $((i * 4))

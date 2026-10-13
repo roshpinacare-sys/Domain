@@ -93,7 +93,7 @@ jobs:
           land
           ok=0
           for i in 1 2 3 4 5 6 7 8; do
-            if git pull --rebase -q origin main && git push -q origin main; then ok=1; echo "PUSH-OK attempt $i"; break; fi
+            if git pull --rebase -X theirs --autostash -q origin main && git push -q origin main; then ok=1; echo "PUSH-OK attempt $i"; break; fi
             # recover from ANY dirty rebase state (measured 22:25:01Z failure: CONFLICT in office/data.json,
             # then "Pulling is not possible because you have unmerged files" - a bare retry loop cannot recover)
             git rebase --abort 2>/dev/null || true

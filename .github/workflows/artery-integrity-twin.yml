@@ -51,7 +51,7 @@ jobs:
           git commit -qm "integrity verdict (twin): $(jq -r '.overall' agents/integrity-verdict.json) $(date -u +%Y-%m-%dT%H:%M:%SZ)"
           ok=0
           for i in 1 2 3; do
-            if git pull --rebase -q origin main && git push -q origin main; then ok=1; break; fi
+            if git pull --rebase -X theirs --autostash -q origin main && git push -q origin main; then ok=1; break; fi
             sleep 3
           done
           [ "$ok" = "1" ] || { echo "PUSH-FAILED"; exit 1; }

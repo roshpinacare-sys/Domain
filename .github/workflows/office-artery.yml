@@ -52,7 +52,7 @@ jobs:
           else
             git commit -m "office-artery: shift $(date -u +%Y-%m-%dT%H:%M:%SZ) [skip ci]"
             for i in 1 2 3; do
-              if git pull --rebase --autostash origin main && git push; then
+              if git pull --rebase -X theirs --autostash --autostash origin main && git push; then
                 echo "pushed (attempt $i)"; break
               fi
               echo "push race (attempt $i) — rebasing again"; sleep $((i * 5))

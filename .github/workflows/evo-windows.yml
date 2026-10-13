@@ -58,7 +58,7 @@ jobs:
               exit 0
             fi
             git commit -m "evo-windows: one pulled-schedule decision $(date -u +%Y-%m-%dT%H:%M:%SZ) [skip ci]"
-            git pull --rebase origin main
+            git pull --rebase -X theirs --autostash origin main
             if git push; then echo "book published (attempt ${attempt})"; exit 0; fi
             echo "push failed (attempt ${attempt}); resetting to origin and re-deciding"
             git reset --hard origin/main

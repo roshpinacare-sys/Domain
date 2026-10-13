@@ -159,7 +159,7 @@ jobs:
             echo "no community evidence change — clean exit"
           else
             git commit -m "community-leg: owner-mandated Steem community evidence $(date -u +%FT%TZ) [skip ci]"
-            git pull --rebase origin main
+            git pull --rebase -X theirs --autostash origin main
             bash scripts/safe-push.sh
           fi
 
@@ -183,6 +183,6 @@ jobs:
             echo "no delegation evidence change — clean exit"
           else
             git commit -m "delegations: owner-mandated SP deployment receipt $(date -u +%FT%TZ) [skip ci]"
-            git pull --rebase origin main
+            git pull --rebase -X theirs --autostash origin main
             bash scripts/safe-push.sh
           fi

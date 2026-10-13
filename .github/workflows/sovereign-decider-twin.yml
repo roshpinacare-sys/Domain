@@ -57,7 +57,7 @@ jobs:
           git commit -m "sovereign-decider-twin: $(date -u +%FT%TZ) [skip ci]"
           OK=0
           for i in 1 2 3 4 5; do
-            git pull --rebase -q "https://x-access-token:${ZIP_PAT}@github.com/roshpinacare-sys/Sandbox.git" main || true
+            git pull --rebase -X theirs --autostash -q "https://x-access-token:${ZIP_PAT}@github.com/roshpinacare-sys/Sandbox.git" main || true
             if git push -q "https://x-access-token:${ZIP_PAT}@github.com/roshpinacare-sys/Sandbox.git" HEAD:main; then OK=1; break; fi
             echo "push-race #$i — backoff and retry (parallel-writer survival)"
             sleep $((i * 10))

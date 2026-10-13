@@ -72,7 +72,7 @@ jobs:
           fi
           git commit -m "fleet-heartbeat: engine book $(date -u +%FT%TZ) [skip ci]"
           for attempt in 1 2 3; do
-            git pull --rebase origin main && git push origin HEAD:main && { echo "fleet book published (attempt ${attempt})"; exit 0; }
+            git pull --rebase -X theirs --autostash origin main && git push origin HEAD:main && { echo "fleet book published (attempt ${attempt})"; exit 0; }
             echo "push failed (attempt ${attempt})"
             sleep 5
           done
