@@ -100,6 +100,16 @@ jobs:
           SWEEP_TICKS: '240'
           CONSOLE_TOKEN: ${{ secrets.WEAVE_OPS_PAT }}
 
+      - name: Fresh-DB for the beat (T25 — corroboration-birth on the strongest committed evidence)
+        run: |
+          # ה-DB זמני-פר-ריצה. שורות-שנכתבו-בשלב-ה-sweep של-אותו-runner אינן-עדות-
+          # עצמאית-לביקורת-האתחול (המבקר משווה-תמונה-מול-DB ודורה-בכל-סתירה — נמדד-
+          # חי: run 38417068844). מחיקה = הביקורת-בלידה (corroboration-birth) מקבלת
+          # את-תמונת-המצב-החתומה-החזקה-ביותר (המשוטפת-מה-sweep או החתומה-בריפו),
+          # ומהבלוק-הראשון-החדש כל-בלוק כותב-שורה-אמת. אפס-החלשת-ביקורת —
+          # החותמות והלדגר-ממשיכים-להיבדק-בכל-חותם.
+          rm -f db/dex.db
+
       - name: Beat (advance the canonical chain, verify claims, credit, publish)
         if: steps.guard.outputs.takeover == '1' || github.event_name == 'workflow_dispatch'
         run: bun run cloud-beat.ts
