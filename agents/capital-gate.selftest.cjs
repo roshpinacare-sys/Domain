@@ -58,11 +58,23 @@ function sandbox(opts = {}) {
   if (opts.chain === 'seed') {
     /* R30: seed = the live chain MINUS any owner full-lift ([*]) entries — the legacy
      * vectors below describe the no-lift world and stay meaningful regardless of what
-     * the live house records. Use 'seed-lift' for the raw live chain (lift included). */
+     * the live house records. Use 'seed-lift' for the raw live chain (lift included).
+     * R31: stripping a NON-LAST entry breaks prev-hash links of everything after it
+     * (e.g. dex-volume-mandate i=6 after the [*] lift i=5) → REBUILD the synthetic
+     * chain after the filter: re-sequence i + recompute hashes (sandbox-only). */
     fs.mkdirSync(path.join(root, 'agents', 'receipts'), { recursive: true });
     const raw = fs.readFileSync(path.join(ROOT, 'receipts', 'owner-directives.jsonl'), 'utf8');
     const noLift = raw.split('\n').filter(Boolean).filter((l) => { try { return !((JSON.parse(l).lanes || []).includes('*')); } catch (_) { return true; } });
-    fs.writeFileSync(path.join(root, 'agents', 'receipts', 'owner-directives.jsonl'), noLift.join('\n') + '\n');
+    let prevSeed = '', iSeed = 0;
+    const rebuilt = noLift.map((l) => {
+      const e = JSON.parse(l);
+      const clean = Object.assign({}, e, { i: iSeed });
+      delete clean.hash;
+      const h = require(path.join(ROOT, 'directivesChain.cjs')).entryHash(prevSeed, clean);
+      prevSeed = h; iSeed++;
+      return JSON.stringify(Object.assign(clean, { hash: h }));
+    });
+    fs.writeFileSync(path.join(root, 'agents', 'receipts', 'owner-directives.jsonl'), rebuilt.join('\n') + '\n');
   } else if (opts.chain === 'seed-lift') {
     fs.mkdirSync(path.join(root, 'agents', 'receipts'), { recursive: true });
     fs.writeFileSync(path.join(root, 'agents', 'receipts', 'owner-directives.jsonl'), fs.readFileSync(path.join(ROOT, 'receipts', 'owner-directives.jsonl'), 'utf8'));
@@ -287,7 +299,7 @@ t('live home: written allow receipts cite the owner lift (policy-gated evidence 
 })());
 t('live home: selfModelGate cites the lift (facts untouched in the model)', live.selfModelGate('grid').allow === true && live.selfModelGate('grid').reason === 'owner-full-lift-over-contradiction' && live.selfModelGate('general').allow === true && live.selfModelGate('general').reason === 'owner-full-lift-accepted-uncovered-surface');
 const liveChain = require(path.join(ROOT, 'directivesChain.cjs')).verifyChain();
-t('live directives chain verifies (>=6 entries, genesis→halt-all→staged-open→…→full-lift [*])', liveChain.ok === true && liveChain.entries.length >= 6 && liveChain.entries[1].type === 'halt-all' && liveChain.entries[2].type === 'staged-open' && liveChain.entries[liveChain.entries.length - 1].lanes.includes('*'));
+t('live directives chain verifies (>=6 entries, genesis→halt-all→staged-open→…→full-lift [*]) — the full-lift is a CONTAINED entry, not necessarily the last (chain may grow: e.g. dex-volume-mandate i=6, trace 1a135930da12227d)', liveChain.ok === true && liveChain.entries.length >= 6 && liveChain.entries[1].type === 'halt-all' && liveChain.entries[2].type === 'staged-open' && liveChain.entries.some((e) => Array.isArray(e.lanes) && e.lanes.includes('*')));
 const GENESIS_HASH = '61419a4cf79ca81e9d6a774e72645ca3bde43626e89612b2dbf59d2ade8d7ae3'; /* sha256(JSON.stringify({i:0,at:"2026-10-05T00:00:00Z",type:"genesis",note:"SAOS-DIRECTIVES-CHAIN/1"})) — shared-contract constant */
 t('live directives chain genesis hash_0 equals the SAOS-DIRECTIVES-CHAIN/1 contract constant (interop with V-b beat)', liveChain.entries[0].hash === GENESIS_HASH);
 const liveGuards = require(path.join(ROOT, 'loopguard.cjs')).guardHalt('grid');
@@ -337,7 +349,20 @@ if (!liveJournalExisted && fs.existsSync(LIVE_JOURNAL)) {
 const CHAINMOD = require(path.join(ROOT, 'directivesChain.cjs'));
 function chainLinesWith(appendEntries, stripLift) {
   let base = fs.readFileSync(path.join(ROOT, 'receipts', 'owner-directives.jsonl'), 'utf8').split('\n').filter(Boolean);
-  if (stripLift) base = base.filter((l) => { try { return !((JSON.parse(l).lanes || []).includes('*')); } catch (_) { return true; } });
+  if (stripLift) {
+    base = base.filter((l) => { try { return !((JSON.parse(l).lanes || []).includes('*')); } catch (_) { return true; } });
+    /* R31: after stripping a non-last [*] entry the prev-hash links of later entries
+     * break — rebuild the synthetic chain (re-sequence i + recompute hashes). */
+    let prevR = '', iR = 0;
+    base = base.map((l) => {
+      const e = JSON.parse(l);
+      const clean = Object.assign({}, e, { i: iR });
+      delete clean.hash;
+      const h = CHAINMOD.entryHash(prevR, clean);
+      prevR = h; iR++;
+      return JSON.stringify(Object.assign(clean, { hash: h }));
+    });
+  }
   if (!base.length) throw new Error('selftest: empty chain base — cannot build R30 fixtures');
   let prev = JSON.parse(base[base.length - 1]).hash;
   let i = base.length;

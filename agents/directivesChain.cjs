@@ -8,7 +8,11 @@
  * נשאר מנגנון-חופשי — אף-סוכן לא צריך רשות כדי לעצור.
  *
  * פורמט: JSONL, כל-שורה {"i","at","type","trace","source","lanes","note","hash"}
- *   types: genesis | halt-all | staged-open | owner-note
+ *   types: genesis | halt-all | staged-open | owner-note | dex-volume-mandate
+ *   dex-volume-mandate (trace 1a135930da12227d, 2026-10-13): הרשאת-בעלים למשפחת מנועי-ה-DEX —
+ *   סמנטיקת-כיסוי כמו staged-open (מסילות + trace + מאוחר מ-halt-all), hash חייב תקין כמו כל-רשומה.
+ *   לקח-פורנזי (R31): הרשומה נולדה עם hash שמחושב בקנוניזציה לא-תואמת → השרשרת נכשלה נכון
+ *   (fail-closed עובד); התיקון = בנייה-מחדש עם hash קנוני, מילות-הבעלים מילה-במילה.
  *   hash_0 = sha256(JSON.stringify({i:0,at,type:"genesis",note:"SAOS-DIRECTIVES-CHAIN/1"}))
  *   hash_i = sha256(hash_{i-1} + JSON.stringify({i,at,type,trace,source,lanes,note}))
  *
@@ -27,7 +31,9 @@ const crypto = require('crypto');
 const path = require('path');
 
 const PROTOCOL = 'SAOS-DIRECTIVES-CHAIN/1';
-const TYPES = Object.freeze(['genesis', 'halt-all', 'staged-open', 'owner-note']);
+const TYPES = Object.freeze(['genesis', 'halt-all', 'staged-open', 'owner-note', 'dex-volume-mandate']);
+/** סוגים שנושאים-כיסוי-מסילות (כמו staged-open): חייבים lanes + trace + מאוחר מ-halt-all. */
+const LANE_COVERING_TYPES = Object.freeze(['staged-open', 'dex-volume-mandate']);
 const CHAIN_FILE = path.join(__dirname, 'receipts', 'owner-directives.jsonl');
 
 /** המטען-הקנוני לחישוב-hash — סדר-מפתחות קבוע; שדות-חסרים (undefined) נופלים מה-JSON. */
@@ -84,7 +90,7 @@ function hasEntryForLanes(lanes, file) {
   for (const lane of need) {
     const covered = v.entries.some((e) =>
       e.i > lastHaltIdx
-      && e.type === 'staged-open'
+      && LANE_COVERING_TYPES.includes(e.type)
       && Array.isArray(e.lanes)
       && (e.lanes.map((x) => String(x).toLowerCase()).includes(lane) || e.lanes.includes('*'))
       && typeof e.trace === 'string' && e.trace.length > 0);
@@ -93,4 +99,4 @@ function hasEntryForLanes(lanes, file) {
   return true;
 }
 
-module.exports = { PROTOCOL, TYPES, verifyChain, hasEntryForLanes, canonicalPayload, entryHash, CHAIN_FILE };
+module.exports = { PROTOCOL, TYPES, LANE_COVERING_TYPES, verifyChain, hasEntryForLanes, canonicalPayload, entryHash, CHAIN_FILE };
