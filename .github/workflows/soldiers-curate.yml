@@ -17,7 +17,7 @@ jobs:
       - name: STASIS gate (mechanical, FATE-DEFENSE law
         id: brake
         run: |
-          ST=$(node -p "JSON.parse(require('fs').readFileSync('agents/STASIS.json','utf8')).active===true")
+          ST=$(node agents/stasis-gate.cjs general)
           echo "active=$ST" >> "$GITHUB_OUTPUT"
           if [ "$ST" = "true" ]; then
             echo "STASIS-HALT soldiers-curate · the breaker is active — capital lanes obey (votes)"

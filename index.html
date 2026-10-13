@@ -200,7 +200,7 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
 
       <div class="grid g3" style="margin-top:18px">
         <div class="card"><span class="ico"></span><h3>קיר-המשימות</h3><p>כל תפקיד בצי מוצג פומבית · מה רץ עכשיו, מה הושלם, מה נחסם ולמה. כולל שורת-חסימה גלויה לכל עיכוב.</p></div>
-        <div class="card"><span class="ico"></span><h3>5 עובדים</h3><p>חמישה סוכני-עבודה מקיימים את המשמרת במקביל · בדיקות, תוכן, כלכלה, גריד ומחקר, כל אחד עם יומן ריצות מאומת.</p></div>
+        <div class="card"><span class="ico"></span><h3><span id="crew-count">6</span> עובדים</h3><p>סוכני-עבודה מקיימים את המשמרת במקביל · בדיקות, תוכן, כלכלה, גריד ומחקר, כל אחד עם יומן ריצות מאומת · המספר נמדד חי מרשימת-הצוות.</p></div>
         <div class="card"><span class="ico"></span><h3>הספרייה</h3><p>דוקטרינה, מפת-תפקידים לכל היחידות ותוכניות עבודה, קריא לכולם, כולל מסמכי-עדכון מתוארכים.</p></div>
       </div>
     </div>
@@ -589,6 +589,11 @@ function loadOffice(){
 function loadPulse(){
   jget('office/data.json', 10000).then(function(d){
     setOfficeStamp(d.office && d.office.pushedAt);
+    /* crew-count measured live from the office roster (no stale hardcodes) */
+    jget('agents/office-live.json', 10000).then(function(ol){
+      var n = ol && ol.crew && Array.isArray(ol.crew.workers) ? ol.crew.workers.length : null;
+      if (n) $('crew-count').textContent = n;
+    }).catch(function(){});
     var v = (d.verdict || 'STALE').toUpperCase();
     var ve = $('of-verdict');
     ve.textContent = v;

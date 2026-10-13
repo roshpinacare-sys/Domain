@@ -35,15 +35,12 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: STASIS gate (mechanical, FATE-DEFENSE law
+      - name: STASIS gate (mechanical, FATE-DEFENSE law #1 — lane-aware staged preflight)
         id: brake
         run: |
-          ST=$(node -p "JSON.parse(require('fs').readFileSync('agents/STASIS.json','utf8')).active===true")
+          ST=$(node agents/stasis-gate.cjs general)
           echo "active=$ST" >> "$GITHUB_OUTPUT"
-          if [ "$ST" = "true" ]; then
-            echo "STASIS-HALT economy-engine · the breaker is active — capital lanes obey (votes + claims)"
-          fi
-
+          # agents/stasis-gate.cjs — fail-closed inside; sign-time capital-gate stays armed
       - name: checkout private steem (seal custody lives here) — proven org-gitleaks pattern
         uses: actions/checkout@v4
         with:

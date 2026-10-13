@@ -33,7 +33,7 @@ jobs:
         id: brake
         run: |
           if [ -f agents/STASIS.json ]; then
-            ST=$(node -p "JSON.parse(require('fs').readFileSync('agents/STASIS.json','utf8')).active===true")
+            ST=$(node agents/stasis-gate.cjs general)
           else
             ST=false
           fi
