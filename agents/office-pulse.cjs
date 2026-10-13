@@ -2,6 +2,9 @@
 /**
  * office-pulse (zai-code-3, E-series) - the office window engine.
  * Measures the Fleet HQ office + the network arteries from PUBLIC APIs only.
+ * T23-A (lane agent): the four artery veins moved Sandbox -> Autonomy (public
+ * repo receipts) - the private Sandbox hit the Actions minutes wall and the
+ * veins aged. Same law thresholds, same verdictChecks names.
  * Zero secrets, zero LLM, deterministic. Any source that fails is recorded
  * as an error in the book - never faked, never skipped silently.
  * Owner mandate: the office opens first on the page, then the network;
@@ -12,7 +15,7 @@ const fs = require("fs");
 
 const OWNER = "roshpinacare-sys";
 const FHQ = `${OWNER}/FleetHQ`;
-const SBX = `${OWNER}/Sandbox`;
+const AUT = `${OWNER}/Autonomy`; // T23-A: the arteries' public home (receipts/ committed by public Actions)
 const RUN = `${OWNER}/saos-runtime`;
 
 // freshness law (minutes) - one block, all measured against it
@@ -36,9 +39,9 @@ const HALF_LIFE = {
 const now = Date.now();
 const ageMin = (iso) => (iso ? Math.round((now - new Date(iso).getTime()) / 60000) : null);
 const H = { "User-Agent": "office-pulse", Accept: "application/vnd.github+json" };
-// trace-1a1312f4: prefer ZIP_PAT (cross-repo read of the PRIVATE Sandbox receipts);
-// the repo-scoped GITHUB_TOKEN cannot see Sandbox → the four arteries degraded to
-// "age not measured" → verdict STALE forever. Measured live 2026-10-12.
+// trace-1a1312f4: bearer kept as a harmless fallback only (public raw reads ignore
+// it; it still unblocks any receipt that flips private). T23-A: the four artery
+// veins are public Autonomy receipts now - zero secrets needed to measure them.
 if (process.env.ZIP_PAT || process.env.GITHUB_TOKEN)
   H.Authorization = `Bearer ${process.env.ZIP_PAT || process.env.GITHUB_TOKEN}`;
 
@@ -138,20 +141,34 @@ function parseWorklog(text) {
     degraded.push("fleetHQ");
   }
 
-  // ---- arteries: Sandbox receipts (public) ----
+  // ---- arteries: Autonomy receipts (public; T23-A) ----
+  // The four veins moved off the private Sandbox (Actions minutes wall) onto the
+  // public Autonomy repo. Same law thresholds, same verdictChecks names. sources
+  // now carries the EXACT receipt path each vein is read from (no sbx-* labels).
+  // A missing/failing receipt stays on the read list and is marked honestly:
+  // artery[k].source names the path, __error + degraded[] carry the failure, and
+  // its verdictCheck degrades to "unknown" (age not measured).
   const artery = {};
+  const arteryNames = {
+    wallet: "wallet-artery",
+    grid: "grid-artery",
+    fleet: "fleet-artery",
+    tick: "sovereign-tick",
+  };
   const arteryFiles = {
     wallet: ["receipts/wallet/verdict.json", "at", "overall"],
     grid: ["receipts/grid/verdict.json", "measuredAt", "overall"],
-    fleet: ["receipts/fleet/verdict.json", "measuredAt", "overall"],
+    fleet: ["receipts/fleet/verdict.json", "at", "overall"],
     tick: ["receipts/latest.json", "at", null],
   };
   for (const [k, [path, atKey, verdictKey]] of Object.entries(arteryFiles)) {
+    const label = `Autonomy/${path}`;
     try {
-      const j = await safeJson(SBX, path);
+      const j = await safeJson(AUT, path);
       if (!ok(j)) throw new Error(j.__error);
       const at = atKey && j[atKey] ? j[atKey] : (j.at || null);
       artery[k] = {
+        source: label,
         at,
         ageMin: ageMin(at),
         overall: verdictKey ? j[verdictKey] : undefined,
@@ -159,10 +176,10 @@ function parseWorklog(text) {
         chain: j.chain ? String(j.chain).slice(0, 12) : undefined,
         runUrl: j.provenance && j.provenance.runUrl,
       };
-      sources[`sbx-${k}`] = "ok";
+      sources[arteryNames[k]] = label;
     } catch (e) {
-      artery[k] = { __error: String(e.message || e) };
-      sources[`sbx-${k}`] = "error";
+      artery[k] = { source: label, __error: String(e.message || e) };
+      sources[arteryNames[k]] = label;
       degraded.push(k);
     }
   }
