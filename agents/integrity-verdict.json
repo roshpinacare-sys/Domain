@@ -1,14 +1,14 @@
 {
  "schema": "integrity-guard/2",
  "scope": "public-twin (Domain home)",
- "at": "2026-10-13T14:49:20.011Z",
+ "at": "2026-10-13T16:02:38.255Z",
  "overall": "FAIL",
  "summary": {
   "sources": 7,
-  "verified": 7,
-  "findings": 2,
+  "verified": 6,
+  "findings": 3,
   "counts": {
-   "stale": 1,
+   "stale": 2,
    "producer-red": 1
   }
  },
@@ -21,27 +21,22 @@
   {
    "where": "Domain:agents/work-orders.json",
    "law": "fresh+parsed",
-   "detail": "גיל 2.3ש' ≤ SLA 4ש'"
+   "detail": "גיל 3.5ש' ≤ SLA 4ש'"
   },
   {
    "where": "Domain:agents/grid-truth.json",
    "law": "fresh+parsed",
-   "detail": "גיל 1.3ש' ≤ SLA 2ש'"
-  },
-  {
-   "where": "Domain:agents/office-live.json",
-   "law": "fresh+parsed",
-   "detail": "גיל 3.4ש' ≤ SLA 4ש'"
+   "detail": "גיל 1ש' ≤ SLA 2ש'"
   },
   {
    "where": "FleetHQ:office/state/office-state.json",
    "law": "fresh+parsed",
-   "detail": "גיל 0.1ש' ≤ SLA 4ש'"
+   "detail": "גיל 0.4ש' ≤ SLA 4ש'"
   },
   {
    "where": "sovereign-runner-kit:results/receipts.jsonl",
    "law": "fresh+parsed",
-   "detail": "גיל 22.7ש' ≤ SLA 72ש' · 1 קבלות"
+   "detail": "גיל 24ש' ≤ SLA 72ש' · 1 קבלות"
   },
   {
    "where": "Domain:agents/work-orders.json",
@@ -53,16 +48,21 @@
   {
    "where": "Domain:office/data.json",
    "law": "stale",
-   "detail": "גיל 3.4ש' > SLA 2ש'"
+   "detail": "גיל 4.6ש' > SLA 2ש'"
+  },
+  {
+   "where": "Domain:agents/office-live.json",
+   "law": "stale",
+   "detail": "גיל 4.6ש' > SLA 4ש'"
   },
   {
    "where": "Domain:office/data.json",
    "law": "producer-red",
-   "detail": "היצרן רץ cancelled לפני 72 דק' — הספר חייב-בדיקה"
+   "detail": "היצרן רץ cancelled לפני 67 דק' — הספר חייב-בדיקה"
   }
  ],
  "provenance": {
-  "runUrl": "https://github.com/roshpinacare-sys/Domain/actions/runs/38416637292",
+  "runUrl": "https://github.com/roshpinacare-sys/Domain/actions/runs/38427193758",
   "workflow": "artery-integrity-twin"
  }
 }
