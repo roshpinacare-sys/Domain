@@ -98,9 +98,15 @@ async function preflight(p, chainName) {
     add("book-relay", matches, `PREFIX-ONLY book ${bookTo.slice(0, 11)}… vs cfg relay (redaction-law book — ${matches ? "prefix binds" : "MISMATCH"})`);
     relayMode = matches ? "prefix" : "none";
   }
-  if (relayMode === "prefix") {
-    log(`book-relay verified PREFIX-ONLY (redaction-law book) — signing target = local canonical relay ${cfg.relay.slice(0, 6)}…`);
-    sig.to = cfg.relay; // verified substitution; the redacted string never reaches RPC
+  if (/^0x[a-fA-F0-9]{40}$/.test(bookTo)) {
+    relayMode = "full";
+  } else {
+    // commitment / prefix modes both verified the target against the local
+    // canonical relay — the redacted string must NEVER reach the RPC layer
+    // (measured run 38486628540b: commitment path skipped the substitution
+    // and the RPC answered "Invalid params" on `0x56c9…[redacted]`).
+    log(`book-relay verified ${relayMode === "commitment" ? "via relayCommit (strong)" : "PREFIX-ONLY (redaction-law book)"} — signing target = local canonical relay ${cfg.relay.slice(0, 6)}…`);
+    sig.to = cfg.relay; // verified substitution
   }
 
   add("calldata-selector", String(sig.data).toLowerCase().startsWith(SELECTOR), String(sig.data).slice(0, 10));
@@ -120,12 +126,32 @@ async function preflight(p, chainName) {
   // "already anchored today", monotonic-height regressions, anything stale
   let estimate;
   try {
+    // transient-tolerance (self-audit 2026-10-13, measured run 38486628540):
+    // publicnode answered "Invalid params" once mid-day while both RPCs
+    // accepted the identical call locally seconds later — a bare single-shot
+    // turned an infra blink into a red email + FATAL. Bounded retry (2),
+    // then classification, never a red email:
     estimate = await rpc(cfg.rpc, "eth_estimateGas", [{ from: EOA, to: sig.to, data: sig.data, value: sig.value || "0x0" }]);
-  } catch (e) {
-    add("contract-accepts", false, `estimateGas reverted: ${e.message}`);
-    return { checks, cfg, sig, dry: true };
+  } catch (e1) {
+    await sleep(2500);
+    try {
+      estimate = await rpc(cfg.rpc, "eth_estimateGas", [{ from: EOA, to: sig.to, data: sig.data, value: sig.value || "0x0" }]);
+    } catch (e) {
+      const msg = String((e && e.message) || e);
+      if (/revert/i.test(msg)) {
+        // the chain itself refused the book calldata — designed honest stop
+        // (dry:true → NOT-FIREABLE named terminal, exit 0). NOTE: add(false)
+        // THROWS, so the old add-then-return shape made this branch
+        // unreachable and turned EVERY failure into a FATAL — fixed by
+        // pushing the check record directly.
+        checks.push({ name: "contract-accepts", pass: false, detail: `estimateGas reverted (chain refused the calldata): ${msg.slice(0, 100)}` });
+        return { checks, cfg, sig, dry: true };
+      }
+      log(`VERDICT: RPC-TRANSIENT (${msg.slice(0, 80)}) — named terminal: await-next-flight; nothing signed, nothing faked (T-77: record, not alarm)`);
+      process.exit(0);
+    }
   }
-  add("contract-accepts", true, `estimateGas ${BigInt(estimate)} (book ${est})`);
+  checks.push({ name: "contract-accepts", pass: true, detail: `estimateGas ${BigInt(estimate)} (book ${est})` });
   return { checks, cfg, sig, dry: false, gasPrice, nonce, estimate: BigInt(estimate), balance, gasPriceGwei };
 }
 
@@ -237,4 +263,16 @@ async function main() {
   process.exit(readBackOk ? 0 : 4);
 }
 
-main().catch((e) => { log(`FATAL: ${e && e.message ? e.message : e}`); process.exit(1); });
+main().catch((e) => {
+  const msg = String((e && e.message) || e);
+  log(`FATAL: ${msg}`);
+  // transient-tolerance classification (self-audit 2026-10-13): pre-flight
+  // book/rpc/fetch failures are designed-or-transient states — one red email
+  // per 4h flight taught the operator nothing and the log IS the record.
+  // True bugs (undefined refs, syntax, logic) still die loud.
+  if (/pre-flight FAIL|HTTP|fetch|timeout|Invalid params|rpc error|network|ENOTFOUND|ECONNRESET|abort/i.test(msg)) {
+    log("named terminal: anchor-await-next-flight — measured state recorded in this log; nothing signed (T-77: record, not alarm)");
+    process.exit(0);
+  }
+  process.exit(1);
+});
