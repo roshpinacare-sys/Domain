@@ -108,7 +108,10 @@ jobs:
           # את-תמונת-המצב-החתומה-החזקה-ביותר (המשוטפת-מה-sweep או החתומה-בריפו),
           # ומהבלוק-הראשון-החדש כל-בלוק כותב-שורה-אמת. אפס-החלשת-ביקורת —
           # החותמות והלדגר-ממשיכים-להיבדק-בכל-חותם.
+          # FIX(SWEEP-1c · run 38419662465): מחיקה-בלי-יצירת-סכמה = הטבלה-חסרה
+          # (priorCount=-1 → סירוב-עלייה). הסכמה נבנית-מחדש מיד-אחרי-המחיקה.
           rm -f db/dex.db
+          DATABASE_URL='file:${{ github.workspace }}/db/dex.db' bunx prisma db push --skip-generate --accept-data-loss
 
       - name: Beat (advance the canonical chain, verify claims, credit, publish)
         if: steps.guard.outputs.takeover == '1' || github.event_name == 'workflow_dispatch'
