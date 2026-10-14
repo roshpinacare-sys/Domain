@@ -85,36 +85,43 @@ jobs:
 
       - name: Mirror the live engine book (keyless public read)
         run: |
-          # [T38 · C-2h] the chase race, measured live twice (runs 38599792374,
-          # 38600671163): workflow_run fires when the beat's RUN completes, but the
-          # book lands on Console Pages only after a 1-4 min rebuild — the first
-          # chase honestly no-oped (pre-rebuild book); the second landed an
-          # intermediate book while a newer one was still rebuilding (the loop
-          # stopped at the first diff). Cure: a VERSION-AWARE chase — on chase
-          # flights, poll the source until its world.json version EXCEEDS the
-          # version this repo currently serves, then mirror once. No intermediate
-          # landing, no false stop; bounded (7 reads x 45s ≈ 5 min) and the hourly
+          # [T38 · C-2h] the chase races, measured live three times (runs 38599792374,
+          # 38600671163, 38601877401): (1) workflow_run fires when the beat's RUN
+          # completes, but the book lands on Console Pages only after a 1-4+ min
+          # rebuild — the first chase honestly no-oped; (2) comparing the source
+          # against the MIRROR's own version is unsound — a stale mirror satisfies
+          # "source > mirror" against an intermediate book and stops while the beat's
+          # actual book is still rebuilding (chase-3 landed book-C and never chased
+          # book-D). Cure: the TARGET law — read the beat's own published version
+          # keylessly from the Console repo's raw main branch (git content, no Pages
+          # lag), and poll Pages until it serves >= that target, then mirror once.
+          # Raw fetch failure or a non-advancing beat => honest give-up; the hourly
           # :52 floor stays the backstop. Schedule and manual flights stay
           # single-shot (they read a settled book).
           if [ "${GITHUB_EVENT_NAME}" = "workflow_run" ]; then
+            TARGET=$(curl -fsSL --max-time 20 "https://raw.githubusercontent.com/roshpinacare-sys/Console/main/dex/world.json" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{try{process.stdout.write(String(JSON.parse(s).version||0))}catch(e){process.stdout.write('0')}})" || echo 0)
             MV=$(node -e "process.stdout.write(String(JSON.parse(require('fs').readFileSync('dex/world.json','utf8')).version||0))")
-            echo "chase: this repo serves world version ${MV}"
+            echo "chase: mirror serves ${MV}; the beat published target ${TARGET} (raw Console main)"
             LANDED=0
-            for attempt in 0 1 2 3 4 5 6; do
-              SV=$(curl -fsSL --max-time 20 "https://roshpinacare-sys.github.io/Console/dex/world.json" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{try{process.stdout.write(String(JSON.parse(s).version||0))}catch(e){process.stdout.write('0')}})" || echo 0)
-              echo "chase attempt ${attempt}: source version ${SV} vs mirror ${MV}"
-              if [ "${SV}" -gt "${MV}" ]; then
-                node agents/dex-mirror.mjs
-                echo "the beat's book (version ${SV}) landed on chase attempt ${attempt}"
-                LANDED=1
-                break
-              fi
-              if [ "${attempt}" -lt 6 ]; then
-                sleep 45
-              fi
-            done
-            if [ "${LANDED}" -eq 0 ]; then
-              echo "chase exhausted: source never advanced past version ${MV} — honest give-up, the hourly :52 floor backstops"
+            if [ "${TARGET}" -gt 0 ] && [ "${TARGET}" -gt "${MV}" ]; then
+              for attempt in 0 1 2 3 4 5 6; do
+                SV=$(curl -fsSL --max-time 20 "https://roshpinacare-sys.github.io/Console/dex/world.json" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{try{process.stdout.write(String(JSON.parse(s).version||0))}catch(e){process.stdout.write('0')}})" || echo 0)
+                echo "chase attempt ${attempt}: pages ${SV} / target ${TARGET} / mirror ${MV}"
+                if [ "${SV}" -ge "${TARGET}" ]; then
+                  node agents/dex-mirror.mjs
+                  echo "the beat's book (target ${TARGET}, pages ${SV}) landed on chase attempt ${attempt}"
+                  LANDED=1
+                  break
+                fi
+                if [ "${attempt}" -lt 6 ]; then
+                  sleep 45
+                fi
+              done
+            else
+              echo "nothing to chase: target ${TARGET} vs mirror ${MV} (verify-only beat, or the raw fetch failed) — the hourly :52 floor backstops"
+            fi
+            if [ "${LANDED}" -eq 0 ] && [ "${TARGET}" -gt 0 ]; then
+              echo "chase exhausted: pages never reached target ${TARGET} — honest give-up, the hourly :52 floor backstops"
             fi
           else
             node agents/dex-mirror.mjs
