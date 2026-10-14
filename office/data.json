@@ -1,18 +1,18 @@
 {
  "schema": "office.pulse/1",
- "generatedAt": "2026-10-14T01:34:38.937Z",
+ "generatedAt": "2026-10-14T01:34:59.286Z",
  "generatedAgeNote": "this file is rewritten by the office-pulse workflow; judge freshness by generatedAt",
- "verdict": "STALE",
+ "verdict": "ALIVE",
  "verdictChecks": [
   {
    "name": "office-push",
-   "state": "unknown",
-   "detail": "age not measured"
+   "state": "fresh",
+   "detail": "2min <= 2880min"
   },
   {
    "name": "office-ci",
-   "state": "pending",
-   "detail": "no receipt yet"
+   "state": "fresh",
+   "detail": "6min <= 1560min"
   },
   {
    "name": "wallet-artery",
@@ -22,7 +22,7 @@
   {
    "name": "grid-artery",
    "state": "fresh",
-   "detail": "34min <= 720min · PASS"
+   "detail": "35min <= 720min · PASS"
   },
   {
    "name": "fleet-artery",
@@ -40,11 +40,9 @@
    "detail": "10min <= 90min"
   }
  ],
- "degraded": [
-  "fleetHQ"
- ],
+ "degraded": [],
  "sources": {
-  "fleetHQ": "error",
+  "fleetHQ": "ok",
   "wallet-artery": "Autonomy/receipts/wallet/verdict.json",
   "grid-artery": "Autonomy/receipts/grid/verdict.json",
   "fleet-artery": "Autonomy/receipts/fleet/verdict.json",
@@ -52,7 +50,96 @@
   "runtime": "ok"
  },
  "office": {
-  "__error": "HTTP 500 for /repos/roshpinacare-sys/FleetHQ"
+  "repo": "roshpinacare-sys/FleetHQ",
+  "pushedAt": "2026-10-14T01:32:29Z",
+  "pushedAgeMin": 2,
+  "openIssues": 17,
+  "wire": [
+   {
+    "sha": "d93e11e",
+    "msg": "pacemaker receipt: 2026-10-14T01:32:27Z",
+    "at": "2026-10-14T01:32:27Z",
+    "ageMin": 3,
+    "author": "roshpinacare-sys"
+   },
+   {
+    "sha": "dd092f1",
+    "msg": "pacemaker receipt: 2026-10-14T01:32:02Z",
+    "at": "2026-10-14T01:32:02Z",
+    "ageMin": 3,
+    "author": "roshpinacare-sys"
+   },
+   {
+    "sha": "2112464",
+    "msg": "office-ci receipt: build pass, types pass [skip ci]",
+    "at": "2026-10-14T01:31:51Z",
+    "ageMin": 3,
+    "author": "roshpinacare-sys"
+   },
+   {
+    "sha": "3d36b9d",
+    "msg": "sovereign-selfscan: network state + claims 2026-10-14T01:31Z [skip ci]",
+    "at": "2026-10-14T01:31:37Z",
+    "ageMin": 3,
+    "author": "roshpinacare-sys"
+   },
+   {
+    "sha": "cdcdd17",
+    "msg": "pacemaker receipt: 2026-10-14T01:30:45Z",
+    "at": "2026-10-14T01:30:45Z",
+    "ageMin": 4,
+    "author": "roshpinacare-sys"
+   },
+   {
+    "sha": "ebf752a",
+    "msg": "selfscan hotfix: disp TDZ (runsInWindow used it before declaration) — the book caught its ",
+    "at": "2026-10-14T01:30:26Z",
+    "ageMin": 5,
+    "author": "roshpinacare-sys"
+   }
+  ],
+  "worklog": {
+   "tasks": 37,
+   "last": [
+    {
+     "id": "52",
+     "title": "הוראת-בעלים: [הנוסח-המלא-בערוץ-הפרטי]"
+    },
+    {
+     "id": "51",
+     "title": "הוראת-בעלים: [הנוסח-המלא-בערוץ-הפרטי]"
+    },
+    {
+     "id": "50",
+     "title": "הוראת-בעלים (לכל-הסוכנים-כאחד): [הנוסח-המלא-בערוץ-הפרטי]"
+    }
+   ]
+  },
+  "worklogLastTouchAgeMin": 2207,
+  "boot": {
+   "at": "2026-10-13T10:37:28.550Z",
+   "ageMin": 897,
+   "office": {
+    "reception_3000": "up",
+    "foreman_3010": "up",
+    "gateway_3011": "up"
+   },
+   "allOk": true
+  },
+  "ci": {
+   "overall": "PASS",
+   "at": "2026-10-14T01:28:57.553Z",
+   "ageMin": 6,
+   "reason": "all five checks ran and passed",
+   "runUrl": "https://github.com/roshpinacare-sys/FleetHQ/actions/runs/38495864778",
+   "checks": {
+    "install": "pass",
+    "prismaGenerate": "pass",
+    "typecheck": "pass",
+    "productionBuild": "pass",
+    "connectivityAudit": "pass"
+   }
+  }
  },
  "arteries": {
   "wallet": {
@@ -67,7 +154,7 @@
   "grid": {
    "source": "Autonomy/receipts/grid/verdict.json",
    "at": "2026-10-14T01:00:26.545Z",
-   "ageMin": 34,
+   "ageMin": 35,
    "overall": "PASS",
    "reason": "grid state measured from git; laws pass",
    "alerts": 0,
