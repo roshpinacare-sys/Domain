@@ -1,18 +1,18 @@
 {
  "schema": "office.pulse/1",
- "generatedAt": "2026-10-14T02:39:44.088Z",
+ "generatedAt": "2026-10-14T02:40:06.825Z",
  "generatedAgeNote": "this file is rewritten by the office-pulse workflow; judge freshness by generatedAt",
  "verdict": "ALIVE",
  "verdictChecks": [
   {
    "name": "office-push",
    "state": "fresh",
-   "detail": "1min <= 2880min"
+   "detail": "0min <= 2880min"
   },
   {
    "name": "office-ci",
    "state": "fresh",
-   "detail": "15min <= 1560min"
+   "detail": "16min <= 1560min"
   },
   {
    "name": "wallet-artery",
@@ -22,7 +22,7 @@
   {
    "name": "grid-artery",
    "state": "fresh",
-   "detail": "53min <= 720min · BLOCKED: grid credential-blocked — BLOCKED-SILENT LAW v2: measured honestly, owner words "
+   "detail": "54min <= 720min · BLOCKED: grid credential-blocked — BLOCKED-SILENT LAW v2: measured honestly, owner words "
   },
   {
    "name": "fleet-artery",
@@ -32,12 +32,12 @@
   {
    "name": "sovereign-tick",
    "state": "fresh",
-   "detail": "10min <= 360min"
+   "detail": "11min <= 360min"
   },
   {
    "name": "runtime-heartbeat",
    "state": "fresh",
-   "detail": "25min <= 90min"
+   "detail": "0min <= 90min"
   }
  ],
  "degraded": [],
@@ -51,10 +51,17 @@
  },
  "office": {
   "repo": "roshpinacare-sys/FleetHQ",
-  "pushedAt": "2026-10-14T02:39:10Z",
-  "pushedAgeMin": 1,
+  "pushedAt": "2026-10-14T02:39:51Z",
+  "pushedAgeMin": 0,
   "openIssues": 1,
   "wire": [
+   {
+    "sha": "f4a977e",
+    "msg": "decide: sovereign decision cycle (SOV-POLICY/1) — sense/decide/record, evidence-anchored",
+    "at": "2026-10-14T02:39:49Z",
+    "ageMin": 0,
+    "author": "roshpinacare-sys"
+   },
    {
     "sha": "96ac0b4",
     "msg": "office-heartbeat: R41 race-tolerance layer composed over the abort-first root fix — empty ",
@@ -80,21 +87,14 @@
     "sha": "f1bafd3",
     "msg": "office-heartbeat: public office state captured [skip ci]",
     "at": "2026-10-14T02:31:35Z",
-    "ageMin": 8,
+    "ageMin": 9,
     "author": "roshpinacare-sys"
    },
    {
     "sha": "9d5cef6",
     "msg": "pacemaker receipt: 2026-10-14T02:30:25Z",
     "at": "2026-10-14T02:30:25Z",
-    "ageMin": 9,
-    "author": "roshpinacare-sys"
-   },
-   {
-    "sha": "fc29d36",
-    "msg": "opens-closer: measured freshness ledger + revival dispatches [skip ci]",
-    "at": "2026-10-14T02:30:14Z",
-    "ageMin": 9,
+    "ageMin": 10,
     "author": "roshpinacare-sys"
    }
   ],
@@ -115,10 +115,10 @@
     }
    ]
   },
-  "worklogLastTouchAgeMin": 2271,
+  "worklogLastTouchAgeMin": 2272,
   "boot": {
    "at": "2026-10-13T10:37:28.550Z",
-   "ageMin": 962,
+   "ageMin": 963,
    "office": {
     "reception_3000": "up",
     "foreman_3010": "up",
@@ -129,7 +129,7 @@
   "ci": {
    "overall": "PASS",
    "at": "2026-10-14T02:24:28.325Z",
-   "ageMin": 15,
+   "ageMin": 16,
    "reason": "all five checks ran and passed",
    "runUrl": "https://github.com/roshpinacare-sys/FleetHQ/actions/runs/38500762351",
    "checks": {
@@ -154,7 +154,7 @@
   "grid": {
    "source": "Autonomy/receipts/grid/verdict.json",
    "at": "2026-10-14T01:46:18.710Z",
-   "ageMin": 53,
+   "ageMin": 54,
    "overall": "BLOCKED",
    "reason": "grid credential-blocked — BLOCKED-SILENT LAW v2: measured honestly, owner words decide",
    "alerts": 0,
@@ -172,14 +172,14 @@
   "tick": {
    "source": "Autonomy/receipts/latest.json",
    "at": "2026-10-14T02:29:28.425Z",
-   "ageMin": 10,
+   "ageMin": 11,
    "chain": "a7f6e684764f"
   }
  },
  "runtime": {
-  "lastSuccessAt": "2026-10-14T02:15:08Z",
-  "lastSuccessAgeMin": 25,
-  "lastSuccessName": "sovereign-runtime",
-  "lastConclusion": "cancelled"
+  "lastSuccessAt": "2026-10-14T02:39:46Z",
+  "lastSuccessAgeMin": 0,
+  "lastSuccessName": "grid-watchdog",
+  "lastConclusion": "success"
  }
 }
