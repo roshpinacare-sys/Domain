@@ -1,6 +1,6 @@
 {
  "schema": "office.pulse/1",
- "generatedAt": "2026-10-14T02:42:02.593Z",
+ "generatedAt": "2026-10-14T02:42:25.315Z",
  "generatedAgeNote": "this file is rewritten by the office-pulse workflow; judge freshness by generatedAt",
  "verdict": "ALIVE",
  "verdictChecks": [
@@ -12,12 +12,12 @@
   {
    "name": "office-ci",
    "state": "fresh",
-   "detail": "0min <= 1560min"
+   "detail": "1min <= 1560min"
   },
   {
    "name": "wallet-artery",
    "state": "fresh",
-   "detail": "33min <= 2880min · PASS"
+   "detail": "34min <= 2880min · PASS"
   },
   {
    "name": "grid-artery",
@@ -37,7 +37,7 @@
   {
    "name": "runtime-heartbeat",
    "state": "fresh",
-   "detail": "2min <= 90min"
+   "detail": "3min <= 90min"
   }
  ],
  "degraded": [],
@@ -51,22 +51,29 @@
  },
  "office": {
   "repo": "roshpinacare-sys/FleetHQ",
-  "pushedAt": "2026-10-14T02:41:47Z",
+  "pushedAt": "2026-10-14T02:42:11Z",
   "pushedAgeMin": 0,
   "openIssues": 1,
   "wire": [
    {
+    "sha": "7b44198",
+    "msg": "pacemaker receipt: 2026-10-14T02:42:10Z",
+    "at": "2026-10-14T02:42:10Z",
+    "ageMin": 0,
+    "author": "roshpinacare-sys"
+   },
+   {
     "sha": "6b9a1b2",
     "msg": "office-ci receipt: build pass, types pass [skip ci]",
     "at": "2026-10-14T02:41:46Z",
-    "ageMin": 0,
+    "ageMin": 1,
     "author": "roshpinacare-sys"
    },
    {
     "sha": "7df5f5a",
     "msg": "pacemaker receipt: 2026-10-14T02:41:32Z",
     "at": "2026-10-14T02:41:32Z",
-    "ageMin": 0,
+    "ageMin": 1,
     "author": "roshpinacare-sys"
    },
    {
@@ -87,14 +94,7 @@
     "sha": "673c2f7",
     "msg": "pacemaker receipt: 2026-10-14T02:40:52Z",
     "at": "2026-10-14T02:40:52Z",
-    "ageMin": 1,
-    "author": "roshpinacare-sys"
-   },
-   {
-    "sha": "22dc0b8",
-    "msg": "office-heartbeat: union completed — restored the second lane's abort-first self-heal line ",
-    "at": "2026-10-14T02:40:43Z",
-    "ageMin": 1,
+    "ageMin": 2,
     "author": "roshpinacare-sys"
    }
   ],
@@ -129,7 +129,7 @@
   "ci": {
    "overall": "PASS",
    "at": "2026-10-14T02:41:45.753Z",
-   "ageMin": 0,
+   "ageMin": 1,
    "reason": "all five checks ran and passed",
    "runUrl": "https://github.com/roshpinacare-sys/FleetHQ/actions/runs/38502288524",
    "checks": {
@@ -145,7 +145,7 @@
   "wallet": {
    "source": "Autonomy/receipts/wallet/verdict.json",
    "at": "2026-10-14T02:08:46.256Z",
-   "ageMin": 33,
+   "ageMin": 34,
    "overall": "PASS",
    "reason": "install, prisma, typecheck, build and all wallet laws pass — with 1 persistent trust-flag(s) (see alerts)",
    "alerts": 1,
@@ -178,7 +178,7 @@
  },
  "runtime": {
   "lastSuccessAt": "2026-10-14T02:39:46Z",
-  "lastSuccessAgeMin": 2,
+  "lastSuccessAgeMin": 3,
   "lastSuccessName": "grid-watchdog",
   "lastConclusion": "success"
  }
