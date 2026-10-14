@@ -281,7 +281,7 @@ async function modeBlog(now, keys, memory, run, posts) {
     // T3 HARD GATE: near-duplicate post vs the fleet's recent posts or this run's accepted
     // bodies => the piece NEVER signs (the audit's byte-identical pairs die here).
     // Fail-closed on missing recent list (null) — no chain truth, no broadcast.
-    const dup = dedupe.gatePost(piece.body, recentBodies.concat(runBodies));
+    const dup = dedupe.gatePost(piece.body, recentBodies.concat(runBodies), { title: piece.title }); /* R297: title dupes veto too (the shelling incident) */
     if (!dup.ok) { run.blog.push({ author: who, piece: piece.id, status: 'SKIP-NEAR-DUP', sim: dup.bestSim, against: dup.partner, why: dup.why }); continue; }
     eligible.push({ who, piece, w });
   }

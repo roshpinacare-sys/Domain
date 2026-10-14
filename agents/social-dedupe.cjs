@@ -30,7 +30,14 @@ const POST_DUP_THRESHOLD = 0.85;
 // T3 thread-lock: two fleet voices inside one thread within the window is the measured
 // coordination fingerprint — the second voice defers (one account per thread per hour).
 const THREAD_LOCK_WINDOW_MIN = 60;
-const MEMORY_WINDOW = 50;
+/* R297 · THE SHALLOW-MEMORY HOLE (the shelling incident, measured 2026-10-14):
+ * the old limit=5/account + window=50 rows let "Seven Floors" ship from
+ * cashmachine 10-11 and AGAIN from headcorner 10-13 (51h later — outside the
+ * 5-posts-per-account window). steemit shelled the WHOLE 14-account roster
+ * for that signature. The memory now reaches 30 posts/account (~450 rows ≈
+ * the last full week of fleet output) and TITLE dupes veto too. */
+const MEMORY_WINDOW = 450;
+const MEMORY_PER_ACCOUNT = 30;
 const MEMORY_CACHE = path.join(__dirname, 'social-memory-cache.json');
 const MEMORY_REFRESH_MS = 90 * 60 * 1000;
 
@@ -130,9 +137,9 @@ async function buildMemory(force) {
   const entries = [];
   for (const acc of FLEET_ACCOUNTS) {
     try {
-      const rows = await fetchRpc('bridge.get_account_posts', { sort: 'comments', account: acc, limit: 5 });
+      const rows = await fetchRpc('bridge.get_account_posts', { sort: 'comments', account: acc, limit: MEMORY_PER_ACCOUNT });
       for (const p of rows || []) {
-        entries.push({ author: String(p.author || acc), permlink: String(p.permlink || ''), created: String(p.created || ''), body: String(p.body || ''), source: 'steem-live' });
+        entries.push({ author: String(p.author || acc), permlink: String(p.permlink || ''), created: String(p.created || ''), title: String(p.title || ''), body: String(p.body || ''), source: 'steem-live' });
       }
     } catch (_) { /* fail-soft: disk cache stays the truth until next refresh */ }
   }
@@ -161,12 +168,21 @@ function gateCast(account, text, memory, slot) {
 // ── 4b) T3 POST gate — the hard crossing point before any blog broadcast ──
 // Pure (no IO, no network): the caller feeds the fleet's recent post bodies (live chain
 // in the engine). FAIL-CLOSED: a missing recent list blocks, it never waves through.
-function gatePost(body, recentPosts) {
+function gatePost(body, recentPosts, opts = {}) {
   if (!Array.isArray(recentPosts)) {
     return { ok: false, why: 'recent-unavailable-fail-closed', bestSim: null, partner: null };
   }
   const mine = contentTokens(String(body || ''));
   let bestSim = 0, partner = null;
+  /* R297 · TITLE VETO: 47 duplicate-title groups crossed every body gate —
+   * the body got reworded while the title shipped verbatim from 6 accounts.
+   * A normalized title already published by ANY fleet account never signs. */
+  const normTitle = (t) => String(t || '').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+  const candTitle = normTitle(opts.title);
+  if (candTitle && candTitle.length > 8) {
+    const clash = recentPosts.find((p) => p && normTitle(p.title) === candTitle);
+    if (clash) return { ok: false, why: `duplicate-title vs @${clash.author || '?'}`, bestSim: 1, partner: clash.author || null };
+  }
   for (const p of recentPosts) {
     if (!p || !p.body || typeof p.body !== 'string') continue;
     const sim = jaccard(mine, contentTokens(p.body)); // normalized token overlap (stopword-stripped)
