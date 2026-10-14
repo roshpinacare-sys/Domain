@@ -7,6 +7,15 @@ on:
   schedule:
     - cron: '7 * * * *'
   workflow_dispatch:
+  # trigger-hardening (measured 2026-10-14): the hourly '7' cron fires only every
+  # 5-8h under estate load (runs at 00:34/07:39/15:54/21:12 — gaps of 5-8h for an
+  # hourly heart). Same measured disease + medicine as Autonomy's compute-rearm
+  # and network-awareness: two VERIFIED frequent beats in this repo (operator-console
+  # '0,39 * * * *', fleet-heartbeat '41 * * * *') now double as the pulse. Cheap by
+  # law — the watch re-reads the moment and publishes honestly even when unchanged.
+  workflow_run:
+    workflows: ["operator-console", "fleet-heartbeat"]
+    types: [completed]
 
 permissions:
   contents: write
