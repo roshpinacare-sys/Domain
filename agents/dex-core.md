@@ -1,8 +1,8 @@
 # dex-core — EXCHANGE CORE (R40, CR-0070)
 
-At: 2026-10-14T00:14:37.801Z · Verdict: **CONSERVATION-BROKEN** · mode: KEYLESS-ATOMIC-INTERNAL · seq: 75 · attestation: `f2898928a371ed09`
+At: 2026-10-14T00:43:47.803Z · Verdict: **CONSERVATION-BROKEN** · mode: KEYLESS-ATOMIC-INTERNAL · seq: 75 · attestation: `f2898928a371ed09`
 
-Feed: FEED-LIVE (router book @ 2026-10-13T23:30:58.485Z) · conservation: **BROKEN** · custody probe: MEASURED @https://api.steemit.com
+Feed: FEED-LIVE (router book @ 2026-10-14T00:14:37.900Z) · conservation: **BROKEN** · custody probe: MEASURED @https://api.steemit.com
 
 | Pool | Pair | Kind | Fee | Reserves (a/b µ) | Mid | Verdict |
 |---|---|---|---|---|---|---|
@@ -115,7 +115,7 @@ Routes: 4 LIVE-INTERNAL (atomic settlement in our own ledger) · 90 planned/thin
 | C-SAOS-WHBD | — | — | PLANNED-NO-CLAIM · unlock: no measured SAOS claim exists in the estate books (dex/credi |
 | C-SAOS-WBLURT | — | — | PLANNED-NO-CLAIM · unlock: no measured SAOS claim exists in the estate books (dex/credi |
 
-- A1 P3 STEEM/SBD pool mid vs CEX-implied fair: CANDIDATE-FOK · net 7998445.3bps vs threshold 120bps
+- A1 P3 STEEM/SBD pool mid vs CEX-implied fair: CANDIDATE-FOK · net 7987126.47bps vs threshold 120bps
 - A-P1 WSTEEM/STEEM peg guard: PEG-DRIFT-HALT · drift 64490.74%
 - A-P2 WSBD/SBD peg guard: PEG-DRIFT-HALT · drift 62.24%
 - A2 P8 HIVE/STEEM cross-network bridge: NO-CUSTODY
