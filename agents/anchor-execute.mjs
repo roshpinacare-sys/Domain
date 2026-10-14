@@ -23,6 +23,7 @@
 import { createRequire } from "node:module";
 import { createHash } from "node:crypto";
 import path from "node:path";
+import { verifyIntent } from "./policy-gate.mjs";
 
 const EOA = "0x01Bd2879Cd9990Cb4B25cD6DE47f378Dc5D18B37";
 const RELAYS = {
@@ -209,6 +210,30 @@ async function main() {
     process.exit(3);
   }
   log(`signer verified: ${derived} == book EOA ✓`);
+
+  // ── POLICY GATE (PolicyAVS tier, self-audit wave 2026-10-13) ─────────────
+  // Hard whitelist enforcement BEFORE the key touches a transaction. A receipt
+  // is never signed off-policy; violations = named terminal, never silence.
+  const balanceEth = Number(pre.balance) / 1e18;
+  const costEth = Number((pre.estimate * pre.gasPrice)) / 1e18;
+  const gate = verifyIntent({
+    chainId: pre.cfg.chainId,
+    to: pre.sig.to,
+    data: pre.sig.data,
+    gasPriceGwei: pre.gasPriceGwei,
+    costEth,
+    reserveAfterEth: balanceEth - costEth,
+    dayRoot: p.dayRoot,
+    alreadyAnchoredThisRoot: false, // Z-18 dedup already ran above; a duplicate root also reverts at the contract (belt + suspenders)
+    derivedAddress: derived,
+    bookEoa: EOA,
+  });
+  for (const c of gate.checks) log(`  policy ${c.pass ? "✓" : "✗"} ${c.name}: ${c.detail}`);
+  if (!gate.ok) {
+    log(`POLICY-VIOLATION: ${gate.violations.length} hard-rule refusals (${gate.violations.join(" | ").slice(0, 200)}) — named terminal: refuse-to-sign (T-77: receipt is the alarm, nothing faked)`);
+    process.exit(0);
+  }
+  log(`policy gate PASS (v${gate.policyVersion}, ${gate.checks.length} hard rules) — cleared to sign`);
 
   const provider = new ethers.JsonRpcProvider(pre.cfg.rpc, pre.cfg.chainId, { staticNetwork: true });
   const signer = await wallet.connect(provider);
