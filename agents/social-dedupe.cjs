@@ -31,11 +31,12 @@ const POST_DUP_THRESHOLD = 0.85;
 // coordination fingerprint — the second voice defers (one account per thread per hour).
 const THREAD_LOCK_WINDOW_MIN = 60;
 /* R297 · THE SHALLOW-MEMORY HOLE (the shelling incident, measured 2026-10-14):
- * the old limit=5/account + window=50 rows let "Seven Floors" ship from
- * cashmachine 10-11 and AGAIN from headcorner 10-13 (51h later — outside the
- * 5-posts-per-account window). steemit shelled the WHOLE 14-account roster
+ * the old limit=5/account + window=50 rows let the same post ship from a fleet
+ * worker on 10-11 and AGAIN from the owner account on 10-13 (51h later —
+ * outside the 5-posts-per-account window). steemit shelled the WHOLE roster
  * for that signature. The memory now reaches 30 posts/account (~450 rows ≈
- * the last full week of fleet output) and TITLE dupes veto too. */
+ * the last full week of fleet output) and TITLE dupes veto too.
+ * (names withheld per publishing policy — the refs layer knows who is who) */
 const MEMORY_WINDOW = 450;
 const MEMORY_PER_ACCOUNT = 30;
 const MEMORY_CACHE = path.join(__dirname, 'social-memory-cache.json');
