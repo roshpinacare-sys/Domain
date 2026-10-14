@@ -101,6 +101,7 @@ const RULES = [
   const consoleHome = await consoleRaw('index.html');
   const board = {
     at: new Date(t0).toISOString(),
+    generatedAt: new Date(t0).toISOString(),
     agent: 'recruit',
     doctrine: 'תפקידים נפתחים מתוך צורך שנמדד בשטח, ונרשמים רק עם הוכחת מנגנון קיימת; תפקיד PROPOSED נושא הגדרה וממתין למימוש — אין טענות בלי ראיות',
     contact: 'הגשת מועמדות ופניות: דרך issues בריפו בלבד',
@@ -139,7 +140,7 @@ const RULES = [
   console.log(JSON.stringify({ state: 'ok', filled: board.roles.filter((r) => r.status === 'FILLED').length, proposed: board.roles.filter((r) => r.status === 'PROPOSED').length }));
   process.exit(0);
 })().catch((e) => {
-  try { fs.writeFileSync(OUT_JSON, JSON.stringify({ at: new Date().toISOString(), agent: 'recruit', fatal: String(e.message || e).slice(0, 140) }, null, 1)); } catch (_) {}
+  try { fs.writeFileSync(OUT_JSON, JSON.stringify({ at: new Date().toISOString(), generatedAt: new Date().toISOString(), agent: 'recruit', fatal: String(e.message || e).slice(0, 140) }, null, 1)); } catch (_) {}
   console.log(JSON.stringify({ state: 'fail-soft', msg: String(e.message || e).slice(0, 100) }));
   process.exit(0);
 });

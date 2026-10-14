@@ -389,7 +389,7 @@ if (require.main === module) (async () => {
   };
 
   const out = {
-    ok: true, at, agent: 'venture-desk v1.2.0 (Z-31 birth · Z-34 earn-governor wiring · Z-42 canon leg attribution — dead anonymous fallback removed)',
+    ok: true, at, generatedAt: at, agent: 'venture-desk v1.2.0 (Z-31 birth · Z-34 earn-governor wiring · Z-42 canon leg attribution — dead anonymous fallback removed)',
     selfHeal: { econSummaryRepaired: heal.healed, incident: 'parallel-runtime [object Object] concat bug repaired in the committed book' },
     origin: 'clodfarm study (Z-31): adopted the governor math + notebook + dashboards + labor tiering; rejected the approval-default, the islands, the earn-less economy; doctrine bound as law',
     ledger, ventures,
