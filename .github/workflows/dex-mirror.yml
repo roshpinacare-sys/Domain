@@ -34,6 +34,9 @@
 # chased. No recursion: dex-beat has no push/workflow_run trigger and this mirror's
 # commits carry [skip ci]. The hourly :52 slot stays (independent freshness floor).
 # Cadence decision stays inside the 15-c delegation (publishing frequency only).
+# LESSON-1 (measured on the first chase, run 38599792374): the trigger fires on run
+# completion, but the book lands on Console Pages 1-4 min later (rebuild lag) — so a
+# chase that finds nothing new re-reads on a bounded cadence (6x50s) before giving up.
 
 name: dex-mirror
 
@@ -81,7 +84,28 @@ jobs:
           node-version: '22'
 
       - name: Mirror the live engine book (keyless public read)
-        run: node agents/dex-mirror.mjs
+        run: |
+          node agents/dex-mirror.mjs
+          # [T38 · C-2h] the chase race, measured live (run 38599792374): workflow_run
+          # fires when the beat's RUN completes, but the beat publishes to the Console
+          # repo at its tail (16:38:21Z) and Console Pages needs 1-4 min to rebuild —
+          # the first chase read the pre-rebuild book and honestly no-oped, leaving the
+          # mirror stale until the next :52. Cure: on a chase flight (workflow_run)
+          # that found nothing new, re-read the source on a bounded cadence — the beat's
+          # book must land in this repo within minutes, not at the next :52. Bounded:
+          # 6 attempts x 50s ≈ 5 min, then the hourly floor remains the backstop.
+          # Schedule and manual flights stay single-shot (they read a settled book).
+          if [ "${GITHUB_EVENT_NAME}" = "workflow_run" ] && git diff --quiet -- dex/; then
+            for attempt in 1 2 3 4 5 6; do
+              echo "chase attempt ${attempt}: book unchanged — Console Pages may still be rebuilding; sleeping 50s"
+              sleep 50
+              node agents/dex-mirror.mjs
+              if ! git diff --quiet -- dex/; then
+                echo "the beat's book landed on chase attempt ${attempt}"
+                break
+              fi
+            done
+          fi
 
       - name: Publish the mirrored book
         if: always()
