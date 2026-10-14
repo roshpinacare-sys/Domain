@@ -21,12 +21,29 @@
 #   אין-חתימה, אין-הון, אין-סודות — שינוי-תדירות-פרסום-בלבד. משבצת-דקה 52 פנויה (רק dex-mirror תובע-אותה במפת-44-המכונות).
 #   החלטה: חוזרים ל-'52 * * * *'. R67-C עצמה (חסכון-מכסה במקורות-פרטיים) נותרת-בתוקף לשאר-המפיקים.
 
+# [T38 · C-2h] 2026-10-14 — the mirror chases the beat (measured fault, Task 37/38):
+# dex-beat publishes the live book to Console (last beat 15:51:35Z) but this mirror
+# only reads hourly :52 — and GitHub's scheduler drifts the slot by tens of minutes
+# (measured: the 14:52 slot fired 15:33Z). Public Domain Pages therefore served a
+# stale book for up to ~1h after every beat (Task 37 had to hand-dispatch the mirror
+# to pass A43). The cure is mechanical, not manual: this workflow now ALSO fires on
+# the completion of dex-beat (workflow_run), so every published book is chased
+# within minutes. The job-level guard admits only definite completions (success or
+# failure — the mirror is a truth-chaser: it reads whatever is live on Console and
+# no-ops on unchanged); cancelled/unknown completions publish nothing and are not
+# chased. No recursion: dex-beat has no push/workflow_run trigger and this mirror's
+# commits carry [skip ci]. The hourly :52 slot stays (independent freshness floor).
+# Cadence decision stays inside the 15-c delegation (publishing frequency only).
+
 name: dex-mirror
 
 on:
   schedule:
     - cron: '52 * * * *'
   workflow_dispatch:
+  workflow_run:
+    workflows: [dex-beat]
+    types: [completed]
 
 permissions:
   contents: write
@@ -37,6 +54,14 @@ concurrency:
 
 jobs:
   mirror:
+    # [T38 · C-2h] trigger guard, fail-closed: on workflow_run, chase only definite
+    # completions (success/failure — a failed beat may still have published before
+    # dying; the mirror reads the live truth and no-ops when unchanged). Schedule
+    # and manual dispatch are untouched.
+    if: >-
+      github.event_name != 'workflow_run' ||
+      github.event.workflow_run.conclusion == 'success' ||
+      github.event.workflow_run.conclusion == 'failure'
     runs-on: ubuntu-latest
     timeout-minutes: 9
     env:
