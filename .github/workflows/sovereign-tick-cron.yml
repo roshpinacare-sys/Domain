@@ -43,7 +43,7 @@ jobs:
         if: steps.stasis.outputs.active != 'true'
         uses: actions/setup-node@v5
         with:
-          node-version: 20
+          node-version: 22
 
       - name: steem client (steem@0.7.11 — the fleet signer, needed only by an ARMED LIVE leg)
         if: steps.stasis.outputs.active != 'true'
