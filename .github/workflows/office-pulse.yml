@@ -62,9 +62,34 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -eu
-          now=$(date +%s)
+          # R53 STALENESS-GATE (owner directive "המשרד מת שעתיים"): the relay is
+          # redundancy for the CLOCK, not the clock. Measured live 2026-10-14:
+          # an unconditional relay turned this into an infinite loop (~2 runs/min,
+          # a Pages build per push, 75/100 builds errored — the office window the
+          # owner watches was flapping for hours). The relay now fires ONLY when
+          # the book proves the schedule missed its slot (generatedAt older than
+          # 25 min = cadence 20 min + 5 min grace). Fresh book → named terminal.
+          age_min=$(python3 - <<'PY'
+          import json, datetime
+          try:
+              d = json.load(open('office/data.json'))
+              g = d.get('generatedAt')
+              if not g:
+                  print(9999)
+              else:
+                  t = datetime.datetime.fromisoformat(str(g).replace('Z', '+00:00'))
+                  print(int((datetime.datetime.now(datetime.timezone.utc) - t).total_seconds() // 60))
+          except Exception:
+              print(9999)
+          PY
+          )
+          echo "relay: book age ${age_min} min (gate: relay only if > 25)"
+          if [ "${age_min:-9999}" -le 25 ]; then
+            echo "named terminal: relay-skipped-fresh — cron owns the cadence, book age ${age_min}min"
+            exit 0
+          fi
           wait=5
-          echo "relay: dispatching immediately (cron keeps cadence; relay is redundancy, not the clock) — lock released now"
+          echo "relay: book stale (${age_min}min) — dispatching redundancy tick"
           sleep "$wait"
           code=$(curl -s -o /tmp/relay.out -w '%{http_code}' -X POST \
             -H "Authorization: Bearer $GH_TOKEN" \
