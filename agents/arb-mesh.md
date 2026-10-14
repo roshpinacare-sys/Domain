@@ -1,9 +1,13 @@
 # arb-mesh — THE MESH MARKET (R41, CR-0071)
 
-At: 2026-10-14T05:19:08.173Z · Verdict: **NO-EDGE (every row below the floor — the machinery waits, the floor law protects the P&L)** · batch: — · protocol: SAOS-ARB-MESH/1
+At: 2026-10-14T06:31:03.936Z · Verdict: **GATED-WIRE (edge above floor but no free capital to arm the agents — named, never faked)** · batch: MESH-2026101406-c67ddc89 · protocol: SAOS-ARB-MESH/1
 
-Roster: 1 accounts (owner + 0 soldiers) · Edge candidates: 0 · Intents drafted: 0 · Fills settled: 0 · Refusals: 0
+Roster: 1 accounts (owner + 0 soldiers) · Edge candidates: 1 · Intents drafted: 0 · Fills settled: 0 · Refusals: 0
 
+
+| Edge row | Direction | Net bps | Floor | Source |
+|---|---|---|---|---|
+| A1 P3 STEEM/SBD pool mid vs CEX-implied fair | STEEM→SBD (sell the rich side) | 5591407.68 | 100 | dex-core.json (our pool — atomic, no bridge) |
 
 ## Size ladder (the large-sums law — exact BigInt, honest slippage)
 
@@ -24,13 +28,13 @@ Roster: 1 accounts (owner + 0 soldiers) · Edge candidates: 0 · Intents drafted
 | 1% | 18318µ | 16193µ | 0.88399388 | 134.15bps |
 | 5% | 91592µ | 79826µ | 0.871539 | 130.85bps |
 
-**P3 STEEM/SBD** (mid 68.1005291 SBD/, fee 25bps):
+**P3 STEEM/SBD** (mid 56.33039294 SBD/, fee 25bps):
 
 | Size (% depth) | In | Out | Exec price | Slippage |
 |---|---|---|---|---|
-| 0.1% | 1µ | 67µ | 67 | -1.61bps |
-| 1% | 11µ | 740µ | 67.27272727 | -1.21bps |
-| 5% | 56µ | 3625µ | 64.73214286 | -4.94bps |
+| 0.1% | 1µ | 56µ | 56 | -0.58bps |
+| 1% | 12µ | 667µ | 55.58333333 | -1.32bps |
+| 5% | 62µ | 3319µ | 53.53225806 | -4.96bps |
 
 ## Mesh P&L (lifetime, from the ledger — the core book is the source of truth)
 
