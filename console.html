@@ -306,6 +306,17 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
           <div class="pfoot"><span>עודכן: <span class="upd" id="pd-upd">…</span></span><span class="src">מקור · מראת-Pulse · CI ציבורי (roshpinacare-sys/Pulse §7)</span></div>
         </div>
 
+        <div class="panel" id="p-owner">
+          <div class="ph"><h3><span class="ico"></span> ערוץ-הבעלים · הריבונות מבקשת, הבעלים מאשר</h3><span class="chip" id="poc-chip">טוען…</span></div>
+          <div class="kv">
+            <b>פתוחות</b><i class="mono" id="poc-open">…</i>
+            <b>אושרו</b><i class="mono" id="poc-granted">…</i>
+            <b>מימון-עצמי</b><i class="mono">הריבונות מתפעלת ממה שיש · אפס תביעה לבעלים מחוץ לערוץ</i>
+          </div>
+          <ul class="runs" id="poc-runs"><li class="err">טוען בקשות-הריבונות…</li></ul>
+          <div class="pfoot"><span>עודכן: <span class="upd" id="poc-upd">…</span></span><span class="src">מקור חי · agents/sovereign-requests.json · מענה-בעלים דרך מסילת-ה-operator של המשרד — לא דרך סוכנים-חוץ</span></div>
+        </div>
+
         <div class="panel" id="p-research">
           <div class="ph"><h3><span class="ico"></span> מחקר וגילוי</h3><span class="chip" id="pr-chip">טוען…</span></div>
           <div style="margin:2px 0 12px">
@@ -983,6 +994,32 @@ function loadDecisions(){
     .catch(function(e){ chip.className = 'chip bad'; chip.textContent = 'המראה לא נגישה'; });
 }
 
+/* -- 12. OWNER CHANNEL (T51: הריבונות מבקשת · הבעלים מאשר — ערוץ ישיר, בלי סוכני-חוץ.
+   Honesty law: כל בקשה נושאת עדות-מדידה מהספרים · OPEN/GRANTED/DECLINED/EXPIRED · fail = כנות. -- */
+function loadOwnerChannel(){
+  var chip = $('poc-chip');
+  jget('agents/sovereign-requests.json', 12000).then(function(v){
+    var reqs = Array.isArray(v.requests) ? v.requests : [];
+    var open = reqs.filter(function(r){return r.status==='OPEN';}).length;
+    var granted = reqs.filter(function(r){return r.status==='GRANTED';}).length;
+    $('poc-open').textContent = open;
+    $('poc-granted').textContent = granted;
+    chip.className = 'chip ' + (open>0 ? 'warn' : 'good');
+    chip.textContent = open>0 ? (open + ' ממתינות-להכרעה') : 'אין-בקשות-פתוחות';
+    var items = reqs.map(function(r){
+      var st = r.status==='OPEN' ? '<span class="chip warn">פתוחה</span>'
+        : r.status==='GRANTED' ? '<span class="chip ok">אושרה</span>'
+        : '<span class="chip">' + String(r.status||'') + '</span>';
+      var ev = Array.isArray(r.evidence) ? r.evidence.join(' · ') : '';
+      return '<li style="font-size:12px;opacity:.9"><b>' + String(r.id||'') + '</b> ' + st + ' · <b>' + String(r.what||'') + '</b><br>' +
+        String(r.why||'') + (ev ? '<br><span class="mono" style="font-size:10.5px">עדות: ' + String(ev) + '</span>' : '') +
+        (r.cost ? '<br>עלות: ' + String(r.cost) : '') + '</li>';
+    });
+    $('poc-runs').innerHTML = items.join('') || '<li class="err">אין בקשות בפנקס.</li>';
+    $('poc-upd').textContent = String(v.updated || v.at || '').replace('T',' ').slice(0,16) + 'Z';
+  }).catch(function(){ chip.className = 'chip bad'; chip.textContent = 'הפנקס לא נגיש'; });
+}
+
 /* -- 10. RESEARCH (11-c lane: REVIVED T-69 via Pulse mirror · the mirror itself resolves the
    latest findings file up to 9 days back, so the page renders what CI found, never a guess.
    Honesty law: renders what the feed says · hypothesis  measurement  verdict  next. -- */
@@ -1076,7 +1113,7 @@ function loadProfit(){
 
 /* -- refresh loop: 5 minutes, one polite batch per source -- */
 function refreshAll(){
-  loadOffice(); loadPulse(); loadGrid(); loadSteem(); loadProbes(); loadWorld(); loadCrew(); loadLessons(); loadFlow(); loadIntegrity(); loadResearch(); loadDecisions(); loadProfit();
+  loadOffice(); loadPulse(); loadGrid(); loadSteem(); loadProbes(); loadWorld(); loadCrew(); loadLessons(); loadFlow(); loadIntegrity(); loadResearch(); loadDecisions(); loadOwnerChannel(); loadProfit();
 }
 refreshAll();
 setInterval(refreshAll, 5*60*1000);
