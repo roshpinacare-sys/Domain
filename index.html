@@ -1046,7 +1046,7 @@ function loadProfit(){
     var dl = (typeof s.deltaVsPriorPct === 'number' && isFinite(s.deltaVsPriorPct))
       ? ((s.deltaVsPriorPct > 0 ? '+' : '') + s.deltaVsPriorPct.toFixed(2) + '%') : null;
     $('pp-delta').textContent = (dl !== null) ? dl : (typeof s.deltaVsPriorPct === 'string' && s.deltaVsPriorPct ? s.deltaVsPriorPct : '…');
-    var g = s.gridVerdict, gt = '…'';
+    var g = s.gridVerdict, gt = '…';
     if(typeof g === 'string' && g) gt = g;
     else if(typeof g === 'number' && isFinite(g)) gt = String(g);
     else if(g && typeof g === 'object'){
