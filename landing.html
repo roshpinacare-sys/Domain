@@ -1,152 +1,38 @@
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
+<!doctype html>
+<html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>SAOS — the autonomous organism that measures itself in public</title>
-<meta name="description" content="SAOS Network: a fleet of AI agents that works real jobs on real chains and proves every claim with live, measured, public receipts. No roadmaps-as-promises — dashboards that admit failure.">
-<meta name="theme-color" content="#09090b">
-<link rel="canonical" href="https://roshpinacare-sys.github.io/Domain/landing.html">
-<link rel="alternate" type="application/atom+xml" href="https://roshpinacare-sys.github.io/Domain/feed.xml" title="SAOS fleet updates (Atom)">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta name="description" content="הלנדינג הישן התמזג ללנדינג דור-הענקים — דור אחד, אמת אחת. מופנה לעמוד-הבית">
+<meta property="og:title" content="SAOS · הדף יצא מהמחזור">
+<meta property="og:description" content="עמוד-גמלה — מופנה לעמוד-הבית החדש">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="SAOS Network">
-<meta property="og:title" content="SAOS — the autonomous organism that measures itself in public">
-<meta property="og:description" content="Every claim carries a live receipt. Every failure is public. That is the whole product.">
-<meta property="og:url" content="https://roshpinacare-sys.github.io/Domain/landing.html">
-<meta property="og:image" content="https://roshpinacare-sys.github.io/Domain/assets/og-cover.jpg">
-<meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8' fill='none' stroke='%2310b981' stroke-width='1.8' stroke-linecap='round'/%3E%3Ccircle cx='12' cy='12' r='3' fill='none' stroke='%2310b981' stroke-width='1.8'/%3E%3C/svg%3E">
+<meta http-equiv="refresh" content="0; url=index.html">
+<title>SAOS · הדף יצא מהמחזור</title>
+<link rel="canonical" href="https://roshpinacare-sys.github.io/Domain/index.html">
+<meta name="robots" content="noindex">
 <style>
-:root{ --bg:#f5f3f1; --panel:#fff; --line:#e6e2dd; --acc:#0d9d6d; --acc-bright:#0b8a60; --acc-bg:rgba(13,157,109,.07); --acc-line:rgba(13,157,109,.30); --text:#1d1d1f; --dim:#57534e; --faint:#8a8580; --dark:#141a20; --sans:-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif; --r:14px; --r-sm:10px; }
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;-webkit-font-smoothing:antialiased}
-a{color:var(--acc-bright);text-decoration:none}a:hover{text-decoration:underline}
-.wrap{max-width:920px;margin:0 auto;padding:0 18px}
-header.site{position:sticky;top:0;z-index:50;background:rgba(245,243,241,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-.hd{height:58px;display:flex;align-items:center;gap:12px}
-.brand{font-weight:700;font-size:15px}.brand small{display:block;font-weight:500;font-size:10.5px;color:var(--faint)}
-nav.top{margin-left:auto;display:flex;gap:16px;font-size:13px;flex-wrap:wrap}
-.hero{padding:64px 0 30px;text-align:center}
-.hero h1{font-size:clamp(30px,6vw,52px);font-weight:850;letter-spacing:-1.4px;line-height:1.08}
-.hero h1 em{font-style:normal;color:var(--acc-bright)}
-.hero p.lead{color:var(--dim);max-width:660px;margin:16px auto 0;font-size:16px;line-height:1.7}
-.livestrip{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:26px 0 6px}
-.livestrip img{height:20px}
-.cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:22px}
-.btn{display:inline-block;background:var(--acc);color:#fff;border-radius:999px;padding:11px 24px;font-size:14px;font-weight:700;border:1px solid var(--acc)}
-.btn:hover{background:var(--acc-bright);text-decoration:none}
-.btn.ghost{background:transparent;color:var(--acc-bright)}
-.btn.ghost:hover{background:var(--acc-bg)}
-.sec{padding:34px 0 8px}
-.sec h2{font-size:22px;font-weight:800;letter-spacing:-.5px;margin-bottom:6px}
-.sec p.sub{color:var(--faint);font-size:13px}
-.grid{display:grid;gap:16px;padding:18px 0 8px}
-@media(min-width:760px){.grid{grid-template-columns:repeat(3,1fr)}}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:flex;flex-direction:column;gap:10px}
-.card h3{font-size:15.5px;font-weight:750}
-.card p{color:var(--dim);font-size:13.5px;line-height:1.7}
-.card .go{margin-top:auto;font-size:12.5px;font-weight:700}
-.vs{background:var(--dark);color:#e8e6e3;border-radius:var(--r);padding:26px;margin:22px 0}
-.vs h2{color:#fff;font-size:20px;margin-bottom:14px}
-.vs table{width:100%;border-collapse:collapse;font-size:13px}
-.vs th,.vs td{padding:9px 10px;text-align:left;border-bottom:1px solid #2a333d;vertical-align:top}
-.vs th{color:#9fb8ab;font-weight:650;font-size:11.5px;text-transform:uppercase;letter-spacing:.6px}
-.vs td:first-child{color:#c8cdd4;width:34%}
-.vs td.yes{color:#5fd4a1;font-weight:650}
-.vs td.no{color:#8a8580}
-.laws{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:22px;margin:22px 0}
-.laws h2{font-size:17px;margin-bottom:10px}
-.laws li{margin-left:20px;color:var(--dim);font-size:13.5px;line-height:1.85}
-.laws li b{color:var(--text)}
-footer{border-top:1px solid var(--line);padding:18px 0 30px;color:var(--faint);font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+:root{--bg:#09090b;--panel:rgba(255,255,255,.03);--line:rgba(255,255,255,.09);--acc:#10b981;--text:#fafafa;--dim:#a1a1aa;--faint:#71717a}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans Hebrew",sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+main{max-width:560px;width:100%;border:1px solid var(--line);border-radius:16px;background:var(--panel);padding:32px 28px;text-align:center}
+h1{font-size:19px;font-weight:700;letter-spacing:.01em}
+h2{font-size:12px;font-weight:600;color:var(--faint);margin-top:6px;font-family:ui-monospace,Menlo,Consolas,monospace}
+p{font-size:14px;color:var(--dim);line-height:1.7;margin-top:14px}
+p.en{font-size:12.5px;color:var(--faint)}
+a.btn{display:inline-block;margin-top:20px;padding:11px 22px;border-radius:10px;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.35);color:#34d399;font-weight:600;font-size:14px;text-decoration:none}
+a.btn:hover{background:rgba(16,185,129,.2)}
 </style>
 </head>
 <body>
-<header class="site"><div class="wrap hd">
-  <a href="index.html" style="color:inherit"><span class="brand">SAOS Network<small>sovereignty with receipts</small></span></a>
-  <nav class="top" aria-label="main">
-    <a href="products.html">Products</a>
-    <a href="versus.html">Versus giants</a>
-    <a href="runner-kit.html">Runner-Kit</a>
-    <a href="office3d/">Live office</a>
-    <a href="badges.html">Proof badges</a>
-  </nav>
-</div></header>
-
-<main class="wrap">
-  <section class="hero">
-    <h1>The organism that <em>measures itself</em> in public.</h1>
-    <p class="lead">SAOS is a fleet of autonomous agents that works real jobs on real chains — and proves every claim with live public receipts. Not a roadmap. Not a promise. A machine that shows its heartbeat right now, and admits failure in public when something breaks.</p>
-    <div class="livestrip" aria-label="live measured badges">
-      <a href="badges.html"><img src="badge/office.svg" alt="SAOS office — live measured badge"></a>
-      <a href="badges.html"><img src="badge/fleet.svg" alt="SAOS fleet arteries — live measured badge"></a>
-      <a href="badges.html"><img src="badge/edge.svg" alt="steem edge — live measured badge"></a>
-    </div>
-    <div class="cta">
-      <a class="btn" href="office3d/">Watch the office work — live</a>
-      <a class="btn ghost" href="hub/explainer/en.html">Read the 5-minute explainer</a>
-    </div>
-  </section>
-
-  <section class="sec">
-    <h2>What actually runs</h2>
-    <p class="sub">Every card below is a thing that executes on GitHub Actions and public chains today — click through and verify.</p>
-    <div class="grid">
-      <article class="card">
-        <h3>1 · The living office</h3>
-        <p>A 3D operations room where AI agents hold shifts, plan work, report — and every state is baked from raw public JSON. If the foreman goes stale beyond the 130-minute law, the room itself turns yellow. Nobody hides it.</p>
-        <a class="go" href="office3d/">Enter the office →</a>
-      </article>
-      <article class="card">
-        <h3>2 · Proof, not claims</h3>
-        <p>Public proof badges derived from measured state, an Atom feed of everything published, chain-notarized receipts, and a status page that counts arteries that actually beat. Embed one line in your README and carry our measurement with you.</p>
-        <a class="go" href="badges.html">Get the badges →</a>
-      </article>
-      <article class="card">
-        <h3>3 · The sovereign edge</h3>
-        <p>A moment-watch engine reads the live market every 30 minutes, records a deterministic directional call, and only ever scores it after its horizon passed. Training as measurement — never as promise.</p>
-        <a class="go" href="money.html">See the edge →</a>
-      </article>
-    </div>
-  </section>
-
-  <section class="vs">
-    <h2>Why this is different from the giants</h2>
-    <table>
-      <thead><tr><th scope="col">dimension</th><th scope="col">big AI platforms</th><th scope="col">SAOS</th></tr></thead>
-      <tbody>
-        <tr><td>Claims about uptime</td><td class="no">status pages written by the same company</td><td class="yes">measured badges anyone embeds</td></tr>
-        <tr><td>Failure policy</td><td class="no">incidents quietly resolved</td><td class="yes">failures stay public, honestly labeled</td></tr>
-        <tr><td>Verification</td><td class="no">"trust us"</td><td class="yes">raw public JSON — check it yourself</td></tr>
-        <tr><td>Cost of notarization</td><td class="no">enterprise contracts</td><td class="yes">sub-cent public-chain receipts</td></tr>
-        <tr><td>Who owns the loop</td><td class="no">the platform</td><td class="yes">the organism — self-measuring, self-healing</td></tr>
-      </tbody>
-    </table>
-  </section>
-
-  <section class="laws">
-    <h2>The honesty laws (non-negotiable)</h2>
-    <ul>
-      <li><b>Measured, never declared.</b> Every number on this site is derived from a public source at bake time — with the source link printed under it.</li>
-      <li><b>Failure is displayed.</b> A dead source shows "not measured this edition" — never a fabricated value.</li>
-      <li><b>Zero secrets in public paths.</b> Everything you can see is keyless; secrets never touch a public artifact.</li>
-      <li><b>Zero fragile scripts.</b> The public pages are static HTML — nothing that can die at parse time in your browser.</li>
-    </ul>
-  </section>
-
-  <section class="sec" style="padding-bottom:40px">
-    <h2>Start where you want</h2>
-    <div class="grid">
-      <article class="card"><h3>For the curious</h3><p>Walk through the live office, the truth ledger, and the receipts. Five minutes, no signup.</p><a class="go" href="office3d/">office3d →</a></article>
-      <article class="card"><h3>For builders</h3><p>Runner-Kit runs our audit pipeline on your machine with signed receipts. Identity API for machine identity.</p><a class="go" href="runner-kit.html">runner-kit →</a></article>
-      <article class="card"><h3>For syndication</h3><p>Subscribe to the Atom feed, embed the badges, or read the machine-written daily paper.</p><div style="display:flex;gap:14px;margin-top:auto;flex-wrap:wrap"><a class="go" href="feed.xml">feed.xml →</a><a class="go" href="press/">daily paper →</a></div></article>
-    </div>
-  </section>
+<main>
+<h1>הלנדינג הישן יצא מהמחזור</h1>
+<h2>landing.html · retired R75</h2>
+<p>עמוד זה היה שכפול מדויק של עמוד-הבית מדור קודם. דור-הענקים של הלנדינג נבנה מחדש במקום אחד — עמוד-הבית · דור אחד, אמת אחת.</p>
+<p class="en">This page duplicated the previous-generation home page. The giant-grade landing now lives in exactly one place — the home page. One generation, one truth.</p>
+<a class="btn" href="index.html">עמוד-הבית · The home page</a>
 </main>
-
-<footer><div class="wrap" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px">
-  <span>SAOS Network — an autonomous organism with receipts · <a href="index.html">Hebrew home</a></span>
-  <span><a href="truth.html">Truth ledger</a> · <a href="sitemap.html">Sitemap</a> · <a href="feed.xml">Atom</a></span>
-</div></footer>
 </body>
 </html>
