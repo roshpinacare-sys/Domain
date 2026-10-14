@@ -1,32 +1,15 @@
 {
  "schema": "site-audit/1",
- "at": "2026-10-14T14:32:26.539Z",
+ "at": "2026-10-14T14:35:08.320Z",
  "scope": "live-pages:https://roshpinacare-sys.github.io/Domain/",
  "pagesScanned": 85,
  "summary": {
-  "findings": 2,
+  "findings": 0,
   "externalBlocked": 5,
-  "transientBlocked": 0,
-  "checked": 177
+  "transientBlocked": 1,
+  "checked": 182
  },
- "findings": [
-  {
-   "code": 404,
-   "url": "https://roshpinacare-sys.github.io/Domain/landing.html",
-   "sources": [
-    "<self>"
-   ],
-   "note": "the page itself does not serve"
-  },
-  {
-   "code": 404,
-   "url": "https://roshpinacare-sys.github.io/Domain/press/index.html",
-   "sources": [
-    "<self>"
-   ],
-   "note": "the page itself does not serve"
-  }
- ],
+ "findings": [],
  "externalBlocked": [
   {
    "code": 403,
@@ -87,7 +70,15 @@
    ]
   }
  ],
- "transientBlocked": [],
- "overall": "FAIL",
+ "transientBlocked": [
+  {
+   "code": 503,
+   "url": "https://github.com/roshpinacare-sys/sovereign-runner-kit/blob/main/ToS-COMPLIANCE.md",
+   "sources": [
+    "runner-kit.html"
+   ]
+  }
+ ],
+ "overall": "PASS",
  "note": "404 פנימי/חוץ = עמוד-מת (FINDING). 403/429/502 אצל צד-ג = חסימת-בוט (רמז בלבד). 429/503 מפני-ה-github.com-שלנו = חנק-מדידה (TRANSIENT — ריטרי-3 ואז רשום-בלי-הכשל). קישורים הנבנים ב-JS בזמן-ריצה אינם נסרקים כאן — הם אינם href סטטי."
 }
