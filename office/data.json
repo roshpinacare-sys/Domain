@@ -1,13 +1,13 @@
 {
  "schema": "office.pulse/1",
- "generatedAt": "2026-10-14T02:08:16.091Z",
+ "generatedAt": "2026-10-14T02:08:35.932Z",
  "generatedAgeNote": "this file is rewritten by the office-pulse workflow; judge freshness by generatedAt",
  "verdict": "AGING",
  "verdictChecks": [
   {
    "name": "office-push",
    "state": "fresh",
-   "detail": "5min <= 2880min"
+   "detail": "0min <= 2880min"
   },
   {
    "name": "office-ci",
@@ -27,7 +27,7 @@
   {
    "name": "fleet-artery",
    "state": "fresh",
-   "detail": "142min <= 2880min · PASS"
+   "detail": "143min <= 2880min · PASS"
   },
   {
    "name": "sovereign-tick",
@@ -37,7 +37,7 @@
   {
    "name": "runtime-heartbeat",
    "state": "fresh",
-   "detail": "8min <= 90min"
+   "detail": "9min <= 90min"
   }
  ],
  "degraded": [],
@@ -51,15 +51,29 @@
  },
  "office": {
   "repo": "roshpinacare-sys/FleetHQ",
-  "pushedAt": "2026-10-14T02:03:05Z",
-  "pushedAgeMin": 5,
+  "pushedAt": "2026-10-14T02:08:28Z",
+  "pushedAgeMin": 0,
   "openIssues": 1,
   "wire": [
+   {
+    "sha": "d4b44fa",
+    "msg": "office-heartbeat: office-knowledge.json refreshed (measured) [skip ci]",
+    "at": "2026-10-14T02:08:26Z",
+    "ageMin": 0,
+    "author": "roshpinacare-sys"
+   },
+   {
+    "sha": "b42cd09",
+    "msg": "office-heartbeat: public office state captured [skip ci]",
+    "at": "2026-10-14T02:08:24Z",
+    "ageMin": 0,
+    "author": "roshpinacare-sys"
+   },
    {
     "sha": "cc25c84",
     "msg": "pacemaker receipt: 2026-10-14T02:03:04Z",
     "at": "2026-10-14T02:03:04Z",
-    "ageMin": 5,
+    "ageMin": 6,
     "author": "roshpinacare-sys"
    },
    {
@@ -73,7 +87,7 @@
     "sha": "3e98559",
     "msg": "pacemaker receipt: 2026-10-14T02:01:51Z",
     "at": "2026-10-14T02:01:51Z",
-    "ageMin": 6,
+    "ageMin": 7,
     "author": "roshpinacare-sys"
    },
    {
@@ -81,20 +95,6 @@
     "msg": "office-ci receipt: build pass, types pass [skip ci]",
     "at": "2026-10-14T02:01:27Z",
     "ageMin": 7,
-    "author": "roshpinacare-sys"
-   },
-   {
-    "sha": "f20a747",
-    "msg": "office-heartbeat: race-proof publish + T-77-aligned readback (measured root: 2 reds 01:22/",
-    "at": "2026-10-14T02:00:23Z",
-    "ageMin": 8,
-    "author": "roshpinacare-sys"
-   },
-   {
-    "sha": "323df6b",
-    "msg": "opens-closer: measured freshness ledger + revival dispatches [skip ci]",
-    "at": "2026-10-14T02:00:13Z",
-    "ageMin": 8,
     "author": "roshpinacare-sys"
    }
   ],
@@ -163,7 +163,7 @@
   "fleet": {
    "source": "Autonomy/receipts/fleet/verdict.json",
    "at": "2026-10-13T23:45:54.216Z",
-   "ageMin": 142,
+   "ageMin": 143,
    "overall": "PASS",
    "reason": "steem=PASS · saos-dex=PASS · saos-agents=PASS · Saosmartwallet=PASS · Adsmarket=PASS",
    "alerts": 3,
@@ -178,7 +178,7 @@
  },
  "runtime": {
   "lastSuccessAt": "2026-10-14T02:00:05Z",
-  "lastSuccessAgeMin": 8,
+  "lastSuccessAgeMin": 9,
   "lastSuccessName": "grid-watchdog",
   "lastConclusion": "success"
  }
