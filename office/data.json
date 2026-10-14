@@ -1,6 +1,6 @@
 {
  "schema": "office.pulse/1",
- "generatedAt": "2026-10-14T01:34:17.615Z",
+ "generatedAt": "2026-10-14T01:34:38.937Z",
  "generatedAgeNote": "this file is rewritten by the office-pulse workflow; judge freshness by generatedAt",
  "verdict": "STALE",
  "verdictChecks": [
@@ -27,22 +27,21 @@
   {
    "name": "fleet-artery",
    "state": "fresh",
-   "detail": "108min <= 2880min · PASS"
+   "detail": "109min <= 2880min · PASS"
   },
   {
    "name": "sovereign-tick",
    "state": "fresh",
-   "detail": "22min <= 360min"
+   "detail": "23min <= 360min"
   },
   {
    "name": "runtime-heartbeat",
-   "state": "unknown",
-   "detail": "age not measured"
+   "state": "fresh",
+   "detail": "10min <= 90min"
   }
  ],
  "degraded": [
-  "fleetHQ",
-  "runtime"
+  "fleetHQ"
  ],
  "sources": {
   "fleetHQ": "error",
@@ -50,10 +49,10 @@
   "grid-artery": "Autonomy/receipts/grid/verdict.json",
   "fleet-artery": "Autonomy/receipts/fleet/verdict.json",
   "sovereign-tick": "Autonomy/receipts/latest.json",
-  "runtime": "error"
+  "runtime": "ok"
  },
  "office": {
-  "__error": "HTTP 500 for /repos/roshpinacare-sys/FleetHQ/commits?path=worklog.md&per_page=1"
+  "__error": "HTTP 500 for /repos/roshpinacare-sys/FleetHQ"
  },
  "arteries": {
   "wallet": {
@@ -77,7 +76,7 @@
   "fleet": {
    "source": "Autonomy/receipts/fleet/verdict.json",
    "at": "2026-10-13T23:45:54.216Z",
-   "ageMin": 108,
+   "ageMin": 109,
    "overall": "PASS",
    "reason": "steem=PASS · saos-dex=PASS · saos-agents=PASS · Saosmartwallet=PASS · Adsmarket=PASS",
    "alerts": 3,
@@ -86,11 +85,14 @@
   "tick": {
    "source": "Autonomy/receipts/latest.json",
    "at": "2026-10-14T01:12:07.074Z",
-   "ageMin": 22,
+   "ageMin": 23,
    "chain": "e2f648fe3286"
   }
  },
  "runtime": {
-  "__error": "HTTP 500 for /repos/roshpinacare-sys/saos-runtime/actions/runs?per_page=8"
+  "lastSuccessAt": "2026-10-14T01:24:32Z",
+  "lastSuccessAgeMin": 10,
+  "lastSuccessName": "system-map",
+  "lastConclusion": "success"
  }
 }
