@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v5
         with: {fetch-depth: 1}
       - uses: actions/setup-node@v5
-        with: {node-version: 20}
+        with: {node-version: 22}
       - name: cross-examine every book claim against the chain (anti-fabrication)
         run: node agents/book-auditor.cjs
       - name: commit audit book

@@ -20,7 +20,7 @@ jobs:
           echo "active=$ST" >> "$GITHUB_OUTPUT"
           # agents/stasis-gate.cjs — fail-closed inside; sign-time capital-gate stays armed
       - uses: actions/setup-node@v5
-        with: {node-version: 20}
+        with: {node-version: 22}
       - name: "install signer (hive-js; R-ECON-3)"
         run: npm install @hiveio/hive-js --omit=dev --silent
       - name: "checkout private steem home (vault recovery path)"

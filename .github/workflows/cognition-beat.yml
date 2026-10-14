@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v5
         with: {fetch-depth: 1}
       - uses: actions/setup-node@v5
-        with: {node-version: 20}
+        with: {node-version: 22}
       - name: regenerate self-model from live measurements (shrink-only)
         run: node agents/cognition-beat.cjs
       - name: commit beat books

@@ -30,7 +30,7 @@ jobs:
           path: steem-home
           fetch-depth: 1
       - uses: actions/setup-node@v5
-        with: {node-version: 20}
+        with: {node-version: 22}
       - name: "install signer lib (tri-bridge pattern)"
         run: npm install --prefix /tmp/steemjs steem@0.7.11 --omit=dev --no-audit --no-fund --loglevel=error
       - name: "soldiers lane curation (public external content, chain dedupe, cache-bust read-back)"

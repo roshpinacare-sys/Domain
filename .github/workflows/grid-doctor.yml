@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v5
         with: {fetch-depth: 1}
       - uses: actions/setup-node@v5
-        with: {node-version: 20}
+        with: {node-version: 22}
       - name: live chain audit (read-only, no secrets, no broadcasts)
         run: node agents/grid-doctor.cjs
       # grid-guard — never-stops law (owner trace 1a1…59b5: "אין מצב כזה
