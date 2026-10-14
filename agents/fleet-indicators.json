@@ -1,12 +1,12 @@
 {
   "protocol": "SAOS-FATE-DEFENSE-FWI/1",
-  "at": "2026-10-11T11:02:07.595Z",
+  "at": "2026-10-14T12:43:00.114Z",
   "agent": "fleet-indicators v1.0.0 (Task 22, study: Emergence World arXiv 2606.08367 + 2609.17320)",
   "verdict": "DEGRADED",
   "counts": {
+    "HELD": 1,
     "DECLINE": 4,
-    "GROW": 4,
-    "HELD": 1
+    "GROW": 4
   },
   "indicators": [
     {
@@ -14,19 +14,19 @@
       "name": "Population Health",
       "measures": "persistent organs (live books) alive & fresh — our equivalent of \"agents alive at end of run\"",
       "evidenceSource": "agents/{econ,curation,money-ledger,ventures,fills-ledger,bridge,dex,learning-ledger,recruitment}-book.json .at/.updated < 48h",
-      "value": "6/9",
+      "value": "8/9",
       "breakEven": "≥7/9",
-      "status": "DECLINE",
-      "note": "econ-book.json, curation-book.json, money-ledger.json"
+      "status": "HELD",
+      "note": "curation-book.json"
     },
     {
       "id": "F2",
       "name": "Safety & Public Order",
       "measures": "destructive attempts mechanically refused (guard denies = incidents PREVENTED, not committed) + guard evals green + STASIS breaker armed",
       "evidenceSource": "agents/command-guard.json .denies + agents/STASIS.json .active + evals/eval-results.json E7-E9",
-      "value": "denies=0 evals=PASS stasis=armed",
+      "value": "denies=8 evals=FAIL stasis=armed",
       "breakEven": "evals PASS + stasis armed",
-      "status": "GROW",
+      "status": "DECLINE",
       "note": "their worlds: coercion cascades killed populations; our guard refuses before execution, our engine obeys STASIS before any seal/broadcast"
     },
     {
@@ -34,7 +34,7 @@
       "name": "Capability Exploration",
       "measures": "executable tool surface (syntax-valid agent scripts) — proxy for functional curiosity without narrow loops",
       "evidenceSource": "node --check over agents/*.cjs|*.mjs + scripts/*.mjs",
-      "value": "107/107",
+      "value": "139/139",
       "breakEven": "100%",
       "status": "GROW",
       "note": "every desk ships as runnable code, not as a memory blob"
@@ -44,7 +44,7 @@
       "name": "Governance Conformity",
       "measures": "judged change-requests (100% must carry a verdict — dissent is ledgered, never silenced) + role-registry coverage",
       "evidenceSource": "agents/change-requests/*.json verdict fields + role-registry.csv row count",
-      "value": "71/76 CRs judged · registry 57 rows (53 LIVE)",
+      "value": "70/79 CRs judged · registry 57 rows (53 LIVE)",
       "breakEven": "100% judged + ≥20 rows",
       "status": "DECLINE",
       "note": "their worlds: herd voting; our law: every CR judged in the open, supersession visible in git"
@@ -74,9 +74,9 @@
       "name": "Economic Vitality & Equity",
       "measures": "real chain balances (liquid + effective SP) in an executor-identified ledger — equity via identity: one executor, one writer, no hoarding ambiguity",
       "evidenceSource": "agents/money-ledger.json .book{executor,headSteemLiquid,headSteemStake} fresh <48h",
-      "value": "owner: 3.652 STEEM liquid · 1392.409 SP · book 158h old",
+      "value": "owner: 0 STEEM liquid · 32.332 SP · book 23.3h old",
       "breakEven": "ledger fresh + executor-identified",
-      "status": "DECLINE",
+      "status": "GROW",
       "note": "their economy was 1-CC billboards; ours is signed chain state with a named executor"
     },
     {
@@ -96,28 +96,28 @@
       "evidenceSource": "git log --grep receipts (agent-verify/econ/anchor), last 7 days",
       "value": "verify ALL_PASS=0 · econ receipts=0 · anchors=0 → score 0",
       "breakEven": "≥5 receipts / 7d",
-      "status": "HELD",
-      "note": "STASIS engaged — autonomy intentionally paused, breaker holds state honestly"
+      "status": "DECLINE",
+      "note": "the estate runs on schedules it owns; nobody presses its buttons"
     }
   ],
   "books": [
     {
       "book": "econ-book.json",
       "exists": true,
-      "ageHours": 158,
-      "fresh": false
+      "ageHours": 26.2,
+      "fresh": true
     },
     {
       "book": "curation-book.json",
       "exists": true,
-      "ageHours": 164.4,
+      "ageHours": 238,
       "fresh": false
     },
     {
       "book": "money-ledger.json",
       "exists": true,
-      "ageHours": 158,
-      "fresh": false
+      "ageHours": 23.3,
+      "fresh": true
     },
     {
       "book": "ventures.json",
@@ -134,19 +134,19 @@
     {
       "book": "bridge-book.json",
       "exists": true,
-      "ageHours": 14.9,
+      "ageHours": 13.9,
       "fresh": true
     },
     {
       "book": "dex-book.json",
       "exists": true,
-      "ageHours": 14.9,
+      "ageHours": 13.9,
       "fresh": true
     },
     {
       "book": "learning-ledger.json",
       "exists": true,
-      "ageHours": 16.2,
+      "ageHours": 16.4,
       "fresh": true
     },
     {

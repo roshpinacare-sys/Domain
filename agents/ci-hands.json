@@ -1,7 +1,7 @@
 {
  "ok": true,
- "at": "2026-10-12T12:28:49.873Z",
- "ms": 4175,
+ "at": "2026-10-14T12:43:43.464Z",
+ "ms": 4327,
  "agent": "ci-hands v1.0.0 (Task 26 — trycua/cua adoption: the fleet gets HANDS on its own CI estate; cua-bench contract: trajectory + result + pass-rate; read-only actuator, STASIS-safe, tier law kept)",
  "reposDeclared": 16,
  "reposReached": 2,
@@ -9,21 +9,20 @@
  "window": 30,
  "sampledRuns": 60,
  "lanes": 22,
- "green": 20,
- "activeRed": 2,
+ "green": 21,
+ "activeRed": 1,
  "selfHealed": 0,
  "historyTransient": 0,
  "recurring": 0,
  "startupFailures": 0,
- "passRate": 91,
+ "passRate": 95,
  "stasis": {
   "parseable": true,
-  "active": true
+  "active": false
  },
  "tokenMode": "env-token (redacted)",
  "proposals": [
-  "Domain/.github/workflows/treasury-arm.yml: ACTIVE-RED — diagnose via jobs+logs (Task 25 method), fix, prove by dispatch/push",
-  "Console/.github/workflows/line-agreement.yml: ACTIVE-RED — diagnose via jobs+logs (Task 25 method), fix, prove by dispatch/push"
+  "Domain/.github/workflows/exposure-gate.yml: ACTIVE-RED — diagnose via jobs+logs (Task 25 method), fix, prove by dispatch/push"
  ],
  "results": [
   {
@@ -48,60 +47,76 @@
    "sampled": 30,
    "failures": [
     {
-     "id": 38245588640,
-     "lane": ".github/workflows/treasury-arm.yml",
-     "event": "schedule",
-     "at": "2026-10-12T11:53:43Z",
+     "id": 38565814578,
+     "lane": ".github/workflows/exposure-gate.yml",
+     "event": "push",
+     "at": "2026-10-14T12:42:00Z",
      "class": "STEP-FAILURE"
     }
    ],
    "lanes": {
-    ".github/workflows/recruit.yml": {
-     "display": "recruit",
+    ".github/workflows/grid-sentinel.yml": {
+     "display": "grid-sentinel",
      "latest": null,
-     "latestAt": "2026-10-12T12:27:28Z",
+     "latestAt": "2026-10-14T12:43:17Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
     },
-    ".github/workflows/proof-pipeline.yml": {
-     "display": "proof-pipeline",
+    ".github/workflows/recruit.yml": {
+     "display": "recruit",
+     "latest": null,
+     "latestAt": "2026-10-14T12:42:05Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/identity-guard.yml": {
+     "display": "identity-guard",
      "latest": "success",
-     "latestAt": "2026-10-12T12:27:04Z",
+     "latestAt": "2026-10-14T12:42:00Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
     },
     ".github/workflows/exposure-gate.yml": {
      "display": "exposure-gate",
-     "latest": "success",
-     "latestAt": "2026-10-12T12:12:47Z",
-     "failures": 0,
-     "verdict": "GREEN",
-     "classes": {}
+     "latest": "failure",
+     "latestAt": "2026-10-14T12:42:00Z",
+     "failures": 1,
+     "verdict": "ACTIVE-RED",
+     "classes": {
+      "38565814578": "STEP-FAILURE"
+     }
     },
     "dynamic/pages/pages-build-deployment": {
      "display": "pages build and deployment",
      "latest": "success",
-     "latestAt": "2026-10-12T12:12:47Z",
+     "latestAt": "2026-10-14T12:42:00Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
     },
-    ".github/workflows/treasury-arm.yml": {
-     "display": "treasury-arm",
-     "latest": "failure",
-     "latestAt": "2026-10-12T11:53:43Z",
-     "failures": 1,
-     "verdict": "ACTIVE-RED",
-     "classes": {
-      "38245588640": "STEP-FAILURE"
-     }
+    ".github/workflows/office-worldbeat.yml": {
+     "display": "office-worldbeat",
+     "latest": null,
+     "latestAt": "2026-10-14T12:40:53Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
     },
-    ".github/workflows/dex-grid.yml": {
-     "display": "dex-grid",
+    ".github/workflows/voice-artery.yml": {
+     "display": "voice-artery",
      "latest": "success",
-     "latestAt": "2026-10-12T11:38:28Z",
+     "latestAt": "2026-10-14T12:30:08Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/tick-keeper.yml": {
+     "display": "tick-keeper",
+     "latest": "success",
+     "latestAt": "2026-10-14T12:30:06Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
@@ -109,31 +124,39 @@
     ".github/workflows/sovereign-tick-cron.yml": {
      "display": "sovereign-tick-cron",
      "latest": "success",
-     "latestAt": "2026-10-12T11:29:24Z",
+     "latestAt": "2026-10-14T12:30:05Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
     },
-    ".github/workflows/mirror-from-console.yml": {
-     "display": "mirror-from-console",
+    ".github/workflows/fleet-census-cron.yml": {
+     "display": "fleet-census-cron",
      "latest": "success",
-     "latestAt": "2026-10-12T11:21:08Z",
+     "latestAt": "2026-10-14T12:30:04Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
     },
-    ".github/workflows/office-feed.yml": {
-     "display": "office-feed",
+    ".github/workflows/earn-audit-cron.yml": {
+     "display": "earn-audit-cron",
      "latest": "success",
-     "latestAt": "2026-10-12T11:19:53Z",
+     "latestAt": "2026-10-14T12:30:02Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
     },
-    ".github/workflows/grid-doctor.yml": {
-     "display": "grid-doctor",
+    ".github/workflows/weave-ecosystem.yml": {
+     "display": "weave-ecosystem",
      "latest": "success",
-     "latestAt": "2026-10-12T10:56:40Z",
+     "latestAt": "2026-10-14T12:29:44Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/twin-audit.yml": {
+     "display": "twin-audit",
+     "latest": "success",
+     "latestAt": "2026-10-14T12:23:54Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
@@ -144,70 +167,28 @@
    "repo": "Console",
    "status": "REACHED",
    "sampled": 30,
-   "failures": [
-    {
-     "id": 38229554815,
-     "lane": ".github/workflows/line-agreement.yml",
-     "event": "schedule",
-     "at": "2026-10-12T09:23:14Z",
-     "class": "STEP-FAILURE"
-    }
-   ],
+   "failures": [],
    "lanes": {
     "dynamic/pages/pages-build-deployment": {
      "display": "pages build and deployment",
      "latest": "success",
-     "latestAt": "2026-10-12T12:27:23Z",
+     "latestAt": "2026-10-14T12:22:30Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
     },
-    ".github/workflows/grid-pulse.yml": {
-     "display": "grid-pulse",
+    ".github/workflows/fee-law.yml": {
+     "display": "fee-law",
      "latest": "success",
-     "latestAt": "2026-10-12T10:51:12Z",
+     "latestAt": "2026-10-14T12:22:20Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
     },
-    ".github/workflows/line-agreement.yml": {
-     "display": "line-agreement",
-     "latest": "failure",
-     "latestAt": "2026-10-12T09:23:14Z",
-     "failures": 1,
-     "verdict": "ACTIVE-RED",
-     "classes": {
-      "38229554815": "STEP-FAILURE"
-     }
-    },
-    ".github/workflows/weave-census.yml": {
-     "display": "weave-census",
+    ".github/workflows/runtime-pacemaker.yml": {
+     "display": "runtime-pacemaker",
      "latest": "success",
-     "latestAt": "2026-10-12T09:02:29Z",
-     "failures": 0,
-     "verdict": "GREEN",
-     "classes": {}
-    },
-    ".github/workflows/agent-verify.yml": {
-     "display": "agent-verify",
-     "latest": "success",
-     "latestAt": "2026-10-12T06:50:28Z",
-     "failures": 0,
-     "verdict": "GREEN",
-     "classes": {}
-    },
-    ".github/workflows/chain-vitals.yml": {
-     "display": "chain-vitals",
-     "latest": "success",
-     "latestAt": "2026-10-12T06:45:09Z",
-     "failures": 0,
-     "verdict": "GREEN",
-     "classes": {}
-    },
-    ".github/workflows/console-publish.yml": {
-     "display": "console-publish",
-     "latest": "success",
-     "latestAt": "2026-10-12T06:29:35Z",
+     "latestAt": "2026-10-14T12:20:25Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
@@ -215,39 +196,47 @@
     ".github/workflows/trigger-mesh.yml": {
      "display": "trigger-mesh",
      "latest": "success",
-     "latestAt": "2026-10-12T06:29:17Z",
+     "latestAt": "2026-10-14T12:20:11Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
     },
-    ".github/workflows/agents-watch.yml": {
-     "display": "agents-watch",
+    ".github/workflows/line-agreement.yml": {
+     "display": "line-agreement",
      "latest": "success",
-     "latestAt": "2026-10-12T06:27:38Z",
+     "latestAt": "2026-10-14T12:05:05Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
     },
-    ".github/workflows/money-watch.yml": {
-     "display": "money-watch",
+    ".github/workflows/identity-guard.yml": {
+     "display": "identity-guard",
      "latest": "success",
-     "latestAt": "2026-10-12T06:20:55Z",
+     "latestAt": "2026-10-14T11:46:36Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
     },
-    ".github/workflows/dex-watch.yml": {
-     "display": "dex-watch",
+    ".github/workflows/giants-beat.yml": {
+     "display": "giants-beat",
      "latest": "success",
-     "latestAt": "2026-10-12T06:13:43Z",
+     "latestAt": "2026-10-14T11:44:47Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
     },
-    ".github/workflows/truth-gate.yml": {
-     "display": "truth-gate",
+    ".github/workflows/weave-census.yml": {
+     "display": "weave-census",
      "latest": "success",
-     "latestAt": "2026-10-12T05:51:46Z",
+     "latestAt": "2026-10-14T11:39:55Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/console-publish.yml": {
+     "display": "console-publish",
+     "latest": "success",
+     "latestAt": "2026-10-14T11:26:20Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
@@ -353,130 +342,123 @@
  ],
  "trajectory": [
   {
-   "ts": "2026-10-12T12:28:50.143Z",
+   "ts": "2026-10-14T12:43:43.678Z",
    "action": "list-runs",
    "target": "saos-sovereign-platform",
    "outcome": 404,
-   "ms": 269
+   "ms": 214
   },
   {
-   "ts": "2026-10-12T12:28:50.328Z",
+   "ts": "2026-10-14T12:43:44.001Z",
    "action": "list-runs",
    "target": "steem",
    "outcome": 404,
-   "ms": 185
+   "ms": 323
   },
   {
-   "ts": "2026-10-12T12:28:51.049Z",
+   "ts": "2026-10-14T12:43:44.815Z",
    "action": "list-runs",
    "target": "Domain",
    "outcome": 200,
-   "ms": 721
+   "ms": 814
   },
   {
-   "ts": "2026-10-12T12:28:51.269Z",
+   "ts": "2026-10-14T12:43:45.172Z",
    "action": "probe-jobs",
-   "target": "Domain/38245588640",
+   "target": "Domain/38565814578",
    "outcome": 200,
-   "ms": 210
+   "ms": 347
   },
   {
-   "ts": "2026-10-12T12:28:51.902Z",
+   "ts": "2026-10-14T12:43:45.906Z",
    "action": "list-runs",
    "target": "Console",
    "outcome": 200,
-   "ms": 632
+   "ms": 732
   },
   {
-   "ts": "2026-10-12T12:28:52.156Z",
-   "action": "probe-jobs",
-   "target": "Console/38229554815",
-   "outcome": 200,
-   "ms": 249
-  },
-  {
-   "ts": "2026-10-12T12:28:52.321Z",
+   "ts": "2026-10-14T12:43:46.072Z",
    "action": "list-runs",
    "target": "Zip",
    "outcome": 404,
-   "ms": 165
+   "ms": 126
   },
   {
-   "ts": "2026-10-12T12:28:52.486Z",
+   "ts": "2026-10-14T12:43:46.284Z",
    "action": "list-runs",
    "target": "roshpina",
    "outcome": 404,
-   "ms": 165
+   "ms": 212
   },
   {
-   "ts": "2026-10-12T12:28:52.607Z",
+   "ts": "2026-10-14T12:43:46.486Z",
    "action": "list-runs",
    "target": "anchor-baseline",
    "outcome": 404,
-   "ms": 121
+   "ms": 202
   },
   {
-   "ts": "2026-10-12T12:28:52.762Z",
+   "ts": "2026-10-14T12:43:46.642Z",
    "action": "list-runs",
    "target": "Saosmartwallet",
+   "outcome": 404,
+   "ms": 156
+  },
+  {
+   "ts": "2026-10-14T12:43:46.760Z",
+   "action": "list-runs",
+   "target": "Sdk",
+   "outcome": 404,
+   "ms": 118
+  },
+  {
+   "ts": "2026-10-14T12:43:46.915Z",
+   "action": "list-runs",
+   "target": "Project-files",
    "outcome": 404,
    "ms": 155
   },
   {
-   "ts": "2026-10-12T12:28:52.929Z",
-   "action": "list-runs",
-   "target": "Sdk",
-   "outcome": 404,
-   "ms": 167
-  },
-  {
-   "ts": "2026-10-12T12:28:53.083Z",
-   "action": "list-runs",
-   "target": "Project-files",
-   "outcome": 404,
-   "ms": 154
-  },
-  {
-   "ts": "2026-10-12T12:28:53.261Z",
+   "ts": "2026-10-14T12:43:47.100Z",
    "action": "list-runs",
    "target": "Adsmarket",
    "outcome": 404,
-   "ms": 179
+   "ms": 185
   },
   {
-   "ts": "2026-10-12T12:28:53.424Z",
+   "ts": "2026-10-14T12:43:47.213Z",
    "action": "list-runs",
    "target": "Defi",
    "outcome": 404,
-   "ms": 162
+   "ms": 113
   },
   {
-   "ts": "2026-10-12T12:28:53.552Z",
+   "ts": "2026-10-14T12:43:47.322Z",
    "action": "list-runs",
    "target": "saos-dex",
    "outcome": 404,
-   "ms": 128
+   "ms": 109
   },
   {
-   "ts": "2026-10-12T12:28:53.709Z",
+   "ts": "2026-10-14T12:43:47.490Z",
    "action": "list-runs",
    "target": "saos-jummper",
    "outcome": 404,
-   "ms": 157
+   "ms": 168
   },
   {
-   "ts": "2026-10-12T12:28:53.884Z",
+   "ts": "2026-10-14T12:43:47.671Z",
    "action": "list-runs",
    "target": "saos-control-center",
    "outcome": 404,
-   "ms": 175
+   "ms": 181
   },
   {
-   "ts": "2026-10-12T12:28:54.049Z",
+   "ts": "2026-10-14T12:43:47.791Z",
    "action": "list-runs",
    "target": "saos-sovereign-foundry",
    "outcome": 404,
-   "ms": 165
+   "ms": 120
   }
  ],
  "verdict": "CI-HANDS keyless floor: 2/16 reached — the rest booked UNREACHABLE (never invented)"

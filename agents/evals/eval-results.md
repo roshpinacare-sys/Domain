@@ -1,8 +1,8 @@
 # Desk Evals — runnable expectations (fresh-process judge, Z-36)
 
-_run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48 + R27 metronome-audit E49 + R28 mm-volume E50 + R29 share-ladder E51 + R30 calibrated-engine E52 + R31 tape-calibration/venue-expansion E53 + R32 sidechain-pond E54 + R33 pnl-verdict E55 + sovereign-hands E56 + R34 fill-through-evolution E57 + R35 human-cadence E58 + R36 community-home E59 + R37 community-breath E60 + R38 chain-proof E61 + R39 swap-net E62 + R40 exchange-core E63 + R41 mesh-market E64 + R42 multi-network-vault E65 + R43 intent-gates E66 + R44 opposing-hands E67, parallel-convergence superset) · 2026-10-12T12:28:30.346Z_
+_run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48 + R27 metronome-audit E49 + R28 mm-volume E50 + R29 share-ladder E51 + R30 calibrated-engine E52 + R31 tape-calibration/venue-expansion E53 + R32 sidechain-pond E54 + R33 pnl-verdict E55 + sovereign-hands E56 + R34 fill-through-evolution E57 + R35 human-cadence E58 + R36 community-home E59 + R37 community-breath E60 + R38 chain-proof E61 + R39 swap-net E62 + R40 exchange-core E63 + R41 mesh-market E64 + R42 multi-network-vault E65 + R43 intent-gates E66 + R44 opposing-hands E67, parallel-convergence superset) · 2026-10-14T12:43:17.930Z_
 
-**evals RED: 22 fail — booked honestly, the fails are the next work**
+**evals RED: 18 fail — booked honestly, the fails are the next work**
 
 ## E1 · dedupe identity is stable across repeat harvest — PASS
 - seed(3) + econ rows carrying the same two fills → exactly 3 entries
@@ -17,13 +17,13 @@ _run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - exit code 0 even when DEFU_DIR is bogus
 - board still written, honest nulls where the oracle is unreachable
 - 5 ventures present with statuses
-- _measured: exit=0 open=4_
+- _measured: exit=0 open=3_
 
 ## E4 · harness-audit exits 0 with missing canon and keeps counts honest — PASS
 - exit code 0 even when DEFU_DIR is bogus
 - missing canon = honest FAILs, never a crash, never green-washed
 - counts arithmetic consistent (pass+warn+fail == checks)
-- _measured: exit=0 pass=28 warn=1 fail=12_
+- _measured: exit=0 pass=27 warn=1 fail=13_
 
 ## E5 · concat-family regression: manabar coerced before arithmetic — PASS
 - string+number concatenates ("74488519347811969") — the Z-33 third-incident family
@@ -45,11 +45,11 @@ _run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - the same reset in an agent-session context has no retry-loop alibi → DENY
 - _measured: data=data-context session=core.git:reset-hard_
 
-## E9 · guard scan: CI executable surfaces clean or booked — PASS
+## E9 · guard scan: CI executable surfaces clean or booked — FAIL
 - 0 DENY rows in .github/workflows (no destructive drift entered CI)
 - the known mirror-bot sync idiom appears as booked allow-with-reason (≥10 rows), never silent
 - ledger stamped (BOOKS-STAMP law)
-- _measured: denies=0 syncIdiom=12 stamped=true_
+- _measured: denies=8 syncIdiom=12 stamped=true_
 
 ## E10 · rail catalog: registry valid, no forbidden rail enabled — PASS
 - catalog parses quote-aware with the 8-column schema (Z-37 lesson carried forward)
@@ -61,7 +61,7 @@ _run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - 200+data → REACHABLE with model count; 401/403 → AUTH-WALL; network error → UNREACHABLE (no hopeful green)
 - probing a nonexistent provider exits 0 with zero probes booked (fail-soft, no invention)
 - rail-ledger.json stamped (BOOKS-STAMP law)
-- _measured: live probes booked=76_
+- _measured: live probes booked=79_
 
 ## E12 · rail policy: FORBIDDEN row enabled as LIVE fails the gate — PASS
 - a catalog where cohere (ToS FORBIDDEN) is flipped to LIVE is rejected — ok:false with the FORBIDDEN reason named
@@ -74,14 +74,14 @@ _run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - every indicator names a mechanical evidence source (ANTI-GOODHART)
 - FWI book stamped fresh (<1h)
 - STASIS.json parseable with boolean active flag
-- _measured: verdict=DEGRADED indicators=9 sourced=true stasisArmed=false_
+- _measured: verdict=DEGRADED indicators=9 sourced=true stasisArmed=true_
 
 ## E14 · collapse drill: containment PROVEN on a fresh run — FAIL
 - receipt verdict CONTAINMENT-PROVEN with a green baseline (no false credit — BASELINE-RED would refuse attribution)
 - every injected fault class caught: faults_caught === faults_total >= 4 (registry corruption, guard neutered, book stamps stripped, forbidden rail LIVE)
 - receipts fresh < 168h — the drill runs on the CI schedule, containment proof is not a one-time trophy
 - CI summary ledger agrees (collapse-drill.json stamped)
-- _measured: caught=4/4 ageH=25 head=963e2382fbdf_
+- _measured: caught=4/4 ageH=48 head=42ca2e4b6e4f_
 
 ## E15 · one-bloc: whole-git convergence map measured, never invented — PASS
 - one-bloc.cjs runs in a fresh process (exit 0, fail-soft)
@@ -96,7 +96,7 @@ _run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - predicate stays ALLOW on legal idioms (block-style expressions, plain flow maps, flow crons)
 - gate desk runs fresh-process exit 0, scans >= 20 workflow files
 - 0 offenders + book stamped fresh (<10min) — full-YAML floor or honest idiom floor, mode named
-- _measured: scanned=74 mode=full offenders=0_
+- _measured: scanned=89 mode=full offenders=0_
 
 ## E17 · canon-liveness: honest verdict derivation + fresh receipt with named legs — FAIL
 - white-box: L1 content → CONTENT-SERVED; L1 absent + L2 rail → RAIL-REACHABLE; both absent → CANON-DARK (zero hopeful greens)
@@ -110,14 +110,14 @@ _run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - fresh-process desk run: exit 0 (fail-soft), book stamped fresh (<30min)
 - honest reach floor: 16 repos declared, >=1 reached OR every unreached booked honestly as HTTP 4xx refusal (rate-limit is environment, not defect) — never invented
 - cua-bench contract: trajectory booked (every action logged) + STASIS state travels with the receipt
-- _measured: reached=2/16 lanes=22 green=20 activeRed=2 startup=0 mode=keyless_
+- _measured: reached=2/16 lanes=23 green=22 activeRed=1 startup=0 mode=keyless_
 
 ## E19 · hands book: honest verdict derivation + fresh receipts, zero hopeful greens — PASS
 - white-box: probe-ok → LIVE; absent → ABSENT; POLICY LOCK BEATS A GREEN PROBE → LOCKED-TIER-C (the cua permission-at-launch lesson); cross-ref → REF; probe-fail → UNREACHABLE
 - black-box: fresh-process desk exits 0 (fail-soft), ≥5 hands booked, ≥2 LIVE in any healthy context
 - every LIVE hand carries evidence+probeAt — a capability claimed without a receipt is a story
 - verdict enum closed (LIVE/ABSENT/UNREACHABLE/REF/LOCKED-TIER-C) — no hopeful greens possible
-- _measured: hands=6 live=3 receipted=true at=2026-10-12T12:28:26.003Z_
+- _measured: hands=6 live=3 receipted=true at=2026-10-14T12:43:12.228Z_
 
 ## E20 · skill-library gate: expertise as governed data with a mandatory Evidence Artifact — PASS
 - white-box: the predicate flags a bare built-in name (help), a missing Evidence Artifact section, and short/no-trigger descriptions — and PASSES the legal package
@@ -205,7 +205,7 @@ _run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - black-box: fresh-process census on the real estate — exit 0, book ok, inventory+sovereignty+blockers+wiring+edgeSeries+receipts(>=12), stamped <10min
 - determinism: two fresh runs byte-identical after stripping the `at` stamp (same tree → same bytes)
 - fail-soft: FLEET_CENSUS_ESTATE pointed at an empty dir → exit 0, 0/16 present, all lanes MISSING, blockers still booked with null-safe evidence
-- _measured: fails: black-box-real; fail-soft-empty-estate_
+- _measured: fails: black-box-real_
 
 ## E32 · census-cadence: the estate map refreshes itself on a keyless daily cron, double-gated by STASIS — FAIL
 - workflow: daily cron off the org minute map + workflow_dispatch escape hatch
@@ -214,7 +214,7 @@ _run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - workflow: concurrency guard + timeout + deterministic publish (clean exit on no-drift, no noise commits) + [skip ci] + pull --rebase push idiom
 - desk: STASIS-HALT in code BEFORE any lane read — fresh-process sandbox with an ACTIVE breaker books verdict=STASIS-HALT with NO inventory section (zero reads beyond the breaker file), exit 0
 - desk: the shared book is restored on the real estate after the sandbox run (16/16 lanes, no verdict field)
-- _measured: fails: stasis-gated-steps; stasisHalt-normal; book-restore_
+- _measured: fails: stasis-gated-steps; keyless; rebase-push; book-restore_
 
 ## E33 · flow-catch planner: marketable-sell floor law, proceeds-funded buy ladder, anti self-cross stack, dust discipline, determinism — PASS
 - white-box: taker ≤ 50% liquid, min price = bid×(1−0.1%), precision scan exact at 3dp, realized ≥ floor
@@ -234,7 +234,7 @@ _run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - black-box: fresh process on temp fixtures books the registry with zero network, fixture score 100 and broadcast-ops-2 verified
 - _measured: registry live on real canons: 6 identities, 3 evidence-backed reputations (market-exec 62% clean runs — the wire-defect history visible honestly), 4 validation rows_
 
-## E35 · census-delta: map-vs-map drift record — event-ledger law, determinism as the diff instrument, PERSPECTIVE law, STASIS halt-before-read — FAIL
+## E35 · census-delta: map-vs-map drift record — event-ledger law, determinism as the diff instrument, PERSPECTIVE law, STASIS halt-before-read — PASS
 - white-box: synthetic DRIFT books exact structured transitions (lanes added/status+caps, sovereignty workflowsKeyless 8->9, blocker B1 OPEN->RESOLVED, wiring BROKEN->WIRED, edges growth, receipts) with distinct from/to fingerprints and the estate perspective stamped
 - PERSPECTIVE law: books measured from different estates are never diffed — SKIP-PERSPECTIVE with zero changes (the live-found defect: a CI 1-lane book over a full-estate book would have booked 49 fake transitions)
 - determinism law as diff instrument: books differing only in at/ok normalize to NO-DRIFT with zero changes and identical fingerprints
@@ -243,7 +243,7 @@ _run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - fresh-process on the REAL estate: exit 0, FLEET-DELTA verdict line, any booked rows are valid transition records (operational ledger untouched via --out temp)
 - fresh-process sandbox with an ACTIVE breaker: STASIS-HALT BEFORE any read, exit 0, ZERO writes (out file never created) — the FATE-DEFENSE surface now covers all THREE measurement desks
 - fresh-process sandbox, SINGLE-LANE-WORKSPACE law: a 1/16-lane workspace books fleet-census.artifact.json (a valid presentLanes=1 map) and NEVER writes the canonical fleet-census.json; the artifact delta series starts as FIRST-DELTA with the estate stamped
-- _measured: fails: fresh-process-real-estate_
+- _measured: nine expectations hold; the drift series can no longer lie by changing the instrument_
 
 ## E36 · sovereign layer: delegated D1/D2 decisions under the dual gate (sovereign auto + operator overlay), breakers as reason codes, arming honesty, drip pacing receipts, append-only tick receipts — PASS
 - white-box: gate order law — STASIS-HALT before any read; operator mode escalates a suggested intent (Tier E) and plans DRY without one
@@ -271,7 +271,7 @@ _run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - white-box: the sovereign BUY-PREMIUM breaker routes PLAN-DRY on the live-measured -2.13% window, still fires EXECUTE-LIVE on a clean edge, and needs >=3 buys to judge
 - _measured: the measured leak is closed structurally: no lane can price a buy above the realized sells minus the floor, and the gate pauses LIVE until the ledger heals_
 
-## E39 · coordination bus: keyless saos.* chain-read with split-brain guard (nothing written on disagreement), LIMIT-100 page-walk, namespace whitelist, RESERVATIONS collision leases (reason-code machine, no immortal leases), STASIS zero-network halt, public proof wire — FAIL
+## E39 · coordination bus: keyless saos.* chain-read with split-brain guard (nothing written on disagreement), LIMIT-100 page-walk, namespace whitelist, RESERVATIONS collision leases (reason-code machine, no immortal leases), STASIS zero-network halt, public proof wire — PASS
 - white-box: namespace whitelist — known saos.* flagged, unknown saos.* kept+flagged known:false, foreign custom_json ignored
 - white-box: THE LIMIT-100 LAW (measured -32801 live) — page plan starts at -1, walk descends minSeq-1, genesis stops
 - white-box: normalize dedupes (id,seq) keeping the later block and sorts ascending; parse failures become honest {raw}
@@ -286,7 +286,7 @@ _run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - white-box lease: GRANT free / REFUSE foreign-active with holder+expiresAt evidence / GRANT-RENEW self / TAKEOVER-EXPIRED / REFUSE-NO-TTL (no immortal leases) / REFUSE missing args
 - white-box reducer: foreign release no-op, holder release clears, stale race row loses to the active lease, resolveLeases deterministic
 - black-box CLI: claim appends exactly one row, foreign claim appends NOTHING (the append law: only grants write), wrong release NOT-YOURS, right release RELEASED, list reports 0 active
-- _measured: fails: black-box-bus-read; black-box-split-brain-no-write; black-box-unreachable-no-write; black-box-truncated-no-write_
+- _measured: the fleet coordination surface is measurable by anyone, anywhere, keyless — and it cannot lie by node, by silence, or by an immortal lease_
 
 ## E40a · LEDGER-FIRST DAY-TRUTH: negative realized survives (BREAKER-DAILY-LOSS can never be silently disarmed again), ledger wins when present, state is the honest fallback, zeros never NaN — PASS
 - white-box: realized -178154 µSBD from the ledger reaches the gate untouched (the Math.max fusion regression is dead)
@@ -328,14 +328,14 @@ _run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - black-box: the real owner-proof desk fresh-process — exit 0, ownerLanguage he, ≥5 sections, every number sourced, stable payload byte-identical across two composes, the md renders the Hebrew title
 - _measured: the audit found dead wires and the resurrection pins each fix with a runnable expectation — a revived wire without an eval is a wire waiting to die again_
 
-## E45 · the cadence-week read: the fleet reads its own series back — parseJsonl fail-soft, exact gap/spread/route/verdict reducers, the encoded B2 bar (marketGrid>=5 ∧ delta>=1), the artifact-lag honesty number, byte-deterministic stable payload, Hebrew owner surface, and the no-write law below the bar proven fresh-process on a fixture dir — FAIL
+## E45 · the cadence-week read: the fleet reads its own series back — parseJsonl fail-soft, exact gap/spread/route/verdict reducers, the encoded B2 bar (marketGrid>=5 ∧ delta>=1), the artifact-lag honesty number, byte-deterministic stable payload, Hebrew owner surface, and the no-write law below the bar proven fresh-process on a fixture dir — PASS
 - white-box: parseJsonl counts corrupt lines and survives empty/null streams
 - white-box: gapMinutes exact min/median/max on known gaps, invalid dates dropped, <2 rows null
 - white-box: spreadDistributions sorted with exact n/min/max/last/mean; feasibleRoutes parses NAME:pct% with non-pct fallback; verdictCounts sorted
 - white-box: deltaSummary counts sovereignty paths and blocker transitions; computeVerdict edge-exact on the encoded B2 bar
 - white-box: artifactLag = actual minus quoted (honesty number), null artifact fail-soft; composeBook byte-deterministic on the real series; renderMd Hebrew
 - black-box: thin fixture dir (1 row) → exit 0, INSUFFICIENT-SERIES, ZERO books written (no-noise law); rich fixture (5 rows + delta) → CADENCE-WEEK-LIVE with exact rows/tape/gaps numbers; the real-tree book agrees
-- _measured: fails: cadence-black-box-verdict; cadence-black-box-live; cadence-black-box-numbers; cadence-black-box-gaps_
+- _measured: a ledger that is only appended to is a diary — this eval pins the moment the diary became an instrument: the series are now READ, distributed, and gated by an encoded bar_
 
 ## E46 · the maturity-law suite: the convert schedule measured into existence — the broken wire (per_account) alive, the phantom date (chain ops carry none) replaced by the open+3.5d chain law, the seq-race date-laundering dead, undated rows honestly bucketed, and the REAL rotation wave (117.887 SBD, 2026-10-06T00:02Z → 2026-10-07T01:38Z) booked from chain measurement — not the 435-STEEM fiction — FAIL
 - white-box: a walked convert with ts and no date composes open+3.5d (the maturity law, computed — never guessed)
@@ -356,27 +356,34 @@ _run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - white-box: the refreshed census book agrees (workflowsKeyless 21 / owner-secret 34)
 - _measured: fails: workflow-count-53; owner-secret-count-34; keyless-count-19; pulse-url-finding-documented; census-book-keyless-19; census-book-owner-secret-34_
 
-## E48 · the suffix law + the wire-name floor (CR-0056): the keeper dispatch normalizes legacy registry keys to workflow file names (the measured 404 class — 2 desks 404 while 2 desks 204 in the same run, same token — heals), every registry key must resolve to a workflow file that EXISTS on the tree (the keeper can never 404-by-name again while this holds), the seal-adopt wire revived from the sovereign house history (script exists, invocation matches, parses), and the keeper registry shape stays intact — PASS
+## E48 · the suffix law + the wire-name floor (CR-0056): the keeper dispatch normalizes legacy registry keys to workflow file names (the measured 404 class — 2 desks 404 while 2 desks 204 in the same run, same token — heals), every registry key must resolve to a workflow file that EXISTS on the tree (the keeper can never 404-by-name again while this holds), the seal-adopt wire revived from the sovereign house history (script exists, invocation matches, parses), and the keeper registry shape stays intact — FAIL
 - white-box: workflowFileOf — the measured 404 class (bare desk names) suffixes, suffixed names stay identity, falsy stays falsy (fail-soft)
 - white-box: the wire-name floor over the LIVE tree — ARC key × workflowFileOf must exist in .github/workflows
 - white-box: seal-adopt.mjs exists on the tree, the r72 workflow invokes exactly node scripts/seal-adopt.mjs, and the script parses (node --check)
 - white-box: keeperDecide + ARC (9 desks) shape unchanged by the suffix law
-- _measured: the self-healing loop is now name-proof: stale → decide → dispatch 204 → desk runs → book commits_
+- _measured: fails: seal-adopt-workflow-invocation-matches_
 
-## E49 · the metronome audit (CR-0057): the fleet measures its own time — cron parser edge-exact over the family the fleet uses, slot math exact on known windows, the PULSE/DEGRADED/STARVED verdict machine, the repo-wide scheduler boundary, byte-deterministic stable payload, Hebrew owner surface, and the bounded heal composition law (STARVED ∧ keyless ∧ not-host ∧ not-keeper, cap 3) proven fresh-process on a fixture — FAIL
+## E49 · the metronome audit (CR-0057): the fleet measures its own time — cron parser edge-exact over the family the fleet uses, slot math exact on known windows, the PULSE/DEGRADED/STARVED verdict machine, the repo-wide scheduler boundary, byte-deterministic stable payload, Hebrew owner surface, and the bounded heal composition law (STARVED ∧ keyless ∧ not-host ∧ not-keeper, cap 3) proven fresh-process on a fixture — PASS
 - white-box: parseCron minutes/hour-lists/hour-steps exact, every invalid form null (4 fields, dow set, minute 60, step 0)
 - white-box: slotsIn 12 slots for half-hourly over 6h, the daily slot found inside its window, 0 outside, -1 unparseable
 - white-box: verdictFor UNMEASURED (expected 0 / runs null), STARVED (0 observed), DEGRADED (missed>=3), PULSE (missed<=2)
 - black-box: rich fixture (4 workflows, one carrying a secret) → exit 0, SCHEDULER-STARVED, exact expected/observed numbers, boundary = max last, heal = keyless-only [k2] (the secret-carrying k4 excluded by law), Hebrew at-free md
 - black-box: corrupt raw → SCHEDULER-EMPTY with an honest note, book written, exit 0 (measured nothing, invented nothing)
 - white-box: the real-tree book agrees and the host workflow carries actions:write + collect/audit/heal + publish/volatile wiring
-- _measured: fails: sched-black-box-verdict; sched-black-box-rows; sched-black-box-degraded-numbers; sched-black-box-starved; sched-black-box-pulse; sched-black-box-secret-starved-row; sched-heal-keyless-only; sched-boundary-max-last; sched-md-hebrew-atfree; sched-empty-law_
+- _measured: a cadence the fleet cannot see is a cadence that can rot silently — this eval pins the moment the fleet started measuring its own time and re-firing its own pulse_
 
-## E50 · volume engine — FAIL
-- 
-- _measured: eval crashed: ENOENT: no such file or directory, open '/tmp/mmv50-v9DT3e/mm-volume-plan.jsonl'_
+## E50 · the volume engine (CR-0058): venue economics edge-exact over each venue’s own fee doctrine (zero-fee internal edges, fee-kill floor zeroing the edge, capacity-vs-tape binding), fleet partition sorted+disjoint+complete, internal flow eligible only at zero round-trip fee with cap+VWAP-exclusion guards as data, BUY-EDGE floor from the realized sell VWAP, fresh-process MMV-PLAN-LIVE on a rich fixture, byte-stable payload, STASIS halt zero-writes, corrupt inputs honestly BLOCKED, real-tree book + host wiring pinned — PASS
+- white-box: venueEconomics edges/bounds/binding exact, invalid null
+- white-box: partitionLadder sorted disjoint complete cover, empty false
+- white-box: selfFlowPlan zero-fee eligible + cap 25%, fee-blocked, no-accounts blocked, guards as data
+- white-box: buyEdgeFloor null-law + 0.102→0.1017, sellVwapFromRuns SBD-weighted
+- black-box: rich fixture → exit 0, MMV-PLAN-LIVE, 2 venues, plan ledger + Hebrew md written, stable payload byte-identical across runs
+- black-box: STASIS active → MMV-HALTED-STASIS, zero plan rows (halt-before-read)
+- black-box: corrupt inputs → exit 0, MMV-BLOCKED-INPUTS with honest reasons
+- white-box: the real-tree book agrees and the host workflow carries the mm-volume leg + publish/volatile wiring
+- _measured: the owner directive — the fleet as the biggest market maker on its networks, provably, before capital moves — now has its instrument: a deterministic planner that prices every venue by its own fee doctrine, partitions the ladder across the soldiers, bounds and labels the internal flow, and never signs_
 
-## E51 · the share ladder (CR-0059): get_volume parsing exact over both chains’ response shapes with invalid drop, sharePct edge-exact with honest invalid-nulls, the share ladder monotonic with the saturates flag (the pond caps the capacity ladder), realized24h metered over a window RELATIVE to the last fill (determinism law) with micro-exact sums, the six-failure doctrine map, black-box share+realized live on a rich fixture with byte-stable payload, enhancement sections null-honest without blocking the plan, and the real-tree share measured from the chain itself — FAIL
+## E51 · the share ladder (CR-0059): get_volume parsing exact over both chains’ response shapes with invalid drop, sharePct edge-exact with honest invalid-nulls, the share ladder monotonic with the saturates flag (the pond caps the capacity ladder), realized24h metered over a window RELATIVE to the last fill (determinism law) with micro-exact sums, the six-failure doctrine map, black-box share+realized live on a rich fixture with byte-stable payload, enhancement sections null-honest without blocking the plan, and the real-tree share measured from the chain itself — PASS
 - white-box: parseVolume steem/hive naming + malformed/negative/null drops
 - white-box: sharePct exact (39.168/163.687=23.9286%) + invalid nulls
 - white-box: shareLadder monotonic + saturates at N=5 over the measured pond
@@ -385,40 +392,49 @@ _run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - black-box: rich fixture (live book + fills) → MMV-PLAN-LIVE, share 23.9286%, realized measured + accuracy, stable payload byte-identical
 - black-box: no live book/fills → sections null with honest nullReason, plan still MMV-PLAN-LIVE
 - white-box: the real-tree book carries the chain-measured share + realized metering
-- _measured: fails: mmv51-blackbox-live; mmv51-share-live-calibrated; mmv51-realized-live; mmv51-accuracy; mmv51-fallback-still-live; mmv51-enhancements-null-honest; mmv51-real-tree-share_
+- _measured: "the BIGGEST" is now a measured number: the pond read from the chain itself, the fleet’s share as a ladder over funded soldiers, and the projection judged against REAL fills — a boast became an instrument_
 
-## E52 · the calibrated engine (CR-0060) — FAIL
+## E52 · the calibrated engine (CR-0060) — PASS
 - white-box: calibratedAvgSize µ-exact over classified fills, unclassified ignored, prior size + source carried side-by-side
 - white-box: fallback chain real-fills → exec-runs-planned → law-assumption, each labeled
 - white-box: shareSeries sorted by at, venue-substring filtered, corrupt rows dropped, capK keeps the LAST k, empty → null
 - black-box: pre-seeded plan ledger → calibration live (0.068 → 0.4115, lift > 0) + series live from the desk’s own past (1 point, 23.9286%) + projection on BOTH measured dials (capture 2/day × 0.4115 = 0.823 SBD, binding capture — evolved from the 237.024 capture-null era WITH the desk) + tape calibration live (prior 10 fpm carried)
 - black-box: byte-stable payload with the time-born `series` namespace excluded
 - white-box: the real tree runs calibrated on the REAL fill ledger (0.691 SBD measured, n=130) and the plan-ledger series grows
-- _measured: fails: mmv52-blackbox-live; mmv52-calibration-live; mmv52-series-live-from-past; mmv52-projection-on-both-dials; mmv52-tape-calibration-live; mmv52-real-tree-calibrated; mmv52-real-tree-series_
+- _measured: "time of truth" honored on both ends: the projection now runs on the REAL fill size the ledger measured (the ×10 lift shown WITH its source, never silent), and the share of the pond became a time series read from the desk’s own past — dominance is a trend, not a frame_
 
-## E53 · measured binding & venue expansion — FAIL
-- 
-- _measured: eval crashed: Cannot read properties of null (reading 'measuredSource')_
+## E53 · the measured binding & the venue expansion (CR-0061) — PASS
+- white-box: calibratedTape window-relative-to-last-fill, prior carried (exec-recon-prior) / law-assumption fallbacks labeled
+- white-box: the capture binding min(tape, capacity, CAPTURE) exact — 124 fills/day × 0.068 = 8.432 SBD; µ-precision kept on the tape bound (0.001 fpm → 1.44 trades, not rounded); no-capture venues unchanged
+- white-box: edgeFromSpread per-token pricing exact (zero-fee 0.7368, 25bps→0.5, floor-zero, invalid nulls)
+- black-box: HE basket sorted+priced per-token (WAIV 25bps edge 1.05 with the honest projectionNullReason — evolved v1.4.0 WITH the desk to NO-MEASURED-HBD-HIVE-MID for the mid-less fixture; BEE 0bps with self-flow honestly blocked NO-PROJECTED-VOLUME — internal flow waits for a measured pond/tape like everything else), blurt dark booked with its reason, capture bound live (2/day), projection on both dials 0.823, byte-stable payload
+- white-box: the real tree runs tape-calibrated on the real ledger and prices the live HE basket
+- _measured: the second calibration dial made the projection REALITY-anchored: the choke is the measured CAPTURE (the fill-through of the current posture), not the order capacity — and the venue expansion prices the sidechain per-token from the chain of record, dark surfaces booked honestly_
 
-## E54 · the sidechain pond — FAIL
-- 
-- _measured: eval crashed: Cannot read properties of null (reading 'heVenuesProjected')_
+## E54 · the sidechain pond (CR-0062) — PASS
+- white-box: the pond bound exact — floor(110.7438/0.691)=160 → 110.56 SBD, binding pond, no tape bound fabricated; capacity beats pond at scale (1447>576 → 398.016); the measured pond beats the 10fpm prior tape; neither volume truth → null; deterministic tie names pond first
+- white-box: the measured cross-rate conversion exact (1972.07561555 × 0.05615263 = 110.7372) with honest invalid-nulls — the RATE is measured, the SBD≈HBD parity is a labeled doctrine conversion
+- white-box: the share ladder rides the pond through N (capacity scales, the pond does not — 99.834% flat, honest non-saturation) and internal flow OPENS on a zero-fee pond-projected venue (cap 27.64)
+- black-box: the mid-bearing fixture opens all 3 HE venues on measured ponds (BEE 269 trades → 110.6935 SBD, 99.9605% of its pond; WAIV fee-priced with self-flow honestly blocked FEE-ROUND-TRIP-NONZERO; two honest dark surfaces; steem capture binding unchanged; byte-stable payload)
+- black-box: the mid-less fixture keeps the honest nulls (NO-MEASURED-HBD-HIVE-MID + NO-PROJECTED-VOLUME self-flow)
+- white-box: the real tree opens the LIVE HE ladders on measured ponds (5 venues, 960.4816 SBD pond — projected 556.255 SBD/day)
+- _measured: the sidechain pond made "volume on every network" MEASURED: the HE projection opens on the venue’s own 24h bound (no borrowed prior), the binding is NAMED, the conversion is a measured cross-rate, and internal flow opens where the fee is honestly zero_
 
-## E55 · the P&L verdict (CR-0063) — FAIL
+## E55 · the P&L verdict (CR-0063) — PASS
 - white-box: the µ-replay is exact by hand-check (basis round(500000×2000000/4860000)=205761 → realized −761 µSBD; inventory 2.860 STEEM at avg cost 0.102881; vwap edge −0.3717%)
 - white-box: pre-basis sells book proceeds honestly and are NEVER guessed into realized (unclassified counted)
 - white-box: two windows — lifetime AND post-law (CR-0047 law time) with the law judged honestly (false/null, never green-washed)
 - black-box: fresh process on a fixture with a corrupt line — exit 0, replay exact, eval-context zero network, byte-stable payload
 - white-box: the real tree reads the real ledger (fills > 100, post-law window since 2026-10-03T22:00:00Z)
-- _measured: fails: pnl55-blackbox-exit0; pnl55-blackbox-replay-exact; pnl55-eval-context-no-network_
+- _measured: the P&L verdict made profit MEASURED, not promised: one book replays the append-only ledger through the fill-ledger’s own pure core — one accounting law, zero second truth — and splits the leak (pre-law) from the law’s proof (post-law)_
 
-## E56 · the sovereign hands (CR-0063) — FAIL
+## E56 · the sovereign hands (CR-0063) — PASS
 - white-box: the decision law exact — DRY default, LIVE only with mode+cooldown, cooldown denies to DRY (booked, never silent), VAULT-ABSENT-LOCAL skips clean with ZERO children, STASIS beats everything, eval-context first
 - white-box: vault presence-only honesty — a missing/shaped-wrong vault answers false without ever reading key material; the authority law stays inside market-exec
 - white-box: lastLiveAt scans the desk’s own canon backwards for LIVE rows only
 - black-box: fresh process without a vault → SKIP + zero children + byte-stable payload (a CI run answers honestly and touches nothing)
 - black-box: eval-context → decision-only row, zero children
-- _measured: fails: st56-blackbox-honest-skip_
+- _measured: the last owner gate fell by law, not by force: the sovereignty owns its own trading cadence — one invocation, one decision, zero new accounting — and where the vault is absent the hands answer honestly and lift nothing_
 
 ## E57 · the fill-through evolution (CR-0064) — PASS
 - white-box: the ladder shape evolved WITH the desk — 3 sells + 3 buys × 0.5 SBD = exactly MAX_NEW_ORDERS, ascending both sides, buy budget 1.5 SBD on a funded book
@@ -431,22 +447,20 @@ _run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - 
 - _measured: eval crashed: ENOENT: no such file or directory, open '/home/runner/work/Domain/Domain/agents/_
 
-## E59 · the community home (CR-0066) — PASS
+## E59 · the community home (CR-0066) — FAIL
 - white-box: the props gate passes the real identity and rejects em-dashes, probe-words and wrong lang by name — the house is born clean of the owner's robotic tells
 - white-box: TYPE LAW /^hive-1\d{5}$/ enforced with dedupe; SP<->VESTS roundtrip exact with null guards; FUNDING LAW picks the farthest idle STEEM sell first, one-cancel coverage preferred, cap 2, SBD orders never touched, armed when liquid suffices
 - white-box: op builders byte-match the measured ground truth (account_create with measured fee + single-key auths + empty json_metadata; community customs signed by community POSTING only; setRole admin for owner, member for soldiers)
 - real-tree: the status book carries SAOS-COMMUNITY-FOUNDER/1; when a community exists the chain read-back must confirm it (title clean, >= 11 members, admin role, create txid, RC delegation confirmed, full ceremony txids); when absent, the verdict must be one of the honest absences
-- _measured: the fleet owns its house: founded on measured ceremony, funded from idle capital, keys cold in the vault, and the chain itself confirms the read-back_
+- _measured: fails: book-protocol; honest-absence-verdict_
 
 ## E60 · the community breath — FAIL
 - 
 - _measured: eval crashed: ENOENT: no such file or directory, open '/home/runner/work/Domain/Domain/agents/_
 
-## E61 · the chain proof (CR-0068) — PASS
-- white-box: the registry carries both chains with their nodes and fee assets; the badge is derived ONLY from the live probe legs + booked fee asset — all six branches covered, and the flip law proves derivation (same name, flipped legs → flipped badge), never a hardcoded label
-- white-box: the Hive authority law refuses to pretend — NO-KEYS when no vault, KEY-MISMATCH when pubs diverge (measured live: owner hive pub STM8c9vp3… ≠ the held steem pub STM5HhJD…), READY only on exact match; the probe verdict gates authority BEFORE name and funding — an unkeyed desk answers HOME-ABSENT-UNKEYED even when rich
-- real-tree: the booked chain proof carries trivalent legs (absence asserts are evidence, unreachable is a gap) and the badge re-derives exactly from its own legs + the booked fee asset; the hive run verdict is from the honest set and the why is named when unkeyed; the Steem house must be absent on Hive
-- _measured: the chain, not the name, is the truth: STEEM-CHAIN measured live on both bridges (2026-10-04: steem=true, hive=false), the hive second-home desk states its empty hands by name, and the badge re-derives from evidence_
+## E61 · the chain proof — FAIL
+- 
+- _measured: eval crashed: ENOENT: no such file or directory, open '/home/runner/work/Domain/Domain/agents/_
 
 ## E62 · the swap net (CR-0069) — PASS
 - white-box: the parity law prices 1 QUOTE in BASE terms (quote/base — the inverted reading is the parity bug the first live book caught and the eval pins forever), zeroes are nulls, the arb FLOOR law nets gross minus fees minus slippage, and the verdict set is exactly {CANDIDATE-FOK, BELOW-FLOOR, FEED-STALE, PEG-DRIFT-HALT} with the 1.5% peg halt outranking any edge
@@ -455,28 +469,28 @@ _run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - real-tree: the booked swap-net book carries the protocol marker, an honest summary verdict, 10+ routes every one inside the six-branch verdict enum, every gated route naming its unlock, the blurt absence booked as NO-RAIL with its why, arb rows that recompute (net = |gross| − fees − slip), and a counter-grid whose rungs re-derive from the booked anchor/skew/spacing
 - _measured: the router plans, the gates are named, the peg is watched, and the opposing grids re-derive from their own numbers_
 
-## E63 · the exchange core (CR-0070) — PASS
+## E63 · the exchange core (CR-0070) — FAIL
 - white-box: constant-product pools obey the Uniswap v2 law exactly (golden vectors hand-derived, k never decreases under a seeded 200-swap fuzz, fee-on-input, floor to the user — the pool keeps the dust)
 - white-box: the Curve stableswap D satisfies the canonical invariant equation evaluated independently in floats, the Newton solver matches a float bisection of the SAME invariant within 3µ, balanced peg pools trade ≈1:1 minus fee (the −1 pad and fee-on-output keep the pool whole), and a minOut refusal leaves state byte-unchanged
 - white-box: the reserve law — wrapped mint 1:1 only against custody actually held, ratio asserted, redemption always honored with the conservation identity custody − reserve − Σclaims − Σpooled === 0 holding after a real rebalance
 - white-box: routing finds the 3-hop WSBD→WSTEEM path deterministically (byte-identical across runs, deterministic tie-breaks), the rebalance fires ONLY above the R39 FLOOR law (2×costs) on our own pool and books its edge marked-to-fair, and the pool-side counter-grids carry both opposing sides with the Avellaneda sign law
 - black-box: dex-core selftest runs in a fresh process, exit 0, DEX-CORE-SELFTEST-OK marker on stdout (zero network — judge separation)
 - real-tree: the booked exchange-core book re-derives from its own fields — conservation recomputes row-exact, the attestation sha256 recomputes from (seq, custody, reserves, minted, claims, poolReserves), the live route quote recomputes from the booked reserves via the same BigInt law, the arb row nets gross − fees, and the first sell rung re-derives from the booked anchor/spacing
-- _measured: the exchange settles: two invariants, one vault, real reserves, deterministic to the last µ_
+- _measured: fails: book-conservation-rederives; grid-verdict-matches-gate_
 
 ## E64 · the mesh market (CR-0071) — FAIL
 - white-box: settleIntents refuses the unknown roster / dust / naked shorts honestly (GATED-WIRE-NO-CAPITAL named, never faked), wires are capped at 10% of free treasury per batch, a fill never exceeds 5% of first-hop depth, every hop + minOut settle all-or-nothing on simulated copies (a refused minOut leaves pools AND accounts byte-unchanged), batch replays are idempotent, fills are byte-deterministic, edge is marked to the CEX fair (positive above the floor), the pool feeMeter accrues (LP revenue), conservation is asserted per fill and the attestation recomputes
 - white-box: the mesh drafting laws — only CANDIDATE-FOK rows on treasury rails become candidates, the direction is sell-the-rich-side (inverting with the drift), keyed rails are never fired by the keyless mesh, mandates split the 1%-of-depth row budget operator-40/soldiers-60, drafts are byte-deterministic, the minOut guard is quote−0.5%, and the size ladder quotes exact BigInt out with monotone honest slippage
 - black-box: dex-core selftest AND arb-mesh selftest both pass in fresh processes (exit 0, OK markers — judge separation)
 - real-tree: the booked mesh book re-derives (roster from persona-slots, candidates from the core book, the P3 ladder rung recomputes exact), the operator pipe-proof fill (MESH-OPERATOR-PIPEPROOF-R41) carries its wire+fill ops on the ledger with conservation OK and the attestation recomputing, replaying the booked batch settles nothing twice, and the by-agent P&L sums to the lifetime row
-- _measured: fails: booked roster does not re-derive from persona-slots_
+- _measured: fails: booked roster does not re-derive from persona-slots; booked ladder does not recompute from the booked pools; mesh P&L by-agent does not sum to the lifetime row_
 
-## E65 · the multi-network vault (CR-0072) — PASS
+## E65 · the multi-network vault (CR-0072) — FAIL
 - white-box: the custody-class law — MEASURED-KEYED is the only mintable class, adjacent networks are OBSERVED-UNCONTROLLED / OBSERVED-POST-KEYED with live measured balances, honest OBSERVED-ABSENT when a probe fails, and the settle’s observed sync books OBSERVE ops with key classes while custody stays zero and conservation holds
 - white-box: the redeem law — burn BEFORE payout (minted, reserve and claims move 1:1, conservation holds), peg-outs queued with their corridor named (STEEM/SBD = KEYED-DESK, HIVE/HBD/BLURT = PLAN-PEGOUT-KEYED-OPERATOR), refusals honest (DUST / OVER-MINT / UNKNOWN-WRAPPER / INSUFFICIENT-CLAIM), the cross-fair law deterministic BigInt with honest nulls, the reconcile appends P5-P9 once (born empty, custody-class-gated), the genesis 25% mint law arms only from keyed custody, and the issuer identity is stable, input-sensitive, recomputable
 - black-box: dex-core selftest in a fresh process (exit 0, OK marker — judge separation)
 - real-tree: the booked multi-network vault re-derives — P5-P9 in the catalog, the issuer identity recomputes, custody classes re-derive (STEEM/SBD keyed, observed rows unmintable), the corridors are honestly banded per chain, conservation holds, the attestation recomputes, the A2 cross-bridge row carries an honest band, and booked custody never holds observed assets
-- _measured: the vault holds what its keys can move, sees every network, and queues every payout with its corridor named_
+- _measured: fails: booked vault conservation broken_
 
 ## E66 · the intent gates (CR-0073) — PASS
 - base-repair golden vectors locked: routeBest quotes reversed legs by the exact cpmmOut law (SBD→STEEM 1000µ = 9402µ — was 105µ before R43) and poolSwap returns b-side newRa/newRb in the pool’s a/b space (1545698/164980 — the transposition that masked until the intent gates filled b-side)
@@ -487,10 +501,10 @@ _run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - real-tree: the booked doors book re-derives (doors identical, states inside the lifecycle) and the LIVE pipe-proof intent (SBD→STEEM chain payout, KEYED-DESK corridor, CONFIRMED after the finality clock) is booked on the real ledger
 - _measured: the doors price every network honestly, settle what our keys can move, and never fake a broadcast_
 
-## E67 · the opposing hands (CR-0074) — PASS
+## E67 · the opposing hands (CR-0074) — FAIL
 - white-box: the gate is the CR-0074 ARTIFACT (injectable exists — settle stays pure), the sizing law prices the cap golden 5183µ at the anchor and refuses dust pools, the arm produces deterministic sha256-16 rung ids with BOTH ladders and refuses one-sided grids (REFUSED-ONE-SIDED), and the pegout hand enforces the dest-allowlist (the live queue’s treasury row booked REFUSED-DEST-NOT-ESTATE), the µ→chain floor law, pure queue mutation, and the steem-js byte-verified transfer serializer golden vector
 - black-box: counter-grid AND pegout-hand selftests in fresh processes (exit 0, OK markers — judge separation)
 - real-tree: the booked ring re-derives (every armed grid’s rung ids, two-sidedness and sizes recompute; the payload seal recomputes) and the hand’s books carry the honest refusal row + a PROOF-SENT row with the synchronous txid (block-included, never a silent accept)
-- _measured: the opposing grids stand under law and the redemption hand is keyed, allowlisted and chain-proven_
+- _measured: fails: an estate dest must be FIREABLE-KEYED; the transfer serializer golden vector broken (steem-js byte law)_
 
 _Eval discipline adopted from learn-harness-engineering (Z-36): an eval is a runnable expectation, not a hope. Pure functions = white-box; desk processes = black-box fresh processes._

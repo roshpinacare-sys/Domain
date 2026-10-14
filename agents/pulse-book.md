@@ -1,7 +1,7 @@
-# Daily Pulse — 2026-10-12T12:28:26.817Z
+# Daily Pulse — 2026-10-14T12:43:13.195Z
 
 - **loop:** reef/SkillClaw Rung 1 (day → review → propose → gate → settle) · **verify-only:** proposals never auto-applied
-- **window:** since 2026-10-12T12:27:47.543Z · **commits:** 0
+- **window:** since 2026-10-14T12:42:19.331Z · **commits:** 0
 - **gates:** skipped (PULSE_SKIP_GATES recursion guard — real gates proven in standalone runs) · skipped (PULSE_SKIP_GATES recursion guard — real gates proven in standalone runs)
 
 | # | id | disposition | advisory (lane/urgency) | action |
@@ -29,4 +29,4 @@
 - BOOKED: 2
 
 - advisory triage: **STALE-NOT-JOINED** · joined 0 · triage book >36h old — hints are ordering hints, not measured numbers; stale hints are never joined (numbers carry, hints don't)
-- evolution-window evidence: **CARRIED-COMPLETE** · measured window outcome carried (numbers carry, hints expire — a measured reward never goes stale; age booked, never gated) (age 12.7h — numbers carry)
+- evolution-window evidence: **CARRIED-COMPLETE** · measured window outcome carried (numbers carry, hints expire — a measured reward never goes stale; age booked, never gated) (age 60.9h — numbers carry)
