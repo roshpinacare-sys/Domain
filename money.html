@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SAOS · נתיב הכסף - מפת המכשירים החיצונית</title>
-<meta name="description" content="מפת נתיב הכסף החיצונית: אילו מכשירים קיימים ברשתות החכמות המובילות, מה כל מכשיר עושה, איפה הנזילות זורמת בפועל, ומה אנחנו מיישמים אצלנו. הכל במדידה חיה, לא בטענות.">
-<meta name="robots" content="noindex, nofollow">
+<title>SAOS · נתיב הכסף — הקופה האמיתית והספר הפנימי</title>
+<meta name="description" content="דלת-הכסף האחת: מה אמיתי (יתרות-שרשרת נמדדות מ-RPC ציבורי במחירי-שוק חיים), מה ספר-פנימי (SIM בלי ביד-חוץ), הספר החי, ומפת המכשירים של הרשתות החכמות. שני ספרים, אפס ערבוב.">
+<meta name="robots" content="index, follow">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.5 20.5 7v10L12 21.5 3.5 17V7z' fill='none' stroke='%23d4af37' stroke-width='1.6'/%3E%3Ccircle cx='12' cy='9' r='2' fill='%23d4af37'/%3E%3Ccircle cx='8.5' cy='15' r='2' fill='%23a78bfa'/%3E%3Ccircle cx='15.5' cy='15' r='2' fill='%23a78bfa'/%3E%3C/svg%3E">
 <style>
 :root{
@@ -101,17 +101,39 @@ footer .wrap{font-size:12px;color:var(--dim);display:flex;justify-content:space-
 <header class="nhead">
   <div class="wrap">
     <h1>נתיב הכסף</h1>
-    <span class="badge">The Money Path · מבט החוצה</span>
-    <span class="sub">מפת המכשירים של הרשתות החכמות המובילות</span>
+    <span class="badge">The Money Path · הקופה האמיתית והספר הפנימי</span>
+    <span class="sub">מה אמיתי ממדידה, מה ספר פנימי, ומפת המכשירים של הרשתות החכמות</span>
     <nav class="links">
       <a href="index.html">הקונסולה</a>
+      <a href="wallet.html">הארנק</a>
+      <a href="deposits.html">נזילות</a>
       <a href="net.html">הרשת</a>
-      <a href="gate.html">השער</a>
     </nav>
   </div>
 </header>
 <main>
   <div class="wrap">
+
+    <section class="card" id="two-ledgers" style="border-color:var(--gold-dim)">
+      <h2>מה אמיתי, מה פנימי <span class="en">Two ledgers, zero mixing · R74</span></h2>
+      <p class="src">הדוקטרינה של הבית: כסף אמיתי = יתרות-שרשרת שנמדדו מ-RPC ציבורי ומסומנות במחירי-שוק חוץ. הכל עוד = ספר פנימי (SIM) ללא תביעת ערך חוץ. ל-SAOS אין ביד-חוץ ואין נזילות-חוץ · כל "רווח" שנמדד בתוך הספר אינו רווח אמיתי. החוק הזה נכתב אחרי איפוס-הכסף-האמיתי (R74) והוא נמדד כאן חי.</p>
+      <div class="pulse" id="ledgerStrip">
+        <div class="pcard"><div class="v" id="rl-steem">124.516</div><div class="l" id="rl-steem-l">STEEM חי בשרשרת · acct-00 · אמיתי</div></div>
+        <div class="pcard"><div class="v" id="rl-sbd">18.643</div><div class="l" id="rl-sbd-l">SBD חי בשרשרת · acct-00 · אמיתי</div></div>
+        <div class="pcard"><div class="v" id="rl-usd">≈ $18.04</div><div class="l" id="rl-usd-l">שווי-חוץ כולל במחירי-שוק חיים · אמיתי</div></div>
+        <div class="pcard" style="border-color:var(--border2)"><div class="v" id="sim-saos">SIM</div><div class="l">SAOS · ספר-פנימי בלבד · אין ביד-חוץ · אין נזילות-חוץ</div></div>
+        <div class="pcard"><div class="v" id="dep-n">0</div><div class="l">הפקדות נמדדו עד היום · נמדד חי</div></div>
+      </div>
+      <div class="inst" id="bookLine" style="margin-top:12px">
+        <div class="irow"><div class="what">הספר הפנימי החי: bid 0.100055 · ask 0.102289 SBD/STEEM · עודף-ביקוש 719 bps · RISK_ON <span class="en">נמדד 15:26Z</span></div></div>
+      </div>
+    </section>
+
+    <div class="pulse" style="margin-bottom:18px">
+      <a class="pcard" href="wallet.html" style="text-decoration:none"><div class="v" style="font-size:20px">הארנק</div><div class="l">ארנק אמיתי: מפתחות נוצרים במכשיר שלך · קריאת יתרות-שרשרת מ-RPC ציבורי</div></a>
+      <a class="pcard" href="deposits.html" style="text-decoration:none"><div class="v" style="font-size:20px">דלת הנזילות</div><div class="l">מה קורה ברגע שנכנס כסף — ומה נמדד עד היום (0 הפקדות, בכנות)</div></a>
+      <a class="pcard" href="truth.html" style="text-decoration:none"><div class="v" style="font-size:20px">שער האמת</div><div class="l">הביקורת החיה של הבית על עצמו — לפני שמישהו אחר עושה אותה</div></a>
+    </div>
 
     <p class="lede">
       זהו מפת-החוץ של נתיב הכסף: <b>לא</b> מה שקורה אצלנו, אלא מה שקורה ברשתות החכמות המובילות.
@@ -490,6 +512,27 @@ footer .wrap{font-size:12px;color:var(--dim);display:flex;justify-content:space-
       meta.textContent="רענון: "+(p.refresh&&p.refresh.policy?p.refresh.policy:"")+" · סטטוס מסילה חיה: "+((p.refresh&&p.refresh.liveFeed&&p.refresh.liveFeed.status)||"");
       b.appendChild(meta);
     }).catch(function(){var b=document.getElementById("pulseBody");if(b)b.innerHTML='<div class="irow"><div class="what">הספר החי לא נטען כרגע — מציג בכנות, בלי להמציא מספרים.</div></div>';});
+  })();
+</script>
+<script>
+  /* פס שני-הספרים — רענון חי מהזנות ציבוריות; כישלון משאיר את מספרי-המדידה הבטוחים שב-HTML */
+  (function(){
+    function txt(id,v){var e=document.getElementById(id);if(e&&v!=null)e.textContent=v;}
+    function n(x){return (Math.round(x*1000)/1000).toString();}
+    function j(u){return fetch(u+"?t="+Date.now(),{cache:"no-store"}).then(function(r){if(!r.ok)throw 0;return r.json();});}
+    Promise.all([j("dex/money.json"),j("moment/moment.json"),j("dex/deposits.json")]).then(function(a){
+      var m=a[0],mo=a[1],d=a[2];
+      if(m&&m.fuel){txt("rl-steem",n(m.fuel.steem));txt("rl-sbd",n(m.fuel.sbd));
+        if(mo&&mo.market){var usd=m.fuel.steem*mo.market.steemUsd+m.fuel.sbd*mo.market.sbdUsd;txt("rl-usd","≈ $"+(Math.round(usd*100)/100));
+          txt("rl-steem-l","STEEM חי בשרשרת · "+m.fuel.account+" · אמיתי · $"+mo.market.steemUsd);
+          txt("rl-sbd-l","SBD חי בשרשרת · "+m.fuel.account+" · אמיתי · $"+mo.market.sbdUsd);}
+        var at=(m.publishedAt||"").replace("T"," ").slice(0,16)+"Z";
+        var ml=document.getElementById("rl-usd-l");if(ml)ml.textContent+=" · נמדד "+at;}
+      if(d&&d.deposits){var e2=document.getElementById("dep-n");if(e2)e2.textContent=String(d.deposits.length);}
+      if(mo&&mo.liveBook){var lb=mo.liveBook,rg=(mo.regime&&mo.regime.label)||"";
+        var e3=document.getElementById("bookLine");if(e3){var dt=(mo.publishedAt||"").replace("T"," ").slice(0,16)+"Z";
+          e3.innerHTML='<div class="irow"><div class="what">הספר הפנימי החי: bid '+lb.bestBid.toFixed(6)+' · ask '+lb.bestAsk.toFixed(6)+' SBD/STEEM · עודף-ביקוש '+Math.round(lb.bidSurplusBps)+' bps · '+rg+' <span class="en">נמדד '+dt+'</span></div></div>';}}
+    }).catch(function(){/* כישלון = נשארים עם מספרי-המדידה הבטוחים, אפס המצאה */});
   })();
 </script>
 </body>
