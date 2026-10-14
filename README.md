@@ -1,5 +1,9 @@
 # SAOS· Domain - the public home of THE WEAVE console
 
+[![SAOS office](https://roshpinacare-sys.github.io/Domain/badge/office.svg)](https://roshpinacare-sys.github.io/Domain/office3d/)
+[![SAOS fleet](https://roshpinacare-sys.github.io/Domain/badge/fleet.svg)](https://roshpinacare-sys.github.io/Domain/status/)
+[![steem-edge](https://roshpinacare-sys.github.io/Domain/badge/edge.svg)](https://roshpinacare-sys.github.io/Domain/money.html)
+
 This repository serves the public console of the SAOS ecosystem at
 https://roshpinacare-sys.github.io/Domain/ - one complete, comprehensive
 console: a single-page app plus the sovereign wallet, the truth gate, the
