@@ -21,10 +21,10 @@ jobs:
     timeout-minutes: 9
     steps:
       - name: Checkout Domain
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Node 20
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '20'
 
@@ -33,7 +33,7 @@ jobs:
 
       - name: Checkout KPI source (Defi is private — read via vault PAT; honest skip if denied)
         continue-on-error: true
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: roshpinacare-sys/Defi
           ref: main
@@ -42,7 +42,7 @@ jobs:
           fetch-depth: 1
 
       - name: Checkout Console (book home — read+write via vault PAT)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: roshpinacare-sys/Console
           ref: main

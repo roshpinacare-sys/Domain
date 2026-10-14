@@ -21,7 +21,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout the sovereign home (Zip — the seal target, full lineage)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: roshpinacare-sys/Zip
           token: ${{ secrets.ZIP_PAT }}
@@ -29,13 +29,13 @@ jobs:
           path: zip
 
       - name: Checkout the fleet home (Domain — the script lives here)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1
           path: domain
 
       - name: Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '20'
 

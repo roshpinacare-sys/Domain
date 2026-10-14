@@ -45,12 +45,12 @@ jobs:
             echo "STASIS-HALT treasury-route · the breaker is active — capital lanes obey"
           fi
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1
 
       - name: checkout private steem home (vault recovery source — proven Z-21 pattern)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: roshpinacare-sys/steem
           token: ${{ secrets.WEAVE_OPS_PAT }}
@@ -58,7 +58,7 @@ jobs:
           path: steem-repo
 
       - name: Node 20
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 20
 

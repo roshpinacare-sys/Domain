@@ -31,7 +31,7 @@ jobs:
     timeout-minutes: 12
     steps:
       - name: Checkout Sandbox (the receipts home)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: roshpinacare-sys/Sandbox
           token: ${{ secrets.ZIP_PAT }}
@@ -39,7 +39,7 @@ jobs:
           path: sandbox
 
       - name: Node 20
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 20
 

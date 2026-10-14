@@ -11,15 +11,15 @@ jobs:
   recruit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with: {fetch-depth: 1}
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           repository: roshpinacare-sys/Defi
           token: ${{ secrets.WEAVE_OPS_PAT }}
           path: canon-defi
           fetch-depth: 1
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with: {node-version: 20}
       - name: "run mechanism desks (evidence for the board)"
         run: |

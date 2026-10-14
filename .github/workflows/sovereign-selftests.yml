@@ -21,14 +21,14 @@ jobs:
     timeout-minutes: 8
     steps:
       - name: Checkout saos-sovereign-platform
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: roshpinacare-sys/saos-sovereign-platform
           ref: main
           token: ${{ secrets.ZIP_PAT }}
           fetch-depth: 1
       - name: Python 3.11
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.11'
       - name: Edge engine selftest (same checks as the original)
@@ -47,14 +47,14 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout saos-jummper
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: roshpinacare-sys/saos-jummper
           ref: main
           token: ${{ secrets.ZIP_PAT }}
           fetch-depth: 1
       - name: Python 3.11
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.11'
       - name: Notary unit tests (same checks as the original)
@@ -71,7 +71,7 @@ jobs:
     timeout-minutes: 6
     steps:
       - name: Checkout Sdk
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: roshpinacare-sys/Sdk
           ref: main
@@ -97,7 +97,7 @@ jobs:
     timeout-minutes: 25
     steps:
       - name: Checkout Saosmartwallet
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: roshpinacare-sys/Saosmartwallet
           ref: main

@@ -32,7 +32,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout the sovereign home
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: roshpinacare-sys/Zip
           token: ${{ secrets.ZIP_PAT }}
@@ -81,7 +81,7 @@ jobs:
 
       - name: Upload beat report (evidence)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: weave-beat-report-domain-twin
           path: sovereign/beat-report.json

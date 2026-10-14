@@ -37,7 +37,7 @@ jobs:
             task: bun-typecheck
     steps:
       - name: Checkout ${{ matrix.repo }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: roshpinacare-sys/${{ matrix.repo }}
           ref: main
@@ -46,7 +46,7 @@ jobs:
 
       - name: Python 3.11
         if: matrix.task == 'python-signingcontract'
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.11'
 

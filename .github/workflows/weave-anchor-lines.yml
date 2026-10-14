@@ -44,7 +44,7 @@ jobs:
     timeout-minutes: 90
     steps:
       - name: Checkout the sovereign home
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: roshpinacare-sys/Zip
           token: ${{ secrets.ZIP_PAT }}
@@ -144,7 +144,7 @@ jobs:
 
       - name: Upload anchor reports (evidence)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: weave-anchor-reports-domain-twin
           path: |

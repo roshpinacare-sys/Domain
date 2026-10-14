@@ -27,7 +27,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: checkout Domain (public home — logic only)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1
 
@@ -49,7 +49,7 @@ jobs:
           fi
 
       - name: checkout private steem (seal custody lives here) — proven org-gitleaks pattern
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: roshpinacare-sys/steem
           ref: main
@@ -62,7 +62,7 @@ jobs:
           git config --global user.name "roshpinacare-sys"
           git config --global user.email "326012154+roshpinacare-sys@users.noreply.github.com"
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 20
 

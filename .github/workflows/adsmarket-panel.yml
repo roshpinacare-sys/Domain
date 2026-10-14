@@ -30,14 +30,14 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1
 
       - name: checkout private Adsmarket (measured-view source)
         id: src
         continue-on-error: true
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: roshpinacare-sys/Adsmarket
           token: ${{ secrets.WEAVE_OPS_PAT }}
@@ -45,7 +45,7 @@ jobs:
           path: adsmarket-repo
 
       - name: Node 20
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 20
 

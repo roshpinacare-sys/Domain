@@ -22,10 +22,10 @@ jobs:
     timeout-minutes: 9
     steps:
       - name: Checkout Domain
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Node 20
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '20'
 
@@ -41,7 +41,7 @@ jobs:
         run: node agents/anchor-execute.mjs
 
       - name: Checkout the public book (receipt lands here on a real anchor)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: roshpinacare-sys/Console
           ref: main

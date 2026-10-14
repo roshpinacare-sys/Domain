@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with: {fetch-depth: 1}
       - name: STASIS gate (mechanical, FATE-DEFENSE law
         id: brake
@@ -23,13 +23,13 @@ jobs:
             echo "STASIS-HALT soldiers-curate · the breaker is active — capital lanes obey (votes)"
           fi
       - name: "checkout the private vault repo (STEEM_REPO_DIR recovery path, econ-desk pattern)"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: roshpinacare-sys/steem
           token: ${{ secrets.WEAVE_OPS_PAT }}
           path: steem-home
           fetch-depth: 1
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with: {node-version: 20}
       - name: "install signer lib (tri-bridge pattern)"
         run: npm install --prefix /tmp/steemjs steem@0.7.11 --omit=dev --no-audit --no-fund --loglevel=error
@@ -50,7 +50,7 @@ jobs:
           fi
       - name: upload book (evidence)
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: curation-book
           path: agents/curation-book.json

@@ -22,7 +22,7 @@ jobs:
     timeout-minutes: 9
     steps:
       - name: Checkout the grid home (saos-dex via vault PAT — the twin never forks the book)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: roshpinacare-sys/saos-dex
           ref: main
@@ -30,7 +30,7 @@ jobs:
           fetch-depth: 1
 
       - name: Node 20
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '20'
 

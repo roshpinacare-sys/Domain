@@ -11,7 +11,7 @@ jobs:
   econ:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with: {fetch-depth: 1}
       - name: STASIS gate (mechanical, FATE-DEFENSE law #1 — lane-aware staged preflight)
         id: brake
@@ -19,12 +19,12 @@ jobs:
           ST=$(node agents/stasis-gate.cjs general)
           echo "active=$ST" >> "$GITHUB_OUTPUT"
           # agents/stasis-gate.cjs — fail-closed inside; sign-time capital-gate stays armed
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with: {node-version: 20}
       - name: "install signer (hive-js; R-ECON-3)"
         run: npm install @hiveio/hive-js --omit=dev --silent
       - name: "checkout private steem home (vault recovery path)"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: roshpinacare-sys/steem
           token: ${{ secrets.WEAVE_OPS_PAT }}

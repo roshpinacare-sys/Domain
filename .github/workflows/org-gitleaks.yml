@@ -78,7 +78,7 @@ jobs:
           python3 -c 'import json,sys; json.dump({"repo":sys.argv[1],"findingsHistory":None,"findingsHead":None,"conclusion":"pending"}, open(f"/tmp/gl-status/{sys.argv[1]}.json","w"))' "$REPO"
 
       - name: Checkout ${{ matrix.repo }} @ ${{ matrix.ref }} (full history)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: roshpinacare-sys/${{ matrix.repo }}
           ref: ${{ matrix.ref }}
@@ -153,7 +153,7 @@ jobs:
 
       - name: Upload leg status
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: gitleaks-leg-${{ matrix.repo }}
           path: /tmp/gl-status/${{ matrix.repo }}.json
@@ -168,12 +168,12 @@ jobs:
       contents: write
     steps:
       - name: Checkout Domain
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 1
 
       - name: Download leg statuses
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           pattern: gitleaks-leg-*
           merge-multiple: true
