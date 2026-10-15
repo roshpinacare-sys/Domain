@@ -1,33 +1,33 @@
 {
  "ok": true,
  "format": "moment-watch-v1",
- "publishedAt": "2026-10-15T01:25:48.046Z",
+ "publishedAt": "2026-10-15T02:15:06.495Z",
  "engine": "Domain/agents/moment-watch · R62 sovereign moment",
  "role": "reads the live moment every 30 minutes (market regime, our parity line vs the live internal book, fuel runway, measured anomalies) and records a deterministic directional call that is only ever scored after its horizon has passed - training as measurement, never as promise",
  "market": {
-  "steemUsd": 0.054533,
-  "steem24h": -4.964891524062401,
-  "sbdUsd": 0.597548,
-  "btcUsd": 81579,
-  "btc24h": -2.097001943689701,
+  "steemUsd": 0.054049,
+  "steem24h": -5.897495362792991,
+  "sbdUsd": 0.59816,
+  "btcUsd": 81489,
+  "btc24h": -2.161559133946819,
   "fearGreed": {
    "value": 53,
    "label": "Neutral"
   }
  },
- "paritySbdPerSteem": 0.09126128779612684,
+ "paritySbdPerSteem": 0.09035876688511435,
  "liveBook": {
   "bestBid": 0.100061,
-  "bestAsk": 0.10116161439983257,
+  "bestAsk": 0.1005337147242474,
   "bidsDepthSbd": 1519.59,
-  "asksDepthSteem": 15225.68,
+  "asksDepthSteem": 15225.74,
   "levels": 11,
-  "bidSurplusBps": 964
+  "bidSurplusBps": 1074
  },
  "regime": {
   "label": "NEUTRAL",
   "drivers": [
-   "BTC -2.1%",
+   "BTC -2.2%",
    "F&G 53"
   ],
   "thresholds": {
@@ -40,11 +40,11 @@
  },
  "runway": {
   "active": false,
-  "weeklySp": 6.203370450527985e-10,
+  "weeklySp": 6.203384860779535e-10,
   "nextPayment": "1969-12-31T23:59:59",
   "remainingSp": 0,
   "weeklyUsd": 0,
-  "treasuryUsd": 1.76
+  "treasuryUsd": 1.75
  },
  "grid": {
   "verdict": "ARMED-WAITING",
@@ -72,22 +72,27 @@
  "call": "DOWN",
  "callStats": {
   "resolved": 28,
-  "hits": 5,
-  "hitRatePct": 18,
+  "hits": 6,
+  "hitRatePct": 21,
   "horizonH": 6,
   "thresholdPct": 3
  },
- "resolvedNow": 0,
+ "resolvedNow": 1,
  "insights": [
   {
    "kind": "parity-edge",
    "tone": "warn",
-   "text": "הספר החי 964bps מעל קו-הזהות — אין עודף-קנייה כרגע; הגריד ממתין."
+   "text": "הספר החי 1074bps מעל קו-הזהות — אין עודף-קנייה כרגע; הגריד ממתין."
   },
   {
    "kind": "sbd-inventory",
    "tone": "warn",
    "text": "צוואר-הקנייה של הגריד: POLICY-HALT (steem leg): per-op notional 91.670 SBD > cap 12 (lane grid) ; cycle notional upper-bound 91.670 SBD > cap 57 ; kelly-cap: gear cap 25→12 SBD (mode=probation; informative fills 5/10 — hard probation ×0.5 (owner law: half cap until measured)) — atomic refresh skipped, ladder untouched"
+  },
+  {
+   "kind": "steem-move",
+   "tone": "info",
+   "text": "STEEM -5.9% ביממה — סימוני-הגריד ייגזרו מחדש בפעימה הבאה; תוכניות-עבר עלולות לא-רלוונטיות."
   },
   {
    "kind": "fuel",
