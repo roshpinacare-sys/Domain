@@ -1,33 +1,33 @@
 {
  "ok": true,
  "format": "moment-watch-v1",
- "publishedAt": "2026-10-15T13:29:40.476Z",
+ "publishedAt": "2026-10-15T14:42:22.332Z",
  "engine": "Domain/agents/moment-watch · R62 sovereign moment",
  "role": "reads the live moment every 30 minutes (market regime, our parity line vs the live internal book, fuel runway, measured anomalies) and records a deterministic directional call that is only ever scored after its horizon has passed - training as measurement, never as promise",
  "market": {
-  "steemUsd": 0.052301,
-  "steem24h": -6.2890903358660735,
-  "sbdUsd": 0.539989,
-  "btcUsd": 80218,
-  "btc24h": -2.832984716290601,
+  "steemUsd": 0.053502,
+  "steem24h": -3.4741838194953307,
+  "sbdUsd": 0.537491,
+  "btcUsd": 81352,
+  "btc24h": -0.5915601589236932,
   "fearGreed": {
    "value": 53,
    "label": "Neutral"
   }
  },
- "paritySbdPerSteem": 0.09685567668971033,
+ "paritySbdPerSteem": 0.09954027137198576,
  "liveBook": {
   "bestBid": 0.1005002857465932,
   "bestAsk": 0.10212418300653595,
-  "bidsDepthSbd": 1182.13,
+  "bidsDepthSbd": 1184.59,
   "asksDepthSteem": 5151.5,
-  "levels": 11,
-  "bidSurplusBps": 376
+  "levels": 15,
+  "bidSurplusBps": 96
  },
  "regime": {
   "label": "NEUTRAL",
   "drivers": [
-   "BTC -2.8%",
+   "BTC -0.6%",
    "F&G 53"
   ],
   "thresholds": {
@@ -40,18 +40,18 @@
  },
  "runway": {
   "active": false,
-  "weeklySp": 6.203581810921634e-10,
+  "weeklySp": 6.203602956345447e-10,
   "nextPayment": "1969-12-31T23:59:59",
   "remainingSp": 0,
   "weeklyUsd": 0,
-  "treasuryUsd": 1.69
+  "treasuryUsd": 1.73
  },
  "grid": {
   "verdict": "ARMED-WAITING",
   "armed": true,
-  "blocker": "POLICY-HALT (steem leg): per-op notional 91.663 SBD > cap 12 (lane grid) ; cycle notional upper-bound 91.663 SBD > cap 57 ; kelly-cap: gear cap 25→12 SBD (mode=probation; informative fills 6/10 — hard probation ×0.5 (owner law: half cap until measured)) — atomic refresh skipped, ladder untouched",
-  "externalFlowUsd": 0.410236,
-  "publishedAt": "2026-10-15T08:29:53.445Z"
+  "blocker": "POLICY-HALT (steem leg): per-op notional 91.746 SBD > cap 25 (lane grid) ; kelly-cap: gear cap 50→25 SBD (mode=probation; informative fills 6/10 — hard probation ×0.5 (owner law: half cap until measured)) — atomic refresh skipped, ladder untouched",
+  "externalFlowUsd": 0.348451,
+  "publishedAt": "2026-10-15T14:17:01.152Z"
  },
  "moneyPath": {
   "fuel": {
@@ -71,28 +71,23 @@
  },
  "call": "DOWN",
  "callStats": {
-  "resolved": 36,
+  "resolved": 37,
   "hits": 16,
-  "hitRatePct": 44,
+  "hitRatePct": 43,
   "horizonH": 6,
   "thresholdPct": 3
  },
- "resolvedNow": 0,
+ "resolvedNow": 1,
  "insights": [
   {
    "kind": "parity-edge",
    "tone": "warn",
-   "text": "הספר החי 376bps מעל קו-הזהות — אין עודף-קנייה כרגע; הגריד ממתין."
+   "text": "הספר החי 96bps מעל קו-הזהות — אין עודף-קנייה כרגע; הגריד ממתין."
   },
   {
    "kind": "sbd-inventory",
    "tone": "warn",
-   "text": "צוואר-הקנייה של הגריד: POLICY-HALT (steem leg): per-op notional 91.663 SBD > cap 12 (lane grid) ; cycle notional upper-bound 91.663 SBD > cap 57 ; kelly-cap: gear cap 25→12 SBD (mode=probation; informative fills 6/10 — hard probation ×0.5 (owner law: half cap until measured)) — atomic refresh skipped, ladder untouched"
-  },
-  {
-   "kind": "steem-move",
-   "tone": "info",
-   "text": "STEEM -6.3% ביממה — סימוני-הגריד ייגזרו מחדש בפעימה הבאה; תוכניות-עבר עלולות לא-רלוונטיות."
+   "text": "צוואר-הקנייה של הגריד: POLICY-HALT (steem leg): per-op notional 91.746 SBD > cap 25 (lane grid) ; kelly-cap: gear cap 50→25 SBD (mode=probation; informative fills 6/10 — hard probation ×0.5 (owner law: half cap until measured)) — atomic refresh skipped, ladder untouched"
   },
   {
    "kind": "fuel",
@@ -107,7 +102,7 @@
   {
    "kind": "external-flow",
    "tone": "info",
-   "text": "זרימת-חוץ מצטברת: 0.4102$ מ-101 מילויים (txids בספר הציבורי)."
+   "text": "זרימת-חוץ מצטברת: 0.3485$ מ-101 מילויים (txids בספר הציבורי)."
   }
  ],
  "sources": [
