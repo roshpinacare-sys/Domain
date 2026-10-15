@@ -1,4 +1,4 @@
-# COGNITION-BEAT · 2026-10-15T12:07:16.378Z
+# COGNITION-BEAT · 2026-10-15T20:32:26.570Z
 
 self-model regenerated from live measurements (runs API + chain RPC + grid-truth + STASIS + directives chain verify: {"ok":true,"entries":7,"breakAt":null,"reason":null})
 
@@ -6,5 +6,5 @@ self-model regenerated from live measurements (runs API + chain RPC + grid-truth
 - contradictions open: C-002(grid)
 - haltCoverage: ORGANISM_ONLY (honest — money-family-live + external key-holders unreachable)
 - STASIS: active=false mode=staged allow=[grid,claims,dex-batch-settle,powerup,delegation,connect,general,dex-core,arb-mesh,dex-activation]
-- workflows seen (24h): cognition-beat, pages build and deployment, moment-watch, fleet-heartbeat, office-worldbeat, dex-mirror, market-grid-cron, dex-beat, operator-console, tick-keeper, office-pulse-twin, earn-audit-cron, cloud-pulse, fill-ledger-cron, grid-sentinel, arb-mesh, soldiers-curate, office-artery, content-gate, agent-verify, economy-engine, network-census, sovereign-tick-cron, pf-artery-keeper, dex-router, public-pulse
+- workflows seen (24h): moment-watch, pages build and deployment, cognition-beat, dex-mirror, fleet-heartbeat, operator-console, dex-beat, arb-mesh, office-pulse-twin, office-artery, earn-audit-cron, cloud-pulse, office-pulse, grid-sentinel, office-worldbeat, estate-scrub, dex-activation, weave-anchor-lines, dex-core, human-cadence, voice-artery, sovereign-tick-cron, network-census, ladder-refresh
 
