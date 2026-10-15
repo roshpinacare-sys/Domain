@@ -25,7 +25,7 @@ const OWNER = "roshpinacare-sys";
 const ACCOUNT = "owner";
 const DEX_REPO = "saos-dex";
 const SECRET_NAME = "STEEM_ACTIVE_WIF";
-const SOURCE_SECRET = "owner";
+const SOURCE_SECRET = process.env.SOURCE_SECRET_NAME || "owner";
 const GH_API = "https://api.github.com";
 const STEEM_RPC = "https://api.steemit.com";
 
