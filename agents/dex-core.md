@@ -1,8 +1,8 @@
 # dex-core — EXCHANGE CORE (R40, CR-0070)
 
-At: 2026-10-15T04:22:22.784Z · Verdict: **CONSERVATION-BROKEN** · mode: KEYLESS-ATOMIC-INTERNAL · seq: 95 · attestation: `56ed7420a8e7a695`
+At: 2026-10-15T05:19:39.836Z · Verdict: **CONSERVATION-BROKEN** · mode: KEYLESS-ATOMIC-INTERNAL · seq: 96 · attestation: `ec70dcb701e91092`
 
-Feed: FEED-LIVE (router book @ 2026-10-15T02:57:16.095Z) · conservation: **BROKEN** · custody probe: MEASURED @https://api.steemit.com
+Feed: FEED-LIVE (router book @ 2026-10-15T05:17:36.573Z) · conservation: **BROKEN** · custody probe: MEASURED @https://api.steemit.com
 
 | Pool | Pair | Kind | Fee | Reserves (a/b µ) | Mid | Verdict |
 |---|---|---|---|---|---|---|
@@ -30,8 +30,8 @@ Routes: 5 LIVE-INTERNAL (atomic settlement in our own ledger) · 90 planned/thin
 | C-STEEM-WHBD | — | — | PLANNED-NO-CLAIM · unlock: the cross-network bridge pair arms when HIVE key material ve |
 | C-STEEM-WBLURT | — | — | PLANNED-NO-CLAIM · unlock: the cross-network bridge pair arms when HIVE key material ve |
 | C-STEEM-SAOS | — | — | PLANNED-NO-CLAIM · unlock: no measured SAOS claim exists in the estate books (dex/credi |
-| C-SBD-STEEM | P3 | 46 STEEM for 186 µ SBD (~1% first-hop depth) | LIVE-INTERNAL |
-| C-SBD-WSBD | P2 | 209 WSBD for 186 µ SBD (~1% first-hop depth) | LIVE-INTERNAL |
+| C-SBD-STEEM | P3 | 51 STEEM for 169 µ SBD (~1% first-hop depth) | LIVE-INTERNAL |
+| C-SBD-WSBD | P2 | 190 WSBD for 169 µ SBD (~1% first-hop depth) | LIVE-INTERNAL |
 | C-HIVE-STEEM | — | — | PLANNED-NO-CLAIM · unlock: the cross-network bridge pair arms when HIVE key material ve |
 | C-HIVE-SBD | — | — | PLANNED-NO-CLAIM · unlock: the cross-network bridge pair arms when HIVE key material ve |
 | C-HIVE-HBD | — | — | PLANNED-NO-CLAIM · unlock: the cross-network bridge pair arms when HIVE key material ve |
@@ -72,9 +72,9 @@ Routes: 5 LIVE-INTERNAL (atomic settlement in our own ledger) · 90 planned/thin
 | C-WSTEEM-WHBD | — | — | PLANNED-NO-CLAIM · unlock: no measured SAOS claim exists in the estate books (dex/credi |
 | C-WSTEEM-WBLURT | — | — | PLANNED-NO-CLAIM · unlock: no measured SAOS claim exists in the estate books (dex/credi |
 | C-WSTEEM-SAOS | — | — | PLANNED-NO-CLAIM · unlock: no measured SAOS claim exists in the estate books (dex/credi |
-| C-WSBD-STEEM | P2→P3 | 2193 STEEM for 18318 µ WSBD (~1% first-hop depth) | LIVE-INTERNAL |
+| C-WSBD-STEEM | P2→P3 | 2535 STEEM for 18318 µ WSBD (~1% first-hop depth) | LIVE-INTERNAL |
 | C-WSBD-SBD | P2 | 16193 SBD for 18318 µ WSBD (~1% first-hop depth) | LIVE-INTERNAL |
-| C-WSBD-WSTEEM | P2→P3→P1 | 7 WSTEEM for 18318 µ WSBD (~1% first-hop depth) | LIVE-INTERNAL |
+| C-WSBD-WSTEEM | P2→P3→P1 | 9 WSTEEM for 18318 µ WSBD (~1% first-hop depth) | LIVE-INTERNAL |
 | C-WHIVE-STEEM | — | — | PLANNED-NO-CLAIM · unlock: the cross-network bridge pair arms when HIVE key material ve |
 | C-WHIVE-SBD | — | — | THIN-DEPTH-NO-QUOTE |
 | C-WHIVE-HIVE | — | — | PLANNED-NO-CLAIM · unlock: the cross-network bridge pair arms when HIVE key material ve |
@@ -116,7 +116,7 @@ Routes: 5 LIVE-INTERNAL (atomic settlement in our own ledger) · 90 planned/thin
 | C-SAOS-WHBD | — | — | PLANNED-NO-CLAIM · unlock: no measured SAOS claim exists in the estate books (dex/credi |
 | C-SAOS-WBLURT | — | — | PLANNED-NO-CLAIM · unlock: no measured SAOS claim exists in the estate books (dex/credi |
 
-- A1 P3 STEEM/SBD pool mid vs CEX-implied fair: REBALANCE-BOOKED · net 431353.49bps vs threshold 120bps · EXECUTED in 472µ → 1688µ (edge 1646µ marked to fair)
+- A1 P3 STEEM/SBD pool mid vs CEX-implied fair: CANDIDATE-FOK · net 346920.03bps vs threshold 120bps
 - A-P1 WSTEEM/STEEM peg guard: PEG-DRIFT-HALT · drift 64490.74%
 - A-P2 WSBD/SBD peg guard: PEG-DRIFT-HALT · drift 62.24%
 - A2 P8 HIVE/STEEM cross-network bridge: NO-CUSTODY
@@ -133,5 +133,5 @@ Vault: minted WSTEEM 14500µ · WSBD 2494800µ · WHIVE 0µ · WHBD 0µ · WBLUR
 
 Treasury P&L: fees 306µ (LP revenue) · rebalance edges 67612µ (marked to fair at execution — the LVR defense on our own pool)
 
-Attestation sha256(seq, custody, reserves, minted, claims) = `56ed7420a8e7a695` — recomputable by any node; the cron book commit is the publication.
+Attestation sha256(seq, custody, reserves, minted, claims) = `ec70dcb701e91092` — recomputable by any node; the cron book commit is the publication.
 
