@@ -1,6 +1,6 @@
 # market-exec — SIGNED EXECUTOR canon (CR-0036)
 
-Last run: 2026-10-15T22:24:30.718Z · mode **DRY_RUN** · venue **SBD/STEEM internal (steem)** via https://api.steemit.com
+Last run: 2026-10-15T23:22:15.064Z · mode **DRY_RUN** · venue **SBD/STEEM internal (steem)** via https://api.steemit.com
 
 | metric | value |
 |---|---|
@@ -26,4 +26,4 @@ Last run: 2026-10-15T22:24:30.718Z · mode **DRY_RUN** · venue **SBD/STEEM inte
 ## errors (1)
 - Cannot access 'placements' before initialization
 
-Run history: 139 rows in canon.
+Run history: 140 rows in canon.
