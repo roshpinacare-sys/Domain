@@ -1,11 +1,11 @@
 # market-exec — SIGNED EXECUTOR canon (CR-0036)
 
-Last run: 2026-10-15T04:08:24.576Z · mode **DRY_RUN** · venue **SBD/STEEM internal (steem)** via https://api.steemit.com
+Last run: 2026-10-15T05:19:49.575Z · mode **DRY_RUN** · venue **SBD/STEEM internal (steem)** via https://api.steemit.com
 
 | metric | value |
 |---|---|
-| bid / ask / mid | 0.1 / 0.10126626434576343 / 0.100633 |
-| spread | 1.2583% |
+| bid / ask / mid | 0.10050286352842576 / 0.10458382753087281 / 0.102543 |
+| spread | 3.9797% |
 | feed (SBD per STEEM) | 0.104088 |
 | cross-check | {"ok":true,"dBid":0,"dAsk":0} |
 | liquid before | 0.000 STEEM / 0.001 SBD |
@@ -16,14 +16,14 @@ Last run: 2026-10-15T04:08:24.576Z · mode **DRY_RUN** · venue **SBD/STEEM inte
 ## placed (0)
 
 ## skipped (6)
-- sell L1 @ 0.102394: CAP-REMAINING
-- sell L2 @ 0.102804: OUT-OF-BAND
-- sell L3 @ 0.103215: OUT-OF-BAND
-- buy L1 @ 0.0995: SBD-CAP
-- buy L2 @ 0.099102: SBD-CAP
-- buy L3 @ 0.098706: SBD-CAP
+- sell L1 @ 0.104534: CAP-REMAINING
+- sell L2 @ 0.104952: OUT-OF-BAND
+- sell L3 @ 0.105372: OUT-OF-BAND
+- buy L1 @ 0.100003: OUT-OF-BAND
+- buy L2 @ 0.099603: OUT-OF-BAND
+- buy L3 @ 0.099205: OUT-OF-BAND
 
 ## errors (1)
 - Cannot access 'placements' before initialization
 
-Run history: 123 rows in canon.
+Run history: 124 rows in canon.
