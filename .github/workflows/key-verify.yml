@@ -1,0 +1,59 @@
+# key-verify — פותח-השער (T63, הוראת-בעלים: "וודא שגם פותח את השער כי מפתח עדיין לא מאומת")
+#
+# זהו הראנר-החסר של agents/key-verify.mjs: המפתח של המפעיל יושב כסוד `owner`
+# בכספת-הגיטהאב, רק Actions של ריפו-עם-הסוד יכולים לקרוא אותו, וה-verifier
+# משווה אותו ביט-מול-ביט מול הרשויות-החיות של @owner בשרשרת Steem.
+# התאמה-מלאה-ל-active = ה-WIF נאטם (sealed-box) לכספת saos-dex והגריד-החוץ
+# מוזנק. אי-התאמה = כלום-לא-נכתב (דוקטרינת-ה-verifier עצמו).
+#
+# P0-1 (חוק-T6 של התוכנית-הראשית): פסק-הדין יוצא ל-Step-Summary בלבד —
+# אין-שום-התמדה של מבנה-מפתחות לריפו הציבורי.
+#
+# דרישות-הפעלה: הסוד `owner` חייב להיות קיים בריפו-זה (Settings → Secrets →
+# Actions). אם הוגש בטעות מפתח-ציבורי / posting במקום active / סיסמת-אב
+# שאינה-של @owner — ה-verifier ידווח פסק-דין כנה בסיכום-הריצה ויצא-עם-כישלון.
+
+name: key-verify
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: key-verify
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout Domain
+        uses: actions/checkout@v4
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install estate deps (gate-crypto: @noble/secp256k1 + libsodium for the probe)
+        run: |
+          npm i --no-audit --no-fund --ignore-scripts --silent
+          npm i libsodium-wrappers@0.7.15 --no-save --no-audit --no-fund --ignore-scripts --silent
+
+      - name: Prepare /tmp/sodium probe (createRequire sandbox per key-verify.mjs contract)
+        run: |
+          mkdir -p /tmp/sodium
+          cd /tmp/sodium
+          printf '{"name":"sodium-probe","private":true}\n' > package.json
+          npm i libsodium-wrappers@0.7.15 --no-audit --no-fund --ignore-scripts --silent
+          printf 'module.exports = (n) => require(n);\n' > probe.cjs
+
+      - name: Run key-verify — verdict to summary only, never persisted (P0-1)
+        env:
+          owner: ${{ secrets.owner }}
+          AGENTS_WATCH_TOKEN: ${{ secrets.AGENTS_WATCH_TOKEN }}
+          GITHUB_REPOSITORY: roshpinacare-sys/Domain
+        run: node agents/key-verify.mjs
