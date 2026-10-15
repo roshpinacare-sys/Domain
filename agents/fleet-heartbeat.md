@@ -1,4 +1,4 @@
-# דופק-הצי (fleet-heartbeat) — 2026-10-15T06:25:37.038Z
+# דופק-הצי (fleet-heartbeat) — 2026-10-15T07:42:54.263Z
 
 מדידת-מנועים של כל-הריפואים: מה פועם, מה שקט, מה הפלטפורמה נטרלה, מה נרפא בריצה זו.
 
@@ -26,7 +26,7 @@
 
 - negen — NO-WORKFLOWS
 - sanbox — NO-WORKFLOWS
-- saos-desk — NO-WORKFLOWS · שקט 4.9 שעות
+- saos-desk — NO-WORKFLOWS · שקט 6.2 שעות
 - saos-markets — NO-WORKFLOWS
 - saos-owner-channel — NO-WORKFLOWS
 - sovereign-runner-kit — NO-WORKFLOWS
