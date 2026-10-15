@@ -22,7 +22,10 @@ import Gate from "../gate-crypto.js";
 import { R, refOf } from "../agents/refs.mjs";
 
 const OWNER = "roshpinacare-sys";
-const ACCOUNT = "owner";
+// T64: the grid signer is FLEET_ACCOUNT (the account whose active authority feeds
+// the engine vault — on-chain evidence: dex anchors + pulse + market ops). The
+// hard-coded "owner" was a 2016-era assumption; the live fleet account wins.
+const ACCOUNT = process.env.FLEET_ACCOUNT || "owner";
 const DEX_REPO = "saos-dex";
 const SECRET_NAME = "STEEM_ACTIVE_WIF";
 const SOURCE_SECRET = process.env.SOURCE_SECRET_NAME || "owner";
@@ -164,7 +167,7 @@ async function identifyMatrix(v) {
   const ANCHOR = R("acct-01");
   const door = matches.some((m) => m.account === ANCHOR && m.role === "posting")
     ? "anchor/posting"
-    : matches.some((m) => m.account === "owner" && m.role === "active")
+    : matches.some((m) => m.account === ACCOUNT && m.role === "active")
       ? "owner/active"
       : null;
   return { valueKind: isWif ? "wif" : "primary-credential", tested, matches, door };
