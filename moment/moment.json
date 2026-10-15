@@ -1,33 +1,33 @@
 {
  "ok": true,
  "format": "moment-watch-v1",
- "publishedAt": "2026-10-15T15:55:38.858Z",
+ "publishedAt": "2026-10-15T17:19:42.840Z",
  "engine": "Domain/agents/moment-watch · R62 sovereign moment",
  "role": "reads the live moment every 30 minutes (market regime, our parity line vs the live internal book, fuel runway, measured anomalies) and records a deterministic directional call that is only ever scored after its horizon has passed - training as measurement, never as promise",
  "market": {
-  "steemUsd": 0.054294,
-  "steem24h": -2.1604513571793587,
-  "sbdUsd": 0.534347,
-  "btcUsd": 82361,
-  "btc24h": 0.8392851680497658,
+  "steemUsd": 0.054389,
+  "steem24h": -2.7635910817776237,
+  "sbdUsd": 0.533098,
+  "btcUsd": 82431,
+  "btc24h": 0.5978074406927724,
   "fearGreed": {
    "value": 53,
    "label": "Neutral"
   }
  },
- "paritySbdPerSteem": 0.10160813104593083,
+ "paritySbdPerSteem": 0.10202439326352754,
  "liveBook": {
-  "bestBid": 0.10263779123473263,
+  "bestBid": 0.10050251256281408,
   "bestAsk": 0.1044776119402985,
-  "bidsDepthSbd": 1189.81,
-  "asksDepthSteem": 5141.76,
-  "levels": 20,
-  "bidSurplusBps": 101
+  "bidsDepthSbd": 683,
+  "asksDepthSteem": 141.8,
+  "levels": 13,
+  "bidSurplusBps": -149
  },
  "regime": {
   "label": "NEUTRAL",
   "drivers": [
-   "BTC +0.8%",
+   "BTC +0.6%",
    "F&G 53"
   ],
   "thresholds": {
@@ -40,7 +40,7 @@
  },
  "runway": {
   "active": false,
-  "weeklySp": 6.203624381278241e-10,
+  "weeklySp": 6.203648912285507e-10,
   "nextPayment": "1969-12-31T23:59:59",
   "remainingSp": 0,
   "weeklyUsd": 0,
@@ -71,9 +71,9 @@
  },
  "call": "FLAT",
  "callStats": {
-  "resolved": 38,
+  "resolved": 39,
   "hits": 16,
-  "hitRatePct": 42,
+  "hitRatePct": 41,
   "horizonH": 6,
   "thresholdPct": 3
  },
@@ -81,8 +81,8 @@
  "insights": [
   {
    "kind": "parity-edge",
-   "tone": "warn",
-   "text": "הספר החי 101bps מעל קו-הזהות — אין עודף-קנייה כרגע; הגריד ממתין."
+   "tone": "good",
+   "text": "עומק-קנייה חי 149bps מתחת לקו-הזהות (bid 0.1005 מול parity 0.1020) — עודף מדוד לגריד."
   },
   {
    "kind": "fuel",
