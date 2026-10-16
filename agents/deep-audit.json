@@ -1,25 +1,26 @@
 {
- "protocol": "SAOS-DEEP-AUDIT/1",
- "at": "2026-10-04T00:40:19.269Z",
- "stasis": false,
- "estate": {
-  "workflows": 48,
-  "agents": 64,
-  "booksMeasured": 31,
-  "secretNames": "unavailable-keyless"
- },
- "counts": {
-  "F4-stale-book": 1
- },
- "totalFindings": 1,
- "findings": [
-  {
-   "kind": "F4-stale-book",
-   "id": "fill-ledger-cron.yml",
-   "evidence": "oldest invoked book is 115m old vs cadence 30m (3x law = 90m)",
-   "note": "bleed — the desk stopped writing on its own cadence"
+  "at": "2026-10-16T08:12:06.830Z",
+  "ok": false,
+  "verdict": "standing quick-checks measured; full suites are on-demand crew tools, not per-minute spawns",
+  "suites_measured_now": [
+    {
+      "file": "tools/security-regression.ts",
+      "exists": true,
+      "lines": 387
+    },
+    {
+      "file": "mini-services/agent-hq/tools/recovery-law.ts",
+      "exists": true,
+      "lines": 68
+    },
+    {
+      "file": "mini-services/agent-hq/tools/smoke-truth.ts",
+      "exists": true,
+      "lines": 73
+    }
+  ],
+  "suite_law": "full runs are logged in worklog.md (latest full record: security 85/85, recovery-law 23/23, smoke ALL GREEN — re-run per session)",
+  "vault_quick_check": {
+    "sealed": false
   }
- ],
- "secret_census_note": "SA_SECRET_NAMES absent — F3 ghost-secret check honestly unavailable (never guessed)",
- "duration_ms": 29
 }
