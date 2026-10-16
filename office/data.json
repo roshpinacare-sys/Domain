@@ -1,8 +1,8 @@
 {
  "schema": "office.pulse/1",
- "generatedAt": "2026-10-16T14:34:42.034Z",
+ "generatedAt": "2026-10-16T14:56:30.922Z",
  "generatedAgeNote": "this file is rewritten by the office-pulse workflow; judge freshness by generatedAt",
- "verdict": "ALIVE",
+ "verdict": "AGING",
  "verdictChecks": [
   {
    "name": "office-push",
@@ -11,33 +11,33 @@
   },
   {
    "name": "office-ci",
-   "state": "fresh",
-   "detail": "0min <= 1560min"
+   "state": "pending",
+   "detail": "HTTP 404 contents:receipts/office-ci/verdict.json"
   },
   {
    "name": "wallet-artery",
-   "state": "fresh",
-   "detail": "162min <= 2880min · PASS"
+   "state": "aging",
+   "detail": "184min <= 2880min · PASS"
   },
   {
    "name": "grid-artery",
    "state": "fresh",
-   "detail": "24min <= 720min · BLOCKED: grid credential-blocked — BLOCKED-SILENT LAW v2: measured honestly, owner words "
+   "detail": "45min <= 720min · BLOCKED: grid credential-blocked — BLOCKED-SILENT LAW v2: measured honestly, owner words "
   },
   {
    "name": "fleet-artery",
    "state": "fresh",
-   "detail": "74min <= 2880min · PASS"
+   "detail": "95min <= 2880min · PASS"
   },
   {
    "name": "sovereign-tick",
    "state": "fresh",
-   "detail": "24min <= 360min"
+   "detail": "4min <= 360min"
   },
   {
    "name": "runtime-heartbeat",
    "state": "fresh",
-   "detail": "30min <= 90min"
+   "detail": "16min <= 90min"
   }
  ],
  "degraded": [],
@@ -51,101 +51,72 @@
  },
  "office": {
   "repo": "roshpinacare-sys/FleetHQ",
-  "pushedAt": "2026-10-16T14:34:32Z",
+  "pushedAt": "2026-10-16T14:56:18Z",
   "pushedAgeMin": 0,
   "openIssues": 5,
   "wire": [
    {
-    "sha": "9b5296c",
-    "msg": "pacemaker receipt: 2026-10-16T14:34:31Z",
-    "at": "2026-10-16T14:34:31Z",
+    "sha": "a11b5e2",
+    "msg": "restore-84c: אחרי-עצירת-השירותים-על-ה-inodes-המחוקים — העץ-שקט [trace 1a144e7ab7f9cc35]",
+    "at": "2026-10-16T14:56:15Z",
     "ageMin": 0,
     "author": "roshpinacare-sys"
    },
    {
-    "sha": "1ab3475",
-    "msg": "office-ci receipt: build pass, types pass [skip ci]",
-    "at": "2026-10-16T14:34:25Z",
-    "ageMin": 0,
-    "author": "roshpinacare-sys"
-   },
-   {
-    "sha": "f53fefd",
-    "msg": "pacemaker receipt: 2026-10-16T14:34:12Z",
-    "at": "2026-10-16T14:34:12Z",
-    "ageMin": 0,
-    "author": "roshpinacare-sys"
-   },
-   {
-    "sha": "4d8cebd",
-    "msg": "identity-patrol receipt: 2026-10-16T14:33:54Z [skip ci]",
-    "at": "2026-10-16T14:33:54Z",
+    "sha": "407e60c",
+    "msg": "restore-84b: דלתא-קבלות-השירותים-החיים",
+    "at": "2026-10-16T14:55:49Z",
     "ageMin": 1,
     "author": "roshpinacare-sys"
    },
    {
-    "sha": "8d1236a",
-    "msg": "claims-triage: decisions ledger 2026-10-16T14:33Z [skip ci]",
-    "at": "2026-10-16T14:33:48Z",
+    "sha": "115e55f",
+    "msg": "restore-84: העץ-המלא (2824-קבצים) משוחזר-מההיסטוריה — app+mini-services+קוד-האפליקציה [tra",
+    "at": "2026-10-16T14:55:28Z",
     "ageMin": 1,
     "author": "roshpinacare-sys"
    },
    {
-    "sha": "8a0edf9",
-    "msg": "pacemaker receipt: 2026-10-16T14:33:37Z",
-    "at": "2026-10-16T14:33:37Z",
-    "ageMin": 1,
+    "sha": "b2357e2",
+    "msg": "vault-seal [auto-economy]: 7 files — אטימה-חוזרת, כלום לא מת עם הסנדבוקס",
+    "at": "2026-10-16T14:51:37Z",
+    "ageMin": 5,
+    "author": "roshpinacare-sys"
+   },
+   {
+    "sha": "479de64",
+    "msg": "vault-seal [auto-economy]: 7 files — אטימה-חוזרת, כלום לא מת עם הסנדבוקס",
+    "at": "2026-10-16T14:50:32Z",
+    "ageMin": 6,
+    "author": "roshpinacare-sys"
+   },
+   {
+    "sha": "1df0f06",
+    "msg": "vault-seal [auto-economy]: 2 files — אטימה-חוזרת, כלום לא מת עם הסנדבוקס",
+    "at": "2026-10-16T14:41:39Z",
+    "ageMin": 15,
     "author": "roshpinacare-sys"
    }
   ],
   "worklog": {
-   "tasks": 84,
-   "last": [
-    {
-     "id": "5",
-     "title": "Pages站点质量专门任务 — office-state 14h stale根因修复 + 端到端/浏览器验证"
-    },
-    {
-     "id": "4",
-     "title": "תמשיך — 全库审计 + estate FleetHQ卡死UU治愈 + git失败邮件根因闭环 + 四仓库0/0"
-    },
-    {
-     "id": "3",
-     "title": "תמשיך — rig停摆事故修复 + 架构断言重审（local_robots可见性缺口闭合）+ Pages数据源审计 + 同步跑步机"
-    }
-   ]
+   "tasks": 0,
+   "last": [],
+   "__error": "worklog fetch failed"
   },
-  "worklogLastTouchAgeMin": 48,
+  "worklogLastTouchAgeMin": 17,
   "boot": {
-   "at": "2026-10-16T13:17:24.885Z",
-   "ageMin": 77,
-   "office": {
-    "reception_3000": "up",
-    "foreman_3010": "up",
-    "gateway_3011": "up"
-   },
-   "allOk": true
+   "error": "HTTP 404 contents:receipts/boot-verify.json"
   },
   "ci": {
-   "overall": "PASS",
-   "at": "2026-10-16T14:34:23.918Z",
-   "ageMin": 0,
-   "reason": "all five checks ran and passed",
-   "runUrl": "https://github.com/roshpinacare-sys/FleetHQ/actions/runs/38916650206",
-   "checks": {
-    "install": "pass",
-    "prismaGenerate": "pass",
-    "typecheck": "pass",
-    "productionBuild": "pass",
-    "connectivityAudit": "pass"
-   }
+   "pending": "first office-ci receipt not landed yet",
+   "error": "HTTP 404 contents:receipts/office-ci/verdict.json"
   }
  },
  "arteries": {
   "wallet": {
    "source": "Autonomy/receipts/wallet/verdict.json",
    "at": "2026-10-16T11:52:47.659Z",
-   "ageMin": 162,
+   "ageMin": 184,
    "overall": "PASS",
    "reason": "install, prisma, typecheck, build and all wallet laws pass — with 1 persistent trust-flag(s) (see alerts)",
    "alerts": 1,
@@ -154,7 +125,7 @@
   "grid": {
    "source": "Autonomy/receipts/grid/verdict.json",
    "at": "2026-10-16T14:11:08.663Z",
-   "ageMin": 24,
+   "ageMin": 45,
    "overall": "BLOCKED",
    "reason": "grid credential-blocked — BLOCKED-SILENT LAW v2: measured honestly, owner words decide",
    "alerts": 0,
@@ -163,7 +134,7 @@
   "fleet": {
    "source": "Autonomy/receipts/fleet/verdict.json",
    "at": "2026-10-16T13:20:59.309Z",
-   "ageMin": 74,
+   "ageMin": 95,
    "overall": "PASS",
    "reason": "steem=PASS · saos-dex=PASS · saos-agents=PASS · Saosmartwallet=PASS · Adsmarket=PASS",
    "alerts": 3,
@@ -171,15 +142,15 @@
   },
   "tick": {
    "source": "Autonomy/receipts/latest.json",
-   "at": "2026-10-16T14:10:18.344Z",
-   "ageMin": 24,
-   "chain": "149429517ff1"
+   "at": "2026-10-16T14:52:56.721Z",
+   "ageMin": 4,
+   "chain": "7bab2abb45f5"
   }
  },
  "runtime": {
-  "lastSuccessAt": "2026-10-16T14:04:37Z",
-  "lastSuccessAgeMin": 30,
-  "lastSuccessName": "sovereign-runtime",
-  "lastConclusion": "cancelled"
+  "lastSuccessAt": "2026-10-16T14:40:40Z",
+  "lastSuccessAgeMin": 16,
+  "lastSuccessName": "grid-watchdog",
+  "lastConclusion": "success"
  }
 }
