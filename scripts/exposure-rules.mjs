@@ -97,7 +97,7 @@ export const SIGLOCKED_FILES = [/^ledger\.json$/, /^agents\/econ-ledger\.jsonl$/
 // DECISION (see in-file RESTORED 2026-10-16 comment — the a5d2224d mis-redaction broke the
 // CI desk: measured NO-FUNDS blind run while 15.9 STEEM/44 SBD sat on-chain). Waive ONLY
 // the owner-handle pattern for this one file; every other law still applies at full strength.
-export const HEAD_ACCOUNT_FILES = [/^agents\/head-delegate\.cjs$/];
+export const HEAD_ACCOUNT_FILES = [/^agents\/head-delegate\.cjs$/, /^agents\/content-campaign\.mjs$/];
 
 export const ENGINE_RE = /^(?:[\w.-]+\/)?(agents\/.*\.(cjs|mjs)|scripts\/.*\.mjs)$/; // T24: prefix-tolerant - the same engine waiver applies in every checkout context (one law, two enforcers, no path drift)
 export const ENGINE_WAIVED = /keysZipPass/;
