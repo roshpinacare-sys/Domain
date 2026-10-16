@@ -7,7 +7,7 @@ At: 2026-10-16T14:41:36.924Z · Verdict: **MARKET-GRID-LIVE** · Markets read: 3
 | HBD/HIVE (internal hive) | 0.05338496252375631 | 0.05345911949685535 | 0.1388 | 2.868 | 10 | 0.00030638 | 5 |
 | SBD/STEEM (internal steem) | 0.10306697266847487 | 0.10333781130515655 | 0.2624 | 0 | 10 | 0.00041281 | 6 |
 
-Hive-Engine basket (keyless RPC, per-token fee measured from the tokens contract): BEE spread 0.9961% fee 0bps pond 341.07570673 SWAP.HIVE/24h FEASIBLE · SWAP.LTC spread 0.0123% fee 0bps pond 16847.79374745 SWAP.HIVE/24h thin · SWAP.DOGE spread 1.1854% fee 0bps pond 501.55881131 SWAP.HIVE/24h FEASIBLE · CENT spread 1.5915% fee 0bps pond 75.60892999 SWAP.HIVE/24h FEASIBLE · WAIV spread 0.0607% fee 0bps pond 7.51429724 SWAP.HIVE/24h thin
+Hive-Engine basket (keyless RPC, per-token fee measured from the tokens contract): BEE spread 0.9308% fee 0bps pond 341.07570673 SWAP.HIVE/24h FEASIBLE · SWAP.LTC spread 0.1256% fee 0bps pond 16847.79374745 SWAP.HIVE/24h thin · SWAP.DOGE spread 1.6905% fee 0bps pond 501.55881323 SWAP.HIVE/24h FEASIBLE · CENT spread 1.769% fee 0bps pond 99.54584202 SWAP.HIVE/24h FEASIBLE · WAIV spread 0.0607% fee 0bps pond 7.51642707 SWAP.HIVE/24h thin
 HE daily-history probe: DARK (probed, honest) — HE-DAILY-HISTORY-DARK: marketHistory/history answered null (not RPC-exposed) — the day it answers, the pond becomes a series
 
 Blurt internal market: DARK (probed, honest) — BLURT-SURFACE-DARK: getaddrinfo ENOTFOUND api.blurt.world
