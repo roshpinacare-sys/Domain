@@ -460,6 +460,30 @@ function appendLedger(events, c) {
   return { wrote };
 }
 
+/* ── ledger rotation (GH001 law, 2026-10-16) ──────────────────────────────
+ * The twin's 338-file wipe ROOT CAUSE was exactly this: a single growing
+ * econ-ledger.jsonl crossed GitHub's 100MB file limit → its sync "cured"
+ * by deleting files. Rotation law: keep the ACTIVE ledger small; seal the
+ * past into gzipped archives (each far below the limit). The sha16 chain
+ * continues across files via state.last_sha16 (prev links preserved). */
+const LEDGER_ROTATE_BYTES = 30 * 1024 * 1024;  // 30MB — 3x under GitHub's 100MB hard limit; ~1 day of rows at ~1M/day
+function rotateLedgerIfNeeded() {
+  try {
+    let size = 0;
+    try { size = fs.statSync(LEDGER).size; } catch { return; }
+    if (size < LEDGER_ROTATE_BYTES) return;
+    const lines = readJsonl(LEDGER);
+    if (!lines.length) return;
+    const first = JSON.parse(lines[0]);
+    const last = JSON.parse(lines[lines.length - 1]);
+    const arch = path.join(ROOT, `econ-ledger-archive-${String(first.seq ?? 0).padStart(6, '0')}-${String(last.seq ?? 0).padStart(6, '0')}.jsonl.gz`);
+    const zipped = require('zlib').gzipSync(fs.readFileSync(LEDGER), { level: 6 });
+    fs.writeFileSync(arch, zipped);
+    fs.writeFileSync(LEDGER, ''); // active file resets; chain continues via state.last_sha16
+    console.log(`[econ-engine] ledger rotated: ${lines.length} rows → ${path.basename(arch)} (${(zipped.length / 1048576).toFixed(1)}MB gz), chain intact (last_sha16=${String(last.sha16 || '').slice(0, 8)})`);
+  } catch (e) { /* rotation is best-effort; never block settlement */ }
+}
+
 /* ── book: measured summary, never a quota ──────────────────────────────── */
 function summarize() {
   const lines = readJsonl(LEDGER);
@@ -497,6 +521,7 @@ function settle() {
   const c = loadCursor();
   const events = harvest(c);
   const { wrote } = appendLedger(events, c);
+  rotateLedgerIfNeeded(); // GH001 law: never let the active ledger approach 100MB
   if (wrote > 0) {
     // advance each source watermark to the newest event it actually minted
     // (Task 59-a: explicit KIND→SRC map — an unknown kind must NEVER
