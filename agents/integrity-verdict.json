@@ -1,0 +1,68 @@
+{
+ "schema": "integrity-guard/2",
+ "scope": "public-twin (Domain home)",
+ "at": "2026-10-16T12:01:09.214Z",
+ "overall": "FAIL",
+ "summary": {
+  "sources": 7,
+  "verified": 4,
+  "findings": 5,
+  "counts": {
+   "stale": 4,
+   "producer-red": 1
+  }
+ },
+ "verified": [
+  {
+   "where": "self:agents/integrity-verdict.json",
+   "law": "L0-verified",
+   "detail": "פסק-קודם תקין (FAIL) מלפני 4ש'"
+  },
+  {
+   "where": "Domain:office/data.json",
+   "law": "fresh+parsed",
+   "detail": "גיל 1.9ש' ≤ SLA 2ש'"
+  },
+  {
+   "where": "FleetHQ:office/state/office-state.json",
+   "law": "fresh+parsed",
+   "detail": "גיל 0.3ש' ≤ SLA 4ש'"
+  },
+  {
+   "where": "Domain:agents/work-orders.json",
+   "law": "published",
+   "detail": "2 פקודות-פתוחות · schema work-orders/2"
+  }
+ ],
+ "findings": [
+  {
+   "where": "Domain:agents/work-orders.json",
+   "law": "stale",
+   "detail": "גיל 4.3ש' > SLA 4ש'"
+  },
+  {
+   "where": "Domain:agents/grid-truth.json",
+   "law": "stale",
+   "detail": "גיל 2.5ש' > SLA 2ש'"
+  },
+  {
+   "where": "Domain:agents/office-live.json",
+   "law": "stale",
+   "detail": "גיל 4.5ש' > SLA 4ש'"
+  },
+  {
+   "where": "sovereign-runner-kit:results/receipts.jsonl",
+   "law": "stale",
+   "detail": "גיל 91.9ש' > SLA 72ש'"
+  },
+  {
+   "where": "Domain:office/data.json",
+   "law": "producer-red",
+   "detail": "היצרן רץ null לפני 0 דק' — הספר חייב-בדיקה"
+  }
+ ],
+ "provenance": {
+  "runUrl": "https://github.com/roshpinacare-sys/Domain/actions/runs/38897615362",
+  "workflow": "artery-integrity-twin"
+ }
+}

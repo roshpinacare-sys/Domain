@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מצב-המערכת | SAOS Network</title>
+<meta name="description" content="מצב-המערכת החי של רשת SAOS — איברים, טריות, כיול רעש וקבלות. ניזון מהדופק הציבורי, בלי מפתחות.">
+<style>
+:root{ --bg:#f5f3f1; --panel:#ffffff; --panel2:#fafaf9; --line:#e6e2dd; --line2:#d6d0c9; --green:#0d9d6d; --red:#c2410c; --amber:#a16207; --text:#1d1d1f; --dim:#57534e; --faint:#8a8580; --mono:ui-monospace,'SF Mono','Cascadia Code',Consolas,Menlo,monospace; --sans:-apple-system,'Segoe UI',Roboto,'Helvetica Neue','Noto Sans Hebrew',Arial,sans-serif; --r:14px; --r-sm:10px; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;-webkit-font-smoothing:antialiased}
+.wrap{max-width:980px;margin:0 auto;padding:0 18px}
+header{position:sticky;top:0;z-index:10;background:rgba(245,243,241,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.hd{height:56px;display:flex;align-items:center;gap:12px}
+.brand{font-weight:700;font-size:15px}
+.brand small{display:block;font-weight:500;font-size:10.5px;color:var(--faint)}
+.hd nav{margin-inline-start:auto;display:flex;gap:14px;font-size:13px}
+.hd a{color:var(--dim);text-decoration:none}
+.hd a:hover{color:var(--text)}
+main{padding:26px 0 60px}
+h1{font-size:24px;letter-spacing:-.3px;margin-bottom:6px}
+.lede{color:var(--dim);font-size:14px;max-width:640px;line-height:1.65;margin-bottom:20px}
+.bigverdict{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px}
+.vcell{flex:1 1 180px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}
+.vcell b{display:block;font-family:var(--mono);font-size:22px;margin-bottom:2px}
+.vcell span{font-size:12px;color:var(--faint)}
+.ok{color:var(--green)} .bad{color:var(--red)} .warn{color:var(--amber)}
+section{margin-bottom:26px}
+h2{font-size:16px;margin-bottom:10px;letter-spacing:-.2px}
+.note{font-size:12.5px;color:var(--dim);margin-bottom:10px;line-height:1.6}
+table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;font-size:13px}
+th{background:var(--panel2);text-align:right;font-weight:600;color:var(--dim);font-size:11.5px;letter-spacing:.3px;padding:9px 12px;border-bottom:1px solid var(--line)}
+td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:none}
+td.mono{font-family:var(--mono);direction:ltr;text-align:left;unicode-bidi:embed}
+.pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:600;border:1px solid}
+.pill.g{color:var(--green);border-color:rgba(13,157,109,.35);background:rgba(13,157,109,.07)}
+.pill.a{color:var(--amber);border-color:rgba(161,98,7,.35);background:rgba(161,98,7,.07)}
+.pill.r{color:var(--red);border-color:rgba(194,65,12,.35);background:rgba(194,65,12,.07)}
+.pill.n{color:var(--faint);border-color:var(--line2);background:var(--panel2)}
+ul.reasons{list-style:none;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:12px 16px;font-size:13px;line-height:1.7}
+ul.reasons li{padding:2px 0;border-bottom:1px dashed var(--line)}
+ul.reasons li:last-child{border-bottom:none}
+.foot{border-top:1px solid var(--line);margin-top:34px;padding-top:14px;font-size:12px;color:var(--faint);line-height:1.8}
+.foot a{color:var(--dim)}
+@media(max-width:640px){ .hd nav{display:none} td,th{padding:7px 8px} .vcell b{font-size:18px} }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap hd">
+    <div class="brand">SAOS Network — מצב-המערכת<small>איברים · טריות · כיול — נמדד חי, בלי מפתחות</small></div>
+    <nav aria-label="ניווט">
+      <a href="/Domain/">ראשי</a>
+      <a href="/Domain/marketing/">מוצרים</a>
+      <a href="https://github.com/roshpinacare-sys/Pulse/blob/main/DECISIONS.md">החלטות</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1>מצב-המערכת</h1>
+  <p class="lede">העמוד ניזון ישירות מספרי-המצב שהאיברים כותבים ב-git: הדופק הציבורי של Pulse, ספר-הטריות של המרפא, והדופק של המשרד. אין כאן תצוגה ידנית — מה שנכתב על-ידי הריצות זה מה שנראה כאן. מצב שלא נמדד מסומן ככזה, לעולם לא ממולא.</p>
+
+  <div class="bigverdict" id="verdict-strip">
+    <div class="vcell"><b id="v-terminal">—</b><span>פס-הדופק · terminal</span></div>
+    <div class="vcell"><b id="v-fresh" class="mono">—</b><span>טריות ה-census · גיל (דק')</span></div>
+    <div class="vcell"><b id="v-clocks" class="mono">—</b><span>שעונים פעילים · relay/schedule</span></div>
+    <div class="vcell"><b id="v-repos" class="mono">—</b><span>הצי · ריפואים נסקרים</span></div>
+  </div>
+
+  <section aria-labelledby="h-organs">
+    <h2 id="h-organs">איברי הרשת — טריות מול יעד</h2>
+    <p class="note">נמדד על-ידי opens-closer (המרפא) בכל טיק: גיל ספר-המצב האחרון של כל איבר מול היעד שלו. stale = מעל היעד; ריפוי-dispatch נשלח אוטומטית ונרשם.</p>
+    <table>
+      <thead><tr><th>איבר</th><th>גיל (דק')</th><th>יעד SLA</th><th>מצב</th><th>ריפוי</th></tr></thead>
+      <tbody id="organs-body"><tr><td colspan="5">טוען מהספר החי…</td></tr></tbody>
+    </table>
+  </section>
+
+  <section aria-labelledby="h-calib">
+    <h2 id="h-calib">כיול-הרעש — האדומים לפי שורש</h2>
+    <p class="note">לא כל אדום הוא איבר-חולה. הסיווג נמדד: חתימת-מכסה (job נכשל תוך שניות עם אפס צעדים) = שער-חיוב, owner-gated; אדום code-level = נדרש תיקון אמיתי; אדומי-אודיט = פלט-עבודה תקין של שערים.</p>
+    <table>
+      <thead><tr><th>סיווג</th><th>מספר</th><th>ריפואים</th><th>משמעות</th></tr></thead>
+      <tbody id="calib-body"><tr><td colspan="4">טוען…</td></tr></tbody>
+    </table>
+  </section>
+
+  <section aria-labelledby="h-reasons">
+    <h2 id="h-reasons">הסיבות הנקובות מה-census האחרון</h2>
+    <ul class="reasons" id="reasons-list"><li>טוען…</li></ul>
+  </section>
+
+  <section aria-labelledby="h-cad">
+    <h2 id="h-cad">אמן-השעון</h2>
+    <table>
+      <thead><tr><th>מנגנון</th><th>קצב</th><th>מצב</th><th>ראיה</th></tr></thead>
+      <tbody id="cad-body"><tr><td colspan="4">טוען…</td></tr></tbody>
+    </table>
+  </section>
+
+  <div class="foot">
+    מקורות חיים: <a href="https://raw.githubusercontent.com/roshpinacare-sys/Pulse/main/state/network.json">Pulse network.json</a> ·
+    <a href="https://raw.githubusercontent.com/roshpinacare-sys/FleetHQ/main/office/state/opens-closer.json">opens-closer ledger</a> ·
+    <a href="https://raw.githubusercontent.com/roshpinacare-sys/Domain/main/office/data.json">office pulse</a> ·
+    היסטוריית ריצות: <a href="https://github.com/roshpinacare-sys/Pulse/actions">Pulse Actions</a>.
+    חוק-הכנות: מצב לא-נמדד מוצג כלא-נמדד. הדף סטטי, נטול-מפתחות, ונמשך מהספרים שהריצות כותבות.
+  </div>
+</main>
+
+<script>
+const RAW = 'https://raw.githubusercontent.com';
+const jget = (url, ms) => {
+  const ctl = new AbortController();
+  const t = setTimeout(() => ctl.abort(), ms || 12000);
+  return fetch(url, { signal: ctl.signal }).then(r => { clearTimeout(t); if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
+};
+const ago = (ts) => {
+  if (!ts) return null;
+  const t = Date.parse(ts);
+  return isNaN(t) ? null : Math.max(0, Math.round((Date.now() - t) / 60000));
+};
+const pill = (cls, txt) => '<span class="pill ' + cls + '">' + txt + '</span>';
+const verdictPill = (st) => st === 'fresh' ? pill('g', 'טרי') : st === 'stale' ? pill('r', 'מאחורי-היעד') : pill('n', 'לא נמדד');
+
+/* ── Pulse census: verdict strip + calibration + reasons + clocks ── */
+jget(RAW + '/roshpinacare-sys/Pulse/main/state/network.json').then(function(d){
+  const term = d.terminal || 'unknown';
+  const vt = document.getElementById('v-terminal');
+  vt.textContent = term === 'success' ? 'תקין' : term === 'degraded' ? 'תקין-עם-תנאים' : 'חסום';
+  vt.className = term === 'success' ? 'ok' : term === 'blocked' ? 'bad' : 'warn';
+  const age = ago(d.generatedAt);
+  const vf = document.getElementById('v-fresh');
+  vf.textContent = age === null ? '—' : age;
+  vf.className = age !== null && age <= 90 ? 'ok' : 'warn';
+  document.getElementById('v-repos').textContent = (d.totals && d.totals.repos) || '—';
+  const clocks = [];
+  clocks.push('relay עצמי');
+  if (d.cadence && d.cadence.scheduleStatus === 'firing') clocks.push('schedule');
+  document.getElementById('v-clocks').textContent = clocks.join(' + ');
+
+  // calibration table
+  const t = d.totals || {};
+  const rows = [
+    ['code-level', t.actionsRedActionable, (d.actionsRedActionable || []).join(', ') || '—', 'נדרש תיקון אמיתי בקוד או בתצורה'],
+    ['שער-חיוב (מכסת דקות)', t.actionsQuotaGated, (d.actionsQuotaGated || []).join(', ') || '—', 'owner-gated; job נכשל בשניות עם אפס צעדים; הציבורי ממשיך חופשי'],
+    ['אודיט-מידע', t.actionsRedInfo, '—', 'פלט-עבודה של שערי-סריקה; מתועד, לא מדביק'],
+    ['טריות 24h', null, (d.stale24h || []).length + ' ריפואים', (d.stale24h || []).join(', ') || '—'],
+  ];
+  document.getElementById('calib-body').innerHTML = rows.map(function(r){
+    return '<tr><td>' + r[0] + '</td><td class="mono">' + (r[1] === null ? '—' : r[1]) + '</td><td class="mono" style="max-width:220px">' + r[2] + '</td><td>' + r[3] + '</td></tr>';
+  }).join('');
+
+  document.getElementById('reasons-list').innerHTML = (d.reasons || []).map(function(r){ return '<li>' + String(r).replace(/[<>&]/g, '') + '</li>'; }).join('') || '<li>אין סיבות נקובות — הכל ביעד</li>';
+
+  // clocks table
+  const c = d.cadence || {};
+  const cad = [
+    ['self-relay (האיבר נושא את השעון שלו)', 'כל 30 דק', 'חי — הוכח A→B→C→D ב-Actions', '<a href="https://github.com/roshpinacare-sys/Pulse/actions">ריצות</a>'],
+    ['cron schedule של GitHub', c.schedule || '*/30', c.scheduleStatus === 'firing' ? 'יורה' : c.scheduleStatus === 'pending-first-fire' ? 'טרם-ריצה-ראשונה (best-effort, נקוב)' : 'לא נמדד', '—'],
+    ['הצתה ידנית/חוצת-איברים', 'לפי-צורך', 'זמין', '—'],
+  ];
+  document.getElementById('cad-body').innerHTML = cad.map(function(r){ return '<tr><td>' + r[0] + '</td><td class="mono">' + r[1] + '</td><td>' + r[2] + '</td><td>' + r[3] + '</td></tr>'; }).join('');
+}).catch(function(){
+  document.getElementById('v-terminal').textContent = 'לא נגיש';
+  document.getElementById('v-terminal').className = 'bad';
+});
+
+/* ── opens-closer ledger: organs freshness table ── */
+jget(RAW + '/roshpinacare-sys/FleetHQ/main/office/state/opens-closer.json').then(function(led){
+  const rows = (led.checks || []).map(function(c){
+    return '<tr><td class="mono">' + String(c.key).replace(/[<>&]/g, '') + '</td>' +
+      '<td class="mono">' + (c.ageMin === null || c.ageMin === undefined ? '—' : c.ageMin) + '</td>' +
+      '<td class="mono">' + (c.slaMin || '—') + '</td>' +
+      '<td>' + verdictPill(c.stale === null || c.stale === undefined ? 'unknown' : c.stale ? 'stale' : 'fresh') + '</td>' +
+      '<td>' + (c.dispatched ? pill('a', 'נשלח ריפוי') : pill('n', 'לא נדרש')) + '</td></tr>';
+  }).join('');
+  document.getElementById('organs-body').innerHTML = rows || '<tr><td colspan="5">הספר ריק — נקוב</td></tr>';
+}).catch(function(){
+  document.getElementById('organs-body').innerHTML = '<tr><td colspan="5">ספר-הטריות לא נגיש כרגע — נקוב, לא ממולא</td></tr>';
+});
+</script>
+</body>
+</html>

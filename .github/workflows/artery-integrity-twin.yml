@@ -1,0 +1,57 @@
+name: artery-integrity-twin
+
+# ═══════════════════════════════════════════════════════════════════════════
+# ARTERY-INTEGRITY-TWIN · שומר-השלמות הציבורי — "אין זיופים" (G-series)
+# ───────────────────────────────────────────────────────────────────────────
+# המקור (Sandbox/artery-integrity) כלוא במכסת-דקות פרטית שאזלה. התאום ממשיך
+# את החוק מהבית-הציבורי: כל-ספר-חי נבדק — קיום, תקינות-פרסור, טריות-מול-SLA,
+# עקביות-מול-ריצת-היצרן בפועל (סתירת-PASS-מול-ריצה-אדומה = FLAG), ו-provenance
+# (runUrl/sha תקינים). 403/429/חוסר-טוקן = UNVERIFIABLE — לעולם לא "זיוף",
+# לעולם לא PASS-שקרי. פסק-קודם של השומר-עצמו נבדק ראשון (L0).
+# ═══════════════════════════════════════════════════════════════════════════
+
+on:
+  schedule:
+    - cron: "23 */2 * * *" # כל שעתיים ב-:23
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: artery-integrity-twin
+  cancel-in-progress: false
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v5
+        with: { fetch-depth: 1 }
+
+      - uses: actions/setup-node@v5
+        with: { node-version: 22 }
+
+      - name: verify public books provenance (never trust, always verify)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ZIP_PAT: ${{ secrets.ZIP_PAT }}
+        run: |
+          set -euo pipefail
+          node agents/integrity-twin.mjs
+
+      - name: Publish the verdict (honest verdicts always land, FAIL included)
+        if: always()
+        run: |
+          git config user.name "roshpinacare-sys"
+          git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
+          git add agents/integrity-verdict.json agents/integrity-log.jsonl
+          if git diff --cached --quiet; then echo "no delta — verdict unchanged"; exit 0; fi
+          git commit -qm "integrity verdict (twin): $(jq -r '.overall' agents/integrity-verdict.json) $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          ok=0
+          for i in 1 2 3; do
+            if git pull --rebase -X theirs --autostash -q origin main && git push -q origin main; then ok=1; break; fi
+            sleep 3
+          done
+          [ "$ok" = "1" ] || { echo "PUSH-FAILED"; exit 1; }

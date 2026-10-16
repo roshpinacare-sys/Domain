@@ -1,0 +1,112 @@
+{
+ "ok": true,
+ "format": "moment-watch-v1",
+ "publishedAt": "2026-10-16T07:28:15.469Z",
+ "engine": "Domain/agents/moment-watch · R62 sovereign moment",
+ "role": "reads the live moment every 30 minutes (market regime, our parity line vs the live internal book, fuel runway, measured anomalies) and records a deterministic directional call that is only ever scored after its horizon has passed - training as measurement, never as promise",
+ "market": {
+  "steemUsd": 0.054524,
+  "steem24h": 3.5913499777978766,
+  "sbdUsd": 0.53086,
+  "btcUsd": 82154,
+  "btc24h": 1.317661365236948,
+  "fearGreed": {
+   "value": 63,
+   "label": "Greed"
+  }
+ },
+ "paritySbdPerSteem": 0.10270881211618883,
+ "liveBook": {
+  "bestBid": 0.10334421892439337,
+  "bestAsk": 0.10432968179447052,
+  "bidsDepthSbd": 672.42,
+  "asksDepthSteem": 15056.07,
+  "levels": 20,
+  "bidSurplusBps": 62
+ },
+ "regime": {
+  "label": "RISK_ON",
+  "drivers": [
+   "BTC +1.3%",
+   "F&G 63"
+  ],
+  "thresholds": {
+   "btc24hPct": 4,
+   "fgLow": 25,
+   "fgHigh": 60,
+   "steemMovePct": 5,
+   "gridStaleHours": 26
+  }
+ },
+ "runway": {
+  "active": false,
+  "weeklySp": 6.203893533862596e-10,
+  "nextPayment": "1969-12-31T23:59:59",
+  "remainingSp": 0,
+  "weeklyUsd": 0,
+  "treasuryUsd": 1.76
+ },
+ "grid": {
+  "verdict": "ARMED-LIVE",
+  "armed": true,
+  "blocker": null,
+  "externalFlowUsd": 0.320837,
+  "publishedAt": "2026-10-16T00:47:59.221Z"
+ },
+ "moneyPath": {
+  "fuel": {
+   "ok": true,
+   "account": "acct-00",
+   "steem": 13.889,
+   "sbd": 42.366,
+   "powerdown": {
+    "active": false,
+    "rateVests": 0,
+    "rateSp": null,
+    "nextPayout": null,
+    "remainingVests": 0
+   }
+  },
+  "redemption": null
+ },
+ "call": "UP",
+ "callStats": {
+  "resolved": 45,
+  "hits": 16,
+  "hitRatePct": 36,
+  "horizonH": 6,
+  "thresholdPct": 3
+ },
+ "resolvedNow": 0,
+ "insights": [
+  {
+   "kind": "parity-edge",
+   "tone": "warn",
+   "text": "הספר החי 62bps מעל קו-הזהות — אין עודף-קנייה כרגע; הגריד ממתין."
+  },
+  {
+   "kind": "fuel",
+   "tone": "info",
+   "text": "דלק נוחת 1969-12-31 — ≈0 SP ≈ 0.0$ בסימון חי."
+  },
+  {
+   "kind": "deposits",
+   "tone": "info",
+   "text": "אפס הפקדות-חוץ (ספר ההפקדות הפתוח נקרא מהריפו) — המעגל האמיתי טרם נסגר בכסף של מישהו אחר."
+  },
+  {
+   "kind": "external-flow",
+   "tone": "info",
+   "text": "זרימת-חוץ מצטברת: 0.3208$ מ-101 מילויים (txids בספר הציבורי)."
+  }
+ ],
+ "sources": [
+  "api.coingecko.com",
+  "api.alternative.me",
+  "api.steemit.com",
+  "Console/dex/grid.json (live mirror)",
+  "dex/money.json (self)",
+  "dex/deposits.json (self)"
+ ],
+ "honesty": "כל נתון נמדד חי ממקורות ציבוריים; נפילת מקור מסומנת בכנות ואינה מוחלפת בהמצאה. קריאת-הכיוון דטרמיניסטית (±3% ביממה) ומוכרעת רק אחרי 6 שעות מול מחיר חי - גם כשהתוצאה גרועה. הסוכן אינו זז כסף, אינו חותם ואינו מזניק מכונות."
+}

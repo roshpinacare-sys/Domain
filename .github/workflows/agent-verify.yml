@@ -1,0 +1,68 @@
+#
+
+name: agent-verify
+
+on:
+  schedule:
+    - cron: '33 */2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: agent-verify
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Node 20
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      - name: Run the verifier against the live site
+        env:
+          # refs layer (19-d): ref→name resolution for chain-reading assertions
+          # (A31 steem_priority). Without the map the verifier parks those
+          # assertions honestly — never guesses a chain identity.
+          FLEET_ROSTER_MAP: ${{ secrets.FLEET_ROSTER_MAP }}
+        run: node agent/verify/run.mjs
+
+      - name: Commit results if changed
+        run: |
+          if [ ! -f agent/verify/results.json ]; then
+            echo "results.json missing - the verifier wrote nothing; nothing to commit"
+            exit 0
+          fi
+          git config user.name "roshpinacare-sys"
+          git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
+          for attempt in 1 2 3; do
+            git add agent/verify/results.json
+            if git diff --cached --quiet -- agent/verify/results.json; then
+              echo "results unchanged - no commit (attempt ${attempt})"
+              exit 0
+            fi
+            VERDICT="$(node -p "require('./agent/verify/results.json').summary.verdict")"
+            PASSED="$(node -p "require('./agent/verify/results.json').summary.passed")"
+            TOTAL="$(node -p "require('./agent/verify/results.json').summary.total")"
+            SUSP="$(node -p "require('./agent/verify/results.json').summary.suspended || 0")"
+            git commit -m "agent-verify: ${VERDICT} · ${PASSED}/${TOTAL} · ${SUSP} suspended · $(date -u +%Y-%m-%dT%H:%M:%SZ) [skip ci]"
+            git pull --rebase -X theirs --autostash origin main
+            if git push; then
+              echo "results committed on attempt ${attempt}: ${VERDICT} ${PASSED}/${TOTAL}"
+              exit 0
+            fi
+            echo "push failed (attempt ${attempt}); resetting to origin and re-running the verifier"
+            git checkout -- .
+            git reset --hard origin/main
+            node agent/verify/run.mjs
+          done
+          echo "ERROR: could not commit the results after 3 attempts"
+          exit 1

@@ -1,0 +1,171 @@
+name: office-orders-twin
+
+# ═══════════════════════════════════════════════════════════════════════════
+# OFFICE-ORDERS-TWIN · מנוע-פקודות-העבודה — התאום הציבורי (בית-הספרים החדש)
+# ───────────────────────────────────────────────────────────────────────────
+# רקע הנדסי (מדידה, 2026-10-12): הספר המקורי ישב בריפו פרטי שמכסת-הדקות שלו
+# אזלה — כל היצרנים שם מתים, וה-feed צרח STALE בקביעות (602 דק'). שיעור-הבית:
+# cap (35 דק') < cadence של היצרן עצמו (360 דק') = אזעקה-תמידית-על-פי-בנייה.
+#
+# התיקון המבני: הספר עובר לריפו ציבורי (דקות-Actions חינמיות, ללא-תלות
+# במכסה פרטית), נכתב באותו-ריפו עם GITHUB_TOKEN בלבד — אפס PAT-תלות לכתיבה.
+# הסריקה קוראת APIs ציבוריים; ריפואים פרטיים נבדקים עם ZIP_PAT כשקיים —
+# ואם לא: UNKNOWN-מפורסם-כך (חוק-הכנות G6), לעולם לא ירוק-מזויף.
+# ═══════════════════════════════════════════════════════════════════════════
+
+on:
+  schedule:
+    - cron: "17 */2 * * *" # כל שעתיים ב-:17 — דקה-אי-זוגיות (משמעת-הבית)
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: domain-office-orders
+  cancel-in-progress: false
+
+jobs:
+  orders:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+        with: { fetch-depth: 1 }
+
+      - uses: actions/setup-node@v5
+        with: { node-version: 22 }
+
+      - name: Scan the estate (public APIs; private repos via ZIP_PAT when present)
+        env:
+          ZIP_PAT: ${{ secrets.ZIP_PAT }}
+        run: |
+          set -euo pipefail
+          PUB=()
+          PRV=()
+          [ -n "${ZIP_PAT}" ] && PRV=(-H "Authorization: Bearer ${ZIP_PAT}")
+          mkdir -p /tmp
+          # ריפואים ציבוריים — קריאה חופשית
+          for R in FleetHQ Domain TruthRail sovereign-beacon sovereign-lighthouse saos-agents Console steem saos-dex; do
+            curl -s "https://api.github.com/repos/roshpinacare-sys/$R" \
+              | jq -c '{repo:"'$R'",pushed_at,archived,open_issues_count,private}' >> /tmp/repos.ndjson 2>/dev/null || true
+          done
+          # ריפואים פרטיים — רק עם PAT; בלעדיו נרשם unknown (כנות)
+          for R in Sandbox saos-runtime; do
+            CODE=$(curl -s -o /tmp/r.json -w '%{http_code}' "${PRV[@]}" "https://api.github.com/repos/roshpinacare-sys/$R" || echo 000)
+            if [ "$CODE" = "200" ]; then
+              jq -c '{repo:"'$R'",pushed_at,archived,open_issues_count,private}' /tmp/r.json >> /tmp/repos.ndjson
+            else
+              jq -cn --arg r "$R" --arg c "$CODE" '{repo:$r,pushed_at:null,archived:false,open_issues_count:null,private:true,unverifiable:$c}' >> /tmp/repos.ndjson
+            fi
+          done
+          # ריצות-אדומות 48ש — ציבורי עם github_token דרך API פתוח; פרטי עם PAT
+          : > /tmp/runs.ndjson
+          for R in FleetHQ Domain Console sovereign-runner-kit; do
+            curl -s "https://api.github.com/repos/roshpinacare-sys/$R/actions/runs?per_page=30" \
+              | jq -c '{repo:"'$R'",reds:[.workflow_runs[]? | select(.conclusion=="failure") | select(.created_at > ((now - 172800) | todateiso8601)) | {name,at:.created_at}]}' >> /tmp/runs.ndjson 2>/dev/null || true
+          done
+          for R in Sandbox saos-runtime; do
+            if [ -n "${ZIP_PAT:-}" ]; then
+              curl -s -H "Authorization: Bearer ${ZIP_PAT}" "https://api.github.com/repos/roshpinacare-sys/$R/actions/runs?per_page=30" \
+                | jq -c '{repo:"'$R'",reds:[.workflow_runs[]? | select(.conclusion=="failure") | select(.created_at > ((now - 172800) | todateiso8601)) | {name,at:.created_at}]}' >> /tmp/runs.ndjson 2>/dev/null || true
+            else
+              jq -cn --arg r "$R" '{repo:$r,reds:[],unverifiable:"no-pat"}' >> /tmp/runs.ndjson
+            fi
+          done
+          # בדיקות-טריות של ארבעת הספרים החיים
+          : > /tmp/feeds.ndjson
+          probe() {
+            local url="$1" tag="$2" code
+            code=$(curl -s -o /tmp/f.json -w '%{http_code}' --max-time 15 "$url") || code=000
+            local head=""
+            [ "$code" = "200" ] && head=$(head -c 300 /tmp/f.json | tr -d '\n')
+            jq -cn --arg tag "$tag" --arg code "$code" --arg head "$head" '{feed:$tag,http:$code,head:$head}' >> /tmp/feeds.ndjson
+          }
+          probe "https://roshpinacare-sys.github.io/FleetHQ/office-state.json" "FleetHQ/office-state.json"
+          probe "https://roshpinacare-sys.github.io/FleetHQ/digest.json" "FleetHQ/digest.json"
+          probe "https://roshpinacare-sys.github.io/Domain/office/data.json" "Domain/office/data.json"
+          probe "https://roshpinacare-sys.github.io/Domain/agents/office-live.json" "Domain/agents/office-live.json"
+
+      - name: Compute VALUE-MAP + work-orders (same schema, honest unknowns)
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from datetime import datetime, timezone
+          now = datetime.now(timezone.utc)
+          repos = [json.loads(l) for l in open('/tmp/repos.ndjson') if l.strip()]
+          runs  = [json.loads(l) for l in open('/tmp/runs.ndjson') if l.strip()]
+          feeds = [json.loads(l) for l in open('/tmp/feeds.ndjson') if l.strip()]
+          def age_h(iso):
+              if not iso: return None
+              try: return round((now - datetime.fromisoformat(iso.replace('Z','+00:00'))).total_seconds()/3600, 1)
+              except Exception: return None
+          def status(h):
+              if h is None: return 'UNKNOWN'
+              if h < 6: return 'FRESH'
+              if h < 24: return 'AGING'
+              if h < 168: return 'STALE'
+              return 'SILENT'
+          reds = {r.get('repo'): r.get('reds', []) for r in runs}
+          wos = []
+          for r in repos:
+              name = r.get('repo','?'); ah = age_h(r.get('pushed_at')); st = status(ah)
+              red = len(reds.get(name, []))
+              if 'unverifiable' in r:
+                  wos.append({'id': f'WO-{name}-unverifiable', 'area': name, 'priority': 'P2',
+                      'title': f'{name}: לא-ניתן-למדידה מהציבורי (HTTP {r["unverifiable"]})',
+                      'why': 'ריפו-פרטי בלי-טוקן-קריאה — הריבונות חייבת-עדות, לא-שתיקה',
+                      'acceptance': 'קריאה-מאומתת או העברת-ספר-לבית-ציבורי'})
+                  continue
+              if red >= 2:
+                  wos.append({'id': f'WO-{name}-reds', 'area': name, 'priority': 'P1',
+                      'title': f'רפא {red} ריצות-אדומות (48ש) ב-{name}',
+                      'why': 'ריצות-אדומות-חוזרות = עורק-שקט-שנפל — הכל-חייב-לפעול',
+                      'acceptance': 'ריצה-ירוקה-מלאה + שורת-שורש-בפנקס'})
+              if st in ('STALE','SILENT') and not r.get('archived'):
+                  wos.append({'id': f'WO-{name}-push-{st.lower()}', 'area': name, 'priority': 'P2',
+                      'title': f'{name}: דחיפה-אחרונה לפני {ah}ש ({st})',
+                      'why': 'ריפו-חי-שאינו-דוחף = מנוע-עומד-על-הגריד',
+                      'acceptance': 'דחיפה-מדידה או הצהרת-ארכיון'})
+          for f in feeds:
+              if f['http'] != '200':
+                  wos.append({'id': f"WO-feed-{f['tag'].split('/')[-1]}", 'area': 'feeds', 'priority': 'P1',
+                      'title': f"ספר-חי חסום: {f['tag']} (HTTP {f['http']})",
+                      'why': 'ספר-שאינו-נקרא = עורק-עיוור', 'acceptance': 'HTTP 200 + טריות-מדודה'})
+          # engine-sync law (AGENTS.md office world law): office/engine.mjs must be
+          # byte-identical to office3d/src/engine.js — drift = a wave changed one
+          # copy without the other (the world would lie differently per viewer).
+          try:
+              ea = open('office/engine.mjs','rb').read()
+              eb = open('office3d/src/engine.js','rb').read()
+              if ea != eb:
+                  wos.append({'id': 'WO-office-engine-sync', 'area': 'office', 'priority': 'P1',
+                      'title': 'סטיית-מנוע: office/engine.mjs ≠ office3d/src/engine.js',
+                      'why': 'שני עותקים של מנוע-אחד — סטייה = עולם-שונה-לכל-צופה',
+                      'acceptance': 'שני הקבצים זהים בייט-בייט'})
+          except FileNotFoundError as e:
+              wos.append({'id': 'WO-office-engine-missing', 'area': 'office', 'priority': 'P1',
+                  'title': f'קובץ-מנוע חסר: {e.filename}',
+                  'why': 'העולם המתמשך חייב שני עותקים מסונכרנים',
+                  'acceptance': 'הקובץ קיים בשני הבתים'})
+          book = {'schema': 'work-orders/2', 'at': now.isoformat(),
+                  'scope': 'public-twin (Domain home; private repos PAT-verified when token present)',
+                  'totals': {'open': len(wos)}, 'orders': wos}
+          json.dump(book, open('agents/work-orders.json','w'), ensure_ascii=False, indent=1)
+          print('work-orders:', len(wos))
+          PY
+
+      - name: Publish the book (same-repo push, GITHUB_TOKEN only)
+        run: |
+          git config user.name "roshpinacare-sys"
+          git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
+          git add agents/work-orders.json
+          if git diff --cached --quiet; then echo "no delta — orders book unchanged"; exit 0; fi
+          git commit -qm "orders book (twin): $(jq -r '.totals.open' agents/work-orders.json) open $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          ok=0
+          for i in 1 2 3; do
+            if git pull --rebase -X theirs --autostash -q origin main && git push -q origin main; then ok=1; break; fi
+            sleep 3
+          done
+          [ "$ok" = "1" ] || { echo "PUSH-FAILED"; exit 1; }

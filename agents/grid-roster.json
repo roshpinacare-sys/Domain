@@ -1,0 +1,186 @@
+{
+  "schema": "saos/grid-roster/1",
+  "generatedAt": "2026-10-11T13:50:00Z",
+  "by": "zai-sec-1a12af86",
+  "chains": {
+    "steem": {
+      "rpc": "https://api.steemit.com",
+      "accounts": [
+        {
+          "name": "owner",
+          "role": "treasury"
+        },
+        {
+          "name": "acct-18",
+          "role": "legacy-treasury"
+        },
+        {
+          "name": "acct-02",
+          "role": "worker-active"
+        },
+        {
+          "name": "acct-01",
+          "role": "worker-active"
+        },
+        {
+          "name": "acct-08",
+          "role": "worker-active"
+        },
+        {
+          "name": "acct-10",
+          "role": "worker-active"
+        },
+        {
+          "name": "acct-07",
+          "role": "worker-active"
+        },
+        {
+          "name": "acct-11",
+          "role": "worker-active"
+        },
+        {
+          "name": "acct-12",
+          "role": "worker-active"
+        },
+        {
+          "name": "acct-13",
+          "role": "worker-active"
+        },
+        {
+          "name": "spaminator",
+          "role": "quarantine-vp-empty"
+        },
+        {
+          "name": "acct-15",
+          "role": "keyless-stranded"
+        },
+        {
+          "name": "acct-16",
+          "role": "keyless-stranded"
+        },
+        {
+          "name": "acct-17",
+          "role": "keyless-stranded"
+        },
+        {
+          "name": "saos",
+          "role": "shell"
+        },
+        {
+          "name": "powerspan",
+          "role": "shell"
+        },
+        {
+          "name": "acct-19",
+          "role": "dead"
+        },
+        {
+          "name": "acct-03",
+          "role": "worker-active"
+        },
+        {
+          "name": "acct-04",
+          "role": "worker-active"
+        },
+        {
+          "name": "acct-05",
+          "role": "worker-active"
+        },
+        {
+          "name": "acct-06",
+          "role": "worker-active"
+        },
+        {
+          "name": "acct-09",
+          "role": "worker-active"
+        }
+      ]
+    },
+    "hive": {
+      "rpc": "https://api.hive.blog",
+      "accounts": [
+        {
+          "name": "acct-18",
+          "role": "treasury-primary"
+        },
+        {
+          "name": "owner",
+          "role": "worker-active"
+        }
+      ]
+    },
+    "blurt": {
+      "rpc": "https://blurt-rpc.saboin.com",
+      "accounts": [
+        {
+          "name": "acct-18",
+          "role": "connect-target"
+        },
+        {
+          "name": "owner",
+          "role": "worker-active"
+        }
+      ]
+    }
+  },
+  "expectations": {
+    "vp_floor_pct": 20,
+    "active_post_max_age_days": 7,
+    "treasury_liquid_floor": {
+      "steem:owner": 90,
+      "hive:acct-18": 10000,
+      "blurt:acct-18": 60
+    },
+    "keyless_no_liquid_above": 1,
+    "drift": {
+      "liquid_abs": 5,
+      "power_abs": 1.0
+    },
+    "sp_floor": {
+      "steem:owner": 3000
+    }
+  },
+  "claims": [
+    {
+      "id": "fleet-steem-eff-baseline",
+      "chain": "steem",
+      "account": null,
+      "metric": "effective_power",
+      "claimed": 4470,
+      "label": "SP fleet effective (post-arming measured)",
+      "source": "grid-doctor v2.2 live k 2026-10-11T16:36Z \u2014 original 4001 was real; naive /1e6 was the phantom"
+    },
+    {
+      "id": "owner-eff-post-arming",
+      "chain": "steem",
+      "account": "owner",
+      "metric": "effective_power",
+      "claimed": 2926,
+      "label": "SP owner effective (post-arming, floor 3000)",
+      "source": "measured live 2026-10-11 \u2014 SP-UNDERFLOOR watches the 74 SP gap"
+    },
+    {
+      "id": "acct-18-hive-eff-baseline",
+      "chain": "hive",
+      "account": "acct-18",
+      "metric": "effective_power",
+      "claimed": 102433,
+      "label": "HP acct-18 (the real whale treasury)",
+      "source": "grid-doctor v2.2 live k=0.0006222 2026-10-11 \u2014 v1 book said 164 HP, 622x phantom"
+    }
+  ],
+  "rosterReconciliation": {
+    "at": "2026-10-11T16:30:00Z",
+    "by": "zai-sec-1a12af86",
+    "authority": "agents/fleet-roster.json (owner directive 2026-10-04, trace 1a1…0451)",
+    "union": "grid-roster \u222a fleet-roster.steemFleet \u2014 chain is the referee",
+    "bannedCapital": [
+      "acct-15",
+      "acct-16",
+      "acct-17",
+      "acct-19",
+      "owner"
+    ],
+    "note": "delegation waves armed fleet workers with ~1100 SP real (acct-03 94, acct-04 80, acct-02 78, acct-01 75, acct-05 75, acct-10 70, acct-08 33, acct-07 31, acct-06 31, acct-09 12) \u2014 owner left at 2926 eff, below its own 3000 floor by 74 SP (SP-UNDERFLOOR watches this)"
+  }
+}

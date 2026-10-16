@@ -1,0 +1,39 @@
+{
+ "protocol": "SAOS-CHANGE-REQUEST/1",
+ "cr": "CR-0077",
+ "title": "THE DEX IGNITION — the owner ordered a sharp activation of the sovereign DEX (volume, liquidity, stable pairs, autonomous flow)",
+ "ok": true,
+ "opens": ["DEX-ACTIVATION"],
+ "directive": "[owner-directive]",
+ "trace": "1a135897157a1d75",
+ "directiveAt": "2026-10-13",
+ "ratified": "[owner-directive]",
+ "ratifiedAt": "2026-10-13",
+ "ownerWord": {
+  "he": "\"אני מסתכל בשולחן-הענקים, saos dex עמלות 0 נפח כמעט 0 מצטבר כלום. איך אנחנו הופכים את הדקס שלנו לכלי ריבוני עובד... חשוב להשקיע מחשבה רבה ומאמץ בתפעול ובחינה של הפעלה חריפה מאוד של הדקס והרצה כבדה... אני רוצה לראות הרבה ווליום והרבה הרבה יותר פעילות אוטונומית בדקס. בגדול הדקס פתוח כרגע רק לנו אין משתמשים אחרים סוחרים זה דווקא יכול לעבוד לטובתנו\"",
+  "note": "the owner SEES the giants-table row (Console dex/giants.json ours: feesAccruedMu 339505 all-time = 0.34 internal units) and orders it to MOVE"
+ },
+ "scope": [
+  "the STAGED-LANE law arrives at the exchange core: dex-core.cjs + arb-mesh.cjs adopt the same lane check the batch-settle desk already runs (CR-0075 pattern) — STASIS active halts a lane ONLY when that lane is not named in STASIS.stagedLanes.allow; the master brake (active=true) never flips",
+  "lanes opened by name: dex-core (the exchange core tick + mesh settle), arb-mesh (the mesh market: measure + draft + settle), dex-activation (the NEW two-sided liquidity ladder desk, this CR's instrument)",
+  "the liquidity engine (agents/dex-activation.cjs): every run drafts TWO-SIDED ladder flow around each live pool's mid (both directions — never a direction bet), sized from the measured depth ladder, split across the roster by the mesh mandate law (operator 40% / soldiers the rest), settled through the CORE's own settle law (dust, 5%-depth cap, minOut guard, 10%-wire cap, conservation, attestation) — the engine invents NOTHING and bypasses NOTHING",
+  "settle-queue separation (single-writer per file): the activation desk writes agents/dex-activation-queue.json and the core settles it via DEX_SETTLE_QUEUE env — the mesh queue dex-intents.json keeps exactly one writer (the mesh), the activation queue exactly one writer (the desk)",
+  "measured visibility: the activation book publishes rolling-24h volume/fees/fills measured from the ledger (never invented); Console giants.mjs merges the core-book truth into the ours row (SAOS DEX) so the owner's giants-table row moves with every beat, honestly labeled internal units",
+  "stable-pair surfaces: the two-sided ladder arms on EVERY live pool — peg pools (WSTEEM/STEEM, WSBD/SBD) trade to-peg from both sides, the volatile pool (STEEM/SBD) trades the spread — and the counter-grid lane (CR-0074) stays the keyed surface for chain-side stable pairs (SBD/STEEM, HBD/HIVE) when key material verifies"
+ ],
+ "honesty": [
+  "the ignition moves INTERNAL SIM LEDGER UNITS on the dex-core book — the units honest-econ labels not-real-money; zero real-chain value, zero keys, zero broadcasts, zero fees in dollars",
+  "fee accrual grows in µ units on our pools (LP revenue to treasury) — the giants row labels it מצטבר-פנימי; the DEFiLlama giants stay dollars; the gap row stays honest",
+  "real on-chain money remains exactly what money.json measures — this CR changes NOTHING about real money; the keyed churn caps (sovereign-policy limits) stay untouched and owned by the custody lanes",
+  "the pools may be tiny (custody measured from FLEET_ACCOUNT liquid balances) — tiny-but-REAL beats big-and-fake; dust rungs refuse honestly (MESH_DUST law)",
+  "STASIS stays armed (active=true, mode=staged): the brake can still halt everything by listing removal or halt-all; revocation = remove the lane names from stagedLanes.allow or delete this file — the engine refuses fail-closed on the next tick"
+ ],
+ "revocation": "the owner revokes by DELETING this file, removing DEX-ACTIVATION from opens[], or removing the lane names from STASIS.stagedLanes.allow — the desks refuse on the next tick (fail-closed: absent, malformed, or lane-not-allowed all refuse); audited in git history (the CR-0074 artifact law)",
+ "proofs": {
+  "selftest": "agents/dex-activation.cjs selftest — drafting determinism, two-sided law, dust law, depth-cap law, roster split sum, minOut guard, lane-closed honest WAIT, no-core honest DRY",
+  "coreSelftest": "agents/dex-core.cjs selftest — the settlement math judges itself first (fresh process, zero network)",
+  "meshSelftest": "agents/arb-mesh.cjs selftest — the drafting laws judge themselves",
+  "authority": "owner word EXPLICIT (IM trace 1a135897157a1d75, 2026-10-13 '[owner-directive]') + R30 FULL LIFT (trace 1a12…9241, 2026-10-11): all lanes open per owner word, mechanical gates unchanged + the staged re-entry calibration mandate (trace 1a10…2391): keyless internal lanes are the safest-first path"
+ },
+ "note": "an artifact someone can audit in git history, not a boolean an import can flip in memory"
+}
