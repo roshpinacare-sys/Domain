@@ -262,7 +262,7 @@ function executorPreview(internalRows) {
       console.log(`STASIS-STAGED-OBSERVE market-grid · brake armed (scope: capital lanes) · measurement lane continues per scope law · ${at}`);
     }
   } catch (_) { /* no brake declared (missing/unreadable STASIS.json) → run normally; the tracked file + init's STASIS proof are the integrity layer */ }
-  const out = { at: new Date().toISOString(), agent: 'market-grid v1.3.0 (Z-60+ internal-market sovereignty instrument; v1.3.0 CR-0062: HE pond law + daily-history probe-first)', laws: null, markets: [], hiveEngine: null, blurt: null, paperLedger: PAPER_LEDGER, executorPreviewCount: 0, errors: [], summary: {} };
+  const out = { at: new Date().toISOString(), agent: 'market-grid v1.3.0 (Z-60+ internal-market sovereignty instrument; v1.3.0 CR-0062: HE pond law + daily-history probe-first)', laws: null, markets: [], hiveEngine: null, blurt: null, paperLedger: 'agents/market-grid-paper.jsonl', executorPreviewCount: 0, errors: [], summary: {} };
   if (brakeInfo) Object.assign(out, brakeInfo);
   out.laws = ['official sources only (chain nodes + sidechain RPC)', 'keyless: reads only, executor = owner-gated preview, never broadcast', 'paper is paper (labeled ledger, never laundered into realized book)', 'fail-loud per market', 'single canon (market-grid.json/.md)', 'the pond law: every venue carries its measured 24h volume (v1.3.0 CR-0062)'];
 

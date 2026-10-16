@@ -46,7 +46,10 @@ const STATE = path.join(ROOT, 'econ-engine-state.json');
 // same host: the FleetHQ repo (robot commits) + the health-guard event log.
 // Env-overridable so the cloud workflow (which lacks the fleet host) skips
 // these sources honestly instead of failing.
-const FLEET_ROOT = process.env.ECON_FLEET_ROOT || '/home/z/my-project';
+// EXPOSURE LAW: no host filesystem path may reach the public surface —
+// the fleet root comes ONLY from the environment. When unset (cloud runs),
+// fleet-local sources skip honestly instead of failing.
+const FLEET_ROOT = process.env.ECON_FLEET_ROOT || 'fleet-host-unset'; // unset → sources skip honestly (path never exists)
 const GUARD_JOURNAL = path.join(FLEET_ROOT, 'mini-services', 'health-guard', 'state', 'guard-events.jsonl');
 
 const WAGE_MWU = 1000;

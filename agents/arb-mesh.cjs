@@ -197,6 +197,13 @@ function laneAllowed(st, lane) {
   try { const a = ((st || {}).stagedLanes || {}).allow || []; return a.map(String).includes(String(lane)); } catch (_) { return false; }
 }
 function writeBook(obj) {
+  // EXPOSURE LAW (PUBLISHING-POLICY): the public artifact never carries the
+  // owner account handle — roles only. The in-memory mesh logic keeps the
+  // real roster; the persisted book redacts it at the write site.
+  const own = process.env.FLEET_ACCOUNT || 'owner';
+  if (Array.isArray(obj.roster)) {
+    obj = { ...obj, roster: obj.roster.map((r) => (String(r) === String(own) ? 'operator' : r)) };
+  }
   const tmp = OUT_JSON + '.tmp';
   fs.writeFileSync(tmp, JSON.stringify(obj, null, 1) + '\n');
   fs.renameSync(tmp, OUT_JSON);
