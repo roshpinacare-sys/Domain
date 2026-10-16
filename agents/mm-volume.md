@@ -6,7 +6,7 @@
 | SBD/STEEM (internal steem) | 0 | 0.8554 | 0.4277 | 25.458 | 140.175 | 18.1616% |
 | HBD/HIVE (internal hive) | 0 | 0.2204 | 0.1102 | 244.3968 | 4803.836 | 5.0875% |
 | saos-dex-kernel (L1 our own DEX) | 30 | — | — | — | — | — |
-| BEE/SWAP.HIVE (hive-engine) | 0 | 1.3069 | 0.6535 | 16.1234 | — | 99.7643% |
+| BEE/SWAP.HIVE (hive-engine) | 0 | 1.307 | 0.6535 | 16.1234 | — | 99.7643% |
 | CENT/SWAP.HIVE (hive-engine) | 0 | 1.5906 | 0.7953 | 4.6673 | — | 92.6806% |
 | SWAP.DOGE/SWAP.HIVE (hive-engine) | 0 | 0.1804 | 0.0902 | 15.6991 | — | 97.4295% |
 | SWAP.LTC/SWAP.HIVE (hive-engine) | 0 | 0.1755 | 0.0878 | 244.3968 | — | 31.0498% |
