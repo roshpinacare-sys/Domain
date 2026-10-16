@@ -2,12 +2,13 @@
 
 At: 2026-10-16T19:41:08.596Z · Verdict: **SWAP-NET-LIVE** · mode: KEYLESS-READ (the router plans; owner-gated desks sign)
 
-Venues alive: steem-internal, hive-internal, he-pools, saos-mirror · Routes: 12 (LIVE-KEYED: R1,R2) · Arb candidates: A1 · Peg halts: none
+Venues alive: steem-internal, he-pools, saos-mirror · Routes: 12 (LIVE-KEYED: R1,R2) · Arb candidates: A1 · Peg halts: none
 
 | Route | From→To | Verdict | Quote | Unlock |
 |---|---|---|---|---|
 | R1 STEEM-INTERNAL | SBD→STEEM | LIVE-KEYED | 1.000 SBD → 9.74 STEEM | — |
 | R2 STEEM-INTERNAL | STEEM→SBD | LIVE-KEYED | 1.000 STEEM → 0.102535 SBD | — |
+<<<<<<< Updated upstream
 | R3 HIVE-INTERNAL | HBD→HIVE | GATED-KEYS | 1.000 HBD → 19.046168 HIVE | HIVE active key material (R38 measured: none held) + ≥0.2 HIVE/HBD level fuel |
 | R4 HIVE-INTERNAL | HIVE→HBD | GATED-KEYS | 1.000 HIVE → 0.052428 HBD | HIVE active key material + inventory |
 | R5 HIVE-ENGINE (SWAP.HIVE→SWAP.BTC) | HIVE→BTC | GATED-CAPITAL | 8545.821 SWAP.HIVE (1% pool) → 0.005319 SWAP.BTC | HIVE keys + HIVE inventory (0.034 HIVE dust today — R38 measured) |
@@ -31,6 +32,6 @@ Counter-grids (opposing grids anchored to the CEX-implied fair, skewed by invent
 
 Laws: official sources only · keyless: the router plans, owner-gated desks sign · fail-soft exit 0 (dark feeds are honest rows) · verdict authority inherited from Z-27 (dex-book/bridge-desk) · single canon book + append-only history · honest money: the powerdown drip is the booked fuel law
 
-Errors: [{"venue":"balances","error":"HEAD_ACCOUNT is not defined"}]
+Errors: [{"venue":"hive-internal","error":"AggregateError"},{"venue":"balances","error":"HEAD_ACCOUNT is not defined"}]
 
 Sources: api.steemit.com, api.hive.blog (condenser), api.hive-engine.com mirrors, Binance/MEXC/HTX public tickers, dex/state.json mirror, Z-27 books. Zero secrets.
