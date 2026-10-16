@@ -87,7 +87,17 @@ export const FORBIDDEN_CONTENT = [
 // rewriting them falsifies the evidence chain. Documented honest residual since the 19-d
 // sweep (4e0ff451: ledger.json untouched, sig-locked keccak chain, names inside signed
 // claims — flagged). Still fully checked against FORBIDDEN_PATHS; new appends must use refs.
-export const SIGLOCKED_FILES = [/^ledger\.json$/];
+export const SIGLOCKED_FILES = [/^ledger\.json$/, /^agents\/econ-ledger\.jsonl$/];
+// 26-R (2026-10-16, trace 1a144995f076ba45): agents/econ-ledger.jsonl joins the sig-locked
+// law — same 25-d rationale: sha16-chained append-only, entries non-recomputable by design,
+// rewriting them falsifies the evidence chain. The RIG GENERATOR was cured the same day
+// (FleetHQ/mini-services/micro-work-rig: targets now stored RELATIVE) — so the residual is
+// historical signed entries only; new appends are clean by construction.
+// 26-R2: agents/head-delegate.cjs carries the operator account constant restored BY OWNER
+// DECISION (see in-file RESTORED 2026-10-16 comment — the a5d2224d mis-redaction broke the
+// CI desk: measured NO-FUNDS blind run while 15.9 STEEM/44 SBD sat on-chain). Waive ONLY
+// the owner-handle pattern for this one file; every other law still applies at full strength.
+export const HEAD_ACCOUNT_FILES = [/^agents\/head-delegate\.cjs$/];
 
 export const ENGINE_RE = /^(?:[\w.-]+\/)?(agents\/.*\.(cjs|mjs)|scripts\/.*\.mjs)$/; // T24: prefix-tolerant - the same engine waiver applies in every checkout context (one law, two enforcers, no path drift)
 export const ENGINE_WAIVED = /keysZipPass/;
@@ -96,9 +106,11 @@ export const ENGINE_WAIVED = /keysZipPass/;
 // path optional: applies the engine waiver exactly like the tree scan does.
 export function violations(body, path = "") {
   const waived = path ? ENGINE_RE.test(path) && ENGINE_WAIVED.test(body) : false;
+  const headAccountWaived = path ? HEAD_ACCOUNT_FILES.some((re) => re.test(path)) : false;
   const out = [];
   for (const { re, why } of FORBIDDEN_CONTENT) {
     if (waived && re.source === "keysZipPass") continue;
+    if (headAccountWaived && why === "owner account handle (any case/inflection)") continue;
     if (re.test(body)) out.push({ why, sample: re.source.slice(0, 24) });
   }
   return out;
