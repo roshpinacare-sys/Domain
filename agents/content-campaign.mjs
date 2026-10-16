@@ -27,7 +27,12 @@ import { createRequire } from "node:module";
 import path from "node:path";
 
 const STEEM_RPC = "https://api.steemit.com";
-const POSTER = "owner";
+/* RESTORED 2026-10-16 (trace 1a144995f076ba45): the a5d2224d exposure-purge mis-redacted
+ * the operator account to "owner" — a REAL but UNRELATED 2016 account (measured: id 1400,
+ * posting STM782KM… ≠ ours STM8m3rB…). The bit-for-bit posting gate then refused 5 runs
+ * in a row (honest red, exactly as designed — never broadcast under an unverified name).
+ * Env-first: the secret FLEET_ACCOUNT wins; fallback is the owner-restored voice account. */
+const POSTER = process.env.FLEET_ACCOUNT || "headcorner";
 const TAGS = ["saos", "defi", "network"];
 const STEEM_JS_DIR = process.env.STEEM_JS_DIR || "/tmp/steemjs";
 const RC_COMMENT_BASE = 976_000_000; // נמדד ב-web-publish (Zip)
