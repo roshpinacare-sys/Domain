@@ -56,6 +56,17 @@ const GUARD_MWU = 100; // micro-settlement per measured guard check
 const OFFEV_MWU = 200; // office agent activity event (real say/log labor)
 const WDOG_MWU = 150;  // watchdog restoration/ops event
 const HMEM_MWU = 50;   // host telemetry measurement (real compute)
+// Task 59-a (owner directive: tens of thousands per day) — every remaining
+// measured truth stream of the estate, each produced by a real resident robot:
+const FORACLE_MWU = 100; // fresh-oracle freshness measurement (probe compute)
+const SCHECK_MWU = 120;  // self-check audit verdict (security+connectivity)
+const PACE_MWU = 300;    // pacemaker beat — each beat MEASURES 36 scheduled lanes
+const SHEALTH_MWU = 250; // sovereign health chain record — full-fleet probe + sha256
+const OCI_MWU = 400;     // office-ci verdict — a REAL build: install+prisma+typecheck+build
+const GTEL_MWU = 80;     // gateway telemetry cycle (light measurement)
+const LINEAGE_MWU = 150; // books lineage root — sha256 hash-tree walk over the books
+const O3D_MWU = 500;     // office-3d — real WebGL frame rendering (heavy compute)
+const SUP_MWU = 200;     // runtime-supervisor spawn/restart — real ops action
 
 const sha16 = (s) => crypto.createHash('sha256').update(s).digest('hex').slice(0, 16);
 const nowIso = () => new Date().toISOString();
@@ -75,11 +86,13 @@ function loadCursor() {
   const backfill = Date.now() - 24 * 3600_000; // books open with a 24h window
   const base = {
     last_seq: 0, last_sha16: '', minted: 0,
-    src: { journal: backfill, git: backfill, mesh: backfill, fleet: backfill, guard: backfill, offev: backfill, wdog: backfill, hmem: backfill },
+    src: { journal: backfill, git: backfill, mesh: backfill, fleet: backfill, guard: backfill, offev: backfill, wdog: backfill, hmem: backfill,
+           foracle: backfill, scheck: backfill, pace: backfill, shealth: backfill, oci: backfill, gtel: backfill, lineage: backfill, o3d: backfill, sup: backfill },
   };
   if (s && s.src && typeof s.src.git === 'number') {
     // per-key defaults — newly added sources open their own 24h window once
-    for (const k of ['journal', 'git', 'mesh', 'fleet', 'guard', 'offev', 'wdog', 'hmem']) {
+    for (const k of ['journal', 'git', 'mesh', 'fleet', 'guard', 'offev', 'wdog', 'hmem',
+                     'foracle', 'scheck', 'pace', 'shealth', 'oci', 'gtel', 'lineage', 'o3d', 'sup']) {
       if (typeof s.src[k] !== 'number') s.src[k] = backfill;
     }
     return s;
@@ -109,11 +122,15 @@ function harvest(c) {
       }
     } catch { /* damaged line — skip, never invent */ }
   }
-  // 2) robot labor — real commits on Domain main since the source cursor
+  // 2) robot labor — real commits on Domain since the source cursor.
+  //    Task 59-a: tolerant READ-ONLY fetch first, then --all — the cloud
+  //    twin's labor (dex-family beats, worldbeat, census, ignition…) now
+  //    settles here too. Offline → fetch fails silently, local refs still settle.
   try {
     const { execFileSync } = require('child_process');
+    try { execFileSync('git', ['fetch', 'origin', '--quiet'], { cwd: DOMAIN, timeout: 25000, stdio: 'ignore' }); } catch { /* offline — local refs suffice */ }
     const since = new Date(c.src.git).toISOString();
-    const log = execFileSync('git', ['log', '--since', since, '--format=%H|%cI|%s'], {
+    const log = execFileSync('git', ['log', '--all', '--since', since, '--format=%H|%cI|%s'], {
       cwd: DOMAIN, timeout: 20000, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024,
     });
     for (const line of log.split('\n').filter(Boolean)) {
@@ -126,7 +143,7 @@ function harvest(c) {
       out.push({
         kind: 'beat', at, who: 'robot:' + robot.slice(0, 24),
         amount: BEAT_MWU, venue: 'robot-labor settlement',
-        evidence: { type: 'git-commit', file: 'git:main', ref: String(hash).slice(0, 12), ts: ci, text: msg.slice(0, 80) },
+        evidence: { type: 'git-commit', file: 'git:Domain-all', ref: String(hash).slice(0, 12), ts: ci, text: msg.slice(0, 80) },
       });
     }
   } catch { /* git unavailable — skip source, verdict will say so */ }
@@ -149,8 +166,9 @@ function harvest(c) {
   //    vault-seal commits are the fleet's real operational work.
   try {
     const { execFileSync } = require('child_process');
+    try { execFileSync('git', ['fetch', 'origin', '--quiet'], { cwd: FLEET_ROOT, timeout: 25000, stdio: 'ignore' }); } catch { /* offline — local refs suffice */ }
     const since = new Date(c.src.fleet).toISOString();
-    const log = execFileSync('git', ['log', '--since', since, '--format=%H|%cI|%s'], {
+    const log = execFileSync('git', ['log', '--all', '--since', since, '--format=%H|%cI|%s'], {
       cwd: FLEET_ROOT, timeout: 20000, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024,
     });
     for (const line of log.split('\n').filter(Boolean)) {
@@ -167,7 +185,7 @@ function harvest(c) {
       out.push({
         kind: 'fleet', at, who: 'robot:' + robot.slice(0, 24),
         amount: BEAT_MWU, venue: 'fleet-labor settlement',
-        evidence: { type: 'git-commit', file: 'git:FleetHQ-main', ref: String(hash).slice(0, 12), ts: ci, text: msg.slice(0, 80) },
+        evidence: { type: 'git-commit', file: 'git:FleetHQ-all', ref: String(hash).slice(0, 12), ts: ci, text: msg.slice(0, 80) },
       });
     }
   } catch { /* fleet repo unavailable — skip source, verdict notes it */ }
@@ -227,6 +245,132 @@ function harvest(c) {
       });
     } catch { /* skip */ }
   }
+  // 9) fresh-oracle (Task 59-a) — real freshness measurements of the estate
+  for (const line of readJsonl(path.join(FLEET_ROOT, 'receipts', 'fresh-oracle', 'log.jsonl'))) {
+    try {
+      const j = JSON.parse(line);
+      const at = Date.parse(j.at || '');
+      if (!Number.isFinite(at) || at <= c.src.foracle) continue;
+      if (!j.overall) continue;
+      out.push({
+        kind: 'foracle', at, who: 'robot:fresh-oracle',
+        amount: FORACLE_MWU, venue: 'fresh-oracle meter',
+        evidence: { type: 'oracle-scan', file: 'receipts/fresh-oracle/log.jsonl', ref: String(j.overall).slice(0, 24), ts: j.at, text: `match=${j.match ?? '?'} drift=${j.drift ?? '?'}`.slice(0, 80) },
+      });
+    } catch { /* damaged line — skip, never invent */ }
+  }
+  // 10) self-check (Task 59-a) — real security+connectivity audit verdicts
+  for (const line of readJsonl(path.join(FLEET_ROOT, 'receipts', 'self-check', 'log.jsonl'))) {
+    try {
+      const j = JSON.parse(line);
+      const at = Date.parse(j.at || '');
+      if (!Number.isFinite(at) || at <= c.src.scheck) continue;
+      if (!j.state) continue;
+      out.push({
+        kind: 'scheck', at, who: 'robot:self-check',
+        amount: SCHECK_MWU, venue: 'self-check meter',
+        evidence: { type: 'selfcheck', file: 'receipts/self-check/log.jsonl', ref: String(j.state).slice(0, 24), ts: j.at, text: String(j.detail || j.state).slice(0, 80) },
+      });
+    } catch { /* skip */ }
+  }
+  // 11) pacemaker beats (Task 59-a) — each beat MEASURES all scheduled lanes
+  for (const line of readJsonl(path.join(FLEET_ROOT, 'pacemaker', 'state', 'beats.jsonl'))) {
+    try {
+      const j = JSON.parse(line);
+      const at = Date.parse(j.at || '');
+      if (!Number.isFinite(at) || at <= c.src.pace) continue;
+      if (typeof j.measured !== 'number') continue;
+      out.push({
+        kind: 'pace', at, who: 'robot:pacemaker',
+        amount: PACE_MWU, venue: 'pacemaker meter',
+        evidence: { type: 'pacemaker-beat', file: 'pacemaker/state/beats.jsonl', ref: `lanes-${j.measured}`.slice(0, 24), ts: j.at, text: `ignited=${j.ignitedCount ?? 0}`.slice(0, 80) },
+      });
+    } catch { /* skip */ }
+  }
+  // 12) sovereign health chain (Task 59-a) — full-fleet probe records, sha256-chained
+  for (const line of readJsonl(path.join(FLEET_ROOT, 'sovereign-stack', 'health', 'history.jsonl'))) {
+    try {
+      const j = JSON.parse(line);
+      const at = Date.parse(j.ts || '');
+      if (!Number.isFinite(at) || at <= c.src.shealth) continue;
+      if (typeof j.all_ok !== 'boolean') continue;
+      out.push({
+        kind: 'shealth', at, who: 'robot:health-chain',
+        amount: SHEALTH_MWU, venue: 'sovereign health meter',
+        evidence: { type: 'health-record', file: 'sovereign-stack/health/history.jsonl', ref: String(j.sha256 || '').slice(0, 16), ts: j.ts, text: `all_ok=${j.all_ok}`.slice(0, 80) },
+      });
+    } catch { /* skip */ }
+  }
+  // 13) office-ci (Task 59-a) — every verdict is a REAL build (install+prisma+typecheck+build)
+  for (const line of readJsonl(path.join(FLEET_ROOT, 'receipts', 'office-ci', 'log.jsonl'))) {
+    try {
+      const j = JSON.parse(line);
+      const at = Date.parse(j.at || '');
+      if (!Number.isFinite(at) || at <= c.src.oci) continue;
+      if (!j.overall) continue;
+      out.push({
+        kind: 'oci', at, who: 'robot:office-ci',
+        amount: OCI_MWU, venue: 'office-ci meter',
+        evidence: { type: 'ci-build', file: 'receipts/office-ci/log.jsonl', ref: String(j.overall).slice(0, 24), ts: j.at, text: `typecheck=${j.checks && j.checks.typecheck || '?'}`.slice(0, 80) },
+      });
+    } catch { /* skip */ }
+  }
+  // 14) gateway telemetry (Task 59-a) — measured gateway request cycles
+  for (const line of readJsonl(path.join(FLEET_ROOT, 'receipts', 'gateway-telemetry-history.jsonl'))) {
+    try {
+      const j = JSON.parse(line);
+      const at = Date.parse(j.at || '');
+      if (!Number.isFinite(at) || at <= c.src.gtel) continue;
+      if (!j.totals || typeof j.totals !== 'object') continue;
+      out.push({
+        kind: 'gtel', at, who: 'robot:gateway-telemetry',
+        amount: GTEL_MWU, venue: 'gateway telemetry meter',
+        evidence: { type: 'gateway-cycle', file: 'receipts/gateway-telemetry-history.jsonl', ref: `req-${j.totals.requests ?? 0}`.slice(0, 24), ts: j.at, text: `answered=${j.totals.answered ?? 0} failed=${j.totals.failed ?? 0}`.slice(0, 80) },
+      });
+    } catch { /* skip */ }
+  }
+  // 15) books lineage (Task 59-a) — sha256 hash-tree roots over the books
+  for (const line of readJsonl(path.join(FLEET_ROOT, 'receipts', 'books-lineage-history.jsonl'))) {
+    try {
+      const j = JSON.parse(line);
+      const at = Date.parse(j.at || '');
+      if (!Number.isFinite(at) || at <= c.src.lineage) continue;
+      if (typeof j.books !== 'number' || !j.root) continue;
+      out.push({
+        kind: 'lineage', at, who: 'robot:books-lineage',
+        amount: LINEAGE_MWU, venue: 'books lineage meter',
+        evidence: { type: 'lineage-root', file: 'receipts/books-lineage-history.jsonl', ref: String(j.root).slice(0, 16), ts: j.at, text: `books=${j.books}`.slice(0, 80) },
+      });
+    } catch { /* skip */ }
+  }
+  // 16) office-3d (Task 59-a) — real WebGL frame rendering (heavy compute)
+  for (const line of readJsonl(path.join(FLEET_ROOT, 'receipts', 'office-3d', 'log.jsonl'))) {
+    try {
+      const j = JSON.parse(line);
+      const at = Date.parse(j.at || '');
+      if (!Number.isFinite(at) || at <= c.src.o3d) continue;
+      if (typeof j.ok !== 'boolean') continue;
+      out.push({
+        kind: 'o3d', at, who: 'robot:office-3d',
+        amount: O3D_MWU, venue: 'office-3d render meter',
+        evidence: { type: 'webgl-render', file: 'receipts/office-3d/log.jsonl', ref: String(j.room || 'office3d').slice(0, 24), ts: j.at, text: `frames=${j.frames ?? '?'}`.slice(0, 80) },
+      });
+    } catch { /* skip */ }
+  }
+  // 17) runtime-supervisor (Task 59-a) — real ops actions: spawn/restart/start
+  for (const line of readJsonl(path.join(FLEET_ROOT, 'receipts', 'runtime-supervisor.jsonl'))) {
+    try {
+      const j = JSON.parse(line);
+      const at = typeof j.ts === 'number' ? j.ts : Date.parse(j.at || '');
+      if (!Number.isFinite(at) || at <= c.src.sup) continue;
+      if (!j.type) continue;
+      out.push({
+        kind: 'sup', at, who: 'robot:runtime-supervisor',
+        amount: SUP_MWU, venue: 'runtime supervisor meter',
+        evidence: { type: 'supervisor-op', file: 'receipts/runtime-supervisor.jsonl', ref: String(j.type).slice(0, 24), ts: new Date(at).toISOString(), text: String(j.service || j.type).slice(0, 80) },
+      });
+    } catch { /* skip */ }
+  }
   out.sort((a, b) => a.at - b.at);
   return out;
 }
@@ -278,7 +422,8 @@ function summarize() {
   return {
     at: nowIso(), ok: true,
     verdict: 'internal settlements measured from real events — every tx carries evidence, zero synthetic',
-    engine: 'econ-engine/1', units: 'mWU (1 WU = 1000 mWU)',
+    engine: 'econ-engine/2', units: 'mWU (1 WU = 1000 mWU)',
+    sources: 'journal, Domain-git(all), mesh, FleetHQ-git(all), guard, office-events, watchdog, host-mem, fresh-oracle, self-check, pacemaker, health-chain, office-ci, gateway-telemetry, books-lineage, office-3d, runtime-supervisor',
     day24: { transactions: tx24, mwu: mwu24 },
     totals, venues, participants: participants.size, top_workers: top,
     honesty: 'no network, no keys, no invented numbers — evidence refs point at real journal/git/mesh records',
@@ -292,8 +437,17 @@ function settle() {
   const { wrote } = appendLedger(events, c);
   if (wrote > 0) {
     // advance each source watermark to the newest event it actually minted
+    // (Task 59-a: explicit KIND→SRC map — an unknown kind must NEVER
+    // silently advance the wrong source's watermark)
+    const KIND2SRC = {
+      wage: 'journal', beat: 'git', scan: 'mesh', fleet: 'fleet', guard: 'guard',
+      offev: 'offev', wdog: 'wdog', hmem: 'hmem', foracle: 'foracle', scheck: 'scheck',
+      pace: 'pace', shealth: 'shealth', oci: 'oci', gtel: 'gtel', lineage: 'lineage',
+      o3d: 'o3d', sup: 'sup',
+    };
     for (const ev of events) {
-      const key = ev.kind === 'wage' ? 'journal' : ev.kind === 'beat' ? 'git' : ev.kind === 'fleet' ? 'fleet' : ev.kind === 'guard' ? 'guard' : ev.kind === 'offev' ? 'offev' : ev.kind === 'wdog' ? 'wdog' : ev.kind === 'hmem' ? 'hmem' : 'mesh';
+      const key = KIND2SRC[ev.kind];
+      if (!key) continue; // unmapped kind — never touch a watermark we don't own
       c.src[key] = Math.max(c.src[key] || 0, ev.at);
     }
     c.minted = (c.minted || 0) + wrote;
