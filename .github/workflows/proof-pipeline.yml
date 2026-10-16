@@ -1,0 +1,76 @@
+#
+#
+
+name: proof-pipeline
+
+on:
+  schedule:
+    - cron: '44 4 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: proof-pipeline
+  cancel-in-progress: false
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - name: Checkout Domain
+        uses: actions/checkout@v5
+
+      - name: Node 20
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      - name: Install ethers (keccak + ABI encoding, keyless)
+        run: npm install ethers@6.13.4 --prefix /tmp/ethers --omit=dev --no-audit --no-fund --loglevel=error
+
+      - name: Checkout KPI source (Defi is private — read via vault PAT; honest skip if denied)
+        continue-on-error: true
+        uses: actions/checkout@v5
+        with:
+          repository: roshpinacare-sys/Defi
+          ref: main
+          token: ${{ secrets.ZIP_PAT }}
+          path: defi-kpi
+          fetch-depth: 1
+
+      - name: Checkout Console (book home — read+write via vault PAT)
+        uses: actions/checkout@v5
+        with:
+          repository: roshpinacare-sys/Console
+          ref: main
+          token: ${{ secrets.ZIP_PAT }}
+          path: console-book
+          fetch-depth: 1
+
+      - name: Run the proof pipeline (measure, digest, ready-to-sign)
+        env:
+          ETHERS_DIR: /tmp/ethers
+          FLEET_ACCOUNT: ${{ secrets.FLEET_ACCOUNT }}
+          GH_TOKEN: ${{ secrets.ZIP_PAT }}
+        run: node agents/proof-pipeline.mjs
+
+      - name: Publish the book to Console (public truth shelf)
+        env:
+          FLEET_ROSTER_MAP: ${{ secrets.FLEET_ROSTER_MAP }}  # חוק-ה-refs: המנקה-בגבולת דורש את-המפה (no-op = סיכון)
+        run: |
+          set -u
+          cd console-book
+          git config user.name "roshpinacare-sys"
+          git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
+          node agents/redact-telemetry.mjs proof/pipeline.json
+          git add proof/pipeline.json
+          if git diff --cached --quiet; then
+            echo "book unchanged — clean exit"
+          else
+            git commit -m "proof-pipeline: day book $(date -u +%F) · ready-to-sign anchor calldata (keyless) [skip ci]"
+            git -c rebase.autoStash=true pull --rebase origin main
+            bash "$GITHUB_WORKSPACE/scripts/safe-push.sh"   # הסקריפט חי-בריפו-הבית — לא ב-checkout-של-Console (127-root-fix)
+          fi

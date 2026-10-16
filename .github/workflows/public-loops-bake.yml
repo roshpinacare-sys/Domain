@@ -1,0 +1,52 @@
+# public-loops-bake — אופה את לולאות-התנועה הציבוריות (Task 44).
+# מה נאפה: badge/office.svg · badge/fleet.svg · badge/edge.svg · feed.xml (Atom)
+# מאיפה: מקורות-ציבוריים בלבד (raw FleetHQ office-state · Domain status/published/moment) —
+# אפס-סודות, keyless, אותו-חוק-כנות של הבית: מקור שנכשל שומר את התג הקודם, לעולם לא ערך-מזויף.
+# למה: תגי-הוכחה להטמעה ב-GitHub README + פיד-Atom חי = לולאות-תנועה שהענקים לא מציעים.
+name: public-loops-bake
+
+on:
+  schedule:
+    - cron: "23,53 * * * *"   # מחוץ לעדר (office-pulse 9,29,49 · twin 3,33)
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: public-loops-bake
+  cancel-in-progress: false
+
+jobs:
+  bake:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Bake badges + feed (keyless, fail-soft)
+        run: node tools/bake-public-loops.mjs
+
+      - name: Commit (only when baked content changed)
+        run: |
+          git config user.name "roshpinacare-sys"
+          git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
+          git add badge feed.xml
+          if git diff --cached --quiet; then
+            echo "no-change — the previous bake stands"
+          else
+            git commit -m "public-loops: badges+feed baked $(date -u +%Y-%m-%dT%H:%M:%SZ) [skip ci]"
+            for i in 1 2 3; do
+              git pull --rebase -q && git push origin main && break
+              echo "push race #$i — rebasing on the fleet and retrying"
+              sleep 3
+            done
+          fi

@@ -1,0 +1,80 @@
+#
+# FLEET-HEARTBEAT (T-56) — the fleet measures its own ENGINES: every repo, every
+# workflow state, the run-event mix, wall-blocked privates, custody boundaries,
+# and the voice-card staleness. Publishes agents/fleet-heartbeat.json (+.md) and
+# the public live mirror truth/fleet.json for the flagship page.
+#
+# WHY HOURLY: the platform starves newly registered schedules on this repo (R27
+# book) — this desk is ALSO wired into the tick-keeper arc (fleet-heartbeat.json
+# staleness, max 90min), so the fleet's own metronome keeps it alive regardless
+# of whether GitHub ever fires the cron. Both paths converge on the same desk.
+#
+name: fleet-heartbeat
+
+on:
+  schedule:
+    - cron: "41 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fleet-heartbeat
+  cancel-in-progress: false
+
+jobs:
+  beat:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+
+      - name: Node 20
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      - name: STASIS gate (FATE-DEFENSE law #1 — the breaker halts the heal, never the measuring)
+        id: brake
+        run: |
+          if [ -f agents/STASIS.json ]; then
+            ST=$(node agents/stasis-gate.cjs general)
+          else
+            ST=false
+          fi
+          echo "active=$ST" >> "$GITHUB_OUTPUT"
+          if [ "$ST" = "true" ]; then
+            echo "STASIS-HALT fleet-heartbeat · the breaker is active — measuring continues, heal obeys"
+          fi
+
+      - name: fleet engine scan (keyless measuring + bounded heal)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FLEET_GH_TOKEN: ${{ secrets.SA_KEEPER_DISPATCH_TOKEN }}
+          STASIS_JSON: ${{ github.workspace }}/agents/STASIS.json
+        run: node agents/fleet-heartbeat.cjs
+
+      - name: publish the books (tolerant-add T-55 law + rebase-retry twin idiom)
+        if: always()
+        run: |
+          git config user.name "roshpinacare-sys"
+          git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
+          for _p in agents/fleet-heartbeat.json agents/fleet-heartbeat.md truth/fleet.json; do
+            [ -e "$_p" ] && git add "$_p" || true
+          done
+          if git diff --cached --quiet; then
+            echo "books unchanged"
+            exit 0
+          fi
+          git commit -m "fleet-heartbeat: engine book $(date -u +%FT%TZ) [skip ci]"
+          for attempt in 1 2 3; do
+            git pull --rebase -X theirs --autostash origin main && git push origin HEAD:main && { echo "fleet book published (attempt ${attempt})"; exit 0; }
+            echo "push failed (attempt ${attempt})"
+            sleep 5
+          done
+          echo "could not publish the fleet book after 3 attempts"
+          exit 1
