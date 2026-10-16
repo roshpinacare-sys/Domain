@@ -1,29 +1,29 @@
 # GRID-STATUS — פעימת הגריד החיה
 
-_נמדד אוטומטית: 2026-10-16T06:57:59.183Z · עורקים: 319 · פועמים-עכשיו: 48 · סריקות-API: 79 (טוקן: GH_PAT)_
+_נמדד אוטומטית: 2026-10-16T07:12:08.934Z · עורקים: 320 · פועמים-עכשיו: 62 · סריקות-API: 79 (טוקן: GH_PAT)_
 
 סיכום: ALIVE=12 · MIXED=2 · STALE=1 · QUOTA-DEAD=16 · IDLE=8
 
 | ריפו | נראות | פסק | עורקים (עדכניים ביותר) |
 |---|---|---|---|
-| Autonomy | public | ALIVE | artery-catchup:BEAT@1m · artery-decision-truth:WARM@72m · artery-defi:WARM@139m · artery-desk:WARM@128m · artery-fleet:WARM@142m · artery-flow:WARM@136m |
-| Console | public | ALIVE | agent-verify:WARM@99m · agents-watch:NEVER · chain-vitals:WARM@94m · console-publish:WARM@42m · dex-watch:NEVER · estate-scrub:WARM@55m |
-| Domain | public | ALIVE | adsmarket-panel:NEVER · agent-verify:NEVER · anchor-execute:NEVER · arb-mesh-cron:WARM@39m · artery-integrity-twin:RE-LIT · audience-analyst:NEVER |
-| FleetHQ | public | ALIVE | claims-triage:WARM@72m · fresh-oracle:WARM@109m · identity-guard:BEAT@16m · identity-patrol:WARM@47m · office-3d:NEVER · office-ci:BEAT@16m |
-| GridWatch | public | ALIVE | flow-map:WARM@155m · grid-watch:WARM@72m · identity-guard:WARM@71m · dynamic/pages/pages-build-deployment:WARM@71m |
-| ops-forge | public | ALIVE | forge:WARM@166m |
-| ops-intake | public | ALIVE | intake:WARM@129m |
-| Pulse | public | ALIVE | heartbeat:RUNNING@28m · identity-guard:COOL@1022m · sovereign-voice:COOL@209m · dynamic/pages/pages-build-deployment:BEAT@28m |
+| Autonomy | public | ALIVE | artery-catchup:BEAT@5m · artery-decision-truth:BEAT@13m · artery-defi:WARM@153m · artery-desk:WARM@142m · artery-fleet:WARM@156m · artery-flow:WARM@150m |
+| Console | public | ALIVE | agent-verify:WARM@113m · agents-watch:NEVER · chain-vitals:WARM@108m · console-publish:WARM@56m · dex-watch:NEVER · estate-scrub:WARM@70m |
+| Domain | public | ALIVE | adsmarket-panel:NEVER · agent-verify:NEVER · anchor-execute:NEVER · arb-mesh-cron:RE-LIT · artery-integrity-twin:BEAT@13m · audience-analyst:NEVER |
+| FleetHQ | public | ALIVE | claims-triage:BEAT@13m · fresh-oracle:WARM@123m · identity-guard:BEAT@3m · identity-patrol:WARM@61m · office-3d:NEVER · office-ci:BEAT@3m |
+| GridWatch | public | ALIVE | flow-map:WARM@169m · grid-watch:BEAT@14m · identity-guard:BEAT@12m · dynamic/pages/pages-build-deployment:BEAT@12m |
+| ops-forge | public | ALIVE | forge:WARM@180m |
+| ops-intake | public | ALIVE | intake:WARM@143m |
+| Pulse | public | ALIVE | heartbeat:RUNNING@12m · identity-guard:COOL@1036m · sovereign-voice:COOL@223m · dynamic/pages/pages-build-deployment:BEAT@12m |
 | Sandbox | private | ALIVE | agent-access:NEVER · agent-roster-reseal:NEVER · artery-catchup:SILENT@3d · artery-decision-truth:SILENT@3d · artery-fleet:NEVER · artery-flow:SILENT@3d |
-| saos-runtime | public | ALIVE | army-ladder:COOL@705m · blurt-revival:COOL@393m · custody-recover:NEVER · escrow-payroll:NEVER · fee-engine:WARM@135m · fleet-rotation-a:NEVER |
-| sovereign-beacon | public | ALIVE | beacon-pulse:WARM@88m · dynamic/pages/pages-build-deployment:SILENT@4d |
-| sovereign-lighthouse | public | ALIVE | estate-redboard:BEAT@14m · lighthouse-pulse:WARM@69m · dynamic/pages/pages-build-deployment:NEVER |
-| giant | public | MIXED | trust-heartbeat:COOL@210m |
-| saos-agents | private | MIXED | gitleaks:RUNNING@1157m · selftest-gate:NEVER |
+| saos-runtime | public | ALIVE | army-ladder:COOL@719m · blurt-revival:BEAT@0m · custody-recover:NEVER · escrow-payroll:NEVER · fee-engine:WARM@149m · fleet-rotation-a:NEVER |
+| sovereign-beacon | public | ALIVE | beacon-pulse:WARM@102m · dynamic/pages/pages-build-deployment:SILENT@4d |
+| sovereign-lighthouse | public | ALIVE | estate-redboard:BEAT@29m · lighthouse-pulse:WARM@83m · dynamic/pages/pages-build-deployment:NEVER |
+| giant | public | MIXED | ext-audit:NEVER · trust-heartbeat:COOL@224m |
+| saos-agents | private | MIXED | gitleaks:RUNNING@1172m · selftest-gate:NEVER |
 | roshpinacare-sys.github.io | public | STALE | dynamic/pages/pages-build-deployment:SILENT@1d |
-| Adsmarket | private | QUOTA-DEAD | claims-guard:RUNNING@1157m · gitleaks:SILENT@10d · workflow-yaml-guard:SILENT@10d |
+| Adsmarket | private | QUOTA-DEAD | claims-guard:RUNNING@1172m · gitleaks:SILENT@10d · workflow-yaml-guard:SILENT@10d |
 | anchor-baseline | private | QUOTA-DEAD | baseline-integrity:SILENT@3d · conformance-selftest:SILENT@3d · gitleaks:SILENT@10d · workflow-yaml-guard:SILENT@10d |
-| Defi | private | QUOTA-DEAD | canary:RUNNING@1157m · gitleaks:SILENT@10d · workflow-yaml-guard:SILENT@10d |
+| Defi | private | QUOTA-DEAD | canary:RUNNING@1171m · gitleaks:SILENT@10d · workflow-yaml-guard:SILENT@10d |
 | Project-files | private | QUOTA-DEAD | archive-keeper:SILENT@3d · gitleaks:SILENT@3d · workflow-yaml-guard:SILENT@3d |
 | roshpina | private | QUOTA-DEAD | controls-audit:SILENT@3d · gitleaks:SILENT@10d · sovereign-invariants-i38:NEVER · workflow-yaml-guard:SILENT@10d |
 | sandbox-private | private | QUOTA-DEAD | sovereign-heart:SILENT@3d |
