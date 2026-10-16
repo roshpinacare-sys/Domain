@@ -1,111 +1,16 @@
 {
   "protocol": "SAOS-DEX-ACTIVATION/1",
-  "at": "2026-10-16T22:09:05.253Z",
+  "at": "2026-10-16T23:19:56.296Z",
   "agent": "dex-activation v1.0.0 (CR-0077 THE DEX IGNITION · two-sided ladder flow)",
-  "mode": "KEYLESS-ACTIVATION-LADDER",
+  "verdict": "REFUSED-CONSERVATION (the core book is broken — the desk never trades on a broken book)",
   "stasisHalted": false,
   "lane": "dex-activation",
-  "verdict": "IGNITED (3/3 rounds filled)",
-  "batch": "ACT-2026101622-63ae6ad1",
-  "settledBatch": "ACT-2026101622-63ae6ad1",
-  "coreLedger": {
-    "seq": 87,
-    "at": "2026-10-16T21:41:55.157Z",
-    "ageHours": 0.45,
-    "conservationOk": true,
-    "attestation": "17b2ff6712e23d2a"
-  },
-  "roster": [
-    "acct-00"
-  ],
-  "poolsArmed": [
-    "P1",
-    "P2",
-    "P3"
-  ],
-  "rounds": {
-    "configured": 3,
-    "run": 3,
-    "filled": 3
-  },
-  "intentsDrafted": 3,
-  "intents": [],
-  "wires": 3,
-  "fills": [
-    {
-      "seq": 89,
-      "type": "AGENT_FILL",
-      "agent": "acct-00",
-      "from": "STEEM",
-      "to": "WSTEEM",
-      "amountIn": "1027",
-      "amountOut": "66",
-      "routeIds": [
-        "P1"
-      ],
-      "hops": [
-        {
-          "pool": "P1",
-          "in": "1027",
-          "out": "66",
-          "fee": "0"
-        }
-      ],
-      "edgeMu": "-961",
-      "fairUsed": "PEG-1:1",
-      "feesMu": "0"
-    },
-    {
-      "seq": 91,
-      "type": "AGENT_FILL",
-      "agent": "acct-00",
-      "from": "STEEM",
-      "to": "WSTEEM",
-      "amountIn": "1028",
-      "amountOut": "66",
-      "routeIds": [
-        "P1"
-      ],
-      "hops": [
-        {
-          "pool": "P1",
-          "in": "1028",
-          "out": "66",
-          "fee": "0"
-        }
-      ],
-      "edgeMu": "-962",
-      "fairUsed": "PEG-1:1",
-      "feesMu": "0"
-    },
-    {
-      "seq": 93,
-      "type": "AGENT_FILL",
-      "agent": "acct-00",
-      "from": "STEEM",
-      "to": "WSTEEM",
-      "amountIn": "1029",
-      "amountOut": "66",
-      "routeIds": [
-        "P1"
-      ],
-      "hops": [
-        {
-          "pool": "P1",
-          "in": "1029",
-          "out": "66",
-          "fee": "0"
-        }
-      ],
-      "edgeMu": "-963",
-      "fairUsed": "PEG-1:1",
-      "feesMu": "0"
-    }
-  ],
+  "intentsDrafted": 0,
+  "fills": [],
   "rejects": [],
   "measure24h": {
     "windowHours": 24,
-    "at": "2026-10-16T22:09:05.253Z",
+    "at": "2026-10-16T23:19:56.296Z",
     "fills": 56,
     "volumeInMu": "1122421",
     "volumeOutMu": "1364046",
@@ -132,13 +37,8 @@
     },
     "perAgent": {
       "acct-00": {
-        "fills": 3,
-        "volumeInMu": "3084",
-        "feesMu": "0"
-      },
-      "acct-00": {
-        "fills": 53,
-        "volumeInMu": "1119337",
+        "fills": 56,
+        "volumeInMu": "1122421",
         "feesMu": "934"
       }
     },
@@ -169,28 +69,12 @@
       },
       "perAgent": {
         "acct-00": {
-          "fills": 3,
-          "volumeInMu": "3084",
-          "feesMu": "0"
-        },
-        "acct-00": {
-          "fills": 53,
-          "volumeInMu": "1119337",
+          "fills": 56,
+          "volumeInMu": "1122421",
           "feesMu": "934"
         }
       }
     }
   },
-  "laws": [
-    "keyless + internal-only (SIM units; zero broadcast, zero keys, zero real-money)",
-    "staged-lane law (CR-0077): STASIS halts only when the lane is not allowed; the master brake never flips",
-    "two-sided ladder on every live pool — a one-sided book is a direction bet and it is REFUSED",
-    "sizes 10/100/500bps of input-side depth; dust refuses honestly; 5%-depth cap is the core's own law",
-    "minOut = core route quote −0.5%; a minOut miss refuses (REFUSED-MINOUT) — never a hope",
-    "roster split: operator 40% / soldiers the rest; wire ≤10% of free treasury per batch (the core's law)",
-    "single-writer per queue file: the desk owns dex-activation-queue.json, the mesh owns dex-intents.json",
-    "idempotency: deterministic batch id — a replayed hour settles nothing twice",
-    "the 24h numbers are measured from the append-only ledger — fail-closed honest zeros when absent"
-  ],
   "errors": []
 }

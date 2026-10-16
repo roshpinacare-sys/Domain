@@ -1,19 +1,11 @@
 # dex-activation — THE IGNITION DESK (CR-0077)
 
-At: 2026-10-16T22:09:05.253Z · Verdict: **IGNITED (3/3 rounds filled)** · batch: ACT-2026101622-63ae6ad1 · lane: dex-activation
+At: 2026-10-16T23:19:56.296Z · Verdict: **REFUSED-CONSERVATION (the core book is broken — the desk never trades on a broken book)** · batch: — · lane: dex-activation
 
 Owner word (trace 1a135897157a1d75): "saos dex עמלות 0 נפח כמעט 0 מצטבר כלום" — הדלפק הזה הוא התיקון: זרימה דו-צדדית רציפה סביב המיד של כל בריכה חיה, דרך חוקי-ה-settle של הליבה עצמה.
 
-Pools armed: P1, P2, P3 · Intents drafted: 3 · Fills settled: 3 · Refusals: 0 · Wires: 3
+Pools armed: — · Intents drafted: 0 · Fills settled: 0 · Refusals: 0 · Wires: 0
 
-Core ledger: seq 87 @ 2026-10-16T21:41:55.157Z · conservation true · att 17b2ff6712e23d2a
-
-
-| Agent | Fill | Out | Edge (marked) | Fees |
-|---|---|---|---|---|
-| acct-00 | STEEM 1027µ | 66µ WSTEEM | -961µ | 0µ |
-| acct-00 | STEEM 1028µ | 66µ WSTEEM | -962µ | 0µ |
-| acct-00 | STEEM 1029µ | 66µ WSTEEM | -963µ | 0µ |
 
 ## Rolling 24h (measured from the ledger — never invented)
 
