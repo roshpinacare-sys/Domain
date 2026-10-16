@@ -12,6 +12,9 @@
  *   · git log cadence              — robot labor actually committed
  *     (dex-family / fill-ledger / market-grid / books-sync / pacemaker beats)
  *   · agents/arb-mesh-history.jsonl — real mesh scans (compute consumed)
+ *   · FleetHQ git log (Task 58)    — fleet robot labor on the estate repo
+ *     (pacemaker / office-ci / silence-watchdog / vault-seal / selfcheck…)
+ *   · health-guard events (Task 58) — every measured fleet health check
  *
  * HONESTY LAWS (non-negotiable, same law as post-batcher):
  *   1. ZERO SYNTHETIC TRANSACTIONS — every tx carries `evidence` pointing at
@@ -39,9 +42,17 @@ const LEDGER = path.join(ROOT, 'econ-ledger.jsonl');
 const BOOK = path.join(ROOT, 'econ-book.json');
 const STATE = path.join(ROOT, 'econ-engine-state.json');
 
+// Task 58 (owner directive: thousands per day, scale) — fleet sources on the
+// same host: the FleetHQ repo (robot commits) + the health-guard event log.
+// Env-overridable so the cloud workflow (which lacks the fleet host) skips
+// these sources honestly instead of failing.
+const FLEET_ROOT = process.env.ECON_FLEET_ROOT || '/home/z/my-project';
+const GUARD_JOURNAL = path.join(FLEET_ROOT, 'mini-services', 'health-guard', 'state', 'guard-events.jsonl');
+
 const WAGE_MWU = 1000;
 const BEAT_MWU = 500;
 const SCAN_MWU = 250;
+const GUARD_MWU = 100; // micro-settlement per measured guard check
 
 const sha16 = (s) => crypto.createHash('sha256').update(s).digest('hex').slice(0, 16);
 const nowIso = () => new Date().toISOString();
@@ -61,9 +72,15 @@ function loadCursor() {
   const backfill = Date.now() - 24 * 3600_000; // books open with a 24h window
   const base = {
     last_seq: 0, last_sha16: '', minted: 0,
-    src: { journal: backfill, git: backfill, mesh: backfill },
+    src: { journal: backfill, git: backfill, mesh: backfill, fleet: backfill, guard: backfill },
   };
-  if (s && s.src && typeof s.src.git === 'number') return s;
+  if (s && s.src && typeof s.src.git === 'number') {
+    // per-key defaults — newly added sources open their own 24h window once
+    for (const k of ['journal', 'git', 'mesh', 'fleet', 'guard']) {
+      if (typeof s.src[k] !== 'number') s.src[k] = backfill;
+    }
+    return s;
+  }
   return base;
 }
 
@@ -123,6 +140,48 @@ function harvest(c) {
         evidence: { type: 'mesh-batch', file: 'agents/arb-mesh-history.jsonl', ref: String(j.batch).slice(0, 24), ts: j.at, text: String(j.verdict || '').slice(0, 80) },
       });
     } catch { /* skip */ }
+  }
+  // 4) fleet labor (Task 58) — robot commits on the FleetHQ estate repo.
+  //    Distinct labor from the Domain beats: pacemaker/office-ci/watchdog/
+  //    vault-seal commits are the fleet's real operational work.
+  try {
+    const { execFileSync } = require('child_process');
+    const since = new Date(c.src.fleet).toISOString();
+    const log = execFileSync('git', ['log', '--since', since, '--format=%H|%cI|%s'], {
+      cwd: FLEET_ROOT, timeout: 20000, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024,
+    });
+    for (const line of log.split('\n').filter(Boolean)) {
+      const parts = line.split('|');
+      if (parts.length < 3) continue;
+      const hash = parts[0], ci = parts[1];
+      const msg = parts.slice(2).join('|');
+      const at = Date.parse(ci);
+      if (!Number.isFinite(at) || at <= c.src.fleet) continue;
+      // robot-shaped: leading kebab token followed by space/colon/dot
+      // (covers "pacemaker receipt:", "vault-seal [...]:", "decide:", …)
+      const robot = (msg.match(/^([a-z0-9-]+)(?=[\s:.])/) || [])[1];
+      if (!robot) continue; // only robot-shaped commits are labor
+      out.push({
+        kind: 'fleet', at, who: 'robot:' + robot.slice(0, 24),
+        amount: BEAT_MWU, venue: 'fleet-labor settlement',
+        evidence: { type: 'git-commit', file: 'git:FleetHQ-main', ref: String(hash).slice(0, 12), ts: ci, text: msg.slice(0, 80) },
+      });
+    }
+  } catch { /* fleet repo unavailable — skip source, verdict notes it */ }
+  // 5) guard-meter (Task 58) — every measured health check of the fleet.
+  //    The guard is a real resident process; its events are the evidence.
+  for (const line of readJsonl(GUARD_JOURNAL)) {
+    try {
+      const j = JSON.parse(line);
+      const at = Date.parse(j.at || '');
+      if (!Number.isFinite(at) || at <= c.src.guard) continue;
+      if (!j.kind) continue;
+      out.push({
+        kind: 'guard', at, who: 'robot:health-guard',
+        amount: GUARD_MWU, venue: 'guard-meter',
+        evidence: { type: 'guard-event', file: 'mini-services/health-guard/state/guard-events.jsonl', ref: String(j.kind).slice(0, 24), ts: j.at, text: String(j.detail || '').slice(0, 80) },
+      });
+    } catch { /* damaged line — skip, never invent */ }
   }
   out.sort((a, b) => a.at - b.at);
   return out;
@@ -190,7 +249,7 @@ function settle() {
   if (wrote > 0) {
     // advance each source watermark to the newest event it actually minted
     for (const ev of events) {
-      const key = ev.kind === 'wage' ? 'journal' : ev.kind === 'beat' ? 'git' : 'mesh';
+      const key = ev.kind === 'wage' ? 'journal' : ev.kind === 'beat' ? 'git' : ev.kind === 'fleet' ? 'fleet' : ev.kind === 'guard' ? 'guard' : 'mesh';
       c.src[key] = Math.max(c.src[key] || 0, ev.at);
     }
     c.minted = (c.minted || 0) + wrote;
