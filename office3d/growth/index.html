@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>חדר-הצמיחה | מפקדת הצי · SAOS</title>
+<meta name="description" content="חדר-הצמיחה של מפקדת הצי: תוכנית-הצמיחה הנמדדת — כל מספר נשלף חי מהספר הציבורי (agents/growth-plan.json), כל שורה עם מקור. אין תחזיות בלי סימוכין.">
+<meta name="theme-color" content="#0c0c0e">
+<link rel="canonical" href="https://roshpinacare-sys.github.io/Domain/office3d/growth/">
+<link rel="icon" href="../logo.svg">
+<style>
+:root{
+  --bg:#0c0c0e; --bg2:#101013; --panel:#141418; --panel2:#18181d;
+  --line:#26262c; --line2:#3f3f46;
+  --acc:#f59e0b; --acc-bright:#fbbf24; --acc-bg:rgba(245,158,11,.09); --acc-line:rgba(245,158,11,.34);
+  --ok:#34d399; --warn:#fbbf24; --bad:#fb7185;
+  --text:#e4e4e7; --dim:#a1a1aa; --faint:#71717a;
+  --mono:ui-monospace,'SF Mono','Cascadia Code',Consolas,Menlo,monospace;
+  --sans:-apple-system,'Segoe UI',Roboto,'Helvetica Neue','Noto Sans Hebrew',Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;line-height:1.7}
+a{color:var(--acc-bright);text-decoration:none}
+a:hover{text-decoration:underline}
+.num{font-variant-numeric:tabular-nums}
+.mono{font-family:var(--mono);direction:ltr;unicode-bidi:embed}
+.wrap{max-width:1020px;margin:0 auto;padding:0 18px}
+@media(min-width:760px){.wrap{padding:0 24px}}
+header.site{position:sticky;top:0;z-index:50;background:rgba(12,12,14,.9);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.hd{height:58px;display:flex;align-items:center;gap:12px}
+.hd .back{flex:none;font-size:13px;color:var(--dim);border:1px solid var(--line2);border-radius:999px;padding:6px 12px}
+.hd .back:hover{color:var(--acc-bright);border-color:var(--acc-line);text-decoration:none}
+.brand{margin-inline-start:auto;font-weight:700;font-size:14px;color:var(--faint);white-space:nowrap}
+.hero{padding:40px 0 22px}
+.kicker{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:var(--acc-bright);border:1px solid var(--acc-line);background:var(--acc-bg);border-radius:999px;padding:6px 13px;font-weight:600}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:pulse 2.4s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+h1{font-size:clamp(28px,5.6vw,46px);line-height:1.1;letter-spacing:-.6px;margin:16px 0 10px;font-weight:800}
+h1 .en{color:var(--acc-bright)}
+.lede{font-size:clamp(14.5px,2.3vw,17.5px);color:var(--dim);max-width:64ch}
+.stamp{margin-top:12px;font-size:12px;color:var(--faint)}
+.stamp b{color:var(--dim);font-weight:600}
+section{padding:26px 0}
+h2.sec{font-size:clamp(19px,3.2vw,26px);letter-spacing:-.3px;font-weight:800;margin-bottom:4px}
+.sub{color:var(--dim);font-size:13.5px;margin-bottom:16px}
+.grid{display:grid;gap:12px;grid-template-columns:1fr}
+@media(min-width:640px){.grid.g2{grid-template-columns:1fr 1fr}.grid.g3{grid-template-columns:1fr 1fr 1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;min-width:0}
+.card h3{font-size:14px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.card .ico{width:28px;height:28px;flex:none;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;border:1px solid var(--acc-line);background:var(--acc-bg);color:var(--acc-bright)}
+.card .ico svg{width:15px;height:15px;display:block}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:5px 14px;font-size:12.8px}
+.kv b{color:var(--faint);font-weight:500}
+.kv i{font-style:normal;color:var(--text);text-align:left;direction:ltr;unicode-bidi:embed;font-variant-numeric:tabular-nums}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;border-radius:999px;padding:3px 9px;border:1px solid var(--line2);color:var(--dim)}
+.pill.ok{color:#86efac;border-color:rgba(52,211,153,.4);background:rgba(52,211,153,.08)}
+.pill.warn{color:#fde047;border-color:rgba(234,179,8,.45);background:rgba(234,179,8,.08)}
+ul.prio{list-style:none;display:flex;flex-direction:column;gap:8px}
+ul.prio li{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+ul.prio .id{font-family:var(--mono);direction:ltr;unicode-bidi:embed;color:var(--acc-bright);font-size:12px;font-weight:700}
+ul.prio .he{font-size:14px;font-weight:600}
+ul.prio .cost{font-size:12px;color:var(--faint);margin-inline-start:auto}
+.note{background:var(--panel2);border:1px dashed var(--line2);border-radius:12px;padding:14px 16px;font-size:13px;color:var(--dim)}
+.err{font-size:13px;color:var(--faint);border:1px dashed var(--line2);border-radius:12px;padding:12px 14px}
+.src-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.src-row a{font-size:12.5px;font-weight:600;border:1px solid var(--line2);border-radius:999px;padding:7px 14px;color:var(--text)}
+.src-row a:hover{border-color:var(--acc-line);color:var(--acc-bright);text-decoration:none}
+footer{border-top:1px solid var(--line);margin-top:20px;padding:22px 0 34px;font-size:12px;color:var(--faint);line-height:1.8}
+footer a{color:var(--dim)}
+</style>
+</head>
+<body>
+<header class="site">
+  <div class="wrap hd">
+    <a class="back" href="../../console.html">← חזרה לקונסולה</a>
+    <a class="back" href="../">החדר התלת-מימדי</a>
+    <span class="brand">SAOS · מפקדת הצי</span>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <span class="kicker"><span class="dot"></span> חדר-הצמיחה · נמדד, לא מדומיין</span>
+      <h1>תוכנית-הצמיחה <span class="en">growth room</span></h1>
+      <p class="lede">המדידה הכלכלית העדכנית של הצי — סולם-המסחר, קו-התוכן, הון-הצבעה והאוצר. כל מספר נשלף חי מספר-הצמיחה הציבורי בכל פתיחה; אין תחזיות בלי סימוכין, ומה שלא נטען — מוצג ככשל-גלוי.</p>
+      <p class="stamp">ספר-מקור: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/growth-plan.json" target="_blank" rel="noopener">agents/growth-plan.json</a> · נוצר: <b id="st-gen">…</b> · גיל מדידה: <b id="st-age">…</b></p>
+    </div>
+  </section>
+
+  <section id="measured">
+    <div class="wrap">
+      <h2 class="sec">מצב כלכלי נמדד</h2>
+      <p class="sub">ארבע מסילות · כל ערך עם משמעותו בעברית. אין-נתון → כתוב במפורש.</p>
+      <div class="grid g2" id="measured-grid">
+        <div class="card"><h3><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span> סולם-המסחר</h3><div class="kv" id="kv-ladder"><b>טוען…</b><i>…</i></div></div>
+        <div class="card"><h3><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span> קו-התוכן</h3><div class="kv" id="kv-content"><b>טוען…</b><i>…</i></div></div>
+        <div class="card"><h3><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="3"/><path d="M12 22V8M5 12H2a10 10 0 0 0 20 0h-3"/></svg></span> הון-הצבעה</h3><div class="kv" id="kv-curation"><b>טוען…</b><i>…</i></div></div>
+        <div class="card"><h3><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7.5" cy="15.5" r="4.5"/><path d="m21 2-9.6 9.6M15.5 7.5l3 3L22 7l-3-3"/></svg></span> אוצר-הבעלים</h3><div class="kv" id="kv-treasury"><b>טוען…</b><i>…</i></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="priorities">
+    <div class="wrap">
+      <h2 class="sec">סדר-העדיפויות</h2>
+      <p class="sub">מה שהספר עצמו מגדיר כפערי-רווח → פעולה. בלי עריכה-יד.</p>
+      <ul class="prio" id="prio-list"><li><span class="err" style="border:none;padding:0">טוען עדיפויות…</span></li></ul>
+    </div>
+  </section>
+
+  <section id="note">
+    <div class="wrap">
+      <h2 class="sec">הערת-הספר</h2>
+      <div class="note" id="book-note">טוען…</div>
+      <div class="src-row">
+        <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/growth-plan.json" target="_blank" rel="noopener">growth-plan.json</a>
+        <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/growth-plan.md" target="_blank" rel="noopener">growth-plan.md — הנימוק המלא</a>
+        <a href="https://roshpinacare-sys.github.io/Domain/console.html">הקונסולה החיה</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    חדר-הצמיחה · דף סטטי שקורא ספר-ציבורי · אפס-סודות, אפס-המצאה — מה שלא נמדד לא מוצג.
+    <br><span class="mono">roshpinacare-sys/Domain · office3d/growth</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+  var URL_BOOK = '../../agents/growth-plan.json';   /* ספר-ציבורי, יחסי-למקום */
+  var fmt = function (v, unit) {
+    if (v === undefined || v === null) return 'unknown';
+    var n = (typeof v === 'number') ? v.toLocaleString('en-US') : String(v);
+    return n + (unit ? ' ' + unit : '');
+  };
+  var row = function (he, v, unit) { return '<b>' + he + '</b><i>' + fmt(v, unit) + '</i>'; };
+
+  fetch(URL_BOOK, { cache: 'no-store' })
+    .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(function (d) {
+      var m = d.measured || {};
+      var l = m.ladder || {}, c = m.content || {}, cu = m.curation || {};
+      document.getElementById('kv-ladder').innerHTML =
+        row('פעולות 12ש׳', l.ops12h) + row('הזמנות', l.orderCreates) +
+        row('ביטולים', l.cancels) + row('fills אמת היום', l.realFillsToday) +
+        row('הון-עבודה', l.workingCapitalSbdEquivalent, 'USD') +
+        row('ריחוף', l.pnlFloatPct, '%') + row('mid', l.mid) + row('מרווח', l.spreadPct, '%');
+      document.getElementById('kv-content').innerHTML =
+        row('פרסומים אחרונים', c.postsLast5) + row('pending payout', c.pendingPayoutSbd, 'SBD') +
+        row('קצב פרסום', c.publishCadence);
+      document.getElementById('kv-curation').innerHTML =
+        row('SP אפקטיבי', cu.effectiveSp) + row('הצבעות בהיסטוריה', cu.votesInHistory);
+      document.getElementById('kv-treasury').innerHTML =
+        row('אוצר-הבעלים', m.treasuryOwnerSp, 'SP');
+
+      var pr = document.getElementById('prio-list');
+      var list = Array.isArray(d.priorities) ? d.priorities : [];
+      pr.innerHTML = list.length
+        ? list.map(function (p) {
+            var cost = (p.cost === 0) ? '0 (אפס)' : ((p.cost === undefined || p.cost === null) ? 'unknown' : p.cost);
+            return '<li><span class="id">' + (p.id || '?') + '</span>' +
+                   '<span class="he">' + (p.he || '') + '</span>' +
+                   '<span class="cost">עלות: ' + cost + (p.owner ? ' · אחריות: ' + p.owner : '') + '</span></li>';
+          }).join('')
+        : '<li><span class="err" style="border:none;padding:0">אין עדיפויות בספר — נאמר זאת בכנות.</span></li>';
+
+      document.getElementById('book-note').textContent = d.note || 'אין הערה בספר.';
+
+      var gen = d.generatedAt;
+      var el = document.getElementById('st-gen');
+      if (gen) {
+        el.textContent = String(gen).replace('T', ' ').replace('Z', ' UTC');
+        var ageH = Math.round((Date.now() - new Date(gen).getTime()) / 36e5 * 10) / 10;
+        var age = document.getElementById('st-age');
+        age.textContent = (isFinite(ageH) ? ageH : 'unknown') + ' שע׳';
+        age.style.color = ageH > 24 * 7 ? '#fbbf24' : '';
+      } else { el.textContent = 'unknown'; }
+    })
+    .catch(function (e) {
+      var msg = 'כישלון-גלוי: ספר-הצמיחה לא נטען (' + (e && e.message ? e.message : 'network') + '). לא יומצא אף מספר — רעננו או בדקו את הספר במקור.';
+      ['kv-ladder', 'kv-content', 'kv-curation', 'kv-treasury'].forEach(function (id) {
+        document.getElementById(id).innerHTML = '<b>מצב</b><i style="color:#fb7185;direction:rtl">לא נטען</i>';
+      });
+      document.getElementById('prio-list').innerHTML = '<li><span class="err" style="border:none;padding:0">' + msg + '</span></li>';
+      document.getElementById('book-note').textContent = msg;
+      document.getElementById('st-gen').textContent = 'unknown';
+    });
+})();
+</script>
+</body>
+</html>
