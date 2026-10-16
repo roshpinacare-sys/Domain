@@ -1,6 +1,6 @@
 {
   "protocol": "SAOS-DEX-ROUTER/1",
-  "at": "2026-10-16T16:41:21.838Z",
+  "at": "2026-10-16T16:41:32.291Z",
   "agent": "dex-router v1.0.0 (R39 SWAP-NET, CR-0069)",
   "mode": "KEYLESS-READ",
   "stasisHalted": false,
@@ -40,18 +40,18 @@
     "cex-refs": {
       "rows": [
         {
-          "venue": "Binance",
-          "symbol": "STEEMUSDT",
-          "mid": 0.05416,
-          "pct24h": -0.313,
+          "venue": "HTX",
+          "symbol": "SBDUSDT",
+          "mid": 0.5281,
+          "pct24h": -1.234,
           "why": null
         },
         {
-          "venue": "HTX",
-          "symbol": "HBDUSDT",
-          "mid": null,
-          "pct24h": null,
-          "why": "NO-TICK"
+          "venue": "Binance",
+          "symbol": "BTCUSDT",
+          "mid": 81496.01,
+          "pct24h": -0.697,
+          "why": null
         },
         {
           "venue": "Binance",
@@ -68,17 +68,24 @@
           "why": "HTTP-400"
         },
         {
-          "venue": "HTX",
-          "symbol": "SBDUSDT",
-          "mid": 0.5282,
-          "pct24h": -1.216,
+          "venue": "Binance",
+          "symbol": "STEEMUSDT",
+          "mid": 0.05416,
+          "pct24h": -0.514,
           "why": null
         },
         {
-          "venue": "Binance",
-          "symbol": "BTCUSDT",
-          "mid": 81500.01,
-          "pct24h": -0.68,
+          "venue": "HTX",
+          "symbol": "HBDUSDT",
+          "mid": null,
+          "pct24h": null,
+          "why": "NO-TICK"
+        },
+        {
+          "venue": "MEXC",
+          "symbol": "STEEMUSDT",
+          "mid": 0.05409,
+          "pct24h": -0.004,
           "why": null
         },
         {
@@ -94,13 +101,6 @@
           "mid": null,
           "pct24h": null,
           "why": "HTTP-400"
-        },
-        {
-          "venue": "MEXC",
-          "symbol": "STEEMUSDT",
-          "mid": 0.05413,
-          "pct24h": -0.003,
-          "why": null
         }
       ],
       "primarySymbols": [
@@ -402,8 +402,8 @@
       "sizeNote": "the only deep SBD book is HTX (Upbit ended SBD support 2025-02)",
       "quote": {
         "in": "1.000 SBD",
-        "out": "0.527936 USDT",
-        "impliedPrice": 0.5282,
+        "out": "0.527836 USDT",
+        "impliedPrice": 0.5281,
         "impactBps": null
       },
       "verdict": "C-GATE-OPERATOR",
@@ -501,11 +501,11 @@
         "cex:STEEMUSDT+SBDUSDT"
       ],
       "localMid": 0.10349081,
-      "impliedFair": 0.10253692,
-      "grossBps": 93.03,
+      "impliedFair": 0.10255633,
+      "grossBps": 91.12,
       "feesBps": 0,
       "slipBps": 20,
-      "netBps": 73.03,
+      "netBps": 71.12,
       "thresholdBps": 100,
       "driftPct": null,
       "verdict": "BELOW-FLOOR",
@@ -531,13 +531,13 @@
         "cex:BTCUSDT+HIVEUSDT"
       ],
       "poolPriceHivePerBtc": 1581168.1692544399,
-      "cexCrossHivePerBtc": 1576402.514507,
-      "grossBps": 30.23,
+      "cexCrossHivePerBtc": 1576325.145068,
+      "grossBps": 30.72,
       "feesBps": 100,
       "slipBps": 20,
-      "netBps": -89.77,
+      "netBps": -89.28,
       "thresholdBps": 100,
-      "driftPct": 0.3023,
+      "driftPct": 0.3072,
       "verdict": "BELOW-FLOOR",
       "railOwner": "owner-hive-alt (NO-KEYS + HE RPC)",
       "why": "the custodial peg is real only while the pool hugs the cross — 1.5% drift halts the venue"
@@ -564,48 +564,48 @@
   "counterGrid": {
     "steem": {
       "market": "SBD/STEEM (STEEM internal)",
-      "anchor": 0.10253692,
+      "anchor": 0.10255633,
       "anchorSource": "CEX-IMPLIED-FAIR (SBDUSDT/STEEMUSDT — lead-lag anchor, the opposing side of the local book)",
       "localMid": 0.10349081,
       "spreadPct": 0.5,
       "spacingPct": 0.4,
-      "anchorAdj": 0.10253692,
+      "anchorAdj": 0.10255633,
       "skewShiftBps": 0,
       "spacingBps": 40,
       "rungs": [
         {
           "side": "buy",
-          "price": 0.10212677,
+          "price": 0.1021461,
           "size": 0,
           "unit": "SBD"
         },
         {
           "side": "buy",
-          "price": 0.10171662,
+          "price": 0.10173588,
           "size": 0,
           "unit": "SBD"
         },
         {
           "side": "buy",
-          "price": 0.10130648,
+          "price": 0.10132565,
           "size": 0,
           "unit": "SBD"
         },
         {
           "side": "sell",
-          "price": 0.10294707,
+          "price": 0.10296656,
           "size": 0,
           "unit": "STEEM"
         },
         {
           "side": "sell",
-          "price": 0.10335722,
+          "price": 0.10337678,
           "size": 0,
           "unit": "STEEM"
         },
         {
           "side": "sell",
-          "price": 0.10376736,
+          "price": 0.10378701,
           "size": 0,
           "unit": "STEEM"
         }
