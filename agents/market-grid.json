@@ -1,5 +1,5 @@
 {
- "at": "2026-10-16T17:41:18.440Z",
+ "at": "2026-10-16T17:41:56.939Z",
  "agent": "market-grid v1.3.0 (Z-60+ internal-market sovereignty instrument; v1.3.0 CR-0062: HE pond law + daily-history probe-first)",
  "laws": [
   "official sources only (chain nodes + sidechain RPC)",
@@ -11,60 +11,149 @@
  ],
  "markets": [
   {
-   "market": "SBD/STEEM (internal steem)",
-   "chain": "steem",
-   "bid": 0.10253026564920535,
-   "ask": 0.10322978086772859,
-   "mid": 0.10288002,
-   "spreadPct": 0.6799,
-   "pct24h": 0,
+   "market": "HBD/HIVE (internal hive)",
+   "chain": "hive",
+   "bid": 0.05210465759156045,
+   "ask": 0.05222832333035372,
+   "mid": 0.05216649,
+   "spreadPct": 0.2371,
+   "pct24h": 0.021,
    "band": {
-    "low": 0.10236562,
-    "high": 0.10339442
+    "low": 0.05190566,
+    "high": 0.05242732
    },
    "grid": [
     {
      "side": "buy",
-     "price": 0.1024685
+     "price": 0.05195782
     },
     {
      "side": "buy",
-     "price": 0.10205698
+     "price": 0.05174916
     },
     {
      "side": "buy",
-     "price": 0.10164546
+     "price": 0.05154049
     },
     {
      "side": "buy",
-     "price": 0.10123394
+     "price": 0.05133183
     },
     {
      "side": "buy",
-     "price": 0.10082242
+     "price": 0.05112316
     },
     {
      "side": "sell",
-     "price": 0.10329154
+     "price": 0.05237516
     },
     {
      "side": "sell",
-     "price": 0.10370306
+     "price": 0.05258382
     },
     {
      "side": "sell",
-     "price": 0.10411458
+     "price": 0.05279249
     },
     {
      "side": "sell",
-     "price": 0.1045261
+     "price": 0.05300115
     },
     {
      "side": "sell",
-     "price": 0.10493762
+     "price": 0.05320982
     }
    ],
-   "step": 0.00041152,
+   "step": 0.00020867,
+   "spacingDisciplined": true,
+   "paperFills": 5,
+   "tapeSamples": 20,
+   "tapeLevels": [
+    0.052184832910862546,
+    0.05218554861730597,
+    0.05228831665354773,
+    0.05229804122391499,
+    0.05228772868853381,
+    19.1938865564219,
+    19.192702394526798,
+    19.190153227832205,
+    19.182821856287426,
+    19.18223119636547,
+    19.181262729124235,
+    19.18122160524987,
+    0.05242790950287683,
+    0.05255258618758541,
+    0.05254278139310678,
+    0.05290482464395508,
+    0.0526972433460076,
+    0.052680827173201085,
+    0.05266329235960473,
+    19.1903548202728
+   ],
+   "depthBids": 10,
+   "depthAsks": 10,
+   "volume24h": {
+    "HIVE": 128673.285,
+    "HBD": 6855.984
+   },
+   "volume24hSbdTerm": 6855.984,
+   "ms": 1380
+  },
+  {
+   "market": "SBD/STEEM (internal steem)",
+   "chain": "steem",
+   "bid": 0.10253026564920535,
+   "ask": 0.10306748466257669,
+   "mid": 0.10279888,
+   "spreadPct": 0.5226,
+   "pct24h": 0,
+   "band": {
+    "low": 0.10228488,
+    "high": 0.10331287
+   },
+   "grid": [
+    {
+     "side": "buy",
+     "price": 0.10238768
+    },
+    {
+     "side": "buy",
+     "price": 0.10197648
+    },
+    {
+     "side": "buy",
+     "price": 0.10156529
+    },
+    {
+     "side": "buy",
+     "price": 0.10115409
+    },
+    {
+     "side": "buy",
+     "price": 0.1007429
+    },
+    {
+     "side": "sell",
+     "price": 0.10321007
+    },
+    {
+     "side": "sell",
+     "price": 0.10362127
+    },
+    {
+     "side": "sell",
+     "price": 0.10403246
+    },
+    {
+     "side": "sell",
+     "price": 0.10444366
+    },
+    {
+     "side": "sell",
+     "price": 0.10485485
+    }
+   ],
+   "step": 0.0004112,
    "spacingDisciplined": true,
    "paperFills": 7,
    "tapeSamples": 20,
@@ -97,7 +186,7 @@
     "STEEM": 1434.498
    },
    "volume24hSbdTerm": 146.928,
-   "ms": 1515
+   "ms": 1495
   }
  ],
  "hiveEngine": {
@@ -106,8 +195,8 @@
    {
     "symbol": "BEE",
     "lastPrice": "0.55050120",
-    "bid": 0.55104211,
-    "ask": 0.5580739,
+    "bid": 0.55104213,
+    "ask": 0.55807389,
     "mid": 0.55455801,
     "spreadPct": 1.268,
     "feePct": 0,
@@ -188,26 +277,21 @@
    "alive": false,
    "reason": "HE-DAILY-HISTORY-DARK: marketHistory/history answered null (not RPC-exposed) — the day it answers, the pond becomes a series"
   },
-  "ms": 1375
+  "ms": 1345
  },
  "blurt": {
   "alive": false,
   "reason": "BLURT-SURFACE-DARK: getaddrinfo ENOTFOUND api.blurt.world"
  },
  "paperLedger": "agents/market-grid-paper.jsonl",
- "executorPreviewCount": 10,
- "errors": [
-  {
-   "market": "hive",
-   "error": ""
-  }
- ],
+ "executorPreviewCount": 20,
+ "errors": [],
  "summary": {
-  "marketsRead": 2,
-  "errors": 1,
-  "gridsComputed": 4,
-  "paperFillsSnapshot": 10,
-  "executorPreviewCount": 10,
-  "verdict": "PARTIAL"
+  "marketsRead": 3,
+  "errors": 0,
+  "gridsComputed": 5,
+  "paperFillsSnapshot": 20,
+  "executorPreviewCount": 20,
+  "verdict": "MARKET-GRID-LIVE"
  }
 }
