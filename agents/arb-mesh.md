@@ -1,21 +1,13 @@
 # arb-mesh — THE MESH MARKET (R41, CR-0071)
 
-<<<<<<< Updated upstream
-At: 2026-10-16T07:41:31.688Z · Verdict: **GATED-WIRE (edge above floor but no free capital to arm the agents — named, never faked)** · batch: MESH-2026101607-3eee605f · protocol: SAOS-ARB-MESH/1
-=======
-At: 2026-10-16T07:41:19.083Z · Verdict: **GATED-WIRE (edge above floor but no free capital to arm the agents — named, never faked)** · batch: MESH-2026101607-4573ce47 · protocol: SAOS-ARB-MESH/1
->>>>>>> Stashed changes
+At: 2026-10-16T07:11:35.918Z · Verdict: **GATED-WIRE (edge above floor but no free capital to arm the agents — named, never faked)** · batch: MESH-2026101607-8b8b9df1 · protocol: SAOS-ARB-MESH/1
 
 Roster: 1 accounts (owner + 0 soldiers) · Edge candidates: 1 · Intents drafted: 0 · Fills settled: 0 · Refusals: 0
 
 
 | Edge row | Direction | Net bps | Floor | Source |
 |---|---|---|---|---|
-<<<<<<< Updated upstream
-| A1 P3 STEEM/SBD pool mid vs CEX-implied fair | STEEM→SBD (sell the rich side) | 308525.25 | 100 | dex-core.json (our pool — atomic, no bridge) |
-=======
-| A1 P3 STEEM/SBD pool mid vs CEX-implied fair | STEEM→SBD (sell the rich side) | 307125.01 | 100 | dex-core.json (our pool — atomic, no bridge) |
->>>>>>> Stashed changes
+| A1 P3 STEEM/SBD pool mid vs CEX-implied fair | STEEM→SBD (sell the rich side) | 308244.19 | 100 | dex-core.json (our pool — atomic, no bridge) |
 
 ## Size ladder (the large-sums law — exact BigInt, honest slippage)
 
