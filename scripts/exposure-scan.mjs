@@ -20,7 +20,7 @@
 // except office3d/** (separate deployment lane) and the law files themselves.
 // Run locally: node scripts/exposure-scan.mjs — exits non-zero on any violation.
 import { readFileSync } from "node:fs";
-import { FORBIDDEN_PATHS, FORBIDDEN_CONTENT, ENGINE_RE, ENGINE_WAIVED, SIGLOCKED_FILES, trackedFiles } from "./exposure-rules.mjs";
+import { FORBIDDEN_PATHS, FORBIDDEN_CONTENT, ENGINE_RE, ENGINE_WAIVED, SIGLOCKED_FILES, HEAD_ACCOUNT_FILES, trackedFiles } from "./exposure-rules.mjs";
 
 const SKIP_RE = /(^|\/)(node_modules|\.git)\//;
 const LANE_SKIP = /^office3d\//;        // parallel deployment lane (do-not-touch zone)
@@ -45,8 +45,10 @@ for (const p of targets) {
   if (body.includes("\u0000")) continue; // binary
   if (SIGLOCKED_FILES.some((re) => re.test(p))) continue; // sig-locked evidence — content law waived by the law file itself (see SIGLOCKED_FILES)
   const waived = ENGINE_RE.test(p) && ENGINE_WAIVED.test(body);
+  const headAcct = HEAD_ACCOUNT_FILES.some((re) => re.test(p)); // 26-R2: owner-restored operator constant (documented exception, one narrow pattern)
   for (const { re, why } of FORBIDDEN_CONTENT) {
     if (waived && re.source === "keysZipPass") continue;
+    if (headAcct && why === "owner account handle (any case/inflection)") continue;
     if (re.test(body)) findings.push({ p, why });
   }
 }
