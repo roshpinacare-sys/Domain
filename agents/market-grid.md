@@ -4,6 +4,13 @@ At: 2026-10-16T20:11:05.538Z · Verdict: **PARTIAL** · Markets read: 2 · Error
 
 | Market | Bid | Ask | Spread% | 24h% | Grid rungs | Step | Paper fills (snapshot) |
 |---|---|---|---|---|---|---|---|
+=======
+At: 2026-10-16T20:11:54.145Z · Verdict: **MARKET-GRID-LIVE** · Markets read: 3 · Errors: 0
+
+| Market | Bid | Ask | Spread% | 24h% | Grid rungs | Step | Paper fills (snapshot) |
+|---|---|---|---|---|---|---|---|
+| HBD/HIVE (internal hive) | 0.05240650027214058 | 0.05261755881445756 | 0.4019 | -0.108 | 10 | 0.00021005 | 5 |
+>>>>>>> Stashed changes
 | SBD/STEEM (internal steem) | 0.10253469434568184 | 0.1026694045174538 | 0.1313 | 0 | 10 | 0.00041041 | 6 |
 
 Hive-Engine basket (keyless RPC, per-token fee measured from the tokens contract): BEE spread 1.0168% fee 0bps pond 266.61607405 SWAP.HIVE/24h FEASIBLE · SWAP.LTC spread 0.2726% fee 0bps pond 17704.80767169 SWAP.HIVE/24h thin · SWAP.DOGE spread 1.1854% fee 0bps pond 479.87896804 SWAP.HIVE/24h FEASIBLE · CENT spread 1.769% fee 0bps pond 59.16125562 SWAP.HIVE/24h FEASIBLE · WAIV spread 0.1062% fee 0bps pond 9.49001561 SWAP.HIVE/24h thin
