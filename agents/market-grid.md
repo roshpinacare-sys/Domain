@@ -1,6 +1,10 @@
 # market-grid — internal-market sovereignty instrument (Z-60+)
 
+<<<<<<< Updated upstream
 At: 2026-10-16T12:11:15.202Z · Verdict: **MARKET-GRID-LIVE** · Markets read: 3 · Errors: 0
+=======
+At: 2026-10-16T12:11:16.421Z · Verdict: **MARKET-GRID-LIVE** · Markets read: 3 · Errors: 0
+>>>>>>> Stashed changes
 
 | Market | Bid | Ask | Spread% | 24h% | Grid rungs | Step | Paper fills (snapshot) |
 |---|---|---|---|---|---|---|---|

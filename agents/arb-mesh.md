@@ -1,6 +1,10 @@
 # arb-mesh — THE MESH MARKET (R41, CR-0071)
 
+<<<<<<< Updated upstream
 At: 2026-10-16T12:11:20.727Z · Verdict: **GATED-WIRE (edge above floor but no free capital to arm the agents — named, never faked)** · batch: MESH-2026101612-ff1a01b9 · protocol: SAOS-ARB-MESH/1
+=======
+At: 2026-10-16T12:11:21.922Z · Verdict: **GATED-WIRE (edge above floor but no free capital to arm the agents — named, never faked)** · batch: MESH-2026101612-ff1a01b9 · protocol: SAOS-ARB-MESH/1
+>>>>>>> Stashed changes
 
 Roster: 1 accounts (owner + 0 soldiers) · Edge candidates: 1 · Intents drafted: 0 · Fills settled: 0 · Refusals: 0
 
