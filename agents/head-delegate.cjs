@@ -162,6 +162,56 @@ async function main() {
     console.log(`[${row.status}] owner ↩ @${refOf(s)} (reclaim idle delegation — 7-day return)`);
     await sleep(400);
   }
+  // ── DEAD-DELEGATION-CURE (2026-10-16, owner order "money stuck in the fleet limits —
+  // check everything, use capital to the maximum"): a chain-measured sweep over ALL
+  // outgoing delegations of the head (condenser_api.get_vesting_delegations
+  // ["headcorner","delegated",1000] — the form that actually returns rows; the 4-arg
+  // form silently returned [] and masked 1460 SP of state vs index for days). Any
+  // delegatee that (a) is NOT in the active roster (SOLDIERS/RETIRED) AND (b) has not
+  // voted for > DEAD_CURE_HOURS (72h) is dead capital: reclaimed to the head's voting
+  // power (delegate 0 VESTS — 7-day return). Measured 2026-10-16: hcsoldier4/5/6
+  // (51 SP, last vote 82h ago, lifetime curation 0) + hive-177702 (10 SP, never voted,
+  // 1970 epoch). Alive delegations (last vote < 72h) are never touched — the fleet's
+  // curation machine is sacred. Cap MAX_CURE_RECLAIMS (6) per run, receipted per row.
+  try {
+    const DEAD_CURE_HOURS = Number(process.env.DEAD_CURE_HOURS || 72);
+    const MAX_CURE_RECLAIMS = Number(process.env.MAX_CURE_RECLAIMS || 6);
+    const protect = new Set([...SOLDIERS, ...RETIRED]);
+    const outRows = (await P(cb => steem.api.getVestingDelegations(HEAD, 'delegated', 1000, cb))) || [];
+    const deadRows = [];
+    for (const d of outRows) {
+      if (protect.has(d.delegatee)) continue;
+      const da = (await P(cb => steem.api.getAccounts([d.delegatee], cb)))[0];
+      if (!da) continue;
+      const lv = da.last_vote_time ? Date.parse(da.last_vote_time + 'Z') : NaN;
+      const ageH = Number.isFinite(lv) ? (Date.now() - lv) / 3600000 : Infinity; // never-voted = dead
+      if (ageH > DEAD_CURE_HOURS) deadRows.push({ delegatee: d.delegatee, ref: refScrub(d.delegatee), vests: d.vesting_shares, ageH: Number.isFinite(ageH) ? Math.round(ageH) : 'never-voted' });
+      await sleep(300);
+    }
+    for (const row of deadRows.slice(0, MAX_CURE_RECLAIMS)) {
+      row.action = 'reclaim-dead-delegation';
+      try {
+        const have = parseFloat(row.vests);
+        if (DRY) { row.status = 'DRY-WOULD-RECLAIM'; row.haveSp = Math.round(have * ratio * 10) / 10; }
+        else {
+          await P(cb => steem.broadcast.delegateVestingShares(actWif, HEAD, row.delegatee, '0.000000 VESTS', cb));
+          await sleep(2000);
+          const sa2 = (await P(cb => steem.api.getAccounts([row.delegatee], cb)))[0];
+          const left = parseFloat(sa2.received_vesting_shares);
+          row.status = left < have * 0.5 ? 'RECLAIMED-VERIFIED' : 'NO-READBACK';
+          row.reclaimedSp = Math.round(have * ratio * 10) / 10;
+          row.status === 'RECLAIMED-VERIFIED' ? reclaimed++ : failed++;
+        }
+      } catch (e) { row.status = 'FAIL'; row.err = String(e.message || e).slice(0, 90); failed++; }
+      results.push({ to: row.ref, action: 'reclaim-dead-delegation', status: row.status, haveSp: row.haveSp, reclaimedSp: row.reclaimedSp, ageH: row.ageH });
+      console.log(`[${row.status}] owner ↩ @${row.ref} (dead-delegation cure: ${row.ageH}h without a vote — 7-day return)`);
+      await sleep(400);
+    }
+    if (deadRows.length > MAX_CURE_RECLAIMS) console.log(`[DEAD-CURE] ${deadRows.length} dead delegations found, ${MAX_CURE_RECLAIMS} reclaimed this run (cap law) — the rest ride the next run`);
+  } catch (e) {
+    console.log(`[DEAD-CURE] sweep failed fail-soft: ${String(e.message || e).slice(0, 90)}`);
+    results.push({ action: 'dead-delegation-cure', status: 'SWEEP-FAIL', err: String(e.message || e).slice(0, 90) });
+  }
   capGate.journal('head-delegate', { dry: DRY, targetSPPerSoldier: targetSP, rosterLoaded: roster.rosterLoaded, allowed: roster.allowed, refused: roster.refused, delegated, reclaimed, skipped, failed, refusedCount: refused });
   const receipt = {
     ok: true, tool: 'head-delegate.cjs', version: 3,
