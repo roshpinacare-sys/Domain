@@ -1,6 +1,6 @@
 {
   "protocol": "SAOS-ARB-MESH/1",
-  "at": "2026-10-16T19:42:00.036Z",
+  "at": "2026-10-16T20:11:09.941Z",
   "agent": "arb-mesh v1.0.0 (R41 MESH MARKET, CR-0071)",
   "mode": "KEYLESS-MESH-DEMAND",
   "stasisHalted": false,
@@ -23,18 +23,18 @@
     "uniform batch clearing (R76): the queue clears as ONE batch - canonical order, two-sided netting at the measured fair, one uniform clearing price for every trader, the solver absorbs the remainder; order-invariance (a permuted queue clears byte-identical) is the anti-sandwich proof · the proof lane is DRY (moves nothing), the settle gate stays the owner's"
   ],
   "verdict": "GATED-WIRE (edge above floor but no free capital to arm the agents — named, never faked)",
-  "batch": "MESH-2026101619-bb5b0b0c",
+  "batch": "MESH-2026101620-610a3d1b",
   "settledBatch": null,
   "coreLedger": {
     "seq": 99,
-    "at": "2026-10-16T19:41:09.759Z",
-    "ageHours": 0.01,
+    "at": "2026-10-16T20:08:41.086Z",
+    "ageHours": 0.04,
     "conservationOk": false,
     "attestation": "999c9e94798bccde",
     "feedFresh": true
   },
   "routerSeen": {
-    "at": "2026-10-16T19:41:58.921Z",
+    "at": "2026-10-16T20:11:08.804Z",
     "arbRows": 4
   },
   "roster": [
@@ -45,24 +45,17 @@
       "id": "A1",
       "name": "P3 STEEM/SBD pool mid vs CEX-implied fair",
       "poolMidNano": "3259965337",
-      "fairNano": "101193860",
-      "netBps": 312115.51,
+      "fairNano": "101231760",
+      "netBps": 311994.9,
       "thresholdBps": 100,
       "from": "STEEM",
       "to": "SBD",
       "railOwner": "treasury (our own pool — atomic, no bridge)",
       "source": "dex-core.json (our pool — atomic, no bridge)",
-      "at": "2026-10-16T19:42:00.036Z"
+      "at": "2026-10-16T20:11:09.941Z"
     }
   ],
-  "keyedRailPlans": [
-    {
-      "id": "A1",
-      "name": "SBD/STEEM internal vs CEX-implied fair (lead-lag)",
-      "railOwner": "owner (STEEM active — LIVE)",
-      "verdict": "PLAN-KEYED-RAIL (the signing desks own this rail — the keyless mesh never signs)"
-    }
-  ],
+  "keyedRailPlans": [],
   "intentsDrafted": 0,
   "intents": [],
   "wires": 0,
