@@ -1,43 +1,43 @@
 {
  "schema": "office.pulse/1",
- "generatedAt": "2026-10-16T12:01:10.168Z",
+ "generatedAt": "2026-10-16T12:44:32.664Z",
  "generatedAgeNote": "this file is rewritten by the office-pulse workflow; judge freshness by generatedAt",
  "verdict": "AGING",
  "verdictChecks": [
   {
    "name": "office-push",
    "state": "fresh",
-   "detail": "0min <= 2880min"
+   "detail": "1min <= 2880min"
   },
   {
    "name": "office-ci",
    "state": "fresh",
-   "detail": "1min <= 1560min"
+   "detail": "2min <= 1560min"
   },
   {
    "name": "wallet-artery",
    "state": "fresh",
-   "detail": "8min <= 2880min · PASS"
+   "detail": "52min <= 2880min · PASS"
   },
   {
    "name": "grid-artery",
    "state": "fresh",
-   "detail": "12min <= 720min · BLOCKED: grid credential-blocked — BLOCKED-SILENT LAW v2: measured honestly, owner words "
+   "detail": "55min <= 720min · BLOCKED: grid credential-blocked — BLOCKED-SILENT LAW v2: measured honestly, owner words "
   },
   {
    "name": "fleet-artery",
    "state": "aging",
-   "detail": "281min <= 2880min · PASS"
+   "detail": "324min <= 2880min · PASS"
   },
   {
    "name": "sovereign-tick",
    "state": "fresh",
-   "detail": "24min <= 360min"
+   "detail": "7min <= 360min"
   },
   {
    "name": "runtime-heartbeat",
    "state": "fresh",
-   "detail": "7min <= 90min"
+   "detail": "28min <= 90min"
   }
  ],
  "degraded": [],
@@ -51,56 +51,60 @@
  },
  "office": {
   "repo": "roshpinacare-sys/FleetHQ",
-  "pushedAt": "2026-10-16T12:00:42Z",
-  "pushedAgeMin": 0,
+  "pushedAt": "2026-10-16T12:43:04Z",
+  "pushedAgeMin": 1,
   "openIssues": 4,
   "wire": [
    {
-    "sha": "19fbfd8",
-    "msg": "pacemaker receipt: 2026-10-16T12:00:40Z",
-    "at": "2026-10-16T12:00:40Z",
-    "ageMin": 0,
-    "author": "roshpinacare-sys"
-   },
-   {
-    "sha": "de847a9",
-    "msg": "opens-closer: measured freshness ledger + revival dispatches [skip ci]",
-    "at": "2026-10-16T12:00:22Z",
+    "sha": "2efbeaa",
+    "msg": "pacemaker receipt: 2026-10-16T12:43:03Z",
+    "at": "2026-10-16T12:43:03Z",
     "ageMin": 1,
     "author": "roshpinacare-sys"
    },
    {
-    "sha": "b835382",
+    "sha": "97862cc",
     "msg": "office-ci receipt: build pass, types pass [skip ci]",
-    "at": "2026-10-16T12:00:15Z",
-    "ageMin": 1,
-    "author": "roshpinacare-sys"
-   },
-   {
-    "sha": "9938c88",
-    "msg": "pacemaker receipt: 2026-10-16T11:59:59Z",
-    "at": "2026-10-16T11:59:59Z",
-    "ageMin": 1,
-    "author": "roshpinacare-sys"
-   },
-   {
-    "sha": "b37444f",
-    "msg": "claims-triage: decisions ledger 2026-10-16T11:59Z [skip ci]",
-    "at": "2026-10-16T11:59:37Z",
+    "at": "2026-10-16T12:42:42Z",
     "ageMin": 2,
     "author": "roshpinacare-sys"
    },
    {
-    "sha": "56c68d6",
-    "msg": "pacemaker receipt: 2026-10-16T11:59:24Z",
-    "at": "2026-10-16T11:59:24Z",
-    "ageMin": 2,
+    "sha": "6744618",
+    "msg": "[selfcheck] standing loop receipts: security+connectivity+fresh-oracle [skip ci]",
+    "at": "2026-10-16T12:41:38Z",
+    "ageMin": 3,
     "author": "roshpinacare-sys"
+   },
+   {
+    "sha": "747459a",
+    "msg": "office-heartbeat: local heartbeat · 2026-10-16T12:41:34Z",
+    "at": "2026-10-16T12:41:34Z",
+    "ageMin": 3,
+    "author": "local-beats"
+   },
+   {
+    "sha": "0d61436",
+    "msg": "pacemaker receipt: 2026-10-16T12:40:42Z",
+    "at": "2026-10-16T12:40:42Z",
+    "ageMin": 4,
+    "author": "roshpinacare-sys"
+   },
+   {
+    "sha": "4072913",
+    "msg": "silence-watchdog: all visible voices alive sig=sig:a89984dddfd3a482 [skip ci]",
+    "at": "2026-10-16T12:40:25Z",
+    "ageMin": 4,
+    "author": "silence-watchdog"
    }
   ],
   "worklog": {
-   "tasks": 81,
+   "tasks": 82,
    "last": [
+    {
+     "id": "3",
+     "title": "תמשיך — rig停摆事故修复 + 架构断言重审（local_robots可见性缺口闭合）+ Pages数据源审计 + 同步跑步机"
+    },
     {
      "id": "2",
      "title": "תמשיך — 云金库直推突破 + Domain大规模删除治愈 + 经济诚实性修复（209x重复铸造根因）+ 账本100MB轮转法则"
@@ -108,17 +112,13 @@
     {
      "id": "1",
      "title": "תמשיך — git为唯一真相源：同步24个远端commit、金库密封、修3红灯、修办公室live显示、经济引擎扩容到百万笔/天"
-    },
-    {
-     "id": "59-b",
-     "title": "git失败邮件根因闭环 + FleetHQ净化事件处置 + 保管库纵深"
     }
    ]
   },
-  "worklogLastTouchAgeMin": 4,
+  "worklogLastTouchAgeMin": 35,
   "boot": {
    "at": "2026-10-13T10:37:28.550Z",
-   "ageMin": 4404,
+   "ageMin": 4447,
    "office": {
     "reception_3000": "up",
     "foreman_3010": "up",
@@ -128,10 +128,10 @@
   },
   "ci": {
    "overall": "PASS",
-   "at": "2026-10-16T12:00:13.835Z",
-   "ageMin": 1,
+   "at": "2026-10-16T12:42:40.964Z",
+   "ageMin": 2,
    "reason": "all five checks ran and passed",
-   "runUrl": "https://github.com/roshpinacare-sys/FleetHQ/actions/runs/38897336945",
+   "runUrl": "https://github.com/roshpinacare-sys/FleetHQ/actions/runs/38902319015",
    "checks": {
     "install": "pass",
     "prismaGenerate": "pass",
@@ -145,7 +145,7 @@
   "wallet": {
    "source": "Autonomy/receipts/wallet/verdict.json",
    "at": "2026-10-16T11:52:47.659Z",
-   "ageMin": 8,
+   "ageMin": 52,
    "overall": "PASS",
    "reason": "install, prisma, typecheck, build and all wallet laws pass — with 1 persistent trust-flag(s) (see alerts)",
    "alerts": 1,
@@ -154,7 +154,7 @@
   "grid": {
    "source": "Autonomy/receipts/grid/verdict.json",
    "at": "2026-10-16T11:49:12.025Z",
-   "ageMin": 12,
+   "ageMin": 55,
    "overall": "BLOCKED",
    "reason": "grid credential-blocked — BLOCKED-SILENT LAW v2: measured honestly, owner words decide",
    "alerts": 0,
@@ -163,7 +163,7 @@
   "fleet": {
    "source": "Autonomy/receipts/fleet/verdict.json",
    "at": "2026-10-16T07:20:21.516Z",
-   "ageMin": 281,
+   "ageMin": 324,
    "overall": "PASS",
    "reason": "steem=PASS · saos-dex=PASS · saos-agents=PASS · Saosmartwallet=PASS · Adsmarket=PASS",
    "alerts": 3,
@@ -171,15 +171,15 @@
   },
   "tick": {
    "source": "Autonomy/receipts/latest.json",
-   "at": "2026-10-16T11:36:42.206Z",
-   "ageMin": 24,
-   "chain": "664c7dc0212b"
+   "at": "2026-10-16T12:37:04.546Z",
+   "ageMin": 7,
+   "chain": "b67d0bb79d44"
   }
  },
  "runtime": {
-  "lastSuccessAt": "2026-10-16T11:54:00Z",
-  "lastSuccessAgeMin": 7,
-  "lastSuccessName": "sovereign-evolution",
+  "lastSuccessAt": "2026-10-16T12:16:37Z",
+  "lastSuccessAgeMin": 28,
+  "lastSuccessName": "sovereign-runtime",
   "lastConclusion": "success"
  }
 }
