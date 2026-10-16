@@ -1,9 +1,10 @@
 # market-grid — internal-market sovereignty instrument (Z-60+)
 
-At: 2026-10-16T16:41:28.976Z · Verdict: **PARTIAL** · Markets read: 2 · Errors: 1
+At: 2026-10-16T16:41:44.809Z · Verdict: **MARKET-GRID-LIVE** · Markets read: 3 · Errors: 0
 
 | Market | Bid | Ask | Spread% | 24h% | Grid rungs | Step | Paper fills (snapshot) |
 |---|---|---|---|---|---|---|---|
+| HBD/HIVE (internal hive) | 0.05311595922110757 | 0.05320687992284199 | 0.171 | 1.954 | 10 | 0.00021265 | 5 |
 | SBD/STEEM (internal steem) | 0.10322380657160571 | 0.1037578104373845 | 0.516 | 0 | 10 | 0.00041396 | 8 |
 
 Hive-Engine basket (keyless RPC, per-token fee measured from the tokens contract): BEE spread 1.398% fee 0bps pond 277.13610259 SWAP.HIVE/24h FEASIBLE · SWAP.LTC spread 0.1256% fee 0bps pond 13954.2207179 SWAP.HIVE/24h thin · SWAP.DOGE spread 1.6905% fee 0bps pond 501.55881323 SWAP.HIVE/24h FEASIBLE · CENT spread 1.769% fee 0bps pond 99.54584202 SWAP.HIVE/24h FEASIBLE · WAIV spread 0.0809% fee 0bps pond 9.36902651 SWAP.HIVE/24h thin
@@ -13,6 +14,6 @@ Blurt internal market: DARK (probed, honest) — BLURT-SURFACE-DARK: getaddrinfo
 
 Laws: official sources only (chain nodes + sidechain RPC) · keyless: reads only, executor = owner-gated preview, never broadcast · paper is paper (labeled ledger, never laundered into realized book) · fail-loud per market · single canon (market-grid.json/.md) · the pond law: every venue carries its measured 24h volume (v1.3.0 CR-0062)
 
-Executor preview: 10 prebuilt limit_order_create payloads, ALL stamped OWNER-GATED-NOT-BROADCAST (law 2). Paper fills: 10 rows appended to market-grid-paper.jsonl (law 3).
+Executor preview: 20 prebuilt limit_order_create payloads, ALL stamped OWNER-GATED-NOT-BROADCAST (law 2). Paper fills: 20 rows appended to market-grid-paper.jsonl (law 3).
 
 Sources: api.hive.blog, api.steemit.com (condenser_api), api.hive-engine.com/rpc/contracts — official chain surfaces, keyless reads.
