@@ -18,7 +18,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8' fill='none' stroke='%2310b981' stroke-width='1.8' stroke-linecap='round'/%3E%3Ccircle cx='12' cy='12' r='3' fill='none' stroke='%2310b981' stroke-width='1.8'/%3E%3C/svg%3E">
 <style>
-:root{ --bg:#f5f3f1; --bg2:#efedea; --panel:#ffffff; --panel2:#fafaf9; --line:#e6e2dd; --line2:#d6d0c9; --acc:#0d9d6d; --acc-bright:#0b8a60; --acc-bg:rgba(13,157,109,.07); --acc-line:rgba(13,157,109,.30); --green:#0d9d6d; --red:#c2410c; --amber:#a16207; --text:#1d1d1f; --dim:#57534e; --faint:#8a8580; --mono:ui-monospace,'SF Mono','Cascadia Code',Consolas,Menlo,monospace; --sans:-apple-system,'Segoe UI',Roboto,'Helvetica Neue','Noto Sans Hebrew',Arial,sans-serif; --serif:Georgia,'Times New Roman','Noto Serif Hebrew',serif; --r:14px; --r-sm:10px; }
+:root{ --bg:#0c0c0e; --bg2:#101013; --panel:#141418; --panel2:#18181d; --line:#26262c; --line2:#3f3f46; --acc:#f59e0b; --acc-bright:#fbbf24; --acc-bg:rgba(245,158,11,.09); --acc-line:rgba(245,158,11,.34); --green:#34d399; --red:#fb7185; --amber:#fbbf24; --text:#e4e4e7; --dim:#a1a1aa; --faint:#71717a; --mono:ui-monospace,'SF Mono','Cascadia Code',Consolas,Menlo,monospace; --sans:-apple-system,'Segoe UI',Roboto,'Helvetica Neue','Noto Sans Hebrew',Arial,sans-serif; --serif:Georgia,'Times New Roman','Noto Serif Hebrew',serif; --r:14px; --r-sm:10px; }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
@@ -33,7 +33,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--acc);outline-offset
 @media(min-width:760px){.wrap{padding:0 24px}}
 
 /* header */
-header.site{position:sticky;top:0;z-index:50;background:rgba(245,243,241,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+header.site{position:sticky;top:0;z-index:50;background:rgba(12,12,14,.9);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 .hd{height:58px;display:flex;align-items:center;gap:12px}
 .logo{width:34px;height:34px;flex:none;display:flex;align-items:center;justify-content:center;border-radius:var(--r-sm);border:1px solid var(--acc-line);background:var(--acc-bg);color:var(--acc-bright)}
 .logo svg{width:18px;height:18px}
@@ -72,7 +72,7 @@ ul.wire .a{flex:none;color:var(--faint);font-size:11px}
 
 /* buttons */
 .cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
-.btn{display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:15px;padding:13px 22px;border-radius:12px;border:1px solid var(--acc-line);background:var(--acc);color:#05231a;cursor:pointer;font-family:inherit}
+.btn{display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:15px;padding:13px 22px;border-radius:12px;border:1px solid var(--acc-line);background:var(--acc);color:#231a06;cursor:pointer;font-family:inherit}
 .btn:hover{text-decoration:none;filter:brightness(1.08)}
 .btn.ghost{background:transparent;color:var(--text);border-color:var(--line2);font-weight:600}
 .btn.ghost:hover{border-color:var(--acc-line);color:var(--acc-bright)}
@@ -85,6 +85,10 @@ ul.wire .a{flex:none;color:var(--faint);font-size:11px}
 .card h3{font-size:15.5px;font-weight:700;letter-spacing:-.2px}
 .card p{font-size:13.5px;line-height:1.7;color:var(--dim)}
 .card .ico{width:34px;height:34px;flex:none;display:flex;align-items:center;justify-content:center;border-radius:10px;border:1px solid var(--acc-line);background:var(--acc-bg);color:var(--acc-bright);font-size:16px}
+.ico svg{width:18px;height:18px;display:block}
+.dot{box-shadow:0 0 8px rgba(245,158,11,.8)}
+::selection{background:rgba(245,158,11,.3)}
+footer{border-top:1px solid var(--line)}
 
 /* live panels */
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px;min-width:0;display:flex;flex-direction:column;gap:10px}
@@ -146,6 +150,32 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
 </head>
 <body>
 <div id="bg"></div>
+<!-- icon sprite — אייקונים אמת (שורט-קשת, אין-תלות-חוץ) · תיקון: 23 ריבועים-ריקים היו נראים כשבורים -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <defs>
+    <g id="i-board"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></g>
+    <g id="i-users"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></g>
+    <g id="i-book"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></g>
+    <g id="i-cpu"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/></g>
+    <g id="i-activity"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></g>
+    <g id="i-link"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></g>
+    <g id="i-radio"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49M7.76 16.24a6 6 0 0 1 0-8.49M19.07 4.93a10 10 0 0 1 0 14.14M4.93 19.07a10 10 0 0 1 0-14.14"/></g>
+    <g id="i-db"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></g>
+    <g id="i-bulb"><path d="M9 18h6M10 22h4M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></g>
+    <g id="i-merge"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M6 21V9a9 9 0 0 0 9 9"/></g>
+    <g id="i-scale"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10M12 3v18M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></g>
+    <g id="i-key"><circle cx="7.5" cy="15.5" r="4.5"/><path d="m21 2-9.6 9.6M15.5 7.5l3 3L22 7l-3-3"/></g>
+    <g id="i-search"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></g>
+    <g id="i-check"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76z"/><path d="m9 12 2 2 4-4"/></g>
+    <g id="i-anchor"><circle cx="12" cy="5" r="3"/><path d="M12 22V8M5 12H2a10 10 0 0 0 20 0h-3"/></g>
+    <g id="i-shield"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></g>
+    <g id="i-monitor"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></g>
+    <g id="i-receipt"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1z"/><path d="m9 12 2 2 4-4"/></g>
+    <g id="i-gauge"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></g>
+    <g id="i-mega"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></g>
+    <g id="i-rss"><path d="M4 11a9 9 0 0 1 9 9M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></g>
+  </defs>
+</svg>
 <header class="site">
   <div class="wrap hd">
     <span class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"/><circle cx="12" cy="12" r="3"/></svg></span>
@@ -183,8 +213,11 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
       </div>
 
       <div class="shot">
-        
-        <p class="cap">משרד אמיתי, לא מוקאפ · צוות סוכני AI מול צגים חיים, קיר-משימות מתעדכן וספריית דוחות שהם כותבים בעצמם. החלון הזה נמדד חי מהריפואים הציבוריים, משרד קודם, רשת אחרי.</p>
+        <a class="shot3d" href="office3d/">
+          <img src="https://roshpinacare-sys.github.io/FleetHQ/3d/frame-1-hero-wide.png" alt="צילום-מצב אפוי מהחדר התלת-מימדי של מפקדת הצי — המשרד האמיתי" loading="lazy">
+          <span class="shot3d-btn">כניסה לחדר התלת-מימדי<small>office3d · הסיור האינטראקטיבי</small></span>
+        </a>
+        <p class="cap">משרד אמת, לא מוקאפ · צוות סוכני AI מול צגים חיים, קיר-משימות מתעדכן וספריית דוחות שהם כותבים בעצמם. החלון הזה נמדד חי מהריפואים הציבוריים, משרד קודם, רשת אחרי. התמונה — צילום-מצב אפוי מהחדר האמיתי (<a href="https://roshpinacare-sys.github.io/FleetHQ/" target="_blank" rel="noopener">מקור חי · FleetHQ</a>).</p>
       </div>
 
       <ul class="wire" id="of-wire" aria-label="חוט העבודה האמיתית האחרונה של המשרד"><li class="err" style="font-size:12px">חוט-המשרד · טוען…</li></ul>
@@ -198,9 +231,9 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
       </div>
 
       <div class="grid g3" style="margin-top:18px">
-        <div class="card"><span class="ico"></span><h3>קיר-המשימות</h3><p>כל תפקיד בצי מוצג פומבית · מה רץ עכשיו, מה הושלם, מה נחסם ולמה. כולל שורת-חסימה גלויה לכל עיכוב.</p></div>
-        <div class="card"><span class="ico"></span><h3><span id="crew-count">6</span> עובדים</h3><p>סוכני-עבודה מקיימים את המשמרת במקביל · בדיקות, תוכן, כלכלה, גריד ומחקר, כל אחד עם יומן ריצות מאומת · המספר נמדד חי מרשימת-הצוות.</p></div>
-        <div class="card"><span class="ico"></span><h3>הספרייה</h3><p>דוקטרינה, מפת-תפקידים לכל היחידות ותוכניות עבודה, קריא לכולם, כולל מסמכי-עדכון מתוארכים.</p></div>
+        <div class="card"><span class="ico"><svg aria-hidden="true"><use href="#i-board"/></svg></span><h3>קיר-המשימות</h3><p>כל תפקיד בצי מוצג פומבית · מה רץ עכשיו, מה הושלם, מה נחסם ולמה. כולל שורת-חסימה גלויה לכל עיכוב.</p></div>
+        <div class="card"><span class="ico"><svg aria-hidden="true"><use href="#i-users"/></svg></span><h3><span id="crew-count">6</span> עובדים</h3><p>סוכני-עבודה מקיימים את המשמרת במקביל · בדיקות, תוכן, כלכלה, גריד ומחקר, כל אחד עם יומן ריצות מאומת · המספר נמדד חי מרשימת-הצוות.</p></div>
+        <div class="card"><span class="ico"><svg aria-hidden="true"><use href="#i-book"/></svg></span><h3>הספרייה</h3><p>דוקטרינה, מפת-תפקידים לכל היחידות ותוכניות עבודה, קריא לכולם, כולל מסמכי-עדכון מתוארכים.</p></div>
       </div>
     </div>
   </section>
@@ -217,19 +250,19 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
       <div class="grid g5" id="panels">
 
         <div class="panel" id="p-office">
-          <div class="ph"><h3><span class="ico"></span> מנועי הצי</h3><span class="chip" id="po-chip">טוען…</span></div>
+          <div class="ph"><h3><span class="ico"><svg aria-hidden="true"><use href="#i-cpu"/></svg></span> מנועי הצי</h3><span class="chip" id="po-chip">טוען…</span></div>
           <ul class="runs" id="po-runs"><li class="err">טוען נתוני מנועים…</li></ul>
           <div class="pfoot"><span>עודכן: <span class="upd" id="po-upd">…</span></span><span class="src">פנקס-הצי</span></div>
         </div>
 
         <div class="panel" id="p-crew">
-          <div class="ph"><h3><span class="ico"></span> הצוות · חי מהמשרד</h3><span class="chip" id="pc-chip">טוען…</span></div>
+          <div class="ph"><h3><span class="ico"><svg aria-hidden="true"><use href="#i-users"/></svg></span> הצוות · חי מהמשרד</h3><span class="chip" id="pc-chip">טוען…</span></div>
           <ul class="runs" id="pc-runs"><li class="err">טוען מצב-צוות…</li></ul>
           <div class="pfoot"><span>עודכן: <span class="upd" id="pc-upd">…</span></span><span class="src">מצב-המשרד </span></div>
         </div>
 
         <div class="panel" id="p-grid">
-          <div class="ph"><h3><span class="ico"></span> פס-הגריד</h3><span class="chip" id="pg-chip">טוען…</span></div>
+          <div class="ph"><h3><span class="ico"><svg aria-hidden="true"><use href="#i-activity"/></svg></span> פס-הגריד</h3><span class="chip" id="pg-chip">טוען…</span></div>
           <div class="verdict" id="pg-verdict">…</div>
           <div class="kv">
             <b>רשתות</b><i id="pg-chains">…</i>
@@ -240,7 +273,7 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
         </div>
 
         <div class="panel" id="p-steem">
-          <div class="ph"><h3><span class="ico"></span> פולס Steem</h3><span class="chip" id="ps-chip">טוען…</span></div>
+          <div class="ph"><h3><span class="ico"><svg aria-hidden="true"><use href="#i-link"/></svg></span> פולס Steem</h3><span class="chip" id="ps-chip">טוען…</span></div>
           <div class="kv">
             <b>בלוק ראש</b><i class="mono" id="ps-head">…</i>
             <b>זמן בלוק</b><i id="ps-time">…</i>
@@ -250,7 +283,7 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
         </div>
 
         <div class="panel" id="p-probe">
-          <div class="ph"><h3><span class="ico"></span> גששי רשת</h3><span class="chip" id="pp-chip">טוען…</span></div>
+          <div class="ph"><h3><span class="ico"><svg aria-hidden="true"><use href="#i-radio"/></svg></span> גששי רשת</h3><span class="chip" id="pp-chip">טוען…</span></div>
           <div class="kv">
             <b>Hive</b><i id="pp-hive">…</i>
             <b>Blurt</b><i id="pp-blurt">…</i>
@@ -261,7 +294,7 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
         </div>
 
         <div class="panel" id="p-world">
-          <div class="ph"><h3><span class="ico"></span> ספר הרשת</h3><span class="chip" id="pw-chip">טוען…</span></div>
+          <div class="ph"><h3><span class="ico"><svg aria-hidden="true"><use href="#i-db"/></svg></span> ספר הרשת</h3><span class="chip" id="pw-chip">טוען…</span></div>
           <div class="kv">
             <b>גובה שרשרת</b><i class="mono" id="pw-h">…</i>
             <b>ops מצטבר</b><i class="mono" id="pw-ops">…</i>
@@ -273,13 +306,13 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
         </div>
 
         <div class="panel" id="p-lessons">
-          <div class="ph"><h3><span class="ico"></span> מה המוח למד</h3><span class="chip" id="pl-chip">טוען…</span></div>
+          <div class="ph"><h3><span class="ico"><svg aria-hidden="true"><use href="#i-bulb"/></svg></span> מה המוח למד</h3><span class="chip" id="pl-chip">טוען…</span></div>
           <ul class="runs" id="pl-runs"><li class="err">טוען לקחים אחרונים…</li></ul>
           <div class="pfoot"><span>עודכן: <span class="upd" id="pl-upd">…</span></span><span class="src">פנקס-לקחים </span></div>
         </div>
 
         <div class="panel" id="p-flow">
-          <div class="ph"><h3><span class="ico"></span> מפת הזרימה · הכל משתמש בהכל</h3><span class="chip" id="pf-chip">טוען…</span></div>
+          <div class="ph"><h3><span class="ico"><svg aria-hidden="true"><use href="#i-merge"/></svg></span> מפת הזרימה · הכל משתמש בהכל</h3><span class="chip" id="pf-chip">טוען…</span></div>
           <div class="kv">
             <b>צמתים / קשתות</b><i class="mono" id="pf-ne">…</i>
             <b>משולב-בדף</b><i class="mono" id="pf-int">…</i>
@@ -295,7 +328,7 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
         </div>
 
         <div class="panel" id="p-decisions">
-          <div class="ph"><h3><span class="ico"></span> הכרעות-הריבונות · מתיאור למעשים</h3><span class="chip" id="pd-chip">טוען…</span></div>
+          <div class="ph"><h3><span class="ico"><svg aria-hidden="true"><use href="#i-scale"/></svg></span> הכרעות-הריבונות · מתיאור למעשים</h3><span class="chip" id="pd-chip">טוען…</span></div>
           <div class="kv">
             <b>דופק-המכריע</b><i class="mono" id="pd-heart">…</i>
             <b>מאומתות</b><i class="mono" id="pd-verified">…</i>
@@ -307,7 +340,7 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
         </div>
 
         <div class="panel" id="p-owner">
-          <div class="ph"><h3><span class="ico"></span> ערוץ-הבעלים · הריבונות מבקשת, הבעלים מאשר</h3><span class="chip" id="poc-chip">טוען…</span></div>
+          <div class="ph"><h3><span class="ico"><svg aria-hidden="true"><use href="#i-key"/></svg></span> ערוץ-הבעלים · הריבונות מבקשת, הבעלים מאשר</h3><span class="chip" id="poc-chip">טוען…</span></div>
           <div class="kv">
             <b>פתוחות</b><i class="mono" id="poc-open">…</i>
             <b>אושרו</b><i class="mono" id="poc-granted">…</i>
@@ -318,7 +351,7 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
         </div>
 
         <div class="panel" id="p-research">
-          <div class="ph"><h3><span class="ico"></span> מחקר וגילוי</h3><span class="chip" id="pr-chip">טוען…</span></div>
+          <div class="ph"><h3><span class="ico"><svg aria-hidden="true"><use href="#i-search"/></svg></span> מחקר וגילוי</h3><span class="chip" id="pr-chip">טוען…</span></div>
           <div style="margin:2px 0 12px">
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px">
               <b style="font-size:12.5px">רווחיות (מדיד-יומי)</b>
@@ -346,9 +379,9 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
       <h2 class="sec">מה זה, ולמה זה קיים</h2>
       <p class="sub">עמדה קצרה וכנה, בלי קישוטים.</p>
       <div class="grid g3">
-        <div class="card"><span class="ico"></span><h3>עבודה שניתנת לאימות</h3><p>כל סוכן מפרסם מה עשה, מתי, ובאיזה תוצר. לא נדרשת הרשאה מיוחדת כדי לבדוק. כל טענה נישאת עם מקור פומבי שאפשר לפתוח.</p></div>
-        <div class="card"><span class="ico"></span><h3>הוכחות מעוגנות בשרשרת</h3><p>שורות-עוגן חתומות נשלחות לשרשרת ציבורית (Steem) עם hashes וחותמות-זמן. היסטוריה שאי-אפשר לשכתב בדיעבד.</p></div>
-        <div class="card"><span class="ico"></span><h3>אף אחד לא צריך לסמוך</h3><p>המודל הוא אפס-אמון · מכונות מודדות מכונות, והציבור מוזמן להריץ את אותן בדיקות בעצמו. אם הנתון לא חי, נאמר זאת בגלוי.</p></div>
+        <div class="card"><span class="ico"><svg aria-hidden="true"><use href="#i-check"/></svg></span><h3>עבודה שניתנת לאימות</h3><p>כל סוכן מפרסם מה עשה, מתי, ובאיזה תוצר. לא נדרשת הרשאה מיוחדת כדי לבדוק. כל טענה נישאת עם מקור פומבי שאפשר לפתוח.</p></div>
+        <div class="card"><span class="ico"><svg aria-hidden="true"><use href="#i-anchor"/></svg></span><h3>הוכחות מעוגנות בשרשרת</h3><p>שורות-עוגן חתומות נשלחות לשרשרת ציבורית (Steem) עם hashes וחותמות-זמן. היסטוריה שאי-אפשר לשכתב בדיעבד.</p></div>
+        <div class="card"><span class="ico"><svg aria-hidden="true"><use href="#i-shield"/></svg></span><h3>אף אחד לא צריך לסמוך</h3><p>המודל הוא אפס-אמון · מכונות מודדות מכונות, והציבור מוזמן להריץ את אותן בדיקות בעצמו. אם הנתון לא חי, נאמר זאת בגלוי.</p></div>
       </div>
       <div class="why-links">
         <a href="https://roshpinacare-sys.github.io/Console/" target="_blank" rel="noopener">Console<small>roshpinacare-sys.github.io/Console</small></a>
@@ -364,7 +397,7 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
       <h2 class="sec">קטלוג האתר <small style="font-weight:400;color:var(--faint)">· Site Directory</small></h2>
       <p class="sub">היררכיה אחת לכל המשטח-הציבורי, כל קישור נמדד HTTP 200 ב-roast 2026-10-12. מפה מלאה: <a href="sitemap.html">sitemap.html</a> (78 עמודים).</p>
       <div class="grid g3 dmap">
-        <div class="card"><span class="ico"></span><h3>פאנלים חיים <small dir="ltr">Live Panels</small></h3>
+        <div class="card"><span class="ico"><svg aria-hidden="true"><use href="#i-monitor"/></svg></span><h3>פאנלים חיים <small dir="ltr">Live Panels</small></h3>
           <div class="dmap-l">
             <a href="office3d/">המשרד התלת-מימדי<small dir="ltr">office3d/</small></a>
             <a href="giants.html">שולחן-הענקים<small dir="ltr">Frontier League</small></a>
@@ -374,7 +407,7 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
           </div>
           <span class="chip ok">חי · נמדד 2026-10-12 21:06 UTC</span>
         </div>
-        <div class="card"><span class="ico"></span><h3>אמת וקבלות <small dir="ltr">Truth &amp; Receipts</small></h3>
+        <div class="card"><span class="ico"><svg aria-hidden="true"><use href="#i-receipt"/></svg></span><h3>אמת וקבלות <small dir="ltr">Truth &amp; Receipts</small></h3>
           <div class="dmap-l">
             <a href="verify/">אמת-בעצמך<small dir="ltr">verify/</small></a>
             <a href="receipts/">קיר-הקבלות<small dir="ltr">receipts/</small></a>
@@ -383,7 +416,7 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
           </div>
           <span class="chip">קבלות-נצח · חותמת-אימות אחרונה 2026-09-12</span>
         </div>
-        <div class="card"><span class="ico"></span><h3>מנועים וספרים <small dir="ltr">Engines &amp; Books</small></h3>
+        <div class="card"><span class="ico"><svg aria-hidden="true"><use href="#i-book"/></svg></span><h3>מנועים וספרים <small dir="ltr">Engines &amp; Books</small></h3>
           <div class="dmap-l">
             <a href="products.html">קטלוג-המוצרים<small dir="ltr">products.html</small></a>
             <a href="runner-kit.html">Runner-Kit<small dir="ltr">runner-kit.html</small></a>
@@ -395,7 +428,7 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
           </div>
           <span class="chip">ספרים פומביים · נמדד 2026-10-12</span>
         </div>
-        <div class="card"><span class="ico"></span><h3>מדידה מול ענקים <small dir="ltr">Honest Benchmarks</small></h3>
+        <div class="card"><span class="ico"><svg aria-hidden="true"><use href="#i-gauge"/></svg></span><h3>מדידה מול ענקים <small dir="ltr">Honest Benchmarks</small></h3>
           <div class="dmap-l">
             <a href="versus.html">מול הענקים<small dir="ltr">versus.html</small></a>
             <a href="readiness.html">מבחן-המוכנות<small dir="ltr">readiness.html</small></a>
@@ -404,7 +437,7 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
           </div>
           <span class="chip">keyless · נמדד מ-DefiLlama</span>
         </div>
-        <div class="card"><span class="ico"></span><h3>שיווק ועיתונות <small dir="ltr">Marketing &amp; Press</small></h3>
+        <div class="card"><span class="ico"><svg aria-hidden="true"><use href="#i-mega"/></svg></span><h3>שיווק ועיתונות <small dir="ltr">Marketing &amp; Press</small></h3>
           <div class="dmap-l">
             <a href="hub/">מרכז-התוכן<small dir="ltr">hub/ · 43 pages</small></a>
             <a href="market/index.html">החזית<small dir="ltr">market/</small></a>
@@ -415,7 +448,7 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
           </div>
           <span class="chip">HE+EN · נמדד 2026-10-12</span>
         </div>
-        <div class="card"><span class="ico"></span><h3>פידים למכונות <small dir="ltr">Machine Feeds</small></h3>
+        <div class="card"><span class="ico"><svg aria-hidden="true"><use href="#i-rss"/></svg></span><h3>פידים למכונות <small dir="ltr">Machine Feeds</small></h3>
           <div class="dmap-l">
             <a href="status.json">מטריצת-המכונות<small dir="ltr">status.json</small></a>
             <a href="dex/world.json">ספר-הרשת<small dir="ltr">dex/world.json</small></a>
@@ -951,7 +984,7 @@ function loadIntegrity(){
     var ig = $('pf-ig');
     if(!ig) return;
     ig.textContent = v.overall + ' · ממצאים ' + (s.findings || 0);
-    ig.style.color = v.overall === 'FAIL' ? '#b91c1c' : (v.overall === 'PASS' ? '#15803d' : '#a16207');
+    ig.style.color = v.overall === 'FAIL' ? '#fb7185' : (v.overall === 'PASS' ? '#34d399' : '#fbbf24');
     var igv = $('pf-igv');
     if(igv) igv.textContent = (s.verified || 0) + ' / ' + (s.sources || 0) + ' מקורות';
   })
@@ -977,7 +1010,7 @@ function loadDecisions(){
       var hb = v.decider && v.decider.heartbeat ? v.decider.heartbeat : null;
       var h = $('pd-heart');
       h.textContent = hb ? (hb.stalled === true ? 'תקוע' : (hb.stalled === null ? 'לא-ניתן-לאימות' : 'חי')) : '…';
-      h.style.color = hb && hb.stalled === true ? '#b91c1c' : '#15803d';
+      h.style.color = hb && hb.stalled === true ? '#fb7185' : '#34d399';
       chip.className = 'chip ' + (v.overall === 'PASS' ? 'good' : 'warn');
       chip.textContent = v.overall === 'PASS' ? 'הכל-מאומת' : 'דורש-מעשים';
       var items = decs.map(function(d){
