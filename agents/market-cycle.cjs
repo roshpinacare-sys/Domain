@@ -91,10 +91,14 @@ function main() {
     // 2. reflex: one decision
     row.decision = decideCycle({ suggestion: row.suggestion, mode, skipFetch: row.skip_fetch });
     // 3. hands: executor child (armed only per decision)
+    // STALE-CURE arm (2026-10-16, owner order "money stuck in the fleet limits — use
+    // capital to the maximum"): every LIVE executor leg carries MARKET_EXEC_CURE=1 so
+    // the law-12 stale reclaim + law-11 edge reclaim run inside the same verify-then-sign
+    // gate — dead orders are cancelled and the ladder re-centers in the same run.
     if (row.decision.executorMode === 'LIVE') {
-      row.executor = spawnChild('market-exec.cjs', { MARKET_EXEC_LIVE: '1' }, 180000);
+      row.executor = spawnChild('market-exec.cjs', { MARKET_EXEC_LIVE: '1', MARKET_EXEC_CURE: '1' }, 180000);
     } else if (row.decision.executorMode === 'DRY') {
-      row.executor = spawnChild('market-exec.cjs', { MARKET_EXEC_LIVE: '' }, 120000);
+      row.executor = spawnChild('market-exec.cjs', { MARKET_EXEC_LIVE: '', MARKET_EXEC_CURE: '1' }, 120000);
     } else {
       row.executor = { script: 'market-exec.cjs', status: null, stdout_tail: '', stderr_tail: '', skipped: row.decision.reason };
     }

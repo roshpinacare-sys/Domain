@@ -42,6 +42,16 @@
  * 10. SINGLE WRITER: agents/market-exec.json (append-only run rows) + agents/market-exec.md
  *     (regenerated human summary). require.main guard (Z-49): requiring this file for
  *     evals must never execute a run.
+ * 12. STALE-CURE (2026-10-16, owner order "money is stuck in the fleet limits — check
+ *     everything and use it to the maximum"): inside a LIVE run armed with
+ *     MARKET_EXEC_CURE=1, own orders resting OLDER than STALE_CURE_HOURS (20h) whose
+ *     price drifted beyond BAND_PCT (2%) from the live mid are CANCELLED — dead capital
+ *     is dead regardless of which lane placed it (the ladder of 2026-10-14 held
+ *     60.27 SBD + 10.82 STEEM ~4.5% off a mid that moved on). Mechanical two-criterion
+ *     test, own-account only, receipted per orderid as phase '0-stale-cure', per-run
+ *     cap MAX_CURE_CANCELS (8). Freed balances re-read so the plan re-centers the
+ *     ladder the same run. Resting orders inside the band are never touched — fresh
+ *     capital waiting is the ladder, not the mine.
  * 11. EDGE-CURE (R33, CR-0063): inside a LIVE run armed with MARKET_EXEC_CURE=1, BEFORE
  *     planning, own BUY orders priced above the BUY-EDGE cap (sellVwap x (1-edge-floor))
  *     are CANCELLED — the add-only law kept pre-law orders resting, and a resting buy
@@ -79,6 +89,8 @@ const DEFAULTS = {
   BAND_PCT: 2.0, STACK_PCT: 0.35, MIN_REMAINING: 0.5,
   FIRST_SELL_OFFSET: 0.00005, FIRST_BUY_OFFSET: 0.0005,
   EXPIRY_DAYS: 27,
+  // law 12 — STALE-CURE caps (2026-10-16): the two-criterion dead-capital reclaim.
+  STALE_CURE_HOURS: 20, MAX_CURE_CANCELS: 8,
   // flow-catch (Z-65, CR-0042): one-sided tape breaker — default OFF, armed only
   // when MARKET_EXEC_FLOWCATCH=1 inside a LIVE run. ONE marketable sell joins the
   // resting bid (fills AT the bid — price improvement over the floor), proceeds fund
@@ -451,7 +463,7 @@ function writeMd(row) {
   L.push(`| liquid before | ${row.liquid_before.steem} / ${row.liquid_before.sbd} |`);
   L.push(`| own orders on book (pre) | ${row.own_orders_pre} |`);
   L.push(`| authority check | ${row.authority_ok} |`);
-  L.push(`| EDGE-CURE (R33) | ${row.cure ? `cancelled ${row.cure.cancelled}/${row.cure.candidates.length} own buys above cap ${row.cure.cap}${row.cure.failed.length ? ' · failed ' + row.cure.failed.length : ''}` : 'not armed'} |`);
+  L.push(`| EDGE-CURE (R33) | ${row.cure ? `cancelled ${row.cure.cancelled}/${row.cure.candidates.length + (row.cure.stale ? row.cure.stale.candidates.length : 0)} own orders above cap/stale (edge ${row.cure.candidates.length} · stale ${row.cure.stale ? row.cure.stale.cancelled : 0})${row.cure.failed.length ? ' · failed ' + row.cure.failed.length : ''}` : 'not armed'} |`);
   L.push('');
   L.push(`## placed (${row.placed.length})`);
   for (const p of row.placed) L.push(`- L${p.level} ${p.side} ${p.amount_to_sell} → ${p.min_to_receive} (target ${p.target}, realized ${p.realized}, err ${p.err_pct}%)${p.broadcast ? ' · broadcast ✓' : ' · DRY'}`);
@@ -516,7 +528,7 @@ async function main() {
     const cureArmed = mode === 'LIVE' && String(process.env.MARKET_EXEC_CURE || '') === '1';
     if (cureArmed) {
       const cap = sellVwap != null ? r6(sellVwap * (1 - DEFAULTS.BUY_EDGE_FLOOR_PCT / 100)) : null;
-      row.cure = { armed: true, cap, candidates: [], cancelled: 0, failed: [] };
+      row.cure = { armed: true, cap, candidates: [], cancelled: 0, stale: { armed: true, candidates: [], cancelled: 0, failed: [] }, failed: [] };
       if (cap != null) {
         const bad = ownPre.filter((o) => o.side === 'buy' && o.price > cap);
         for (const b of bad) row.cure.candidates.push({ orderid: b.orderid, price: b.price, cap });
@@ -531,12 +543,44 @@ async function main() {
             row.errors.push('cure cancel ' + b.orderid + ': ' + String(e.message || e).slice(0, 90));
           }
         }
-        if (row.cure.cancelled > 0) {
-          await sleep(3000);
-          const [accPost] = await Promise.all([rpcNode(NODE_PRIMARY, 'condenser_api.get_accounts', [[HEAD]])]);
-          liquidSteem = f(accPost.balance); liquidSbd = f(accPost.sbd_balance);
-          row.liquid_after_cure = { steem: accPost.balance, sbd: accPost.sbd_balance };
+      }
+      // law 12 — STALE-CURE: dead capital is dead regardless of which lane placed it.
+      // Two mechanical criteria, both must hold: age > STALE_CURE_HOURS AND price
+      // drifted beyond BAND_PCT from the live mid. Unreadable created/mid → skipped
+      // (never guessed). Per-run cap MAX_CURE_CANCELS keeps the run gentle.
+      const midCure = book.bid != null && book.ask != null ? (book.bid + book.ask) / 2 : null;
+      const staleAll = [];
+      if (midCure != null) {
+        for (const o of ownPre) {
+          if (row.cure.candidates.some((c) => c.orderid === o.orderid)) continue; // already edge-cured
+          const createdMs = o.created ? Date.parse(String(o.created) + 'Z') : NaN;
+          if (!Number.isFinite(createdMs)) continue; // never guess an age
+          const ageH = (Date.now() - createdMs) / 3600000;
+          const driftPct = Math.abs(o.price - midCure) / midCure * 100;
+          if (ageH > DEFAULTS.STALE_CURE_HOURS && driftPct > DEFAULTS.BAND_PCT) {
+            staleAll.push({ orderid: o.orderid, price: o.price, ageH: +ageH.toFixed(1), driftPct: +driftPct.toFixed(2) });
+          }
         }
+      }
+      const staleCure = staleAll.slice(0, DEFAULTS.MAX_CURE_CANCELS);
+      for (const c of staleCure) row.cure.stale.candidates.push(c);
+      for (const c of staleCure) {
+        try {
+          try { if (require('./capital-gate.cjs').stasisHalt('market-exec')) return; } catch (e) { console.log('[CAPITAL-GATE] market-exec — gate module error, lane halts fail-closed: ' + String(e.message || e).slice(0, 80)); return; }
+          const res = await signBroadcast(NODE_PRIMARY, steem, wif, [['limit_order_cancel', { owner: HEAD, orderid: c.orderid }]]);
+          row.broadcast.push({ phase: '0-stale-cure', ops: 1, orderid: c.orderid, ...res });
+          row.cure.stale.cancelled++;
+          row.cure.cancelled++;
+        } catch (e) {
+          row.cure.stale.failed.push({ orderid: c.orderid, error: String(e.message || e).slice(0, 90) });
+          row.errors.push('stale-cure cancel ' + c.orderid + ': ' + String(e.message || e).slice(0, 90));
+        }
+      }
+      if (row.cure.cancelled > 0) {
+        await sleep(3000);
+        const [accPost] = await Promise.all([rpcNode(NODE_PRIMARY, 'condenser_api.get_accounts', [[HEAD]])]);
+        liquidSteem = f(accPost.balance); liquidSbd = f(accPost.sbd_balance);
+        row.liquid_after_cure = { steem: accPost.balance, sbd: accPost.sbd_balance };
       }
     }
     // 4. plan (pure) — flow-catch mode replaces the resting-grid plan when armed
@@ -549,6 +593,19 @@ async function main() {
       : buildPlan({ liquidSteem, liquidSbd, bid: book.bid, ask: book.ask, ownOrders: ownPre, sellVwap, avgCost });
     row.mid = plan.mid; row.planned = [...plan.sells, ...plan.buys].map((p) => ({ ...p }));
     row.skipped = plan.skipped;
+    // 5. execute
+    // TDZ-FIX (2026-10-16, owner order "check everything"): the governor block below
+    // referenced `placements` three runs before its declaration — every
+    // EDGE-NEGATIVE-GRID-HOLD run crashed with "Cannot access 'placements' before
+    // initialization" (runs 143/144/145 booked the error instead of a receipt).
+    // The declaration + fills now precede the governor; the hold path clears the
+    // array instead of exploding. Measured fault, mechanical fix, no behavior change
+    // when the governor does not hold.
+    const expiry = new Date(Date.now() + DEFAULTS.EXPIRY_DAYS * 864e5).toISOString().slice(0, 19);
+    const ops = [];
+    const placements = [];
+    for (const p of plan.sells) { placements.push({ ...p, side: p.side === 'flow-taker' ? 'flow-taker' : 'sell', broadcast: false }); }
+    for (const p of plan.buys) { placements.push({ ...p, side: 'buy', broadcast: false }); }
     // 4.5 WEEKLY-EDGE GOVERNOR (T2): the aggregate verdict above the per-order laws.
     row.governor = governorVerdict();
     if (row.governor.verdict === 'EDGE-NEGATIVE-GRID-HOLD') {
@@ -558,12 +615,6 @@ async function main() {
     } else if (row.governor.verdict !== 'EDGE-POSITIVE-GRID-MAY-RUN') {
       console.log('[GOVERNOR] ' + row.governor.verdict + ' — no mirror truth this run; per-order laws remain the brakes');
     }
-    // 5. execute
-    const expiry = new Date(Date.now() + DEFAULTS.EXPIRY_DAYS * 864e5).toISOString().slice(0, 19);
-    const ops = [];
-    const placements = [];
-    for (const p of plan.sells) { placements.push({ ...p, side: p.side === 'flow-taker' ? 'flow-taker' : 'sell', broadcast: false }); }
-    for (const p of plan.buys) { placements.push({ ...p, side: 'buy', broadcast: false }); }
     if (mode === 'LIVE') {
       // unique orderids: (epoch-seconds mod 2^32) + index — chain law: same (owner, orderid)
       // REPLACES the standing order, so uniqueness is correctness, not cosmetics
