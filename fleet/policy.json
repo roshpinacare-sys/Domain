@@ -1,0 +1,26 @@
+{
+  "schema": "saos.policy/1",
+  "pattern": "PolicyAVS (EigenLayer verifiable-agents pattern, verified 2026-10-13) git-native tier: hard whitelist enforcement BEFORE any signature; the operator network = independent verifier lanes (anchor-verify.mjs, fleet-verify, wallet-verify) that re-check receipts; violations = refuse + receipt, never silence",
+  "version": 1,
+  "updatedAt": "2026-10-13T23:59:00Z",
+  "signing": {
+    "allowedChains": [1, 10, 8453],
+    "allowedRelays": [
+      "0xa52d85caa4c04c15ce60d0c582e8c138d16678e6",
+      "0x56c9d54ea866e25916757903e51392bbedee2ece",
+      "0x279818b4c9eddc02fb3dd036a5e77d8f7dc1cf87"
+    ],
+    "allowedSelectors": ["0x8be975cf"],
+    "calldataMustCarryDayRoot": true,
+    "maxGasPriceGwei": { "1": 30, "10": 0.5, "8453": 0.5 },
+    "maxCostPerActionEth": 0.000001,
+    "minReserveAfterActionEth": 0.00002,
+    "maxSignsPerDayRoot": 1,
+    "keyDerivationMustEqualBookEoa": true,
+    "keyMayLiveInMemoryOnly": true
+  },
+  "refusals": {
+    "onViolation": "named terminal POLICY-VIOLATION + verdict receipt; refuse to sign; never fake, never silently skip",
+    "escalation": "receipt is the alarm (T-77); owner-words decide policy changes"
+  }
+}
