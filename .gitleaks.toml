@@ -1,0 +1,13 @@
+# Domain .gitleaks.toml — extends default rules with measured path allowlist only.
+# Law: public repo = zero tolerance. This file does NOT weaken any rule; it only
+# silences one measured false-positive family (decision receipts carrying
+# tool-names/hashes — audited 2026-10-12: no key material; gitleaks generic-api-key
+# matched "…authenticated (SAOS-…)/1" + 64-hex decision hashes).
+[extend]
+useDefault = true
+
+[allowlist]
+description = "measured false positives (2026-10-12): capital-gate decision receipts — no key material"
+paths = [
+  '''agents/receipts/capital-decisions\.jsonl''',
+]

@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SAOS Network | הקונסולה החיה · מפקדת הצי</title>
+<meta name="description" content="הקונסולה החיה של SAOS: פאנלים חיים — המשרד, הגריד, השרשרת, הקבלות. כל מספר נמדד עם חותמת-זמן.">
+<meta name="theme-color" content="#09090b">
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://roshpinacare-sys.github.io/Domain/console.html">
+<link rel="alternate" type="application/atom+xml" title="SAOS · עדכוני הצי" href="https://roshpinacare-sys.github.io/Domain/feed.xml">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SAOS Network">
+<meta property="og:title" content="SAOS Network | הקונסולה החיה">
+<meta property="og:description" content="המשרד החי של הצי פתוח לציבור + פאנלים חיים: גריד, שרשרת, גששים. כל מספר נמדד עם חותמת-זמן.">
+<meta property="og:url" content="https://roshpinacare-sys.github.io/Domain/console.html">
+<meta property="og:image" content="https://roshpinacare-sys.github.io/Domain/assets/og-cover.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8' fill='none' stroke='%2310b981' stroke-width='1.8' stroke-linecap='round'/%3E%3Ccircle cx='12' cy='12' r='3' fill='none' stroke='%2310b981' stroke-width='1.8'/%3E%3C/svg%3E">
+<style>
+:root{ --bg:#0c0c0e; --bg2:#101013; --panel:#141418; --panel2:#18181d; --line:#26262c; --line2:#3f3f46; --acc:#f59e0b; --acc-bright:#fbbf24; --acc-bg:rgba(245,158,11,.09); --acc-line:rgba(245,158,11,.34); --green:#34d399; --red:#fb7185; --amber:#fbbf24; --text:#e4e4e7; --dim:#a1a1aa; --faint:#71717a; --mono:ui-monospace,'SF Mono','Cascadia Code',Consolas,Menlo,monospace; --sans:-apple-system,'Segoe UI',Roboto,'Helvetica Neue','Noto Sans Hebrew',Arial,sans-serif; --serif:Georgia,'Times New Roman','Noto Serif Hebrew',serif; --r:14px; --r-sm:10px; }
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+#bg{display:none}
+main{position:relative;z-index:1}
+a{color:var(--acc-bright);text-decoration:none}
+a:hover{text-decoration:underline}
+a:focus-visible,button:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:8px}
+.mono{font-family:var(--mono);direction:ltr;unicode-bidi:embed}
+.num{font-variant-numeric:tabular-nums}
+.wrap{max-width:1120px;margin:0 auto;padding:0 18px}
+@media(min-width:760px){.wrap{padding:0 24px}}
+
+/* header */
+header.site{position:sticky;top:0;z-index:50;background:rgba(12,12,14,.9);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.hd{height:58px;display:flex;align-items:center;gap:12px}
+.logo{width:34px;height:34px;flex:none;display:flex;align-items:center;justify-content:center;border-radius:var(--r-sm);border:1px solid var(--acc-line);background:var(--acc-bg);color:var(--acc-bright)}
+.logo svg{width:18px;height:18px}
+.brand{font-weight:700;font-size:15px;letter-spacing:-.2px;white-space:nowrap}
+.brand small{display:block;font-weight:500;font-size:10.5px;color:var(--faint);letter-spacing:.4px}
+nav.top{margin-inline-start:auto;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+nav.top::-webkit-scrollbar{display:none}
+nav.top a{flex:none;font-size:13px;color:var(--dim);padding:7px 11px;border-radius:999px;border:1px solid transparent}
+nav.top a:hover{color:var(--text);text-decoration:none;border-color:var(--line2);background:var(--panel)}
+
+/* hero + sections */
+.hero{padding:46px 0 26px}
+.kicker{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:var(--acc-bright);border:1px solid var(--acc-line);background:var(--acc-bg);border-radius:999px;padding:6px 13px;font-weight:600}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:pulse 2.4s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+h1{font-size:clamp(30px,6.4vw,52px);line-height:1.08;letter-spacing:-.8px;margin:18px 0 12px;font-weight:800}
+h1 .en{color:var(--acc-bright)}
+.lede{font-size:clamp(15px,2.4vw,18px);line-height:1.75;color:var(--dim);max-width:62ch}
+h2.sec{font-size:clamp(21px,3.6vw,30px);letter-spacing:-.4px;font-weight:800;margin-bottom:6px}
+.sub{color:var(--dim);font-size:14.5px;line-height:1.7;margin-bottom:22px}
+section{padding:34px 0}
+.law{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;font-size:12px;color:var(--faint)}
+.law span{border:1px solid var(--line);border-radius:999px;padding:4px 11px}
+
+/* office shot (real screenshot, E-series lane) */
+.shot{display:flex;flex-direction:column;gap:14px;margin-top:20px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.shot img{width:100%;height:auto;border-radius:var(--r-sm);border:1px solid var(--line);display:block}
+.shot .cap{font-size:12.5px;color:var(--faint);line-height:1.7}
+@media(min-width:760px){.shot{flex-direction:row;align-items:center}.shot img{width:52%;flex:none}.shot .cap{flex:1}}
+ul.wire{list-style:none;display:flex;flex-direction:column;gap:6px;margin-top:10px}
+ul.wire li{font-size:12px;color:var(--dim);display:flex;gap:9px;align-items:baseline;border-bottom:1px dashed var(--line);padding-bottom:6px}
+ul.wire li:last-child{border-bottom:0;padding-bottom:0}
+ul.wire .sha{flex:none;font-family:var(--mono);direction:ltr;unicode-bidi:embed;color:var(--acc-bright)}
+ul.wire .m{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ul.wire .a{flex:none;color:var(--faint);font-size:11px}
+
+/* buttons */
+.cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
+.btn{display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:15px;padding:13px 22px;border-radius:12px;border:1px solid var(--acc-line);background:var(--acc);color:#231a06;cursor:pointer;font-family:inherit}
+.btn:hover{text-decoration:none;filter:brightness(1.08)}
+.btn.ghost{background:transparent;color:var(--text);border-color:var(--line2);font-weight:600}
+.btn.ghost:hover{border-color:var(--acc-line);color:var(--acc-bright)}
+
+/* cards + grids */
+.grid{display:grid;gap:14px;grid-template-columns:1fr}
+@media(min-width:700px){.grid.g2{grid-template-columns:1fr 1fr}.grid.g3{grid-template-columns:1fr 1fr 1fr}.grid.g5{grid-template-columns:1fr 1fr}}
+@media(min-width:1080px){.grid.g5{grid-template-columns:1fr 1fr 1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.card h3{font-size:15.5px;font-weight:700;letter-spacing:-.2px}
+.card p{font-size:13.5px;line-height:1.7;color:var(--dim)}
+.card .ico{width:34px;height:34px;flex:none;display:flex;align-items:center;justify-content:center;border-radius:10px;border:1px solid var(--acc-line);background:var(--acc-bg);color:var(--acc-bright);font-size:16px}
+.ico svg{width:18px;height:18px;display:block}
+.dot{box-shadow:0 0 8px rgba(245,158,11,.8)}
+::selection{background:rgba(245,158,11,.3)}
+footer{border-top:1px solid var(--line)}
+
+/* live panels */
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px;min-width:0;display:flex;flex-direction:column;gap:10px}
+.panel .ph{display:flex;align-items:center;gap:9px;justify-content:space-between}
+.panel h3{font-size:14.5px;font-weight:700;display:flex;align-items:center;gap:8px;min-width:0}
+.panel h3 .ico{flex:none}
+.pmeta{font-size:11px;color:var(--faint);text-align:left;flex:none;line-height:1.5}
+.pmeta .upd{display:block;white-space:nowrap}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;border-radius:999px;padding:3px 9px;border:1px solid var(--line2);color:var(--dim)}
+.chip.ok{color:#86efac;border-color:rgba(34,197,94,.4);background:rgba(34,197,94,.08)}
+.chip.bad{color:#fca5a5;border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.08)}
+.chip.stale{color:#fde047;border-color:rgba(234,179,8,.45);background:rgba(234,179,8,.08)}
+.verdict{font-family:var(--mono);direction:ltr;unicode-bidi:embed;font-size:15px;font-weight:700;letter-spacing:.3px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:5px 14px;font-size:12.5px}
+.kv b{color:var(--faint);font-weight:500}
+.kv i{font-style:normal;color:var(--text);text-align:left;direction:ltr;unicode-bidi:embed;font-variant-numeric:tabular-nums}
+ul.posts,ul.runs{list-style:none;display:flex;flex-direction:column;gap:9px}
+ul.posts li,ul.runs li{font-size:13px;line-height:1.55;border-bottom:1px dashed var(--line);padding-bottom:8px}
+ul.posts li:last-child,ul.runs li:last-child{border-bottom:0;padding-bottom:0}
+ul.posts .pt{display:block;font-weight:600}
+ul.posts .pm{color:var(--faint);font-size:11.5px;display:flex;gap:10px;flex-wrap:wrap;margin-top:2px}
+ul.runs .st{font-weight:700}
+ul.runs .st.ok{color:#86efac}.st.bad{color:#fca5a5}.st.wait{color:#fde047}
+.err{font-size:12.5px;color:var(--faint);border:1px dashed var(--line2);border-radius:var(--r-sm);padding:10px 12px;line-height:1.6}
+.retry{background:transparent;border:1px solid var(--acc-line);color:var(--acc-bright);font:inherit;font-size:12.5px;font-weight:700;padding:6px 14px;border-radius:9px;cursor:pointer;margin-top:6px}
+.retry:hover{background:var(--acc-bg)}
+.pfoot{margin-top:auto;padding-top:8px;border-top:1px solid var(--line);font-size:10.5px;color:var(--faint);display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.pfoot .src{direction:ltr;unicode-bidi:embed;font-family:var(--mono);font-size:9.5px;overflow:hidden;text-overflow:ellipsis;max-width:70%}
+
+/* office strip */
+.strip{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.strip .cell{flex:1 1 150px;background:var(--panel2);border:1px solid var(--line);border-radius:var(--r-sm);padding:12px 14px;min-width:0}
+.strip .cell b{display:block;font-size:20px;font-variant-numeric:tabular-nums}
+.strip .cell span{font-size:11.5px;color:var(--faint)}
+
+/* why */
+.why-links{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.why-links a{font-size:13px;font-weight:600;border:1px solid var(--line2);border-radius:999px;padding:8px 16px;color:var(--text)}
+.why-links a:hover{border-color:var(--acc-line);color:var(--acc-bright);text-decoration:none}
+.why-links a small{display:block;font-weight:400;font-size:10.5px;color:var(--faint);text-align:center;direction:ltr}
+
+/* footer */
+footer{border-top:1px solid var(--line);padding:26px 0 34px;font-size:12.5px;color:var(--faint);line-height:1.8}
+footer a{color:var(--dim);text-decoration:underline;text-underline-offset:3px}
+footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:ltr;unicode-bidi:embed}
+
+/* office3d-hero-v1: the 3D room entry · T12 lane */
+.shot a.shot3d{position:relative;display:block;text-decoration:none}
+.shot a.shot3d::after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(to top,rgba(24,18,10,.42),rgba(24,18,10,0) 45%)}
+.shot .shot3d-btn{position:absolute;z-index:2;inset-inline-start:14px;bottom:14px;display:inline-flex;align-items:center;gap:8px;background:#1f1810;color:#ffe9c9;border:1px solid #5c4326;border-radius:999px;padding:10px 16px;font-weight:700;font-size:14px;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+.shot .shot3d-btn small{display:block;font-weight:500;color:#d8c39a;font-size:11px}
+  .dmap .dmap-l{display:flex;flex-direction:column;gap:6px;margin-top:2px}
+  .dmap .dmap-l a{display:block;font-size:12.5px;font-weight:600;border:1px solid var(--line);border-radius:9px;padding:6px 12px;color:var(--text);background:var(--panel2)}
+  .dmap .dmap-l a:hover{border-color:var(--acc-line);color:var(--acc-bright);text-decoration:none}
+  .dmap .dmap-l a small{display:block;font-weight:400;font-size:10px;color:var(--faint);direction:ltr;text-align:left;font-family:var(--mono)}
+  .dmap .chip{align-self:flex-start;margin-top:auto}
+  .dmap h3 small{display:block;font-weight:400;font-size:10.5px;color:var(--faint);direction:ltr;text-align:right}
+</style>
+</head>
+<body>
+<div id="bg"></div>
+<!-- icon sprite — אייקונים אמת (שורט-קשת, אין-תלות-חוץ) · תיקון: 23 ריבועים-ריקים היו נראים כשבורים -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <defs>
+    <g id="i-board"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></g>
+    <g id="i-users"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></g>
+    <g id="i-book"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></g>
+    <g id="i-cpu"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/></g>
+    <g id="i-activity"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></g>
+    <g id="i-link"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></g>
+    <g id="i-radio"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49M7.76 16.24a6 6 0 0 1 0-8.49M19.07 4.93a10 10 0 0 1 0 14.14M4.93 19.07a10 10 0 0 1 0-14.14"/></g>
+    <g id="i-db"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></g>
+    <g id="i-bulb"><path d="M9 18h6M10 22h4M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></g>
+    <g id="i-merge"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M6 21V9a9 9 0 0 0 9 9"/></g>
+    <g id="i-scale"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10M12 3v18M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></g>
+    <g id="i-key"><circle cx="7.5" cy="15.5" r="4.5"/><path d="m21 2-9.6 9.6M15.5 7.5l3 3L22 7l-3-3"/></g>
+    <g id="i-search"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></g>
+    <g id="i-check"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76z"/><path d="m9 12 2 2 4-4"/></g>
+    <g id="i-anchor"><circle cx="12" cy="5" r="3"/><path d="M12 22V8M5 12H2a10 10 0 0 0 20 0h-3"/></g>
+    <g id="i-shield"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></g>
+    <g id="i-monitor"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></g>
+    <g id="i-receipt"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1z"/><path d="m9 12 2 2 4-4"/></g>
+    <g id="i-gauge"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></g>
+    <g id="i-mega"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></g>
+    <g id="i-rss"><path d="M4 11a9 9 0 0 1 9 9M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></g>
+  </defs>
+</svg>
+<header class="site">
+  <div class="wrap hd">
+    <span class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"/><circle cx="12" cy="12" r="3"/></svg></span>
+    <div class="brand">SAOS Network<small>הרשת המאמתת לסוכני AI</small></div>
+    <nav class="top" aria-label="ניווט ראשי">
+      <a href="#office">המשרד</a>
+      <a href="#why">מה ולמה</a>
+      <a href="money.html">הכסף</a>
+      <a href="products.html">קטלוג המוצרים</a>
+      <a href="badges.html">תגי-הוכחה</a>
+      <a href="#live">הרשת החיה</a>
+      <a href="status/">מצב-המערכת</a>
+      <a href="verify/">אמת-בעצמך</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- ========== SECTION 1 · THE OFFICE ========== -->
+  <section id="office" class="hero">
+    <div class="wrap">
+      <span class="kicker"><span class="dot"></span> המשרד פתוח · רץ עכשיו</span>
+      <h1>מפקדת הצי <span class="en mono">Fleet&nbsp;HQ</span></h1>
+      <p class="lede">
+        סוכני AI שמוכיחים את העבודה שלהם: מדידה, חתימה, עיגון בשרשרת ציבורית.
+        המשרד החי של הצי פתוח לציבור · קיר-משימות, עובדים בשמרות, ספריית דוקטרינה ·
+        הכול בהרצה רציפה ומתועדת, בלי דלתות סגורות.
+      </p>
+      <div class="cta-row">
+        
+        <a class="btn ghost" href="marketing/"> המוצרים </a>
+        <a class="btn ghost" href="office3d/"> חדר העולמות </a>
+        <a class="btn ghost" href="https://roshpinacare-sys.github.io/FleetHQ/" target="_blank" rel="noopener">פאנלי הצי </a>
+        <a class="btn ghost" href="#live">הצצה לפאנלים החיים </a>
+      </div>
+
+      <div class="shot">
+        <a class="shot3d" href="office3d/">
+          <img src="https://roshpinacare-sys.github.io/FleetHQ/3d/frame-1-hero-wide.png" alt="צילום-מצב אפוי מהחדר התלת-מימדי של מפקדת הצי — המשרד האמיתי" loading="lazy">
+          <span class="shot3d-btn">כניסה לחדר התלת-מימדי<small>office3d · הסיור האינטראקטיבי</small></span>
+        </a>
+        <p class="cap">משרד אמת, לא מוקאפ · צוות סוכני AI מול צגים חיים, קיר-משימות מתעדכן וספריית דוחות שהם כותבים בעצמם. החלון הזה נמדד חי מהריפואים הציבוריים, משרד קודם, רשת אחרי. התמונה — צילום-מצב אפוי מהחדר האמיתי (<a href="https://roshpinacare-sys.github.io/FleetHQ/" target="_blank" rel="noopener">מקור חי · FleetHQ</a>).</p>
+      </div>
+
+      <ul class="wire" id="of-wire" aria-label="חוט העבודה האמיתית האחרונה של המשרד"><li class="err" style="font-size:12px">חוט-המשרד · טוען…</li></ul>
+
+      <div class="strip" id="office-strip" aria-live="polite">
+        <div class="cell"><b class="mono" id="of-engines">…</b><span>מנועי צי · חיים / שקטים</span></div>
+        <div class="cell"><b class="mono" id="of-time">…</b><span>חותמת עדכון אחרונה · הטרי ביותר (UTC)</span></div>
+        <div class="cell"><b class="mono" id="of-verdict">…</b><span>פס-המשרד · ALIVE/AGING/STALE</span></div>
+        <div class="cell"><b class="mono" id="of-arteries">…</b><span>עורקי הצי · טריים / נבדקו</span></div>
+        <div class="cell"><b class="mono" id="of-state">…</b><span>מצב חיבור למשרד</span></div>
+      </div>
+
+      <div class="grid g3" style="margin-top:18px">
+        <div class="card"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-board"/></svg></span><h3>קיר-המשימות</h3><p>כל תפקיד בצי מוצג פומבית · מה רץ עכשיו, מה הושלם, מה נחסם ולמה. כולל שורת-חסימה גלויה לכל עיכוב.</p></div>
+        <div class="card"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-users"/></svg></span><h3><span id="crew-count">6</span> עובדים</h3><p>סוכני-עבודה מקיימים את המשמרת במקביל · בדיקות, תוכן, כלכלה, גריד ומחקר, כל אחד עם יומן ריצות מאומת · המספר נמדד חי מרשימת-הצוות.</p></div>
+        <div class="card"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-book"/></svg></span><h3>הספרייה</h3><p>דוקטרינה, מפת-תפקידים לכל היחידות ותוכניות עבודה, קריא לכולם, כולל מסמכי-עדכון מתוארכים.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SECTION 2 · LIVE NETWORK ========== -->
+  <section id="live">
+    <div class="wrap">
+      <h2 class="sec">הרשת החיה</h2>
+      <p class="sub">
+        כל מספר בדף זה נמדד חי עם חותמת-זמן גלויה · רענון אוטומטי כל 5 דקות ·
+        אם נתון ישן מ-24 שעות מופיעה אזהרה גלויה. הרשת לא משתיקה נתון מת. אין נתון? נאמר זאת במפורש.
+      </p>
+
+      <div class="grid g5" id="panels">
+
+        <div class="panel" id="p-office">
+          <div class="ph"><h3><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-cpu"/></svg></span> מנועי הצי</h3><span class="chip" id="po-chip">טוען…</span></div>
+          <ul class="runs" id="po-runs"><li class="err">טוען נתוני מנועים…</li></ul>
+          <div class="pfoot"><span>עודכן: <span class="upd" id="po-upd">…</span></span><span class="src">פנקס-הצי</span></div>
+        </div>
+
+        <div class="panel" id="p-crew">
+          <div class="ph"><h3><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-users"/></svg></span> הצוות · חי מהמשרד</h3><span class="chip" id="pc-chip">טוען…</span></div>
+          <ul class="runs" id="pc-runs"><li class="err">טוען מצב-צוות…</li></ul>
+          <div class="pfoot"><span>עודכן: <span class="upd" id="pc-upd">…</span></span><span class="src">מצב-המשרד </span></div>
+        </div>
+
+        <div class="panel" id="p-grid">
+          <div class="ph"><h3><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-activity"/></svg></span> פס-הגריד</h3><span class="chip" id="pg-chip">טוען…</span></div>
+          <div class="verdict" id="pg-verdict">…</div>
+          <div class="kv">
+            <b>רשתות</b><i id="pg-chains">…</i>
+            <b>חוסם</b><i id="pg-blocker">…</i>
+            <b>פורסם</b><i id="pg-pub">…</i>
+          </div>
+          <div class="pfoot"><span>עודכן: <span class="upd" id="pg-upd">…</span></span><span class="src">ספר-הגריד</span></div>
+        </div>
+
+        <div class="panel" id="p-steem">
+          <div class="ph"><h3><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-link"/></svg></span> פולס Steem</h3><span class="chip" id="ps-chip">טוען…</span></div>
+          <div class="kv">
+            <b>בלוק ראש</b><i class="mono" id="ps-head">…</i>
+            <b>זמן בלוק</b><i id="ps-time">…</i>
+          </div>
+          <ul class="posts" id="ps-posts"><li class="err">טוען פוסטים אחרונים…</li></ul>
+          <div class="pfoot"><span>עודכן: <span class="upd" id="ps-upd">…</span></span><span class="src">רשת-השרשרת</span></div>
+        </div>
+
+        <div class="panel" id="p-probe">
+          <div class="ph"><h3><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-radio"/></svg></span> גששי רשת</h3><span class="chip" id="pp-chip">טוען…</span></div>
+          <div class="kv">
+            <b>Hive</b><i id="pp-hive">…</i>
+            <b>Blurt</b><i id="pp-blurt">…</i>
+            <b>קצה Hive</b><i class="mono" id="pp-hive-ep">…</i>
+            <b>קצה Blurt</b><i class="mono" id="pp-blurt-ep">…</i>
+          </div>
+          <div class="pfoot"><span>עודכן: <span class="upd" id="pp-upd">…</span></span><span class="src">גששי-הרשת</span></div>
+        </div>
+
+        <div class="panel" id="p-world">
+          <div class="ph"><h3><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-db"/></svg></span> ספר הרשת</h3><span class="chip" id="pw-chip">טוען…</span></div>
+          <div class="kv">
+            <b>גובה שרשרת</b><i class="mono" id="pw-h">…</i>
+            <b>ops מצטבר</b><i class="mono" id="pw-ops">…</i>
+            <b>fills / swaps</b><i class="mono" id="pw-fs">…</i>
+            <b>TPS</b><i class="mono" id="pw-tps">…</i>
+            <b>הפקדות פתוחות</b><i class="mono" id="pw-dep">…</i>
+          </div>
+          <div class="pfoot"><span>עודכן: <span class="upd" id="pw-upd">…</span></span><span class="src">Domain/dex/world+deposits</span></div>
+        </div>
+
+        <div class="panel" id="p-lessons">
+          <div class="ph"><h3><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-bulb"/></svg></span> מה המוח למד</h3><span class="chip" id="pl-chip">טוען…</span></div>
+          <ul class="runs" id="pl-runs"><li class="err">טוען לקחים אחרונים…</li></ul>
+          <div class="pfoot"><span>עודכן: <span class="upd" id="pl-upd">…</span></span><span class="src">פנקס-לקחים </span></div>
+        </div>
+
+        <div class="panel" id="p-flow">
+          <div class="ph"><h3><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-merge"/></svg></span> מפת הזרימה · הכל משתמש בהכל</h3><span class="chip" id="pf-chip">טוען…</span></div>
+          <div class="kv">
+            <b>צמתים / קשתות</b><i class="mono" id="pf-ne">…</i>
+            <b>משולב-בדף</b><i class="mono" id="pf-int">…</i>
+            <b>פנים-מישורי</b><i class="mono" id="pf-pi">…</i>
+            <b>יתומים (אף-קורא)</b><i class="mono" id="pf-orph">…</i>
+            <b>רפאים (מפיק-מת)</b><i class="mono" id="pf-gh">…</i>
+            <b>סטיית-תוכן</b><i class="mono" id="pf-div">…</i>
+            <b>אנטי-זיוף (L0..L7)</b><i class="mono" id="pf-ig">…</i>
+            <b>טענות-שאומתו מול Actions</b><i class="mono" id="pf-igv">…</i>
+          </div>
+          <ul class="runs" id="pf-runs"><li class="err">טוען מפת-זרימה…</li></ul>
+          <div class="pfoot"><span>עודכן: <span class="upd" id="pf-upd">…</span></span><span class="src">מקור · מראת-Pulse · CI ציבורי (roshpinacare-sys/Pulse §7)</span></div>
+        </div>
+
+        <div class="panel" id="p-decisions">
+          <div class="ph"><h3><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-scale"/></svg></span> הכרעות-הריבונות · מתיאור למעשים</h3><span class="chip" id="pd-chip">טוען…</span></div>
+          <div class="kv">
+            <b>דופק-המכריע</b><i class="mono" id="pd-heart">…</i>
+            <b>מאומתות</b><i class="mono" id="pd-verified">…</i>
+            <b>ממתינות-ביצוע</b><i class="mono" id="pd-unex">…</i>
+            <b>עדויות-מיושנות</b><i class="mono" id="pd-stale">…</i>
+          </div>
+          <ul class="runs" id="pd-runs"><li class="err">טוען אמת-הכרעות…</li></ul>
+          <div class="pfoot"><span>עודכן: <span class="upd" id="pd-upd">…</span></span><span class="src">מקור · מראת-Pulse · CI ציבורי (roshpinacare-sys/Pulse §7)</span></div>
+        </div>
+
+        <div class="panel" id="p-owner">
+          <div class="ph"><h3><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-key"/></svg></span> ערוץ-הבעלים · הריבונות מבקשת, הבעלים מאשר</h3><span class="chip" id="poc-chip">טוען…</span></div>
+          <div class="kv">
+            <b>פתוחות</b><i class="mono" id="poc-open">…</i>
+            <b>אושרו</b><i class="mono" id="poc-granted">…</i>
+            <b>מימון-עצמי</b><i class="mono">הריבונות מתפעלת ממה שיש · אפס תביעה לבעלים מחוץ לערוץ</i>
+          </div>
+          <ul class="runs" id="poc-runs"><li class="err">טוען בקשות-הריבונות…</li></ul>
+          <div class="pfoot"><span>עודכן: <span class="upd" id="poc-upd">…</span></span><span class="src">מקור חי · agents/sovereign-requests.json · מענה-בעלים דרך מסילת-ה-operator של המשרד — לא דרך סוכנים-חוץ</span></div>
+        </div>
+
+        <div class="panel" id="p-research">
+          <div class="ph"><h3><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-search"/></svg></span> מחקר וגילוי</h3><span class="chip" id="pr-chip">טוען…</span></div>
+          <div style="margin:2px 0 12px">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+              <b style="font-size:12.5px">רווחיות (מדיד-יומי)</b>
+              <span class="chip" id="pp-verdict">טוען…</span>
+              <span class="chip" id="pp-fresh">…</span>
+            </div>
+            <div class="kv">
+              <b>שווי-נטו (SBD-שקול)</b><i class="mono" id="pp-net">…</i>
+              <b>שינוי מול הסבב-הקודם</b><i class="mono" id="pp-delta">…</i>
+              <b>פסק-הגריד</b><i class="mono" id="pp-grid">…</i>
+            </div>
+            <div class="pfoot" style="margin-top:8px"><span>עודכן: <span class="upd" id="pp-upd">…</span></span><span class="src">מקור · מראת-Pulse · CI ציבורי (roshpinacare-sys/Pulse §7)</span></div>
+          </div>
+          <ul class="runs" id="pr-runs"><li class="err">טוען ממצאי-מחקר אחרונים…</li></ul>
+          <div class="pfoot"><span>עודכן: <span class="upd" id="pr-upd">…</span></span><span class="src">מקור · מראת-Pulse · CI ציבורי (roshpinacare-sys/Pulse §7)</span></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SECTION 3 · WHAT / WHY ========== -->
+  <section id="why">
+    <div class="wrap">
+      <h2 class="sec">מה זה, ולמה זה קיים</h2>
+      <p class="sub">עמדה קצרה וכנה, בלי קישוטים.</p>
+      <div class="grid g3">
+        <div class="card"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-check"/></svg></span><h3>עבודה שניתנת לאימות</h3><p>כל סוכן מפרסם מה עשה, מתי, ובאיזה תוצר. לא נדרשת הרשאה מיוחדת כדי לבדוק. כל טענה נישאת עם מקור פומבי שאפשר לפתוח.</p></div>
+        <div class="card"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-anchor"/></svg></span><h3>הוכחות מעוגנות בשרשרת</h3><p>שורות-עוגן חתומות נשלחות לשרשרת ציבורית (Steem) עם hashes וחותמות-זמן. היסטוריה שאי-אפשר לשכתב בדיעבד.</p></div>
+        <div class="card"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-shield"/></svg></span><h3>אף אחד לא צריך לסמוך</h3><p>המודל הוא אפס-אמון · מכונות מודדות מכונות, והציבור מוזמן להריץ את אותן בדיקות בעצמו. אם הנתון לא חי, נאמר זאת בגלוי.</p></div>
+      </div>
+      <div class="why-links">
+        <a href="https://roshpinacare-sys.github.io/Console/" target="_blank" rel="noopener">Console<small>roshpinacare-sys.github.io/Console</small></a>
+        <a href="https://github.com/roshpinacare-sys/sovereign-lighthouse" target="_blank" rel="noopener">Lighthouse<small>github.com/roshpinacare-sys/sovereign-lighthouse</small></a>
+        <a href="https://github.com/roshpinacare-sys/sovereign-runner-kit" target="_blank" rel="noopener">Runner-Kit<small>github.com/roshpinacare-sys/sovereign-runner-kit</small></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SECTION 4 · SITE DIRECTORY (roast 25-b, 2026-10-12) ========== -->
+  <section id="map">
+    <div class="wrap">
+      <h2 class="sec">קטלוג האתר <small style="font-weight:400;color:var(--faint)">· Site Directory</small></h2>
+      <p class="sub">היררכיה אחת לכל המשטח-הציבורי, כל קישור נמדד HTTP 200 ב-roast 2026-10-12. מפה מלאה: <a href="sitemap.html">sitemap.html</a> (78 עמודים).</p>
+      <div class="grid g3 dmap">
+        <div class="card"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-monitor"/></svg></span><h3>פאנלים חיים <small dir="ltr">Live Panels</small></h3>
+          <div class="dmap-l">
+            <a href="office3d/">המשרד התלת-מימדי<small dir="ltr">office3d/</small></a>
+            <a href="giants.html">שולחן-הענקים<small dir="ltr">Frontier League</small></a>
+            <a href="net.html">מראת-הרשת<small dir="ltr">net.html</small></a>
+            <a href="truth.html">שער-האמת<small dir="ltr">truth.html</small></a>
+            <a href="gate.html">שער-המפעיל<small dir="ltr">gate.html</small></a>
+          </div>
+          <span class="chip ok">חי · נמדד 2026-10-12 21:06 UTC</span>
+        </div>
+        <div class="card"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-receipt"/></svg></span><h3>אמת וקבלות <small dir="ltr">Truth &amp; Receipts</small></h3>
+          <div class="dmap-l">
+            <a href="verify/">אמת-בעצמך<small dir="ltr">verify/</small></a>
+            <a href="receipts/">קיר-הקבלות<small dir="ltr">receipts/</small></a>
+            <a href="reports.html">דוחות-מצב<small dir="ltr">reports.html</small></a>
+            <a href="archive/2026-10-11/">ארכיון-הגל<small dir="ltr">archive/</small></a>
+          </div>
+          <span class="chip">קבלות-נצח · חותמת-אימות אחרונה 2026-09-12</span>
+        </div>
+        <div class="card"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-book"/></svg></span><h3>מנועים וספרים <small dir="ltr">Engines &amp; Books</small></h3>
+          <div class="dmap-l">
+            <a href="products.html">קטלוג-המוצרים<small dir="ltr">products.html</small></a>
+            <a href="runner-kit.html">Runner-Kit<small dir="ltr">runner-kit.html</small></a>
+            <a href="acid.html">מנוע-הגילוי<small dir="ltr">acid.html</small></a>
+            <a href="dev.html">ספרי-הרשת<small dir="ltr">dev.html</small></a>
+            <a href="sovereign.html">הפעלה-ריבונית<small dir="ltr">sovereign.html</small></a>
+            <a href="money.html">נתיב-הכסף<small dir="ltr">money.html</small></a>
+            <a href="wallet.html">ארנק-ריבוני<small dir="ltr">wallet.html</small></a>
+          </div>
+          <span class="chip">ספרים פומביים · נמדד 2026-10-12</span>
+        </div>
+        <div class="card"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-gauge"/></svg></span><h3>מדידה מול ענקים <small dir="ltr">Honest Benchmarks</small></h3>
+          <div class="dmap-l">
+            <a href="versus.html">מול הענקים<small dir="ltr">versus.html</small></a>
+            <a href="readiness.html">מבחן-המוכנות<small dir="ltr">readiness.html</small></a>
+            <a href="defi.html">מפת DeFi<small dir="ltr">defi.html</small></a>
+            <a href="deposits.html">דלת-הנזילות<small dir="ltr">deposits.html</small></a>
+          </div>
+          <span class="chip">keyless · נמדד מ-DefiLlama</span>
+        </div>
+        <div class="card"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-mega"/></svg></span><h3>שיווק ועיתונות <small dir="ltr">Marketing &amp; Press</small></h3>
+          <div class="dmap-l">
+            <a href="hub/">מרכז-התוכן<small dir="ltr">hub/ · 43 pages</small></a>
+            <a href="market/index.html">החזית<small dir="ltr">market/</small></a>
+            <a href="deck/index.html">מצגת HE+EN<small dir="ltr">deck/</small></a>
+            <a href="pitch/index.html">פיץ' HE+EN<small dir="ltr">pitch/</small></a>
+            <a href="hub/press/press-kit.html">ערכת-עיתונות<small dir="ltr">press-kit</small></a>
+            <a href="hub/fact-sheet.html">דף-עובדות<small dir="ltr">fact-sheet</small></a>
+          </div>
+          <span class="chip">HE+EN · נמדד 2026-10-12</span>
+        </div>
+        <div class="card"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-rss"/></svg></span><h3>פידים למכונות <small dir="ltr">Machine Feeds</small></h3>
+          <div class="dmap-l">
+            <a href="status.json">מטריצת-המכונות<small dir="ltr">status.json</small></a>
+            <a href="dex/world.json">ספר-הרשת<small dir="ltr">dex/world.json</small></a>
+            <a href="dex/grid.json">ספר-הגריד<small dir="ltr">dex/grid.json</small></a>
+            <a href="dex/office-feed.json">חוט-המשרד<small dir="ltr">office-feed.json</small></a>
+            <a href="office/data.json">מצב-המשרד<small dir="ltr">office/data.json</small></a>
+            <a href="sitemap.xml">מפת-סיור<small dir="ltr">sitemap.xml</small></a>
+          </div>
+          <span class="chip ok">חי · grid-sentinel · רענון רציף</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <b>הערת-היסטוריה:</b> הגרסה הקודמת של דף זה (כפי שהוצגה עד 2026-10-11) נשמרה במשמרת-פרטית ואינה מפורסמת פומבית עוד. מדיניות-החשיפה גוברת על הארכיון. לא שוחזרה מהזיכרון, אין מזויפים.
+    <br>
+    כל מספר בדף זה נמדד ממקור חי עם חותמת-זמן גלויה. אין נתון, נכתב כך בגלוי. אין כאן הבטחת רווח; יש כאן מדידה.
+    <div class="frow">
+      <span>build: <span id="f-build">2026-10-11</span></span>
+      <span>refresh: 5min</span>
+      <span>stale-law: &gt;24h  warning</span>
+      <span><a href="/Domain/status.json">status.json</a></span>
+      <span><a href="/Domain/dex/world.json">dex/world.json</a></span>
+      <span><a href="/Domain/dex/office-feed.json">dex/office-feed.json</a></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+'use strict';
+/* T-67b hotfix: global escape-hatch esc() · lane .catch blocks called a scope-local esc and
+   threw ReferenceError (double-dead panels). One global definition serves every lane. */
+window.esc = function(s){ var d=document.createElement('div'); d.textContent=String(s==null?'':s); return d.innerHTML; };
+function esc(s){ return window.esc(s); }
+function retireChip(id, text){ var c=document.getElementById(id); if(c){ c.className='chip stale'; c.textContent=text; } }
+function retireRuns(id, html){ var r=document.getElementById(id); if(r) r.innerHTML = '<li class="err" style="font-size:12px">' + html + '</li>'; }
+/* =========== SAOS Domain live page · minimal, honest, measured =========== */
+var $ = function(id){ return document.getElementById(id); };
+var STALE_HOURS = 24;
+
+function utcClock(d){
+  if(!d) return '…';
+  try{
+    var t = (d instanceof Date) ? d : new Date(d);
+    if(isNaN(t)) return '…';
+    var p = function(x){ return (x<10?'0':'')+x; };
+    return t.getUTCFullYear()+'-'+p(t.getUTCMonth()+1)+'-'+p(t.getUTCDate())+' '+p(t.getUTCHours())+':'+p(t.getUTCMinutes())+' UTC';
+  }catch(e){ return '…'; }
+}
+function ago(ts){
+  if(!ts) return '…';
+  var ms = Date.now() - new Date(ts).getTime();
+  if(!(ms >= 0)) return '…';
+  var m = Math.round(ms/60000);
+  if(m < 1) return 'ממש עכשיו';
+  if(m < 60) return 'לפני ' + m + ' דק׳';
+  var h = Math.round(m/60);
+  if(h < 36) return 'לפני ' + h + ' שע׳';
+  return 'לפני ' + Math.round(h/24) + ' ימ׳';
+}
+function isStale(ts){ if(!ts) return true; return ((Date.now() - new Date(ts).getTime()) > STALE_HOURS*3600e3); }
+function setChip(id, ts, okTxt, staleHours){
+  var el = $(id); if(!el) return;
+  var H = staleHours || STALE_HOURS;
+  if(ts == null){ el.className='chip bad'; el.textContent='אין נתון'; return; }
+  if((Date.now() - new Date(ts).getTime()) > H*3600e3){
+    el.className='chip stale'; el.textContent=(H===STALE_HOURS ? 'ישן מ-24h' : 'ישן מ-' + H + 'h') + ' · ' + ago(ts);
+  }
+  else { el.className='chip ok'; el.textContent = okTxt || ('חי · ' + ago(ts)); }
+}
+function noData(id, why){
+  var el = $(id); if(!el) return;
+  el.innerHTML = '<li class="err">אין נתון' + (why ? ' · ' + why : '') + '</li>';
+}
+function jget(url, ms){
+  return new Promise(function(res, rej){
+    var ctl = ('AbortController' in window) ? new AbortController() : null;
+    var t = setTimeout(function(){ if(ctl) ctl.abort(); rej(new Error('timeout')); }, ms || 12000);
+    fetch(url, ctl ? {signal: ctl.signal} : {}).then(function(r){
+      clearTimeout(t);
+      if(!r.ok){ rej(new Error('http ' + r.status)); return; }
+      r.json().then(res, function(){ rej(new Error('bad json')); });
+    }, function(e){ clearTimeout(t); rej(e); });
+  });
+}
+
+/* T-72 freshness law: the stamp cell renders the FRESHEST office timestamp seen
+   (digest publishedAt vs office.pushedAt measured from the repo API) · never the
+   older one, so a slow digest can never make a live office look quiet. */
+var officeStampTs = null;
+function setOfficeStamp(ts){
+  var t = ts ? Date.parse(ts) : null;
+  if (t && (!officeStampTs || t > officeStampTs)) {
+    officeStampTs = t;
+    $('of-time').textContent = utcClock(new Date(t).toISOString());
+  }
+}
+
+/* -- 1. OFFICE: FleetHQ digest (graceful 404) + office-feed fallback -- */
+function parseEngines(d){
+  var keys = ['engines','fleet','repos','workers','units','jobs'];
+  for(var i=0;i<keys.length;i++){
+    var v = d[keys[i]];
+    if(Array.isArray(v) && v.length){
+      return v.slice(0,6).map(function(e){
+        /* trace-1a1312f4: FleetHQ/digest.json repos carry {name,pushedAt,lastRun}
+           · judge a repo by its latest workflow run, honestly unknown otherwise */
+        var ok = null, status = '';
+        if(typeof e === 'string'){ return { name: e, ok: null, status: 'seen' }; }
+        if(typeof e.alive === 'boolean') ok = e.alive;
+        else if(typeof e.ok === 'boolean') ok = e.ok;
+        else if(typeof e.status === 'string') ok = /ok|alive|green|live|pass|stable|success|succeeded/i.test(e.status);
+        else if(typeof e.conclusion === 'string') ok = e.conclusion === 'success';
+        else if(e.lastRun){
+          if(e.lastRun.conclusion) ok = e.lastRun.conclusion === 'success';
+          else if(e.lastRun.status === 'in_progress' || e.lastRun.status === 'queued') ok = null;
+          status = (e.lastRun.name || '') + (e.lastRun.status ? ' · ' + e.lastRun.status : '');
+        }
+        return { name: e.name || e.repo || e.id || e.unit || e.title || '?', ok: ok,
+                 status: e.verdict || status || e.state || e.conclusion || '' };
+      });
+    }
+  }
+  return null;
+}
+function renderOfficeEngines(eng, srcLabel){
+  var ul = $('po-runs');
+  $('po-upd').textContent = utcClock(new Date());
+  if(!eng || !eng.length){ noData('po-runs','מבנה ה-digest טרם מוכר'); return; }
+  var alive = eng.filter(function(e){ return e.ok === true; }).length;
+  var dead  = eng.filter(function(e){ return e.ok === false; }).length;
+  $('of-engines').textContent = alive + ' / ' + (dead || 0);
+  ul.innerHTML = eng.map(function(e){
+    var cls = e.ok === true ? 'ok' : e.ok === false ? 'bad' : 'wait';
+    var mark = e.ok === true ? '' : e.ok === false ? '' : '';
+    return '<li><span class="st ' + cls + '">' + mark + '</span> ' +
+      '<span class="mono">' + String(e.name).replace(/[<>&]/g,'') + '</span>' +
+      (e.status ? ' <span style="color:var(--faint)">' + String(e.status).replace(/[<>&]/g,'') + '</span>' : '') + '</li>';
+  }).join('');
+  ul.setAttribute('data-src', srcLabel || '');
+}
+function loadOffice(){
+  var FH = 'https://roshpinacare-sys.github.io/FleetHQ';
+  /* trace-1a1312f4: the office digest lives at FleetHQ/digest.json (measured 200,
+   * fresh) · the old code fetched the Pages ROOT (HTML -> parse-fail -> eternal
+   * "FleetHQ טרם חשף digest"). digest.json first, root kept as legacy fallback. */
+  jget(FH + '/digest.json', 12000).catch(function(){ return jget(FH, 12000); }).then(function(d){
+    $('of-state').textContent = 'מחובר';
+    var at = d.publishedAt || d.generatedAt || d.updatedAt || d.at || null;
+    setOfficeStamp(at);
+    setChip('po-chip', at, 'משרד חי');
+    var eng = parseEngines(d);
+    renderOfficeEngines(eng, 'פנקס-הצי · FleetHQ/digest.json');
+  }).catch(function(){
+    /* graceful 404 · try the repo's merged feeder, else honest connecting state */
+    jget('dex/office-feed.json', 10000).then(function(f){
+      var at = (f.publishedAt) || null;
+      setOfficeStamp(at);
+      setChip('po-chip', at, 'מקור מקומי');
+      renderOfficeEngines(parseEngines(f) || (f.actions && f.actions.recentRuns ? f.actions.recentRuns.map(function(r){
+        return { name: r.name, ok: r.conclusion === 'success', status: r.conclusion || r.status };
+      }) : null), 'dex/office-feed.json');
+      $('of-state').textContent = 'מקור מקומי (FleetHQ טרם חשף digest)';
+    }).catch(function(){
+      /* the office page may not exist yet · show honest connecting state with retry */
+      $('of-state').textContent = 'מתחבר…';
+      $('of-engines').textContent = '…';
+      if (officeStampTs === null) $('of-time').textContent = '…'; // T-72: never erase a fresher stamp
+      var chip = $('po-chip'); chip.className='chip wait'; chip.style.cssText='color:#fde047;border-color:rgba(234,179,8,.45);background:rgba(234,179,8,.08)';
+      chip.textContent = 'המשרד מתחבר…';
+      $('po-upd').textContent = utcClock(new Date());
+      $('po-runs').innerHTML = '<li class="err">המשרד ב-FleetHQ עדיין מתארגן · digest.json טרם מתפרסם (404). ' +
+        'הפאנל יידלק אוטומטין ברגע שהמשרד יעלה הדייג׳סט שלו.<br>' +
+        '<button class="retry" onclick="loadOffice()">נסה שוב</button></li>';
+    });
+  });
+}
+
+/* -- 1b. OFFICE PULSE (E-series lane file: office/data.json, 20-min writer) -- */
+function loadPulse(){
+  jget('office/data.json', 10000).then(function(d){
+    setOfficeStamp(d.office && d.office.pushedAt);
+    /* crew-count measured live from the office roster (no stale hardcodes) */
+    jget('agents/office-live.json', 10000).then(function(ol){
+      var n = ol && ol.crew && Array.isArray(ol.crew.workers) ? ol.crew.workers.length : null;
+      if (n) $('crew-count').textContent = n;
+    }).catch(function(){});
+    var v = (d.verdict || 'STALE').toUpperCase();
+    var ve = $('of-verdict');
+    ve.textContent = v;
+    ve.style.color = v === 'ALIVE' ? 'var(--green)' : v === 'AGING' ? 'var(--amber)' : 'var(--red)';
+    var checks = Array.isArray(d.verdictChecks) ? d.verdictChecks : [];
+    var fresh = checks.filter(function(c){ return c.state === 'fresh'; }).length;
+    $('of-arteries').textContent = checks.length ? (fresh + ' / ' + checks.length) : '…';
+    var ul = $('of-wire');
+    var wire = (d.office && Array.isArray(d.office.wire)) ? d.office.wire.slice(0, 4) : [];
+    ul.innerHTML = wire.length ? wire.map(function(w){
+      return '<li><span class="sha">' + String(w.sha||'').replace(/[^0-9a-f]/g,'').slice(0,8) + '</span>' +
+        '<span class="m">' + String(w.msg||'').replace(/[<>&]/g,'') + '</span>' +
+        '<span class="a">' + ago(w.at ? new Date(Date.now() - (w.ageMin||0)*60000) : null) + '</span></li>';
+    }).join('') : '<li style="font-size:12px;color:var(--faint)">אין נתון · ה-pulse של המשרד טרם פרסם חוט</li>';
+  }).catch(function(){
+    $('of-verdict').textContent = '…';
+    $('of-arteries').textContent = '…';
+    $('of-wire').innerHTML = '<li style="font-size:12px;color:var(--faint)">אין נתון · office/data.json לא נגיש כרגע</li>';
+  });
+}
+
+/* -- 2. GRID verdict line -- */
+function loadGrid(){
+  jget('dex/grid.json', 12000).then(function(d){
+    var at = d.publishedAt || null;
+    var v = $('pg-verdict');
+    v.textContent = d.verdict || '·';
+    v.style.color = /STABLE|LIVE|OK/i.test(d.verdict||'') ? 'var(--green)' : /WAIT/i.test(d.verdict||'') ? 'var(--amber)' : /BLOCK|STALE|ERR/i.test(d.verdict||'') ? 'var(--red)' : 'var(--text)';
+    $('pg-chains').textContent = Array.isArray(d.chains) ? d.chains.join(' · ') : (d.chain || '·');
+    $('pg-blocker').textContent = d.blocker ? String(d.blocker).slice(0,80) : '…';
+    $('pg-pub').textContent = at ? utcClock(at) : '…';
+    $('pg-upd').textContent = utcClock(at || new Date());
+    setChip('pg-chip', at);
+  }).catch(function(){
+    $('pg-verdict').textContent = '…';
+    $('pg-chip').className='chip bad'; $('pg-chip').textContent='אין נתון';
+    $('pg-upd').textContent = utcClock(new Date());
+  });
+}
+
+/* -- 3. STEEM pulse (public RPC, CORS *; fallback chain of public nodes) -- */
+var STEEM_NODES = ['https://api.steemit.com','https://api.steem.fans','https://steem-api.eofix.io'];
+function rpc(method, params){
+  var p = Promise.reject(new Error('start'));
+  STEEM_NODES.forEach(function(node){
+    p = p.catch(function(){
+      return fetch(node, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({jsonrpc:'2.0', method:method, params:params, id:1})
+      }).then(function(r){ return r.json(); }).then(function(j){
+        if(j.error) throw new Error(j.error.message || 'rpc error');
+        return j.result;
+      });
+    });
+  });
+  return p;
+}
+function loadSteem(){
+  rpc('condenser_api.get_dynamic_global_properties', []).then(function(d){
+    $('ps-head').textContent = d.head_block_number != null ? String(d.head_block_number).replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '…';
+    $('ps-time').textContent = d.time ? utcClock(d.time + 'Z') : '…';
+    $('ps-upd').textContent = utcClock(new Date());
+    setChip('ps-chip', d.time ? d.time + 'Z' : null);
+  }).catch(function(){
+    $('ps-chip').className='chip bad'; $('ps-chip').textContent='אין נתון';
+    $('ps-upd').textContent = utcClock(new Date());
+  });
+  function bookMsg(msg){
+    var el = $('ps-posts'); if(!el) return;
+    el.innerHTML = '<li class="err">' + msg + '</li>';
+  }
+  fetch('content/published.json', {cache:'no-store'}).then(function(r){
+    if (!r.ok) throw new Error('book http ' + r.status);
+    return r.json();
+  }).then(function(book){
+    var rows = (book && book.posts) || [];
+    if (!rows.length) { bookMsg('אין פרסומים · מסילת-התוכן טרם פרסמה (המתין למשמרת-תוכן)'); return; }
+    $('ps-posts').innerHTML = rows.slice(0,3).map(function(p){
+      var pay = p.state === 'pending-sign-gate' ? 'ממתין לשער-החתימה' : (p.pendingPayout ? 'pending ' + p.pendingPayout : 'published');
+      return '<li><span class="pt">' + String(p.title).replace(/[<>&]/g,'') + '</span><span class="pm">' +
+        '<span class="mono num">' + pay.replace(/[<>&]/g,'') + '</span><span>' + ago(p.at ? p.at : null) + '</span></span></li>';
+    }).join('');
+  }).catch(function(){ bookMsg('הספר אינו נגיש כרגע (שגיאת רשת)'); });
+}
+
+/* -- 4. PROBES: live from the browser (trace-1a1312f4 owner directive: הפעל הכל).
+   T-66 closed the Sandbox raw lane; the honest live source is the chains themselves ·
+   public RPC queries with CORS, zero private content, measured client-side. -- */
+function chainRpc(url, method, params){
+  return fetch(url, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({jsonrpc:'2.0', method:method, params:params, id:1})
+  }).then(function(r){ return r.text(); }).then(function(t){
+    var j; try { j = JSON.parse(t.replace(/^\uFEFF/, '')); } catch(e){ throw new Error('non-json'); }
+    if(j.error) throw new Error(j.error.message || 'rpc error');
+    return j.result;
+  });
+}
+var HIVE_NODES = ['https://api.hive.blog','https://api.openhive.network','https://rpc.esteem.app'];
+var BLURT_NODES = ['https://blurt-rpc.saboin.com','https://rpc.blurt.world','https://blurt-rpc.senen.dev','https://rpc.blurt.buzz'];
+function probeChain(nodes, method, params){
+  var p = Promise.reject(new Error('start'));
+  nodes.forEach(function(node){
+    p = p.catch(function(){ return chainRpc(node, method, params); });
+  });
+  return p;
+}
+function loadProbes(){
+  var upd = utcClock(new Date());
+  $('pp-upd').textContent = upd;
+  var done = 0, failed = 0, latest = null;
+  function settle(ok, at){
+    done++; if(!ok) failed++;
+    if(at && (!latest || new Date(at) > new Date(latest))) latest = at;
+    if(done >= 2){
+      if(failed >= 2){ var c=$('pp-chip'); c.className='chip bad'; c.textContent='אין נתון'; }
+      else setChip('pp-chip', latest || new Date().toISOString().slice(0,19), 'גששים חיים');
+    }
+  }
+  probeChain(HIVE_NODES, 'condenser_api.get_dynamic_global_properties', []).then(function(d){
+    var ok = d && d.head_block_number > 0;
+    $('pp-hive').textContent = ok ? ' חי' : ' כשל';
+    $('pp-hive-ep').textContent = ok ? 'רשת-Hive · חי-מהדפדפן · גובה ' + String(d.head_block_number).replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '…';
+    settle(ok, new Date().toISOString().slice(0,19));
+  }).catch(function(){
+    $('pp-hive').textContent = 'אין תשובה';
+    $('pp-hive-ep').textContent = 'כל צמתי Hive שקטים כרגע';
+    settle(false, null);
+  });
+  probeChain(BLURT_NODES, 'condenser_api.get_dynamic_global_properties', []).then(function(d){
+    var ok = d && d.head_block_number > 0;
+    $('pp-blurt').textContent = ok ? ' חי' : ' כשל';
+    $('pp-blurt-ep').textContent = ok ? 'רשת-Blurt · חי-מהדפדפן · גובה ' + String(d.head_block_number).replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '…';
+    settle(ok, new Date().toISOString().slice(0,19));
+  }).catch(function(){
+    $('pp-blurt').textContent = 'אין תשובה';
+    $('pp-blurt-ep').textContent = 'כל צמתי Blurt שקטים כרגע';
+    settle(false, null);
+  });
+}
+
+/* -- 5. WORLD book + deposits (same-origin, bot-refreshed) -- */
+function loadWorld(){
+  jget('dex/world.json', 12000).then(function(d){
+    var at = d.publishedAt || null;
+    var s = d.state || {};
+    $('pw-h').textContent = s.height != null ? String(s.height) : '…';
+    $('pw-ops').textContent = s.opsTotal != null ? String(s.opsTotal) : '…';
+    $('pw-fs').textContent = (s.fills != null ? s.fills : '…') + ' / ' + (s.swaps != null ? s.swaps : '…');
+    $('pw-tps').textContent = s.tps != null ? String(s.tps) : '…';
+    $('pw-upd').textContent = utcClock(at || new Date());
+    chipMerge('pw-chip', at, 'pw-has-dep');
+  }).catch(function(){
+    $('pw-chip').className='chip bad'; $('pw-chip').textContent='אין נתון';
+    $('pw-upd').textContent = utcClock(new Date());
+  });
+  jget('dex/deposits.json', 12000).then(function(d){
+    var n = Array.isArray(d.deposits) ? d.deposits.length : null;
+    $('pw-dep').textContent = n != null ? String(n) : '…';
+    $('pw-dep').setAttribute('data-at', d.updatedAt || '');
+    chipMerge('pw-chip', d.updatedAt || null, 'pw-has-dep');
+  }).catch(function(){ $('pw-dep').textContent = 'אין נתון'; });
+}
+function chipMerge(id, ts){
+  var el = $(id); if(!el) return;
+  var at = ts;
+  if(document.getElementById('p-world').dataset.at && (!at || new Date(document.getElementById('p-world').dataset.at) > new Date(at)))
+    at = document.getElementById('p-world').dataset.at;
+  if(at) document.getElementById('p-world').dataset.at = at;
+  setChip(id, at);
+}
+
+/* -- crew panel: live from the office's own heartbeat (office-heartbeat.yml, every 2h).
+   Honesty law: renders ONLY what the captured office state actually says ·
+   no data = an honest "no data", never a fake.
+   3-b fix (owner: "0 משמרות? 0 לקחים? זה לא מעודכן"): this panel read
+   FleetHQ office-state.json `memory` · which the capture never shipped
+   (the foreman puts it at status.memory) · so shifts/lessons rendered 0
+   forever while the real books said otherwise. Wiring now:
+     · PRIMARY: agents/office-live.json (same-origin, the ALWAYS-ON git artery)
+       -> shifts.total, lessons.total, books.total, crew.total + generatedAt.
+     · FALLBACK: foreman office-state.json memory (root or status.memory).
+     · The foreman still owns agents/tasks/feed rows and its own chip age.
+     · Every number shows its source · git artery book vs foreman memory. -- */
+function loadCrew(){
+  var el = function(id){ return document.getElementById(id); };
+  function esc(s){ var d=document.createElement('div'); d.textContent=String(s==null?'':s); return d.innerHTML; }
+  function agoStr(iso){ try{ var m=Math.round((Date.now()-new Date(iso).getTime())/60000);
+    if(m<1) return 'עכשיו'; if(m<60) return m+' ד׳'; if(m<1440) return Math.round(m/60)+' ש׳'; return Math.round(m/1440)+' ימים'; }catch(e){ return ''; } }
+  var artery = null, foreman = null;
+  function render(){
+    if(!artery && !foreman){ // both dead · honest, never faked
+      var chip0 = el('pc-chip');
+      chip0.textContent = 'אין-דופק';
+      chip0.classList.remove('ok'); chip0.classList.add('stale');
+      el('pc-runs').innerHTML = '<li class="err">אין עדיין מדידת-צוות חיה · כאן שום דבר לא מזויף. הדופק הראשון מואץ עכשיו.</li>';
+      el('pc-upd').textContent = '…';
+      return;
+    }
+    // shifts/lessons/books: the artery book is the canonical always-on office;
+    // the foreman's git-restored memory (root or status.memory) is the fallback.
+    var fm = foreman ? (foreman.memory || (foreman.status && foreman.status.memory) || null) : null;
+    var shifts = artery && artery.shifts && artery.shifts.total != null ? artery.shifts.total
+               : (fm && fm.shifts) || 0;
+    var lessons = artery && artery.lessons && artery.lessons.total != null ? artery.lessons.total
+               : (fm && fm.lessons != null ? (Array.isArray(fm.lessons) ? fm.lessons.length : (fm.lessons || 0)) : 0);
+    var books = artery && artery.books && artery.books.total != null ? artery.books.total
+              : (foreman && foreman.books != null ? foreman.books : 0);
+    var crewN = artery && artery.crew && artery.crew.total != null ? artery.crew.total
+              : (foreman && Array.isArray(foreman.agents) ? foreman.agents.length : 0);
+    var src = artery ? 'עורק-הגיט' : (fm ? 'זיכרון-הפורמן' : '…');
+    var h = '<li><b>' + crewN + '</b> סוכנים בצוות · <b>' + shifts + '</b> משמרות · <b>' + lessons + '</b> לקחים · <b>' + books + '</b> ספרים <span style="opacity:.6">(' + esc(src) + ')</span></li>';
+    if (foreman) {
+      var tasks = foreman.tasks || [];
+      var open = tasks.filter(function(t){ return t.status !== 'done'; });
+      if (open.length) {
+        open.slice(0, 4).forEach(function(t){
+          h += '<li><code>' + esc(t.id) + '</code> ' + esc(t.status) + ' · ' + esc(String(t.title || '').slice(0, 90)) + '</li>';
+        });
+      } else if (tasks.length) {
+        h += '<li>אין משימות פתוחות · המשמרת נסגרה. הדופק הבא בתוך שעה.</li>';
+      } else {
+        h += '<li class="err">המשרד בין משמרות · אין מצב-משימות בדופק האחרון.</li>';
+      }
+      (foreman.feed || []).slice(0, 3).forEach(function(f){
+        h += '<li style="opacity:.75">' + esc(f.kind) + ': ' + esc(String(f.text || '').slice(0, 90)) + '</li>';
+      });
+    } else {
+      h += '<li>הפורמן-החי לא נענה · הספרים למעלה הם ספר-העורק האמיתי (git-backed, תמיד-חי).</li>';
+    }
+    el('pc-runs').innerHTML = h;
+    var chip = el('pc-chip');
+    var atIso = foreman ? foreman.capturedAt : (artery && artery.generatedAt);
+    var ageMin = atIso ? Math.round((Date.now() - new Date(atIso).getTime())/60000) : null;
+    chip.textContent = ageMin == null ? '…' : (ageMin > 150 ? 'מיושן' : 'חי');
+    chip.classList.toggle('ok', ageMin != null && ageMin <= 150);
+    chip.classList.toggle('stale', ageMin == null || ageMin > 150);
+    el('pc-upd').textContent = atIso ? agoStr(atIso) : '…';
+  }
+  fetch('agents/office-live.json',{cache:'no-store'})
+    .then(function(r){ if(!r.ok) throw 0; return r.json(); })
+    .then(function(d){ if(d && d.status === 'ALIVE') artery = d; render(); })
+    .catch(function(){ render(); });
+  fetch('https://raw.githubusercontent.com/roshpinacare-sys/FleetHQ/main/office/state/office-state.json?ts='+Date.now())
+    .then(function(r){ if(!r.ok) throw 0; return r.json(); })
+    .then(function(s){ foreman = s; render(); })
+    .catch(function(){ render(); });
+}
+
+/* -- T-69: PUBLIC MIRROR · the closed lanes come back alive via roshpinacare-sys/Pulse
+   (public §7 shell): CI carries the public-grade Sandbox ledgers back to light every 30min.
+   Provenance law: chips show the MIRROR freshness; per-source gaps stay honest, never forged. -- */
+var MIRROR_URL = 'https://raw.githubusercontent.com/roshpinacare-sys/Pulse/main/mirror/lanes.json';
+var _mirrorCache = null, _mirrorAt = 0;
+function mirror(){
+  var ts = Date.now();
+  if(_mirrorCache && ts - _mirrorAt < 5*60*1000) return Promise.resolve(_mirrorCache);
+  return jget(MIRROR_URL + '?ts=' + ts, 12000).then(function(j){
+    if(!j || j.schema !== 'pulse-mirror-v1') throw new Error('mirror: bad schema');
+    _mirrorCache = j; _mirrorAt = ts;
+    return j;
+  });
+}
+function mirrorStamp(updId, j){ var u=$(updId); if(u) u.textContent = 'מראת-Pulse · ' + ago(j.generatedAt); }
+function mirrorFail(chipId, runsId, e){
+  var chip=$(chipId); if(chip){ chip.className='chip bad'; chip.textContent='המראה לא נגישה'; }
+  if(runsId && $(runsId)) $(runsId).innerHTML = '<li class="err">מראת-Pulse טרם נגישה · כנות, לא זיוף.</li>';
+}
+
+/* -- 8. LESSONS (F-series lane: REVIVED T-69 via Pulse mirror · what the brain learned, daily) -- */
+function loadLessons(){
+  var chip = $('pl-chip');
+  mirror().then(function(j){
+    var s = j.sources && j.sources.lessons;
+    if(!s || !s.text) throw new Error((s && s.error) || 'no lessons in mirror');
+    setChip('pl-chip', j.generatedAt);
+    mirrorStamp('pl-upd', j);
+    return s.text;
+  }).then(function(t){
+      var entries = t.split(/\n(?=## )/).filter(function(e){ return e.indexOf('## ') === 0; });
+      if(!entries.length){ chip.className='chip bad'; chip.textContent='אין לקחים'; return; }
+      var last = entries[entries.length - 1];
+      var lines = last.split('\n');
+      var head = lines[0].replace(/^##\s*/, '');
+      var m = head.match(/([0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9:.]+Z)/);
+      var ts = m ? m[1] : null;
+      var bullets = lines.slice(1).filter(function(l){ return l.indexOf('- ') === 0; });
+      function esc(s2){ var d=document.createElement('div'); d.textContent=String(s2==null?'':s2); return d.innerHTML; }
+      var h = '<li style="font-weight:700">' + esc(head) + '</li>';
+      bullets.slice(0, 7).forEach(function(b){
+        h += '<li style="font-size:12px">' + esc(b.replace(/^-\s*/, '').slice(0, 170)) + '</li>';
+      });
+      $('pl-runs').innerHTML = h;
+      if(ts){ setChip('pl-chip', ts); $('pl-upd').textContent = ago(ts); }
+      else { chip.className='chip ok'; chip.textContent='נטען-רשומה'; $('pl-upd').textContent='·'; }
+    })
+    .catch(function(e){ mirrorFail('pl-chip', 'pl-runs', e); });
+}
+
+/* -- 9. FLOW MAP (F-series lane: REVIVED T-69 via Pulse mirror · who feeds whom, measured) -- */
+function loadFlow(){
+  mirror().then(function(j){
+    var s = j.sources && j.sources.flowMap;
+    if(!s || !s.data) throw new Error((s && s.error) || 'no flowMap in mirror');
+    setChip('pf-chip', j.generatedAt);
+    mirrorStamp('pf-upd', j);
+    return s.data;
+  }).then(function(m){
+      var s = m.summary || {};
+      $('pf-ne').textContent = (s.nodes || 0) + ' / ' + (s.edges || 0);
+      $('pf-int').textContent = s.integrated || 0;
+      $('pf-pi').textContent = s.planeInternal || 0;
+      $('pf-orph').textContent = s.orphans || 0;
+      $('pf-gh').textContent = s.ghosts || 0;
+      var divergent = (m.nodes || []).filter(function(n){ return n.contentDivergence; }).length;
+      $('pf-div').textContent = divergent;
+      var h = '';
+      (m.ghosts || []).slice(0, 2).forEach(function(g){
+        h += '<li class="err" style="font-size:12px">רפא: ' + String(g.target).split('/').pop() + ' · הדף קורא מפיק-מת</li>';
+      });
+      (m.orphans || []).slice(0, 4).forEach(function(o){
+        h += '<li style="font-size:12px;opacity:.8">יתום: ' + String(o.key).split(':').pop() + ' · נכתב ואף-אחד לא קורא</li>';
+      });
+      (m.nodes || []).filter(function(n){ return n.contentDivergence; }).slice(0, 2).forEach(function(n){
+        h += '<li style="font-size:12px;opacity:.8">סטייה: ' + n.path + ', קומיט ' + (n.ageH||0).toFixed(0) + 'h אך תוכן ' + (n.contentAgeH||0).toFixed(0) + 'h</li>';
+      });
+      $('pf-runs').innerHTML = h || '<li style="font-size:12px;opacity:.7">אין חריגות · הזרימה נקייה במדידה האחרונה.</li>';
+      setChip('pf-chip', m.generatedAt);
+      $('pf-upd').textContent = ago(m.generatedAt);
+    })
+    .catch(function(e){ mirrorFail('pf-chip', 'pf-runs', e); });
+}
+
+/* -- 9b. INTEGRITY GUARD (G-series lane: REVIVED T-69 via Pulse mirror · anti-forgery verdict.
+   Single-writer law kept: flow owns pf-runs; integrity sets only its ig/igv kv. -- */
+function loadIntegrity(){
+  mirror().then(function(j){
+    var s = j.sources && j.sources.integrity;
+    if(!s || !s.data) throw new Error((s && s.error) || 'no integrity in mirror');
+    return s.data;
+  }).then(function(v){
+    var s = v.summary || {};
+    var ig = $('pf-ig');
+    if(!ig) return;
+    ig.textContent = v.overall + ' · ממצאים ' + (s.findings || 0);
+    ig.style.color = v.overall === 'FAIL' ? '#fb7185' : (v.overall === 'PASS' ? '#34d399' : '#fbbf24');
+    var igv = $('pf-igv');
+    if(igv) igv.textContent = (s.verified || 0) + ' / ' + (s.sources || 0) + ' מקורות';
+  })
+  .catch(function(){ var ig=$('pf-ig'); if(ig){ ig.textContent='המראה לא נגישה'; } });
+}
+
+/* -- 11. DECISIONS (H-series lane: sovereign decisions truth · description-vs-action measured every 30min.
+   Honesty law: VERIFIED = evidence re-measured independently + consumer present; UNEXECUTED = enforced without a measured consumer;
+   STALE-TRUTH = world moved past evidence; UNVERIFIABLE = source down (honest, never forged). -- */
+function loadDecisions(){
+  var chip = $('pd-chip');
+  mirror().then(function(j){
+    var s = j.sources && j.sources.decisionTruth;
+    if(!s || !s.data) throw new Error((s && s.error) || 'no decisionTruth in mirror');
+    return s.data;
+  }).then(function(v){
+      var decs = Array.isArray(v.decisions) ? v.decisions : [];
+      var c = { VERIFIED: 0, UNEXECUTED: 0, 'STALE-TRUTH': 0, UNVERIFIABLE: 0 };
+      decs.forEach(function(d){ if(c[d.truth] !== undefined) c[d.truth]++; });
+      $('pd-verified').textContent = c.VERIFIED;
+      $('pd-unex').textContent = c.UNEXECUTED;
+      $('pd-stale').textContent = c['STALE-TRUTH'];
+      var hb = v.decider && v.decider.heartbeat ? v.decider.heartbeat : null;
+      var h = $('pd-heart');
+      h.textContent = hb ? (hb.stalled === true ? 'תקוע' : (hb.stalled === null ? 'לא-ניתן-לאימות' : 'חי')) : '…';
+      h.style.color = hb && hb.stalled === true ? '#fb7185' : '#34d399';
+      chip.className = 'chip ' + (v.overall === 'PASS' ? 'good' : 'warn');
+      chip.textContent = v.overall === 'PASS' ? 'הכל-מאומת' : 'דורש-מעשים';
+      var items = decs.map(function(d){
+        var mark = d.truth === 'VERIFIED' ? '' : (d.truth === 'UNEXECUTED' ? '' : (d.truth === 'STALE-TRUTH' ? '' : ''));
+        var note = d.truth === 'UNEXECUTED' ? 'ההכרעה פורסמה · המעשה עדיין לא נמדד (מנותב לליין-הבעלים)'
+          : d.truth === 'STALE-TRUTH' ? 'העולם התקדם מעבר לעדויות · RE-MEASURE נדרש'
+          : d.truth === 'VERIFIED' ? 'עדויות נמדדו מחדש באופן-עצמאי + צרכן קיים'
+          : 'מקור-נפל · כנות';
+        return '<li style="font-size:12px;opacity:.9">' + mark + ' <b>' + String(d.id) + '</b> · ' + String(d.area || '') + ' · ' + note + '</li>';
+      });
+      $('pd-runs').innerHTML = items.join('') || '<li class="err">אין הכרעות בפנקס.</li>';
+      $('pd-upd').textContent = String(v.generatedAt || '').replace('T',' ').slice(0,16) + 'Z';
+    })
+    .catch(function(e){ chip.className = 'chip bad'; chip.textContent = 'המראה לא נגישה'; });
+}
+
+/* -- 12. OWNER CHANNEL (T51: הריבונות מבקשת · הבעלים מאשר — ערוץ ישיר, בלי סוכני-חוץ.
+   Honesty law: כל בקשה נושאת עדות-מדידה מהספרים · OPEN/GRANTED/DECLINED/EXPIRED · fail = כנות. -- */
+function loadOwnerChannel(){
+  var chip = $('poc-chip');
+  jget('agents/sovereign-requests.json', 12000).then(function(v){
+    var reqs = Array.isArray(v.requests) ? v.requests : [];
+    var open = reqs.filter(function(r){return r.status==='OPEN';}).length;
+    var granted = reqs.filter(function(r){return r.status==='GRANTED';}).length;
+    $('poc-open').textContent = open;
+    $('poc-granted').textContent = granted;
+    chip.className = 'chip ' + (open>0 ? 'warn' : 'good');
+    chip.textContent = open>0 ? (open + ' ממתינות-להכרעה') : 'אין-בקשות-פתוחות';
+    var items = reqs.map(function(r){
+      var st = r.status==='OPEN' ? '<span class="chip warn">פתוחה</span>'
+        : r.status==='GRANTED' ? '<span class="chip ok">אושרה</span>'
+        : '<span class="chip">' + String(r.status||'') + '</span>';
+      var ev = Array.isArray(r.evidence) ? r.evidence.join(' · ') : '';
+      return '<li style="font-size:12px;opacity:.9"><b>' + String(r.id||'') + '</b> ' + st + ' · <b>' + String(r.what||'') + '</b><br>' +
+        String(r.why||'') + (ev ? '<br><span class="mono" style="font-size:10.5px">עדות: ' + String(ev) + '</span>' : '') +
+        (r.cost ? '<br>עלות: ' + String(r.cost) : '') + '</li>';
+    });
+    $('poc-runs').innerHTML = items.join('') || '<li class="err">אין בקשות בפנקס.</li>';
+    $('poc-upd').textContent = String(v.updated || v.at || '').replace('T',' ').slice(0,16) + 'Z';
+  }).catch(function(){ chip.className = 'chip bad'; chip.textContent = 'הפנקס לא נגיש'; });
+}
+
+/* -- 10. RESEARCH (11-c lane: REVIVED T-69 via Pulse mirror · the mirror itself resolves the
+   latest findings file up to 9 days back, so the page renders what CI found, never a guess.
+   Honesty law: renders what the feed says · hypothesis  measurement  verdict  next. -- */
+function loadResearch(){
+  var chip = $('pr-chip');
+  function failEmpty(why){
+    chip.className='chip bad'; chip.textContent='אין נתון';
+    $('pr-runs').innerHTML = '<li class="err">אין נתון' + (why ? ' · ' + why : '') + '</li>';
+    $('pr-upd').textContent = '…';
+  }
+  function render(d){
+    if(!d || !Array.isArray(d.experiments) || !d.experiments.length){ failEmpty('קובץ-הממצאים ריק או במבנה-לא-מוכר'); return; }
+    function esc(s){ var el=document.createElement('div'); el.textContent=String(s==null?'':s); return el.innerHTML; }
+    var h = '';
+    d.experiments.slice(0, 4).forEach(function(e){
+      var mark = e.ok === true ? '<span class="st ok"></span>' : e.ok === false ? '<span class="st bad"></span>' : '<span class="st wait"></span>';
+      h += '<li>' + mark + ' <b>' + esc(e.id) + ' · ' + esc(e.name) + '</b>' +
+        (e.verdict ? '<br><span style="font-size:12px">' + esc(e.verdict) + '</span>' : '') +
+        (e.next ? '<br><span style="font-size:11px;color:var(--faint)">צעד-הבא: ' + esc(e.next) + '</span>' : '') + '</li>';
+    });
+    h += '<li style="font-size:11px;color:var(--faint)">פנקס-המחקר · השערה · מדידה · פסק · צעד-הבא (הפנקס המלא במשמרת-פרטית)</li>';
+    $('pr-runs').innerHTML = h;
+    var at = d.at || null;
+    if(at){ setChip('pr-chip', at, 'מחקר חי', 192); $('pr-upd').textContent = utcClock(at); }
+    else { chip.className='chip ok'; chip.textContent='ממצאים'; $('pr-upd').textContent = utcClock(new Date()); }
+  }
+  mirror().then(function(j){
+    var s = j.sources && j.sources.research;
+    if(!s || !s.data){ failEmpty((s && s.error) || 'אין ממצאים במראה'); return; }
+    render(s.data);
+  }).catch(function(){ failEmpty('המראה לא נגישה'); });
+}
+
+/* -- 10b. PROFITABILITY (14-d lane: the economy's pulse, public · owner directive on record.
+   Source: Sandbox/receipts/profit-oracle-latest.json (daily measurement receipt).
+   Defensive law: missing/failing/shapeless feed  honest "אין-נתון", never fake.
+   XSS law: every fetched value reaches the DOM via textContent only · no innerHTML. -- */
+function loadProfit(){
+  var vChip = $('pp-verdict'), fChip = $('pp-fresh');
+  function honest(why){
+    if(vChip){ vChip.className='chip'; vChip.textContent='לא-ידוע'; }
+    if(fChip){ fChip.className='chip bad'; fChip.textContent='אין-נתון'; }
+    if($('pp-net')) $('pp-net').textContent = '…';
+    if($('pp-delta')) $('pp-delta').textContent = '…';
+    if($('pp-grid')) $('pp-grid').textContent = '…';
+    if($('pp-upd')) $('pp-upd').textContent = why ? ('… (' + why + ')') : '…';
+  }
+  function num(x){
+    if(typeof x === 'number' && isFinite(x)) return x.toLocaleString('en-US',{maximumFractionDigits:2});
+    return null;
+  }
+  function render(d){
+    if(!d || !d.summary || typeof d.summary !== 'object'){ honest('מבנה-לא-מוכר'); return; }
+    var s = d.summary;
+    var MAP = { PROFIT:['chip ok','רווח'], FLAT:['chip','שטוח'], LOSS:['chip bad','הפסד'], UNKNOWN:['chip','לא-ידוע'] };
+    var v = MAP[String(s.verdict == null ? '' : s.verdict).toUpperCase()] || MAP.UNKNOWN;
+    vChip.className = v[0]; vChip.textContent = v[1];
+    var net = num(s.netWorthSbdEquiv);
+    $('pp-net').textContent = (net !== null) ? net : (typeof s.netWorthSbdEquiv === 'string' && s.netWorthSbdEquiv ? s.netWorthSbdEquiv : '…');
+    var dl = (typeof s.deltaVsPriorPct === 'number' && isFinite(s.deltaVsPriorPct))
+      ? ((s.deltaVsPriorPct > 0 ? '+' : '') + s.deltaVsPriorPct.toFixed(2) + '%') : null;
+    $('pp-delta').textContent = (dl !== null) ? dl : (typeof s.deltaVsPriorPct === 'string' && s.deltaVsPriorPct ? s.deltaVsPriorPct : '…');
+    var g = s.gridVerdict, gt = '…';
+    if(typeof g === 'string' && g) gt = g;
+    else if(typeof g === 'number' && isFinite(g)) gt = String(g);
+    else if(g && typeof g === 'object'){
+      var cand = g.verdict || g.state || g.status || null;
+      if(typeof cand === 'string' && cand) gt = cand;
+      else if(typeof g.ok === 'boolean') gt = g.ok ? 'תקין' : 'חריג';
+    }
+    $('pp-grid').textContent = gt;
+    var at = d.at ? new Date(d.at) : null;
+    if(at && !isNaN(at.getTime())){
+      var stale = (Date.now() - at.getTime()) > 48*3600e3; /* daily receipt · 48h honest-warning law */
+      fChip.className = stale ? 'chip stale' : 'chip ok';
+      fChip.textContent = 'עודכן ' + ago(at.toISOString()) + (stale ? ' (ישן)' : '');
+      $('pp-upd').textContent = utcClock(at.toISOString());
+    } else {
+      fChip.className = 'chip bad'; fChip.textContent = 'אין-תאריך';
+      $('pp-upd').textContent = '…';
+    }
+  }
+  mirror().then(function(j){
+    var s = j.sources && j.sources.profitOracle;
+    if(!s || !s.data) throw new Error((s && s.error) || 'no oracle in mirror');
+    return s.data;
+  })
+    .then(render)
+    .catch(function(){ honest('המראה-לא-זמינה'); });
+}
+
+/* -- refresh loop: 5 minutes, one polite batch per source -- */
+function refreshAll(){
+  loadOffice(); loadPulse(); loadGrid(); loadSteem(); loadProbes(); loadWorld(); loadCrew(); loadLessons(); loadFlow(); loadIntegrity(); loadResearch(); loadDecisions(); loadOwnerChannel(); loadProfit();
+}
+refreshAll();
+setInterval(refreshAll, 5*60*1000);
+$('f-build').textContent = new Date().toISOString().slice(0,10);
+</script>
+</body>
+</html>

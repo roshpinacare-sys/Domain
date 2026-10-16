@@ -1,0 +1,70 @@
+#
+#
+#
+
+name: anchor-execute
+
+on:
+  schedule:
+    - cron: '8 */4 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: anchor-execute
+  cancel-in-progress: false
+
+jobs:
+  anchor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - name: Checkout Domain
+        uses: actions/checkout@v5
+
+      - name: Node 20
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      - name: Install ethers (signing path only)
+        run: npm install ethers@6.13.4 --prefix /tmp/ethers --omit=dev --no-audit --no-fund --loglevel=error
+
+      - name: Run anchor-execute (DRYRUN without a signing key — the script itself is the honest gate)
+        env:
+          ETHERS_DIR: /tmp/ethers
+          EVM_ANCHOR_PK: ${{ secrets.EVM_ANCHOR_PK }}
+          CHAIN: OPTIMISM
+          RECEIPT_OUT: /tmp/anchor-receipt.json
+        run: node agents/anchor-execute.mjs
+
+      - name: Checkout the public book (receipt lands here on a real anchor)
+        uses: actions/checkout@v5
+        with:
+          repository: roshpinacare-sys/Console
+          ref: main
+          token: ${{ secrets.ZIP_PAT }}
+          path: console-book
+          fetch-depth: 1
+
+      - name: Commit receipt (only if the run produced one — file-existence gate, not a secrets gate)
+        run: |
+          set -u
+          test -f /tmp/anchor-receipt.json || { echo "no receipt — hourly DRYRUN as designed"; exit 0; }
+          cd console-book
+          cp /tmp/anchor-receipt.json proof/anchor-receipt.json
+          git config user.name "roshpinacare-sys"
+          git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
+          git add proof/anchor-receipt.json
+          git commit -m "anchor-execute: fleet EVM anchor — receipt + independent read-back [skip ci]"
+          # 127-root-fix (self-audit 2026-10-13, same class proof-pipeline fixed):
+          # safe-push.sh lives in the HOME repo, not in the console-book checkout —
+          # the bare relative path exit-127'd AFTER a REAL on-chain anchor and the
+          # receipt never landed. Absolute path + named terminal on budget
+          # exhaustion (T-77): the anchor itself is already the chain-truth; the
+          # next 4h flight re-lands the receipt, the Z-18 dedup reads the book.
+          if ! bash "$GITHUB_WORKSPACE/scripts/safe-push.sh" 3; then
+            echo "named terminal: anchor-receipt-deferred — anchor is on-chain (verifiable), receipt re-lands next flight (record, not alarm)"
+          fi

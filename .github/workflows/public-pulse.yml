@@ -1,0 +1,62 @@
+#
+# empty string on every run since day one while miscounting this flow as
+# home-platform feed is ever declared, wire it as a vars. reference — the desk
+# freshness-faking, every run). Same-repo checkout/push = built-in github.token.
+
+name: public-pulse
+
+on:
+  schedule:
+    - cron: '21 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: public-pulse
+  cancel-in-progress: false
+
+jobs:
+  pulse:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout (keyless — same-repo only, R26 CR-0054)
+        uses: actions/checkout@v5
+        with:
+          token: ${{ github.token }}
+          fetch-depth: 1
+
+      - name: Node 20
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      - name: Compose the pulse books (keyless, fail-soft)
+        run: node agents/public-pulse.cjs
+
+      - name: Publish the books
+        if: always()
+        run: |
+          git config user.name "roshpinacare-sys"
+          git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
+          node agents/redact-telemetry.mjs about/team.json public/pulse.json agents/receipts/public-pulse-receipt.json
+          # T-55 (tolerant-add law): about/team.json was retired from the tree — a git add
+          # on an absent path exits 128 and killed this desk every run (measured 20:42/21:51/22:04).
+          # The desk adds only what exists; the redact step already skips absent files.
+          for _p in public/pulse.json about/team.json agents/receipts/public-pulse-receipt.json; do
+            [ -e "$_p" ] && git add "$_p" || true
+          done
+          if git diff --cached --quiet; then
+            echo "books unchanged"
+            exit 0
+          fi
+          git commit -m "public-pulse: refresh public pulse books $(date -u +%Y-%m-%dT%H:%M:%SZ) [skip ci]"
+          for attempt in 1 2 3; do
+            git pull --rebase -X theirs --autostash origin main && git push origin HEAD:main && { echo "books published (attempt ${attempt})"; exit 0; }
+            echo "push failed (attempt ${attempt})"
+            sleep 5
+          done
+          echo "could not publish the books after 3 attempts"
+          exit 1

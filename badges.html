@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SAOS · תגי-הוכחה חיים · הצב את המדידה ב-README שלך</title>
+<meta name="description" content="תגי-SVG חיים של SAOS — נגזרים אוטומטית ממדידות ציבוריות (משרד, צי, steem-edge) ומתאפים ב-CI כל חצי-שעה. הטמעה בשורת-README אחת.">
+<meta name="theme-color" content="#09090b">
+<link rel="canonical" href="https://roshpinacare-sys.github.io/Domain/badges.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SAOS Network">
+<meta property="og:title" content="SAOS · תגי-הוכחה חיים">
+<meta property="og:description" content="תגי-מדידה חיים להטמעה — כל ערך נמדד ממקור-ציבורי, לא מוצהר.">
+<meta property="og:url" content="https://roshpinacare-sys.github.io/Domain/badges.html">
+<meta property="og:image" content="https://roshpinacare-sys.github.io/Domain/assets/og-cover.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8' fill='none' stroke='%2310b981' stroke-width='1.8' stroke-linecap='round'/%3E%3Ccircle cx='12' cy='12' r='3' fill='none' stroke='%2310b981' stroke-width='1.8'/%3E%3C/svg%3E">
+<style>
+:root{ --bg:#f5f3f1; --panel:#ffffff; --line:#e6e2dd; --line2:#d6d0c9; --acc:#0d9d6d; --acc-bright:#0b8a60; --acc-bg:rgba(13,157,109,.07); --acc-line:rgba(13,157,109,.30); --text:#1d1d1f; --dim:#57534e; --faint:#8a8580; --mono:ui-monospace,'SF Mono','Cascadia Code',Consolas,Menlo,monospace; --sans:-apple-system,'Segoe UI',Roboto,'Helvetica Neue','Noto Sans Hebrew',Arial,sans-serif; --r:14px; --r-sm:10px; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;-webkit-font-smoothing:antialiased}
+a{color:var(--acc-bright);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:880px;margin:0 auto;padding:0 18px}
+header.site{position:sticky;top:0;z-index:50;background:rgba(245,243,241,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.hd{height:58px;display:flex;align-items:center;gap:12px}
+.brand{font-weight:700;font-size:15px}
+.brand small{display:block;font-weight:500;font-size:10.5px;color:var(--faint)}
+.hero{padding:44px 0 20px;text-align:center}
+.hero h1{font-size:clamp(28px,5vw,42px);font-weight:800;letter-spacing:-1px}
+.hero h1 em{font-style:normal;color:var(--acc-bright)}
+.hero p{color:var(--dim);max-width:640px;margin:12px auto 0;font-size:15px;line-height:1.7}
+.grid{display:grid;gap:16px;padding:26px 0 10px}
+@media(min-width:720px){.grid{grid-template-columns:1fr 1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:flex;flex-direction:column;gap:12px}
+.card h2{font-size:16.5px;font-weight:750}
+.card .sub{color:var(--faint);font-size:12.5px;line-height:1.6}
+.badgebox{background:var(--bg);border:1px solid var(--line);border-radius:var(--r-sm);padding:14px;display:flex;align-items:center;justify-content:center;min-height:56px}
+.badgebox img{max-width:100%;height:auto}
+.src{font-size:11.5px;color:var(--faint)}
+.src a{direction:ltr;unicode-bidi:embed}
+textarea{width:100%;font-family:var(--mono);font-size:11.5px;direction:ltr;text-align:left;background:#141a20;color:#c8e8d8;border:1px solid #2a333d;border-radius:var(--r-sm);padding:10px;resize:vertical;min-height:58px}
+.copy{align-self:flex-start;background:var(--acc-bg);color:var(--acc-bright);border:1px solid var(--acc-line);border-radius:999px;padding:6px 16px;font-size:12.5px;font-weight:650;cursor:pointer}
+.copy:hover{background:var(--acc-line)}
+.copy:disabled{opacity:.55;cursor:default}
+.laws{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:22px;margin:22px 0 40px}
+.laws h2{font-size:17px;margin-bottom:10px}
+.laws li{margin-inline-start:20px;color:var(--dim);font-size:13.5px;line-height:1.85}
+.laws li b{color:var(--text)}
+footer{border-top:1px solid var(--line);padding:18px 0 26px;color:var(--faint);font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+</style>
+</head>
+<body>
+<header class="site"><div class="wrap hd">
+  <a href="index.html" aria-label="חזרה למפקדה" style="color:inherit"><span class="brand">SAOS Network<small>ריבונות עם קבלות</small></span></a>
+  <nav style="margin-inline-start:auto;display:flex;gap:14px;font-size:13px">
+    <a href="products.html">קטלוג המוצרים</a>
+    <a href="dev.html">למפתחים</a>
+    <a href="office3d/">המשרד החי</a>
+  </nav>
+</div></header>
+<main class="wrap">
+  <section class="hero">
+    <h1>תגי-<em>הוכחה</em> חיים</h1>
+    <p>תגי-SVG שנגזרים אוטומטית ממדידות ציבוריות — משרד-הסוכנים, דופק-הצי, וקריאת-הרגע הכלכלית. מתאפים ב-CI כל 30 דקות, בלי מפתחות ובלי ידיים אנושיות. העתיקו, הדביקו ב-README, וכל העולם רואה את המדידה.</p>
+  </section>
+
+  <section class="grid" id="cards">
+    <article class="card">
+      <h2>המשרד החי</h2>
+      <div class="sub">חיובות-המשרד מתוך state הפורמן: משמרות שעבדו באמת, טריות לפי חוק-130 הדקות. אדום = המשמרת התפזרה, ואתם רואים את זה — כי אנחנו לא מסתירים.</div>
+      <div class="badgebox"><img src="badge/office.svg" alt="SAOS office badge" data-live></div>
+      <textarea readonly rows="2">[![SAOS office](https://roshpinacare-sys.github.io/Domain/badge/office.svg)](https://roshpinacare-sys.github.io/Domain/office3d/)</textarea>
+      <button class="copy" type="button">העתקת-README</button>
+      <div class="src">מקור: <a href="https://raw.githubusercontent.com/roshpinacare-sys/FleetHQ/main/office/state/office-state.json">FleetHQ raw office-state.json</a></div>
+    </article>
+
+    <article class="card">
+      <h2>דופק-הצי</h2>
+      <div class="sub">עורקים שפעמו מתוך סך-העורקים על-פני 34 ה-repos של הצי — נמדד מספר-המצב הציבורי, לא מוכרז.</div>
+      <div class="badgebox"><img src="badge/fleet.svg" alt="SAOS fleet badge" data-live></div>
+      <textarea readonly rows="2">[![SAOS fleet](https://roshpinacare-sys.github.io/Domain/badge/fleet.svg)](https://roshpinacare-sys.github.io/Domain/status/)</textarea>
+      <button class="copy" type="button">העתקת-README</button>
+      <div class="src">מקור: <a href="status.json">Domain status.json</a></div>
+    </article>
+
+    <article class="card">
+      <h2>steem-edge</h2>
+      <div class="sub">הפרש-עומק ההצעות החי בשוק STEEM/SBD (bps) + קריאת-הרגע של moment-watch. המספר שהענקים לא מציגים — כי הוא נמדד ולא משווק.</div>
+      <div class="badgebox"><img src="badge/edge.svg" alt="steem edge badge" data-live></div>
+      <textarea readonly rows="2">[![steem-edge](https://roshpinacare-sys.github.io/Domain/badge/edge.svg)](https://roshpinacare-sys.github.io/Domain/money.html)</textarea>
+      <button class="copy" type="button">העתקת-README</button>
+      <div class="src">מקור: <a href="moment/moment.json">Domain moment/moment.json</a></div>
+    </article>
+
+    <article class="card">
+      <h2>פיד העדכונים</h2>
+      <div class="sub">Atom חי: פוסטי-השרשרת (כותרות בלבד לפי מדיניות-החשיפה), מדידות-המשרד, וקריאות-הרגע. הרשימו קורא-RSS — הצי מדווח לבד.</div>
+      <div class="badgebox" style="font-size:13.5px"><a href="feed.xml" class="mono">feed.xml — Atom 1.0</a></div>
+      <textarea readonly rows="2">&lt;link rel="alternate" type="application/atom+xml" title="SAOS · עדכוני הצי" href="https://roshpinacare-sys.github.io/Domain/feed.xml"&gt;</textarea>
+      <button class="copy" type="button">העתקת-head</button>
+      <div class="src">מקור: <a href="content/published.json">content/published.json</a> + <a href="status.json">status.json</a> + <a href="moment/moment.json">moment.json</a></div>
+    </article>
+  </section>
+
+  <section class="laws">
+    <h2>למה התגים האלה שונים</h2>
+    <ul>
+      <li><b>נמדד, לא מוצהר</b> — כל ערך נשלף באפיית-CI ממקור-ציבורי מוכרז בקישור מתחת לכל תג. אפשר לבדוק את המקור בעצמכם.</li>
+      <li><b>כישלון נראה</b> — מקור שנפל משאיר את התג הקודם ולא ממציא ערך; פורמן שהזדקן מעל חוק-130 הדקות הופך <b>אדום</b> על התג עצמו.</li>
+      <li><b>אפס-סודות</b> — האפייה keyless ומאותו-GitHub-Pages: בלי טוקנים, בלי שרת, בלי תלות בענקים.</li>
+      <li><b>קצב אמיתי</b> — מתאפים כל 30 דקות (<span class="mono">23,53 * * * *</span>), ונכתבים רק כשהתוכן באמת השתנה.</li>
+    </ul>
+  </section>
+</main>
+<footer class="wrap">
+  <span>SAOS Network · ריבונות עם קבלות</span>
+  <span>האפייה: <span id="baked" class="mono">…</span></span>
+</footer>
+<script>
+(function(){
+  // cache-bust לתצוגה בלבד — התג עצמו סטטי ונאפה ב-CI
+  document.querySelectorAll('[data-live]').forEach(function(img){
+    var u = new URL(img.getAttribute('src'), location.href);
+    u.searchParams.set('v', Date.now());
+    img.src = u.toString();
+  });
+  var btns = document.querySelectorAll('.copy');
+  btns.forEach(function(b){
+    b.addEventListener('click', function(){
+      var ta = b.parentElement.querySelector('textarea');
+      ta.select();
+      try { document.execCommand('copy'); } catch(_) {}
+      if (navigator.clipboard) navigator.clipboard.writeText(ta.value).catch(function(){});
+      var t = b.textContent; b.textContent = 'הועתק ✓'; b.disabled = true;
+      setTimeout(function(){ b.textContent = t; b.disabled = false; }, 1600);
+    });
+  });
+  fetch('badge/office.svg', {cache:'no-store'}).then(function(r){return r.text()}).then(function(t){
+    var m = /re-baked by CI[^\n]*/.test(t) ? '' : '';
+    var d = new Date(document.lastModified);
+    document.getElementById('baked').textContent = d.toISOString().slice(0,16).replace('T',' ') + ' UTC (דף)';
+  }).catch(function(){ document.getElementById('baked').textContent = '—'; });
+})();
+</script>
+</body>
+</html>
