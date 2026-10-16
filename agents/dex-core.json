@@ -92,11 +92,11 @@
     "source": "agents/dex-router.json",
     "routerAt": "2026-10-16T18:11:58.583Z",
     "fresh": true,
-    "fairNano": 101995440,
+    "fairNano": 102033450,
     "fairSource": "CEX-IMPLIED-FAIR (SBDUSDT/STEEMUSDT — lead-lag anchor, the opposing side of the local book)",
-    "hiveFairNano": null,
-    "crossFairNano": null,
-    "fairSource2": null,
+    "hiveFairNano": 52739160,
+    "crossFairNano": "1934680984",
+    "fairSource2": "LOCAL-MID-FALLBACK (CEX feed stale)",
     "verdict": "FEED-LIVE"
   },
   "custodyProbe": {
@@ -1404,11 +1404,11 @@
         "cex:STEEMUSDT+SBDUSDT"
       ],
       "poolMidNano": "3259965337",
-      "fairNano": "101995440",
+      "fairNano": "102033450",
       "fairSource": "CEX-IMPLIED-FAIR (SBDUSDT/STEEMUSDT — lead-lag anchor, the opposing side of the local book)",
-      "grossBps": 309618.73,
+      "grossBps": 309499.67,
       "feesBps": 35,
-      "netBps": 309583.73,
+      "netBps": 309464.67,
       "thresholdBps": 100,
       "verdict": "CANDIDATE-FOK",
       "railOwner": "treasury (our own pool — atomic, no bridge)"
@@ -1432,8 +1432,11 @@
     {
       "id": "A2",
       "name": "P8 HIVE/STEEM cross-network bridge",
-      "verdict": "FEED-STALE",
-      "why": "no cross fair (router anchors absent) — the bridge row waits, never guesses"
+      "crossFairNano": "1934680984",
+      "fairSource": "cross of CEX-IMPLIED-FAIR (SBDUSDT/STEEMUSDT — lead-lag anchor, the opposing side of the local book) / LOCAL-MID-FALLBACK (CEX feed stale)",
+      "verdict": "NO-CUSTODY",
+      "why": "HIVE custody is OBSERVED-UNCONTROLLED — the bridge arms when hive active key material verifies into the estate (R38 law)",
+      "railOwner": "treasury (our own pool — atomic, no bridge)"
     }
   ],
   "counterGrids": {
