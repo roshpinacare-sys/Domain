@@ -1,6 +1,6 @@
 {
   "protocol": "SAOS-DEX-ROUTER/1",
-  "at": "2026-10-16T12:11:35.786Z",
+  "at": "2026-10-16T12:11:20.753Z",
   "agent": "dex-router v1.0.0 (R39 SWAP-NET, CR-0069)",
   "mode": "KEYLESS-READ",
   "stasisHalted": false,
@@ -21,7 +21,7 @@
       "mid": 0.10406992,
       "spreadPct": 0.75,
       "pct24h": 0.094,
-      "depthBids": 680635,
+      "depthBids": 677671,
       "depthAsks": 15041729,
       "node": "api.steemit.com"
     },
@@ -40,18 +40,25 @@
     "cex-refs": {
       "rows": [
         {
-          "venue": "HTX",
-          "symbol": "SBDUSDT",
-          "mid": 0.5293,
-          "pct24h": -2.253,
+          "venue": "Binance",
+          "symbol": "STEEMUSDT",
+          "mid": 0.05459,
+          "pct24h": 4.08,
           "why": null
         },
         {
-          "venue": "Binance",
+          "venue": "HTX",
           "symbol": "HBDUSDT",
           "mid": null,
           "pct24h": null,
-          "why": "HTTP-400"
+          "why": "NO-TICK"
+        },
+        {
+          "venue": "HTX",
+          "symbol": "SBDUSDT",
+          "mid": 0.5294,
+          "pct24h": -2.235,
+          "why": null
         },
         {
           "venue": "Binance",
@@ -61,11 +68,11 @@
           "why": null
         },
         {
-          "venue": "HTX",
-          "symbol": "HBDUSDT",
-          "mid": null,
-          "pct24h": null,
-          "why": "NO-TICK"
+          "venue": "MEXC",
+          "symbol": "HIVEUSDT",
+          "mid": 0.05209,
+          "pct24h": 0.055,
+          "why": null
         },
         {
           "venue": "Binance",
@@ -89,10 +96,10 @@
           "why": null
         },
         {
-          "venue": "MEXC",
-          "symbol": "HIVEUSDT",
-          "mid": 0.05209,
-          "pct24h": 0.055,
+          "venue": "Binance",
+          "symbol": "BTCUSDT",
+          "mid": 82359.21,
+          "pct24h": 1.807,
           "why": null
         },
         {
@@ -402,8 +409,8 @@
       "sizeNote": "the only deep SBD book is HTX (Upbit ended SBD support 2025-02)",
       "quote": {
         "in": "1.000 SBD",
-        "out": "0.529035 USDT",
-        "impliedPrice": 0.5293,
+        "out": "0.529135 USDT",
+        "impliedPrice": 0.5294,
         "impactBps": null
       },
       "verdict": "C-GATE-OPERATOR",
@@ -501,11 +508,11 @@
         "cex:STEEMUSDT+SBDUSDT"
       ],
       "localMid": 0.10406992,
-      "impliedFair": 0.10313622,
-      "grossBps": 90.53,
+      "impliedFair": 0.10311674,
+      "grossBps": 92.44,
       "feesBps": 0,
       "slipBps": 20,
-      "netBps": 70.53,
+      "netBps": 72.44,
       "thresholdBps": 200,
       "driftPct": null,
       "verdict": "BELOW-FLOOR",
@@ -531,13 +538,13 @@
         "cex:BTCUSDT+HIVEUSDT"
       ],
       "poolPriceHivePerBtc": 1586521.8853961434,
-      "cexCrossHivePerBtc": 1576935.057471,
-      "grossBps": 60.79,
+      "cexCrossHivePerBtc": 1577762.643678,
+      "grossBps": 55.52,
       "feesBps": 100,
       "slipBps": 20,
-      "netBps": -59.21,
+      "netBps": -64.48,
       "thresholdBps": 100,
-      "driftPct": 0.6079,
+      "driftPct": 0.5552,
       "verdict": "BELOW-FLOOR",
       "railOwner": "owner-hive-alt (NO-KEYS + HE RPC)",
       "why": "the custodial peg is real only while the pool hugs the cross — 1.5% drift halts the venue"
@@ -564,48 +571,48 @@
   "counterGrid": {
     "steem": {
       "market": "SBD/STEEM (STEEM internal)",
-      "anchor": 0.10313622,
+      "anchor": 0.10311674,
       "anchorSource": "CEX-IMPLIED-FAIR (SBDUSDT/STEEMUSDT — lead-lag anchor, the opposing side of the local book)",
       "localMid": 0.10406992,
       "spreadPct": 0.75,
       "spacingPct": 0.408,
-      "anchorAdj": 0.10313622,
+      "anchorAdj": 0.10311674,
       "skewShiftBps": 0,
       "spacingBps": 41,
       "rungs": [
         {
           "side": "buy",
-          "price": 0.10271336,
+          "price": 0.10269396,
           "size": 0,
           "unit": "SBD"
         },
         {
           "side": "buy",
-          "price": 0.1022905,
+          "price": 0.10227118,
           "size": 0,
           "unit": "SBD"
         },
         {
           "side": "buy",
-          "price": 0.10186764,
+          "price": 0.1018484,
           "size": 0,
           "unit": "SBD"
         },
         {
           "side": "sell",
-          "price": 0.10355908,
+          "price": 0.10353952,
           "size": 0,
           "unit": "STEEM"
         },
         {
           "side": "sell",
-          "price": 0.10398194,
+          "price": 0.1039623,
           "size": 0,
           "unit": "STEEM"
         },
         {
           "side": "sell",
-          "price": 0.1044048,
+          "price": 0.10438508,
           "size": 0,
           "unit": "STEEM"
         }
