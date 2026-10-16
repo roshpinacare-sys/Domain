@@ -27,7 +27,7 @@ const SOLDIERS = ['acct-01', 'acct-02', 'acct-03', 'acct-04', 'acct-05', 'acct-0
 const SP_PER_SOLDIER = 30;   // תקרה-קשיחה
 const RETIRED = ['acct-19'].map(x => x.startsWith('acct-') ? R(x) : x).filter(Boolean); // retired 2026-09-29 — keyless by sovereign decision; idle 30 SP delegation is reclaimed below (capital efficiency)
 if (!refsResolved()) console.log('[refs] roster-unresolved — soldier refs unresolved; delegation work is skipped this run (fail-honest, never guessed)');
-const HEAD = 'owner';
+const HEAD = 'headcorner'; // RESTORED 2026-10-16: exposure-purge a5d2224d mis-redacted the operator account to 'owner' (nonexistent) — measured: CI desk ran blind, PLAN-DRY NO-FUNDS while 15.9 STEEM/44 SBD sat on-chain; mirror t19b (proven Oct-04 reclaim run) holds 'headcorner'
 
 function recoverVault() {
   const out = '/tmp/hd-keys';
