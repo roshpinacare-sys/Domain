@@ -53,6 +53,9 @@ const WAGE_MWU = 1000;
 const BEAT_MWU = 500;
 const SCAN_MWU = 250;
 const GUARD_MWU = 100; // micro-settlement per measured guard check
+const OFFEV_MWU = 200; // office agent activity event (real say/log labor)
+const WDOG_MWU = 150;  // watchdog restoration/ops event
+const HMEM_MWU = 50;   // host telemetry measurement (real compute)
 
 const sha16 = (s) => crypto.createHash('sha256').update(s).digest('hex').slice(0, 16);
 const nowIso = () => new Date().toISOString();
@@ -72,11 +75,11 @@ function loadCursor() {
   const backfill = Date.now() - 24 * 3600_000; // books open with a 24h window
   const base = {
     last_seq: 0, last_sha16: '', minted: 0,
-    src: { journal: backfill, git: backfill, mesh: backfill, fleet: backfill, guard: backfill },
+    src: { journal: backfill, git: backfill, mesh: backfill, fleet: backfill, guard: backfill, offev: backfill, wdog: backfill, hmem: backfill },
   };
   if (s && s.src && typeof s.src.git === 'number') {
     // per-key defaults — newly added sources open their own 24h window once
-    for (const k of ['journal', 'git', 'mesh', 'fleet', 'guard']) {
+    for (const k of ['journal', 'git', 'mesh', 'fleet', 'guard', 'offev', 'wdog', 'hmem']) {
       if (typeof s.src[k] !== 'number') s.src[k] = backfill;
     }
     return s;
@@ -183,6 +186,47 @@ function harvest(c) {
       });
     } catch { /* damaged line — skip, never invent */ }
   }
+  // 6) office agent activity (Task 58-b) — the office's own event stream:
+  //    real agent say/log events from the persistent world (agents working).
+  for (const line of readJsonl(path.join(DOMAIN, 'agents', 'office-events.jsonl'))) {
+    try {
+      const j = JSON.parse(line);
+      const at = typeof j.ts === 'number' ? j.ts : Date.parse(j.at || '');
+      if (!Number.isFinite(at) || at <= c.src.offev) continue;
+      if (!j.agentId) continue;
+      out.push({
+        kind: 'offev', at, who: 'agent:' + String(j.agentId).slice(0, 24),
+        amount: OFFEV_MWU, venue: 'office-events payroll',
+        evidence: { type: 'office-event', file: 'agents/office-events.jsonl', ref: String(j.kind || 'log').slice(0, 24), ts: new Date(at).toISOString(), text: String(j.text || j.kind || '').slice(0, 80) },
+      });
+    } catch { /* damaged line — skip */ }
+  }
+  // 7) watchdog ops (Task 58-b) — measured fleet watchdog restorations
+  for (const line of readJsonl(path.join(FLEET_ROOT, 'receipts', 'watchdog-events.jsonl'))) {
+    try {
+      const j = JSON.parse(line);
+      const at = Date.parse(j.at || '');
+      if (!Number.isFinite(at) || at <= c.src.wdog) continue;
+      out.push({
+        kind: 'wdog', at, who: 'robot:silence-watchdog',
+        amount: WDOG_MWU, venue: 'watchdog-meter',
+        evidence: { type: 'watchdog-event', file: 'receipts/watchdog-events.jsonl', ref: String(j.kind || '').slice(0, 24), ts: j.at, text: String(j.detail || j.kind || '').slice(0, 80) },
+      });
+    } catch { /* skip */ }
+  }
+  // 8) host telemetry (Task 58-b) — every real host measurement costs compute
+  for (const line of readJsonl(path.join(FLEET_ROOT, 'receipts', 'host-mem.jsonl'))) {
+    try {
+      const j = JSON.parse(line);
+      const at = Date.parse(j.at || '');
+      if (!Number.isFinite(at) || at <= c.src.hmem) continue;
+      out.push({
+        kind: 'hmem', at, who: 'robot:host-meter',
+        amount: HMEM_MWU, venue: 'telemetry-meter',
+        evidence: { type: 'host-mem', file: 'receipts/host-mem.jsonl', ref: `used-${String(j.used_pct ?? '?')}`.slice(0, 24), ts: j.at, text: `load ${String(j.load1 ?? '?')}`.slice(0, 80) },
+      });
+    } catch { /* skip */ }
+  }
   out.sort((a, b) => a.at - b.at);
   return out;
 }
@@ -249,7 +293,7 @@ function settle() {
   if (wrote > 0) {
     // advance each source watermark to the newest event it actually minted
     for (const ev of events) {
-      const key = ev.kind === 'wage' ? 'journal' : ev.kind === 'beat' ? 'git' : ev.kind === 'fleet' ? 'fleet' : ev.kind === 'guard' ? 'guard' : 'mesh';
+      const key = ev.kind === 'wage' ? 'journal' : ev.kind === 'beat' ? 'git' : ev.kind === 'fleet' ? 'fleet' : ev.kind === 'guard' ? 'guard' : ev.kind === 'offev' ? 'offev' : ev.kind === 'wdog' ? 'wdog' : ev.kind === 'hmem' ? 'hmem' : 'mesh';
       c.src[key] = Math.max(c.src[key] || 0, ev.at);
     }
     c.minted = (c.minted || 0) + wrote;
