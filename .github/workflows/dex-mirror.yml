@@ -37,6 +37,28 @@
 # LESSON-1 (measured on the first chase, run 38599792374): the trigger fires on run
 # completion, but the book lands on Console Pages 1-4 min later (rebuild lag) — so a
 # chase that finds nothing new re-reads on a bounded cadence (6x50s) before giving up.
+#
+# [netrun-10-c] 2026-10-17 — failing-streak root cause (netrun q-queue-20261017-09, P1):
+# Measured: runs 474-483 (2026-10-16T20:38Z → 2026-10-17T01:32Z) ALL concluded FAILURE
+# while every one of them PUBLISHED the live book (publish commits on main, e.g. 2135c1c
+# 01:20:31Z, 1cc0a4d 01:33:46Z "dex-mirror: … live engine book mirrored") and the mirror
+# step itself exits 0 (reproduced locally at 2d0b5ee: updated=0 kept=11, exit 0). The
+# failing step was the tree-wide "Exposure gate": scripts/exposure-scan.mjs scans EVERY
+# tracked file of the repo, so exposure-law violations in files this mirror NEVER touches
+# (measured at HEAD 2d0b5ee: LIQUIDITY-PLAN-20261016.md, agents/arb-mesh.json,
+# agents/arb-mesh.md — 6 findings) turned the mirror red. That coupling fired TWICE in one
+# day (runs 460-466 red 05:34→10:08Z, green again 467-473 after a noon fix, re-broken at
+# 20:38Z by other lanes' pushes) and the red noise ended with the workflow DISABLED
+# MANUALLY on GitHub (state measured 2026-10-17T05:1xZ; zero runs after 01:32 despite the
+# hourly :52 cron) — the public page's freshness floor is dead while disabled. Cure: the
+# gate step now enforces the SAME law module (scripts/exposure-rules.mjs — one law, two
+# enforcers) on the surface this mirror actually writes (dex/ books, git add dex/),
+# fail-closed: exit 1 on violations, exit 2 on a scanner crash (honest gap, mirrors
+# exposure-gate.yml's distinction). Tree-wide enforcement stays owned by exposure-gate.yml
+# (push to main + daily, one-voice rolling issue) — that lane is red at HEAD for the 3
+# files above and their remediation ("remove at HEAD") belongs to their owners, not to a
+# mirror. The workflow must be RE-ENABLED on GitHub after this fix (owner/UI action —
+# needs repo write; a disabled workflow cannot prove itself green).
 
 name: dex-mirror
 
@@ -157,5 +179,28 @@ jobs:
           done
           echo "named terminal: publish-deferred - live book re-mirrored at next :52 flight (anti-storm 5: record, not alarm)"
           exit 0
-      - name: Exposure gate (one-law-two-enforcers — the tree the mirror just touched must PASS)
-        run: node scripts/exposure-scan.mjs
+      # [netrun-10-c] scope fix: the gate judges WHAT THE MIRROR WRITES (dex/ books),
+      # with the same law module the producer gate (agents/dex-mirror.mjs) runs — not the
+      # whole tree. A tree-wide scan here coupled this mirror's conclusion to unrelated
+      # lanes' content (measured failing-streak above); the tree-wide law has its own
+      # dedicated enforcer: exposure-gate.yml (one-voice issue lane).
+      - name: Exposure gate (one-law-two-enforcers — the dex/ books the mirror just wrote must PASS)
+        run: |
+          node -e '
+            const fs = require("node:fs");
+            import("./scripts/exposure-rules.mjs").then(({ violations, FORBIDDEN_PATHS }) => {
+              const files = fs.readdirSync("dex").filter((f) => f.endsWith(".json")).sort().map((f) => "dex/" + f);
+              const findings = [];
+              for (const p of files) {
+                for (const fp of FORBIDDEN_PATHS) if (fp.test(p)) findings.push({ p: p, why: "forbidden path" });
+                const body = fs.readFileSync(p, "utf8");
+                for (const v of violations(body, p)) findings.push({ p: p, why: v.why });
+              }
+              if (findings.length) {
+                console.error("EXPOSURE-GATE FAIL (dex/ mirror surface) - violations:");
+                for (const f of findings.slice(0, 40)) console.error("  x " + f.p + " - " + f.why);
+                process.exit(1);
+              }
+              console.log("exposure-gate: PASS - " + files.length + " mirrored-book files scanned (dex/ write surface), 0 violations");
+            }).catch((e) => { console.error("gate crash (honest gap, NOT a recovery): " + String((e && e.message) || e)); process.exit(2); });
+          '
