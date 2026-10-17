@@ -196,17 +196,32 @@ function stasisCheck() {
 function laneAllowed(st, lane) {
   try { const a = ((st || {}).stagedLanes || {}).allow || []; return a.map(String).includes(String(lane)); } catch (_) { return false; }
 }
-function writeBook(obj) {
-  // EXPOSURE LAW (PUBLISHING-POLICY): the public artifact never carries the
-  // owner account handle — roles only. The in-memory mesh logic keeps the
-  // real roster; the persisted book redacts it at the write site.
-  const own = process.env.FLEET_ACCOUNT || 'owner';
-  if (Array.isArray(obj.roster)) {
-    obj = { ...obj, roster: obj.roster.map((r) => (String(r) === String(own) ? 'operator' : r)) };
+// EXPOSURE LAW (PUBLISHING-POLICY): the public artifact never carries the owner
+// account handle — roles only. The in-memory mesh logic keeps the real roster;
+// the persisted book redacts it at the write site. CR wave-12: the redaction is
+// DEEP (every string value + object key, not just roster) — measured leak: with
+// live fills the handle also flowed into intents[].agent, fills[].agent,
+// rejects[].agent and meshPnl.lifetime.byAgent keys, tripping the exposure-gate.
+// No-op in the default world (FLEET_ACCOUNT unset → the roster head is already
+// the neutral 'owner' literal, the selftest's deterministic world).
+function redactOwn(v) {
+  const own = process.env.FLEET_ACCOUNT;
+  if (!own) return v;
+  const s = String(own);
+  const rx = new RegExp(s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+  if (typeof v === 'string') return v.replace(rx, 'operator');
+  if (Array.isArray(v)) return v.map(redactOwn);
+  if (v && typeof v === 'object') {
+    return Object.fromEntries(Object.entries(v).map(([k, x]) => [String(k).replace(rx, 'operator'), redactOwn(x)]));
   }
+  return v;
+}
+function writeBook(obj) {
+  obj = redactOwn(obj);
   const tmp = OUT_JSON + '.tmp';
   fs.writeFileSync(tmp, JSON.stringify(obj, null, 1) + '\n');
   fs.renameSync(tmp, OUT_JSON);
+  return obj;
 }
 function writeMd(b) {
   const L = [];
@@ -331,7 +346,7 @@ async function tick() {
         : 'PLAN-POOL-GATED-NOT-BROADCAST — counter-grid rungs fire only behind the owner gate; the mesh waits',
       errors: [],
     };
-    writeBook(book); writeMd(book);
+    writeMd(writeBook(book)); // the md is written from the REDACTED book — same exposure law, one redaction site
     appendHistory([{ at: now, verdict, batch, candidates: candidates.length, intents: book.intentsDrafted, fills: fills.length, rejects: rejects.length, wires, edgeMu: meshPnl && meshPnl.batch ? meshPnl.batch.edgeMu : '0' }]);
     console.log(`ARB-MESH-TICK verdict=${verdict.split(' ')[0]} batch=${batch || '—'} candidates=${candidates.length} intents=${book.intentsDrafted} fills=${fills.length} rejects=${rejects.length} wires=${wires}`);
     return 0;
