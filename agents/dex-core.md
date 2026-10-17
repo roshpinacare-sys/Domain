@@ -1,6 +1,6 @@
 # dex-core — EXCHANGE CORE (R40, CR-0070)
 
-At: 2026-10-17T21:11:35.054Z · Verdict: **CONSERVATION-BROKEN** · mode: KEYLESS-ATOMIC-INTERNAL · seq: 103 · attestation: `54a8dd7a7fbc9f30`
+At: 2026-10-17T21:46:42.691Z · Verdict: **CONSERVATION-BROKEN** · mode: KEYLESS-ATOMIC-INTERNAL · seq: 103 · attestation: `597e040d9b20a2dc`
 
 Feed: FEED-LIVE (router book @ 2026-10-17T21:11:33.759Z) · conservation: **BROKEN** · custody probe: MEASURED @https://api.steemit.com
 
@@ -120,5 +120,5 @@ Vault: minted WSTEEM 761900µ · WSBD 6314850µ · WHIVE 0µ · WHBD 0µ · WBLU
 
 Treasury P&L: fees 1177µ (LP revenue) · rebalance edges 15510µ (marked to fair at execution — the LVR defense on our own pool)
 
-Attestation sha256(seq, custody, reserves, minted, claims) = `54a8dd7a7fbc9f30` — recomputable by any node; the cron book commit is the publication.
+Attestation sha256(seq, custody, reserves, minted, claims) = `597e040d9b20a2dc` — recomputable by any node; the cron book commit is the publication.
 
