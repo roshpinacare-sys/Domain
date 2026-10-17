@@ -31,6 +31,32 @@ const { R, refOf, scrub, resolved: refsResolved } = require('./refs.cjs');
 const REF_IDS = Array.from({ length: 20 }, (_, i) => 'acct-' + String(i).padStart(2, '0'));
 const refScrub = (t) => { let out = scrub(String(t)); if (refsResolved()) { for (const ref of REF_IDS) { const n = R(ref); if (n) out = out.replace(new RegExp('\\b' + n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'g'), ref); } } return out; };
 
+// ── fail-closed identity scrub (wave-12, measured leak: CI run 2026-10-17T17:44Z published
+// real fleet names in the receipt when FLEET_ROSTER_MAP was absent — refOf passes unknown
+// names through by design). The writer is the last line: every real name the process can
+// know (keys secret, personas, resolved roster) is replaced by a stable unit-NN pseudonym
+// before the receipt leaves the machine. Zero real names reach the public surface, ever.
+const UNIT_LIKE = /^(unit-\d+|acct-\d+|owner)$/;
+function collectSensitiveNames() {
+  const names = new Set();
+  try { const k = loadKeys(); if (k) for (const x of k) if (x && x.username) names.add(String(x.username)); } catch (_) {}
+  try { for (const p of PERSONAS) if (p && p.account) names.add(String(p.account)); } catch (_) {}
+  for (let i = 0; i < 20; i++) { const n = R('acct-' + String(i).padStart(2, '0')); if (n) names.add(String(n)); }
+  return [...names].filter(n => n && !UNIT_LIKE.test(n));
+}
+function identityScrub(jsonText) {
+  const names = collectSensitiveNames().sort((a, b) => b.length - a.length);
+  let out = String(jsonText); let i = 0;
+  const unitOf = new Map();
+  for (const n of names) if (!unitOf.has(n)) unitOf.set(n, 'unit-' + String(i++).padStart(2, '0'));
+  for (const n of names) {
+    const e = n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    out = out.replace(new RegExp('([@"\'\\|:,\\s(\\[>])' + e + '(["\'|:,\\s\\])},<])', 'gi'), '$1' + unitOf.get(n) + '$2');
+  }
+  return out;
+}
+const safeReceipt = (obj) => identityScrub(refScrub(JSON.stringify(obj, null, 1)));
+
 steem.api.setOptions({ url: 'https://api.steemit.com' });
 const ROOT = path.resolve(__dirname, '..');
 const OUT = process.env.RECEIPT_OUT || path.join(ROOT, 'agents', 'receipts', 'tribridge-receipt.json');
@@ -202,7 +228,7 @@ async function publishCross({ who, wif, node, chainId, content, permlink, chain,
   const receipt = { at: now.toISOString(), agent: 'tribridge', chains: ['hive', 'blurt'], results: [], fuel: [], summary: {} };
 
   const keys = loadKeys();
-  if (!keys) { receipt.error = 'SA_FLEET_KEYS missing/unparseable — nothing signed'; fs.mkdirSync(path.dirname(OUT), { recursive: true }); fs.writeFileSync(OUT, JSON.stringify(receipt, null, 1)); console.log(JSON.stringify({ state: 'no-keys' })); process.exit(0); }
+  if (!keys) { receipt.error = 'SA_FLEET_KEYS missing/unparseable — nothing signed'; fs.mkdirSync(path.dirname(OUT), { recursive: true }); fs.writeFileSync(OUT, safeReceipt(receipt)); console.log(JSON.stringify({ state: 'no-keys' })); process.exit(0); }
 
   const roster = keys.filter(k => !RETIRED.has(k.username) && k.username !== HEAD && /^[a-z0-9-]{3,16}$/.test(k.username));
   receipt.roster = roster.map(r => refOf(r.username));
@@ -344,13 +370,13 @@ async function publishCross({ who, wif, node, chainId, content, permlink, chain,
   receipt.summary = { tally, fuelTransfers: receipt.fuel.filter(f => f.op === 'TRANSFER-BROADCAST').length, ms: Date.now() - t0 };
 
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
-  fs.writeFileSync(OUT, refScrub(JSON.stringify(receipt, null, 1)));
+  fs.writeFileSync(OUT, safeReceipt(receipt));
   console.log(JSON.stringify({ state: 'ok', summary: receipt.summary }));
   process.exit(0); // fail-soft: always green for the train
 })().catch(e => {
   try {
     fs.mkdirSync(path.dirname(OUT), { recursive: true });
-    fs.writeFileSync(OUT, refScrub(JSON.stringify({ at: new Date().toISOString(), agent: 'tribridge', fatal: String(e.message || e).slice(0, 200) }, null, 1)));
+    fs.writeFileSync(OUT, safeReceipt({ at: new Date().toISOString(), agent: 'tribridge', fatal: String(e.message || e).slice(0, 200) }));
   } catch (_) {}
   console.log(JSON.stringify({ state: 'fail-soft', msg: String(e.message || e).slice(0, 160) }));
   process.exit(0);
