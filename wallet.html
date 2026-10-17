@@ -607,7 +607,8 @@ footer.site a:hover{color:var(--gold-bright);text-decoration:none}
         <h2 data-i="xOfferT">Place a sell offer</h2>
         <p class="sub" data-i="xOfferP">Your SAOS moves into escrow the moment the offer lands on chain.</p>
         <div class="frow">
-          <div class="field"><label class="f" data-i="xCur">Currency you accept</label><input class="mono" id="off-cur" placeholder="USD" maxlength="10"></div>
+          <div class="field"><label class="f" data-i="xSide">Side</label><select class="mono" id="off-side"><option value="sell" selected data-i="xSideSell">Sell SAOS</option><option value="buy" data-i="xSideBuy">Buy SAOS</option></select></div>
+          <div class="field"><label class="f" data-i="xCur">Currency you accept / pay</label><input class="mono" id="off-cur" placeholder="USDS" maxlength="10"></div>
           <div class="field"><label class="f" data-i="xAmt">Amount (SAOS)</label><input class="mono" id="off-amt" placeholder="10.000"></div>
           <div class="field"><label class="f" data-i="xPricePer">Price per 1 SAOS</label><input class="mono" id="off-price" placeholder="0.001"></div>
         </div>
@@ -942,7 +943,8 @@ en: {
   xRatesT:"Network rates", xRatesP:"Reference rates published on chain by network governance.",
   xPair:"Pair", xPrice:"Price",
   xRatesNote:"Rates are set by signed treasury operations and are visible to everyone. They are a reference: each offer carries its own price.",
-  xOfferT:"Place a sell offer", xOfferP:"Your SAOS moves into escrow the moment the offer lands on chain.",
+  xOfferT:"Place an order", xOfferP:"Your SAOS (sell) or your currency (buy) moves into escrow the moment the order lands on chain.",
+  xSide:"Side", xSideSell:"Sell SAOS", xSideBuy:"Buy SAOS",
   xCur:"Currency you accept", xAmt:"Amount (SAOS)", xPricePer:"Price per 1 SAOS", xOfferBtn:"Sign offer",
   xOfferNote:"Settlement of the currency side is recorded by the network treasury with a payment reference. Both sides stay visible on chain.",
   xBookT:"Open offers", xBookP:"Escrowed SAOS for sale right now.",
@@ -1084,7 +1086,8 @@ he: {
   xRatesT:"שערי הרשת", xRatesP:"שערי ייחוס שמתפרסמים על השרשרת בהחלטת ממשל הרשת.",
   xPair:"זוג", xPrice:"שער",
   xRatesNote:"השערים נקבעים בפעולות אוצר חתומות וגלויות לכולם. הם ייחוס: לכל הצעה מחיר משלה.",
-  xOfferT:"הצבת הצעת מכירה", xOfferP:"ה-SAOS שלך עובר לנאמנות ברגע שההצעה נוחתת על השרשרת.",
+  xOfferT:"הצבת פקודה", xOfferP:"ה-SAOS שלך (מכירה) או המטבע שלך (קנייה) עובר לנאמנות ברגע שהפקודה נוחתת על השרשרת.",
+  xSide:"צד", xSideSell:"מכירת SAOS", xSideBuy:"קניית SAOS",
   xCur:"המטבע שאתה מקבל", xAmt:"כמות (SAOS)", xPricePer:"מחיר על 1 SAOS", xOfferBtn:"חתימת הצעה",
   xOfferNote:"סגירת הצד של המטבע נרשמת על ידי אוצר הרשת עם אסמכתת תשלום. שני הצדדים נשארים גלויים על השרשרת.",
   xBookT:"הצעות פתוחות", xBookP:"SAOS בנאמנות שמחכה לקונים.",
@@ -1349,6 +1352,7 @@ async function boot() {
   await Promise.all([
     jget("mirror.json").then((m) => (MIRROR = m)).catch(() => {}),
     jget("saos-live.json").then((l) => (LIVE = l)).catch(() => {}),
+    pullDexState(), // the live kernel book: real balances + real orders
     pullDexWorld(), // R33: the depositor's USDS must be visible next to the SAOS balances
     pullVitals(), // R69: the wallet page carries the measured network truth too
   ]);
@@ -1356,6 +1360,7 @@ async function boot() {
   relayKick(); // r144-g2: תור קיים עם ריליי מוכר? ממשיך משלב 2 לשלב 3 מעצמו
   probeChain();
   setInterval(() => jget("saos-live.json").then((l) => { LIVE = l; renderLive(); }).catch(() => {}), 120 * 1000);
+  setInterval(pullDexState, 120 * 1000); // the kernel book rides the same cadence
   setInterval(pullDexWorld, 120 * 1000); // R33: the dex mirror rides the same cadence
   setInterval(pullVitals, 120 * 1000); // R69: measured lines at the house freshness cadence
 }
@@ -1477,26 +1482,32 @@ function renderLive() {
     ? rates.map(([pair, r]) => `<tr><td><b class="mono">${esc(pair)}</b></td><td class="num mono">${esc(r.price)}</td></tr>`).join("")
     : `<tr><td colspan="2" style="color:var(--faint)">${LANG === "he" ? "טרם פורסמו שערים. הם יופיעו כאן ברגע שממשל הרשת יפרסם אותם." : "No rates published yet. They appear here once network governance publishes them."}</td></tr>`;
 
-  /* exchange: order book */
-  const open = Object.entries(offers).filter(([, o]) => o.status === "open");
-  $("x-book").innerHTML = open.length
-    ? open.map(([id, o]) => {
-        const remain = BigInt(o.units) - BigInt(o.filled);
-        const total = (Number(remain) / 1000) * Number(o.price);
-        return `<tr><td><span class="mono" style="font-size:11px">${esc(o.by.slice(0, 11))}…</span></td><td>${esc(o.cur)}</td><td class="num">${nice(fmtSaos(remain.toString(), 3))}</td><td class="num mono">${esc(o.price)}</td></tr>`;
+  /* exchange: order book — THE LIVE KERNEL BOOK (dex/state.json). One truth:
+     real engine orders with real ids; kernel price is µ-quote per 1 SAOS (×1000). */
+  const kbook = kernelOrders().filter((o) => o && o.base === "SAOS" && o.quote && o.side);
+  const fmtPx = (pxMu) => { const p = Number(pxMu || 0) / 1000; return String(p); };
+  $("x-book").innerHTML = kbook.length
+    ? kbook.slice(-40).reverse().map((o) => {
+        const remain = Math.max(0, Number(o.amount || 0) - Number(o.filled || 0));
+        const total = (remain / 1000) * (Number(o.price || 0) / 1000);
+        const sideTag = o.side === "buy" ? `<span class="tag green">bid</span>` : `<span class="tag gold">ask</span>`;
+        return `<tr><td>${sideTag} <span class="mono" style="font-size:11px">${esc(String(o.owner || "").replace(/^u:/, "").slice(0, 11))}…</span></td><td>${esc(o.quote)}</td><td class="num">${nice(fmtSaos(String(remain), 3))}</td><td class="num mono">${esc(fmtPx(o.price))}</td></tr>`;
       }).join("")
     : `<tr><td colspan="4" style="color:var(--faint)">${t("empty.offers")}</td></tr>`;
 
-  /* exchange: my offers */
+  /* exchange: my orders — live kernel orders under the canonical u: account */
   if (WALLET) {
-    const mine = Object.entries(offers).filter(([, o]) => o.by === WALLET.addr);
+    const me = "u:" + WALLET.addr.toLowerCase();
+    const mine = kernelOrders().filter((o) => o && o.owner === me && o.base === "SAOS");
     $("x-mine").innerHTML = mine.length
-      ? mine.reverse().map(([id, o]) => {
-          const remain = BigInt(o.units) - BigInt(o.filled);
-          const statusTag = o.status === "open" ? `<span class="tag green">open</span>` : o.status === "cancelled" ? `<span class="tag">cancelled</span>` : `<span class="tag gold">filled</span>`;
-          return `<div class="op-row"><span class="k">${esc(o.cur)}</span><span style="flex:1;color:var(--dim)">${nice(fmtSaos(remain.toString(), 3))} / ${nice(fmtSaos(o.units, 3))} SAOS @ ${esc(o.price)}</span>${statusTag}${o.status === "open" ? `<button class="copy" data-cancel="${esc(id)}">${esc(t("misc.cancel"))}</button>` : ""}</div>`;
+      ? mine.slice().reverse().map((o) => {
+          const remain = Math.max(0, Number(o.amount || 0) - Number(o.filled || 0));
+          const filled = Number(o.filled || 0) > 0;
+          const statusTag = filled ? `<span class="tag gold">part-filled</span>` : `<span class="tag green">open</span>`;
+          const sideTag = o.side === "buy" ? `<span class="tag green">bid</span>` : `<span class="tag gold">ask</span>`;
+          return `<div class="op-row">${sideTag}<span class="k">${esc(o.quote)}</span><span style="flex:1;color:var(--dim)">${nice(fmtSaos(String(remain), 3))} / ${nice(fmtSaos(String(o.amount || 0), 3))} SAOS @ ${esc(fmtPx(o.price))}</span>${statusTag}<button class="copy" data-cancel="${esc(String(o.id))}">${esc(t("misc.cancel"))}</button></div>`;
         }).join("")
-      : `<div class="op-row"><span style="color:var(--faint)">${t("empty.offers")}</span></div>`;
+      : `<div class="op-row"><span style="color:var(--faint)">${t("empty.mine")}</span></div>`;
     for (const b of document.querySelectorAll("[data-cancel]")) {
       b.addEventListener("click", async () => {
         const env = await enqueue({ k: "dex.cancel", offerId: b.dataset.cancel });
@@ -1507,11 +1518,10 @@ function renderLive() {
     $("x-mine").innerHTML = `<div class="op-row"><span style="color:var(--faint)">${t("empty.mine")}</span></div>`;
   }
 
-  /* exchange: fills */
-  const fills = [];
-  for (const [id, o] of Object.entries(offers)) for (const f of o.fills || []) fills.push({ ...f, offerId: id, cur: o.cur, price: o.price });
-  $("x-fills").innerHTML = fills.length
-    ? fills.slice(-12).reverse().map((f) => `<div class="op-row"><span class="k">${esc(f.cur)}</span><span style="flex:1;color:var(--dim)">${nice(fmtSaos(f.units, 3))} SAOS -> <span class="mono" style="font-size:11px">${esc(String(f.to).slice(0, 12))}…</span>${f.paid ? ` · ${esc(f.paid)} ${esc(f.cur)}` : ""}${f.ref ? ` · ref <span class="mono" style="font-size:10.5px">${esc(String(f.ref).slice(0, 22))}…</span>` : ""}</span><span class="when">${timeAgo(f.at)}</span></div>`).join("")
+  /* exchange: fills — the kernel tape (real trades only; honest empty until trades land) */
+  const tape = Array.isArray(DEXS?.tape) ? DEXS.tape : [];
+  $("x-fills").innerHTML = tape.length
+    ? tape.slice(-12).reverse().map((f) => `<div class="op-row"><span class="k">${esc(String(f.pair || f.base || "") + (f.base ? "/" + String(f.quote || "") : ""))}</span><span style="flex:1;color:var(--dim)">${esc(String(f.note || JSON.stringify(f)).slice(0, 90))}</span><span class="when">${timeAgo(f.at || f.t || Date.now())}</span></div>`).join("")
     : `<div class="op-row"><span style="color:var(--faint)">${t("empty.ops")}</span></div>`;
 
   /* earn: deposit addresses */
@@ -1589,12 +1599,13 @@ function renderWalletUI() {
   renderMyActivity(); // R69: the feed speaks even before a wallet exists
 }
 function renderWalletBalances() {
-  if (!WALLET || !LIVE?.state) return;
-  const bal = LIVE.state.balances?.[WALLET.addr] || {};
-  const tokens = LIVE.state.tokens || {};
-  const entries = Object.entries(bal).filter(([, v]) => BigInt(v) > 0n);
+  if (!WALLET) return;
+  /* the kernel book is the only balance truth (µ numbers, u:-keyed) */
+  const kb = kernelWallet()?.balances || {};
+  const tokens = LIVE?.state?.tokens || {};
+  const entries = Object.entries(kb).filter(([, v]) => BigInt(Math.max(0, Math.floor(Number(v) || 0))) > 0n);
   $("wallet-bal").textContent = entries.length
-    ? entries.map(([sym, v]) => `${nice(fmtSaos(v, tokens[sym]?.decimals ?? 0))} ${sym}`).join(" · ")
+    ? entries.map(([sym, v]) => `${nice(fmtSaos(String(Math.floor(Number(v) || 0)), tokens[sym]?.decimals ?? 0))} ${sym}`).join(" · ")
     : "0";
   renderPv();
   renderDexBalance();
@@ -1612,9 +1623,10 @@ function tokenPriceUsds(sym) {
 }
 function renderPv() {
   const box = $("wallet-pv");
-  if (!box || !WALLET || !LIVE?.state) return;
-  const bal = LIVE.state.balances?.[WALLET.addr] || {};
-  const entries = Object.entries(bal).filter(([, v]) => BigInt(v) > 0n);
+  if (!box || !WALLET) return;
+  /* the kernel book is the only balance truth (µ numbers) */
+  const kb = kernelWallet()?.balances || {};
+  const entries = Object.entries(kb).filter(([, v]) => BigInt(Math.max(0, Math.floor(Number(v) || 0))) > 0n);
   let total = 0, anyPrice = false;
   const rows = entries.map(([sym, v]) => {
     const amt = Number(v) / 1000;
@@ -1648,6 +1660,26 @@ function renderDexBalance() {
     } else box.style.display = "none";
   }
 }
+/* ═══════════ THE LIVE KERNEL BOOK (dex/state.json) ═══════════
+   One truth: the engine's own book — balances keyed "u:"+addr-lower (µ), live
+   orders with real ids. Mirrored hourly by the dex-beat. The legacy weave book
+   (saos-live.json) stays only for token metadata (decimals) — its relay is dead,
+   and a wallet that shows money from a dead book is a lie. */
+let DEXS = null;
+async function pullDexState() {
+  try { DEXS = await jget("dex/state.json"); renderWalletUI(); } catch { /* the mirror keeps the last frame — next round retries */ }
+}
+function kernelWallet() {
+  if (!WALLET || !DEXS || !Array.isArray(DEXS.wallets)) return null;
+  const me = "u:" + WALLET.addr.toLowerCase();
+  return DEXS.wallets.find((w) => w && w.name === me) || null;
+}
+function kernelBalMu(symbol) {
+  const w = kernelWallet();
+  const v = w?.balances?.[symbol];
+  return BigInt(typeof v === "number" && Number.isFinite(v) ? Math.max(0, Math.floor(v)) : 0);
+}
+function kernelOrders() { return (DEXS && Array.isArray(DEXS.orders)) ? DEXS.orders : []; }
 async function pullDexWorld() {
   try { DEXW = await jget("dex/world.json"); renderDexBalance(); refreshAlertSymbols(); checkAlerts(false); } catch { /* the mirror keeps the last frame — next round retries */ }
 }
@@ -1850,12 +1882,13 @@ function renderQueue() {
 function queueSummary(env) {
   const n = (x) => nice(Number(x || 0));
   if (env.k === "wallet.create") return (LANG === "he" ? "רישום ארנק" : "wallet registration") + (env.nick ? ` "${env.nick}"` : "");
+  if (env.k === "dex.order") return (env.side === "buy" ? (LANG === "he" ? "קנייה " : "buy ") : (LANG === "he" ? "מכירה " : "sell ")) + `${nice(Number(env.amount || 0))} ${env.base} @ ${env.price} ${env.quote}`;
   if (env.k === "token.deploy") return `${env.symbol} (cap ${n(env.maxSupply)})`;
   if (env.k === "token.mint") return `${n(env.amount)} ${env.symbol}`;
   if (env.k === "token.transfer") return `${n(env.amount)} ${env.symbol} -> ${String(env.to).slice(0, 10)}…`;
   if (env.k === "token.burn") return `${n(env.amount)} ${env.symbol}`;
   if (env.k === "deposit.claim") return `${env.amt} ${env.cur}`;
-  if (env.k === "dex.offer") return `${n(env.units)} SAOS @ ${env.price} ${env.cur}`;
+  if (env.k === "dex.offer") return `${n(Number(env.units || 0) / 1000)} SAOS @ ${env.price} ${env.cur}`; // units are µ — display in units
   if (env.k === "dex.cancel") return env.offerId;
   return env.id;
 }
@@ -1876,9 +1909,10 @@ $("btn-send").addEventListener("click", async () => {
   const units = toUnits(amount, dec);
   if (units === null) { toast(t("tErr.badAmt"), false); return; }
   /* R69: local honesty guard — the fold would reject a transfer bigger than the balance;
-     catching it here costs nothing and tells the truth before a signature exists */
+     catching it here costs nothing and tells the truth before a signature exists.
+     The balance truth is the kernel book (µ, u:-keyed). */
   if (WALLET) {
-    const balUnits = BigInt(LIVE?.state?.balances?.[WALLET.addr]?.[symbol] || "0");
+    const balUnits = kernelBalMu(symbol);
     if (BigInt(units) > balUnits) { toast(t("tErr.overBal"), false); return; }
   }
   openSendReview({ symbol, to, units, dec });
@@ -2021,6 +2055,7 @@ function afterRegistered(env) {
   delete RELAYMAP[env.id]; saveRelayMap();
   toast(t("relay.registered")("✓"));
   jget("saos-live.json").then((l) => { LIVE = l; renderLive(); renderWalletUI(); }).catch(() => {});
+  pullDexState(); // the kernel book: the landed truth right after registration
 }
 function relayKick() {
   const base = relayBase();
@@ -2032,11 +2067,30 @@ function relayKick() {
 
 /* ═══════════ exchange + earn actions ═══════════ */
 $("btn-offer").addEventListener("click", async () => {
+  const side = ($("off-side")?.value === "buy") ? "buy" : "sell";
   const cur = $("off-cur").value.trim().toUpperCase();
   const amt = $("off-amt").value.trim();
   const price = $("off-price").value.trim();
   if (!/^[A-Z]{2,10}$/.test(cur)) { toast(t("tErr.badCur"), false); return; }
+  if (side === "buy" && cur === "SAOS") { toast(LANG === "he" ? "לא ניתן לקנות SAOS ב-SAOS" : "cannot buy SAOS with SAOS", false); return; }
   if (!/^(0|[1-9]\d{0,11})(\.\d{1,8})?$/.test(price) || /^0+(\.0+)?$/.test(price)) { toast(t("tErr.badPrice"), false); return; }
+  if (side === "buy") {
+    /* engine-native institutional shape: human price/amount — the beat multiplies ×1000.
+       escrow locks the quote side, so the local honesty guard checks the currency balance */
+    if (WALLET) {
+      const have = kernelBalMu(cur);
+      const units = toUnits(amt, 3);
+      const pxMu = Number(price) * 1000;
+      const amtMu = Number(units || 0);
+      if (amtMu <= 0) { toast(t("tErr.badAmt"), false); return; }
+      const notional = BigInt(Math.ceil(pxMu * amtMu / 1000));
+      const feeBuf = notional / 100n; // conservative 1% buffer over the 30bps taker fee
+      if (have < notional + feeBuf) { toast(LANG === "he" ? "אין מספיק " + cur + " לקנייה (ערבות-escrow)" : "not enough " + cur + " to buy (escrow)", false); return; }
+    }
+    const env = await enqueue({ k: "dex.order", base: "SAOS", quote: cur, side: "buy", price, amount: amt });
+    if (env) { toast(t("tOk.offerSigned")); $("off-amt").value = ""; }
+    return;
+  }
   const units = toUnits(amt, 3);
   if (units === null) { toast(t("tErr.badAmt"), false); return; }
   const env = await enqueue({ k: "dex.offer", cur, units, price });
@@ -2085,7 +2139,7 @@ $("btn-relay-all").addEventListener("click", async () => {
     saveQueue();
     out.textContent = t("tOk.broadcast")(sent);
     toast(t("tOk.broadcast")(sent));
-    setTimeout(() => jget("saos-live.json").then((l) => { LIVE = l; renderLive(); }).catch(() => {}), 15000);
+    setTimeout(() => { jget("saos-live.json").then((l) => { LIVE = l; renderLive(); }).catch(() => {}); pullDexState(); }, 15000);
   } catch (e) {
     out.textContent = (e.message || "").slice(0, 90);
     toast(t("tErr.relayFail") + (e.message || "").slice(0, 80), false);
