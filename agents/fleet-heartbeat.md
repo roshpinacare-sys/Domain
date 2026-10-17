@@ -1,4 +1,4 @@
-# דופק-הצי (fleet-heartbeat) — 2026-10-17T22:01:21.748Z
+# דופק-הצי (fleet-heartbeat) — 2026-10-17T22:39:16.148Z
 
 מדידת-מנועים של כל-הריפואים: מה פועם, מה שקט, מה הפלטפורמה נטרלה, מה נרפא בריצה זו.
 
@@ -17,7 +17,7 @@
 ## חסומי-קיר-המכסה (WALL-BLOCKED — מנוע פרטי שאינו יכול לרוץ כלל)
 
 - Defi — ריצה-אחרונה 2026-10-15T11:41:22Z (null) · אפס-הצלחות בחלון
-- fleet-economy — ריצה-אחרונה 2026-10-17T18:49:07Z (failure) · אפס-הצלחות בחלון
+- fleet-economy — ריצה-אחרונה 2026-10-17T22:39:19Z (failure) · אפס-הצלחות בחלון
 - sandbox-private — ריצה-אחרונה 2026-10-13T03:24:17Z (failure) · אפס-הצלחות בחלון
 - saos-sovereign-foundry — ריצה-אחרונה 2026-10-13T03:24:15Z (failure) · אפס-הצלחות בחלון
 - steem — ריצה-אחרונה 2026-10-17T05:43:19Z (null) · אפס-הצלחות בחלון
@@ -30,8 +30,8 @@
 - ops-control — NO-WORKFLOWS
 - sanbox — NO-WORKFLOWS
 - saos-coordination — NO-WORKFLOWS
-- saos-desk — NO-WORKFLOWS · שקט 68.5 שעות
-- saos-markets — NO-WORKFLOWS · שקט 19.3 שעות
+- saos-desk — NO-WORKFLOWS · שקט 69.1 שעות
+- saos-markets — NO-WORKFLOWS · שקט 19.9 שעות
 - saos-owner-channel — NO-WORKFLOWS
 - SovereignConsole — NO-WORKFLOWS
 - vault-home — NO-WORKFLOWS
