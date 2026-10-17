@@ -11,7 +11,7 @@ Roster: 1 accounts (owner + 0 soldiers) · Edge candidates: 1 · Intents drafted
 
 | Agent | Fill | Route | Out | Edge (marked) | Fees |
 |---|---|---|---|---|---|
-| headcorner | STEEM 3466µ → SBD | P3 | 1079µ SBD | 725µ (CEX-FAIR (SBD per STEEM)) | 8µ |
+| owner | STEEM 3466µ → SBD | P3 | 1079µ SBD | 725µ (CEX-FAIR (SBD per STEEM)) | 8µ |
 
 ## Size ladder (the large-sums law — exact BigInt, honest slippage)
 
@@ -44,7 +44,7 @@ Roster: 1 accounts (owner + 0 soldiers) · Edge candidates: 1 · Intents drafted
 
 Fills: 57 · Volume in: 1125887µ · Edge captured: -902216µ · Fees paid (LP revenue): 942µ
 - acct-00: 3 fills · vol 102710281029µ · edge -961-962-963µ · fees 000µ
-- headcorner: 1 fills · vol 3466µ · edge 725µ · fees 8µ
+- owner: 1 fills · vol 3466µ · edge 725µ · fees 8µ
 
 Laws: L1 L2 L3 L4 L5 L6 L7 L8 L9 L10 L11 L12 L13 L14 L15 L16 · Gate law: the counter-grid gate follows CR-0074 (open = GATED-ARMED-BROADCAST-READY, closed = PLAN-POOL-GATED-NOT-BROADCAST) — the mesh never fires a keyed rail either way.
 
