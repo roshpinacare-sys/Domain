@@ -1,23 +1,23 @@
 {
  "schema": "saos/fleet-heartbeat/1",
- "at": "2026-10-17T01:31:45.473Z",
+ "at": "2026-10-17T13:55:13.811Z",
  "account": "roshpinacare-sys",
  "summary": {
-  "repos": 40,
-  "PULSING": 12,
+  "repos": 43,
+  "PULSING": 13,
   "ACTIVE-NO-CRON": 4,
   "WARM": 10,
   "QUIET": 0,
   "NEVER_RAN": 0,
-  "NO_WORKFLOWS": 9,
+  "NO_WORKFLOWS": 10,
   "AUTO_DISABLED": 0,
-  "WALL_BLOCKED": 5,
+  "WALL_BLOCKED": 6,
   "ARCHIVED": 0,
   "API_ERROR": 0
  },
  "quiet": [
   {
-   "repo": "fleet-economy",
+   "repo": "execution-fabric",
    "verdict": "NO-WORKFLOWS",
    "staleHours": null
   },
@@ -27,27 +27,32 @@
    "staleHours": null
   },
   {
+   "repo": "ops-control",
+   "verdict": "NO-WORKFLOWS",
+   "staleHours": null
+  },
+  {
    "repo": "sanbox",
+   "verdict": "NO-WORKFLOWS",
+   "staleHours": null
+  },
+  {
+   "repo": "saos-coordination",
    "verdict": "NO-WORKFLOWS",
    "staleHours": null
   },
   {
    "repo": "saos-desk",
    "verdict": "NO-WORKFLOWS",
-   "staleHours": 48
+   "staleHours": 60.4
   },
   {
    "repo": "saos-markets",
    "verdict": "NO-WORKFLOWS",
-   "staleHours": null
+   "staleHours": 11.2
   },
   {
    "repo": "saos-owner-channel",
-   "verdict": "NO-WORKFLOWS",
-   "staleHours": null
-  },
-  {
-   "repo": "sovereign-runner-kit",
    "verdict": "NO-WORKFLOWS",
    "staleHours": null
   },
@@ -65,7 +70,7 @@
  "wallBlocked": [
   {
    "repo": "Defi",
-   "staleHours": 37.8,
+   "staleHours": 50.2,
    "lastRun": {
     "at": "2026-10-15T11:41:22Z",
     "event": "workflow_dispatch",
@@ -74,8 +79,18 @@
    }
   },
   {
+   "repo": "fleet-economy",
+   "staleHours": 5.1,
+   "lastRun": {
+    "at": "2026-10-17T08:47:35Z",
+    "event": "schedule",
+    "conclusion": "failure",
+    "workflow": "economy-beat"
+   }
+  },
+  {
    "repo": "sandbox-private",
-   "staleHours": 94.1,
+   "staleHours": 106.5,
    "lastRun": {
     "at": "2026-10-13T03:24:17Z",
     "event": "workflow_dispatch",
@@ -85,7 +100,7 @@
   },
   {
    "repo": "saos-sovereign-foundry",
-   "staleHours": 94.1,
+   "staleHours": 106.5,
    "lastRun": {
     "at": "2026-10-13T03:24:15Z",
     "event": "workflow_dispatch",
@@ -95,17 +110,17 @@
   },
   {
    "repo": "steem",
-   "staleHours": 70.2,
+   "staleHours": 8.2,
    "lastRun": {
-    "at": "2026-10-14T03:17:02Z",
+    "at": "2026-10-17T05:43:19Z",
     "event": "workflow_dispatch",
     "conclusion": null,
-    "workflow": "presence-matrix"
+    "workflow": "hive-custody-revival"
    }
   },
   {
    "repo": "Zip",
-   "staleHours": 86.6,
+   "staleHours": 99,
    "lastRun": {
     "at": "2026-10-13T10:53:15Z",
     "event": "workflow_dispatch",
@@ -146,6 +161,6 @@
  ],
  "heal": {
   "reEnabled": 0,
-  "dispatched": 1
+  "dispatched": 2
  }
 }
