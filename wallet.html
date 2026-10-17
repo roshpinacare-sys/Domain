@@ -1354,6 +1354,7 @@ async function boot() {
     jget("saos-live.json").then((l) => (LIVE = l)).catch(() => {}),
     pullDexState(), // the live kernel book: real balances + real orders
     pullDexWorld(), // R33: the depositor's USDS must be visible next to the SAOS balances
+    pullWatch(), // 9-b: the watcher's real deposit addresses feed the earn tab
     pullVitals(), // R69: the wallet page carries the measured network truth too
   ]);
   renderAll();
@@ -1362,6 +1363,7 @@ async function boot() {
   setInterval(() => jget("saos-live.json").then((l) => { LIVE = l; renderLive(); }).catch(() => {}), 120 * 1000);
   setInterval(pullDexState, 120 * 1000); // the kernel book rides the same cadence
   setInterval(pullDexWorld, 120 * 1000); // R33: the dex mirror rides the same cadence
+  setInterval(pullWatch, 120 * 1000); // 9-b: deposit addresses ride the same cadence
   setInterval(pullVitals, 120 * 1000); // R69: measured lines at the house freshness cadence
 }
 
@@ -1524,10 +1526,27 @@ function renderLive() {
     ? tape.slice(-12).reverse().map((f) => `<div class="op-row"><span class="k">${esc(String(f.pair || f.base || "") + (f.base ? "/" + String(f.quote || "") : ""))}</span><span style="flex:1;color:var(--dim)">${esc(String(f.note || JSON.stringify(f)).slice(0, 90))}</span><span class="when">${timeAgo(f.at || f.t || Date.now())}</span></div>`).join("")
     : `<div class="op-row"><span style="color:var(--faint)">${t("empty.ops")}</span></div>`;
 
-  /* earn: deposit addresses */
-  const addrs = Object.entries(cfg.addrs || {});
-  $("e-addrs").innerHTML = addrs.length
-    ? addrs.map(([cur, a]) => `
+  /* earn: deposit addresses — LIVE source first (dex/watch.json depositAddresses,
+     published by the real chain watcher), then the legacy weave cfg.addrs as
+     fallback; a network neither source publishes is simply not shown, and if
+     neither source has any address at all the honest empty state stays. */
+  const depMeta = [
+    ["depositTron", "TRON (TRC20)"],
+    ["depositEvm", "EVM (ERC20)"],
+    ["depositSol", "Solana (SPL)"],
+    ["depositBtc", "Bitcoin"],
+  ];
+  const depRows = [];
+  for (const [key, label] of depMeta) {
+    const a = WATCH && WATCH.depositAddresses ? WATCH.depositAddresses[key] : null;
+    if (typeof a === "string" && a.trim()) depRows.push([label, { addr: a.trim() }]);
+  }
+  const shown = new Set(depRows.map(([, a]) => a.addr));
+  for (const [cur, a] of Object.entries(cfg.addrs || {})) {
+    if (a && a.addr && !shown.has(a.addr)) depRows.push([cur, a]);
+  }
+  $("e-addrs").innerHTML = depRows.length
+    ? depRows.map(([cur, a]) => `
         <div class="addrbox" style="margin-bottom:10px">
           <span class="tag gold mono">${esc(cur)}</span>
           <span class="a" style="font-size:12px">${esc(a.addr)}</span>
@@ -1666,6 +1685,10 @@ function renderDexBalance() {
    (saos-live.json) stays only for token metadata (decimals) — its relay is dead,
    and a wallet that shows money from a dead book is a lie. */
 let DEXS = null;
+let WATCH = null; // dex/watch.json — the watcher's live deposit addresses (9-b)
+async function pullWatch() {
+  try { WATCH = await jget("dex/watch.json"); renderLive(); } catch { /* no watcher frame yet — the honest empty state stays, nothing invented */ }
+}
 async function pullDexState() {
   try { DEXS = await jget("dex/state.json"); renderWalletUI(); } catch { /* the mirror keeps the last frame — next round retries */ }
 }
