@@ -122,7 +122,7 @@ footer .wrap{font-size:12px;color:var(--dim);display:flex;justify-content:space-
     <div class="pulse">
       <div class="pcard"><div class="v" id="k-their-tvl">$50.0B</div><div class="l">TVL של 7 הענקים · חי מ-DefiLlama</div></div>
       <div class="pcard"><div class="v our" id="k-our-book">$69K</div><div class="l">הספר הפנימי שלנו · חי מ-world.json</div></div>
-      <div class="pcard"><div class="v our" id="k-agents">24</div><div class="l">סוכנים חיים שעושים את העבודה</div></div>
+      <div class="pcard"><div class="v our" id="k-agents">?</div><div class="l">סוכנים חיים שעושים את העבודה · נמדד חי מ-agents/registry.json</div></div>
       <div class="pcard"><div class="v our" id="k-gas">$0.00</div><div class="l">עלות-גז למפקיד אצלנו · מול $2-30 אצלם</div></div>
     </div>
 
@@ -247,7 +247,7 @@ footer .wrap{font-size:12px;color:var(--dim);display:flex;justify-content:space-
       <h2>מי עושה את העבודה <span class="en">who does things</span></h2>
       <p>
         אצלם · צוותי-פיתוח בשכר, מבקרי-אבטחה בחוזה, חקלאי-תשואה שנודדים אחרי הפליטה הבאה, וגריד-מוכנות של סוחרים.
-        אצלנו: <b>צי של <span class="mono" id="agent-count-inline">24</span> סוכנים על GitHub Actions</b> - ללא שרת-אם, ללא מפעיל-אנושי בלולאה, עם קבלה ציבורית לכל פעולה.
+        אצלנו: <b>צי של <span class="mono" id="agent-count-inline">?</span> סוכנים על GitHub Actions</b> - ללא שרת-אם, ללא מפעיל-אנושי בלולאה, עם קבלה ציבורית לכל פעולה. <span class="src">המספר נמדד חי מרישום-הסוכנים (agents/registry.json) · ? = המדידה טרם נקראה</span>
         הסוכנים סופרים-מלאי, מזניקים-גריד ברגע שדלק נוחת, שומרים-אוצר, מפרסמים-אמת. הכל בקוד-פתוח בריפאים הציבוריים.
       </p>
       <p>
@@ -335,7 +335,7 @@ footer .wrap{font-size:12px;color:var(--dim);display:flex;justify-content:space-
 var SNAP = {
   measuredAt: "2026-09-18T05:05:00Z",
   theirTvl: { aave: 17965649532, makerdao: 5632337799, "curve-dex": 1271558923, uniswap: 3610292907, morpho: 10255939437, ethena: 5172454076, hyperliquid: 6741095332 },
-  our: { height: 23000, bookUsd: 69092, incomeUsd: 456, agents: 24, deposits: 0,
+  our: { height: 23000, bookUsd: 69092, incomeUsd: 456, deposits: 0,
          custodyTrx: 2.000002, outboxTrx: 0.1, verdict: "WAIT",
          steem: 1.232, sbd: 0.049, weeklySp: 470.84, weeklyUsd: 24.9 },
   save: null
@@ -411,10 +411,13 @@ function renderOurs(){
     }
   });
   jget(B + "agents/registry.json").then(function(R){
-    if(!R || !R.agents) return;
+    if(!R || !Array.isArray(R.agents)) return; /* כנות: בלי מדידה נשאר ? - אף מספר מפוברק */
     var n = R.agents.length;
     el("k-agents").textContent = String(n);
     el("agent-count-inline").textContent = String(n);
+    var src = (R.measuredBy ? " · " + R.measuredBy.split(" ·")[0] : "");
+    el("k-agents").title = "agents/registry.json · measured " + (R.generatedAt || "") + src;
+    el("agent-count-inline").title = el("k-agents").title;
   });
   jget(B + "dex/watch.json").then(function(WD){
     if(WD && typeof WD.depositsTotal === "number"){

@@ -20,6 +20,10 @@
 // אפס-מפתחות: CoinGecko · alternative.me · RPC ציבורי של Steem · המראות
 // הציבוריות שלנו. כל נפילה נרשמת בכנות (null + סיבה) — שום דבר לא מדומה.
 // הסוכן לא זז כסף, לא חותם ולא מזניק אף מכונה: הוא רואה, מבין, מתעד.
+//
+// מאז netrun-8-b: בכל ריצה הסוכן גם מפרסם את agents/registry.json ממנוי-דינמי
+// של הארגון (fleet-truth, סעיף 6 למטה) — במקום רשימת-ריפואים קשיחה שכיסתה
+// 16 מתוך 40. כל מספר-סוכנים בדפים נגזר מהמדידה הזו, לעולם לא מקידוד-יד.
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
 
@@ -286,3 +290,279 @@ const callLine = call ? `${call}${resolvedNow ? ` · ${resolvedNow} resolved` : 
 console.log(`[moment-watch] regime=${regimeLabel} steem=${steemUsd ?? "down"} parity=${parity?.toFixed(4) ?? "n/a"} bid-edge=${edgeLine}`);
 console.log(`[moment-watch] call=${callLine} · stats ${callStats.resolved} resolved / ${callStats.hitRatePct ?? "–"}% hit`);
 console.log(`[moment-watch] insights=${insights.length} sources=${prices.error ? "DEGRADED (coingecko down)" : "ok"}`);
+
+/* ═══ 6) fleet-truth: רישום-הסוכנים באמת ממנוי-דינמי של הארגון (netrun-8-b) ═══
+   תלונת-הבעלים: הדפים הכריזו "24 סוכנים" מקידוד-יד בעוד המדידה החיה אחרת, והרישום
+   הקנוני כיסה 16 ריפואים מרשימה-קשיחה כשבארגון 40. מעתה הריצה הזו מפרסמת גם את
+   agents/registry.json מה-API של גיטהאב:
+     · מנוי-דינמי: GET /orgs/:org/repos?per_page=100 עם עימוד מלא דרך כותרת Link;
+     · GITHUB_TOKEN אופציונלי (כותרת Bearer שקטה — הטוקן לעולם לא נדפס), עם נפילה
+       כנה לאנונימי: בלי טוקן ניתנים למדידה רק הריפואים הפומביים, וזה נרשם בתוך
+       הרישום עצמו (measurement.scope/notes), לא מוסתר;
+     · כל סוכן נושא מדידה חיה מה-Actions API (ריצות, הצלחות, משכים, ריצה אחרונה);
+       measuredState (alive/idle/dead/degraded) נגזר מהנתונים בלבד, לצד אוצא-המילון
+       הקנוני (state) לתאימות-אחורה לדפים שכבר קוראים את הרישום;
+     · מסילות-פרטיות שאינן קריאות אנונימית נישאות מהמפקד הקודם (שנמדד בטוקן) עם
+       provenance (measuredAt + carried) והתיישנות מחושבת מהנתונים שלהן עצמן;
+     · שער-כנות: אם מדידת-ההיקף-החי לא הושלמה (מכסה/רשת) — הרישום הקיים אינו נדרס
+       וההשלמה נדחית בכנות לריצת-הענן השעתית (שם יש GITHUB_TOKEN). אפס המצאה. */
+
+const GH_ORG = "roshpinacare-sys";
+const GH_TOKEN = process.env.GITHUB_TOKEN || process.env.AGENTS_WATCH_TOKEN || "";
+const REGISTRY_OUT = process.env.REGISTRY_PATH || new URL("registry.json", import.meta.url).pathname;
+
+let ghRemaining = null; // יתרת-מכסה כפי שגיטהאב מדווח — לשער-התקציב על קריאות-ה-yml
+
+function ghHeaders() {
+  const h = { "User-Agent": "moment-watch fleet-truth", Accept: "application/vnd.github+json" };
+  if (GH_TOKEN) h.Authorization = `Bearer ${GH_TOKEN}`; // שקט: הטוקן לעולם לא נרשם ולא נדפס
+  return h;
+}
+
+async function gh(url) { // כשל-מכסה הוא תוצאה כנה עם סיבה — לא רגע להמצאה
+  const r = await fetch(url, { headers: ghHeaders() });
+  const rem = Number(r.headers.get("x-ratelimit-remaining"));
+  ghRemaining = Number.isFinite(rem) ? rem : null;
+  if (r.status === 403 || r.status === 429) {
+    const reset = r.headers.get("x-ratelimit-reset");
+    throw new Error(`github rate-limit (${r.status}) remaining=${r.headers.get("x-ratelimit-remaining")} reset=${reset ? new Date(Number(reset) * 1000).toISOString() : "?"}`);
+  }
+  if (!r.ok) throw new Error(`${url.replace("https://api.github.com", "")} -> ${r.status}`);
+  return r.json();
+}
+
+// מנוי-דינמי של הצי — עימוד מלא דרך כותרת Link, לא רשימה-קשיחה.
+// נמדד חי (netrun-8-b): roshpinacare-sys הוא חשבון-משתמש (type=User), לא ארגון —
+// /orgs/ מחזיר 404. לכן המנוי נעשה על שני הבסיסים לפי האמת: /orgs/ תחילה, וב-404
+// ממשיכים ל-/users/ — והבסיס שענה נרשם בכנות בתוך המדידה (measurement.enumEndpoint).
+let ghEnumEndpoint = null;
+async function orgRepos() {
+  for (const base of [`orgs/${GH_ORG}`, `users/${GH_ORG}`]) {
+    const all = [];
+    let url = `https://api.github.com/${base}/repos?per_page=100`;
+    let answered = false;
+    for (let page = 1; url && page <= 10; page++) {
+      const r = await fetch(url, { headers: ghHeaders() });
+      const rem = Number(r.headers.get("x-ratelimit-remaining"));
+      ghRemaining = Number.isFinite(rem) ? rem : null;
+      if (r.status === 403 || r.status === 429) throw new Error(`github rate-limit on fleet enumeration (${r.status})`);
+      if (r.status === 404) break; // הבסיס הזה לא קיים — כנות: ממשיכים לבסיס השני
+      if (!r.ok) throw new Error(`${base}/repos -> ${r.status}`);
+      answered = true;
+      const batch = await r.json();
+      if (!Array.isArray(batch)) throw new Error(`${base}/repos -> unexpected response shape`);
+      all.push(...batch);
+      const next = /<([^>]+)>;\s*rel="next"/.exec(r.headers.get("link") || "");
+      url = next ? next[1] : null;
+    }
+    if (answered) { ghEnumEndpoint = base; return all; }
+  }
+  throw new Error("fleet enumeration failed: /orgs/ and /users/ both answered non-listable (404)");
+}
+
+// הטריגר והמדינות — אותם חוקי-אמת כמו המפקד הקנוני (agents/watch.mjs)
+function triggerSummary(yml) {
+  if (!yml) return "unknown";
+  const has = (re) => re.test(yml);
+  const isSched = has(/(^|\n)\s*schedule\s*:/) || has(/-\s*cron\s*:/);
+  const isDisp  = has(/(^|\n)\s*workflow_dispatch\s*:/);
+  const isPush  = has(/(^|\n)\s*push\s*:/) || has(/\[\s*['"]?push/);
+  const isPR    = has(/(^|\n)\s*pull_request\s*:/) || has(/['"]?pull_request['"]?\s*,/);
+  const isWR    = has(/(^|\n)\s*workflow_run\s*:/);
+  const isRD    = has(/(^|\n)\s*repository_dispatch\s*:/);
+  const parts = [];
+  if (isSched) {
+    const crons = [...yml.matchAll(/cron\s*:\s*['"]([^'"]+)['"]/g)].map((m) => m[1]);
+    parts.push(crons.length ? "schedule " + crons.join(", ") : "schedule");
+  }
+  if (isPush) parts.push("on push");
+  if (isPR) parts.push("on PR");
+  if (isWR) parts.push("on workflow_run");
+  if (isRD) parts.push("on repository_dispatch");
+  if (isDisp) parts.push("manual dispatch");
+  return parts.join(" + ") || "event";
+}
+
+function stateOf(lastConcl, lastAt, trigger, name) {
+  if (name === "pages build and deployment") return "auto"; // GitHub מנהל אותו בעצמו
+  const ageH = lastAt ? (Date.now() - Date.parse(lastAt)) / 36e5 : Infinity;
+  const isSched  = /schedule/.test(trigger || "");
+  const isEvent  = /on (push|PR|workflow_run|repository_dispatch)/.test(trigger || "");
+  const isManual = /manual dispatch/.test(trigger || "");
+  const manualOnly = isManual && !isSched && !isEvent;
+  if (lastConcl === "failure") {
+    if (ageH < 48) return "degraded";
+    if (isSched) return "stale";
+    return manualOnly ? "backup" : "dormant";
+  }
+  if (lastConcl === "success") {
+    if (manualOnly) return "backup";
+    if (isSched) return ageH < 48 ? "live" : "stale";
+    return ageH < 168 ? "on-demand" : "dormant";
+  }
+  return manualOnly ? "backup" : "dormant";
+}
+
+// alive/idle/dead — נגזר אמת מהנתונים בלבד, בלי שום תלות בטריגר או בקטלוג
+function measuredState(conclusion, at) {
+  if (!at) return "dead"; // אין ריצה מתועדת כלל
+  const ageH = (Date.now() - Date.parse(at)) / 36e5;
+  if (!Number.isFinite(ageH)) return "dead";
+  if (conclusion === "failure" && ageH < 48) return "degraded";
+  if (conclusion === "success" && ageH < 48) return "alive";
+  return ageH < 168 ? "idle" : "dead";
+}
+
+const GENERIC_TRUTH = {
+  layer: "PUBLISH",
+  role: {
+    en: "Workflow measured live by the fleet-truth run (moment-watch) straight from the GitHub Actions API - runs, timing and state strictly from measured data; no catalog entry yet.",
+    he: "Workflow שנמדד חי על-ידי ריצת fleet-truth (moment-watch) ישירות מה-API של GitHub Actions - ריצות, תזמון ומצב נגזרים מהנתונים בלבד; עדיין אין לו רישום בקטלוג.",
+  },
+  input: { en: "per workflow definition", he: "לפי הגדרת ה-workflow" },
+  output: { en: "per workflow definition", he: "לפי הגדרת ה-workflow" },
+};
+
+try {
+  const liveRepos = await orgRepos(); // כשל כאן = כשל-כנה של כל מדידת-הצי (הרישום נשאר כולו)
+  const nowIso = new Date().toISOString().replace(/\.\d+Z$/, "Z");
+  const liveByName = new Map(liveRepos.map((r) => [r.name, r]));
+  const liveNames = [...liveByName.keys()];
+
+  const prev = existsSync(REGISTRY_OUT) ? JSON.parse(readFileSync(REGISTRY_OUT, "utf8")) : null;
+  const prevById = new Map((prev?.agents ?? []).map((a) => [a.id, a]));
+  const snap = localJson(new URL("gh-snapshot.json", import.meta.url).pathname); // רוסטה שנמדדה בטוקן בריצה השעתית
+  const snapRepos = Array.isArray(snap?.repos) ? snap.repos : [];
+
+  // רוסטת-הריפואים: מה שנראה חי עכשיו + מה שידוע ממקורות-מדידה קודמים (עם provenance)
+  const roster = new Map();
+  for (const r of liveRepos) roster.set(r.name, { name: r.name, visibility: r.visibility ?? "public", archived: !!r.archived, provenance: "live-org-enumeration" });
+  for (const r of snapRepos) if (!roster.has(r.name)) roster.set(r.name, { name: r.name, visibility: r.visibility ?? "unknown", archived: !!r.archived, provenance: `gh-snapshot (token-measured ${snap.generatedAt ?? "?"})` });
+  for (const name of [...new Set([...(prev?.reposWithAgents ?? []), ...(prev?.reposIdle ?? [])])]) if (!roster.has(name)) roster.set(name, { name, visibility: "unknown", archived: false, provenance: "previous registry" });
+
+  const notes = [];
+  const plan = []; // כל ה-workflows הפעילים בריפואים-החיים
+  let unmeasured = 0;
+  for (const repo of liveNames) {
+    let wfs;
+    try { wfs = (await gh(`https://api.github.com/repos/${GH_ORG}/${repo}/actions/workflows?per_page=100`)).workflows || []; }
+    catch (e) { notes.push(`workflows ${repo}: ${e.message}`); unmeasured++; continue; }
+    for (const w of wfs) if (w.state === "active") plan.push({ repo, w });
+  }
+
+  // מדידת-החיות לכל סוכן: ריצות אמיתיות מה-Actions API (מדגם 100 אחרונות, כמו המפקד הקנוני)
+  const measured = [];
+  const declaredNeverRan = [];
+  for (const { repo, w } of plan) {
+    let runs;
+    try { runs = (await gh(`https://api.github.com/repos/${GH_ORG}/${repo}/actions/workflows/${w.id}/runs?per_page=100`)).workflow_runs || []; }
+    catch (e) { notes.push(`runs ${repo}/${w.name}: ${e.message}`); unmeasured++; continue; }
+    if (!runs.length) { declaredNeverRan.push({ repo, name: w.name, path: w.path }); continue; } // מוצהר אך מעולם לא רץ — נרשם, לא מוסתר
+    const succ = runs.filter((r) => r.conclusion === "success").length;
+    const fail = runs.filter((r) => r.conclusion === "failure").length;
+    const durs = runs.slice(0, 40).map((r) => {
+      const s = Date.parse(r.run_started_at || r.created_at), e = Date.parse(r.updated_at);
+      return Number.isFinite(s) && Number.isFinite(e) ? (e - s) / 1000 : null;
+    }).filter((x) => x !== null && x >= 0);
+    const last = runs.find((r) => r.conclusion) || runs[0]; // הריצה האחרונה שהושלמה — לא ריצה בעיצומה
+    measured.push({ repo, w, runs, last, succ, fail, durs });
+  }
+
+  // טריגרים: מקובץ ה-workflow החי כשהתקציב מאפשר, אחרת מהמפקד הקודם, אחרת "unknown" כנה
+  const fresh = [];
+  for (const m of measured) {
+    const { repo, w, runs, last, succ, fail, durs } = m;
+    const id = `${repo.toLowerCase()}-${w.name.toLowerCase().replace(/ /g, "-")}`;
+    const prevEntry = prevById.get(id);
+    let trigger = "unknown";
+    if (ghRemaining === null || ghRemaining > 8) {
+      try {
+        const c = await gh(`https://api.github.com/repos/${GH_ORG}/${repo}/contents/${encodeURIComponent(w.path)}?ref=HEAD`);
+        trigger = triggerSummary(Buffer.from(c.content || "", "base64").toString("utf8"));
+      } catch { trigger = prevEntry?.trigger ?? "unknown"; }
+    } else {
+      trigger = prevEntry?.trigger ?? "unknown";
+    }
+    const vis = liveByName.get(repo)?.visibility ?? "public";
+    const ms = measuredState(last.conclusion, last.run_started_at);
+    const st = trigger !== "unknown"
+      ? stateOf(last.conclusion, last.run_started_at, trigger, w.name)
+      : (w.name === "pages build and deployment" ? "auto" : ms === "alive" ? "live" : ms === "degraded" ? "degraded" : "dormant");
+    fresh.push({
+      id, name: w.name, repo,
+      visibility: vis, rail: vis === "public" ? "public" : "private",
+      trigger,
+      schedule: /schedule/.test(trigger) ? trigger : (prevEntry?.schedule || trigger),
+      layer: prevEntry?.layer ?? GENERIC_TRUTH.layer,
+      role: prevEntry?.role ?? GENERIC_TRUTH.role,
+      input: prevEntry?.input ?? GENERIC_TRUTH.input,
+      output: prevEntry?.output ?? GENERIC_TRUTH.output,
+      ...(prevEntry?.migratedTo ? { migratedTo: prevEntry.migratedTo } : {}),
+      state: st,
+      measuredState: ms,
+      stats: { runs_sampled: runs.length, success: succ, failure: fail, other: runs.length - succ - fail,
+        successRate: Math.round((1000 * succ) / runs.length) / 10, avgDurS: durs.length ? Math.round((10 * durs.reduce((a, b) => a + b, 0)) / durs.length) / 10 : null },
+      lastRun: { at: last.run_started_at, conclusion: last.conclusion },
+      measuredAt: nowIso,
+    });
+  }
+
+  // נישאים: סוכני-מסילות שלא נמדדו בריצה זו (אנונימי ← פרטי) נישאים מהמפקד הקודם
+  // עם provenance. ריפו שנמדד עכשיו וה-workflow שלו לא נראה — נמחק באמת ונוריד אותו בכנות.
+  const freshIds = new Set(fresh.map((a) => a.id));
+  const carried = [];
+  for (const a of (prev?.agents ?? [])) {
+    if (freshIds.has(a.id)) continue;
+    if (liveNames.includes(a.repo)) continue;
+    carried.push({
+      ...a,
+      measuredAt: prev?.generatedAt ?? null,
+      carried: true,
+      state: (a.lastRun?.at && a.trigger ? stateOf(a.lastRun.conclusion, a.lastRun.at, a.trigger, a.name) : a.state),
+      measuredState: measuredState(a.lastRun?.conclusion, a.lastRun?.at),
+    });
+  }
+
+  const all = [...fresh, ...carried];
+  const order = { live: 0, "on-demand": 1, auto: 2, backup: 3, stale: 4, degraded: 5, dormant: 6 };
+  all.sort((a, b) => (order[a.state] ?? 9) - (order[b.state] ?? 9) || a.repo.localeCompare(b.repo) || a.name.localeCompare(b.name));
+
+  const withAgent = [...new Set(all.map((a) => a.repo))];
+  const rosterNames = [...roster.keys()];
+  const liveScopeComplete = unmeasured === 0; // כל ריפו-חי נפקד וכל workflow קיבל מדידת-ריצות
+  const fullyComplete = liveScopeComplete && carried.length === 0 && liveRepos.length === rosterNames.length;
+
+  if (!liveScopeComplete) {
+    // שער-הכנות: מדידה חלקית לא דורסת רישום שלם — נדחה בכנות לריצת-הענן
+    console.log(`[moment-watch] fleet-truth: INCOMPLETE (${unmeasured} unmeasured units) — agents/registry.json NOT overwritten; deferred to the hourly CI run (GITHUB_TOKEN)`);
+    for (const n of notes.slice(0, 5)) console.log(`[moment-watch]   · ${n}`);
+  } else {
+    const reg = {
+      ok: true,
+      generatedAt: nowIso,
+      source: "github-actions-api",
+      measuredBy: "Domain/agents/moment-watch.mjs · dynamic fleet enumeration (org-or-user endpoint, Link-paginated), optional GITHUB_TOKEN, honest anonymous fallback",
+      reposTotal: rosterNames.length,
+      reposMeasured: liveNames.length,
+      reposWithAgents: rosterNames.filter((r) => withAgent.includes(r)),
+      reposIdle: rosterNames.filter((r) => !withAgent.includes(r)),
+      agents: all,
+      ...(declaredNeverRan.length ? { declaredNeverRan } : {}),
+      measurement: {
+        anonymous: !GH_TOKEN,
+        complete: fullyComplete,
+        liveScopeComplete,
+        scope: GH_TOKEN ? "whole fleet (token)" : "public repos measured live; private rails carried from the previous token-measured census (provenance: measuredAt)",
+        enumEndpoint: ghEnumEndpoint,
+        orgReposSeen: liveRepos.length,
+        carriedCount: carried.length,
+        ...(notes.length ? { notes } : {}),
+      },
+    };
+    writeFileSync(REGISTRY_OUT, JSON.stringify(reg, null, 1) + "\n");
+    const aliveN = all.filter((a) => a.measuredState === "alive").length;
+    console.log(`[moment-watch] fleet-truth: ${all.length} agents (${aliveN} alive by data) · repos measured ${liveNames.length}/${rosterNames.length} · carried ${carried.length} · declared-never-ran ${declaredNeverRan.length} · scope=${GH_TOKEN ? "org-wide (token)" : "public-only (anonymous)"}`);
+  }
+} catch (e) {
+  console.log(`[moment-watch] fleet-truth: FAILED HONESTLY (${e.message}) — agents/registry.json untouched; regeneration deferred to the hourly CI run (GITHUB_TOKEN)`);
+}
