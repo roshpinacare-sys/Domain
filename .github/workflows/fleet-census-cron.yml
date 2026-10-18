@@ -125,7 +125,7 @@ jobs:
             echo "stable payloads identical (only the at-stamps moved) — clean exit, no noise commit"
           else
             git commit -m "fleet-census(ci): artifact+delta+claims $(date -u +%FT%TZ) [skip ci]"
-            git -c rebase.autoStash=true pull --rebase origin main
+            git -c rebase.autoStash=true pull --rebase -X theirs origin main
             bash scripts/safe-push.sh
           fi
 
