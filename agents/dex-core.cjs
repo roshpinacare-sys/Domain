@@ -1698,7 +1698,7 @@ function withLawFees(pools, book, nowMs) { return (pools || []).map((p) => withL
  *  to a state copy atomically. Returns either a refusal state (movedNothing, ledger:null)
  *  or the full settlement: {st, ops, fills, rejects, notes, batchId, processedBatches, cons,
  *  consOk, att, meshPnl, batchResult, book fields}. */
-function settleBatch(prev, queue, feed, now, gate, lane, feeBook) {
+function settleBatch(prev, queue, feed, now, gate, lane, feeBook, rosterForProofs) {
   const g = gate || ownerGate('BATCH-SETTLE');
   const l = lane || stagedLaneCheck('dex-batch-settle');
   const fb = feeBook === undefined ? lawFeeBook() : feeBook;
@@ -1724,7 +1724,7 @@ function settleBatch(prev, queue, feed, now, gate, lane, feeBook) {
   // T-49: freshness is judged at the SETTLE's trade time (threaded) — never wall-clock
   const settleNowMs = Number.isFinite(Date.parse(now)) ? Date.parse(now) : Date.now();
   const lawPools = withLawFees(prev.pools, fb, settleNowMs);
-  const m = clearBatchUniform({ ...prev, pools: lawPools }, queue, feed, now);
+  const m = clearBatchUniform({ ...prev, pools: lawPools }, queue, feed, now, rosterForProofs);
   // apply on copies — atomic across the WHOLE batch (the walk runs on the SAME law-fee pools,
   // so the uniform clearing price INCLUDES the engine fee law; the BASE fee is restored at commit)
   const st = { vault: JSON.parse(JSON.stringify(prev.vault)), accounts: JSON.parse(JSON.stringify(prev.accounts)), pools: JSON.parse(JSON.stringify(lawPools)), seq: prev.seq || 0 };
@@ -1978,7 +1978,14 @@ function selftestBatch() {
  *  fresh process, zero network, gate/stasis/feeBook injected (purity law). */
 function selftestBatchSettle() {
   const c = []; const ok = (name, cond) => c.push({ name, ok: !!cond });
-  const roster = rosterLaw();
+  // proof-set law (same as selftestBatch): live head always trades, fixture proof-traders
+  // complete the 3-trader set when the measured roster is below it — the R77 laws are
+  // mathematical and must stay provable in EVERY roster world.
+  const live = rosterLaw();
+  const traders = [...live];
+  let proofIdx = 0;
+  while (traders.length < 3) traders.push(`proof-trader-${String(++proofIdx).padStart(2, '0')}`);
+  const roster = traders;
   const [A, B, C] = roster;
   const mkCore = (extra) => {
     // balanced book (the R44 mkBook law): custody = pooled + free claims, per real asset
@@ -2014,12 +2021,12 @@ function selftestBatchSettle() {
   const core = mkCore();
   const q = (rows) => ({ batch: 'B77-1', at: '2026-10-07T10:00:00.000Z', intents: rows });
   const intents = q([{ agent: A, from: 'STEEM', to: 'SBD', amountIn: '20000', minOut: null }, { agent: B, from: 'STEEM', to: 'SBD', amountIn: '20000', minOut: null }]);
-  for (const [name, r] of [['gate-closed-refuses', settleBatch(core, intents, feed, 'x', gateAbsent, laneOpen, null)], ['lane-halted-refuses', settleBatch(core, intents, feed, 'x', gateOpen, laneShut, null)], ['no-genesis-refuses', settleBatch(null, intents, feed, 'x', gateOpen, laneOpen, null)], ['no-intents-refuses', settleBatch(core, q([]), feed, 'x', gateOpen, laneOpen, null)]]) {
+  for (const [name, r] of [['gate-closed-refuses', settleBatch(core, intents, feed, 'x', gateAbsent, laneOpen, null, roster)], ['lane-halted-refuses', settleBatch(core, intents, feed, 'x', gateOpen, laneShut, null, roster)], ['no-genesis-refuses', settleBatch(null, intents, feed, 'x', gateOpen, laneOpen, null, roster)], ['no-intents-refuses', settleBatch(core, q([]), feed, 'x', gateOpen, laneOpen, null, roster)]]) {
     ok(name, r.movedNothing === true && r.ledger === null && r.verdict.length > 0);
   }
-  ok('settled-already-refuses', settleBatch(mkCore({ processedBatches: ['B77-1'] }), intents, feed, 'x', gateOpen, laneOpen, null).verdict.indexOf('SETTLED-ALREADY') === 0);
+  ok('settled-already-refuses', settleBatch(mkCore({ processedBatches: ['B77-1'] }), intents, feed, 'x', gateOpen, laneOpen, null, roster).verdict.indexOf('SETTLED-ALREADY') === 0);
   // 4 · the one-sided residual batch SETTLES with conservation + attestation
-  const r = settleBatch(core, intents, feed, '2026-10-07T10:00:00.000Z', gateOpen, laneOpen, null);
+  const r = settleBatch(core, intents, feed, '2026-10-07T10:00:00.000Z', gateOpen, laneOpen, null, roster);
   ok('batch-settles', r.verdict === 'BATCH-SETTLED' && r.movedNothing === false && r.traders === 2);
   ok('conservation-holds', r.consOk === true && r.ledger.cons.every((x) => x.ok));
   ok('one-price-uniform', r.clears.length === 1 && r.clears[0].traders.every((t) => t.uniformOut === r.clears[0].traders[0].uniformOut));
@@ -2035,7 +2042,7 @@ function selftestBatchSettle() {
     { agent: B, from: 'STEEM', to: 'SBD', amountIn: '19000', minOut: null },  // sell STEEM, buy SBD
   ]);
   const poolsBefore = JSON.stringify(core.pools);
-  const r2 = settleBatch(core, twoSided, feed, '2026-10-07T10:00:00.000Z', gateOpen, laneOpen, null);
+  const r2 = settleBatch(core, twoSided, feed, '2026-10-07T10:00:00.000Z', gateOpen, laneOpen, null, roster);
   ok('two-sided-nets-internally', r2.verdict === 'BATCH-SETTLED' && r2.internalRows.length === 2 && r2.poolClears <= 2); // per-row flooring leaves ±1µ residuals that clear the pools honestly
   ok('conservation-holds-2', r2.consOk === true);
   ok('match-at-fair', r2.internalRows.every((row) => Math.abs(Number(row.from === 'SBD' ? BigInt(row.inMu) - BigInt(row.outMu) * 105446700n / 1000000000n : BigInt(row.outMu) - BigInt(row.inMu) * 105446700n / 1000000000n)) <= 1)); // the match price is the measured fair within the 1µ floor
@@ -2043,11 +2050,11 @@ function selftestBatchSettle() {
   ok('pure-no-mutation-of-input', after === poolsBefore); // the settle law: the caller's state is NEVER mutated (copies only)
   // 6 · a permuted queue settles to a byte-identical LEDGER (order-invariance on the settle path)
   const perm = q([{ agent: B, from: 'STEEM', to: 'SBD', amountIn: '19000', minOut: null }, { agent: A, from: 'SBD', to: 'STEEM', amountIn: '2000', minOut: null }]);
-  const r3 = settleBatch(core, perm, feed, '2026-10-07T10:00:00.000Z', gateOpen, laneOpen, null);
+  const r3 = settleBatch(core, perm, feed, '2026-10-07T10:00:00.000Z', gateOpen, laneOpen, null, roster);
   ok('permuted-queue-identical-ledger', r3.verdict === 'BATCH-SETTLED' && r3.att === r2.att);
   // 7 · the fee law rides the batch: a law book raising P3 25→50 changes the uniform price and the hop rows say lawFee
   const lawBook = { ok: true, publishedAt: '2026-10-07T09:00:00.000Z', pools: [{ pool: 'P3', sigmaBps: 25, feeBps: 50 }] };
-  const r4 = settleBatch(core, intents, feed, '2026-10-07T10:00:00.000Z', gateOpen, laneOpen, lawBook);
+  const r4 = settleBatch(core, intents, feed, '2026-10-07T10:00:00.000Z', gateOpen, laneOpen, lawBook, roster);
   const hop = (r4.fills.find((f) => f.kind === 'BATCH-CLEAR') || {}).hops || [];
   ok('law-fee-rides-the-batch', r4.verdict === 'BATCH-SETTLED' && hop.some((h) => h.lawFee === true && h.feeBpsUsed === 50) && BigInt(r4.clears[0].aggOut) < BigInt(r.clears[0].aggOut));
   ok('law-fee-ledger-fee-stays-base', r4.st.pools.find((p) => p.id === 'P3').feeBps === 25); // the ledger fee NEVER fee-creeps
