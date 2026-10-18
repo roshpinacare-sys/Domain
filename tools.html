@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>קטלוג-היכולות · ריבונות SAOS</title>
+<style>
+  :root { --fg:#e8e6e1; --faint:#8a877f; --bg:#0d0e11; }
+  body { background:var(--bg); color:var(--fg); font-family:system-ui,'Segoe UI',sans-serif; margin:0; padding:48px 20px; line-height:1.65; }
+  main { max-width:1000px; margin:0 auto; }
+  h1 { font-size:28px; margin:0 0 6px; } h2 { font-size:19px; margin-top:36px; }
+  .sub { color:var(--faint); font-size:13px; }
+  table { width:100%; border-collapse:collapse; background:#14151a; border:1px solid #26272e; border-radius:12px; overflow:hidden; margin-top:14px; }
+  th, td { padding:8px 12px; text-align:right; border-bottom:1px solid #1f2027; font-size:13.5px; vertical-align:top; }
+  th { color:var(--faint); font-weight:600; font-size:12px; }
+  tr:last-child td { border-bottom:none; }
+  code { color:#d8b46a; font-size:12px; } a { color:#d8b46a; text-decoration:none; }
+  .ok { color:#7dd087; } .warn { color:#e0b45e; }
+  ul { padding-inline-start:20px; } li { margin:5px 0; font-size:13.5px; }
+  footer { margin-top:40px; color:var(--faint); font-size:12px; text-align:center; }
+</style>
+</head>
+<body>
+<main>
+  <h1>קטלוג-היכולות</h1>
+  <p class="sub">מה הריבונות יודעת לעשות — כל איבר, עורק, וידע · נבנה אוטונומית · 2026-10-18T04:36:08.785Z</p>
+
+  <h2>האיברים (organs) · מה כל אחד עושה ומתי פעם אחרונה</h2>
+  <table><tr><th>איבר</th><th>תפקיד</th><th>דופק-אחרון</th></tr>
+  <tr><td><code>health-probe</code></td><td>ראש השרשרת + git tip (קריאה-בלבד)</td><td class="warn">—</td></tr>
+  <tr><td><code>fleet-report</code></td><td>מלאי מנוע + קבלות אחרונות (קריאה-בלבד)</td><td class="warn">—</td></tr>
+  <tr><td><code>minutes-census</code></td><td>בריאות-צי-החישוב-הציבורי (חסר-מפתחות, API ציבורי בלבד;</td><td class="warn">—</td></tr>
+  <tr><td><code>self-heal</code></td><td>הריאה-האוטונומית t10: קורא פסק-אמת, מצית עורקים-סטיים (dispatch</td><td class="warn">—</td></tr>
+  <tr><td><code>scout</code></td><td>איבר-הצייד t12 · owner order: צינור-הלמידה — sources (pinoyfreecoder</td><td class="warn">—</td></tr>
+  <tr><td><code>treasury-topup</code></td><td>מבצע-איזון-האוצר P2 · t12 · owner-approved: §3 — אוצר ≥3000 SP.</td><td class="warn">—</td></tr>
+  <tr><td><code>builder</code></td><td>איבר-הבונה t13 · owner order: &quot;אני רוצה בניה שיפור תמיד ולא רק</td><td class="warn">—</td></tr>
+  <tr><td><code>growth-watch</code></td><td>איבר-הצמיחה t13 · owner order: &quot;לוודא התפתחות וגדילה ולא סגירה,</td><td class="warn">—</td></tr>
+  </table>
+
+  <h2>העורקים (workflows) · קצב-הפעמעום</h2>
+  <table><tr><th>עורק</th><th>cron</th></tr>
+  <tr><td><code>artery-builder.yml</code></td><td>17 * * * *</td></tr>
+  <tr><td><code>artery-catchup.yml</code></td><td>7,37 * * * *</td></tr>
+  <tr><td><code>artery-decision-truth.yml</code></td><td>16,46 * * * *</td></tr>
+  <tr><td><code>artery-defi.yml</code></td><td>17 */6 * * *</td></tr>
+  <tr><td><code>artery-desk.yml</code></td><td>41 */2 * * *</td></tr>
+  <tr><td><code>artery-fleet.yml</code></td><td>25 */2 * * *</td></tr>
+  <tr><td><code>artery-flow.yml</code></td><td>20 */3 * * *</td></tr>
+  <tr><td><code>artery-grid.yml</code></td><td>*/30 * * * *</td></tr>
+  <tr><td><code>artery-growth.yml</code></td><td>19 6 * * *</td></tr>
+  <tr><td><code>artery-integrity.yml</code></td><td>25 * * * *</td></tr>
+  <tr><td><code>artery-pacer.yml</code></td><td>7 2 * * *</td></tr>
+  <tr><td><code>artery-participation.yml</code></td><td>13 * * * *</td></tr>
+  <tr><td><code>artery-scout.yml</code></td><td>18 5,14 * * *</td></tr>
+  <tr><td><code>artery-scribe.yml</code></td><td>5 3 * * *</td></tr>
+  <tr><td><code>artery-selfheal.yml</code></td><td>11,41 * * * *</td></tr>
+  <tr><td><code>artery-treasury.yml</code></td><td>33 6 * * *</td></tr>
+  <tr><td><code>artery-wallet.yml</code></td><td>40 * * * *</td></tr>
+  <tr><td><code>artery-watch.yml</code></td><td>*/15 * * * *</td></tr>
+  <tr><td><code>claims-intake.yml</code></td><td>41 */4 * * *</td></tr>
+  <tr><td><code>compute-rearm.yml</code></td><td>23 * * * *</td></tr>
+  <tr><td><code>contract-check.yml</code></td><td>23/30 * * * *</td></tr>
+  <tr><td><code>directive-bus.yml</code></td><td>*/30 * * * * · 13,43 * * * * · 27,57 * * * *</td></tr>
+  <tr><td><code>estate-relay.yml</code></td><td>47 3 * * *</td></tr>
+  <tr><td><code>estate-vault.yml</code></td><td>23 2 * * *</td></tr>
+  <tr><td><code>evo-windows-staleness.yml</code></td><td>37 6 * * 2</td></tr>
+  <tr><td><code>executor.yml</code></td><td>dispatch-only</td></tr>
+  <tr><td><code>federation.yml</code></td><td>19,49 * * * *</td></tr>
+  <tr><td><code>fleet-heal.yml</code></td><td>5,35 * * * *</td></tr>
+  <tr><td><code>fleet-yield.yml</code></td><td>11 */2 * * *</td></tr>
+  <tr><td><code>floating-builds.yml</code></td><td>17 */2 * * *</td></tr>
+  <tr><td><code>fresh-oracle.yml</code></td><td>7 5 * * 3</td></tr>
+  <tr><td><code>hive-probe.yml</code></td><td>41 5 * * * · 23 14 * * *</td></tr>
+  <tr><td><code>identity-guard.yml</code></td><td>dispatch-only</td></tr>
+  <tr><td><code>key-proof.yml</code></td><td>23 4 * * 3</td></tr>
+  <tr><td><code>network-awareness.yml</code></td><td>13,43 * * * *</td></tr>
+  <tr><td><code>network-self-awareness.yml</code></td><td>23 */6 * * *</td></tr>
+  <tr><td><code>office-growth.yml</code></td><td>41 */6 * * *</td></tr>
+  <tr><td><code>operator-routing.yml</code></td><td>23,53 * * * *</td></tr>
+  <tr><td><code>profit-oracle.yml</code></td><td>29 5 * * *</td></tr>
+  <tr><td><code>research-lane.yml</code></td><td>23 5 * * 1</td></tr>
+  <tr><td><code>retro.yml</code></td><td>17 5 * * 1</td></tr>
+  <tr><td><code>run-score.yml</code></td><td>37 */3 * * *</td></tr>
+  <tr><td><code>selfhood.yml</code></td><td>7/20 * * * *</td></tr>
+  <tr><td><code>sovereign-decider.yml</code></td><td>9,39 * * * *</td></tr>
+  <tr><td><code>sovereign-state.yml</code></td><td>3,18,33,48 * * * *</td></tr>
+  <tr><td><code>sovereign.yml</code></td><td>21 * * * *</td></tr>
+  <tr><td><code>token-watchdog.yml</code></td><td>40 5 * * *</td></tr>
+  <tr><td><code>value-scan.yml</code></td><td>17,47 * * * *</td></tr>
+  <tr><td><code>verifier.yml</code></td><td>7,37 * * * * · 23,53 * * * *</td></tr>
+  <tr><td><code>world-evolver.yml</code></td><td>19 */2 * * *</td></tr>
+  </table>
+
+  <h2>הידע שנאסף · סקירה-והנדסה (clean-room)</h2>
+  <table><tr><th>מקור</th><th>פסק</th><th>מה לומדים ממנו</th></tr>
+  <tr><td><a href="https://github.com/anthropics/claude-plugins-official" target="_blank" rel="noopener">anthropics/claude-plugins-official</a></td><td>SAFE_TO_STUDY</td><td>Official, Anthropic-managed directory of high quality Claude Code Plugins.</td></tr>
+  <tr><td><a href="https://github.com/MadsLorentzen/ai-job-search" target="_blank" rel="noopener">MadsLorentzen/ai-job-search</a></td><td>SAFE_TO_STUDY</td><td>The job search that runs on your machine. AI job application framework built on Claude Code: evaluate postings, tailor CVs, write cover lett</td></tr>
+  <tr><td><a href="https://github.com/affaan-m/ECC" target="_blank" rel="noopener">affaan-m/ECC</a></td><td>SAFE_TO_STUDY</td><td>The agent harness performance optimization system. Skills, instincts, memory, security, and research-first development for Claude Code, Code</td></tr>
+  <tr><td><a href="https://github.com/HKUDS/CLI-Anything" target="_blank" rel="noopener">HKUDS/CLI-Anything</a></td><td>SAFE_TO_STUDY</td><td>&quot;CLI-Anything: Making ALL Software Agent-Native&quot; -- CLI-Hub: https://clianything.cc/</td></tr>
+  <tr><td><a href="https://github.com/K-Dense-AI/scientific-agent-skills" target="_blank" rel="noopener">K-Dense-AI/scientific-agent-skills</a></td><td>SAFE_TO_STUDY</td><td>Turn any AI agent into an AI Scientist. The #1 Agent Skills library for science, used by 250,000+ scientists worldwide. 177 ready-to-use val</td></tr>
+  <tr><td><a href="https://github.com/akitaonrails/ai-memory" target="_blank" rel="noopener">akitaonrails/ai-memory</a></td><td>SAFE_TO_STUDY</td><td>Solution for long term memory for agent coding CLIs and to facilitate handoff between different agent vendors</td></tr>
+  <tr><td><a href="https://github.com/android/skills" target="_blank" rel="noopener">android/skills</a></td><td>SAFE_TO_STUDY</td><td>nding?since=daily&amp;quot;,&amp;quot;user_id&amp;quot;:null}}&quot; data-hydro-click-hmac=&quot;1f226507621fd40f79c6b4d60d3744db393620b85354224f58a63b7ae7070f7c&quot;</td></tr>
+  <tr><td><a href="https://github.com/stablyai/orca" target="_blank" rel="noopener">stablyai/orca</a></td><td>SAFE_TO_STUDY</td><td>Orca is the place for working with a fleet of agents (e.g. Grok Bot, Claude Code). Run any coding agent with your own subscription. Availabl</td></tr>
+  </table>
+
+  <h2>קבלות-חיות · מי פעם אחרונה</h2>
+  <ul>
+  <li><code>fleet-participation</code> — ? · אין-מדידה</li>
+  <li><code>builder</code> — 1 דק׳ · ok</li>
+  <li><code>growth</code> — 2 שע׳ · ok</li>
+  <li><code>scout</code> — 2 שע׳ · ok</li>
+  <li><code>self-heal</code> — 2 שע׳ · ok</li>
+  <li><code>treasury</code> — 2 שע׳ · ok</li>
+  <li><code>world</code> — 3 שע׳ · ok</li>
+  <li><code>execution</code> — 39 דק׳ · ok</li>
+  </ul>
+
+  <footer>נבנה על-ידי איבר-הבונה מהקבצים האמיתיים בגיט · השמישות היא חוק, לא מותרות</footer>
+</main>
+</body>
+</html>
