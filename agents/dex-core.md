@@ -1,6 +1,6 @@
 # dex-core — EXCHANGE CORE (R40, CR-0070)
 
-At: 2026-10-18T05:11:56.148Z · Verdict: **CONSERVATION-BROKEN** · mode: KEYLESS-ATOMIC-INTERNAL · seq: 135 · attestation: `36872b29c69436ea`
+At: 2026-10-18T06:01:55.325Z · Verdict: **CONSERVATION-BROKEN** · mode: KEYLESS-ATOMIC-INTERNAL · seq: 135 · attestation: `36872b29c69436ea`
 
 Feed: FEED-LIVE (router book @ 2026-10-18T05:11:31.511Z) · conservation: **BROKEN** · custody probe: MEASURED @https://api.steemit.com
 
