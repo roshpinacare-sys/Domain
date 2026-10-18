@@ -1,17 +1,17 @@
 # arb-mesh — THE MESH MARKET (R41, CR-0071)
 
-At: 2026-10-18T06:11:12.050Z · Verdict: **MESH-LIVE** · batch: MESH-2026101806-b1b8af0f · protocol: SAOS-ARB-MESH/1
+At: 2026-10-18T12:12:04.747Z · Verdict: **MESH-LIVE** · batch: MESH-2026101812-21e9f3fb · protocol: SAOS-ARB-MESH/1
 
 Roster: 1 accounts (owner + 0 soldiers) · Edge candidates: 1 · Intents drafted: 1 · Fills settled: 1 · Refusals: 0
 
 
 | Edge row | Direction | Net bps | Floor | Source |
 |---|---|---|---|---|
-| A1 P3 STEEM/SBD pool mid vs CEX-implied fair | STEEM→SBD (sell the rich side) | 12247.12 | 100 | dex-core.json (our pool — atomic, no bridge) |
+| A1 P3 STEEM/SBD pool mid vs CEX-implied fair | STEEM→SBD (sell the rich side) | 11870.06 | 100 | dex-core.json (our pool — atomic, no bridge) |
 
 | Agent | Fill | Route | Out | Edge (marked) | Fees |
 |---|---|---|---|---|---|
-| operator | STEEM 4121µ → SBD | P3 | 904µ SBD | 492µ (CEX-FAIR (SBD per STEEM)) | 10µ |
+| operator | STEEM 4121µ → SBD | P3 | 897µ SBD | 457µ (CEX-FAIR (SBD per STEEM)) | 10µ |
 
 ## Size ladder (the large-sums law — exact BigInt, honest slippage)
 
@@ -32,19 +32,19 @@ Roster: 1 accounts (owner + 0 soldiers) · Edge candidates: 1 · Intents drafted
 | 1% | 38161µ | 36596µ | 0.95898954 | 45.71bps |
 | 5% | 190806µ | 181971µ | 0.95369642 | 44.9bps |
 
-**P3 STEEM/SBD** (mid 0.22088392 SBD/, fee 25bps):
+**P3 STEEM/SBD** (mid 0.219134 SBD/, fee 25bps):
 
 | Size (% depth) | In | Out | Exec price | Slippage |
 |---|---|---|---|---|
-| 0.1% | 1032µ | 227µ | 0.21996124 | -0.41bps |
-| 1% | 10326µ | 2252µ | 0.21809026 | -1.26bps |
-| 5% | 51632µ | 10835µ | 0.20985048 | -4.99bps |
+| 0.1% | 1036µ | 226µ | 0.21814672 | -0.45bps |
+| 1% | 10367µ | 2243µ | 0.2163596 | -1.26bps |
+| 5% | 51838µ | 10792µ | 0.20818704 | -4.99bps |
 
 ## Mesh P&L (lifetime, from the ledger — the core book is the source of truth)
 
-Fills: 77 · Volume in: 1205075µ · Edge captured: -891260µ · Fees paid (LP revenue): 1130µ
+Fills: 78 · Volume in: 1209196µ · Edge captured: -890803µ · Fees paid (LP revenue): 1140µ
 - acct-00: 1 fills · vol 3859µ · edge 580µ · fees 9µ
-- operator: 1 fills · vol 4121µ · edge 492µ · fees 10µ
+- operator: 1 fills · vol 4121µ · edge 457µ · fees 10µ
 
 Laws: L1 L2 L3 L4 L5 L6 L7 L8 L9 L10 L11 L12 L13 L14 L15 L16 · Gate law: the counter-grid gate follows CR-0074 (open = GATED-ARMED-BROADCAST-READY, closed = PLAN-POOL-GATED-NOT-BROADCAST) — the mesh never fires a keyed rail either way.
 
