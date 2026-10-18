@@ -62,8 +62,12 @@ jobs:
           #    workflows pass the same secret the same way).
           #  · SOURCE_SECRET_NAME keeps the receipt honest about which vault secret
           #    the value came from (no-secret-shape disclosure — name only).
-          owner: ${{ secrets.acct-00 }}
-          SOURCE_SECRET_NAME: acct-00
+          # measured 2026-10-18: `secrets.acct-00` can NEVER resolve — GitHub secret
+          # names allow only [A-Za-z0-9_], hyphens are impossible, so this env was
+          # permanently empty (no-secret at 00:38:45Z). The PROVEN wiring (verdict=armed,
+          # run 38661586814 on 2026-10-15) reads HEADCORNER — restored verbatim.
+          owner: ${{ secrets.HEADCORNER }}
+          SOURCE_SECRET_NAME: HEADCORNER
           FLEET_ROSTER_MAP: ${{ secrets.FLEET_ROSTER_MAP }}
           FLEET_ACCOUNT: ${{ secrets.FLEET_ACCOUNT }}
           AGENTS_WATCH_TOKEN: ${{ secrets.AGENTS_WATCH_TOKEN }}
