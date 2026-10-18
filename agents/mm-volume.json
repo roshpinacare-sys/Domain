@@ -344,7 +344,7 @@
       ],
       "gridFeasible": true,
       "selfFlow": {
-        "eligible": true,
+        "eligible": false,
         "accounts": 1,
         "feeRoundTripPct": 0,
         "capPct": 0.25,
@@ -355,7 +355,7 @@
           "CAP: internal flow ≤ 25% of projected volume",
           "FEE-NULL-ONLY: internal flow armed only on zero-fee round-trip venues"
         ],
-        "blockedReason": null
+        "blockedReason": "NO-PROJECTED-VOLUME"
       }
     },
     {
@@ -428,7 +428,7 @@
       ],
       "gridFeasible": true,
       "selfFlow": {
-        "eligible": true,
+        "eligible": false,
         "accounts": 1,
         "feeRoundTripPct": 0,
         "capPct": 0.25,
@@ -439,7 +439,7 @@
           "CAP: internal flow ≤ 25% of projected volume",
           "FEE-NULL-ONLY: internal flow armed only on zero-fee round-trip venues"
         ],
-        "blockedReason": null
+        "blockedReason": "NO-PROJECTED-VOLUME"
       }
     },
     {
@@ -512,7 +512,7 @@
       ],
       "gridFeasible": true,
       "selfFlow": {
-        "eligible": true,
+        "eligible": false,
         "accounts": 1,
         "feeRoundTripPct": 0,
         "capPct": 0.25,
@@ -523,7 +523,7 @@
           "CAP: internal flow ≤ 25% of projected volume",
           "FEE-NULL-ONLY: internal flow armed only on zero-fee round-trip venues"
         ],
-        "blockedReason": null
+        "blockedReason": "NO-PROJECTED-VOLUME"
       }
     },
     {
@@ -596,18 +596,18 @@
       ],
       "gridFeasible": false,
       "selfFlow": {
-        "eligible": true,
+        "eligible": false,
         "accounts": 1,
         "feeRoundTripPct": 0,
         "capPct": 0.25,
-        "internalCapSbd": 61.0992,
+        "internalCapSbd": 0,
         "guards": [
           "VWAP-EXCLUSION: internal fills never enter realized sell VWAP / edge books (poison guard)",
           "LABEL: every internal row carries INTERNAL-FLOW",
           "CAP: internal flow ≤ 25% of projected volume",
           "FEE-NULL-ONLY: internal flow armed only on zero-fee round-trip venues"
         ],
-        "blockedReason": null
+        "blockedReason": "NO-PROJECTED-VOLUME"
       }
     },
     {
@@ -648,36 +648,7 @@
       "marketVolume24h": 5.6968,
       "marketVolumeTerm": "SWAP.HIVE (quote-asset units)",
       "sharePct": null,
-      "shareLadder": [
-        {
-          "n": 1,
-          "volumeSbd": 0,
-          "sharePct": null,
-          "saturates": false,
-          "binding": "pond"
-        },
-        {
-          "n": 2,
-          "volumeSbd": 0,
-          "sharePct": null,
-          "saturates": false,
-          "binding": "pond"
-        },
-        {
-          "n": 3,
-          "volumeSbd": 0,
-          "sharePct": null,
-          "saturates": false,
-          "binding": "pond"
-        },
-        {
-          "n": 5,
-          "volumeSbd": 0,
-          "sharePct": null,
-          "saturates": false,
-          "binding": "pond"
-        }
-      ],
+      "shareLadder": null,
       "gridFeasible": false,
       "selfFlow": {
         "eligible": false,
