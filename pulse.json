@@ -1,33 +1,33 @@
 {
   "schema": "builder-pulse/1",
-  "at": "2026-10-18T04:38:12.102Z",
+  "at": "2026-10-18T06:28:02.941Z",
   "builder": {
     "organ": "artery-builder",
     "cadence": "hourly",
     "law": "fail-honest, refs-only, marker-scoped"
   },
   "facts": {
-    "at": "2026-10-18T04:38:12.047Z",
+    "at": "2026-10-18T06:28:02.714Z",
     "verifier": {
-      "overall": "FAIL",
-      "at": "2026-10-18T04:24:24.021Z"
+      "overall": "DEGRADED",
+      "at": "2026-10-18T05:23:16.786Z"
     },
     "treasury": {
       "health": "HEALTHY",
-      "acct00sp": 4029.05,
+      "acct00sp": 4029.159,
       "floor": 3000,
-      "at": "2026-10-18T02:08:02.282Z"
+      "at": "2026-10-18T04:42:59.503Z"
     },
     "selfHeal": {
       "ok": true,
-      "workflowsActive": 47,
+      "workflowsActive": 50,
       "workflowsDisabled": [],
-      "at": "2026-10-18T02:12:27.334Z"
+      "at": "2026-10-18T04:38:06.950Z"
     },
     "scout": {
       "ok": true,
       "entries": 8,
-      "at": "2026-10-18T02:07:55.782Z"
+      "at": "2026-10-18T04:42:48.819Z"
     },
     "world": {
       "version": 3,
@@ -36,7 +36,17 @@
     "fleet": {
       "ok": null,
       "total": null,
-      "at": "2026-10-18T03:57:21.626Z"
+      "at": "2026-10-18T04:47:17.437Z"
+    },
+    "pacer": {
+      "at": "2026-10-18T05:17:45.923Z",
+      "skipped": true,
+      "checked": 0,
+      "staleN": 0,
+      "dispatchedN": 0,
+      "lastBeatAt": "2026-10-18T05:04:36.735Z",
+      "lastBeatChecked": 12,
+      "lastBeatDispatched": 1
     }
   },
   "audit": {
@@ -44,45 +54,52 @@
       {
         "path": "index.html",
         "exists": true,
-        "days": 0.19319537037037038
+        "days": 0.26947836805555553
       },
       {
         "path": "console.html",
         "exists": true,
-        "days": 0.19319537037037038
+        "days": 2.2694783680555557
       },
       {
         "path": "products.html",
         "exists": true,
-        "days": 0.19319537037037038
+        "days": 2.2694783680555557
       },
       {
         "path": "truth.html",
         "exists": true,
-        "days": 0.19319537037037038
+        "days": 2.2694783680555557
       },
       {
         "path": "tools.html",
         "exists": true,
-        "days": 0.19319537037037038
+        "days": 0.26947836805555553
       },
       {
         "path": "docs/index.html",
         "exists": true,
-        "days": 0.19319537037037038
+        "days": 0.26947836805555553
       },
       {
         "path": "changelog.html",
         "exists": true,
-        "days": 0.19319537037037038
+        "days": 0.26947836805555553
       },
       {
         "path": "pulse.json",
         "exists": true,
-        "days": 0.19319537037037038
+        "days": 0.26947836805555553
+      },
+      {
+        "path": "receipts.html",
+        "exists": false,
+        "days": null
       }
     ],
-    "missing": [],
+    "missing": [
+      "receipts.html"
+    ],
     "linksChecked": 311,
     "brokenCount": 0,
     "backlog": [
@@ -90,6 +107,11 @@
         "id": "PULSE_SNAPSHOT",
         "priority": 0,
         "why": "דופק-מדידה חי של הריבונות — מתעדכן בכל ריצה מהקבלות בגיט"
+      },
+      {
+        "id": "REFRESH_PRODUCT_SURFACES",
+        "priority": 1,
+        "why": "משטחי-מוצר קפואים 2+ ימים בזמן שהרשת פועמת מתחת — בדיוק התלונה שנמדדה"
       }
     ]
   }
