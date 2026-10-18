@@ -1,6 +1,6 @@
 # dex-activation — THE IGNITION DESK (CR-0077)
 
-At: 2026-10-18T22:16:46.258Z · Verdict: **REFUSED-CONSERVATION (the core book is broken — the desk never trades on a broken book)** · batch: — · lane: dex-activation
+At: 2026-10-18T23:21:32.779Z · Verdict: **REFUSED-CONSERVATION (the core book is broken — the desk never trades on a broken book)** · batch: — · lane: dex-activation
 
 Owner word (trace 1a135897157a1d75): "saos dex עמלות 0 נפח כמעט 0 מצטבר כלום" — הדלפק הזה הוא התיקון: זרימה דו-צדדית רציפה סביב המיד של כל בריכה חיה, דרך חוקי-ה-settle של הליבה עצמה.
 
@@ -9,12 +9,12 @@ Pools armed: — · Intents drafted: 0 · Fills settled: 0 · Refusals: 0 · Wir
 
 ## Rolling 24h (measured from the ledger — never invented)
 
-Fills: 29 · Volume in: 117397µ · Volume out: 25963µ · Fees accrued: 281µ
+Fills: 30 · Volume in: 121518µ · Volume out: 26762µ · Fees accrued: 291µ
 
 
 | Pool | Swaps 24h | In µ | Out µ | Fees µ |
 |---|---|---|---|---|
-| P3 | 29 | 117397 | 25963 | 281 |
+| P3 | 30 | 121518 | 26762 | 291 |
 
 Laws: keyless internal-only · staged-lane (CR-0077) · two-sided (never a direction bet) · 10/100/500bps depth ladder · dust 1000µ · minOut −0.5% · roster split op-40% · bounded 30 intents/run · single-writer queue (DEX_SETTLE_QUEUE) · idempotent batch · measured 24h only
 
