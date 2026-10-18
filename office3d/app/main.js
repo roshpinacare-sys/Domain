@@ -5,7 +5,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from '../vendor/loaders/GLTFLoader.js';
 import { loadAll, loadTruth, freshness, ageMin, agoHe } from './feed.js';
-import { buildRoom, buildProps, buildFurniture, applyDaylight, jerusalemHour } from './world.js';
+import { buildRoom, buildProps, buildFurniture, applyDaylight, jerusalemHour, drawScreenboard } from './world.js';
 import { MotionLibrary, lifeState } from './motions.js';
 import { Crew, ensureDesks, setState, play, updateAgent } from './crew.js';
 import { Board } from './board.js';
@@ -52,8 +52,9 @@ async function boot() {
 
   bar(0.15, 'בונה את החדר');
   buildRoom(scene, W);
-  buildProps(scene, W);
+  const propsB = buildProps(scene, W);
   const furn = buildFurniture(scene, W);
+  drawScreenboard(propsB.screens[0], W, null); // שלט-הרגעים-חי-מהרגע-הראשון
 
   // ── טעינת-אווטארים ────────────────────────
   bar(0.3, 'מכין את הצוות-החי');
@@ -150,6 +151,7 @@ async function boot() {
         loadTruth(), fetch(`https://raw.githubusercontent.com/roshpinacare-sys/Domain/main/agents/office-live.json?t=${Date.now()}`).then((r) => r.json()),
       ]);
       truth = truthNew; board.truth(truth, officeNew); board.presence(freshness(officeNew.generatedAt));
+      drawScreenboard(propsB.screens[0], W, truthNew.map((t) => `${t.label}: ${t.summary} (${agoHe(t.at)})`));
       // חגיגה-אוטומטית: קבלת-ריאה-טרייה עם-הצתות
       const lung = truthNew.find((t) => t.id === 'lung');
       if (lung && ageMin(lung.at) < 3 && (lung.raw?.dispatched?.length ?? 0) > 0)

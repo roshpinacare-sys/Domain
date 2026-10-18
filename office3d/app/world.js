@@ -107,8 +107,9 @@ export function buildProps(scene, W) {
       const c = document.createElement('canvas'); c.width = 640; c.height = 340;
       const board = new THREE.Mesh(new THREE.PlaneGeometry(p.w, p.h),
         new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(c), toneMapped: false }));
-      board.position.set(p.x, 2.0, p.z); g.add(board);
-      screens.push({ canvas: c, mesh: board });
+      board.position.set(p.x, 2.0, p.z); board.rotation.y = p.rotY || 0; g.add(board);
+      const tex = board.material.map; tex.colorSpace = THREE.SRGBColorSpace;
+      screens.push({ canvas: c, mesh: board, tex });
     }
   }
   scene.add(g);
@@ -168,6 +169,25 @@ export function buildFurniture(scene, W) {
 
   scene.add(g);
   return { group: g, screens };
+}
+
+/** שלט-הרגעים: מצייר-את-האמת-החיה-על-הצג (נקרא-מ-main בכל-רענון-אמת) */
+export function drawScreenboard(screen, world, truthLines) {
+  if (!screen?.canvas) return;
+  const c = screen.canvas.getContext('2d');
+  c.fillStyle = '#141a22'; c.fillRect(0, 0, 640, 340);
+  c.fillStyle = '#e8d9a8'; c.font = 'bold 30px system-ui'; c.textAlign = 'right';
+  c.fillText('רגעי-העולם החי', 610, 52);
+  c.strokeStyle = '#3a4656'; c.lineWidth = 3; c.beginPath(); c.moveTo(30, 68); c.lineTo(610, 68); c.stroke();
+  c.font = '21px system-ui';
+  const lines = (truthLines && truthLines.length ? truthLines : (world?.moments || []).map((m) => m.text)).slice(-6);
+  lines.forEach((ln, i) => {
+    c.fillStyle = i % 2 ? '#9fb3c8' : '#c8d6e5';
+    c.fillText(String(ln).slice(0, 46), 610, 108 + i * 40);
+  });
+  c.fillStyle = '#5f7186'; c.font = '17px system-ui';
+  c.fillText(`גרסת-עולם v${world?.version ?? '?'} · מתפתח-על-הגיט`, 610, 316);
+  if (screen.tex) screen.tex.needsUpdate = true;
 }
 
 function posterTexture(title, sub, accent) {
