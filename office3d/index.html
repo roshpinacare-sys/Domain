@@ -2,20 +2,84 @@
 <html lang="he" dir="rtl">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>מפקדת הצי — המשרד התלת-מימדי | FleetHQ</title>
-    <meta
-      name="description"
-      content="המשרד החי בתלת-מימד של מפקדת הצי: אור-יום לפי שעון-ירושלים, נוכחות-חיה של הסוכנים, קיר-אמת של הגיט עם מד-טריות — אפס בקאנד, אפס סודות."
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <title>המשרד החי · FleetHQ 3D — צוות אמיתי, פעולות אמת, עולם מתפתח</title>
+    <meta name="description" content="המשרד התלת-מימדי החי של מפקדת הצי: צוות אמיתי מהגיט, אנימציות Mixamo עם ריטרגטינג בדפדפן, קיר-אמת חי, עולם שהסוכנים מפתחים בעצמם. אפס-בקאנד, אפס-סודות." />
+    <!-- office3d v2 LIVING-WORLD · guard-marker: keep this comment intact -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='13'>🏢</text></svg>" />
     <style>
-      /* טעינה טרום-React: רקע אור-יום, אפס הבהוב שחור */
-      html, body { margin: 0; background: #f3f1ec; }
+      html, body { margin:0; padding:0; height:100%; overflow:hidden; background:#efece6; font-family:'Segoe UI',system-ui,-apple-system,sans-serif; }
+      #root { position:fixed; inset:0; }
+      canvas { display:block; }
+      /* ── HUD ─────────────────────────── */
+      .hud { position:fixed; z-index:10; pointer-events:none; }
+      .hud * { pointer-events:auto; }
+      #topbar { top:10px; inset-inline:10px; display:flex; gap:8px; align-items:center; justify-content:space-between; flex-wrap:wrap; }
+      .pill { background:#fffefb; border:1px solid #e2ddd2; border-radius:999px; padding:8px 14px; font-size:13px; color:#3d3830; box-shadow:0 2px 10px rgba(60,50,30,.08); display:flex; align-items:center; gap:8px; white-space:nowrap; }
+      .dot { width:9px; height:9px; border-radius:50%; background:#22b45e; box-shadow:0 0 8px #22b45e88; }
+      .dot.stale { background:#e0a12c; box-shadow:0 0 8px #e0a12c88; }
+      .dot.dead { background:#d0452e; box-shadow:0 0 8px #d0452e88; }
+      .brand { font-weight:700; color:#6b5b3e; letter-spacing:.4px; }
+      #toolbar { bottom:12px; inset-inline:0; display:flex; gap:8px; justify-content:center; flex-wrap:wrap; padding:0 10px; }
+      .btn { background:#fffefb; border:1px solid #e2ddd2; border-radius:12px; padding:10px 16px; font-size:14px; cursor:pointer; color:#4a4237; box-shadow:0 2px 10px rgba(60,50,30,.10); transition:transform .15s, box-shadow .15s; }
+      .btn:hover { transform:translateY(-2px); box-shadow:0 6px 16px rgba(60,50,30,.16); }
+      .btn:active { transform:translateY(0); }
+      .btn.on { background:#f3e9d2; border-color:#d8c89f; color:#5a4a28; }
+      #infocard { position:fixed; z-index:11; top:64px; inset-inline-start:12px; width:min(320px, 86vw); background:#fffefbee; border:1px solid #e2ddd2; border-radius:14px; padding:14px 16px; box-shadow:0 10px 30px rgba(60,50,30,.18); display:none; }
+      #infocard h3 { margin:0 0 4px; font-size:16px; color:#3d3428; }
+      #infocard .desk { font-size:12.5px; color:#8a7a5c; margin-bottom:8px; }
+      #infocard .row { font-size:12.5px; color:#5a5142; margin:4px 0; display:flex; justify-content:space-between; gap:8px; }
+      #infocard .row b { color:#3d3428; }
+      #wall { position:fixed; z-index:9; bottom:64px; inset-inline-end:12px; width:min(300px, 88vw); background:#fffefbf2; border:1px solid #e2ddd2; border-radius:14px; padding:12px 14px; box-shadow:0 10px 30px rgba(60,50,30,.14); font-size:12.5px; color:#5a5142; }
+      #wall h4 { margin:0 0 8px; font-size:13.5px; color:#3d3428; display:flex; justify-content:space-between; align-items:center; }
+      #wall .metric { display:flex; justify-content:space-between; margin:3px 0; }
+      #wall .metric b { color:#6b5b3e; }
+      #wall .event { border-top:1px dashed #e6e0d2; margin-top:8px; padding-top:6px; font-size:11.5px; color:#7a6f5c; line-height:1.5; max-height:110px; overflow-y:auto; }
+      #loading { position:fixed; inset:0; z-index:50; background:#efece6; display:flex; flex-direction:column; gap:14px; align-items:center; justify-content:center; color:#6b5b3e; font-size:15px; }
+      #loading .bar { width:min(320px,70vw); height:6px; border-radius:6px; background:#e2ddd2; overflow:hidden; }
+      #loading .bar i { display:block; height:100%; width:0%; background:linear-gradient(90deg,#c9a24b,#e8c877); transition:width .3s; }
+      #bubbles { position:fixed; inset:0; pointer-events:none; z-index:8; }
+      .bubble { position:absolute; transform:translate(-50%,-100%); background:#fffefbf5; border:1px solid #e0d8c6; border-radius:12px 12px 12px 3px; padding:7px 11px; font-size:12px; color:#4a4237; max-width:210px; line-height:1.45; box-shadow:0 4px 14px rgba(60,50,30,.14); opacity:0; transition:opacity .6s; }
+      .bubble b { color:#8a6d2f; }
+      @media (max-width:640px){ #wall{ display:none; } .pill{ font-size:11.5px; padding:6px 10px; } .btn{ padding:8px 12px; font-size:12.5px; } }
     </style>
-    <script type="module" crossorigin src="./assets/index-BZw9LJJ3.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-B6BuwR3O.css">
   </head>
   <body>
     <div id="root"></div>
+    <div id="loading"><div>המשרד החי נטען…</div><div class="bar"><i id="loadbar"></i></div><div id="loadmsg" style="font-size:12px;color:#9a8d74">מכין את העולם</div></div>
+    <div class="hud" id="topbar">
+      <div class="pill brand">🏢 המשרד החי · FLEET HQ 3D</div>
+      <div class="pill" id="presence"><span class="dot" id="presence-dot"></span><span id="presence-text">מתחבר לאמת…</span></div>
+      <div class="pill" id="clock">—</div>
+    </div>
+    <div id="infocard">
+      <h3 id="ic-name">—</h3>
+      <div class="desk" id="ic-desk">—</div>
+      <div class="row"><span>מצב-חיים</span><b id="ic-state">—</b></div>
+      <div class="row"><span>פעולה-אחרונה (אמת)</span><b id="ic-last">—</b></div>
+      <div class="row"><span>קרדיטים</span><b id="ic-credits">—</b></div>
+    </div>
+    <div id="wall">
+      <h4>קיר-האמת של הגיט <span id="wall-fresh" style="font-weight:400;font-size:11px;color:#9a8d74"></span></h4>
+      <div class="metric"><span>כיסוי-אוטובוס (3 צמתים)</span><b id="m-bus">—</b></div>
+      <div class="metric"><span>היסט-פעימות</span><b id="m-shifts">—</b></div>
+      <div class="metric"><span>אירועי-יומן</span><b id="m-journal">—</b></div>
+      <div class="metric"><span>שעונים-פעילים</span><b id="m-wfs">—</b></div>
+      <div class="metric"><span>ריאה-עצמית (self-heal)</span><b id="m-lung">—</b></div>
+      <div class="event" id="wall-events">…</div>
+    </div>
+    <div id="bubbles"></div>
+    <div class="hud" id="toolbar">
+      <button class="btn" id="btn-tour">🎬 סיור-אוטומטי</button>
+      <button class="btn" id="btn-meet">🤝 כינוס-צוות</button>
+      <button class="btn" id="btn-dance">🎉 חגיגת-קבלה</button>
+      <button class="btn" id="btn-evolve">🌱 התפתחות-העולם</button>
+      <button class="btn" id="btn-cam">🎥 זווית</button>
+    </div>
+
+    <script type="importmap">
+      { "imports": { "three": "./vendor/three.module.js" } }
+    </script>
+    <script type="module" src="./app/main.js"></script>
   </body>
 </html>
