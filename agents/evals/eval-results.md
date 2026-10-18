@@ -1,8 +1,8 @@
 # Desk Evals — runnable expectations (fresh-process judge, Z-36)
 
-_run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48 + R27 metronome-audit E49 + R28 mm-volume E50 + R29 share-ladder E51 + R30 calibrated-engine E52 + R31 tape-calibration/venue-expansion E53 + R32 sidechain-pond E54 + R33 pnl-verdict E55 + sovereign-hands E56 + R34 fill-through-evolution E57 + R35 human-cadence E58 + R36 community-home E59 + R37 community-breath E60 + R38 chain-proof E61 + R39 swap-net E62 + R40 exchange-core E63 + R41 mesh-market E64 + R42 multi-network-vault E65 + R43 intent-gates E66 + R44 opposing-hands E67, parallel-convergence superset) · 2026-10-14T12:43:17.930Z_
+_run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense E13 + Z-40 collapse drill E14 + Task 23 one-bloc E15 + Task 24 parse-gate E16 + Z-42 canon-liveness E17 + Task 26 ci-hands E18 + Z-43 hands E19 + Task 27 skill-library E20 + Task 29 strix-lineage E21 + Task 31 ax-lineage E22 + Task 33 mini-swe-lineage E24 + Task 35 fcc-lineage E25 + Task 36 sweep-lineage E26 + Z-62 evo-windows E27 + Z-63 market-exec E28 + CR-0038 market-grid STASIS/cadence E29 + Z-64 fill-ledger/cycle E30 + R14 fleet-census E31 + R15 census-cadence E32 + Z-65 wiring-wave E33 + agent-registry E34 + R16 census-delta E35 + Z-66 sovereign E36 + Z-67 drip-canon mixed-unit E36-ext + Z-68 earn-audit E37 + Z-69 buy-premium E38 + R19 coord-bus/coord-lease E39 + Z-70 self-healing-pulse/ledger-first-day-truth E40 + R21 claims-audit E41 + R22 deep-audit E42+E43 + R22 resurrection E44 + R25 cadence-week E45 + Z-72 maturity-law E46 + R26 keyless-wave E47 + Z-73 suffix-law E48 + R27 metronome-audit E49 + R28 mm-volume E50 + R29 share-ladder E51 + R30 calibrated-engine E52 + R31 tape-calibration/venue-expansion E53 + R32 sidechain-pond E54 + R33 pnl-verdict E55 + sovereign-hands E56 + R34 fill-through-evolution E57 + R35 human-cadence E58 + R36 community-home E59 + R37 community-breath E60 + R38 chain-proof E61 + R39 swap-net E62 + R40 exchange-core E63 + R41 mesh-market E64 + R42 multi-network-vault E65 + R43 intent-gates E66 + R44 opposing-hands E67, parallel-convergence superset) · 2026-10-18T09:05:28.033Z_
 
-**evals RED: 18 fail — booked honestly, the fails are the next work**
+**evals RED: 20 fail — booked honestly, the fails are the next work**
 
 ## E1 · dedupe identity is stable across repeat harvest — PASS
 - seed(3) + econ rows carrying the same two fills → exactly 3 entries
@@ -49,7 +49,7 @@ _run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - 0 DENY rows in .github/workflows (no destructive drift entered CI)
 - the known mirror-bot sync idiom appears as booked allow-with-reason (≥10 rows), never silent
 - ledger stamped (BOOKS-STAMP law)
-- _measured: denies=8 syncIdiom=12 stamped=true_
+- _measured: denies=16 syncIdiom=12 stamped=true_
 
 ## E10 · rail catalog: registry valid, no forbidden rail enabled — PASS
 - catalog parses quote-aware with the 8-column schema (Z-37 lesson carried forward)
@@ -61,7 +61,7 @@ _run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - 200+data → REACHABLE with model count; 401/403 → AUTH-WALL; network error → UNREACHABLE (no hopeful green)
 - probing a nonexistent provider exits 0 with zero probes booked (fail-soft, no invention)
 - rail-ledger.json stamped (BOOKS-STAMP law)
-- _measured: live probes booked=79_
+- _measured: live probes booked=82_
 
 ## E12 · rail policy: FORBIDDEN row enabled as LIVE fails the gate — PASS
 - a catalog where cohere (ToS FORBIDDEN) is flipped to LIVE is rejected — ok:false with the FORBIDDEN reason named
@@ -81,7 +81,7 @@ _run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - every injected fault class caught: faults_caught === faults_total >= 4 (registry corruption, guard neutered, book stamps stripped, forbidden rail LIVE)
 - receipts fresh < 168h — the drill runs on the CI schedule, containment proof is not a one-time trophy
 - CI summary ledger agrees (collapse-drill.json stamped)
-- _measured: caught=4/4 ageH=48 head=42ca2e4b6e4f_
+- _measured: caught=4/4 ageH=92 head=15c1e4808262_
 
 ## E15 · one-bloc: whole-git convergence map measured, never invented — PASS
 - one-bloc.cjs runs in a fresh process (exit 0, fail-soft)
@@ -89,14 +89,14 @@ _run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - every repo lands REACHED or an honest AUTH-WALL/UNKNOWN — no invented reach (KEYLESS-FIRST law)
 - keyless floor holds: >=2 public repos reachable with zero credentials (env-independent)
 - book stamped fresh (<1h) + STASIS law parseable + 3 truth-maps bound (dedup: one map, not three)
-- _measured: verdict=DEGRADED reached=2/16 keyless=2 authWall=0_
+- _measured: verdict=DEGRADED reached=3/16 keyless=3 authWall=0_
 
 ## E16 · workflow-parse gate: no dead lane wears a green shape — PASS
 - predicate catches `${{ }}` inside flow collections (the recruit.yml incident class)
 - predicate stays ALLOW on legal idioms (block-style expressions, plain flow maps, flow crons)
 - gate desk runs fresh-process exit 0, scans >= 20 workflow files
 - 0 offenders + book stamped fresh (<10min) — full-YAML floor or honest idiom floor, mode named
-- _measured: scanned=89 mode=full offenders=0_
+- _measured: scanned=97 mode=full offenders=0_
 
 ## E17 · canon-liveness: honest verdict derivation + fresh receipt with named legs — FAIL
 - white-box: L1 content → CONTENT-SERVED; L1 absent + L2 rail → RAIL-REACHABLE; both absent → CANON-DARK (zero hopeful greens)
@@ -110,14 +110,14 @@ _run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - fresh-process desk run: exit 0 (fail-soft), book stamped fresh (<30min)
 - honest reach floor: 16 repos declared, >=1 reached OR every unreached booked honestly as HTTP 4xx refusal (rate-limit is environment, not defect) — never invented
 - cua-bench contract: trajectory booked (every action logged) + STASIS state travels with the receipt
-- _measured: reached=2/16 lanes=23 green=22 activeRed=1 startup=0 mode=keyless_
+- _measured: reached=3/16 lanes=26 green=21 activeRed=5 startup=0 mode=keyless_
 
 ## E19 · hands book: honest verdict derivation + fresh receipts, zero hopeful greens — PASS
 - white-box: probe-ok → LIVE; absent → ABSENT; POLICY LOCK BEATS A GREEN PROBE → LOCKED-TIER-C (the cua permission-at-launch lesson); cross-ref → REF; probe-fail → UNREACHABLE
 - black-box: fresh-process desk exits 0 (fail-soft), ≥5 hands booked, ≥2 LIVE in any healthy context
 - every LIVE hand carries evidence+probeAt — a capability claimed without a receipt is a story
 - verdict enum closed (LIVE/ABSENT/UNREACHABLE/REF/LOCKED-TIER-C) — no hopeful greens possible
-- _measured: hands=6 live=3 receipted=true at=2026-10-14T12:43:12.228Z_
+- _measured: hands=6 live=3 receipted=true at=2026-10-18T09:05:23.834Z_
 
 ## E20 · skill-library gate: expertise as governed data with a mandatory Evidence Artifact — PASS
 - white-box: the predicate flags a bare built-in name (help), a missing Evidence Artifact section, and short/no-trigger descriptions — and PASSES the legal package
@@ -170,7 +170,7 @@ _run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - white-box: classifyOutcome() honest — incumbent-retained=INCUMBENT-RETAINED, challenger=ADOPTION-PENDING-CR (verify-only), reef-alive=LEAK-DETECTED (a leak is never silenced), no-book=WINDOW-NO-WINNER
 - black-box: fresh-process desk exits 0 under EVO_WINDOWS_SKIP_RUN=1, appends exactly ONE row (append-only history), never spawns the measured batch (off-budget law)
 - laws: verifyOnly booked in the book laws map
-- _measured: wdec=true wcls=true appended=true decision=SKIPPED-EVAL-CONTEXT windows=134_
+- _measured: wdec=true wcls=true appended=true decision=SKIPPED-EVAL-CONTEXT windows=135_
 
 ## E28 · market-exec planner: mode law, band guard, precision scan, caps, stack idempotency, SBD cap — PASS
 - white-box: resolveMode defaults DRY_RUN; only MARKET_EXEC_LIVE=1 arms broadcast
@@ -245,17 +245,9 @@ _run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - fresh-process sandbox, SINGLE-LANE-WORKSPACE law: a 1/16-lane workspace books fleet-census.artifact.json (a valid presentLanes=1 map) and NEVER writes the canonical fleet-census.json; the artifact delta series starts as FIRST-DELTA with the estate stamped
 - _measured: nine expectations hold; the drift series can no longer lie by changing the instrument_
 
-## E36 · sovereign layer: delegated D1/D2 decisions under the dual gate (sovereign auto + operator overlay), breakers as reason codes, arming honesty, drip pacing receipts, append-only tick receipts — PASS
-- white-box: gate order law — STASIS-HALT before any read; operator mode escalates a suggested intent (Tier E) and plans DRY without one
-- white-box: arming honesty is presence-only (NOT-ARMED books keyless DRY sovereignty and names what arms it)
-- white-box: breakers each return a reason code — GAP-PACING, DAY-CAPS, BREAKER-DAILY-LOSS, BREAKER-CONSEC-LOSS, FUEL-FLOOR; Tier-E size parks in the mailbox; the green path fires EXECUTE-LIVE
-- white-box: D2 drip pacing — absent canon = honest RECEIPT, healthy runway = STEADY, thin runway = Tier-E RECOMMENDATION with authority ops disabled
-- white-box: D2 fuel canon (Z-67) — THE MIXED-UNIT LAW: to_withdraw GESTS (µ-VESTS ÷1e6) vs rate VESTS, live-measured fixture; unit-clamp refuses absurd remaining (fail-loud, nothing written)
-- white-box: applyReceipt advances counters + paces the broadcast attempt; daily rollover resets the day book
-- black-box A: keyless fresh tick (SKIP_FETCH) — NOT-ARMED PLAN-DRY routes a DRY cycle booking SKIPPED-EVAL-CONTEXT, decision receipt + state advanced, zero network
-- black-box B: SOVEREIGN_MODE=operator — suggested intent lands in sovereign-pending.json, no cycle child, Tier-E receipt
-- black-box C: STASIS active — halt-before-read proven with a garbage ledger (exit 0, STASIS-HALT receipt, no reads past the breaker)
-- _measured: the transfer is live: local sovereign ticks fire per policy; the cron books keyless receipts 24/7 and arms on the vault secret_
+## E36 · sovereign layer — FAIL
+- 
+- _measured: eval crashed: Cannot read properties of undefined (reading 'min_broadcast_gap_sec')_
 
 ## E37 · earn-audit: from-nothing chain-truth — direction-law fill classification (ours-as-open vs ours-as-current vs taker), rewards/claims/drip/convert tallies, honest unparseable skip — PASS
 - white-box: fill direction law — open_owner==us means we gave open_pays (maker sell booked 0.576 STEEM→0.058 SBD); open_owner!=us means we gave current_pays (taker sell 4.996 STEEM→0.500 SBD AND taker buy 3.692 SBD→36.601 STEEM both classified correctly)
@@ -264,12 +256,9 @@ _run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - live-measured: 1d owner — drip 475.857 STEEM deployed (50 fills: sold 525.2 STEEM → 52.56 SBD, bought 87.9 for 8.99), 14 converts 32.8 SBD; 7d fleet — 1421 votes / 56 posts → ZERO author+curation payouts lifetime (the content loop is measured dead)
 - _measured: the proof surface is live: every claim about fleet income is now checkable against the chain_
 
-## E38 · BUY-PREMIUM LAW: the ledger vwap is the realized-edge authority — executor caps every buy at sellVwap x (1-floor), below-band caps skip honest, the sovereign gate routes DRY while the window shows a premium, 3-buys minimum, clean windows still fire LIVE — PASS
-- white-box: vwapStats sums micro legs exactly (sell 0.100067 / buy 0.102197 / edge -2.1286 on the live-measured fixture), empty/unparseable = honest nulls
-- white-box: buildPlan uncapped keeps the 0.0995 ladder law byte-identical; with sellVwap 0.100067 the buy targets cap to 0.099767 (vwap_capped receipt); a cap below the band skips OUT-OF-BAND instead of pricing wrong
-- white-box: the flow-catch ladder is capped by the same law
-- white-box: the sovereign BUY-PREMIUM breaker routes PLAN-DRY on the live-measured -2.13% window, still fires EXECUTE-LIVE on a clean edge, and needs >=3 buys to judge
-- _measured: the measured leak is closed structurally: no lane can price a buy above the realized sells minus the floor, and the gate pauses LIVE until the ledger heals_
+## E38 · buy-premium law — FAIL
+- 
+- _measured: eval crashed: Cannot read properties of undefined (reading 'max_fills_per_day')_
 
 ## E39 · coordination bus: keyless saos.* chain-read with split-brain guard (nothing written on disagreement), LIMIT-100 page-walk, namespace whitelist, RESERVATIONS collision leases (reason-code machine, no immortal leases), STASIS zero-network halt, public proof wire — PASS
 - white-box: namespace whitelist — known saos.* flagged, unknown saos.* kept+flagged known:false, foreign custom_json ignored
@@ -476,7 +465,7 @@ _run-evals v1.53.0 (Z-36 + Z-38 guard + Z-39 rail E10-E12 + Task 22 fate-defense
 - white-box: routing finds the 3-hop WSBD→WSTEEM path deterministically (byte-identical across runs, deterministic tie-breaks), the rebalance fires ONLY above the R39 FLOOR law (2×costs) on our own pool and books its edge marked-to-fair, and the pool-side counter-grids carry both opposing sides with the Avellaneda sign law
 - black-box: dex-core selftest runs in a fresh process, exit 0, DEX-CORE-SELFTEST-OK marker on stdout (zero network — judge separation)
 - real-tree: the booked exchange-core book re-derives from its own fields — conservation recomputes row-exact, the attestation sha256 recomputes from (seq, custody, reserves, minted, claims, poolReserves), the live route quote recomputes from the booked reserves via the same BigInt law, the arb row nets gross − fees, and the first sell rung re-derives from the booked anchor/spacing
-- _measured: fails: book-conservation-rederives; grid-verdict-matches-gate_
+- _measured: fails: book-conservation-rederives_
 
 ## E64 · the mesh market (CR-0071) — FAIL
 - white-box: settleIntents refuses the unknown roster / dust / naked shorts honestly (GATED-WIRE-NO-CAPITAL named, never faked), wires are capped at 10% of free treasury per batch, a fill never exceeds 5% of first-hop depth, every hop + minOut settle all-or-nothing on simulated copies (a refused minOut leaves pools AND accounts byte-unchanged), batch replays are idempotent, fills are byte-deterministic, edge is marked to the CEX fair (positive above the floor), the pool feeMeter accrues (LP revenue), conservation is asserted per fill and the attestation recomputes

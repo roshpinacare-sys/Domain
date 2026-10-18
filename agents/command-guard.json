@@ -1,10 +1,10 @@
 {
- "at": "2026-10-14T12:42:58.493Z",
+ "at": "2026-10-18T09:05:13.339Z",
  "agent": "command-guard v1.0.0 (Z-38, study: Dicklesworthstone/destructive_command_guard)",
  "mode": "explain",
  "scanned": 76,
  "findings": 12,
- "denies": 8,
+ "denies": 16,
  "fleetSyncIdiomAllowed": 12,
  "rows": [
   {
@@ -104,7 +104,7 @@
    "reason": "CI push-retry loop re-syncs a throwaway checkout; content regenerable — booked, not silent"
   }
  ],
- "explains": 14,
+ "explains": 28,
  "recentDenies": [
   {
    "at": "2026-10-14T12:42:27.012Z",
@@ -143,6 +143,46 @@
   },
   {
    "at": "2026-10-14T12:42:58.493Z",
+   "command": "git reset --hard origin/main",
+   "rule": "core.git:reset-hard"
+  },
+  {
+   "at": "2026-10-18T09:04:45.394Z",
+   "command": "git reset --hard HEAD~1",
+   "rule": "core.git:reset-hard"
+  },
+  {
+   "at": "2026-10-18T09:04:45.421Z",
+   "command": "git push --force origin main",
+   "rule": "core.git:push-force"
+  },
+  {
+   "at": "2026-10-18T09:04:45.449Z",
+   "command": "rm -rf agents/",
+   "rule": "fs:rm-rf"
+  },
+  {
+   "at": "2026-10-18T09:04:45.556Z",
+   "command": "git reset --hard origin/main",
+   "rule": "core.git:reset-hard"
+  },
+  {
+   "at": "2026-10-18T09:05:13.173Z",
+   "command": "git reset --hard HEAD~1",
+   "rule": "core.git:reset-hard"
+  },
+  {
+   "at": "2026-10-18T09:05:13.200Z",
+   "command": "git push --force origin main",
+   "rule": "core.git:push-force"
+  },
+  {
+   "at": "2026-10-18T09:05:13.228Z",
+   "command": "rm -rf agents/",
+   "rule": "fs:rm-rf"
+  },
+  {
+   "at": "2026-10-18T09:05:13.339Z",
    "command": "git reset --hard origin/main",
    "rule": "core.git:reset-hard"
   }

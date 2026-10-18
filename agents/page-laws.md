@@ -1,6 +1,6 @@
 # Page Laws (Z-30 mobile-steward desk)
 
-Updated: 2026-10-14T12:42:15.773Z UTC. Every public page must hold at 390px: viewport, design wave, table scroll, menu close, no fixed body. Browser sweeps remain the gold standard after each UI wave; this desk keeps the laws enforced daily.
+Updated: 2026-10-18T09:04:35.398Z UTC. Every public page must hold at 390px: viewport, design wave, table scroll, menu close, no fixed body. Browser sweeps remain the gold standard after each UI wave; this desk keeps the laws enforced daily.
 
 | page | laws | verdict |
 |---|---|---|
@@ -9,7 +9,7 @@ Updated: 2026-10-14T12:42:15.773Z UTC. Every public page must hold at 390px: vie
 | Console/deposits.html | 5/5 | PASS |
 | Console/money.html | 5/5 | PASS |
 | Console/versus.html | 5/5 | PASS |
-| Console/sovereign.html | 5/5 | PASS |
+| Console/sovereign.html | 4/5 | FAIL |
 | Console/readiness.html | 5/5 | PASS |
 | Console/gate.html | 4/5 | FAIL |
 | Console/truth.html | 4/5 | FAIL |
