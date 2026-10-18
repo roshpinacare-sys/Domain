@@ -1,16 +1,16 @@
 {
   "schema": "builder-pulse/1",
-  "at": "2026-10-18T02:53:14.863Z",
+  "at": "2026-10-18T04:35:22.597Z",
   "builder": {
     "organ": "artery-builder",
     "cadence": "hourly",
     "law": "fail-honest, refs-only, marker-scoped"
   },
   "facts": {
-    "at": "2026-10-18T02:53:14.814Z",
+    "at": "2026-10-18T04:35:22.375Z",
     "verifier": {
       "overall": "DEGRADED",
-      "at": "2026-10-18T02:26:39.453Z"
+      "at": "2026-10-18T03:54:58.615Z"
     },
     "treasury": {
       "health": "HEALTHY",
@@ -36,7 +36,7 @@
     "fleet": {
       "ok": null,
       "total": null,
-      "at": "2026-10-18T02:12:42.599Z"
+      "at": "2026-10-18T03:57:21.626Z"
     }
   },
   "audit": {
@@ -44,40 +44,47 @@
       {
         "path": "index.html",
         "exists": true,
-        "days": 0.1203106712962963
+        "days": 0.19123364583333333
       },
       {
         "path": "console.html",
         "exists": true,
-        "days": 0.1203106712962963
+        "days": 2.1912336458333335
       },
       {
         "path": "products.html",
         "exists": true,
-        "days": 0.1203106712962963
+        "days": 2.1912336458333335
       },
       {
         "path": "truth.html",
         "exists": true,
-        "days": 0.1203106712962963
+        "days": 2.1912336458333335
+      },
+      {
+        "path": "tools.html",
+        "exists": false,
+        "days": null
       },
       {
         "path": "docs/index.html",
         "exists": true,
-        "days": 0.1203106712962963
+        "days": 0.19123364583333333
       },
       {
         "path": "changelog.html",
         "exists": true,
-        "days": 0.1203106712962963
+        "days": 0.19123364583333333
       },
       {
         "path": "pulse.json",
         "exists": true,
-        "days": 0.1203106712962963
+        "days": 0.19123364583333333
       }
     ],
-    "missing": [],
+    "missing": [
+      "tools.html"
+    ],
     "linksChecked": 310,
     "brokenCount": 0,
     "backlog": [
@@ -85,6 +92,16 @@
         "id": "PULSE_SNAPSHOT",
         "priority": 0,
         "why": "דופק-מדידה חי של הריבונות — מתעדכן בכל ריצה מהקבלות בגיט"
+      },
+      {
+        "id": "REFRESH_PRODUCT_SURFACES",
+        "priority": 1,
+        "why": "משטחי-מוצר קפואים 2+ ימים בזמן שהרשת פועמת מתחת — בדיוק התלונה שנמדדה"
+      },
+      {
+        "id": "CREATE_TOOLS_HTML",
+        "priority": 2,
+        "why": "משטח חסר במוצר — כניסה שאינה קיימת (סגור/חסר, כפי שהבעלים מדד)"
       }
     ]
   }
