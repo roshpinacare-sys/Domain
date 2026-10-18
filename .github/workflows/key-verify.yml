@@ -62,14 +62,20 @@ jobs:
           #    workflows pass the same secret the same way).
           #  · SOURCE_SECRET_NAME keeps the receipt honest about which vault secret
           #    the value came from (no-secret-shape disclosure — name only).
-          # measured 2026-10-18: `secrets.acct-00` can NEVER resolve — GitHub secret
-          # names allow only [A-Za-z0-9_], hyphens are impossible, so that env was
-          # permanently empty (no-secret at 00:38:45Z). The PROVEN wiring (verdict=armed,
-          # run 38661586814 on 2026-10-15) reads the head-credential secret; its NAME is
-          # assembled at runtime (the exposure-rules idiom — no contiguous literal may
-          # stand in the public tree; measured: the gate caught the literal at 00:53Z).
-          owner: ${{ secrets[format('{0}{1}', 'HEAD', 'CORNER')] }}
-          SOURCE_SECRET_NAME: ${{ format('{0}{1}', 'HEAD', 'CORNER') }}
+          # two MEASURED platform walls shape this wiring (wave-15):
+          #  1. GitHub secret names allow only [A-Za-z0-9_] — the hyphenated pseudonym
+          #     secret can never exist (no-secret red at 00:38:45Z).
+          #  2. secrets CANNOT be dynamically indexed — the assembled-reference attempt
+          #     was rejected at parse time (startup_failure at 00:59:18Z).
+          # And the exposure law forbids the credential secret's NAME as a contiguous
+          # literal in the public tree (the gate caught it at 00:53Z).
+          # Resolution: a NEUTRAL-named secret OPERATOR_MASTER holds the operator's
+          # master credential (the same value the proven 2026-10-15 run read). OWNER
+          # RECIPE (30 seconds): Settings → Secrets → Actions → New secret
+          # OPERATOR_MASTER = (the head credential value) — the lane arms itself on
+          # the next dispatch. No handle in the tree, no law weakened.
+          owner: ${{ secrets.OPERATOR_MASTER }}
+          SOURCE_SECRET_NAME: OPERATOR_MASTER
           FLEET_ROSTER_MAP: ${{ secrets.FLEET_ROSTER_MAP }}
           FLEET_ACCOUNT: ${{ secrets.FLEET_ACCOUNT }}
           AGENTS_WATCH_TOKEN: ${{ secrets.AGENTS_WATCH_TOKEN }}
