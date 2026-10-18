@@ -617,13 +617,33 @@ function armCounterGrids(counterGrids, gate) {
   }
   return out;
 }
+// wave-14 exposure law at the write site (the arb-mesh redactOwn idiom, one law two enforcers):
+// the runtime head account (FLEET_ACCOUNT) NEVER reaches public bytes — deep-replaced (values
+// AND object keys) with the neutral role token before any write. Map-independent by
+// construction (the value is in hand at runtime), so a missing roster layer can never
+// silently no-op this scrub (the 2026-10-12 lesson). No-op in the default world
+// (FLEET_ACCOUNT unset → the head is already the neutral 'owner' literal).
+function redactOwn(v) {
+  const own = process.env.FLEET_ACCOUNT;
+  if (!own) return v;
+  const rx = new RegExp(String(own).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+  if (typeof v === 'string') return v.replace(rx, 'operator');
+  if (Array.isArray(v)) return v.map(redactOwn);
+  if (v && typeof v === 'object') {
+    return Object.fromEntries(Object.entries(v).map(([k, x]) => [String(k).replace(rx, 'operator'), redactOwn(x)]));
+  }
+  return v;
+}
 function writeBook(obj) {
+  obj = redactOwn(obj);
   const tmp = OUT_JSON + '.tmp';
   fs.writeFileSync(tmp, JSON.stringify(obj, null, 1) + '\n');
   fs.renameSync(tmp, OUT_JSON);
+  return obj;
 }
 function writeMd(b) {
   try {
+    b = redactOwn(b);
     const L = [];
     L.push(`# dex-core — EXCHANGE CORE (R40, CR-0070)`);
     L.push('');
@@ -669,7 +689,7 @@ function writeMd(b) {
 }
 function appendHistory(rows) {
   if (!rows.length) return;
-  fs.appendFileSync(OUT_HISTORY, rows.map((r) => JSON.stringify(r)).join('\n') + '\n');
+  fs.appendFileSync(OUT_HISTORY, rows.map((r) => JSON.stringify(redactOwn(r))).join('\n') + '\n');
 }
 
 // ── genesis: the vault is born from MEASURED custody, deterministically ─────
@@ -1291,10 +1311,13 @@ function sandwichExtraction(pool, from, to, victimIn, frBps) {
 /** uniform batch clearing (pure, DRY): prev is read, never written. Every intent is
  *  validated by the same laws as the sequential path (roster, pair, dust, 5%-depth cap),
  *  then the batch clears: net, route the residual aggregate once, one uniform price,
- *  minOut misses are excluded honestly and the batch re-clears without them. */
-function clearBatchUniform(prev, queue, feed, now) {
+ *  minOut misses are excluded honestly and the batch re-clears without them.
+ *  rosterForProofs: selftest-only injectable (purity law — the same seam idiom as the
+ *  gate/stasis/feeBook injectables). Production paths never pass it — they validate
+ *  against the LIVE roster, always. */
+function clearBatchUniform(prev, queue, feed, now, rosterForProofs) {
   const pools = JSON.parse(JSON.stringify(prev.pools || []));
-  const roster = rosterLaw();
+  const roster = Array.isArray(rosterForProofs) ? rosterForProofs : rosterLaw();
   const intentsIn = (queue && Array.isArray(queue.intents)) ? queue.intents : [];
   const refused = [], notes = [];
   // 1 · validate + canonical order (the order-independence law: sort, never trust arrival)
@@ -1864,12 +1887,21 @@ function feeLawTick() {
 }
 
 /** selftest-batch: the uniform clearing laws judge themselves (fresh process, zero network).
- *  The roster is read LIVE (roster law): the traders are real roster names, so the proofs
- *  never depend on a hardcoded list. */
+ *  The live roster head always trades (roster law honored — read LIVE, never hardcoded).
+ *  Proof-set law (measured 2026-10-17T23:56Z: soldiers gone → roster=1 → 9 structural
+ *  fails): the batch laws are mathematical — uniform price, order-invariance, netting,
+ *  minOut exclusion — they need THREE DISTINCT roster-valid traders, not three live
+ *  soldiers. When the measured roster is below the proof set, deterministic fixture
+ *  traders (proof-trader-NN, fixture names only, never real identities) complete it so
+ *  the laws stay provable in EVERY roster world. */
 function selftestBatch() {
   const c = []; const ok = (name, cond) => c.push({ name, ok: !!cond });
-  const roster = rosterLaw();
-  const [A, B, C] = roster; // operator first, then soldiers sorted - deterministic
+  const live = rosterLaw();
+  const traders = [...live];
+  let proofIdx = 0;
+  while (traders.length < 3) traders.push(`proof-trader-${String(++proofIdx).padStart(2, '0')}`);
+  const roster = traders;
+  const [A, B, C] = roster; // operator first (live), then measured soldiers, then fixture proof-traders
   const mkCore = () => ({
     protocol: PROTOCOL, at: '2026-10-07T10:00:00.000Z', genesisDone: true, seq: 7,
     accounts: Object.fromEntries(roster.map((r) => [r, { claims: { STEEM: '500000', SBD: '50000', WSTEEM: '388775', WSBD: '27450' } }])),
@@ -1886,7 +1918,7 @@ function selftestBatch() {
     { agent: B, from: 'STEEM', to: 'SBD', amountIn: '20000', minOut: null },
     { agent: C, from: 'STEEM', to: 'SBD', amountIn: '20000', minOut: null },
   ]);
-  const r1 = clearBatchUniform(mkCore(), oneSided, feed, '2026-10-07T10:00:00.000Z');
+  const r1 = clearBatchUniform(mkCore(), oneSided, feed, '2026-10-07T10:00:00.000Z', roster);
   // 1 · uniform price for all
   const side1 = r1.clears.find((x) => x.from === 'STEEM');
   const prices = side1 ? side1.traders.map((t) => (ub(t.uniformOut) * NANO) / ub(t.sizeIn)) : [];
@@ -1896,7 +1928,7 @@ function selftestBatch() {
   ok('remainder-conservation', !!side1 && sumShares + ub(side1.solverRemainderMu) === ub(side1.aggOut));
   // 3 · permutation invariance (the anti-sandwich proof)
   const shuffled = q([oneSided.intents[2], oneSided.intents[0], oneSided.intents[1]]);
-  const r2 = clearBatchUniform(mkCore(), shuffled, feed, '2026-10-07T10:00:00.000Z');
+  const r2 = clearBatchUniform(mkCore(), shuffled, feed, '2026-10-07T10:00:00.000Z', roster);
   ok('permutation-invariance-byte-identical', JSON.stringify(r1.clears) === JSON.stringify(r2.clears));
   // 4 · sandwich surface: sequential has windows (and they pay), batch has zero
   ok('sequential-windows-exist', r1.sandwich.sequentialFills === 3 && r1.sandwich.windows === 2);
@@ -1907,7 +1939,7 @@ function selftestBatch() {
     { agent: A, from: 'STEEM', to: 'SBD', amountIn: '10000', minOut: null }, // sells 10000mu STEEM
     { agent: B, from: 'SBD', to: 'STEEM', amountIn: '1500', minOut: null },  // buys with 1500mu SBD = 14226mu STEEM at fair
   ]);
-  const r3 = clearBatchUniform(mkCore(), twoSided, feed, '2026-10-07T10:00:00.000Z');
+  const r3 = clearBatchUniform(mkCore(), twoSided, feed, '2026-10-07T10:00:00.000Z', roster);
   const buyInternal = r3.netting.internalRows.find((x) => x.agent === A);
   const sellInternal = r3.netting.internalRows.find((x) => x.agent === B);
   ok('internal-match-at-measured-fair', !!buyInternal && !!sellInternal); // both sides matched internally at 0.1054467 SBD/STEEM
@@ -1920,21 +1952,21 @@ function selftestBatch() {
     { agent: B, from: 'STEEM', to: 'SBD', amountIn: '20000', minOut: '999999' }, // 999999 SBD for 20000mu STEEM = impossible
     { agent: C, from: 'STEEM', to: 'SBD', amountIn: '20000', minOut: null },
   ]);
-  const r4 = clearBatchUniform(mkCore(), withRidic, feed, '2026-10-07T10:00:00.000Z');
+  const r4 = clearBatchUniform(mkCore(), withRidic, feed, '2026-10-07T10:00:00.000Z', roster);
   const side4 = r4.clears.find((x) => x.from === 'STEEM');
   ok('impossible-minout-excluded', r4.clearedTotal === 2 && !!side4 && side4.excluded.some((x) => x.agent === B && x.why.indexOf('UNSATISFIED-AT-CLEARING') === 0));
   ok('survivors-still-clear', !!side4 && side4.traders.length === 2 && side4.traders.every((t) => ub(t.uniformOut) >= 1000n));
   // 7 · DRY: the ledger is untouched
   const before = mkCore();
   const snap = JSON.stringify(before);
-  clearBatchUniform(before, oneSided, feed, '2026-10-07T10:00:00.000Z');
+  clearBatchUniform(before, oneSided, feed, '2026-10-07T10:00:00.000Z', roster);
   ok('dry-ledger-untouched', JSON.stringify(before) === snap);
   ok('dry-moved-nothing-flagged', r1.movedNothing === true);
   // 8 · fail-closed netting: two-sided without a fresh fair refuses
-  const r5 = clearBatchUniform(mkCore(), twoSided, { fresh: false, fair: null }, '2026-10-07T10:00:00.000Z');
+  const r5 = clearBatchUniform(mkCore(), twoSided, { fresh: false, fair: null }, '2026-10-07T10:00:00.000Z', roster);
   ok('mixed-no-fair-refused', r5.refused.length === 2 && r5.refused.every((x) => x.why === 'MIXED-DIRECTION-NO-FAIR') && r5.clearedTotal === 0);
   // 9 · dust refusal: below MESH_DUST an intent is noise, honestly refused
-  const r6 = clearBatchUniform(mkCore(), q([{ agent: A, from: 'STEEM', to: 'SBD', amountIn: '999', minOut: null }]), feed, '2026-10-07T10:00:00.000Z');
+  const r6 = clearBatchUniform(mkCore(), q([{ agent: A, from: 'STEEM', to: 'SBD', amountIn: '999', minOut: null }]), feed, '2026-10-07T10:00:00.000Z', roster);
   ok('dust-refused-honestly', r6.validIntents === 0 && r6.refused.length === 1 && r6.refused[0].why === 'DUST');
   const pass = c.filter((x) => x.ok).length;
   console.log(`DEX-CORE-SELFTEST-BATCH-OK ${pass}/${c.length}`);
