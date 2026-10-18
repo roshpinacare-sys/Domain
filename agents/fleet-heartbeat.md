@@ -1,10 +1,12 @@
-# דופק-הצי (fleet-heartbeat) — 2026-10-18T06:09:18.210Z
+# דופק-הצי (fleet-heartbeat) — 2026-10-18T15:20:17.892Z
 
 מדידת-מנועים של כל-הריפואים: מה פועם, מה שקט, מה הפלטפורמה נטרלה, מה נרפא בריצה זו.
 
-**סיכום:** 44 ריפואים · פועמים 13 · ללא-קרון-אך-פעילים 5 · חמימים 10 · שקטים 0 · מעולם-לא-רצו 0 · ללא-workflows 10 · נטרולי-חוסר-פעילות 0 · חסומי-קיר-המכסה 6
+**סיכום:** 45 ריפואים · פועמים 14 · ללא-קרון-אך-פעילים 5 · חמימים 9 · שקטים 0 · מעולם-לא-רצו 0 · ללא-workflows 11 · נטרולי-חוסר-פעילות 0 · חסומי-קיר-המכסה 6
 
-**דופק-מונע:** Domain/tick-keeper.yml=http 422
+**דופק-מונע:** Domain/tick-keeper.yml=http 422 · Domain/cognition-beat.yml=http 422
+
+**דילוגים-כנים:** ops-forge: no active workflow to dispatch · ops-intake: no active workflow to dispatch
 
 
 ## גבולות-משמורת מדודים (לא כישלונות קוד)
@@ -17,10 +19,10 @@
 ## חסומי-קיר-המכסה (WALL-BLOCKED — מנוע פרטי שאינו יכול לרוץ כלל)
 
 - Defi — ריצה-אחרונה 2026-10-18T05:15:02Z (failure) · אפס-הצלחות בחלון
-- fleet-economy — ריצה-אחרונה 2026-10-18T05:06:44Z (failure) · אפס-הצלחות בחלון
+- fleet-economy — ריצה-אחרונה 2026-10-18T12:47:09Z (failure) · אפס-הצלחות בחלון
 - sandbox-private — ריצה-אחרונה 2026-10-13T03:24:17Z (failure) · אפס-הצלחות בחלון
 - saos-sovereign-foundry — ריצה-אחרונה 2026-10-13T03:24:15Z (failure) · אפס-הצלחות בחלון
-- steem — ריצה-אחרונה 2026-10-17T05:43:19Z (null) · אפס-הצלחות בחלון
+- steem — ריצה-אחרונה 2026-10-18T15:15:35Z (skipped) · אפס-הצלחות בחלון
 - Zip — ריצה-אחרונה 2026-10-13T10:53:15Z (failure) · אפס-הצלחות בחלון
 
 ## שורות-שקט (QUIET/NEVER-RAN/NO-WORKFLOWS/AUTO-DISABLED)
@@ -29,10 +31,11 @@
 - negen — NO-WORKFLOWS
 - ops-control — NO-WORKFLOWS
 - sanbox — NO-WORKFLOWS
+- saos-console-zai — NO-WORKFLOWS
 - saos-coordination — NO-WORKFLOWS
-- saos-desk — NO-WORKFLOWS · שקט 76.6 שעות
-- saos-markets — NO-WORKFLOWS · שקט 27.4 שעות
-- saos-owner-channel — NO-WORKFLOWS
+- saos-desk — NO-WORKFLOWS · שקט 85.8 שעות
+- saos-markets — NO-WORKFLOWS · שקט 36.6 שעות
+- saos-owner-channel — NO-WORKFLOWS · שקט 3.3 שעות
 - SovereignConsole — NO-WORKFLOWS
 - vault-home — NO-WORKFLOWS
 
