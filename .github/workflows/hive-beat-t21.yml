@@ -1,0 +1,54 @@
+# hive-beat-t21 — HIVE fleet claim lane. The architecture operates its own custody
+# (ROT2_FLEET_KEYS — ESTATE-CENSUS measured 2026-10-19: 5 roster refs hold live
+# HIVE posting/active authorities) to claim pending HIVE rewards for the fleet.
+# Chain-is-the-judge key mapping (bit-exact vs live posting authority).
+# Idempotent (no pending → SKIP) · zero exposure (refs/txids/verdicts only).
+# T21 owner order: "הארכיטקטורה תפעל הכל כבעלים — יש את כל המפתחות — השתמשי בהכל".
+name: hive-beat-t21
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry:
+        description: 'DRY=1 gates only · DRY=0 live claim'
+        required: false
+        default: 'true'
+  schedule:
+    - cron: '37 */4 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hive-beat-t21
+  cancel-in-progress: false
+
+jobs:
+  claim:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      ROT2_FLEET_KEYS: ${{ secrets.ROT2_FLEET_KEYS }}
+      FLEET_ROSTER_MAP: ${{ secrets.FLEET_ROSTER_MAP }}
+    steps:
+      - name: resolve dry flag
+        id: dry
+        run: echo "value=${{ github.event.inputs.dry || '1' }}" >> "$GITHUB_OUTPUT"
+      - name: checkout canon signer (private steem @ saos-cockpit)
+        uses: actions/checkout@v4
+        with:
+          repository: roshpinacare-sys/steem
+          ref: saos-cockpit
+          token: ${{ secrets.GH_PAT }}
+          path: steem-priv
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.14
+      - name: install + claim (fail-closed per ref, zero exposure)
+        run: |
+          set +e
+          cd steem-priv/mini-services/saos-engine
+          bun install > install.log 2>&1
+          echo "install-exit=$?"
+          DRY="${{ steps.dry.outputs.value }}" bun hive-claim-t21.mjs 2>&1 | sed -E 's/[5JK][1-9A-HJ-NP-Za-km-z]{50}/[REDACTED-WIF]/g'
+          exit "${PIPESTATUS[0]}"
