@@ -193,7 +193,7 @@
       <div class="hint" data-i="s3P">המטבעות האמתיים (STEEM/SBD) נכנסים דרך כתובת-המפקידה של הרשת. הזיכוי נטבע 1:1 מול מטמון אמת בלבד ונבדק בכל פעימת קיפול — הביקורת מפרסמת גירעון בכנות אם יש.</div>
       <div class="grid c2" id="rails"></div>
       <div class="grid c3">
-        <label class="f"><span data-i="s3Cur">מטבע</span><select id="cl-cur"><option>STEEM</option><option>SBD</option></select></label>
+        <label class="f"><span data-i="s3Cur">מטבע</span><select id="cl-cur"><option>STEEM</option><option>SBD</option><option>HIVE</option><option>HBD</option></select></label>
         <label class="f"><span data-i="s3Amt">סכום שהופקד</span><input id="cl-amt" inputmode="decimal" placeholder="10.000"></label>
         <label class="f"><span data-i="s3Ref">מזהה-הפקדה (claim id)</span><input id="cl-ref" class="mono" placeholder="dep-…" spellcheck="false"></label>
       </div>
@@ -395,7 +395,7 @@ const I = {
   s2Nick: { he: "כינוי (אופציונלי)", en: "nickname (optional)" },
   s2RegB: { he: "חתום רישום", en: "sign registration" },
   s3T: { he: "הפקדת מטבע אמת → אשראי SAOS", en: "Deposit real currency → SAOS credit" },
-  s3P: { he: "המטבעות האמתיים (STEEM/SBD) נכנסים דרך כתובת-המפקידה של הרשת. הזיכוי נטבע 1:1 מול מטמון אמת בלבד ונבדק בכל פעימת קיפול — הביקורת מפרסמת גירעון בכנות אם יש.", en: "Real currencies (STEEM/SBD) enter through the network's deposit address. Credit is minted 1:1 against real custody only and audited every fold — the audit publishes any deficit honestly." },
+  s3P: { he: "המטבעות האמתיים (STEEM/SBD ו- HIVE/HBD על שרשרת-HIVE) נכנסים דרך כתובת-המפקידה של הרשת. הזיכוי נטבע 1:1 מול מטמון אמת בלבד ונבדק בכל פעימת קיפול — הביקורת מפרסמת גירעון בכנות אם יש.", en: "Real currencies (STEEM/SBD and HIVE/HBD on the Hive chain) enter through the network's deposit address. Credit is minted 1:1 against real custody only and audited every fold — the audit publishes any deficit honestly." },
   s3Rail: { he: "מסילת-הפקדה", en: "deposit rail" },
   s3Memo: { he: "שורת-תזכיר", en: "memo" },
   s3Cur: { he: "מטבע", en: "currency" },
@@ -551,7 +551,7 @@ const I_GET = (k) => { const v = I[k]; if (v == null) return k; if (typeof v ===
 const T = (k, ...a) => { const v = I_GET(k); return typeof v === "function" ? v(...a) : v; };
 
 /* ═══════════ books ═══════════ */
-let LIVE = null, DEXS = null, TOKEN = null;
+let LIVE = null, DEXS = null, TOKEN = null, WATCH = null; // WATCH = dex/watch.json — ספר-הצופה-הפומבי (Task 24-c: נופל-אחורה למסילות-הפקדה)
 const jget = async (u) => { const r = await fetch(u, { cache: "no-store" }); if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); };
 const NODES = ["https://api.steemit.com", "https://api.justyy.com", "https://api_rpc.ecency.com"];
 async function steemRpc(method, params) {
@@ -1228,10 +1228,24 @@ $("btn-lp-rm")?.addEventListener("click", async () => {
 /* ═══════════ station 3: deposit rails + claim ═══════════ */
 function renderRails() {
   const box = $("rails"); if (!box) return;
-  const addrs = LIVE?.state?.cfg?.addrs || {};
-  const rows = Object.entries(addrs);
+  /* Task 24-c: שני-מקורות-כנים — cfg.addrs (פעולות-treasury על-השרשרת) קודם,
+   * ואחריו ספר-הצופה-הפומבי dex/watch.json depositAddresses (אפס-מפתחות,
+   * מתעדכן כל-2ש׳) — רשת שאף-מקור לא מפרסם לא-מוצגת, אף-המצאה. */
+  const LABELS = {
+    depositTron: "TRON (TRC20)", depositEvm: "EVM (ERC20)", depositSol: "Solana (SPL)", depositBtc: "Bitcoin",
+    depositSteem: "STEEM", depositSbd: "SBD", depositHive: "HIVE", depositHbd: "HBD",
+  };
+  const rows = Object.entries(LIVE?.state?.cfg?.addrs || {}).map(([cur, r]) => ({ cur, addr: r.addr, memo: r.memo }));
+  const shown = new Set(rows.map((r) => r.cur));
+  for (const [key, a] of Object.entries(WATCH?.depositAddresses || {})) {
+    const addr = typeof a === "string" ? a.trim() : (a && typeof a === "object" && typeof a.addr === "string" ? a.addr.trim() : "");
+    if (!addr) continue;
+    const cur = LABELS[key] || key.replace(/^deposit/, "");
+    if (shown.has(cur)) continue;
+    rows.push({ cur, addr, memo: (typeof a === "object" && typeof a.memo === "string" && a.memo.trim()) || "" });
+  }
   box.innerHTML = rows.length
-    ? rows.map(([cur, r]) => `<div class="rail"><b>${esc(cur)} → ${esc(r.addr || "—")}</b><div class="hint mono" style="margin-top:5px">${esc(T("s3Memo"))}: ${esc(r.memo || "saos:<claimId>")}</div></div>`).join("")
+    ? rows.map((r) => `<div class="rail"><b>${esc(r.cur)} → ${esc(r.addr || "—")}</b><div class="hint mono" style="margin-top:5px">${esc(T("s3Memo"))}: ${esc(r.memo || "saos:<claimId>")}</div></div>`).join("")
     : `<div class="hint">${LANG === "he" ? "מסילת-ההפקדה תתפרסם בספר החי הקרוב." : "the deposit rail will be published in the next live book."}</div>`;
 }
 $("btn-claim").addEventListener("click", async () => {
@@ -1403,6 +1417,7 @@ async function refreshBooks() {
   try { LIVE = await jget("saos-live.json"); } catch { /* keep last frame */ }
   try { DEXS = await jget("dex/state.json"); } catch { /* keep last frame */ }
   try { TOKEN = await jget("token.json"); } catch { TOKEN = null; }
+  try { WATCH = await jget("dex/watch.json"); } catch { WATCH = null; } /* Task 24-c: ספר-הצופה — כתובות-הפקדה מפורסמות */
   renderLiveChips(); renderAccount(); renderPools(); renderRails(); refreshSendSymbols(); renderAbook(); renderQueue();
 }
 
