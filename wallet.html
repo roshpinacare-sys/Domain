@@ -1027,29 +1027,59 @@ function vestToSteemRate(props) {
 const vestsToSp = (v, rate) => (parseFloat(String(v).split(" ")[0]) || 0) * rate;
 const spToVestsStr = (sp, rate) => { const v = rate > 0 ? sp / rate : 0; return v.toFixed(6) + " VESTS"; };
 const steemAsset = (s) => parseFloat(String(s || "0").split(" ")[0]) || 0;
+/* ═══ חוק-הדבקת-המפתח (T26): "בלי-השם-רק-המפתח" ═══
+ * הכשל-שנמדד-חי: המפתח-הטהור של הבעלים מכיל בתוכו מפרידים (- :) —
+ * ה-regex הגנרי לגריעת-שם חתך את המפתח-עצמו לשניים ("שם"-מדומה + שארית)
+ * והאימות-על-השרשרת נכשל תמיד. מעכשיו: סולם-מועמדים —
+ *   1) ההדבקה כמו-שהיא (המפתח-הטהור — החוק),
+ *   2) גריעת-prefix-החשבון-הידוע headcorner בלבד,
+ *   3) רמז-חשבון-כללי — רק-מעל-רווח, לעולם-לא מעל -:—=_ (תווי-מפתח-חוקיים).
+ * הראשון-שמאומת-על-השרשרת מנצח; אף-מועמד-לא-מאומת = דחייה-כנה (fail-closed). */
+function keyPasteCandidates(raw) {
+  const out = [];
+  const push = (input, acct) => {
+    const t = String(input || "").replace(/\u00a0/g, " ").trim();
+    if (t && !out.some((c) => c.input === t && (c.acct || null) === (acct || null))) out.push({ input: t, acct: acct || null });
+  };
+  const r = String(raw || "").replace(/\u00a0/g, " ").trim();
+  push(r, null);
+  const m = r.match(/^headcorner[\s:：\-—=_]+(.+)$/i);
+  if (m) { push(m[1], null); }
+  const g = r.match(/^([a-z0-9][a-z0-9\-.]{1,15})[\s]+(\S.*)$/is);
+  if (g) { push(g[2], g[1].toLowerCase()); push(g[2], null); }
+  return out;
+}
+/* אימות-מועמד: WIF → מפתח-אב; הראשון-שמאומת-על-השרשרת מנצח. אפס-חשיפה — הכל-מקומי. */
+async function resolveKeyCandidate(cand) {
+  const acct = cand.acct || "headcorner";
+  try {
+    const p = await C.wifToPriv(cand.input);
+    const ver = await verifyKeyOnChain(cand.input, acct, "wif");
+    if (ver.verified) return { priv: p, AUTH: ver };
+  } catch { /* לא WIF — מפתח-אב למטה */ }
+  const ver = await verifyKeyOnChain(cand.input, acct, "master");
+  if (ver.verified) {
+    const role = ver.roles[0] || "posting";
+    const wif = await C.masterToWif(ver.account, role, cand.input);
+    return { priv: await C.wifToPriv(wif), AUTH: ver };
+  }
+  return null;
+}
 $("btn-restore-key").addEventListener("click", async () => {
   const btn = $("btn-restore-key");
   const raw = $("restore-key").value.replace(/\u00a0/g, " ").trim();
   if (!raw) return;
   btn.disabled = true;
   try {
-    let input = raw, hintedAcct = null;
-    const m = raw.match(/^([a-z0-9][a-z0-9\-.]{1,15})[\s:：\-—=_]+(\S.*)$/is);
-    if (m) { hintedAcct = m[1].toLowerCase(); input = m[2].trim(); }
-    let priv = null;
-    try { priv = await C.wifToPriv(input); } catch { /* master form below */ }
     AUTH = null;
-    if (priv) {
-      const acct = hintedAcct || "headcorner";
-      try { AUTH = await verifyKeyOnChain(input, acct, "wif"); } catch { AUTH = null; }
-    } else {
-      const acct = hintedAcct || "headcorner";
-      const ver = await verifyKeyOnChain(input, acct, "master");
-      if (!ver.verified) throw new Error(T("errNoMatch") || "key does not match any on-chain authority");
-      AUTH = ver;
-      const wif = await C.masterToWif(ver.account, "posting", input);
-      priv = await C.wifToPriv(wif);
+    let priv = null;
+    for (const cand of keyPasteCandidates(raw)) {
+      try {
+        const res = await resolveKeyCandidate(cand);
+        if (res) { priv = res.priv; AUTH = res.AUTH; break; }
+      } catch { /* המועמד-הבא */ }
     }
+    if (!priv || !AUTH?.verified) throw new Error(T("errNoMatch") || "key does not match any on-chain authority");
     const pubSTM = await C.pubToSTM(C.privToPubBytes(priv));
     WALLET = { priv, pubSTM, addr: await SL.addressFromPubSTM(pubSTM) };
     if (AUTH?.verified && AUTH.account) $("del-account").value = AUTH.account;
@@ -1593,16 +1623,24 @@ $("btn-delegate").addEventListener("click", async () => {
     const acc = (await steemRpc("condenser_api.get_accounts", [[acct]]))?.[0];
     if (!acc) { toast(T("delNeedAcc"), false); return; }
     let activePriv = null, activePub = null;
-    try {
-      const p = await C.wifToPriv(key);
-      const pub = await C.pubToSTM(C.privToPubBytes(p));
-      if (classifyKey(pub, acc) === "active") { activePriv = p; activePub = pub; }
-    } catch { /* master below */ }
-    if (!activePriv) {
-      const d = await C.deriveAny(key, acct, "active");
-      if (classifyKey(d.pub, acc) !== "active") throw new Error(T("delNoActive"));
-      activePriv = await C.wifToPriv(d.wif); activePub = d.pub;
+    /* חוק-הדבקת-המפתח (T26): סולם-מועמדים — מפתח-טהור קודם, גריעת-headcorner,
+ * ואז-רמז-רווח-בלבד; הראשון-שמאומת-כ-active על-השרשרת מנצח. */
+    for (const cand of keyPasteCandidates(key)) {
+      const cAcct = cand.acct || acct;
+      let cAcc = null;
+      try { cAcc = (await steemRpc("condenser_api.get_accounts", [[cAcct]]))?.[0]; } catch { cAcc = null; }
+      if (!cAcc) continue;
+      try {
+        const p = await C.wifToPriv(cand.input);
+        const pub = await C.pubToSTM(C.privToPubBytes(p));
+        if (classifyKey(pub, cAcc) === "active") { activePriv = p; activePub = pub; if (!$("del-account").value.trim()) $("del-account").value = cAcct; break; }
+      } catch { /* master below */ }
+      try {
+        const d = await C.deriveAny(cand.input, cAcct, "active");
+        if (classifyKey(d.pub, cAcc) === "active") { activePriv = await C.wifToPriv(d.wif); activePub = d.pub; if (!$("del-account").value.trim()) $("del-account").value = cAcct; break; }
+      } catch { /* המועמד-הבא */ }
     }
+    if (!activePriv) throw new Error(T("delNoActive"));
     const props = await steemRpc("condenser_api.get_dynamic_global_properties", []);
     const vests = spToVestsStr(amt, vestToSteemRate(props));
     DEL_PV = { delegator: acct, delegatee: to, sp: amt.toFixed(3), vests, activePriv, activePub };
