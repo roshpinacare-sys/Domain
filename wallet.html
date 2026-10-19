@@ -4,684 +4,466 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SAOS · המכונה — ארנק אמת</title>
-<meta name="description" content="ארנק SAOS: מכונה חיה — נולד במכשיר שלך, מאומת מול השרשרת הציבורית, נסחר בבריכות אמת. כל חלק במכונה זוהר כשהוא באמת פעיל.">
+<meta name="description" content="ארנק SAOS v2: מכונה חיה שנולדת במכשיר שלך. כל חלק עושה משהו — כספת, ממגורות, גלגל-החלפה, מכלי-בריכות, אנטנת-ממסר ומנורת-אימות. כל מספר נקרא מהשרשרת הציבורית וכל פעולה נחתמת במכשיר.">
 <meta property="og:title" content="SAOS · המכונה">
 <meta property="og:description" content="ארנק אמת: יצירה, הפקדה, החלפה, נזילות — הכל חתום מקומית ומאומת על השרשרת.">
 <link rel="icon" href="favicon.svg">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Hebrew:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-  /* ── חוק-עיצוב: קווים דקים, איזומטריה שקטה, זוהר-ענבר רק כשהמצב אמת. המכונה היא לוח-מצב חי. ── */
+  /* ── חוק-עיצוב v2 (לקח-מ-isoglow): קו דק, נייר שקט, זוהר-ענבר רק כשהמצב אמת.
+     כל חלק במכונה עושה משהו — וכל מספר מראה מאיפה הוא בא. ── */
   :root {
     color-scheme: dark;
-    --bg:#0d0e0f; --panel:#141516; --panel2:#181a1b; --rule:#26282a; --line:#3a3e41; --dim:#8a8f93; --text:#c9cdd0; --strong:#eef0f1;
-    --gold:#ffd166; --green:#86efac; --red:#fca5a5; --amber:#fbbf24;
-    --sans:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --bg:#0e0f10; --panel:#151617; --panel2:#1a1c1d; --rule:#27292b; --line:#3a3e41;
+    --dim:#8f9498; --text:#c9cdd0; --strong:#eef0f1;
+    --gold:#f5b301; --gold-soft:rgba(245,179,1,.14); --green:#4ade80; --red:#f87171; --amber:#fbbf24;
+    --sans:"IBM Plex Sans Hebrew", system-ui, -apple-system, "Segoe UI", sans-serif;
     --mono:"IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    --r:14px;
   }
   @media (prefers-color-scheme: light) { html:not([data-theme="dark"]) {
     color-scheme: light;
-    --bg:#f4f4f2; --panel:#ffffff; --panel2:#fafaf8; --rule:#dcdcd8; --line:#b9bcbe; --dim:#6b6f72; --text:#33373a; --strong:#121415;
-    --gold:#a16207; --green:#15803d; --red:#b91c1c; --amber:#a16207;
+    --bg:#f7f6f2; --panel:#ffffff; --panel2:#fafaf7; --rule:#e2e1da; --line:#b9bcbe;
+    --dim:#676c70; --text:#2c3033; --strong:#141618;
+    --gold:#a16207; --gold-soft:rgba(161,98,7,.10); --green:#15803d; --red:#b91c1c; --amber:#a16207;
   }}
   * { box-sizing:border-box; }
-  html { scroll-padding-top:118px; }
-  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.65 var(--sans); min-height:100vh; display:flex; flex-direction:column; }
+  html { scroll-padding-top:132px; scroll-behavior:smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior:auto; } * { animation:none!important; transition:none!important; } }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.7 var(--sans); min-height:100vh; display:flex; flex-direction:column; }
   main { flex:1 0 auto; width:100%; }
-  a { color:var(--strong); text-decoration:underline; text-decoration-color:var(--rule); text-decoration-thickness:1px; text-underline-offset:3px; }
+  a { color:var(--strong); text-decoration:underline; text-decoration-color:var(--rule); text-underline-offset:3px; }
   a:hover { text-decoration-color:var(--gold); }
-  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible { outline:2px solid var(--gold); outline-offset:2px; border-radius:6px; }
-  code, .mono, kbd { font-family:var(--mono); font-size:.88em; }
+  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, [tabindex]:focus-visible { outline:2px solid var(--gold); outline-offset:2px; border-radius:6px; }
+  code, .mono, kbd { font-family:var(--mono); font-size:.86em; }
+  h1,h2,h3 { color:var(--strong); line-height:1.35; margin:0 0 6px; }
+  h2 { font-size:21px; } h3 { font-size:16.5px; }
+  p { margin:0 0 10px; }
+  .sub { color:var(--dim); font-size:14px; }
+  ::selection { background:var(--gold-soft); }
   ::-webkit-scrollbar { width:8px; height:8px; }
   ::-webkit-scrollbar-thumb { background:var(--rule); border-radius:8px; }
 
   /* ── header ── */
-  .top { position:sticky; top:0; z-index:30; padding-top:env(safe-area-inset-top,0px);
-         background:color-mix(in srgb, var(--bg) 76%, transparent);
+  .top { position:sticky; top:0; z-index:40; padding-top:env(safe-area-inset-top,0px);
+         background:color-mix(in srgb, var(--bg) 80%, transparent);
          -webkit-backdrop-filter:blur(14px) saturate(140%); backdrop-filter:blur(14px) saturate(140%);
-         border-bottom:1px solid color-mix(in srgb, var(--rule) 72%, transparent); }
-  .top-in { max-width:960px; margin:0 auto; padding:11px 20px; display:flex; align-items:center; gap:10px; }
-  .brand { display:flex; align-items:center; gap:10px; font-weight:600; color:var(--strong); text-decoration:none; }
-  .chip { display:inline-flex; align-items:center; gap:6px; border:1px solid var(--rule); border-radius:999px; padding:2px 10px; font-size:11.5px; color:var(--dim); white-space:nowrap; }
-  .chip i { width:7px; height:7px; border-radius:50%; background:var(--dim); flex:none; }
-  .chip.live i { background:var(--green); }
-  .chip.warn i { background:var(--amber); }
-  .chip.gold { border-color:color-mix(in srgb, var(--gold) 45%, var(--rule)); color:var(--gold); }
+         border-bottom:1px solid var(--rule); }
+  .top-in { max-width:1060px; margin:0 auto; padding:10px 20px; display:flex; align-items:center; gap:10px; }
+  .brand { display:flex; align-items:center; gap:9px; font-weight:700; color:var(--strong); text-decoration:none; font-size:17px; }
+  .brand .mark { width:26px; height:26px; flex:none; }
   .spacer { flex:1; }
+  .chip { display:inline-flex; align-items:center; gap:6px; border:1px solid var(--rule); border-radius:999px; padding:3px 11px; font-size:12px; color:var(--dim); white-space:nowrap; }
+  .chip i { width:7px; height:7px; border-radius:50%; background:var(--dim); flex:none; }
+  .chip.live i { background:var(--green); box-shadow:0 0 8px color-mix(in srgb, var(--green) 55%, transparent); }
+  .chip.gold { border-color:color-mix(in srgb, var(--gold) 40%, var(--rule)); color:var(--gold); }
+  .chip.gold i { background:var(--gold); }
+  .chip.red i { background:var(--red); }
   .langbtn { all:unset; cursor:pointer; font-size:12px; color:var(--dim); border:1px solid var(--rule); border-radius:8px; padding:4px 10px; }
   .langbtn:hover { color:var(--strong); border-color:var(--dim); }
-  @media (max-width:700px) { .top-in .chip.hide-s { display:none; } }
+  @media (max-width:760px) { .top-in .hide-s { display:none; } }
 
-  /* ── next-step bar: המכונה אומרת מה עכשיו ── */
-  .nextbar { position:sticky; top:0; z-index:29; background:color-mix(in srgb, var(--gold) 7%, var(--bg)); border-bottom:1px solid color-mix(in srgb, var(--gold) 32%, var(--rule)); }
-  .nextbar-in { max-width:960px; margin:0 auto; padding:9px 20px; display:flex; align-items:center; gap:10px; font-size:13.5px; color:var(--strong); }
-  .nextbar .dot { width:9px; height:9px; border-radius:50%; background:var(--gold); flex:none; box-shadow:0 0 12px color-mix(in srgb, var(--gold) 60%, transparent); }
-  .nextbar.done .dot { background:var(--green); box-shadow:0 0 12px color-mix(in srgb, var(--green) 50%, transparent); }
+  /* ── next-step bar: המכונה אומרת מה הצעד הבא ── */
+  .nextbar { position:sticky; top:53px; z-index:39; background:color-mix(in srgb, var(--gold) 6%, var(--bg)); border-bottom:1px solid color-mix(in srgb, var(--gold) 30%, var(--rule)); }
+  .nextbar-in { max-width:1060px; margin:0 auto; padding:9px 20px; display:flex; align-items:center; gap:10px; font-size:14px; color:var(--strong); }
+  .nextbar .dot { width:9px; height:9px; border-radius:50%; background:var(--gold); flex:none; box-shadow:0 0 12px color-mix(in srgb, var(--gold) 55%, transparent); }
+  .nextbar.done .dot { background:var(--green); box-shadow:0 0 12px color-mix(in srgb, var(--green) 45%, transparent); }
   .nextbar .go { all:unset; cursor:pointer; margin-inline-start:auto; font-size:12px; color:var(--gold); border:1px solid color-mix(in srgb, var(--gold) 45%, var(--rule)); border-radius:8px; padding:3px 12px; white-space:nowrap; }
-  .nextbar .go:hover { background:color-mix(in srgb, var(--gold) 12%, transparent); }
+  .nextbar .go:hover { background:var(--gold-soft); }
 
   /* ── layout ── */
-  main .wrap { max-width:960px; margin:0 auto; padding:22px 20px 60px; display:flex; flex-direction:column; gap:30px; }
-  .hero h1 { margin:0 0 6px; font-size:25px; line-height:1.3; color:var(--strong); letter-spacing:-.01em; }
-  .hero p { margin:0; max-width:66ch; color:var(--dim); font-size:14.5px; }
-  .statline { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+  .wrap { max-width:1060px; margin:0 auto; padding:26px 20px 60px; }
+  .hero { margin:6px 0 20px; }
+  .hero h1 { font-size:clamp(24px, 4.6vw, 34px); letter-spacing:-.01em; }
+  .hero .sub { max-width:72ch; }
 
-  /* ── the iso machine ── */
-  #machine { border:1px solid var(--rule); border-radius:16px; background:
-      radial-gradient(1200px 300px at 50% -60px, color-mix(in srgb, var(--gold) 4%, transparent), transparent),
-      var(--panel); overflow:hidden; }
-  #machine svg { display:block; width:100%; height:auto; }
-  .iso .face { fill:var(--panel2); stroke:var(--line); stroke-width:1.1; vector-effect:non-scaling-stroke; stroke-linejoin:round; transition:fill .5s ease-out, stroke .5s ease-out; }
-  .iso .face.top { fill:var(--panel); }
-  .iso .face.recess { fill:var(--bg); }
-  .iso .stroke { fill:none; stroke:var(--line); stroke-width:1.1; vector-effect:non-scaling-stroke; stroke-linecap:round; }
-  .iso .halo { fill:var(--gold); opacity:0; transition:opacity .5s ease-out, filter .5s ease-out; }
-  .iso-part { cursor:pointer; }
-  .iso-part:hover .face { stroke:var(--dim); }
-  .iso-part.lit .halo { opacity:.30; filter:drop-shadow(0 0 5px color-mix(in srgb, var(--gold) 60%, transparent)) drop-shadow(0 0 14px color-mix(in srgb, var(--gold) 28%, transparent)); }
-  .iso-part.lit .face { fill:color-mix(in srgb, var(--gold) 13%, var(--panel2)); }
-  .iso-part.lit .face.top { fill:color-mix(in srgb, var(--gold) 20%, var(--panel)); }
-  .iso-part.lit .stroke { stroke:color-mix(in srgb, var(--gold) 40%, var(--line)); }
-  .iso-part:focus-visible .face, .iso-part:focus-visible .stroke { stroke:var(--gold); }
-  .iso-part strong { font:500 10.5px var(--mono); fill:var(--dim); }
-  .iso-part.lit strong { fill:var(--gold); }
-  #iso-belt .belt-cube { transition:fill .4s; }
-  #iso-belt.run .belt-cube { animation:belt-pulse 1.15s ease-in-out infinite; }
-  @keyframes belt-pulse { 0%,100% { fill:var(--panel2); } 50% { fill:color-mix(in srgb, var(--gold) 42%, var(--panel2)); } }
-  #iso-wires { stroke-dasharray:5 7; }
-  #iso-wires.flow { animation:wires-flow 1s linear infinite; stroke:var(--gold); }
-  @keyframes wires-flow { to { stroke-dashoffset:-12; } }
-  #iso-silo-fill { transition:height .7s ease, y .7s ease; }
-  @media (prefers-reduced-motion:reduce) { #iso-belt.run .belt-cube, #iso-wires.flow, #iso-silo-fill { animation:none; transition:none; } }
-  .mach-legend { display:flex; flex-wrap:wrap; gap:7px 16px; padding:10px 18px 14px; font-size:12px; color:var(--dim); border-top:1px solid var(--rule); }
-  .mach-legend button { all:unset; cursor:pointer; display:inline-flex; gap:6px; align-items:center; }
-  .mach-legend button:hover { color:var(--strong); }
-  .mach-legend .k { width:8px; height:8px; border-radius:2px; border:1px solid var(--line); background:var(--panel2); flex:none; }
-  .mach-legend .k.on { background:var(--gold); border-color:var(--gold); box-shadow:0 0 8px color-mix(in srgb, var(--gold) 55%, transparent); }
+  /* ── the machine ── */
+  .machine { background:var(--panel); border:1px solid var(--rule); border-radius:var(--r); padding:14px 10px 6px; margin:0 0 10px; }
+  .machine svg { width:100%; height:auto; display:block; }
+  .mlegend { display:flex; flex-wrap:wrap; gap:8px 16px; padding:10px 14px 12px; font-size:12.5px; color:var(--dim); }
+  .mlegend b { color:var(--text); font-weight:500; }
+  .mlegend .on b { color:var(--gold); }
+
+  .part { cursor:pointer; }
+  .part .halo { opacity:0; transition:opacity .35s ease; }
+  .part.lit .halo { opacity:1; }
+  .part .face { fill:var(--panel2); stroke:var(--line); stroke-width:1.1; transition:fill .3s, stroke .3s; }
+  .part .face.top { fill:color-mix(in srgb, var(--panel2) 82%, var(--line)); }
+  .part .wire { stroke:var(--line); stroke-width:1.4; fill:none; }
+  .part .lbl { font:500 12.5px var(--sans); fill:var(--dim); }
+  .part.lit .lbl { fill:var(--gold); }
+  .part .lbl-v { font:500 11px var(--mono); fill:var(--dim); }
+  .part.lit .face { stroke:color-mix(in srgb, var(--gold) 55%, var(--line)); }
+  .part:hover .face, .part:focus-visible .face { fill:color-mix(in srgb, var(--gold) 7%, var(--panel2)); }
+  .part:focus { outline:none; }
+  .part.dead .face { stroke-dasharray:4 3; opacity:.75; }
+  #iso-wires.flow .dash { stroke-dasharray:6 6; animation:dashmove 1.1s linear infinite; }
+  .part .sig { opacity:.25; transition:opacity .3s; }
+  .part.live-sig .sig { opacity:1; stroke:var(--gold); animation:sigpulse 1.6s ease-in-out infinite; }
+  @keyframes sigpulse { 0%,100% { opacity:.45; } 50% { opacity:1; } }
+  .beltbox { animation:none; }
+  @keyframes dashmove { to { stroke-dashoffset:-12; } }
 
   /* ── stations ── */
-  section.station { border:1px solid var(--rule); border-radius:14px; background:var(--panel); overflow:hidden; }
-  .st-head { display:flex; align-items:baseline; gap:12px; padding:15px 20px 12px; border-bottom:1px solid var(--rule); background:var(--panel2); }
-  .st-num { font-family:var(--mono); font-size:12px; color:var(--gold); border:1px solid color-mix(in srgb, var(--gold) 40%, var(--rule)); border-radius:8px; padding:1px 8px; }
-  .st-head h2 { margin:0; font-size:17px; color:var(--strong); }
-  .st-head .hint2 { margin-inline-start:auto; font-size:12px; color:var(--dim); }
-  .st-body { padding:18px 20px 20px; display:flex; flex-direction:column; gap:14px; }
-  .hint { color:var(--dim); font-size:12.5px; line-height:1.6; }
-  .hint b { color:var(--text); }
-  .grid { display:grid; gap:12px; }
-  @media (min-width:700px) { .grid.c2 { grid-template-columns:1fr 1fr; } .grid.c3 { grid-template-columns:1fr 1fr 1fr; } }
-  .card { border:1px solid var(--rule); border-radius:11px; padding:14px 16px; background:var(--panel2); display:flex; flex-direction:column; gap:9px; }
-  .card h3 { margin:0; font-size:14.5px; color:var(--strong); }
-  .card p { margin:0; font-size:13px; color:var(--dim); }
-  label.f { display:flex; flex-direction:column; gap:5px; font-size:12.5px; color:var(--dim); }
-  input, select, textarea { background:var(--bg); border:1px solid var(--rule); color:var(--strong); border-radius:9px; padding:10px 12px; font:14px/1.4 var(--sans); width:100%; }
+  .station { background:var(--panel); border:1px solid var(--rule); border-radius:var(--r); padding:20px 22px; margin:18px 0; scroll-margin-top:132px; }
+  .station.flash { border-color:color-mix(in srgb, var(--gold) 55%, var(--rule)); box-shadow:0 0 0 3px var(--gold-soft); }
+  .st-head { display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin-bottom:4px; }
+  .st-src { font-size:11px; color:var(--dim); border:1px solid var(--rule); border-radius:999px; padding:1px 9px; white-space:nowrap; }
+  .st-src.live { color:var(--green); border-color:color-mix(in srgb, var(--green) 35%, var(--rule)); }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:14px; margin:12px 0; }
+  .cell { background:var(--panel2); border:1px solid var(--rule); border-radius:10px; padding:13px 15px; }
+  .cell .k { font-size:12.5px; color:var(--dim); }
+  .cell .v { font-size:19px; color:var(--strong); font-weight:600; margin-top:2px; }
+  .cell .v small { font-size:12px; color:var(--dim); font-weight:400; }
+  .row { display:flex; gap:10px; flex-wrap:wrap; align-items:end; }
+  label.f { display:flex; flex-direction:column; gap:4px; font-size:12.5px; color:var(--dim); min-width:140px; flex:1; }
+  input[type=text], input[type=password], input[type=number], select {
+    background:var(--panel2); color:var(--strong); border:1px solid var(--line); border-radius:9px;
+    padding:9px 12px; font:15px var(--sans); width:100%;
+  }
   input.mono { font-family:var(--mono); font-size:13px; }
-  .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
-  .btn { all:unset; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:8px; background:var(--strong); color:var(--bg); border-radius:10px; padding:10px 18px; font:500 14px var(--sans); min-height:44px; }
-  .btn:hover { filter:brightness(1.06); }
-  .btn.gold { background:var(--gold); }
-  .btn.ghost { background:transparent; color:var(--strong); border:1px solid var(--rule); }
-  .btn.ghost:hover { border-color:var(--dim); }
-  .btn.sm { padding:6px 12px; min-height:36px; font-size:13px; }
+  .btn { all:unset; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:7px;
+         border:1px solid var(--line); border-radius:10px; padding:9px 18px; font:500 14.5px var(--sans);
+         color:var(--strong); background:var(--panel2); min-height:44px; transition:border-color .2s, background .2s; }
+  .btn:hover { border-color:var(--dim); }
+  .btn.gold { border-color:color-mix(in srgb, var(--gold) 55%, var(--rule)); color:var(--gold); }
+  .btn.gold:hover { background:var(--gold-soft); }
   .btn:disabled { opacity:.45; cursor:not-allowed; }
-  .copy { all:unset; cursor:pointer; font-family:var(--mono); font-size:11px; color:var(--dim); border:1px solid var(--rule); border-radius:7px; padding:3px 9px; }
-  .copy:hover { color:var(--strong); border-color:var(--dim); }
-  .keybox { border:1px dashed color-mix(in srgb, var(--gold) 50%, var(--rule)); background:color-mix(in srgb, var(--gold) 6%, transparent); border-radius:11px; padding:13px 15px; }
-  .keybox .w { font-family:var(--mono); font-size:12.5px; word-break:break-all; color:var(--strong); margin-top:6px; }
-  .ok { color:var(--green); } .bad { color:var(--red); } .warn { color:var(--amber); }
-  table { width:100%; border-collapse:collapse; font-size:13px; }
-  th { text-align:start; color:var(--dim); font-weight:500; font-size:11.5px; letter-spacing:.04em; text-transform:uppercase; padding:7px 8px; border-bottom:1px solid var(--rule); }
-  td { padding:8px; border-bottom:1px solid color-mix(in srgb, var(--rule) 55%, transparent); }
-  tr:last-child td { border-bottom:none; }
-  .num { font-family:var(--mono); font-size:12.5px; }
-  .twrap { max-height:300px; overflow:auto; border:1px solid var(--rule); border-radius:10px; }
-  .op-row { display:flex; align-items:center; gap:9px; padding:7px 11px; border-bottom:1px solid color-mix(in srgb, var(--rule) 55%, transparent); font-size:12.5px; }
-  .op-row:last-child { border-bottom:none; }
-  .op-row .k { font-family:var(--mono); color:var(--gold); font-size:11.5px; flex:none; }
-  details.adv { border:1px solid var(--rule); border-radius:11px; background:var(--panel2); }
-  details.adv > summary { cursor:pointer; padding:12px 16px; color:var(--strong); font-size:14px; }
-  details.adv > div { padding:4px 16px 16px; }
-  .addrbox { display:flex; align-items:center; gap:9px; flex-wrap:wrap; }
-  .addrbox .a { font-family:var(--mono); font-size:12.5px; word-break:break-all; color:var(--strong); }
-  .rail { border:1px solid var(--rule); border-radius:10px; padding:11px 13px; background:var(--bg); }
-  .rail b { color:var(--strong); font-size:13px; }
-  .modal { position:fixed; inset:0; z-index:50; background:color-mix(in srgb, var(--bg) 72%, transparent); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); display:flex; align-items:center; justify-content:center; padding:18px; }
-  .modal[hidden] { display:none; }
-  .modal .box { background:var(--panel); border:1px solid var(--rule); border-radius:14px; max-width:460px; width:100%; padding:20px; display:flex; flex-direction:column; gap:11px; }
-  .pv-row { display:flex; justify-content:space-between; gap:10px; padding:5px 0; font-size:13px; }
-  .tag { display:inline-flex; align-items:center; gap:6px; border:1px solid var(--rule); border-radius:999px; padding:3px 11px; font-size:12px; color:var(--dim); }
-  .tag.gold { border-color:color-mix(in srgb, var(--gold) 45%, var(--rule)); color:var(--gold); }
-  .tag.green { border-color:color-mix(in srgb, var(--green) 40%, var(--rule)); color:var(--green); }
-  .tag.amber { border-color:color-mix(in srgb, var(--amber) 45%, var(--rule)); color:var(--amber); }
-  /* tabs (station 3) */
-  .tabs { display:flex; gap:6px; flex-wrap:wrap; }
-  .tabs button { all:unset; cursor:pointer; font-size:13px; color:var(--dim); border:1px solid var(--rule); border-radius:9px; padding:7px 14px; min-height:38px; }
-  .tabs button[aria-selected="true"] { color:var(--gold); border-color:color-mix(in srgb, var(--gold) 45%, var(--rule)); background:color-mix(in srgb, var(--gold) 7%, transparent); }
-  .tabpanel[hidden] { display:none; }
+  .btn.sm { padding:5px 12px; min-height:34px; font-size:13px; border-radius:8px; }
+  table.t { width:100%; border-collapse:collapse; font-size:13.5px; }
+  table.t th { text-align:start; color:var(--dim); font-weight:500; font-size:12px; padding:7px 10px; border-bottom:1px solid var(--rule); }
+  table.t td { padding:8px 10px; border-bottom:1px solid color-mix(in srgb, var(--rule) 55%, transparent); }
+  table.t tr:last-child td { border-bottom:none; }
+  .warn { border:1px solid color-mix(in srgb, var(--amber) 40%, var(--rule)); background:color-mix(in srgb, var(--amber) 6%, var(--panel2)); border-radius:10px; padding:12px 15px; font-size:13.5px; }
+  .okbox { border:1px solid color-mix(in srgb, var(--green) 35%, var(--rule)); background:color-mix(in srgb, var(--green) 6%, var(--panel2)); border-radius:10px; padding:12px 15px; font-size:13.5px; }
+  .fp { font-family:var(--mono); letter-spacing:.04em; }
+  .addr { font-family:var(--mono); font-size:12.5px; word-break:break-all; }
+  details.acc { border:1px solid var(--rule); border-radius:10px; padding:10px 14px; margin:8px 0; background:var(--panel2); }
+  details.acc summary { cursor:pointer; color:var(--strong); font-weight:500; }
+  details.acc[open] summary { margin-bottom:8px; }
 
-  footer { border-top:1px solid var(--rule); margin-top:auto; flex-shrink:0; padding-bottom:env(safe-area-inset-bottom,0px); }
-  footer .in { max-width:960px; margin:0 auto; padding:20px; display:flex; flex-wrap:wrap; gap:10px 22px; color:var(--dim); font-size:12.5px; align-items:center; }
-  .sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+  /* ── toast ── */
+  #toast { position:fixed; inset-inline:0; bottom:calc(18px + env(safe-area-inset-bottom,0px)); display:flex; justify-content:center; z-index:90; pointer-events:none; }
+  #toast .t { background:var(--strong); color:var(--bg); border-radius:999px; padding:9px 20px; font-size:13.5px; font-weight:500; box-shadow:0 6px 24px rgba(0,0,0,.35); opacity:0; transform:translateY(8px); transition:.25s; max-width:88vw; }
+  #toast .t.on { opacity:1; transform:none; }
+  #toast .t.bad { background:var(--red); color:#fff; }
+
+  footer { margin-top:auto; border-top:1px solid var(--rule); padding:22px 20px calc(24px + env(safe-area-inset-bottom,0px)); }
+  .foot-in { max-width:1060px; margin:0 auto; display:flex; flex-wrap:wrap; gap:10px 22px; align-items:center; font-size:12.5px; color:var(--dim); }
+  .foot-in a { color:var(--dim); }
+  .foot-in a:hover { color:var(--strong); }
 </style>
 </head>
 <body>
 <header class="top">
   <div class="top-in">
-    <a class="brand" href="wallet.html" aria-label="SAOS wallet">
-      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--gold)"><path d="M12 1.6 21 6.8V17.2L12 22.4 3 17.2V6.8Z"/><path d="M12 5.6C12.35 9.3 13.6 10.55 17.4 10.9 13.75 11.3 12.6 12.6 12.22 22.2H11.78C11.4 12.6 10.25 11.3 6.6 10.9 10.4 10.55 11.65 9.3 12 5.6Z" fill="currentColor" stroke="none"/></svg>
+    <a class="brand" href="index.html" aria-label="SAOS ראשי">
+      <svg class="mark" viewBox="0 0 26 26" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.4"><polygon points="13,2 24,8 24,18 13,24 2,18 2,8"/><polygon points="13,8 18.5,11 18.5,16 13,19 7.5,16 7.5,11" stroke="var(--gold)"/></g></svg>
       <span>SAOS · המכונה</span>
     </a>
-    <span class="chip hide-s" id="book-chip"><i></i><span id="book-chip-t">קורא את הספר החי…</span></span>
     <span class="spacer"></span>
-    <button type="button" class="langbtn" id="btn-lang" aria-label="language">EN</button>
+    <span class="chip hide-s" id="chip-selftest"><i></i><span>בודקת את עצמה…</span></span>
+    <span class="chip hide-s" id="chip-chain"><i></i><span>שרשרת…</span></span>
+    <span class="chip hide-s" id="chip-state"><i></i><span>ספר…</span></span>
+    <span class="chip" id="chip-relay"><i></i><span>ממסר…</span></span>
+    <button class="langbtn" id="btn-lang" aria-label="החלפת שפה">EN</button>
   </div>
 </header>
-
 <div class="nextbar" id="nextbar" role="status" aria-live="polite">
-  <div class="nextbar-in">
-    <span class="dot" aria-hidden="true"></span>
-    <span id="nextbar-text">…</span>
-    <button type="button" class="go" id="nextbar-go"></button>
-  </div>
+  <div class="nextbar-in"><span class="dot" aria-hidden="true"></span><span id="next-text">המכונה נבדקת…</span><button class="go" id="next-go">לך לתחנה</button></div>
 </div>
 
-<main><div class="wrap">
-  <div class="hero">
-    <h1 data-i="h1">המכונה — ארנק אמת שנולד אצלך</h1>
-    <p data-i="h1p">כל חלק במכונה למטה זוהר רק כשהוא באמת פעיל אצלכם: כספת פתוחה, יתרה בסילו, תור על המסילה, מגדל-שידור חי, ספר-אמת ובריכות. לוחצים על חלק — מגיעים לתחנה שלו. כל פעולה נחתמת במכשיר ונקראת חזרה מהשרשרת הציבורית.</p>
-    <div class="statline">
-      <span class="chip gold" id="st-supply">—</span>
-      <span class="chip hide-s" id="st-treasury">—</span>
-      <span class="chip hide-s" id="st-pools">—</span>
-    </div>
+<main>
+<div class="wrap">
+
+  <section class="hero" aria-labelledby="h-main">
+    <h1 id="h-main" data-i="h1"></h1>
+    <p class="sub" data-i="h1p"></p>
+  </section>
+
+  <!-- ═══ THE MACHINE — every part does something, every part glows only when true ═══ -->
+  <div class="machine" id="machine" role="group" aria-label="המכונה — לוח מצב חי">
+    <svg id="iso" viewBox="0 0 980 430" aria-hidden="false" role="img" aria-labelledby="iso-title">
+      <title id="iso-title">מכונת ה-SAOS: כספת, ממגורות-מטבע, גלגל-החלפה, מכלי-בריכות, מסילה, אנטנת-ממסר ומנורת-אימות</title>
+      <g id="iso-wires">
+        <!-- conveyor belt + wires (drawn by JS with real state classes) -->
+      </g>
+    </svg>
+    <div class="mlegend" id="mlegend"></div>
   </div>
 
-  <!-- ═══ המכונה האיזומטרית — לוח-מצב חי ═══ -->
-  <section id="machine" aria-label="the live machine — a state board">
-    <svg id="machine-svg" viewBox="0 0 1000 320" role="img" aria-label="isometric wallet machine, parts glow when live"></svg>
-    <div class="mach-legend" id="mach-legend"></div>
-  </section>
-
-  <div id="status-strip" class="statline" style="display:none" aria-live="polite"></div>
-
-  <!-- ═══ 1 · פתיחה ═══ -->
-  <section class="station" id="open" aria-labelledby="st1h">
-    <div class="st-head"><span class="st-num">1</span><h2 id="st1h" data-i="s1T">פתיחה או שחזור ארנק</h2><span class="hint2" data-i="s1H">המפתח נולד במכשיר — לא נשלח anywhere</span></div>
-    <div class="st-body">
-      <div class="grid c3">
-        <div class="card">
-          <h3 data-i="s1aT">ארנק חדש</h3>
-          <p data-i="s1aP">מפתח אקראי נולד כאן בדפדפן. כתובת ה-SAOS נגזרת ממנו לבד.</p>
-          <button class="btn gold" id="btn-new-wallet" data-i="s1aB">צור ארנק</button>
-        </div>
-        <div class="card">
-          <h3 data-i="s1bT">שחזור ממפתח קיים</h3>
-          <p data-i="s1bP">WIF או מפתח-כספת — עם או בלי שם-החשבון לפניו. הכל מתקבל.</p>
-          <label class="f"><span data-i="s1bL">מפתח</span><input class="mono" id="restore-key" autocomplete="off" spellcheck="false"></label>
-          <button class="btn ghost" id="btn-restore-key" data-i="s1bB">שחזר</button>
-        </div>
-        <div class="card">
-          <h3 data-i="s1cT">שחזור מגיבוי מוצפן</h3>
-          <p data-i="s1cP">קובץ keystore (AES-256-GCM) + סיסמה. הפענוח מקומי לחלוטין.</p>
-          <button class="btn ghost" id="btn-import-wallet" data-i="s1cB">בחר קובץ גיבוי</button>
-          <input type="file" id="import-file" accept="application/json" class="sr-only">
-        </div>
+  <!-- ═══ 1 · הכספת ═══ -->
+  <section class="station" id="open" aria-labelledby="t-open">
+    <div class="st-head"><h2 id="t-open" data-i="s1T"></h2><span class="st-src" id="src-open"></span></div>
+    <p class="sub" data-i="s1P"></p>
+    <div class="grid">
+      <div class="cell">
+        <h3 data-i="s1aT"></h3>
+        <p class="sub" data-i="s1aP"></p>
+        <button class="btn gold" id="btn-create" data-i="s1aB"></button>
       </div>
-      <div id="key-reveal" style="display:none">
-        <div class="keybox" role="alert">
-          <div style="font-size:12.5px;color:var(--amber)" data-i="s1KeyW">זה המפתח היחיד שלך. שמור אותו עכשיו — לא נוכל לשחזר אותו בשבילך.</div>
-          <div class="w" id="wif-out"></div>
-          <div class="row" style="margin-top:10px">
-            <button type="button" class="copy" id="btn-copy-wif" data-i="copy">העתק</button>
-            <button type="button" class="copy" id="btn-export-keystore" data-i="s1Save">שמור גיבוי מוצפן</button>
-            <button type="button" class="copy" id="btn-wipe" data-i="s1Wipe">נקה ארנק מהמכשיר</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══ 2 · החשבון ═══ -->
-  <section class="station" id="account" aria-labelledby="st2h">
-    <div class="st-head"><span class="st-num">2</span><h2 id="st2h" data-i="s2T">החשבון והיתרות</h2></div>
-    <div class="st-body" id="acc-body">
-      <div class="hint" data-i="s2Empty">אין עדיין ארנק במכשיר הזה. פתחו ארנק בתחנה 1 — הכתובת והיתרות יופיעו כאן.</div>
-    </div>
-  </section>
-
-  <!-- ═══ 3 · פעולות (החלפה · שליחה · נזילות · הפקדה) ═══ -->
-  <section class="station" id="actions" aria-labelledby="st3h">
-    <div class="st-head"><span class="st-num">3</span><h2 id="st3h" data-i="s3T">פעולות על הספר החי</h2></div>
-    <div class="st-body">
-      <div class="tabs" role="tablist" aria-label="actions">
-        <button role="tab" id="tab-swap" aria-selected="true" aria-controls="panel-swap" data-i="s4T">החלפה</button>
-        <button role="tab" id="tab-send" aria-selected="false" aria-controls="panel-send" data-i="s6T">שליחה</button>
-        <button role="tab" id="tab-pools" aria-selected="false" aria-controls="panel-pools" data-i="s5T">נזילות</button>
-        <button role="tab" id="tab-dep" aria-selected="false" aria-controls="panel-dep" data-i="s3TabDep">הפקדה</button>
-      </div>
-
-      <div class="tabpanel" id="panel-swap" role="tabpanel" aria-labelledby="tab-swap" style="display:flex;flex-direction:column;gap:14px">
-        <div class="hint" data-i="s4P">מכפלה-קבועה אמת (x·y=k, BigInt): דמי בריכה 0.3% נשארים בעתודות לטובת ספקי-הנזילות. ההצעה מחושבת מאותו מנוע שמקפל את הספר — מה שאתם רואים הוא מה שיקרה.</div>
-        <div class="grid c2">
-          <label class="f"><span data-i="s4Pair">בריכה</span><select id="am-pair"></select></label>
-          <label class="f"><span data-i="s4Dir">כיוון</span><select id="am-dir"><option value="SA2C" data-i="s4DirA">SAOS → מטבע</option><option value="C2SA" data-i="s4DirB">מטבע → SAOS</option></select></label>
-          <label class="f"><span data-i="s4Amt">כמות</span><input id="am-amt" inputmode="decimal" placeholder="100.000"></label>
-          <label class="f"><span data-i="s4Slip">החלקה מותרת (minOut)</span><select id="am-slip"><option value="1">1%</option><option value="3" selected>3%</option><option value="5">5%</option></select></label>
-        </div>
-        <div class="hint mono" id="am-quote" style="font-size:12.5px">—</div>
-        <div class="row"><button class="btn gold" id="btn-swap" data-i="s4B">חתום החלפה</button></div>
-        <div class="twrap"><table id="am-table"><thead><tr>
-          <th data-i="thPool">בריכה</th><th data-i="thResA">עתודת SAOS</th><th data-i="thResB">עתודת מטבע</th><th data-i="thSpot">שער</th><th data-i="thFee">דמי</th><th data-i="thSwaps">החלפות</th><th data-i="thMyLp">ה-LP שלי</th>
-        </tr></thead><tbody id="am-pools"></tbody></table></div>
-        <div class="hint" id="am-custody"></div>
-      </div>
-
-      <div class="tabpanel" id="panel-send" role="tabpanel" aria-labelledby="tab-send" hidden style="display:flex;flex-direction:column;gap:14px">
-        <div class="grid c3">
-          <label class="f"><span data-i="s6Sym">טוקן</span><select id="send-symbol"></select></label>
-          <label class="f"><span data-i="s6To">כתובת יעד</span><input id="send-to" class="mono" spellcheck="false"></label>
-          <label class="f"><span data-i="s6Amt">כמות</span><input id="send-amount" inputmode="decimal"></label>
-        </div>
+      <div class="cell">
+        <h3 data-i="s1bT"></h3>
+        <p class="sub" data-i="s1bP"></p>
         <div class="row">
-          <button class="btn" id="btn-send" data-i="s6B">סקור וחתום</button>
-          <span class="hint" data-i="s6H">לפני כל חתימה ייפתח סקירה: יעד, סכום, שווי מוערך ויתרה אחרי.</span>
+          <label class="f"><span data-i="s1bL"></span>
+            <input type="password" id="in-restore" class="mono" autocomplete="off" spellcheck="false" data-i-ph="s1bPh">
+          </label>
+          <button class="btn" id="btn-restore" data-i="s1bB"></button>
         </div>
-        <div id="ab-wrap" style="display:none">
-          <div class="hint" data-i="s6Ab">ספר-כתובות מקומי (נשמר במכשיר בלבד):</div>
-          <div class="row" id="ab-chips"></div>
-          <div class="row" style="margin-top:6px">
-            <input id="ab-label" style="max-width:200px" placeholder="תגית">
-            <button class="btn ghost sm" id="btn-ab-save" data-i="s6AbSave">שמור יעד נוכחי</button>
-          </div>
-        </div>
+        <p class="sub" style="margin:8px 0 0" data-i="s1bNote"></p>
       </div>
-
-      <div class="tabpanel" id="panel-pools" role="tabpanel" aria-labelledby="tab-pools" hidden style="display:flex;flex-direction:column;gap:14px">
-        <div class="hint" data-i="s5P">הוסיפו נזילות בשני הצדדים וקבלו טבעות-LP; הדמיים נצברים לעתודות ואתם מתחלקים לפי החזקה. המשיכו בכל עת.</div>
-        <div class="grid c2">
-          <div class="card">
-            <h3 data-i="s5aT">הוספת נזילות</h3>
-            <label class="f"><span data-i="s5Pair">בריכה</span><select id="am-lp-pair"></select></label>
-            <label class="f"><span data-i="s5Base">צד SAOS</span><input id="am-lp-base" inputmode="decimal" placeholder="100.000"></label>
-            <label class="f"><span data-i="s5Quote">צד מטבע (ריק = אוטומטי לפי השער)</span><input id="am-lp-quote" inputmode="decimal" placeholder="auto"></label>
-            <div class="hint mono" id="am-lp-info" style="font-size:12px">—</div>
-            <button class="btn" id="btn-lp-add" data-i="s5aB">חתום הוספת נזילות</button>
-          </div>
-          <div class="card">
-            <h3 data-i="s5bT">משיכת נזילות</h3>
-            <label class="f"><span data-i="s5Pair2">בריכה</span><select id="am-lp-pair2" disabled></select></label>
-            <label class="f"><span data-i="s5Pct">אחוז מה-LP שלי</span><select id="am-lp-rm"><option value="25">25%</option><option value="50">50%</option><option value="75">75%</option><option value="100" selected>100%</option></select></label>
-            <button class="btn ghost" id="btn-lp-rm" data-i="s5bB">חתום משיכה</button>
-            <div class="hint" data-i="s5bH">השריפה פרו-רטה: מקבלים בחזרה את שני הצדדים לפי חלקכם בעתודות.</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="tabpanel" id="panel-dep" role="tabpanel" aria-labelledby="tab-dep" hidden style="display:flex;flex-direction:column;gap:14px">
-        <div class="hint" data-i="s3P">המטבעות האמתיים (STEEM/SBD) נכנסים דרך כתובת-המפקידה של הרשת. הזיכוי נטבע 1:1 מול מטמון אמת בלבד ונבדק בכל פעימת קיפול — הביקורת מפרסמת גירעון בכנות אם יש.</div>
-        <div class="grid c2" id="rails"></div>
-        <div class="grid c3">
-          <label class="f"><span data-i="s3Cur">מטבע</span><select id="cl-cur"><option>STEEM</option><option>SBD</option><option>HIVE</option><option>HBD</option></select></label>
-          <label class="f"><span data-i="s3Amt">סכום שהופקד</span><input id="cl-amt" inputmode="decimal" placeholder="10.000"></label>
-          <label class="f"><span data-i="s3Ref">מזהה-הפקדה (claim id)</span><input id="cl-ref" class="mono" placeholder="dep-…" spellcheck="false"></label>
-        </div>
+    </div>
+    <div id="key-reveal" style="display:none">
+      <div class="warn">
+        <b data-i="kTitle"></b>
+        <p style="margin:6px 0"><code class="fp" id="wif-out"></code></p>
         <div class="row">
-          <button class="btn" id="btn-claim" data-i="s3B">חתום תביעת-הפקדה</button>
-          <span class="hint" data-i="s3Hint">התביעה נכנסת לתור ומקבלת זיכוי-נגדי אוטומטי מאוצר הרשת לפי השער המפורסם.</span>
+          <button class="btn sm" id="btn-copy-wif" data-i="kCopy"></button>
+          <button class="btn sm" id="btn-save-keystore" data-i="kSave"></button>
+          <button class="btn sm" id="btn-wipe" data-i="kWipe"></button>
         </div>
+        <p class="sub" style="margin:8px 0 0" data-i="kNote"></p>
       </div>
     </div>
+    <div id="keystore-open" style="display:none" class="warn">
+      <b data-i="ksTitle"></b>
+      <div class="row" style="margin-top:8px">
+        <label class="f"><span data-i="ksPass"></span><input type="password" id="in-ks-pass" autocomplete="off"></label>
+        <button class="btn sm" id="btn-ks-open" data-i="ksOpen"></button>
+        <button class="btn sm" id="btn-ks-forget" data-i="ksForget"></button>
+      </div>
+    </div>
+    <div id="auth-box" style="margin-top:12px"></div>
   </section>
 
-  <!-- ═══ 4 · שידור ═══ -->
-  <section class="station" id="relay" aria-labelledby="st4h">
-    <div class="st-head"><span class="st-num">4</span><h2 id="st4h" data-i="s7T">מפתח-שידור והזרמה</h2><span class="hint2" data-i="s7H">המפתח בזיכרון-הלשונית בלבד</span></div>
-    <div class="st-body">
-      <div class="hint" data-i="s7P">מפתח של חשבון-Steem כאן הוא <b>תחבורה בלבד</b>: הוא משדר את הפעולות שכבר חתמתם בחתימת-הפנים של ה-SAOS. מתקבל <b>WIF</b> <b>או מפתח-כספת</b> (עם או בלי שם-החשבון לפניו — השם נגרע אוטומטית). המפתח נשמר בזיכרון-הלשונית בלבד ונמחק בסגירתה.</div>
-      <div class="grid c2">
-        <label class="f"><span data-i="s7Acc">חשבון Steem (תחבורה)</span><input id="relay-account" class="mono" spellcheck="false" autocomplete="off"></label>
-        <label class="f"><span data-i="s7Key">WIF או מפתח-כספת</span><input id="relay-wif" class="mono" type="password" spellcheck="false" autocomplete="off"></label>
-      </div>
-      <div class="row">
-        <button class="btn gold" id="btn-relay-all" data-i="s7B">אמת ושדר את התור</button>
-        <button class="btn ghost" id="btn-flush" data-i="s7B2" style="display:none">הזרם תור קיים</button>
-        <span class="hint" id="relay-keytype"></span>
-      </div>
-      <div class="hint" id="relay-result" aria-live="polite"></div>
-      <details class="adv">
-        <summary data-i="s7Adv">מתקדם: חיבור מפתח-פרסום חדש (חתום owner) · למה owner לא משדר</summary>
-        <div style="display:flex;flex-direction:column;gap:11px;padding-top:8px">
-          <div class="hint" data-i="s7AdvP">מפתח-owner חותם עדכוני-סמכויות ואינו יכול לשדר פעולות יומיומיות — זו החוקה של השרשרת, לא מגבלה שלנו. הפתרון: נולד כאן זוג-מפתחות פרסום חדש, ה-owner חותם על עדכון שמחבר אותו לחשבון, והשידור ממשיך איתו. <b>כל מפתחות-הפרסום הקיימים של החשבון נשמרים</b> — החיבור הוא תוספתי בלבד.</div>
-          <label class="row" style="gap:8px;font-size:13px;color:var(--text)"><input type="checkbox" id="attach-confirm" style="width:auto"> <span data-i="s7Chk">אני מבין: יווצר מפתח-פרסום חדש וייחתם עדכון-סמכויות במפתח-ה-owner</span></label>
-          <button class="btn ghost" id="btn-attach-posting" disabled data-i="s7Go">הפעל חיבור</button>
-          <div class="hint" id="attach-result"></div>
-        </div>
-      </details>
-    </div>
+  <!-- ═══ 2 · הממגורות (חשבון ויתרות) ═══ -->
+  <section class="station" id="account" aria-labelledby="t-account">
+    <div class="st-head"><h2 id="t-account" data-i="s2T"></h2><span class="st-src" id="src-account"></span></div>
+    <p class="sub" data-i="s2P"></p>
+    <div id="acct-cells" class="grid"></div>
+    <details class="acc" id="chain-details">
+      <summary data-i="s2Chain"></summary>
+      <div id="chain-panel" class="sub">…</div>
+    </details>
   </section>
 
-  <!-- ═══ 5 · SP ═══ -->
-  <section class="station" id="delegate" aria-labelledby="st5h">
-    <div class="st-head"><span class="st-num">5</span><h2 id="st5h" data-i="delT">האצת SP על השרשרת</h2><span class="hint2" data-i="delH">חתימה מקומית · שידור ישיר · ביטול בכל רגע</span></div>
-    <div class="st-body">
-      <div class="hint" data-i="delP">האצת כוח-גלל (SP) מהחשבון שלכם לחשבון אחר — פעולת delegate_vesting_shares אמיתית, חתומה כאן במכשיר במפתח-ה-active שלכם ומשודרת ישירות לצמתים הציבוריים. ה-SP נשאר שלכם, וניתן לביטול בכל רגע עם סכום 0. המפתח מתקבל כ-WIF או מפתח-כספת — עם או בלי השם לפניו.</div>
-      <div class="grid c2">
-        <label class="f"><span data-i="delFrom">חשבון מאציל (delegator)</span><input id="del-account" class="mono" spellcheck="false" autocomplete="off" placeholder="headcorner"></label>
-        <label class="f"><span data-i="delKey">מפתח (WIF או מפתח-כספת — נדרשת רמת active)</span><input id="del-key" class="mono" type="password" spellcheck="false" autocomplete="off"></label>
-      </div>
-      <div class="grid c2">
-        <label class="f"><span data-i="delTo">חשבון מקבל (delegatee)</span><input id="del-to" class="mono" spellcheck="false" autocomplete="off"></label>
-        <label class="f"><span data-i="delAmt">סכום SP (0 = ביטול האצה)</span><span class="row" style="gap:6px"><input id="del-amt" class="mono" inputmode="decimal" placeholder="0.000"><button type="button" class="copy" id="btn-del-max" data-i="delMax">מקסימום</button></span></label>
-      </div>
-      <div class="row">
-        <button class="btn" id="btn-delegate" data-i="delGo">סקור והאץ</button>
-        <button class="btn ghost" id="btn-del-list" data-i="delList">האצות פעילות</button>
-      </div>
-      <div class="card" id="del-preview" style="display:none">
-        <h3 style="margin:0 0 8px" data-i="delPvT">סקירת האצה לפני חתימה</h3>
-        <div id="del-pv-body"></div>
-        <div class="row" style="justify-content:flex-end;margin-top:8px">
-          <button class="btn ghost sm" id="btn-del-cancel" data-i="wPvCancel">ביטול</button>
-          <button class="btn gold sm" id="btn-del-go" data-i="delSign">חתום ושדר לשרשרת</button>
-        </div>
-      </div>
-      <div class="hint mono" id="del-result" aria-live="polite"></div>
-      <div class="twrap" id="del-list-box" style="display:none"><table><tbody id="del-list"></tbody></table></div>
+  <!-- ═══ 3 · גלגל-ההחלפה (AMM) ═══ -->
+  <section class="station" id="swap" aria-labelledby="t-swap">
+    <div class="st-head"><h2 id="t-swap" data-i="s3T"></h2><span class="st-src" id="src-swap"></span></div>
+    <p class="sub" data-i="s3P"></p>
+    <div class="row" style="margin:10px 0">
+      <label class="f"><span data-i="s3Pool"></span><select id="in-pool"></select></label>
+      <label class="f"><span data-i="s3Dir"></span><select id="in-dir"></select></label>
+      <label class="f"><span data-i="s3Amt"></span><input type="text" id="in-amt" inputmode="decimal" placeholder="0.0"></label>
+      <button class="btn gold" id="btn-quote" data-i="s3Quote"></button>
     </div>
+    <div id="quote-out"></div>
+    <details class="acc"><summary data-i="s3Math"></summary>
+      <p class="sub" style="margin:6px 0">out = (resOut × inFee) ÷ (resIn + inFee) · inFee = amount × (10000 − feeBps) ÷ 10000 · k′ ≥ k — <span data-i="s3MathP"></span></p>
+    </details>
   </section>
 
-  <!-- ═══ 6 · תור ואימות ═══ -->
-  <section class="station" id="verify" aria-labelledby="st6h">
-    <div class="st-head"><span class="st-num">6</span><h2 id="st6h" data-i="s8T">התור שלי · אימות עצמאי</h2></div>
-    <div class="st-body">
-      <div>
-        <div class="row" style="justify-content:space-between">
-          <span class="tag" data-i="s8Queue">תור חתום-מקומי</span>
-          <div class="row">
-            <span class="tag" id="wallet-queue">0</span>
-            <button type="button" class="copy" id="btn-copy-queue" data-i="s8Copy">העתק JSON</button>
-          </div>
-        </div>
-        <div class="twrap" style="margin-top:9px"><div id="queue-list"></div></div>
-      </div>
-      <div>
-        <div class="row">
-          <button class="btn ghost" id="btn-verify-chain" data-i="s8V">אמת את הספר מהשרשרת עכשיו</button>
-          <span class="tag" id="selftest-chip">selfTest…</span>
-        </div>
-        <div class="hint mono" id="verify-chain-result" style="margin-top:9px"></div>
-      </div>
+  <!-- ═══ 4 · שליחה ═══ -->
+  <section class="station" id="send" aria-labelledby="t-send">
+    <div class="st-head"><h2 id="t-send" data-i="s4T"></h2><span class="st-src" id="src-send"></span></div>
+    <p class="sub" data-i="s4P"></p>
+    <div class="row" style="margin:10px 0">
+      <label class="f"><span data-i="s4Sym"></span><select id="in-send-sym"></select></label>
+      <label class="f" style="flex:2"><span data-i="s4To"></span><input type="text" id="in-send-to" class="mono" spellcheck="false"></label>
+      <label class="f"><span data-i="s4Amt"></span><input type="text" id="in-send-amt" inputmode="decimal" placeholder="0.0"></label>
+      <button class="btn" id="btn-send" data-i="s4B"></button>
     </div>
+    <p class="sub" data-i="s4Note"></p>
   </section>
-</div></main>
 
-<footer><div class="in">
-  <span data-i="fT">המכונה חותמת מקומית · השרשרת מחליטה · הספר פתוח.</span>
-  <span><a href="index.html" data-i="fHome">האתר</a> · <a href="deposits.html" data-i="fDep">הפקדות</a> · <a href="dex/" data-i="fDex">מסחר</a></span>
-</div></footer>
-
-<!-- review modal -->
-<div class="modal" id="rev-modal" hidden role="dialog" aria-modal="true" aria-labelledby="rev-h">
-  <div class="box">
-    <h3 id="rev-h" style="margin:0;font-size:15.5px;color:var(--strong)" data-i="wPvT">סקירת פעולה לפני חתימה</h3>
-    <div id="rev-body"></div>
-    <div class="row" style="justify-content:flex-end">
-      <button class="btn ghost sm" id="rev-cancel" data-i="wPvCancel">ביטול</button>
-      <button class="btn gold sm" id="rev-ok" data-i="wPvOk">חתום</button>
+  <!-- ═══ 5 · מכלי-הבריכות ═══ -->
+  <section class="station" id="pools" aria-labelledby="t-pools">
+    <div class="st-head"><h2 id="t-pools" data-i="s5T"></h2><span class="st-src" id="src-pools"></span></div>
+    <p class="sub" data-i="s5P"></p>
+    <div id="pools-table"></div>
+    <div class="row" style="margin:12px 0 4px">
+      <label class="f"><span data-i="s5Pool"></span><select id="in-lp-pool"></select></label>
+      <label class="f"><span data-i="s5Amt"></span><input type="text" id="in-lp-amt" inputmode="decimal" placeholder="0.0"></label>
+      <button class="btn" id="btn-lp-add" data-i="s5Add"></button>
+      <button class="btn" id="btn-lp-remove" data-i="s5Rem"></button>
     </div>
-  </div>
+    <div id="lp-info" class="sub"></div>
+  </section>
+
+  <!-- ═══ 6 · נציגות ═══ -->
+  <section class="station" id="delegate" aria-labelledby="t-del">
+    <div class="st-head"><h2 id="t-del" data-i="s6T"></h2><span class="st-src" id="src-delegate"></span></div>
+    <p class="sub" data-i="s6P"></p>
+    <div id="del-info" class="sub"></div>
+  </section>
+
+  <!-- ═══ 7 · המסילה והממסר (תור פעולות) ═══ -->
+  <section class="station" id="relay" aria-labelledby="t-relay">
+    <div class="st-head"><h2 id="t-relay" data-i="s7T"></h2><span class="st-src" id="src-relay"></span></div>
+    <p class="sub" data-i="s7P"></p>
+    <div id="relay-status" style="margin:8px 0"></div>
+    <div id="queue-list"></div>
+    <div class="row" style="margin-top:10px">
+      <button class="btn sm" id="btn-flush" data-i="s7Flush"></button>
+      <button class="btn sm" id="btn-export" data-i="s7Export"></button>
+      <button class="btn sm" id="btn-clear-q" data-i="s7Clear"></button>
+    </div>
+    <p class="sub" style="margin-top:8px" data-i="s7Note"></p>
+  </section>
+
+  <!-- ═══ 8 · מנורת-האימות ═══ -->
+  <section class="station" id="verify" aria-labelledby="t-verify">
+    <div class="st-head"><h2 id="t-verify" data-i="s8T"></h2><span class="st-src" id="src-verify"></span></div>
+    <p class="sub" data-i="s8P"></p>
+    <div id="verify-out"></div>
+    <button class="btn sm" id="btn-verify" style="margin-top:10px" data-i="s8B"></button>
+  </section>
+
+  <!-- ═══ 9 · האם זה בטוח? ═══ -->
+  <section class="station" id="safety" aria-labelledby="t-safety">
+    <div class="st-head"><h2 id="t-safety" data-i="s9T"></h2></div>
+    <div class="grid">
+      <div class="cell"><h3 data-i="s9aT"></h3><p class="sub" data-i="s9aP"></p></div>
+      <div class="cell"><h3 data-i="s9bT"></h3><p class="sub" data-i="s9bP"></p></div>
+      <div class="cell"><h3 data-i="s9cT"></h3><p class="sub" data-i="s9cP"></p></div>
+      <div class="cell"><h3 data-i="s9dT"></h3><p class="sub" data-i="s9dP"></p></div>
+    </div>
+    <details class="acc"><summary data-i="s9More"></summary>
+      <div class="sub">
+        <p>· <span class="fp" id="roots-line">…</span></p>
+        <p>· <a href="receipts.html" data-i="s9L1"></a></p>
+        <p>· <a href="index.html" data-i="s9L2"></a></p>
+      </div>
+    </details>
+  </section>
+
 </div>
-<!-- password modal -->
-<div class="modal" id="pw-modal" hidden role="dialog" aria-modal="true" aria-labelledby="pw-h">
-  <div class="box">
-    <h3 id="pw-h" style="margin:0;font-size:15.5px;color:var(--strong)"></h3>
-    <p class="hint" id="pw-sub" style="margin:0"></p>
-    <input type="password" id="pw-input" autocomplete="off">
-    <div class="hint bad" id="pw-err" hidden></div>
-    <div class="row" style="justify-content:flex-end">
-      <button class="btn ghost sm" id="pw-cancel" data-i="wPvCancel">ביטול</button>
-      <button class="btn sm" id="pw-ok" data-i="pwOk">אישור</button>
-    </div>
+</main>
+
+<footer>
+  <div class="foot-in">
+    <span>SAOS · המכונה v2</span>
+    <span id="ft-state"></span>
+    <span id="ft-relay"></span>
+    <a href="changelog.html" data-i="ftChlog"></a>
+    <a href="console.html" data-i="ftConsole"></a>
+    <span class="spacer"></span>
+    <span data-i="ftHonest"></span>
   </div>
-</div>
+</footer>
+
+<div id="toast" aria-live="polite"><div class="t" id="toast-t"></div></div>
 
 <script src="gate-crypto.js"></script>
 <script type="module">
 import * as SL from "./saos-live.js";
 const C = globalThis.GateCrypto;
-
-/* ═══════════ tiny dom + i18n ═══════════ */
+/* ═══════════ tiny dom + i18n — clarity first ═══════════ */
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
+const utf8 = (s) => new TextEncoder().encode(String(s));
 const nice = (n) => { const v = Number(n); if (!Number.isFinite(v)) return String(n); return v.toLocaleString("en-US", { maximumFractionDigits: 6 }); };
 const fmtSaos = (units, dec) => { try { return nice(SL.fmt(String(units), dec)); } catch { return String(units); } };
 let LANG = "he";
 try { LANG = localStorage.getItem("saos.lang") === "en" ? "en" : "he"; } catch {}
-const applyLang = () => { document.documentElement.lang = LANG; document.documentElement.dir = LANG === "he" ? "rtl" : "ltr"; for (const el of document.querySelectorAll("[data-i]")) { const v = I[el.dataset.i]; if (v == null) continue; const val = typeof v === "function" ? v() : (typeof v === "object" ? (v[LANG] ?? v.he) : v); if (typeof val === "string") el.textContent = val; } $("btn-lang").textContent = LANG === "he" ? "EN" : "עברית"; };
+const applyLang = () => {
+  document.documentElement.lang = LANG; document.documentElement.dir = LANG === "he" ? "rtl" : "ltr";
+  for (const el of document.querySelectorAll("[data-i]")) { const v = I[el.dataset.i]; if (v == null) continue; const val = typeof v === "function" ? v() : (typeof v === "object" ? (v[LANG] ?? v.he) : v); if (typeof val === "string") el.textContent = val; }
+  for (const el of document.querySelectorAll("[data-i-ph]")) { const v = I[el.dataset.iPh]; if (v != null) el.placeholder = (typeof v === "object" ? (v[LANG] ?? v.he) : v); }
+  $("btn-lang").textContent = LANG === "he" ? "EN" : "עברית";
+  buildMachine(); buildMachineLegend(); renderAll();
+};
+const T = (k) => { const v = I[k]; if (v == null) return k; if (typeof v === "function") return v; const val = typeof v === "object" ? (v[LANG] ?? v.he) : v; return String(val); };
 const I = {
-  h1: { he: "המכונה — ארנק אמת שנולד אצלך", en: "The machine — a real wallet born on your device" },
-  h1p: { he: "כל חלק במכונה למטה זוהר רק כשהוא באמת פעיל אצלכם: כספת פתוחה, יתרה בסילו, תור על המסילה, מגדל-שידור חי, ספר-אמת ובריכות. לוחצים על חלק — מגיעים לתחנה שלו. כל פעולה נחתמת במכשיר ונקראת חזרה מהשרשרת הציבורית.", en: "Every part of the machine below glows only when it is truly live for you: an open vault, balance in the silo, ops on the belt, a live transmission tower, the truth-book and pools. Press a part to reach its station. Every action is signed on your device and read back from the public chain." },
-  s1T: { he: "פתיחה או שחזור ארנק", en: "Open or restore a wallet" },
-  s1H: { he: "המפתח נולד במכשיר", en: "the key is born on-device" },
+  h1: { he: "המכונה — כל חלק עושה משהו", en: "The machine — every part does something" },
+  h1p: {
+    he: "לוחצים על חלק במכונה — מגיעים לתחנה שלו. חלק זוהר רק כשהמצב שלו אמת ומאומת. כל מספר בדף נקרא ממקור ציבורי (השרשרת או ספר-המדינה החתום), וכל פעולה נחתמת במכשיר שלכם — המפתח לעולם לא יוצא מהדפדפן.",
+    en: "Press any part of the machine to reach its station. A part glows only when its state is verified-true. Every number is read from a public source (the chain or the signed state book), and every action is signed on your device — the key never leaves the browser."
+  },
+  s1T: { he: "1 · הכספת — פתיחה או שחזור", en: "1 · The vault — open or restore" },
+  s1P: { he: "המפתח נולד במכשיר שלכם ונשאר בזיכרון הדף בלבד. אפשר לשמור אותו מוצפן-בסיסמה על המכשיר, או לשחזר ממפתח קיים.", en: "The key is born on your device and lives in page memory only. Save it encrypted with a passphrase, or restore from an existing key." },
   s1aT: { he: "ארנק חדש", en: "New wallet" },
-  s1aP: { he: "מפתח אקראי נולד כאן בדפדפן. כתובת ה-SAOS נגזרת ממנו לבד.", en: "A random key is born here in the browser. Your SAOS address derives from it alone." },
+  s1aP: { he: "מפתח אקראי (CSPRNG) נולד כאן. כתובת ה-SAOS נגזרת ממנו לבד.", en: "A random key (CSPRNG) is born here. Your SAOS address derives from it alone." },
   s1aB: { he: "צור ארנק", en: "Create wallet" },
   s1bT: { he: "שחזור ממפתח קיים", en: "Restore from a key" },
-  s1bP: { he: "WIF או מפתח-כספת — עם או בלי שם-החשבון לפניו. הכל מתקבל.", en: "A WIF or a master key — with or without the account name in front. Both accepted." },
+  s1bP: { he: "WIF, מפתח-כספת, או סיסמת-אם — עם או בלי שם-החשבון. הכל מתקבל ומסווג.", en: "A WIF, a master password, or a vault credential — with or without the account name. All accepted and classified." },
   s1bL: { he: "מפתח", en: "key" },
+  s1bPh: { he: "מפתח או WIF…", en: "key or WIF…" },
   s1bB: { he: "שחזר", en: "Restore" },
-  s1cT: { he: "שחזור מגיבוי מוצפן", en: "Restore from an encrypted backup" },
-  s1cP: { he: "קובץ keystore (AES-256-GCM) + סיסמה. הפענוח מקומי לחלוטין.", en: "A keystore file (AES-256-GCM) + password. Decryption is fully local." },
-  s1cB: { he: "בחר קובץ גיבוי", en: "Choose backup file" },
-  s1KeyW: { he: "זה המפתח היחיד שלך. שמור אותו עכשיו — לא נוכל לשחזר אותו בשבילך.", en: "This is your only key. Save it now — it cannot be recovered for you." },
-  copy: { he: "העתק", en: "copy" },
-  s1Save: { he: "שמור גיבוי מוצפן", en: "save encrypted backup" },
-  s1Wipe: { he: "נקה ארנק מהמכשיר", en: "wipe wallet from device" },
-  s2T: { he: "החשבון והיתרות", en: "Account and balances" },
-  s2Empty: { he: "אין עדיין ארנק במכשיר הזה. פתחו ארנק בתחנה 1 — הכתובת והיתרות יופיעו כאן.", en: "No wallet on this device yet. Open one at station 1 — the address and balances appear here." },
-  s2Reg: { he: "רישום הארנק בספר", en: "Register the wallet in the book" },
-  s2RegP: { he: "פעולה אחת חתומה והספר החי מזקק אותה לבלוק הבא.", en: "One signed op — the live book folds it into the next block." },
-  s2Nick: { he: "כינוי (אופציונלי)", en: "nickname (optional)" },
-  s2RegB: { he: "חתום רישום", en: "sign registration" },
-  s3T: { he: "פעולות על הספר החי", en: "Actions on the live book" },
-  s3TabDep: { he: "הפקדה", en: "deposit" },
-  s3P: { he: "המטבעות האמתיים (STEEM/SBD) נכנסים דרך כתובת-המפקידה של הרשת. הזיכוי נטבע 1:1 מול מטמון אמת בלבד ונבדק בכל פעימת קיפול — הביקורת מפרסמת גירעון בכנות אם יש.", en: "Real currencies (STEEM/SBD) enter through the network's deposit address. Credit is minted 1:1 against real custody only and audited every fold — the audit publishes any deficit honestly." },
-  s3Rail: { he: "מסילת-הפקדה", en: "deposit rail" },
-  s3Memo: { he: "שורת-תזכיר", en: "memo" },
-  s3Cur: { he: "מטבע", en: "currency" },
-  s3Amt: { he: "סכום שהופקד", en: "amount deposited" },
-  s3Ref: { he: "מזהה-הפקדה (claim id)", en: "deposit id (claim id)" },
-  s3B: { he: "חתום תביעת-הפקדה", en: "sign deposit claim" },
-  s3Hint: { he: "התביעה נכנסת לתור ומקבלת זיכוי-נגדי אוטומטי מאוצר הרשת לפי השער המפורסם.", en: "The claim enters the queue and receives an automatic counter-credit from the network treasury at the published rate." },
-  s4T: { he: "החלפה", en: "swap" },
-  s4P: { he: "מכפלה-קבועה אמת (x·y=k, BigInt): דמי בריכה 0.3% נשארים בעתודות לטובת ספקי-הנזילות. ההצעה מחושבת מאותו מנוע שמקפל את הספר — מה שאתם רואים הוא מה שיקרה.", en: "A real constant-product engine (x·y=k, BigInt): the 0.3% pool fee stays in reserves for LPs. Quotes come from the same engine that folds the book — what you see is what executes." },
-  s4Pair: { he: "בריכה", en: "pool" },
-  s4Dir: { he: "כיוון", en: "direction" },
-  s4DirA: { he: "SAOS → מטבע", en: "SAOS → currency" },
-  s4DirB: { he: "מטבע → SAOS", en: "currency → SAOS" },
+  s1bNote: { he: "השחזור מאמת מול השרשרת מיד: אילו תפקידים המפתח שולט בהם יסומנו.", en: "Restore verifies against the chain immediately: which roles this key controls will be shown." },
+  kTitle: { he: "⚠ המפתח הפרטי שלכם — הפעם היחידה שהוא מוצג", en: "⚠ Your private key — shown this one time only" },
+  kCopy: { he: "העתק", en: "Copy" },
+  kSave: { he: "שמור מוצפן על המכשיר", en: "Save encrypted on device" },
+  kWipe: { he: "מחק מהזיכרון", en: "Wipe from memory" },
+  kNote: { he: "מי שמחזיק במפתח — מחזיק בכסף. שמרו אותו במקום בטוח לפני שסוגרים את הדף.", en: "Whoever holds the key holds the funds. Store it safely before closing the page." },
+  ksTitle: { he: "כספת-מכשיר: יש עותק מוצפן שמור כאן", en: "Device keystore: an encrypted copy is stored here" },
+  ksPass: { he: "סיסמה", en: "passphrase" },
+  ksOpen: { he: "פתח בסיסמה", en: "Unlock" },
+  ksForget: { he: "שכח עותק", en: "Forget copy" },
+  s2T: { he: "2 · הממגורות — יתרות אמת", en: "2 · The silos — real balances" },
+  s2P: { he: "יתרת הספר החתום (SAOS/CSTEEM/CSBD) ויתרות שרשרת-ה-Steem של חשבון מאומת. כל שורה מראה את מקורה.", en: "Signed-book balances (SAOS/CSTEEM/CSBD) and Steem chain balances of a verified account. Every line shows its source." },
+  s2Chain: { he: "פאנל-שרשרת: יתרות, כוח-הצבעה, RC ונציגויות — קריאה חיה", en: "Chain panel: balances, voting power, RC and delegations — live read" },
+  s3T: { he: "3 · גלגל-ההחלפה — מחיר אמת מהבריכות", en: "3 · The swap wheel — true price from the pools" },
+  s3P: { he: "הצעת-מחיר מהמתמטיקה האמיתית של הבריכות (אותו קוד מדויק של המנוע): עמלה 0.3% והשפעת-מחיר מוצגות בגלוי לפני חתימה.", en: "A quote from the pools' real math (the engine's exact code): 0.3% fee and price impact shown openly before signing." },
+  s3Pool: { he: "בריכה", en: "pool" },
+  s3Dir: { he: "כיוון", en: "direction" },
+  s3Amt: { he: "כמות", en: "amount" },
+  s3Quote: { he: "הצעת-מחיר", en: "Quote" },
+  s3Math: { he: "המתמטיקה — גלויה לביקורת", en: "The math — open for review" },
+  s3MathP: { he: "אותן נוסחאות של מנוע-הספר, ביט-ביט.", en: "the engine's exact formulas, bit-for-bit." },
+  s4T: { he: "4 · שליחה — חתימה מקומית", en: "4 · Send — local signing" },
+  s4P: { he: "העברה בספר החתום. הפעולה נחתמת כאן ונכנסת למסילה; הממסר מזרים אותה לספר כשהוא פתוח.", en: "A transfer on the signed book. The op is signed here and enters the belt; the relay flushes it into the book when open." },
+  s4Sym: { he: "מטבע", en: "symbol" },
+  s4To: { he: "אל (כתובת saos1…)", en: "to (saos1… address)" },
   s4Amt: { he: "כמות", en: "amount" },
-  s4Slip: { he: "החלקה מותרת (minOut)", en: "allowed slippage (minOut)" },
-  s4B: { he: "חתום החלפה", en: "sign swap" },
-  thPool: { he: "בריכה", en: "pool" }, thResA: { he: "עתודת SAOS", en: "SAOS reserve" }, thResB: { he: "עתודת מטבע", en: "currency reserve" }, thSpot: { he: "שער", en: "spot" }, thFee: { he: "דמי", en: "fee" }, thSwaps: { he: "החלפות", en: "swaps" }, thMyLp: { he: "ה-LP שלי", en: "my LP" },
-  s5T: { he: "נזילות", en: "liquidity" },
-  s5P: { he: "הוסיפו נזילות בשני הצדדים וקבלו טבעות-LP; הדמיים נצברים לעתודות ואתם מתחלקים לפי החזקה. המשיכו בכל עת.", en: "Add liquidity on both sides and receive LP tokens; fees accrue to reserves and you share by holdings. Withdraw anytime." },
-  s5aT: { he: "הוספת נזילות", en: "Add liquidity" },
-  s5Pair: { he: "בריכה", en: "pool" },
-  s5Base: { he: "צד SAOS", en: "SAOS side" },
-  s5Quote: { he: "צד מטבע (ריק = אוטומטי לפי השער)", en: "currency side (empty = auto at spot)" },
-  s5aB: { he: "חתום הוספת נזילות", en: "sign add-liquidity" },
-  s5bT: { he: "משיכת נזילות", en: "Withdraw liquidity" },
-  s5Pair2: { he: "בריכה", en: "pool" },
-  s5Pct: { he: "אחוז מה-LP שלי", en: "percent of my LP" },
-  s5bB: { he: "חתום משיכה", en: "sign withdrawal" },
-  s5bH: { he: "השריפה פרו-רטה: מקבלים בחזרה את שני הצדדים לפי חלקכם בעתודות.", en: "The burn is pro-rata: you receive both sides back per your share of the reserves." },
-  s6T: { he: "שליחה", en: "send" },
-  s6Sym: { he: "טוקן", en: "token" },
-  s6To: { he: "כתובת יעד", en: "destination address" },
-  s6Amt: { he: "כמות", en: "amount" },
-  s6B: { he: "סקור וחתום", en: "Review and sign" },
-  s6H: { he: "לפני כל חתימה ייפתח סקירה: יעד, סכום, שווי מוערך ויתרה אחרי.", en: "Before every signature a review opens: destination, amount, estimated value and balance after." },
-  s6Ab: { he: "ספר-כתובות מקומי (נשמר במכשיר בלבד):", en: "Local address book (stored on this device only):" },
-  s6AbSave: { he: "שמור יעד נוכחי", en: "save current destination" },
-  s7T: { he: "מפתח-שידור והזרמה", en: "Transport key and broadcast" },
-  s7H: { he: "המפתח בזיכרון-הלשונית בלבד", en: "the key lives in tab memory only" },
-  s7P: { he: "מפתח של חשבון-Steem כאן הוא תחבורה בלבד: הוא משדר את הפעולות שכבר חתמתם בחתימת-הפנים של ה-SAOS. מתקבל WIF או מפתח-כספת (עם או בלי שם-החשבון לפניו — השם נגרע אוטומטית). המפתח נשמר בזיכרון-הלשונית בלבד ונמחק בסגירתה.", en: "A Steem account key here is transport only: it broadcasts the operations you already signed with the inner SAOS signature. Both a WIF and a master key are accepted (with or without the account name in front — the name is stripped automatically). The key lives in tab memory only and dies with the tab." },
-  s7Acc: { he: "חשבון Steem (תחבורה)", en: "Steem account (transport)" },
-  s7Key: { he: "WIF או מפתח-כספת", en: "WIF or master key" },
-  s7B: { he: "אמת ושדר את התור", en: "Verify and broadcast the queue" },
-  s7B2: { he: "הזרם תור קיים", en: "flush existing queue" },
-  s7Adv: { he: "מתקדם: חיבור מפתח-פרסום חדש (חתום owner) · למה owner לא משדר", en: "Advanced: attach a fresh posting key (owner-signed) · why an owner key cannot broadcast" },
-  s7AdvP: { he: "מפתח-owner חותם עדכוני-סמכויות ואינו יכול לשדר פעולות יומיומיות — זו החוקה של השרשרת, לא מגבלה שלנו. הפתרון: נולד כאן זוג-מפתחות פרסום חדש, ה-owner חותם על עדכון שמחבר אותו לחשבון, והשידור ממשיך איתו. כל מפתחות-הפרסום הקיימים של החשבון נשמרים — החיבור הוא תוספתי בלבד.", en: "An owner key signs authority updates and cannot broadcast everyday ops — that is the chain's constitution, not our limit. The fix: a fresh posting keypair is born here, the owner signs the update attaching it, and broadcast continues with it. All existing posting keys of the account are preserved — the attach is append-only." },
-  s7Chk: { he: "אני מבין: יווצר מפתח-פרסום חדש וייחתם עדכון-סמכויות במפתח-ה-owner", en: "I understand: a new posting key will be created and an authority update signed with the owner key" },
-  s7Go: { he: "הפעל חיבור", en: "Run attach" },
-  s8T: { he: "התור שלי · אימות עצמאי", en: "My queue · independent verification" },
-  s8Queue: { he: "תור חתום-מקומי", en: "locally signed queue" },
-  s8Copy: { he: "העתק JSON", en: "copy JSON" },
-  s8V: { he: "אמת את הספר מהשרשרת עכשיו", en: "Verify the book from the chain now" },
-  fT: { he: "המכונה חותמת מקומית · השרשרת מחליטה · הספר פתוח.", en: "The machine signs locally · the chain decides · the book is open." },
-  fHome: { he: "האתר", en: "site" }, fDep: { he: "הפקדות", en: "deposits" }, fDex: { he: "מסחר", en: "trade" },
-  wPvT: { he: "סקירת פעולה לפני חתימה", en: "Review before signing" },
-  wPvCancel: { he: "ביטול", en: "cancel" }, wPvOk: { he: "חתום", en: "sign" }, pwOk: { he: "אישור", en: "ok" },
-  wSendTo: { he: "יעד", en: "to" }, wSendAmt: { he: "סכום", en: "amount" },
-  wPvNone: { he: "אין עדיין מחיר-בריכה ציבורי לטוקן הזה", en: "no public pool price for this token yet" },
-  miscBalAfter: { he: "יתרה אחרי", en: "balance after" },
-  wPvEst: { he: "שווי מוערך", en: "estimated value" },
-  tOkWalletBorn: { he: "ארנק נולד — שמרו את המפתח עכשיו", en: "wallet born — save the key now" },
-  tOkWiped: { he: "הארנק נוקה מהמכשיר", en: "wallet wiped from device" },
-  tOkRestored: { he: "הארנק שוחזר", en: "wallet restored" },
-  tOkRegistered: { he: "רישום נחתם ונכנס לתור", en: "registration signed and queued" },
-  tOkSigned: { he: "נחתם ונכנס לתור", en: "signed and queued" },
-  tOkBackup: { he: "הגיבוי המוצפן נשמר", en: "encrypted backup saved" },
-  tOkBroadcast: (n) => ({ he: `שודרו ${n} פעולות לשרשרת`, en: `${n} op(s) broadcast to the chain` }[LANG]),
-  tOkSwap: { he: "ההחלפה נחתמה ונכנסה לתור", en: "swap signed and queued" },
-  tOkLp: { he: "פעולת-הנזילות נחתמה ונכנסה לתור", en: "liquidity op signed and queued" },
-  tOkClaim: { he: "תביעת-ההפקדה נחתמה ונכנסה לתור", en: "deposit claim signed and queued" },
-  tNeedWallet: { he: "אין ארנק במכשיר — פתחו ארנק בתחנה 1", en: "no wallet on device — open one at station 1" },
-  tErrSign: { he: "החתימה נכשלה: ", en: "signing failed: " },
-  tErrCreate: { he: "יצירת-הארנק נכשלה: ", en: "wallet creation failed: " },
-  tErrImport: { he: "השחזור נכשל: ", en: "restore failed: " },
-  tErrBadAmt: { he: "כמות לא תקינה", en: "invalid amount" },
-  tErrBadAddr: { he: "כתובת SAOS לא תקינה", en: "invalid SAOS address" },
-  tErrBadCur: { he: "מטבע לא תקין", en: "invalid currency" },
-  tErrBadRef: { he: "מזהה-הפקדה לא תקין", en: "invalid deposit id" },
-  tErrOverBal: { he: "הסכום עולה על היתרה", en: "amount exceeds balance" },
-  tErrNoToken: { he: "אין טוקן נבחר", en: "no token selected" },
-  tErrEmptyQueue: { he: "התור ריק", en: "the queue is empty" },
-  tErrBadAccount: { he: "שם-חשבון לא תקין", en: "invalid account name" },
-  tErrNoAccount: { he: "החשבון לא נמצא על השרשרת", en: "account not found on the chain" },
-  errNoMatch: { he: "המפתח לא נמצא באף סמכות של החשבון (owner/active/posting). נבדקו: צורת-WIF וצורת-מפתח-כספת, עם ובלי שם-החשבון. ודאו שזה המפתח הנכון של החשבון הזה.", en: "The key matches none of the account's authorities (owner/active/posting). Tried: WIF form and master-key form, with and without the account-name prefix. Make sure this is the right key for this account." },
-  errOwner: { he: "זוהה מפתח-owner: הוא חותם עדכוני-סמכויות, לא שידורים. פתחו את הכרטיס המתקדם למטה — חיבור מפתח-פרסום חדש.", en: "Owner key detected: it signs authority updates, not broadcasts. Open the advanced card below — attach a fresh posting key." },
-  keyDetected: (k) => ({ he: { owner: "זוהה מפתח-owner", active: "זוהה מפתח-active", posting: "זוהה מפתח-פרסום" }[k] || k, en: { owner: "owner key detected", active: "active key detected", posting: "posting key detected" }[k] || k }[LANG]),
-  autoRelayOn: { he: "הזרמה אוטומטית פעילה", en: "auto-broadcast on" },
-  autoRelayFail: { he: "השידור האוטומטי נכשל:", en: "auto-broadcast failed:" },
-  relayFail: { he: "השידור נכשל: ", en: "broadcast failed: " },
-  wssKeyChip: { he: "מפתח-שידור פעיל", en: "transport key live" },
-  wssKeyOff: { he: "אין מפתח-שידור — התור ממתין", en: "no transport key — queue waiting" },
-  wssBal: { he: "יתרת SAOS", en: "SAOS balance" },
-  wssQueue: { he: "תור", en: "queue" },
-  wssTrType: (k) => ({ owner: "owner", active: "active", posting: "פרסום" }[k] || k),
-  wssKeyMem: { he: "המפתח בזיכרון-הלשונית בלבד", en: "the key lives in tab memory only" },
-  relayRegistered: { he: "נרשם בספר החי ✓", en: "registered in the live book ✓" },
-  queueReg: { he: "רישום ארנק ממתין בתור", en: "wallet registration waiting in queue" },
-  queueRegHint: { he: "הזרימו עם מפתח-שידור בתחנה 4, או השאירו בתור — הרשת מזקקת בעצמה בפעימה הקרובה.", en: "Flush with a transport key at station 4, or leave it queued — the network folds it itself on the next beat." },
-  myAddr: { he: "הכתובת שלי", en: "my address" },
-  wAbSaved: { he: "נשמר בספר-הכתובות", en: "saved to the address book" },
-  wAbPicked: { he: "היעד הודבק", en: "destination pasted" },
-  wAbEmpty: { he: "ספר-הכתובות ריק", en: "the address book is empty" },
-  pwExportT: { he: "סיסמה להצפנת הגיבוי", en: "password to encrypt the backup" },
-  pwExportP: { he: "לפחות 8 תווים. בלי הסיסמה הגיבוי חסר-ערך.", en: "at least 8 characters. Without the password the backup is worthless." },
-  pwImportT: { he: "סיסמת הגיבוי", en: "backup password" },
-  pwImportP: { he: "הסיסמה שבחרתם בעת הייצוא.", en: "the password you chose at export." },
-  pwShort: { he: "לפחות 8 תווים", en: "at least 8 characters" },
-  pwBad: { he: "סיסמה שגויה או קובץ פגום", en: "wrong password or corrupted file" },
-  wAttOwnerOnly: { he: "הדביקו את מפתח-ה-owner של החשבון (WIF או מפתח-כספת)", en: "paste the account's owner key (WIF or master key)" },
-  wAttBusy: { he: "חותם עדכון-סמכויות…", en: "signing the authority update…" },
-  wAttDone: { he: "מפתח-הפרסום החדש חובר לחשבון (הקיימים נשמרו) — השידור ממשיך איתו.", en: "The new posting key is attached (existing ones preserved) — broadcast continues with it." },
-  wAttWifT: { he: "מפתח-הפרסום החדש — מוצג פעם אחת, שמרו אותו:", en: "The new posting key — shown once, save it:" },
-  wAttFail: { he: "החיבור נכשל: ", en: "attach failed: " },
-  wAttNotOwner: { he: "המפתח הזה אינו מפתח-ה-owner של החשבון — עדכון-סמכויות חתום רק ב-owner.", en: "this key is not the account's owner key — authority updates are signed by owner only." },
-  custOk: { he: "ביקורת-מטמון: הכל מאוזן", en: "custody audit: all balanced" },
-  custDeficit: { he: "ביקורת-מטמון מפרסמת גירעון בכנות:", en: "custody audit publishes a deficit honestly:" },
-  stSupply: { he: "אספקה", en: "supply" },
-  stTreasury: { he: "אוצר", en: "treasury" },
-  stPools: { he: "בריכות", en: "pools" },
-  bookReal: { he: "ספר חי אמת", en: "real live book" },
-  bookWait: { he: "ממתין לספר החי", en: "waiting for the live book" },
-  balances: { he: "יתרות (הספר האמת)", en: "balances (the real book)" },
-  balEmpty: { he: "אין עדיין יתרות — הפקידו או החליפו", en: "no balances yet — deposit or swap" },
-  addr: { he: "כתובת", en: "address" },
-  swapNotPossible: { he: "ההחלפה לא אפשרית: ", en: "swap not possible: " },
-  swapRejected: { he: "ההחלפה נדחית: ", en: "swap rejected: " },
-  pickPoolAmt: { he: "מלאו בריכה וכמות", en: "pick a pool and amount" },
-  insuffBal: { he: " · אין מספיק יתרה", en: " · insufficient balance" },
-  myLp: { he: "ה-LP שלי", en: "my LP" },
-  creditSide: { he: "צד-אשראי נדרש", en: "credit side needed" },
-  pickPoolSide: { he: "מלאו בריכה וצד SAOS", en: "pick a pool and a SAOS amount" },
-  emptyPoolBoth: { he: "הבריכה ריקה — הפקידו שני צדדים ידנית", en: "empty pool — provide both sides manually" },
-  lpNoPct: { he: "אחוז לא תקין (0-100)", en: "percent must be 0-100" },
-  lpNone: { he: "אין לכם LP בבריכה הזו", en: "you hold no LP in this pool" },
-  pickPool: { he: "בחרו בריכה", en: "pick a pool" },
-  reading: { he: "קורא את השרשרת הציבורית…", en: "reading the public chain…" },
-  vNone: { he: "אין עדיין פעולות על השרשרת. הג'נזיס ייחתם בפעימת הרשת הקרובה.", en: "No operations on the chain yet. The genesis lands with the next network beat." },
-  vRead: (n, v) => ({ he: `נקראו ${n} פעולות · ${v} תקפות · שורש `, en: `Read ${n} operations · ${v} valid · root ` }[LANG]),
-  vMatch: { he: "= תואם למפורסם", en: "= matches the published root" },
-  vDiff: { he: "≠ שונה מהמפורסם!", en: "≠ differs from the published root!" },
-  vFail: { he: "האימות נכשל: ", en: "verification failed: " },
-  selfTestOk: { he: "selfTest עובר", en: "selfTest passes" },
-  selfTestBad: { he: "selfTest נכשל", en: "selfTest fails" },
-  relaySending: { he: "שולח לממסר המארח", en: "sending to the hosted relay" },
-  relaySent: (r) => ({ he: `שודר על השרשרת (${r}) — הספר החי יזקוק בבלוק הבא`, en: `broadcast on-chain (${r}) — the live book folds it next block` }[LANG]),
-  relayQueued: (r) => ({ he: `נתון בתור הממסר (${r})`, en: `queued at the relay (${r})` }[LANG]),
-  relayFailed: { he: "הממסר נכשל — התור המקומי נשאר הדרך", en: "relay failed — the local queue remains the way" },
-  relayDeep: { he: "פתח עמוק לממסר", en: "deep-link to relay" },
-  wiping: { he: "מפתח-השידור נמחק מהזיכרון", en: "transport key wiped from memory" },
-  stName: { he: "ממתין לרישום על הספר", en: "waiting to be folded into the book" },
-  copyDone: { he: "הועתק", en: "copied" },
-  delT: { he: "האצת SP על השרשרת", en: "SP delegation on-chain" },
-  delH: { he: "חתימה מקומית · שידור ישיר · ביטול בכל רגע", en: "local signing · direct broadcast · cancel anytime" },
-  delP: { he: "האצת כוח-גלל (SP) מהחשבון שלכם לחשבון אחר — פעולת delegate_vesting_shares אמיתית, חתומה כאן במכשיר במפתח-ה-active שלכם ומשודרת ישירות לצמתים הציבוריים. ה-SP נשאר שלכם, וניתן לביטול בכל רגע עם סכום 0. המפתח מתקבל כ-WIF או מפתח-כספת — עם או בלי השם לפניו.", en: "Delegate Steem Power (SP) to another account — a real delegate_vesting_shares operation, signed in this device with your active key and broadcast straight to public nodes. The SP stays yours and can be cancelled anytime with amount 0. The key is accepted as a WIF or a master key — with or without the name in front." },
-  delFrom: { he: "חשבון מאציל (delegator)", en: "delegator account" },
-  delKey: { he: "מפתח (WIF או מפתח-כספת — נדרשת רמת active)", en: "key (WIF or master — active level required)" },
-  delTo: { he: "חשבון מקבל (delegatee)", en: "delegatee account" },
-  delAmt: { he: "סכום SP (0 = ביטול האצה)", en: "amount SP (0 = cancel)" },
-  delMax: { he: "מקסימום", en: "max" },
-  delGo: { he: "סקור והאץ", en: "review & delegate" },
-  delList: { he: "האצות פעילות", en: "active delegations" },
-  delPvT: { he: "סקירת האצה לפני חתימה", en: "delegation preview before signing" },
-  delSign: { he: "חתום ושדר לשרשרת", en: "sign & broadcast" },
-  delNeedKey: { he: "הדביקו מפתח — WIF או מפתח-כספת.", en: "paste a key — WIF or master key." },
-  delNeedAcc: { he: "מלאו חשבון-מאציל וחשבון-מקבל תקינים.", en: "fill valid delegator and delegatee accounts." },
-  delNeedAmt: { he: "סכום לא תקין.", en: "invalid amount." },
-  delNoActive: { he: "המפתח לא מגזר מפתח-active תקין לחשבון הזה — האצה דורשת רמת active על השרשרת.", en: "this key does not derive a valid active key for this account — delegation requires active authority on-chain." },
-  delPvRow: (a, b, c, d) => ({ he: `<b>${a}</b> מאציל → <b>${b}</b> מקבל · <b>${c} SP</b> (${d})`, en: `<b>${a}</b> → <b>${b}</b> · <b>${c} SP</b> (${d})` }[LANG]),
-  delSigning: { he: "חותם ומשדר…", en: "signing & broadcasting…" },
-  delOk: (t) => ({ he: `ההאצה שודרה על השרשרת ✅ tx: ${t} — תיכנס לתוקף בבלוק הבא`, en: `delegation broadcast ✅ tx: ${t} — lands next block` }[LANG]),
-  delFail: { he: "השידור נדחה על-ידי השרשרת: ", en: "broadcast rejected by the chain: " },
-  delNone: { he: "אין האצות יוצאות פעילות לחשבון הזה.", en: "no outgoing delegations for this account." },
-  delCancel: { he: "בטל", en: "cancel" },
-  chT: { he: "השרשרת האמת — החשבון החי", en: "the real chain — live account" },
-  chVerified: { he: "מאומת על השרשרת", en: "chain-verified" },
-  chNoMatch: { he: "המפתח לא נמצא בסמכויות של חשבון מוכר", en: "key not found in any known account authority" },
-  chWait: { he: "קורא את החשבון מהצמתים הציבוריים…", en: "reading the account from public nodes…" },
-  chFail: { he: "קריאת השרשרת נכשלה: ", en: "chain read failed: " },
-  chPow: { he: "כוח-גלל (SP)", en: "Steem Power (SP)" },
-  chDelegated: { he: "מואץ החוצה", en: "delegated out" },
-  chView: { he: "בדיקה עצמאית", en: "verify independently" },
-  keyAuto: (a, r) => ({ he: `מאומת על השרשרת: @${a} · ${r}`, en: `chain-verified: @${a} · ${r}` }[LANG]),
-  /* machine + next-step */
-  mVault: { he: "כספת", en: "vault" }, mSilo: { he: "סילו-יתרה", en: "balance silo" }, mBelt: { he: "מסילת-תור", en: "queue belt" }, mTower: { he: "מגדל-שידור", en: "transmission" }, mBook: { he: "ספר-אמת", en: "truth book" }, mPool: { he: "בריכות", en: "pools" },
-  nextOpen: { he: "התחילו כאן: פתחו ארנק או שחזרו ממפתח (תחנה 1)", en: "Start here: open a wallet or restore from a key (station 1)" },
-  nextRegister: { he: "הארנק חי — הירשמו בספר החי (תחנה 2)", en: "Wallet alive — register it in the live book (station 2)" },
-  nextFlush: { he: "יש פעולות חתומות בתור — הדביקו מפתח-שידור ושדרו (תחנה 4)", en: "Signed ops are waiting — paste a transport key and broadcast (station 4)" },
-  nextBroadcasting: { he: "משדר את התור לשרשרת…", en: "broadcasting the queue to the chain…" },
-  nextDone: { he: "המכונה זוהרת — הכל שודר. אפשר להחליף, לשלוח או להפקיד (תחנה 3)", en: "The machine glows — everything broadcast. Swap, send or deposit (station 3)" },
-  nextGo: { he: "קחו אותי", en: "take me there" },
+  s4B: { he: "חתום ושלח למסילה", en: "Sign & send to belt" },
+  s4Note: { he: "לפני החתימה תראו סקירה מלאה של הפעולה. אף פעולה לא יוצאת בלי לחיצה שלכם.", en: "You will see a full review before signing. Nothing leaves without your click." },
+  s5T: { he: "5 · מכלי-הבריכות — נזילות אמת", en: "5 · The pool tanks — real liquidity" },
+  s5P: { he: "עומק הבריכות מהספר החתום: יתרות, עמלה, סה״כ-החלפות. הוספת/נסיגת נזילות נחתמת מקומית.", en: "Pool depth from the signed book: reserves, fee, total swaps. Add/remove liquidity signs locally." },
+  s5Pool: { he: "בריכה", en: "pool" },
+  s5Amt: { he: "כמות (צד-בסיס)", en: "amount (base side)" },
+  s5Add: { he: "הוסף נזילות", en: "Add liquidity" },
+  s5Rem: { he: "סגור נזילות", en: "Remove liquidity" },
+  s6T: { he: "6 · נציגות — כוח שמושאל", en: "6 · Delegation — borrowed power" },
+  s6P: { he: "מי מאציל כוח-הצבעה לחשבון המאומת ומה נדרש כדי להאציל בעצמכם (custom_json על השרשרת).", en: "Who delegates voting power to the verified account, and what it takes to delegate yourself (a chain custom_json)." },
+  s7T: { he: "7 · המסילה והממסר — התור שלכם", en: "7 · The belt & relay — your queue" },
+  s7P: { he: "כל פעולה חתומה עומדת כאן עד שהיא נכנסת לספר. הממסר פתוח? — מוזרם אוטומטית. סגור? — התור נשמר אצלכם וניתן לייצוא.", en: "Every signed op waits here until it lands in the book. Relay open — it flushes automatically. Closed — the queue stays with you, exportable." },
+  s7Flush: { he: "נסה להזרים", en: "Try flush" },
+  s7Export: { he: "ייצוא תור (JSON)", en: "Export queue (JSON)" },
+  s7Clear: { he: "נקה תור", en: "Clear queue" },
+  s7Note: { he: "התור נשמר בזיכרון הדף בלבד — ייצוא שומר עותק אצלכם.", en: "The queue lives in page memory only — export keeps a copy with you." },
+  s8T: { he: "8 · מנורת-האימות — הוכחה על השרשרת", en: "8 · The verify lamp — on-chain proof" },
+  s8P: { he: "בדיקה חיה: העצמי-בוחן של הפרוטוקול, טריות הספר, קיום הכתובות והצלבת מספרים מול המקורות.", en: "A live check: the protocol self-test, book freshness, address existence, and cross-checking numbers against sources." },
+  s8B: { he: "הרץ אימות עכשיו", en: "Run verification now" },
+  s9T: { he: "9 · האם זה בטוח?", en: "9 · Is it safe?" },
+  s9aT: { he: "טקסט גלוי", en: "Plain text" },
+  s9aP: { he: "הכל קוד-גלוי בקבצים שאתם קוראים: gate-crypto.js ו-saos-live.js — בלי CDN, בלי תלות חיצונית.", en: "Everything is open code you can read: gate-crypto.js and saos-live.js — no CDN, no external dependencies." },
+  s9bT: { he: "המפתח לא יוצא", en: "The key never leaves" },
+  s9bP: { he: "חתימה מקומית בלבד. מה שנשלח החוצה: חתימות ומפתחות-ציבוריים בלבד. שום סוד לא נשלח, נרשם או מוצג.", en: "Local signing only. What goes out: signatures and public keys only. No secret is sent, logged, or displayed." },
+  s9cT: { he: "כלום לא רץ בהתקנה", en: "Nothing runs on install" },
+  s9cP: { he: "דף סטטי אחד. כיבוי האינטרנט אחרי טעינה — והמכונה עדיין עובדת במצב-מקומי (קריאות-שרשרת יחזרו עם הרשת).", en: "One static page. Cut the internet after load — the machine still works locally (chain reads resume with the network)." },
+  s9dT: { he: "המתמטיקה לפני האמון", en: "Math before trust" },
+  s9dP: { he: "הצעות-מחיר נגזרות מנוסחאות פתוחות על יתרות-פתוחות, והעצמי-בוחן של הפרוטוקול רץ בכל טעינה.", en: "Quotes derive from open formulas on open reserves, and the protocol self-test runs on every load." },
+  s9More: { he: "שורשי-אמת וקישורים", en: "Truth roots & links" },
+  s9L1: { he: "קבלות ופרסומים", en: "Receipts & broadcasts" },
+  s9L2: { he: "עמוד הבית", en: "Home page" },
+  ftChlog: { he: "יומן-שינויים", en: "Changelog" },
+  ftConsole: { he: "קונסולה", en: "Console" },
+  ftHonest: { he: "כנות: המכונה מציגה רק מה שנמדד — ואומרת ״לא יודעת״ כשהמקור חסר.", en: "Honesty: the machine shows only what is measured — and says \"unknown\" when a source is missing." },
+  // dynamic helpers
+  qRelayOpen: { he: "הממסר פתוח — התור מוזרם אוטומטית", en: "Relay open — the queue flushes automatically" },
+  qRelayClosed: { he: "הממסר סגור — התור נשמר אצלכם. אפשר לייצא JSON ולהזרים ידנית כשנפתח.", en: "Relay closed — the queue stays with you. Export JSON and flush manually once it opens." },
+  stFresh: (h) => LANG === "he" ? `טרי · ${h}ש׳` : `fresh · ${h}h`,
+  stOld: (h) => LANG === "he" ? `זקן · ${h}ש׳` : `stale · ${h}h`,
+  srcChain: { he: "מקור: שרשרת ציבורית · קריאה חיה", en: "source: public chain · live read" },
+  srcBook: { he: "מקור: ספר חתום", en: "source: signed book" },
+  srcMachine: { he: "מקור: המכשיר שלכם", en: "source: your device" },
 };
-const I_GET = (k) => { const v = I[k]; if (v == null) return k; if (typeof v === "function") return v; if (typeof v === "object") return v[LANG] ?? v.he; return v; };
-const T = (k, ...a) => { const v = I_GET(k); return typeof v === "function" ? v(...a) : v; };
 
-/* ═══════════ books ═══════════ */
-let LIVE = null, DEXS = null, TOKEN = null, WATCH = null;
-const jget = async (u) => { const r = await fetch(u, { cache: "no-store" }); if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); };
+/* ═══════════ live sources ═══════════ */
+let LIVE = null, DEXS = null, TOKEN = null;
+let LIVE_AT = null;
 const NODES = ["https://api.steemit.com", "https://api.justyy.com", "https://api_rpc.ecency.com"];
 async function steemRpc(method, params) {
   for (const n of NODES) {
@@ -694,963 +476,151 @@ async function steemRpc(method, params) {
   }
   throw new Error("all nodes failed");
 }
+async function jget(rel) { const r = await fetch(rel, { cache: "no-store" }); if (!r.ok) throw new Error(String(r.status)); return r.json(); }
 
-/* ═══════════ wallet + queue ═══════════ */
-let WALLET = null;
-let QUEUE = [];
-try { QUEUE = JSON.parse(localStorage.getItem("saos.queue") || "[]") || []; } catch { QUEUE = []; }
-const saveQueue = () => { try { localStorage.setItem("saos.queue", JSON.stringify(QUEUE)); } catch {} };
-const QKEY = "saos.txkey.v1";
+/* ═══════════ wallet + queue + transport ═══════════ */
+let WALLET = null;          // { priv, pubSTM, addr }
+let QUEUE = [];             // signed envelopes waiting for the belt
+let AUTH = null;            // { account, via, roles, pub, verified }
+let KS = null;              // device keystore envelope
+const QKEY = "saos.keystore.v2";
+try { KS = JSON.parse(sessionStorage.getItem(QKEY) || "null"); } catch {}
+function setTransport(tr) { TRANSPORT = tr; }
 let TRANSPORT = null;
-try { TRANSPORT = JSON.parse(sessionStorage.getItem(QKEY) || "null"); } catch { TRANSPORT = null; }
-function setTransport(tr) {
-  TRANSPORT = tr;
-  try { if (tr) sessionStorage.setItem(QKEY, JSON.stringify(tr)); else sessionStorage.removeItem(QKEY); } catch {}
-  renderStatusStrip(); renderAll();
+
+function toast(msg, good = true) {
+  const t = $("toast-t"); t.textContent = msg; t.classList.toggle("bad", !good); t.classList.add("on");
+  clearTimeout(toast._h); toast._h = setTimeout(() => t.classList.remove("on"), 3400);
+}
+async function copyText(v, label) {
+  try { await navigator.clipboard.writeText(v); toast(`${label} ✓`); }
+  catch { toast(LANG === "he" ? "העתקה נכשלה — סמנו ידנית" : "copy failed — select manually", false); }
 }
 async function enqueue(fields) {
-  if (!WALLET) { toast(T("tNeedWallet"), false); $("open").scrollIntoView({ behavior: "smooth", block: "center" }); return null; }
-  try {
-    const env = await SL.buildOp(WALLET.priv, WALLET.pubSTM, fields);
-    QUEUE.push(env); saveQueue(); renderQueue();
-    autoRelay(env);
-    return env;
-  } catch (e) { toast(T("tErrSign") + e.message, false); return null; }
+  const by = WALLET.addr;
+  const env = { v: 1, id: `${Date.now()}-${Math.random().toString(16).slice(2, 10)}`, by, pub: WALLET.pubSTM, ...fields };
+  env.sig = await SL.signEnvelope(env, WALLET.priv);
+  QUEUE.push(env);
+  if (TRANSPORT) { try { await broadcastEnv(env, TRANSPORT); } catch {} }
+  autoRelay(env);
+  renderQueue(); renderMachine(); machinePulse();
+  return env;
 }
 
-/* ═══════════ toast ═══════════ */
-let toastT = null;
-function toast(msg, good = true) {
-  let el = $("toast");
-  if (!el) { el = document.createElement("div"); el.id = "toast"; el.setAttribute("role", "status"); el.style.cssText = "position:fixed;inset-inline:0;bottom:18px;z-index:60;display:flex;justify-content:center;pointer-events:none;padding:0 16px"; document.body.appendChild(el); }
-  el.innerHTML = `<div style="background:var(--panel);border:1px solid ${good ? "var(--rule)" : "var(--red)"};color:var(--strong);border-radius:11px;padding:10px 16px;font-size:13.5px;max-width:560px;box-shadow:0 8px 30px rgba(0,0,0,.35)">${esc(msg)}</div>`;
-  clearTimeout(toastT); toastT = setTimeout(() => { el.innerHTML = ""; }, 4200);
-}
-function copyText(v, label) {
-  navigator.clipboard?.writeText(String(v)).then(() => toast((label ? label + " " : "") + T("copyDone"))).catch(() => {});
-}
-document.addEventListener("click", (e) => {
-  const c = e.target.closest?.("[data-copytxt]");
-  if (c) copyText(c.dataset.copytxt, c.dataset.copylabel || "");
-});
-
-/* ═══════════ THE KEY LAW (T24): WIF-or-master + name-strip + all three authorities ═══════════
-   Accepted: 1) a WIF as-is, 2) a master password (priv(role)=sha256(account+role+password)),
-   3) a master WITH the account-name prefix — the name is stripped automatically.
-   Detection runs against the LIVE authorities of the account from the public chain. */
+/* key classification against a chain account */
 function classifyKey(pub, acc) {
-  const has = (auth) => Array.isArray(auth?.key_auths) && auth.key_auths.some((pair) => Array.isArray(pair) && pair[0] === pub);
-  if (has(acc?.posting)) return "posting";
-  if (has(acc?.active)) return "active";
-  if (has(acc?.owner)) return "owner";
+  const lists = { owner: acc.owner?.key_auths ?? [], active: acc.active?.key_auths ?? [], posting: acc.posting?.key_auths ?? [] };
+  for (const [role, arr] of Object.entries(lists)) if (arr.some((k) => k[0] === pub)) return role;
+  if (acc.memo_key === pub) return "memo";
   return "none";
 }
 async function resolveKey(input, account) {
-  const raw = String(input || "").trim();
-  if (!raw) return null;
   const acc = (await steemRpc("condenser_api.get_accounts", [[account]]))?.[0];
-  if (!acc) throw new Error(T("tErrNoAccount"));
-  const candidates = [raw];
-  const low = raw.toLowerCase();
-  const acct = account.toLowerCase();
-  if (low.startsWith(acct)) {
-    const rest = raw.slice(acct.length).replace(/^[\s:：\-—=_]+/, "").trim();
-    if (rest && !candidates.includes(rest)) candidates.push(rest);
-  }
-  for (const cand of candidates) {
-    /* 1) WIF form */
-    try {
-      const priv = await C.wifToPriv(cand);
-      const pub = await C.pubToSTM(C.privToPubBytes(priv));
-      const kt = classifyKey(pub, acc);
-      if (kt !== "none") return { priv, pub, wif: cand, type: kt, via: "wif" };
-    } catch { /* not a WIF — master form next */ }
-    /* 2) master form: posting preferred, then active, then owner (no broadcast — attach takes over) */
-    for (const role of ["posting", "active", "owner"]) {
-      try {
-        const wif = await C.masterToWif(account, role, cand);
-        const priv = await C.wifToPriv(wif);
-        const pub = await C.pubToSTM(C.privToPubBytes(priv));
-        const kt = classifyKey(pub, acc);
-        if (kt !== "none") return { priv, pub, wif, type: kt, via: role === "posting" ? "master" : "master-" + role };
-      } catch { /* next role */ }
-    }
-  }
-  return { none: true, acc };
-}
-
-/* ═══════════ transport broadcast ═══════════ */
-async function broadcastEnv(env, tr) {
-  const T2 = tr || TRANSPORT;
-  if (!T2) return { ok: false, err: "no transport" };
-  try {
-    const op = ["custom_json", T2.type === "active"
-      ? { required_auths: [T2.account], required_posting_auths: [], id: SL.OP_ID, json: JSON.stringify(env) }
-      : { required_auths: [], required_posting_auths: [T2.account], id: SL.OP_ID, json: JSON.stringify(env) }];
-    const priv = await C.wifToPriv(T2.wif);
-    const getProps = () => steemRpc("condenser_api.get_dynamic_global_properties", []);
-    const getBlockHeader = (n) => steemRpc("condenser_api.get_block_header", [n]);
-    const signed = await C.buildSignedTx([op], priv, getProps, getBlockHeader);
-    await steemRpc("condenser_api.broadcast_transaction", [signed]);
-    return { ok: true };
-  } catch (e) { return { ok: false, err: (e.message || "").slice(0, 90) }; }
-}
-let AUTOBUSY = false;
-async function autoRelay(env) {
-  if (!TRANSPORT || AUTOBUSY) return;
-  AUTOBUSY = true;
-  machineBroadcast(true);
-  try {
-    const r = await broadcastEnv(env);
-    if (r.ok) {
-      const i = QUEUE.findIndex((e) => e && e.id === env.id);
-      if (i >= 0) { QUEUE.splice(i, 1); saveQueue(); renderQueue(); }
-      toast(T("tOkBroadcast")(1));
-    } else toast((T("autoRelayFail") + " " + (r.err || "")).slice(0, 140), false);
-  } finally { AUTOBUSY = false; machineBroadcast(false); }
-}
-let AUTOFLUSHED = false;
-async function autoFlush() {
-  if (!TRANSPORT || AUTOFLUSHED || !QUEUE.length) return;
-  AUTOFLUSHED = true;
-  machineBroadcast(true);
-  try {
-    while (QUEUE.length && TRANSPORT) {
-      const r = await broadcastEnv(QUEUE[0]);
-      if (!r.ok) { toast((T("autoRelayFail") + " " + (r.err || "")).slice(0, 140), false); break; }
-      QUEUE.shift(); saveQueue(); renderQueue();
-      await new Promise((r2) => setTimeout(r2, 700));
-    }
-  } finally { AUTOFLUSHED = false; machineBroadcast(false); }
-}
-
-/* ═══════════ station 4: login (the transport law) ═══════════ */
-$("btn-relay-all").addEventListener("click", async () => {
-  const account = $("relay-account").value.trim().toLowerCase();
-  const keyIn = $("relay-wif").value.trim();
-  const out = $("relay-result");
-  if (!QUEUE.length && !WALLET) { toast(T("tErrEmptyQueue"), false); return; }
-  if (!/^[a-z0-9.-]{3,24}$/.test(account)) { toast(T("tErrBadAccount"), false); return; }
-  if (!keyIn) { toast(LANG === "he" ? "הדביקו מפתח — WIF או מפתח-כספת." : "Paste a key — WIF or master key.", false); return; }
-  out.innerHTML = `<span class="warn">…</span>`;
-  try {
-    const r = await resolveKey(keyIn, account);
-    if (r.none) throw new Error(T("errNoMatch"));
-    $("relay-keytype").textContent = T("keyDetected")(r.type) + (r.via.startsWith("master") ? (LANG === "he" ? " · מפתח-כספת" : " · master") : (LANG === "he" ? " · WIF" : " · WIF"));
-    if (r.type === "owner") {
-      out.textContent = "";
-      document.querySelector("details.adv")?.setAttribute("open", "");
-      $("attach-result").scrollIntoView({ behavior: "smooth", block: "center" });
-      toast(T("errOwner"), false);
-      return;
-    }
-    setTransport({ account, wif: r.wif, type: r.type });
-    let sent = 0, fail = null;
-    machineBroadcast(true);
-    try {
-      while (QUEUE.length) {
-        const b = await broadcastEnv(QUEUE[0]);
-        if (!b.ok) { fail = b.err; break; }
-        QUEUE.shift(); saveQueue(); renderQueue(); sent++;
-        await new Promise((r2) => setTimeout(r2, 700));
-      }
-    } finally {
-      $("relay-wif").value = ""; // the key leaves the input on EVERY path
-      machineBroadcast(false);
-    }
-    if (sent) out.innerHTML = `<span class="ok">${esc(T("tOkBroadcast")(sent))}</span>`;
-    else if (!fail) out.textContent = "";
-    if (fail && !sent) throw new Error(T("relayFail") + fail);
-    else if (fail) out.innerHTML += ` <span class="warn">${esc(T("autoRelayFail") + " " + fail)}</span>`;
-    setTimeout(refreshBooks, 12000);
-  } catch (e) {
-    out.innerHTML = `<span class="bad">${esc((e.message || "").slice(0, 220))}</span>`;
-    toast((e.message || "fail").slice(0, 160), false);
-  }
-});
-$("btn-flush").addEventListener("click", () => autoFlush());
-
-/* ═══════════ advanced attach — append-only (preserves ALL existing posting keys) ═══════════ */
-$("attach-confirm").addEventListener("change", () => { $("btn-attach-posting").disabled = !$("attach-confirm").checked; });
-document.addEventListener("click", (e) => {
-  if (e.target.closest?.("[data-kc-x]")) { setTransport(null); toast(T("wiping"), true); }
-});
-const OP_ID_ACCOUNT_UPDATE = 11;
-const vint = (n) => { const out = []; n = Number(n); do { let b = n & 0x7f; n >>>= 7; if (n) b |= 0x80; out.push(b); } while (n); return out; };
-const vstr = (s) => { const b = new TextEncoder().encode(String(s)); return [...vint(b.length), ...b]; };
-const u16le = (n) => { n = Number(n) & 0xffff; return [n & 0xff, (n >>> 8) & 0xff]; };
-const u32le = (n) => { n = Number(n) >>> 0; return [n & 0xff, (n >>> 8) & 0xff, (n >>> 16) & 0xff, (n >>> 24) & 0xff]; };
-const pub37 = (stm) => [...C.b58decode(String(stm).slice(3))];
-function serAuthority(a) {
-  const out = [];
-  out.push(...u32le(a?.weight_threshold ?? 0));
-  const accAuths = Array.isArray(a?.account_auths) ? a.account_auths : [];
-  out.push(...vint(accAuths.length));
-  for (const p of accAuths) { out.push(...vstr(p[0])); out.push(...u16le(p[1])); }
-  const keyAuths = Array.isArray(a?.key_auths) ? a.key_auths : [];
-  out.push(...vint(keyAuths.length));
-  for (const p of keyAuths) { out.push(...pub37(p[0])); out.push(...u16le(p[1])); }
-  return out;
-}
-function serializeAccountUpdate(o) {
-  let out = [];
-  out.push(...vstr(o.account));
-  for (const k of ["owner", "active", "posting"]) {
-    const v = o[k];
-    if (v == null) out.push(0); else { out.push(1); out.push(...serAuthority(v)); }
-  }
-  out.push(...pub37(o.memo_key));
-  out.push(...vstr(o.json_metadata || ""));
-  return out;
-}
-async function buildSignedAccountUpdate(op, priv, getProps, getBlockHeader) {
-  const props = await getProps();
-  const libr = Number(props.last_irreversible_block_num);
-  const header = await getBlockHeader(libr);
-  const prevB = C.unhex(String(header.previous || ""));
-  const prefix = (prevB[4] | (prevB[5] << 8) | (prevB[6] << 16) | (prevB[7] << 24)) >>> 0;
-  const expSec = Math.floor(new Date(props.time + "Z").getTime() / 1000) + 600;
-  const expiration = new Date(expSec * 1000).toISOString().slice(0, 19);
-  const refBlockNum = (libr - 1) & 0xffff;
-  const bytes = [];
-  bytes.push(refBlockNum & 0xff, (refBlockNum >>> 8) & 0xff);
-  bytes.push(...u32le(prefix));
-  bytes.push(...u32le(expSec));
-  bytes.push(...vint(1), ...vint(OP_ID_ACCOUNT_UPDATE));
-  bytes.push(...serializeAccountUpdate(op[1]));
-  bytes.push(...vint(0));
-  const digest = await C.sha256(C.cat(C.unhex(C.STEEM_CHAIN_ID), new Uint8Array(bytes)));
-  const sig = await C.signCompact(digest, priv);
-  return { ref_block_num: refBlockNum, ref_block_prefix: prefix, expiration, operations: [op], extensions: [], signatures: [C.hex(sig)] };
-}
-$("btn-attach-posting").addEventListener("click", async () => {
-  const account = $("relay-account").value.trim().toLowerCase();
-  const keyIn = $("relay-wif").value.trim();
-  const out = $("attach-result");
-  if (!/^[a-z0-9.-]{3,24}$/.test(account)) { toast(T("tErrBadAccount"), false); return; }
-  if (!keyIn) { toast(T("wAttOwnerOnly"), false); return; }
-  out.innerHTML = `<span class="warn">${esc(T("wAttBusy"))}</span>`;
-  try {
-    const r = await resolveKey(keyIn, account);
-    if (r.none || r.type !== "owner") throw new Error(T("wAttNotOwner"));
-    const acc = r.acc;
-    /* a fresh posting keypair, born in this tab */
-    const seed = crypto.getRandomValues(new Uint8Array(32));
-    const newWif = await C.b58cEncode(0x80, seed);
-    const newPriv = await C.wifToPriv(newWif);
-    const newPub = await C.pubToSTM(C.privToPubBytes(newPriv));
-    /* APPEND-ONLY LAW: every existing posting key_auth is preserved */
-    const existing = (acc.posting?.key_auths || []).map((p) => [p[0], p[1] ?? 1]);
-    const keyAuths = [...existing, [newPub, 1]].sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0));
-    const op = ["account_update", {
-      account,
-      owner: acc.owner,
-      active: acc.active,
-      posting: { weight_threshold: acc.posting?.weight_threshold ?? 1, account_auths: acc.posting?.account_auths || [], key_auths },
-      memo_key: acc.memo_key,
-      json_metadata: "",
-    }];
-    const getProps = () => steemRpc("condenser_api.get_dynamic_global_properties", []);
-    const getBlockHeader = (n) => steemRpc("condenser_api.get_block_header", [n]);
-    const signed = await buildSignedAccountUpdate(op, r.priv, getProps, getBlockHeader);
-    await steemRpc("condenser_api.broadcast_transaction", [signed]);
-    $("relay-wif").value = "";
-    setTransport({ account, wif: newWif, type: "posting" });
-    out.innerHTML = `<div class="ok" style="font-size:13px">${esc(T("wAttDone"))}</div>`
-      + `<div class="keybox" style="margin-top:10px"><div style="font-size:12px;color:var(--amber);margin-bottom:6px">${esc(T("wAttWifT"))}</div><div class="w">${esc(newWif)}</div><button type="button" class="copy" data-copytxt="${esc(newWif)}" data-copylabel="posting WIF" style="margin-top:9px">${esc(T("copy"))}</button></div>`;
-    $("attach-confirm").checked = false;
-    $("btn-attach-posting").disabled = true;
-    if (QUEUE.length) autoFlush();
-  } catch (e) {
-    out.innerHTML = `<span class="bad" style="font-size:12.5px">${esc((T("wAttFail") + (e.message || "")).slice(0, 180))}</span>`;
-    toast((e.message || "attach failed").slice(0, 150), false);
-  }
-});
-
-/* ═══════════ hosted relay (r144-g2 contract unchanged) ═══════════ */
-let RELAYMAP = {};
-try { RELAYMAP = JSON.parse(localStorage.getItem("saos.relay") || "{}"); } catch { RELAYMAP = {}; }
-const saveRelayMap = () => { try { localStorage.setItem("saos.relay", JSON.stringify(RELAYMAP)); } catch {} };
-function relayBase() {
-  const u = LIVE?.relay?.url;
-  return typeof u === "string" && /^https:\/\//.test(u) ? u.replace(/\/+$/, "") : null;
-}
-const regEnv = () => QUEUE.find((e) => e && e.k === "wallet.create") || null;
-function relayRegStatusHtml() {
-  const qe = regEnv();
-  const rs = qe ? RELAYMAP[qe.id] : null;
-  const base = relayBase();
-  let html = "";
-  if (rs && rs.status === "sending") html += `<span class="warn">${esc(T("relaySending"))}…</span>`;
-  else if (rs && rs.status === "broadcast") html += `<span class="warn">${esc(T("relaySent")(rs.ref || "…"))}</span>`;
-  else if (rs && rs.status === "queued") html += `<span class="warn">${esc(T("relayQueued")(rs.ref || "…"))}</span>`;
-  else if (rs && rs.status === "failed") html += `<span class="warn">${esc(T("relayFailed"))}</span>`;
-  else html += `<span class="warn">${esc(T("queueReg"))}</span><div class="hint" style="margin-top:6px">${esc(T("queueRegHint"))}</div>`;
-  if (base && qe && (!rs || rs.status === "failed")) {
-    html += ` <a class="btn ghost sm" style="margin-top:8px;display:inline-flex" href="${esc(base)}/#saos-reg=${encodeURIComponent(JSON.stringify(qe))}">${esc(T("relayDeep"))}</a>`;
-  }
-  return html;
-}
-async function relaySend(env) {
-  RELAYMAP[env.id] = { status: "sending", at: Date.now() }; saveRelayMap(); renderAccount();
-  try {
-    const r = await fetch(relayBase() + "/api/saos/relay", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ envelope: env, signedAt: new Date().toISOString() }),
-    });
-    const j = await r.json().catch(() => null);
-    if (j && j.ok && j.status === "broadcast") {
-      RELAYMAP[env.id] = { status: "broadcast", ref: j.opRef || j.txid || "", at: Date.now() };
-      saveRelayMap(); renderAccount(); relayPoll(env);
-    } else if (j && j.ok && (j.queued || j.status === "queued")) {
-      RELAYMAP[env.id] = { status: "queued", ref: j.queueId || env.id, at: Date.now() };
-      saveRelayMap(); renderAccount();
-    } else if (j && j.ok && j.status === "registered") {
-      afterRegistered(env);
-    } else {
-      RELAYMAP[env.id] = { status: "failed", detail: (j && (j.detail || j.err)) || "HTTP " + r.status, at: Date.now() };
-      saveRelayMap(); renderAccount();
-    }
-  } catch (e) {
-    RELAYMAP[env.id] = { status: "failed", detail: (e.message || "").slice(0, 60), at: Date.now() };
-    saveRelayMap(); renderAccount();
-  }
-}
-async function relayPoll(env, tries = 0) {
-  if (tries > 15) return;
-  try {
-    const r = await fetch(relayBase() + "/api/saos/relay?address=" + encodeURIComponent(env.by), { cache: "no-store" });
-    const j = await r.json();
-    if (j && j.ok && j.status === "registered") { afterRegistered(env); return; }
-    if (j && j.ok && j.status === "broadcast" && RELAYMAP[env.id] && j.opRef) {
-      RELAYMAP[env.id].ref = j.opRef; saveRelayMap(); renderAccount();
-    }
-  } catch { /* the chain decides; the next round retries */ }
-  setTimeout(() => relayPoll(env, tries + 1), 8000);
-}
-function afterRegistered(env) {
-  const i = QUEUE.findIndex((e) => e && e.id === env.id);
-  if (i >= 0) { QUEUE.splice(i, 1); saveQueue(); }
-  delete RELAYMAP[env.id]; saveRelayMap();
-  toast(T("relayRegistered"));
-  refreshBooks();
-  const qe = regEnv();
-  if (!qe) relayKick();
-}
-function relayKick() {
-  const base = relayBase();
-  const qe = regEnv();
-  if (!base || !qe) return;
-  if (RELAYMAP[qe.id]) return;
-  relaySend(qe);
-}
-
-/* ═══════════ station 1: create / restore / backup ═══════════ */
-$("btn-new-wallet").addEventListener("click", async () => {
-  try {
-    const w = await SL.newWallet();
-    WALLET = w;
-    $("wif-out").textContent = await C.b58cEncode(0x80, w.priv);
-    $("key-reveal").style.display = "";
-    renderAccount(); renderStatusStrip(); renderAll();
-    toast(T("tOkWalletBorn"));
-  } catch (e) { toast(T("tErrCreate") + e.message, false); }
-});
-$("btn-wipe").addEventListener("click", () => {
-  WALLET = null;
-  AUTH = null;
-  $("key-reveal").style.display = "none";
-  $("wif-out").textContent = "";
-  renderAccount(); renderStatusStrip(); renderAll();
-  toast(T("tOkWiped"));
-});
-$("btn-copy-wif").addEventListener("click", () => copyText($("wif-out").textContent, "WIF"));
-/* restore from a key: the T24 law — WIF or master, with or without the name.
-   The inner SAOS wallet needs priv bytes: a WIF decodes directly; a master
-   derives the posting-role WIF (sha256(account+posting+master)). */
-let AUTH = null; // { account, via, roles: [], pub, verified }
-async function verifyKeyOnChain(input, account, via) {
-  const acc = (await steemRpc("condenser_api.get_accounts", [[account]]))?.[0];
-  if (!acc) return { account, via, roles: [], verified: false };
-  const roles = [];
-  let pub = null;
-  if (via === "wif") {
-    pub = await C.pubToSTM(C.privToPubBytes(await C.wifToPriv(input)));
+  if (!acc) return { account, via: null, roles: [], verified: false };
+  const roles = []; let pub = null;
+  let priv = null;
+  try { priv = await C.wifToPriv(input); } catch { priv = null; }
+  if (priv) {
+    pub = await C.pubToSTM(C.privToPubBytes(priv));
     const kt = classifyKey(pub, acc);
     if (kt !== "none") roles.push(kt);
   } else {
-    for (const role of ["posting", "active", "owner"]) {
-      try {
-        const d = await C.deriveAny(input, account, role);
-        if (classifyKey(d.pub, acc) !== "none") roles.push(role);
-      } catch { /* next role */ }
+    for (const role of ["posting", "active", "owner", "memo"]) {
+      const p = await C.pubToSTM(C.privToPubBytes(await C.sha256(C.cat(utf8(account), utf8(role), utf8(input)))));
+      if (classifyKey(p, acc) !== "none") { roles.push(role); pub = p; }
     }
   }
-  return { account, via, roles, pub, verified: roles.length > 0 };
+  return { account, via: priv ? "wif" : "master", roles, pub, verified: roles.length > 0 };
 }
-function vestToSteemRate(props) {
-  const fund = parseFloat(String(props?.total_vesting_fund_steem || "0").split(" ")[0]) || 0;
-  const shares = parseFloat(String(props?.total_vesting_shares || "0").split(" ")[0]) || 0;
-  return shares > 0 ? fund / shares : 0;
-}
-const vestsToSp = (v, rate) => (parseFloat(String(v).split(" ")[0]) || 0) * rate;
-const spToVestsStr = (sp, rate) => { const v = rate > 0 ? sp / rate : 0; return v.toFixed(6) + " VESTS"; };
-const steemAsset = (s) => parseFloat(String(s || "0").split(" ")[0]) || 0;
-/* T26 paste law: "בלי-השם-רק-המפתח" — candidate ladder, the first chain-verified wins */
 function keyPasteCandidates(raw) {
   const out = [];
-  const push = (input, acct) => {
-    const t = String(input || "").replace(/\u00a0/g, " ").trim();
-    if (t && !out.some((c) => c.input === t && (c.acct || null) === (acct || null))) out.push({ input: t, acct: acct || null });
-  };
-  const r = String(raw || "").replace(/\u00a0/g, " ").trim();
-  push(r, null);
-  const m = r.match(/^headcorner[\s:：\-—=_]+(.+)$/i);
-  if (m) { push(m[1], null); }
-  const g = r.match(/^([a-z0-9][a-z0-9\-.]{1,15})[\s]+(\S.*)$/is);
-  if (g) { push(g[2], g[1].toLowerCase()); push(g[2], null); }
-  return out;
+  const s = String(raw ?? "").trim();
+  if (!s) return out;
+  out.push(s);
+  const m = s.match(/^([a-z0-9\-.]{3,16})[\s:=](.+)$/i);
+  if (m) { out.push(m[2].trim()); out.push([m[1], m[2].trim()].join(" ")); }
+  return [...new Set(out)];
 }
 async function resolveKeyCandidate(cand) {
-  const acct = cand.acct || "headcorner";
-  try {
-    const p = await C.wifToPriv(cand.input);
-    const ver = await verifyKeyOnChain(cand.input, acct, "wif");
-    if (ver.verified) return { priv: p, AUTH: ver };
-  } catch { /* not a WIF — master below */ }
-  const ver = await verifyKeyOnChain(cand.input, acct, "master");
-  if (ver.verified) {
-    const role = ver.roles[0] || "posting";
-    const wif = await C.masterToWif(ver.account, role, cand.input);
-    return { priv: await C.wifToPriv(wif), AUTH: ver };
+  const errs = [];
+  for (const c of keyPasteCandidates(cand)) {
+    const m = c.match(/^([a-z0-9\-.]{3,16})[\s:=](.+)$/i);
+    const account = m ? m[1] : (AUTH?.account ?? "headcorner");
+    try {
+      const r = await resolveKey(c, account);
+      if (r.verified) return { ...r, raw: c };
+      errs.push(`${account}: none`);
+    } catch (e) { errs.push(e.message.slice(0, 40)); }
   }
-  return null;
+  return { verified: false, errs };
 }
-$("btn-restore-key").addEventListener("click", async () => {
-  const btn = $("btn-restore-key");
-  const raw = $("restore-key").value.replace(/\u00a0/g, " ").trim();
-  if (!raw) return;
-  btn.disabled = true;
+async function verifyKeyOnChain(input, account, via) {
+  return resolveKey(input, account);
+}
+
+/* relay — honest uplink */
+async function broadcastEnv(env, tr) {
+  const r = await fetch(tr, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ops: [env] }) });
+  if (!r.ok) throw new Error(String(r.status));
+  return r.json().catch(() => ({}));
+}
+
+/* relay — honest uplink */
+let RELAYMAP = {};
+function relayBase() { const u = LIVE?.relay?.url; return typeof u === "string" && /^https:\/\//.test(u) ? u.replace(/\/+$/, "") : null; }
+function relayRegStatusHtml() {
+  const u = relayBase();
+  return u ? `<span class="st-src live">${esc(T("qRelayOpen"))}</span>` : `<span class="st-src">${esc(T("qRelayClosed"))}</span>`;
+}
+async function relaySend(env) {
+  const base = relayBase(); if (!base) throw new Error("relay-closed");
+  const r = await fetch(base + "/api/saos/relay", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ops: [env] }) });
+  if (!r.ok) throw new Error("relay " + r.status);
+  return r.json().catch(() => ({}));
+}
+async function relayPoll(env, tries = 0) {
+  const base = relayBase(); if (!base || tries > 3) return null;
   try {
-    AUTH = null;
-    let priv = null;
-    for (const cand of keyPasteCandidates(raw)) {
-      try {
-        const res = await resolveKeyCandidate(cand);
-        if (res) { priv = res.priv; AUTH = res.AUTH; break; }
-      } catch { /* next candidate */ }
-    }
-    if (!priv || !AUTH?.verified) throw new Error(T("errNoMatch") || "key does not match any on-chain authority");
-    const pubSTM = await C.pubToSTM(C.privToPubBytes(priv));
-    WALLET = { priv, pubSTM, addr: await SL.addressFromPubSTM(pubSTM) };
-    if (AUTH?.verified && AUTH.account) $("del-account").value = AUTH.account;
-    $("key-reveal").style.display = "none";
-    $("restore-key").value = "";
-    renderAccount(); renderStatusStrip(); renderAll();
-    toast(T("tOkRestored"));
-    if (AUTH?.verified) toast(T("keyAuto")(AUTH.account, AUTH.roles.join(" · ")), true);
-  } catch (e) { toast(T("tErrImport") + (e.message || ""), false); }
-  btn.disabled = false;
-});
-/* encrypted backup: AES-256-GCM with a user password */
+    const r = await fetch(base + "/api/saos/relay?address=" + encodeURIComponent(env.by));
+    const j = await r.json();
+    return j?.anchored?.find?.((e) => e.id === env.id) || null;
+  } catch { return null; }
+}
+function afterRegistered(env) { toast(LANG === "he" ? "הרישום נכנס למסילה ✓" : "registration queued ✓"); renderQueue(); }
+async function relayKick() {
+  let n = 0;
+  for (const env of [...QUEUE]) {
+    try { await relaySend(env); n++; } catch { break; }
+  }
+  if (n) toast((LANG === "he" ? "הוזרמו לממסר: " : "flushed: ") + n);
+  else toast(LANG === "he" ? "הממסר סגור — התור נשמר" : "relay closed — queue kept", false);
+  renderQueue();
+}
+let AUTOBUSY = false;
+async function autoRelay(env) { if (AUTOBUSY || !relayBase()) return; AUTOBUSY = true; try { await relaySend(env); } catch {} AUTOBUSY = false; }
+let AUTOFLUSHED = false;
+async function autoFlush() { if (AUTOFLUSHED || !relayBase() || !QUEUE.length) return; AUTOFLUSHED = true; try { await relayKick(); } finally { AUTOFLUSHED = false; } }
+
+/* device keystore (passphrase-encrypted, session-only) */
 function askPassword({ title, sub }) {
-  return new Promise((resolve) => {
-    $("pw-h").textContent = title; $("pw-sub").textContent = sub;
-    $("pw-err").hidden = true; $("pw-input").value = "";
-    $("pw-modal").hidden = false;
-    $("pw-input").focus();
-    const done = (v) => { $("pw-modal").hidden = true; resolve(v); };
-    $("pw-ok").onclick = () => {
-      const v = $("pw-input").value;
-      if (v.length < 8) { $("pw-err").textContent = T("pwShort"); $("pw-err").hidden = false; return; }
-      done(v);
-    };
-    $("pw-cancel").onclick = () => done(null);
-    $("pw-input").onkeydown = (e) => { if (e.key === "Enter") $("pw-ok").click(); };
-  });
+  const p = prompt(`${title}\n${sub ?? ""}`); return p;
 }
 async function keystoreEncrypt(priv, pub, password) {
   const salt = crypto.getRandomValues(new Uint8Array(16));
-  const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveKey"]);
-  const aes = await crypto.subtle.deriveKey({ name: "PBKDF2", salt, iterations: 310000, hash: "SHA-256" }, key, { name: "AES-GCM", length: 256 }, false, ["encrypt"]);
   const iv = crypto.getRandomValues(new Uint8Array(12));
-  const data = new TextEncoder().encode(JSON.stringify({ v: 1, pub, priv: C.hex(priv) }));
-  const ct = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-GCM", iv }, aes, data));
-  return { format: "saos-keystore-v1", kdf: "PBKDF2-SHA256-310000", cipher: "AES-256-GCM", salt: C.hex(salt), iv: C.hex(iv), ct: C.hex(ct), createdAt: new Date().toISOString() };
+  const key = await crypto.subtle.importKey("raw", await crypto.subtle.digest("SHA-256", C.cat(utf8("saos-ks2"), salt, utf8(password))), "AES-GCM", false, ["encrypt"]);
+  const ct = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, priv));
+  return { v: 2, salt: C.hex(salt), iv: C.hex(iv), pub, ct: C.hex(ct), at: Date.now() };
 }
 async function keystoreDecrypt(ks, password) {
-  const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveKey"]);
-  const aes = await crypto.subtle.deriveKey({ name: "PBKDF2", salt: C.unhex(ks.salt), iterations: 310000, hash: "SHA-256" }, key, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
-  const pt = new Uint8Array(await crypto.subtle.decrypt({ name: "AES-GCM", iv: C.unhex(ks.iv) }, aes, C.unhex(ks.ct)));
-  const j = JSON.parse(new TextDecoder().decode(pt));
-  if (j.v !== 1 || typeof j.priv !== "string" || !/^[0-9a-f]{64}$/.test(j.priv)) throw new Error("bad keystore");
-  return { priv: C.unhex(j.priv), pubSTM: j.pub };
+  const salt = C.unhex(ks.salt), iv = C.unhex(ks.iv), ct = C.unhex(ks.ct);
+  const key = await crypto.subtle.importKey("raw", await crypto.subtle.digest("SHA-256", C.cat(utf8("saos-ks2"), salt, utf8(password))), "AES-GCM", false, ["decrypt"]);
+  return new Uint8Array(await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ct));
 }
-$("btn-export-keystore").addEventListener("click", async () => {
-  if (!WALLET) return;
-  const pass = await askPassword({ title: T("pwExportT"), sub: T("pwExportP") });
-  if (!pass) return;
-  const ks = await keystoreEncrypt(WALLET.priv, WALLET.pubSTM, pass);
-  try { localStorage.setItem("saos.keystore", JSON.stringify(ks)); } catch {}
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(new Blob([JSON.stringify(ks, null, 2)], { type: "application/json" }));
-  a.download = "saos-wallet-" + WALLET.addr.slice(5, 15) + ".json";
-  a.click();
-  URL.revokeObjectURL(a.href);
-  toast(T("tOkBackup"));
-});
-$("btn-import-wallet").addEventListener("click", () => $("import-file").click());
-$("import-file").addEventListener("change", async (e) => {
-  const f = e.target.files?.[0];
-  if (!f) return;
-  try {
-    const ks = JSON.parse(await f.text());
-    if (ks.format !== "saos-keystore-v1") throw new Error("format");
-    const pass = await askPassword({ title: T("pwImportT"), sub: T("pwImportP") });
-    if (!pass) { e.target.value = ""; return; }
-    const { priv, pubSTM } = await keystoreDecrypt(ks, pass);
-    WALLET = { priv, pubSTM, addr: await SL.addressFromPubSTM(pubSTM) };
-    $("key-reveal").style.display = "none";
-    renderAccount(); renderStatusStrip(); renderAll();
-    toast(T("tOkRestored"));
-  } catch (err) { toast(T("tErrImport") + (err.message === "format" ? "format" : T("pwBad")), false); }
-  e.target.value = "";
-});
+function saveKeystore(ks) { KS = ks; try { sessionStorage.setItem(QKEY, JSON.stringify(ks)); } catch {} }
+function forgetKeystore() { KS = null; try { sessionStorage.removeItem(QKEY); } catch {} }
 
-/* ═══════════ kernel book (dex/state.json) — the balance truth ═══════════ */
-function kernelWallet() {
-  if (!WALLET || !DEXS || !Array.isArray(DEXS.wallets)) return null;
-  const me = "u:" + WALLET.addr.toLowerCase();
-  return DEXS.wallets.find((w) => w && w.name === me) || null;
-}
-function kernelBalMu(symbol) {
-  const w = kernelWallet();
-  const v = w?.balances?.[symbol];
-  return BigInt(typeof v === "number" && Number.isFinite(v) ? Math.max(0, Math.floor(v)) : 0);
-}
-
-/* ═══════════ station 2 render ═══════════ */
-function renderAccount() {
-  const body = $("acc-body");
-  if (!WALLET) {
-    body.innerHTML = `<div class="hint">${esc(T("s2Empty"))}</div>`;
-    $("status-strip").style.display = "none";
-    return;
-  }
-  const kb = kernelWallet()?.balances || {};
-  const tokens = LIVE?.state?.tokens || {};
-  const entries = Object.entries(kb).filter(([, v]) => BigInt(Math.max(0, Math.floor(Number(v) || 0))) > 0n);
-  const registered = !!(LIVE?.state?.wallets?.[WALLET.addr]);
-  const balHtml = entries.length
-    ? entries.map(([sym, v]) => `<tr><td><b>${esc(sym)}</b></td><td class="num">${esc(fmtSaos(String(Math.floor(Number(v) || 0)), tokens[sym]?.decimals ?? 0))}</td></tr>`).join("")
-    : `<tr><td><b>SAOS</b></td><td class="num">0</td></tr>`;
-  body.innerHTML = `
-    <div class="addrbox">
-      <span class="tag gold">${esc(T("addr"))}</span>
-      <span class="a" id="my-addr">${esc(WALLET.addr)}</span>
-      <button type="button" class="copy" data-copytxt="${esc(WALLET.addr)}" data-copylabel="${esc(T("myAddr"))}">${esc(T("copy"))}</button>
-      ${registered ? `<span class="tag green">${LANG === "he" ? "רשום בספר" : "in the book"}</span>` : `<span class="tag amber">${esc(T("stName"))}</span>`}
-    </div>
-    <div>
-      <div class="hint" style="margin-bottom:7px">${esc(T("balances"))}</div>
-      <div class="twrap"><table><tbody>${balHtml}</tbody></table></div>
-    </div>
-    <div class="card" id="chain-card">
-      <div class="row" style="justify-content:space-between">
-        <h3 style="margin:0">${esc(T("chT"))}</h3>
-        <span id="chain-badge">${authBadgeHtml()}</span>
-      </div>
-      <div class="hint mono" id="chain-live" style="margin:8px 0 0">${esc(T("chWait"))}</div>
-    </div>
-    ${registered ? "" : `
-    <div class="card">
-      <h3>${esc(T("s2Reg"))}</h3>
-      <p>${esc(T("s2RegP"))}</p>
-      <div class="row">
-        <input id="reg-nick" style="max-width:240px" placeholder="${esc(T("s2Nick"))}">
-        <button class="btn sm" id="btn-register">${esc(T("s2RegB"))}</button>
-      </div>
-      <div class="hint" id="reg-relay">${relayRegStatusHtml()}</div>
-    </div>`}`;
-  $("btn-register")?.addEventListener("click", async () => {
-    const nick = $("reg-nick")?.value.trim();
-    const fields = { k: "wallet.create" };
-    if (nick) fields.nick = nick;
-    const env = await enqueue(fields);
-    if (env) { toast(T("tOkRegistered")); renderAccount(); relayKick(); }
-  });
-  renderStatusStrip();
-  loadChainPanel();
-}
-function authBadgeHtml() {
-  return AUTH
-    ? (AUTH.verified
-        ? `<span class="tag green">${esc(T("chVerified"))}</span> <span class="tag gold mono">@${esc(AUTH.account)} · ${esc(AUTH.roles.join(" · "))}</span>`
-        : `<span class="tag amber">${esc(T("chNoMatch"))}</span>`)
-    : "";
-}
-async function loadChainPanel() {
-  const el = $("chain-live"); if (!el) return;
-  const badge = $("chain-badge"); if (badge) badge.innerHTML = authBadgeHtml();
-  const acct = AUTH?.account || $("relay-account")?.value?.trim()?.toLowerCase() || "headcorner";
-  try {
-    const acc = (await steemRpc("condenser_api.get_accounts", [[acct]]))?.[0];
-    if (!acc) throw new Error("account not found");
-    const props = await steemRpc("condenser_api.get_dynamic_global_properties", []);
-    const rate = vestToSteemRate(props);
-    const sp = vestsToSp(acc.vesting_shares, rate);
-    const delOut = (await steemRpc("condenser_api.get_vesting_delegations", [acct, "", 100])) || [];
-    const outVests = delOut.reduce((s, d) => s + steemAsset(d.vesting_shares), 0);
-    const rc = acc.rc_manabar && acc.rc_manabar.max_rc > 0 ? Math.round((acc.rc_manabar.current_mana / acc.rc_manabar.max_rc) * 100) : null;
-    const row = (k, v) => `<tr><td><b>${esc(k)}</b></td><td class="num">${v}</td></tr>`;
-    el.innerHTML = `<table><tbody>` +
-      row("STEEM", esc(nice(steemAsset(acc.balance).toFixed(3)))) +
-      row(T("chPow"), esc(nice(sp.toFixed(3))) + " SP") +
-      row("SBD", esc(nice(steemAsset(acc.sbd_balance).toFixed(3)))) +
-      row(T("chDelegated"), esc(nice(vestsToSp(outVests, rate).toFixed(3))) + " SP") +
-      (rc !== null ? row("RC", esc(String(rc) + "%")) : "") +
-      `</tbody></table><div class="hint" style="margin-top:7px">@${esc(acct)} · <a href="https://steemworld.org/${esc(acct)}" target="_blank" rel="noopener">${esc(T("chView"))} ↗</a></div>`;
-  } catch (e) { el.textContent = T("chFail") + (e.message || e); }
-}
-
-/* ═══════════ status strip ═══════════ */
-function renderStatusStrip() {
-  const box = $("status-strip");
-  if (!WALLET) { box.style.display = "none"; return; }
-  box.style.display = "";
-  const short = (s) => esc(String(s).length > 20 ? String(s).slice(0, 12) + "…" + String(s).slice(-6) : String(s));
-  const kb = kernelWallet()?.balances || {};
-  const saos = nice(fmtSaos(String(Math.floor(Number(kb.SAOS ?? 0) || 0)), 3));
-  const keyChip = TRANSPORT
-    ? `<span class="chip live"><i></i>${esc(T("wssKeyChip"))} · ${esc(TRANSPORT.account)} · ${esc(T("wssTrType")(TRANSPORT.type))} <button type="button" class="copy" data-kc-x aria-label="remove" title="${esc(T("wssKeyMem"))}">×</button></span>`
-    : `<span class="chip"><i></i>${esc(T("wssKeyOff"))}</span>`;
-  box.innerHTML = [
-    `<span class="chip gold"><i></i><span class="mono" title="${esc(WALLET.addr)}">${short(WALLET.addr)}</span></span>`,
-    `<span class="chip"><i></i>${esc(T("wssBal"))}: <b class="mono">${saos}</b></span>`,
-    keyChip,
-    `<span class="chip ${QUEUE.length ? "warn" : "live"}"><i></i>${esc(T("wssQueue"))}: ${QUEUE.length}</span>`,
-  ].join("");
-}
-
-/* ═══════════ AMM pools (Genesis-2) — wire contract unchanged ═══════════ */
-const amPools = () => (LIVE && LIVE.state && LIVE.state.pools) || {};
-function amDec(sym) {
-  const tok = LIVE?.state?.tokens?.[sym];
-  if (tok) return Number(tok.decimals);
-  return sym === "SAOS" ? 3 : 8;
-}
-const amPoolEngine = (p) => ({ feeBps: String(p.feeBps ?? "30"), resA: BigInt(p.resA), resB: BigInt(p.resB) });
-function amUnits(raw, dec) {
-  const m = /^(\d+)(?:\.(\d{1,8}))?$/.exec(String(raw || "").trim());
-  if (!m) return null;
-  return BigInt(m[1] + (m[2] ?? "").padEnd(dec, "0"));
-}
-function amFmt(units, sym) { try { return nice(SL.fmt(String(units), amDec(sym))); } catch { return String(units); } }
-function amFillPairs() {
-  const pairs = Object.keys(amPools()).sort();
-  for (const id of ["am-pair", "am-lp-pair"]) {
-    const el = $(id); if (!el) continue;
-    const keep = el.value && pairs.includes(el.value) ? el.value : pairs[0];
-    el.innerHTML = pairs.map((x) => `<option value="${esc(x)}"${x === keep ? " selected" : ""}>${esc(x)}</option>`).join("") || `<option value="">—</option>`;
-  }
-}
-const amSpot = (p) => { try { const a = BigInt(p.resA), b = BigInt(p.resB); return a > 0n ? (Number(b) / 1e8) / (Number(a) / 1e3) : 0; } catch { return 0; } };
-function amQuote() {
-  const el = $("am-quote"); if (!el) return;
-  const p = amPools()[$("am-pair")?.value]; const dir = $("am-dir")?.value; const raw = $("am-amt")?.value?.trim();
-  if (!p || !dir || !raw) { el.textContent = "—"; return; }
-  const units = amUnits(raw, dir === "SA2C" ? 3 : 8);
-  if (units === null || units <= 0n) { el.textContent = "—"; return; }
-  const q = SL.quoteSwap(amPoolEngine(p), dir, units.toString());
-  if (q.err) { el.textContent = T("swapNotPossible") + q.err; return; }
-  const outSym = dir === "SA2C" ? p.quote : "SAOS";
-  const slip = Number($("am-slip")?.value || 3);
-  const minOut = (q.out * BigInt(10000 - slip * 100)) / 10000n;
-  const spot = amSpot(p);
-  const effPrice = dir === "SA2C" ? (Number(q.out) * 1e3) / (Number(units) * 1e8) : (Number(units) * 1e3) / (Number(q.out) * 1e8);
-  const impact = spot > 0 ? Math.max(0, (1 - effPrice / spot) * 100) : 0;
-  const symIn = dir === "SA2C" ? "SAOS" : p.quote;
-  const bal = WALLET ? (kernelBalMu(symIn) ?? 0n) : null;
-  const enough = bal !== null ? bal >= units : null;
-  el.innerHTML = esc("≈ " + amFmt(q.out, outSym) + " " + outSym + " · minOut " + amFmt(minOut, outSym) + " · spot " + spot.toPrecision(6) + " · impact " + impact.toFixed(2) + "%" + (enough === false ? T("insuffBal") : ""));
-}
-function amLpInfo() {
-  const el = $("am-lp-info"); if (!el) return;
-  const pair = $("am-lp-pair")?.value; const p = amPools()[pair];
-  if (!p) { el.textContent = "—"; return; }
-  const mine = WALLET ? BigInt(p.lpBal?.[WALLET.addr] || "0") : 0n;
-  const share = BigInt(p.lpSupply || "0") > 0n && mine > 0n ? Number((mine * 10000n) / BigInt(p.lpSupply)) / 100 : 0;
-  const baseIn = $("am-lp-base")?.value?.trim();
-  let auto = "";
-  if (baseIn && Number(baseIn) > 0) {
-    const u = amUnits(baseIn, 3);
-    if (u !== null && p.resA > 0n) {
-      const q = (u * BigInt(p.resB)) / BigInt(p.resA);
-      auto = " · " + T("creditSide") + " ≈ " + amFmt(q, p.quote);
-    }
-  }
-  el.textContent = T("myLp") + ": " + amFmt(mine, "LP") + (share ? " (" + share.toFixed(2) + "%)" : "") + auto;
-}
-function renderPools() {
-  amFillPairs();
-  const body = $("am-pools");
-  if (body) {
-    const pools = amPools();
-    body.innerHTML = Object.keys(pools).sort().map((pair) => {
-      const p = pools[pair];
-      const mine = WALLET ? BigInt(p.lpBal?.[WALLET.addr] || "0") : 0n;
-      return `<tr><td><b>${esc(pair)}</b></td><td class="num">${esc(amFmt(p.resA, "SAOS"))}</td><td class="num">${esc(amFmt(p.resB, p.quote))}</td><td class="num">${esc(amSpot(p).toPrecision(6))}</td><td class="num">${esc(String(Number(p.feeBps) / 100))}%</td><td class="num">${esc(String(p.swaps))}</td><td class="num">${mine > 0n ? esc(amFmt(mine, "LP")) : "—"}</td></tr>`;
-    }).join("") || `<tr><td colspan="7">—</td></tr>`;
-  }
-  const cu = $("am-custody");
-  if (cu) {
-    const c = LIVE?.custody;
-    if (!c) cu.textContent = "";
-    else {
-      const defs = Object.entries(c.verdict || {}).filter(([, v]) => String(v).includes("deficit"));
-      cu.textContent = defs.length ? T("custDeficit") + " (" + defs.map(([k]) => k).join(", ") + ")" : T("custOk");
-    }
-  }
-  amQuote(); amLpInfo();
-}
-["am-pair", "am-dir", "am-slip"].forEach((id) => $(id)?.addEventListener("change", amQuote));
-$("am-amt")?.addEventListener("input", amQuote);
-$("am-lp-pair")?.addEventListener("change", amLpInfo);
-$("am-lp-base")?.addEventListener("input", amLpInfo);
-$("btn-swap")?.addEventListener("click", async () => {
-  const pair = $("am-pair")?.value; const p = amPools()[pair]; const dir = $("am-dir")?.value; const raw = $("am-amt")?.value?.trim();
-  if (!p || !dir || !raw) { toast(T("pickPoolAmt"), false); return; }
-  const units = amUnits(raw, dir === "SA2C" ? 3 : 8);
-  if (units === null || units <= 0n) { toast(T("tErrBadAmt"), false); return; }
-  const q = SL.quoteSwap(amPoolEngine(p), dir, units.toString());
-  if (q.err) { toast(T("swapRejected") + q.err, false); return; }
-  const slip = Number($("am-slip")?.value || 3);
-  const minOut = (q.out * BigInt(10000 - slip * 100)) / 10000n;
-  const env = await enqueue({ k: "pool.swap", pair, dir, amountIn: units.toString(), minOut: minOut.toString() });
-  if (env) { toast(T("tOkSwap")); $("am-amt").value = ""; amQuote(); }
-});
-$("btn-lp-add")?.addEventListener("click", async () => {
-  const pair = $("am-lp-pair")?.value; const p = amPools()[pair]; const rawBase = $("am-lp-base")?.value?.trim();
-  if (!p || !rawBase) { toast(T("pickPoolSide"), false); return; }
-  const base = amUnits(rawBase, 3);
-  if (base === null || base <= 0n) { toast(T("tErrBadAmt"), false); return; }
-  const rawQ = $("am-lp-quote")?.value?.trim();
-  let quote;
-  if (rawQ && Number(rawQ) > 0) { quote = amUnits(rawQ, 8); }
-  else if (p.resA > 0n) { quote = ((base * BigInt(p.resB)) / BigInt(p.resA)) + 1n; }
-  else { toast(T("emptyPoolBoth"), false); return; }
-  if (quote === null || quote === undefined || quote <= 0n) { toast(T("tErrBadAmt"), false); return; }
-  const env = await enqueue({ k: "pool.add", pair, base: base.toString(), quote: quote.toString() });
-  if (env) { toast(T("tOkLp")); $("am-lp-base").value = ""; $("am-lp-quote").value = ""; amLpInfo(); }
-});
-$("btn-lp-rm")?.addEventListener("click", async () => {
-  const pair = $("am-lp-pair")?.value; const p = amPools()[pair]; const pctRaw = $("am-lp-rm")?.value?.trim();
-  if (!p) { toast(T("pickPool"), false); return; }
-  if (!WALLET) { toast(T("tNeedWallet"), false); return; }
-  const mine = BigInt(p.lpBal?.[WALLET.addr] || "0");
-  if (mine <= 0n) { toast(T("lpNone"), false); return; }
-  const pct = Number(pctRaw || "100");
-  if (!(pct > 0 && pct <= 100)) { toast(T("lpNoPct"), false); return; }
-  const lp = (mine * BigInt(Math.round(pct * 100))) / 10000n;
-  if (lp <= 0n) { toast(T("tErrBadAmt"), false); return; }
-  const env = await enqueue({ k: "pool.remove", pair, lp: lp.toString() });
-  if (env) { toast(T("tOkLp")); }
-});
-
-/* ═══════════ deposit rails + claim ═══════════ */
-function renderRails() {
-  const box = $("rails"); if (!box) return;
-  const LABELS = {
-    depositTron: "TRON (TRC20)", depositEvm: "EVM (ERC20)", depositSol: "Solana (SPL)", depositBtc: "Bitcoin",
-    depositSteem: "STEEM", depositSbd: "SBD", depositHive: "HIVE", depositHbd: "HBD",
-  };
-  const rows = Object.entries(LIVE?.state?.cfg?.addrs || {}).map(([cur, r]) => ({ cur, addr: r.addr, memo: r.memo }));
-  const shown = new Set(rows.map((r) => r.cur));
-  for (const [key, a] of Object.entries(WATCH?.depositAddresses || {})) {
-    const addr = typeof a === "string" ? a.trim() : (a && typeof a === "object" && typeof a.addr === "string" ? a.addr.trim() : "");
-    if (!addr) continue;
-    const cur = LABELS[key] || key.replace(/^deposit/, "");
-    if (shown.has(cur)) continue;
-    rows.push({ cur, addr, memo: (typeof a === "object" && typeof a.memo === "string" && a.memo.trim()) || "" });
-  }
-  box.innerHTML = rows.length
-    ? rows.map((r) => `<div class="rail"><b>${esc(r.cur)} → ${esc(r.addr || "—")}</b><div class="hint mono" style="margin-top:5px">${esc(T("s3Memo"))}: ${esc(r.memo || "saos:<claimId>")}</div></div>`).join("")
-    : `<div class="hint">${LANG === "he" ? "מסילת-ההפקדה תתפרסם בספר החי הקרוב." : "the deposit rail will be published in the next live book."}</div>`;
-}
-$("btn-claim").addEventListener("click", async () => {
-  const cur = $("cl-cur").value.trim().toUpperCase();
-  const amt = $("cl-amt").value.trim();
-  const ref = $("cl-ref").value.trim();
-  if (!/^[A-Z]{2,10}$/.test(cur)) { toast(T("tErrBadCur"), false); return; }
-  if (!/^(0|[1-9]\d{0,11})(\.\d{1,8})?$/.test(amt) || /^0+(\.0+)?$/.test(amt)) { toast(T("tErrBadAmt"), false); return; }
-  if (!/^[\w :.\-\/+=]{6,90}$/.test(ref)) { toast(T("tErrBadRef"), false); return; }
-  const env = await enqueue({ k: "deposit.claim", cur, amt, ref });
-  if (env) { toast(T("tOkClaim")); $("cl-ref").value = ""; }
-});
-
-/* ═══════════ send + review + address book ═══════════ */
-function toUnits(amount, decimals) {
-  const m = /^(\d+)(?:\.(\d{1,9}))?$/.exec(String(amount || "").trim());
-  if (!m) return null;
-  const frac = (m[2] || "").padEnd(decimals, "0").slice(0, decimals);
-  const units = m[1] + frac;
-  if (!/^\d{1,18}$/.test(units) || /^0+$/.test(units)) return null;
-  return units.replace(/^0+(?=\d)/, "");
-}
-function refreshSendSymbols() {
-  const syms = Object.keys(LIVE?.state?.tokens || {});
-  const sel = $("send-symbol");
-  const cur = sel.value;
-  sel.innerHTML = syms.map((s) => `<option value="${esc(s)}">${esc(s)}</option>`).join("") || `<option value="">—</option>`;
-  if (syms.includes(cur)) sel.value = cur;
-}
-let REV = null;
-$("btn-send").addEventListener("click", async () => {
-  const symbol = $("send-symbol").value;
-  const to = $("send-to").value.trim();
-  const amount = $("send-amount").value.trim();
-  if (!symbol) { toast(T("tErrNoToken"), false); return; }
-  if (!SL.ADDR_RE.test(to)) { toast(T("tErrBadAddr"), false); return; }
-  const dec = LIVE?.state?.tokens?.[symbol]?.decimals ?? 0;
-  const units = toUnits(amount, dec);
-  if (units === null) { toast(T("tErrBadAmt"), false); return; }
-  if (WALLET) {
-    const balUnits = kernelBalMu(symbol);
-    if (BigInt(units) > balUnits) { toast(T("tErrOverBal"), false); return; }
-  }
-  REV = { symbol, to, units, dec };
-  const row = (label, v, mono = true) => `<div class="pv-row"><span style="color:var(--dim)">${esc(label)}</span><span ${mono ? 'class="mono" style="font-size:12px;word-break:break-all;text-align:end"' : 'style="text-align:end"'}>${v}</span></div>`;
-  const balAfter = WALLET ? (BigInt(kernelBalMu(symbol)) - BigInt(units)).toString() : null;
-  $("rev-body").innerHTML = [
-    row(T("wSendTo"), esc(to)),
-    row(T("wSendAmt"), esc(fmtSaos(units, dec)) + " " + esc(symbol)),
-    balAfter === null ? null : row(T("miscBalAfter"), esc(fmtSaos(balAfter, dec)) + " " + esc(symbol)),
-  ].filter(Boolean).join("");
-  $("rev-modal").hidden = false;
-  $("rev-ok").focus();
-});
-$("rev-cancel").addEventListener("click", () => { $("rev-modal").hidden = true; REV = null; });
-$("rev-modal").addEventListener("click", (e) => { if (e.target === $("rev-modal")) { $("rev-modal").hidden = true; REV = null; } });
-$("rev-ok").addEventListener("click", async () => {
-  if (!REV) return;
-  const r = REV;
-  $("rev-modal").hidden = true; REV = null;
-  const env = await enqueue({ k: "token.transfer", symbol: r.symbol, to: r.to, amount: r.units });
-  if (env) { toast(T("tOkSigned")); $("send-to").value = ""; $("send-amount").value = ""; }
-});
-/* address book (device-local) */
-const AB_KEY = "saos.abook.v1";
-const lsGet = (k, fb) => { try { return JSON.parse(localStorage.getItem(k)) ?? fb; } catch { return fb; } };
-const abList = () => lsGet(AB_KEY, []);
-function renderAbook() {
-  const box = $("ab-chips"); if (!box) return;
-  $("ab-wrap").style.display = WALLET ? "" : "none";
-  const rows = abList();
-  box.innerHTML = rows.length ? rows.map((r, i) =>
-    `<span class="tag"><button type="button" data-ab-pick="${i}" style="all:unset;cursor:pointer">${esc(r.label)} <span class="mono" style="color:var(--dim)">${esc(String(r.addr).slice(0, 10))}…</span></button><button type="button" data-ab-del="${i}" aria-label="remove" style="all:unset;cursor:pointer;color:var(--dim)">×</button></span>`).join("")
-    : `<span class="hint">${esc(T("wAbEmpty"))}</span>`;
-}
-document.addEventListener("click", (e) => {
-  const pick = e.target.closest?.("[data-ab-pick]");
-  if (pick) { const r = abList()[Number(pick.dataset.abPick)]; if (r) { $("send-to").value = r.addr; toast(T("wAbPicked")); } }
-  const del = e.target.closest?.("[data-ab-del]");
-  if (del) { const rows = abList(); rows.splice(Number(del.dataset.abDel), 1); localStorage.setItem(AB_KEY, JSON.stringify(rows)); renderAbook(); }
-});
-$("btn-ab-save").addEventListener("click", () => {
-  const to = $("send-to").value.trim();
-  if (!SL.ADDR_RE.test(to)) { toast(T("tErrBadAddr"), false); return; }
-  const label = $("ab-label").value.trim() || to.slice(0, 8);
-  const rows = abList().filter((r) => r.addr !== to);
-  rows.unshift({ label, addr: to, at: Date.now() });
-  localStorage.setItem(AB_KEY, JSON.stringify(rows.slice(0, 24)));
-  $("ab-label").value = "";
-  renderAbook(); toast(T("wAbSaved"));
-});
-
-/* ═══════════ queue + verify ═══════════ */
-function queueSummary(env) {
-  const n = (x) => nice(Number(x || 0));
-  if (env.k === "wallet.create") return (LANG === "he" ? "רישום ארנק" : "wallet registration") + (env.nick ? ` "${env.nick}"` : "");
-  if (env.k === "token.transfer") return `${n(Number(env.amount || 0) / 1000)} ${env.symbol} → ${String(env.to).slice(0, 10)}…`;
-  if (env.k === "deposit.claim") return `${env.amt} ${env.cur}`;
-  if (env.k === "pool.swap") return `${env.pair} ${env.dir} ${n(Number(env.amountIn || 0) / (env.dir === "SA2C" ? 1000 : 1e8))}`;
-  if (env.k === "pool.add") return `${env.pair} +${n(Number(env.base || 0) / 1000)} SAOS`;
-  if (env.k === "pool.remove") return `${env.pair} −LP ${n(Number(env.lp || 0) / 1000)}`;
-  return env.id;
-}
-function renderQueue() {
-  $("wallet-queue").textContent = QUEUE.length;
-  $("queue-list").innerHTML = QUEUE.length
-    ? QUEUE.map((env, i) => `<div class="op-row"><span class="k">${esc(env.k)}</span><span style="flex:1;color:var(--dim);font-size:11.5px">${esc(queueSummary(env))}</span><button class="copy" data-qi="${i}">×</button></div>`).join("")
-    : `<div class="op-row"><span style="color:var(--dim)">${LANG === "he" ? "התור ריק — הכל שודר או טרם נחתם" : "the queue is empty — everything broadcast or nothing signed yet"}</span></div>`;
-  for (const b of document.querySelectorAll("[data-qi]")) {
-    b.addEventListener("click", () => { QUEUE.splice(Number(b.dataset.qi), 1); saveQueue(); renderQueue(); renderStatusStrip(); });
-  }
-  renderStatusStrip();
-}
-$("btn-copy-queue").addEventListener("click", () => {
-  if (!QUEUE.length) { toast(T("tErrEmptyQueue"), false); return; }
-  copyText(JSON.stringify(QUEUE, null, 2), "JSON");
-});
-$("btn-verify-chain").addEventListener("click", async () => {
-  const out = $("verify-chain-result");
-  out.textContent = T("reading");
-  out.style.color = "var(--dim)";
-  try {
-    const accounts = ["acct-01", "acct-04"]; // public fold anchors — roster stays internal
-    const envelopes = [];
-    for (const acc of accounts) {
-      let start = -1;
-      for (let p = 0; p < 12; p++) {
-        const hist = await steemRpc("condenser_api.get_account_history", [acc, start, 100]);
-        if (!Array.isArray(hist) || !hist.length) break;
-        let oldest = Infinity;
-        for (const [idx, entry] of hist) {
-          if (typeof idx === "number") oldest = Math.min(oldest, idx);
-          const op = entry?.op;
-          if (!op || op[0] !== "custom_json") continue;
-          const body = op[1];
-          if (body?.id !== SL.OP_ID) continue;
-          try { envelopes.push(JSON.parse(String(body.json || "{}"))); } catch { /* the fold rejects broken json honestly */ }
-        }
-        if (oldest === Infinity || oldest <= 1) break;
-        start = Math.max(1, oldest - 1);
-      }
-    }
-    if (envelopes.length === 0) { out.textContent = T("vNone"); out.style.color = "var(--amber)"; return; }
-    const res = await SL.fold(envelopes);
-    const published = LIVE?.stateRoot || null;
-    const match = published === res.stateRoot;
-    out.innerHTML = esc(T("vRead")(envelopes.length, res.valid)) + `<span class="mono">${esc(res.stateRoot.slice(0, 16))}…</span> `
-      + (match ? `<span class="ok">${esc(T("vMatch"))}</span>` : `<span class="bad">${esc(T("vDiff"))}</span>`);
-    out.style.color = match ? "var(--green)" : "var(--red)";
-  } catch (e) {
-    out.textContent = T("vFail") + (e.message || "").slice(0, 90);
-    out.style.color = "var(--red)";
-  }
-});
-
-/* ═══════════ live book + chips ═══════════ */
-function renderLiveChips() {
-  const chip = $("book-chip");
-  const chipT = $("book-chip-t");
-  const real = !!(LIVE && LIVE.truthLabel && String(LIVE.truthLabel).startsWith("REAL"));
-  chip.className = "chip " + (real ? "live" : "");
-  chipT.textContent = real ? T("bookReal") : T("bookWait");
-  const sup = LIVE?.state?.supply || {};
-  $("st-supply").textContent = T("stSupply") + ": " + Object.entries(sup).map(([k, v]) => nice(Number(v) / (k === "CSTEEM" ? 1e8 : k === "CSBD" ? 1e8 : 1e3))).map((s, i) => Object.keys(sup)[i] + " " + s).join(" · ");
-  $("st-treasury").textContent = T("stTreasury") + ": " + String(LIVE?.state?.treasury || "—").slice(0, 12) + "…";
-  $("st-pools").textContent = T("stPools") + ": " + Object.keys(LIVE?.state?.pools || {}).join(", ");
-}
-async function refreshBooks() {
-  try { LIVE = await jget("saos-live.json"); } catch { /* keep last frame */ }
-  try { DEXS = await jget("dex/state.json"); } catch { /* keep last frame */ }
-  try { TOKEN = await jget("token.json"); } catch { TOKEN = null; }
-  try { WATCH = await jget("dex/watch.json"); } catch { WATCH = null; }
-  renderLiveChips(); renderAccount(); renderPools(); renderRails(); refreshSendSymbols(); renderAbook(); renderQueue(); renderAll();
-}
-
-/* ═══════════ THE ISO MACHINE — a live state board, every part goes somewhere ═══════════ */
+/* ═══════════ THE MACHINE — isometric board, every part does something ═══════════ */
 function isoCube(x, y, w, h, d, cls = "") {
   return `<g class="${cls}">
     <polygon class="face top" points="${x},${y} ${x + w},${y - h} ${x + 2 * w},${y} ${x + w},${y + h}"/>
@@ -1658,295 +628,517 @@ function isoCube(x, y, w, h, d, cls = "") {
     <polygon class="face" points="${x + 2 * w},${y} ${x + w},${y + h} ${x + w},${y + h + d} ${x + 2 * w},${y + d}"/>
   </g>`;
 }
+function partOpen(id, target, labelKey) {
+  return `<g id="${id}" class="part" tabindex="0" role="button" aria-label="${esc(T(labelKey))}" data-target="${target}" aria-expanded="false">`;
+}
 function buildMachine() {
-  const svg = $("machine-svg");
-  /* ground */
-  let s = `<line class="iso stroke" x1="30" y1="286" x2="970" y2="286" opacity=".55"/>`;
-  /* vault (station 1) */
-  s += `<g id="iso-vault" class="iso iso-part" data-goto="open" role="button" tabindex="0" aria-label="vault — open or restore a wallet">
-    ${isoCube(64, 176, 36, 20, 62)}
-    <ellipse class="face recess" cx="118" cy="222" rx="13" ry="13"/>
-    <circle class="stroke" cx="118" cy="222" r="4" style="stroke:var(--dim)"/>
-    <ellipse class="halo" cx="100" cy="190" rx="52" ry="20"/>
-    <text x="82" y="284" text-anchor="middle" style="font:500 10.5px var(--mono);fill:var(--dim)">1</text>
-  </g>`;
-  /* silo (station 2) — fill shows SAOS balance */
-  s += `<g id="iso-silo" class="iso iso-part" data-goto="account" role="button" tabindex="0" aria-label="balance silo">
-    <clipPath id="silo-clip"><polygon points="247,112 225,125 225,271 247,258"/></clipPath>
-    ${isoCube(200, 105, 24, 13, 160)}
-    <rect id="iso-silo-fill" x="225" y="271" width="22" height="0" fill="var(--gold)" opacity=".55" clip-path="url(#silo-clip)"/>
-    <ellipse class="halo" cx="234" cy="130" rx="44" ry="16"/>
-    <text x="216" y="284" text-anchor="middle" style="font:500 10.5px var(--mono);fill:var(--dim)">2</text>
-  </g>`;
-  /* belt + queue cubes (station 3) */
-  s += `<g id="iso-belt" class="iso iso-part" data-goto="actions" role="button" tabindex="0" aria-label="queue belt">
-    <line class="stroke" x1="320" y1="252" x2="520" y2="252"/>
-    <line class="stroke" x1="320" y1="252" x2="332" y2="246" opacity=".5"/>
-    <line class="stroke" x1="520" y1="252" x2="508" y2="246" opacity=".5"/>
-    <g class="belt-cubes">${[0, 1, 2, 3].map((i) => isoCube(340 + i * 44, 236 - (i % 2) * 6, 14, 8, 12)).join("")}</g>
-    <ellipse class="halo" cx="420" cy="230" rx="96" ry="16"/>
-    <text x="402" y="284" text-anchor="middle" style="font:500 10.5px var(--mono);fill:var(--dim)">3</text>
-  </g>`;
-  /* transmission tower (station 4) */
-  s += `<g id="iso-tower" class="iso iso-part" data-goto="relay" role="button" tabindex="0" aria-label="transmission tower — transport key">
-    <line class="stroke" x1="600" y1="256" x2="614" y2="96"/>
-    <line class="stroke" x1="640" y1="256" x2="626" y2="96"/>
-    <line class="stroke" x1="607" y1="212" x2="633" y2="212" opacity=".7"/>
-    <line class="stroke" x1="611" y1="168" x2="629" y2="168" opacity=".7"/>
-    <line class="stroke" x1="614" y1="124" x2="626" y2="124" opacity=".7"/>
-    <ellipse class="halo" cx="620" cy="86" rx="30" ry="10"/>
-    <circle class="face" cx="620" cy="92" r="5"/>
-    <text x="618" y="284" text-anchor="middle" style="font:500 10.5px var(--mono);fill:var(--dim)">4</text>
-  </g>`;
-  /* delegation node (station 5) */
-  s += `<g id="iso-sp" class="iso iso-part" data-goto="delegate" role="button" tabindex="0" aria-label="SP delegation node">
-    ${isoCube(690, 200, 20, 11, 48)}
-    <line class="stroke" x1="710" y1="216" x2="736" y2="204" opacity=".8"/>
-    ${isoCube(736, 200, 12, 7, 18)}
-    <ellipse class="halo" cx="724" cy="196" rx="46" ry="15"/>
-    <text x="716" y="284" text-anchor="middle" style="font:500 10.5px var(--mono);fill:var(--dim)">5</text>
-  </g>`;
-  /* truth book (station 6) */
-  s += `<g id="iso-book" class="iso iso-part" data-goto="verify" role="button" tabindex="0" aria-label="truth book — verification">
-    <polygon class="face top" points="788,224 828,208 848,218 808,234"/>
-    <polygon class="face" points="788,224 808,234 808,252 788,242"/>
-    <polygon class="face" points="848,218 808,234 808,252 848,236"/>
-    <ellipse class="halo" cx="818" cy="216" rx="42" ry="13"/>
-    <text x="812" y="284" text-anchor="middle" style="font:500 10.5px var(--mono);fill:var(--dim)">6</text>
-  </g>`;
-  /* liquidity pools (station 3 · pools tab) — tank fills are REAL reserves from the live book */
-  s += `<g id="iso-pool" class="iso iso-part" data-goto="actions" role="button" tabindex="0" aria-label="liquidity pools — live reserves from the public book">
-    <clipPath id="poolA-clip"><polygon points="919,157 901,168 901,274 919,263"/></clipPath>
-    ${isoCube(880, 150, 20, 11, 120)}
-    <rect id="iso-poolA-fill" x="901" y="274" width="18" height="0" fill="var(--gold)" opacity=".55" clip-path="url(#poolA-clip)"/>
-    <clipPath id="poolB-clip"><polygon points="979,157 961,168 961,274 979,263"/></clipPath>
-    ${isoCube(940, 150, 20, 11, 120)}
-    <rect id="iso-poolB-fill" x="961" y="274" width="18" height="0" fill="var(--gold)" opacity=".55" clip-path="url(#poolB-clip)"/>
-    <ellipse class="halo" cx="926" cy="140" rx="70" ry="15"/>
-    <text id="iso-poolA-label" x="910" y="284" text-anchor="middle" style="font:500 10.5px var(--mono);fill:var(--dim)">—</text>
-    <text id="iso-poolB-label" x="970" y="284" text-anchor="middle" style="font:500 10.5px var(--mono);fill:var(--dim)">—</text>
-  </g>`;
-  /* wires */
-  s += `<g id="iso-wires" class="stroke" opacity=".5">
-    <polyline points="136,168 180,120 214,120" fill="none"/>
-    <polyline points="248,120 320,200" fill="none"/>
-    <polyline points="428,222 500,140 604,104" fill="none"/>
-    <polyline points="648,110 700,170" fill="none"/>
-    <polyline points="760,186 800,200" fill="none"/>
-    <polyline points="848,214 872,196" fill="none"/>
-  </g>`;
-  svg.innerHTML = s;
-  /* legend */
-  const L = [["iso-vault", "mVault"], ["iso-silo", "mSilo"], ["iso-belt", "mBelt"], ["iso-tower", "mTower"], ["iso-sp", "delT"], ["iso-book", "mBook"], ["iso-pool", "mPool"]];
-  $("mach-legend").innerHTML = L.map(([id, k]) => `<button type="button" data-goto="${$(id).dataset.goto}"><span class="k" id="lg-${id}"></span>${esc(T(k))}</button>`).join("");
-  /* clicks + keys */
-  document.addEventListener("click", (e) => {
-    const p = e.target.closest?.("[data-goto]");
-    if (p) { const t = $(p.dataset.goto); if (t) t.scrollIntoView({ behavior: "smooth", block: "start" }); }
-  });
-  document.addEventListener("keydown", (e) => {
-    if ((e.key === "Enter" || e.key === " ") && e.target.closest?.(".iso-part")) { e.preventDefault(); const t = $(e.target.closest(".iso-part").dataset.goto); if (t) t.scrollIntoView({ behavior: "smooth", block: "start" }); }
-  });
-}
-function machineBroadcast(on) { $("iso-wires")?.classList.toggle("flow", !!on); }
-function setPart(id, lit) { $(id)?.classList.toggle("lit", !!lit); const lg = $("lg-" + id); if (lg) lg.classList.toggle("on", !!lit); }
-function renderMachine() {
-  setPart("iso-vault", !!WALLET);
-  const saosMu = kernelBalMu("SAOS");
-  const saosNum = Number(saosMu) / 1000;
-  const pct = saosNum > 0 ? Math.min(80, 12 + Math.log10(saosNum + 1) * 22) : 0;
-  const fill = $("iso-silo-fill");
-  if (fill) { const H = Math.round(pct * 1.35); fill.setAttribute("height", String(H)); fill.setAttribute("y", String(271 - H)); }
-  setPart("iso-silo", saosNum > 0);
-  const belt = $("iso-belt");
-  if (belt) { belt.classList.toggle("run", QUEUE.length > 0); belt.classList.toggle("lit", QUEUE.length > 0); }
-  const lgBelt = $("lg-iso-belt"); if (lgBelt) lgBelt.classList.toggle("on", QUEUE.length > 0);
-  setPart("iso-tower", !!TRANSPORT);
-  setPart("iso-sp", !!TRANSPORT);
-  const real = !!(LIVE && LIVE.truthLabel && String(LIVE.truthLabel).startsWith("REAL"));
-  setPart("iso-book", real);
-  /* pools tanks — fills bound to REAL reserves from the live book (same engine the swap tab quotes) */
-  const pools = amPools();
-  const pk = Object.keys(pools).sort();
-  const tank = (el, pool) => {
-    if (!el) return;
-    let H = 0;
-    if (pool) {
-      try {
-        const saos = Number(BigInt(pool.resA)) / 1000;
-        const pct = saos > 0 ? Math.min(80, 12 + Math.log10(saos + 1) * 22) : 0;
-        H = Math.round(pct * 1.32);
-      } catch { H = 0; }
-    }
-    el.setAttribute("height", String(H)); el.setAttribute("y", String(274 - H));
+  /* idempotent: clear previously appended wires+parts, keep the static base */
+  for (const el of [...document.querySelectorAll("#iso .part, #iso path.wire, #iso .floor, #iso g.beltbox")]) el.remove();
+  const parts = [];
+  const wire = (x1, y1, x2, y2) => `<path class="wire dash" d="M${x1},${y1} L${x2},${y2}"/>`;
+
+  /* floor: subtle isometric tiles for depth (isoglow-grade presence) */
+  let floor = '<g class="floor" opacity="0.5">';
+  for (let i = 0; i < 9; i++) {
+    const x = 60 + i * 100, y = 340 - i * 0;
+    floor += `<path class="wire" d="M${x},350 l50,25 l50,-25" stroke-width="0.6" opacity="0.35"/>`;
+  }
+  for (let j = 0; j < 3; j++) floor += `<path class="wire" d="M${70 + j * 25},${355 - j * 25} L${930 - j * 0},${355 - j * 25}" stroke-width="0" />`;
+  floor += `<ellipse cx="490" cy="352" rx="440" ry="26" fill="none" stroke="var(--rule)" stroke-width="0.8"/></g>`;
+
+  /* 1 · vault — a real safe with a dial (right side: where reading starts in RTL) */
+  parts.push(partOpen("pt-vault", "open", "s1T"));
+  parts.push(`<polygon class="halo" points="812,96 878,63 944,96 944,196 878,229 812,196" fill="var(--gold-soft)"/>
+    <polygon class="face" points="818,116 878,86 938,116 878,146"/>
+    <polygon class="face" points="818,116 878,146 878,214 818,184"/>
+    <polygon class="face" points="938,116 878,146 878,214 938,184"/>
+    <rect class="face" x="856" y="140" width="44" height="52" rx="4"/>
+    <circle class="face" cx="878" cy="166" r="12"/>
+    <line class="wire" x1="878" y1="166" x2="878" y2="156"/>
+    <line class="wire" x1="878" y1="166" x2="886" y2="171"/>
+    <text class="lbl" x="878" y="252" text-anchor="middle">${esc(LANG === "he" ? "הכספת" : "vault")}</text>
+    <text class="lbl-v" id="mv-vault" x="878" y="268" text-anchor="middle"></text></g>`);
+
+  /* 2 · silos — three cylinders with fill levels */
+  parts.push(partOpen("pt-silos", "account", "s2T"));
+  const silo = (cx, top, h, w, fillFrac) => {
+    const fh = Math.max(3, Math.round(h * Math.min(1, Math.max(0.06, fillFrac))));
+    return `<polygon class="face" points="${cx - w},${top} ${cx},${top - w * 0.5} ${cx + w},${top} ${cx},${top + w * 0.5}"/>
+      <polygon class="face" points="${cx - w},${top} ${cx},${top + w * 0.5} ${cx},${top + h + w * 0.5} ${cx - w},${top + h}"/>
+      <polygon class="face" points="${cx + w},${top} ${cx},${top + w * 0.5} ${cx},${top + h + w * 0.5} ${cx + w},${top + h}"/>
+      <polygon points="${cx - w + 1},${top + h - fh} ${cx},${top + h - fh + w * 0.5} ${cx + w - 1},${top + h - fh} ${cx + w - 1},${top + h} ${cx},${top + h + w * 0.5} ${cx - w + 1},${top + h}" fill="var(--gold-soft)" stroke="none"/>`;
   };
-  tank($("iso-poolA-fill"), pools[pk[0]]);
-  tank($("iso-poolB-fill"), pools[pk[1]]);
-  const la = $("iso-poolA-label"), lb = $("iso-poolB-label");
-  if (la) la.textContent = pools[pk[0]]?.quote || "—";
-  if (lb) lb.textContent = pools[pk[1]]?.quote || "—";
-  const poolsAlive = pk.some((k) => { try { return BigInt(pools[k].resA) > 0n && BigInt(pools[k].resB) > 0n; } catch { return false; } });
-  setPart("iso-pool", poolsAlive);
+  parts.push(`<polygon class="halo" points="560,86 680,26 800,86 800,226 680,286 560,226" fill="var(--gold-soft)"/>
+    ${silo(622, 128, 92, 26, 0.8)}
+    ${silo(684, 116, 104, 26, 0.55)}
+    ${silo(746, 128, 92, 26, 0.35)}
+    <text class="lbl" x="680" y="308" text-anchor="middle">${esc(LANG === "he" ? "ממגורות-מטבע" : "coin silos")}</text>
+    <text class="lbl-v" id="mv-silos" x="680" y="324" text-anchor="middle"></text></g>`);
+
+  /* 3 · swap wheel — a gear that turns when quoting */
+  parts.push(partOpen("pt-swap", "swap", "s3T"));
+  let gear = "";
+  for (let a = 0; a < 12; a++) {
+    const ang = (Math.PI * 2 * a) / 12;
+    gear += `<line class="wire" x1="${430 + Math.cos(ang) * 26}" y1="${190 + Math.sin(ang) * 14}" x2="${430 + Math.cos(ang) * 34}" y2="${190 + Math.sin(ang) * 18}"/>`;
+  }
+  parts.push(`<polygon class="halo" points="352,120 430,81 508,120 508,240 430,279 352,240" fill="var(--gold-soft)"/>
+    <ellipse class="face" cx="430" cy="190" rx="34" ry="19"/>
+    <ellipse class="face" cx="430" cy="182" rx="34" ry="19"/>
+    ${gear}
+    <circle class="face" cx="430" cy="182" r="9"/>
+    <text class="lbl" x="430" y="302" text-anchor="middle">${esc(LANG === "he" ? "גלגל-החלפה" : "swap wheel")}</text>
+    <text class="lbl-v" id="mv-swap" x="430" y="318" text-anchor="middle"></text></g>`);
+
+  /* 4 · pool tanks — two tanks with liquid levels */
+  parts.push(partOpen("pt-pools", "pools", "s5T"));
+  const tank = (cx, top, w, h, frac) => {
+    const fh = Math.max(4, Math.round(h * Math.min(1, Math.max(0.08, frac))));
+    return `<polygon class="face" points="${cx - w},${top} ${cx},${top - w * 0.45} ${cx + w},${top} ${cx},${top + w * 0.45}"/>
+      <polygon class="face" points="${cx - w},${top} ${cx},${top + w * 0.45} ${cx},${top + h + w * 0.45} ${cx - w},${top + h}"/>
+      <polygon class="face" points="${cx + w},${top} ${cx},${top + w * 0.45} ${cx},${top + h + w * 0.45} ${cx + w},${top + h}"/>
+      <polygon points="${cx - w + 1},${top + h - fh} ${cx},${top + h - fh + w * 0.45} ${cx + w - 1},${top + h - fh} ${cx + w - 1},${top + h} ${cx},${top + h + w * 0.45} ${cx - w + 1},${top + h}" fill="color-mix(in srgb, var(--gold) 24%, transparent)" stroke="none"/>`;
+  };
+  parts.push(`<polygon class="halo" points="150,140 260,85 370,140 370,268 260,323 150,268" fill="var(--gold-soft)"/>
+    ${tank(212, 176, 40, 84, 0.85)}
+    ${tank(308, 190, 40, 70, 0.95)}
+    <text class="lbl" x="260" y="345" text-anchor="middle">${esc(LANG === "he" ? "מכלי-בריכות" : "pool tanks")}</text>
+    <text class="lbl-v" id="mv-pools" x="260" y="361" text-anchor="middle"></text></g>`);
+
+  /* belt: full-width conveyor under everything, boxes = queue depth */
+  parts.push(partOpen("pt-belt", "relay", "s7T"));
+  parts.push(`<polygon class="halo" points="70,368 930,368 930,392 70,392" fill="var(--gold-soft)" opacity="0.6"/>
+    <rect class="face" x="70" y="368" width="860" height="22" rx="11"/>
+    ${[110,190,270,350,430,510,590,670,750,830,900].map((x) => `<circle class="face" cx="${x}" cy="379" r="6"/>`).join("")}
+    <g id="belt-boxes"></g>
+    <text class="lbl" id="mv-belt" x="500" y="412" text-anchor="middle"></text></g>`);
+
+  /* 6 · relay antenna — mast + signal arcs */
+  parts.push(partOpen("pt-relay", "relay", "s7T"));
+  parts.push(`<polygon class="halo" points="640,60 700,30 760,60 760,150 700,180 640,150" fill="var(--gold-soft)"/>
+    <line class="wire" x1="700" y1="172" x2="700" y2="74"/>
+    <polygon class="face" points="700,74 712,92 700,86 688,92"/>
+    <path class="wire sig" d="M682,66 Q700,46 718,66"/>
+    <path class="wire sig" d="M672,58 Q700,30 728,58"/>
+    <text class="lbl" x="700" y="204" text-anchor="middle">${esc(LANG === "he" ? "אנטנת-ממסר" : "relay antenna")}</text>
+    <text class="lbl-v" id="mv-relay" x="700" y="220" text-anchor="middle"></text></g>`);
+
+  /* 7 · verify lamp — lantern with glow core */
+  parts.push(partOpen("pt-verify", "verify", "s8T"));
+  parts.push(`<polygon class="halo" points="494,60 540,37 586,60 586,140 540,163 494,140" fill="var(--gold-soft)"/>
+    <line class="wire" x1="540" y1="156" x2="540" y2="86"/>
+    <path class="wire" d="M524,86 h32"/>
+    <circle class="face" cx="540" cy="106" r="13"/>
+    <circle cx="540" cy="106" r="5.5" fill="var(--dim)" id="lamp-core"/>
+    <text class="lbl" x="540" y="188" text-anchor="middle">${esc(LANG === "he" ? "מנורת-אימות" : "verify lamp")}</text></g>`);
+
+  /* wires connect the flow: tanks→silos→wheel→vault→lamp→antenna */
+  const wires = wire(370, 210, 560, 160) + wire(800, 170, 812, 168) + wire(508, 200, 494, 120) + wire(586, 110, 640, 110);
+
+  $("iso").insertAdjacentHTML("beforeend", floor + wires + parts.join(""));
+  for (const el of document.querySelectorAll(".part")) {
+    const go = () => gotoStation(el.dataset.target, el.id);
+    el.addEventListener("click", go);
+    el.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
+  }
 }
-/* next-step bar */
+
+function buildMachineLegend() {
+  const L = [
+    ["pt-vault", LANG === "he" ? "כספת — מפתח חי בזיכרון" : "vault — live key in memory"],
+    ["pt-silos", LANG === "he" ? "ממגורות — יתרות מהספר" : "silos — book balances"],
+    ["pt-swap", LANG === "he" ? "גלגל — הצעות-מחיר חיות" : "wheel — live quotes"],
+    ["pt-pools", LANG === "he" ? "מכלים — נזילות בריכות" : "tanks — pool liquidity"],
+    ["pt-belt", LANG === "he" ? "מסילה — תור פעולות חתום" : "belt — signed op queue"],
+    ["pt-relay", LANG === "he" ? "אנטנה — ממסר פתוח/סגור" : "antenna — relay open/closed"],
+    ["pt-verify", LANG === "he" ? "מנורה — אימות שרשרת" : "lamp — chain verification"],
+  ];
+  $("mlegend").innerHTML = L.map(([id, t]) => `<span id="lg-${id}" class="${$(id)?.classList.contains("lit") ? "on" : ""}"><b>●</b> ${esc(t)}</span>`).join(" ");
+}
+function setPart(id, lit) { $(id)?.classList.toggle("lit", !!lit); const lg = $("lg-" + id); if (lg) lg.classList.toggle("on", !!lit); }
+function machinePulse() { $("iso-wires")?.classList.add("flow"); clearTimeout(machinePulse._h); machinePulse._h = setTimeout(() => $("iso-wires")?.classList.remove("flow"), 2600); }
+function gotoStation(id, partId) {
+  const st = $(id); if (!st) return;
+  st.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+  st.classList.add("flash"); setTimeout(() => st.classList.remove("flash"), 1400);
+}
+function renderMachine() {
+  setPart("pt-vault", !!WALLET);
+  if (WALLET) { vaultFp().then((fp) => { const el = $("mv-vault"); if (el && WALLET) el.textContent = "fp " + fp; }).catch(() => {}); }
+  else { const el = $("mv-vault"); if (el) el.textContent = LANG === "he" ? "סגורה" : "closed"; }
+  const beltLbl = $("mv-belt");
+  if (beltLbl) beltLbl.textContent = QUEUE.length ? `${QUEUE.length} ${LANG === "he" ? "פעולות חתומות על המסילה" : "signed ops on the belt"}` : (LANG === "he" ? "המסילה פנויה" : "belt clear");
+  const bb = $("belt-boxes");
+  if (bb) bb.innerHTML = QUEUE.slice(0, 8).map((_, i) => `<rect class="face beltbox" x="${120 + i * 46}" y="352" width="26" height="14" rx="2"/>`).join("");
+  const relayPart = document.getElementById("pt-relay");
+  if (relayPart) relayPart.classList.toggle("live-sig", !!relayBase());
+  const bal = bookBalances();
+  setPart("pt-silos", bal.any || !!WALLET);
+  $("mv-silos").textContent = bal.text;
+  const pools = LIVE?.state?.pools || {};
+  const openN = Object.values(pools).filter((p) => p.status === "open" && BigInt(p.resA || 0) > 0n).length;
+  $("mv-swap").textContent = `${openN} ${LANG === "he" ? "בריכות פתוחות" : "open pools"}`;
+  setPart("pt-swap", Object.keys(pools).length > 0);
+  setPart("pt-pools", openN > 0);
+  $("mv-pools").textContent = openN > 0 ? (LANG === "he" ? "נזילות חיה" : "live liquidity") : (LANG === "he" ? "ריק" : "empty");
+  setPart("pt-belt", QUEUE.length > 0);
+  setPart("pt-relay", !!relayBase());
+  $("mv-relay").textContent = relayBase() ? (LANG === "he" ? "פתוח" : "open") : (LANG === "he" ? "סגור" : "closed");
+  document.querySelector("#pt-relay")?.classList.toggle("dead", !relayBase());
+  const vt = STATE.selftest === true, vc = STATE.chainOk === true;
+  setPart("pt-verify", vt || vc);
+  const core = $("lamp-core"); if (core) core.setAttribute("fill", vt && vc ? "var(--green)" : (vt || vc) ? "var(--amber)" : "var(--dim)");
+}
+function vaultFp() {
+  if (!WALLET) return "—";
+  if (vaultFp._c) return vaultFp._c;
+  vaultFp._c = C.sha256(C.cat(WALLET.priv)).then((d) => C.hex(d).slice(0, 8));
+  return vaultFp._c;
+}
+
+/* ═══════════ state + renderers ═══════════ */
+const STATE = { selftest: null, chainOk: null, bookAgeH: null };
+function bookBalances() {
+  const addr = WALLET?.addr || AUTH?.addr;
+  const bal = addr ? LIVE?.state?.balances?.[addr] : null;
+  if (!bal) {
+    if (addr) return { any: false, text: LANG === "he" ? "כתובת חדשה — טרם נרשמה בספר" : "new address — not yet in the book" };
+    return { any: false, text: LANG === "he" ? "אין כתובת פעילה" : "no active address" };
+  }
+  const parts = Object.entries(bal).map(([sym, units]) => `${sym} ${fmtSaos(units, 6)}`);
+  return { any: parts.length > 0, text: parts.slice(0, 2).join(" · ") || (LANG === "he" ? "ריק" : "empty") };
+}
+function renderAccount() {
+  const addr = WALLET?.addr;
+  const cells = [];
+  if (addr) cells.push({ k: LANG === "he" ? "הכתובת שלכם (saos1…)" : "your address (saos1…)", v: `<span class="addr">${esc(addr)}</span>`, src: "machine" });
+  if (AUTH?.account) cells.push({ k: LANG === "he" ? "חשבון שרשרת מאומת" : "verified chain account", v: `${esc(AUTH.account)} <small>${AUTH.roles?.join(", ") || "—"}</small>`, src: "chain" });
+  const bal = WALLET?.addr ? (LIVE?.state?.balances?.[WALLET.addr] || {}) : null;
+  if (bal) for (const [sym, units] of Object.entries(bal)) cells.push({ k: `${sym} · ${T("srcBook")}`, v: fmtSaos(units, 6) });
+  const sup = LIVE?.state?.supply || {};
+  for (const [sym, units] of Object.entries(sup).slice(0, 3)) cells.push({ k: `${LANG === "he" ? "היצע כולל" : "total supply"} ${sym}`, v: fmtSaos(units, sym === "SAOS" ? 6 : 3) });
+  $("acct-cells").innerHTML = cells.map((c) => `<div class="cell"><div class="k">${c.k}</div><div class="v">${c.v}</div></div>`).join("") || `<div class="cell sub">${esc(LANG === "he" ? "צרו או שחזרו כספת — והממגורות יתמלאו." : "Create or restore a vault — the silos will fill.")}</div>`;
+  $("src-account").textContent = T("srcBook"); $("src-account").className = "st-src" + (LIVE ? " live" : "");
+}
+async function loadDelegations() {
+  const el = $("del-info"); if (!el) return;
+  const acct = AUTH?.account;
+  if (!acct) { el.textContent = LANG === "he" ? "שחזרו מפתח-חשבון (תחנה 1) כדי לקרוא נציגויות חיות מהשרשרת — מאצילים, סכומים ורעננות." : "Restore an account key (station 1) to read live delegations from the chain."; return; }
+  el.textContent = "…";
+  try {
+    const r = await steemRpc("condenser_api.get_vesting_delegations", [[acct, "", 50]]);
+    const rows = Array.isArray(r) ? r : [];
+    const total = rows.reduce((s, d) => s + Number((d.vesting_shares || "0").split(" ")[0]), 0);
+    el.innerHTML = rows.length
+      ? `<table class="t"><thead><tr><th>${esc(LANG === "he" ? "מאציל" : "delegator")}</th><th>${esc(LANG === "he" ? "כוח מואצל" : "delegated power")}</th></tr></thead><tbody>${rows.slice(0, 12).map((d) => `<tr><td>${esc(d.delegator)}</td><td>${esc(d.vesting_shares)}</td></tr>`).join("")}</tbody></table><p class="sub" style="margin-top:6px">${esc(LANG === "he" ? "סה״כ ווסט מואצל" : "total delegated vests")}: ${nice(total)}</p>`
+      : (LANG === "he" ? "לחשבון זה אין נציגויות נכנסות כרגע (נמדד חי מהשרשרת)." : "this account has no incoming delegations right now (measured live).");
+  } catch (e) { el.textContent = (LANG === "he" ? "קריאת-נציגויות נכשלה: " : "delegation read failed: ") + e.message; }
+}
+async function loadChainPanel() {
+  const acct = AUTH?.account;
+  if (!acct) { $("chain-panel").innerHTML = `<span class="sub">${esc(LANG === "he" ? "שחזרו מפתח-חשבון כדי לראות פאנל-שרשרת חי." : "Restore an account key to see the live chain panel.")}</span>`; return; }
+  try {
+    const acc = (await steemRpc("condenser_api.get_accounts", [[acct]]))?.[0];
+    const props = await steemRpc("condenser_api.get_dynamic_global_properties", []);
+    const vests = acc?.vesting_shares?.split(" ")[0] || "0";
+    const vp = acc?.voting_power != null ? (acc.voting_power / 100).toFixed(2) + "%" : "—";
+    $("chain-panel").innerHTML = `
+      <table class="t">
+        <tr><td>STEEM</td><td>${esc(acc?.balance || "—")}</td></tr>
+        <tr><td>SBD</td><td>${esc(acc?.sbd_balance || "—")}</td></tr>
+        <tr><td>VESTS</td><td>${esc(vests)} <small>(${esc(props?.head_block_number || "—")} head)</small></td></tr>
+        <tr><td>VP</td><td>${esc(vp)}</td></tr>
+      </table>`;
+    STATE.chainOk = true;
+  } catch (e) {
+    $("chain-panel").textContent = LANG === "he" ? "קריאת-שרשרת נכשלה: " + e.message : "chain read failed: " + e.message;
+    STATE.chainOk = false;
+  }
+}
+/* AMM panel */
+function amDec(sym) { return sym === "SAOS" ? 6 : (sym === "CSTEEM" || sym === "CSBD") ? 6 : 3; }
+function amUnits(raw, dec) { try { return BigInt(raw); } catch { return 0n; } }
+function amFmt(units, sym) { try { return nice(SL.fmt(String(units), amDec(sym))); } catch { return String(units); } }
+function amFillPairs() {
+  const pools = LIVE?.state?.pools || {};
+  const selP = $("in-pool"), selD = $("in-dir"), selS = $("in-send-sym"), selL = $("in-lp-pool");
+  const poolKeys = Object.keys(pools);
+  selP.innerHTML = poolKeys.map((k) => `<option value="${esc(k)}">${esc(k)}</option>`).join("");
+  selL.innerHTML = poolKeys.map((k) => `<option value="${esc(k)}">${esc(k)}</option>`).join("");
+  selD.innerHTML = LANG === "he"
+    ? `<option value="SA2C">בסיס → ציטוט</option><option value="C2A">ציטוט → בסיס</option>`
+    : `<option value="SA2C">base → quote</option><option value="C2A">quote → base</option>`;
+  const syms = ["SAOS", "CSTEEM", "CSBD"];
+  selS.innerHTML = syms.map((s) => `<option>${s}</option>`).join("");
+}
+function currentPool() {
+  const p = (LIVE?.state?.pools || {})[$("in-pool").value] || null;
+  if (!p) return null;
+  try { return { base: p.base, quote: p.quote, status: p.status, feeBps: String(p.feeBps ?? "30"), resA: BigInt(p.resA), resB: BigInt(p.resB), swaps: p.swaps, volA: p.volA, volB: p.volB }; }
+  catch { return null; }
+}
+function amQuote() {
+  const pool = currentPool(); if (!pool) return;
+  const dir = $("in-dir").value;
+  const raw = $("in-amt").value.trim();
+  const inSym = dir === "SA2C" ? pool.base : pool.quote;
+  let unitsStr;
+  try { unitsStr = String(toUnits(raw || "0", amDec(inSym))); } catch { $("quote-out").innerHTML = `<div class="warn">${esc(LANG === "he" ? "כמות לא תקינה — הזינו מספר חיובי" : "invalid amount — enter a positive number")}</div>`; return; }
+  const q = SL.quoteSwap(pool, dir, unitsStr);
+  const base = pool.base, quote = pool.quote;
+  if (q.err) {
+    $("quote-out").innerHTML = `<div class="warn">${esc({ "bad-dir": "כיוון שגוי", "bad-amountIn": "כמות שגויה", "fee-eats-input": "העמלה בולעת את הקלט", "empty-reserve": "בריכה ריקה", "zero-out": "תפוקה אפס", "drain-guard": "הגנת-ריקון — קלט גדול מדי" }[q.err] || q.err)}</div>`;
+    return;
+  }
+  const outSym = dir === "SA2C" ? quote : base;
+  const amountIn = BigInt(unitsStr);
+  const feeAmt = amountIn - q.inFee;
+  const impact = q.resIn > 0n ? Number((q.inFee * 10000n) / (q.resIn + q.inFee)) / 100 : 0;
+  const minOut = (q.out * 99n) / 100n;
+  $("quote-out").innerHTML = `
+    <div class="okbox">
+      <div>${esc(amFmt(q.out, outSym))} <b>${esc(outSym)}</b> ${esc(LANG === "he" ? "תמורת" : "for")} ${esc(amFmt(amountIn, inSym))} <b>${esc(inSym)}</b></div>
+      <div class="sub" style="margin-top:4px">${esc(LANG === "he" ? "עמלה" : "fee")}: ${amFmt(feeAmt, inSym)} ${esc(inSym)} · ${esc(LANG === "he" ? "השפעת-מחיר" : "price impact")}: ~${impact.toFixed(2)}% · minOut(1%): ${amFmt(minOut, outSym)} ${esc(outSym)}</div>
+      <div class="sub">k ${esc(amFmt(q.kBefore, inSym))} → ${esc(amFmt(q.kAfter, inSym))} ${q.kAfter >= q.kBefore ? "✓" : "✗"}</div>
+      <div class="row" style="margin-top:8px"><button class="btn sm gold" id="btn-sign-swap">${esc(LANG === "he" ? "חתום ושלח למסילה" : "Sign & send to belt")}</button></div>
+    </div>`;
+  $("btn-sign-swap")?.addEventListener("click", () => signSwap(pool, dir, unitsStr, minOut));
+}
+function toUnits(amount, decimals) {
+  const s = String(amount).trim(); if (!/^\d*(\.\d*)?$/.test(s) || s === "" || s === ".") throw new Error("bad-amount");
+  const [i, f = ""] = s.split("."); const f2 = (f + "0".repeat(decimals)).slice(0, decimals);
+  return BigInt((i || "0") + f2);
+}
+async function signSwap(pool, dir, unitsStr, minOut) {
+  if (!WALLET) { toast(LANG === "he" ? "פתחו כספת קודם" : "open the vault first", false); gotoStation("open"); return; }
+  const base = pool.base, quote = pool.quote;
+  await enqueue({ k: "pool.swap", pool: `${base}/${quote}`, dir, amountIn: unitsStr, minOut: String(minOut) });
+  toast(LANG === "he" ? "ההחלפה נחתמה ונכנסה למסילה ✓" : "swap signed, on the belt ✓");
+}
+function renderPools() {
+  const pools = LIVE?.state?.pools || {};
+  const rows = Object.entries(pools).map(([name, p]) => {
+    const depth = (BigInt(p.resA || 0) > 0n && BigInt(p.resB || 0) > 0n);
+    return `<tr>
+      <td><b>${esc(name)}</b> ${p.status === "open" ? "" : "· closed"}</td>
+      <td>${esc(amFmt(p.resA, amDec(p.base)))} ${esc(p.base)}</td>
+      <td>${esc(amFmt(p.resB, amDec(p.quote)))} ${esc(p.quote)}</td>
+      <td>${Number(BigInt(p.feeBps || 0)) / 100}%</td>
+      <td>${esc(p.swaps || "0")}</td>
+      <td>${depth ? '<span style="color:var(--green)">●</span>' : '<span style="color:var(--dim)">○</span>'}</td>
+    </tr>`;
+  }).join("");
+  $("pools-table").innerHTML = `<table class="t"><thead><tr><th>${esc(LANG === "he" ? "בריכה" : "pool")}</th><th>${esc(LANG === "he" ? "עתודת-בסיס" : "base reserve")}</th><th>${esc(LANG === "he" ? "עתודת-ציטוט" : "quote reserve")}</th><th>${esc(LANG === "he" ? "עמלה" : "fee")}</th><th>${esc(LANG === "he" ? "החלפות" : "swaps")}</th><th></th></tr></thead><tbody>${rows || `<tr><td colspan="6" class="sub">${esc(LANG === "he" ? "אין בריכות בספר." : "no pools in the book.")}</td></tr>`}</tbody></table>`;
+  $("src-pools").textContent = T("srcBook"); $("src-pools").className = "st-src" + (LIVE ? " live" : "");
+  $("lp-info").textContent = LANG === "he"
+    ? "הוספת-נזילות מפקידה שני-צדדים לפי היחס הנוכחי; נסיגה שורפת יחידות-LP. שתיהן נחתמות מקומית ונכנסות למסילה."
+    : "Adding liquidity deposits both sides at the current ratio; removing burns LP units. Both sign locally and enter the belt.";
+}
+async function lpAdd() {
+  if (!WALLET) { toast(LANG === "he" ? "פתחו כספת קודם" : "open the vault first", false); gotoStation("open"); return; }
+  const pool = (LIVE?.state?.pools || {})[$("in-lp-pool").value]; if (!pool) return;
+  const amt = $("in-lp-amt").value.trim(); if (!amt) { toast(LANG === "he" ? "הזינו כמות" : "enter an amount", false); return; }
+  await enqueue({ k: "pool.add", pool: `${pool.base}/${pool.quote}`, amountA: toUnits(amt, 6).toString() });
+  toast(LANG === "he" ? "הוספת-נזילות נחתמה ✓" : "liquidity add signed ✓");
+}
+async function lpRemove() {
+  if (!WALLET) { toast(LANG === "he" ? "פתחו כספת קודם" : "open the vault first", false); gotoStation("open"); return; }
+  const pool = (LIVE?.state?.pools || {})[$("in-lp-pool").value]; if (!pool) return;
+  const amt = $("in-lp-amt").value.trim(); if (!amt) { toast(LANG === "he" ? "הזינו כמות" : "enter an amount", false); return; }
+  await enqueue({ k: "pool.remove", pool: `${pool.base}/${pool.quote}`, lp: toUnits(amt, 6).toString() });
+  toast(LANG === "he" ? "נסיגת-נזילות נחתמה ✓" : "liquidity remove signed ✓");
+}
+/* send */
+async function signSend() {
+  if (!WALLET) { toast(LANG === "he" ? "פתחו כספת קודם" : "open the vault first", false); gotoStation("open"); return; }
+  const sym = $("in-send-sym").value, to = $("in-send-to").value.trim(), amt = $("in-send-amt").value.trim();
+  if (!SL.ADDR_RE.test(to)) { toast(LANG === "he" ? "כתובת לא תקינה (saos1…)" : "invalid address (saos1…)", false); return; }
+  if (!amt) { toast(LANG === "he" ? "הזינו כמות" : "enter an amount", false); return; }
+  let units; try { units = toUnits(amt, 6).toString(); } catch { toast(LANG === "he" ? "כמות לא תקינה" : "invalid amount", false); return; }
+  const review = `${LANG === "he" ? "לחתום" : "Sign"}: ${amt} ${sym} → ${to}\n${LANG === "he" ? "מאשרים?" : "confirm?"}`;
+  if (!confirm(review)) return;
+  await enqueue({ k: "token.transfer", symbol: sym, to, amount: units });
+  toast(LANG === "he" ? "ההעברה נחתמה ונכנסה למסילה ✓" : "transfer signed, on the belt ✓");
+}
+/* queue */
+function queueSummary(env) {
+  const t = { "wallet.create": LANG === "he" ? "רישום ארנק" : "wallet registration", "token.transfer": LANG === "he" ? "העברה" : "transfer", "pool.swap": LANG === "he" ? "החלפה" : "swap", "pool.add": LANG === "he" ? "הוספת-נזילות" : "liquidity add", "pool.remove": LANG === "he" ? "נסיגת-נזילות" : "liquidity remove", "deposit.claim": LANG === "he" ? "תביעת-הפקדה" : "deposit claim" }[env.k] || env.k;
+  return t;
+}
+function renderQueue() {
+  $("relay-status").innerHTML = relayRegStatusHtml();
+  $("src-relay").textContent = relayBase() ? T("srcChain") : T("srcMachine");
+  $("src-relay").className = "st-src" + (relayBase() ? " live" : "");
+  $("queue-list").innerHTML = QUEUE.length
+    ? `<table class="t"><thead><tr><th>#</th><th>${esc(LANG === "he" ? "פעולה" : "op")}</th><th>id</th><th></th></tr></thead><tbody>${
+        QUEUE.map((e, i) => `<tr><td>${i + 1}</td><td>${esc(queueSummary(e))}</td><td class="addr">${esc(e.id)}</td><td><button class="btn sm" data-q="${i}">✕</button></td></tr>`).join("")
+      }</tbody></table>`
+    : `<div class="sub">${esc(LANG === "he" ? "המסילה פנויה — אין פעולות בתור." : "the belt is clear — no ops queued.")}</div>`;
+  for (const b of document.querySelectorAll("[data-q]")) b.addEventListener("click", () => { QUEUE.splice(Number(b.dataset.q), 1); renderQueue(); });
+  $("btn-flush").disabled = !QUEUE.length;
+}
+/* verify */
+async function runVerify() {
+  const lines = [];
+  const paint = () => { $("verify-out").innerHTML = `<table class="t"><tbody>${lines.join("")}</tbody></table>`; };
+  let st = null;
+  try { st = await SL.selfTest(); } catch (e) { st = { passed: 0, total: 1, detail: e.message }; }
+  const stPassed = st && Number(st.fail ?? (st.total - st.passed)) === 0 && st.passed === st.total;
+  STATE.selftest = !!stPassed;
+  lines.push(`<tr><td>${esc(LANG === "he" ? "עצמי-בוחן פרוטוקול" : "protocol self-test")}</td><td>${st ? `${st.passed ?? st.pass ?? 0}/${st.total ?? (st.pass + st.fail) ?? 0}` : "—"}</td><td>${STATE.selftest ? "✓" : "✗"}</td></tr>`);
+  paint();
+  const ageH = LIVE?.generatedAt ? Math.floor((Date.now() - new Date(LIVE.generatedAt)) / 3600000) : null;
+  STATE.bookAgeH = ageH;
+  lines.push(`<tr><td>${esc(LANG === "he" ? "טריות ספר-המדינה" : "state-book freshness")}</td><td>${ageH != null ? esc(T("stFresh")(ageH)) : "—"}</td><td>${ageH != null && ageH <= 26 ? "✓" : "✗"}</td></tr>`);
+  paint();
+  lines.push(`<tr><td>${esc(LANG === "he" ? "שרשרת ציבורית (ראש)" : "public chain (head)")}</td><td>…</td><td>⏳</td></tr>`);
+  paint();
+  let chain = "…";
+  try { const props = await steemRpc("condenser_api.get_dynamic_global_properties", []); chain = esc(props.head_block_number); STATE.chainOk = true; }
+  catch { chain = LANG === "he" ? "לא נגישה" : "unreachable"; STATE.chainOk = false; }
+  lines[lines.length - 1] = `<tr><td>${esc(LANG === "he" ? "שרשרת ציבורית (ראש)" : "public chain (head)")}</td><td>${chain}</td><td>${STATE.chainOk ? "✓" : "✗"}</td></tr>`;
+  paint();
+  const addrOk = WALLET ? SL.ADDR_RE.test(WALLET.addr) : null;
+  if (addrOk != null) { lines.push(`<tr><td>${esc(LANG === "he" ? "תקינות כתובת" : "address format")}</td><td>${esc(WALLET.addr.slice(0, 14))}…</td><td>${addrOk ? "✓" : "✗"}</td></tr>`); paint(); }
+  $("src-verify").textContent = T("srcChain"); $("src-verify").className = "st-src" + (STATE.chainOk ? " live" : "");
+  renderMachine(); renderChips();
+}
+/* chips + next bar + renderAll */
+function ageH(ts) { return ts ? Math.floor((Date.now() - new Date(ts)) / 3600000) : null; }
+function renderChips() {
+  const st = $("chip-selftest");
+  if (STATE.selftest === true) { st.className = "chip live hide-s"; st.innerHTML = `<i></i><span>selftest ✓</span>`; }
+  else if (STATE.selftest === false) { st.className = "chip red hide-s"; st.innerHTML = `<i></i><span>selftest ✗</span>`; }
+  const ch = $("chip-chain");
+  ch.className = "chip hide-s" + (STATE.chainOk ? " live" : "");
+  ch.innerHTML = `<i></i><span>${LANG === "he" ? "שרשרת" : "chain"} ${STATE.chainOk ? "✓" : "…"}</span>`;
+  const h = ageH(LIVE?.generatedAt);
+  const sb = $("chip-state");
+  sb.className = "chip hide-s" + (h != null && h <= 26 ? " live" : "");
+  sb.innerHTML = `<i></i><span>${esc(LANG === "he" ? "ספר" : "book")} ${h != null ? esc(T(h <= 26 ? "stFresh" : "stOld")(h)) : "…"}</span>`;
+  const rl = $("chip-relay");
+  const open = !!relayBase();
+  rl.className = "chip" + (open ? " live" : " red");
+  rl.innerHTML = `<i></i><span>${LANG === "he" ? "ממסר" : "relay"} ${open ? "✓" : "✕"}</span>`;
+}
 function nextStep() {
-  if (!WALLET) return { k: "nextOpen", t: "open" };
-  const registered = !!(LIVE?.state?.wallets?.[WALLET.addr]);
-  if (!registered && !regEnv()) return { k: "nextRegister", t: "account" };
-  if (QUEUE.length && !TRANSPORT) return { k: "nextFlush", t: "relay" };
-  if (QUEUE.length && TRANSPORT) return { k: "nextBroadcasting", t: "relay" };
-  return { k: "nextDone", t: "actions" };
+  if (STATE.selftest === false) return { t: LANG === "he" ? "העצמי-בוחן נכשל — אל תחתמו, פנו ליומן-השינויים" : "self-test failed — do not sign, see the changelog", go: "verify" };
+  if (!WALLET) return { t: LANG === "he" ? "הצעד הבא: צרו ארנק (המפתח נולד במכשיר)" : "next: create a wallet (the key is born on-device)", go: "open" };
+  if (!QUEUE.length && !LIVE) return { t: LANG === "he" ? "הצעד הבא: המתינו לספר-המדינה (או רעננו)" : "next: waiting for the state book (or refresh)", go: "account" };
+  if (!QUEUE.length) return { t: LANG === "he" ? "הצעד הבא: החליפו בגלגל או הפקידו נזילות" : "next: swap on the wheel or add liquidity", go: "swap" };
+  if (relayBase()) return { t: LANG === "he" ? "הצעד הבא: הזרימו את התור לממסר" : "next: flush the queue to the relay", go: "relay" };
+  return { t: LANG === "he" ? "התור מוכן — הממסר סגור, אפשר לייצא JSON" : "queue ready — relay closed, export JSON", go: "relay" };
 }
 function renderNextBar() {
-  const st = nextStep();
-  const bar = $("nextbar");
-  bar.classList.toggle("done", st.k === "nextDone");
-  $("nextbar-text").textContent = T(st.k);
-  $("nextbar-go").textContent = T("nextGo");
-  $("nextbar-go").onclick = () => { const t = $(st.t); if (t) t.scrollIntoView({ behavior: "smooth", block: "start" }); };
+  const n = nextStep();
+  $("next-text").textContent = n.t;
+  $("next-go").onclick = () => gotoStation(n.go);
+  $("nextbar").classList.toggle("done", !!WALLET && !QUEUE.length);
 }
-function renderAll() { renderMachine(); renderNextBar(); }
+function renderAll() { renderMachine(); renderNextBar(); renderChips(); }
 
-/* ═══════════ tabs (station 3) ═══════════ */
-const TABS = [["tab-swap", "panel-swap"], ["tab-send", "panel-send"], ["tab-pools", "panel-pools"], ["tab-dep", "panel-dep"]];
-function selectTab(tabId) {
-  for (const [t, p] of TABS) {
-    $(t).setAttribute("aria-selected", String(t === tabId));
-    $(p).hidden = $(t) !== $(tabId);
+/* ═══════════ boot ═══════════ */
+async function refreshBooks() {
+  try { LIVE = await jget("saos-live.json"); } catch { /* keep last frame */ }
+  try { DEXS = await jget("dex/state.json"); } catch { /* keep last frame */ }
+  try { TOKEN = await jget("token.json"); } catch { TOKEN = null; }
+  amFillPairs(); renderAccount(); renderPools(); renderAll();
+}
+function wireUI() {
+  $("btn-lang").addEventListener("click", () => { LANG = LANG === "he" ? "en" : "he"; try { localStorage.setItem("saos.lang", LANG); } catch {} applyLang(); });
+  $("btn-create").addEventListener("click", async () => {
+    try {
+      WALLET = await SL.newWallet();
+      vaultFp._c = null;
+      $("key-reveal").style.display = "";
+      $("wif-out").textContent = await C.b58cEncode(0x80, WALLET.priv);
+      $("auth-box").innerHTML = "";
+      renderAccount(); renderMachine(); renderNextBar(); machinePulse();
+      toast(T(LANG === "he" ? "הארנק נולד — שמרו את המפתח עכשיו" : "wallet born — save the key now"));
+    } catch (e) { toast((LANG === "he" ? "יצירה נכשלה: " : "create failed: ") + e.message, false); }
+  });
+  $("btn-restore").addEventListener("click", async () => {
+    const raw = $("in-restore").value; if (!raw.trim()) { toast(LANG === "he" ? "הזינו מפתח" : "enter a key", false); return; }
+    try {
+      const r = await resolveKeyCandidate(raw);
+      if (r?.verified) {
+        AUTH = { account: r.account, via: r.via, roles: r.roles, pub: r.pub, verified: true };
+        $("auth-box").innerHTML = `<div class="okbox">${esc(LANG === "he" ? "אומת על השרשרת" : "verified on-chain")}: <b>${esc(r.account)}</b> · ${r.roles.map(esc).join(", ")}</div>`;
+        toast(LANG === "he" ? "המפתח אומת מול השרשרת ✓" : "key verified on-chain ✓");
+      } else {
+        AUTH = { account: r?.account, via: null, roles: [], verified: false };
+        $("auth-box").innerHTML = `<div class="warn">${esc(LANG === "he" ? "לא נמצאה התאמה על השרשרת — המפתח טעון או שייך לחשבון אחר." : "no on-chain match — the key is wrong or belongs to another account.")}</div>`;
+      }
+      renderAccount(); renderAll(); loadChainPanel(); loadDelegations(); machinePulse();
+    } catch (e) { toast((LANG === "he" ? "שחזור נכשל: " : "restore failed: ") + e.message, false); }
+  });
+  $("btn-copy-wif").addEventListener("click", () => copyText($("wif-out").textContent, "WIF"));
+  $("btn-wipe").addEventListener("click", () => {
+    WALLET = null; AUTH = null; vaultFp._c = null;
+    $("key-reveal").style.display = "none"; $("wif-out").textContent = ""; $("auth-box").innerHTML = "";
+    renderAccount(); renderAll(); toast(LANG === "he" ? "נמחק מהזיכרון" : "wiped from memory");
+  });
+  $("btn-save-keystore").addEventListener("click", async () => {
+    if (!WALLET) return;
+    const p = askPassword({ title: LANG === "he" ? "סיסמה להצפנת המפתח על המכשיר" : "passphrase to encrypt the key on-device", sub: LANG === "he" ? "הסיסמה לא נשמרת בשום מקום" : "the passphrase is never stored" });
+    if (!p) return;
+    try { saveKeystore(await keystoreEncrypt(WALLET.priv, WALLET.pubSTM, p)); renderKsBox(); toast(LANG === "he" ? "נשמר מוצפן (עד סגירת הדפדפן)" : "saved encrypted (until the browser closes)"); }
+    catch (e) { toast((LANG === "he" ? "שמירה נכשלה: " : "save failed: ") + e.message, false); }
+  });
+  function renderKsBox() {
+    $("keystore-open").style.display = KS ? "" : "none";
   }
+  $("btn-ks-open").addEventListener("click", async () => {
+    const p = $("in-ks-pass").value; if (!p) return;
+    try {
+      const priv = await keystoreDecrypt(KS, p);
+      const pub33 = C.privToPubBytes(priv);
+      const pubSTM = await C.pubToSTM(pub33);
+      WALLET = { priv, pubSTM, addr: await SL.addressFromPubSTM(pubSTM) };
+      vaultFp._c = null;
+      $("key-reveal").style.display = ""; $("wif-out").textContent = await C.b58cEncode(0x80, priv);
+      $("in-ks-pass").value = "";
+      renderAccount(); renderAll(); machinePulse(); toast(LANG === "he" ? "הכספת נפתחה ✓" : "vault unlocked ✓");
+    } catch { toast(LANG === "he" ? "סיסמה שגויה" : "wrong passphrase", false); }
+  });
+  $("btn-ks-forget").addEventListener("click", () => { forgetKeystore(); renderKsBox(); toast(LANG === "he" ? "העותק נשכח" : "copy forgotten"); });
+  $("btn-quote").addEventListener("click", amQuote);
+  $("btn-send").addEventListener("click", signSend);
+  $("btn-lp-add").addEventListener("click", lpAdd);
+  $("btn-lp-remove").addEventListener("click", lpRemove);
+  $("btn-flush").addEventListener("click", relayKick);
+  $("btn-export").addEventListener("click", () => {
+    if (!QUEUE.length) { toast(LANG === "he" ? "התור ריק" : "queue empty", false); return; }
+    const blob = new Blob([JSON.stringify({ format: "saos-queue-v1", ops: QUEUE }, null, 2)], { type: "application/json" });
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "saos-queue.json"; a.click();
+    toast(LANG === "he" ? "התור יוצא ✓" : "queue exported ✓");
+  });
+  $("btn-clear-q").addEventListener("click", () => { if (QUEUE.length && confirm(LANG === "he" ? "לנקות את התור?" : "clear the queue?")) { QUEUE = []; renderQueue(); renderMachine(); } });
+  $("btn-verify").addEventListener("click", runVerify);
+  $("next-go").addEventListener("click", () => { const n = nextStep(); gotoStation(n.go); });
+  renderKsBox();
 }
-TABS.forEach(([t]) => $(t).addEventListener("click", () => selectTab(t)));
-
-/* ═══════════ SP delegation (T25) ═══════════ */
-const ACC_RE = /^[a-z0-9][a-z0-9\-.]{1,15}$/;
-let DEL_PV = null, DEL_BUSY = false;
-$("btn-del-max").addEventListener("click", async () => {
-  try {
-    const acct = $("del-account").value.trim().toLowerCase();
-    if (!ACC_RE.test(acct)) { toast(T("delNeedAcc"), false); return; }
-    const acc = (await steemRpc("condenser_api.get_accounts", [[acct]]))?.[0];
-    if (!acc) { toast(T("delNeedAcc"), false); return; }
-    const props = await steemRpc("condenser_api.get_dynamic_global_properties", []);
-    const sp = vestsToSp(acc.vesting_shares, vestToSteemRate(props));
-    $("del-amt").value = Math.max(0, sp - 1).toFixed(3);
-    $("del-amt").focus();
-  } catch (e) { toast(T("chFail") + (e.message || e), false); }
-});
-const delPvRow = (label, val) => `<div class="pv-row"><span style="color:var(--dim)">${esc(label)}</span><span class="mono" style="text-align:end">${esc(val)}</span></div>`;
-$("btn-delegate").addEventListener("click", async () => {
-  const acct = $("del-account").value.trim().toLowerCase();
-  const to = $("del-to").value.trim().toLowerCase();
-  const amt = parseFloat($("del-amt").value.replace(",", "."));
-  if (!ACC_RE.test(acct) || !ACC_RE.test(to)) { toast(T("delNeedAcc"), false); return; }
-  if (!isFinite(amt) || amt < 0) { toast(T("delNeedAmt"), false); return; }
-  const key = $("del-key").value.replace(/\u00a0/g, " ").trim();
-  if (!key) { toast(T("delNeedKey"), false); return; }
-  try {
-    const acc = (await steemRpc("condenser_api.get_accounts", [[acct]]))?.[0];
-    if (!acc) { toast(T("delNeedAcc"), false); return; }
-    let activePriv = null, activePub = null;
-    /* T26: candidate ladder — pure key first, headcorner stripped, then space-hint only */
-    for (const cand of keyPasteCandidates(key)) {
-      const cAcct = cand.acct || acct;
-      let cAcc = null;
-      try { cAcc = (await steemRpc("condenser_api.get_accounts", [[cAcct]]))?.[0]; } catch { cAcc = null; }
-      if (!cAcc) continue;
-      try {
-        const p = await C.wifToPriv(cand.input);
-        const pub = await C.pubToSTM(C.privToPubBytes(p));
-        if (classifyKey(pub, cAcc) === "active") { activePriv = p; activePub = pub; if (!$("del-account").value.trim()) $("del-account").value = cAcct; break; }
-      } catch { /* master below */ }
-      try {
-        const d = await C.deriveAny(cand.input, cAcct, "active");
-        if (classifyKey(d.pub, cAcc) === "active") { activePriv = await C.wifToPriv(d.wif); activePub = d.pub; if (!$("del-account").value.trim()) $("del-account").value = cAcct; break; }
-      } catch { /* next candidate */ }
-    }
-    if (!activePriv) throw new Error(T("delNoActive"));
-    const props = await steemRpc("condenser_api.get_dynamic_global_properties", []);
-    const vests = spToVestsStr(amt, vestToSteemRate(props));
-    DEL_PV = { delegator: acct, delegatee: to, sp: amt.toFixed(3), vests, activePriv, activePub };
-    $("del-pv-body").innerHTML =
-      delPvRow(T("delFrom"), "@" + acct) +
-      delPvRow(T("delTo"), "@" + to) +
-      delPvRow(T("delAmt"), amt.toFixed(3) + " SP") +
-      delPvRow("vesting_shares", vests) +
-      delPvRow("active pub", activePub);
-    $("del-preview").style.display = "";
-    $("btn-del-go").focus();
-    $("del-result").textContent = "";
-  } catch (e) { toast(e.message || String(e), false); }
-});
-$("btn-del-cancel").addEventListener("click", () => { $("del-preview").style.display = "none"; DEL_PV = null; });
-$("btn-del-go").addEventListener("click", async () => {
-  if (DEL_BUSY || !DEL_PV) return;
-  DEL_BUSY = true;
-  $("btn-del-go").disabled = true;
-  $("del-result").textContent = T("delSigning");
-  try {
-    const op = ["delegate_vesting_shares", { delegator: DEL_PV.delegator, delegatee: DEL_PV.delegatee, vesting_shares: DEL_PV.vests }];
-    const getProps = () => steemRpc("condenser_api.get_dynamic_global_properties", []);
-    const getBlockHeader = (n) => steemRpc("condenser_api.get_block_header", [n]);
-    const signed = await C.buildSignedTx([op], DEL_PV.activePriv, getProps, getBlockHeader);
-    await steemRpc("condenser_api.broadcast_transaction", [signed]);
-    const txBytes = C.serializeTx({ ref_block_num: signed.ref_block_num, ref_block_prefix: signed.ref_block_prefix, expiration: signed.expiration, operations: signed.operations, extensions: signed.extensions });
-    const txid = C.hex(await C.sha256(txBytes)).slice(0, 40);
-    $("del-result").textContent = T("delOk")(txid);
-    $("del-result").innerHTML += ` · <a href="https://steemworld.org/tx/${txid}" target="_blank" rel="noopener">steemworld ↗</a>`;
-    $("del-preview").style.display = "none"; DEL_PV = null;
-    $("del-key").value = "";
-    loadChainPanel();
-    if ($("del-list-box").style.display !== "none") loadDelegations();
-  } catch (e) {
-    $("del-result").textContent = T("delFail") + (e.message || e);
-  }
-  DEL_BUSY = false; $("btn-del-go").disabled = false;
-});
-async function loadDelegations() {
-  const acct = $("del-account").value.trim().toLowerCase();
-  const box = $("del-list-box"), list = $("del-list");
-  if (!ACC_RE.test(acct)) { toast(T("delNeedAcc"), false); return; }
-  box.style.display = "";
-  try {
-    const rows = (await steemRpc("condenser_api.get_vesting_delegations", [acct, "", 100])) || [];
-    if (!rows.length) { list.innerHTML = `<tr><td class="hint">${esc(T("delNone"))}</td></tr>`; return; }
-    const props = await steemRpc("condenser_api.get_dynamic_global_properties", []);
-    const rate = vestToSteemRate(props);
-    list.innerHTML = rows.map((d) => {
-      const sp = vestsToSp(d.vesting_shares, rate).toFixed(3);
-      return `<tr><td><b class="mono">@${esc(d.delegatee)}</b></td><td class="num">${esc(sp)} SP</td><td class="num"><button type="button" class="copy" data-delcancel="${esc(d.delegatee)}" data-delamt="${esc(sp)}">${esc(T("delCancel"))}</button></td></tr>`;
-    }).join("");
-  } catch (e) { list.innerHTML = `<tr><td class="hint">${esc(T("chFail") + (e.message || e))}</td></tr>`; }
+async function boot() {
+  buildMachine(); buildMachineLegend(); wireUI(); applyLang();
+  /* selftest first — the machine checks itself before showing anything */
+  try { const st = await SL.selfTest(); STATE.selftest = !!st && st.passed === st.total; } catch { STATE.selftest = false; }
+  await refreshBooks();
+  await runVerify();
+  autoFlush();
+  setInterval(refreshBooks, 90000);
+  const roots = [];
+  if (LIVE?.stateRoot) roots.push("stateRoot " + String(LIVE.stateRoot).slice(0, 12) + "…");
+  if (SL.SAOS_GENESIS?.txid) roots.push("genesis " + String(SL.SAOS_GENESIS.txid).slice(0, 12) + "…");
+  if (TOKEN?.lastRoot) roots.push("ledgerRoot " + String(TOKEN.lastRoot).slice(0, 12) + "…");
+  $("roots-line").textContent = roots.join(" · ") || "—";
+  $("ft-state").textContent = LIVE ? (LANG === "he" ? `ספר: ${new Date(LIVE.generatedAt).toISOString().slice(0, 16)}Z` : `book: ${new Date(LIVE.generatedAt).toISOString().slice(0, 16)}Z`) : (LANG === "he" ? "ספר: לא נטען" : "book: not loaded");
+  $("ft-relay").textContent = relayBase() ? "relay: open" : "relay: closed (queue-local)";
+  for (const id of ["src-open", "src-send", "src-delegate"]) { const el = $(id); if (el) { el.textContent = T("srcMachine"); el.className = "st-src"; } }
+  $("src-swap").textContent = T("srcBook"); $("src-swap").className = "st-src" + (LIVE ? " live" : "");
+  $("src-verify").textContent = T("srcChain"); $("src-verify").className = "st-src" + (STATE.chainOk ? " live" : "");
+  loadChainPanel(); loadDelegations();
 }
-$("btn-del-list").addEventListener("click", loadDelegations);
-$("del-list").addEventListener("click", (e) => {
-  const b = e.target.closest("[data-delcancel]");
-  if (!b) return;
-  $("del-to").value = b.getAttribute("data-delcancel");
-  $("del-amt").value = "0";
-  $("del-preview").scrollIntoView({ behavior: "smooth", block: "center" });
-  toast(T("delCancel"), true);
-});
-
-/* ═══════════ lang + boot ═══════════ */
-$("btn-lang").addEventListener("click", () => { LANG = LANG === "he" ? "en" : "he"; try { localStorage.setItem("saos.lang", LANG); } catch {} applyLang(); buildMachineLegend(); renderAccount(); renderPools(); renderQueue(); renderRails(); renderLiveChips(); renderStatusStrip(); renderAll(); });
-function buildMachineLegend() {
-  const L = [["iso-vault", "mVault"], ["iso-silo", "mSilo"], ["iso-belt", "mBelt"], ["iso-tower", "mTower"], ["iso-sp", "delT"], ["iso-book", "mBook"], ["iso-pool", "mPool"]];
-  $("mach-legend").innerHTML = L.map(([id, k]) => `<button type="button" data-goto="${$(id).dataset.goto}"><span class="k" id="lg-${id}"></span>${esc(T(k))}</button>`).join("");
-  renderMachine();
-}
-SL.selfTest().then((r) => {
-  const ok = r && r.tests ? r.tests.every((x) => x.pass) : !!r;
-  const chip = $("selftest-chip");
-  chip.className = "tag " + (ok ? "green" : "amber");
-  chip.textContent = ok ? T("selfTestOk") : T("selfTestBad");
-}).catch(() => { const chip = $("selftest-chip"); chip.className = "tag amber"; chip.textContent = T("selfTestBad"); });
-applyLang();
-buildMachine();
-renderQueue();
-refreshBooks();
-relayKick();
-setInterval(refreshBooks, 120 * 1000);
-if (TRANSPORT && QUEUE.length) autoFlush();
+boot();
 </script>
 </body>
 </html>
