@@ -3,29 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>SAOS · המכונה — ארנק אמיתי</title>
-<meta name="description" content="ארנק SAOS: נולד במכשיר שלך, מאומת מול השרשרת הציבורית, נסחר בבריכות אמת. בלי מתווך, בלי הסתרה — כל מספר ניתן לאימות.">
+<title>SAOS · המכונה — ארנק אמת</title>
+<meta name="description" content="ארנק SAOS: מכונה חיה — נולד במכשיר שלך, מאומת מול השרשרת הציבורית, נסחר בבריכות אמת. כל חלק במכונה זוהר כשהוא באמת פעיל.">
 <meta property="og:title" content="SAOS · המכונה">
 <meta property="og:description" content="ארנק אמת: יצירה, הפקדה, החלפה, נזילות — הכל חתום מקומית ומאומת על השרשרת.">
 <link rel="icon" href="favicon.svg">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-  /* ── החוק העיצובי: טיפוגרפיה שקטה, צבע רק בפאנלים ובטוקנים, עמודה אחת, הכל ממוקד מקלדת ── */
+  /* ── חוק-עיצוב: קווים דקים, איזומטריה שקטה, זוהר-ענבר רק כשהמצב אמת. המכונה היא לוח-מצב חי. ── */
   :root {
     color-scheme: dark;
-    --bg:#0d0e0f; --panel:#141516; --panel2:#181a1b; --rule:#26282a; --dim:#8a8f93; --text:#c9cdd0; --strong:#eef0f1;
+    --bg:#0d0e0f; --panel:#141516; --panel2:#181a1b; --rule:#26282a; --line:#3a3e41; --dim:#8a8f93; --text:#c9cdd0; --strong:#eef0f1;
     --gold:#ffd166; --green:#86efac; --red:#fca5a5; --amber:#fbbf24;
     --sans:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
     --mono:"IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
   }
   @media (prefers-color-scheme: light) { html:not([data-theme="dark"]) {
     color-scheme: light;
-    --bg:#f4f4f2; --panel:#ffffff; --panel2:#fafaf8; --rule:#dcdcd8; --dim:#6b6f72; --text:#33373a; --strong:#121415;
+    --bg:#f4f4f2; --panel:#ffffff; --panel2:#fafaf8; --rule:#dcdcd8; --line:#b9bcbe; --dim:#6b6f72; --text:#33373a; --strong:#121415;
     --gold:#a16207; --green:#15803d; --red:#b91c1c; --amber:#a16207;
   }}
   * { box-sizing:border-box; }
-  html { scroll-padding-top:76px; }
-  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.65 var(--sans); }
+  html { scroll-padding-top:118px; }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.65 var(--sans); min-height:100vh; display:flex; flex-direction:column; }
+  main { flex:1 0 auto; width:100%; }
   a { color:var(--strong); text-decoration:underline; text-decoration-color:var(--rule); text-decoration-thickness:1px; text-underline-offset:3px; }
   a:hover { text-decoration-color:var(--gold); }
   a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible { outline:2px solid var(--gold); outline-offset:2px; border-radius:6px; }
@@ -33,14 +34,13 @@
   ::-webkit-scrollbar { width:8px; height:8px; }
   ::-webkit-scrollbar-thumb { background:var(--rule); border-radius:8px; }
 
-  /* ── glass header ── */
-  .top { position:sticky; top:0; z-index:20; padding-top:env(safe-area-inset-top,0px);
-         background:color-mix(in srgb, var(--bg) 74%, transparent);
+  /* ── header ── */
+  .top { position:sticky; top:0; z-index:30; padding-top:env(safe-area-inset-top,0px);
+         background:color-mix(in srgb, var(--bg) 76%, transparent);
          -webkit-backdrop-filter:blur(14px) saturate(140%); backdrop-filter:blur(14px) saturate(140%);
          border-bottom:1px solid color-mix(in srgb, var(--rule) 72%, transparent); }
-  .top-in { max-width:920px; margin:0 auto; padding:12px 20px; display:flex; align-items:center; gap:12px; }
+  .top-in { max-width:960px; margin:0 auto; padding:11px 20px; display:flex; align-items:center; gap:10px; }
   .brand { display:flex; align-items:center; gap:10px; font-weight:600; color:var(--strong); text-decoration:none; }
-  .brand svg { flex:none; }
   .chip { display:inline-flex; align-items:center; gap:6px; border:1px solid var(--rule); border-radius:999px; padding:2px 10px; font-size:11.5px; color:var(--dim); white-space:nowrap; }
   .chip i { width:7px; height:7px; border-radius:50%; background:var(--dim); flex:none; }
   .chip.live i { background:var(--green); }
@@ -49,14 +49,56 @@
   .spacer { flex:1; }
   .langbtn { all:unset; cursor:pointer; font-size:12px; color:var(--dim); border:1px solid var(--rule); border-radius:8px; padding:4px 10px; }
   .langbtn:hover { color:var(--strong); border-color:var(--dim); }
+  @media (max-width:700px) { .top-in .chip.hide-s { display:none; } }
 
-  /* ── layout: one column, numbered stations ── */
-  main { max-width:920px; margin:0 auto; padding:26px 20px 64px; display:flex; flex-direction:column; gap:34px; }
-  .hero h1 { margin:0 0 6px; font-size:26px; line-height:1.3; color:var(--strong); letter-spacing:-.01em; }
-  .hero p { margin:0; max-width:64ch; color:var(--dim); font-size:15px; }
-  .statline { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  /* ── next-step bar: המכונה אומרת מה עכשיו ── */
+  .nextbar { position:sticky; top:0; z-index:29; background:color-mix(in srgb, var(--gold) 7%, var(--bg)); border-bottom:1px solid color-mix(in srgb, var(--gold) 32%, var(--rule)); }
+  .nextbar-in { max-width:960px; margin:0 auto; padding:9px 20px; display:flex; align-items:center; gap:10px; font-size:13.5px; color:var(--strong); }
+  .nextbar .dot { width:9px; height:9px; border-radius:50%; background:var(--gold); flex:none; box-shadow:0 0 12px color-mix(in srgb, var(--gold) 60%, transparent); }
+  .nextbar.done .dot { background:var(--green); box-shadow:0 0 12px color-mix(in srgb, var(--green) 50%, transparent); }
+  .nextbar .go { all:unset; cursor:pointer; margin-inline-start:auto; font-size:12px; color:var(--gold); border:1px solid color-mix(in srgb, var(--gold) 45%, var(--rule)); border-radius:8px; padding:3px 12px; white-space:nowrap; }
+  .nextbar .go:hover { background:color-mix(in srgb, var(--gold) 12%, transparent); }
+
+  /* ── layout ── */
+  main .wrap { max-width:960px; margin:0 auto; padding:22px 20px 60px; display:flex; flex-direction:column; gap:30px; }
+  .hero h1 { margin:0 0 6px; font-size:25px; line-height:1.3; color:var(--strong); letter-spacing:-.01em; }
+  .hero p { margin:0; max-width:66ch; color:var(--dim); font-size:14.5px; }
+  .statline { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+
+  /* ── the iso machine ── */
+  #machine { border:1px solid var(--rule); border-radius:16px; background:
+      radial-gradient(1200px 300px at 50% -60px, color-mix(in srgb, var(--gold) 4%, transparent), transparent),
+      var(--panel); overflow:hidden; }
+  #machine svg { display:block; width:100%; height:auto; }
+  .iso .face { fill:var(--panel2); stroke:var(--line); stroke-width:1.1; vector-effect:non-scaling-stroke; stroke-linejoin:round; transition:fill .5s ease-out, stroke .5s ease-out; }
+  .iso .face.top { fill:var(--panel); }
+  .iso .face.recess { fill:var(--bg); }
+  .iso .stroke { fill:none; stroke:var(--line); stroke-width:1.1; vector-effect:non-scaling-stroke; stroke-linecap:round; }
+  .iso .halo { fill:var(--gold); opacity:0; transition:opacity .5s ease-out; }
+  .iso-part { cursor:pointer; }
+  .iso-part:hover .face { stroke:var(--dim); }
+  .iso-part.lit .halo { opacity:.30; }
+  .iso-part.lit .face { fill:color-mix(in srgb, var(--gold) 13%, var(--panel2)); }
+  .iso-part.lit .face.top { fill:color-mix(in srgb, var(--gold) 20%, var(--panel)); }
+  .iso-part strong { font:500 10.5px var(--mono); fill:var(--dim); }
+  .iso-part.lit strong { fill:var(--gold); }
+  #iso-belt .belt-cube { transition:fill .4s; }
+  #iso-belt.run .belt-cube { animation:belt-pulse 1.15s ease-in-out infinite; }
+  @keyframes belt-pulse { 0%,100% { fill:var(--panel2); } 50% { fill:color-mix(in srgb, var(--gold) 42%, var(--panel2)); } }
+  #iso-wires { stroke-dasharray:5 7; }
+  #iso-wires.flow { animation:wires-flow 1s linear infinite; stroke:var(--gold); }
+  @keyframes wires-flow { to { stroke-dashoffset:-12; } }
+  #iso-silo-fill { transition:height .7s ease, y .7s ease; }
+  @media (prefers-reduced-motion:reduce) { #iso-belt.run .belt-cube, #iso-wires.flow, #iso-silo-fill { animation:none; transition:none; } }
+  .mach-legend { display:flex; flex-wrap:wrap; gap:7px 16px; padding:10px 18px 14px; font-size:12px; color:var(--dim); border-top:1px solid var(--rule); }
+  .mach-legend button { all:unset; cursor:pointer; display:inline-flex; gap:6px; align-items:center; }
+  .mach-legend button:hover { color:var(--strong); }
+  .mach-legend .k { width:8px; height:8px; border-radius:2px; border:1px solid var(--line); background:var(--panel2); flex:none; }
+  .mach-legend .k.on { background:var(--gold); border-color:var(--gold); box-shadow:0 0 8px color-mix(in srgb, var(--gold) 55%, transparent); }
+
+  /* ── stations ── */
   section.station { border:1px solid var(--rule); border-radius:14px; background:var(--panel); overflow:hidden; }
-  .st-head { display:flex; align-items:baseline; gap:12px; padding:16px 20px 12px; border-bottom:1px solid var(--rule); background:var(--panel2); }
+  .st-head { display:flex; align-items:baseline; gap:12px; padding:15px 20px 12px; border-bottom:1px solid var(--rule); background:var(--panel2); }
   .st-num { font-family:var(--mono); font-size:12px; color:var(--gold); border:1px solid color-mix(in srgb, var(--gold) 40%, var(--rule)); border-radius:8px; padding:1px 8px; }
   .st-head h2 { margin:0; font-size:17px; color:var(--strong); }
   .st-head .hint2 { margin-inline-start:auto; font-size:12px; color:var(--dim); }
@@ -104,15 +146,19 @@
   .modal[hidden] { display:none; }
   .modal .box { background:var(--panel); border:1px solid var(--rule); border-radius:14px; max-width:460px; width:100%; padding:20px; display:flex; flex-direction:column; gap:11px; }
   .pv-row { display:flex; justify-content:space-between; gap:10px; padding:5px 0; font-size:13px; }
-  .pbar { height:6px; background:var(--rule); border-radius:6px; overflow:hidden; }
-  .pbar i { display:block; height:100%; background:var(--gold); }
-  footer { border-top:1px solid var(--rule); margin-top:12px; }
-  footer .in { max-width:920px; margin:0 auto; padding:20px; display:flex; flex-wrap:wrap; gap:10px 22px; color:var(--dim); font-size:12.5px; align-items:center; }
-  .sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
   .tag { display:inline-flex; align-items:center; gap:6px; border:1px solid var(--rule); border-radius:999px; padding:3px 11px; font-size:12px; color:var(--dim); }
   .tag.gold { border-color:color-mix(in srgb, var(--gold) 45%, var(--rule)); color:var(--gold); }
   .tag.green { border-color:color-mix(in srgb, var(--green) 40%, var(--rule)); color:var(--green); }
   .tag.amber { border-color:color-mix(in srgb, var(--amber) 45%, var(--rule)); color:var(--amber); }
+  /* tabs (station 3) */
+  .tabs { display:flex; gap:6px; flex-wrap:wrap; }
+  .tabs button { all:unset; cursor:pointer; font-size:13px; color:var(--dim); border:1px solid var(--rule); border-radius:9px; padding:7px 14px; min-height:38px; }
+  .tabs button[aria-selected="true"] { color:var(--gold); border-color:color-mix(in srgb, var(--gold) 45%, var(--rule)); background:color-mix(in srgb, var(--gold) 7%, transparent); }
+  .tabpanel[hidden] { display:none; }
+
+  footer { border-top:1px solid var(--rule); margin-top:auto; flex-shrink:0; padding-bottom:env(safe-area-inset-bottom,0px); }
+  footer .in { max-width:960px; margin:0 auto; padding:20px; display:flex; flex-wrap:wrap; gap:10px 22px; color:var(--dim); font-size:12.5px; align-items:center; }
+  .sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
 </style>
 </head>
 <body>
@@ -122,22 +168,36 @@
       <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--gold)"><path d="M12 1.6 21 6.8V17.2L12 22.4 3 17.2V6.8Z"/><path d="M12 5.6C12.35 9.3 13.6 10.55 17.4 10.9 13.75 11.3 12.6 12.6 12.22 22.2H11.78C11.4 12.6 10.25 11.3 6.6 10.9 10.4 10.55 11.65 9.3 12 5.6Z" fill="currentColor" stroke="none"/></svg>
       <span>SAOS · המכונה</span>
     </a>
-    <span class="chip" id="book-chip"><i></i><span id="book-chip-t">קורא את הספר החי…</span></span>
+    <span class="chip hide-s" id="book-chip"><i></i><span id="book-chip-t">קורא את הספר החי…</span></span>
     <span class="spacer"></span>
     <button type="button" class="langbtn" id="btn-lang" aria-label="language">EN</button>
   </div>
 </header>
 
-<main>
+<div class="nextbar" id="nextbar" role="status" aria-live="polite">
+  <div class="nextbar-in">
+    <span class="dot" aria-hidden="true"></span>
+    <span id="nextbar-text">…</span>
+    <button type="button" class="go" id="nextbar-go"></button>
+  </div>
+</div>
+
+<main><div class="wrap">
   <div class="hero">
-    <h1 data-i="h1">ארנק אמת — נולד אצלך, מאומת על השרשרת</h1>
-    <p data-i="h1p">כל פעולה נחתמת במכשיר שלך ונקראת מהשרשרת הציבורית. שום דבר לא נשלח לשרת פרטי, שום מפתח לא עוזב את הדפדפן, וכל מספר כאן ניתן לאימות עצמאי.</p>
-    <div class="statline" id="statline">
+    <h1 data-i="h1">המכונה — ארנק אמת שנולד אצלך</h1>
+    <p data-i="h1p">כל חלק במכונה למטה זוהר רק כשהוא באמת פעיל אצלכם: כספת פתוחה, יתרה בסילו, תור על המסילה, מגדל-שידור חי, ספר-אמת ובריכות. לוחצים על חלק — מגיעים לתחנה שלו. כל פעולה נחתמת במכשיר ונקראת חזרה מהשרשרת הציבורית.</p>
+    <div class="statline">
       <span class="chip gold" id="st-supply">—</span>
-      <span class="chip" id="st-treasury">—</span>
-      <span class="chip" id="st-pools">—</span>
+      <span class="chip hide-s" id="st-treasury">—</span>
+      <span class="chip hide-s" id="st-pools">—</span>
     </div>
   </div>
+
+  <!-- ═══ המכונה האיזומטרית — לוח-מצב חי ═══ -->
+  <section id="machine" aria-label="the live machine — a state board">
+    <svg id="machine-svg" viewBox="0 0 880 320" role="img" aria-label="isometric wallet machine, parts glow when live"></svg>
+    <div class="mach-legend" id="mach-legend"></div>
+  </section>
 
   <div id="status-strip" class="statline" style="display:none" aria-live="polite"></div>
 
@@ -186,104 +246,101 @@
     </div>
   </section>
 
-  <!-- ═══ 3 · הפקדה ═══ -->
-  <section class="station" id="deposit" aria-labelledby="st3h">
-    <div class="st-head"><span class="st-num">3</span><h2 id="st3h" data-i="s3T">הפקדת מטבע אמת → אשראי SAOS</h2></div>
+  <!-- ═══ 3 · פעולות (החלפה · שליחה · נזילות · הפקדה) ═══ -->
+  <section class="station" id="actions" aria-labelledby="st3h">
+    <div class="st-head"><span class="st-num">3</span><h2 id="st3h" data-i="s3T">פעולות על הספר החי</h2></div>
     <div class="st-body">
-      <div class="hint" data-i="s3P">המטבעות האמתיים (STEEM/SBD) נכנסים דרך כתובת-המפקידה של הרשת. הזיכוי נטבע 1:1 מול מטמון אמת בלבד ונבדק בכל פעימת קיפול — הביקורת מפרסמת גירעון בכנות אם יש.</div>
-      <div class="grid c2" id="rails"></div>
-      <div class="grid c3">
-        <label class="f"><span data-i="s3Cur">מטבע</span><select id="cl-cur"><option>STEEM</option><option>SBD</option><option>HIVE</option><option>HBD</option></select></label>
-        <label class="f"><span data-i="s3Amt">סכום שהופקד</span><input id="cl-amt" inputmode="decimal" placeholder="10.000"></label>
-        <label class="f"><span data-i="s3Ref">מזהה-הפקדה (claim id)</span><input id="cl-ref" class="mono" placeholder="dep-…" spellcheck="false"></label>
+      <div class="tabs" role="tablist" aria-label="actions">
+        <button role="tab" id="tab-swap" aria-selected="true" aria-controls="panel-swap" data-i="s4T">החלפה</button>
+        <button role="tab" id="tab-send" aria-selected="false" aria-controls="panel-send" data-i="s6T">שליחה</button>
+        <button role="tab" id="tab-pools" aria-selected="false" aria-controls="panel-pools" data-i="s5T">נזילות</button>
+        <button role="tab" id="tab-dep" aria-selected="false" aria-controls="panel-dep" data-i="s3TabDep">הפקדה</button>
       </div>
-      <div class="row">
-        <button class="btn" id="btn-claim" data-i="s3B">חתום תביעת-הפקדה</button>
-        <span class="hint" data-i="s3Hint">התביעה נכנסת לתור ומקבלת זיכוי-נגדי אוטומטי מאוצר הרשת לפי השער המפורסם.</span>
-      </div>
-    </div>
-  </section>
 
-  <!-- ═══ 4 · החלפה ═══ -->
-  <section class="station" id="swap" aria-labelledby="st4h">
-    <div class="st-head"><span class="st-num">4</span><h2 id="st4h" data-i="s4T">החלפה בבריכות האמת</h2></div>
-    <div class="st-body">
-      <div class="hint" data-i="s4P">מכפלה-קבועה אמת (x·y=k, BigInt): דמי בריכה 0.3% נשארים בעתודות לטובת ספקי-הנזילות. ההצעה מחושבת מאותו מנוע שמקפל את הספר — מה שאתם רואים הוא מה שיקרה.</div>
-      <div class="grid c2">
-        <label class="f"><span data-i="s4Pair">בריכה</span><select id="am-pair"></select></label>
-        <label class="f"><span data-i="s4Dir">כיוון</span><select id="am-dir"><option value="SA2C" data-i="s4DirA">SAOS → מטבע</option><option value="C2SA" data-i="s4DirB">מטבע → SAOS</option></select></label>
-        <label class="f"><span data-i="s4Amt">כמות</span><input id="am-amt" inputmode="decimal" placeholder="100.000"></label>
-        <label class="f"><span data-i="s4Slip">החלקה מותרת (minOut)</span><select id="am-slip"><option value="1">1%</option><option value="3" selected>3%</option><option value="5">5%</option></select></label>
-      </div>
-      <div class="hint mono" id="am-quote" style="font-size:12.5px">—</div>
-      <div class="row"><button class="btn gold" id="btn-swap" data-i="s4B">חתום החלפה</button></div>
-      <div class="twrap"><table id="am-table"><thead><tr>
-        <th data-i="thPool">בריכה</th><th data-i="thResA">עתודת SAOS</th><th data-i="thResB">עתודת מטבע</th><th data-i="thSpot">שער</th><th data-i="thFee">דמי</th><th data-i="thSwaps">החלפות</th><th data-i="thMyLp">ה-LP שלי</th>
-      </tr></thead><tbody id="am-pools"></tbody></table></div>
-      <div class="hint" id="am-custody"></div>
-    </div>
-  </section>
-
-  <!-- ═══ 5 · נזילות ═══ -->
-  <section class="station" id="pools" aria-labelledby="st5h">
-    <div class="st-head"><span class="st-num">5</span><h2 id="st5h" data-i="s5T">ספקי-נזילות (LP)</h2></div>
-    <div class="st-body">
-      <div class="hint" data-i="s5P">הוסיפו נזילות בשני הצדדים וקבלו טבעות-LP; הדמיים נצברים לעתודות ואתם מתחלקים לפי החזקה. המשיכו בכל עת.</div>
-      <div class="grid c2">
-        <div class="card">
-          <h3 data-i="s5aT">הוספת נזילות</h3>
-          <label class="f"><span data-i="s5Pair">בריכה</span><select id="am-lp-pair"></select></label>
-          <label class="f"><span data-i="s5Base">צד SAOS</span><input id="am-lp-base" inputmode="decimal" placeholder="100.000"></label>
-          <label class="f"><span data-i="s5Quote">צד מטבע (ריק = אוטומטי לפי השער)</span><input id="am-lp-quote" inputmode="decimal" placeholder="auto"></label>
-          <div class="hint mono" id="am-lp-info" style="font-size:12px">—</div>
-          <button class="btn" id="btn-lp-add" data-i="s5aB">חתום הוספת נזילות</button>
+      <div class="tabpanel" id="panel-swap" role="tabpanel" aria-labelledby="tab-swap" style="display:flex;flex-direction:column;gap:14px">
+        <div class="hint" data-i="s4P">מכפלה-קבועה אמת (x·y=k, BigInt): דמי בריכה 0.3% נשארים בעתודות לטובת ספקי-הנזילות. ההצעה מחושבת מאותו מנוע שמקפל את הספר — מה שאתם רואים הוא מה שיקרה.</div>
+        <div class="grid c2">
+          <label class="f"><span data-i="s4Pair">בריכה</span><select id="am-pair"></select></label>
+          <label class="f"><span data-i="s4Dir">כיוון</span><select id="am-dir"><option value="SA2C" data-i="s4DirA">SAOS → מטבע</option><option value="C2SA" data-i="s4DirB">מטבע → SAOS</option></select></label>
+          <label class="f"><span data-i="s4Amt">כמות</span><input id="am-amt" inputmode="decimal" placeholder="100.000"></label>
+          <label class="f"><span data-i="s4Slip">החלקה מותרת (minOut)</span><select id="am-slip"><option value="1">1%</option><option value="3" selected>3%</option><option value="5">5%</option></select></label>
         </div>
-        <div class="card">
-          <h3 data-i="s5bT">משיכת נזילות</h3>
-          <label class="f"><span data-i="s5Pair2">בריכה</span><select id="am-lp-pair2" disabled></select></label>
-          <label class="f"><span data-i="s5Pct">אחוז מה-LP שלי</span><select id="am-lp-rm"><option value="25">25%</option><option value="50">50%</option><option value="75">75%</option><option value="100" selected>100%</option></select></label>
-          <button class="btn ghost" id="btn-lp-rm" data-i="s5bB">חתום משיכה</button>
-          <div class="hint" data-i="s5bH">השריפה פרו-רטה: מקבלים בחזרה את שני הצדדים לפי חלקכם בעתודות.</div>
+        <div class="hint mono" id="am-quote" style="font-size:12.5px">—</div>
+        <div class="row"><button class="btn gold" id="btn-swap" data-i="s4B">חתום החלפה</button></div>
+        <div class="twrap"><table id="am-table"><thead><tr>
+          <th data-i="thPool">בריכה</th><th data-i="thResA">עתודת SAOS</th><th data-i="thResB">עתודת מטבע</th><th data-i="thSpot">שער</th><th data-i="thFee">דמי</th><th data-i="thSwaps">החלפות</th><th data-i="thMyLp">ה-LP שלי</th>
+        </tr></thead><tbody id="am-pools"></tbody></table></div>
+        <div class="hint" id="am-custody"></div>
+      </div>
+
+      <div class="tabpanel" id="panel-send" role="tabpanel" aria-labelledby="tab-send" hidden style="display:flex;flex-direction:column;gap:14px">
+        <div class="grid c3">
+          <label class="f"><span data-i="s6Sym">טוקן</span><select id="send-symbol"></select></label>
+          <label class="f"><span data-i="s6To">כתובת יעד</span><input id="send-to" class="mono" spellcheck="false"></label>
+          <label class="f"><span data-i="s6Amt">כמות</span><input id="send-amount" inputmode="decimal"></label>
+        </div>
+        <div class="row">
+          <button class="btn" id="btn-send" data-i="s6B">סקור וחתום</button>
+          <span class="hint" data-i="s6H">לפני כל חתימה ייפתח סקירה: יעד, סכום, שווי מוערך ויתרה אחרי.</span>
+        </div>
+        <div id="ab-wrap" style="display:none">
+          <div class="hint" data-i="s6Ab">ספר-כתובות מקומי (נשמר במכשיר בלבד):</div>
+          <div class="row" id="ab-chips"></div>
+          <div class="row" style="margin-top:6px">
+            <input id="ab-label" style="max-width:200px" placeholder="תגית">
+            <button class="btn ghost sm" id="btn-ab-save" data-i="s6AbSave">שמור יעד נוכחי</button>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- ═══ 6 · שליחה ═══ -->
-  <section class="station" id="send" aria-labelledby="st6h">
-    <div class="st-head"><span class="st-num">6</span><h2 id="st6h" data-i="s6T">שליחת טוקנים</h2></div>
-    <div class="st-body">
-      <div class="grid c3">
-        <label class="f"><span data-i="s6Sym">טוקן</span><select id="send-symbol"></select></label>
-        <label class="f"><span data-i="s6To">כתובת יעד</span><input id="send-to" class="mono" spellcheck="false"></label>
-        <label class="f"><span data-i="s6Amt">כמות</span><input id="send-amount" inputmode="decimal"></label>
+      <div class="tabpanel" id="panel-pools" role="tabpanel" aria-labelledby="tab-pools" hidden style="display:flex;flex-direction:column;gap:14px">
+        <div class="hint" data-i="s5P">הוסיפו נזילות בשני הצדדים וקבלו טבעות-LP; הדמיים נצברים לעתודות ואתם מתחלקים לפי החזקה. המשיכו בכל עת.</div>
+        <div class="grid c2">
+          <div class="card">
+            <h3 data-i="s5aT">הוספת נזילות</h3>
+            <label class="f"><span data-i="s5Pair">בריכה</span><select id="am-lp-pair"></select></label>
+            <label class="f"><span data-i="s5Base">צד SAOS</span><input id="am-lp-base" inputmode="decimal" placeholder="100.000"></label>
+            <label class="f"><span data-i="s5Quote">צד מטבע (ריק = אוטומטי לפי השער)</span><input id="am-lp-quote" inputmode="decimal" placeholder="auto"></label>
+            <div class="hint mono" id="am-lp-info" style="font-size:12px">—</div>
+            <button class="btn" id="btn-lp-add" data-i="s5aB">חתום הוספת נזילות</button>
+          </div>
+          <div class="card">
+            <h3 data-i="s5bT">משיכת נזילות</h3>
+            <label class="f"><span data-i="s5Pair2">בריכה</span><select id="am-lp-pair2" disabled></select></label>
+            <label class="f"><span data-i="s5Pct">אחוז מה-LP שלי</span><select id="am-lp-rm"><option value="25">25%</option><option value="50">50%</option><option value="75">75%</option><option value="100" selected>100%</option></select></label>
+            <button class="btn ghost" id="btn-lp-rm" data-i="s5bB">חתום משיכה</button>
+            <div class="hint" data-i="s5bH">השריפה פרו-רטה: מקבלים בחזרה את שני הצדדים לפי חלקכם בעתודות.</div>
+          </div>
+        </div>
       </div>
-      <div class="row">
-        <button class="btn" id="btn-send" data-i="s6B">סקור וחתום</button>
-        <span class="hint" data-i="s6H">לפני כל חתימה ייפתח סקירה: יעד, סכום, שווי מוערך ויתרה אחרי.</span>
-      </div>
-      <div id="ab-wrap" style="display:none">
-        <div class="hint" data-i="s6Ab">ספר-כתובות מקומי (נשמר במכשיר בלבד):</div>
-        <div class="row" id="ab-chips"></div>
-        <div class="row" style="margin-top:6px">
-          <input id="ab-label" style="max-width:200px" placeholder="תגית">
-          <button class="btn ghost sm" id="btn-ab-save" data-i="s6AbSave">שמור יעד נוכחי</button>
+
+      <div class="tabpanel" id="panel-dep" role="tabpanel" aria-labelledby="tab-dep" hidden style="display:flex;flex-direction:column;gap:14px">
+        <div class="hint" data-i="s3P">המטבעות האמתיים (STEEM/SBD) נכנסים דרך כתובת-המפקידה של הרשת. הזיכוי נטבע 1:1 מול מטמון אמת בלבד ונבדק בכל פעימת קיפול — הביקורת מפרסמת גירעון בכנות אם יש.</div>
+        <div class="grid c2" id="rails"></div>
+        <div class="grid c3">
+          <label class="f"><span data-i="s3Cur">מטבע</span><select id="cl-cur"><option>STEEM</option><option>SBD</option><option>HIVE</option><option>HBD</option></select></label>
+          <label class="f"><span data-i="s3Amt">סכום שהופקד</span><input id="cl-amt" inputmode="decimal" placeholder="10.000"></label>
+          <label class="f"><span data-i="s3Ref">מזהה-הפקדה (claim id)</span><input id="cl-ref" class="mono" placeholder="dep-…" spellcheck="false"></label>
+        </div>
+        <div class="row">
+          <button class="btn" id="btn-claim" data-i="s3B">חתום תביעת-הפקדה</button>
+          <span class="hint" data-i="s3Hint">התביעה נכנסת לתור ומקבלת זיכוי-נגדי אוטומטי מאוצר הרשת לפי השער המפורסם.</span>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ═══ 7 · מפתחות ושידור ═══ -->
-  <section class="station" id="keys" aria-labelledby="st7h">
-    <div class="st-head"><span class="st-num">7</span><h2 id="st7h" data-i="s7T">מפתח-שידור והזרמה אוטומטית</h2></div>
+  <!-- ═══ 4 · שידור ═══ -->
+  <section class="station" id="relay" aria-labelledby="st4h">
+    <div class="st-head"><span class="st-num">4</span><h2 id="st4h" data-i="s7T">מפתח-שידור והזרמה</h2><span class="hint2" data-i="s7H">המפתח בזיכרון-הלשונית בלבד</span></div>
     <div class="st-body">
-      <div class="hint" data-i="s7P">מפתח של חשבון-Steem כאן הוא <b>תחבורה בלבד</b>: הוא משדר את הפעולות שכבר חתמתם בחתימת-הפנים של ה-SAOS. מתקבל <b>WIF</b> <b>או מפתח-כספת</b> (עם או בלי שם-החשבון לפניו). המפתח נשמר בזיכרון-הלשון בלבד ונמחק בסגירת-הלשונית.</div>
+      <div class="hint" data-i="s7P">מפתח של חשבון-Steem כאן הוא <b>תחבורה בלבד</b>: הוא משדר את הפעולות שכבר חתמתם בחתימת-הפנים של ה-SAOS. מתקבל <b>WIF</b> <b>או מפתח-כספת</b> (עם או בלי שם-החשבון לפניו — השם נגרע אוטומטית). המפתח נשמר בזיכרון-הלשונית בלבד ונמחק בסגירתה.</div>
       <div class="grid c2">
         <label class="f"><span data-i="s7Acc">חשבון Steem (תחבורה)</span><input id="relay-account" class="mono" spellcheck="false" autocomplete="off"></label>
         <label class="f"><span data-i="s7Key">WIF או מפתח-כספת</span><input id="relay-wif" class="mono" type="password" spellcheck="false" autocomplete="off"></label>
       </div>
       <div class="row">
-        <button class="btn" id="btn-relay-all" data-i="s7B">אמת ושדר את התור</button>
+        <button class="btn gold" id="btn-relay-all" data-i="s7B">אמת ושדר את התור</button>
         <button class="btn ghost" id="btn-flush" data-i="s7B2" style="display:none">הזרם תור קיים</button>
         <span class="hint" id="relay-keytype"></span>
       </div>
@@ -300,34 +357,11 @@
     </div>
   </section>
 
-  <!-- ═══ 8 · תור ואימות ═══ -->
-  <section class="station" id="verify" aria-labelledby="st8h">
-    <div class="st-head"><span class="st-num">8</span><h2 id="st8h" data-i="s8T">התור שלי · אימות עצמאי</h2></div>
+  <!-- ═══ 5 · SP ═══ -->
+  <section class="station" id="delegate" aria-labelledby="st5h">
+    <div class="st-head"><span class="st-num">5</span><h2 id="st5h" data-i="delT">האצת SP על השרשרת</h2><span class="hint2" data-i="delH">חתימה מקומית · שידור ישיר · ביטול בכל רגע</span></div>
     <div class="st-body">
-      <div>
-        <div class="row" style="justify-content:space-between">
-          <span class="tag" data-i="s8Queue">תור חתום-מקומי</span>
-          <div class="row">
-            <span class="tag" id="wallet-queue">0</span>
-            <button type="button" class="copy" id="btn-copy-queue" data-i="s8Copy">העתק JSON</button>
-          </div>
-        </div>
-        <div class="twrap" style="margin-top:9px"><div id="queue-list"></div></div>
-      </div>
-      <div>
-        <div class="row">
-          <button class="btn ghost" id="btn-verify-chain" data-i="s8V">אמת את הספר מהשרשרת עכשיו</button>
-          <span class="tag" id="selftest-chip">selfTest…</span>
-        </div>
-        <div class="hint mono" id="verify-chain-result" style="margin-top:9px"></div>
-      </div>
-    </div>
-  </section>
-  <!-- ═══ 9 · האצת SP ═══ -->
-  <section class="station" id="chain" aria-labelledby="st9h">
-    <div class="st-head"><span class="st-num">9</span><h2 id="st9h" data-i="delT">האצת SP על השרשרת</h2><span class="hint2" data-i="delH">חתימה מקומית · שידור ישיר · ביטול בכל רגע</span></div>
-    <div class="st-body">
-      <div class="hint" data-i="delP">האצת כוח-גלל (SP) מהחשבון שלכם לחשבון אחר על השרשרת — פעולת delegate_vesting_shares אמיתית, חתומה כאן במכשיר במפתח-ה-active שלכם ונשדרת ישירות לצמתים הציבוריים. ה-SP נשאר שלכם (רק כוח-ההצבעה מוקצה), וניתן לבטל בכל רגע עם סכום 0. המפתח מתקבל כ-WIF או מפתח-כספת — עם או בלי השם לפניו.</div>
+      <div class="hint" data-i="delP">האצת כוח-גלל (SP) מהחשבון שלכם לחשבון אחר — פעולת delegate_vesting_shares אמיתית, חתומה כאן במכשיר במפתח-ה-active שלכם ומשודרת ישירות לצמתים הציבוריים. ה-SP נשאר שלכם, וניתן לביטול בכל רגע עם סכום 0. המפתח מתקבל כ-WIF או מפתח-כספת — עם או בלי השם לפניו.</div>
       <div class="grid c2">
         <label class="f"><span data-i="delFrom">חשבון מאציל (delegator)</span><input id="del-account" class="mono" spellcheck="false" autocomplete="off" placeholder="headcorner"></label>
         <label class="f"><span data-i="delKey">מפתח (WIF או מפתח-כספת — נדרשת רמת active)</span><input id="del-key" class="mono" type="password" spellcheck="false" autocomplete="off"></label>
@@ -352,7 +386,31 @@
       <div class="twrap" id="del-list-box" style="display:none"><table><tbody id="del-list"></tbody></table></div>
     </div>
   </section>
-</main>
+
+  <!-- ═══ 6 · תור ואימות ═══ -->
+  <section class="station" id="verify" aria-labelledby="st6h">
+    <div class="st-head"><span class="st-num">6</span><h2 id="st6h" data-i="s8T">התור שלי · אימות עצמאי</h2></div>
+    <div class="st-body">
+      <div>
+        <div class="row" style="justify-content:space-between">
+          <span class="tag" data-i="s8Queue">תור חתום-מקומי</span>
+          <div class="row">
+            <span class="tag" id="wallet-queue">0</span>
+            <button type="button" class="copy" id="btn-copy-queue" data-i="s8Copy">העתק JSON</button>
+          </div>
+        </div>
+        <div class="twrap" style="margin-top:9px"><div id="queue-list"></div></div>
+      </div>
+      <div>
+        <div class="row">
+          <button class="btn ghost" id="btn-verify-chain" data-i="s8V">אמת את הספר מהשרשרת עכשיו</button>
+          <span class="tag" id="selftest-chip">selfTest…</span>
+        </div>
+        <div class="hint mono" id="verify-chain-result" style="margin-top:9px"></div>
+      </div>
+    </div>
+  </section>
+</div></main>
 
 <footer><div class="in">
   <span data-i="fT">המכונה חותמת מקומית · השרשרת מחליטה · הספר פתוח.</span>
@@ -397,10 +455,9 @@ const fmtSaos = (units, dec) => { try { return nice(SL.fmt(String(units), dec));
 let LANG = "he";
 try { LANG = localStorage.getItem("saos.lang") === "en" ? "en" : "he"; } catch {}
 const applyLang = () => { document.documentElement.lang = LANG; document.documentElement.dir = LANG === "he" ? "rtl" : "ltr"; for (const el of document.querySelectorAll("[data-i]")) { const v = I[el.dataset.i]; if (v == null) continue; const val = typeof v === "function" ? v() : (typeof v === "object" ? (v[LANG] ?? v.he) : v); if (typeof val === "string") el.textContent = val; } $("btn-lang").textContent = LANG === "he" ? "EN" : "עברית"; };
-const t = (k) => (typeof I[k] === "function" ? I[k] : I[k] ?? (LANG === "he" ? k : k));
 const I = {
-  h1: { he: "ארנק אמת — נולד אצלך, מאומת על השרשרת", en: "A real wallet — born on your device, verified on-chain" },
-  h1p: { he: "כל פעולה נחתמת במכשיר שלך ונקראת מהשרשרת הציבורית. שום דבר לא נשלח לשרת פרטי, שום מפתח לא עוזב את הדפדפן, וכל מספר כאן ניתן לאימות עצמאי.", en: "Every operation is signed on your device and read back from the public chain. Nothing is sent to a private server, no key leaves the browser, and every number here can be independently verified." },
+  h1: { he: "המכונה — ארנק אמת שנולד אצלך", en: "The machine — a real wallet born on your device" },
+  h1p: { he: "כל חלק במכונה למטה זוהר רק כשהוא באמת פעיל אצלכם: כספת פתוחה, יתרה בסילו, תור על המסילה, מגדל-שידור חי, ספר-אמת ובריכות. לוחצים על חלק — מגיעים לתחנה שלו. כל פעולה נחתמת במכשיר ונקראת חזרה מהשרשרת הציבורית.", en: "Every part of the machine below glows only when it is truly live for you: an open vault, balance in the silo, ops on the belt, a live transmission tower, the truth-book and pools. Press a part to reach its station. Every action is signed on your device and read back from the public chain." },
   s1T: { he: "פתיחה או שחזור ארנק", en: "Open or restore a wallet" },
   s1H: { he: "המפתח נולד במכשיר", en: "the key is born on-device" },
   s1aT: { he: "ארנק חדש", en: "New wallet" },
@@ -423,8 +480,9 @@ const I = {
   s2RegP: { he: "פעולה אחת חתומה והספר החי מזקק אותה לבלוק הבא.", en: "One signed op — the live book folds it into the next block." },
   s2Nick: { he: "כינוי (אופציונלי)", en: "nickname (optional)" },
   s2RegB: { he: "חתום רישום", en: "sign registration" },
-  s3T: { he: "הפקדת מטבע אמת → אשראי SAOS", en: "Deposit real currency → SAOS credit" },
-  s3P: { he: "המטבעות האמתיים (STEEM/SBD ו- HIVE/HBD על שרשרת-HIVE) נכנסים דרך כתובת-המפקידה של הרשת. הזיכוי נטבע 1:1 מול מטמון אמת בלבד ונבדק בכל פעימת קיפול — הביקורת מפרסמת גירעון בכנות אם יש.", en: "Real currencies (STEEM/SBD and HIVE/HBD on the Hive chain) enter through the network's deposit address. Credit is minted 1:1 against real custody only and audited every fold — the audit publishes any deficit honestly." },
+  s3T: { he: "פעולות על הספר החי", en: "Actions on the live book" },
+  s3TabDep: { he: "הפקדה", en: "deposit" },
+  s3P: { he: "המטבעות האמתיים (STEEM/SBD) נכנסים דרך כתובת-המפקידה של הרשת. הזיכוי נטבע 1:1 מול מטמון אמת בלבד ונבדק בכל פעימת קיפול — הביקורת מפרסמת גירעון בכנות אם יש.", en: "Real currencies (STEEM/SBD) enter through the network's deposit address. Credit is minted 1:1 against real custody only and audited every fold — the audit publishes any deficit honestly." },
   s3Rail: { he: "מסילת-הפקדה", en: "deposit rail" },
   s3Memo: { he: "שורת-תזכיר", en: "memo" },
   s3Cur: { he: "מטבע", en: "currency" },
@@ -432,7 +490,7 @@ const I = {
   s3Ref: { he: "מזהה-הפקדה (claim id)", en: "deposit id (claim id)" },
   s3B: { he: "חתום תביעת-הפקדה", en: "sign deposit claim" },
   s3Hint: { he: "התביעה נכנסת לתור ומקבלת זיכוי-נגדי אוטומטי מאוצר הרשת לפי השער המפורסם.", en: "The claim enters the queue and receives an automatic counter-credit from the network treasury at the published rate." },
-  s4T: { he: "החלפה בבריכות האמת", en: "Swap on the real pools" },
+  s4T: { he: "החלפה", en: "swap" },
   s4P: { he: "מכפלה-קבועה אמת (x·y=k, BigInt): דמי בריכה 0.3% נשארים בעתודות לטובת ספקי-הנזילות. ההצעה מחושבת מאותו מנוע שמקפל את הספר — מה שאתם רואים הוא מה שיקרה.", en: "A real constant-product engine (x·y=k, BigInt): the 0.3% pool fee stays in reserves for LPs. Quotes come from the same engine that folds the book — what you see is what executes." },
   s4Pair: { he: "בריכה", en: "pool" },
   s4Dir: { he: "כיוון", en: "direction" },
@@ -442,7 +500,7 @@ const I = {
   s4Slip: { he: "החלקה מותרת (minOut)", en: "allowed slippage (minOut)" },
   s4B: { he: "חתום החלפה", en: "sign swap" },
   thPool: { he: "בריכה", en: "pool" }, thResA: { he: "עתודת SAOS", en: "SAOS reserve" }, thResB: { he: "עתודת מטבע", en: "currency reserve" }, thSpot: { he: "שער", en: "spot" }, thFee: { he: "דמי", en: "fee" }, thSwaps: { he: "החלפות", en: "swaps" }, thMyLp: { he: "ה-LP שלי", en: "my LP" },
-  s5T: { he: "ספקי-נזילות (LP)", en: "Liquidity providers (LP)" },
+  s5T: { he: "נזילות", en: "liquidity" },
   s5P: { he: "הוסיפו נזילות בשני הצדדים וקבלו טבעות-LP; הדמיים נצברים לעתודות ואתם מתחלקים לפי החזקה. המשיכו בכל עת.", en: "Add liquidity on both sides and receive LP tokens; fees accrue to reserves and you share by holdings. Withdraw anytime." },
   s5aT: { he: "הוספת נזילות", en: "Add liquidity" },
   s5Pair: { he: "בריכה", en: "pool" },
@@ -454,7 +512,7 @@ const I = {
   s5Pct: { he: "אחוז מה-LP שלי", en: "percent of my LP" },
   s5bB: { he: "חתום משיכה", en: "sign withdrawal" },
   s5bH: { he: "השריפה פרו-רטה: מקבלים בחזרה את שני הצדדים לפי חלקכם בעתודות.", en: "The burn is pro-rata: you receive both sides back per your share of the reserves." },
-  s6T: { he: "שליחת טוקנים", en: "Send tokens" },
+  s6T: { he: "שליחה", en: "send" },
   s6Sym: { he: "טוקן", en: "token" },
   s6To: { he: "כתובת יעד", en: "destination address" },
   s6Amt: { he: "כמות", en: "amount" },
@@ -462,8 +520,9 @@ const I = {
   s6H: { he: "לפני כל חתימה ייפתח סקירה: יעד, סכום, שווי מוערך ויתרה אחרי.", en: "Before every signature a review opens: destination, amount, estimated value and balance after." },
   s6Ab: { he: "ספר-כתובות מקומי (נשמר במכשיר בלבד):", en: "Local address book (stored on this device only):" },
   s6AbSave: { he: "שמור יעד נוכחי", en: "save current destination" },
-  s7T: { he: "מפתח-שידור והזרמה אוטומטית", en: "Transport key and auto-broadcast" },
-  s7P: { he: "מפתח של חשבון-Steem כאן הוא תחבורה בלבד: הוא משדר את הפעולות שכבר חתמתם בחתימת-הפנים של ה-SAOS. מתקבל WIF או מפתח-כספת (עם או בלי שם-החשבון לפניו). המפתח נשמר בזיכרון-הלשונית בלבד ונמחק בסגירתה.", en: "A Steem account key here is transport only: it broadcasts the operations you already signed with the inner SAOS signature. Both a WIF and a master key are accepted (with or without the account name in front). The key lives in tab memory only and dies with the tab." },
+  s7T: { he: "מפתח-שידור והזרמה", en: "Transport key and broadcast" },
+  s7H: { he: "המפתח בזיכרון-הלשונית בלבד", en: "the key lives in tab memory only" },
+  s7P: { he: "מפתח של חשבון-Steem כאן הוא תחבורה בלבד: הוא משדר את הפעולות שכבר חתמתם בחתימת-הפנים של ה-SAOS. מתקבל WIF או מפתח-כספת (עם או בלי שם-החשבון לפניו — השם נגרע אוטומטית). המפתח נשמר בזיכרון-הלשונית בלבד ונמחק בסגירתה.", en: "A Steem account key here is transport only: it broadcasts the operations you already signed with the inner SAOS signature. Both a WIF and a master key are accepted (with or without the account name in front — the name is stripped automatically). The key lives in tab memory only and dies with the tab." },
   s7Acc: { he: "חשבון Steem (תחבורה)", en: "Steem account (transport)" },
   s7Key: { he: "WIF או מפתח-כספת", en: "WIF or master key" },
   s7B: { he: "אמת ושדר את התור", en: "Verify and broadcast the queue" },
@@ -521,7 +580,7 @@ const I = {
   wssKeyMem: { he: "המפתח בזיכרון-הלשונית בלבד", en: "the key lives in tab memory only" },
   relayRegistered: { he: "נרשם בספר החי ✓", en: "registered in the live book ✓" },
   queueReg: { he: "רישום ארנק ממתין בתור", en: "wallet registration waiting in queue" },
-  queueRegHint: { he: "הזרימו עם מפתח-שידור בתחנה 7, או השאירו בתור — הרשת מזקקת בעצמה בפעימה הקרובה.", en: "Flush with a transport key at station 7, or leave it queued — the network folds it itself on the next beat." },
+  queueRegHint: { he: "הזרימו עם מפתח-שידור בתחנה 4, או השאירו בתור — הרשת מזקקת בעצמה בפעימה הקרובה.", en: "Flush with a transport key at station 4, or leave it queued — the network folds it itself on the next beat." },
   myAddr: { he: "הכתובת שלי", en: "my address" },
   wAbSaved: { he: "נשמר בספר-הכתובות", en: "saved to the address book" },
   wAbPicked: { he: "היעד הודבק", en: "destination pasted" },
@@ -577,7 +636,7 @@ const I = {
   copyDone: { he: "הועתק", en: "copied" },
   delT: { he: "האצת SP על השרשרת", en: "SP delegation on-chain" },
   delH: { he: "חתימה מקומית · שידור ישיר · ביטול בכל רגע", en: "local signing · direct broadcast · cancel anytime" },
-  delP: { he: "האצת כוח-גלל (SP) מהחשבון שלכם לחשבון אחר על השרשרת — פעולת delegate_vesting_shares אמיתית, חתומה כאן במכשיר במפתח-ה-active שלכם ונשדרת ישירות לצמתים הציבוריים. ה-SP נשאר שלכם (רק כוח-ההצבעה מוקצה), וניתן לבטל בכל רגע עם סכום 0. המפתח מתקבל כ-WIF או מפתח-כספת — עם או בלי השם לפניו.", en: "Delegate Steem Power (SP) to another account — a real delegate_vesting_shares operation, signed in this device with your active key and broadcast straight to public nodes. The SP stays yours (only voting power is allocated) and can be cancelled anytime with amount 0. The key is accepted as a WIF or a master key — with or without the name in front." },
+  delP: { he: "האצת כוח-גלל (SP) מהחשבון שלכם לחשבון אחר — פעולת delegate_vesting_shares אמיתית, חתומה כאן במכשיר במפתח-ה-active שלכם ומשודרת ישירות לצמתים הציבוריים. ה-SP נשאר שלכם, וניתן לביטול בכל רגע עם סכום 0. המפתח מתקבל כ-WIF או מפתח-כספת — עם או בלי השם לפניו.", en: "Delegate Steem Power (SP) to another account — a real delegate_vesting_shares operation, signed in this device with your active key and broadcast straight to public nodes. The SP stays yours and can be cancelled anytime with amount 0. The key is accepted as a WIF or a master key — with or without the name in front." },
   delFrom: { he: "חשבון מאציל (delegator)", en: "delegator account" },
   delKey: { he: "מפתח (WIF או מפתח-כספת — נדרשת רמת active)", en: "key (WIF or master — active level required)" },
   delTo: { he: "חשבון מקבל (delegatee)", en: "delegatee account" },
@@ -606,12 +665,20 @@ const I = {
   chDelegated: { he: "מואץ החוצה", en: "delegated out" },
   chView: { he: "בדיקה עצמאית", en: "verify independently" },
   keyAuto: (a, r) => ({ he: `מאומת על השרשרת: @${a} · ${r}`, en: `chain-verified: @${a} · ${r}` }[LANG]),
+  /* machine + next-step */
+  mVault: { he: "כספת", en: "vault" }, mSilo: { he: "סילו-יתרה", en: "balance silo" }, mBelt: { he: "מסילת-תור", en: "queue belt" }, mTower: { he: "מגדל-שידור", en: "transmission" }, mBook: { he: "ספר-אמת", en: "truth book" }, mPool: { he: "בריכות", en: "pools" },
+  nextOpen: { he: "התחילו כאן: פתחו ארנק או שחזרו ממפתח (תחנה 1)", en: "Start here: open a wallet or restore from a key (station 1)" },
+  nextRegister: { he: "הארנק חי — הירשמו בספר החי (תחנה 2)", en: "Wallet alive — register it in the live book (station 2)" },
+  nextFlush: { he: "יש פעולות חתומות בתור — הדביקו מפתח-שידור ושדרו (תחנה 4)", en: "Signed ops are waiting — paste a transport key and broadcast (station 4)" },
+  nextBroadcasting: { he: "משדר את התור לשרשרת…", en: "broadcasting the queue to the chain…" },
+  nextDone: { he: "המכונה זוהרת — הכל שודר. אפשר להחליף, לשלוח או להפקיד (תחנה 3)", en: "The machine glows — everything broadcast. Swap, send or deposit (station 3)" },
+  nextGo: { he: "קחו אותי", en: "take me there" },
 };
 const I_GET = (k) => { const v = I[k]; if (v == null) return k; if (typeof v === "function") return v; if (typeof v === "object") return v[LANG] ?? v.he; return v; };
 const T = (k, ...a) => { const v = I_GET(k); return typeof v === "function" ? v(...a) : v; };
 
 /* ═══════════ books ═══════════ */
-let LIVE = null, DEXS = null, TOKEN = null, WATCH = null; // WATCH = dex/watch.json — ספר-הצופה-הפומבי (Task 24-c: נופל-אחורה למסילות-הפקדה)
+let LIVE = null, DEXS = null, TOKEN = null, WATCH = null;
 const jget = async (u) => { const r = await fetch(u, { cache: "no-store" }); if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); };
 const NODES = ["https://api.steemit.com", "https://api.justyy.com", "https://api_rpc.ecency.com"];
 async function steemRpc(method, params) {
@@ -637,7 +704,7 @@ try { TRANSPORT = JSON.parse(sessionStorage.getItem(QKEY) || "null"); } catch { 
 function setTransport(tr) {
   TRANSPORT = tr;
   try { if (tr) sessionStorage.setItem(QKEY, JSON.stringify(tr)); else sessionStorage.removeItem(QKEY); } catch {}
-  renderStatusStrip(); renderKeyCard();
+  renderStatusStrip(); renderAll();
 }
 async function enqueue(fields) {
   if (!WALLET) { toast(T("tNeedWallet"), false); $("open").scrollIntoView({ behavior: "smooth", block: "center" }); return null; }
@@ -666,12 +733,8 @@ document.addEventListener("click", (e) => {
 });
 
 /* ═══════════ THE KEY LAW (T24): WIF-or-master + name-strip + all three authorities ═══════════
-   The owner's vault key ("headcorner" + master) is now LIVE on-chain (append-only adopt,
-   tx 5abe45ab — active+posting authorities). This resolver accepts:
-     1) a WIF (paste as-is),
-     2) a master password (the canonical Steemit law priv(role)=sha256(account+role+password)),
-     3) a master password WITH the account-name prefix — the name is stripped automatically
-        ("בלי השם רק המפתח" — the owner's law, now implemented in code).
+   Accepted: 1) a WIF as-is, 2) a master password (priv(role)=sha256(account+role+password)),
+   3) a master WITH the account-name prefix — the name is stripped automatically.
    Detection runs against the LIVE authorities of the account from the public chain. */
 function classifyKey(pub, acc) {
   const has = (auth) => Array.isArray(auth?.key_auths) && auth.key_auths.some((pair) => Array.isArray(pair) && pair[0] === pub);
@@ -700,8 +763,7 @@ async function resolveKey(input, account) {
       const kt = classifyKey(pub, acc);
       if (kt !== "none") return { priv, pub, wif: cand, type: kt, via: "wif" };
     } catch { /* not a WIF — master form next */ }
-    /* 2) master form: posting preferred (it can broadcast custom_json instantly),
-          then active, then owner (no broadcast — the attach flow takes over). */
+    /* 2) master form: posting preferred, then active, then owner (no broadcast — attach takes over) */
     for (const role of ["posting", "active", "owner"]) {
       try {
         const wif = await C.masterToWif(account, role, cand);
@@ -715,7 +777,7 @@ async function resolveKey(input, account) {
   return { none: true, acc };
 }
 
-/* ═══════════ transport broadcast (unchanged wire contract) ═══════════ */
+/* ═══════════ transport broadcast ═══════════ */
 async function broadcastEnv(env, tr) {
   const T2 = tr || TRANSPORT;
   if (!T2) return { ok: false, err: "no transport" };
@@ -735,6 +797,7 @@ let AUTOBUSY = false;
 async function autoRelay(env) {
   if (!TRANSPORT || AUTOBUSY) return;
   AUTOBUSY = true;
+  machineBroadcast(true);
   try {
     const r = await broadcastEnv(env);
     if (r.ok) {
@@ -742,21 +805,24 @@ async function autoRelay(env) {
       if (i >= 0) { QUEUE.splice(i, 1); saveQueue(); renderQueue(); }
       toast(T("tOkBroadcast")(1));
     } else toast((T("autoRelayFail") + " " + (r.err || "")).slice(0, 140), false);
-  } finally { AUTOBUSY = false; }
+  } finally { AUTOBUSY = false; machineBroadcast(false); }
 }
 let AUTOFLUSHED = false;
 async function autoFlush() {
   if (!TRANSPORT || AUTOFLUSHED || !QUEUE.length) return;
   AUTOFLUSHED = true;
-  while (QUEUE.length && TRANSPORT) {
-    const r = await broadcastEnv(QUEUE[0]);
-    if (!r.ok) { toast((T("autoRelayFail") + " " + (r.err || "")).slice(0, 140), false); break; }
-    QUEUE.shift(); saveQueue(); renderQueue();
-    await new Promise((r2) => setTimeout(r2, 700));
-  }
+  machineBroadcast(true);
+  try {
+    while (QUEUE.length && TRANSPORT) {
+      const r = await broadcastEnv(QUEUE[0]);
+      if (!r.ok) { toast((T("autoRelayFail") + " " + (r.err || "")).slice(0, 140), false); break; }
+      QUEUE.shift(); saveQueue(); renderQueue();
+      await new Promise((r2) => setTimeout(r2, 700));
+    }
+  } finally { AUTOFLUSHED = false; machineBroadcast(false); }
 }
 
-/* ═══════════ station 7: login (fixed) ═══════════ */
+/* ═══════════ station 4: login (the transport law) ═══════════ */
 $("btn-relay-all").addEventListener("click", async () => {
   const account = $("relay-account").value.trim().toLowerCase();
   const keyIn = $("relay-wif").value.trim();
@@ -778,6 +844,7 @@ $("btn-relay-all").addEventListener("click", async () => {
     }
     setTransport({ account, wif: r.wif, type: r.type });
     let sent = 0, fail = null;
+    machineBroadcast(true);
     try {
       while (QUEUE.length) {
         const b = await broadcastEnv(QUEUE[0]);
@@ -787,6 +854,7 @@ $("btn-relay-all").addEventListener("click", async () => {
       }
     } finally {
       $("relay-wif").value = ""; // the key leaves the input on EVERY path
+      machineBroadcast(false);
     }
     if (sent) out.innerHTML = `<span class="ok">${esc(T("tOkBroadcast")(sent))}</span>`;
     else if (!fail) out.textContent = "";
@@ -869,14 +937,13 @@ $("btn-attach-posting").addEventListener("click", async () => {
     const newWif = await C.b58cEncode(0x80, seed);
     const newPriv = await C.wifToPriv(newWif);
     const newPub = await C.pubToSTM(C.privToPubBytes(newPriv));
-    /* APPEND-ONLY LAW: every existing posting key_auth is preserved —
-       the old flow replaced them all, which would have amputated the account. */
+    /* APPEND-ONLY LAW: every existing posting key_auth is preserved */
     const existing = (acc.posting?.key_auths || []).map((p) => [p[0], p[1] ?? 1]);
     const keyAuths = [...existing, [newPub, 1]].sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0));
     const op = ["account_update", {
       account,
-      owner: acc.owner,   // kept exactly as the chain reports it
-      active: acc.active, // kept unchanged
+      owner: acc.owner,
+      active: acc.active,
       posting: { weight_threshold: acc.posting?.weight_threshold ?? 1, account_auths: acc.posting?.account_auths || [], key_auths },
       memo_key: acc.memo_key,
       json_metadata: "",
@@ -983,22 +1050,22 @@ $("btn-new-wallet").addEventListener("click", async () => {
     WALLET = w;
     $("wif-out").textContent = await C.b58cEncode(0x80, w.priv);
     $("key-reveal").style.display = "";
-    renderAccount(); renderStatusStrip();
+    renderAccount(); renderStatusStrip(); renderAll();
     toast(T("tOkWalletBorn"));
   } catch (e) { toast(T("tErrCreate") + e.message, false); }
 });
 $("btn-wipe").addEventListener("click", () => {
   WALLET = null;
+  AUTH = null;
   $("key-reveal").style.display = "none";
   $("wif-out").textContent = "";
-  renderAccount(); renderStatusStrip();
+  renderAccount(); renderStatusStrip(); renderAll();
   toast(T("tOkWiped"));
 });
 $("btn-copy-wif").addEventListener("click", () => copyText($("wif-out").textContent, "WIF"));
 /* restore from a key: the T24 law — WIF or master, with or without the name.
    The inner SAOS wallet needs priv bytes: a WIF decodes directly; a master
    derives the posting-role WIF (sha256(account+posting+master)). */
-/* ═══ אימות-מפתח על השרשרת (T25) — אפס prompt: הכל אוטומטי ומוצג ═══ */
 let AUTH = null; // { account, via, roles: [], pub, verified }
 async function verifyKeyOnChain(input, account, via) {
   const acc = (await steemRpc("condenser_api.get_accounts", [[account]]))?.[0];
@@ -1027,14 +1094,7 @@ function vestToSteemRate(props) {
 const vestsToSp = (v, rate) => (parseFloat(String(v).split(" ")[0]) || 0) * rate;
 const spToVestsStr = (sp, rate) => { const v = rate > 0 ? sp / rate : 0; return v.toFixed(6) + " VESTS"; };
 const steemAsset = (s) => parseFloat(String(s || "0").split(" ")[0]) || 0;
-/* ═══ חוק-הדבקת-המפתח (T26): "בלי-השם-רק-המפתח" ═══
- * הכשל-שנמדד-חי: המפתח-הטהור של הבעלים מכיל בתוכו מפרידים (- :) —
- * ה-regex הגנרי לגריעת-שם חתך את המפתח-עצמו לשניים ("שם"-מדומה + שארית)
- * והאימות-על-השרשרת נכשל תמיד. מעכשיו: סולם-מועמדים —
- *   1) ההדבקה כמו-שהיא (המפתח-הטהור — החוק),
- *   2) גריעת-prefix-החשבון-הידוע headcorner בלבד,
- *   3) רמז-חשבון-כללי — רק-מעל-רווח, לעולם-לא מעל -:—=_ (תווי-מפתח-חוקיים).
- * הראשון-שמאומת-על-השרשרת מנצח; אף-מועמד-לא-מאומת = דחייה-כנה (fail-closed). */
+/* T26 paste law: "בלי-השם-רק-המפתח" — candidate ladder, the first chain-verified wins */
 function keyPasteCandidates(raw) {
   const out = [];
   const push = (input, acct) => {
@@ -1049,14 +1109,13 @@ function keyPasteCandidates(raw) {
   if (g) { push(g[2], g[1].toLowerCase()); push(g[2], null); }
   return out;
 }
-/* אימות-מועמד: WIF → מפתח-אב; הראשון-שמאומת-על-השרשרת מנצח. אפס-חשיפה — הכל-מקומי. */
 async function resolveKeyCandidate(cand) {
   const acct = cand.acct || "headcorner";
   try {
     const p = await C.wifToPriv(cand.input);
     const ver = await verifyKeyOnChain(cand.input, acct, "wif");
     if (ver.verified) return { priv: p, AUTH: ver };
-  } catch { /* לא WIF — מפתח-אב למטה */ }
+  } catch { /* not a WIF — master below */ }
   const ver = await verifyKeyOnChain(cand.input, acct, "master");
   if (ver.verified) {
     const role = ver.roles[0] || "posting";
@@ -1077,7 +1136,7 @@ $("btn-restore-key").addEventListener("click", async () => {
       try {
         const res = await resolveKeyCandidate(cand);
         if (res) { priv = res.priv; AUTH = res.AUTH; break; }
-      } catch { /* המועמד-הבא */ }
+      } catch { /* next candidate */ }
     }
     if (!priv || !AUTH?.verified) throw new Error(T("errNoMatch") || "key does not match any on-chain authority");
     const pubSTM = await C.pubToSTM(C.privToPubBytes(priv));
@@ -1085,7 +1144,7 @@ $("btn-restore-key").addEventListener("click", async () => {
     if (AUTH?.verified && AUTH.account) $("del-account").value = AUTH.account;
     $("key-reveal").style.display = "none";
     $("restore-key").value = "";
-    renderAccount(); renderStatusStrip();
+    renderAccount(); renderStatusStrip(); renderAll();
     toast(T("tOkRestored"));
     if (AUTH?.verified) toast(T("keyAuto")(AUTH.account, AUTH.roles.join(" · ")), true);
   } catch (e) { toast(T("tErrImport") + (e.message || ""), false); }
@@ -1150,7 +1209,7 @@ $("import-file").addEventListener("change", async (e) => {
     const { priv, pubSTM } = await keystoreDecrypt(ks, pass);
     WALLET = { priv, pubSTM, addr: await SL.addressFromPubSTM(pubSTM) };
     $("key-reveal").style.display = "none";
-    renderAccount(); renderStatusStrip();
+    renderAccount(); renderStatusStrip(); renderAll();
     toast(T("tOkRestored"));
   } catch (err) { toast(T("tErrImport") + (err.message === "format" ? "format" : T("pwBad")), false); }
   e.target.value = "";
@@ -1221,7 +1280,6 @@ function renderAccount() {
   renderStatusStrip();
   loadChainPanel();
 }
-/* ═══ פאנל-השרשרת החי (T25) — יתרות אמת קריאות-בלבד מהצמתים הציבוריים ═══ */
 function authBadgeHtml() {
   return AUTH
     ? (AUTH.verified
@@ -1397,12 +1455,9 @@ $("btn-lp-rm")?.addEventListener("click", async () => {
   if (env) { toast(T("tOkLp")); }
 });
 
-/* ═══════════ station 3: deposit rails + claim ═══════════ */
+/* ═══════════ deposit rails + claim ═══════════ */
 function renderRails() {
   const box = $("rails"); if (!box) return;
-  /* Task 24-c: שני-מקורות-כנים — cfg.addrs (פעולות-treasury על-השרשרת) קודם,
-   * ואחריו ספר-הצופה-הפומבי dex/watch.json depositAddresses (אפס-מפתחות,
-   * מתעדכן כל-2ש׳) — רשת שאף-מקור לא מפרסם לא-מוצגת, אף-המצאה. */
   const LABELS = {
     depositTron: "TRON (TRC20)", depositEvm: "EVM (ERC20)", depositSol: "Solana (SPL)", depositBtc: "Bitcoin",
     depositSteem: "STEEM", depositSbd: "SBD", depositHive: "HIVE", depositHbd: "HBD",
@@ -1431,7 +1486,7 @@ $("btn-claim").addEventListener("click", async () => {
   if (env) { toast(T("tOkClaim")); $("cl-ref").value = ""; }
 });
 
-/* ═══════════ station 6: send + review + address book ═══════════ */
+/* ═══════════ send + review + address book ═══════════ */
 function toUnits(amount, decimals) {
   const m = /^(\d+)(?:\.(\d{1,9}))?$/.exec(String(amount || "").trim());
   if (!m) return null;
@@ -1490,7 +1545,7 @@ function renderAbook() {
   $("ab-wrap").style.display = WALLET ? "" : "none";
   const rows = abList();
   box.innerHTML = rows.length ? rows.map((r, i) =>
-    `<span class="tag"><button type="button" data-ab-pick="${i}" style="all:unset;cursor:pointer">${esc(r.label)} <span class="mono" style="color:var(--faint)">${esc(String(r.addr).slice(0, 10))}…</span></button><button type="button" data-ab-del="${i}" aria-label="remove" style="all:unset;cursor:pointer;color:var(--faint)">×</button></span>`).join("")
+    `<span class="tag"><button type="button" data-ab-pick="${i}" style="all:unset;cursor:pointer">${esc(r.label)} <span class="mono" style="color:var(--dim)">${esc(String(r.addr).slice(0, 10))}…</span></button><button type="button" data-ab-del="${i}" aria-label="remove" style="all:unset;cursor:pointer;color:var(--dim)">×</button></span>`).join("")
     : `<span class="hint">${esc(T("wAbEmpty"))}</span>`;
 }
 document.addEventListener("click", (e) => {
@@ -1510,7 +1565,7 @@ $("btn-ab-save").addEventListener("click", () => {
   renderAbook(); toast(T("wAbSaved"));
 });
 
-/* ═══════════ station 8: queue + verify ═══════════ */
+/* ═══════════ queue + verify ═══════════ */
 function queueSummary(env) {
   const n = (x) => nice(Number(x || 0));
   if (env.k === "wallet.create") return (LANG === "he" ? "רישום ארנק" : "wallet registration") + (env.nick ? ` "${env.nick}"` : "");
@@ -1589,13 +1644,143 @@ async function refreshBooks() {
   try { LIVE = await jget("saos-live.json"); } catch { /* keep last frame */ }
   try { DEXS = await jget("dex/state.json"); } catch { /* keep last frame */ }
   try { TOKEN = await jget("token.json"); } catch { TOKEN = null; }
-  try { WATCH = await jget("dex/watch.json"); } catch { WATCH = null; } /* Task 24-c: ספר-הצופה — כתובות-הפקדה מפורסמות */
-  renderLiveChips(); renderAccount(); renderPools(); renderRails(); refreshSendSymbols(); renderAbook(); renderQueue();
+  try { WATCH = await jget("dex/watch.json"); } catch { WATCH = null; }
+  renderLiveChips(); renderAccount(); renderPools(); renderRails(); refreshSendSymbols(); renderAbook(); renderQueue(); renderAll();
 }
 
-/* ═══════════ lang + boot ═══════════ */
-$("btn-lang").addEventListener("click", () => { LANG = LANG === "he" ? "en" : "he"; try { localStorage.setItem("saos.lang", LANG); } catch {} applyLang(); renderAccount(); renderPools(); renderQueue(); renderRails(); renderLiveChips(); renderStatusStrip(); });
-/* ═══════════ 9 · האצת SP — חתימה מקומית, שידור ישיר (T25) ═══════════ */
+/* ═══════════ THE ISO MACHINE — a live state board, every part goes somewhere ═══════════ */
+function isoCube(x, y, w, h, d, cls = "") {
+  return `<g class="${cls}">
+    <polygon class="face top" points="${x},${y} ${x + w},${y - h} ${x + 2 * w},${y} ${x + w},${y + h}"/>
+    <polygon class="face" points="${x},${y} ${x + w},${y + h} ${x + w},${y + h + d} ${x},${y + d}"/>
+    <polygon class="face" points="${x + 2 * w},${y} ${x + w},${y + h} ${x + w},${y + h + d} ${x + 2 * w},${y + d}"/>
+  </g>`;
+}
+function buildMachine() {
+  const svg = $("machine-svg");
+  /* ground */
+  let s = `<line class="iso stroke" x1="30" y1="286" x2="850" y2="286" opacity=".55"/>`;
+  /* vault (station 1) */
+  s += `<g id="iso-vault" class="iso iso-part" data-goto="open" role="button" tabindex="0" aria-label="vault — open or restore a wallet">
+    ${isoCube(64, 176, 36, 20, 62)}
+    <ellipse class="face recess" cx="118" cy="222" rx="13" ry="13"/>
+    <circle class="stroke" cx="118" cy="222" r="4" style="stroke:var(--dim)"/>
+    <ellipse class="halo" cx="100" cy="190" rx="52" ry="20"/>
+    <text x="82" y="284" text-anchor="middle" style="font:500 10.5px var(--mono);fill:var(--dim)">1</text>
+  </g>`;
+  /* silo (station 2) — fill shows SAOS balance */
+  s += `<g id="iso-silo" class="iso iso-part" data-goto="account" role="button" tabindex="0" aria-label="balance silo">
+    <clipPath id="silo-clip"><polygon points="247,112 225,125 225,271 247,258"/></clipPath>
+    ${isoCube(200, 105, 24, 13, 160)}
+    <rect id="iso-silo-fill" x="225" y="271" width="22" height="0" fill="var(--gold)" opacity=".55" clip-path="url(#silo-clip)"/>
+    <ellipse class="halo" cx="234" cy="130" rx="44" ry="16"/>
+    <text x="216" y="284" text-anchor="middle" style="font:500 10.5px var(--mono);fill:var(--dim)">2</text>
+  </g>`;
+  /* belt + queue cubes (station 3) */
+  s += `<g id="iso-belt" class="iso iso-part" data-goto="actions" role="button" tabindex="0" aria-label="queue belt">
+    <line class="stroke" x1="320" y1="252" x2="520" y2="252"/>
+    <line class="stroke" x1="320" y1="252" x2="332" y2="246" opacity=".5"/>
+    <line class="stroke" x1="520" y1="252" x2="508" y2="246" opacity=".5"/>
+    <g class="belt-cubes">${[0, 1, 2, 3].map((i) => isoCube(340 + i * 44, 236 - (i % 2) * 6, 14, 8, 12)).join("")}</g>
+    <ellipse class="halo" cx="420" cy="230" rx="96" ry="16"/>
+    <text x="402" y="284" text-anchor="middle" style="font:500 10.5px var(--mono);fill:var(--dim)">3</text>
+  </g>`;
+  /* transmission tower (station 4) */
+  s += `<g id="iso-tower" class="iso iso-part" data-goto="relay" role="button" tabindex="0" aria-label="transmission tower — transport key">
+    <line class="stroke" x1="600" y1="256" x2="614" y2="96"/>
+    <line class="stroke" x1="640" y1="256" x2="626" y2="96"/>
+    <line class="stroke" x1="607" y1="212" x2="633" y2="212" opacity=".7"/>
+    <line class="stroke" x1="611" y1="168" x2="629" y2="168" opacity=".7"/>
+    <line class="stroke" x1="614" y1="124" x2="626" y2="124" opacity=".7"/>
+    <ellipse class="halo" cx="620" cy="86" rx="30" ry="10"/>
+    <circle class="face" cx="620" cy="92" r="5"/>
+    <text x="618" y="284" text-anchor="middle" style="font:500 10.5px var(--mono);fill:var(--dim)">4</text>
+  </g>`;
+  /* delegation node (station 5) */
+  s += `<g id="iso-sp" class="iso iso-part" data-goto="delegate" role="button" tabindex="0" aria-label="SP delegation node">
+    ${isoCube(690, 200, 20, 11, 48)}
+    <line class="stroke" x1="710" y1="216" x2="736" y2="204" opacity=".8"/>
+    ${isoCube(736, 200, 12, 7, 18)}
+    <ellipse class="halo" cx="724" cy="196" rx="46" ry="15"/>
+    <text x="716" y="284" text-anchor="middle" style="font:500 10.5px var(--mono);fill:var(--dim)">5</text>
+  </g>`;
+  /* truth book (station 6) */
+  s += `<g id="iso-book" class="iso iso-part" data-goto="verify" role="button" tabindex="0" aria-label="truth book — verification">
+    <polygon class="face top" points="788,224 828,208 848,218 808,234"/>
+    <polygon class="face" points="788,224 808,234 808,252 788,242"/>
+    <polygon class="face" points="848,218 808,234 808,252 848,236"/>
+    <ellipse class="halo" cx="818" cy="216" rx="42" ry="13"/>
+    <text x="812" y="284" text-anchor="middle" style="font:500 10.5px var(--mono);fill:var(--dim)">6</text>
+  </g>`;
+  /* wires */
+  s += `<g id="iso-wires" class="stroke" opacity=".5">
+    <polyline points="136,168 180,120 214,120" fill="none"/>
+    <polyline points="248,120 320,200" fill="none"/>
+    <polyline points="428,222 500,140 604,104" fill="none"/>
+    <polyline points="648,110 700,170" fill="none"/>
+    <polyline points="760,186 800,200" fill="none"/>
+  </g>`;
+  svg.innerHTML = s;
+  /* legend */
+  const L = [["iso-vault", "mVault"], ["iso-silo", "mSilo"], ["iso-belt", "mBelt"], ["iso-tower", "mTower"], ["iso-sp", "delT"], ["iso-book", "mBook"]];
+  $("mach-legend").innerHTML = L.map(([id, k]) => `<button type="button" data-goto="${$(id).dataset.goto}"><span class="k" id="lg-${id}"></span>${esc(T(k))}</button>`).join("");
+  /* clicks + keys */
+  document.addEventListener("click", (e) => {
+    const p = e.target.closest?.("[data-goto]");
+    if (p) { const t = $(p.dataset.goto); if (t) t.scrollIntoView({ behavior: "smooth", block: "start" }); }
+  });
+  document.addEventListener("keydown", (e) => {
+    if ((e.key === "Enter" || e.key === " ") && e.target.closest?.(".iso-part")) { e.preventDefault(); const t = $(e.target.closest(".iso-part").dataset.goto); if (t) t.scrollIntoView({ behavior: "smooth", block: "start" }); }
+  });
+}
+function machineBroadcast(on) { $("iso-wires")?.classList.toggle("flow", !!on); }
+function setPart(id, lit) { $(id)?.classList.toggle("lit", !!lit); const lg = $("lg-" + id); if (lg) lg.classList.toggle("on", !!lit); }
+function renderMachine() {
+  setPart("iso-vault", !!WALLET);
+  const saosMu = kernelBalMu("SAOS");
+  const saosNum = Number(saosMu) / 1000;
+  const pct = saosNum > 0 ? Math.min(80, 12 + Math.log10(saosNum + 1) * 22) : 0;
+  const fill = $("iso-silo-fill");
+  if (fill) { const H = Math.round(pct * 1.35); fill.setAttribute("height", String(H)); fill.setAttribute("y", String(271 - H)); }
+  setPart("iso-silo", saosNum > 0);
+  const belt = $("iso-belt");
+  if (belt) { belt.classList.toggle("run", QUEUE.length > 0); belt.classList.toggle("lit", QUEUE.length > 0); }
+  const lgBelt = $("lg-iso-belt"); if (lgBelt) lgBelt.classList.toggle("on", QUEUE.length > 0);
+  setPart("iso-tower", !!TRANSPORT);
+  setPart("iso-sp", !!TRANSPORT);
+  const real = !!(LIVE && LIVE.truthLabel && String(LIVE.truthLabel).startsWith("REAL"));
+  setPart("iso-book", real);
+}
+/* next-step bar */
+function nextStep() {
+  if (!WALLET) return { k: "nextOpen", t: "open" };
+  const registered = !!(LIVE?.state?.wallets?.[WALLET.addr]);
+  if (!registered && !regEnv()) return { k: "nextRegister", t: "account" };
+  if (QUEUE.length && !TRANSPORT) return { k: "nextFlush", t: "relay" };
+  if (QUEUE.length && TRANSPORT) return { k: "nextBroadcasting", t: "relay" };
+  return { k: "nextDone", t: "actions" };
+}
+function renderNextBar() {
+  const st = nextStep();
+  const bar = $("nextbar");
+  bar.classList.toggle("done", st.k === "nextDone");
+  $("nextbar-text").textContent = T(st.k);
+  $("nextbar-go").textContent = T("nextGo");
+  $("nextbar-go").onclick = () => { const t = $(st.t); if (t) t.scrollIntoView({ behavior: "smooth", block: "start" }); };
+}
+function renderAll() { renderMachine(); renderNextBar(); }
+
+/* ═══════════ tabs (station 3) ═══════════ */
+const TABS = [["tab-swap", "panel-swap"], ["tab-send", "panel-send"], ["tab-pools", "panel-pools"], ["tab-dep", "panel-dep"]];
+function selectTab(tabId) {
+  for (const [t, p] of TABS) {
+    $(t).setAttribute("aria-selected", String(t === tabId));
+    $(p).hidden = $(t) !== $(tabId);
+  }
+}
+TABS.forEach(([t]) => $(t).addEventListener("click", () => selectTab(t)));
+
+/* ═══════════ SP delegation (T25) ═══════════ */
 const ACC_RE = /^[a-z0-9][a-z0-9\-.]{1,15}$/;
 let DEL_PV = null, DEL_BUSY = false;
 $("btn-del-max").addEventListener("click", async () => {
@@ -1606,7 +1791,7 @@ $("btn-del-max").addEventListener("click", async () => {
     if (!acc) { toast(T("delNeedAcc"), false); return; }
     const props = await steemRpc("condenser_api.get_dynamic_global_properties", []);
     const sp = vestsToSp(acc.vesting_shares, vestToSteemRate(props));
-    $("del-amt").value = Math.max(0, sp - 1).toFixed(3); /* רצפת 1 SP */
+    $("del-amt").value = Math.max(0, sp - 1).toFixed(3);
     $("del-amt").focus();
   } catch (e) { toast(T("chFail") + (e.message || e), false); }
 });
@@ -1623,8 +1808,7 @@ $("btn-delegate").addEventListener("click", async () => {
     const acc = (await steemRpc("condenser_api.get_accounts", [[acct]]))?.[0];
     if (!acc) { toast(T("delNeedAcc"), false); return; }
     let activePriv = null, activePub = null;
-    /* חוק-הדבקת-המפתח (T26): סולם-מועמדים — מפתח-טהור קודם, גריעת-headcorner,
- * ואז-רמז-רווח-בלבד; הראשון-שמאומת-כ-active על-השרשרת מנצח. */
+    /* T26: candidate ladder — pure key first, headcorner stripped, then space-hint only */
     for (const cand of keyPasteCandidates(key)) {
       const cAcct = cand.acct || acct;
       let cAcc = null;
@@ -1638,7 +1822,7 @@ $("btn-delegate").addEventListener("click", async () => {
       try {
         const d = await C.deriveAny(cand.input, cAcct, "active");
         if (classifyKey(d.pub, cAcc) === "active") { activePriv = await C.wifToPriv(d.wif); activePub = d.pub; if (!$("del-account").value.trim()) $("del-account").value = cAcct; break; }
-      } catch { /* המועמד-הבא */ }
+      } catch { /* next candidate */ }
     }
     if (!activePriv) throw new Error(T("delNoActive"));
     const props = await steemRpc("condenser_api.get_dynamic_global_properties", []);
@@ -1703,8 +1887,16 @@ $("del-list").addEventListener("click", (e) => {
   $("del-to").value = b.getAttribute("data-delcancel");
   $("del-amt").value = "0";
   $("del-preview").scrollIntoView({ behavior: "smooth", block: "center" });
-  toast(T("delAmt"), true);
+  toast(T("delCancel"), true);
 });
+
+/* ═══════════ lang + boot ═══════════ */
+$("btn-lang").addEventListener("click", () => { LANG = LANG === "he" ? "en" : "he"; try { localStorage.setItem("saos.lang", LANG); } catch {} applyLang(); buildMachineLegend(); renderAccount(); renderPools(); renderQueue(); renderRails(); renderLiveChips(); renderStatusStrip(); renderAll(); });
+function buildMachineLegend() {
+  const L = [["iso-vault", "mVault"], ["iso-silo", "mSilo"], ["iso-belt", "mBelt"], ["iso-tower", "mTower"], ["iso-sp", "delT"], ["iso-book", "mBook"]];
+  $("mach-legend").innerHTML = L.map(([id, k]) => `<button type="button" data-goto="${$(id).dataset.goto}"><span class="k" id="lg-${id}"></span>${esc(T(k))}</button>`).join("");
+  renderMachine();
+}
 SL.selfTest().then((r) => {
   const ok = r && r.tests ? r.tests.every((x) => x.pass) : !!r;
   const chip = $("selftest-chip");
@@ -1712,6 +1904,7 @@ SL.selfTest().then((r) => {
   chip.textContent = ok ? T("selfTestOk") : T("selfTestBad");
 }).catch(() => { const chip = $("selftest-chip"); chip.className = "tag amber"; chip.textContent = T("selfTestBad"); });
 applyLang();
+buildMachine();
 renderQueue();
 refreshBooks();
 relayKick();
