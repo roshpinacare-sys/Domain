@@ -1,6 +1,6 @@
 {
   "protocol": "SAOS-ARB-MESH/1",
-  "at": "2026-10-19T05:11:49.211Z",
+  "at": "2026-10-19T05:13:29.758Z",
   "agent": "arb-mesh v1.0.0 (R41 MESH MARKET, CR-0071)",
   "mode": "KEYLESS-MESH-DEMAND",
   "stasisHalted": false,
@@ -23,14 +23,14 @@
     "uniform batch clearing (R76): the queue clears as ONE batch - canonical order, two-sided netting at the measured fair, one uniform clearing price for every trader, the solver absorbs the remainder; order-invariance (a permuted queue clears byte-identical) is the anti-sandwich proof · the proof lane is DRY (moves nothing), the settle gate stays the owner's"
   ],
   "verdict": "MESH-LIVE",
-  "batch": "MESH-2026101905-af3180af",
-  "settledBatch": "MESH-2026101905-af3180af",
+  "batch": "MESH-2026101905-68f52103",
+  "settledBatch": "MESH-2026101905-68f52103",
   "coreLedger": {
-    "seq": 208,
-    "at": "2026-10-19T04:54:01.015Z",
-    "ageHours": 0.3,
+    "seq": 210,
+    "at": "2026-10-19T05:11:49.536Z",
+    "ageHours": 0.03,
     "conservationOk": false,
-    "attestation": "982f84495f495578",
+    "attestation": "deec32d81b64c221",
     "feedFresh": true
   },
   "routerSeen": {
@@ -44,15 +44,15 @@
     {
       "id": "A1",
       "name": "P3 STEEM/SBD pool mid vs CEX-implied fair",
-      "poolMidNano": "172533294",
-      "fairNano": "106797710",
-      "netBps": 6120.15,
+      "poolMidNano": "171325031",
+      "fairNano": "106492980",
+      "netBps": 6052.92,
       "thresholdBps": 100,
       "from": "STEEM",
       "to": "SBD",
       "railOwner": "treasury (our own pool — atomic, no bridge)",
       "source": "dex-core.json (our pool — atomic, no bridge)",
-      "at": "2026-10-19T05:11:49.211Z"
+      "at": "2026-10-19T05:13:29.758Z"
     }
   ],
   "keyedRailPlans": [
@@ -70,8 +70,8 @@
       "from": "STEEM",
       "to": "SBD",
       "amountIn": "4121",
-      "minOut": "703",
-      "quote": "706",
+      "minOut": "698",
+      "quote": "701",
       "rowId": "A1",
       "share": "OPERATOR-40%",
       "heldMu": "0",
@@ -81,13 +81,13 @@
   "wires": 1,
   "fills": [
     {
-      "seq": 210,
+      "seq": 212,
       "type": "AGENT_FILL",
       "agent": "operator",
       "from": "STEEM",
       "to": "SBD",
       "amountIn": "4121",
-      "amountOut": "706",
+      "amountOut": "701",
       "routeIds": [
         "P3"
       ],
@@ -95,11 +95,11 @@
         {
           "pool": "P3",
           "in": "4121",
-          "out": "706",
+          "out": "701",
           "fee": "10"
         }
       ],
-      "edgeMu": "268",
+      "edgeMu": "263",
       "fairUsed": "CEX-FAIR (SBD per STEEM)",
       "feesMu": "10"
     }
@@ -173,28 +173,28 @@
       "pair": "STEEM/SBD",
       "kind": "VOLATILE",
       "feeBps": 25,
-      "mid": 0.17253329,
+      "mid": 0.17132503,
       "unit": "SBD",
       "rungs": [
         {
           "sizeBps": 10,
-          "sizeIn": "1168",
+          "sizeIn": "1172",
           "out": "200",
-          "execPrice": 0.17123288,
-          "slipBps": -0.75
+          "execPrice": 0.17064846,
+          "slipBps": -0.39
         },
         {
           "sizeBps": 100,
-          "sizeIn": "11686",
-          "out": "1991",
-          "execPrice": 0.17037481,
+          "sizeIn": "11727",
+          "out": "1984",
+          "execPrice": 0.16918223,
           "slipBps": -1.25
         },
         {
           "sizeBps": 500,
-          "sizeIn": "58432",
-          "out": "9578",
-          "execPrice": 0.16391703,
+          "sizeIn": "58638",
+          "out": "9544",
+          "execPrice": 0.16276135,
           "slipBps": -4.99
         }
       ]
@@ -212,20 +212,20 @@
         "operator": {
           "fills": 1,
           "volumeInMu": "4121",
-          "edgeMu": "268",
+          "edgeMu": "263",
           "feesMu": "10"
         }
       },
-      "fills": 110,
-      "edgeMu": "-879488",
-      "feesMu": "1460",
-      "volumeInMu": "1341068"
+      "fills": 111,
+      "edgeMu": "-879225",
+      "feesMu": "1470",
+      "volumeInMu": "1345189"
     },
     "batch": {
-      "id": "MESH-2026101905-af3180af",
+      "id": "MESH-2026101905-68f52103",
       "fills": 1,
       "rejects": 0,
-      "edgeMu": "268",
+      "edgeMu": "263",
       "feesMu": "10",
       "volumeInMu": "4121"
     }
