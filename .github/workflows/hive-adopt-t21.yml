@@ -42,7 +42,6 @@ jobs:
       S_MAIN_KEY: ${{ secrets.MAIN_KEY }}
       S_SA_FLEET_KEYS: ${{ secrets.SA_FLEET_KEYS }}
       S_ROT2_FLEET_KEYS: ${{ secrets.ROT2_FLEET_KEYS }}
-      S_HEADCORNER_CRED: ${{ secrets.HEADCORNER_CRED }}
       FLEET_ROSTER_MAP: ${{ secrets.FLEET_ROSTER_MAP }}
       IN_ACCOUNT: ${{ github.event.inputs.account }}
       IN_PUB: ${{ github.event.inputs.new_posting_pub }}
@@ -156,7 +155,7 @@ jobs:
             // ── CENSUS: every candidate secret vs live authorities (names + pubs only) ──
             // Form exhaustion law (estate keys-census v2): WIF shapes (37B/38B/P-prefix, raw/base64/JSON)
             // AND password-derivation (steemit login law sha256(name+role+password), 6 seed orders).
-            const CANDIDATES = ['S_HIVE_ACTIVE_WIF', 'S_SA_HEAD_ACTIVE', 'S_STEEM_ACTIVE_WIF', 'S_MAIN_KEY', 'S_SA_FLEET_KEYS', 'S_ROT2_FLEET_KEYS', 'S_HEADCORNER_CRED'];
+            const CANDIDATES = ['S_HIVE_ACTIVE_WIF', 'S_SA_HEAD_ACTIVE', 'S_STEEM_ACTIVE_WIF', 'S_MAIN_KEY', 'S_SA_FLEET_KEYS', 'S_ROT2_FLEET_KEYS'];
             const ORDERS = [(a, r, p) => a + r + p, (a, r, p) => p + r + a, (a, r, p) => a + p + r, (a, r, p) => p + a + r, (a, r, p) => r + a + p, (a, r, p) => r + p + a];
             let found = null; // {name, priv}
             for (const c of CANDIDATES) {

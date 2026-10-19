@@ -300,7 +300,7 @@
     <div class="st-head"><h2 id="t-del" data-i="s6T"></h2><span class="st-src" id="src-delegate"></span></div>
     <p class="sub" data-i="s6P"></p>
     <div class="row" style="margin:10px 0">
-      <label class="f"><span data-i="dFrom"></span><input type="text" id="del-account" class="mono" spellcheck="false" autocomplete="off" value="headcorner" placeholder="headcorner"></label>
+      <label class="f"><span data-i="dFrom"></span><input type="text" id="del-account" class="mono" spellcheck="false" autocomplete="off" value="" placeholder="account"></label>
       <label class="f" style="flex:2"><span data-i="dKey"></span><input type="password" id="del-key" class="mono" spellcheck="false" autocomplete="off"></label>
     </div>
     <div class="row" style="margin:10px 0">
@@ -417,7 +417,7 @@ const I = {
   s1aP: { he: "מפתח אקראי (CSPRNG) נולד כאן. כתובת ה-SAOS נגזרת ממנו לבד.", en: "A random key (CSPRNG) is born here. Your SAOS address derives from it alone." },
   s1aB: { he: "צור ארנק", en: "Create wallet" },
   s1bT: { he: "שחזור ממפתח קיים", en: "Restore from a key" },
-  s1bP: { he: "WIF, מפתח-כספת, או סיסמת-אם — עם או בלי שם-החשבון. הכל מתקבל ומסווג.", en: "A WIF, a master password, or a vault credential — with or without the account name. All accepted and classified." },
+  s1bP: { he: "WIF, מפתח-כספת, או הרשאת-בעלים — עם או בלי שם-החשבון. הכל מתקבל ומסווג.", en: "A WIF, a vault credential, or an owner-issued credential — with or without the account name. All accepted and classified." },
   s1bL: { he: "מפתח", en: "key" },
   s1bPh: { he: "מפתח או WIF…", en: "key or WIF…" },
   s1bB: { he: "שחזר", en: "Restore" },
@@ -586,7 +586,7 @@ async function resolveKeyCandidate(cand) {
   const errs = [];
   for (const c of keyPasteCandidates(cand)) {
     const m = c.match(/^([a-z0-9\-.]{3,16})[\s:=](.+)$/i);
-    const account = m ? m[1] : (AUTH?.account ?? "headcorner");
+    const account = m ? m[1] : (AUTH?.account ?? "");
     try {
       const r = await resolveKey(c, account);
       if (r.verified) return { ...r, raw: c };
@@ -601,7 +601,7 @@ async function verifyKeyOnChain(input, account, via) {
 
 /* ═══ honest key verdict — why a key that "doesn't fit" doesn't fit (live chain truth) ═══ */
 async function keyDiagnosis(raw) {
-  const account = AUTH?.account || "headcorner";
+  const account = AUTH?.account || "";
   const acc = (await steemRpc("condenser_api.get_accounts", [[account]]))?.[0];
   if (!acc) return null;
   const installed = {
