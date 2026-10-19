@@ -74,12 +74,14 @@
   .iso .face.top { fill:var(--panel); }
   .iso .face.recess { fill:var(--bg); }
   .iso .stroke { fill:none; stroke:var(--line); stroke-width:1.1; vector-effect:non-scaling-stroke; stroke-linecap:round; }
-  .iso .halo { fill:var(--gold); opacity:0; transition:opacity .5s ease-out; }
+  .iso .halo { fill:var(--gold); opacity:0; transition:opacity .5s ease-out, filter .5s ease-out; }
   .iso-part { cursor:pointer; }
   .iso-part:hover .face { stroke:var(--dim); }
-  .iso-part.lit .halo { opacity:.30; }
+  .iso-part.lit .halo { opacity:.30; filter:drop-shadow(0 0 5px color-mix(in srgb, var(--gold) 60%, transparent)) drop-shadow(0 0 14px color-mix(in srgb, var(--gold) 28%, transparent)); }
   .iso-part.lit .face { fill:color-mix(in srgb, var(--gold) 13%, var(--panel2)); }
   .iso-part.lit .face.top { fill:color-mix(in srgb, var(--gold) 20%, var(--panel)); }
+  .iso-part.lit .stroke { stroke:color-mix(in srgb, var(--gold) 40%, var(--line)); }
+  .iso-part:focus-visible .face, .iso-part:focus-visible .stroke { stroke:var(--gold); }
   .iso-part strong { font:500 10.5px var(--mono); fill:var(--dim); }
   .iso-part.lit strong { fill:var(--gold); }
   #iso-belt .belt-cube { transition:fill .4s; }
@@ -195,7 +197,7 @@
 
   <!-- ═══ המכונה האיזומטרית — לוח-מצב חי ═══ -->
   <section id="machine" aria-label="the live machine — a state board">
-    <svg id="machine-svg" viewBox="0 0 880 320" role="img" aria-label="isometric wallet machine, parts glow when live"></svg>
+    <svg id="machine-svg" viewBox="0 0 1000 320" role="img" aria-label="isometric wallet machine, parts glow when live"></svg>
     <div class="mach-legend" id="mach-legend"></div>
   </section>
 
@@ -1659,7 +1661,7 @@ function isoCube(x, y, w, h, d, cls = "") {
 function buildMachine() {
   const svg = $("machine-svg");
   /* ground */
-  let s = `<line class="iso stroke" x1="30" y1="286" x2="850" y2="286" opacity=".55"/>`;
+  let s = `<line class="iso stroke" x1="30" y1="286" x2="970" y2="286" opacity=".55"/>`;
   /* vault (station 1) */
   s += `<g id="iso-vault" class="iso iso-part" data-goto="open" role="button" tabindex="0" aria-label="vault — open or restore a wallet">
     ${isoCube(64, 176, 36, 20, 62)}
@@ -1712,6 +1714,18 @@ function buildMachine() {
     <ellipse class="halo" cx="818" cy="216" rx="42" ry="13"/>
     <text x="812" y="284" text-anchor="middle" style="font:500 10.5px var(--mono);fill:var(--dim)">6</text>
   </g>`;
+  /* liquidity pools (station 3 · pools tab) — tank fills are REAL reserves from the live book */
+  s += `<g id="iso-pool" class="iso iso-part" data-goto="actions" role="button" tabindex="0" aria-label="liquidity pools — live reserves from the public book">
+    <clipPath id="poolA-clip"><polygon points="919,157 901,168 901,274 919,263"/></clipPath>
+    ${isoCube(880, 150, 20, 11, 120)}
+    <rect id="iso-poolA-fill" x="901" y="274" width="18" height="0" fill="var(--gold)" opacity=".55" clip-path="url(#poolA-clip)"/>
+    <clipPath id="poolB-clip"><polygon points="979,157 961,168 961,274 979,263"/></clipPath>
+    ${isoCube(940, 150, 20, 11, 120)}
+    <rect id="iso-poolB-fill" x="961" y="274" width="18" height="0" fill="var(--gold)" opacity=".55" clip-path="url(#poolB-clip)"/>
+    <ellipse class="halo" cx="926" cy="140" rx="70" ry="15"/>
+    <text id="iso-poolA-label" x="910" y="284" text-anchor="middle" style="font:500 10.5px var(--mono);fill:var(--dim)">—</text>
+    <text id="iso-poolB-label" x="970" y="284" text-anchor="middle" style="font:500 10.5px var(--mono);fill:var(--dim)">—</text>
+  </g>`;
   /* wires */
   s += `<g id="iso-wires" class="stroke" opacity=".5">
     <polyline points="136,168 180,120 214,120" fill="none"/>
@@ -1719,10 +1733,11 @@ function buildMachine() {
     <polyline points="428,222 500,140 604,104" fill="none"/>
     <polyline points="648,110 700,170" fill="none"/>
     <polyline points="760,186 800,200" fill="none"/>
+    <polyline points="848,214 872,196" fill="none"/>
   </g>`;
   svg.innerHTML = s;
   /* legend */
-  const L = [["iso-vault", "mVault"], ["iso-silo", "mSilo"], ["iso-belt", "mBelt"], ["iso-tower", "mTower"], ["iso-sp", "delT"], ["iso-book", "mBook"]];
+  const L = [["iso-vault", "mVault"], ["iso-silo", "mSilo"], ["iso-belt", "mBelt"], ["iso-tower", "mTower"], ["iso-sp", "delT"], ["iso-book", "mBook"], ["iso-pool", "mPool"]];
   $("mach-legend").innerHTML = L.map(([id, k]) => `<button type="button" data-goto="${$(id).dataset.goto}"><span class="k" id="lg-${id}"></span>${esc(T(k))}</button>`).join("");
   /* clicks + keys */
   document.addEventListener("click", (e) => {
@@ -1750,6 +1765,28 @@ function renderMachine() {
   setPart("iso-sp", !!TRANSPORT);
   const real = !!(LIVE && LIVE.truthLabel && String(LIVE.truthLabel).startsWith("REAL"));
   setPart("iso-book", real);
+  /* pools tanks — fills bound to REAL reserves from the live book (same engine the swap tab quotes) */
+  const pools = amPools();
+  const pk = Object.keys(pools).sort();
+  const tank = (el, pool) => {
+    if (!el) return;
+    let H = 0;
+    if (pool) {
+      try {
+        const saos = Number(BigInt(pool.resA)) / 1000;
+        const pct = saos > 0 ? Math.min(80, 12 + Math.log10(saos + 1) * 22) : 0;
+        H = Math.round(pct * 1.32);
+      } catch { H = 0; }
+    }
+    el.setAttribute("height", String(H)); el.setAttribute("y", String(274 - H));
+  };
+  tank($("iso-poolA-fill"), pools[pk[0]]);
+  tank($("iso-poolB-fill"), pools[pk[1]]);
+  const la = $("iso-poolA-label"), lb = $("iso-poolB-label");
+  if (la) la.textContent = pools[pk[0]]?.quote || "—";
+  if (lb) lb.textContent = pools[pk[1]]?.quote || "—";
+  const poolsAlive = pk.some((k) => { try { return BigInt(pools[k].resA) > 0n && BigInt(pools[k].resB) > 0n; } catch { return false; } });
+  setPart("iso-pool", poolsAlive);
 }
 /* next-step bar */
 function nextStep() {
@@ -1893,7 +1930,7 @@ $("del-list").addEventListener("click", (e) => {
 /* ═══════════ lang + boot ═══════════ */
 $("btn-lang").addEventListener("click", () => { LANG = LANG === "he" ? "en" : "he"; try { localStorage.setItem("saos.lang", LANG); } catch {} applyLang(); buildMachineLegend(); renderAccount(); renderPools(); renderQueue(); renderRails(); renderLiveChips(); renderStatusStrip(); renderAll(); });
 function buildMachineLegend() {
-  const L = [["iso-vault", "mVault"], ["iso-silo", "mSilo"], ["iso-belt", "mBelt"], ["iso-tower", "mTower"], ["iso-sp", "delT"], ["iso-book", "mBook"]];
+  const L = [["iso-vault", "mVault"], ["iso-silo", "mSilo"], ["iso-belt", "mBelt"], ["iso-tower", "mTower"], ["iso-sp", "delT"], ["iso-book", "mBook"], ["iso-pool", "mPool"]];
   $("mach-legend").innerHTML = L.map(([id, k]) => `<button type="button" data-goto="${$(id).dataset.goto}"><span class="k" id="lg-${id}"></span>${esc(T(k))}</button>`).join("");
   renderMachine();
 }
