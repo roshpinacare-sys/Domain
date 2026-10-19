@@ -407,6 +407,7 @@ footer.site a:hover{color:var(--gold-bright);text-decoration:none}
       <a class="tab" href="#home" data-nav="home" data-i="navHome">Home</a>
       <a class="tab" href="#wallet" data-nav="wallet" data-i="navWallet">Wallet</a>
       <a class="tab" href="#exchange" data-nav="exchange" data-i="navExchange">Exchange</a>
+      <a class="tab" href="#pools" data-nav="pools" data-i="navPools">Pools</a>
       <a class="tab" href="#dex" data-nav="dex" data-i="navDex">DEX</a>
       <a class="tab" href="#earn" data-nav="earn" data-i="navEarn">Deposit and Earn</a>
       <a class="tab" href="#currency" data-nav="currency" data-i="navCurrency">Currency</a>
@@ -722,6 +723,50 @@ footer.site a:hover{color:var(--gold-bright);text-decoration:none}
       <h2 data-i="xFillsT">Recent fills</h2>
       <p class="sub" data-i="xFillsP">Settled deals with their on-chain payment references.</p>
       <div class="feed" id="x-fills"></div>
+    </div>
+  </section>
+
+  <!-- ═══════════ AMM POOLS (Genesis-2) ═══════════ -->
+  <section class="view" id="view-pools">
+    <div class="eyebrow">SAOS · AMM POOLS</div>
+    <h2 data-i="amTitle">Liquidity pools</h2>
+    <p class="sect-sub" data-i="amSub">Constant-product pools on the open chain. Swap SAOS against custody-backed credit instantly, provide both sides and earn the pool fee. Every reserve is public and audited against real custody on every fold run — no invented money, ever.</p>
+
+    <div class="grid g2">
+      <div class="card">
+        <h2 data-i="amSwapT">Swap</h2>
+        <p class="sub" data-i="amSwapP">Instant on-chain swap at the pool price. You sign on your device; the network fold executes it deterministically.</p>
+        <div class="frow">
+          <div class="field"><label class="f" data-i="amPair">Pool</label><select class="mono" id="am-pair"></select></div>
+          <div class="field"><label class="f" data-i="amDir">Direction</label><select class="mono" id="am-dir"><option value="SA2C" data-i="amDirSA2C">SAOS → credit</option><option value="C2SA" data-i="amDirC2SA">credit → SAOS</option></select></div>
+          <div class="field"><label class="f" data-i="amAmt">You pay</label><input class="mono" id="am-amt" placeholder="10.000" inputmode="decimal"></div>
+          <div class="field"><label class="f" data-i="amSlip">Max slippage</label><select class="mono" id="am-slip"><option value="1">1%</option><option value="3" selected>3%</option><option value="5">5%</option></select></div>
+        </div>
+        <div class="note" id="am-quote">—</div>
+        <button class="btn gold" id="btn-swap" data-i="amSwapBtn">Sign swap</button>
+      </div>
+      <div class="card">
+        <h2 data-i="amLpT">My liquidity</h2>
+        <p class="sub" data-i="amLpP">Provide both sides at the pool ratio (±2%) and hold LP units — the fee compounds into the reserves you own a share of. Remove any time, pro-rata.</p>
+        <div class="frow">
+          <div class="field"><label class="f" data-i="amPair2">Pool</label><select class="mono" id="am-lp-pair"></select></div>
+          <div class="field"><label class="f" data-i="amLpBase">SAOS side</label><input class="mono" id="am-lp-base" placeholder="100.000" inputmode="decimal"></div>
+          <div class="field"><label class="f" data-i="amLpQuote">Credit side</label><input class="mono" id="am-lp-quote" placeholder="auto" inputmode="decimal"></div>
+          <div class="field"><label class="f" data-i="amLpRemove">Remove LP %</label><input class="mono" id="am-lp-rm" placeholder="25" inputmode="decimal"></div>
+        </div>
+        <div class="note" id="am-lp-info">—</div>
+        <button class="btn gold" id="btn-lp-add" data-i="amLpAdd">Sign add liquidity</button>
+        <button class="btn" id="btn-lp-rm" data-i="amLpRm" style="margin-inline-start:8px">Sign remove</button>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <h2 data-i="amPoolsT">Pools — the open reserves</h2>
+      <p class="sub" data-i="amPoolsP">Live from the public book. Spot = credit per 1 SAOS. Volume is the cumulative amount swapped through each pool.</p>
+      <div class="tblwrap"><table><thead><tr>
+        <th data-i="amPool">Pool</th><th data-i="amRes">SAOS reserve</th><th data-i="amResC">Credit reserve</th><th data-i="amSpot">Spot</th><th data-i="amFee">Fee</th><th data-i="amSwaps">Swaps</th><th data-i="amMyLp">My LP</th>
+      </tr></thead><tbody id="am-pools"></tbody></table></div>
+      <div class="note" id="am-custody"></div>
     </div>
   </section>
 
@@ -1068,6 +1113,14 @@ en: {
   wNick:"Display name (optional)", wRegBtn:"Register on chain",
   wSendT:"Send", wSendP:"Signed on your device, broadcast as a public operation.",
   wSendSym:"Currency", wSendTo:"Recipient address (saos1...)", wSendAmt:"Amount", wSendBtn:"Sign transfer",
+  navPools:"Pools", amTitle:"Liquidity pools", amSub:"Constant-product pools on the open chain. Swap SAOS against custody-backed credit instantly, provide both sides and earn the pool fee. Every reserve is public and audited against real custody on every fold run — no invented money, ever.",
+  amSwapT:"Swap", amSwapP:"Instant on-chain swap at the pool price. You sign on your device; the network fold executes it deterministically.",
+  amPair:"Pool", amDir:"Direction", amDirSA2C:"SAOS → credit", amDirC2SA:"credit → SAOS", amAmt:"You pay", amSlip:"Max slippage", amSwapBtn:"Sign swap",
+  amLpT:"My liquidity", amLpP:"Provide both sides at the pool ratio (±2%) and hold LP units — the fee compounds into the reserves you own a share of. Remove any time, pro-rata.",
+  amPair2:"Pool", amLpBase:"SAOS side", amLpQuote:"Credit side", amLpRemove:"Remove LP %", amLpAdd:"Sign add liquidity", amLpRm:"Sign remove",
+  amPoolsT:"Pools — the open reserves", amPoolsP:"Live from the public book. Spot = credit per 1 SAOS. Volume is the cumulative amount swapped through each pool.",
+  amPool:"Pool", amRes:"SAOS reserve", amResC:"Credit reserve", amSpot:"Spot", amFee:"Fee", amSwaps:"Swaps", amMyLp:"My LP",
+  amCustodyOk:"Custody audit: the credit in circulation is fully backed by currency the treasury custodian actually holds on chain.", amCustodyDeficit:"Custody audit: DEFICIT — credit in circulation exceeds measured custody. Published honestly until restored.",
   wQueueT:"Signed operations queue", wQueueP:"Signed and waiting. Copy them for the network, or broadcast below.", wQueueCopy:"Copy signed JSON",
   wRelayT:"Broadcast", wRelayP:"A Steem account key is transport only: it cannot change your operations. The inner signature is the authority.",
   wRelayAcc:"Steem account", wRelayWif:"Posting key (WIF)", wRelayBtn:"Broadcast queue",
@@ -1326,10 +1379,18 @@ he: {
   nRoot:"שורש", nWhen:"מתי", nSeen:"נראה על",
   nAnchT:"עוגנים אחרונים", nAnchP:"נקודות-ביקורת שנכתבו לשרשראות ציבוריות כעדים קבועים.",
   fVerify:"אימות עצמאי", fCurrency:"המטבע", fWallet:"פתיחת ארנק",
+  navPools:"בריכות", amTitle:"בריכות נזילות", amSub:"בריכות מכפלה-קבועה על השרשרת הפומבית. החליפו SAOS מול אשראי גיבוי-מטמון ברגע, הפקידו שני-צדדים והרוויחו את דמי-הבריכה. כל עתודה פומבית ונבדקת מול מטמון אמיתי בכל ריצת-fold — אין כסף מומצא, לעולם.",
+  amSwapT:"החלפה", amSwapP:"החלפה מיידית על השרשרת במחיר-הבריכה. חותמים במכשיר; ה-fold של הרשת מבצע בדטרמיניזם.",
+  amPair:"בריכה", amDir:"כיוון", amDirSA2C:"SAOS ← אשראי", amDirC2SA:"אשראי ← SAOS", amAmt:"אתם משלמים", amSlip:"החלקה מרבית", amSwapBtn:"חתום החלפה",
+  amLpT:"הנזילות שלי", amLpP:"הפקידו שני-צדדים ביחס-הבריכה (±2%) והחזיקו יחידות-LP — דמי-הבריכה מתגלגלים לעתודות שאתם שותפים בהן. ניתן למשוך בכל עת, פרו-רטה.",
+  amPair2:"בריכה", amLpBase:"צד SAOS", amLpQuote:"צד אשראי", amLpRemove:"משיכת LP %", amLpAdd:"חתום הוספת נזילות", amLpRm:"חתום משיכה",
+  amPoolsT:"הבריכות — העתודות הפומביות", amPoolsP:"חי מהספר הציבורי. שער = אשראי ל-1 SAOS. היקף = הכמות המצטברת שהוחלפה דרך הבריכה.",
+  amPool:"בריכה", amRes:"עתודת SAOS", amResC:"עתודת אשראי", amSpot:"שער", amFee:"דמי-בריכה", amSwaps:"החלפות", amMyLp:"ה-LP שלי",
+  amCustodyOk:"ביקורת-מטמון: האשראי שבמחזור מגובה במלואו במטבע שמטמוני האוצר באמת מחזיק על השרשרת.", amCustodyDeficit:"ביקורת-מטמון: גירעון — האשראי שבמחזור עולה על המטמון הנמדד. מתפרסם בכנות עד לתיקון.",
   tOk:{ walletBorn:"ארנק חדש נולד במכשיר שלך", wiped:"הארנק נמחק מהזיכרון", backup:"גיבוי מוצפן הורד",
     restored:"הארנק שוחזר", signed:"נחתם ונוסף לתור", broadcast:n=>n+" פעולות שודרו לשרשרת",
     copied:"הועתק", registered:"הרישום נחתם והועבר לתור", needWallet:"קודם פתח או שחזר ארנק",
-    claimSigned:"תביעת ההפקדה נחתמה והועברה לתור — עכשיו פתח את הארנק ושדר את התור", offerSigned:"הצעת המכירה נחתמה והועברה לתור", cancelSigned:"הביטול נחתם והועבר לתור" },
+    claimSigned:"תביעת ההפקדה נחתמה והועברה לתור — עכשיו פתח את הארנק ושדר את התור", swapSigned:"ההחלפה נחתמה והועברה לתור", lpSigned:"פעולת הנזילות נחתמה והועברה לתור", offerSigned:"הצעת המכירה נחתמה והועברה לתור", cancelSigned:"הביטול נחתם והועבר לתור" },
   tErr:{ create:"יצירת הארנק נכשלה: ", import:"שחזור נכשל: ", sign:"החתימה נכשלה: ", badAddr:"כתובת SAOS לא תקינה (saos1...)",
     badAmt:"כמות לא תקינה — הזינו מספר חיובי, למשל 12.5", badPrice:"מחיר לא תקין — הזינו מספר חיובי, למשל 0.001", badCur:"סמל מטבע: 2 עד 10 אותיות גדולות", badRef:"אסמכתה: 6 עד 90 תווים — הדביקו את מזהה ההעברה מאפליקציית המטבע שלכם",
     noSymbol:"בחרו מטבע מהרשימה קודם", emptyQueue:"התור ריק — אין מה לשדר. חתמו קודם על פעולה (למשל רישום ארנק) ואז שדרו.", relayFail:"השידור נכשל: ", noToken:"לא נבחר טוקן", badSym:"סמל: אותיות גדולות A-Z, 3 עד 8 תווים",
@@ -1455,7 +1516,7 @@ function timeAgo(iso) {
 $("year").textContent = new Date().getFullYear();
 
 /* ═══════════ routing ═══════════ */
-const VIEWS = ["home", "wallet", "exchange", "dex", "earn", "currency", "tokens", "saosx", "network"];
+const VIEWS = ["home", "wallet", "exchange", "pools", "dex", "earn", "currency", "tokens", "saosx", "network"];
 function route() {
   let h = (location.hash || "#home").slice(1);
   if (!VIEWS.includes(h)) h = "home";
@@ -2383,6 +2444,136 @@ $("btn-claim").addEventListener("click", async () => {
   const env = await enqueue({ k: "deposit.claim", cur, amt, ref });
   if (env) { toast(t("tOk.claimSigned")); $("cl-ref").value = ""; }
 });
+
+/* ═══════════ AMM pools (Genesis-2) — the real exchange ═══════════ */
+function amPools() { return (LIVE && LIVE.state && LIVE.state.pools) || {}; }
+function amDec(sym) {
+  const tok = LIVE?.state?.tokens?.[sym];
+  if (tok) return Number(tok.decimals);
+  return sym === "SAOS" ? 3 : 8;
+}
+function amPoolEngine(p) { return { feeBps: String(p.feeBps ?? "30"), resA: BigInt(p.resA), resB: BigInt(p.resB) }; }
+function amUnits(raw, dec) {
+  const m = /^(\d+)(?:\.(\d{1,8}))?$/.exec(String(raw || "").trim());
+  if (!m) return null;
+  return BigInt(m[1] + (m[2] ?? "").padEnd(dec, "0"));
+}
+function amFmt(units, sym) { try { return nice(SL.fmt(String(units), amDec(sym))); } catch { return String(units); } }
+function amFillPairs() {
+  const pairs = Object.keys(amPools()).sort();
+  for (const id of ["am-pair", "am-lp-pair"]) {
+    const el = $(id); if (!el) continue;
+    const keep = el.value && pairs.includes(el.value) ? el.value : pairs[0];
+    el.innerHTML = pairs.map((x) => `<option value="${esc(x)}"${x === keep ? " selected" : ""}>${esc(x)}</option>`).join("") || `<option value="">—</option>`;
+  }
+}
+function amSpot(p) { try { return (Number(p.resB) / 1e8) / (Number(p.resA) / 1e3); } catch { return 0; } }
+function amQuote() {
+  const el = $("am-quote"); if (!el) return;
+  const p = amPools()[$("am-pair")?.value]; const dir = $("am-dir")?.value; const raw = $("am-amt")?.value?.trim();
+  if (!p || !dir || !raw) { el.textContent = "—"; return; }
+  const units = amUnits(raw, dir === "SA2C" ? 3 : 8);
+  if (units === null || units <= 0n) { el.textContent = "—"; return; }
+  const q = SL.quoteSwap(amPoolEngine(p), dir, units.toString());
+  if (q.err) { el.textContent = (LANG === "he" ? "ההחלפה לא אפשרית: " : "swap not possible: ") + q.err; return; }
+  const outSym = dir === "SA2C" ? p.quote : "SAOS";
+  const slip = Number($("am-slip")?.value || 3);
+  const minOut = (q.out * BigInt(10000 - slip * 100)) / 10000n;
+  const spot = amSpot(p);
+  /* effective price in the same space as spot (credit per 1 SAOS), both real units */
+  const effPrice = dir === "SA2C" ? (Number(q.out) * 1e3) / (Number(units) * 1e8) : (Number(units) * 1e3) / (Number(q.out) * 1e8);
+  const impact = spot > 0 ? Math.max(0, (1 - effPrice / spot) * 100) : 0;
+  const symIn = dir === "SA2C" ? "SAOS" : p.quote;
+  const bal = WALLET ? (LIVE?.state?.balances?.[WALLET.addr]?.[symIn] || "0") : null;
+  const enough = bal !== null ? BigInt(bal) >= units : null;
+  el.innerHTML = esc("≈ " + amFmt(q.out, outSym) + " " + outSym + " · minOut " + amFmt(minOut, outSym) + " · spot " + spot.toPrecision(6) + " · impact " + impact.toFixed(2) + "%" + (enough === false ? (LANG === "he" ? " · אין מספיק יתרה" : " · insufficient balance") : ""));
+}
+function amLpInfo() {
+  const el = $("am-lp-info"); if (!el) return;
+  const pair = $("am-lp-pair")?.value; const p = amPools()[pair];
+  if (!p) { el.textContent = "—"; return; }
+  const mine = WALLET ? BigInt(p.lpBal?.[WALLET.addr] || "0") : 0n;
+  const share = BigInt(p.lpSupply || "0") > 0n && mine > 0n ? Number((mine * 10000n) / BigInt(p.lpSupply)) / 100 : 0;
+  const baseIn = $("am-lp-base")?.value?.trim();
+  let auto = "";
+  if (baseIn && Number(baseIn) > 0) {
+    const u = amUnits(baseIn, 3);
+    if (u !== null && p.resA > 0n) {
+      const q = (u * BigInt(p.resB)) / BigInt(p.resA);
+      auto = " · " + (LANG === "he" ? "צד-אשראי נדרש" : "credit side needed") + " ≈ " + amFmt(q, p.quote);
+    }
+  }
+  el.textContent = (LANG === "he" ? "ה-LP שלי" : "my LP") + ": " + amFmt(mine, "LP") + (share ? " (" + share.toFixed(2) + "%)" : "") + auto;
+}
+function renderPools() {
+  amFillPairs();
+  const body = $("am-pools"); if (body) {
+    const pools = amPools();
+    body.innerHTML = Object.keys(pools).sort().map((pair) => {
+      const p = pools[pair];
+      const mine = WALLET ? BigInt(p.lpBal?.[WALLET.addr] || "0") : 0n;
+      return `<tr><td><b>${esc(pair)}</b></td><td>${esc(amFmt(p.resA, "SAOS"))}</td><td>${esc(amFmt(p.resB, p.quote))}</td><td class="mono">${esc(amSpot(p).toPrecision(6))}</td><td>${esc(String(Number(p.feeBps) / 100))}%</td><td>${esc(String(p.swaps))}</td><td>${mine > 0n ? esc(amFmt(mine, "LP")) : "—"}</td></tr>`;
+    }).join("") || `<tr><td colspan="7">—</td></tr>`;
+  }
+  const cu = $("am-custody");
+  if (cu) {
+    const c = LIVE?.custody;
+    if (!c) cu.textContent = "";
+    else {
+      const defs = Object.entries(c.verdict || {}).filter(([, v]) => String(v).includes("deficit"));
+      cu.textContent = defs.length ? (LANG === "he" ? t("amCustodyDeficit") + " (" + defs.map(([k]) => k).join(", ") + ")" : t("amCustodyDeficit") + " (" + defs.map(([k]) => k).join(", ") + ")") : t("amCustodyOk");
+    }
+  }
+  amQuote(); amLpInfo();
+}
+$("am-pair")?.addEventListener("change", amQuote);
+$("am-dir")?.addEventListener("change", amQuote);
+$("am-amt")?.addEventListener("input", amQuote);
+$("am-slip")?.addEventListener("change", amQuote);
+$("am-lp-pair")?.addEventListener("change", amLpInfo);
+$("am-lp-base")?.addEventListener("input", amLpInfo);
+$("btn-swap")?.addEventListener("click", async () => {
+  const pair = $("am-pair")?.value; const p = amPools()[pair]; const dir = $("am-dir")?.value; const raw = $("am-amt")?.value?.trim();
+  if (!p || !dir || !raw) { toast(LANG === "he" ? "מלאו בריכה וכמות" : "pick a pool and amount", false); return; }
+  const units = amUnits(raw, dir === "SA2C" ? 3 : 8);
+  if (units === null || units <= 0n) { toast(t("tErr.badAmt"), false); return; }
+  const q = SL.quoteSwap(amPoolEngine(p), dir, units.toString());
+  if (q.err) { toast((LANG === "he" ? "ההחלפה נדחית: " : "swap rejected: ") + q.err, false); return; }
+  const slip = Number($("am-slip")?.value || 3);
+  const minOut = (q.out * BigInt(10000 - slip * 100)) / 10000n;
+  const env = await enqueue({ k: "pool.swap", pair, dir, amountIn: units.toString(), minOut: minOut.toString() });
+  if (env) { toast(t("tOk.swapSigned")); $("am-amt").value = ""; }
+});
+$("btn-lp-add")?.addEventListener("click", async () => {
+  const pair = $("am-lp-pair")?.value; const p = amPools()[pair]; const rawBase = $("am-lp-base")?.value?.trim();
+  if (!p || !rawBase) { toast(LANG === "he" ? "מלאו בריכה וצד SAOS" : "pick a pool and a SAOS amount", false); return; }
+  const base = amUnits(rawBase, 3);
+  if (base === null || base <= 0n) { toast(t("tErr.badAmt"), false); return; }
+  const rawQ = $("am-lp-quote")?.value?.trim();
+  let quote;
+  if (rawQ && Number(rawQ) > 0) { quote = amUnits(rawQ, 8); }
+  else if (p.resA > 0n) { quote = ((base * BigInt(p.resB)) / BigInt(p.resA)) + 1n; } // ceil — inside the ±2% law
+  else { toast(LANG === "he" ? "הבריכה ריקה — הפקידו שני צדדים ידנית" : "empty pool — provide both sides manually", false); return; }
+  if (quote === null || quote === undefined || quote <= 0n) { toast(t("tErr.badAmt"), false); return; }
+  const env = await enqueue({ k: "pool.add", pair, base: base.toString(), quote: quote.toString() });
+  if (env) { toast(t("tOk.lpSigned")); $("am-lp-base").value = ""; $("am-lp-quote").value = ""; }
+});
+$("btn-lp-rm")?.addEventListener("click", async () => {
+  const pair = $("am-lp-pair")?.value; const p = amPools()[pair]; const pctRaw = $("am-lp-rm")?.value?.trim();
+  if (!p) { toast(LANG === "he" ? "בחרו בריכה" : "pick a pool", false); return; }
+  if (!WALLET) { toast(t("tOk.needWallet"), false); return; }
+  const mine = BigInt(p.lpBal?.[WALLET.addr] || "0");
+  if (mine <= 0n) { toast(LANG === "he" ? "אין לכם LP בבריכה הזו" : "you hold no LP in this pool", false); return; }
+  const pct = Number(pctRaw || "100");
+  if (!(pct > 0 && pct <= 100)) { toast(LANG === "he" ? "אחוז לא תקין (0-100)" : "percent must be 0-100", false); return; }
+  const lp = (mine * BigInt(Math.round(pct * 100))) / 10000n;
+  if (lp <= 0n) { toast(t("tErr.badAmt"), false); return; }
+  const env = await enqueue({ k: "pool.remove", pair, lp: lp.toString() });
+  if (env) { toast(t("tOk.lpSigned")); $("am-lp-rm").value = ""; }
+});
+setInterval(renderPools, 5000);
+window.addEventListener("hashchange", renderPools);
+setTimeout(renderPools, 400);
 
 /* ═══════════ broadcast (any Steem account as transport) — wallet v2 (task 21-b) ═══════════
    ROOT-CAUSE FIX (A): the old wall validated ONLY posting authority, so an owner key
