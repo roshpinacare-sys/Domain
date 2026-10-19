@@ -13,6 +13,10 @@ on:
         description: 'DRY=1 gates only · DRY=0 live claim'
         required: false
         default: 'true'
+      curate:
+        description: 'CURATE=1 also votes (curation rewards accrue → claim lane harvests)'
+        required: false
+        default: 'false'
   schedule:
     - cron: '37 */4 * * *'
 
@@ -30,6 +34,7 @@ jobs:
     env:
       ROT2_FLEET_KEYS: ${{ secrets.ROT2_FLEET_KEYS }}
       FLEET_ROSTER_MAP: ${{ secrets.FLEET_ROSTER_MAP }}
+      CURATE: ${{ github.event.inputs.curate || '0' }}
     steps:
       - name: resolve dry flag
         id: dry
