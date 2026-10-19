@@ -5,7 +5,10 @@ name: weave-mirror
 
 on:
   schedule:
-    - cron: '38 18 * * *'
+    # T22: the live SAOS book is folded every 15 min on Console (saos-fold) —
+    # the public mirror rides the same cadence so wallet.html always reads a
+    # fresh book (the daily cadence left the public face up to 24h stale).
+    - cron: '*/15 * * * *'
   workflow_dispatch:
 
 permissions:
