@@ -23,7 +23,7 @@
 <body>
 <main>
   <h1>קטלוג-היכולות</h1>
-  <p class="sub">מה הריבונות יודעת לעשות — כל איבר, עורק, וידע · נבנה אוטונומית · 2026-10-18T04:36:08.785Z</p>
+  <p class="sub">מה הריבונות יודעת לעשות — כל איבר, עורק, וידע · נבנה אוטונומית · 2026-10-19T00:13:33.688Z</p>
 
   <h2>האיברים (organs) · מה כל אחד עושה ומתי פעם אחרונה</h2>
   <table><tr><th>איבר</th><th>תפקיד</th><th>דופק-אחרון</th></tr>
@@ -35,10 +35,15 @@
   <tr><td><code>treasury-topup</code></td><td>מבצע-איזון-האוצר P2 · t12 · owner-approved: §3 — אוצר ≥3000 SP.</td><td class="warn">—</td></tr>
   <tr><td><code>builder</code></td><td>איבר-הבונה t13 · owner order: &quot;אני רוצה בניה שיפור תמיד ולא רק</td><td class="warn">—</td></tr>
   <tr><td><code>growth-watch</code></td><td>איבר-הצמיחה t13 · owner order: &quot;לוודא התפתחות וגדילה ולא סגירה,</td><td class="warn">—</td></tr>
+  <tr><td><code>artery-pacer</code></td><td>איבר-הקצב t14 · owner order: &quot;תמשיך ודחוף&quot;: הלב שאינו-בוטח-במתזמן —</td><td class="warn">—</td></tr>
+  <tr><td><code>treasury-forensics</code></td><td>משטרת-האוצר t14: מודד-מהשרשרת מי-הזיז-vesting של-האוצר ב-48h</td><td class="warn">—</td></tr>
+  <tr><td><code>autonomy-guardian</code></td><td>השומר-חוצה-הריפו t15 · owner order: &quot;מפעיל הכל... לא סגירה&quot;: הגיבוי-שחוצה-גבולות-ריפו —</td><td class="warn">—</td></tr>
   </table>
 
   <h2>העורקים (workflows) · קצב-הפעמעום</h2>
   <table><tr><th>עורק</th><th>cron</th></tr>
+  <tr><td><code>agent-9-org-revival.yml</code></td><td>17 6 * * *</td></tr>
+  <tr><td><code>agent-9-vault-sync.yml</code></td><td>47 3 * * *</td></tr>
   <tr><td><code>artery-builder.yml</code></td><td>17 * * * *</td></tr>
   <tr><td><code>artery-catchup.yml</code></td><td>7,37 * * * *</td></tr>
   <tr><td><code>artery-decision-truth.yml</code></td><td>16,46 * * * *</td></tr>
@@ -101,18 +106,23 @@
   <tr><td><a href="https://github.com/akitaonrails/ai-memory" target="_blank" rel="noopener">akitaonrails/ai-memory</a></td><td>SAFE_TO_STUDY</td><td>Solution for long term memory for agent coding CLIs and to facilitate handoff between different agent vendors</td></tr>
   <tr><td><a href="https://github.com/android/skills" target="_blank" rel="noopener">android/skills</a></td><td>SAFE_TO_STUDY</td><td>nding?since=daily&amp;quot;,&amp;quot;user_id&amp;quot;:null}}&quot; data-hydro-click-hmac=&quot;1f226507621fd40f79c6b4d60d3744db393620b85354224f58a63b7ae7070f7c&quot;</td></tr>
   <tr><td><a href="https://github.com/stablyai/orca" target="_blank" rel="noopener">stablyai/orca</a></td><td>SAFE_TO_STUDY</td><td>Orca is the place for working with a fleet of agents (e.g. Grok Bot, Claude Code). Run any coding agent with your own subscription. Availabl</td></tr>
+  <tr><td><a href="https://github.com/cursor/plugins" target="_blank" rel="noopener">cursor/plugins</a></td><td>SAFE_TO_STUDY</td><td>Cursor plugin specification and official plugins</td></tr>
+  <tr><td><a href="https://github.com/mlabonne/llm-course" target="_blank" rel="noopener">mlabonne/llm-course</a></td><td>SAFE_TO_STUDY</td><td>Course to get into Large Language Models (LLMs) with roadmaps and Colab notebooks.</td></tr>
+  <tr><td><a href="https://github.com/Kruk2/jasna" target="_blank" rel="noopener">Kruk2/jasna</a></td><td>SAFE_TO_STUDY</td><td>Video restoration tool</td></tr>
+  <tr><td><a href="https://github.com/Comfy-Org/ComfyUI" target="_blank" rel="noopener">Comfy-Org/ComfyUI</a></td><td>SAFE_TO_STUDY</td><td>The most powerful and modular diffusion model GUI, api and backend with a graph/nodes interface. The fastest local inference engine in the w</td></tr>
   </table>
 
   <h2>קבלות-חיות · מי פעם אחרונה</h2>
   <ul>
   <li><code>fleet-participation</code> — ? · אין-מדידה</li>
-  <li><code>builder</code> — 1 דק׳ · ok</li>
-  <li><code>growth</code> — 2 שע׳ · ok</li>
-  <li><code>scout</code> — 2 שע׳ · ok</li>
-  <li><code>self-heal</code> — 2 שע׳ · ok</li>
-  <li><code>treasury</code> — 2 שע׳ · ok</li>
-  <li><code>world</code> — 3 שע׳ · ok</li>
-  <li><code>execution</code> — 39 דק׳ · ok</li>
+  <li><code>execution</code> — 18 שע׳ · ok</li>
+  <li><code>self-heal</code> — 19 דק׳ · ok</li>
+  <li><code>world</code> — 23 שע׳ · ok</li>
+  <li><code>treasury</code> — 45 דק׳ · ok</li>
+  <li><code>pacer</code> — 6 דק׳ · בעיה-מדודה</li>
+  <li><code>growth</code> — 60 דק׳ · ok</li>
+  <li><code>scout</code> — 60 דק׳ · ok</li>
+  <li><code>builder</code> — 72 דק׳ · ok</li>
   </ul>
 
   <footer>נבנה על-ידי איבר-הבונה מהקבצים האמיתיים בגיט · השמישות היא חוק, לא מותרות</footer>
