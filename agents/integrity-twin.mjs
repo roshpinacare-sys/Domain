@@ -7,6 +7,10 @@
  *  · סתירה בין ספר שאומר PASS-כביכול לבין ריצת-היצרן האחרונה שנכשלה = FLAG.
  *  · 403/429/אין-טוקן = UNVERIFIABLE — כנות, לא זיוף; לא מוריד את ה-overall למטה
  *    לבדו, גם לא מעלה אותו (כל FLAG אחד = FAIL).
+ *  · verdict-aware (T30, תקדים-blurt.live/T29): staleness של-מקור-מכשיר-הבעלים
+ *    (thirdPartyDevice — sovereign-runner-kit; עיצוב: אין-מפתחות-ב-kit, עיגון-רק-בכספת-הבעלים)
+ *    אינו אדום-מכונה — כשכל-הממצאים כאלה ה-overall = DEGRADED (הממצאים נשארים גלויים במלואם;
+ *    empty/unparsable/no-timestamp/missing על אותו-ספר נשארים FAIL — אנומליה-בספר עצמו).
  *  · פסק-קודם של השומר-עצמו נבדק ראשון (L0).
  *  · exit 0 תמיד — הפסק נכתב לספר גם כשהוא אדום; ה-workflow מפרסם ב-if: always().
  */
@@ -27,7 +31,9 @@ const BOOKS = [
   { where: 'Domain:office/data.json', url: `https://raw.githubusercontent.com/${OWNER}/Domain/main/office/data.json`, slaH: 2 },
   { where: 'Domain:agents/office-live.json', url: `https://raw.githubusercontent.com/${OWNER}/Domain/main/agents/office-live.json`, slaH: 4 },
   { where: 'FleetHQ:office/state/office-state.json', url: `https://raw.githubusercontent.com/${OWNER}/FleetHQ/main/office/state/office-state.json`, slaH: 4 },
-  { where: 'sovereign-runner-kit:results/receipts.jsonl', url: `https://raw.githubusercontent.com/${OWNER}/sovereign-runner-kit/main/results/receipts.jsonl`, slaH: 72, jsonl: true },
+  // מקור-מכשיר-הבעלים (T30): ה-kit רץ על המכשיר-של-הבעלים (device-fresh-oracle, מדידה 2026-10-19)
+  // — שקט שלו = DEGRADED-ולא-FAIL (חוק-verdict-aware, למעלה)
+  { where: 'sovereign-runner-kit:results/receipts.jsonl', url: `https://raw.githubusercontent.com/${OWNER}/sovereign-runner-kit/main/results/receipts.jsonl`, slaH: 72, jsonl: true, thirdPartyDevice: true },
 ];
 
 const tsOf = (o) => {
@@ -140,6 +146,27 @@ try {
   const orders = JSON.parse(fs.readFileSync('agents/work-orders.json', 'utf8'));
   ok('Domain:agents/work-orders.json', 'published', `${orders.totals?.open ?? '?'} פקודות-פתוחות · schema ${orders.schema || 'legacy'}`);
 } catch (e) { flag('Domain:agents/work-orders.json', 'local-read', String(e?.message || e)); }
+
+// ─── verdict-aware degradation (T30) — אחרי-כל-הבדיקות, לפני-הכתיבה ───
+// אדום-מכונה נשאר אדום; שקט-של-צד-שלישי הופך DEGRADED עם-תיעוד-מלא. אפס-הסתרה.
+try {
+  const TP = new Set(BOOKS.filter((b) => b.thirdPartyDevice).map((b) => b.where));
+  // UNVERIFIABLE = ניטרלי (חוק-הכותרת למעלה) — אינו חוסם-דרדור ואינו מניע-אותו
+  const consequential = verdict.findings.filter((f) => f.law !== 'UNVERIFIABLE');
+  const allThirdPartyStale =
+    verdict.overall === 'FAIL' &&
+    consequential.length > 0 &&
+    consequential.every((f) => f.law === 'stale' && TP.has(f.where));
+  if (allThirdPartyStale) {
+    verdict.overall = 'DEGRADED';
+    verdict.degraded = {
+      law: 'verdict-aware/third-party-device',
+      reason: 'כל-הממצאים-המהותיים = staleness של-מקור-מכשיר-הבעלים (sovereign-runner-kit, device-fresh-oracle) — צד-שלישי-מחוץ-להישג-יד; לא שבר-מכונה. תקדים: blurt.live UNREACHABLE (T29).',
+      findings: consequential.map((f) => f.where),
+      remedy: 'הקבלות יתחדשו כשה-kit ירוץ שוב על מכשיר-הבעלים (עיצוב: אין-מפתחות-חתימה-ב-kit; עיגון-רק-בכספת-הבעלים).',
+    };
+  }
+} catch { /* דרדור לעולם לא שובר את הפסק */ }
 
 verdict.summary = {
   sources: BOOKS.length,
