@@ -130,7 +130,7 @@
   .btn.gold:hover { background:var(--gold-soft); }
   .btn:disabled { opacity:.45; cursor:not-allowed; }
   .btn.sm { padding:5px 12px; min-height:34px; font-size:13px; border-radius:8px; }
-  table.t { width:100%; border-collapse:collapse; font-size:13.5px; }
+  table.t { width:100%; border-collapse:collapse; font-size:13.5px; display:block; overflow-x:auto; -webkit-overflow-scrolling:touch; } /* T29 mobile law: wide tables scroll inside themselves — no page-level horizontal overflow (measured 390px: 513→390) */
   table.t th { text-align:start; color:var(--dim); font-weight:500; font-size:12px; padding:7px 10px; border-bottom:1px solid var(--rule); }
   table.t td { padding:8px 10px; border-bottom:1px solid color-mix(in srgb, var(--rule) 55%, transparent); }
   table.t tr:last-child td { border-bottom:none; }
@@ -242,6 +242,10 @@
     <div class="st-head"><h2 id="t-account" data-i="s2T"></h2><span class="st-src" id="src-account"></span></div>
     <p class="sub" data-i="s2P"></p>
     <div id="acct-cells" class="grid"></div>
+    <details class="acc" id="custody-details">
+      <summary data-i="s2CustodyT"></summary>
+      <div id="custody-panel" class="sub">…</div>
+    </details>
     <details class="acc" id="chain-details">
       <summary data-i="s2Chain"></summary>
       <div id="chain-panel" class="sub">…</div>
@@ -398,7 +402,7 @@ const applyLang = () => {
   for (const el of document.querySelectorAll("[data-i]")) { const v = I[el.dataset.i]; if (v == null) continue; const val = typeof v === "function" ? v() : (typeof v === "object" ? (v[LANG] ?? v.he) : v); if (typeof val === "string") el.textContent = val; }
   for (const el of document.querySelectorAll("[data-i-ph]")) { const v = I[el.dataset.iPh]; if (v != null) el.placeholder = (typeof v === "object" ? (v[LANG] ?? v.he) : v); }
   $("btn-lang").textContent = LANG === "he" ? "EN" : "עברית";
-  buildMachine(); buildMachineLegend(); renderAll();
+  buildMachine(); buildMachineLegend(); renderCustody(); renderAll();
 };
 const T = (k) => { const v = I[k]; if (v == null) return k; if (typeof v === "function") return v; const val = typeof v === "object" ? (v[LANG] ?? v.he) : v; return String(val); };
 const I = {
@@ -429,6 +433,7 @@ const I = {
   ksForget: { he: "שכח עותק", en: "Forget copy" },
   s2T: { he: "2 · הממגורות — יתרות אמת", en: "2 · The silos — real balances" },
   s2P: { he: "יתרת הספר החתום (SAOS/CSTEEM/CSBD) ויתרות שרשרת-ה-Steem של חשבון מאומת. כל שורה מראה את מקורה.", en: "Signed-book balances (SAOS/CSTEEM/CSBD) and Steem chain balances of a verified account. Every line shows its source." },
+  s2CustodyT: { he: "כספת-העוגן — מדידה-רוחב-נכסים (STEEM+SBD בערך-דולר)", en: "Anchor treasury — cross-asset measurement (STEEM+SBD in USD)" },
   s2Chain: { he: "פאנל-שרשרת: יתרות, כוח-הצבעה, RC ונציגויות — קריאה חיה", en: "Chain panel: balances, voting power, RC and delegations — live read" },
   s3T: { he: "3 · גלגל-ההחלפה — מחיר אמת מהבריכות", en: "3 · The swap wheel — true price from the pools" },
   s3P: { he: "הצעת-מחיר מהמתמטיקה האמיתית של הבריכות (אותו קוד מדויק של המנוע): עמלה 0.3% והשפעת-מחיר מוצגות בגלוי לפני חתימה.", en: "A quote from the pools' real math (the engine's exact code): 0.3% fee and price impact shown openly before signing." },
@@ -1088,6 +1093,77 @@ function amFillPairs() {
   const syms = ["SAOS", "CSTEEM", "CSBD"];
   selS.innerHTML = syms.map((s) => `<option>${s}</option>`).join("");
 }
+/* ═══ treasury custody — cross-asset measurement (T29 · owner-approved fix (ב)) ═══
+ * Honest math only: balances + verdicts come verbatim from the fold's custody
+ * block in the live book; USD figures are ESTIMATES from a public price feed
+ * (5-min cache, graceful fail → "price unavailable"). The 1:1-vs-real-coin law
+ * makes promised backing = outstanding credit × chain-coin price. The verdict
+ * itself stays the fold's on-chain truth — this panel only makes it visible. */
+let PRICE_CACHE = { at: 0, usd: null };
+async function fetchUsdPrices() {
+  const now = Date.now();
+  if (PRICE_CACHE.usd && now - PRICE_CACHE.at < 300000) return PRICE_CACHE.usd;
+  /* STEEM USD: public CEX/aggregator ladder (measured 2026-10-19: coingecko
+   * public tier 429-rate-limits from shared egress; binance is the primary). */
+  let steem = null;
+  try { const r = await fetch("https://api.binance.com/api/v3/ticker/price?symbol=STEEMUSDT", { cache: "no-store", signal: AbortSignal.timeout(8000) }); const j = await r.json(); steem = parseFloat(j?.price) || null; } catch { /* next rung */ }
+  if (steem == null) { try { const r = await fetch("https://api.coinpaprika.com/v1/tickers/steem-steem", { cache: "no-store", signal: AbortSignal.timeout(8000) }); const j = await r.json(); steem = j?.quotes?.usd?.price ?? null; } catch { /* next rung */ } }
+  if (steem == null) { try { const r = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=steem&vs_currencies=usd", { cache: "no-store", signal: AbortSignal.timeout(8000) }); const j = await r.json(); steem = j?.steem?.usd ?? null; } catch { /* honest fail */ } }
+  /* SBD USD: the chain's own witnesses feed (get_current_median_history_price,
+   * "X SBD per Y STEEM") × the measured STEEM USD — the chain is the judge,
+   * no third-party SBD market needed. */
+  let sbd = null, sbdSrc = null;
+  if (steem != null) {
+    try {
+      const med = await steemRpc("condenser_api.get_current_median_history_price", []);
+      const b = parseFloat(med?.base), q = parseFloat(med?.quote);
+      /* base="X SBD" quote="Y STEEM" → Y STEEM buys X SBD → 1 SBD = (q/b) STEEM */
+      if (Number.isFinite(b) && Number.isFinite(q) && b > 0 && q > 0) { sbd = (q / b) * steem; sbdSrc = "chain-witnesses"; }
+    } catch { /* honest fail */ }
+  }
+  const usd = (steem != null || sbd != null) ? { steem, sbd, sbdSrc } : null;
+  PRICE_CACHE = { at: now, usd };
+  return usd;
+}
+const CUSTODY_SCALE = 100000000n; /* the fold publishes 1e8-units (T27 measured narrative: 61.452 STEEM) */
+function custNum(raw) { try { return Number(BigInt(raw)) / Number(CUSTODY_SCALE); } catch { return null; } }
+function fmtUsd(x) { return x == null ? "—" : "$" + nice(Math.round(x).toString()); }
+async function renderCustody() {
+  const el = $("custody-panel"); if (!el) return;
+  const c = LIVE?.custody || null;
+  const he = LANG === "he";
+  if (!c || !c.measured) {
+    el.textContent = he ? "אין מדידת-כספת בספר החי (custody חסר) — כנות: לא נמדד." : "No treasury measurement in the live book (custody missing) — honest: not measured.";
+    return;
+  }
+  const mSTEEM = custNum(c.measured?.STEEM), mSBD = custNum(c.measured?.SBD);
+  const oCST = custNum(c.outstanding?.CSTEEM), oCSB = custNum(c.outstanding?.CSBD);
+  const prices = await fetchUsdPrices();
+  const pS = prices?.steem ?? null, pD = prices?.sbd ?? null;
+  const anyPrice = pS != null || pD != null;
+  const measuredUsd = (pS != null && mSTEEM != null ? pS * mSTEEM : 0) + (pD != null && mSBD != null ? pD * mSBD : 0);
+  const promisedUsd = (pS != null && oCST != null ? pS * oCST : 0) + (pD != null && oCSB != null ? pD * oCSB : 0);
+  const cov = anyPrice && promisedUsd > 0 ? (measuredUsd / promisedUsd * 100) : null;
+  const verdictBadge = (v) => v === "custody-ok"
+    ? `<span style="color:var(--ok,#2e9e6b)">✓ ${esc(he ? "מגובה" : "covered")}</span>`
+    : `<span style="color:var(--gold)">⚠ ${esc(he ? "גירעון-אמת מפורסם" : "honest deficit published")}</span>`;
+  const priceCell = anyPrice
+    ? `${fmtUsd(measuredUsd)}${pS != null ? ` · STEEM ${pS}$` : ""}${pD != null ? ` · SBD ${pD.toFixed(4)}$${prices.sbdSrc === "chain-witnesses" ? " (" + (he ? "מחיר-עדי-השרשרת" : "chain witnesses") + ")" : ""}` : ""}`
+    : (he ? "מחיר לא זמין — כנות" : "price unavailable — honest");
+  const rows = [
+    [he ? "נמדד בכספת" : "Measured in treasury", `${mSTEEM != null ? nice(mSTEEM.toString()) : "—"} STEEM · ${mSBD != null ? nice(mSBD.toString()) : "—"} SBD`],
+    [he ? "שווי-דולרי נמדד (אמדן — מחיר-ציבורי)" : "Measured USD value (estimate — public price)", priceCell],
+    [he ? "אשראי חייב (חוק 1:1 מול מטבע-אמת)" : "Outstanding credit (1:1 law vs real coin)", `${oCST != null ? nice(oCST.toString()) : "—"} CSTEEM · ${oCSB != null ? nice(oCSB.toString()) : "—"} CSBD`],
+    [he ? "גיבוי-מובטח בדולרים (אמדן)" : "Promised backing in USD (estimate)", anyPrice ? fmtUsd(promisedUsd) : (he ? "מחיר לא זמין" : "price unavailable")],
+    [he ? "כיסוי-רוחב-נכסים (שווי — להבדיל מהדין-לפי-נכס שלהלן)" : "Cross-asset coverage (value — distinct from the per-asset verdict below)", cov != null ? cov.toFixed(1) + "%" : "—"],
+    [he ? "פסק-דין הספר (כנות, לפי-נכס)" : "Book verdict (honest, per-asset)", `CSTEEM: ${verdictBadge(c.verdict?.CSTEEM)} · CSBD: ${verdictBadge(c.verdict?.CSBD)}`],
+  ];
+  el.innerHTML = `<div style="display:grid;gap:6px">` + rows.map(([k, v]) =>
+    `<div style="display:flex;justify-content:space-between;gap:12px;border-bottom:1px dashed var(--rule);padding:4px 0;flex-wrap:wrap"><span class="sub">${esc(k)}</span><span>${v}</span></div>`).join("") + `</div>`
+    + `<div class="sub" style="margin-top:8px">${esc(he
+      ? "מקור: custody מהספר החי (fold · saos-live.json). STEEM: Binance ציבורי (נפילה-מדורגת) — SBD: מחיר-עדי-השרשרת × מחיר-STEEM. אמדן בלבד — לא עוגן. פסק-הדין נשאר של ה-fold על השרשרת."
+      : "Source: custody from the live book (fold · saos-live.json). STEEM: public Binance (graded fallback) — SBD: chain witnesses feed × STEEM price. Estimate only, not an anchor. The verdict stays the fold's on-chain truth.")}</div>`;
+}
 function currentPool() {
   const p = (LIVE?.state?.pools || {})[$("in-pool").value] || null;
   if (!p) return null;
@@ -1259,7 +1335,7 @@ async function refreshBooks() {
   try { LIVE = await jget("saos-live.json"); } catch { /* keep last frame */ }
   try { DEXS = await jget("dex/state.json"); } catch { /* keep last frame */ }
   try { TOKEN = await jget("token.json"); } catch { TOKEN = null; }
-  amFillPairs(); renderAccount(); renderPools(); renderAll();
+  amFillPairs(); renderAccount(); renderPools(); renderCustody(); renderAll();
 }
 function wireUI() {
   $("btn-lang").addEventListener("click", () => { LANG = LANG === "he" ? "en" : "he"; try { localStorage.setItem("saos.lang", LANG); } catch {} applyLang(); });
