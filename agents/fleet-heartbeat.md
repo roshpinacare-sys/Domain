@@ -1,8 +1,8 @@
-# דופק-הצי (fleet-heartbeat) — 2026-10-19T00:11:39.903Z
+# דופק-הצי (fleet-heartbeat) — 2026-10-19T00:28:01.767Z
 
 מדידת-מנועים של כל-הריפואים: מה פועם, מה שקט, מה הפלטפורמה נטרלה, מה נרפא בריצה זו.
 
-**סיכום:** 45 ריפואים · פועמים 14 · ללא-קרון-אך-פעילים 2 · חמימים 11 · שקטים 0 · מעולם-לא-רצו 0 · ללא-workflows 11 · נטרולי-חוסר-פעילות 0 · חסומי-קיר-המכסה 7
+**סיכום:** 45 ריפואים · פועמים 13 · ללא-קרון-אך-פעילים 2 · חמימים 12 · שקטים 0 · מעולם-לא-רצו 0 · ללא-workflows 11 · נטרולי-חוסר-פעילות 0 · חסומי-קיר-המכסה 7
 
 **דופק-מונע:** ops-forge/forge.yml=http 422 · ops-intake/intake.yml=http 422 · Domain/tick-keeper.yml=http 422 · Domain/cognition-beat.yml=http 422
 
@@ -18,10 +18,10 @@
 
 - Defi — ריצה-אחרונה 2026-10-18T05:15:02Z (failure) · אפס-הצלחות בחלון
 - fleet-economy — ריצה-אחרונה 2026-10-18T22:35:32Z (failure) · אפס-הצלחות בחלון
-- Sandbox — ריצה-אחרונה 2026-10-19T00:06:48Z (failure) · אפס-הצלחות בחלון
+- Sandbox — ריצה-אחרונה 2026-10-19T00:21:05Z (failure) · אפס-הצלחות בחלון
 - sandbox-private — ריצה-אחרונה 2026-10-13T03:24:17Z (failure) · אפס-הצלחות בחלון
 - saos-sovereign-foundry — ריצה-אחרונה 2026-10-13T03:24:15Z (failure) · אפס-הצלחות בחלון
-- steem — ריצה-אחרונה 2026-10-18T23:56:43Z (skipped) · אפס-הצלחות בחלון
+- steem — ריצה-אחרונה 2026-10-19T00:27:05Z (skipped) · אפס-הצלחות בחלון
 - Zip — ריצה-אחרונה 2026-10-13T10:53:15Z (failure) · אפס-הצלחות בחלון
 
 ## שורות-שקט (QUIET/NEVER-RAN/NO-WORKFLOWS/AUTO-DISABLED)
@@ -32,9 +32,9 @@
 - sanbox — NO-WORKFLOWS
 - saos-console-zai — NO-WORKFLOWS
 - saos-coordination — NO-WORKFLOWS
-- saos-desk — NO-WORKFLOWS · שקט 94.7 שעות
-- saos-markets — NO-WORKFLOWS · שקט 45.5 שעות
-- saos-owner-channel — NO-WORKFLOWS · שקט 12.2 שעות
+- saos-desk — NO-WORKFLOWS · שקט 94.9 שעות
+- saos-markets — NO-WORKFLOWS · שקט 45.7 שעות
+- saos-owner-channel — NO-WORKFLOWS · שקט 12.5 שעות
 - SovereignConsole — NO-WORKFLOWS
 - vault-home — NO-WORKFLOWS
 
