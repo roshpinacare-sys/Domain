@@ -1,0 +1,64 @@
+name: t25-cred-rotate
+# ONE-SHOT rotation organ (t25): migrate the legacy-named credential to the
+# neutral ANCHOR_CRED so the public tree stops carrying the owner-handle
+# secret NAME (exposure-gate law). Value never printed, never committed.
+# Runs on a throwaway branch only — deleted from origin after success.
+on:
+  workflow_dispatch: {}
+permissions: {}
+concurrency:
+  group: t25-cred-rotate
+jobs:
+  rotate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Seal legacy value into ANCHOR_CRED (ladder PATs, verify, fail loud)
+        env:
+          SRC: ${{ secrets.HEADCORNER_CRED }}
+          P1: ${{ secrets.GH_PAT }}
+          P2: ${{ secrets.SBX_FLEET_PAT }}
+          P3: ${{ secrets.ZIP_PAT }}
+        run: |
+          pip install -q pynacl
+          python3 - <<'PY'
+          import base64, json, os, urllib.request, urllib.error
+          from nacl import encoding, public
+          src = os.environ['SRC']
+          assert src, 'SOURCE_SECRET_EMPTY — fail loud'
+          pats = [os.environ.get(k, '') for k in ('P1', 'P2', 'P3')]
+          pats = [p for p in pats if p]
+          assert pats, 'NO_PATS — fail loud'
+          REPO = 'roshpinacare-sys/Domain'
+          def api(url, method='GET', token=None, data=None):
+              req = urllib.request.Request(url, method=method,
+                  headers={'Authorization': f'Bearer {token}', 'Accept': 'application/vnd.github+json'},
+                  data=json.dumps(data).encode() if data is not None else None)
+              try:
+                  with urllib.request.urlopen(req, timeout=20) as r:
+                      return r.status, json.loads(r.read() or b'{}')
+              except urllib.error.HTTPError as e:
+                  return e.code, {}
+          # find the first PAT with secrets:write (probe + cleanup)
+          WORK = None
+          for i, t in enumerate(pats):
+              st, _ = api(f'https://api.github.com/repos/{REPO}/actions/secrets/T25_PROBE', method='PUT', token=t, data={'encrypted_value': base64.b64encode(b'probe').decode(), 'key_id': 'x'})
+              api(f'https://api.github.com/repos/{REPO}/actions/secrets/T25_PROBE', method='DELETE', token=t)
+              print(f'PAT[{i}] write-probe -> {st}')
+              if st in (201, 204): WORK = t; break
+          assert WORK, 'NO_PAT_WITH_SECRETS_WRITE — fail loud'
+          st, k = api(f'https://api.github.com/repos/{REPO}/actions/secrets/public-key', token=WORK)
+          assert st == 200, f'public-key GET failed {st}'
+          sealed = public.SealedBox(public.PublicKey(k['key'].encode(), encoding.Base64Encoder())).encrypt(src.encode())
+          st, _ = api(f'https://api.github.com/repos/{REPO}/actions/secrets/ANCHOR_CRED', method='PUT', token=WORK,
+                      data={'encrypted_value': base64.b64encode(sealed).decode(), 'key_id': k['key_id']})
+          print(f'PUT ANCHOR_CRED -> {st}')
+          assert st in (201, 204), 'ANCHOR_CRED PUT FAILED'
+          st, v = api(f'https://api.github.com/repos/{REPO}/actions/secrets/ANCHOR_CRED', token=WORK)
+          print('VERIFY:', st, v.get('name'), v.get('updated_at'))
+          assert st == 200
+          print('ROTATE_OK — legacy value migrated under neutral name; source secret left for owner to retire')
+          PY
