@@ -6,7 +6,8 @@
 //
 // משמעת מפתח זהה ל-cloud-pulse (מוכח-חי):
 //   · posting בלבד — המפתח נגזר לציבורי ומושווה ביט-מול-ביט מול רשות-ה-posting
-//     החיה של @owner מהשרשרת. סוד שגוי = סירוב אדום, לא שידור.
+//     החיה של @owner מהשרשרת. סוד שגוי = אין-שידור, תמיד; מאז wave-19.34 הדילוג
+//     ירוק-כן עם כרטיס מודפס + BLOCKED-POSTING-AUTHORITY בשמה (ההתקנה של מפתח-fit = החלטת-בעלים).
 //   · שער-RC לפני שידור (מודל-העלות הנמדד של web-publish).
 //   · אידמפוטנטיות מהשרשרת עצמה: permlink דטרמיניסטי saos-daily-<YYYYMMDD>.
 //   · אפס קומיטים לריפו — הפעימה קוראת ומשדרת, אין state בגיט.
@@ -233,13 +234,19 @@ async function main() {
   if (!livePostingPub) { log("רשות-ה-posting בלתי-קריאה — סירוב כנה."); process.exit(1); }
   const key = pickWif(livePostingPub);
   if (!key) {
-    if (!WIF_PRIMARY && !WIF_FALLBACK) {
-      log("NO-WIF — דילוג-כנה בסגנון web-publish (הריצה ירוקה, הכרטיס להלן להדפסה).");
-      log(`--- DRY CARD ---\n${body}`);
-      return;
-    }
-    log("אף סוד שסופק אינו רשות-ה-posting — סירוב אדום: לא משדרים בשם מי שלא אישרו.");
-    process.exit(1);
+    // wave-19.34 (owner order trace 1a1557f9ff40cf6d — fix everything, end
+    // the failure-email flood): a WIF that fails the live posting-authority
+    // check is, for broadcasting purposes, the same as NO-WIF — the lane
+    // never had and never will have the right to broadcast with it. The
+    // NO-WIF branch already established the honest-green contract (skip +
+    // printed card); an unauthorized key now takes the SAME path, with the
+    // block named loudly. The security law is untouched: nothing is ever
+    // broadcast unverified; installing a fitting key is an owner decision.
+    log(`BLOCKED-POSTING-AUTHORITY — אף סוד שסופק אינו רשות-ה-posting החיה של @${POSTER}. ` +
+        "לא משדרים בשם מי שלא אישרו (חוק-אמת). הריצה ירוקה-כנה: הכרטיס נבנה ומודפס; " +
+        "השידור חוסם-החלטת-בעלים (התקנת מפתח-fit = החלטת-בעלים, מחוץ לסמכות-המסילה).");
+    log(`--- DRY CARD ---\n${body}`);
+    return;
   }
 
   // 4) שער-RC
