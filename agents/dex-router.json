@@ -56,16 +56,44 @@
         {
           "venue": "Binance",
           "symbol": "HIVEUSDT",
-          "mid": null,
-          "pct24h": null,
-          "why": "HTTP-451"
+          "mid": 0.0485,
+          "pct24h": -2.61,
+          "why": null
         },
         {
           "venue": "Binance",
           "symbol": "HBDUSDT",
           "mid": null,
           "pct24h": null,
-          "why": "HTTP-451"
+          "why": "HTTP-400"
+        },
+        {
+          "venue": "HTX",
+          "symbol": "SBDUSDT",
+          "mid": 0.4825,
+          "pct24h": -8.479,
+          "why": null
+        },
+        {
+          "venue": "HTX",
+          "symbol": "HBDUSDT",
+          "mid": null,
+          "pct24h": null,
+          "why": "NO-TICK"
+        },
+        {
+          "venue": "Binance",
+          "symbol": "STEEMUSDT",
+          "mid": 0.05164,
+          "pct24h": -2.823,
+          "why": null
+        },
+        {
+          "venue": "Binance",
+          "symbol": "BTCUSDT",
+          "mid": 82226.67,
+          "pct24h": 0.93,
+          "why": null
         },
         {
           "venue": "MEXC",
@@ -402,8 +430,8 @@
       "sizeNote": "the only deep SBD book is HTX (Upbit ended SBD support 2025-02)",
       "quote": {
         "in": "1.000 SBD",
-        "out": "0.481459 USDT",
-        "impliedPrice": 0.4817,
+        "out": "0.482259 USDT",
+        "impliedPrice": 0.4825,
         "impactBps": null
       },
       "verdict": "C-GATE-OPERATOR",
@@ -525,14 +553,22 @@
     },
     {
       "id": "A3",
-      "name": "SWAP.HIVE:SWAP.BTC pool vs CEX cross",
+      "name": "SWAP.HIVE:SWAP.BTC pool vs CEX cross (peg drift)",
       "legs": [
         "he-pool",
-        "cex"
+        "cex:BTCUSDT+HIVEUSDT"
       ],
-      "verdict": "FEED-STALE",
-      "railOwner": "owner-hive-alt",
-      "why": "a CEX leg did not answer"
+      "poolPriceHivePerBtc": 1666091.9351888597,
+      "cexCrossHivePerBtc": 1695395.257732,
+      "grossBps": 172.84,
+      "feesBps": 100,
+      "slipBps": 20,
+      "netBps": 52.84,
+      "thresholdBps": 100,
+      "driftPct": -1.7284,
+      "verdict": "PEG-DRIFT-HALT",
+      "railOwner": "owner-hive-alt (NO-KEYS + HE RPC)",
+      "why": "the custodial peg is real only while the pool hugs the cross — 1.5% drift halts the venue"
     },
     {
       "id": "A4",
@@ -789,6 +825,7 @@
       "A1"
     ],
     "pegDriftHalts": [
+      "A3",
       "A4"
     ],
     "counterGridMarkets": [
