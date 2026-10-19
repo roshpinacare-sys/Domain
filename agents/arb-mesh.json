@@ -1,6 +1,6 @@
 {
   "protocol": "SAOS-ARB-MESH/1",
-  "at": "2026-10-19T21:30:10.020Z",
+  "at": "2026-10-19T21:41:43.729Z",
   "agent": "arb-mesh v1.0.0 (R41 MESH MARKET, CR-0071)",
   "mode": "KEYLESS-MESH-DEMAND",
   "stasisHalted": false,
@@ -23,18 +23,18 @@
     "uniform batch clearing (R76): the queue clears as ONE batch - canonical order, two-sided netting at the measured fair, one uniform clearing price for every trader, the solver absorbs the remainder; order-invariance (a permuted queue clears byte-identical) is the anti-sandwich proof · the proof lane is DRY (moves nothing), the settle gate stays the owner's"
   ],
   "verdict": "MESH-LIVE",
-  "batch": "MESH-2026101921-d998da73",
-  "settledBatch": "MESH-2026101921-d998da73",
+  "batch": "MESH-2026101921-d6edbba7",
+  "settledBatch": "MESH-2026101921-d6edbba7",
   "coreLedger": {
-    "seq": 270,
-    "at": "2026-10-19T21:11:43.137Z",
-    "ageHours": 0.31,
+    "seq": 272,
+    "at": "2026-10-19T21:30:10.058Z",
+    "ageHours": 0.19,
     "conservationOk": false,
-    "attestation": "f0012f5f2c54c655",
+    "attestation": "deba597d4d2572ae",
     "feedFresh": true
   },
   "routerSeen": {
-    "at": "2026-10-19T21:15:31.002Z",
+    "at": "2026-10-19T21:41:42.524Z",
     "arbRows": 4
   },
   "roster": [
@@ -52,7 +52,7 @@
       "to": "SBD",
       "railOwner": "treasury (our own pool — atomic, no bridge)",
       "source": "dex-core.json (our pool — atomic, no bridge)",
-      "at": "2026-10-19T21:30:10.020Z"
+      "at": "2026-10-19T21:41:43.729Z"
     }
   ],
   "keyedRailPlans": [
@@ -70,8 +70,8 @@
       "from": "STEEM",
       "to": "SBD",
       "amountIn": "4121",
-      "minOut": "576",
-      "quote": "578",
+      "minOut": "572",
+      "quote": "574",
       "rowId": "A1",
       "share": "OPERATOR-40%",
       "heldMu": "0",
@@ -81,13 +81,13 @@
   "wires": 1,
   "fills": [
     {
-      "seq": 272,
+      "seq": 274,
       "type": "AGENT_FILL",
       "agent": "operator",
       "from": "STEEM",
       "to": "SBD",
       "amountIn": "4121",
-      "amountOut": "578",
+      "amountOut": "574",
       "routeIds": [
         "P3"
       ],
@@ -95,11 +95,11 @@
         {
           "pool": "P3",
           "in": "4121",
-          "out": "578",
+          "out": "574",
           "fee": "10"
         }
       ],
-      "edgeMu": "189",
+      "edgeMu": "185",
       "fairUsed": "CEX-FAIR (SBD per STEEM)",
       "feesMu": "10"
     }
@@ -173,28 +173,28 @@
       "pair": "STEEM/SBD",
       "kind": "VOLATILE",
       "feeBps": 25,
-      "mid": 0.14114654,
+      "mid": 0.14025201,
       "unit": "SBD",
       "rungs": [
         {
           "sizeBps": 10,
-          "sizeIn": "1292",
+          "sizeIn": "1296",
           "out": "181",
-          "execPrice": 0.14009288,
-          "slipBps": -0.74
+          "execPrice": 0.13966049,
+          "slipBps": -0.42
         },
         {
           "sizeBps": 100,
-          "sizeIn": "12922",
-          "out": "1801",
-          "execPrice": 0.13937471,
-          "slipBps": -1.25
+          "sizeIn": "12963",
+          "out": "1795",
+          "execPrice": 0.13847103,
+          "slipBps": -1.26
         },
         {
           "sizeBps": 500,
-          "sizeIn": "64613",
-          "out": "8664",
-          "execPrice": 0.13409066,
+          "sizeIn": "64819",
+          "out": "8637",
+          "execPrice": 0.13324797,
           "slipBps": -4.99
         }
       ]
@@ -212,20 +212,20 @@
         "operator": {
           "fills": 1,
           "volumeInMu": "4121",
-          "edgeMu": "189",
+          "edgeMu": "185",
           "feesMu": "10"
         }
       },
-      "fills": 140,
-      "edgeMu": "-872675",
-      "feesMu": "1760",
-      "volumeInMu": "1464698"
+      "fills": 141,
+      "edgeMu": "-872490",
+      "feesMu": "1770",
+      "volumeInMu": "1468819"
     },
     "batch": {
-      "id": "MESH-2026101921-d998da73",
+      "id": "MESH-2026101921-d6edbba7",
       "fills": 1,
       "rejects": 0,
-      "edgeMu": "189",
+      "edgeMu": "185",
       "feesMu": "10",
       "volumeInMu": "4121"
     }
