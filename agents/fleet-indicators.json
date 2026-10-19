@@ -1,12 +1,11 @@
 {
   "protocol": "SAOS-FATE-DEFENSE-FWI/1",
-  "at": "2026-10-18T09:05:14.370Z",
+  "at": "2026-10-19T10:17:49.785Z",
   "agent": "fleet-indicators v1.0.0 (Task 22, study: Emergence World arXiv 2606.08367 + 2609.17320)",
   "verdict": "DEGRADED",
   "counts": {
-    "HELD": 1,
-    "DECLINE": 4,
-    "GROW": 4
+    "GROW": 5,
+    "DECLINE": 4
   },
   "indicators": [
     {
@@ -14,17 +13,17 @@
       "name": "Population Health",
       "measures": "persistent organs (live books) alive & fresh — our equivalent of \"agents alive at end of run\"",
       "evidenceSource": "agents/{econ,curation,money-ledger,ventures,fills-ledger,bridge,dex,learning-ledger,recruitment}-book.json .at/.updated < 48h",
-      "value": "8/9",
+      "value": "9/9",
       "breakEven": "≥7/9",
-      "status": "HELD",
-      "note": "curation-book.json"
+      "status": "GROW",
+      "note": "all organs alive"
     },
     {
       "id": "F2",
       "name": "Safety & Public Order",
       "measures": "destructive attempts mechanically refused (guard denies = incidents PREVENTED, not committed) + guard evals green + STASIS breaker armed",
       "evidenceSource": "agents/command-guard.json .denies + agents/STASIS.json .active + evals/eval-results.json E7-E9",
-      "value": "denies=16 evals=FAIL stasis=armed",
+      "value": "denies=24 evals=FAIL stasis=armed",
       "breakEven": "evals PASS + stasis armed",
       "status": "DECLINE",
       "note": "their worlds: coercion cascades killed populations; our guard refuses before execution, our engine obeys STASIS before any seal/broadcast"
@@ -74,7 +73,7 @@
       "name": "Economic Vitality & Equity",
       "measures": "real chain balances (liquid + effective SP) in an executor-identified ledger — equity via identity: one executor, one writer, no hoarding ambiguity",
       "evidenceSource": "agents/money-ledger.json .book{executor,headSteemLiquid,headSteemStake} fresh <48h",
-      "value": "owner: 0 STEEM liquid · 32.34 SP · book 37.4h old",
+      "value": "owner: 0 STEEM liquid · 32.344 SP · book 15.4h old",
       "breakEven": "ledger fresh + executor-identified",
       "status": "GROW",
       "note": "their economy was 1-CC billboards; ours is signed chain state with a named executor"
@@ -104,19 +103,19 @@
     {
       "book": "econ-book.json",
       "exists": true,
-      "ageHours": 7.5,
+      "ageHours": 4,
       "fresh": true
     },
     {
       "book": "curation-book.json",
       "exists": true,
-      "ageHours": 330.4,
-      "fresh": false
+      "ageHours": 5.7,
+      "fresh": true
     },
     {
       "book": "money-ledger.json",
       "exists": true,
-      "ageHours": 37.4,
+      "ageHours": 15.4,
       "fresh": true
     },
     {
@@ -134,19 +133,19 @@
     {
       "book": "bridge-book.json",
       "exists": true,
-      "ageHours": 37.4,
+      "ageHours": 15.4,
       "fresh": true
     },
     {
       "book": "dex-book.json",
       "exists": true,
-      "ageHours": 37.4,
+      "ageHours": 15.4,
       "fresh": true
     },
     {
       "book": "learning-ledger.json",
       "exists": true,
-      "ageHours": 15.7,
+      "ageHours": 5.9,
       "fresh": true
     },
     {

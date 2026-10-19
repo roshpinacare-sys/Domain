@@ -2,14 +2,14 @@
 
 _one-bloc v1.0.1 (Task 23 convergence — owner directive "מקשה אחת"; binds BLOC-STATE + SOVEREIGN-INDEX + FATE-DEFENSE into one machine map; keyless-first + env-token fallback, stderr redacted)_
 
-Measured: **2026-10-18T09:05:29.444Z** · Verdict: **DEGRADED** · REACHED 3/16 (keyless 3 + token 0) · AUTH-WALL 0 · UNKNOWN 13 · local-sync 1/1
+Measured: **2026-10-19T10:18:10.694Z** · Verdict: **DEGRADED** · REACHED 3/16 (keyless 3 + token 0) · AUTH-WALL 0 · UNKNOWN 13 · local-sync 1/1
 
 | ריפו | תפקיד | origin/main | מצב | דרך | סנכרון-מקומי |
 |---|---|---|---|---|---|
 | saos-sovereign-platform | המוח הריבוני — צבא מגייס-עצמו וסולם כלכלת-אמת | `—` | UNKNOWN | — | N/A |
 | steem | המפתחות הקנוניים + הזרוע החיה על-השרשרת | `—` | UNKNOWN | — | N/A |
-| Domain | הפנים הציבוריות + רכזת ה-CI האורגנית | `a6c458604f63` | REACHED | keyless | SYNCED |
-| Console | מרכז-ההפעלה — אמת נמדדת פעם-אחת | `beb38dc9e566` | REACHED | keyless | N/A |
+| Domain | הפנים הציבוריות + רכזת ה-CI האורגנית | `8b560a15fb52` | REACHED | keyless | SYNCED |
+| Console | מרכז-ההפעלה — אמת נמדדת פעם-אחת | `9a94fcbe1255` | REACHED | keyless | N/A |
 | Zip | המחסן החתום — עוגני אמת על שרשרת-אפו | `—` | UNKNOWN | — | N/A |
 | roshpina | הגרעין + מבקר השליטה העצמית | `—` | UNKNOWN | — | N/A |
 | anchor-baseline | שומר העוגן — בוט שלמות Merkle | `—` | UNKNOWN | — | N/A |
@@ -18,7 +18,7 @@ Measured: **2026-10-18T09:05:29.444Z** · Verdict: **DEGRADED** · REACHED 3/16 
 | Project-files | הארכיון הפיזי — keeper ארכיונים | `—` | UNKNOWN | — | N/A |
 | Adsmarket | הקמפיין הכן — claims-guard | `—` | UNKNOWN | — | N/A |
 | Defi | הכלכלן — reprices חי fail-closed | `—` | UNKNOWN | — | N/A |
-| saos-dex | הבורסה — פעימות dex-beat/grid | `dd6d1488791f` | REACHED | keyless | N/A |
+| saos-dex | הבורסה — פעימות dex-beat/grid | `40d1cdaca9bd` | REACHED | keyless | N/A |
 | saos-jummper | החוזים בפייתון — signingcontract | `—` | UNKNOWN | — | N/A |
 | saos-control-center | מרכז הבקרה הפנימי — 12 סקריפטים env-first | `—` | UNKNOWN | — | N/A |
 | saos-sovereign-foundry | המפעל — key-broker fail-closed | `—` | UNKNOWN | — | N/A |
