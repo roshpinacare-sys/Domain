@@ -55,6 +55,9 @@ const ARC = {
   'cognition-beat.yml':      { receipt: 'agents/cognition/organism.json',       max_gap_min: 90,   cooldown_min: 60  }, // the brain book, kept alive by the arc (T24: same law as T19, landed at the new home)
   'office-pulse.yml':        { receipt: 'office/data.json',                      max_gap_min: 90,   cooldown_min: 60  }, // the office health book - frozen 642min on 10-13 while its writer starved (T24 measured)
   'audience-analyst.yml':    { receipt: 'audience/latest.json',                     max_gap_min: 1560, cooldown_min: 240 }, // daily 05:31
+  // t28 cures (agent-9, measured 2026-10-19): three estate books died 10-04 with the vault re-seal + wipe era.
+  'soldiers-curate.yml':     { receipt: 'agents/curation-book.json',             max_gap_min: 1440, cooldown_min: 720 }, // 2/day — book frozen 10-04 (NO-VAULT after R20c-deep re-seal); t28: bundle custody path revives it (fail-soft preserved)
+  'books-revival-t28.yml':   { receipt: 'agents/pnl-book.json',                  max_gap_min: 1440, cooldown_min: 720 }, // t28 revival desk — pnl-book + skill-library were orphaned (their workflow was lost in the 10-16 wipe/cure cycles); this desk runs both, keeper watches the stricter law (pnl 24h)
 };
 for (const k of Object.keys(ARC)) if (!ARC[k]) delete ARC[k]; // the resurrection arc must never carry ghost rows
 const COOLDOWN_MIN = 20; // per-desk re-dispatch floor — a broken desk is retried, not stormned
@@ -176,5 +179,12 @@ async function main() {
   fs.writeFileSync(OUT_MD, md.join('\n') + '\n');
   console.log(`[tick-keeper] stasis=${book.stasis} fired=[${fired}] skipped=${(book.skipped || []).length} errors=${book.errors.length} in ${book.duration_ms}ms`);
 }
+
+// Z-49 require.main guard — RESTORED t28 (agent-9, measured 2026-10-19): the invocation
+// line was lost in the union-cure merge 7174f49e4 (estate restore after the office-memory
+// wipes). From 10-04T00:29Z to 10-19T04:00Z every scheduled run loaded the module, exported,
+// and exited in ~50ms with zero output — "no keeper changes" every hour while the arc's
+// desks starved (measured via run 39185130881 logs: the keep step ran 0.05s, printed nothing).
+if (require.main === module) { main().catch((e) => { console.error('[tick-keeper] fatal:', String(e.message || e).slice(0, 160)); process.exit(0); }); }
 
 module.exports = { workflowFileOf, dispatch, keeperDecide, ARC, COOLDOWN_MIN, OUT_JSON };

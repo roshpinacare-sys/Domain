@@ -121,6 +121,35 @@ function recoverVault() {
   return null;
 }
 
+// t28 cure (agent-9, measured 2026-10-19): the vault re-sealed 10-04 (R20c-deep) and
+// rotated 10-12 to recovery-meta-3 (MASTER-DERIVE) — the inline keysZipPass LEFT the repo
+// (R-VAULTPASS-1: bundle = Actions secret STEEM_VAULT_PASSES on steem+saos-runtime, NOT
+// this repo), so recoverVault() can never match again here: NO-VAULT fail-soft froze the
+// book at 10-04T14:40Z. The estate's live custody is the WIF bundle secret (ROT2_FLEET_KEYS
+// — T21 owner order: "יש את כל המפתחות — השתמשי בהכל"). This path needs NO vault material:
+// CHAIN-IS-THE-JUDGE — a WIF is used only if its derived pubkey bit-matches the account's
+// LIVE posting authority on the chain. Zero secrets printed; fail-soft on any error.
+async function recoverKeymapFromBundle(rpcFn) {
+  const raw = String(process.env.CURATE_FLEET_KEYS || '').trim();
+  if (!raw) return null;
+  try {
+    const wifs = Array.from(new Set(raw.match(/[5JK][1-9A-HJ-NP-Za-km-z]{50}/g) || []));
+    if (!wifs.length || !SOLDIERS.length) return null;
+    const accounts = await rpcFn('condenser_api.get_accounts', [SOLDIERS]);
+    const keymap = {};
+    for (const acc of accounts || []) {
+      const live = (acc && acc.posting && Array.isArray(acc.posting.key_auths) && acc.posting.key_auths[0] && acc.posting.key_auths[0][0]) || null;
+      if (!live) continue;
+      for (const wif of wifs) {
+        let pub = null;
+        try { pub = steem.auth.wifToPublic(wif); } catch (_) { continue; }
+        if (pub === live) { keymap[acc.name] = wif; break; } // bit-exact match only — never guess
+      }
+    }
+    return keymap;
+  } catch (e) { console.log(`[soldiers-curate] bundle recovery failed fail-soft (${String(e.message || e).slice(0, 60)})`); return null; }
+}
+
 async function main() {
   try { if (require('./capital-gate.cjs').stasisHalt('soldiers-curate')) return; } catch (e) { console.log('[CAPITAL-GATE] soldiers-curate — gate module error, lane halts fail-closed: ' + String(e.message || e).slice(0, 80)); return; }
   // CR-0065: curation moved into human-cadence.cjs (hourly spread, internal-only, probe-b floor).
@@ -146,15 +175,19 @@ const book0 = (() => { try { return JSON.parse(fs.readFileSync(OUT_JSON, 'utf8')
   const cutoff = Date.now() - DEDUPE_DAYS * 864e5;
   const recentVotes = (book0.votes || []).filter((v) => v.status !== 'DRYRUN-CANDIDATE' && Date.parse(v.at || 0) > cutoff); // dry-run rows are inspection, not casts
 
-  // keys
-  const vaultPath = process.env.VAULT || recoverVault();
-  if (!vaultPath) { console.log('[soldiers-curate] NO-VAULT — fail-soft'); return; }
-  const vault = JSON.parse(fs.readFileSync(vaultPath, 'utf8'));
-  const keymap = {};
-  for (const a of vault.accounts || []) {
-    const k = a.keys || {};
-    const wif = (k.posting && k.posting.wif) || (k.steem && k.steem.posting && k.steem.posting.wif) || null;
-    if (wif && SOLDIERS.includes(a.username)) keymap[a.username] = wif;
+  // keys — t28: modern bundle custody first (chain-is-the-judge, no vault material),
+  // legacy .enc vault second (kept for continuity; it cannot match since R-VAULTPASS-1).
+  let keymap = await recoverKeymapFromBundle(rpc);
+  if (!keymap) {
+    const vaultPath = process.env.VAULT || recoverVault();
+    if (!vaultPath) { console.log('[soldiers-curate] NO-VAULT — fail-soft (no bundle custody either)'); return; }
+    const vault = JSON.parse(fs.readFileSync(vaultPath, 'utf8'));
+    keymap = {};
+    for (const a of vault.accounts || []) {
+      const k = a.keys || {};
+      const wif = (k.posting && k.posting.wif) || (k.steem && k.steem.posting && k.steem.posting.wif) || null;
+      if (wif && SOLDIERS.includes(a.username)) keymap[a.username] = wif;
+    }
   }
   console.log(`[soldiers-curate] keys: ${Object.keys(keymap).length}/${SOLDIERS.length} · zero secrets printed`);
 

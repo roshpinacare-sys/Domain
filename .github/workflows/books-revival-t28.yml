@@ -1,0 +1,83 @@
+# books-revival-t28 — revival of two ORPHANED keyless desks (agent-9, measured 2026-10-19).
+#
+# MEASURED TRUTH: pnl-book.cjs and skill-library-gate.cjs are healthy writers whose
+# invoking workflow was lost in the 10-16 wipe/cure cycles (union-cure 7174f49e4 restored
+# the estate but no workflow ever called them again — `git log --all -S pnl-book.cjs
+# -- .github/workflows/` is empty). Their books froze at 2026-10-04 (pnl 347.8h,
+# skill-library 347.8h stale at measurement) while every run of the estate's own
+# office-live truth counted them STALE (books 9/13 fresh).
+#
+# BOTH DESKS ARE KEYLESS: pnl-book reads the fills ledger + steem rpc (env for paths
+# only); skill-library-gate reads the local tree (zero process.env). No secrets, no
+# capital, no vault material — measurement-only lane, publish [skip ci] twin idiom.
+#
+# The tick-keeper arc (revived t28) watches agents/pnl-book.json via this file and
+# re-fires on starvation (cooldown 720m, law 1440m).
+
+name: books-revival-t28
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: '51 * * * *'
+permissions:
+  contents: write
+
+concurrency:
+  group: books-revival-t28
+  cancel-in-progress: false
+
+jobs:
+  revive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+
+      - name: Node 22
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      - name: STASIS gate (mechanical, FATE-DEFENSE law #1)
+        id: brake
+        run: |
+          if [ -f agents/STASIS.json ]; then
+            ST=$(node agents/stasis-gate.cjs general)
+          else
+            ST=false
+          fi
+          echo "active=$ST" >> "$GITHUB_OUTPUT"
+          if [ "$ST" = "true" ]; then
+            echo "STASIS-HALT books-revival-t28 · the breaker is active — the healer obeys too"
+          fi
+
+      - name: pnl-book (P&L from the fills ledger + chain, keyless)
+        if: steps.brake.outputs.active != 'true'
+        run: node agents/pnl-book.cjs
+
+      - name: skill-library-gate (library census, keyless)
+        if: steps.brake.outputs.active != 'true'
+        run: node agents/skill-library-gate.cjs
+
+      - name: publish receipts (append-only, [skip ci], rebase-push twin idiom)
+        if: always()
+        continue-on-error: true
+        run: |
+          git config user.name "roshpinacare-sys"
+          git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
+          for p in agents/pnl-book.json agents/pnl-book.md agents/skill-library.json agents/skill-library.md; do
+            [ -e "$p" ] && git add "$p" || true
+          done
+          if git diff --cached --quiet; then
+            echo "no book changes"
+          else
+            git commit -m "books-revival-t28: orphaned keyless desks beat [skip ci]" || exit 0
+            for i in 1 2 3; do
+              git pull --rebase -X theirs --autostash origin main && git push origin HEAD:main && break
+              echo "publish retry $i failed — re-pulling"; sleep 5
+            done
+          fi

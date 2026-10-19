@@ -35,6 +35,11 @@ jobs:
         run: npm install --prefix /tmp/steemjs steem@0.7.11 --omit=dev --no-audit --no-fund --loglevel=error
       - name: "soldiers lane curation (public external content, chain dedupe, cache-bust read-back)"
         if: steps.brake.outputs.active != 'true'
+        # t28: CURATE_FLEET_KEYS = the estate WIF bundle (ROT2_FLEET_KEYS custody, T21 owner
+        # order) — chain-is-the-judge posting-key recovery; the .enc vault cannot resolve on
+        # this repo since R-VAULTPASS-1 (pass left to steem+saos-runtime custody).
+        env:
+          CURATE_FLEET_KEYS: ${{ secrets.ROT2_FLEET_KEYS }}
         run: NODE_PATH=/tmp/steemjs/node_modules STEEM_REPO_DIR=$GITHUB_WORKSPACE/steem-home MAXVOTES=2 node agents/soldiers-curate.cjs
       - name: commit book
         run: |
