@@ -23,7 +23,7 @@
           "crons": [
             "33 */2 * * *"
           ],
-          "expectedSlots": 12,
+          "expectedSlots": 11,
           "observed": 4,
           "lastScheduledAt": "2026-10-18T22:33:32Z",
           "unparseableCrons": 0,
@@ -56,7 +56,7 @@
           "crons": [
             "23 */2 * * *"
           ],
-          "expectedSlots": 12,
+          "expectedSlots": 11,
           "observed": 4,
           "lastScheduledAt": "2026-10-18T22:27:32Z",
           "unparseableCrons": 0,
@@ -166,11 +166,11 @@
           "crons": [
             "2 1 * * *"
           ],
-          "expectedSlots": 0,
+          "expectedSlots": 1,
           "observed": 1,
           "lastScheduledAt": "2026-10-18T05:43:59Z",
           "unparseableCrons": 0,
-          "verdict": "UNMEASURED"
+          "verdict": "PULSE"
         },
         {
           "file": "dex-activation.yml",
@@ -257,7 +257,7 @@
           "crons": [
             "4 */2 * * *"
           ],
-          "expectedSlots": 12,
+          "expectedSlots": 11,
           "observed": 4,
           "lastScheduledAt": "2026-10-18T22:23:11Z",
           "unparseableCrons": 0,
@@ -356,11 +356,11 @@
           "crons": [
             "24 2 * * *"
           ],
-          "expectedSlots": 1,
+          "expectedSlots": 0,
           "observed": 0,
           "lastScheduledAt": "2026-10-16T07:19:14Z",
           "unparseableCrons": 0,
-          "verdict": "STARVED"
+          "verdict": "UNMEASURED"
         },
         {
           "file": "fleet-heartbeat.yml",
@@ -411,7 +411,7 @@
           "crons": [
             "27,57 * * * *"
           ],
-          "expectedSlots": 47,
+          "expectedSlots": 46,
           "observed": 6,
           "lastScheduledAt": "2026-10-19T00:33:20Z",
           "unparseableCrons": 0,
@@ -467,8 +467,8 @@
             "48 1-23/2 * * *"
           ],
           "expectedSlots": 0,
-          "observed": 3,
-          "lastScheduledAt": "2026-10-18T21:54:59Z",
+          "observed": 4,
+          "lastScheduledAt": "2026-10-19T01:46:44Z",
           "unparseableCrons": 1,
           "verdict": "UNMEASURED"
         },
@@ -532,7 +532,7 @@
           "crons": [
             "17 */2 * * *"
           ],
-          "expectedSlots": 12,
+          "expectedSlots": 11,
           "observed": 4,
           "lastScheduledAt": "2026-10-18T22:27:31Z",
           "unparseableCrons": 0,
@@ -719,7 +719,7 @@
           "crons": [
             "11 */2 * * *"
           ],
-          "expectedSlots": 12,
+          "expectedSlots": 11,
           "observed": 5,
           "lastScheduledAt": "2026-10-18T22:23:15Z",
           "unparseableCrons": 0,
@@ -785,7 +785,7 @@
           "crons": [
             "23 */2 * * *"
           ],
-          "expectedSlots": 12,
+          "expectedSlots": 11,
           "observed": 5,
           "lastScheduledAt": "2026-10-18T22:28:47Z",
           "unparseableCrons": 0,
@@ -948,13 +948,13 @@
         {
           "file": "weave-mirror.yml",
           "crons": [
-            "38 18 * * *"
+            "*/15 * * * *"
           ],
-          "expectedSlots": 1,
+          "expectedSlots": 0,
           "observed": 1,
           "lastScheduledAt": "2026-10-18T20:58:37Z",
-          "unparseableCrons": 0,
-          "verdict": "PULSE"
+          "unparseableCrons": 1,
+          "verdict": "UNMEASURED"
         },
         {
           "file": "web-publish.yml",
@@ -970,13 +970,12 @@
       ]
     },
     "boundary": {
-      "schedulerLastSeenAt": "2026-10-19T01:31:51Z",
+      "schedulerLastSeenAt": "2026-10-19T01:46:44Z",
       "starvedNames": [
         "content-reviewer.yml",
         "daily-claim.yml",
         "earn-audit-cron.yml",
         "exposure-gate.yml",
-        "fleet-census-cron.yml",
         "hive-beat-t21.yml",
         "office-feed.yml"
       ],
@@ -1024,9 +1023,9 @@
       "unmeasuredNames": [
         "adsmarket-panel.yml",
         "audience-analyst.yml",
-        "daily-digest.yml",
         "estate-scrub.yml",
         "evo-windows.yml",
+        "fleet-census-cron.yml",
         "foundry-mesh-tests.yml",
         "grid-sentinel.yml",
         "mirror-from-console.yml",
@@ -1036,7 +1035,8 @@
         "org-selftests.yml",
         "social-audit.yml",
         "sovereign-selftests.yml",
-        "token-forge.yml"
+        "token-forge.yml",
+        "weave-mirror.yml"
       ]
     },
     "heal": {
@@ -1049,10 +1049,10 @@
       "law": "STARVED ∧ keyless ∧ not-host ∧ not-keeper"
     },
     "window": {
-      "from": "2026-10-18T01:38:32.493Z",
-      "to": "2026-10-19T01:38:32.493Z",
+      "from": "2026-10-18T02:36:04.906Z",
+      "to": "2026-10-19T02:36:04.906Z",
       "graceMinutes": 40
     }
   },
-  "at": "2026-10-19T01:40:11.824Z"
+  "at": "2026-10-19T02:37:28.677Z"
 }
