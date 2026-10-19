@@ -1,10 +1,8 @@
-# דופק-הצי (fleet-heartbeat) — 2026-10-19T04:26:28.209Z
+# דופק-הצי (fleet-heartbeat) — 2026-10-19T05:17:28.533Z
 
 מדידת-מנועים של כל-הריפואים: מה פועם, מה שקט, מה הפלטפורמה נטרלה, מה נרפא בריצה זו.
 
-**סיכום:** 45 ריפואים · פועמים 15 · ללא-קרון-אך-פעילים 3 · חמימים 9 · שקטים 0 · מעולם-לא-רצו 0 · ללא-workflows 11 · נטרולי-חוסר-פעילות 0 · חסומי-קיר-המכסה 7
-
-**דופק-מונע:** Domain/tick-keeper.yml=http 422 · Domain/cognition-beat.yml=http 422
+**סיכום:** 45 ריפואים · פועמים 16 · ללא-קרון-אך-פעילים 2 · חמימים 9 · שקטים 0 · מעולם-לא-רצו 0 · ללא-workflows 11 · נטרולי-חוסר-פעילות 0 · חסומי-קיר-המכסה 7
 
 
 ## גבולות-משמורת מדודים (לא כישלונות קוד)
@@ -17,11 +15,11 @@
 ## חסומי-קיר-המכסה (WALL-BLOCKED — מנוע פרטי שאינו יכול לרוץ כלל)
 
 - Defi — ריצה-אחרונה 2026-10-18T05:15:02Z (failure) · אפס-הצלחות בחלון
-- fleet-economy — ריצה-אחרונה 2026-10-18T22:35:32Z (failure) · אפס-הצלחות בחלון
-- Sandbox — ריצה-אחרונה 2026-10-19T04:05:48Z (failure) · אפס-הצלחות בחלון
+- fleet-economy — ריצה-אחרונה 2026-10-19T04:36:47Z (failure) · אפס-הצלחות בחלון
+- Sandbox — ריצה-אחרונה 2026-10-19T05:05:48Z (failure) · אפס-הצלחות בחלון
 - sandbox-private — ריצה-אחרונה 2026-10-13T03:24:17Z (failure) · אפס-הצלחות בחלון
 - saos-sovereign-foundry — ריצה-אחרונה 2026-10-13T03:24:15Z (failure) · אפס-הצלחות בחלון
-- steem — ריצה-אחרונה 2026-10-19T04:19:32Z (skipped) · אפס-הצלחות בחלון
+- steem — ריצה-אחרונה 2026-10-19T05:08:36Z (failure) · אפס-הצלחות בחלון
 - Zip — ריצה-אחרונה 2026-10-13T10:53:15Z (failure) · אפס-הצלחות בחלון
 
 ## שורות-שקט (QUIET/NEVER-RAN/NO-WORKFLOWS/AUTO-DISABLED)
@@ -32,9 +30,9 @@
 - sanbox — NO-WORKFLOWS
 - saos-console-zai — NO-WORKFLOWS
 - saos-coordination — NO-WORKFLOWS
-- saos-desk — NO-WORKFLOWS · שקט 98.9 שעות
-- saos-markets — NO-WORKFLOWS · שקט 49.7 שעות
-- saos-owner-channel — NO-WORKFLOWS · שקט 16.4 שעות
+- saos-desk — NO-WORKFLOWS · שקט 99.8 שעות
+- saos-markets — NO-WORKFLOWS · שקט 50.5 שעות
+- saos-owner-channel — NO-WORKFLOWS · שקט 17.3 שעות
 - SovereignConsole — NO-WORKFLOWS
 - vault-home — NO-WORKFLOWS
 
