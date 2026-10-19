@@ -1,14 +1,24 @@
 # dex-core — EXCHANGE CORE (R40, CR-0070)
 
+<<<<<<< Updated upstream
 At: 2026-10-19T04:45:46.391Z · Verdict: **CONSERVATION-BROKEN** · mode: KEYLESS-ATOMIC-INTERNAL (mesh batch) · seq: 208 · attestation: `11cdbb77e417893f`
 
 Feed: FEED-LIVE (router book @ 2026-10-19T04:41:46.932Z) · conservation: **BROKEN** · custody probe: unreachable (booked custody stands)
+=======
+At: 2026-10-19T04:41:48.390Z · Verdict: **CONSERVATION-BROKEN** · mode: KEYLESS-ATOMIC-INTERNAL · seq: 206 · attestation: `55c03ef7962d746e`
+
+Feed: FEED-LIVE (router book @ 2026-10-19T04:41:46.932Z) · conservation: **BROKEN** · custody probe: MEASURED @https://api.steemit.com
+>>>>>>> Stashed changes
 
 | Pool | Pair | Kind | Fee | Reserves (a/b µ) | Mid | Verdict |
 |---|---|---|---|---|---|---|
 | P1 | WSTEEM/STEEM | PEG | 2bps | 16617 / 1030429 | 62.01053138 | LIVE-INTERNAL |
 | P2 | WSBD/SBD | PEG | 2bps | 3816129 / 2511573 | 0.65814678 | LIVE-INTERNAL |
+<<<<<<< Updated upstream
 | P3 | STEEM/SBD | VOLATILE | 25bps | 1168644 / 201630 | 0.17253329 | LIVE-INTERNAL |
+=======
+| P3 | STEEM/SBD | VOLATILE | 25bps | 1164523 / 202341 | 0.1737544 | LIVE-INTERNAL |
+>>>>>>> Stashed changes
 | P4 | SAOS/WSTEEM | VOLATILE | 25bps | 0 / 0 | — | PLANNED-NO-CLAIM |
 | P5 | WHIVE/HIVE | PEG | 2bps | 0 / 0 | — | AWAITING-CUSTODY |
 | P6 | WHBD/HBD | PEG | 2bps | 0 / 0 | — | AWAITING-CUSTODY |
@@ -103,7 +113,11 @@ Routes: 12 LIVE-INTERNAL (atomic settlement in our own ledger) · 70 planned/thi
 | C-SAOS-WHBD | — | — | PLANNED-NO-CLAIM · unlock: no measured SAOS claim exists in the estate books (dex/credi |
 | C-SAOS-WBLURT | — | — | PLANNED-NO-CLAIM · unlock: no measured SAOS claim exists in the estate books (dex/credi |
 
+<<<<<<< Updated upstream
 - A1 P3 STEEM/SBD pool mid vs CEX-implied fair: CANDIDATE-FOK · net 6234.49bps vs threshold 100bps
+=======
+- A1 P3 STEEM/SBD pool mid vs CEX-implied fair: CANDIDATE-FOK · net 6234.49bps vs threshold 120bps
+>>>>>>> Stashed changes
 - A-P1 WSTEEM/STEEM peg guard: PEG-DRIFT-HALT · drift 6101.05%
 - A-P2 WSBD/SBD peg guard: PEG-DRIFT-HALT · drift 34.18%
 - A2 P8 HIVE/STEEM cross-network bridge: NO-CUSTODY
@@ -118,7 +132,13 @@ Observed (adjacent networks — seen, never custody): HIVE 34000µ (OBSERVED-UNC
 Custody classes: STEEM=MEASURED-KEYED · SBD=MEASURED-KEYED · HIVE=OBSERVED-UNCONTROLLED · HBD=OBSERVED-UNCONTROLLED · BLURT=OBSERVED-POST-KEYED · SAOS=PLANNED-NO-CLAIM
 Vault: minted WSTEEM 761900µ · WSBD 6314850µ · WHIVE 0µ · WHBD 0µ · WBLURT 0µ · redeem is ALWAYS honored 1:1 (burn before payout) — the real-value law
 
+<<<<<<< Updated upstream
 Treasury P&L: fees 0µ (LP revenue) · rebalance edges 15510µ (marked to fair at execution — the LVR defense on our own pool)
 
 Attestation sha256(seq, custody, reserves, minted, claims) = `11cdbb77e417893f` — recomputable by any node; the cron book commit is the publication.
+=======
+Treasury P&L: fees 1658µ (LP revenue) · rebalance edges 15510µ (marked to fair at execution — the LVR defense on our own pool)
+
+Attestation sha256(seq, custody, reserves, minted, claims) = `55c03ef7962d746e` — recomputable by any node; the cron book commit is the publication.
+>>>>>>> Stashed changes
 
