@@ -1,27 +1,27 @@
 {
  "protocol": "SAOS-TICK-KEEPER/1",
- "at": "2026-10-19T15:42:32.706Z",
+ "at": "2026-10-19T21:08:30.117Z",
  "repo": "roshpinacare-sys/Domain",
  "stasis": false,
  "arc": {
   "sovereign-tick-cron": {
    "receipt": "agents/sovereign-decisions.jsonl",
-   "last_ts": "2026-10-19T14:11:59.635Z",
+   "last_ts": "2026-10-19T18:34:09.331Z",
    "max_gap_min": 20
   },
   "earn-audit-cron": {
    "receipt": "agents/earn-audit.json",
-   "last_ts": "2026-10-19T15:30:53.857Z",
+   "last_ts": "2026-10-19T20:16:56.594Z",
    "max_gap_min": 45
   },
   "fill-ledger-cron": {
    "receipt": "agents/fill-ledger.json",
-   "last_ts": "2026-10-19T15:08:51.268Z",
+   "last_ts": "2026-10-19T20:41:33.496Z",
    "max_gap_min": 45
   },
   "market-grid-cron.yml": {
    "receipt": "agents/market-grid.json",
-   "last_ts": "2026-10-19T15:39:47.997Z",
+   "last_ts": "2026-10-19T20:41:38.583Z",
    "max_gap_min": 45
   },
   "fleet-census-cron.yml": {
@@ -46,17 +46,17 @@
   },
   "fleet-heartbeat.yml": {
    "receipt": "agents/fleet-heartbeat.json",
-   "last_ts": "2026-10-19T15:23:24.232Z",
+   "last_ts": "2026-10-19T20:17:13.088Z",
    "max_gap_min": 90
   },
   "cognition-beat.yml": {
    "receipt": "agents/cognition/organism.json",
-   "last_ts": "2026-10-19T11:12:38.171Z",
+   "last_ts": "2026-10-19T19:03:28.910Z",
    "max_gap_min": 90
   },
   "office-pulse.yml": {
    "receipt": "office/data.json",
-   "last_ts": "2026-10-19T15:14:59.919Z",
+   "last_ts": "2026-10-19T20:58:00.411Z",
    "max_gap_min": 90
   },
   "audience-analyst.yml": {
@@ -71,30 +71,35 @@
   },
   "books-revival-t28.yml": {
    "receipt": "agents/pnl-book.json",
-   "last_ts": "2026-10-19T10:19:25.399Z",
+   "last_ts": "2026-10-19T17:10:48.781Z",
    "max_gap_min": 1440
   }
  },
  "decided": [
   {
    "desk": "sovereign-tick-cron",
-   "stale_min": 90.6,
-   "reason": "book stale 90.6m > 20m"
+   "stale_min": 154.3,
+   "reason": "book stale 154.3m > 20m"
+  },
+  {
+   "desk": "earn-audit-cron",
+   "stale_min": 51.6,
+   "reason": "book stale 51.6m > 45m"
   },
   {
    "desk": "fleet-census-cron.yml",
-   "stale_min": 4616.2,
-   "reason": "book stale 4616.2m > 1560m"
+   "stale_min": 4942.1,
+   "reason": "book stale 4942.1m > 1560m"
   },
   {
    "desk": "self-audience.yml",
-   "stale_min": 22619,
-   "reason": "book stale 22619.0m > 1560m"
+   "stale_min": 22944.9,
+   "reason": "book stale 22944.9m > 1560m"
   },
   {
    "desk": "cognition-beat.yml",
-   "stale_min": 269.9,
-   "reason": "book stale 269.9m > 90m"
+   "stale_min": 125,
+   "reason": "book stale 125.0m > 90m"
   },
   {
    "desk": "audience-analyst.yml",
@@ -105,6 +110,12 @@
  "dispatched": [
   {
    "desk": "sovereign-tick-cron",
+   "http_status": 204,
+   "ok": true,
+   "error": null
+  },
+  {
+   "desk": "earn-audit-cron",
    "http_status": 204,
    "ok": true,
    "error": null
@@ -136,55 +147,51 @@
  ],
  "skipped": [
   {
-   "desk": "earn-audit-cron",
-   "reason": "fresh 11.6m <= 45m"
-  },
-  {
    "desk": "fill-ledger-cron",
-   "reason": "fresh 33.7m <= 45m"
+   "reason": "fresh 26.9m <= 45m"
   },
   {
    "desk": "market-grid-cron.yml",
-   "reason": "fresh 2.7m <= 45m"
+   "reason": "fresh 26.9m <= 45m"
   },
   {
    "desk": "twin-audit.yml",
-   "reason": "fresh 102.8m <= 1560m"
+   "reason": "fresh 428.8m <= 1560m"
   },
   {
    "desk": "public-pulse.yml",
-   "reason": "fresh 324.5m <= 1560m"
+   "reason": "fresh 650.4m <= 1560m"
   },
   {
    "desk": "fleet-heartbeat.yml",
-   "reason": "fresh 19.1m <= 90m"
+   "reason": "fresh 51.3m <= 90m"
   },
   {
    "desk": "office-pulse.yml",
-   "reason": "fresh 27.5m <= 90m"
+   "reason": "fresh 10.5m <= 90m"
   },
   {
    "desk": "soldiers-curate.yml",
-   "reason": "cooldown: dispatched 676m ago < 720m"
+   "reason": "fresh 994.5m <= 1440m"
   },
   {
    "desk": "books-revival-t28.yml",
-   "reason": "cooldown: dispatched 676m ago < 720m"
+   "reason": "fresh 237.7m <= 1440m"
   }
  ],
  "errors": [],
- "duration_ms": 6538,
+ "duration_ms": 9321,
  "cooldown_book": {
-  "earn-audit-cron": "2026-10-19T10:33:59.015Z",
-  "sovereign-tick-cron": "2026-10-19T15:42:32.706Z",
+  "earn-audit-cron": "2026-10-19T21:08:30.117Z",
+  "sovereign-tick-cron": "2026-10-19T21:08:30.117Z",
   "market-grid-cron": "2026-10-03T22:18:37.142Z",
   "fill-ledger-cron": "2026-10-19T07:53:59.398Z",
   "market-grid-cron.yml": "2026-10-19T13:42:46.515Z",
-  "audience-analyst.yml": "2026-10-19T15:42:32.706Z",
-  "fleet-census-cron.yml": "2026-10-19T15:42:32.706Z",
-  "self-audience.yml": "2026-10-19T15:42:32.706Z",
+  "audience-analyst.yml": "2026-10-19T21:08:30.117Z",
+  "fleet-census-cron.yml": "2026-10-19T21:08:30.117Z",
+  "self-audience.yml": "2026-10-19T21:08:30.117Z",
   "fleet-heartbeat.yml": "2026-10-19T04:26:07.838Z",
-  "cognition-beat.yml": "2026-10-19T15:42:32.706Z",
+  "cognition-beat.yml": "2026-10-19T21:08:30.117Z",
   "soldiers-curate.yml": "2026-10-19T04:26:07.838Z",
   "books-revival-t28.yml": "2026-10-19T04:26:07.838Z"
  }
