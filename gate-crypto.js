@@ -270,7 +270,23 @@
     out.push(...vstring(typeof o.json === "string" ? o.json : JSON.stringify(o.json)));
     return out;
   }
-  const OP_IDS = { custom_json: 18 }; // ChainTypes של Steem
+  const OP_IDS = { custom_json: 18, delegate_vesting_shares: 40 }; // ChainTypes של Steem
+  /** נכס-legacy מדויק-בתים (מאומת מול steem-js 0.7.10 operations.transaction.toBuffer):
+   *  amount int64 LE (8 בתים) + precision uint8 (1) + symbol fixed-7 מרופד \0 (7) = 16 בתים */
+  function serializeAsset(amountStr) {
+    const m = /^(\d+(?:\.\d+)?)\s+([A-Z][A-Z0-9]{0,5})$/.exec(String(amountStr).trim());
+    if (!m) throw new Error("asset לא תקין: " + amountStr);
+    const num = m[1], sym = m[2];
+    const dot = num.indexOf(".");
+    const dec = dot === -1 ? 0 : num.length - dot - 1;
+    const units = BigInt(dot === -1 ? num : num.replace(".", ""));
+    if (units < 0n) throw new Error("asset שלילי");
+    const out = [];
+    for (let i = 0; i < 8; i++) out.push(Number((units >> BigInt(8 * i)) & 0xffn));
+    out.push(dec); // precision uint8
+    for (let i = 0; i < 7; i++) out.push(i < sym.length ? sym.charCodeAt(i) : 0);
+    return out;
+  }
   /** עסקה (בלי חתימות) -> בתים בדיוק כמו transaction.toBuffer של steem-js */
   function serializeTx(tx) {
     let out = [];
@@ -284,7 +300,14 @@
       if (tid === undefined) throw new Error("שער: פעולה לא נתמכת בשער - " + op[0]);
       out.push(...varint(tid));
       if (tid === 18) out.push(...serializeCustomJson(op));
-      else throw new Error("שער: השער חותם custom_json בלבד (רשות posting) - סירוב כנה");
+      else if (tid === 40) { // delegate_vesting_shares: delegator + delegatee + vesting_shares
+        const o = op[1];
+        if (!o || !o.delegator || !o.delegatee || !o.vesting_shares) throw new Error("שער: פעולת-האצלה חסרת שדות");
+        out.push(...vstring(String(o.delegator).toLowerCase()));
+        out.push(...vstring(String(o.delegatee).toLowerCase()));
+        out.push(...serializeAsset(o.vesting_shares));
+      }
+      else throw new Error("שער: השער חותם custom_json/delegate בלבד - סירוב כנה");
     }
     out.push(...varint((tx.extensions || []).length));
     return new Uint8Array(out);

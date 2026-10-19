@@ -323,6 +323,35 @@
       </div>
     </div>
   </section>
+  <!-- ═══ 9 · האצת SP ═══ -->
+  <section class="station" id="chain" aria-labelledby="st9h">
+    <div class="st-head"><span class="st-num">9</span><h2 id="st9h" data-i="delT">האצת SP על השרשרת</h2><span class="hint2" data-i="delH">חתימה מקומית · שידור ישיר · ביטול בכל רגע</span></div>
+    <div class="st-body">
+      <div class="hint" data-i="delP">האצת כוח-גלל (SP) מהחשבון שלכם לחשבון אחר על השרשרת — פעולת delegate_vesting_shares אמיתית, חתומה כאן במכשיר במפתח-ה-active שלכם ונשדרת ישירות לצמתים הציבוריים. ה-SP נשאר שלכם (רק כוח-ההצבעה מוקצה), וניתן לבטל בכל רגע עם סכום 0. המפתח מתקבל כ-WIF או מפתח-כספת — עם או בלי השם לפניו.</div>
+      <div class="grid c2">
+        <label class="f"><span data-i="delFrom">חשבון מאציל (delegator)</span><input id="del-account" class="mono" spellcheck="false" autocomplete="off" placeholder="headcorner"></label>
+        <label class="f"><span data-i="delKey">מפתח (WIF או מפתח-כספת — נדרשת רמת active)</span><input id="del-key" class="mono" type="password" spellcheck="false" autocomplete="off"></label>
+      </div>
+      <div class="grid c2">
+        <label class="f"><span data-i="delTo">חשבון מקבל (delegatee)</span><input id="del-to" class="mono" spellcheck="false" autocomplete="off"></label>
+        <label class="f"><span data-i="delAmt">סכום SP (0 = ביטול האצה)</span><span class="row" style="gap:6px"><input id="del-amt" class="mono" inputmode="decimal" placeholder="0.000"><button type="button" class="copy" id="btn-del-max" data-i="delMax">מקסימום</button></span></label>
+      </div>
+      <div class="row">
+        <button class="btn" id="btn-delegate" data-i="delGo">סקור והאץ</button>
+        <button class="btn ghost" id="btn-del-list" data-i="delList">האצות פעילות</button>
+      </div>
+      <div class="card" id="del-preview" style="display:none">
+        <h3 style="margin:0 0 8px" data-i="delPvT">סקירת האצה לפני חתימה</h3>
+        <div id="del-pv-body"></div>
+        <div class="row" style="justify-content:flex-end;margin-top:8px">
+          <button class="btn ghost sm" id="btn-del-cancel" data-i="wPvCancel">ביטול</button>
+          <button class="btn gold sm" id="btn-del-go" data-i="delSign">חתום ושדר לשרשרת</button>
+        </div>
+      </div>
+      <div class="hint mono" id="del-result" aria-live="polite"></div>
+      <div class="twrap" id="del-list-box" style="display:none"><table><tbody id="del-list"></tbody></table></div>
+    </div>
+  </section>
 </main>
 
 <footer><div class="in">
@@ -546,6 +575,37 @@ const I = {
   wiping: { he: "מפתח-השידור נמחק מהזיכרון", en: "transport key wiped from memory" },
   stName: { he: "ממתין לרישום על הספר", en: "waiting to be folded into the book" },
   copyDone: { he: "הועתק", en: "copied" },
+  delT: { he: "האצת SP על השרשרת", en: "SP delegation on-chain" },
+  delH: { he: "חתימה מקומית · שידור ישיר · ביטול בכל רגע", en: "local signing · direct broadcast · cancel anytime" },
+  delP: { he: "האצת כוח-גלל (SP) מהחשבון שלכם לחשבון אחר על השרשרת — פעולת delegate_vesting_shares אמיתית, חתומה כאן במכשיר במפתח-ה-active שלכם ונשדרת ישירות לצמתים הציבוריים. ה-SP נשאר שלכם (רק כוח-ההצבעה מוקצה), וניתן לבטל בכל רגע עם סכום 0. המפתח מתקבל כ-WIF או מפתח-כספת — עם או בלי השם לפניו.", en: "Delegate Steem Power (SP) to another account — a real delegate_vesting_shares operation, signed in this device with your active key and broadcast straight to public nodes. The SP stays yours (only voting power is allocated) and can be cancelled anytime with amount 0. The key is accepted as a WIF or a master key — with or without the name in front." },
+  delFrom: { he: "חשבון מאציל (delegator)", en: "delegator account" },
+  delKey: { he: "מפתח (WIF או מפתח-כספת — נדרשת רמת active)", en: "key (WIF or master — active level required)" },
+  delTo: { he: "חשבון מקבל (delegatee)", en: "delegatee account" },
+  delAmt: { he: "סכום SP (0 = ביטול האצה)", en: "amount SP (0 = cancel)" },
+  delMax: { he: "מקסימום", en: "max" },
+  delGo: { he: "סקור והאץ", en: "review & delegate" },
+  delList: { he: "האצות פעילות", en: "active delegations" },
+  delPvT: { he: "סקירת האצה לפני חתימה", en: "delegation preview before signing" },
+  delSign: { he: "חתום ושדר לשרשרת", en: "sign & broadcast" },
+  delNeedKey: { he: "הדביקו מפתח — WIF או מפתח-כספת.", en: "paste a key — WIF or master key." },
+  delNeedAcc: { he: "מלאו חשבון-מאציל וחשבון-מקבל תקינים.", en: "fill valid delegator and delegatee accounts." },
+  delNeedAmt: { he: "סכום לא תקין.", en: "invalid amount." },
+  delNoActive: { he: "המפתח לא מגזר מפתח-active תקין לחשבון הזה — האצה דורשת רמת active על השרשרת.", en: "this key does not derive a valid active key for this account — delegation requires active authority on-chain." },
+  delPvRow: (a, b, c, d) => ({ he: `<b>${a}</b> מאציל → <b>${b}</b> מקבל · <b>${c} SP</b> (${d})`, en: `<b>${a}</b> → <b>${b}</b> · <b>${c} SP</b> (${d})` }[LANG]),
+  delSigning: { he: "חותם ומשדר…", en: "signing & broadcasting…" },
+  delOk: (t) => ({ he: `ההאצה שודרה על השרשרת ✅ tx: ${t} — תיכנס לתוקף בבלוק הבא`, en: `delegation broadcast ✅ tx: ${t} — lands next block` }[LANG]),
+  delFail: { he: "השידור נדחה על-ידי השרשרת: ", en: "broadcast rejected by the chain: " },
+  delNone: { he: "אין האצות יוצאות פעילות לחשבון הזה.", en: "no outgoing delegations for this account." },
+  delCancel: { he: "בטל", en: "cancel" },
+  chT: { he: "השרשרת האמת — החשבון החי", en: "the real chain — live account" },
+  chVerified: { he: "מאומת על השרשרת", en: "chain-verified" },
+  chNoMatch: { he: "המפתח לא נמצא בסמכויות של חשבון מוכר", en: "key not found in any known account authority" },
+  chWait: { he: "קורא את החשבון מהצמתים הציבוריים…", en: "reading the account from public nodes…" },
+  chFail: { he: "קריאת השרשרת נכשלה: ", en: "chain read failed: " },
+  chPow: { he: "כוח-גלל (SP)", en: "Steem Power (SP)" },
+  chDelegated: { he: "מואץ החוצה", en: "delegated out" },
+  chView: { he: "בדיקה עצמאית", en: "verify independently" },
+  keyAuto: (a, r) => ({ he: `מאומת על השרשרת: @${a} · ${r}`, en: `chain-verified: @${a} · ${r}` }[LANG]),
 };
 const I_GET = (k) => { const v = I[k]; if (v == null) return k; if (typeof v === "function") return v; if (typeof v === "object") return v[LANG] ?? v.he; return v; };
 const T = (k, ...a) => { const v = I_GET(k); return typeof v === "function" ? v(...a) : v; };
@@ -938,25 +998,68 @@ $("btn-copy-wif").addEventListener("click", () => copyText($("wif-out").textCont
 /* restore from a key: the T24 law — WIF or master, with or without the name.
    The inner SAOS wallet needs priv bytes: a WIF decodes directly; a master
    derives the posting-role WIF (sha256(account+posting+master)). */
+/* ═══ אימות-מפתח על השרשרת (T25) — אפס prompt: הכל אוטומטי ומוצג ═══ */
+let AUTH = null; // { account, via, roles: [], pub, verified }
+async function verifyKeyOnChain(input, account, via) {
+  const acc = (await steemRpc("condenser_api.get_accounts", [[account]]))?.[0];
+  if (!acc) return { account, via, roles: [], verified: false };
+  const roles = [];
+  let pub = null;
+  if (via === "wif") {
+    pub = await C.pubToSTM(C.privToPubBytes(await C.wifToPriv(input)));
+    const kt = classifyKey(pub, acc);
+    if (kt !== "none") roles.push(kt);
+  } else {
+    for (const role of ["posting", "active", "owner"]) {
+      try {
+        const d = await C.deriveAny(input, account, role);
+        if (classifyKey(d.pub, acc) !== "none") roles.push(role);
+      } catch { /* next role */ }
+    }
+  }
+  return { account, via, roles, pub, verified: roles.length > 0 };
+}
+function vestToSteemRate(props) {
+  const fund = parseFloat(String(props?.total_vesting_fund_steem || "0").split(" ")[0]) || 0;
+  const shares = parseFloat(String(props?.total_vesting_shares || "0").split(" ")[0]) || 0;
+  return shares > 0 ? fund / shares : 0;
+}
+const vestsToSp = (v, rate) => (parseFloat(String(v).split(" ")[0]) || 0) * rate;
+const spToVestsStr = (sp, rate) => { const v = rate > 0 ? sp / rate : 0; return v.toFixed(6) + " VESTS"; };
+const steemAsset = (s) => parseFloat(String(s || "0").split(" ")[0]) || 0;
 $("btn-restore-key").addEventListener("click", async () => {
-  const raw = $("restore-key").value.trim();
+  const btn = $("btn-restore-key");
+  const raw = $("restore-key").value.replace(/\u00a0/g, " ").trim();
   if (!raw) return;
+  btn.disabled = true;
   try {
+    let input = raw, hintedAcct = null;
+    const m = raw.match(/^([a-z0-9][a-z0-9\-.]{1,15})[\s:：\-—=_]+(\S.*)$/is);
+    if (m) { hintedAcct = m[1].toLowerCase(); input = m[2].trim(); }
     let priv = null;
-    try { priv = await C.wifToPriv(raw); } catch { /* master form below */ }
-    if (!priv) {
-      const acct = prompt(LANG === "he" ? "שם-החשבון שהמפתח שייך אליו (לגזירת מפתח-פרסום):" : "the account this key belongs to (for posting-key derivation):");
-      if (!acct) return;
-      const wif = await C.masterToWif(acct.trim().toLowerCase(), "posting", raw);
+    try { priv = await C.wifToPriv(input); } catch { /* master form below */ }
+    AUTH = null;
+    if (priv) {
+      const acct = hintedAcct || "headcorner";
+      try { AUTH = await verifyKeyOnChain(input, acct, "wif"); } catch { AUTH = null; }
+    } else {
+      const acct = hintedAcct || "headcorner";
+      const ver = await verifyKeyOnChain(input, acct, "master");
+      if (!ver.verified) throw new Error(T("errNoMatch") || "key does not match any on-chain authority");
+      AUTH = ver;
+      const wif = await C.masterToWif(ver.account, "posting", input);
       priv = await C.wifToPriv(wif);
     }
     const pubSTM = await C.pubToSTM(C.privToPubBytes(priv));
     WALLET = { priv, pubSTM, addr: await SL.addressFromPubSTM(pubSTM) };
+    if (AUTH?.verified && AUTH.account) $("del-account").value = AUTH.account;
     $("key-reveal").style.display = "none";
     $("restore-key").value = "";
     renderAccount(); renderStatusStrip();
     toast(T("tOkRestored"));
+    if (AUTH?.verified) toast(T("keyAuto")(AUTH.account, AUTH.roles.join(" · ")), true);
   } catch (e) { toast(T("tErrImport") + (e.message || ""), false); }
+  btn.disabled = false;
 });
 /* encrypted backup: AES-256-GCM with a user password */
 function askPassword({ title, sub }) {
@@ -1061,6 +1164,13 @@ function renderAccount() {
       <div class="hint" style="margin-bottom:7px">${esc(T("balances"))}</div>
       <div class="twrap"><table><tbody>${balHtml}</tbody></table></div>
     </div>
+    <div class="card" id="chain-card">
+      <div class="row" style="justify-content:space-between">
+        <h3 style="margin:0">${esc(T("chT"))}</h3>
+        <span id="chain-badge">${authBadgeHtml()}</span>
+      </div>
+      <div class="hint mono" id="chain-live" style="margin:8px 0 0">${esc(T("chWait"))}</div>
+    </div>
     ${registered ? "" : `
     <div class="card">
       <h3>${esc(T("s2Reg"))}</h3>
@@ -1079,6 +1189,38 @@ function renderAccount() {
     if (env) { toast(T("tOkRegistered")); renderAccount(); relayKick(); }
   });
   renderStatusStrip();
+  loadChainPanel();
+}
+/* ═══ פאנל-השרשרת החי (T25) — יתרות אמת קריאות-בלבד מהצמתים הציבוריים ═══ */
+function authBadgeHtml() {
+  return AUTH
+    ? (AUTH.verified
+        ? `<span class="tag green">${esc(T("chVerified"))}</span> <span class="tag gold mono">@${esc(AUTH.account)} · ${esc(AUTH.roles.join(" · "))}</span>`
+        : `<span class="tag amber">${esc(T("chNoMatch"))}</span>`)
+    : "";
+}
+async function loadChainPanel() {
+  const el = $("chain-live"); if (!el) return;
+  const badge = $("chain-badge"); if (badge) badge.innerHTML = authBadgeHtml();
+  const acct = AUTH?.account || $("relay-account")?.value?.trim()?.toLowerCase() || "headcorner";
+  try {
+    const acc = (await steemRpc("condenser_api.get_accounts", [[acct]]))?.[0];
+    if (!acc) throw new Error("account not found");
+    const props = await steemRpc("condenser_api.get_dynamic_global_properties", []);
+    const rate = vestToSteemRate(props);
+    const sp = vestsToSp(acc.vesting_shares, rate);
+    const delOut = (await steemRpc("condenser_api.get_vesting_delegations", [acct, "", 100])) || [];
+    const outVests = delOut.reduce((s, d) => s + steemAsset(d.vesting_shares), 0);
+    const rc = acc.rc_manabar && acc.rc_manabar.max_rc > 0 ? Math.round((acc.rc_manabar.current_mana / acc.rc_manabar.max_rc) * 100) : null;
+    const row = (k, v) => `<tr><td><b>${esc(k)}</b></td><td class="num">${v}</td></tr>`;
+    el.innerHTML = `<table><tbody>` +
+      row("STEEM", esc(nice(steemAsset(acc.balance).toFixed(3)))) +
+      row(T("chPow"), esc(nice(sp.toFixed(3))) + " SP") +
+      row("SBD", esc(nice(steemAsset(acc.sbd_balance).toFixed(3)))) +
+      row(T("chDelegated"), esc(nice(vestsToSp(outVests, rate).toFixed(3))) + " SP") +
+      (rc !== null ? row("RC", esc(String(rc) + "%")) : "") +
+      `</tbody></table><div class="hint" style="margin-top:7px">@${esc(acct)} · <a href="https://steemworld.org/${esc(acct)}" target="_blank" rel="noopener">${esc(T("chView"))} ↗</a></div>`;
+  } catch (e) { el.textContent = T("chFail") + (e.message || e); }
 }
 
 /* ═══════════ status strip ═══════════ */
@@ -1423,6 +1565,108 @@ async function refreshBooks() {
 
 /* ═══════════ lang + boot ═══════════ */
 $("btn-lang").addEventListener("click", () => { LANG = LANG === "he" ? "en" : "he"; try { localStorage.setItem("saos.lang", LANG); } catch {} applyLang(); renderAccount(); renderPools(); renderQueue(); renderRails(); renderLiveChips(); renderStatusStrip(); });
+/* ═══════════ 9 · האצת SP — חתימה מקומית, שידור ישיר (T25) ═══════════ */
+const ACC_RE = /^[a-z0-9][a-z0-9\-.]{1,15}$/;
+let DEL_PV = null, DEL_BUSY = false;
+$("btn-del-max").addEventListener("click", async () => {
+  try {
+    const acct = $("del-account").value.trim().toLowerCase();
+    if (!ACC_RE.test(acct)) { toast(T("delNeedAcc"), false); return; }
+    const acc = (await steemRpc("condenser_api.get_accounts", [[acct]]))?.[0];
+    if (!acc) { toast(T("delNeedAcc"), false); return; }
+    const props = await steemRpc("condenser_api.get_dynamic_global_properties", []);
+    const sp = vestsToSp(acc.vesting_shares, vestToSteemRate(props));
+    $("del-amt").value = Math.max(0, sp - 1).toFixed(3); /* רצפת 1 SP */
+    $("del-amt").focus();
+  } catch (e) { toast(T("chFail") + (e.message || e), false); }
+});
+const delPvRow = (label, val) => `<div class="pv-row"><span style="color:var(--dim)">${esc(label)}</span><span class="mono" style="text-align:end">${esc(val)}</span></div>`;
+$("btn-delegate").addEventListener("click", async () => {
+  const acct = $("del-account").value.trim().toLowerCase();
+  const to = $("del-to").value.trim().toLowerCase();
+  const amt = parseFloat($("del-amt").value.replace(",", "."));
+  if (!ACC_RE.test(acct) || !ACC_RE.test(to)) { toast(T("delNeedAcc"), false); return; }
+  if (!isFinite(amt) || amt < 0) { toast(T("delNeedAmt"), false); return; }
+  const key = $("del-key").value.replace(/\u00a0/g, " ").trim();
+  if (!key) { toast(T("delNeedKey"), false); return; }
+  try {
+    const acc = (await steemRpc("condenser_api.get_accounts", [[acct]]))?.[0];
+    if (!acc) { toast(T("delNeedAcc"), false); return; }
+    let activePriv = null, activePub = null;
+    try {
+      const p = await C.wifToPriv(key);
+      const pub = await C.pubToSTM(C.privToPubBytes(p));
+      if (classifyKey(pub, acc) === "active") { activePriv = p; activePub = pub; }
+    } catch { /* master below */ }
+    if (!activePriv) {
+      const d = await C.deriveAny(key, acct, "active");
+      if (classifyKey(d.pub, acc) !== "active") throw new Error(T("delNoActive"));
+      activePriv = await C.wifToPriv(d.wif); activePub = d.pub;
+    }
+    const props = await steemRpc("condenser_api.get_dynamic_global_properties", []);
+    const vests = spToVestsStr(amt, vestToSteemRate(props));
+    DEL_PV = { delegator: acct, delegatee: to, sp: amt.toFixed(3), vests, activePriv, activePub };
+    $("del-pv-body").innerHTML =
+      delPvRow(T("delFrom"), "@" + acct) +
+      delPvRow(T("delTo"), "@" + to) +
+      delPvRow(T("delAmt"), amt.toFixed(3) + " SP") +
+      delPvRow("vesting_shares", vests) +
+      delPvRow("active pub", activePub);
+    $("del-preview").style.display = "";
+    $("btn-del-go").focus();
+    $("del-result").textContent = "";
+  } catch (e) { toast(e.message || String(e), false); }
+});
+$("btn-del-cancel").addEventListener("click", () => { $("del-preview").style.display = "none"; DEL_PV = null; });
+$("btn-del-go").addEventListener("click", async () => {
+  if (DEL_BUSY || !DEL_PV) return;
+  DEL_BUSY = true;
+  $("btn-del-go").disabled = true;
+  $("del-result").textContent = T("delSigning");
+  try {
+    const op = ["delegate_vesting_shares", { delegator: DEL_PV.delegator, delegatee: DEL_PV.delegatee, vesting_shares: DEL_PV.vests }];
+    const getProps = () => steemRpc("condenser_api.get_dynamic_global_properties", []);
+    const getBlockHeader = (n) => steemRpc("condenser_api.get_block_header", [n]);
+    const signed = await C.buildSignedTx([op], DEL_PV.activePriv, getProps, getBlockHeader);
+    await steemRpc("condenser_api.broadcast_transaction", [signed]);
+    const txBytes = C.serializeTx({ ref_block_num: signed.ref_block_num, ref_block_prefix: signed.ref_block_prefix, expiration: signed.expiration, operations: signed.operations, extensions: signed.extensions });
+    const txid = C.hex(await C.sha256(txBytes)).slice(0, 40);
+    $("del-result").textContent = T("delOk")(txid);
+    $("del-result").innerHTML += ` · <a href="https://steemworld.org/tx/${txid}" target="_blank" rel="noopener">steemworld ↗</a>`;
+    $("del-preview").style.display = "none"; DEL_PV = null;
+    $("del-key").value = "";
+    loadChainPanel();
+    if ($("del-list-box").style.display !== "none") loadDelegations();
+  } catch (e) {
+    $("del-result").textContent = T("delFail") + (e.message || e);
+  }
+  DEL_BUSY = false; $("btn-del-go").disabled = false;
+});
+async function loadDelegations() {
+  const acct = $("del-account").value.trim().toLowerCase();
+  const box = $("del-list-box"), list = $("del-list");
+  if (!ACC_RE.test(acct)) { toast(T("delNeedAcc"), false); return; }
+  box.style.display = "";
+  try {
+    const rows = (await steemRpc("condenser_api.get_vesting_delegations", [acct, "", 100])) || [];
+    if (!rows.length) { list.innerHTML = `<tr><td class="hint">${esc(T("delNone"))}</td></tr>`; return; }
+    const props = await steemRpc("condenser_api.get_dynamic_global_properties", []);
+    const rate = vestToSteemRate(props);
+    list.innerHTML = rows.map((d) => {
+      const sp = vestsToSp(d.vesting_shares, rate).toFixed(3);
+      return `<tr><td><b class="mono">@${esc(d.delegatee)}</b></td><td class="num">${esc(sp)} SP</td><td class="num"><button type="button" class="copy" data-delcancel="${esc(d.delegatee)}" data-delamt="${esc(sp)}">${esc(T("delCancel"))}</button></td></tr>`;
+    }).join("");
+  } catch (e) { list.innerHTML = `<tr><td class="hint">${esc(T("chFail") + (e.message || e))}</td></tr>`; }
+}
+$("btn-del-list").addEventListener("click", loadDelegations);
+$("del-list").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-delcancel]");
+  if (!b) return;
+  $("del-to").value = b.getAttribute("data-delcancel");
+  $("del-amt").value = "0";
+  $("del-preview").scrollIntoView({ behavior: "smooth", block: "center" });
+  toast(T("delAmt"), true);
+});
 SL.selfTest().then((r) => {
   const ok = r && r.tests ? r.tests.every((x) => x.pass) : !!r;
   const chip = $("selftest-chip");
