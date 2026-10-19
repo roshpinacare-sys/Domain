@@ -1,14 +1,8 @@
 # dex-core — EXCHANGE CORE (R40, CR-0070)
 
-<<<<<<< Updated upstream
-At: 2026-10-19T11:11:07.011Z · Verdict: **CONSERVATION-BROKEN** · mode: KEYLESS-ATOMIC-INTERNAL (mesh batch) · seq: 230 · attestation: `b0a39bd99b9d666f`
-
-Feed: FEED-LIVE (router book @ 2026-10-19T10:48:34.240Z) · conservation: **BROKEN** · custody probe: unreachable (booked custody stands)
-=======
 At: 2026-10-19T11:11:13.949Z · Verdict: **CONSERVATION-BROKEN** · mode: KEYLESS-ATOMIC-INTERNAL · seq: 230 · attestation: `0181b1202c7a13fe`
 
 Feed: FEED-LIVE (router book @ 2026-10-19T11:11:12.674Z) · conservation: **BROKEN** · custody probe: MEASURED @https://api.steemit.com
->>>>>>> Stashed changes
 
 | Pool | Pair | Kind | Fee | Reserves (a/b µ) | Mid | Verdict |
 |---|---|---|---|---|---|---|
@@ -109,11 +103,7 @@ Routes: 12 LIVE-INTERNAL (atomic settlement in our own ledger) · 70 planned/thi
 | C-SAOS-WHBD | — | — | PLANNED-NO-CLAIM · unlock: no measured SAOS claim exists in the estate books (dex/credi |
 | C-SAOS-WBLURT | — | — | PLANNED-NO-CLAIM · unlock: no measured SAOS claim exists in the estate books (dex/credi |
 
-<<<<<<< Updated upstream
-- A1 P3 STEEM/SBD pool mid vs CEX-implied fair: CANDIDATE-FOK · net 6172.54bps vs threshold 100bps
-=======
 - A1 P3 STEEM/SBD pool mid vs CEX-implied fair: CANDIDATE-FOK · net 6176.42bps vs threshold 120bps
->>>>>>> Stashed changes
 - A-P1 WSTEEM/STEEM peg guard: PEG-DRIFT-HALT · drift 6101.05%
 - A-P2 WSBD/SBD peg guard: PEG-DRIFT-HALT · drift 34.18%
 - A2 P8 HIVE/STEEM cross-network bridge: NO-CUSTODY
@@ -128,13 +118,7 @@ Observed (adjacent networks — seen, never custody): HIVE 34000µ (OBSERVED-UNC
 Custody classes: STEEM=MEASURED-KEYED · SBD=MEASURED-KEYED · HIVE=OBSERVED-UNCONTROLLED · HBD=OBSERVED-UNCONTROLLED · BLURT=OBSERVED-POST-KEYED · SAOS=PLANNED-NO-CLAIM
 Vault: minted WSTEEM 761900µ · WSBD 6314850µ · WHIVE 0µ · WHBD 0µ · WBLURT 0µ · redeem is ALWAYS honored 1:1 (burn before payout) — the real-value law
 
-<<<<<<< Updated upstream
-Treasury P&L: fees 0µ (LP revenue) · rebalance edges 15510µ (marked to fair at execution — the LVR defense on our own pool)
-
-Attestation sha256(seq, custody, reserves, minted, claims) = `b0a39bd99b9d666f` — recomputable by any node; the cron book commit is the publication.
-=======
 Treasury P&L: fees 1778µ (LP revenue) · rebalance edges 15510µ (marked to fair at execution — the LVR defense on our own pool)
 
 Attestation sha256(seq, custody, reserves, minted, claims) = `0181b1202c7a13fe` — recomputable by any node; the cron book commit is the publication.
->>>>>>> Stashed changes
 
