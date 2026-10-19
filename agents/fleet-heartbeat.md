@@ -1,10 +1,10 @@
-# דופק-הצי (fleet-heartbeat) — 2026-10-19T01:24:06.753Z
+# דופק-הצי (fleet-heartbeat) — 2026-10-19T02:21:29.355Z
 
 מדידת-מנועים של כל-הריפואים: מה פועם, מה שקט, מה הפלטפורמה נטרלה, מה נרפא בריצה זו.
 
-**סיכום:** 45 ריפואים · פועמים 13 · ללא-קרון-אך-פעילים 2 · חמימים 12 · שקטים 0 · מעולם-לא-רצו 0 · ללא-workflows 11 · נטרולי-חוסר-פעילות 0 · חסומי-קיר-המכסה 7
+**סיכום:** 45 ריפואים · פועמים 14 · ללא-קרון-אך-פעילים 3 · חמימים 10 · שקטים 0 · מעולם-לא-רצו 0 · ללא-workflows 11 · נטרולי-חוסר-פעילות 0 · חסומי-קיר-המכסה 7
 
-**דופק-מונע:** ops-forge/forge.yml=http 422 · ops-intake/intake.yml=http 422 · Domain/tick-keeper.yml=http 422 · Domain/cognition-beat.yml=http 422
+**דופק-מונע:** Domain/tick-keeper.yml=http 422 · Domain/cognition-beat.yml=http 422
 
 
 ## גבולות-משמורת מדודים (לא כישלונות קוד)
@@ -18,10 +18,10 @@
 
 - Defi — ריצה-אחרונה 2026-10-18T05:15:02Z (failure) · אפס-הצלחות בחלון
 - fleet-economy — ריצה-אחרונה 2026-10-18T22:35:32Z (failure) · אפס-הצלחות בחלון
-- Sandbox — ריצה-אחרונה 2026-10-19T01:06:02Z (failure) · אפס-הצלחות בחלון
+- Sandbox — ריצה-אחרונה 2026-10-19T01:35:24Z (failure) · אפס-הצלחות בחלון
 - sandbox-private — ריצה-אחרונה 2026-10-13T03:24:17Z (failure) · אפס-הצלחות בחלון
 - saos-sovereign-foundry — ריצה-אחרונה 2026-10-13T03:24:15Z (failure) · אפס-הצלחות בחלון
-- steem — ריצה-אחרונה 2026-10-19T01:22:45Z (skipped) · אפס-הצלחות בחלון
+- steem — ריצה-אחרונה 2026-10-19T02:18:27Z (skipped) · אפס-הצלחות בחלון
 - Zip — ריצה-אחרונה 2026-10-13T10:53:15Z (failure) · אפס-הצלחות בחלון
 
 ## שורות-שקט (QUIET/NEVER-RAN/NO-WORKFLOWS/AUTO-DISABLED)
@@ -32,9 +32,9 @@
 - sanbox — NO-WORKFLOWS
 - saos-console-zai — NO-WORKFLOWS
 - saos-coordination — NO-WORKFLOWS
-- saos-desk — NO-WORKFLOWS · שקט 95.9 שעות
-- saos-markets — NO-WORKFLOWS · שקט 46.7 שעות
-- saos-owner-channel — NO-WORKFLOWS · שקט 13.4 שעות
+- saos-desk — NO-WORKFLOWS · שקט 96.8 שעות
+- saos-markets — NO-WORKFLOWS · שקט 47.6 שעות
+- saos-owner-channel — NO-WORKFLOWS · שקט 14.4 שעות
 - SovereignConsole — NO-WORKFLOWS
 - vault-home — NO-WORKFLOWS
 
