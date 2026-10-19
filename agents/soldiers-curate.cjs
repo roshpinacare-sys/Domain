@@ -134,7 +134,8 @@ async function recoverKeymapFromBundle(rpcFn) {
   if (!raw) return null;
   try {
     const wifs = Array.from(new Set(raw.match(/[5JK][1-9A-HJ-NP-Za-km-z]{50}/g) || []));
-    if (!wifs.length || !SOLDIERS.length) return null;
+    if (!wifs.length) return null;
+    if (!SOLDIERS.length) return {}; // roster-unresolved (measured run 32: no FLEET_ROSTER_MAP env) — empty keymap, NOT null: the desk still writes its fail-loud book (zero rows), never a silent no-book
     const accounts = await rpcFn('condenser_api.get_accounts', [SOLDIERS]);
     const keymap = {};
     for (const acc of accounts || []) {

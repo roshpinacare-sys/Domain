@@ -40,6 +40,8 @@ jobs:
         # this repo since R-VAULTPASS-1 (pass left to steem+saos-runtime custody).
         env:
           CURATE_FLEET_KEYS: ${{ secrets.ROT2_FLEET_KEYS }}
+          FLEET_ROSTER_MAP: ${{ secrets.FLEET_ROSTER_MAP }}
+          DRYRUN: '1'
         run: NODE_PATH=/tmp/steemjs/node_modules STEEM_REPO_DIR=$GITHUB_WORKSPACE/steem-home MAXVOTES=2 node agents/soldiers-curate.cjs
       - name: commit book
         run: |
