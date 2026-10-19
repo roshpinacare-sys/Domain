@@ -584,6 +584,7 @@ footer.site a:hover{color:var(--gold-bright);text-decoration:none}
             <div class="field"><label class="f" data-i="wRelayWif">Posting key (WIF)</label><input type="password" class="mono" id="relay-wif" placeholder="5..."></div>
           </div>
           <button class="btn gold" id="btn-relay-all" data-i="wRelayBtn">Broadcast queue</button>
+          <div class="hint" data-i="wRelayOrder" style="margin-top:10px">Order matters: broadcast the whole queue in one go — wallet.create must land before anything else. A verified deposit is countersigned by the network treasury at the published rate and your SAOS appears in the open ledger.</div>
           <div class="hint" id="relay-result" style="margin-top:10px"></div>
         </div>
       </div>
@@ -927,6 +928,7 @@ en: {
   wQueueT:"Signed operations queue", wQueueP:"Signed and waiting. Copy them for the network, or broadcast below.", wQueueCopy:"Copy signed JSON",
   wRelayT:"Broadcast", wRelayP:"A Steem account key is transport only: it cannot change your operations. The inner signature is the authority.",
   wRelayAcc:"Steem account", wRelayWif:"Posting key (WIF)", wRelayBtn:"Broadcast queue",
+  wRelayOrder:"Order matters: broadcast the whole queue in one go — wallet.create must land before anything else. A verified deposit is countersigned by the network treasury at the published rate and your SAOS appears in the open ledger.",
   wQrT:"Address QR", wQrP:"Scan with a camera to share this address. The code holds the address only — never keys.",
   wPvT:"Estimated value", wPvNote:"Mid prices of the public DEX pools — an estimate, never a promise.", wPvNone:"No public pool prices for this token yet.",
   wAlertT:"Price alerts", wAlertP:"Checked against the official book prices whenever the wallet opens or you press Check now. Everything stays on this device — keyless, no server.", wAlertAsset:"Asset", wAlertDir:"Condition", wAlertGe:"rises to or above", wAlertLe:"falls to or below", wAlertTarget:"Target (USDS)", wAlertAdd:"Add alert", wAlertCheck:"Check now", wAlertArmed:"armed", wAlertDone:"hit", wAlertNone:"No alerts yet — add one above.", wAlertHit:"Alert: {s} reached {p} USDS", wAlertCalm:"No alert crossed right now.", wAlertBad:"Choose an asset and a positive target.", wAlertSet:"Alert saved on this device.",
@@ -993,7 +995,7 @@ en: {
   tOk:{ walletBorn:"New wallet born on your device", wiped:"Wallet cleared from memory", backup:"Encrypted backup downloaded",
     restored:"Wallet restored", signed:"Signed and added to the queue", broadcast:n=>n+" operations broadcast to the chain",
     copied:"Copied", registered:"Registration signed and queued", needWallet:"Open or restore a wallet first",
-    claimSigned:"Deposit claim signed and queued", offerSigned:"Sell offer signed and queued", cancelSigned:"Cancel signed and queued" },
+    claimSigned:"Deposit claim signed and queued — now open your Wallet and Broadcast the queue", offerSigned:"Sell offer signed and queued", cancelSigned:"Cancel signed and queued" },
   tErr:{ create:"Wallet creation failed: ", import:"Restore failed: ", sign:"Signing failed: ", badAddr:"Not a valid SAOS address (saos1...)",
     badAmt:"Invalid amount", badPrice:"Invalid price", badCur:"Currency symbol: 2 to 10 capital letters", badRef:"Reference: 6 to 90 characters",
     noSymbol:"Pick a currency", emptyQueue:"The queue is empty", relayFail:"Broadcast failed: ", noToken:"No token selected", badSym:"Symbol: capital A-Z, 3 to 8 characters",
@@ -1070,6 +1072,7 @@ he: {
   wQueueT:"תור פעולות חתומות", wQueueP:"חתומות וממתינות. העתק אותן לרשת, או שדר למטה.", wQueueCopy:"העתקת JSON חתום",
   wRelayT:"שידור", wRelayP:"מפתח של חשבון Steem הוא תעבורה בלבד: הוא לא יכול לשנות את הפעולות שלך. החתימה הפנימית היא הסמכות.",
   wRelayAcc:"חשבון Steem", wRelayWif:"מפתח posting (WIF)", wRelayBtn:"שידור התור",
+  wRelayOrder:"הסדר חשוב: משדרים את כל התור בבת אחת — wallet.create חייב לנחות לפני הכל. הפקדה מאומתת מקבלת זיכוי-נגדי מאוצר-הרשת לפי השער המפורסם, וה-SAOS שלך מופיע בספר הפתוח.",
   wQrT:"QR של הכתובת", wQrP:"סרקו עם מצלמה כדי לשתף את הכתובת. הקוד מכיל את הכתובת בלבד — לעולם לא מפתחות.",
   wPvT:"שווי מוערך", wPvNote:"מחירי ביניים של בריכות ה-DEX הציבוריות — הערכה בלבד, לעולם לא הבטחה.", wPvNone:"אין עדיין מחיר בריכה ציבורי לטוקן הזה.",
   wAlertT:"התראות מחיר", wAlertP:"נבדק מול מחירי הספר הרשמי בכל פתיחת ארנק או לחיצה על בדיקה עכשיו. הכל נשאר במכשיר הזה — בלי מפתחות, בלי שרת.", wAlertAsset:"מטבע", wAlertDir:"תנאי", wAlertGe:"עולה ל\u200f או מעל", wAlertLe:"יורד ל\u200f או מתחת", wAlertTarget:"יעד (USDS)", wAlertAdd:"הוספת התראה", wAlertCheck:"בדיקה עכשיו", wAlertArmed:"דרוך", wAlertDone:"נחצה", wAlertNone:"אין עדיין התראות — הוסיפו אחת למעלה.", wAlertHit:"התראה: {s} הגיע ל\u200f {p} USDS", wAlertCalm:"אף התראה לא נחצה כרגע.", wAlertBad:"בחרו מטבע ויעד חיובי.", wAlertSet:"ההתראה נשמרה במכשיר הזה.",
@@ -1136,7 +1139,7 @@ he: {
   tOk:{ walletBorn:"ארנק חדש נולד במכשיר שלך", wiped:"הארנק נמחק מהזיכרון", backup:"גיבוי מוצפן הורד",
     restored:"הארנק שוחזר", signed:"נחתם ונוסף לתור", broadcast:n=>n+" פעולות שודרו לשרשרת",
     copied:"הועתק", registered:"הרישום נחתם והועבר לתור", needWallet:"קודם פתח או שחזר ארנק",
-    claimSigned:"תביעת ההפקדה נחתמה והועברה לתור", offerSigned:"הצעת המכירה נחתמה והועברה לתור", cancelSigned:"הביטול נחתם והועבר לתור" },
+    claimSigned:"תביעת ההפקדה נחתמה והועברה לתור — עכשיו פתח את הארנק ושדר את התור", offerSigned:"הצעת המכירה נחתמה והועברה לתור", cancelSigned:"הביטול נחתם והועבר לתור" },
   tErr:{ create:"יצירת הארנק נכשלה: ", import:"שחזור נכשל: ", sign:"החתימה נכשלה: ", badAddr:"כתובת SAOS לא תקינה (saos1...)",
     badAmt:"כמות לא תקינה", badPrice:"מחיר לא תקין", badCur:"סמל מטבע: 2 עד 10 אותיות גדולות", badRef:"אסמכתה: 6 עד 90 תווים",
     noSymbol:"בחר מטבע", emptyQueue:"התור ריק", relayFail:"השידור נכשל: ", noToken:"לא נבחר טוקן", badSym:"סמל: אותיות גדולות A-Z, 3 עד 8 תווים",
