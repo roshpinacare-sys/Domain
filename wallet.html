@@ -323,6 +323,42 @@ footer.site a:hover{color:var(--gold-bright);text-decoration:none}
   .dex-frame iframe{height:70vh}
   .dex-strip>span{padding:9px 10px;min-width:86px}
 }
+/* ═══ wallet v2 (task 21-b) · wizard, status strip, transport chip, SAOSX, slim scroll ═══ */
+.scroll-y{max-height:300px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
+.scroll-y::-webkit-scrollbar{width:8px}
+.scroll-y::-webkit-scrollbar-thumb{background:var(--line2);border-radius:8px}
+.scroll-y::-webkit-scrollbar-track{background:transparent}
+/* quick-start wizard — checkmarks reflect REAL state only */
+.wz-step{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line)}
+.wz-step:last-child{border-bottom:none}
+.wz-mark{flex:none;width:32px;height:32px;min-width:32px;margin-top:2px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-weight:650;font-size:13px;border:1px solid var(--line2);color:var(--faint);background:var(--bg2)}
+.wz-step.done .wz-mark{border-color:rgba(34,197,94,.5);color:var(--green);background:rgba(34,197,94,.08)}
+.wz-step b{font-size:14.5px;display:block}
+.wz-step p{font-size:12.5px;color:var(--dim);line-height:1.55;margin-top:2px}
+/* one-glance status strip */
+.wss{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+/* active transport-key chip — memory only, removable */
+.keychip{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11.5px;color:var(--gold-bright);
+  border:1px solid var(--gold-line);background:var(--gold-dim);border-radius:999px;padding:5px 6px 5px 12px;max-width:100%}
+.keychip i{width:7px;height:7px;border-radius:50%;background:var(--green);flex:none;box-shadow:0 0 8px currentColor}
+.keychip .kc-x{all:unset;cursor:pointer;color:var(--dim);font-size:14px;line-height:1;padding:6px 9px;border-radius:999px}
+.keychip .kc-x:hover{color:var(--red);background:rgba(239,68,68,.12)}
+/* SAOSX */
+.xbar{height:10px;border-radius:999px;background:var(--bg2);border:1px solid var(--line);overflow:hidden;margin-top:8px}
+.xbar>i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-bright));border-radius:999px;transition:width .4s}
+.sx-pool{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r-sm);padding:12px 14px;box-shadow:var(--key)}
+.sx-pool b{font-size:13px}
+.sx-pool .pbar{height:6px;border-radius:999px;background:var(--bg3);border:1px solid var(--line);overflow:hidden;margin-top:8px}
+.sx-pool .pbar>i{display:block;height:100%;background:var(--gold-dim);border-inline-start:2px solid var(--gold)}
+.sx-feats{display:flex;gap:8px;flex-wrap:wrap}
+/* touch targets ≥44px on mobile (task 21-b D4) */
+@media(max-width:760px){
+  .copy{min-height:44px;padding:9px 16px}
+  .btn.sm{min-height:44px;padding:10px 16px}
+  .card{padding:18px 16px}
+  .grid{gap:14px}
+}
 @media print{
   body::before,body::after{display:none}
   #bg{display:none}
@@ -375,6 +411,7 @@ footer.site a:hover{color:var(--gold-bright);text-decoration:none}
       <a class="tab" href="#earn" data-nav="earn" data-i="navEarn">Deposit and Earn</a>
       <a class="tab" href="#currency" data-nav="currency" data-i="navCurrency">Currency</a>
       <a class="tab" href="#tokens" data-nav="tokens" data-i="navTokens">Tokens</a>
+      <a class="tab" href="#saosx" data-nav="saosx" data-i="navSaosx">SAOSX</a>
       <a class="tab" href="#network" data-nav="network" data-i="navNetwork">Network</a>
     </nav>
     <div class="hright">
@@ -463,6 +500,38 @@ footer.site a:hover{color:var(--gold-bright);text-decoration:none}
     <h2 data-i="wTitle">Your wallet</h2>
     <p class="sect-sub" data-i="wSub">A personal SAOS address that belongs to the key on your device. Register it once and the whole network can see it.</p>
 
+    <!-- wallet v2 (task 21-b D1): quick-start wizard — 3 steps, live real state -->
+    <div class="card" id="wizard-card" style="margin-top:16px">
+      <h2 data-i="wzTitle">Quick start</h2>
+      <p class="sub" data-i="wzSub"></p>
+      <div class="wz">
+        <div class="wz-step" id="wz-1">
+          <span class="wz-mark" id="wz-mark-1">1</span>
+          <div style="flex:1;min-width:0">
+            <b data-i="wz1T"></b>
+            <p data-i="wz1P"></p>
+            <div class="wz-act" style="margin-top:8px"><button type="button" class="btn ghost sm" id="wz-go-1" data-i="wz1Go"></button></div>
+          </div>
+        </div>
+        <div class="wz-step" id="wz-2">
+          <span class="wz-mark" id="wz-mark-2">2</span>
+          <div style="flex:1;min-width:0">
+            <b data-i="wz2T"></b>
+            <p data-i="wz2P"></p>
+            <div class="wz-act" style="margin-top:8px"><button type="button" class="btn ghost sm" id="wz-go-2" data-i="wz2Go"></button></div>
+          </div>
+        </div>
+        <div class="wz-step" id="wz-3">
+          <span class="wz-mark" id="wz-mark-3">3</span>
+          <div style="flex:1;min-width:0">
+            <b data-i="wz3T"></b>
+            <p data-i="wz3P"></p>
+            <div class="wz-act" style="margin-top:8px"><button type="button" class="btn ghost sm" id="wz-go-3" data-i="wz3Go"></button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="card" style="margin-top:16px;padding:12px 16px">
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
         <span style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)" data-i="vitT">Network lines</span>
@@ -494,6 +563,10 @@ footer.site a:hover{color:var(--gold-bright);text-decoration:none}
     </div>
 
     <div id="wallet-live" style="display:none">
+      <!-- wallet v2 (task 21-b D2): one-glance status strip — address, balance, transport key, queue -->
+      <div class="card" id="wallet-status" style="margin-bottom:16px;padding:14px 16px">
+        <div class="wss" id="ws-chips"></div>
+      </div>
       <div class="grid g2">
         <div class="card">
           <h2 data-i="wAddrT">Your address</h2>
@@ -569,23 +642,37 @@ footer.site a:hover{color:var(--gold-bright);text-decoration:none}
         <div class="feed" id="my-activity" style="max-height:300px;overflow-y:auto"></div>
       </div>
 
-      <div class="grid g2" style="margin-top:16px">
+      <div class="grid g2" id="queue-card" style="margin-top:16px">
         <div class="card">
           <h2><span data-i="wQueueT">Signed operations queue</span> <span class="tag gold" id="wallet-queue">0</span></h2>
           <p class="sub" data-i="wQueueP">Signed and waiting. Copy them for the network, or broadcast below.</p>
           <div class="feed" id="queue-list"></div>
           <button class="btn ghost sm" id="btn-copy-queue" style="margin-top:12px" data-i="wQueueCopy">Copy signed JSON</button>
         </div>
-        <div class="card">
+        <div class="card" id="relay-card">
           <h2 data-i="wRelayT">Broadcast</h2>
           <p class="sub" data-i="wRelayP">A Steem account key is transport only: it cannot change your operations. The inner signature is the authority.</p>
+          <!-- wallet v2 (task 21-b B): active transport chip — memory only, removable -->
+          <div id="tx-key-chip" style="display:none;margin-bottom:12px"></div>
           <div class="frow">
             <div class="field"><label class="f" data-i="wRelayAcc">Steem account</label><input id="relay-account" placeholder="account"></div>
-            <div class="field"><label class="f" data-i="wRelayWif">Posting key (WIF)</label><input type="password" class="mono" id="relay-wif" placeholder="5..."></div>
+            <div class="field"><label class="f" data-i="wRelayWif">Transport key (posting / active WIF)</label><input type="password" class="mono" id="relay-wif" placeholder="5..."></div>
           </div>
+          <div class="hint" id="relay-keytype" style="margin-top:0"></div>
           <button class="btn gold" id="btn-relay-all" data-i="wRelayBtn">Broadcast queue</button>
           <div class="hint" data-i="wRelayOrder" style="margin-top:10px">Order matters: broadcast the whole queue in one go — wallet.create must land before anything else. A verified deposit is countersigned by the network treasury at the published rate and your SAOS appears in the open ledger.</div>
           <div class="hint" id="relay-result" style="margin-top:10px"></div>
+          <!-- wallet v2 (task 21-b A): the honest owner-key path — attach a fresh posting key -->
+          <div id="attach-panel" style="display:none;margin-top:16px;border-top:1px solid var(--line);padding-top:14px">
+            <h3 style="font-size:14.5px;margin-bottom:4px" data-i="wAttT"></h3>
+            <p class="hint" style="margin-bottom:10px;line-height:1.6" data-i="wAttP"></p>
+            <label style="display:flex;gap:9px;align-items:flex-start;font-size:12.5px;color:var(--dim);cursor:pointer;margin-bottom:10px;line-height:1.5">
+              <input type="checkbox" id="attach-confirm" style="width:18px;height:18px;min-height:18px;flex:none;margin-top:2px">
+              <span data-i="wAttConfirm"></span>
+            </label>
+            <button class="btn gold" id="btn-attach-posting" data-i="wAttBtn" disabled></button>
+            <div id="attach-result" style="margin-top:12px"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -682,6 +769,7 @@ footer.site a:hover{color:var(--gold-bright);text-decoration:none}
         <h2 data-i="eAddrT">Deposit addresses</h2>
         <p class="sub" data-i="eAddrP">Published on chain by the network treasury.</p>
         <div id="e-addrs"></div>
+        <div class="note honest" data-i="eAddrHow" style="margin-top:12px"></div>
         <div class="note" data-i="eAddrNote">Send only the currency shown next to each address. The reference of your transfer is what you paste in the claim below.</div>
       </div>
 
@@ -740,7 +828,7 @@ footer.site a:hover{color:var(--gold-bright);text-decoration:none}
       <div class="card">
         <h2 data-i="cHoldT">Top holders</h2>
         <p class="sub" data-i="cHoldP">From the public balances.</p>
-        <div class="tblwrap"><table><thead><tr><th data-i="cAddr">Address</th><th data-i="cBal">SAOS</th></tr></thead><tbody id="c-holders"></tbody></table></div>
+        <div class="tblwrap scroll-y" style="max-height:300px"><table><thead><tr><th data-i="cAddr">Address</th><th data-i="cBal">SAOS</th></tr></thead><tbody id="c-holders"></tbody></table></div>
       </div>
     </div>
 
@@ -787,6 +875,61 @@ footer.site a:hover{color:var(--gold-bright);text-decoration:none}
       <h2 data-i="tListT">Contracts on chain</h2>
       <p class="sub" data-i="tListP">Every token is a signed contract with a public state.</p>
       <div class="tblwrap"><table><thead><tr><th data-i="tLSym">Symbol</th><th data-i="tLName">Name</th><th data-i="tLSup">Supply</th><th data-i="tLMax">Max</th><th data-i="tLIss">Issuer</th><th data-i="tLHold">Holders</th></tr></thead><tbody id="tokens-table"></tbody></table></div>
+    </div>
+  </section>
+
+  <!-- ═══════════ SAOSX (task 21-b D5) ═══════════ -->
+  <section class="view" id="view-saosx">
+    <div class="eyebrow">SAOS · SAOSX TOKEN</div>
+    <h2 data-i="sxTitle">SAOSX</h2>
+    <p class="sect-sub" data-i="sxSub"></p>
+
+    <div id="sx-empty" class="note honest" style="display:none;margin-bottom:16px">
+      <b data-i="sxNoneT"></b>
+      <p data-i="sxNoneP" style="margin-top:6px"></p>
+    </div>
+
+    <div id="sx-live" style="display:none">
+      <div class="strip">
+        <div class="kpi"><div class="k" data-i="sxSupply"></div><div class="v num" id="sx-sup">—</div><div class="s" id="sx-sym">—</div></div>
+        <div class="kpi"><div class="k" data-i="sxCap"></div><div class="v num" id="sx-cap">—</div><div class="s" id="sx-cap-s"></div></div>
+        <div class="kpi"><div class="k" data-i="sxStaked"></div><div class="v num" id="sx-staked">—</div><div class="s" data-i="sxStakedS"></div></div>
+        <div class="kpi"><div class="k" data-i="sxApr"></div><div class="v" id="sx-apy" style="font-size:17px">—</div><div class="s" id="sx-reward"></div></div>
+      </div>
+
+      <div class="card" id="sx-progress-card" style="margin-top:16px;display:none">
+        <div style="display:flex;justify-content:space-between;gap:10px;font-size:12.5px;color:var(--dim)">
+          <span data-i="sxProgress"></span><b class="num" id="sx-pct">—</b>
+        </div>
+        <div class="xbar"><i id="sx-bar" style="width:0%"></i></div>
+      </div>
+
+      <div class="grid g2" style="margin-top:16px">
+        <div class="card">
+          <h2 data-i="sxPoolsT"></h2>
+          <p class="sub" data-i="sxPoolsP"></p>
+          <div class="grid g2" id="sx-pools" style="gap:10px"></div>
+        </div>
+        <div class="card">
+          <h2 data-i="sxHoldT"></h2>
+          <p class="sub" data-i="sxHoldP"></p>
+          <div class="tblwrap scroll-y" style="max-height:288px"><table style="min-width:0"><thead><tr><th data-i="sxHoldAddr"></th><th data-i="sxHoldAmt"></th></tr></thead><tbody id="sx-holders"></tbody></table></div>
+        </div>
+      </div>
+
+      <div class="card" id="sx-issuer-card" style="margin-top:16px">
+        <h2 data-i="sxIssT"></h2>
+        <p class="sub" data-i="sxIssP"></p>
+        <div id="sx-issuer"></div>
+      </div>
+    </div>
+
+    <!-- engine features + open-book note: static engine truth, shown even before token.json exists -->
+    <div class="card" style="margin-top:16px">
+      <h2 data-i="sxFeatT"></h2>
+      <p class="sub" data-i="sxFeatP"></p>
+      <div class="sx-feats" id="sx-feats"></div>
+      <div class="note" style="margin-top:14px"><span data-i="sxBook"></span> <a href="#network" data-i="sxBookGo" style="color:var(--gold);white-space:nowrap"></a></div>
     </div>
   </section>
 
@@ -997,12 +1140,12 @@ en: {
     copied:"Copied", registered:"Registration signed and queued", needWallet:"Open or restore a wallet first",
     claimSigned:"Deposit claim signed and queued — now open your Wallet and Broadcast the queue", offerSigned:"Sell offer signed and queued", cancelSigned:"Cancel signed and queued" },
   tErr:{ create:"Wallet creation failed: ", import:"Restore failed: ", sign:"Signing failed: ", badAddr:"Not a valid SAOS address (saos1...)",
-    badAmt:"Invalid amount", badPrice:"Invalid price", badCur:"Currency symbol: 2 to 10 capital letters", badRef:"Reference: 6 to 90 characters",
-    noSymbol:"Pick a currency", emptyQueue:"The queue is empty", relayFail:"Broadcast failed: ", noToken:"No token selected", badSym:"Symbol: capital A-Z, 3 to 8 characters",
-    overBal:"Amount exceeds your balance for this token" },
+    badAmt:"Invalid amount — enter a positive number, e.g. 12.5", badPrice:"Invalid price — enter a positive number, e.g. 0.001", badCur:"Currency symbol: 2 to 10 capital letters", badRef:"Reference: 6 to 90 characters — paste the transfer id from your currency app",
+    noSymbol:"Pick a currency from the list first", emptyQueue:"The queue is empty — nothing to broadcast. Sign an operation first (e.g. wallet registration), then broadcast.", relayFail:"Broadcast failed: ", noToken:"No token selected", badSym:"Symbol: capital A-Z, 3 to 8 characters",
+    overBal:"Amount exceeds your balance for this token — press MAX to fill the available balance" },
   status:{ registered:"Registered on chain", pendingReg:"Waiting for registration on chain", treasury:"Network treasury",
     newReg:"Step 1 of 3: sign your registration", newHint:"Tap Register below. Your registration is signed on this device and nothing leaves it until you broadcast it.",
-    queuedReg:"Step 2 of 3: signed and queued", queuedHint:"Your registration is signed on this device. Open Broadcast below and relay it with a Steem posting key; the network fold then lists your wallet (step 3)." },
+    queuedReg:"Step 2 of 3: signed and queued", queuedHint:"Your registration is signed on this device. Attach a transport key in the Broadcast card below (posting or active) and it broadcasts itself; the network fold then lists your wallet (step 3)." },
   /* r144-g2 — hosted-relay states for step 2 → 3 (honest: every state is a real one) */
   relay:{ sending:"signed — handing to the hosted relay", sent:(id)=>"signed — sent for broadcast (ref: "+id+")",
     queued:(id)=>"the relay queued it for the next fold publish (ref: "+id+")",
@@ -1011,6 +1154,53 @@ en: {
     deepBtn:"Complete registration in the Console",
     hashTitle:"A wallet registration was passed from another device", hashGo:"Relay it via the hosted relay",
     hashFail:"the relay did not accept it — nothing was changed", hashNone:"no hosted relay is known to this page yet" },
+  /* task 21-b · wallet v2 — wizard, status strip, transport key, owner path, SAOSX */
+  navSaosx:"SAOSX",
+  wzTitle:"Quick start", wzSub:"Three steps from zero to a wallet that lives on the open book. Every checkmark below is your real state — nothing here is faked.",
+  wz1T:"1 · Create or restore a wallet",
+  wz1P:"A key is born on your device (or restored from your encrypted backup). Your SAOS address is derived from that key alone.",
+  wz1Go:"Create a wallet",
+  wz2T:"2 · Attach a transport key (posting / active)",
+  wz2P:"SAOS operations ride on a Steem account as transport. A posting key broadcasts the everyday operations; an active key signs operations that need stronger authority. An owner key cannot sign these at all — it is the master key, keep it offline.",
+  wz2Go:"Attach a transport key",
+  wz3T:"3 · Broadcast and land on the book",
+  wz3P:"With a transport key attached, every newly signed operation broadcasts itself over the public chain and the open book folds it. Without one, the signed queue waits safely in the card below.",
+  wz3Go:"To the queue and broadcast",
+  wssKeyChip:"transport key active (memory only)", wssKeyMem:"wiped when this tab closes",
+  wssAddr:"address", wssBal:"balance", wssQueue:"queue",
+  keyPosting:"posting", keyActive:"active", keyNone:"none attached",
+  wssKeyOff:"transport key: none — attach one in the Broadcast card below",
+  wRelayKeyHint:"Paste the WIF. The page derives its public key and checks it against ALL three authorities of the account (owner, active, posting) before anything is signed.",
+  keyDetected:(k)=>"detected: "+k+" key",
+  tErrBadAccount:"Account name looks wrong — use 3-24 lowercase letters/digits/dots/dashes and try again.",
+  errNoAccount:"No Steem account with this name — check the spelling and try again.",
+  errNoMatch:"This key does not belong to this account. Paste a key that is linked to it (posting, active or owner), or attach a fresh posting key below.",
+  errOwner:"An owner key is the master key — it cannot sign broadcast operations. Use a posting or active key, or press 'Attach a fresh posting key' below.",
+  wAttT:"Advanced · attach a fresh posting key",
+  wAttP:"An owner key cannot sign broadcasts — by design. This action generates a brand-new posting keypair in your browser, updates your account's posting authority to it (signed by your owner key; the owner and active authorities stay untouched), then broadcasts the queued operations with it. The new posting WIF is shown once — store it.",
+  wAttConfirm:"I understand this action adds a posting key to my account",
+  wAttBtn:"Attach a fresh posting key",
+  wAttBusy:"generating + signing the account_update…",
+  wAttDone:"posting key attached — the queue now broadcasts with it automatically",
+  wAttWifT:"New posting key (WIF) — shown once. Copy and store it now; it is not saved anywhere.",
+  wAttFail:"the attach failed: ",
+  wAttOwnerOnly:"Paste the account's owner key — only the owner authority can update the posting authority.",
+  autoRelayOn:"auto-broadcast: on — new signed ops broadcast themselves",
+  autoRelayFail:"auto-broadcast failed — the op stays in the local queue (honest fallback)",
+  wssTrType:(k)=>"transport: "+k,
+  eAddrHow:"A deposit = a transfer to the address + a signed claim from your wallet. The open ledger records everything.",
+  sxTitle:"SAOSX", sxSub:"The network token, read live from token.json in this directory (cache: no-store). Only what the file publishes is shown — this page invents nothing.",
+  sxNoneT:"Token not published yet",
+  sxNoneP:"token.json is not published in this directory yet. The moment it appears, this page reads it directly from the public source and fills every number below from it alone.",
+  sxSupply:"Supply", sxCap:"Hard cap", sxStaked:"Total staked", sxStakedS:"in the staking pool", sxApr:"Staking yield",
+  sxProgress:"Supply minted of cap",
+  sxPoolsT:"Pools", sxPoolsP:"Contract pools and their share of the cap, as published.",
+  sxHoldT:"Top 10 holders", sxHoldP:"From the published holder list.", sxHoldAddr:"Holder", sxHoldAmt:"Amount",
+  sxIssT:"Issuer", sxIssP:"The public identity of the issuer, exactly as published.",
+  sxFeatT:"Contract engine features", sxFeatP:"Real capabilities of the contract engine this token runs on.",
+  sxBook:"Token history lives on the open book — every operation is verifiable.",
+  sxBookGo:"verify it yourself →",
+  sxNoPools:"No pools published in token.json yet.", sxNoHolders:"No holders published in token.json yet.",
   wRestoreLocalT:"An encrypted backup exists in this browser", wRestoreLocalBtn:"Restore with password", wForgetLocalBtn:"Forget it",
   empty:{ ops:"No operations yet. The first ones will appear here.", offers:"No open offers yet.", mine:"Open a wallet to see your offers.",
     addrs:"No deposit addresses published yet. They appear here the moment the treasury publishes them.",
@@ -1141,12 +1331,12 @@ he: {
     copied:"הועתק", registered:"הרישום נחתם והועבר לתור", needWallet:"קודם פתח או שחזר ארנק",
     claimSigned:"תביעת ההפקדה נחתמה והועברה לתור — עכשיו פתח את הארנק ושדר את התור", offerSigned:"הצעת המכירה נחתמה והועברה לתור", cancelSigned:"הביטול נחתם והועבר לתור" },
   tErr:{ create:"יצירת הארנק נכשלה: ", import:"שחזור נכשל: ", sign:"החתימה נכשלה: ", badAddr:"כתובת SAOS לא תקינה (saos1...)",
-    badAmt:"כמות לא תקינה", badPrice:"מחיר לא תקין", badCur:"סמל מטבע: 2 עד 10 אותיות גדולות", badRef:"אסמכתה: 6 עד 90 תווים",
-    noSymbol:"בחר מטבע", emptyQueue:"התור ריק", relayFail:"השידור נכשל: ", noToken:"לא נבחר טוקן", badSym:"סמל: אותיות גדולות A-Z, 3 עד 8 תווים",
-    overBal:"הכמות גדולה מהיתרה שלך למטבע הזה" },
+    badAmt:"כמות לא תקינה — הזינו מספר חיובי, למשל 12.5", badPrice:"מחיר לא תקין — הזינו מספר חיובי, למשל 0.001", badCur:"סמל מטבע: 2 עד 10 אותיות גדולות", badRef:"אסמכתה: 6 עד 90 תווים — הדביקו את מזהה ההעברה מאפליקציית המטבע שלכם",
+    noSymbol:"בחרו מטבע מהרשימה קודם", emptyQueue:"התור ריק — אין מה לשדר. חתמו קודם על פעולה (למשל רישום ארנק) ואז שדרו.", relayFail:"השידור נכשל: ", noToken:"לא נבחר טוקן", badSym:"סמל: אותיות גדולות A-Z, 3 עד 8 תווים",
+    overBal:"הכמות גדולה מהיתרה שלך למטבע הזה — לחצו MAX למילוי כל היתרה הזמינה" },
   status:{ registered:"רשום על השרשרת", pendingReg:"ממתין לרישום על השרשרת", treasury:"אוצר הרשת",
     newReg:"שלב 1 מתוך 3: חתימת ההרשמה", newHint:"לחצו 'רישום על השרשרת' למטה. ההרשמה נחתמת במכשיר שלכם ושום דבר לא יוצא ממנו עד שתשדרו אותה.",
-    queuedReg:"שלב 2 מתוך 3: נחתם וממתין בתור", queuedHint:"ההרשמה נחתמה במכשיר שלכם. פתחו את כרטיס 'שידור' למטה ושדרו עם מפתח posting של Steem; אז הרשת תכניס את הארנק לספר (שלב 3)." },
+    queuedReg:"שלב 2 מתוך 3: נחתם וממתין בתור", queuedHint:"ההרשמה נחתמה במכשיר שלכם. צרפו מפתח-שידור בכרטיס 'שידור' למטה (posting או active) והיא תשודר מעצמה; אז הרשת תכניס את הארנק לספר (שלב 3)." },
   /* r144-g2 — מצבי הריליי המאורח לשלב 2 ← 3 (כנות: כל מצב אמיתי) */
   relay:{ sending:"נחתם — נשלח לריליי המאורח", sent:(id)=>"חתום — נשלח לשידור (מזהה: "+id+")",
     queued:(id)=>"הריליי תיקב אותה לתור לפרסום-הקיפול הבא (מזהה: "+id+")",
@@ -1155,6 +1345,53 @@ he: {
     deepBtn:"השלם רישום בקונסולה",
     hashTitle:"הרשמת-ארנק הועברה ממכשיר אחר", hashGo:"שדר דרך הריליי המאורח",
     hashFail:"הריליי לא קיבל אותה — לא השתנה דבר", hashNone:"אין עדיין ריליי מאורח מוכר לדף הזה" },
+  /* task 21-b · wallet v2 — אשף-התחלה, פס-מצב, מפתח-שידור, נתיב-owner, SAOSX */
+  navSaosx:"SAOSX",
+  wzTitle:"התחלה מהירה", wzSub:"שלושה צעדים מאפס ועד ארנק חי על הספר הפתוח. כל סימן-ביקורת כאן הוא המצב האמיתי שלך — שום דבר לא מדומה.",
+  wz1T:"1 · יצירת/שחזור ארנק",
+  wz1P:"מפתח נולד במכשיר שלך (או שוחזר מהגיבוי המוצפן). כתובת ה-SAOS נגזרת מהמפתח הזה לבדו.",
+  wz1Go:"יצירת ארנק",
+  wz2T:"2 · מפתח-שידור (posting / active)",
+  wz2P:"פעולות SAOS רוכבות על חשבון Steem כתעבורה. מפתח-posting משדר את הפעולות היומיומיות; מפתח-active חותם פעולות שדורשות סמכות חזקה יותר. מפתח-owner לא יכול לחתום עליהן בכלל — הוא מפתח-האמא, שמרו עליו לא מקוון.",
+  wz2Go:"צריף מפתח-שידור",
+  wz3T:"3 · שידור וקבלה על הספר",
+  wz3P:"עם מפתח-שידור מחובר, כל פעולה חתומה חדשה משודרת מעצמה דרך השרשרת הציבורית והספר הפתוח מקפל אותה. בלי כזה — התור החתום ממתין בבטחה בכרטיס למטה.",
+  wz3Go:"לתור ולשידור",
+  wssKeyChip:"מפתח-שידור פעיל (בזיכרון בלבד)", wssKeyMem:"נמחק בסגירת הלשונית",
+  wssAddr:"כתובת", wssBal:"יתרה", wssQueue:"תור",
+  keyPosting:"posting", keyActive:"active", keyNone:"לא צורף",
+  wssKeyOff:"מפתח-שידור: אין — צרפו אחד בכרטיס השידור למטה",
+  wRelayKeyHint:"הדביקו את ה-WIF. הדף גוזר את המפתח הציבורי ובודק אותו מול כל שלוש הסמכויות של החשבון (owner, active, posting) לפני כל חתימה.",
+  keyDetected:(k)=>"זוהה: מפתח-"+k,
+  tErrBadAccount:"שם החשבון נראה שגוי — 3 עד 24 תווים (אותיות קטנות/ספרות/נקודות/מקפים) ונסו שוב.",
+  errNoAccount:"אין חשבון Steem בשם הזה — בדקו את האיות ונסו שוב.",
+  errNoMatch:"המפתח הזה לא שייך לחשבון הזה. הדביקו מפתח שמקושר אליו (posting, active או owner), או צרפו מפתח-posting חדש למטה.",
+  errOwner:"מפתח-owner הוא מפתח-האמא. לשידור צריך מפתח-posting או active — לחץ 'צרף מפתח-posting' למטה.",
+  wAttT:"מתקדם · צריף מפתח-posting חדש",
+  wAttP:"מפתח-owner לא יכול לחתום על שידורים — כך זה בתכנון. הפעולה הזאת מחוללת זוג מפתחות-posting חדש בדפדפן שלך, מעדכנת את סמכות ה-posting של החשבון אליה (חתום במפתח-owner; סמכויות owner ו-active נשארות בלי שינוי), ואז משדרת את פעולות התור איתה. ה-WIF החדש מוצג פעם אחת — שמרו אותו.",
+  wAttConfirm:"אני מבין שפעולה זו מוסיפה מפתח-posting לחשבון שלי",
+  wAttBtn:"צריף מפתח-posting",
+  wAttBusy:"מחולל וחותם את ה-account_update…",
+  wAttDone:"מפתח-posting צורף — התור משודר איתו אוטומטית מעכשיו",
+  wAttWifT:"מפתח-posting חדש (WIF) — מוצג פעם אחת. העתיקו ושמרו עכשיו; הוא לא נשמר בשום מקום.",
+  wAttFail:"הצירוף נכשל: ",
+  wAttOwnerOnly:"הדביקו את מפתח-ה-owner של החשבון — רק סמכות ה-owner יכולה לעדכן את סמכות ה-posting.",
+  autoRelayOn:"שידור אוטומטי: פעיל — כל פעולה חתומה חדשה משודרת מעצמה",
+  autoRelayFail:"השידור האוטומטי נכשל — הפעולה נשארת בתור המקומי (גיבוי כנה)",
+  wssTrType:(k)=>"תעבורה: "+k,
+  eAddrHow:"הפקדה = העברה לכתובת + תביעה חתומה מהארנק שלך. הספר הפתוח רושם הכל.",
+  sxTitle:"SAOSX", sxSub:"הטוקן של הרשת, נקרא חי מ-token.json בספרייה הזאת (בלי מטמון). מוצג רק מה שהקובץ מפרסם — הדף לא ממציא כלום.",
+  sxNoneT:"טוקן עוד לא פורסם",
+  sxNoneP:"קובץ token.json עוד לא פורסם בספרייה הזאת. ברגע שיופיע, הדף קורא אותו ישירות מהמקור הציבורי וממלא כל מספר למטה ממנו לבדו.",
+  sxSupply:"אספקה", sxCap:"תקרה קבועה", sxStaked:"סך הכל שמור", sxStakedS:"בבריכת ה-staking", sxApr:"תשואת staking",
+  sxProgress:"אספקה מוטבעת מהתקרה",
+  sxPoolsT:"בריכות", sxPoolsP:"בריכות החוזה ונתחן מהתקרה, כפי שפורסם.",
+  sxHoldT:"עשרת המחזיקים הגדולים", sxHoldP:"מרשימת המחזיקים המפורסמת.", sxHoldAddr:"מחזיק", sxHoldAmt:"כמות",
+  sxIssT:"מנפיק", sxIssP:"הזהות הציבורית של המנפיק, בדיוק כפי שפורסמה.",
+  sxFeatT:"יכולות מנוע החוזים", sxFeatP:"יכולות אמיתיות של מנוע החוזים שהטוקן רץ עליו.",
+  sxBook:"היסטוריית הטוקן חיה על הספר הפתוח — כל פעולה ניתנת לאימות.",
+  sxBookGo:"אמתו בעצמכם ←",
+  sxNoPools:"אין עדיין בריכות מפורסמות ב-token.json.", sxNoHolders:"אין עדיין מחזיקים מפורסמים ב-token.json.",
   wRestoreLocalT:"קיים גיבוי מוצפן בדפדפן הזה", wRestoreLocalBtn:"שחזור עם סיסמה", wForgetLocalBtn:"מחיקה",
   empty:{ ops:"אין עדיין פעולות. הראשונות יופיעו כאן.", offers:"אין עדיין הצעות פתוחות.", mine:"פתח ארנק כדי לראות את ההצעות שלך.",
     addrs:"טרם פורסמו כתובות הפקדה. הן יופיעו כאן ברגע שהאוצר יפרסם אותן.",
@@ -1218,7 +1455,7 @@ function timeAgo(iso) {
 $("year").textContent = new Date().getFullYear();
 
 /* ═══════════ routing ═══════════ */
-const VIEWS = ["home", "wallet", "exchange", "dex", "earn", "currency", "tokens", "network"];
+const VIEWS = ["home", "wallet", "exchange", "dex", "earn", "currency", "tokens", "saosx", "network"];
 function route() {
   let h = (location.hash || "#home").slice(1);
   if (!VIEWS.includes(h)) h = "home";
@@ -1359,15 +1596,18 @@ async function boot() {
     pullDexWorld(), // R33: the depositor's USDS must be visible next to the SAOS balances
     pullWatch(), // 9-b: the watcher's real deposit addresses feed the earn tab
     pullVitals(), // R69: the wallet page carries the measured network truth too
+    pullToken(), // wallet v2 (21-b): SAOSX reads token.json — tolerant, honest empty until published
   ]);
   renderAll();
   relayKick(); // r144-g2: תור קיים עם ריליי מוכר? ממשיך משלב 2 לשלב 3 מעצמו
+  autoFlush(); // wallet v2 (21-b): a remembered session transport key flushes the queue itself
   probeChain();
   setInterval(() => jget("saos-live.json").then((l) => { LIVE = l; renderLive(); }).catch(() => {}), 120 * 1000);
   setInterval(pullDexState, 120 * 1000); // the kernel book rides the same cadence
   setInterval(pullDexWorld, 120 * 1000); // R33: the dex mirror rides the same cadence
   setInterval(pullWatch, 120 * 1000); // 9-b: deposit addresses ride the same cadence
   setInterval(pullVitals, 120 * 1000); // R69: measured lines at the house freshness cadence
+  setInterval(pullToken, 120 * 1000); // wallet v2 (21-b): SAOSX rides the same cadence
 }
 
 async function probeChain() {
@@ -1385,7 +1625,7 @@ async function probeChain() {
 setInterval(probeChain, 90 * 1000);
 
 /* ═══════════ rendering ═══════════ */
-function renderAll() { renderMirror(); renderLive(); renderAbook(); refreshAlertSymbols(); renderAlerts(); }
+function renderAll() { renderMirror(); renderLive(); renderAbook(); refreshAlertSymbols(); renderAlerts(); renderSaosx(); }
 
 function renderMirror() {
   const m = MIRROR;
@@ -1538,11 +1778,18 @@ function renderLive() {
     ["depositEvm", "EVM (ERC20)"],
     ["depositSol", "Solana (SPL)"],
     ["depositBtc", "Bitcoin"],
+    ["depositSteem", "STEEM"], // wallet v2 (21-b): Steem-chain deposits, account + memo form
+    ["depositSbd", "SBD"],
   ];
   const depRows = [];
   for (const [key, label] of depMeta) {
     const a = WATCH && WATCH.depositAddresses ? WATCH.depositAddresses[key] : null;
+    /* wallet v2 (21-b): an address may be a plain string (tron/evm/sol/btc) or an
+       {addr, memo} object (steem/sbd) — both shapes are read, nothing is invented */
     if (typeof a === "string" && a.trim()) depRows.push([label, { addr: a.trim() }]);
+    else if (a && typeof a === "object" && typeof a.addr === "string" && a.addr.trim()) {
+      depRows.push([label, { addr: a.addr.trim(), memo: (typeof a.memo === "string" && a.memo.trim()) || "" }]);
+    }
   }
   const shown = new Set(depRows.map(([, a]) => a.addr));
   for (const [cur, a] of Object.entries(cfg.addrs || {})) {
@@ -1594,7 +1841,7 @@ function renderLive() {
 let WALLET = null; // { priv:Uint8Array, pubSTM, addr }
 let QUEUE = [];
 try { QUEUE = JSON.parse(localStorage.getItem("saos.queue") || "[]"); } catch { QUEUE = []; }
-const saveQueue = () => { localStorage.setItem("saos.queue", JSON.stringify(QUEUE)); renderQueue(); renderMyActivity(); };
+const saveQueue = () => { localStorage.setItem("saos.queue", JSON.stringify(QUEUE)); renderQueue(); renderMyActivity(); renderWalletStatus(); renderWizard(); };
 /* R-wallet-persist-1: the page unload no longer needs an explicit wipe — tab memory dies with the tab.
    Persistence is offered ONLY as the user's encrypted keystore (password-protected, below). */
 
@@ -1618,6 +1865,8 @@ function renderWalletUI() {
     refreshSendSymbols();
     renderQr(); // R69: the address becomes scannable
   }
+  renderWalletStatus(); // wallet v2 (21-b): one-glance strip rides every wallet state change
+  renderWizard(); // wallet v2 (21-b): wizard checkmarks are the real state
   renderMyActivity(); // R69: the feed speaks even before a wallet exists
 }
 function renderWalletBalances() {
@@ -1631,6 +1880,7 @@ function renderWalletBalances() {
     : "0";
   renderPv();
   renderDexBalance();
+  renderWalletStatus(); // wallet v2 (21-b): the balance chip must never go stale
 }
 /* R69: portfolio value — mid prices of the public DEX pools, honest estimate only */
 function tokenPriceUsds(sym) {
@@ -1890,6 +2140,7 @@ async function enqueue(fields) {
     const env = await SL.buildOp(WALLET.priv, WALLET.pubSTM, fields);
     QUEUE.push(env);
     saveQueue();
+    autoRelay(env); // wallet v2 (21-b): with a transport key attached, new ops broadcast themselves
     return env;
   } catch (e) {
     toast(t("tErr.sign") + e.message, false);
@@ -2133,46 +2384,345 @@ $("btn-claim").addEventListener("click", async () => {
   if (env) { toast(t("tOk.claimSigned")); $("cl-ref").value = ""; }
 });
 
-/* ═══════════ broadcast (any Steem account as transport) ═══════════ */
+/* ═══════════ broadcast (any Steem account as transport) — wallet v2 (task 21-b) ═══════════
+   ROOT-CAUSE FIX (A): the old wall validated ONLY posting authority, so an owner key
+   ("מפתח לא מאומת") was rejected. Now the derived public key is checked against ALL THREE
+   authorities (owner/active/posting key_auths arrays) and the honest path per type:
+   posting → required_posting_auths · active → required_auths · owner → no broadcast
+   (the chain forbids it) + the advanced "attach a fresh posting key" flow below. */
+function classifyKey(pub, acc) {
+  const has = (auth) => Array.isArray(auth?.key_auths) && auth.key_auths.some((pair) => Array.isArray(pair) && pair[0] === pub);
+  if (has(acc?.owner)) return "owner";   // precedence: owner > active > posting
+  if (has(acc?.active)) return "active";
+  if (has(acc?.posting)) return "posting";
+  return "none";
+}
 $("btn-relay-all").addEventListener("click", async () => {
   const account = $("relay-account").value.trim().toLowerCase();
   const wif = $("relay-wif").value.trim();
   const out = $("relay-result");
   if (!QUEUE.length) { toast(t("tErr.emptyQueue"), false); return; }
-  if (!/^[a-z0-9.-]{3,24}$/.test(account)) { toast(t("tErr.badCur"), false); return; }
-  if (!wif) { toast(t("tErr.badRef"), false); return; }
+  if (!/^[a-z0-9.-]{3,24}$/.test(account)) { toast(t("tErrBadAccount"), false); return; }
+  if (!wif) { toast(LANG === "he" ? "הדביקו מפתח-שידור (WIF) — בלי מפתח אין מה לחתום איתו." : "Paste a transport key (WIF) first — there is nothing to sign with otherwise.", false); return; }
   out.textContent = "...";
   try {
     const priv = await C.wifToPriv(wif);
     const pub = await C.pubToSTM(C.privToPubBytes(priv));
-    const acc = await steemRpc("condenser_api.get_accounts", [[account]]);
-    const postingPub = acc?.[0]?.posting?.key_auths?.[0]?.[0];
-    if (pub !== postingPub) throw new Error(LANG === "he" ? "המפתח אינו מפתח ה-posting של החשבון" : "key is not a posting key of this account");
-    let sent = 0;
-    for (const env of QUEUE) {
-      const op = ["custom_json", {
-        required_auths: [], required_posting_auths: [account],
-        id: SL.OP_ID, json: JSON.stringify(env),
-      }];
-      const getProps = () => steemRpc("condenser_api.get_dynamic_global_properties", []);
-      const getBlockHeader = (n) => steemRpc("condenser_api.get_block_header", [n]);
-      const signed = await C.buildSignedTx([op], priv, getProps, getBlockHeader);
-      await steemRpc("condenser_api.broadcast_transaction", [signed]);
-      sent++;
-      await new Promise((r) => setTimeout(r, 700));
+    const acc = (await steemRpc("condenser_api.get_accounts", [[account]]))?.[0];
+    if (!acc) throw new Error(t("errNoAccount"));
+    const kt = classifyKey(pub, acc);
+    if (kt === "none") throw new Error(t("errNoMatch"));
+    $("relay-keytype").textContent = t("keyDetected")(kt);
+    if (kt === "owner") {
+      /* honest: an owner key cannot sign custom_json. Show the advanced path instead. */
+      $("attach-panel").style.display = "";
+      out.textContent = "";
+      $("attach-panel").scrollIntoView({ behavior: "smooth", block: "center" });
+      throw new Error(t("errOwner"));
     }
-    QUEUE = [];
-    saveQueue();
+    let sent = 0;
+    while (QUEUE.length) {
+      const r = await broadcastEnv(QUEUE[0], { account, wif, type: kt });
+      if (!r.ok) { if (!sent) throw new Error((t("tErr.relayFail") + (r.err || "rpc")).slice(0, 120)); out.textContent = t("autoRelayFail") + " " + (r.err || ""); break; }
+      QUEUE.shift();
+      saveQueue();
+      sent++;
+      await new Promise((r2) => setTimeout(r2, 700));
+    }
+    setTransport({ account, wif, type: kt }); // session transport remembered (memory + sessionStorage)
     out.textContent = t("tOk.broadcast")(sent);
     toast(t("tOk.broadcast")(sent));
     setTimeout(() => { jget("saos-live.json").then((l) => { LIVE = l; renderLive(); }).catch(() => {}); pullDexState(); }, 15000);
   } catch (e) {
-    out.textContent = (e.message || "").slice(0, 90);
-    toast(t("tErr.relayFail") + (e.message || "").slice(0, 80), false);
+    out.textContent = (e.message || "").slice(0, 140);
+    toast((e.message || t("tErr.relayFail")).slice(0, 140), false);
   } finally {
-    $("relay-wif").value = ""; // transport key wiped immediately
+    $("relay-wif").value = ""; // transport key wiped from the input immediately
   }
 });
+
+/* ═══════════ wallet v2 (task 21-b): session transport + auto-relay + attach + wizard + status ═══════════
+   (B) The transport key lives in memory + sessionStorage ONLY — never localStorage, never disk,
+   wiped with the tab. With it attached, every NEW signed op broadcasts itself via the public
+   RPCs (STEEM_NODES rotate on failure inside steemRpc); the local queue stays the honest
+   fallback whenever no transport key exists or a broadcast fails. */
+const TXKEY = "saos.txkey.v1";
+let TRANSPORT = null;
+try { TRANSPORT = JSON.parse(sessionStorage.getItem(TXKEY) || "null"); } catch { TRANSPORT = null; }
+function setTransport(tr) {
+  TRANSPORT = tr;
+  try { if (tr) sessionStorage.setItem(TXKEY, JSON.stringify(tr)); else sessionStorage.removeItem(TXKEY); } catch { /* private mode: memory only */ }
+  renderTransportUI();
+  renderWalletStatus();
+  renderWizard();
+}
+async function broadcastEnv(env, tr) {
+  const T = tr || TRANSPORT;
+  if (!T) return { ok: false, err: "no transport" };
+  try {
+    const op = ["custom_json", T.type === "active"
+      ? { required_auths: [T.account], required_posting_auths: [], id: SL.OP_ID, json: JSON.stringify(env) }
+      : { required_auths: [], required_posting_auths: [T.account], id: SL.OP_ID, json: JSON.stringify(env) }];
+    const priv = await C.wifToPriv(T.wif);
+    const getProps = () => steemRpc("condenser_api.get_dynamic_global_properties", []);
+    const getBlockHeader = (n) => steemRpc("condenser_api.get_block_header", [n]);
+    const signed = await C.buildSignedTx([op], priv, getProps, getBlockHeader);
+    await steemRpc("condenser_api.broadcast_transaction", [signed]);
+    return { ok: true };
+  } catch (e) { return { ok: false, err: (e.message || "").slice(0, 90) }; }
+}
+let AUTOBUSY = false;
+async function autoRelay(env) {
+  if (!TRANSPORT || AUTOBUSY) return;
+  AUTOBUSY = true;
+  try {
+    const r = await broadcastEnv(env);
+    if (r.ok) {
+      const i = QUEUE.findIndex((e) => e && e.id === env.id);
+      if (i >= 0) { QUEUE.splice(i, 1); saveQueue(); }
+      toast(t("tOk.broadcast")(1));
+    } else {
+      toast((t("autoRelayFail") + " " + (r.err || "")).slice(0, 140), false);
+    }
+  } finally { AUTOBUSY = false; }
+}
+let AUTOFLUSHED = false;
+async function autoFlush() {
+  if (!TRANSPORT || AUTOFLUSHED || !QUEUE.length) return;
+  AUTOFLUSHED = true;
+  while (QUEUE.length && TRANSPORT) {
+    const r = await broadcastEnv(QUEUE[0]);
+    if (!r.ok) { toast((t("autoRelayFail") + " " + (r.err || "")).slice(0, 140), false); break; }
+    QUEUE.shift();
+    saveQueue();
+    await new Promise((r2) => setTimeout(r2, 700));
+  }
+}
+function renderTransportUI() {
+  const chip = $("tx-key-chip");
+  const hint = $("relay-keytype");
+  if (hint) hint.textContent = TRANSPORT ? t("keyDetected")(TRANSPORT.type) + " · " + t("autoRelayOn") : t("wRelayKeyHint");
+  if (!chip) return;
+  if (!TRANSPORT) { chip.style.display = "none"; chip.innerHTML = ""; return; }
+  chip.style.display = "";
+  chip.innerHTML = `<span class="keychip"><i></i>${esc(t("wssKeyChip"))} · ${esc(TRANSPORT.account)} · ${esc(t("wssTrType")(TRANSPORT.type))}`
+    + ` <button type="button" class="kc-x" data-kc-x aria-label="remove" title="${esc(t("wssKeyMem"))}">×</button></span>`;
+}
+$("attach-confirm")?.addEventListener("change", () => { const b = $("btn-attach-posting"); if (b) b.disabled = !$("attach-confirm").checked; });
+document.addEventListener("click", (e) => {
+  if (e.target.closest?.("[data-kc-x]")) { setTransport(null); toast(LANG === "he" ? "מפתח-השידור נמחק מהזיכרון" : "transport key wiped from memory", true); }
+  const wsCopy = e.target.closest?.("[data-ws-copy]");
+  if (wsCopy) copyText(wsCopy.dataset.wsCopy, t("misc.myAddr"));
+});
+
+/* (A) advanced owner path: generate a fresh posting keypair in-browser, attach it with an
+   account_update signed by the OWNER key, then broadcast the queue with the new posting key.
+   The gate's serializer signs custom_json only, so account_update (op id 11) is serialized
+   here with the same canonical graphene LE anatomy (optional<authority> = 1 flag byte). */
+const OP_ID_ACCOUNT_UPDATE = 11;
+const vint = (n) => { const out = []; n = Number(n); do { let b = n & 0x7f; n >>>= 7; if (n) b |= 0x80; out.push(b); } while (n); return out; };
+const vstr = (s) => { const b = new TextEncoder().encode(String(s)); return [...vint(b.length), ...b]; };
+const u16le = (n) => { n = Number(n) & 0xffff; return [n & 0xff, (n >>> 8) & 0xff]; };
+const u32le = (n) => { n = Number(n) >>> 0; return [n & 0xff, (n >>> 8) & 0xff, (n >>> 16) & 0xff, (n >>> 24) & 0xff]; };
+const pub37 = (stm) => [...C.b58decode(String(stm).slice(3))]; // 33B compressed key + 4B ripemd160 checksum
+function serAuthority(a) {
+  const out = [];
+  out.push(...u32le(a?.weight_threshold ?? 0));
+  const accAuths = Array.isArray(a?.account_auths) ? a.account_auths : [];
+  out.push(...vint(accAuths.length));
+  for (const p of accAuths) { out.push(...vstr(p[0])); out.push(...u16le(p[1])); }
+  const keyAuths = Array.isArray(a?.key_auths) ? a.key_auths : [];
+  out.push(...vint(keyAuths.length));
+  for (const p of keyAuths) { out.push(...pub37(p[0])); out.push(...u16le(p[1])); }
+  return out;
+}
+function serializeAccountUpdate(o) {
+  let out = [];
+  out.push(...vstr(o.account));
+  for (const k of ["owner", "active", "posting"]) {
+    const v = o[k];
+    if (v == null) out.push(0); else { out.push(1); out.push(...serAuthority(v)); }
+  }
+  out.push(...pub37(o.memo_key));
+  out.push(...vstr(o.json_metadata || ""));
+  return out;
+}
+async function buildSignedAccountUpdate(op, priv, getProps, getBlockHeader) {
+  const props = await getProps();
+  const libr = Number(props.last_irreversible_block_num);
+  const header = await getBlockHeader(libr);
+  const prevB = C.unhex(String(header.previous || ""));
+  const prefix = (prevB[4] | (prevB[5] << 8) | (prevB[6] << 16) | (prevB[7] << 24)) >>> 0;
+  const expSec = Math.floor(new Date(props.time + "Z").getTime() / 1000) + 600;
+  const expiration = new Date(expSec * 1000).toISOString().slice(0, 19);
+  const refBlockNum = (libr - 1) & 0xffff;
+  const bytes = [];
+  bytes.push(refBlockNum & 0xff, (refBlockNum >>> 8) & 0xff); // uint16 LE
+  bytes.push(...u32le(prefix));
+  bytes.push(...u32le(expSec));
+  bytes.push(...vint(1), ...vint(OP_ID_ACCOUNT_UPDATE));
+  bytes.push(...serializeAccountUpdate(op[1]));
+  bytes.push(...vint(0)); // extensions
+  const digest = await C.sha256(C.cat(C.unhex(C.STEEM_CHAIN_ID), new Uint8Array(bytes)));
+  const sig = await C.signCompact(digest, priv);
+  return { ref_block_num: refBlockNum, ref_block_prefix: prefix, expiration, operations: [op], extensions: [], signatures: [C.hex(sig)] };
+}
+$("btn-attach-posting")?.addEventListener("click", async () => {
+  const account = $("relay-account").value.trim().toLowerCase();
+  const wif = $("relay-wif").value.trim();
+  const out = $("attach-result");
+  if (!/^[a-z0-9.-]{3,24}$/.test(account)) { toast(t("tErrBadAccount"), false); return; }
+  if (!wif) { toast(t("wAttOwnerOnly"), false); return; }
+  out.innerHTML = `<span class="hint">${esc(t("wAttBusy"))}</span>`;
+  try {
+    const ownerPriv = await C.wifToPriv(wif);
+    const ownerPub = await C.pubToSTM(C.privToPubBytes(ownerPriv));
+    const acc = (await steemRpc("condenser_api.get_accounts", [[account]]))?.[0];
+    if (!acc) throw new Error(t("errNoAccount"));
+    if (classifyKey(ownerPub, acc) !== "owner") throw new Error(LANG === "he" ? "המפתח הזה אינו מפתח-ה-owner של החשבון — עדכון סמכויות חתום רק ב-owner." : "this key is not the account's owner key — authority updates are signed by owner only.");
+    /* a fresh posting keypair, born in this tab */
+    const seed = crypto.getRandomValues(new Uint8Array(32));
+    const newWif = await C.b58cEncode(0x80, seed);
+    const newPriv = await C.wifToPriv(newWif);
+    const newPub = await C.pubToSTM(C.privToPubBytes(newPriv));
+    const op = ["account_update", {
+      account,
+      owner: acc.owner,   // kept exactly as the chain reports it
+      active: acc.active, // kept unchanged
+      posting: { weight_threshold: 1, account_auths: [], key_auths: [[newPub, 1]] },
+      memo_key: acc.memo_key, // unchanged
+      json_metadata: "",
+    }];
+    const getProps = () => steemRpc("condenser_api.get_dynamic_global_properties", []);
+    const getBlockHeader = (n) => steemRpc("condenser_api.get_block_header", [n]);
+    const signed = await buildSignedAccountUpdate(op, ownerPriv, getProps, getBlockHeader);
+    await steemRpc("condenser_api.broadcast_transaction", [signed]);
+    /* success: the new posting key becomes the session transport, the queue flushes now */
+    $("relay-wif").value = "";
+    setTransport({ account, wif: newWif, type: "posting" });
+    out.innerHTML = `<div class="ok" style="font-size:13px">${esc(t("wAttDone"))}</div>`
+      + `<div class="keybox" style="margin-top:10px"><div style="font-size:12px;color:var(--amber);margin-bottom:6px">${esc(t("wAttWifT"))}</div><div class="w">${esc(newWif)}</div><button type="button" class="copy" data-attach-wif style="margin-top:9px">${esc(t("copy"))}</button></div>`;
+    out.querySelector("[data-attach-wif]")?.addEventListener("click", () => copyText(newWif, "posting WIF"));
+    $("attach-confirm").checked = false;
+    $("btn-attach-posting").disabled = true;
+    if (QUEUE.length) autoFlush();
+  } catch (e) {
+    out.innerHTML = `<span class="bad" style="font-size:12.5px">${esc((t("wAttFail") + (e.message || "")).slice(0, 150))}</span>`;
+    toast((e.message || "attach failed").slice(0, 140), false);
+  }
+});
+
+/* (D1) quick-start wizard — checkmarks are the REAL state: wallet exists / transport key set / registered + queue drained */
+function renderWizard() {
+  const s1 = !!WALLET;
+  const s2 = !!TRANSPORT;
+  const registered = !!(WALLET && LIVE?.state?.wallets?.[WALLET.addr]);
+  const s3 = registered && QUEUE.length === 0;
+  [[1, s1], [2, s2], [3, s3]].forEach(([n, done]) => {
+    const el = $("wz-" + n);
+    const mark = $("wz-mark-" + n);
+    if (!el || !mark) return;
+    el.classList.toggle("done", done);
+    mark.textContent = done ? "✓" : String(n);
+    const act = el.querySelector(".wz-act");
+    if (act) act.style.display = done ? "none" : "";
+  });
+}
+$("wz-go-1")?.addEventListener("click", () => ($("wallet-empty") || $("wizard-card")).scrollIntoView({ behavior: "smooth", block: "center" }));
+$("wz-go-2")?.addEventListener("click", () => $("relay-card")?.scrollIntoView({ behavior: "smooth", block: "center" }));
+$("wz-go-3")?.addEventListener("click", () => $("queue-card")?.scrollIntoView({ behavior: "smooth", block: "center" }));
+
+/* (D2) status strip — one glance: address, balance, transport key type, queue count */
+function renderWalletStatus() {
+  const box = $("ws-chips");
+  if (!box) return;
+  if (!WALLET) { box.innerHTML = ""; return; }
+  const short = (s) => esc(String(s).length > 20 ? String(s).slice(0, 12) + "…" + String(s).slice(-6) : String(s));
+  const kb = kernelWallet()?.balances || {};
+  const saos = nice(fmtSaos(String(Math.floor(Number(kb.SAOS ?? 0) || 0)), 3));
+  const keyChip = TRANSPORT
+    ? `<span class="keychip"><i></i>${esc(t("wssKeyChip"))} · ${esc(TRANSPORT.account)} · ${esc(TRANSPORT.type)} <button type="button" class="kc-x" data-kc-x aria-label="remove">×</button></span>`
+    : `<span class="tag">${esc(t("wssKeyOff"))}</span>`;
+  box.innerHTML = [
+    `<span class="tag gold mono" title="${esc(WALLET.addr)}">${short(WALLET.addr)}</span><button type="button" class="copy" data-ws-copy="${esc(WALLET.addr)}">${esc(t("copy"))}</button>`,
+    `<span class="tag">${esc(t("wssBal"))}: <b class="num">${esc(saos)}</b> SAOS</span>`,
+    keyChip,
+    `<span class="tag ${QUEUE.length ? "amber" : "green"}">${esc(t("wssQueue"))}: ${QUEUE.length}</span>`,
+  ].join(" ");
+}
+
+/* ═══════════ SAOSX (task 21-b D5): token.json only — the page invents nothing ═══════════ */
+let TOKEN = null;
+async function pullToken() {
+  try { TOKEN = await jget("token.json"); } catch { TOKEN = null; } // honest empty until the file is published
+  renderSaosx();
+}
+const num0 = (v) => { const n = Number(v); return Number.isFinite(n) ? n : null; };
+function renderSaosx() {
+  const empty = $("sx-empty"), live = $("sx-live");
+  if (!empty || !live) return;
+  $("sx-feats").innerHTML = ["vesting", "staking", "delegation", "HTLC", "multisig", "batch"].map((f) => `<span class="tag gold">${esc(f)}</span>`).join("");
+  if (!TOKEN || typeof TOKEN !== "object") { empty.style.display = ""; live.style.display = "none"; return; }
+  empty.style.display = "none";
+  live.style.display = "";
+  const name = typeof TOKEN.name === "string" ? TOKEN.name : null;
+  const sym = typeof TOKEN.symbol === "string" ? TOKEN.symbol : null;
+  const supply = num0(TOKEN.supply ?? TOKEN.totalSupply ?? TOKEN.total_supply);
+  const cap = num0(TOKEN.cap ?? TOKEN.maxSupply ?? TOKEN.max_supply);
+  $("sx-sup").textContent = supply !== null ? nice(supply) : "—";
+  $("sx-sym").textContent = sym || name || "—";
+  $("sx-cap").textContent = cap !== null ? nice(cap) : "—";
+  $("sx-cap-s").textContent = name || "";
+  const st = (TOKEN.staking && typeof TOKEN.staking === "object") ? TOKEN.staking : {};
+  const staked = num0(st.totalStaked ?? st.total_staked);
+  const aprBps = num0(st.aprBps ?? st.apr_bps);
+  const reward = num0(st.rewardRemaining ?? st.reward_remaining);
+  $("sx-staked").textContent = staked !== null ? nice(staked) : "—";
+  $("sx-apy").textContent = aprBps !== null
+    ? "APY ≈ " + ((Math.pow(1 + aprBps / 10000 / 365, 365) - 1) * 100).toFixed(2) + "% (APR " + (aprBps / 100).toFixed(2) + "%)"
+    : "—";
+  $("sx-reward").textContent = reward !== null ? (LANG === "he" ? "נותר לתגמולים: " : "reward remaining: ") + nice(reward) : "";
+  const pc = $("sx-progress-card");
+  if (supply !== null && cap !== null && cap > 0) {
+    const pct = Math.max(0, Math.min(100, (supply / cap) * 100));
+    pc.style.display = "";
+    $("sx-pct").textContent = pct.toFixed(2) + "%";
+    $("sx-bar").style.width = pct + "%";
+  } else pc.style.display = "none";
+  /* pools: array [{key|name,label?,amount,cap?}] or map {key:amount} */
+  let pools = [];
+  if (Array.isArray(TOKEN.pools)) pools = TOKEN.pools.filter((p) => p && typeof p === "object").map((p) => [String(p.key || p.name || p.label || "?"), num0(p.amount ?? p.balance), num0(p.cap)]);
+  else if (TOKEN.pools && typeof TOKEN.pools === "object") pools = Object.entries(TOKEN.pools).map(([k, v]) => [k, num0(v), null]);
+  $("sx-pools").innerHTML = pools.length
+    ? pools.map(([k, amt, c]) => {
+        const pct = amt !== null && c !== null && c > 0 ? (amt / c) * 100 : null;
+        return `<div class="sx-pool"><b>${esc(k)}</b><div class="num" style="font-size:12px;color:var(--dim);margin-top:3px">${amt !== null ? esc(nice(amt)) : "—"}${c !== null ? " / " + esc(nice(c)) : ""}</div>`
+          + (pct !== null ? `<div class="pbar"><i style="width:${Math.min(100, pct).toFixed(2)}%"></i></div><div class="num" style="font-size:10.5px;color:var(--faint);margin-top:3px">${pct.toFixed(2)}%</div>` : "") + `</div>`;
+      }).join("")
+    : `<div style="color:var(--faint);font-size:12.5px">${esc(t("sxNoPools"))}</div>`;
+  /* holders: array of {addr|address|account, amount|balance} or map addr→amount — top 10 */
+  let holders = [];
+  const H = TOKEN.holders;
+  if (Array.isArray(H)) holders = H.map((x) => (x && typeof x === "object" ? [String(x.addr || x.address || x.account || x.holder || ""), num0(x.amount ?? x.balance ?? x.value)] : [String(x), null])).filter((r) => r[0]);
+  else if (H && typeof H === "object") holders = Object.entries(H).map(([k, v]) => [k, num0(v)]);
+  holders.sort((a, b) => ((b[1] ?? 0) - (a[1] ?? 0)));
+  $("sx-holders").innerHTML = holders.length
+    ? holders.slice(0, 10).map(([a, v]) => `<tr><td><span class="mono" style="font-size:11px">${esc(String(a).slice(0, 16))}${String(a).length > 16 ? "…" : ""}</span></td><td class="num">${v !== null ? esc(nice(v)) : "—"}</td></tr>`).join("")
+    : `<tr><td colspan="2" style="color:var(--faint)">${esc(t("sxNoHolders"))}</td></tr>`;
+  /* issuer: object {account?, pub?} or plain string — only what is published */
+  const iss = TOKEN.issuer;
+  const issAcc = typeof iss === "object" && iss ? (typeof iss.account === "string" ? iss.account : null) : null;
+  const issPub = typeof iss === "object" && iss ? (typeof iss.pub === "string" ? iss.pub : null) : (typeof iss === "string" ? iss : null);
+  const issHtml = [];
+  if (issAcc) issHtml.push(`<span class="tag gold">${esc(t("sxIssT"))}: ${esc(issAcc)}</span>`);
+  if (issPub && /^STM/.test(issPub)) {
+    issHtml.push(`<div class="addrbox" style="margin-top:10px"><span class="tag gold mono">${esc(t("sxIssT"))}</span><span class="a" style="font-size:12px">${esc(issPub)}</span><button type="button" class="copy" data-sx-iss="${esc(issPub)}">${esc(t("copy"))}</button></div>`);
+  } else if (issPub) {
+    issHtml.push(`<div class="addrbox" style="margin-top:10px"><span class="a" style="font-size:12px">${esc(issPub)}</span><button type="button" class="copy" data-sx-iss="${esc(issPub)}">${esc(t("copy"))}</button></div>`);
+  }
+  $("sx-issuer").innerHTML = issHtml.join("") || `<span class="hint">${esc(t("sxIssP"))}</span>`;
+  $("sx-issuer").querySelector("[data-sx-iss]")?.addEventListener("click", (e) => copyText(e.currentTarget.dataset.sxIss, t("sxIssT")));
+}
 
 /* ═══════════ independent verification: fold the chain yourself ═══════════ */
 $("btn-verify-chain").addEventListener("click", async () => {
