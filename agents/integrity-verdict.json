@@ -1,22 +1,21 @@
 {
  "schema": "integrity-guard/2",
  "scope": "public-twin (Domain home)",
- "at": "2026-10-19T19:07:02.305Z",
+ "at": "2026-10-19T19:07:46.602Z",
  "overall": "DEGRADED",
  "summary": {
   "sources": 7,
-  "verified": 7,
-  "findings": 2,
+  "verified": 8,
+  "findings": 1,
   "counts": {
-   "stale": 1,
-   "UNVERIFIABLE": 1
+   "stale": 1
   }
  },
  "verified": [
   {
    "where": "self:agents/integrity-verdict.json",
    "law": "L0-verified",
-   "detail": "פסק-קודם תקין (FAIL) מלפני 0ש'"
+   "detail": "פסק-קודם תקין (DEGRADED) מלפני 0ש'"
   },
   {
    "where": "Domain:agents/work-orders.json",
@@ -44,6 +43,11 @@
    "detail": "גיל 2ש' ≤ SLA 4ש'"
   },
   {
+   "where": "Domain:office/data.json",
+   "law": "producer-green",
+   "detail": "ריצת-יצרן ירוקה לפני 63 דק'"
+  },
+  {
    "where": "Domain:agents/work-orders.json",
    "law": "published",
    "detail": "3 פקודות-פתוחות · schema work-orders/2"
@@ -54,15 +58,10 @@
    "where": "sovereign-runner-kit:results/receipts.jsonl",
    "law": "stale",
    "detail": "גיל 171ש' > SLA 72ש'"
-  },
-  {
-   "where": "Domain:office-pulse-twin runs",
-   "law": "UNVERIFIABLE",
-   "detail": "HTTP 403"
   }
  ],
  "provenance": {
-  "runUrl": null,
+  "runUrl": "https://github.com/roshpinacare-sys/Domain/actions/runs/39308344045",
   "workflow": "artery-integrity-twin"
  },
  "degraded": {
