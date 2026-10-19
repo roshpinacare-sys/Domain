@@ -1100,9 +1100,14 @@ function amFillPairs() {
  * makes promised backing = outstanding credit × chain-coin price. The verdict
  * itself stays the fold's on-chain truth — this panel only makes it visible. */
 let PRICE_CACHE = { at: 0, usd: null };
+let PRICE_INFLIGHT = null; /* T30: single-flight — re-renders never re-run the ladder in parallel */
 async function fetchUsdPrices() {
   const now = Date.now();
   if (PRICE_CACHE.usd && now - PRICE_CACHE.at < 300000) return PRICE_CACHE.usd;
+  /* T30 negative cache: a failed ladder isn't re-run on every re-render — 60s honest cooldown */
+  if (!PRICE_CACHE.usd && PRICE_CACHE.at > 0 && now - PRICE_CACHE.at < 60000) return null;
+  if (PRICE_INFLIGHT) return PRICE_INFLIGHT;
+  PRICE_INFLIGHT = (async () => {
   /* STEEM USD: public CEX/aggregator ladder (measured 2026-10-19: coingecko
    * public tier 429-rate-limits from shared egress; binance is the primary). */
   let steem = null;
@@ -1124,6 +1129,8 @@ async function fetchUsdPrices() {
   const usd = (steem != null || sbd != null) ? { steem, sbd, sbdSrc } : null;
   PRICE_CACHE = { at: now, usd };
   return usd;
+  })().finally(() => { PRICE_INFLIGHT = null; });
+  return PRICE_INFLIGHT;
 }
 const CUSTODY_SCALE = 100000000n; /* the fold publishes 1e8-units (T27 measured narrative: 61.452 STEEM) */
 function custNum(raw) { try { return Number(BigInt(raw)) / Number(CUSTODY_SCALE); } catch { return null; } }
@@ -1138,31 +1145,37 @@ async function renderCustody() {
   }
   const mSTEEM = custNum(c.measured?.STEEM), mSBD = custNum(c.measured?.SBD);
   const oCST = custNum(c.outstanding?.CSTEEM), oCSB = custNum(c.outstanding?.CSBD);
-  const prices = await fetchUsdPrices();
-  const pS = prices?.steem ?? null, pD = prices?.sbd ?? null;
-  const anyPrice = pS != null || pD != null;
-  const measuredUsd = (pS != null && mSTEEM != null ? pS * mSTEEM : 0) + (pD != null && mSBD != null ? pD * mSBD : 0);
-  const promisedUsd = (pS != null && oCST != null ? pS * oCST : 0) + (pD != null && oCSB != null ? pD * oCSB : 0);
-  const cov = anyPrice && promisedUsd > 0 ? (measuredUsd / promisedUsd * 100) : null;
   const verdictBadge = (v) => v === "custody-ok"
     ? `<span style="color:var(--ok,#2e9e6b)">✓ ${esc(he ? "מגובה" : "covered")}</span>`
     : `<span style="color:var(--gold)">⚠ ${esc(he ? "גירעון-אמת מפורסם" : "honest deficit published")}</span>`;
-  const priceCell = anyPrice
-    ? `${fmtUsd(measuredUsd)}${pS != null ? ` · STEEM ${pS}$` : ""}${pD != null ? ` · SBD ${pD.toFixed(4)}$${prices.sbdSrc === "chain-witnesses" ? " (" + (he ? "מחיר-עדי-השרשרת" : "chain witnesses") + ")" : ""}` : ""}`
-    : (he ? "מחיר לא זמין — כנות" : "price unavailable — honest");
-  const rows = [
-    [he ? "נמדד בכספת" : "Measured in treasury", `${mSTEEM != null ? nice(mSTEEM.toString()) : "—"} STEEM · ${mSBD != null ? nice(mSBD.toString()) : "—"} SBD`],
-    [he ? "שווי-דולרי נמדד (אמדן — מחיר-ציבורי)" : "Measured USD value (estimate — public price)", priceCell],
-    [he ? "אשראי חייב (חוק 1:1 מול מטבע-אמת)" : "Outstanding credit (1:1 law vs real coin)", `${oCST != null ? nice(oCST.toString()) : "—"} CSTEEM · ${oCSB != null ? nice(oCSB.toString()) : "—"} CSBD`],
-    [he ? "גיבוי-מובטח בדולרים (אמדן)" : "Promised backing in USD (estimate)", anyPrice ? fmtUsd(promisedUsd) : (he ? "מחיר לא זמין" : "price unavailable")],
-    [he ? "כיסוי-רוחב-נכסים (שווי — להבדיל מהדין-לפי-נכס שלהלן)" : "Cross-asset coverage (value — distinct from the per-asset verdict below)", cov != null ? cov.toFixed(1) + "%" : "—"],
-    [he ? "פסק-דין הספר (כנות, לפי-נכס)" : "Book verdict (honest, per-asset)", `CSTEEM: ${verdictBadge(c.verdict?.CSTEEM)} · CSBD: ${verdictBadge(c.verdict?.CSBD)}`],
-  ];
-  el.innerHTML = `<div style="display:grid;gap:6px">` + rows.map(([k, v]) =>
-    `<div style="display:flex;justify-content:space-between;gap:12px;border-bottom:1px dashed var(--rule);padding:4px 0;flex-wrap:wrap"><span class="sub">${esc(k)}</span><span>${v}</span></div>`).join("") + `</div>`
-    + `<div class="sub" style="margin-top:8px">${esc(he
-      ? "מקור: custody מהספר החי (fold · saos-live.json). STEEM: Binance ציבורי (נפילה-מדורגת) — SBD: מחיר-עדי-השרשרת × מחיר-STEEM. אמדן בלבד — לא עוגן. פסק-הדין נשאר של ה-fold על השרשרת."
-      : "Source: custody from the live book (fold · saos-live.json). STEEM: public Binance (graded fallback) — SBD: chain witnesses feed × STEEM price. Estimate only, not an anchor. The verdict stays the fold's on-chain truth.")}</div>`;
+  /* T30 two-phase paint: the skeleton is drawn immediately (zero empty window) — USD cells
+   * read "measuring…" until the ladder resolves, then the full truth. The per-asset verdict
+   * never waits for prices — it is the fold's on-chain truth. */
+  const paint = (prices, measuring) => {
+    const pS = prices?.steem ?? null, pD = prices?.sbd ?? null;
+    const anyPrice = pS != null || pD != null;
+    const measuredUsd = (pS != null && mSTEEM != null ? pS * mSTEEM : 0) + (pD != null && mSBD != null ? pD * mSBD : 0);
+    const promisedUsd = (pS != null && oCST != null ? pS * oCST : 0) + (pD != null && oCSB != null ? pD * oCSB : 0);
+    const cov = anyPrice && promisedUsd > 0 ? (measuredUsd / promisedUsd * 100) : null;
+    const priceCell = anyPrice
+      ? `${fmtUsd(measuredUsd)}${pS != null ? ` · STEEM ${pS}$` : ""}${pD != null ? ` · SBD ${pD.toFixed(4)}$${prices.sbdSrc === "chain-witnesses" ? " (" + (he ? "מחיר-עדי-השרשרת" : "chain witnesses") + ")" : ""}` : ""}`
+      : (measuring ? (he ? "מודד מחיר-ציבורי…" : "measuring public price…") : (he ? "מחיר לא זמין — כנות" : "price unavailable — honest"));
+    const rows = [
+      [he ? "נמדד בכספת" : "Measured in treasury", `${mSTEEM != null ? nice(mSTEEM.toString()) : "—"} STEEM · ${mSBD != null ? nice(mSBD.toString()) : "—"} SBD`],
+      [he ? "שווי-דולרי נמדד (אמדן — מחיר-ציבורי)" : "Measured USD value (estimate — public price)", priceCell],
+      [he ? "אשראי חייב (חוק 1:1 מול מטבע-אמת)" : "Outstanding credit (1:1 law vs real coin)", `${oCST != null ? nice(oCST.toString()) : "—"} CSTEEM · ${oCSB != null ? nice(oCSB.toString()) : "—"} CSBD`],
+      [he ? "גיבוי-מובטח בדולרים (אמדן)" : "Promised backing in USD (estimate)", anyPrice ? fmtUsd(promisedUsd) : (measuring ? (he ? "מודד…" : "measuring…") : (he ? "מחיר לא זמין" : "price unavailable"))],
+      [he ? "כיסוי-רוחב-נכסים (שווי — להבדיל מהדין-לפי-נכס שלהלן)" : "Cross-asset coverage (value — distinct from the per-asset verdict below)", cov != null ? cov.toFixed(1) + "%" : (measuring ? "…" : "—")],
+      [he ? "פסק-דין הספר (כנות, לפי-נכס)" : "Book verdict (honest, per-asset)", `CSTEEM: ${verdictBadge(c.verdict?.CSTEEM)} · CSBD: ${verdictBadge(c.verdict?.CSBD)}`],
+    ];
+    el.innerHTML = `<div style="display:grid;gap:6px">` + rows.map(([k, v]) =>
+      `<div style="display:flex;justify-content:space-between;gap:12px;border-bottom:1px dashed var(--rule);padding:4px 0;flex-wrap:wrap"><span class="sub">${esc(k)}</span><span>${v}</span></div>`).join("") + `</div>`
+      + `<div class="sub" style="margin-top:8px">${esc(he
+        ? "מקור: custody מהספר החי (fold · saos-live.json). STEEM: Binance ציבורי (נפילה-מדורגת) — SBD: מחיר-עדי-השרשרת × מחיר-STEEM. אמדן בלבד — לא עוגן. פסק-הדין נשאר של ה-fold על השרשרת."
+        : "Source: custody from the live book (fold · saos-live.json). STEEM: public Binance (graded fallback) — SBD: chain witnesses feed × STEEM price. Estimate only, not an anchor. The verdict stays the fold's on-chain truth.")}</div>`;
+  };
+  paint(null, true); /* immediate skeleton — the panel is never empty */
+  paint(await fetchUsdPrices(), false); /* final truth when the ladder resolves */
 }
 function currentPool() {
   const p = (LIVE?.state?.pools || {})[$("in-pool").value] || null;
