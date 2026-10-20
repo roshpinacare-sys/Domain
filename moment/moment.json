@@ -1,29 +1,22 @@
 {
  "ok": true,
  "format": "moment-watch-v1",
- "publishedAt": "2026-10-20T22:35:51.894Z",
+ "publishedAt": "2026-10-20T23:07:18.350Z",
  "engine": "Domain/agents/moment-watch · R62 sovereign moment",
  "role": "reads the live moment every 30 minutes (market regime, our parity line vs the live internal book, fuel runway, measured anomalies) and records a deterministic directional call that is only ever scored after its horizon has passed - training as measurement, never as promise",
  "market": {
-  "steemUsd": 0.054727,
-  "steem24h": 3.416997278365154,
-  "sbdUsd": 0.518807,
-  "btcUsd": 82987,
-  "btc24h": 1.188189393243923,
+  "steemUsd": 0.054749,
+  "steem24h": 3.614439298163552,
+  "sbdUsd": 0.517891,
+  "btcUsd": 82972,
+  "btc24h": 1.2017290391569624,
   "fearGreed": {
    "value": 55,
    "label": "Greed"
   }
  },
- "paritySbdPerSteem": 0.10548624054802652,
- "liveBook": {
-  "bestBid": 0.1013890297069857,
-  "bestAsk": 0.1043431309688523,
-  "bidsDepthSbd": 607.74,
-  "asksDepthSteem": 214.23,
-  "levels": 21,
-  "bidSurplusBps": -388
- },
+ "paritySbdPerSteem": 0.10571529530345189,
+ "liveBook": null,
  "regime": {
   "label": "NEUTRAL",
   "drivers": [
@@ -38,14 +31,7 @@
    "gridStaleHours": 26
   }
  },
- "runway": {
-  "active": false,
-  "weeklySp": 6.205780708621833e-10,
-  "nextPayment": "1969-12-31T23:59:59",
-  "remainingSp": 0,
-  "weeklyUsd": 0,
-  "treasuryUsd": 1.77
- },
+ "runway": null,
  "grid": {
   "verdict": "ARMED-WAITING",
   "armed": true,
@@ -82,19 +68,9 @@
  "resolvedNow": 0,
  "insights": [
   {
-   "kind": "parity-edge",
-   "tone": "good",
-   "text": "עומק-קנייה חי 388bps מתחת לקו-הזהות (bid 0.1014 מול parity 0.1055) — עודף מדוד לגריד."
-  },
-  {
    "kind": "sbd-inventory",
    "tone": "warn",
    "text": "צוואר-הקנייה של הגריד: POLICY-HALT (steem leg): per-op notional 70.059 SBD > cap 17 (lane grid) ; kelly-cap: gear cap 100→17 SBD (mode=kelly; winRate=0.570 WLR=0.892 kelly=0.089 safe=0.044 ×4 → 17/100) — atomic refresh skipped, ladder untouched"
-  },
-  {
-   "kind": "fuel",
-   "tone": "info",
-   "text": "דלק נוחת 1969-12-31 — ≈0 SP ≈ 0.0$ בסימון חי."
   },
   {
    "kind": "deposits",
