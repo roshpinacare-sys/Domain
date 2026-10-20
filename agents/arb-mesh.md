@@ -7,7 +7,7 @@ Roster: 1 accounts (owner + 0 soldiers) · Edge candidates: 1 · Intents drafted
 
 | Edge row | Direction | Net bps | Floor | Source |
 |---|---|---|---|---|
-| A1 P3 STEEM/SBD pool mid vs CEX-implied fair | STEEM→SBD (sell the rich side) | 3789.8 | 100 | dex-core.json (our pool — atomic, no bridge) |
+| A1 P3 STEEM/SBD pool mid vs CEX-implied fair | STEEM→SBD (sell the rich side) | 3308.84 | 100 | dex-core.json (our pool — atomic, no bridge) |
 
 | Agent | Fill | Route | Out | Edge (marked) | Fees |
 |---|---|---|---|---|---|
@@ -32,13 +32,13 @@ Roster: 1 accounts (owner + 0 soldiers) · Edge candidates: 1 · Intents drafted
 | 1% | 38161µ | 36596µ | 0.95898954 | 45.71bps |
 | 5% | 190806µ | 181971µ | 0.95369642 | 44.9bps |
 
-**P3 STEEM/SBD** (mid 0.13095073 SBD/, fee 25bps):
+**P3 STEEM/SBD** (mid 0.1301515 SBD/, fee 25bps):
 
 | Size (% depth) | In | Out | Exec price | Slippage |
 |---|---|---|---|---|
-| 0.1% | 1341µ | 174µ | 0.12975391 | -0.91bps |
-| 1% | 13417µ | 1735µ | 0.12931356 | -1.25bps |
-| 5% | 67086µ | 8346µ | 0.12440748 | -4.99bps |
+| 0.1% | 1345µ | 174µ | 0.12936803 | -0.6bps |
+| 1% | 13458µ | 1729µ | 0.12847377 | -1.28bps |
+| 5% | 67292µ | 8321µ | 0.12365511 | -4.99bps |
 
 ## Mesh P&L (lifetime, from the ledger — the core book is the source of truth)
 

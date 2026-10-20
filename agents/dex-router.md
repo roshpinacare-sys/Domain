@@ -22,7 +22,7 @@ Venues alive: steem-internal, hive-internal, he-pools, saos-mirror · Routes: 12
 Arb net (floor law: net must beat 2×(capture+0.4% floor); FOK legs only, single block):
 - A1 SBD/STEEM internal vs CEX-implied fair (lead-lag): net 164.5bps vs threshold 293.28bps → **BELOW-FLOOR** · maker lead-lag: when the CEX leads, we re-center first (the counter-grid anchor) and get filled by local traders who lag
 - A2 HBD/HIVE internal vs CEX-implied fair: net — vs threshold undefinedbps → **FEED-STALE** · no readable HBD/USDT leg (SBD is refused as the HBD proxy — the assets are different dollars); never guessed
-- A3 SWAP.HIVE:SWAP.BTC pool vs CEX cross: net — vs threshold undefinedbps → **FEED-STALE** · a CEX leg did not answer
+- A3 SWAP.HIVE:SWAP.BTC pool vs CEX cross (peg drift): net -78.14bps vs threshold 120bps → **BELOW-FLOOR** · the custodial peg is real only while the pool hugs the cross — 1.5% drift halts the venue
 - A4 SAOS/USDS pool vs booked ref price (internal): net -10.55bps vs threshold 120bps → **BELOW-FLOOR** · internal-AMM honesty: the pool may not wander from the booked ref unnoticed
 
 Counter-grids (opposing grids anchored to the CEX-implied fair, skewed by inventory, PLAN-OWNER-GATED-NOT-BROADCAST):
