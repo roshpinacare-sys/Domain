@@ -80,4 +80,14 @@ jobs:
           FLEET_ACCOUNT: ${{ secrets.FLEET_ACCOUNT }}
           AGENTS_WATCH_TOKEN: ${{ secrets.AGENTS_WATCH_TOKEN }}
           GITHUB_REPOSITORY: roshpinacare-sys/Domain
-        run: node agents/key-verify.mjs
+        # wave-19.42 email-quiet cure (measured): the 3 failures of 10-18 were
+        # verdict=no-secret — the dispatch carried NO credential (OPERATOR_MASTER not
+        # yet created; owner input empty). An un-armed attempt is a SKIP, not a
+        # regression: honest skip keeps the receipt language and ends the email class.
+        # A REAL verification run with a supplied credential still fails loudly.
+        run: |
+          if [ -z "$owner" ]; then
+            echo "verdict=skip · no credential supplied at dispatch (owner input empty — OPERATOR_MASTER not yet created per the OWNER RECIPE above) — nothing to verify, honest skip"
+            exit 0
+          fi
+          node agents/key-verify.mjs
