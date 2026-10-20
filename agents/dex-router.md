@@ -31,6 +31,6 @@ Counter-grids (opposing grids anchored to the CEX-implied fair, skewed by invent
 
 Laws: official sources only · keyless: the router plans, owner-gated desks sign · fail-soft exit 0 (dark feeds are honest rows) · verdict authority inherited from Z-27 (dex-book/bridge-desk) · single canon book + append-only history · honest money: the powerdown drip is the booked fuel law
 
-Errors: [{"venue":"balances","error":"HEAD_ACCOUNT is not defined"}]
+Errors: [{"venue":"hive-internal","error":"AggregateError"},{"venue":"balances","error":"HEAD_ACCOUNT is not defined"}]
 
 Sources: api.steemit.com, api.hive.blog (condenser), api.hive-engine.com mirrors, Binance/MEXC/HTX public tickers, dex/state.json mirror, Z-27 books. Zero secrets.
