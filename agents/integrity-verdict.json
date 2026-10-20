@@ -1,51 +1,46 @@
 {
  "schema": "integrity-guard/2",
  "scope": "public-twin (Domain home)",
- "at": "2026-10-20T11:01:32.513Z",
- "overall": "DEGRADED",
+ "at": "2026-10-20T11:23:48.949Z",
+ "overall": "FAIL",
  "summary": {
   "sources": 7,
-  "verified": 8,
-  "findings": 1,
+  "verified": 7,
+  "findings": 2,
   "counts": {
-   "stale": 1
+   "stale": 2
   }
  },
  "verified": [
   {
    "where": "self:agents/integrity-verdict.json",
    "law": "L0-verified",
-   "detail": "פסק-קודם תקין (DEGRADED) מלפני 1ש'"
+   "detail": "פסק-קודם תקין (DEGRADED) מלפני 0ש'"
   },
   {
    "where": "Domain:agents/work-orders.json",
    "law": "fresh+parsed",
-   "detail": "גיל 0ש' ≤ SLA 4ש'"
-  },
-  {
-   "where": "Domain:agents/grid-truth.json",
-   "law": "fresh+parsed",
-   "detail": "גיל 1.8ש' ≤ SLA 2ש'"
+   "detail": "גיל 0.4ש' ≤ SLA 4ש'"
   },
   {
    "where": "Domain:office/data.json",
    "law": "fresh+parsed",
-   "detail": "גיל 0ש' ≤ SLA 2ש'"
+   "detail": "גיל 0.4ש' ≤ SLA 2ש'"
   },
   {
    "where": "Domain:agents/office-live.json",
    "law": "fresh+parsed",
-   "detail": "גיל 1.2ש' ≤ SLA 4ש'"
+   "detail": "גיל 0.4ש' ≤ SLA 4ש'"
   },
   {
    "where": "FleetHQ:office/state/office-state.json",
    "law": "fresh+parsed",
-   "detail": "גיל 0.9ש' ≤ SLA 4ש'"
+   "detail": "גיל 1.3ש' ≤ SLA 4ש'"
   },
   {
    "where": "Domain:office/data.json",
    "law": "producer-green",
-   "detail": "ריצת-יצרן ירוקה לפני 15 דק'"
+   "detail": "ריצת-יצרן ירוקה לפני 2 דק'"
   },
   {
    "where": "Domain:agents/work-orders.json",
@@ -55,21 +50,18 @@
  ],
  "findings": [
   {
+   "where": "Domain:agents/grid-truth.json",
+   "law": "stale",
+   "detail": "גיל 2.2ש' > SLA 2ש'"
+  },
+  {
    "where": "sovereign-runner-kit:results/receipts.jsonl",
    "law": "stale",
-   "detail": "גיל 186.9ש' > SLA 72ש'"
+   "detail": "גיל 187.3ש' > SLA 72ש'"
   }
  ],
  "provenance": {
-  "runUrl": "https://github.com/roshpinacare-sys/Domain/actions/runs/39412013456",
+  "runUrl": "https://github.com/roshpinacare-sys/Domain/actions/runs/39414630830",
   "workflow": "artery-integrity-twin"
- },
- "degraded": {
-  "law": "verdict-aware/third-party-device",
-  "reason": "כל-הממצאים-המהותיים = staleness של-מקור-מכשיר-הבעלים (sovereign-runner-kit, device-fresh-oracle) — צד-שלישי-מחוץ-להישג-יד; לא שבר-מכונה. תקדים: blurt.live UNREACHABLE (T29).",
-  "findings": [
-   "sovereign-runner-kit:results/receipts.jsonl"
-  ],
-  "remedy": "הקבלות יתחדשו כשה-kit ירוץ שוב על מכשיר-הבעלים (עיצוב: אין-מפתחות-חתימה-ב-kit; עיגון-רק-בכספת-הבעלים)."
  }
 }
