@@ -1,6 +1,10 @@
 # arb-mesh — THE MESH MARKET (R41, CR-0071)
 
+<<<<<<< Updated upstream
 At: 2026-10-20T06:11:14.172Z · Verdict: **MESH-LIVE** · batch: MESH-2026102006-bbe37964 · protocol: SAOS-ARB-MESH/1
+=======
+At: 2026-10-20T06:11:13.499Z · Verdict: **MESH-LIVE** · batch: MESH-2026102006-bbe37964 · protocol: SAOS-ARB-MESH/1
+>>>>>>> Stashed changes
 
 Roster: 1 accounts (owner + 0 soldiers) · Edge candidates: 1 · Intents drafted: 1 · Fills settled: 1 · Refusals: 0
 
@@ -11,7 +15,11 @@ Roster: 1 accounts (owner + 0 soldiers) · Edge candidates: 1 · Intents drafted
 
 | Agent | Fill | Route | Out | Edge (marked) | Fees |
 |---|---|---|---|---|---|
+<<<<<<< Updated upstream
 | operator | STEEM 4121µ → SBD | P3 | 526µ SBD | 125µ (CEX-FAIR (SBD per STEEM)) | 10µ |
+=======
+| operator | STEEM 4121µ → SBD | P3 | 526µ SBD | 124µ (CEX-FAIR (SBD per STEEM)) | 10µ |
+>>>>>>> Stashed changes
 
 ## Size ladder (the large-sums law — exact BigInt, honest slippage)
 
@@ -42,9 +50,15 @@ Roster: 1 accounts (owner + 0 soldiers) · Edge candidates: 1 · Intents drafted
 
 ## Mesh P&L (lifetime, from the ledger — the core book is the source of truth)
 
+<<<<<<< Updated upstream
 Fills: 154 · Volume in: 1522392µ · Edge captured: -870438µ · Fees paid (LP revenue): 1900µ
 - acct-00: 1 fills · vol 3859µ · edge 580µ · fees 9µ
 - operator: 1 fills · vol 4121µ · edge 125µ · fees 10µ
+=======
+Fills: 154 · Volume in: 1522392µ · Edge captured: -870439µ · Fees paid (LP revenue): 1900µ
+- acct-00: 1 fills · vol 3859µ · edge 580µ · fees 9µ
+- operator: 1 fills · vol 4121µ · edge 124µ · fees 10µ
+>>>>>>> Stashed changes
 
 Laws: L1 L2 L3 L4 L5 L6 L7 L8 L9 L10 L11 L12 L13 L14 L15 L16 · Gate law: the counter-grid gate follows CR-0074 (open = GATED-ARMED-BROADCAST-READY, closed = PLAN-POOL-GATED-NOT-BROADCAST) — the mesh never fires a keyed rail either way.
 
