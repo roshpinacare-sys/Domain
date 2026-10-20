@@ -34,9 +34,12 @@ const headers = TOKEN
 
 const hashes = {};
 for (const s of sources) {
-  const res = await fetch(`https://api.github.com/repos/${CANON_REPO}/contents/${s}?ref=main`, { headers });
+  // measured 06:40Z: sourceCanon labels may carry version suffixes ("fact-sheet.md v3")
+  // where "v3" is a version tag, not path — strip " vN" for the fetch path, keep the label
+  const path = s.trim().replace(/\s+v\d+$/i, '');
+  const res = await fetch(`https://api.github.com/repos/${CANON_REPO}/contents/${path}?ref=main`, { headers });
   if (!res.ok) {
-    console.error(`canon source ${s} -> HTTP ${res.status} — fail-closed: not claiming freshness over a dead source`);
+    console.error(`canon source ${s} (${path}) -> HTTP ${res.status} — fail-closed: not claiming freshness over a dead source`);
     process.exit(1);
   }
   const body = await res.text();
