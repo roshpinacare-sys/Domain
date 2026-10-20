@@ -1,5 +1,5 @@
 {
-  "at": "2026-10-20T12:11:24.917Z",
+  "at": "2026-10-20T12:16:15.816Z",
   "agent": "mm-volume v1.4.0 (CR-0058..CR-0062, fleet Rungs 28-32 — the volume engine + the share ladder + the calibrated engine + the measured binding & the venue expansion + THE SIDECHAIN POND)",
   "verdict": "MMV-PLAN-LIVE",
   "law": {
@@ -84,8 +84,8 @@
         "feeBps": 0,
         "spreadPct": 0,
         "feeRoundTripPct": 0,
-        "edgeConsPct": 0.0252,
-        "edgeOptPct": 0.0503,
+        "edgeConsPct": 0,
+        "edgeOptPct": 0,
         "bounds": {
           "tapeBoundTradesDay": 14400,
           "capBoundTradesDay": 576,
@@ -95,41 +95,41 @@
         },
         "projTradesDay": 60,
         "projVolumeSbd": 25.458,
-        "projNetConsSbd": 0.0064,
-        "projNetOptSbd": 0.0128
+        "projNetConsSbd": 0,
+        "projNetOptSbd": 0
       },
       "marketVolume24h": {
-        "SBD": 3755.139,
-        "STEEM": 37334.363
+        "SBD": 3868.205,
+        "STEEM": 38430.967
       },
-      "marketVolume24hSbdTerm": 3755.139,
-      "sharePct": 0.678,
+      "marketVolume24hSbdTerm": 3868.205,
+      "sharePct": 0.6581,
       "shareLadder": [
         {
           "n": 1,
           "volumeSbd": 244.3968,
-          "sharePct": 6.5083,
+          "sharePct": 6.3181,
           "saturates": false,
           "binding": "capacity"
         },
         {
           "n": 2,
           "volumeSbd": 488.7936,
-          "sharePct": 13.0167,
+          "sharePct": 12.6362,
           "saturates": false,
           "binding": "capacity"
         },
         {
           "n": 3,
           "volumeSbd": 733.1904,
-          "sharePct": 19.525,
+          "sharePct": 18.9543,
           "saturates": false,
           "binding": "capacity"
         },
         {
           "n": 5,
           "volumeSbd": 1221.984,
-          "sharePct": 32.5416,
+          "sharePct": 31.5905,
           "saturates": false,
           "binding": "capacity"
         }
@@ -154,6 +154,94 @@
         "feeRoundTripPct": 0,
         "capPct": 0.25,
         "internalCapSbd": 6.3645,
+        "guards": [
+          "VWAP-EXCLUSION: internal fills never enter realized sell VWAP / edge books (poison guard)",
+          "LABEL: every internal row carries INTERNAL-FLOW",
+          "CAP: internal flow ≤ 25% of projected volume",
+          "FEE-NULL-ONLY: internal flow armed only on zero-fee round-trip venues"
+        ],
+        "blockedReason": null
+      }
+    },
+    {
+      "venue": "HBD/HIVE (internal hive)",
+      "layer": "chain-internal",
+      "feeBps": 0,
+      "spreadPct": 0.5,
+      "measuredFrom": "market-grid live book",
+      "avgSizeSbd": 0.4243,
+      "avgSizeSource": "fill-ledger-realized",
+      "avgSizeAssumed": false,
+      "avgSizeN": 243,
+      "avgSizePriorSbd": 0.0712,
+      "tapeFpm": 10,
+      "tapeSource": "exec-recon-prior",
+      "captureFpm": null,
+      "captureSource": null,
+      "captureN": null,
+      "sellVwap": null,
+      "buyEdgeFloor": null,
+      "econ": {
+        "feeBps": 0,
+        "spreadPct": 0.5,
+        "feeRoundTripPct": 0,
+        "edgeConsPct": 0.25,
+        "edgeOptPct": 0.5,
+        "bounds": {
+          "tapeBoundTradesDay": 14400,
+          "capBoundTradesDay": 576,
+          "captureTradesDay": null,
+          "pondBoundTradesDay": null,
+          "binding": "capacity"
+        },
+        "projTradesDay": 576,
+        "projVolumeSbd": 244.3968,
+        "projNetConsSbd": 0.611,
+        "projNetOptSbd": 1.222
+      },
+      "marketVolume24h": {
+        "HIVE": 99820.004,
+        "HBD": 4912.108
+      },
+      "marketVolume24hSbdTerm": 4912.108,
+      "sharePct": 4.9754,
+      "shareLadder": [
+        {
+          "n": 1,
+          "volumeSbd": 244.3968,
+          "sharePct": 4.9754,
+          "saturates": false,
+          "binding": "capacity"
+        },
+        {
+          "n": 2,
+          "volumeSbd": 488.7936,
+          "sharePct": 9.9508,
+          "saturates": false,
+          "binding": "capacity"
+        },
+        {
+          "n": 3,
+          "volumeSbd": 733.1904,
+          "sharePct": 14.9262,
+          "saturates": false,
+          "binding": "capacity"
+        },
+        {
+          "n": 5,
+          "volumeSbd": 1221.984,
+          "sharePct": 24.877,
+          "saturates": false,
+          "binding": "capacity"
+        }
+      ],
+      "realized": null,
+      "selfFlow": {
+        "eligible": true,
+        "accounts": 1,
+        "feeRoundTripPct": 0,
+        "capPct": 0.25,
+        "internalCapSbd": 61.0992,
         "guards": [
           "VWAP-EXCLUSION: internal fills never enter realized sell VWAP / edge books (poison guard)",
           "LABEL: every internal row carries INTERNAL-FLOW",
@@ -194,34 +282,80 @@
       "spreadPct": 1,
       "measuredFrom": "market-grid live book (HE RPC)",
       "edge": {
-        "edgeConsPct": 0.4415,
-        "edgeOptPct": 0.8829
+        "edgeConsPct": 0.5,
+        "edgeOptPct": 1
       },
-      "econ": null,
-      "projectionNullReason": "NO-MEASURED-HBD-HIVE-MID",
+      "econ": {
+        "feeBps": 0,
+        "spreadPct": 1,
+        "feeRoundTripPct": 0,
+        "edgeConsPct": 0.5,
+        "edgeOptPct": 1,
+        "bounds": {
+          "tapeBoundTradesDay": null,
+          "capBoundTradesDay": 576,
+          "captureTradesDay": null,
+          "pondBoundTradesDay": 53,
+          "binding": "pond"
+        },
+        "projTradesDay": 53,
+        "projVolumeSbd": 22.4879,
+        "projNetConsSbd": 0.1124,
+        "projNetOptSbd": 0.2249
+      },
+      "projectionNullReason": null,
       "pond24hHive": 457.36567674,
       "pondTerm": "SWAP.HIVE (base-asset units, HE metrics.volume)",
-      "pond24hSbdTerm": null,
-      "pondConversion": null,
+      "pond24hSbdTerm": 22.5711,
+      "pondConversion": "market-grid live book (chain condenser mid)",
       "pondConversionLaw": "SBD≈HBD parity (both chains’ USD-like assets), rate = measured HBD/HIVE internal mid",
       "marketVolume24h": 457.3657,
       "marketVolumeTerm": "SWAP.HIVE (quote-asset units)",
-      "sharePct": null,
-      "shareLadder": null,
+      "sharePct": 99.6314,
+      "shareLadder": [
+        {
+          "n": 1,
+          "volumeSbd": 22.4879,
+          "sharePct": 99.6314,
+          "saturates": false,
+          "binding": "pond"
+        },
+        {
+          "n": 2,
+          "volumeSbd": 22.4879,
+          "sharePct": 99.6314,
+          "saturates": false,
+          "binding": "pond"
+        },
+        {
+          "n": 3,
+          "volumeSbd": 22.4879,
+          "sharePct": 99.6314,
+          "saturates": false,
+          "binding": "pond"
+        },
+        {
+          "n": 5,
+          "volumeSbd": 22.4879,
+          "sharePct": 99.6314,
+          "saturates": false,
+          "binding": "pond"
+        }
+      ],
       "gridFeasible": true,
       "selfFlow": {
-        "eligible": false,
+        "eligible": true,
         "accounts": 1,
         "feeRoundTripPct": 0,
         "capPct": 0.25,
-        "internalCapSbd": 0,
+        "internalCapSbd": 5.622,
         "guards": [
           "VWAP-EXCLUSION: internal fills never enter realized sell VWAP / edge books (poison guard)",
           "LABEL: every internal row carries INTERNAL-FLOW",
           "CAP: internal flow ≤ 25% of projected volume",
           "FEE-NULL-ONLY: internal flow armed only on zero-fee round-trip venues"
         ],
-        "blockedReason": "NO-PROJECTED-VOLUME"
+        "blockedReason": null
       }
     },
     {
@@ -232,34 +366,80 @@
       "spreadPct": 0.5,
       "measuredFrom": "market-grid live book (HE RPC)",
       "edge": {
-        "edgeConsPct": 0.2209,
-        "edgeOptPct": 0.4417
+        "edgeConsPct": 0.25,
+        "edgeOptPct": 0.5
       },
-      "econ": null,
-      "projectionNullReason": "NO-MEASURED-HBD-HIVE-MID",
+      "econ": {
+        "feeBps": 0,
+        "spreadPct": 0.5,
+        "feeRoundTripPct": 0,
+        "edgeConsPct": 0.25,
+        "edgeOptPct": 0.5,
+        "bounds": {
+          "tapeBoundTradesDay": null,
+          "capBoundTradesDay": 576,
+          "captureTradesDay": null,
+          "pondBoundTradesDay": 4,
+          "binding": "pond"
+        },
+        "projTradesDay": 4,
+        "projVolumeSbd": 1.6972,
+        "projNetConsSbd": 0.0042,
+        "projNetOptSbd": 0.0085
+      },
+      "projectionNullReason": null,
       "pond24hHive": 40.95259244,
       "pondTerm": "SWAP.HIVE (base-asset units, HE metrics.volume)",
-      "pond24hSbdTerm": null,
-      "pondConversion": null,
+      "pond24hSbdTerm": 2.021,
+      "pondConversion": "market-grid live book (chain condenser mid)",
       "pondConversionLaw": "SBD≈HBD parity (both chains’ USD-like assets), rate = measured HBD/HIVE internal mid",
       "marketVolume24h": 40.9526,
       "marketVolumeTerm": "SWAP.HIVE (quote-asset units)",
-      "sharePct": null,
-      "shareLadder": null,
+      "sharePct": 83.9782,
+      "shareLadder": [
+        {
+          "n": 1,
+          "volumeSbd": 1.6972,
+          "sharePct": 83.9782,
+          "saturates": false,
+          "binding": "pond"
+        },
+        {
+          "n": 2,
+          "volumeSbd": 1.6972,
+          "sharePct": 83.9782,
+          "saturates": false,
+          "binding": "pond"
+        },
+        {
+          "n": 3,
+          "volumeSbd": 1.6972,
+          "sharePct": 83.9782,
+          "saturates": false,
+          "binding": "pond"
+        },
+        {
+          "n": 5,
+          "volumeSbd": 1.6972,
+          "sharePct": 83.9782,
+          "saturates": false,
+          "binding": "pond"
+        }
+      ],
       "gridFeasible": true,
       "selfFlow": {
-        "eligible": false,
+        "eligible": true,
         "accounts": 1,
         "feeRoundTripPct": 0,
         "capPct": 0.25,
-        "internalCapSbd": 0,
+        "internalCapSbd": 0.4243,
         "guards": [
           "VWAP-EXCLUSION: internal fills never enter realized sell VWAP / edge books (poison guard)",
           "LABEL: every internal row carries INTERNAL-FLOW",
           "CAP: internal flow ≤ 25% of projected volume",
           "FEE-NULL-ONLY: internal flow armed only on zero-fee round-trip venues"
         ],
-        "blockedReason": "NO-PROJECTED-VOLUME"
+        "blockedReason": null
       }
     },
     {
@@ -270,34 +450,80 @@
       "spreadPct": 0,
       "measuredFrom": "market-grid live book (HE RPC)",
       "edge": {
-        "edgeConsPct": 0.0172,
-        "edgeOptPct": 0.0344
+        "edgeConsPct": 0,
+        "edgeOptPct": 0
       },
-      "econ": null,
-      "projectionNullReason": "NO-MEASURED-HBD-HIVE-MID",
+      "econ": {
+        "feeBps": 0,
+        "spreadPct": 0,
+        "feeRoundTripPct": 0,
+        "edgeConsPct": 0,
+        "edgeOptPct": 0,
+        "bounds": {
+          "tapeBoundTradesDay": null,
+          "capBoundTradesDay": 576,
+          "captureTradesDay": null,
+          "pondBoundTradesDay": 93,
+          "binding": "pond"
+        },
+        "projTradesDay": 93,
+        "projVolumeSbd": 39.4599,
+        "projNetConsSbd": 0,
+        "projNetOptSbd": 0
+      },
+      "projectionNullReason": null,
       "pond24hHive": 807.91943815,
       "pondTerm": "SWAP.HIVE (base-asset units, HE metrics.volume)",
-      "pond24hSbdTerm": null,
-      "pondConversion": null,
+      "pond24hSbdTerm": 39.871,
+      "pondConversion": "market-grid live book (chain condenser mid)",
       "pondConversionLaw": "SBD≈HBD parity (both chains’ USD-like assets), rate = measured HBD/HIVE internal mid",
       "marketVolume24h": 807.9194,
       "marketVolumeTerm": "SWAP.HIVE (quote-asset units)",
-      "sharePct": null,
-      "shareLadder": null,
+      "sharePct": 98.9689,
+      "shareLadder": [
+        {
+          "n": 1,
+          "volumeSbd": 39.4599,
+          "sharePct": 98.9689,
+          "saturates": false,
+          "binding": "pond"
+        },
+        {
+          "n": 2,
+          "volumeSbd": 39.4599,
+          "sharePct": 98.9689,
+          "saturates": false,
+          "binding": "pond"
+        },
+        {
+          "n": 3,
+          "volumeSbd": 39.4599,
+          "sharePct": 98.9689,
+          "saturates": false,
+          "binding": "pond"
+        },
+        {
+          "n": 5,
+          "volumeSbd": 39.4599,
+          "sharePct": 98.9689,
+          "saturates": false,
+          "binding": "pond"
+        }
+      ],
       "gridFeasible": false,
       "selfFlow": {
-        "eligible": false,
+        "eligible": true,
         "accounts": 1,
         "feeRoundTripPct": 0,
         "capPct": 0.25,
-        "internalCapSbd": 0,
+        "internalCapSbd": 9.865,
         "guards": [
           "VWAP-EXCLUSION: internal fills never enter realized sell VWAP / edge books (poison guard)",
           "LABEL: every internal row carries INTERNAL-FLOW",
           "CAP: internal flow ≤ 25% of projected volume",
           "FEE-NULL-ONLY: internal flow armed only on zero-fee round-trip venues"
         ],
-        "blockedReason": "NO-PROJECTED-VOLUME"
+        "blockedReason": null
       }
     },
     {
@@ -308,34 +534,80 @@
       "spreadPct": 0,
       "measuredFrom": "market-grid live book (HE RPC)",
       "edge": {
-        "edgeConsPct": 0.5036,
-        "edgeOptPct": 1.0071
+        "edgeConsPct": 0,
+        "edgeOptPct": 0
       },
-      "econ": null,
-      "projectionNullReason": "NO-MEASURED-HBD-HIVE-MID",
+      "econ": {
+        "feeBps": 0,
+        "spreadPct": 0,
+        "feeRoundTripPct": 0,
+        "edgeConsPct": 0,
+        "edgeOptPct": 0,
+        "bounds": {
+          "tapeBoundTradesDay": null,
+          "capBoundTradesDay": 576,
+          "captureTradesDay": null,
+          "pondBoundTradesDay": 1434,
+          "binding": "capacity"
+        },
+        "projTradesDay": 576,
+        "projVolumeSbd": 244.3968,
+        "projNetConsSbd": 0,
+        "projNetOptSbd": 0
+      },
+      "projectionNullReason": null,
       "pond24hHive": 12337.11474758,
       "pondTerm": "SWAP.HIVE (base-asset units, HE metrics.volume)",
-      "pond24hSbdTerm": null,
-      "pondConversion": null,
+      "pond24hSbdTerm": 608.8392,
+      "pondConversion": "market-grid live book (chain condenser mid)",
       "pondConversionLaw": "SBD≈HBD parity (both chains’ USD-like assets), rate = measured HBD/HIVE internal mid",
       "marketVolume24h": 12337.1147,
       "marketVolumeTerm": "SWAP.HIVE (quote-asset units)",
-      "sharePct": null,
-      "shareLadder": null,
+      "sharePct": 40.1414,
+      "shareLadder": [
+        {
+          "n": 1,
+          "volumeSbd": 244.3968,
+          "sharePct": 40.1414,
+          "saturates": false,
+          "binding": "capacity"
+        },
+        {
+          "n": 2,
+          "volumeSbd": 488.7936,
+          "sharePct": 80.2829,
+          "saturates": false,
+          "binding": "capacity"
+        },
+        {
+          "n": 3,
+          "volumeSbd": 608.4462,
+          "sharePct": 99.9355,
+          "saturates": false,
+          "binding": "pond"
+        },
+        {
+          "n": 5,
+          "volumeSbd": 608.4462,
+          "sharePct": 99.9355,
+          "saturates": false,
+          "binding": "pond"
+        }
+      ],
       "gridFeasible": true,
       "selfFlow": {
-        "eligible": false,
+        "eligible": true,
         "accounts": 1,
         "feeRoundTripPct": 0,
         "capPct": 0.25,
-        "internalCapSbd": 0,
+        "internalCapSbd": 61.0992,
         "guards": [
           "VWAP-EXCLUSION: internal fills never enter realized sell VWAP / edge books (poison guard)",
           "LABEL: every internal row carries INTERNAL-FLOW",
           "CAP: internal flow ≤ 25% of projected volume",
           "FEE-NULL-ONLY: internal flow armed only on zero-fee round-trip venues"
         ],
-        "blockedReason": "NO-PROJECTED-VOLUME"
+        "blockedReason": null
       }
     },
     {
@@ -346,34 +618,80 @@
       "spreadPct": 0,
       "measuredFrom": "market-grid live book (HE RPC)",
       "edge": {
-        "edgeConsPct": 0.7812,
-        "edgeOptPct": 1.5623
+        "edgeConsPct": 0,
+        "edgeOptPct": 0
       },
-      "econ": null,
-      "projectionNullReason": "NO-MEASURED-HBD-HIVE-MID",
+      "econ": {
+        "feeBps": 0,
+        "spreadPct": 0,
+        "feeRoundTripPct": 0,
+        "edgeConsPct": 0,
+        "edgeOptPct": 0,
+        "bounds": {
+          "tapeBoundTradesDay": null,
+          "capBoundTradesDay": 576,
+          "captureTradesDay": null,
+          "pondBoundTradesDay": 19,
+          "binding": "pond"
+        },
+        "projTradesDay": 19,
+        "projVolumeSbd": 8.0617,
+        "projNetConsSbd": 0,
+        "projNetOptSbd": 0
+      },
+      "projectionNullReason": null,
       "pond24hHive": 170.42485347,
       "pondTerm": "SWAP.HIVE (base-asset units, HE metrics.volume)",
-      "pond24hSbdTerm": null,
-      "pondConversion": null,
+      "pond24hSbdTerm": 8.4105,
+      "pondConversion": "market-grid live book (chain condenser mid)",
       "pondConversionLaw": "SBD≈HBD parity (both chains’ USD-like assets), rate = measured HBD/HIVE internal mid",
       "marketVolume24h": 170.4249,
       "marketVolumeTerm": "SWAP.HIVE (quote-asset units)",
-      "sharePct": null,
-      "shareLadder": null,
+      "sharePct": 95.8528,
+      "shareLadder": [
+        {
+          "n": 1,
+          "volumeSbd": 8.0617,
+          "sharePct": 95.8528,
+          "saturates": false,
+          "binding": "pond"
+        },
+        {
+          "n": 2,
+          "volumeSbd": 8.0617,
+          "sharePct": 95.8528,
+          "saturates": false,
+          "binding": "pond"
+        },
+        {
+          "n": 3,
+          "volumeSbd": 8.0617,
+          "sharePct": 95.8528,
+          "saturates": false,
+          "binding": "pond"
+        },
+        {
+          "n": 5,
+          "volumeSbd": 8.0617,
+          "sharePct": 95.8528,
+          "saturates": false,
+          "binding": "pond"
+        }
+      ],
       "gridFeasible": true,
       "selfFlow": {
-        "eligible": false,
+        "eligible": true,
         "accounts": 1,
         "feeRoundTripPct": 0,
         "capPct": 0.25,
-        "internalCapSbd": 0,
+        "internalCapSbd": 2.0154,
         "guards": [
           "VWAP-EXCLUSION: internal fills never enter realized sell VWAP / edge books (poison guard)",
           "LABEL: every internal row carries INTERNAL-FLOW",
           "CAP: internal flow ≤ 25% of projected volume",
           "FEE-NULL-ONLY: internal flow armed only on zero-fee round-trip venues"
         ],
-        "blockedReason": "NO-PROJECTED-VOLUME"
+        "blockedReason": null
       }
     }
   ],
@@ -382,13 +700,13 @@
       "surface": "he-daily-history",
       "reason": "HE-DAILY-HISTORY-DARK: marketHistory/history answered null (not RPC-exposed) — the day it answers, the pond becomes a series",
       "pondSource": "metrics.volume 24h snapshot instead of a series",
-      "probedAt": "2026-10-20T12:11:17.209Z"
+      "probedAt": "2026-10-20T12:06:30.826Z"
     },
     {
       "surface": "blurt-internal-market",
       "reason": "BLURT-SURFACE-DARK: getaddrinfo ENOTFOUND api.blurt.world",
       "feeBpsSource": 0,
-      "probedAt": "2026-10-20T12:11:17.209Z"
+      "probedAt": "2026-10-20T12:06:30.826Z"
     }
   ],
   "fleet": {
@@ -448,18 +766,18 @@
     "rolloutPath": "fleet rollout = fund + key-provision recruits (recruit.cjs contract path), one derived-key vault per account, each account re-runs market-exec law with its own caps; the partition above pre-assigns the rungs"
   },
   "projections": {
-    "venuesMeasured": 1,
-    "projVolumeSbdDay": 25.458,
-    "projNetConsSbdDay": 0.0064,
-    "projNetOptSbdDay": 0.0128,
-    "internalFlowCapSbdDay": 6.3645,
+    "venuesMeasured": 7,
+    "projVolumeSbdDay": 585.9583,
+    "projNetConsSbdDay": 0.7276,
+    "projNetOptSbdDay": 1.4554,
+    "internalFlowCapSbdDay": 146.4896,
     "captureTradesDay": 60,
     "captureFillThroughPct": 10.4167,
     "heVenuesPriced": 5,
-    "heVenuesProjected": 0,
-    "hePondSbdDay": 0,
-    "heProjVolumeSbdDay": 0,
-    "heProjNetConsSbdDay": 0
+    "heVenuesProjected": 5,
+    "hePondSbdDay": 681.7128,
+    "heProjVolumeSbdDay": 316.1035,
+    "heProjNetConsSbdDay": 0.1166
   },
   "series": {
     "law": "Q11: time-born namespace — the desk’s own past (the append-only plan ledger); excluded from the byte-stable payload (values deterministic, timestamps are the axis)",
@@ -565,6 +883,612 @@
             "sharePct": 0.433
           }
         ]
+      },
+      {
+        "venue": "HBD/HIVE (internal hive)",
+        "points": [
+          {
+            "at": "2026-10-19T17:12:02.224Z",
+            "sharePct": 6.5876
+          },
+          {
+            "at": "2026-10-19T17:22:45.796Z",
+            "sharePct": 6.5876
+          },
+          {
+            "at": "2026-10-19T18:35:52.496Z",
+            "sharePct": 6.7083
+          },
+          {
+            "at": "2026-10-19T18:41:16.263Z",
+            "sharePct": 6.5621
+          },
+          {
+            "at": "2026-10-19T19:11:15.649Z",
+            "sharePct": 6.2586
+          },
+          {
+            "at": "2026-10-19T19:35:14.238Z",
+            "sharePct": 6.2586
+          },
+          {
+            "at": "2026-10-19T19:41:17.073Z",
+            "sharePct": 5.238
+          },
+          {
+            "at": "2026-10-19T20:33:36.987Z",
+            "sharePct": 5.2512
+          },
+          {
+            "at": "2026-10-19T21:41:46.547Z",
+            "sharePct": 5.2453
+          },
+          {
+            "at": "2026-10-19T22:11:46.652Z",
+            "sharePct": 5.3281
+          },
+          {
+            "at": "2026-10-19T22:41:46.620Z",
+            "sharePct": 5.4035
+          },
+          {
+            "at": "2026-10-19T23:11:46.628Z",
+            "sharePct": 5.3949
+          },
+          {
+            "at": "2026-10-20T00:12:03.482Z",
+            "sharePct": 5.4071
+          },
+          {
+            "at": "2026-10-20T01:10:10.300Z",
+            "sharePct": 5.414
+          },
+          {
+            "at": "2026-10-20T01:25:03.209Z",
+            "sharePct": 5.414
+          },
+          {
+            "at": "2026-10-20T02:37:05.316Z",
+            "sharePct": 5.3749
+          },
+          {
+            "at": "2026-10-20T05:29:11.669Z",
+            "sharePct": 5.0012
+          },
+          {
+            "at": "2026-10-20T05:41:14.248Z",
+            "sharePct": 5.0069
+          },
+          {
+            "at": "2026-10-20T07:11:13.544Z",
+            "sharePct": 5.1539
+          },
+          {
+            "at": "2026-10-20T07:41:14.892Z",
+            "sharePct": 5.1483
+          },
+          {
+            "at": "2026-10-20T07:46:22.082Z",
+            "sharePct": 5.1483
+          },
+          {
+            "at": "2026-10-20T09:06:38.497Z",
+            "sharePct": 4.9815
+          },
+          {
+            "at": "2026-10-20T10:19:14.522Z",
+            "sharePct": 4.9623
+          },
+          {
+            "at": "2026-10-20T11:18:05.809Z",
+            "sharePct": 4.992
+          }
+        ]
+      },
+      {
+        "venue": "BEE/SWAP.HIVE (hive-engine)",
+        "points": [
+          {
+            "at": "2026-10-19T17:12:02.224Z",
+            "sharePct": 99.043
+          },
+          {
+            "at": "2026-10-19T17:22:45.796Z",
+            "sharePct": 99.043
+          },
+          {
+            "at": "2026-10-19T18:35:52.496Z",
+            "sharePct": 98.9805
+          },
+          {
+            "at": "2026-10-19T18:41:16.263Z",
+            "sharePct": 98.8398
+          },
+          {
+            "at": "2026-10-19T19:11:15.649Z",
+            "sharePct": 97.5441
+          },
+          {
+            "at": "2026-10-19T19:35:14.238Z",
+            "sharePct": 97.3567
+          },
+          {
+            "at": "2026-10-19T19:41:17.073Z",
+            "sharePct": 98.8839
+          },
+          {
+            "at": "2026-10-19T20:33:36.987Z",
+            "sharePct": 99.8575
+          },
+          {
+            "at": "2026-10-19T21:41:46.547Z",
+            "sharePct": 97.8094
+          },
+          {
+            "at": "2026-10-19T22:11:46.652Z",
+            "sharePct": 98.8798
+          },
+          {
+            "at": "2026-10-19T22:41:46.620Z",
+            "sharePct": 98.5713
+          },
+          {
+            "at": "2026-10-19T23:11:46.628Z",
+            "sharePct": 98.4197
+          },
+          {
+            "at": "2026-10-20T00:12:03.482Z",
+            "sharePct": 99.4786
+          },
+          {
+            "at": "2026-10-20T01:10:10.300Z",
+            "sharePct": 98.1079
+          },
+          {
+            "at": "2026-10-20T01:25:03.209Z",
+            "sharePct": 98.1079
+          },
+          {
+            "at": "2026-10-20T02:37:05.316Z",
+            "sharePct": 98.9535
+          },
+          {
+            "at": "2026-10-20T05:29:11.669Z",
+            "sharePct": 99.3736
+          },
+          {
+            "at": "2026-10-20T05:41:14.248Z",
+            "sharePct": 99.4142
+          },
+          {
+            "at": "2026-10-20T07:11:13.544Z",
+            "sharePct": 99.7031
+          },
+          {
+            "at": "2026-10-20T07:41:14.892Z",
+            "sharePct": 98.9435
+          },
+          {
+            "at": "2026-10-20T07:46:22.082Z",
+            "sharePct": 98.9435
+          },
+          {
+            "at": "2026-10-20T09:06:38.497Z",
+            "sharePct": 98.4747
+          },
+          {
+            "at": "2026-10-20T10:19:14.522Z",
+            "sharePct": 98.8159
+          },
+          {
+            "at": "2026-10-20T11:18:05.809Z",
+            "sharePct": 99.2829
+          }
+        ]
+      },
+      {
+        "venue": "CENT/SWAP.HIVE (hive-engine)",
+        "points": [
+          {
+            "at": "2026-10-19T17:12:02.224Z",
+            "sharePct": 95.9502
+          },
+          {
+            "at": "2026-10-19T17:22:45.796Z",
+            "sharePct": 95.9502
+          },
+          {
+            "at": "2026-10-19T18:35:52.496Z",
+            "sharePct": 95.8906
+          },
+          {
+            "at": "2026-10-19T18:41:16.263Z",
+            "sharePct": 95.0147
+          },
+          {
+            "at": "2026-10-19T19:11:15.649Z",
+            "sharePct": 95.0573
+          },
+          {
+            "at": "2026-10-19T19:35:14.238Z",
+            "sharePct": 95.0493
+          },
+          {
+            "at": "2026-10-19T19:41:17.073Z",
+            "sharePct": 94.8474
+          },
+          {
+            "at": "2026-10-19T20:33:36.987Z",
+            "sharePct": 94.731
+          },
+          {
+            "at": "2026-10-19T21:41:46.547Z",
+            "sharePct": 97.6721
+          },
+          {
+            "at": "2026-10-19T22:11:46.652Z",
+            "sharePct": 98.8353
+          },
+          {
+            "at": "2026-10-19T22:41:46.620Z",
+            "sharePct": 97.3081
+          },
+          {
+            "at": "2026-10-19T23:11:46.628Z",
+            "sharePct": 97.1577
+          },
+          {
+            "at": "2026-10-20T00:12:03.482Z",
+            "sharePct": 98.1182
+          },
+          {
+            "at": "2026-10-20T01:10:10.300Z",
+            "sharePct": 98.2091
+          },
+          {
+            "at": "2026-10-20T01:25:03.209Z",
+            "sharePct": 98.2091
+          },
+          {
+            "at": "2026-10-20T02:37:05.316Z",
+            "sharePct": 98.6371
+          },
+          {
+            "at": "2026-10-20T05:29:11.669Z",
+            "sharePct": 90.8038
+          },
+          {
+            "at": "2026-10-20T05:41:14.248Z",
+            "sharePct": 91.4299
+          },
+          {
+            "at": "2026-10-20T07:11:13.544Z",
+            "sharePct": 85.3036
+          },
+          {
+            "at": "2026-10-20T07:41:14.892Z",
+            "sharePct": 85.6134
+          },
+          {
+            "at": "2026-10-20T07:46:22.082Z",
+            "sharePct": 85.6134
+          },
+          {
+            "at": "2026-10-20T09:06:38.497Z",
+            "sharePct": 83.9492
+          },
+          {
+            "at": "2026-10-20T10:19:14.522Z",
+            "sharePct": 84.2785
+          },
+          {
+            "at": "2026-10-20T11:18:05.809Z",
+            "sharePct": 84.3665
+          }
+        ]
+      },
+      {
+        "venue": "SWAP.DOGE/SWAP.HIVE (hive-engine)",
+        "points": [
+          {
+            "at": "2026-10-19T17:12:02.224Z",
+            "sharePct": 99.6456
+          },
+          {
+            "at": "2026-10-19T17:22:45.796Z",
+            "sharePct": 99.6456
+          },
+          {
+            "at": "2026-10-19T18:35:52.496Z",
+            "sharePct": 99.583
+          },
+          {
+            "at": "2026-10-19T18:41:16.263Z",
+            "sharePct": 99.7445
+          },
+          {
+            "at": "2026-10-19T19:11:15.649Z",
+            "sharePct": 99.7878
+          },
+          {
+            "at": "2026-10-19T19:35:14.238Z",
+            "sharePct": 99.7802
+          },
+          {
+            "at": "2026-10-19T19:41:17.073Z",
+            "sharePct": 99.644
+          },
+          {
+            "at": "2026-10-19T20:33:36.987Z",
+            "sharePct": 99.6025
+          },
+          {
+            "at": "2026-10-19T21:41:46.547Z",
+            "sharePct": 99.6977
+          },
+          {
+            "at": "2026-10-19T22:11:46.652Z",
+            "sharePct": 99.751
+          },
+          {
+            "at": "2026-10-19T22:41:46.620Z",
+            "sharePct": 99.4401
+          },
+          {
+            "at": "2026-10-19T23:11:46.628Z",
+            "sharePct": 99.2869
+          },
+          {
+            "at": "2026-10-20T00:12:03.482Z",
+            "sharePct": 99.4326
+          },
+          {
+            "at": "2026-10-20T01:10:10.300Z",
+            "sharePct": 99.5224
+          },
+          {
+            "at": "2026-10-20T01:25:03.209Z",
+            "sharePct": 99.5224
+          },
+          {
+            "at": "2026-10-20T02:37:05.316Z",
+            "sharePct": 99.9564
+          },
+          {
+            "at": "2026-10-20T05:29:11.669Z",
+            "sharePct": 99.3829
+          },
+          {
+            "at": "2026-10-20T05:41:14.248Z",
+            "sharePct": 99.012
+          },
+          {
+            "at": "2026-10-20T07:11:13.544Z",
+            "sharePct": 99.3398
+          },
+          {
+            "at": "2026-10-20T07:41:14.892Z",
+            "sharePct": 99.7044
+          },
+          {
+            "at": "2026-10-20T07:46:22.082Z",
+            "sharePct": 99.7044
+          },
+          {
+            "at": "2026-10-20T09:06:38.497Z",
+            "sharePct": 99.0083
+          },
+          {
+            "at": "2026-10-20T10:19:14.522Z",
+            "sharePct": 99.9031
+          },
+          {
+            "at": "2026-10-20T11:18:05.809Z",
+            "sharePct": 98.9587
+          }
+        ]
+      },
+      {
+        "venue": "SWAP.LTC/SWAP.HIVE (hive-engine)",
+        "points": [
+          {
+            "at": "2026-10-19T17:12:02.224Z",
+            "sharePct": 34.6436
+          },
+          {
+            "at": "2026-10-19T17:22:45.796Z",
+            "sharePct": 34.6436
+          },
+          {
+            "at": "2026-10-19T18:35:52.496Z",
+            "sharePct": 34.957
+          },
+          {
+            "at": "2026-10-19T18:41:16.263Z",
+            "sharePct": 36.6873
+          },
+          {
+            "at": "2026-10-19T19:11:15.649Z",
+            "sharePct": 36.7037
+          },
+          {
+            "at": "2026-10-19T19:35:14.238Z",
+            "sharePct": 36.9455
+          },
+          {
+            "at": "2026-10-19T19:41:17.073Z",
+            "sharePct": 92.6456
+          },
+          {
+            "at": "2026-10-19T20:33:36.987Z",
+            "sharePct": 99.0288
+          },
+          {
+            "at": "2026-10-19T21:41:46.547Z",
+            "sharePct": 99.8674
+          },
+          {
+            "at": "2026-10-19T22:11:46.652Z",
+            "sharePct": 81.2844
+          },
+          {
+            "at": "2026-10-19T22:41:46.620Z",
+            "sharePct": 67.746
+          },
+          {
+            "at": "2026-10-19T23:11:46.628Z",
+            "sharePct": 67.7666
+          },
+          {
+            "at": "2026-10-20T00:12:03.482Z",
+            "sharePct": 68.4365
+          },
+          {
+            "at": "2026-10-20T01:10:10.300Z",
+            "sharePct": 69.4155
+          },
+          {
+            "at": "2026-10-20T01:25:03.209Z",
+            "sharePct": 69.4155
+          },
+          {
+            "at": "2026-10-20T02:37:05.316Z",
+            "sharePct": 69.7182
+          },
+          {
+            "at": "2026-10-20T05:29:11.669Z",
+            "sharePct": 69.5475
+          },
+          {
+            "at": "2026-10-20T05:41:14.248Z",
+            "sharePct": 70.0251
+          },
+          {
+            "at": "2026-10-20T07:11:13.544Z",
+            "sharePct": 60.9256
+          },
+          {
+            "at": "2026-10-20T07:41:14.892Z",
+            "sharePct": 61.1492
+          },
+          {
+            "at": "2026-10-20T07:46:22.082Z",
+            "sharePct": 61.1492
+          },
+          {
+            "at": "2026-10-20T09:06:38.497Z",
+            "sharePct": 38.0021
+          },
+          {
+            "at": "2026-10-20T10:19:14.522Z",
+            "sharePct": 44.164
+          },
+          {
+            "at": "2026-10-20T11:18:05.809Z",
+            "sharePct": 43.6509
+          }
+        ]
+      },
+      {
+        "venue": "WAIV/SWAP.HIVE (hive-engine)",
+        "points": [
+          {
+            "at": "2026-10-19T17:12:02.224Z",
+            "sharePct": 99.1378
+          },
+          {
+            "at": "2026-10-19T17:22:45.796Z",
+            "sharePct": 99.1378
+          },
+          {
+            "at": "2026-10-19T18:35:52.496Z",
+            "sharePct": 99.0753
+          },
+          {
+            "at": "2026-10-19T18:41:16.263Z",
+            "sharePct": 98.7743
+          },
+          {
+            "at": "2026-10-19T19:11:15.649Z",
+            "sharePct": 98.764
+          },
+          {
+            "at": "2026-10-19T19:35:14.238Z",
+            "sharePct": 98.7559
+          },
+          {
+            "at": "2026-10-19T19:41:17.073Z",
+            "sharePct": 95.6654
+          },
+          {
+            "at": "2026-10-19T20:33:36.987Z",
+            "sharePct": 95.6255
+          },
+          {
+            "at": "2026-10-19T21:41:46.547Z",
+            "sharePct": 95.7172
+          },
+          {
+            "at": "2026-10-19T22:11:46.652Z",
+            "sharePct": 96.8578
+          },
+          {
+            "at": "2026-10-19T22:41:46.620Z",
+            "sharePct": 95.3601
+          },
+          {
+            "at": "2026-10-19T23:11:46.628Z",
+            "sharePct": 99.9708
+          },
+          {
+            "at": "2026-10-20T00:12:03.482Z",
+            "sharePct": 96.1521
+          },
+          {
+            "at": "2026-10-20T01:10:10.300Z",
+            "sharePct": 96.2382
+          },
+          {
+            "at": "2026-10-20T01:25:03.209Z",
+            "sharePct": 96.2382
+          },
+          {
+            "at": "2026-10-20T02:37:05.316Z",
+            "sharePct": 96.6581
+          },
+          {
+            "at": "2026-10-20T05:29:11.669Z",
+            "sharePct": 95.5555
+          },
+          {
+            "at": "2026-10-20T05:41:14.248Z",
+            "sharePct": 96.211
+          },
+          {
+            "at": "2026-10-20T07:11:13.544Z",
+            "sharePct": 99.5253
+          },
+          {
+            "at": "2026-10-20T07:41:14.892Z",
+            "sharePct": 99.8913
+          },
+          {
+            "at": "2026-10-20T07:46:22.082Z",
+            "sharePct": 99.8913
+          },
+          {
+            "at": "2026-10-20T09:06:38.497Z",
+            "sharePct": 95.4749
+          },
+          {
+            "at": "2026-10-20T10:19:14.522Z",
+            "sharePct": 95.3237
+          },
+          {
+            "at": "2026-10-20T11:18:05.809Z",
+            "sharePct": 96.5311
+          }
+        ]
       }
     ]
   },
@@ -576,9 +1500,9 @@
   "inputs": {
     "feeDoctrine": "saos-fee-doctrine/1",
     "dexBookAt": "2026-10-19T21:14:18.564Z",
-    "marketGridBookAt": "2026-10-20T12:11:17.209Z",
-    "marketGridHistoryRows": 233,
-    "lastMarketGridAt": "2026-10-20T12:11:17.209Z",
+    "marketGridBookAt": "2026-10-20T12:06:30.826Z",
+    "marketGridHistoryRows": 232,
+    "lastMarketGridAt": "2026-10-20T12:06:30.826Z",
     "treasuryAt": "2026-10-19T21:13:35.037Z",
     "execRunRows": 184,
     "fillLedgerRows": 243,
