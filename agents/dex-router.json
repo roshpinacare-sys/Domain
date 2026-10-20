@@ -41,17 +41,10 @@
       "rows": [
         {
           "venue": "Binance",
-          "symbol": "BTCUSDT",
-          "mid": null,
-          "pct24h": null,
-          "why": "HTTP-418"
-        },
-        {
-          "venue": "Binance",
-          "symbol": "HBDUSDT",
-          "mid": null,
-          "pct24h": null,
-          "why": "HTTP-400"
+          "symbol": "HIVEUSDT",
+          "mid": 0.0491,
+          "pct24h": 0.615,
+          "why": null
         },
         {
           "venue": "MEXC",
@@ -511,14 +504,22 @@
     },
     {
       "id": "A3",
-      "name": "SWAP.HIVE:SWAP.BTC pool vs CEX cross",
+      "name": "SWAP.HIVE:SWAP.BTC pool vs CEX cross (peg drift)",
       "legs": [
         "he-pool",
-        "cex"
+        "cex:BTCUSDT+HIVEUSDT"
       ],
-      "verdict": "FEED-STALE",
-      "railOwner": "owner-hive-alt",
-      "why": "a CEX leg did not answer"
+      "poolPriceHivePerBtc": 1664105.1173525732,
+      "cexCrossHivePerBtc": 1671100,
+      "grossBps": 41.86,
+      "feesBps": 100,
+      "slipBps": 20,
+      "netBps": -78.14,
+      "thresholdBps": 100,
+      "driftPct": -0.4186,
+      "verdict": "BELOW-FLOOR",
+      "railOwner": "owner-hive-alt (NO-KEYS + HE RPC)",
+      "why": "the custodial peg is real only while the pool hugs the cross — 1.5% drift halts the venue"
     },
     {
       "id": "A4",
