@@ -1,14 +1,15 @@
 {
  "schema": "integrity-guard/2",
  "scope": "public-twin (Domain home)",
- "at": "2026-10-20T14:56:49.781Z",
- "overall": "DEGRADED",
+ "at": "2026-10-20T15:56:19.654Z",
+ "overall": "FAIL",
  "summary": {
   "sources": 7,
-  "verified": 8,
-  "findings": 1,
+  "verified": 6,
+  "findings": 3,
   "counts": {
-   "stale": 1
+   "stale": 2,
+   "missing": 1
   }
  },
  "verified": [
@@ -20,12 +21,7 @@
   {
    "where": "Domain:agents/work-orders.json",
    "law": "fresh+parsed",
-   "detail": "גיל 0.2ש' ≤ SLA 4ש'"
-  },
-  {
-   "where": "Domain:agents/grid-truth.json",
-   "law": "fresh+parsed",
-   "detail": "גיל 1.3ש' ≤ SLA 2ש'"
+   "detail": "גיל 1.1ש' ≤ SLA 4ש'"
   },
   {
    "where": "Domain:office/data.json",
@@ -35,17 +31,12 @@
   {
    "where": "Domain:agents/office-live.json",
    "law": "fresh+parsed",
-   "detail": "גיל 0.7ש' ≤ SLA 4ש'"
-  },
-  {
-   "where": "FleetHQ:office/state/office-state.json",
-   "law": "fresh+parsed",
-   "detail": "גיל 0.1ש' ≤ SLA 4ש'"
+   "detail": "גיל 1.7ש' ≤ SLA 4ש'"
   },
   {
    "where": "Domain:office/data.json",
    "law": "producer-green",
-   "detail": "ריצת-יצרן ירוקה לפני 15 דק'"
+   "detail": "ריצת-יצרן ירוקה לפני 7 דק'"
   },
   {
    "where": "Domain:agents/work-orders.json",
@@ -55,21 +46,23 @@
  ],
  "findings": [
   {
+   "where": "Domain:agents/grid-truth.json",
+   "law": "stale",
+   "detail": "גיל 2.3ש' > SLA 2ש'"
+  },
+  {
+   "where": "FleetHQ:office/state/office-state.json",
+   "law": "missing",
+   "detail": "HTTP 404 — ספר-חי לא נקרא"
+  },
+  {
    "where": "sovereign-runner-kit:results/receipts.jsonl",
    "law": "stale",
-   "detail": "גיל 190.9ש' > SLA 72ש'"
+   "detail": "גיל 191.9ש' > SLA 72ש'"
   }
  ],
  "provenance": {
-  "runUrl": "https://github.com/roshpinacare-sys/Domain/actions/runs/39443853617",
+  "runUrl": "https://github.com/roshpinacare-sys/Domain/actions/runs/39452948777",
   "workflow": "artery-integrity-twin"
- },
- "degraded": {
-  "law": "verdict-aware/third-party-device",
-  "reason": "כל-הממצאים-המהותיים = staleness של-מקור-מכשיר-הבעלים (sovereign-runner-kit, device-fresh-oracle) — צד-שלישי-מחוץ-להישג-יד; לא שבר-מכונה. תקדים: blurt.live UNREACHABLE (T29).",
-  "findings": [
-   "sovereign-runner-kit:results/receipts.jsonl"
-  ],
-  "remedy": "הקבלות יתחדשו כשה-kit ירוץ שוב על מכשיר-הבעלים (עיצוב: אין-מפתחות-חתימה-ב-kit; עיגון-רק-בכספת-הבעלים)."
  }
 }
