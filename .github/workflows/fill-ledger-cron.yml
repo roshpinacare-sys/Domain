@@ -75,14 +75,27 @@ jobs:
           else
             git commit -m "fill-ledger: tick $(date -u +%FT%TZ) [skip ci]"
             ok=0
-            for attempt in 1 2 3; do
+            for attempt in 1 2 3 4 5; do
               if git -c rebase.autoStash=true pull --rebase origin main && git push origin HEAD:main; then
                 echo "ledger published (attempt ${attempt})"; ok=1; break
               fi
               echo "publish failed (attempt ${attempt})"
-              sleep 5
+              # class-E cure (wave-19.44 · DECISIONS #32): a failed rebase leaves unmerged
+              # index state — the next attempt would deterministically die on it (measured
+              # 15:12:09Z run: 'Pulling is not possible because you have unmerged files').
+              git rebase --abort 2>/dev/null || true
+              git rebase --quit 2>/dev/null || true
+              git reset --hard HEAD 2>/dev/null || true
+              sleep $((attempt*4))
             done
-            [ "$ok" = "1" ] || { echo "could not publish the ledger after 3 attempts - fail-loud"; exit 1; }
+            if [ "$ok" != "1" ]; then
+              git fetch origin main --quiet
+              if git diff --quiet HEAD origin/main -- agents/ 2>/dev/null; then
+                echo "landed-check: ledger content already at origin (live sibling writer) — honest skip"
+              else
+                echo "could not publish the ledger after 5 attempts and content NOT at origin - fail-loud"; exit 1
+              fi
+            fi
           fi
 
       - name: publish the bus book (independent no-noise — CR-0048)
@@ -97,14 +110,24 @@ jobs:
           else
             git commit -m "coord-bus: tick $(date -u +%FT%TZ) [skip ci]"
             ok2=0
-            for attempt in 1 2 3; do
+            for attempt in 1 2 3 4 5; do
               if git -c rebase.autoStash=true pull --rebase origin main && git push origin HEAD:main; then
                 echo "bus published (attempt ${attempt})"; ok2=1; break
               fi
               echo "bus publish failed (attempt ${attempt})"
-              sleep 5
+              git rebase --abort 2>/dev/null || true
+              git rebase --quit 2>/dev/null || true
+              git reset --hard HEAD 2>/dev/null || true
+              sleep $((attempt*4))
             done
-            [ "$ok2" = "1" ] || { echo "could not publish the bus book after 3 attempts - fail-loud"; exit 1; }
+            if [ "$ok2" != "1" ]; then
+              git fetch origin main --quiet
+              if git diff --quiet HEAD origin/main -- agents/coord-bus.json 2>/dev/null; then
+                echo "landed-check: bus book already at origin (live sibling writer) — honest skip"
+              else
+                echo "could not publish the bus book after 5 attempts and content NOT at origin - fail-loud"; exit 1
+              fi
+            fi
           fi
 
       - name: Halt receipt (this shift belongs to the breaker)
