@@ -1,0 +1,52 @@
+name: products-feed
+
+# products-feed · the products.json producer (wave-19.37, trace 1a157fd40d380521)
+# Cures the orphan measured in wave-19.36-f: marketing/products.json had ZERO
+# writers across all 102 Domain workflows. Design honesty: the file is
+# "static by design" — this lane REAFFIRMS canon freshness (sha256 of the
+# Adsmarket sources) and fail-closes on any canon delta. Daily cron sits well
+# inside the opens-closer products SLA (2910min).
+
+on:
+  schedule:
+    - cron: '23 4 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: products-feed
+  cancel-in-progress: false
+
+jobs:
+  reaffirm:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Reaffirm the products canon (fail-closed on canon delta)
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }} # Domain/GH_PAT rotated 2026-10-20T05:26Z (measured live)
+        run: node marketing/reaffirm-products.mjs
+
+      - name: Commit the reaffirmation
+        run: |
+          git config user.name "roshpinacare-sys"
+          git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
+          git add marketing/products.json
+          if git diff --cached --quiet; then echo "no delta — nothing to reaffirm"; exit 0; fi
+          git commit -qm "products reaffirm: canon sources unchanged $(date -u +%Y-%m-%dT%H:%M:%SZ) [skip ci]"
+          ok=0
+          for i in 1 2 3; do
+            if git pull --rebase -X theirs --autostash -q origin main && git push -q origin main; then ok=1; break; fi
+            sleep 3
+          done
+          [ "$ok" = "1" ] || { echo "PUSH-FAILED"; exit 1; }
