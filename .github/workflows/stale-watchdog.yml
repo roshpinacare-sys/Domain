@@ -1,0 +1,172 @@
+#
+# [wave 19.55 · trace 1a15f267e3a06a41] STALE-WATCHDOG — freshness that measures
+# the ARTIFACT, not the clock.
+#
+# The measured root (2026-10-21 ~15:5xZ census): GitHub's scheduler skips slots
+# under load. weave-heart's 12:29Z slot NEVER fired (no scheduled run between the
+# 09:52Z dispatch and 15:5xZ — the */4 cadence's first autonomous cycle was
+# swallowed); pages-quality-gate (cron "11,41 * * * *") was silent 11:39Z→15:5xZ
+# while its own doctrine says "measured every 30 minutes in public"; weave-mirror
+# (*/15) landed ~4 runs all day. Every freshness law that trusts ONE cron slot
+# eventually lies — the artifact's own age is the only honest clock.
+#
+# The cure: a cheap keyless watcher reads the three public artifacts and re-fires
+# the SPECIFIC broken writer:
+#   - Console mirror.json (the weave book's ts) older than 3.5h -> dispatch
+#     weave-heart (the book writer is the root; the mirrorers copy it after).
+#   - Domain mirror.json lagging the book by >1h -> dispatch weave-mirror
+#     (book fresh, the Domain copy hop is the broken one).
+#   - quality/report.json older than 45min -> dispatch pages-quality-gate.
+#
+# Safety (nothing else changes — same law pattern as the 19.53 cadence cure):
+#   - weave-heart auto mode NEVER takes over while the ledger is fresh
+#     (WEAVE_STALE_MIN 1560) — an extra dispatch is an honest attestation +
+#     a fresh public mirror; anchor lines dedupe via Z-18 (honest no-op).
+#   - pages-quality-gate is a pure re-measure — extra runs only add honest PASSes.
+#   - 45-min per-target hold (state lives in the receipt) prevents dispatch
+#     pile-ups while a writer is already healing; a genuinely broken writer
+#     still surfaces loudly via its own runs (we keep NOTHING quiet).
+#   - The watchdog NEVER edits content — it only re-fires existing writers.
+
+name: stale-watchdog
+
+on:
+  schedule:
+    - cron: '*/17 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: stale-watchdog
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout Domain (receipt home)
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+
+      - name: Measure public artifact ages, re-fire the broken writer
+        id: decide
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -e
+          python3 - <<'PY'
+          import json, datetime, urllib.request, os, subprocess
+
+          NOW = datetime.datetime.now(datetime.timezone.utc)
+          def age_h(url, keys=("generatedAt", "generated_at", "at")):
+              try:
+                  with urllib.request.urlopen(url, timeout=30) as r:
+                      d = json.load(r)
+                  ts = next((d[k] for k in keys if k in d), None)
+                  if not ts:
+                      return None, None
+                  t = datetime.datetime.fromisoformat(ts.replace("Z", "+00:00"))
+                  return round((NOW - t).total_seconds() / 3600, 2), ts
+              except Exception:
+                  return None, None
+
+          DOMAIN_MIRROR  = "https://roshpinacare-sys.github.io/Domain/mirror.json"
+          CONSOLE_MIRROR = "https://roshpinacare-sys.github.io/Console/mirror.json"
+          QUALITY        = "https://roshpinacare-sys.github.io/Domain/quality/report.json"
+
+          (adom, tsdom), (acon, tscon), (aq, tsq) = age_h(DOMAIN_MIRROR), age_h(CONSOLE_MIRROR), age_h(QUALITY)
+
+          BOOK_STALE_H, COPY_LAG_H, QUALITY_STALE_H, HOLD_MIN = 3.5, 1.0, 0.75, 45
+
+          holds = {}
+          try:
+              holds = json.load(open("receipts/stale-watchdog/last.json")).get("holds", {})
+          except Exception:
+              pass
+
+          def held_recently(target):
+              ts = holds.get(target)
+              if not ts:
+                  return False
+              return (NOW - datetime.datetime.fromisoformat(ts.replace("Z", "+00:00"))).total_seconds() < HOLD_MIN * 60
+
+          def dispatch(target):
+              subprocess.run(["gh", "workflow", "run", target, "--repo", "roshpinacare-sys/Domain", "--ref", "main"],
+                             check=True, capture_output=True)
+
+          actions, notes = [], []
+          if acon is None:
+              notes.append("Console mirror UNREACHABLE — blind sensor, no book decision (honest skip)")
+          elif acon > BOOK_STALE_H:
+              if held_recently("weave-heart.yml"):
+                  notes.append(f"book {acon}h stale but weave-heart dispatched <{HOLD_MIN}min ago — healing in flight")
+              else:
+                  dispatch("weave-heart.yml")
+                  actions.append(f"dispatched weave-heart.yml (book {acon}h > {BOOK_STALE_H}h)")
+                  holds["weave-heart.yml"] = NOW.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+          if adom is not None and acon is not None and (adom - acon) > COPY_LAG_H:
+              if held_recently("weave-mirror.yml"):
+                  notes.append(f"copy lag {round(adom - acon, 2)}h but weave-mirror dispatched <{HOLD_MIN}min ago")
+              else:
+                  dispatch("weave-mirror.yml")
+                  actions.append(f"dispatched weave-mirror.yml (Domain {adom}h vs book {acon}h, lag > {COPY_LAG_H}h)")
+                  holds["weave-mirror.yml"] = NOW.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+          if aq is None:
+              notes.append("quality report UNREACHABLE — honest skip")
+          elif aq > QUALITY_STALE_H:
+              if held_recently("pages-quality-gate.yml"):
+                  notes.append(f"quality {aq}h stale but gate dispatched <{HOLD_MIN}min ago — re-measure in flight")
+              else:
+                  dispatch("pages-quality-gate.yml")
+                  actions.append(f"dispatched pages-quality-gate.yml (report {aq}h > {QUALITY_STALE_H}h)")
+                  holds["pages-quality-gate.yml"] = NOW.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+          out = {
+              "generatedAt": NOW.strftime("%Y-%m-%dT%H:%M:%SZ"),
+              "measured": {
+                  "domainMirror": {"ageH": adom, "ts": tsdom},
+                  "consoleMirror": {"ageH": acon, "ts": tscon},
+                  "qualityReport": {"ageH": aq, "ts": tsq},
+              },
+              "thresholds": {"bookStaleH": BOOK_STALE_H, "copyLagH": COPY_LAG_H, "qualityStaleH": QUALITY_STALE_H, "holdMin": HOLD_MIN},
+              "actions": actions,
+              "notes": notes,
+              "holds": holds,
+          }
+          os.makedirs("receipts/stale-watchdog", exist_ok=True)
+          with open("receipts/stale-watchdog/last.json", "w") as fh:
+              json.dump(out, fh, indent=1, ensure_ascii=False)
+          print(json.dumps(out, indent=1, ensure_ascii=False))
+          PY
+
+      - name: Commit receipt (commit-first, then pull-rebase-retry — never staged-rebase)
+        run: |
+          set -e
+          git config user.name  "stale-watchdog[bot]"
+          git config user.email "stale-watchdog[bot]@fleet.local"
+          git add receipts/stale-watchdog/last.json
+          if git diff --cached --quiet; then
+            echo "receipt unchanged — honest no-op"
+            exit 0
+          fi
+          git commit -m "stale-watchdog: artifact ages measured, writers re-fired [skip ci]"
+          ok=0
+          for i in 1 2 3 4 5; do
+            if git pull --rebase origin main; then
+              if git push; then ok=1; break; fi
+            else
+              git rebase --abort 2>/dev/null || true
+            fi
+            echo "publish race $i — backing off"
+            sleep $((i * 7))
+          done
+          if [ "$ok" != "1" ]; then
+            echo "publish-deferred (sibling races) — the next slot re-measures honestly; dispatches already fired"
+          fi

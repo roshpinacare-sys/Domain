@@ -27,6 +27,15 @@
 #
 # כנות: רגל-אחת אדומה לא מכסה על אחרת; רגל חסרה (missing) מפילה את הקבלה.
 # אפס-סודות-מפעיל: ZIP_PAT בלבד. הקבלה מכילה ספירות-בלבד.
+#
+# [wave 19.55 · trace 1a15f267e3a06a41] T-w הושלמה בכותב: פסק-הדין למעלה אמר
+# "ממצאים בריפו-מפתחות הם by-design; רגלה-אדומה-תמידית מסתירה סיגנלים-אמיתיים" —
+# ואולם הקוד נתן success-custody רק כשהספירות אפס, ולכן 4 רגלי-מפתחות
+# (Saosmartwallet/roshpina/saos-sovereign-foundry/steem) אדמו בכל ריצה — 5
+# אדומים ביום-שני 10-19/10-20, אפס-סיגנל (המחלה המדויקת שההערה עצמה מכריזה עליה).
+# החוק המושלם: ממצאים-ב-custody = success-custody עם ספירות+צורות רמות בקבלה
+# (הפצע R-VAULTPASS-1 נשאר רשום אצל הבעלים); strict נשאר סף-אפס ללא-שינוי;
+# שגיאת-סריקה אמיתית (RC>=2) נשארת אדומה בכל-טיר.
 
 name: org-gitleaks
 
@@ -136,9 +145,18 @@ jobs:
           #      visible, tracked, never hidden. Error RCs still fail the leg.
           TIER="${{ matrix.tier }}"
           CONCLUSION=success
-          if [ "$RC_HISTORY" -ne 0 ] || [ "$RC_HEAD" -ne 0 ] || [ "${COUNT_HISTORY}" = "-1" ] || [ "${COUNT_HEAD}" = "-1" ]; then CONCLUSION=failure; fi
-          if [ "$TIER" = "custody" ] && [ "$RC_HISTORY" -eq 0 ] && [ "$RC_HEAD" -eq 0 ] && [ "${COUNT_HISTORY}" != "-1" ] && [ "${COUNT_HEAD}" != "-1" ]; then
-            CONCLUSION=success-custody
+          # [wave 19.55 · trace 1a15f267e3a06a41] T-w מושלמת: gitleaks RC 1 = נמצאו
+          # ממצאים (לא שגיאה); RC >= 2 = שגיאת-סריקה אמיתית. strict: כל-ממצא או שגיאה
+          # = אדום (סף-אפס, ללא-שינוי). custody: ממצאים = by-design =>
+          # success-custody עם ספירות-רמות; רק שגיאה (RC>=2) או ספירה לא-קריאה
+          # מאדימים. זהו פסק-הדין T-w כפי שנכתב — מיושם עד-הסוף.
+          if [ "$TIER" != "custody" ]; then
+            if [ "$RC_HISTORY" -ne 0 ] || [ "$RC_HEAD" -ne 0 ] || [ "${COUNT_HISTORY}" = "-1" ] || [ "${COUNT_HEAD}" = "-1" ]; then CONCLUSION=failure; fi
+          else
+            if [ "$RC_HISTORY" -ge 2 ] || [ "$RC_HEAD" -ge 2 ] || [ "${COUNT_HISTORY}" = "-1" ] || [ "${COUNT_HEAD}" = "-1" ]; then CONCLUSION=failure; fi
+            if [ "$RC_HISTORY" -le 1 ] && [ "$RC_HEAD" -le 1 ] && [ "${COUNT_HISTORY}" != "-1" ] && [ "${COUNT_HEAD}" != "-1" ]; then
+              CONCLUSION=success-custody
+            fi
           fi
           python3 - "$REPO" "$COUNT_HISTORY" "$COUNT_HEAD" "$CONCLUSION" "$TIER" <<'PYEOF'
           import json, sys
@@ -146,10 +164,15 @@ jobs:
           with open(f"/tmp/gl-status/{repo}.json", "w") as fh:
               json.dump({"repo": repo, "findingsHistory": hist, "findingsHead": head, "conclusion": conclusion, "tier": tier}, fh)
           PYEOF
-          # כנות: קוד-היציאה של הרגלה = הראשון-מבין-השניים שנכשל — גם היסטוריה
-          # לא-מטופלת וגם HEAD מלוכלך מאדימים את הרגלה (מעבר ל-conclusion בסטטוס).
-          if [ "$RC_HISTORY" -ne 0 ]; then exit "$RC_HISTORY"; fi
-          exit "$RC_HEAD"
+          # כנות [19.55]: יוצאים לא-אפס רק מרגלה שנכשלה באמת (strict-עם-ממצאים,
+          # שגיאת-סריקה, או ספירה לא-קריאה) — רגלת-מפתחות-עם-ממצאים יוצאת 0 עם
+          # הספירות-הרמות שלה בקבלה (לעולם לא נסתרות, לעולם לא אדום-נצחי).
+          if [ "$CONCLUSION" = "failure" ]; then
+            if [ "$RC_HISTORY" -ge 1 ]; then exit "$RC_HISTORY"; fi
+            if [ "$RC_HEAD" -ge 1 ]; then exit "$RC_HEAD"; fi
+            exit 1
+          fi
+          exit 0
 
       - name: Upload leg status
         if: always()
@@ -207,7 +230,7 @@ jobs:
           out = {
               "generatedAt": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
               "workflow": "org-gitleaks",
-              "verdict": "dual history+HEAD (13-d2) + tier law (T-w): public=strict zero-tolerance, private=custody-by-design counted honestly (success-custody)",
+              "verdict": "dual history+HEAD (13-d2) + tier law T-w COMPLETED (wave 19.55): strict=zero-tolerance red; custody findings=success-custody with loud counts (R-VAULTPASS-1 owner P0 stays registered); real scan errors (RC>=2) red on every tier",
               "repos": dict(sorted(repos.items())),
           }
           os.makedirs("receipts/gitleaks", exist_ok=True)
