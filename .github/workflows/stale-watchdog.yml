@@ -27,6 +27,21 @@
 #     pile-ups while a writer is already healing; a genuinely broken writer
 #     still surfaces loudly via its own runs (we keep NOTHING quiet).
 #   - The watchdog NEVER edits content — it only re-fires existing writers.
+#
+# [wave 19.57 · trace 1a16092c97bffe25] THE WATCHDOG ITSELF WAS STARVING.
+# Measured 2026-10-21 ~22:3xZ: the */17 watchdog landed ONE scheduled run all day
+# (20:09Z) while */15 weave-mirror landed 4 and treasury-route's 4h cron was
+# swallowed at EVERY slot since its birth (10-20 20:06Z was its last schedule;
+# the capital book aged 5.5h toward the 6h law with NO watchdog coverage).
+# Cure class stays the same — never trust a calendar, ride an EVENT:
+#   - workflow_run trigger: every completion of the estate's own high-frequency
+#     writers (office-worldbeat / dex-core / dex-beat — dozens of runs a day,
+#     push-driven, immune to schedule swallowing) re-measures the artifacts.
+#   - cancel-in-progress: true — the NEWEST measurement supersedes the stale one;
+#     holds live in the committed receipt, so a cancelled re-measure loses nothing.
+#   - 4th sensor: agents/money-ledger.json (stamp key "updated") older than 4.5h
+#     -> dispatch treasury-route.yml (its 4h cron keeps failing-open; the artifact
+#     age is the only honest clock it has).
 
 name: stale-watchdog
 
@@ -34,6 +49,13 @@ on:
   schedule:
     - cron: '*/17 * * * *'
   workflow_dispatch:
+  workflow_run:
+    workflows:
+      - office-worldbeat
+      - dex-core
+      - dex-beat
+    types:
+      - completed
 
 permissions:
   contents: write
@@ -41,7 +63,7 @@ permissions:
 
 concurrency:
   group: stale-watchdog
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   watch:
@@ -78,10 +100,12 @@ jobs:
           DOMAIN_MIRROR  = "https://roshpinacare-sys.github.io/Domain/mirror.json"
           CONSOLE_MIRROR = "https://roshpinacare-sys.github.io/Console/mirror.json"
           QUALITY        = "https://roshpinacare-sys.github.io/Domain/quality/report.json"
+          MONEY_BOOK     = "https://roshpinacare-sys.github.io/Domain/agents/money-ledger.json"
 
           (adom, tsdom), (acon, tscon), (aq, tsq) = age_h(DOMAIN_MIRROR), age_h(CONSOLE_MIRROR), age_h(QUALITY)
+          (am, tsm) = age_h(MONEY_BOOK, keys=("updated", "at"))
 
-          BOOK_STALE_H, COPY_LAG_H, QUALITY_STALE_H, HOLD_MIN = 3.5, 1.0, 0.75, 45
+          BOOK_STALE_H, COPY_LAG_H, QUALITY_STALE_H, MONEY_STALE_H, HOLD_MIN = 3.5, 1.0, 0.75, 4.5, 45
 
           holds = {}
           try:
@@ -128,14 +152,25 @@ jobs:
                   actions.append(f"dispatched pages-quality-gate.yml (report {aq}h > {QUALITY_STALE_H}h)")
                   holds["pages-quality-gate.yml"] = NOW.strftime("%Y-%m-%dT%H:%M:%SZ")
 
+          if am is None:
+              notes.append("money-ledger UNREACHABLE — blind sensor, honest skip")
+          elif am > MONEY_STALE_H:
+              if held_recently("treasury-route.yml"):
+                  notes.append(f"money-ledger {am}h stale but treasury-route dispatched <{HOLD_MIN}min ago — healing in flight")
+              else:
+                  dispatch("treasury-route.yml")
+                  actions.append(f"dispatched treasury-route.yml (money-ledger {am}h > {MONEY_STALE_H}h)")
+                  holds["treasury-route.yml"] = NOW.strftime("%Y-%m-%dT%H:%M:%SZ")
+
           out = {
               "generatedAt": NOW.strftime("%Y-%m-%dT%H:%M:%SZ"),
               "measured": {
                   "domainMirror": {"ageH": adom, "ts": tsdom},
                   "consoleMirror": {"ageH": acon, "ts": tscon},
                   "qualityReport": {"ageH": aq, "ts": tsq},
+                  "moneyLedger": {"ageH": am, "ts": tsm},
               },
-              "thresholds": {"bookStaleH": BOOK_STALE_H, "copyLagH": COPY_LAG_H, "qualityStaleH": QUALITY_STALE_H, "holdMin": HOLD_MIN},
+              "thresholds": {"bookStaleH": BOOK_STALE_H, "copyLagH": COPY_LAG_H, "qualityStaleH": QUALITY_STALE_H, "moneyStaleH": MONEY_STALE_H, "holdMin": HOLD_MIN},
               "actions": actions,
               "notes": notes,
               "holds": holds,
