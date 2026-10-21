@@ -1,16 +1,30 @@
 {
  "schema": "site-audit/1",
- "at": "2026-10-21T16:50:51.508Z",
+ "at": "2026-10-21T16:52:26.268Z",
  "scope": "live-pages:https://roshpinacare-sys.github.io/Domain/",
- "pagesScanned": 96,
+ "pagesScanned": 97,
  "summary": {
-  "findings": 0,
+  "findings": 2,
   "externalBlocked": 4,
   "transientBlocked": 0,
   "checked": 305,
-  "structuralFindings": 0
+  "structuralFindings": 1
  },
- "findings": [],
+ "findings": [
+  {
+   "rule": "R-SITEMAP",
+   "file": "live.html",
+   "note": "indexable page missing from sitemap.xml"
+  },
+  {
+   "code": 404,
+   "url": "https://roshpinacare-sys.github.io/Domain/live.html",
+   "sources": [
+    "<self>"
+   ],
+   "note": "the page itself does not serve"
+  }
+ ],
  "externalBlocked": [
   {
    "code": 451,
@@ -58,9 +72,9 @@
  ],
  "transientBlocked": [],
  "structural": {
-  "checked": 96,
-  "scriptsSyntaxChecked": 35,
-  "indexed": 76,
+  "checked": 97,
+  "scriptsSyntaxChecked": 36,
+  "indexed": 77,
   "stubs": 11,
   "rules": [
    "R-BALANCE",
@@ -70,8 +84,8 @@
    "R-SITEMAP",
    "R-TRUTH"
   ],
-  "findings": 0
+  "findings": 1
  },
- "overall": "PASS",
+ "overall": "FAIL",
  "note": "קישורים = אמת-חיה ב-Pages: 404 פנימי/חוץ = עמוד-מת (FINDING); 403/429/502 אצל צד-ג = חסימת-בוט (רמז בלבד); 429/503 מפני-ה-github.com-שלנו = חנק-מדידה (TRANSIENT — ריטרי-3 ואז רשום-בלי-הכשל). קישורים הנבנים ב-JS בזמן-ריצה אינם נסרקים כאן — הם אינם href סטטי. structural = אמת-checkout בלי רשת (R75): R-BALANCE·R-SCRIPT·R-CANONICAL·R-STUB·R-SITEMAP·R-TRUTH — החוקים ב-agents/SELF-CHECKS.md."
 }
