@@ -1,20 +1,33 @@
 {
  "schema": "site-audit/1",
- "at": "2026-10-21T06:49:08.784Z",
+ "at": "2026-10-21T06:50:56.598Z",
  "scope": "live-pages:https://roshpinacare-sys.github.io/Domain/",
- "pagesScanned": 94,
+ "pagesScanned": 95,
  "summary": {
-  "findings": 1,
+  "findings": 3,
   "externalBlocked": 4,
   "transientBlocked": 0,
-  "checked": 290,
-  "structuralFindings": 1
+  "checked": 300,
+  "structuralFindings": 2
  },
  "findings": [
   {
-   "rule": "R-BALANCE",
-   "file": "press/editions/2026-10-21.html",
-   "note": "stray </ul>"
+   "rule": "R-SITEMAP",
+   "file": "sitemap.xml",
+   "note": "lists press/editions/ — not in tree"
+  },
+  {
+   "rule": "R-SITEMAP",
+   "file": "press/editions/index.html",
+   "note": "indexable page missing from sitemap.xml"
+  },
+  {
+   "code": 404,
+   "url": "https://roshpinacare-sys.github.io/Domain/press/editions/index.html",
+   "sources": [
+    "<self>"
+   ],
+   "note": "the page itself does not serve"
   }
  ],
  "externalBlocked": [
@@ -32,12 +45,12 @@
    "sources": [
     "about/index.html",
     "hub/explainer/en.html",
+    "hub/explainer/index.html",
     "hub/fact-sheet.html",
     "market/he.html",
     "marketing/index.html",
     "pitch/en.html",
-    "pitch/index.html",
-    "receipts/index.html"
+    "pitch/index.html"
    ]
   },
   {
@@ -64,9 +77,9 @@
  ],
  "transientBlocked": [],
  "structural": {
-  "checked": 94,
+  "checked": 95,
   "scriptsSyntaxChecked": 33,
-  "indexed": 75,
+  "indexed": 76,
   "stubs": 10,
   "rules": [
    "R-BALANCE",
@@ -76,7 +89,7 @@
    "R-SITEMAP",
    "R-TRUTH"
   ],
-  "findings": 1
+  "findings": 2
  },
  "overall": "FAIL",
  "note": "קישורים = אמת-חיה ב-Pages: 404 פנימי/חוץ = עמוד-מת (FINDING); 403/429/502 אצל צד-ג = חסימת-בוט (רמז בלבד); 429/503 מפני-ה-github.com-שלנו = חנק-מדידה (TRANSIENT — ריטרי-3 ואז רשום-בלי-הכשל). קישורים הנבנים ב-JS בזמן-ריצה אינם נסרקים כאן — הם אינם href סטטי. structural = אמת-checkout בלי רשת (R75): R-BALANCE·R-SCRIPT·R-CANONICAL·R-STUB·R-SITEMAP·R-TRUTH — החוקים ב-agents/SELF-CHECKS.md."
