@@ -24,13 +24,20 @@
       section.how .lat { direction: ltr; unicode-bidi: embed; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
     </style>
     <script>
-      // משמרת-קור-לואד: המודול של-הסצנה נטען אחרי-צביעה-ראשונה של-השלד (requestIdleCallback),
-      // כדי-שהלשונית לא-תקפא בטעינה-קרה על-רנדר-תוכנה של-WebGL — השלד חי לפני-הסצנה.
+      // משמרת-קור-לואד (T-110 v2): שני-שלבים במקור-הבעיה של-הקפאה בטעינה-קרה:
+      // 1) תקרת-DPR=1 לפני-עליית-המודול — על-רנדר-תוכנה (swiftshader) כמות-הפיקסלים
+      //    יורדת עד-פי-4 וזמן-קומפילציית-השיידרים והפריים-הראשון קטן-בהתאם; על-GPU חומרי
+      //    אין-שינוי-נראה (DPR כבר-1 בשולחן-עבודה).
+      // 2) המודול נטען רק-אחרי-חצי-שנייה-מהצביעה-הראשונה — השלד חי ומגיב לפני-הסצנה.
       (function () {
+        try {
+          var real = window.devicePixelRatio || 1;
+          if (real > 1) { Object.defineProperty(window, 'devicePixelRatio', { get: function () { return 1; }, configurable: true }); }
+        } catch (e) { /* סביבה-שמסרבת — ממשיכים בכנות בלי-תקרה */ }
         var boot = function () {
           var s = document.createElement('script');
           s.type = 'module'; s.crossOrigin = 'anonymous'; s.src = './assets/index-B-kpT5EF.js';
-          (window.requestIdleCallback || function (f) { setTimeout(f, 120); })(function () { document.head.appendChild(s); });
+          setTimeout(function () { document.head.appendChild(s); }, 500);
         };
         if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', boot); } else { boot(); }
       })();
