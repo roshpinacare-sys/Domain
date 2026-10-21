@@ -47,10 +47,14 @@ const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").
 
 function tsOf(o) {
   if (!o || typeof o !== "object") return null;
-  const KEY = ["ts", "time", "generatedAt", "publishedAt", "updatedAt", "capturedAt", "at", "timestamp", "derivedAt"];
+  // R78 (trace 1a15f4a1e42c9839): two measured defects — 'updated' (money-ledger's own publish stamp)
+  // was not a recognized key, and the `best ||` recursion guard made the walker return the FIRST
+  // match (the oldest history entry, 502h) instead of the newest. The file's age = its FRESHEST
+  // timestamp: full walk, max wins.
+  const KEY = ["ts", "time", "generatedAt", "publishedAt", "updatedAt", "updated", "capturedAt", "at", "timestamp", "derivedAt"];
   let best = null;
   const walk = (x, depth) => {
-    if (best || depth > 4 || !x || typeof x !== "object") return;
+    if (depth > 4 || !x || typeof x !== "object") return;
     for (const [k, v] of Object.entries(x)) {
       if (KEY.includes(k) && typeof v === "string" && /^\d{4}-\d{2}-\d{2}T/.test(v)) {
         const t = new Date(v).getTime();
