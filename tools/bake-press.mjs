@@ -344,7 +344,7 @@ const NOT_MEASURED = `<p class="na">לא נמדד במהדורה זו — המק
   try { edFiles = fs.readdirSync(edDir).filter((f) => /^\d{4}-\d{2}-\d{2}\.html$/.test(f)).sort().reverse(); } catch { /* first bake */ }
   const edList = edFiles.slice(0, 14);
   archHtml = edList.length
-    ? `<ul class="posts">${edList.map((f) => `<li><a href="editions/${f}" style="direction:ltr;unicode-bidi:embed">${f.replace(".html", "")}</a></li>`).join("")}</ul><p class="sub">מהדורת-היום נשמרת אוטומטית כאן ומוחלפת כל-אפייה של אותו-יום; 14 מהדורות אחרונות מוצגות.</p>`
+    ? `<ul class="posts">${edList.map((f) => `<li><a href="${SITE}press/editions/${f}" style="direction:ltr;unicode-bidi:embed">${f.replace(".html", "")}</a></li>`).join("")}</ul><p class="sub">מהדורת-היום נשמרת אוטומטית כאן ומוחלפת כל-אפייה של אותו-יום; 14 מהדורות אחרונות מוצגות.</p>`
     : `<p class="na">אין עדיין ארכיון — המהדורה של היום תישמר כאן באפייה ראשונה.</p>`;
 
   /* W29 graft 1) שולחן-השווקים — מחיר-אמת חוץ משלושה מקורות בלתי-תלויים */
@@ -575,7 +575,7 @@ footer{border-top:1px solid var(--line);padding:18px 0 30px;color:var(--faint);f
     ${sec("מודעות-הגיוס", "לוח-התפקידים של האורגניזם", recHtml, "https://roshpinacare-sys.github.io/Domain/agents/recruitment.json", recIso)}
     ${sec("מוסף-המיזמים", "venture-desk", venHtml, "https://roshpinacare-sys.github.io/Domain/agents/ventures.json", venIso)}
     ${sec("מוסף-הריבונות", "סוכן-4 · ראיות-ארכיטקטורה חיות · 9 מקורות", sovHtml, "https://roshpinacare-sys.github.io/Domain/press/evidence.json", sovIso)}
-    ${sec("ארכיון-המהדורות", "עיתון-אמיתי שומר את ההיסטוריה שלו", archHtml, "https://roshpinacare-sys.github.io/Domain/press/editions/", new Date().toISOString())}
+    ${sec("ארכיון-המהדורות", "עיתון-אמיתי שומר את ההיסטוריה שלו", archHtml, edList.length ? `${SITE}press/editions/${edList[0]}` : `${SITE}press/index.html`, new Date().toISOString())}
     ${sec("שולחן-השווקים", "מחיר-אמת · שלושה מקורות בלתי-תלויים · W29", deskHtml, "https://api.binance.com/api/v3/ticker/24hr?symbol=STEEMUSDT", deskIso)}
     ${sec("גל-העדים", "עגינות-שרשרת · weave · W29", weaveHtml, "https://roshpinacare-sys.github.io/Domain/weave/vitals.json", weaveIso)}
     ${sec("סיקור-ה-DEX", "השוק על הרשת שלנו · W29", dexHtml, "https://roshpinacare-sys.github.io/Domain/dex/world.json", dexIso).replace('class="card"', 'class="card wide"')}
