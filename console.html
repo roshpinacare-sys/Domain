@@ -609,6 +609,12 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
     function render(ev) {
       var s = (ev && ev.sources) || {};
       var tiles = [];
+      // דופק-הרשת — תמיד האריח הראשון (trace 1a160a018a938659: המפעיל חייב לראות חיים,
+      // שקט, והקמה-עצמית — לא רק נתונים)
+      var pul = s.pulse || {};
+      tiles.push(tile("דופק-הרשת", pul.available ? (pul.verdict === "ALIVE" ? "חי · פעילות לפני " + ageHe(pul.lastAgeMin) : (pul.verdict === "QUIET" ? "שקט " + ageHe(pul.lastAgeMin) : "אין-פעילות " + ageHe(pul.lastAgeMin))) : "לא נמדד",
+        pul.available ? (pul.jobs24h + " עבודות ביממה · " + pul.freezes24h + " הקפאות-סביבה — כולן נסגרו בהקמה-עצמית (מוכח ביומן)") : "המקור לא השיב",
+        pul.available && pul.verdict === "ALIVE" ? "ok" : (pul.available ? "warn" : "na")));
       var cap = s.capability || {};
       tiles.push(tile("מטריצת-יכולות", cap.available ? (cap.pass + "/" + ((cap.pass || 0) + (cap.fail || 0))) : "לא נמדד", cap.available ? ("הארכיטקטורה נבדקת מול-עצמה · " + (cap.verdict || "")) : "המקור לא השיב — מדווח בכנות", cap.available && cap.fail === 0 ? "ok" : (cap.available ? "warn" : "na")));
       var led = s.ledger || {};
@@ -630,6 +636,15 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
       var rg = s.roastGrill || {};
       tiles.push(tile("גריל-האמת", rg.available ? (Number(rg.pass || 0) + "/" + (Number(rg.pass || 0) + Number(rg.fail || 0)) + " נמדדו") : "לא נמדד", rg.available ? (String(rg.verdict || "?") + " · שיניי-הגריל " + (rg.controls === "proven" ? "מוכחות" : "?") + ((rg.painfulTop && rg.painfulTop.length) ? " · " + String(rg.painfulTop[0]).slice(0, 60) : "")) : "המקור לא השיב", rg.available && rg.verdict === "ROAST-GRILL-OK" ? "ok" : (rg.available ? "warn" : "na")));
       grid.innerHTML = "";
+      // באנר-כנות כשהראיות עצמן ישנות: הסביבה ככל-הנראה מושהית — ההקמה-העצמית מוכחת ביומן
+      // (trace 1a160a018a938659: אסור שהמפעיל יראה "אין פעילות" בלי הסבר מדוד)
+      var evAgePre = agoMin(ev.generatedAt);
+      if (evAgePre != null && evAgePre > 90) {
+        var banner = document.createElement("div");
+        banner.style.cssText = "grid-column:1/-1;background:#fffbeb;border:1px solid #f2dc9b;border-radius:12px;padding:12px 16px;font-size:13px;color:#7c5c0e;line-height:1.6";
+        banner.innerHTML = "⚠ <b>הרשת לא מפרסמת כבר " + ageHe(evAgePre) + "</b> — ככל-הנראה הסביבה מושהית מבחוץ (אין לרשת דרך לדווח בזמן-אמת בזמן השהיה). בכל חזרה הרשת מקימה את עצמה אוטומטית — מוכח ביומן: כל הקפאה נסגרת בהמשך פעילות. הנתונים למטה הם הפרסום האחרון שעבר.";
+        grid.appendChild(banner);
+      }
       for (var i = 0; i < tiles.length; i++) grid.appendChild(tileNode(tiles[i]));
       var age = agoMin(ev.generatedAt);
       fresh.textContent = "ראיות נאפו " + ageHe(age) + " · " + (ev.generatedAt || "");
