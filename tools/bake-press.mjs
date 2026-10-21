@@ -427,6 +427,12 @@ const NOT_MEASURED = `<p class="na">לא נמדד במהדורה זו — המק
     try { const b = await jget("https://api.binance.com/api/v3/ticker/24hr?symbol=STEEMUSDT", 9000); if (b?.lastPrice) px.push({ venue: "Binance STEEM/USDT", price: +b.lastPrice, chg: +b.priceChangePercent, vol: +b.quoteVolume }); } catch {}
     try { const g = await jget("https://api.coingecko.com/api/v3/simple/price?ids=steem&vs_currencies=usd&include_24hr_change=true", 9000); if (g?.steem?.usd) px.push({ venue: "CoinGecko STEEM/USD", price: g.steem.usd, chg: g.steem.usd_24h_change, vol: null }); } catch {}
     try { const p = await jget("https://api.coinpaprika.com/v1/tickers/steem-steem", 9000); if (p?.quotes?.USD?.price) px.push({ venue: "Coinpaprika STEEM/USD", price: p.quotes.USD.price, chg: p.quotes.USD.percent_change_24h, vol: p.quotes.USD.volume_24h }); } catch {}
+    // FIX(feed-451 · 2026-10-21): runners-US חסומים ל-Binance (451 מדוד) ו-CoinGecko חונק —
+    // המהדורה 06:58 יצאה steemUsd:null (מדוד). נוספים מקורות שעובדים מ-US (אותה-שרשרת
+    // שהדקס משתמש בה: price-proof.ts): CryptoCompare → Kraken → KuCoin.
+    try { const c = await jget("https://min-api.cryptocompare.com/data/price?fsym=STEEM&tsyms=USD", 9000); if (c?.USD) px.push({ venue: "CryptoCompare STEEM/USD", price: +c.USD, chg: null, vol: null }); } catch {}
+    try { const k = await jget("https://api.kraken.com/0/public/Ticker?pair=STEEMUSD", 9000); const kr = k?.result && Object.values(k.result)[0]; if (kr?.c?.[0]) px.push({ venue: "Kraken STEEM/USD", price: +kr.c[0], chg: null, vol: kr.v?.[1] ? +kr.v[1] : null }); } catch {}
+    try { const ku = await jget("https://api.kucoin.com/api/v1/market/orderbook/level1?symbol=STEEM-USDT", 9000); if (ku?.data?.price) px.push({ venue: "KuCoin STEEM/USDT", price: +ku.data.price, chg: null, vol: null }); } catch {}
     if (!px.length) throw new Error("no external venue answered");
     deskIso = new Date().toISOString();
     const prices = px.map((r) => r.price).sort((a, b) => a - b);
@@ -496,6 +502,11 @@ const NOT_MEASURED = `<p class="na">לא נמדד במהדורה זו — המק
     const px2 = [];
     try { const b = await jget("https://api.binance.com/api/v3/ticker/price?symbol=STEEMUSDT", 8000); if (b?.price) px2.push(+b.price); } catch {}
     try { const g = await jget("https://api.coingecko.com/api/v3/simple/price?ids=steem&vs_currencies=usd", 8000); if (g?.steem?.usd) px2.push(+g.steem.usd); } catch {}
+    // FIX(feed-451 · 2026-10-21): אותם-מקורות-נפילה מול חסימת-451 של-runners-US
+    try { const p = await jget("https://api.coinpaprika.com/v1/tickers/steem-steem", 8000); if (p?.quotes?.USD?.price) px2.push(+p.quotes.USD.price); } catch {}
+    try { const c = await jget("https://min-api.cryptocompare.com/data/price?fsym=STEEM&tsyms=USD", 8000); if (c?.USD) px2.push(+c.USD); } catch {}
+    try { const k = await jget("https://api.kraken.com/0/public/Ticker?pair=STEEMUSD", 8000); const kr = k?.result && Object.values(k.result)[0]; if (kr?.c?.[0]) px2.push(+kr.c[0]); } catch {}
+    try { const ku = await jget("https://api.kucoin.com/api/v1/market/orderbook/level1?symbol=STEEM-USDT", 8000); if (ku?.data?.price) px2.push(+ku.data.price); } catch {}
     if (px2.length) { px2.sort((a, b) => a - b); edNow.steemUsd = px2[Math.floor(px2.length / 2)]; }
   }
   const trendChip = (label, p, c, d = 5) => {
