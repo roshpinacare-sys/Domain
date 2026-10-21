@@ -1,4 +1,4 @@
-# BOOK-AUDIT · 2026-10-21T06:38:53.206Z
+# BOOK-AUDIT · 2026-10-21T12:29:19.875Z
 
 law: a book claim without a chain-verifiable txid is not a claim
 
