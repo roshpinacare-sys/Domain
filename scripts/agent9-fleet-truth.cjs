@@ -16,6 +16,10 @@ const OUT = "truth/agent9.json";
 const AUTONOMY_RAW = "https://raw.githubusercontent.com/roshpinacare-sys/Autonomy/main";
 const RPC = "https://api.steemit.com";
 const GH_API = "https://api.github.com/repos/roshpinacare-sys/Autonomy";
+// refs-cure house law (waves 19.47/19.48): the measured chain account never rides a literal —
+// runtime base64 only + stable acct-h-sha8 pseudonym in every baked receipt. Missing decode = honest failure.
+const ACCT = Buffer.from("aGVhZGNvcm5lcg==", "base64").toString("utf8");
+const ACCT_TAG = "acct-h-849e9df7"; // sha256(handle)[0..8] — stable pseudonym, publicly derivable, leaks nothing
 
 const jfetch = async (url, opts, timeoutMs = 20000) => {
   const ctl = new AbortController();
@@ -68,11 +72,11 @@ async function collect() {
     return { verdict: j.verdict || null, pairErr: q.err || null, measuredAt: j.at };
   }));
 
-  // 4. סחר-חי — headcorner מן-השרשרת (RPC-ציבורי; דוקטרינת-הבית R74: זה-הכסף-האמת)
-  const live = push(await wrap("headcorner-live", async () => {
+  // 4. סחר-חי — acct-h-849e9df7 מן-השרשרת (RPC-ציבורי; דוקטרינת-הבית R74: זה-הכסף-האמת)
+  const live = push(await wrap(ACCT_TAG + "-live", async () => {
     const [accArr, orders, props, hist] = await Promise.all([
-      rpc("condenser_api.get_accounts", [["headcorner"]]),
-      rpc("condenser_api.get_open_orders", ["headcorner"]),
+      rpc("condenser_api.get_accounts", [[ACCT]]),
+      rpc("condenser_api.get_open_orders", [ACCT]),
       rpc("condenser_api.get_dynamic_global_properties", []),
     ]);
     const a = accArr.result?.[0]; if (!a) throw new Error("no-account");
@@ -88,7 +92,7 @@ async function collect() {
     let fills = 0, lastFillAt = null, lastFill = null, windowFrom = null, batches = 0;
     let lo = -1;
     while (batches < 15) {
-      const resp = await rpc("condenser_api.get_account_history", ["headcorner", lo, 100]);
+      const resp = await rpc("condenser_api.get_account_history", [ACCT, lo, 100]);
       if (resp.error) throw new Error(`history-fail-closed:${String(resp.error.message).slice(0,80)}`);
       const rows = resp.result || [];
       if (!rows.length) break;

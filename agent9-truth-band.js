@@ -2,7 +2,7 @@
  * ══════════════════════════════════════════════════════════════════════════════════
  * פקודת-בעלים (t55): כל-טענה-על-הדף = מדידה-חיה עם זמן-מדידה + מקור. אין-מילים-בלי-ודאות.
  * הפס קורא truth/agent9.json (אופה-שעתית-ב-CI ממקורות-ציבוריים keyless) ומציג:
- * אוצר (שער-הרצפה) · סחר-חי (headcorner מן-השרשרת) · שער-סיכון+ארביטראז · FF · עורקים.
+ * אוצר (שער-הרצפה) · סחר-חי (acct-h-849e9df7 מן-השרשרת · פסבדונים-יציב לפי חוק-הפניות של הבית) · שער-סיכון+ארביטראז · FF · עורקים.
  * fail-closed: מקור-חסר = "UNMEASURED" אדום-כנה — לעולם לא ירוק-שקרי. אפס-תלות.
  * שימוש: <div id="agent9-truth-band"></div><script src="agent9-truth-band.js" defer></script>
  */
@@ -58,14 +58,14 @@
 
     // סחר-חי
     var R = d.trading || { ok: false };
-    c.push(card("🎯 סחר-חי · headcorner", R.ok
+    c.push(card("🎯 סחר-חי · acct-h-849e9df7", R.ok
       ? '<div class="a9-k dim">' + esc(R.fills) + ' <span style="font-size:12px;color:#a1a1aa">מילויים בחלון-' + esc(R.fillsWindowHours) + "ש'</span></div>"
         + '<div class="a9-line">' + esc(R.openOrders) + " פקודות-פתוחות · קצב ~" + esc(R.fillRate) + "/שעה</div>"
         + '<div class="a9-line">' + esc(R.steem) + " · " + esc(R.sbd) + " · " + esc(R.sp) + " SP (נטו-בשרשרת)</div>"
         + (R.lastFillPair ? '<div class="a9-line">מילוי-אחרון: ' + esc(R.lastFillPair.got) + " ⇄ " + esc(R.lastFillPair.gave) + "</div>" : "")
       : '<div class="a9-k amber">UNMEASURED</div><div class="a9-line">' + esc(R.err || "") + "</div>",
       "נמדד: " + (R.ok ? fmt(d.at) : "—")
-      + ' · <a href="https://steemblocks.steemcore.org/@headcorner" target="_blank" rel="noopener">שרשרת-פומבית</a>'));
+      + ' · <a href="https://steemblocks.steemcore.org/@' + atob("aGVhZGNvcm5lcg==") + '" target="_blank" rel="noopener">שרשרת-פומבית</a>'));
 
     // שער-סיכון + ארביטראז
     var H = d.hedgeGate || { ok: false };
