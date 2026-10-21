@@ -42,6 +42,21 @@
 #   - 4th sensor: agents/money-ledger.json (stamp key "updated") older than 4.5h
 #     -> dispatch treasury-route.yml (its 4h cron keeps failing-open; the artifact
 #     age is the only honest clock it has).
+#
+# [wave 19.58 · trace 1a160ad2281f7cd9] THE TRUTH COPY-HOP STARVED — 5th sensor.
+# Measured at 19.58 open: truth.html read WARN dataAge 8.7h at the 22:39:47Z gate
+# while the Console truth-gate itself was HEALTHY (verdicts 16:37/17:08/19:23/21:39Z
+# all SUCCESS) — the broken link was Domain's own mirror-from-console hop: cron
+# '48 1-23/2' (~11 slots/day) landed only 08:54/14:41/19:40/22:47 — five slots
+# swallowed (14:41→19:40 = 5h), so Domain's truth/latest.json carried a ~14:00Z
+# verdict past the 6h law. agent9-truth-watchdog covers truth/agent9.json only —
+# nothing watched the Console-verdict copy. Cure (same class, writer-side):
+#   - 5th sensor: truth/latest.json (stamp key "at") older than 3.5h -> dispatch
+#     mirror-from-console.yml (Domain-local, keyless copy — no cross-repo token
+#     needed; if the Console verdict ITSELF is stale, the mirror copies it
+#     honestly and Console's own gate/pacemaker owns that clock).
+#   - the hop's cadence goes hourly at mirror-from-console.yml (worst-case copy
+#     lag halved; copy-only, zero takeover risk).
 
 name: stale-watchdog
 
@@ -101,11 +116,13 @@ jobs:
           CONSOLE_MIRROR = "https://roshpinacare-sys.github.io/Console/mirror.json"
           QUALITY        = "https://roshpinacare-sys.github.io/Domain/quality/report.json"
           MONEY_BOOK     = "https://roshpinacare-sys.github.io/Domain/agents/money-ledger.json"
+          TRUTH_LATEST   = "https://roshpinacare-sys.github.io/Domain/truth/latest.json"
 
           (adom, tsdom), (acon, tscon), (aq, tsq) = age_h(DOMAIN_MIRROR), age_h(CONSOLE_MIRROR), age_h(QUALITY)
           (am, tsm) = age_h(MONEY_BOOK, keys=("updated", "at"))
+          (at_, tst) = age_h(TRUTH_LATEST, keys=("at", "ts"))
 
-          BOOK_STALE_H, COPY_LAG_H, QUALITY_STALE_H, MONEY_STALE_H, HOLD_MIN = 3.5, 1.0, 0.75, 4.5, 45
+          BOOK_STALE_H, COPY_LAG_H, QUALITY_STALE_H, MONEY_STALE_H, TRUTH_STALE_H, HOLD_MIN = 3.5, 1.0, 0.75, 4.5, 3.5, 45
 
           holds = {}
           try:
@@ -162,6 +179,16 @@ jobs:
                   actions.append(f"dispatched treasury-route.yml (money-ledger {am}h > {MONEY_STALE_H}h)")
                   holds["treasury-route.yml"] = NOW.strftime("%Y-%m-%dT%H:%M:%SZ")
 
+          if at_ is None:
+              notes.append("truth/latest.json UNREACHABLE — blind sensor, honest skip")
+          elif at_ > TRUTH_STALE_H:
+              if held_recently("mirror-from-console.yml"):
+                  notes.append(f"truth {at_}h stale but mirror-from-console dispatched <{HOLD_MIN}min ago — copy in flight")
+              else:
+                  dispatch("mirror-from-console.yml")
+                  actions.append(f"dispatched mirror-from-console.yml (truth {at_}h > {TRUTH_STALE_H}h)")
+                  holds["mirror-from-console.yml"] = NOW.strftime("%Y-%m-%dT%H:%M:%SZ")
+
           out = {
               "generatedAt": NOW.strftime("%Y-%m-%dT%H:%M:%SZ"),
               "measured": {
@@ -169,8 +196,9 @@ jobs:
                   "consoleMirror": {"ageH": acon, "ts": tscon},
                   "qualityReport": {"ageH": aq, "ts": tsq},
                   "moneyLedger": {"ageH": am, "ts": tsm},
+                  "truthLatest": {"ageH": at_, "ts": tst},
               },
-              "thresholds": {"bookStaleH": BOOK_STALE_H, "copyLagH": COPY_LAG_H, "qualityStaleH": QUALITY_STALE_H, "moneyStaleH": MONEY_STALE_H, "holdMin": HOLD_MIN},
+              "thresholds": {"bookStaleH": BOOK_STALE_H, "copyLagH": COPY_LAG_H, "qualityStaleH": QUALITY_STALE_H, "moneyStaleH": MONEY_STALE_H, "truthStaleH": TRUTH_STALE_H, "holdMin": HOLD_MIN},
               "actions": actions,
               "notes": notes,
               "holds": holds,

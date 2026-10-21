@@ -1,5 +1,11 @@
 #
-#
+# [wave 19.58 · trace 1a160ad2281f7cd9] the truth copy-hop cadence. Measured root:
+# the 2h cron ('48 1-23/2') landed only 4 of ~11 scheduled slots on 10-21
+# (08:54/14:41/19:40/22:47Z — a 5h mid-day gap) while the Console truth-gate was
+# healthy, so Domain's truth/latest.json aged to 8.7h and the 22:39Z quality gate
+# read truth.html WARN. Cadence goes hourly: worst-case copy lag halves, and the
+# watchdog's 5th sensor (stale-watchdog.yml, >3.5h) re-fires this hop when slots
+# are swallowed anyway. Copy-only + keyless — zero takeover risk.
 #
 
 name: mirror-from-console
@@ -7,7 +13,7 @@ name: mirror-from-console
 on:
   workflow_dispatch:
   schedule:
-    - cron: '48 1-23/2 * * *'
+    - cron: '48 * * * *'
 permissions:
   contents: write
 
