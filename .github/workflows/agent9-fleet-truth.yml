@@ -1,0 +1,41 @@
+# ═════════════════════════════════════════════════════════════════════════════
+# AGENT9-FLEET-TRUTH [t55 · agent-9] — מכונת-אמת-הצי לדפים (keyless, fail-closed).
+# פקודת-בעלים (t55): "אל תסמוך על שום טענה... דף עם כמה מילים זה לא הוכחה" →
+# המכונה אוספת מדידות חיות (Steem-RPC ציבורי · קבלות-CI של Autonomy · סטטוס-עורקים)
+# ואופה truth/agent9.json שהדפים מציגים. כל-מקור-שלא-השיב מדווח-בכנות-ולא-מומצא.
+# אפס-מפתחות, אפס-סודות, אפס-תלות-באף-סוכן-או-בבעלים — רץ-לבד, לתמיד.
+# ═════════════════════════════════════════════════════════════════════════════
+name: agent9-fleet-truth
+
+on:
+  schedule:
+    - cron: "9 * * * *"           # שעתית, מוסט-מהסערה (:17/:41/:47/:23/:37)
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency:
+  group: agent9-fleet-truth
+  cancel-in-progress: false
+
+jobs:
+  bake:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Selftest (fail-closed — a red collector never bakes)
+        run: node scripts/agent9-fleet-truth.cjs --selftest
+      - name: Bake live fleet truth
+        run: node scripts/agent9-fleet-truth.cjs
+      - name: Commit baked truth (evidence = commit)
+        run: |
+          set -Eeuo pipefail
+          git config user.name "agent-9"
+          git config user.email "agent-9@users.noreply.github.com"
+          git add truth/agent9.json
+          OK=$(python3 -c "import json;d=json.load(open('truth/agent9.json'));print(f\"{sum(1 for s in d['sources'] if s['ok'])}/{len(d['sources'])}\")")
+          git commit -m "agent-9/t55: fleet-truth bake [sources ok ${OK}] @ $(date -u +%FT%TZ) [skip ci]" || echo "nothing changed"
+          git push origin HEAD:main
