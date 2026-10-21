@@ -38,7 +38,12 @@ jobs:
         run: |
           set -Eeuo pipefail
           git config user.name "agent-9"
-          git config user.email "agent-9@users.noreply.github.com"
+          # wave-19.52 identity cure: the bare `agent-9@users.noreply.github.com` form is the
+          # DECISIONS #10 violation class (Autonomy identity-guard red 09:16Z run 39575643428
+          # proved it live) — and this lane's [skip ci] commits bypass the Domain guard, so the
+          # writer must carry the lawful identity itself: the sibling's own convention (agent9@fleet.local,
+          # measured on Autonomy 979c310).
+          git config user.email "agent9@fleet.local"
           git add truth/agent9.json
           OK=$(python3 -c "import json;d=json.load(open('truth/agent9.json'));print(f\"{sum(1 for s in d['sources'] if s['ok'])}/{len(d['sources'])}\")")
           git commit -m "agent-9/t55: fleet-truth bake [sources ok ${OK}] @ $(date -u +%FT%TZ) [skip ci]" || echo "nothing changed"
