@@ -27,6 +27,10 @@
   .tile.live b { color: var(--ok); } .tile.failing b { color: var(--bad); }
   .tile.running b { color: var(--warn); } .tile.idle b { color: var(--flat); }
   table { width: 100%; border-collapse: collapse; background: var(--paper); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+  /* גלישת-390px: מינימום-התוכן של הטבלה (pill/age ללא-גלישה + ריפוד-תאים) חורג מרוחב-המכל בנייד
+     וגורר גלישה-אופקית של העמוד כולו ב-RTL — העטיפה קולטת כל שארית, והתאים נשברים במקום להרחיב */
+  .tbl-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  thead th, tbody td { overflow-wrap: anywhere; }
   thead th { text-align: start; font-size: 11.5px; color: var(--ink2); font-weight: 800; padding: 10px 12px; border-bottom: 1px solid var(--line); background: rgba(60,52,40,.04); }
   tbody td { padding: 9px 12px; font-size: 13px; border-bottom: 1px solid rgba(60,52,40,.07); font-variant-numeric: tabular-nums; }
   tbody tr:last-child td { border-bottom: 0; }
@@ -85,6 +89,7 @@
     <p class="snap">תמונת-מצב מהספר בשעת עדכון העמוד (<span class="lat">2026-10-21 04:55 UTC</span>): <span class="lat">46</span> ריפואים — <span class="lat">8</span> חיים · <span class="lat">8</span> רצים · <span class="lat">17</span> תקינים · <span class="lat">4</span> נכשלים · <span class="lat">1</span> שקט · <span class="lat">8</span> בלי ריצות. הסקר הבא מתעדכן כל <span class="lat">15</span> דקות — הספר תמיד חדש יותר מהשורה הזאת. המדידה-הרחבה של העורקים (פעימות פר-זרימה בכל הצי) חיה ב-<a href="../status.json">status.json</a> השורשי: <span class="lat">60</span> עורקים פועמים מתוך <span class="lat">387</span>, סיכום <span class="lat">19 ALIVE</span>. המשך: <a href="../status/">מפקדת-המצב המלאה</a> · <a href="../console.html">הקונסולה</a> · <a href="../receipts.html">פנקס-הקבלות</a> · <a href="../index.html">העמוד הראשי</a>.</p>
   </section>
   <div class="tiles" id="tiles"></div>
+  <div class="tbl-scroll">
   <table>
     <thead>
       <tr>
@@ -94,6 +99,7 @@
     </thead>
     <tbody id="rows"><tr><td colspan="5" class="loading">מודד את הרשת…</td></tr></tbody>
   </table>
+  </div>
   <footer>
     מדידה קנונית · agents/network-census.mjs על הגריד · נתוני-מקור <a href="status.json">status.json</a> ·
     המשרד החי <a href="../office3d/">office3d</a> ·

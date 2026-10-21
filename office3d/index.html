@@ -23,8 +23,26 @@
       section.how a { color: #2c2a26; font-weight: 700; }
       section.how .lat { direction: ltr; unicode-bidi: embed; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
     </style>
-    <script type="module" crossorigin src="./assets/index-B-kpT5EF.js"></script>
+    <script>
+      // משמרת-קור-לואד: המודול של-הסצנה נטען אחרי-צביעה-ראשונה של-השלד (requestIdleCallback),
+      // כדי-שהלשונית לא-תקפא בטעינה-קרה על-רנדר-תוכנה של-WebGL — השלד חי לפני-הסצנה.
+      (function () {
+        var boot = function () {
+          var s = document.createElement('script');
+          s.type = 'module'; s.crossOrigin = 'anonymous'; s.src = './assets/index-B-kpT5EF.js';
+          (window.requestIdleCallback || function (f) { setTimeout(f, 120); })(function () { document.head.appendChild(s); });
+        };
+        if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', boot); } else { boot(); }
+      })();
+    </script>
     <link rel="stylesheet" crossorigin href="./assets/index-B6BuwR3O.css">
+    <style>
+      /* משמרת-גלישה-390px: פאנל-המנהל נמדד מול אזור-התצוגה בלי פס-גלילה
+         (‎100vw כולל פס-גלילה קלאסי → הפאנל בולע 5px מתחתיו ברוחבי 350–374)‎,
+         והבמה התלת-מימדית לעולם לא גוררת גלישה-אופקית גם אם ה-renderer ימדד innerWidth. */
+      .hud-op { width: min(350px, calc(100% - 20px)); }
+      .stage { overflow: hidden; }
+    </style>
   </head>
   <body>
     <div id="root"></div>
