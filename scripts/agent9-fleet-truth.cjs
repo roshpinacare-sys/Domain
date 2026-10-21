@@ -166,7 +166,18 @@ async function collect() {
   }));
   const mreport = push(await wrap("domain-mirror-report", async () => {
     const j = await jfetch(`${RAW_DOMAIN}/mirror-report.json`);
-    return { dexMoneyAgeH: j?.data?.["dex/money.json"]?.ageH ?? null, at: j?.generatedAt || null };
+    // bug-t55d-a fix: the mirror emits age as a string ("0.84h old at source") in field `age`,
+    // not as a numeric `ageH` — the old parser read a nonexistent field and X6 was stuck UNMEASURED.
+    const raw = j?.data?.["dex/money.json"];
+    let dexMoneyAgeH = null;
+    if (raw) {
+      if (typeof raw.ageH === "number") dexMoneyAgeH = raw.ageH;
+      else if (typeof raw.age === "string") {
+        const m2 = raw.age.match(/^\s*([\d.]+)\s*h/i);
+        if (m2) dexMoneyAgeH = +parseFloat(m2[1]).toFixed(2);
+      }
+    }
+    return { dexMoneyAgeH, mirrorGenAt: j?.generatedAt || null, rawShape: raw ? Object.keys(raw).join(",") : null };
   }));
   const orgRoot = push(await wrap("org-root-freshness", async () => {
     const j = await jfetch("https://api.github.com/repos/roshpinacare-sys/roshpinacare-sys.github.io", { headers: ghHeaders() });
@@ -245,9 +256,10 @@ async function collect() {
       "מסילת-Console — מתועד-בכנות; המירור-מדווח-עליו");
     if (mreport.ok) {
       const age = mreport.data.dexMoneyAgeH;
-      x.a = { claim: "dex/money.json ageH", value: age == null ? null : +Number(age).toFixed(2), src: "Domain/mirror-report.json ← Console" };
+      x.a = { claim: "dex/money.json ageH (מפורש-מ-string-age-במירור)", value: age == null ? null : +Number(age).toFixed(2), src: `Domain/mirror-report.json@${mreport.data.mirrorGenAt || "?"} ← Console (shape: ${mreport.data.rawShape || "?"})` };
       x.b = { claim: "רף-טריות", value: 24, src: "מדיניות-הבית" };
       x.verdict = age == null ? "UNMEASURED" : (age > 24 ? "CONFIRMED" : "OK");
+      if (age != null && age <= 24) x.note = "bug-t55d-a: הבדיקה-הקודמת-קראה-שדה-ageH-שלא-קיים-והדביקה-את-X6-בUNMEASURED-תמידי — תוקן: פירוש-השדה-age-המיתרי";
     } else x.err = mreport.err;
     items.push(x);
   }
