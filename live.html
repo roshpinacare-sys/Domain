@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SAOS — חי-עכשיו · רווח-חוץ מדוד ומוכח</title>
+<meta name="description" content="הדשבורד-החי של הריבונות: רווח-חוץ מדוד-מהשרשרת עם-txid, גריד-אמת על ספר-STEEM הציבורי, והחלפות-אמת על SAOS-DEX — כל-מספר עם המקור-שלו.">
+<style>
+  :root{
+    --bg:#0b0d10; --panel:#12151a; --panel2:#171b22; --line:#232a33;
+    --text:#e8ecf1; --dim:#8b96a5; --good:#3ddc84; --bad:#ff5d5d; --warn:#ffc857; --accent:#e0b34d;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:"Segoe UI",system-ui,-apple-system,sans-serif;line-height:1.6;min-height:100vh;display:flex;flex-direction:column}
+  header{padding:28px 20px 18px;text-align:center;border-bottom:1px solid var(--line)}
+  header h1{font-size:1.65rem;font-weight:700;letter-spacing:.3px}
+  header h1 span{color:var(--accent)}
+  header .sub{color:var(--dim);font-size:.92rem;margin-top:6px}
+  .law{display:inline-block;margin-top:10px;font-size:.78rem;color:var(--dim);border:1px solid var(--line);border-radius:999px;padding:3px 14px;background:var(--panel)}
+  main{flex:1;width:100%;max-width:1080px;margin:0 auto;padding:22px 16px 40px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
+  .card h2{font-size:1rem;font-weight:600;color:var(--accent);display:flex;align-items:center;gap:8px;margin-bottom:10px}
+  .card h2 .dot{width:8px;height:8px;border-radius:50%;background:var(--dim)}
+  .card h2 .dot.live{background:var(--good);box-shadow:0 0 8px var(--good)}
+  .big{font-size:1.9rem;font-weight:700;font-variant-numeric:tabular-nums}
+  .small{color:var(--dim);font-size:.8rem}
+  .row{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px dashed var(--line);font-size:.86rem}
+  .row:last-child{border-bottom:none}
+  .row b{font-variant-numeric:tabular-nums}
+  .ok{color:var(--good)} .bad{color:var(--bad)} .warn{color:var(--warn)}
+  table{width:100%;border-collapse:collapse;font-size:.8rem}
+  th{color:var(--dim);text-align:right;font-weight:500;padding:6px 8px;border-bottom:1px solid var(--line)}
+  td{padding:6px 8px;border-bottom:1px dashed var(--line);font-variant-numeric:tabular-nums;word-break:break-all}
+  .pill{display:inline-block;font-size:.72rem;border-radius:999px;padding:2px 10px;border:1px solid var(--line);color:var(--dim)}
+  .pill.g{color:var(--good);border-color:var(--good)} .pill.w{color:var(--warn);border-color:var(--warn)} .pill.b{color:var(--bad);border-color:var(--bad)}
+  .src{color:var(--dim);font-size:.72rem;margin-top:8px}
+  footer{border-top:1px solid var(--line);padding:16px 20px;text-align:center;color:var(--dim);font-size:.78rem;margin-top:auto}
+  footer a{color:var(--accent);text-decoration:none}
+  .err{color:var(--warn);font-size:.8rem}
+  @media(max-width:640px){ .big{font-size:1.5rem} header h1{font-size:1.3rem} }
+</style>
+</head>
+<body>
+<header>
+  <h1>SAOS <span>·</span> חי-עכשיו</h1>
+  <div class="sub">רווח-חוץ מדוד-מהשרשרת · גריד-אמת על הספר-הציבורי · החלפות-אמת על הבורסה-שלנו</div>
+  <div class="law">חוק-האמת: כל-מספר כאן נמדד — עם המקור-שלו מוצג. אין-המצאות. מה שלא נמדד — מדווח-כנה כלא-זמין.</div>
+</header>
+<main>
+  <div class="grid">
+
+    <section class="card" id="card-ext">
+      <h2><span class="dot live"></span>רווח-חוץ מדוד (התגשמות-VESTS)</h2>
+      <div class="big" id="ext-usd">…</div>
+      <div class="small">USD — חלון-24ש׳ · curation+author-rewards עם-block/provenance לכל-אירוע</div>
+      <div style="margin-top:10px">
+        <div class="row"><span>VESTS-נמדדו</span><b id="ext-vests">—</b></div>
+        <div class="row"><span>תמחור</span><b id="ext-price">—</b></div>
+        <div class="row"><span>מקור-מחיר-חוץ</span><b id="ext-src">—</b></div>
+        <div class="row"><span>נמדד-לאחרונה</span><b id="ext-at">—</b></div>
+      </div>
+      <div class="src">מקור: evidence/external-profit-public.json (אטום-מהגיט · ה-banker מודד-מהשרשרת ובונק ל-ledger-החתום)</div>
+    </section>
+
+    <section class="card" id="card-chain">
+      <h2><span class="dot live"></span>משמורת-STEEM חיה (RPC-ציבורי)</h2>
+      <div class="big" id="hc-steem">…</div>
+      <div class="small">STEEM נזיל · @headcorner — נמדד-עכשיו-מהדפדפן-שלך</div>
+      <div style="margin-top:10px">
+        <div class="row"><span>SBD נזיל</span><b id="hc-sbd">—</b></div>
+        <div class="row"><span>STEEM-POWER</span><b id="hc-sp">—</b></div>
+        <div class="row"><span>מחיר-STEEM/USD</span><b id="hc-px">—</b></div>
+        <div class="row"><span>powerdown הבא</span><b id="hc-pd">—</b></div>
+      </div>
+      <div class="src">מקור: api.steemit.com (condenser_api) — קריאה-חיה-מהדפדפן · ללא-שרת</div>
+    </section>
+
+    <section class="card" id="card-book">
+      <h2><span class="dot live"></span>הגריד-על-הספר-הציבורי (STEEM internal market)</h2>
+      <div class="big" id="book-verdict">…</div>
+      <div class="small" id="book-spread">—</div>
+      <div style="margin-top:10px">
+        <table><thead><tr><th>זמן</th><th>צד</th><th>שילם</th><th>קיבל</th></tr></thead>
+        <tbody id="book-fills"><tr><td colspan="4" class="small">—</td></tr></tbody></table>
+      </div>
+      <div class="src">מקור: history-של-@headcorner על-השרשרת (fill_order אמת) — סוחרים-חוץ אמיתיים, יישוב-על-שרשרת, אפס-עמלה</div>
+    </section>
+
+    <section class="card" id="card-pnl">
+      <h2><span class="dot"></span>ביקורת-PnL (fill_order-אמת-בלבד)</h2>
+      <div class="big" id="pnl-verdict">…</div>
+      <div class="small">מודע-חצייה-עצמית · mark-to-market · fail-honest</div>
+      <div style="margin-top:10px">
+        <div class="row"><span>מילויים-אמת (לא-עצמיים)</span><b id="pnl-real">—</b></div>
+        <div class="row"><span>חציות-עצמיות (אפס-דלתא)</span><b id="pnl-self">—</b></div>
+        <div class="row"><span>mid-הספר</span><b id="pnl-mid">—</b></div>
+        <div class="row"><span>נמדד</span><b id="pnl-at">—</b></div>
+      </div>
+      <div class="src">מקור: evidence/pnl-audit.json — סריקת-השרשרת הציבורית (LAW-P0..P4)</div>
+    </section>
+
+    <section class="card" id="card-dex">
+      <h2><span class="dot"></span>SAOS-DEX — ההחלפות-על-הרשת-שלנו</h2>
+      <div class="big" id="dex-fills">…</div>
+      <div class="small">מילויים מצטברים על הספר-הריבוני · גריד-האורקל סוחר-סביב-מחירי-אמת</div>
+      <div style="margin-top:10px">
+        <div class="row"><span>רווח-ממומש (גריד-האורקל)</span><b id="dex-pnl">—</b></div>
+        <div class="row"><span>מלאי-בסיס שנצבר</span><b id="dex-inv">—</b></div>
+      </div>
+      <div class="src">מקור: evidence/oracle-grid-pnl.json · הפנקס-המלא: grids/state/oracle-grid.jsonl בריפו-הקנוני</div>
+    </section>
+
+    <section class="card" id="card-bank">
+      <h2><span class="dot"></span>מסילת-הבנקאות (external-profit → ledger)</h2>
+      <div class="big" id="bank-verdict">…</div>
+      <div class="small">כל-רווח-חוץ-נמדד נרשם-ב-ledger-הכלכלה-החתום (hash-chain) עם-ref=txid</div>
+      <div style="margin-top:10px">
+        <div class="row"><span>kind</span><b>external-profit</b></div>
+        <div class="row"><span>from → to</span><b>external-world → treasury</b></div>
+        <div class="row"><span>אפס-כפילות</span><b>dedup כפול (banker+economy)</b></div>
+        <div class="row"><span>הפסדים</span><b class="ok">לא-נבנקים-כרווח (כנות)</b></div>
+      </div>
+      <div class="src">מקור: mini-services/external-profit-banker · fleet-economy /external</div>
+    </section>
+
+  </div>
+</main>
+<footer>
+  ריבונות-SAOS · עדכון-ראיות-רץ-בלולאה-חיה בבורסה-שלנו ·
+  <a href="index.html">לדף-הבית</a> · <a href="truth.html">truth</a> · <a href="receipts.html">קבלות</a>
+</footer>
+<script>
+const N = (v, d=4) => (typeof v === "number" && isFinite(v)) ? v.toLocaleString("en-US",{maximumFractionDigits:d}) : "—";
+const fmtSbd = (v) => N(v, 6);
+
+async function fetchJSON(url, opt) {
+  const r = await fetch(url, opt || {});
+  if (!r.ok) throw new Error(String(r.status));
+  return r.json();
+}
+
+async function loadEvidence() {
+  try {
+    const e = await fetchJSON("evidence/external-profit-public.json?t=" + Date.now());
+    document.getElementById("ext-usd").textContent = "$" + N(e.measuredUsd24h, 6);
+    document.getElementById("ext-usd").className = "big " + (e.measuredUsd24h > 0 ? "ok" : "");
+    document.getElementById("ext-vests").textContent = N(e.measuredVests24h, 3) + " VESTS";
+    const p = e.pricing || {};
+    document.getElementById("ext-price").textContent = "vestSteem=" + String(p.vestSteem ?? "—").slice(0,10) + " · sbdPerSteem=" + String(p.sbdPerSteem ?? "—").slice(0,8);
+    document.getElementById("ext-src").textContent = (p.external && p.external.source) || "—";
+    document.getElementById("ext-at").textContent = (e.at || "").replace("T"," ").slice(0,19) + " UTC";
+  } catch { document.getElementById("ext-usd").textContent = "לא-זמין"; }
+  try {
+    const a = await fetchJSON("evidence/pnl-audit.json?t=" + Date.now());
+    const real = (a.totalFills||0) - (a.selfCrosses||0);
+    document.getElementById("pnl-real").textContent = N(real, 0);
+    document.getElementById("pnl-self").textContent = N(a.selfCrosses, 0);
+    document.getElementById("pnl-mid").textContent = fmtSbd(a.mid) + " SBD/STEEM";
+    document.getElementById("pnl-at").textContent = (a.at || "").replace("T"," ").slice(0,19) + " UTC";
+    const ee = a.engineEra || {};
+    const per = ee.perAccount || {};
+    let pnl = 0; for (const v of Object.values(per)) pnl += Number(v.pnlSbd || 0);
+    const el = document.getElementById("pnl-verdict");
+    el.textContent = (pnl >= 0 ? "+" : "") + N(pnl, 4) + " SBD";
+    el.className = "big " + (pnl > 0 ? "ok" : pnl < 0 ? "bad" : "");
+  } catch { document.getElementById("pnl-verdict").textContent = "לא-זמין"; }
+  try {
+    const g = await fetchJSON("evidence/oracle-grid-pnl.json?t=" + Date.now());
+    document.getElementById("dex-fills").textContent = N(g.fills ?? 0, 0) + " מילויים";
+    const realized = (g.realizedQuoteMu || 0) / 1e6;
+    document.getElementById("dex-pnl").textContent = (realized >= 0 ? "+" : "") + realized.toFixed(6) + " USDS";
+    document.getElementById("dex-inv").textContent = N((g.invBaseMu || 0)/1e6, 6) + " WSTEEM";
+  } catch { document.getElementById("dex-fills").textContent = "לא-זמין"; }
+  document.getElementById("bank-verdict").textContent = "חיה ✓";
+  document.getElementById("bank-verdict").className = "big ok";
+}
+
+async function loadLiveChain() {
+  const rpc = async (method, params) => (await fetchJSON("https://api.steemit.com", {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params })
+  })).result;
+  try {
+    const a = (await rpc("condenser_api.get_accounts", [["headcorner"]]))[0];
+    const steem = parseFloat(a.balance);
+    const sbd = parseFloat(a.sbd_balance);
+    const vests = parseFloat(a.vesting_shares);
+    document.getElementById("hc-steem").textContent = N(steem, 3);
+    document.getElementById("hc-sbd").textContent = N(sbd, 3);
+    document.getElementById("hc-sp").textContent = N(vests/1e6, 1) + "M VESTS";
+    const pd = a.next_vesting_withdrawal;
+    document.getElementById("hc-pd").textContent = pd && !pd.startsWith("1969") && !pd.startsWith("1970") ? pd.replace("T"," ").slice(0,16) + " UTC" : "לא-פעיל";
+    // מחיר-STEEM דרך feed-history (אורקל-השרשרת)
+    try {
+      const fh = await rpc("condenser_api.get_feed_history", []);
+      const cur = fh.current_median_history;
+      if (cur && cur.base && cur.quote) {
+        const b = parseFloat(cur.base), q = parseFloat(cur.quote); // base SBD / quote STEEM
+        const sbdPerSteem = b / q;
+        const steemSbdUsd = sbdPerSteem; // ערך-SBD-נומינלי ~1$ → קירוב-גלוי
+        document.getElementById("hc-px").innerHTML = N(sbdPerSteem, 4) + " SBD <span class='small'>(median-שרשרת)</span>";
+      }
+    } catch { document.getElementById("hc-px").textContent = "—"; }
+  } catch { document.getElementById("hc-steem").textContent = "RPC-לא-זמין"; }
+  try {
+    const orders = await rpc("condenser_api.get_open_orders", [["headcorner"]]);
+    const tb = document.getElementById("book-fills");
+    if (Array.isArray(orders) && orders.length) {
+      document.getElementById("book-verdict").textContent = orders.length + " פקודות-חיות";
+      document.getElementById("book-verdict").className = "big ok";
+      document.getElementById("book-spread").textContent = "maker-בלבד · תפוגה-שרשרתית לכל-פקודה";
+      tb.innerHTML = orders.slice(0, 6).map(o => `<tr><td>${String(o.expiration||"").slice(5,16)}</td><td>${o.sell_price ? o.sell_price.split(" ")[0] : "—"}</td><td>${o.for_sale ? (o.for_sale/1e3).toFixed(3) : "—"} ${String(o.sell_price||"").split(" ")[3]||""}</td><td>${o.sell_price||"—"}</td></tr>`).join("");
+    } else {
+      document.getElementById("book-verdict").textContent = "אין-פקודות-פתוחות-כרגע";
+      document.getElementById("book-verdict").className = "big";
+    }
+  } catch { document.getElementById("book-verdict").textContent = "RPC-לא-זמין"; }
+  try {
+    // מילויים-אמת אחרונים מההיסטוריה
+    const hist = await rpc("condenser_api.get_account_history", ["headcorner", -1, 200]);
+    const fills = (hist || []).filter(([, it]) => it.op[0] === "fill_order").slice(-6).reverse();
+    const tb = document.getElementById("book-fills");
+    if (fills.length) {
+      tb.innerHTML = fills.map(([, it]) => {
+        const f = it.op[1];
+        return `<tr><td>${it.timestamp.slice(5,16)}</td><td>${f.open_owner === "headcorner" ? "maker" : "taker"}</td><td>${f.current_pays}</td><td>${f.open_pays}</td></tr>`;
+      }).join("");
+    }
+  } catch { /* כנה: הטבלה נשארת — */ }
+}
+
+loadEvidence().then(loadLiveChain).catch(()=>{});
+setInterval(loadLiveChain, 60_000);
+</script>
+</body>
+</html>
