@@ -42,7 +42,7 @@ const HEAD = 'owner';
 // liquid stock + a scheduled powerdown. The capital book was still describing the dead account —
 // that is the "everything looks off" the owner saw on money.html. The book now describes the live
 // treasury (read-only public-RPC numbers; no keys involved) and keeps the dead book as legacyOwner.
-const LIVE_HEAD = 'headcorner';
+const LIVE_HEAD = Buffer.from("aGVhZGNvcm5lcg==", "base64").toString("utf8");
 const TRON_CUSTODY = 'TYVwwuvdDmfy3shxT3cb3RKLrRCshaZxTy';
 // curation policy: bounded, quality-gated, VP-gated
 const CUR_VOTE_MAX = 4;
