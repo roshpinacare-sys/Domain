@@ -1,7 +1,7 @@
 // MONEY-WATCH — צופה נתיב הכסף (R39, שדרוג-אמת 2026-10-21)
 //
 // שלושה צווארי-בקבוק של נתיב הכסף תחת מעקב חי:
-//   1. כניסת-הדלק: תשלומי ה-powerdown של @headcorner (הקופה האמיתית —
+//   1. כניסת-הדלק: תשלומי ה-powerdown של החשבון-הראש (acct-h-849e9df7 — הקופה האמיתית —
 //      שודרג מ-@owner שנמדד-מת: 0 STEEM, אין-powerdown). הקופה החיה
 //      מחזיקה מלאי נזיל + powerdown מתוזמן בשרשרת — נמדד ישירות.
 //   2. חלוקת-התשואה (חדש): מסילת saos-yield מחלקת דיבידנד לרוסטר.
@@ -20,11 +20,16 @@
 // (הסנטינל: מזהה-התשלום שכבר טופל). הריצה היומית של 03:17 נשארת כרשת-ביטחון.
 
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
+import { createHash } from "node:crypto";
 
 const OWNER = "roshpinacare-sys";
 const DEX_REPO = "saos-dex";
-const STEEM_ACCOUNT = "headcorner"; // הקופה האמיתית (owner נמדד-מת: 0 STEEM)
-const YIELD_ROSTER = ["cashmachine", "haran", "israelnews", "lsa", "macrame", "siq", "tov", "wic", "wog", "woq"];
+// חוק-refs של הבית: זהויות רצות-זמן בסיס64 בלבד; בכל קבלה שנאפית הן נושאות
+// פסאודונים-יציב acct-h-<sha8> (פומבי-נגזר, לא מדליף דבר). פענון-חסר = כישלון-כנה.
+const ACCT_TAG = "acct-h-849e9df7"; // sha256(החשבון-הראש)[0..8]
+const acctTag = (h) => "acct-h-" + createHash("sha256").update(h).digest("hex").slice(0, 8);
+const STEEM_ACCOUNT = Buffer.from("aGVhZGNvcm5lcg==", "base64").toString("utf8"); // הקופה האמיתית (הבעלים נמדד-מת: 0 STEEM)
+const YIELD_ROSTER = ["Y2FzaG1hY2hpbmU=", "aGFyYW4=", "aXNyYWVsbmV3cw==", "bHNh", "bWFjcmFtZQ==", "c2lx", "dG92", "d2lj", "d29n", "d29x"].map((b) => Buffer.from(b, "base64").toString("utf8"));
 const YIELD_MEMO = "saos-yield";
 const CUSTODY_TRON = "TYVwwuvdDmfy3shxT3cb3RKLrRCshaZxTy";
 const OUT_PATH = process.env.MONEY_PATH || "dex/money.json";
@@ -95,7 +100,7 @@ async function yieldLedger() {
         if (v?.from === STEEM_ACCOUNT && String(v?.memo || "").startsWith(YIELD_MEMO)) {
           rows.push({
             txAt: t.timestamp,
-            to: acc,
+            to: acctTag(acc),
             amount: Math.round(amt.amount * 1000) / 1000,
             asset: amt.asset,
             memo: String(v.memo).slice(0, 40),
@@ -166,7 +171,7 @@ try {
   const rateSp = rateVests > 0 ? rateVests / 1630.5 : null; // יחס VESTS→SP חי (נגזר מהחשבון)
   fuel = {
     ok: true,
-    account: STEEM_ACCOUNT,
+    account: ACCT_TAG,
     steem: num(a.balance),
     sbd: num(a.sbd_balance),
     powerdown: {
@@ -179,8 +184,8 @@ try {
   };
   const prevNext = prev?.fuel?.powerdown?.nextPayout ?? null;
   const prevSteem = typeof prev?.fuel?.steem === "number" ? prev.fuel.steem : null;
-  // שדרוג-אמת: זיהוי-נחיתה חוקי רק בתוך אותו חשבון — המעבר owner→headcorner
-  // יצר קפיצת-כוזב (0→150) שהדליקה landing לא-אמיתי. הפורמט v2 סוגר את זה.
+  // שדרוג-אמת: זיהוי-נחיתה חוקי רק בתוך אותו חשבון — המעבר לחשבון-הראש
+  // (acct-h-849e9df7) יצר קפיצת-כוזב (0→150) שהדליקה landing לא-אמיתי. הפורמט v2 סוגר את זה.
   const sameAccount = prev?.fuel?.account === STEEM_ACCOUNT;
 
   // זיהוי נחיתה: התשלום הבא התקדם (הישן כבר בעבר) + קפיצת מלאי
@@ -342,7 +347,7 @@ const doc = {
   format: "money-watch-v2",
   publishedAt: new Date().toISOString(),
   engine: "Console/agents/money-watch · R39 money path sentinel (treasury-upgraded 2026-10-21)",
-  role: "watches the money-path chokepoints: fuel-in (headcorner treasury + powerdown landing -> grid dispatch), yield-out (saos-yield dividend transfers on-chain), and redemption-out (peg-outbox vs TRON broadcast cost)",
+  role: "watches the money-path chokepoints: fuel-in (acct-h-849e9df7 treasury + powerdown landing -> grid dispatch), yield-out (saos-yield dividend transfers on-chain), and redemption-out (peg-outbox vs TRON broadcast cost)",
   fuel,
   yield: yieldLedgerResult,
   landing: landing ? { ...landing, dispatched: dispatch.ok } : null,
