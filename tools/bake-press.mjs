@@ -709,6 +709,107 @@ footer{border-top:1px solid var(--line);padding:18px 0 30px;color:var(--faint);f
         fs.renameSync(smTmp, smAbs);
       }
     } catch { /* sitemap registration never breaks the edition */ }
+    // wave-19.50 clobber-cure: the bare directory https://…/press/editions/ was a measured
+    // live 404 (site-audit finding, sources press/index.html) — the archive now keeps its own
+    // real index page, self-maintained by this writer on every bake (idempotent, atomic).
+    try {
+      const idxUrl = `${SITE}press/editions/`;
+      const idxList = [...new Set([...edList.map((f) => f.replace(".html", "")), today])].sort().reverse().slice(0, 14);
+      const idxItems = idxList.map((d) => `      <li><a href="${SITE}press/editions/${d}.html"><span class="d">${d}</span><span class="t">${d === today ? "מהדורת היום · נאפית ב-CI" : "מהדורה שנשמרה בארכיון"}</span></a></li>`).join("\n");
+      const idxPage = `<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ארכיון-המהדורות · עיתון-הצי · SAOS Network</title>
+<meta name="description" content="הארכיון המלא של מהדורות עיתון-הצי היומי של רשת SAOS — כל מהדורה נאפית ממדידות-ציבוריות חיות, נשמרת לנצח, וקריאה במלואה בלי JavaScript. עיתון אמיתי שומר את ההיסטוריה שלו.">
+<meta name="theme-color" content="#09090b">
+<link rel="canonical" href="${idxUrl}">
+<link rel="alternate" type="application/atom+xml" href="${SITE}feed.xml" title="עדכוני הצי (Atom)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SAOS Network">
+<meta property="og:title" content="ארכיון-המהדורות · עיתון-הצי">
+<meta property="og:description" content="כל מהדורה שנאפתה נשמרת כאן לנצח — היסטוריה ציבורית שנמדדה, לא נכתבה.">
+<meta property="og:url" content="${idxUrl}">
+<meta property="og:image" content="${SITE}assets/og-cover.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8' fill='none' stroke='%2310b981' stroke-width='1.8' stroke-linecap='round'/%3E%3Ccircle cx='12' cy='12' r='3' fill='none' stroke='%2310b981' stroke-width='1.8'/%3E%3C/svg%3E">
+<style>
+:root{ --bg:#f5f3f1; --panel:#fff; --line:#e6e2dd; --acc:#0d9d6d; --acc-bright:#0b8a60; --acc-bg:rgba(13,157,109,.07); --acc-line:rgba(13,157,109,.30); --text:#1d1d1f; --dim:#57534e; --faint:#8a8580; --sans:-apple-system,'Segoe UI',Roboto,'Helvetica Neue','Noto Sans Hebrew',Arial,sans-serif; --r:14px; --r-sm:10px; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;-webkit-font-smoothing:antialiased;display:flex;flex-direction:column}
+a{color:var(--acc-bright);text-decoration:none}a:hover{text-decoration:underline}
+.wrap{max-width:860px;margin:0 auto;padding:0 18px;width:100%}
+header.site{position:sticky;top:0;z-index:50;background:rgba(245,243,241,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.hd{height:58px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{font-weight:700;font-size:15px}.brand small{display:block;font-weight:500;font-size:10.5px;color:var(--faint)}
+.back{font-size:13px;font-weight:600;color:var(--acc-bright);border:1px solid var(--acc-line);background:var(--acc-bg);padding:7px 14px;border-radius:9px}
+.back:hover{text-decoration:none;background:rgba(13,157,109,.14)}
+main{flex:1;padding:32px 0 10px}
+.mast{text-align:center;border-bottom:3px double #c9c2ba;padding-bottom:16px}
+.mast h1{font-size:clamp(28px,5.5vw,42px);font-weight:900;letter-spacing:-1px}
+.mast h1 em{font-style:normal;color:var(--acc-bright)}
+.mast .sub{color:var(--dim);font-size:14.5px;margin-top:8px;max-width:640px;margin-inline:auto;line-height:1.7}
+.laws{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin:24px 0 8px}
+.law{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px}
+.law b{display:block;font-size:14px;font-weight:800;margin-bottom:4px}
+.law span{font-size:13px;color:var(--dim);line-height:1.7}
+.editions{margin-top:20px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.editions h2{font-size:16px;font-weight:800;padding:16px 18px 4px}
+.editions .note{padding:0 18px 12px;color:var(--faint);font-size:12.5px}
+.editions ul{list-style:none}
+.editions li{border-top:1px solid var(--line)}
+.editions li a{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:13px 18px;font-size:14.5px}
+.editions li a:hover{background:var(--acc-bg);text-decoration:none}
+.editions .d{font-family:ui-monospace,Menlo,Consolas,monospace;direction:ltr;unicode-bidi:embed;font-weight:700}
+.editions .t{color:var(--dim);font-size:12.5px}
+footer{border-top:1px solid var(--line);padding:16px 0 20px;margin-top:26px}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:12.5px;color:var(--faint)}
+</style>
+</head>
+<body>
+<header class="site"><div class="wrap hd">
+  <div class="brand">SAOS Network<small>עיתון-הצי · ארכיון</small></div>
+  <a class="back" href="${SITE}press/">← אל-המהדורה של היום</a>
+</div></header>
+<main><div class="wrap">
+  <div class="mast">
+    <h1>ארכיון-<em>המהדורות</em></h1>
+    <p class="sub">עיתון אמיתי שומר את ההיסטוריה שלו. כל מהדורה שנאפית נשמרת כאן לנצח — קריאה-אנושית מלאה, בלי JavaScript, בלי סודות, בלי המצאות. מה שנמדד ביום-שכבה — כך-הוא נשאר.</p>
+  </div>
+  <div class="laws">
+    <div class="law"><b>מה מאוחסן כאן</b><span>מהדורה-יומית אחת לכל יום פעילות — נאפית אוטומטית ב-CI מהמדידות החיות של הרשת, ומוחלפת במהלך-היום עם כל אפייה חדשה של אותו יום.</span></div>
+    <div class="law"><b>מדוע לשמור</b><span>עיתון שמוחק את עברו אינו עיתון אלא פרסומת. הארכיון הוא ההוכחה שהמספרים שפורסמו ביום-שהם פורסמו — נשארו כמו-שהיו: אף-מספר לא נכתב מאוחר.</span></div>
+    <div class="law"><b>איך לקרוא</b><span>כל כתבה נושאת שורת-מקור — קישור לנתוני-הגלם הציבוריים וזמן-המדידה. מקור שלא השיב → הכתבה נפתחת ב«לא נמדד במהדורה זו». אין אומדנים.</span></div>
+  </div>
+  <section class="editions">
+    <h2>המהדורות</h2>
+    <p class="note">מוצגות 14 המהדורות האחרונות · עמוד-זה נשמר אוטומטית על-ידי האופה בכל אפייה (wave-19.50)</p>
+    <ul>
+${idxItems}
+    </ul>
+  </section>
+</div></main>
+<footer><div class="wrap">
+  <span>SAOS Network · עיתון-הצי — נאפה ב-CI, keyless</span>
+  <span><a href="${SITE}press/">העיתון</a> · <a href="${SITE}feed.xml">RSS/Atom</a> · <a href="${SITE}sitemap.html">מפת-האתר</a></span>
+</div></footer>
+</body>
+</html>
+`;
+      const idxAbs = path.join(edDir, "index.html");
+      const idxTmp = `${idxAbs}.tmp-${process.pid}`;
+      fs.writeFileSync(idxTmp, idxPage);
+      fs.renameSync(idxTmp, idxAbs);
+      const smAbs2 = path.join(__dirname, "..", "sitemap.xml");
+      let sm2 = fs.readFileSync(smAbs2, "utf8");
+      if (!sm2.includes("press/editions/</loc>")) {
+        sm2 = sm2.replace("</urlset>", `  <url><loc>${idxUrl}</loc><lastmod>${today}</lastmod></url>\n</urlset>`);
+        const smTmp2 = `${smAbs2}.tmp-${process.pid}`;
+        fs.writeFileSync(smTmp2, sm2);
+        fs.renameSync(smTmp2, smAbs2);
+      }
+    } catch { /* archive index never breaks the edition */ }
   } catch { /* archive never breaks the edition */ }
   console.log(JSON.stringify({ state: "ok", press: "baked", bytes: page.length }));
 })().catch((e) => {
