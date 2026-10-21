@@ -48,9 +48,10 @@
     var c = [];
     // אוצר — שער-הרצפה · תיקון-סתירה X1 (t55c): פיצול-פסק-הפעולה-המוצעת (PASS/BLOCK) מבריאות-האוצר (OK/BELOW-FLOOR)
     var T = d.treasury || { ok: false };
-    var health = (T.ok && T.netSp != null && T.floorSp != null)
+    var Tm = T.ok || T.verdict != null; // bug-t55c-b: מדידה-קיימת = יש-נתוני-שער, לא-רק-שדה-ok
+    var health = ((T.ok || T.verdict != null) && T.netSp != null && T.floorSp != null)
       ? (T.netSp >= T.floorSp ? "OK" : "BELOW-FLOOR −" + (T.floorSp - T.netSp).toFixed(1) + " SP") : null;
-    c.push(card("🛡️ אוצר · שער-הרצפה-3000", T.ok
+    c.push(card("🛡️ אוצר · שער-הרצפה-3000", Tm
       ? '<div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap">'
         + '<span class="a9-k ' + verdictClass(T.verdict) + '">' + esc(T.verdict) + '</span>'
         + '<span class="a9-k ' + (health && health.indexOf("BELOW") === 0 ? "red" : "") + '" style="font-size:13px">' + esc(health || "UNMEASURED") + '</span></div>'
@@ -58,12 +59,12 @@
         + '<div class="a9-line">net ' + esc(T.netSp) + " SP · רצפה " + esc(T.floorSp) + " · עודף " + esc(T.surplus) + "</div>"
         + '<div class="a9-line">שורות-האצלה-חיות ' + esc(T.rowsOut) + " SP · החזרות-בפייפליין-7-ימים</div>"
       : '<div class="a9-k amber">UNMEASURED</div><div class="a9-line">' + esc(T.err || "המקור-לא-השיב") + "</div>",
-      "נמדד: " + (T.ok ? fmt(T.measuredAt) + " · לפני " + ago(T.measuredAt) : "—")
+      "נמדד: " + ((T.ok || T.measuredAt) ? fmt(T.measuredAt) + " · לפני " + ago(T.measuredAt) : "—")
       + ' · <a href="https://raw.githubusercontent.com/roshpinacare-sys/Autonomy/main/receipts/treasury-floor/latest.json" target="_blank" rel="noopener">קבלת-מקור</a>'));
 
     // סחר-חי
     var R = d.trading || { ok: false };
-    c.push(card("🎯 סחר-חי · acct-h-849e9df7", R.ok
+    c.push(card("🎯 סחר-חי · acct-h-849e9df7", (R.ok || R.fills != null) // bug-t55c-b
       ? '<div class="a9-k dim">' + esc(R.fills) + ' <span style="font-size:12px;color:#a1a1aa">מילויים בחלון-' + esc(R.fillsWindowHours) + "ש'</span></div>"
         + '<div class="a9-line">' + esc(R.openOrders) + " פקודות-פתוחות · קצב ~" + esc(R.fillRate) + "/שעה</div>"
         + '<div class="a9-line">' + esc(R.steem) + " · " + esc(R.sbd) + " · " + esc(R.sp) + " SP (נטו-בשרשרת)</div>"
@@ -74,22 +75,22 @@
 
     // שער-סיכון + ארביטראז
     var H = d.hedgeGate || { ok: false };
-    c.push(card("⚖️ שער-סיכון-לפני-ביצוע · AUTOHEDGE", H.ok
+    c.push(card("⚖️ שער-סיכון-לפני-ביצוע · AUTOHEDGE", (H.ok || H.verdict != null) // bug-t55c-b
       ? '<div class="a9-k ' + verdictClass(H.verdict) + '">' + esc(H.verdict) + "</div>"
         + '<div class="a9-line">' + esc(H.blocked) + " סיבות-חסימה על-הגריד-העומד (מול-הון-נזיל)</div>"
         + '<div class="a9-line">פער-ארביטראז פנים↔חוץ: <b>' + esc(H.arbGapPct) + "%</b> · " + esc(H.edge || "") + "</div>"
         + '<div class="a9-line">פנימי ' + esc(H.internalUsd) + "$ · חוץ " + esc(H.externalUsd) + "$</div>"
       : '<div class="a9-k amber">UNMEASURED</div><div class="a9-line">' + esc(H.err || "") + "</div>",
-      "נמדד: " + (H.ok ? fmt(H.measuredAt) + " · לפני " + ago(H.measuredAt) : "—")
+      "נמדד: " + ((H.ok || H.measuredAt) ? fmt(H.measuredAt) + " · לפני " + ago(H.measuredAt) : "—")
       + ' · <a href="https://raw.githubusercontent.com/roshpinacare-sys/Autonomy/main/receipts/autotrade-hedge/latest.json" target="_blank" rel="noopener">קבלת-מקור</a>'));
 
     // FF
     var F = d.fixedfloat || { ok: false };
-    c.push(card("🔀 שער-FixedFloat → BTC", F.ok
+    c.push(card("🔀 שער-FixedFloat → BTC", (F.ok || F.verdict != null) // bug-t55c-b
       ? '<div class="a9-k ' + (F.verdict === "HONEST-FAIL" ? "amber" : "") + '">' + esc(F.verdict) + "</div>"
         + '<div class="a9-line">' + esc(F.pairErr || "ממתין-לאישורם-שלהם") + "</div>"
       : '<div class="a9-k amber">UNMEASURED</div><div class="a9-line">' + esc(F.err || "") + "</div>",
-      "נמדד: " + (F.ok ? fmt(F.measuredAt) : "—")
+      "נמדד: " + ((F.ok || F.measuredAt) ? fmt(F.measuredAt) : "—")
       + ' · <a href="https://raw.githubusercontent.com/roshpinacare-sys/Autonomy/main/receipts/fixedfloat/latest.json" target="_blank" rel="noopener">קבלת-מקור</a>'));
 
     // עורקים
