@@ -517,6 +517,9 @@ function setCmdsDisabled(dis) {
 }
 
 /* ── wiring ── */
+/* R77 (2026-10-21): פאנל-מצב-הרשת נטען מיידית בפתיחת הדף — נמדד: הוא היה נקרא
+   רק אחרי-חיבור-מפתח, ומבקר-ציבורי ראה "·" תמיד. המדידה ציבורית ולא דורשת מפתח. */
+loadNet();
 $("connectBtn").addEventListener("click", connect);
 $("sec").addEventListener("keydown", (e) => { if (e.key === "Enter") connect(); });
 $("lockBtn").addEventListener("click", lock);
