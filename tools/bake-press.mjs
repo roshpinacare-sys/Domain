@@ -419,6 +419,43 @@ const NOT_MEASURED = `<p class="na">לא נמדד במהדורה זו — המק
     ? `<ul class="posts">${edList.map((f) => `<li><a href="${SITE}press/editions/${f}" style="direction:ltr;unicode-bidi:embed">${f.replace(".html", "")}</a></li>`).join("")}</ul><p class="sub">מהדורת-היום נשמרת אוטומטית כאן ומוחלפת כל-אפייה של אותו-יום; 14 מהדורות אחרונות מוצגות.</p>`
     : `<p class="na">אין עדיין ארכיון — המהדורה של היום תישמר כאן באפייה ראשונה.</p>`;
 
+  /* AGENT4-EDITIONS-INDEX-LIST BEGIN (agent4 · trace 1a15d34fc9c03265) — additive.
+     טענה-מול-אמת שנמדדה: wave-19.50 הצהיר בהודעת-הקומיט שעמוד-אינדקס-המהדורות
+     "self-maintained by the bake writer on every future bake" — אבל אין בשום כותב
+     קוד שמתחזק אותו. בלי זה, מהדורה של מחר לא תופיע בארכיון — טענה שקרית.
+     ה-cure המאוחד: מתחזק את הרשימה בתוך העמוד הביתי-הקיים (עיצוב-בית של wave-19.50
+     נשמר — אף-כתיבה מלאה, אף ping-pong), בכל אפייה, מרשימת-הקבצים בפועל.
+     אם העמוד לא קיים — נוצר fallback כן; אם הרשימה לא נמצאה — fail-soft ללא שינוי. */
+  try {
+    const idxAbs = path.join(edDir, "index.html");
+    if (fs.existsSync(idxAbs)) {
+      const cur = fs.readFileSync(idxAbs, "utf8");
+      const items = edFiles
+        .map((f) => {
+          const d = f.replace(".html", "");
+          const isToday = d === new Date().toISOString().slice(0, 10);
+          const t = isToday ? "מהדורת היום · נאפית ב-CI" : "מהדורה יומית בארכיון";
+          return `      <li><a href="${SITE}press/editions/${f}"><span class="d">${d}</span><span class="t">${t}</span></a></li>`;
+        })
+        .join("\n");
+      const ulRe = /<ul>\s*(<li><a href="[^"]*press\/editions\/\d{4}-\d{2}-\d{2}\.html">[\s\S]*?)<\/ul>/;
+      if (ulRe.test(cur)) {
+        const next = cur.replace(ulRe, `<ul>\n${items}\n    </ul>`);
+        if (next !== cur) {
+          const tmp = `${idxAbs}.tmp-${process.pid}`;
+          fs.writeFileSync(tmp, next);
+          fs.renameSync(tmp, idxAbs);
+        }
+      }
+    } else {
+      fs.writeFileSync(
+        idxAbs,
+        `<!doctype html>\n<html lang="he" dir="rtl">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width,initial-scale=1">\n<title>ארכיון-המהדורות · עיתון-הצי · SAOS Network</title>\n<link rel="canonical" href="${SITE}press/editions/">\n</head>\n<body>\n<h1>ארכיון-המהדורות</h1>\n<p>עיתון אמיתי שומר את ההיסטוריה שלו — ${edFiles.length} מהדורות בארכיון.</p>\n<ul>\n${edFiles.map((f) => `      <li><a href="${SITE}press/editions/${f}"><span class="d">${f.replace(".html", "")}</span><span class="t">מהדורה יומית בארכיון</span></a></li>`).join("\n")}\n</ul>\n<p><a href="${SITE}press/">← אל המהדורה הנוכחית</a></p>\n</body>\n</html>\n`
+      );
+    }
+  } catch { /* editions index maintenance never breaks the bake */ }
+  /* AGENT4-EDITIONS-INDEX-LIST END */
+
   /* W29 graft 1) שולחן-השווקים — מחיר-אמת חוץ משלושה מקורות בלתי-תלויים */
   let deskHtml = NOT_MEASURED, deskIso = null;
   try {
