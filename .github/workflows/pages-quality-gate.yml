@@ -32,6 +32,9 @@ jobs:
         with:
           node-version: 22
 
+      - name: R-bidi self-heal — re-inject bidi-fix.js into any dir=rtl page a parallel writer baked without it
+        run: node scripts/inject-bidi-fix.mjs
+
       - name: Measure every key page (fail-soft)
         run: node tools/pages-quality-audit.mjs
 
@@ -39,7 +42,7 @@ jobs:
         run: |
           git config user.name "roshpinacare-sys"
           git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
-          git add quality
+          git add -A
           if git diff --cached --quiet; then
             echo "no-change — the previous measurement stands"
           else

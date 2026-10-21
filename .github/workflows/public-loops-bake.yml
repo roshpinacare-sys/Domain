@@ -41,6 +41,9 @@ jobs:
       - name: Bake state-reports index (G46 — the 9 daily doctor reports in git get mapped)
         run: node tools/bake-reports.mjs
 
+      - name: R-bidi — ensure every baked dir=rtl page carries assets/bidi-fix.js
+        run: node scripts/inject-bidi-fix.mjs
+
       - name: Commit (only when baked content changed)
         run: |
           git config user.name "roshpinacare-sys"
