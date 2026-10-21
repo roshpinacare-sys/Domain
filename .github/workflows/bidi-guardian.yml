@@ -1,0 +1,55 @@
+# bidi-guardian — R-bidi self-heal at push time.
+# Law: any writer (fleet agent, bake, human) that rewrites an RTL page
+# MUST NOT drop assets/bidi-fix.js. Some writers replace the page-tail
+# script tag with their own (measured: d178e6f replaced bidi-fix.js with
+# agent9-truth-band.js). This guardian re-injects within ~1 minute of any
+# push, so the SITE is always correct regardless of writer behavior.
+# Tags may coexist — the injector only ADDS what is missing, never removes.
+name: bidi-guardian
+
+on:
+  push:
+    branches: [main]
+    paths: ["**/*.html"]
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bidi-guardian
+  cancel-in-progress: false
+
+jobs:
+  heal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Re-inject R-bidi into any dir=rtl page a writer stripped
+        run: node scripts/inject-bidi-fix.mjs
+
+      - name: Commit only when a writer stripped the fix
+        run: |
+          git config user.name "roshpinacare-sys"
+          git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "clean — no writer stripped the fix (this push also closes the loop: no further runs)"
+          else
+            git commit -m "bidi-guardian: re-injected R-bidi after a writer stripped it [skip ci]"
+            for i in 1 2 3; do
+              git pull --rebase -q && git push origin main && break
+              echo "push race #$i — rebasing on the fleet and retrying"
+              sleep 3
+            done
+          fi
