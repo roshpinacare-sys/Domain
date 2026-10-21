@@ -169,7 +169,7 @@ async function healLoop(reason, ageMin) {
   state.dispatches += 1;
   logEvent("DISPATCH", `reason=${reason} age=${ageMin}min status=${st}`);
   if (st !== 204) { state.verifyFailures += 1; state.lastVerdict = `DISPATCH-${st}`; return false; }
-  if (ONCE) return true; // next tick verifies (cron cadence)
+  if (ONCE) { state.lastVerdict = "DISPATCHED"; return true; } // next tick verifies (cron cadence)
   // daemon mode: verify a NEW run appears, then the bake refreshes
   const deadline = Date.now() + CFG.verifyTimeoutMs;
   let newRun = null;
