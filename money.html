@@ -191,6 +191,20 @@ footer .wrap{font-size:12px;color:var(--dim);display:flex;justify-content:space-
       </div>
     </section>
 
+    <section class="card" id="external-profit" style="border-color:var(--gold-dim)">
+      <h2>רווח חוץ מוכח <span class="en">Measured external profit · non-zero or honest-zero</span></h2>
+      <p class="src">המספר שהבעלים ביקש: רווח-חוץ אמת — הכנסה שזרמה אלינו ממערכת-חוץ (שרשרת-STEEM), נמדדת-בהתגשמות מה-ops-עצמם (אצירה + פרס-מחבר), כל-אירוע עם בלוק-שרשרת ומקור, מתומחר במחיר-שוק חוץ. אפס-כפילות מול ספר-התביעות; מילויי-מסחר נמדדים אצל ביקורת-הגריד בלבד. מקור-האמת: מנוע external-profit חי (SAOS-EXTERNAL-PROFIT/1) — ניתן לחישוב-מחדש מ-RPC ציבורי על-ידי כל-מאמת.</p>
+      <div class="pulse" id="xpStrip">
+        <div class="pcard" style="border-color:var(--gold-dim)"><div class="v" id="xp-usd">—</div><div class="l">רווח-חוץ מדוד 24ש׳ · התגשמות-אמת עם ראיות · לא-אפס = נמדד</div></div>
+        <div class="pcard"><div class="v" id="xp-vests">—</div><div class="l">VESTS שהתגשמו 24ש׳ · אצירה+פרס-מחבר · נמדד מה-ops</div></div>
+        <div class="pcard"><div class="v" id="xp-evidence">—</div><div class="l">אירועי-ראיה בפנקס · כל-אירוע עם בלוק+מקור</div></div>
+        <div class="pcard"><div class="v" id="xp-price">—</div><div class="l">תמחור · מסילת-מחיר-חוץ חיה</div></div>
+      </div>
+      <div class="inst" id="xpDetail" style="margin-top:12px">
+        <div class="irow"><div class="what">טוען את פנקס-הרווח-החוץ החי (giant → external-profit-node)…</div></div>
+      </div>
+    </section>
+
     <section class="card" id="gravity" style="border-color:var(--gold-dim)">
       <h2>מרכז-הכובד: הכלכלה שלנו <span class="en">The center of gravity · SAOS first</span></h2>
       <p class="src">הוראת-בעלים (2026-10-14): המטבע שלנו במרכז — הכלכלה, הבורסה, הארנק, המערכת. Steem ו-Hive יורדים למקום-אחרון: הם מסילות-חוץ למדידה ולcustody, לא מרכז-הכובד. הם ממשיכים לפעוק ולהימדד — אבל הבמה הריבונית היא הבורסה שלנו, והצי מבצע עליה. R74 עומד: מחיר-ה-SAOS כאן הוא מחיר-ספר-פנימי בלבד, אין ביד-חוץ ואין נזילות-חוץ.</p>
@@ -639,6 +653,45 @@ footer .wrap{font-size:12px;color:var(--dim);display:flex;justify-content:space-
         var e3=document.getElementById("bookLine");if(e3){var dt=(mo.publishedAt||"").replace("T"," ").slice(0,16)+"Z";
           e3.innerHTML='<div class="irow"><div class="what">הספר הפנימי החי: bid '+lb.bestBid.toFixed(6)+' · ask '+lb.bestAsk.toFixed(6)+' SBD/STEEM · עודף-ביקוש '+Math.round(lb.bidSurplusBps)+' bps · '+rg+' <span class="en">נמדד '+dt+'</span></div></div>';}}
     }).catch(function(){/* כישלון = נשארים עם מספרי-המדידה הבטוחים, אפס המצאה */});
+  })();
+</script>
+<script>
+  /* פס-הרווח-החוץ — חי מ-giant.git (external-profit-node snapshot); כישלון = כנות, אפס המצאה */
+  (function(){
+    function txt(id,v){var e=document.getElementById(id);if(e&&v!=null)e.textContent=v;}
+    function esc(s){return String(s==null?"":s).replace(/[&<>"/]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","/":"&#47;"}[c];});}
+    var URLS=["https://raw.githubusercontent.com/roshpinacare-sys/giant/main/mini-services/external-profit-node/state/external-profit-public.json"];
+    function j(u){return fetch(u+"?t="+Date.now(),{cache:"no-store"}).then(function(r){if(!r.ok)throw 0;return r.json();});}
+    (function tryLoad(i){
+      if(i>=URLS.length){var h=document.getElementById("xpDetail");if(h)h.innerHTML='<div class="irow"><div class="what">פנקס-הרווח-החוץ לא נטען כרגע — מציג בכנות, בלי להמציא מספרים. המנוע חי בצד-השרת (SAOS-EXTERNAL-PROFIT/1).</div></div>';return;}
+      j(URLS[i]).then(function(s){
+        var xp=s.externalProfit||{};
+        txt("xp-usd",(xp.measuredUsd24h!=null?"$"+xp.measuredUsd24h:"0 (כנות)"));
+        txt("xp-vests",(xp.measuredVests24h!=null?xp.measuredVests24h:"—"));
+        txt("xp-evidence",(xp.evidenceCount!=null?xp.evidenceCount:"—"));
+        var pr=xp.pricing||{};var ex=pr.external||{};
+        txt("xp-price","STEEM $"+(ex.steemUsd!=null?ex.steemUsd:"?")+(ex.source?(" · "+ex.source):""));
+        var host=document.getElementById("xpDetail");
+        if(host){
+          var out="";
+          var parts=(xp.parts||[]);
+          for(var k=0;k<parts.length;k++){var pt=parts[k];
+            out+='<div class="irow"><div class="what"><b>'+(pt.id==="chain-curation"?"אצירה":pt.id==="chain-author-vests"?"פרס-מחבר (vests)":esc(pt.id))+'</b> · '+esc(pt.vests)+" VESTS · $"+esc(pt.usd)+" · "+esc(pt.source||"")+"</div></div>";}
+          var cur=s.curateTail||[];
+          for(var c2=cur.length-1;c2>=0;c2--){var cb=cur[c2];
+            if(cb&&cb.verdict==="VOTED-LIVE"){
+              var vs=(cb.votes||[]).slice(0,3);
+              var txs=vs.map(function(v){return '<span class="mono">'+esc(String(v.txid||"").slice(0,10))+"…</span>";}).join(" ");
+              out+='<div class="irow"><div class="what">מסילת-האצירה חיה: '+esc(cb.executed)+" הצבעות-אמת על-השרשרת במחזור "+esc(String(cb.at||"").slice(0,16))+"Z · txids: "+txs+'</div></div>';
+              break;}}
+          var sd=s.selfDeposit||null;
+          if(sd&&sd.measuredUsd24h!=null){
+            out+='<div class="irow"><div class="what">במסילת-הדיבידנד (self-deposit): רווח-מדוד $'+esc(sd.measuredUsd24h)+" · "+((sd.dividendLane&&sd.dividendLane.greenStreak!=null)?("רצף-ירוק "+esc(sd.dividendLane.greenStreak)+" · "):(""))+"יעד $1000/יום · פער $"+esc(sd.dividendLane?sd.dividendLane.gapToTargetUsd:"?")+" (כנה, לא מובטח)</div></div>";}
+          out+='<div class="irow"><div class="what">אימות-עצמאי: הרץ מחדש <span class="mono">grids/external-profit.mjs --measure</span> (saos-dex) — קריאה-ציבורית-בלבד, אפס-מפתחות · אפייה '+esc(String(s.bakedAt||"").slice(0,16))+"Z</div></div>";
+          host.innerHTML=out;
+        }
+      }).catch(function(){tryLoad(i+1);});
+    })(0);
   })();
 </script>
 <script>
