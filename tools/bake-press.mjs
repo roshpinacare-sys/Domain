@@ -33,16 +33,25 @@ const PAGES = (p) => `https://${OWNER}.github.io/Domain/${p}`;
 const SITE = `https://${OWNER}.github.io/Domain/`;
 const H = { "User-Agent": "bake-press", Accept: "application/vnd.github+json" };
 
+// retry ×3 — שיעור 2026-10-21: כשל-רגעי (fetch בזמן-commit של הצי / קצבת-CDN)
+// נחרת לתוך מהדורה ככשל-קבוע; ניסיון-חוזר מונע אפיית-שקר.
 async function jget(url, timeoutMs = 12000) {
-  const ac = new AbortController();
-  const t = setTimeout(() => ac.abort(), timeoutMs);
-  try {
-    const r = await fetch(url + `?t=${Date.now()}`, { headers: H, cache: "no-store", signal: ac.signal });
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    return JSON.parse(await r.text()); // raw מחזיר text/plain גם ל-JSON תקני
-  } finally {
-    clearTimeout(t);
+  let lastErr = null;
+  for (let i = 0; i < 3; i++) {
+    const ac = new AbortController();
+    const t = setTimeout(() => ac.abort(), timeoutMs);
+    try {
+      const r = await fetch(url + `?t=${Date.now()}`, { headers: H, cache: "no-store", signal: ac.signal });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      return JSON.parse(await r.text()); // raw מחזיר text/plain גם ל-JSON תקני
+    } catch (e) {
+      lastErr = e;
+      if (i < 2) await new Promise((res) => setTimeout(res, 400 * (i + 1)));
+    } finally {
+      clearTimeout(t);
+    }
   }
+  throw lastErr;
 }
 
 const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -304,6 +313,40 @@ const NOT_MEASURED = `<p class="na">לא נמדד במהדורה זו — המק
     mirrorHtml = `${NOT_MEASURED}<!-- ${esc(String(e.message || e).slice(0, 80))} -->`;
   }
 
+  /* 7) מוסף-הריבונות — סוכן-4: ראיות-ארכיטקטורה חיות (גשר-הראיות של הרשת עצמה) */
+  let sovHtml = NOT_MEASURED, sovIso = null;
+  try {
+    const ev = await jget(PAGES("press/evidence.json"));
+    sovIso = ev.generatedAt;
+    const s = ev.sources || {};
+    const parts = [];
+    if (s.capability?.available) parts.push(`<li>מטריצת-יכולות: <b>${esc(s.capability.pass)}</b>/<b>${esc((s.capability.pass ?? 0) + (s.capability.fail ?? 0))}</b> עוברות (${esc(s.capability.verdict ?? "?")}) — הארכיטקטורה נבדקת מול-עצמה</li>`);
+    if (s.schedules?.available) parts.push(`<li>אוטונומיה מתוזמנת: <b>${esc(s.schedules.enabled)}</b>/<b>${esc(s.schedules.total)}</b> תזמונים חיים · הצלחה <b>${esc(s.schedules.successRate ?? "?")}%</b> מ-<b>${esc(s.schedules.runsTotal)}</b> ריצות</li>`);
+    if (s.ledger?.available) parts.push(`<li>הפנקס החתום: seq <b>${esc(s.ledger.seq)}</b> · <b>${esc(s.ledger.settles24h)}</b> התיישבויות ב-24ש׳ · עמלות-24ש׳ <b>$${esc(s.ledger.fees24hUsd)}</b> (מיקרו-סנט אמיתי)</li>`);
+    if (s.market?.available) parts.push(`<li>השוק החי: <b>${esc(s.market.trades)}</b> עסקאות · ספרד <b>${esc(s.market.spreadBps ?? "?")}</b> bps · שולחן-שוק <b class="${s.market.deskOn ? "ok" : "warn"}">${s.market.deskOn ? "פועל" : "כבוי"}</b></li>`);
+    if (s.treasury?.available) parts.push(`<li>אוצרה: עמלות-לכל-החיים <b>$${esc(s.treasury.feesUsd)}</b> · סטייק נעול <b>${esc(Math.round((s.treasury.stakedQuote ?? 0) / 1e6))}</b> USDS</li>`);
+    if (s.council?.available) parts.push(`<li>מועצת-הריבון: ההחלטה האחרונה <b>${esc(s.council.kind)}</b> · סה\"כ <b>${esc(s.council.decisionsTotal)}</b> החלטות מתועדות</li>`);
+    if (s.secretsGate?.available) parts.push(`<li>שער-סודות: <b class="${s.secretsGate.verdict === "CLEAN" ? "ok" : "warn"}">${esc(s.secretsGate.verdict)}</b> על <b>${esc(s.secretsGate.filesScanned)}</b> קבצים — אף-מפתח לא נדחף</li>`);
+    if (s.ownerMemory?.available) parts.push(`<li>זיכרון-בעלים: <b>${esc(s.ownerMemory.directives)}</b> הנחיות חתומות-עקבה · אחרונה <code>${esc(String(s.ownerMemory.lastTrace ?? "").slice(0, 16))}</code></li>`);
+    if (s.oracle?.available) parts.push(`<li>עוגן-אורקל: ${esc(s.oracle.pair ?? "?")} <b>${esc(s.oracle.price ?? "?")}</b> (${esc(s.oracle.source ?? "?")})</li>`);
+    const unavailable = Object.entries(s).filter(([, v]) => !v?.available).map(([k]) => k);
+    const honest = unavailable.length ? `<p class="sub">לא נמדד הרצה זו: ${esc(unavailable.join(", "))} — מדווח בכנות, לא מושלם.</p>` : `<p class="sub">כל-9 המקורות השיבו. אימות-אחרי-פרסום נעשה על-ידי הרשת בעצמה (runner preset pages-evidence).</p>`;
+    sovHtml = `<ul>${parts.join("")}</ul>${honest}`;
+    if (!parts.length) sovHtml = NOT_MEASURED;
+  } catch (e) {
+    sovHtml = `${NOT_MEASURED}<!-- ${esc(String(e.message || e).slice(0, 80))} -->`;
+  }
+
+  /* 8) ארכיון-המהדורות — עיתון אמיתי שומר את מהדורותיו */
+  let archHtml = "";
+  const edDir = path.join(__dirname, "..", "press", "editions");
+  let edFiles = [];
+  try { edFiles = fs.readdirSync(edDir).filter((f) => /^\d{4}-\d{2}-\d{2}\.html$/.test(f)).sort().reverse(); } catch { /* first bake */ }
+  const edList = edFiles.slice(0, 14);
+  archHtml = edList.length
+    ? `<ul class="posts">${edList.map((f) => `<li><a href="editions/${f}" style="direction:ltr;unicode-bidi:embed">${f.replace(".html", "")}</a></li>`).join("")}</ul><p class="sub">מהדורת-היום נשמרת אוטומטית כאן ומוחלפת כל-אפייה של אותו-יום; 14 מהדורות אחרונות מוצגות.</p>`
+    : `<p class="na">אין עדיין ארכיון — המהדורה של היום תישמר כאן באפייה ראשונה.</p>`;
+
   /* ------------------------------- the page -------------------------------- */
 
   const page = `<!DOCTYPE html>
@@ -396,6 +439,8 @@ footer{border-top:1px solid var(--line);padding:18px 0 30px;color:var(--faint);f
     ${sec("בשרשרת", "מוסף-הפרסומים", chainHtml, "https://roshpinacare-sys.github.io/Domain/content/published.json", chainIso)}
     ${sec("מודעות-הגיוס", "לוח-התפקידים של האורגניזם", recHtml, "https://roshpinacare-sys.github.io/Domain/agents/recruitment.json", recIso)}
     ${sec("מוסף-המיזמים", "venture-desk", venHtml, "https://roshpinacare-sys.github.io/Domain/agents/ventures.json", venIso)}
+    ${sec("מוסף-הריבונות", "סוכן-4 · ראיות-ארכיטקטורה חיות · 9 מקורות", sovHtml, "https://roshpinacare-sys.github.io/Domain/press/evidence.json", sovIso)}
+    ${sec("ארכיון-המהדורות", "עיתון-אמיתי שומר את ההיסטוריה שלו", archHtml, "https://roshpinacare-sys.github.io/Domain/press/editions/", new Date().toISOString())}
   </section>
 </main>
 <footer><div class="wrap" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px">
@@ -418,6 +463,15 @@ footer{border-top:1px solid var(--line);padding:18px 0 30px;color:var(--faint);f
   fs.mkdirSync(path.dirname(abs), { recursive: true });
   fs.writeFileSync(tmp, page);
   fs.renameSync(tmp, abs);
+  // ארכיון: מהדורת-היום נשמרת תמיד (אותו-יום מוחלף — ההיסטוריה היומית נשמרת-לעד)
+  try {
+    const today = new Date().toISOString().slice(0, 10);
+    fs.mkdirSync(edDir, { recursive: true });
+    const edAbs = path.join(edDir, `${today}.html`);
+    const edTmp = `${edAbs}.tmp-${process.pid}`;
+    fs.writeFileSync(edTmp, page);
+    fs.renameSync(edTmp, edAbs);
+  } catch { /* archive never breaks the edition */ }
   console.log(JSON.stringify({ state: "ok", press: "baked", bytes: page.length }));
 })().catch((e) => {
   console.log(JSON.stringify({ state: "fail-soft", msg: String(e.message || e).slice(0, 140) }));
