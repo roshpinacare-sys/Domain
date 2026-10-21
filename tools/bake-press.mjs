@@ -687,6 +687,7 @@ footer{border-top:4px double var(--line2);padding:18px 0 30px;color:var(--faint)
     </div>
   </section>
   <div class="edband" role="doc-subtitle">
+    <span class="eb">גיליון #${edFiles.length + 1}</span><span class="dotsep"></span>
     <span class="eb">מהדורה חיה · נאפית 2× בשעה</span><span class="dotsep"></span>
     <span class="eb">${new Date().toISOString().slice(0,16).replace('T',' · ')} UTC</span><span class="dotsep"></span>
     <span class="eb">ארכיון-מהדורות: <a href="${SITE}press/editions/" style="color:inherit;text-decoration:underline">editions/</a></span>

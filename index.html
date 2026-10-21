@@ -54,6 +54,24 @@ nav.top a{color:var(--dim)}
 nav.top a:hover{color:var(--text);text-decoration:none}
 @media(min-width:1020px){nav.top{display:flex}.pill{margin-inline-start:0}}
 
+/* ── hero art · sovereign constellation ── */
+.hero-art{margin:38px auto 0;max-width:1020px}
+.hero-art svg{width:100%;height:auto;display:block}
+.ha-line{stroke:#c8c1b8;stroke-width:1;fill:none}
+.ha-line.acc{stroke:rgba(13,157,109,.45)}
+.ha-node{fill:#0d9d6d}
+.ha-node.dim{fill:#b9b1a8}
+.ha-node.sm{fill:#fff;stroke:#0d9d6d;stroke-width:1.4}
+.ha-ring{fill:none;stroke:rgba(13,157,109,.32);stroke-width:1}
+.ha-ring.dash{stroke-dasharray:3 6}
+.ha-sig{fill:#0b8a60;animation:ha-pulse 2.8s ease-in-out infinite}
+.ha-sig.d2{animation-delay:.9s}
+.ha-sig.d3{animation-delay:1.7s}
+@keyframes ha-pulse{0%,100%{opacity:.12}50%{opacity:.95}}
+@media(prefers-reduced-motion:reduce){.ha-sig{animation:none;opacity:.5}}
+.ha-lab{font-size:11.5px;fill:#8a8580;font-family:var(--sans)}
+.ha-lab.core{fill:#0b8a60;font-weight:700;font-size:12.5px}
+
 /* ── hero ── */
 .hero{padding:64px 0 30px;text-align:center}
 .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;letter-spacing:.6px;color:var(--acc-bright);background:var(--acc-bg);border:1px solid var(--acc-line);border-radius:999px;padding:6px 14px}
@@ -148,6 +166,72 @@ footer{border-top:1px solid var(--line);background:var(--bg2);margin-top:24px;pa
       <a class="btn primary" href="console.html">הקונסולה החיה
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg></a>
       <a class="btn ghost" href="products.html">קטלוג המוצרים</a>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <svg viewBox="0 0 1200 300" role="presentation">
+        <defs>
+          <radialGradient id="haHalo" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="rgba(13,157,109,.14)"/>
+            <stop offset="55%" stop-color="rgba(13,157,109,.05)"/>
+            <stop offset="100%" stop-color="rgba(13,157,109,0)"/>
+          </radialGradient>
+        </defs>
+        <ellipse cx="600" cy="150" rx="240" ry="120" fill="url(#haHalo)"/>
+        <line class="ha-line" x1="600" y1="150" x2="600" y2="66"/>
+        <line class="ha-line" x1="600" y1="150" x2="600" y2="234"/>
+        <line class="ha-line" x1="600" y1="150" x2="446" y2="108"/>
+        <line class="ha-line" x1="600" y1="150" x2="754" y2="108"/>
+        <line class="ha-line" x1="600" y1="150" x2="462" y2="200"/>
+        <line class="ha-line" x1="600" y1="150" x2="738" y2="200"/>
+        <line class="ha-line" x1="600" y1="150" x2="344" y2="150"/>
+        <line class="ha-line" x1="600" y1="150" x2="856" y2="150"/>
+        <line class="ha-line" x1="600" y1="66" x2="446" y2="108"/>
+        <line class="ha-line" x1="600" y1="66" x2="754" y2="108"/>
+        <line class="ha-line" x1="600" y1="234" x2="462" y2="200"/>
+        <line class="ha-line" x1="600" y1="234" x2="738" y2="200"/>
+        <line class="ha-line" x1="344" y1="150" x2="446" y2="108"/>
+        <line class="ha-line" x1="344" y1="150" x2="462" y2="200"/>
+        <line class="ha-line" x1="856" y1="150" x2="754" y2="108"/>
+        <line class="ha-line" x1="856" y1="150" x2="738" y2="200"/>
+        <line class="ha-line" x1="344" y1="150" x2="196" y2="96"/>
+        <line class="ha-line" x1="344" y1="150" x2="196" y2="206"/>
+        <line class="ha-line" x1="856" y1="150" x2="1004" y2="96"/>
+        <line class="ha-line" x1="856" y1="150" x2="1004" y2="206"/>
+        <line class="ha-line acc" x1="568" y1="150" x2="446" y2="108"/>
+        <line class="ha-line acc" x1="632" y1="150" x2="754" y2="108"/>
+        <circle class="ha-ring" cx="600" cy="150" r="30"/>
+        <circle class="ha-ring dash" cx="600" cy="150" r="52"/>
+        <circle class="ha-ring dash" cx="600" cy="150" r="86" opacity=".5"/>
+        <circle class="ha-node" cx="600" cy="150" r="9"/>
+        <circle cx="600" cy="150" r="3.2" fill="#f5f3f1"/>
+        <circle class="ha-node sm" cx="600" cy="66" r="6"/>
+        <circle class="ha-node sm" cx="600" cy="234" r="6"/>
+        <circle class="ha-node" cx="446" cy="108" r="5"/>
+        <circle class="ha-node" cx="754" cy="108" r="5"/>
+        <circle class="ha-node" cx="462" cy="200" r="5"/>
+        <circle class="ha-node" cx="738" cy="200" r="5"/>
+        <circle class="ha-node sm" cx="344" cy="150" r="4.5"/>
+        <circle class="ha-node sm" cx="856" cy="150" r="4.5"/>
+        <circle class="ha-node dim" cx="196" cy="96" r="3"/>
+        <circle class="ha-node dim" cx="196" cy="206" r="3"/>
+        <circle class="ha-node dim" cx="1004" cy="96" r="3"/>
+        <circle class="ha-node dim" cx="1004" cy="206" r="3"/>
+        <circle class="ha-node dim" cx="524" cy="92" r="2.2"/>
+        <circle class="ha-node dim" cx="676" cy="92" r="2.2"/>
+        <circle class="ha-node dim" cx="524" cy="208" r="2.2"/>
+        <circle class="ha-node dim" cx="676" cy="208" r="2.2"/>
+        <circle class="ha-sig" cx="600" cy="118" r="2.6"/>
+        <circle class="ha-sig d2" cx="528" cy="131" r="2.6"/>
+        <circle class="ha-sig d3" cx="668" cy="169" r="2.6"/>
+        <text class="ha-lab core" x="600" y="36" text-anchor="middle">העיתון היומי</text>
+        <text class="ha-lab" x="446" y="90" text-anchor="middle">הקונסולה החיה</text>
+        <text class="ha-lab" x="754" y="90" text-anchor="middle">המשרד החי</text>
+        <text class="ha-lab" x="462" y="226" text-anchor="middle">נתיב-הכסף</text>
+        <text class="ha-lab" x="738" y="226" text-anchor="middle">תגי-הוכחה</text>
+        <text class="ha-lab core" x="600" y="272" text-anchor="middle">הקופה האמיתית</text>
+        <text class="ha-lab" x="344" y="132" text-anchor="middle">הגריד</text>
+        <text class="ha-lab" x="856" y="132" text-anchor="middle">השרשרת</text>
+      </svg>
     </div>
   </section>
 
