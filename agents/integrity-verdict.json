@@ -1,51 +1,54 @@
 {
  "schema": "integrity-guard/2",
  "scope": "public-twin (Domain home)",
- "at": "2026-10-21T13:16:43.586Z",
- "overall": "FAIL",
+ "at": "2026-10-21T13:53:14.293Z",
+ "overall": "PASS",
  "summary": {
   "sources": 7,
-  "verified": 8,
-  "findings": 1,
-  "counts": {
-   "stale": 1
-  }
+  "verified": 9,
+  "findings": 0,
+  "counts": {}
  },
  "verified": [
   {
    "where": "self:agents/integrity-verdict.json",
    "law": "L0-verified",
-   "detail": "פסק-קודם תקין (PASS) מלפני 1ש'"
+   "detail": "פסק-קודם תקין (FAIL) מלפני 1ש'"
   },
   {
    "where": "Domain:agents/work-orders.json",
    "law": "fresh+parsed",
-   "detail": "גיל 2.5ש' ≤ SLA 4ש'"
+   "detail": "גיל 0.1ש' ≤ SLA 4ש'"
+  },
+  {
+   "where": "Domain:agents/grid-truth.json",
+   "law": "fresh+parsed",
+   "detail": "גיל 0.4ש' ≤ SLA 2ש'"
   },
   {
    "where": "Domain:office/data.json",
    "law": "fresh+parsed",
-   "detail": "גיל 0ש' ≤ SLA 2ש'"
+   "detail": "גיל 0.6ש' ≤ SLA 2ש'"
   },
   {
    "where": "Domain:agents/office-live.json",
    "law": "fresh+parsed",
-   "detail": "גיל 0.2ש' ≤ SLA 4ש'"
+   "detail": "גיל 0.9ש' ≤ SLA 4ש'"
   },
   {
    "where": "FleetHQ:office/state/office-state.json",
    "law": "fresh+parsed",
-   "detail": "גיל 0.1ש' ≤ SLA 4ש'"
+   "detail": "גיל 0.7ש' ≤ SLA 4ש'"
   },
   {
    "where": "sovereign-runner-kit:results/receipts.jsonl",
    "law": "fresh+parsed",
-   "detail": "גיל 1.7ש' ≤ SLA 72ש' · 2 קבלות"
+   "detail": "גיל 2.3ש' ≤ SLA 72ש' · 2 קבלות"
   },
   {
    "where": "Domain:office/data.json",
    "law": "producer-green",
-   "detail": "ריצת-יצרן ירוקה לפני 9 דק'"
+   "detail": "ריצת-יצרן ירוקה לפני 45 דק'"
   },
   {
    "where": "Domain:agents/work-orders.json",
@@ -53,15 +56,9 @@
    "detail": "3 פקודות-פתוחות · schema work-orders/2"
   }
  ],
- "findings": [
-  {
-   "where": "Domain:agents/grid-truth.json",
-   "law": "stale",
-   "detail": "גיל 2.4ש' > SLA 2ש'"
-  }
- ],
+ "findings": [],
  "provenance": {
-  "runUrl": "https://github.com/roshpinacare-sys/Domain/actions/runs/39606554838",
+  "runUrl": "https://github.com/roshpinacare-sys/Domain/actions/runs/39611910879",
   "workflow": "artery-integrity-twin"
  }
 }
