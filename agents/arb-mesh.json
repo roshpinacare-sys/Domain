@@ -1,6 +1,6 @@
 {
   "protocol": "SAOS-ARB-MESH/1",
-  "at": "2026-10-21T02:11:32.819Z",
+  "at": "2026-10-21T02:41:32.983Z",
   "agent": "arb-mesh v1.0.0 (R41 MESH MARKET, CR-0071)",
   "mode": "KEYLESS-MESH-DEMAND",
   "stasisHalted": false,
@@ -22,19 +22,19 @@
     "multi-network vault (R42): custody classes — MEASURED-KEYED is the only mintable class; adjacent networks are OBSERVED (seen, never custody, never a reserve); redeem is ALWAYS honored 1:1 in-ledger (burn before payout); the chain payout is queued for the keyed desks — keyless code never fires a broadcast",
     "uniform batch clearing (R76): the queue clears as ONE batch - canonical order, two-sided netting at the measured fair, one uniform clearing price for every trader, the solver absorbs the remainder; order-invariance (a permuted queue clears byte-identical) is the anti-sandwich proof · the proof lane is DRY (moves nothing), the settle gate stays the owner's"
   ],
-  "verdict": "MESH-LIVE",
-  "batch": "MESH-2026102102-cbe67169",
-  "settledBatch": "MESH-2026102102-cbe67169",
+  "verdict": "GATED-WIRE (edge above floor but no free capital to arm the agents — named, never faked)",
+  "batch": "MESH-2026102102-4e0727ad",
+  "settledBatch": null,
   "coreLedger": {
-    "seq": 362,
-    "at": "2026-10-21T02:06:26.250Z",
-    "ageHours": 0.09,
+    "seq": 364,
+    "at": "2026-10-21T02:11:33.110Z",
+    "ageHours": 0.5,
     "conservationOk": false,
-    "attestation": "bb368cbfc9441d13",
+    "attestation": "ee21d5cddb8a8b49",
     "feedFresh": true
   },
   "routerSeen": {
-    "at": "2026-10-21T02:11:31.514Z",
+    "at": "2026-10-21T02:41:31.762Z",
     "arbRows": 4
   },
   "roster": [
@@ -44,15 +44,15 @@
     {
       "id": "A1",
       "name": "P3 STEEM/SBD pool mid vs CEX-implied fair",
-      "poolMidNano": "107992791",
-      "fairNano": "105987210",
-      "netBps": 154.23,
+      "poolMidNano": "106800245",
+      "fairNano": "111864060",
+      "netBps": 417.68,
       "thresholdBps": 100,
-      "from": "STEEM",
-      "to": "SBD",
+      "from": "SBD",
+      "to": "STEEM",
       "railOwner": "treasury (our own pool — atomic, no bridge)",
       "source": "dex-core.json (our pool — atomic, no bridge)",
-      "at": "2026-10-21T02:11:32.819Z"
+      "at": "2026-10-21T02:41:32.983Z"
     }
   ],
   "keyedRailPlans": [
@@ -63,47 +63,10 @@
       "verdict": "PLAN-KEYED-RAIL (the signing desks own this rail — the keyless mesh never signs)"
     }
   ],
-  "intentsDrafted": 1,
-  "intents": [
-    {
-      "agent": "operator",
-      "from": "STEEM",
-      "to": "SBD",
-      "amountIn": "4121",
-      "minOut": "438",
-      "quote": "440",
-      "rowId": "A1",
-      "share": "OPERATOR-40%",
-      "heldMu": "0",
-      "wireExpected": "4121"
-    }
-  ],
-  "wires": 1,
-  "fills": [
-    {
-      "seq": 364,
-      "type": "AGENT_FILL",
-      "agent": "operator",
-      "from": "STEEM",
-      "to": "SBD",
-      "amountIn": "4121",
-      "amountOut": "440",
-      "routeIds": [
-        "P3"
-      ],
-      "hops": [
-        {
-          "pool": "P3",
-          "in": "4121",
-          "out": "440",
-          "fee": "10"
-        }
-      ],
-      "edgeMu": "-20",
-      "fairUsed": "CEX-FAIR (SBD per STEEM)",
-      "feesMu": "10"
-    }
-  ],
+  "intentsDrafted": 0,
+  "intents": [],
+  "wires": 0,
+  "fills": [],
   "rejects": [],
   "sizeLadder": [
     {
@@ -173,29 +136,29 @@
       "pair": "STEEM/SBD",
       "kind": "VOLATILE",
       "feeBps": 25,
-      "mid": 0.10739419,
+      "mid": 0.10680025,
       "unit": "SBD",
       "rungs": [
         {
           "sizeBps": 10,
-          "sizeIn": "1481",
+          "sizeIn": "1485",
           "out": "158",
-          "execPrice": 0.10668467,
-          "slipBps": -0.66
+          "execPrice": 0.10639731,
+          "slipBps": -0.37
         },
         {
           "sizeBps": 100,
-          "sizeIn": "14818",
-          "out": "1571",
-          "execPrice": 0.10601971,
-          "slipBps": -1.27
+          "sizeIn": "14859",
+          "out": "1567",
+          "execPrice": 0.10545797,
+          "slipBps": -1.25
         },
         {
           "sizeBps": 500,
-          "sizeIn": "74092",
-          "out": "7560",
-          "execPrice": 0.10203531,
-          "slipBps": -4.98
+          "sizeIn": "74298",
+          "out": "7539",
+          "execPrice": 0.10146976,
+          "slipBps": -4.99
         }
       ]
     }
