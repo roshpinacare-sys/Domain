@@ -1,43 +1,43 @@
 {
  "schema": "office.pulse/1",
- "generatedAt": "2026-10-21T21:47:40.128Z",
+ "generatedAt": "2026-10-21T21:52:51.604Z",
  "generatedAgeNote": "this file is rewritten by the office-pulse workflow; judge freshness by generatedAt",
  "verdict": "ALIVE",
  "verdictChecks": [
   {
    "name": "office-push",
    "state": "fresh",
-   "detail": "0min <= 2880min"
+   "detail": "4min <= 2880min"
   },
   {
    "name": "office-ci",
    "state": "fresh",
-   "detail": "231min <= 1560min"
+   "detail": "236min <= 1560min"
   },
   {
    "name": "wallet-artery",
    "state": "fresh",
-   "detail": "43min <= 2880min · PASS"
+   "detail": "48min <= 2880min · PASS"
   },
   {
    "name": "grid-artery",
    "state": "fresh",
-   "detail": "43min <= 720min · PASS"
+   "detail": "48min <= 720min · PASS"
   },
   {
    "name": "fleet-artery",
    "state": "fresh",
-   "detail": "16min <= 2880min · PASS"
+   "detail": "21min <= 2880min · PASS"
   },
   {
    "name": "sovereign-tick",
    "state": "fresh",
-   "detail": "15min <= 360min"
+   "detail": "4min <= 360min"
   },
   {
    "name": "runtime-heartbeat",
    "state": "fresh",
-   "detail": "2min <= 90min"
+   "detail": "7min <= 90min"
   }
  ],
  "degraded": [],
@@ -51,50 +51,50 @@
  },
  "office": {
   "repo": "roshpinacare-sys/FleetHQ",
-  "pushedAt": "2026-10-21T21:47:13Z",
-  "pushedAgeMin": 0,
+  "pushedAt": "2026-10-21T21:49:06Z",
+  "pushedAgeMin": 4,
   "openIssues": 23,
   "wire": [
+   {
+    "sha": "6197484",
+    "msg": "pacemaker receipt: 2026-10-21T21:49:04Z",
+    "at": "2026-10-21T21:49:04Z",
+    "ageMin": 4,
+    "author": "roshpinacare-sys"
+   },
+   {
+    "sha": "bab4bab",
+    "msg": "sovereign-selfscan: network state + claims 2026-10-21T21:48Z [skip ci]",
+    "at": "2026-10-21T21:48:40Z",
+    "ageMin": 4,
+    "author": "roshpinacare-sys"
+   },
+   {
+    "sha": "081ed7a",
+    "msg": "pacemaker receipt: 2026-10-21T21:47:40Z",
+    "at": "2026-10-21T21:47:40Z",
+    "ageMin": 5,
+    "author": "roshpinacare-sys"
+   },
    {
     "sha": "1d678ca",
     "msg": "decide: sovereign decision cycle (SOV-POLICY/1) — sense/decide/record, evidence-anchored",
     "at": "2026-10-21T21:47:12Z",
-    "ageMin": 0,
+    "ageMin": 6,
     "author": "roshpinacare-sys"
    },
    {
     "sha": "b8f3f1a",
     "msg": "silence-watchdog: 5 alarm(s) sig=sig:7a404d3037e87994 [skip ci]",
     "at": "2026-10-21T21:43:01Z",
-    "ageMin": 5,
+    "ageMin": 10,
     "author": "silence-watchdog"
    },
    {
     "sha": "8649a45",
     "msg": "pacemaker receipt: 2026-10-21T21:30:22Z",
     "at": "2026-10-21T21:30:22Z",
-    "ageMin": 17,
-    "author": "roshpinacare-sys"
-   },
-   {
-    "sha": "d2bf132",
-    "msg": "opens-closer: measured freshness ledger + revival dispatches [skip ci]",
-    "at": "2026-10-21T21:30:22Z",
-    "ageMin": 17,
-    "author": "roshpinacare-sys"
-   },
-   {
-    "sha": "02e5b08",
-    "msg": "pacemaker receipt: 2026-10-21T21:19:30Z",
-    "at": "2026-10-21T21:19:30Z",
-    "ageMin": 28,
-    "author": "roshpinacare-sys"
-   },
-   {
-    "sha": "89d878d",
-    "msg": "identity-root: agents=5",
-    "at": "2026-10-21T21:19:10Z",
-    "ageMin": 28,
+    "ageMin": 22,
     "author": "roshpinacare-sys"
    }
   ],
@@ -115,10 +115,10 @@
     }
    ]
   },
-  "worklogLastTouchAgeMin": 1739,
+  "worklogLastTouchAgeMin": 1744,
   "boot": {
    "at": "2026-10-16T13:17:24.885Z",
-   "ageMin": 7710,
+   "ageMin": 7715,
    "office": {
     "reception_3000": "up",
     "foreman_3010": "up",
@@ -129,7 +129,7 @@
   "ci": {
    "overall": "PASS",
    "at": "2026-10-21T17:56:24.757Z",
-   "ageMin": 231,
+   "ageMin": 236,
    "reason": "all five checks ran and passed",
    "runUrl": "https://github.com/roshpinacare-sys/FleetHQ/actions/runs/39648091966",
    "checks": {
@@ -145,7 +145,7 @@
   "wallet": {
    "source": "Autonomy/receipts/wallet/verdict.json",
    "at": "2026-10-21T21:04:58.499Z",
-   "ageMin": 43,
+   "ageMin": 48,
    "overall": "PASS",
    "reason": "install, prisma, typecheck, build and all wallet laws pass",
    "alerts": 0,
@@ -154,7 +154,7 @@
   "grid": {
    "source": "Autonomy/receipts/grid/verdict.json",
    "at": "2026-10-21T21:04:51.642Z",
-   "ageMin": 43,
+   "ageMin": 48,
    "overall": "PASS",
    "reason": "grid state measured from git; laws pass",
    "alerts": 0,
@@ -163,7 +163,7 @@
   "fleet": {
    "source": "Autonomy/receipts/fleet/verdict.json",
    "at": "2026-10-21T21:31:26.661Z",
-   "ageMin": 16,
+   "ageMin": 21,
    "overall": "PASS",
    "reason": "steem=PASS · saos-dex=PASS · saos-agents=PASS · Saosmartwallet=PASS · Adsmarket=PASS",
    "alerts": 2,
@@ -171,14 +171,14 @@
   },
   "tick": {
    "source": "Autonomy/receipts/latest.json",
-   "at": "2026-10-21T21:32:49.332Z",
-   "ageMin": 15,
-   "chain": "859e446e2b59"
+   "at": "2026-10-21T21:49:02.005Z",
+   "ageMin": 4,
+   "chain": "e11ced4e48bf"
   }
  },
  "runtime": {
   "lastSuccessAt": "2026-10-21T21:45:57Z",
-  "lastSuccessAgeMin": 2,
+  "lastSuccessAgeMin": 7,
   "lastSuccessName": "sovereign-builder",
   "lastConclusion": "success"
  }
