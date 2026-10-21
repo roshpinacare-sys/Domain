@@ -62,7 +62,7 @@ section{padding:34px 0}
 .shot{display:flex;flex-direction:column;gap:14px;margin-top:20px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px}
 .shot img{width:100%;height:auto;border-radius:var(--r-sm);border:1px solid var(--line);display:block}
 .shot .cap{font-size:12.5px;color:var(--faint);line-height:1.7}
-@media(min-width:760px){.shot{flex-direction:row;align-items:center}.shot img{width:52%;flex:none}.shot .cap{flex:1}}
+@media(min-width:760px){.shot{flex-direction:row;align-items:center}.shot a.shot3d{width:52%;flex:none;min-width:0}.shot img{width:100%}.shot .cap{flex:1;min-width:0}}
 ul.wire{list-style:none;display:flex;flex-direction:column;gap:6px;margin-top:10px}
 ul.wire li{font-size:12px;color:var(--dim);display:flex;gap:9px;align-items:baseline;border-bottom:1px dashed var(--line);padding-bottom:6px}
 ul.wire li:last-child{border-bottom:0;padding-bottom:0}
@@ -146,6 +146,58 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
   .dmap .dmap-l a small{display:block;font-weight:400;font-size:10px;color:var(--faint);direction:ltr;text-align:left;font-family:var(--mono)}
   .dmap .chip{align-self:flex-start;margin-top:auto}
   .dmap h3 small{display:block;font-weight:400;font-size:10.5px;color:var(--faint);direction:ltr;text-align:right}
+
+  /* ═══ W30 capability revolution · real AI-generated brand art ═══ */
+  .hero{position:relative;overflow:hidden}
+  .hero-art{position:absolute;inset:0;z-index:0;pointer-events:none}
+  .hero-art img{width:100%;height:100%;object-fit:cover;object-position:center 38%;opacity:.52;transform:scale(1.02)}
+  .hero-art::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,12,14,.42) 0%,rgba(12,12,14,.28) 34%,rgba(12,12,14,.92) 82%,var(--bg) 100%)}
+  .hero > .wrap{position:relative;z-index:1}
+  h1{text-shadow:0 2px 26px rgba(0,0,0,.65)}
+  h1 .en{margin-inline-start:6px;letter-spacing:.5px}
+  .hero .lede{text-shadow:0 1px 14px rgba(0,0,0,.7)}
+  .capchips{display:flex;flex-wrap:wrap;gap:9px;margin-top:18px}
+  .capchips span{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--text);border:1px solid var(--line2);background:rgba(20,20,24,.72);backdrop-filter:blur(6px);border-radius:999px;padding:7px 14px}
+  .capchips span b{color:var(--acc-bright)}
+
+  /* capability band — proof, not promise */
+  .capband{background:linear-gradient(180deg,var(--bg2),var(--bg));border-block:1px solid var(--line)}
+  .capband .sub{margin-bottom:20px}
+  .capgrid{display:grid;gap:14px;grid-template-columns:1fr}
+  @media(min-width:640px){.capgrid{grid-template-columns:1fr 1fr}}
+  @media(min-width:1000px){.capgrid{grid-template-columns:repeat(3,1fr)}}
+  .capcard{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;transition:transform .18s ease,border-color .18s ease;display:block;text-decoration:none}
+  .capcard:hover{transform:translateY(-3px);border-color:var(--acc-line);text-decoration:none}
+  .capcard .art{position:relative;aspect-ratio:16/9;overflow:hidden;background:#000}
+  .capcard .art img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s ease}
+  .capcard:hover .art img{transform:scale(1.045)}
+  .capcard .art::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(12,12,14,.55),transparent 52%)}
+  .capcard .cb{display:flex;flex-direction:column;gap:5px;padding:14px 16px 15px}
+  .capcard .cb h3{font-size:15.5px;font-weight:800;letter-spacing:-.2px;color:var(--text)}
+  .capcard .cb p{font-size:12.5px;line-height:1.65;color:var(--dim);margin:0}
+  .capcard .pro{font-size:10px;color:var(--faint);border-top:1px dashed var(--line);padding:9px 16px 12px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;direction:ltr;unicode-bidi:embed}
+  .capcard .pro b{color:var(--acc-bright);font-weight:600}
+  .capcard .tag{position:absolute;top:12px;inset-inline-start:12px;z-index:2;font-size:10.5px;font-weight:700;color:#ffe9c9;background:rgba(31,24,16,.86);border:1px solid #5c4326;border-radius:999px;padding:5px 11px;backdrop-filter:blur(4px)}
+
+  /* live composition bar — real measured ops mix */
+  .compbar{display:flex;height:14px;border-radius:8px;overflow:hidden;border:1px solid var(--line2);background:var(--panel2);direction:ltr}
+  .compbar i{display:block;height:100%;min-width:0}
+  .compbar .c-f{background:linear-gradient(180deg,#fbbf24,#d99a06)}
+  .compbar .c-s{background:linear-gradient(180deg,#8a6d1d,#6b5416)}
+  .compbar .c-l{background:linear-gradient(180deg,#57534e,#44403c)}
+  .compbar .c-o{background:linear-gradient(180deg,#26262c,#1c1c21)}
+  .compleg{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px;font-size:11px;color:var(--faint);direction:ltr;unicode-bidi:embed}
+  .compleg span::before{content:"";display:inline-block;width:9px;height:9px;border-radius:3px;margin-inline-end:6px;vertical-align:-1px}
+  .compleg .c-f::before{background:#fbbf24}
+  .compleg .c-s::before{background:#8a6d1d}
+  .compleg .c-l::before{background:#57534e}
+  .compleg .c-o::before{background:#26262c}
+
+  /* scrollbars — the whole surface, not just panels */
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-track{background:var(--bg)}
+  ::-webkit-scrollbar-thumb{background:#2c2c33;border-radius:6px;border:2px solid var(--bg)}
+  ::-webkit-scrollbar-thumb:hover{background:#3f3f46}
 </style>
 </head>
 <body>
@@ -196,6 +248,9 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
 <main>
   <!-- ========== SECTION 1 · THE OFFICE ========== -->
   <section id="office" class="hero">
+    <div class="hero-art" aria-hidden="true">
+      <img src="assets/art/art-console-hero.jpg" alt="" fetchpriority="high">
+    </div>
     <div class="wrap">
       <span class="kicker"><span class="dot"></span> המשרד פתוח · רץ עכשיו</span>
       <h1>מפקדת הצי <span class="en mono">Fleet&nbsp;HQ</span></h1>
@@ -204,6 +259,12 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
         המשרד החי של הצי פתוח לציבור · קיר-משימות, עובדים בשמרות, ספריית דוקטרינה ·
         הכול בהרצה רציפה ומתועדת, בלי דלתות סגורות.
       </p>
+      <div class="capchips" aria-label="יכולות מוכחות בעמוד זה">
+        <span><b>●</b> מדידה חיה בכל 5 דקות</span>
+        <span><b>●</b> עיגון-שרשרת חתום · 1,783 עדויות</span>
+        <span><b>●</b> יצירת-AI מובנית בארכיטקטורה</span>
+        <span><b>●</b> אפס-אמון · אמת-בעצמך</span>
+      </div>
       <div class="cta-row">
         
         <a class="btn ghost" href="marketing/"> המוצרים </a>
@@ -234,6 +295,39 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
         <div class="card"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-board"/></svg></span><h3>קיר-המשימות</h3><p>כל תפקיד בצי מוצג פומבית · מה רץ עכשיו, מה הושלם, מה נחסם ולמה. כולל שורת-חסימה גלויה לכל עיכוב.</p></div>
         <div class="card"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-users"/></svg></span><h3><span id="crew-count">6</span> עובדים</h3><p>סוכני-עבודה מקיימים את המשמרת במקביל · בדיקות, תוכן, כלכלה, גריד ומחקר, כל אחד עם יומן ריצות מאומת · המספר נמדד חי מרשימת-הצוות.</p></div>
         <div class="card"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-book"/></svg></span><h3>הספרייה</h3><p>דוקטרינה, מפת-תפקידים לכל היחידות ותוכניות עבודה, קריא לכולם, כולל מסמכי-עדכון מתוארכים.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SECTION 1b · PROVEN CAPABILITIES (W30 · trace 1a15d213aca02f45) ========== -->
+  <section id="capabilities" class="capband">
+    <div class="wrap">
+      <h2 class="sec">היכולות — מוכחות בפועל, לא בהבטחה</h2>
+      <p class="sub">כל יצירה כאן <b>נוצרה על-ידי הארכיטקטורה עצמה</b> — מנוע-יצירת-תמונות AI בתוך משמרת אחת, ללא צלם, ללא מעצב אנושי, ללא רכישה. זו לא ויטרינה: אלו הנכסים החיים של העמודים שלנו, עם תיעוד-מקור מלא ב-git. היכולת לא נטענת — היא נמדדת בכל פיקסל.</p>
+      <div class="capgrid">
+        <a class="capcard" href="#office">
+          <span class="tag">בשימוש · עמוד זה</span>
+          <div class="art"><img src="assets/art/art-console-hero.jpg" alt="אולם-הפיקוד של הצי — קבוצת-זהב מרחפת מעל שולחן-פיקוד" loading="lazy"></div>
+          <div class="cb"><h3>אולם-הפיקוד</h3><p>נכס-הגבורה של הקונסולה החיה: קבוצת-הצי מרחפת מעל שולחן-הפיקוד של הריבונות.</p></div>
+          <div class="pro"><span>engine: <b>image-gen AI</b></span><span>2026-10-21</span><span>1344×768</span></div>
+        </a>
+        <a class="capcard" href="press/">
+          <span class="tag">בשימוש · עיתון-הצי</span>
+          <div class="art"><img src="assets/art/art-press-masthead.jpg" alt="שער-עיתון חרות בזהב — מכבש דפוס וזרי-דפנה" loading="lazy"></div>
+          <div class="cb"><h3>שער-העיתון</h3><p>מסטהד חרות-זהב לעיתון-הצי: עיתון אמיתי עם מהדורה, סיפור-שער ותמונת-שער שנוצרה ב-AI.</p></div>
+          <div class="pro"><span>engine: <b>image-gen AI</b></span><span>2026-10-21</span><span>1344×768</span></div>
+        </a>
+        <a class="capcard" href="money.html">
+          <span class="tag">בשימוש · נתיב-הכסף</span>
+          <div class="art"><img src="assets/art/art-money.jpg" alt="נהר-זהב זורם אל כספת אבן בקניון אובסידיאן" loading="lazy"></div>
+          <div class="cb"><h3>נתיב-הכסף</h3><p>נהר-הזהב אל הכספת: המטאפורה הוויזואלית של עמוד נתיב-הכסף — מהשרשרת ועד הרווח הנמדד.</p></div>
+          <div class="pro"><span>engine: <b>image-gen AI</b></span><span>2026-10-21</span><span>1344×768</span></div>
+        </a>
+      </div>
+      <div class="law" style="margin-top:14px">
+        <span>provenance: assets/art/ · קומיט חתום ב-git</span>
+        <span>zero-human-assets · zero-purchases</span>
+        <span>רישוי: נכסי-הריבונות עצמה</span>
       </div>
     </div>
   </section>
@@ -302,6 +396,7 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
             <b>TPS</b><i class="mono" id="pw-tps">…</i>
             <b>הפקדות פתוחות</b><i class="mono" id="pw-dep">…</i>
           </div>
+          <div id="pw-bars" style="margin-top:6px" aria-label="הרכבת ops נמדדת"></div>
           <div class="pfoot"><span>עודכן: <span class="upd" id="pw-upd">…</span></span><span class="src">Domain/dex/world+deposits</span></div>
         </div>
 
@@ -860,6 +955,26 @@ function loadProbes(){
 }
 
 /* -- 5. WORLD book + deposits (same-origin, bot-refreshed) -- */
+/* W30: measured ops composition bar — fills/swaps/ladders share of opsTotal,
+   rendered from the SAME fetched world state · no extra fetch, no estimate. */
+function nfW30(n){ return (typeof n === 'number' && isFinite(n)) ? n.toLocaleString('en-US') : String(n == null ? '…' : n); }
+function compBar(s){
+  var el = document.getElementById('pw-bars'); if(!el) return;
+  var ops = s.opsTotal, f = s.fills, sw = s.swaps, ld = s.ladders;
+  if(!(ops > 0) || f == null || sw == null){ el.style.display = 'none'; return; }
+  var rest = Math.max(0, ops - (f + sw + (ld || 0)));
+  var pf = (f / ops) * 100, ps = (sw / ops) * 100, pl = ((ld || 0) / ops) * 100, po = (rest / ops) * 100;
+  el.style.display = '';
+  el.innerHTML = '<div class="compbar" role="img" aria-label="fills ' + pf.toFixed(1) + '% · swaps ' + ps.toFixed(1) + '%">'
+    + '<i class="c-f" style="width:' + pf.toFixed(2) + '%"></i>'
+    + '<i class="c-s" style="width:' + ps.toFixed(2) + '%"></i>'
+    + '<i class="c-l" style="width:' + pl.toFixed(2) + '%"></i>'
+    + '<i class="c-o" style="width:' + po.toFixed(2) + '%"></i></div>'
+    + '<div class="compleg"><span class="c-f">fills ' + nfW30(f) + ' (' + pf.toFixed(1) + '%)</span>'
+    + '<span class="c-s">swaps ' + nfW30(sw) + ' (' + ps.toFixed(1) + '%)</span>'
+    + '<span class="c-l">ladders ' + nfW30(ld || 0) + '</span>'
+    + '<span class="c-o">other ops ' + nfW30(rest) + '</span></div>';
+}
 function loadWorld(){
   jget('dex/world.json', 12000).then(function(d){
     var at = d.publishedAt || null;
@@ -868,6 +983,7 @@ function loadWorld(){
     $('pw-ops').textContent = s.opsTotal != null ? String(s.opsTotal) : '…';
     $('pw-fs').textContent = (s.fills != null ? s.fills : '…') + ' / ' + (s.swaps != null ? s.swaps : '…');
     $('pw-tps').textContent = s.tps != null ? String(s.tps) : '…';
+    try { compBar(s); } catch(e){}
     $('pw-upd').textContent = utcClock(at || new Date());
     chipMerge('pw-chip', at, 'pw-has-dep');
   }).catch(function(){

@@ -101,6 +101,11 @@ header.site{border-bottom:1px solid var(--line);background:#0d1116}
 .brand{font-weight:800;font-size:18px}.brand small{display:block;font-weight:400;color:var(--faint);font-size:11px}
 h1{font-size:34px;margin:30px 0 4px}h1 em{color:var(--gold);font-style:normal}
 .sub{color:var(--faint);margin:0 0 18px}
+/* W30: real AI-generated money-path art — the vault river */
+.whero{position:relative;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:14px 0;background:#0d0b08}
+.whero img{display:block;width:100%;max-height:300px;object-fit:cover;object-position:center 45%}
+.whero figcaption{position:absolute;inset-inline:0;bottom:0;padding:12px 18px;font-size:13px;color:#f3e6c4;background:linear-gradient(180deg,rgba(10,8,5,0),rgba(10,8,5,.85));line-height:1.7}
+.whero figcaption b{color:var(--gold)}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:14px 0}
 h2{margin:0 0 10px;font-size:21px}
 .kick{display:block;font-size:11.5px;color:var(--gold);font-weight:600;letter-spacing:.4px}
@@ -141,6 +146,11 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
 <main class="wrap">
   <h1>ארנק-<em>אמת</em> · בכתב</h1>
   <p class="sub">עמוד-האמת האפס-JS של הארנק — תמיד נרנדר, גם בלי שום סקריפט · הארנק האינטראקטיבי (חתימה במכשיר): <a href="wallet.html">wallet.html</a> · אפוי ב-${new Date().toISOString()} · כל עובדה מלדגר ציבורי מחויב-בגיט עם קישור-מקור</p>
+
+  <figure class="whero">
+    <img src="${SITE}assets/art/art-money.jpg" alt="נהר-זהב זורם אל כספת-אבן בקניון אובסידיאן — נוצר במנוע-יצירת-תמונות AI של הארכיטקטורה, 2026-10-21" loading="lazy">
+    <figcaption><b>נהר-הזהב אל הכספת</b> — התמונה הזו לא נקנתה ולא צולמה: נוצרה על-ידי מנוע-ה-AI של הארכיטקטורה ב-2026-10-21 · provenance חתום ב-git (<span dir="ltr">assets/art/</span>). היכולת מוכחת בכל עמוד.</figcaption>
+  </figure>
 
   <div class="card">
     <h2>נתיב-הכסף<span class="kick">מכסף-חוץ ועד הספר הפנימי — ארבע תחנות, כולן נמדדות</span></h2>
