@@ -1,213 +1,297 @@
 {
- "at": "2026-10-21T08:41:29.490Z",
- "agent": "market-grid v1.3.0 (Z-60+ internal-market sovereignty instrument; v1.3.0 CR-0062: HE pond law + daily-history probe-first)",
- "laws": [
-  "official sources only (chain nodes + sidechain RPC)",
-  "keyless: reads only, executor = owner-gated preview, never broadcast",
-  "paper is paper (labeled ledger, never laundered into realized book)",
-  "fail-loud per market",
-  "single canon (market-grid.json/.md)",
-  "the pond law: every venue carries its measured 24h volume (v1.3.0 CR-0062)"
- ],
- "markets": [
-  {
-   "market": "SBD/STEEM (internal steem)",
-   "chain": "steem",
-   "bid": 0.10336985734959686,
-   "ask": 0.1033805437816603,
-   "mid": 0.1033752,
-   "spreadPct": 0.0103,
-   "pct24h": -0.326,
-   "band": {
-    "low": 0.10285832,
-    "high": 0.10389208
-   },
-   "grid": [
-    {
-     "side": "buy",
-     "price": 0.1029617
-    },
-    {
-     "side": "buy",
-     "price": 0.1025482
-    },
-    {
-     "side": "buy",
-     "price": 0.1021347
-    },
-    {
-     "side": "buy",
-     "price": 0.1017212
-    },
-    {
-     "side": "buy",
-     "price": 0.1013077
-    },
-    {
-     "side": "sell",
-     "price": 0.1037887
-    },
-    {
-     "side": "sell",
-     "price": 0.1042022
-    },
-    {
-     "side": "sell",
-     "price": 0.1046157
-    },
-    {
-     "side": "sell",
-     "price": 0.1050292
-    },
-    {
-     "side": "sell",
-     "price": 0.1054427
-    }
-   ],
-   "step": 0.0004135,
-   "spacingDisciplined": true,
-   "paperFills": 9,
-   "tapeSamples": 20,
-   "tapeLevels": [
-    9.690058479532164,
-    9.690058479532164,
-    9.761904761904761,
-    9.638,
-    9.638,
-    0.10382059800664452,
-    0.10382059800664452,
-    9.843,
-    9.842,
-    0.10160375513397221,
-    9.836065573770492,
-    9.804744525547443,
-    9.667682926829267,
-    9.666,
-    9.656,
-    9.646,
-    9.636,
-    9.636,
-    9.628,
-    9.628
-   ],
-   "depthBids": 10,
-   "depthAsks": 10,
-   "volume24h": {
-    "SBD": 1892.08,
-    "STEEM": 18216.727
-   },
-   "volume24hSbdTerm": 1892.08,
-   "ms": 1523
-  }
- ],
- "hiveEngine": {
-  "market": "Hive-Engine basket (sidechain DEX)",
-  "rows": [
-   {
-    "symbol": "BEE",
-    "lastPrice": "0.56496740",
-    "bid": 0.5649674,
-    "ask": 0.56498327,
-    "mid": 0.56497533,
-    "spreadPct": 0.0028,
-    "feePct": 0,
-    "feeBps": 0,
-    "volume24h": 199.83819575,
-    "pond24hHive": 199.83819575,
-    "pondTerm": "SWAP.HIVE (base-asset units, HE metrics.volume)",
-    "gridFeasible": false,
-    "rungs": 10,
-    "step": 0.0022599
-   },
-   {
-    "symbol": "SWAP.LTC",
-    "lastPrice": "1247.00000000",
-    "bid": 1232.00000124,
-    "ask": 1237.62672555,
-    "mid": 1234.8133634,
-    "spreadPct": 0.4557,
-    "feePct": 0,
-    "feeBps": 0,
-    "volume24h": 7440.57824479,
-    "pond24hHive": 7440.57824479,
-    "pondTerm": "SWAP.HIVE (base-asset units, HE metrics.volume)",
-    "gridFeasible": true,
-    "rungs": 10,
-    "step": 4.93925345
-   },
-   {
-    "symbol": "SWAP.DOGE",
-    "lastPrice": "1.63709033",
-    "bid": 1.62016209,
-    "ask": 1.63709033,
-    "mid": 1.62862621,
-    "spreadPct": 1.0394,
-    "feePct": 0,
-    "feeBps": 0,
-    "volume24h": 235.15008537,
-    "pond24hHive": 235.15008537,
-    "pondTerm": "SWAP.HIVE (base-asset units, HE metrics.volume)",
-    "gridFeasible": true,
-    "rungs": 10,
-    "step": 0.0065145
-   },
-   {
-    "symbol": "CENT",
-    "lastPrice": "0.00112480",
-    "bid": 0.0011249,
-    "ask": 0.0011298,
-    "mid": 0.00112735,
-    "spreadPct": 0.4346,
-    "feePct": 0,
-    "feeBps": 0,
-    "volume24h": 82.85763008,
-    "pond24hHive": 82.85763008,
-    "pondTerm": "SWAP.HIVE (base-asset units, HE metrics.volume)",
-    "gridFeasible": true,
-    "rungs": 10,
-    "step": 0.00000451
-   },
-   {
-    "symbol": "WAIV",
-    "lastPrice": "0.19453000",
-    "bid": 0.19453,
-    "ask": 0.19674,
-    "mid": 0.195635,
-    "spreadPct": 1.1297,
-    "feePct": 0,
-    "feeBps": 0,
-    "volume24h": 14.24402457,
-    "pond24hHive": 14.24402457,
-    "pondTerm": "SWAP.HIVE (base-asset units, HE metrics.volume)",
-    "gridFeasible": true,
-    "rungs": 10,
-    "step": 0.00078254
-   }
+  "at": "2026-10-21T09:52:08.320Z",
+  "agent": "market-grid v1.3.0 (Z-60+ internal-market sovereignty instrument; v1.3.0 CR-0062: HE pond law + daily-history probe-first)",
+  "laws": [
+    "official sources only (chain nodes + sidechain RPC)",
+    "keyless: reads only, executor = owner-gated preview, never broadcast",
+    "paper is paper (labeled ledger, never laundered into realized book)",
+    "fail-loud per market",
+    "single canon (market-grid.json/.md)",
+    "the pond law: every venue carries its measured 24h volume (v1.3.0 CR-0062)"
   ],
-  "historyProbe": {
-   "alive": false,
-   "reason": "HE-DAILY-HISTORY-DARK: marketHistory/history answered null (not RPC-exposed) — the day it answers, the pond becomes a series"
+  "markets": [
+    {
+      "market": "HBD/HIVE (internal hive)",
+      "chain": "hive",
+      "bid": 0.05059105249154282,
+      "ask": 0.0507996953541508,
+      "mid": 0.05069537,
+      "spreadPct": 0.5,
+      "pct24h": 3.076,
+      "band": {
+        "low": 0.04913589,
+        "high": 0.05225485
+      },
+      "grid": [
+        {
+          "side": "buy",
+          "price": 0.05038348
+        },
+        {
+          "side": "buy",
+          "price": 0.05007158
+        },
+        {
+          "side": "buy",
+          "price": 0.04975969
+        },
+        {
+          "side": "buy",
+          "price": 0.04944779
+        },
+        {
+          "side": "buy",
+          "price": 0.04913589
+        },
+        {
+          "side": "sell",
+          "price": 0.05100727
+        },
+        {
+          "side": "sell",
+          "price": 0.05131917
+        },
+        {
+          "side": "sell",
+          "price": 0.05163106
+        },
+        {
+          "side": "sell",
+          "price": 0.05194296
+        },
+        {
+          "side": "sell",
+          "price": 0.05225485
+        }
+      ],
+      "step": 0.0003119,
+      "spacingDisciplined": true,
+      "paperFills": 5,
+      "tapeSamples": 20,
+      "tapeLevels": [
+        19.799107142857142,
+        19.77409638554217,
+        0.05075854246419963,
+        0.05069083868696647,
+        0.05069530012321774,
+        20,
+        0.05065757428153921,
+        0.05066168709913128,
+        0.050800057397745,
+        0.050762141084721726,
+        0.05072497123130035,
+        0.05070228139969149,
+        0.05067084383300415,
+        19.803449744463375,
+        19.8,
+        19.797019734192506,
+        19.822050290135394,
+        19.79623287671233,
+        20,
+        0.05070250458155162
+      ],
+      "depthBids": 10,
+      "depthAsks": 10,
+      "volume24h": {
+        "HIVE": 121442.737,
+        "HBD": 6125.54
+      },
+      "volume24hSbdTerm": 6125.54,
+      "ms": 530
+    },
+    {
+      "market": "SBD/STEEM (internal steem)",
+      "chain": "steem",
+      "bid": 0.10199383655738313,
+      "ask": 0.10345541071798055,
+      "mid": 0.10272462,
+      "spreadPct": 0,
+      "pct24h": -0.004,
+      "band": {
+        "low": 0.102211,
+        "high": 0.10323825
+      },
+      "grid": [
+        {
+          "side": "buy",
+          "price": 0.10231373
+        },
+        {
+          "side": "buy",
+          "price": 0.10190283
+        },
+        {
+          "side": "buy",
+          "price": 0.10149193
+        },
+        {
+          "side": "buy",
+          "price": 0.10108103
+        },
+        {
+          "side": "buy",
+          "price": 0.10067013
+        },
+        {
+          "side": "sell",
+          "price": 0.10313552
+        },
+        {
+          "side": "sell",
+          "price": 0.10354642
+        },
+        {
+          "side": "sell",
+          "price": 0.10395732
+        },
+        {
+          "side": "sell",
+          "price": 0.10436822
+        },
+        {
+          "side": "sell",
+          "price": 0.10477912
+        }
+      ],
+      "step": 0.0004109,
+      "spacingDisciplined": true,
+      "paperFills": 5,
+      "tapeSamples": 20,
+      "tapeLevels": [
+        9.900990099009901,
+        9.900990099009901,
+        9.900990099009901,
+        9.900990099009901,
+        9.900990099009901,
+        9.8125,
+        9.8,
+        9.900990099009901,
+        9.900990099009901,
+        9.900990099009901,
+        9.900990099009901,
+        9.884615384615385,
+        9.776315789473685,
+        9.803921568627452,
+        9.803921568627452,
+        9.803921568627452,
+        9.803921568627452,
+        9.803921568627452,
+        9.803921568627452,
+        9.803921568627452
+      ],
+      "depthBids": 10,
+      "depthAsks": 10,
+      "volume24h": {
+        "SBD": 1884.672,
+        "STEEM": 18140.87
+      },
+      "volume24hSbdTerm": 1884.672,
+      "ms": 453
+    }
+  ],
+  "hiveEngine": {
+    "market": "Hive-Engine basket (sidechain DEX)",
+    "rows": [
+      {
+        "symbol": "BEE",
+        "lastPrice": "0.56496740",
+        "bid": 0.5649674,
+        "ask": 0.56498327,
+        "mid": 0.56497533,
+        "spreadPct": 0,
+        "feePct": 0,
+        "feeBps": 0,
+        "volume24h": 199.83819575,
+        "pond24hHive": 199.83819575,
+        "pondTerm": "SWAP.HIVE (base-asset units, HE metrics.volume)",
+        "gridFeasible": false,
+        "rungs": 10,
+        "step": 0.0022599
+      },
+      {
+        "symbol": "SWAP.LTC",
+        "lastPrice": "1247.00000000",
+        "bid": 1235.75000318,
+        "ask": 1239.500002,
+        "mid": 1237.62500259,
+        "spreadPct": 0.25,
+        "feePct": 0,
+        "feeBps": 0,
+        "volume24h": 7440.57824479,
+        "pond24hHive": 7440.57824479,
+        "pondTerm": "SWAP.HIVE (base-asset units, HE metrics.volume)",
+        "gridFeasible": false,
+        "rungs": 10,
+        "step": 4.95050001
+      },
+      {
+        "symbol": "SWAP.DOGE",
+        "lastPrice": "1.63709033",
+        "bid": 1.62016209,
+        "ask": 1.65,
+        "mid": 1.63508104,
+        "spreadPct": 0,
+        "feePct": 0,
+        "feeBps": 0,
+        "volume24h": 235.15008537,
+        "pond24hHive": 235.15008537,
+        "pondTerm": "SWAP.HIVE (base-asset units, HE metrics.volume)",
+        "gridFeasible": true,
+        "rungs": 10,
+        "step": 0.00654032
+      },
+      {
+        "symbol": "CENT",
+        "lastPrice": "0.00112480",
+        "bid": 0.00112,
+        "ask": 0.0011298,
+        "mid": 0.0011249,
+        "spreadPct": 0.75,
+        "feePct": 0,
+        "feeBps": 0,
+        "volume24h": 82.90258124,
+        "pond24hHive": 82.90258124,
+        "pondTerm": "SWAP.HIVE (base-asset units, HE metrics.volume)",
+        "gridFeasible": true,
+        "rungs": 10,
+        "step": 0.0000045
+      },
+      {
+        "symbol": "WAIV",
+        "lastPrice": "0.19453000",
+        "bid": 0.19453,
+        "ask": 0.19674,
+        "mid": 0.195635,
+        "spreadPct": 0,
+        "feePct": 0,
+        "feeBps": 0,
+        "volume24h": 14.25851002,
+        "pond24hHive": 14.25851002,
+        "pondTerm": "SWAP.HIVE (base-asset units, HE metrics.volume)",
+        "gridFeasible": true,
+        "rungs": 10,
+        "step": 0.00078254
+      }
+    ],
+    "historyProbe": {
+      "alive": false,
+      "reason": "HE-DAILY-HISTORY-DARK: marketHistory/history answered null (not RPC-exposed) — the day it answers, the pond becomes a series"
+    },
+    "ms": 874
   },
-  "ms": 1429
- },
- "blurt": {
-  "alive": false,
-  "reason": "BLURT-SURFACE-DARK: getaddrinfo ENOTFOUND api.blurt.world"
- },
- "paperLedger": "agents/market-grid-paper.jsonl",
- "executorPreviewCount": 10,
- "errors": [
-  {
-   "market": "hive",
-   "error": ""
+  "blurt": {
+    "alive": false,
+    "reason": "BLURT-SURFACE-DARK: getaddrinfo ENOTFOUND api.blurt.world"
+  },
+  "paperLedger": "agents/market-grid-paper.jsonl",
+  "executorPreviewCount": 20,
+  "errors": [],
+  "summary": {
+    "marketsRead": 3,
+    "errors": 0,
+    "gridsComputed": 5,
+    "paperFillsSnapshot": 20,
+    "executorPreviewCount": 20,
+    "verdict": "MARKET-GRID-LIVE"
   }
- ],
- "summary": {
-  "marketsRead": 2,
-  "errors": 1,
-  "gridsComputed": 5,
-  "paperFillsSnapshot": 10,
-  "executorPreviewCount": 10,
-  "verdict": "PARTIAL"
- }
 }
