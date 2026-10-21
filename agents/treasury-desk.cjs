@@ -37,6 +37,12 @@ const HIVE_MAX_AGE_MIN = 480;
 const RETIRED = new Set(['acct-19'].map(x => x.startsWith('acct-') ? R(x) : x).filter(Boolean));
 const HIVE_SKIP_T = R('acct-07'); // posting authority not ours on hive (byte-verified 09-30)
 const HEAD = 'owner';
+// R78 (owner trace 1a15f4a1e42c9839): the LIVE coffers moved — money-watch R39 (2026-10-21) measured
+// @owner DEAD (0 STEEM, no powerdown) while the real treasury (pseudonym acct-h-849e9df7) holds the
+// liquid stock + a scheduled powerdown. The capital book was still describing the dead account —
+// that is the "everything looks off" the owner saw on money.html. The book now describes the live
+// treasury (read-only public-RPC numbers; no keys involved) and keeps the dead book as legacyOwner.
+const LIVE_HEAD = 'headcorner';
 const TRON_CUSTODY = 'TYVwwuvdDmfy3shxT3cb3RKLrRCshaZxTy';
 // curation policy: bounded, quality-gated, VP-gated
 const CUR_VOTE_MAX = 4;
@@ -191,13 +197,14 @@ async function chainBook(chain, node, names) {
         entry.rcPct = +(f(rc.rc_accounts[0].rc_manabar.current_mana) / f(rc.rc_accounts[0].max_rc) * 100).toFixed(1);
       } catch (_) {}
     }
+    const isActivePd = r.to_withdraw && f(r.to_withdraw) > f(r.withdrawn) && r.next_vesting_withdrawal && !r.next_vesting_withdrawal.startsWith('1969') && !r.next_vesting_withdrawal.startsWith('1970');
+    const pdEntry = { active: true, rate: r.vesting_withdraw_rate, next: r.next_vesting_withdrawal, rateSp: vestsToHp(r.vesting_withdraw_rate, props, sym) };
     if (r.name === HEAD) {
       out.head = entry;
-      const active = r.to_withdraw && f(r.to_withdraw) > f(r.withdrawn) && r.next_vesting_withdrawal && !r.next_vesting_withdrawal.startsWith('1969') && !r.next_vesting_withdrawal.startsWith('1970');
-      if (active) out.powerdown = {
-        active: true, rate: r.vesting_withdraw_rate, next: r.next_vesting_withdrawal,
-        rateSp: vestsToHp(r.vesting_withdraw_rate, props, sym),
-      };
+      if (isActivePd) out.powerdown = pdEntry;
+    } else if (chain === 'steem' && r.name === LIVE_HEAD) {
+      out.liveHead = entry; // R78: the live coffers — the capital book's primary subject
+      if (isActivePd) out.livePowerdown = pdEntry;
     } else out.soldiers[r.name] = entry;
   }
   return out;
@@ -473,24 +480,40 @@ async function headCurateBlurt(headWif) {
   const soldiers = names.filter(n => n !== HEAD && !RETIRED.has(n));
   const receipt = { at: new Date().toISOString(), agent: 'treasury-desk', book: {}, claims: [], curation: [], rail: { enabled: EXEC_ENABLED } };
 
+  // ---- SIGNING GATE (R78: the book refreshes every 4h; signing VOLUME stays daily) ----
+  // the books (read-only public RPC) are freshness-bound; the signing lanes (claims + curation)
+  // are volume-bound. One process serves both — so the desk self-gates: signing sections run only
+  // when the last receipt is ≥20h old. Claims are chain-state no-ops anyway; curation is
+  // VP-gated per run — this gate keeps the DAILY vote volume unchanged while the book goes 6×/day.
+  let prevSignAt = null; try { prevSignAt = JSON.parse(fs.readFileSync(OUT, 'utf8')).at || null; } catch (_) {}
+  const SIGN_MIN_GAP_H = 20;
+  const signDue = !prevSignAt || (Date.now() - Date.parse(prevSignAt)) > SIGN_MIN_GAP_H * 3600e3;
+  receipt.signing = signDue
+    ? { due: true, lastAt: prevSignAt }
+    : { due: false, note: 'book-only refresh — signing volume stays daily (R78 gate)', lastAt: prevSignAt };
+
   // ---- BOOK ----
-  try { receipt.book.steem = await chainBook('steem', STEEM_NODE, [HEAD, ...soldiers]); } catch (e) { receipt.book.steem = { error: String(e.message || e).slice(0, 100) }; }
+  try { receipt.book.steem = await chainBook('steem', STEEM_NODE, [HEAD, LIVE_HEAD, ...soldiers]); } catch (e) { receipt.book.steem = { error: String(e.message || e).slice(0, 100) }; }
   try { receipt.book.hive = await chainBook('hive', HIVE_NODE, [HEAD, ...soldiers.filter(n => n !== HIVE_SKIP_T)]); } catch (e) { receipt.book.hive = { error: String(e.message || e).slice(0, 100) }; }
   try { receipt.book.blurt = await chainBook('blurt', BLURT_NODE, [HEAD, ...soldiers]); } catch (e) { receipt.book.blurt = { error: String(e.message || e).slice(0, 100) }; }
   try { receipt.book.tron = await tronBook(); } catch (_) { receipt.book.tron = { error: 'x' }; }
   try { receipt.book.hiveEngine = await heBook([HEAD, ...soldiers]); } catch (_) {}
 
-  // ---- CLAIMS (hive + blurt) ----
-  try { receipt.claims.push(...await claimChain({ chain: 'hive', node: HIVE_NODE, chainId: HIVE_CHAIN_ID, names: [HEAD, ...soldiers], keys })); } catch (e) { receipt.claims.push({ chain: 'hive', op: 'ERR', msg: String(e.message || e).slice(0, 90) }); }
-  try { receipt.claims.push(...await claimChain({ chain: 'blurt', node: BLURT_NODE, chainId: BLURT_CHAIN_ID, names: [HEAD, ...soldiers], keys })); } catch (e) { receipt.claims.push({ chain: 'blurt', op: 'ERR', msg: String(e.message || e).slice(0, 90) }); }
+  // ---- CLAIMS (hive + blurt) — signing lane, gated by the R78 signing gate ----
+  if (signDue) {
+    try { receipt.claims.push(...await claimChain({ chain: 'hive', node: HIVE_NODE, chainId: HIVE_CHAIN_ID, names: [HEAD, ...soldiers], keys })); } catch (e) { receipt.claims.push({ chain: 'hive', op: 'ERR', msg: String(e.message || e).slice(0, 90) }); }
+    try { receipt.claims.push(...await claimChain({ chain: 'blurt', node: BLURT_NODE, chainId: BLURT_CHAIN_ID, names: [HEAD, ...soldiers], keys })); } catch (e) { receipt.claims.push({ chain: 'blurt', op: 'ERR', msg: String(e.message || e).slice(0, 90) }); }
+  }
 
-  // ---- HEAD CURATION (steem) ----
-  try { receipt.curation = await headCurate(headPosting, new Set([HEAD, ...soldiers, ...RETIRED, HIVE_SKIP_T].filter(Boolean))); }
-  catch (e) { receipt.curation = [{ op: 'ERR', msg: String(e.message || e).slice(0, 100) }]; }
-  try { receipt.curationBlurt = await headCurateBlurt(headPosting); }
-  catch (e) { receipt.curationBlurt = [{ op: 'ERR', msg: String(e.message || e).slice(0, 100) }]; }
-  try { receipt.curationHive = await headCurateHive(process.env.SA_HEAD_HIVE_POSTING || recoverHeadHive() || headPosting); }
-  catch (e) { receipt.curationHive = [{ op: 'ERR', msg: String(e.message || e).slice(0, 100) }]; }
+  // ---- HEAD CURATION (steem) — signing lane, gated by the R78 signing gate ----
+  if (signDue) {
+    try { receipt.curation = await headCurate(headPosting, new Set([HEAD, ...soldiers, ...RETIRED, HIVE_SKIP_T].filter(Boolean))); }
+    catch (e) { receipt.curation = [{ op: 'ERR', msg: String(e.message || e).slice(0, 100) }]; }
+    try { receipt.curationBlurt = await headCurateBlurt(headPosting); }
+    catch (e) { receipt.curationBlurt = [{ op: 'ERR', msg: String(e.message || e).slice(0, 100) }]; }
+    try { receipt.curationHive = await headCurateHive(process.env.SA_HEAD_HIVE_POSTING || recoverHeadHive() || headPosting); }
+    catch (e) { receipt.curationHive = [{ op: 'ERR', msg: String(e.message || e).slice(0, 100) }]; }
+  }
 
   // ---- ARMED RAIL (holstered) ----
   receipt.rail.note = EXEC_ENABLED
@@ -498,17 +521,31 @@ async function headCurateBlurt(headWif) {
     : 'HOLSTERED: set ENABLE_TX=1 + SA_HEAD_STEEM_ACTIVE / SA_HEAD_HIVE_ACTIVE secrets to arm';
 
   // ---- LEDGER (committed, keyless) ----
+  // R78: the primary numbers describe the LIVE coffers (LIVE_HEAD, pseudonym acct-h-849e9df7 per the
+  // money-watch R39 convention); the measured-dead @owner book is kept as legacyOwner — no history erased.
+  // executor stays the signing identity (Task-18 reconcile + fleet-indicators F7 read it unchanged).
+  const bs = receipt.book.steem || {};
+  const liveSteem = bs.liveHead || null;
   const book = {
-    executor: 'owner', // Task 18: the ledger names the account it describes — the reconcile cross-check (references executor account) reads this identity
-    headSteemLiquid: receipt.book.steem && receipt.book.steem.head ? receipt.book.steem.head.liquid : null,
-    headSteemDebt: receipt.book.steem && receipt.book.steem.head ? receipt.book.steem.head.debt : null,
-    headSteemStake: receipt.book.steem && receipt.book.steem.head ? receipt.book.steem.head.effStake : null,
-    powerdown: receipt.book.steem && receipt.book.steem.powerdown ? receipt.book.steem.powerdown : null,
+    executor: 'owner', // signing identity — Task 18 reconcile + fleet-indicators F7 read this unchanged
+    treasury: 'acct-h-849e9df7', // R78: the account the primary numbers describe (pseudonym — sha8, public-derived, leaks nothing)
+    headSteemLiquid: liveSteem ? liveSteem.liquid : null,
+    headSteemDebt: liveSteem ? liveSteem.debt : null,
+    headSteemStake: liveSteem ? liveSteem.effStake : null,
+    powerdown: bs.livePowerdown || null,
+    liveHeadMissing: liveSteem ? undefined : (bs.error ? 'steem-rpc-error' : 'no-live-head-row'),
+    legacyOwner: {
+      headSteemLiquid: bs.head ? bs.head.liquid : null,
+      headSteemDebt: bs.head ? bs.head.debt : null,
+      headSteemStake: bs.head ? bs.head.effStake : null,
+      powerdown: bs.powerdown || null,
+    },
     headHive: receipt.book.hive && receipt.book.hive.head ? receipt.book.hive.head : null,
     headBlurt: receipt.book.blurt && receipt.book.blurt.head ? receipt.book.blurt.head : null,
     tron: receipt.book.tron,
     claimsDone: receipt.claims.filter(c => c.op === 'CLAIMED-VERIFIED').length,
     curated: receipt.curation.filter(c => c.op === 'VOTED-VERIFIED').length,
+    signing: receipt.signing,
   };
   let ledger = { updated: receipt.at, book, history: [] };
   try { const prev = JSON.parse(fs.readFileSync(LEDGER, 'utf8')); ledger.history = (prev.history || []).slice(-29); const pb = prev.book || {}; ledger.history.push({ at: prev.updated, headSteemLiquid: pb.headSteemLiquid, headSteemStake: pb.headSteemStake, curated: pb.curated, claimsDone: pb.claimsDone }); } catch (_) {}
@@ -519,8 +556,12 @@ async function headCurateBlurt(headWif) {
   fs.writeFileSync(OUT, refScrub(JSON.stringify(receipt, null, 1)));
   console.log(JSON.stringify({
     state: 'ok',
-    headSteem: receipt.book.steem && receipt.book.steem.head ? receipt.book.steem.head.liquid : null,
-    powerdown: receipt.book.steem && receipt.book.steem.powerdown ? receipt.book.steem.powerdown.rateSp + 'SP/week' : 'none',
+    liveTreasury: liveSteem ? liveSteem.liquid : null,
+    livePowerdown: bs.livePowerdown ? bs.livePowerdown.rateSp + 'SP/week' : 'none',
+    legacyOwner: bs.head ? bs.head.liquid : null,
+    signing: signDue ? 'due' : 'skipped-fresh',
+    headSteem: bs.head ? bs.head.liquid : null,
+    powerdown: bs.powerdown ? bs.powerdown.rateSp + 'SP/week' : 'none',
     claims: receipt.claims.filter(c => String(c.op).startsWith('CLAIMED')).length + ' claimed / ' + receipt.claims.filter(c => c.op === 'NOTHING-PENDING').length + ' nothing-pending',
     curated: receipt.curation.filter(c => String(c.op).startsWith('VOTED')).length,
     rail: EXEC_ENABLED ? 'ENABLED' : 'HOLSTERED',

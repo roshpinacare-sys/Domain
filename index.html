@@ -436,19 +436,18 @@ footer{border-top:1px solid var(--line);background:var(--bg2);margin-top:24px;pa
       if(l) l.textContent = "הקופה האמיתית · " + mo.fuel.steem + " STEEM + " + mo.fuel.sbd + " SBD · " + mo.fuel.account;
     }
     stamp("pt-cash", mo && mo.publishedAt);
-
-  /* R77: התנור — מסחר-אמת על הרשת-העצמית (ספר-המנוע הציבורי, keyless) */
-  fetch("https://raw.githubusercontent.com/roshpinacare-sys/giant/main/mini-services/market-furnace/state/furnace-state.json?t=" + Date.now(), {cache:"no-store"}).then(function(r){ return r.json(); }).then(function(f){
-    if(!f) return;
-    var fmt = function(n){ return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ","); };
-    var sw = (f.ignitionSwaps||0) + (f.rotationSwaps||0);
-    var fee = (f.ignitionCostMu||0) + (f.rotationCostMu||0);
-    txt("pv-furnace", fmt(sw) + " סוופים");
-    var l = document.getElementById("pv-furnace-l");
-    if(l) l.textContent = "התנור · מסחר-אמת על הרשת-העצמית · " + fmt((f.rotationVolMu||0)) + "µ ווליום · " + fmt(fee) + "µ עמלות-אמת";
-    stamp("pt-furnace", f && f.at);
-  }).catch(function(){ stamp("pt-furnace", null); });
   }).catch(function(){ stamp("pt-cash", null); });
+
+  /* R78: המנוע-החי — נמדד מהספר-הציבורי (dex/state.json, keyless). התנור-הישן (מיני-שירות סנדבוקס)
+     פרש בכנות עם איפוס-הסנדבוקס ואין-לו יותר כתובת — המספרים החיים כאן הם של המנוע עצמו. */
+  jget("dex/state.json").then(function(sd){
+    var s2 = (sd && sd.state) || {};
+    var fmt = function(n){ return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ","); };
+    txt("pv-furnace", fmt(s2.swaps!=null?s2.swaps:0) + " סוופים");
+    var l = document.getElementById("pv-furnace-l");
+    if(l) l.textContent = "המנוע-החי על הרשת-העצמית · " + fmt(s2.fills||0) + " מילויים" + (s2.liveOrders!=null?" · "+s2.liveOrders+" פקודות-חיות":"") + " · התנור-הישן (סנדבוקס) פרש בכנות";
+    stamp("pt-furnace", sd && sd.publishedAt);
+  }).catch(function(){ stamp("pt-furnace", null); });
 
   /* header pill + footer stamp — heartbeat freshness */
   jget("https://raw.githubusercontent.com/roshpinacare-sys/FleetHQ/main/office/state/office-state.json").then(function(s){

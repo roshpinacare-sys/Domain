@@ -15,7 +15,11 @@ on:
       - 'agents/blurt-curate.cjs'
       - '.github/workflows/treasury-route.yml'
   schedule:
-    - cron: '37 16 * * *'
+    # R78 (owner trace 1a15f4a1e42c9839): daily cadence left the public capital book 20h+ stale —
+    # the same class 19.53 cured for the weave mirror. 4h cadence = the book measures 6×/day.
+    # Signing VOLUME stays daily: the desk self-gates (treasury-desk.cjs R78 signing gate, ≥20h gap)
+    # and the blurt step carries its own receipt-age gate below. Zero new signing risk.
+    - cron: '37 */4 * * *'
   workflow_dispatch: {}
 
 permissions:
@@ -32,22 +36,26 @@ jobs:
     env:
       NODE_PATH: /tmp/steemjs/node_modules
     steps:
-      - name: STASIS gate (mechanical, FATE-DEFENSE law
-        id: brake
-        run: |
-          if [ -f agents/STASIS.json ]; then
-            ST=$(node agents/stasis-gate.cjs general)
-          else
-            ST=false
-          fi
-          echo "active=$ST" >> "$GITHUB_OUTPUT"
-          if [ "$ST" = "true" ]; then
-            echo "STASIS-HALT treasury-route · the breaker is active — capital lanes obey"
-          fi
       - name: checkout
         uses: actions/checkout@v5
         with:
           fetch-depth: 1
+
+      # R78 brake repair — measured defects in the old placement: the gate ran BEFORE checkout
+      # (agents/STASIS.json never existed on the runner → the printed token was always "false"),
+      # the wrapper's missing-file branch overrode the gate's own fail-closed contract, and NO step
+      # consumed the token — the brake was decorative. Now: gate runs post-checkout, the gate's
+      # fail-closed semantics are untouched (unreadable file → prints true), and the token STOPS the job.
+      - name: STASIS gate (mechanical, FATE-DEFENSE law — fail-closed at the source)
+        id: brake
+        run: |
+          ST=$(node agents/stasis-gate.cjs general)
+          echo "active=$ST" >> "$GITHUB_OUTPUT"
+      - name: STASIS halt (the breaker obeys — capital lanes stop before any signing)
+        if: steps.brake.outputs.active == 'true'
+        run: |
+          echo "STASIS-HALT treasury-route · the breaker is active — capital lanes obey"
+          exit 1
 
       - name: checkout private steem home (vault recovery source — proven Z-21 pattern)
         uses: actions/checkout@v5
@@ -95,7 +103,19 @@ jobs:
       - name: bridge desk (no-account exchanger sweep, read-only)
         run: node agents/bridge-desk.cjs
 
+      - name: blurt daily gate (R78 — book refreshes 6×/day, vote VOLUME stays daily)
+        id: blurtgate
+        run: |
+          DUE=true
+          if [ -f agents/receipts/blurt-curate-receipt.json ]; then
+            A=$(node -e "try{const r=require('./agents/receipts/blurt-curate-receipt.json');const h=(Date.now()-Date.parse(r.at||0))/36e5;console.log(isFinite(h)&&h<20?'skip':'run')}catch(e){console.log('run')}")
+            [ "$A" = "skip" ] && DUE=false
+          fi
+          echo "due=$DUE" >> "$GITHUB_OUTPUT"
+          echo "blurt daily gate: due=$DUE"
+
       - name: blurt curation (idle 8,727 BP activation, VP-gated, verify-then-sign)
+        if: steps.blurtgate.outputs.due == 'true'
         env:
           SA_FLEET_KEYS: ${{ secrets.SA_FLEET_KEYS }}
           SA_HEAD_POSTING: ${{ secrets.SA_HEAD_POSTING }}

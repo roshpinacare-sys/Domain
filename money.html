@@ -201,7 +201,7 @@ footer .wrap{font-size:12px;color:var(--dim);display:flex;justify-content:space-
         <div class="pcard"><div class="v" id="xp-price">—</div><div class="l">תמחור · מסילת-מחיר-חוץ חיה</div></div>
       </div>
       <div class="inst" id="xpDetail" style="margin-top:12px">
-        <div class="irow"><div class="what">טוען את פנקס-הרווח-החוץ החי (giant → external-profit-node)…</div></div>
+        <div class="irow"><div class="what">טוען את פנקס-הרווח-החוץ החי (saos-dex → external-profit-publish)…</div></div>
       </div>
     </section>
 
@@ -213,7 +213,7 @@ footer .wrap{font-size:12px;color:var(--dim);display:flex;justify-content:space-
         <div class="pcard"><div class="v" id="gr-height">999,424</div><div class="l" id="gr-height-l">גובה-השרשרת של הבורסה שלנו (saos-dex)</div></div>
         <div class="pcard"><div class="v" id="gr-fills">255,685</div><div class="l" id="gr-fills-l">מילויים על הבורסה שלנו · אפייה 2026-10-21 · נמדד חי מ-world.json</div></div>
         <div class="pcard"><div class="v" id="gr-swaps">63,184</div><div class="l" id="gr-swaps-l">swaps · 30 פקודות-חיות לפני הרענון</div></div>
-        <div class="pcard"><div class="v" id="gr-furnace">79 סוופים</div><div class="l" id="gr-furnace-l">התנור · מסחר-אמת על הרשת-שלנו · נמדד חי מספר-התנור (giant)</div></div>
+        <div class="pcard"><div class="v" id="gr-furnace">73,381 סוופים</div><div class="l" id="gr-furnace-l">המנוע-החי על הרשת-העצמית · נמדד חי מהספר-הציבורי (dex/state.json)</div></div>
         <div class="pcard" style="border-color:var(--border2)"><div class="v" id="gr-soldiers">תור-חייאה</div><div class="l" id="gr-soldiers-l">חיילי-הצי על הבורסה: פקודות נדחות בכנות עד תדלוק-credits</div></div>
       </div>
       <div class="inst" id="gravityLine" style="margin-top:12px">
@@ -656,20 +656,20 @@ footer .wrap{font-size:12px;color:var(--dim);display:flex;justify-content:space-
   })();
 </script>
 <script>
-  /* פס-הרווח-החוץ — חי מ-giant.git (external-profit-node snapshot); כישלון = כנות, אפס המצאה */
+  /* פס-הרווח-החוץ — חי מ-saos-dex.git (grids/external-profit.mjs — נמדד ופורסם אוטונומית מ-github-actions); כישלון = כנות, אפס המצאה */
   (function(){
     function txt(id,v){var e=document.getElementById(id);if(e&&v!=null)e.textContent=v;}
     function esc(s){return String(s==null?"":s).replace(/[&<>"/]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","/":"&#47;"}[c];});}
-    var URLS=["https://raw.githubusercontent.com/roshpinacare-sys/giant/main/mini-services/external-profit-node/state/external-profit-public.json"];
+    var URLS=["https://raw.githubusercontent.com/roshpinacare-sys/saos-dex/main/grids/state/external-profit-public.json"];
     function j(u){return fetch(u+"?t="+Date.now(),{cache:"no-store"}).then(function(r){if(!r.ok)throw 0;return r.json();});}
     (function tryLoad(i){
-      if(i>=URLS.length){var h=document.getElementById("xpDetail");if(h)h.innerHTML='<div class="irow"><div class="what">פנקס-הרווח-החוץ לא נטען כרגע — מציג בכנות, בלי להמציא מספרים. המנוע חי בצד-השרת (SAOS-EXTERNAL-PROFIT/1).</div></div>';return;}
+      if(i>=URLS.length){var h=document.getElementById("xpDetail");if(h)h.innerHTML='<div class="irow"><div class="what">פנקס-הרווח-החוץ לא נטען כרגע — מציג בכנות, בלי להמציא מספרים. המנוע חי ב-saos-dex (SAOS-EXTERNAL-PROFIT/1).</div></div>';return;}
       j(URLS[i]).then(function(s){
-        var xp=s.externalProfit||{};
+        var xp=s||{};
         txt("xp-usd",(xp.measuredUsd24h!=null?"$"+xp.measuredUsd24h:"0 (כנות)"));
         txt("xp-vests",(xp.measuredVests24h!=null?xp.measuredVests24h:"—"));
         txt("xp-evidence",(xp.evidenceCount!=null?xp.evidenceCount:"—"));
-        var pr=xp.pricing||{};var ex=pr.external||{};
+        var ex=(xp.pricing&&xp.pricing.external)||{};
         txt("xp-price","STEEM $"+(ex.steemUsd!=null?ex.steemUsd:"?")+(ex.source?(" · "+ex.source):""));
         var host=document.getElementById("xpDetail");
         if(host){
@@ -677,17 +677,9 @@ footer .wrap{font-size:12px;color:var(--dim);display:flex;justify-content:space-
           var parts=(xp.parts||[]);
           for(var k=0;k<parts.length;k++){var pt=parts[k];
             out+='<div class="irow"><div class="what"><b>'+(pt.id==="chain-curation"?"אצירה":pt.id==="chain-author-vests"?"פרס-מחבר (vests)":esc(pt.id))+'</b> · '+esc(pt.vests)+" VESTS · $"+esc(pt.usd)+" · "+esc(pt.source||"")+"</div></div>";}
-          var cur=s.curateTail||[];
-          for(var c2=cur.length-1;c2>=0;c2--){var cb=cur[c2];
-            if(cb&&cb.verdict==="VOTED-LIVE"){
-              var vs=(cb.votes||[]).slice(0,3);
-              var txs=vs.map(function(v){return '<span class="mono">'+esc(String(v.txid||"").slice(0,10))+"…</span>";}).join(" ");
-              out+='<div class="irow"><div class="what">מסילת-האצירה חיה: '+esc(cb.executed)+" הצבעות-אמת על-השרשרת במחזור "+esc(String(cb.at||"").slice(0,16))+"Z · txids: "+txs+'</div></div>';
-              break;}}
-          var sd=s.selfDeposit||null;
-          if(sd&&sd.measuredUsd24h!=null){
-            out+='<div class="irow"><div class="what">במסילת-הדיבידנד (self-deposit): רווח-מדוד $'+esc(sd.measuredUsd24h)+" · "+((sd.dividendLane&&sd.dividendLane.greenStreak!=null)?("רצף-ירוק "+esc(sd.dividendLane.greenStreak)+" · "):(""))+"יעד $1000/יום · פער $"+esc(sd.dividendLane?sd.dividendLane.gapToTargetUsd:"?")+" (כנה, לא מובטח)</div></div>";}
-          out+='<div class="irow"><div class="what">אימות-עצמאי: הרץ מחדש <span class="mono">grids/external-profit.mjs --measure</span> (saos-dex) — קריאה-ציבורית-בלבד, אפס-מפתחות · אפייה '+esc(String(s.bakedAt||"").slice(0,16))+"Z</div></div>";
+          if(!parts.length) out+='<div class="irow"><div class="what">אין אירועי-רווח בחלון-24ש׳ — כנות-אפס, אפס המצאה.</div></div>';
+          out+='<div class="irow"><div class="what">פורסם אוטונומית מ-github-actions (saos-dex · external-profit-publish · כל שעתיים) · נמדד '+esc(String(xp.at||"").slice(0,16))+"Z</div></div>";
+          out+='<div class="irow"><div class="what">אימות-עצמאי: הרץ מחדש <span class="mono">grids/external-profit.mjs --measure --since &lt;24h&gt;</span> (saos-dex) — קריאה-ציבורית-בלבד, אפס-מפתחות · '+esc(xp.law||"")+'</div></div>';
           host.innerHTML=out;
         }
       }).catch(function(){tryLoad(i+1);});
@@ -704,15 +696,11 @@ footer .wrap{font-size:12px;color:var(--dim);display:flex;justify-content:space-
       var s=a[0]||{},e=a[1]||{},st=s.state||{};
       var at=((s.publishedAt||"").replace("T"," ").slice(0,16)+"Z");
       if(st.height)txt("gr-height",fmt(st.height));
-      /* R77: התנור — מסחר-אמת על הרשת-העצמית, נמדד מהספר הציבורי של המנוע (raw, keyless) */
-      fetch("https://raw.githubusercontent.com/roshpinacare-sys/giant/main/mini-services/market-furnace/state/furnace-state.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(f){
-        if(!f) return;
-        var sw=(f.ignitionSwaps||0)+(f.rotationSwaps||0);
-        var vol=(f.rotationVolMu||0), fee=((f.ignitionCostMu||0)+(f.rotationCostMu||0));
-        txt("gr-furnace", fmt(sw) + " סוופים");
-        var l=document.getElementById("gr-furnace-l");
-        if(l) l.textContent = "התנור · מסחר-אמת על הרשת-שלנו · " + fmt(vol) + "µ ווליום · " + fmt(fee) + "µ עמלות-אמת" + (f.at ? " · נמדד " + f.at.slice(0,16).replace("T"," ") + "Z" : "");
-      }).catch(function(){});
+      /* R78: המנוע-החי — נמדד מהספר-הציבורי (dex/state.json, keyless). התנור-הישן (מיני-שירות סנדבוקס)
+         פרש בכנות עם איפוס-הסנדבוקס ואין-לו יותר כתובת — המספרים החיים כאן הם של המנוע עצמו. */
+      txt("gr-furnace", fmt(st.swaps!=null?st.swaps:0) + " סוופים");
+      var fl=document.getElementById("gr-furnace-l");
+      if(fl) fl.textContent = "המנוע-החי על הרשת-העצמית · " + fmt(st.fills||0) + " מילויים" + (st.liveOrders!=null?" · "+st.liveOrders+" פקודות-חיות":"") + " · התנור-הישן (סנדבוקס) פרש בכנות · נמדד " + at;
       if(st.fills!=null)txt("gr-fills",fmt(st.fills));
       if(st.swaps!=null)txt("gr-swaps",fmt(st.swaps));
       txt("gr-fills-l","מילויים על הבורסה שלנו · "+(st.liveOrders!=null?st.liveOrders+" פקודות-חיות · ":"")+"נמדד "+at);

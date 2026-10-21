@@ -24,7 +24,7 @@ const SITE = "https://roshpinacare-sys.github.io/Domain/";
 const PAGE_MAP = {
   "index.html": [],
   "console.html": ["status.json"],
-  "money.html": ["moment/moment.json"],
+  "money.html": ["moment/moment.json", "agents/money-ledger.json", "dex/state.json"],
   "wallet-truth.html": ["dex/world.json", "dex/deposits.json", "moment/moment.json"],
   "wallet.html": [], // JS-app (peer lane) — exempt from static depth, jsFetches reported
   "press/index.html": ["status.json", "moment/moment.json", "dex/world.json", "weave/vitals.json"],
