@@ -627,6 +627,8 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
       tiles.push(tile("עוגן-אורקל", ora.available ? ((ora.pair || "?") + " " + (ora.price || "?")) : "לא נמדד", ora.available ? ("מקור " + (ora.source || "?") + " · " + ageHe(agoMin(ora.at))) : "המקור לא השיב", ora.available ? "ok" : "na"));
       var om = s.ownerMemory || {};
       tiles.push(tile("זיכרון-בעלים", om.available ? (om.directives + " הנחיות") : "לא נמדד", om.available ? ("עקבה אחרונה " + String(om.lastTrace || "").slice(0, 12)) : "המקור לא השיב", om.available ? "ok" : "na"));
+      var rg = s.roastGrill || {};
+      tiles.push(tile("גריל-האמת", rg.available ? (Number(rg.pass || 0) + "/" + (Number(rg.pass || 0) + Number(rg.fail || 0)) + " נמדדו") : "לא נמדד", rg.available ? (String(rg.verdict || "?") + " · שיניי-הגריל " + (rg.controls === "proven" ? "מוכחות" : "?") + ((rg.painfulTop && rg.painfulTop.length) ? " · " + String(rg.painfulTop[0]).slice(0, 60) : "")) : "המקור לא השיב", rg.available && rg.verdict === "ROAST-GRILL-OK" ? "ok" : (rg.available ? "warn" : "na")));
       grid.innerHTML = "";
       for (var i = 0; i < tiles.length; i++) grid.appendChild(tileNode(tiles[i]));
       var age = agoMin(ev.generatedAt);
