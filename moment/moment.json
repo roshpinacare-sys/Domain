@@ -1,34 +1,34 @@
 {
  "ok": true,
  "format": "moment-watch-v1",
- "publishedAt": "2026-10-20T23:13:27.933Z",
+ "publishedAt": "2026-10-21T00:07:35.803Z",
  "engine": "Domain/agents/moment-watch · R62 sovereign moment",
  "role": "reads the live moment every 30 minutes (market regime, our parity line vs the live internal book, fuel runway, measured anomalies) and records a deterministic directional call that is only ever scored after its horizon has passed - training as measurement, never as promise",
  "market": {
-  "steemUsd": 0.054647,
-  "steem24h": 3.5186604316558587,
-  "sbdUsd": 0.517805,
-  "btcUsd": 82896,
-  "btc24h": 1.147262635912696,
+  "steemUsd": 0.054706,
+  "steem24h": 3.982234850663534,
+  "sbdUsd": 0.516706,
+  "btcUsd": 82914,
+  "btc24h": 1.3928810655155945,
   "fearGreed": {
-   "value": 55,
+   "value": 63,
    "label": "Greed"
   }
  },
- "paritySbdPerSteem": 0.10553586774944237,
+ "paritySbdPerSteem": 0.10587452052037329,
  "liveBook": {
-  "bestBid": 0.1013933814381687,
-  "bestAsk": 0.10400566935511085,
-  "bidsDepthSbd": 1991.85,
-  "asksDepthSteem": 154.03,
-  "levels": 20,
-  "bidSurplusBps": -393
+  "bestBid": 0.10505796122056453,
+  "bestAsk": 0.1052576124749763,
+  "bidsDepthSbd": 591.13,
+  "asksDepthSteem": 171.55,
+  "levels": 21,
+  "bidSurplusBps": -77
  },
  "regime": {
-  "label": "NEUTRAL",
+  "label": "RISK_ON",
   "drivers": [
-   "BTC +1.1%",
-   "F&G 55"
+   "BTC +1.4%",
+   "F&G 63"
   ],
   "thresholds": {
    "btc24hPct": 4,
@@ -40,7 +40,7 @@
  },
  "runway": {
   "active": false,
-  "weeklySp": 6.205791621431105e-10,
+  "weeklySp": 6.205807362423891e-10,
   "nextPayment": "1969-12-31T23:59:59",
   "remainingSp": 0,
   "weeklyUsd": 0,
@@ -49,9 +49,9 @@
  "grid": {
   "verdict": "ARMED-WAITING",
   "armed": true,
-  "blocker": "POLICY-HALT (steem leg): per-op notional 70.059 SBD > cap 17 (lane grid) ; kelly-cap: gear cap 100→17 SBD (mode=kelly; winRate=0.570 WLR=0.892 kelly=0.089 safe=0.044 ×4 → 17/100) — atomic refresh skipped, ladder untouched",
-  "externalFlowUsd": 0.305035,
-  "publishedAt": "2026-10-20T19:23:21.632Z"
+  "blocker": "POLICY-HALT (steem leg): per-op notional 70.514 SBD > cap 14 (lane grid) ; cycle notional upper-bound 70.514 SBD > cap 67 ; kelly-cap: gear cap 100→14 SBD (mode=kelly; winRate=0.550 WLR=0.944 kelly=0.073 safe=0.036 ×4 → 14/100) — atomic refresh skipped, ladder untouched",
+  "externalFlowUsd": 0.301453,
+  "publishedAt": "2026-10-20T23:57:56.721Z"
  },
  "moneyPath": {
   "fuel": {
@@ -73,23 +73,23 @@
  },
  "call": "UP",
  "callStats": {
-  "resolved": 63,
+  "resolved": 65,
   "hits": 25,
-  "hitRatePct": 40,
+  "hitRatePct": 38,
   "horizonH": 6,
   "thresholdPct": 3
  },
- "resolvedNow": 0,
+ "resolvedNow": 2,
  "insights": [
   {
    "kind": "parity-edge",
    "tone": "good",
-   "text": "עומק-קנייה חי 393bps מתחת לקו-הזהות (bid 0.1014 מול parity 0.1055) — עודף מדוד לגריד."
+   "text": "עומק-קנייה חי 77bps מתחת לקו-הזהות (bid 0.1051 מול parity 0.1059) — עודף מדוד לגריד."
   },
   {
    "kind": "sbd-inventory",
    "tone": "warn",
-   "text": "צוואר-הקנייה של הגריד: POLICY-HALT (steem leg): per-op notional 70.059 SBD > cap 17 (lane grid) ; kelly-cap: gear cap 100→17 SBD (mode=kelly; winRate=0.570 WLR=0.892 kelly=0.089 safe=0.044 ×4 → 17/100) — atomic refresh skipped, ladder untouched"
+   "text": "צוואר-הקנייה של הגריד: POLICY-HALT (steem leg): per-op notional 70.514 SBD > cap 14 (lane grid) ; cycle notional upper-bound 70.514 SBD > cap 67 ; kelly-cap: gear cap 100→14 SBD (mode=kelly; winRate=0.550 WLR=0.944 kelly=0.073 safe=0.036 ×4 → 14/100) — atomic refresh skipped, ladder untouched"
   },
   {
    "kind": "fuel",
@@ -104,7 +104,7 @@
   {
    "kind": "external-flow",
    "tone": "info",
-   "text": "זרימת-חוץ מצטברת: 0.3050$ מ-104 מילויים (txids בספר הציבורי)."
+   "text": "זרימת-חוץ מצטברת: 0.3015$ מ-104 מילויים (txids בספר הציבורי)."
   }
  ],
  "sources": [
