@@ -469,8 +469,25 @@ footer{border-top:1px solid var(--line);padding:18px 0 30px;color:var(--faint);f
     fs.mkdirSync(edDir, { recursive: true });
     const edAbs = path.join(edDir, `${today}.html`);
     const edTmp = `${edAbs}.tmp-${process.pid}`;
-    fs.writeFileSync(edTmp, page);
+    // wave-19.49 refs-cure: an edition copy is its own public URL — self-canonical + og:url,
+    // so the site-auditor's R-CANONICAL stays green on every future edition (writer cured, not patched).
+    const edUrl = `${SITE}press/editions/${today}.html`;
+    const edPage = page
+      .replace(`<link rel="canonical" href="${SITE}press/">`, `<link rel="canonical" href="${edUrl}">`)
+      .replace(`<meta property="og:url" content="${SITE}press/">`, `<meta property="og:url" content="${edUrl}">`);
+    fs.writeFileSync(edTmp, edPage);
     fs.renameSync(edTmp, edAbs);
+    // wave-19.49: register the edition in sitemap.xml (idempotent, atomic, never breaks the bake)
+    try {
+      const smAbs = path.join(__dirname, "..", "sitemap.xml");
+      let sm = fs.readFileSync(smAbs, "utf8");
+      if (!sm.includes(`press/editions/${today}.html`)) {
+        sm = sm.replace("</urlset>", `  <url><loc>${edUrl}</loc><lastmod>${today}</lastmod></url>\n</urlset>`);
+        const smTmp = `${smAbs}.tmp-${process.pid}`;
+        fs.writeFileSync(smTmp, sm);
+        fs.renameSync(smTmp, smAbs);
+      }
+    } catch { /* sitemap registration never breaks the edition */ }
   } catch { /* archive never breaks the edition */ }
   console.log(JSON.stringify({ state: "ok", press: "baked", bytes: page.length }));
 })().catch((e) => {
