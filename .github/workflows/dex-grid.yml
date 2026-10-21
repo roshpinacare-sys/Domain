@@ -145,7 +145,7 @@ jobs:
         env:
           SAOS_RELAY_AGENT_ACCOUNT: ${{ secrets.FLEET_ACCOUNT }}
           STEEM_ACTIVE_WIF: ${{ secrets.STEEM_ACTIVE_WIF }}
-        run: node grids/community.mjs --execute
+        run: echo "[T-563 tombstone] grids/community.mjs never lived in this repo (saos-dex-template origin) - step was silent module-not-found under continue-on-error; honest skip"
         continue-on-error: true
 
       - name: Community evidence commit (receipt = commit)
@@ -169,7 +169,7 @@ jobs:
         env:
           SAOS_RELAY_AGENT_ACCOUNT: ${{ secrets.FLEET_ACCOUNT }}
           STEEM_ACTIVE_WIF: ${{ secrets.STEEM_ACTIVE_WIF }}
-        run: node grids/delegate-plan.mjs --execute
+        run: echo "[T-563 tombstone] grids/delegate-plan.mjs never lived in this repo (saos-dex-template origin) - step was silent module-not-found under continue-on-error; honest skip"
         continue-on-error: true
 
       - name: Delegation evidence commit (receipt = commit)

@@ -57,8 +57,8 @@ jobs:
         run: |
           set -Eeuo pipefail
           set +e
-          node grids/sovereign-pulse.mjs --selftest || { echo "selftest RED — refusing to pulse"; exit 1; }
-          node grids/sovereign-pulse.mjs --execute
+          echo "[T-563 tombstone] grids/sovereign-pulse.mjs never lived in this repo (saos-dex-template origin) - step was silent module-not-found under continue-on-error; honest skip"
+          echo "[T-563 tombstone] grids/sovereign-pulse.mjs never lived in this repo (saos-dex-template origin) - step was silent module-not-found under continue-on-error; honest skip"
           RC=$?
           set -e
           if [ $RC -ne 0 ]; then

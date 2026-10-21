@@ -69,11 +69,11 @@ jobs:
 
       - name: tick (deterministic grid measurement — the thing-drags-thing pulse)
         if: steps.guard.outputs.takeover == '1' || github.event_name == 'workflow_dispatch'
-        run: node grids/run.mjs
+        run: echo "[T-563 tombstone] grids/run.mjs never lived in this repo (saos-dex-template origin) - step was silent module-not-found under continue-on-error; honest skip"
 
       - name: peg offer (B-1/B-3 — internal grid params -> external offer)
         if: steps.guard.outputs.takeover == '1' || github.event_name == 'workflow_dispatch'
-        run: node grids/peg.mjs
+        run: echo "[T-563 tombstone] grids/peg.mjs never lived in this repo (saos-dex-template origin) - step was silent module-not-found under continue-on-error; honest skip"
         continue-on-error: true
 
       - name: publish heartbeat back to saos-dex

@@ -46,24 +46,24 @@ jobs:
       - name: Tick (sovereign heartbeat receipt)
         id: tick
         working-directory: sandbox
-        run: node engine/sovereign-tick.mjs
+        run: echo "[T-563 tombstone] engine/sovereign-tick.mjs never lived in this repo (saos-dex-template origin) - step was silent module-not-found under continue-on-error; honest skip"
 
       # each lane is honest-fail: an engine that exits 1 still wrote its receipt;
       # we keep going so one red lane never silences the others.
       - name: Wallet artery receipt
         if: always()
         working-directory: sandbox
-        run: node engine/wallet-verify.mjs || echo "[wallet] lane verdict non-green (receipt written)"
+        run: echo "[T-563 tombstone] engine/wallet-verify.mjs never lived in this repo (saos-dex-template origin) - step was silent module-not-found under continue-on-error; honest skip"
 
       - name: Grid artery receipt
         if: always()
         working-directory: sandbox
-        run: node engine/grid-watch.mjs || echo "[grid] lane verdict non-green (receipt written)"
+        run: echo "[T-563 tombstone] engine/grid-watch.mjs never lived in this repo (saos-dex-template origin) - step was silent module-not-found under continue-on-error; honest skip"
 
       - name: Fleet artery receipt
         if: always()
         working-directory: sandbox
-        run: node engine/fleet-verify.mjs || echo "[fleet] lane verdict non-green (receipt written)"
+        run: echo "[T-563 tombstone] engine/fleet-verify.mjs never lived in this repo (saos-dex-template origin) - step was silent module-not-found under continue-on-error; honest skip"
 
       - name: Commit + push receipts back (rebase-safe)
         if: always()

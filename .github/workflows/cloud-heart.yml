@@ -45,7 +45,7 @@ jobs:
         run: cd agent && npm install --omit=dev --no-audit --no-fund --loglevel=error
 
       - name: Cloud heartbeat (watch, or take over if the sandbox died)
-        run: node agent/cloud_heartbeat.cjs
+        run: echo "[T-563 tombstone] agent/cloud_heartbeat.cjs never lived in this repo (saos-dex-template origin) - step was silent module-not-found under continue-on-error; honest skip"
         env:
           CLOUD_HEART: '1'
           CLOUD_STALE_MIN: '95'

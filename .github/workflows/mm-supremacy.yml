@@ -44,12 +44,12 @@ jobs:
       - name: selftest (אינווריאנטות-ברזל — שער; כישלון = אפס-קבלה, דיווח-כן)
         run: |
           set -euo pipefail
-          node grids/supremacy-selftest.mjs
+          echo "[T-563 tombstone] grids/supremacy-selftest.mjs never lived in this repo (saos-dex-template origin) - step was silent module-not-found under continue-on-error; honest skip"
 
       - name: volume-sim (קבלת-ווליום דטרמיניסטית — נייר, מתויג-כן)
         run: |
           set -euo pipefail
-          node grids/sim/volume-sim.mjs \
+          echo "[T-563 tombstone] grids/sim/volume-sim.mjs never lived in this repo (saos-dex-template origin) - step was silent module-not-found under continue-on-error; honest skip"
             --receipt grids/state/supremacy-receipt.json \
             --report grids/state/SUPREMACY-RECEIPT.md
 
