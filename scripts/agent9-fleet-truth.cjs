@@ -154,7 +154,26 @@ async function collect() {
   }));
   const domStatus = push(await wrap("domain-status", async () => {
     const j = await jfetch(`${RAW_DOMAIN}/status.json`);
-    return { repos: j?.pulse?.repos ?? null, at: j?.generatedAt || null };
+    return { repos: j?.pulse?.repos ?? null, reposPublic: j?.pulse?.reposPublic ?? null, at: j?.generatedAt || null };
+  }));
+  // roast-t55g-b: מדידה-עצמאית-על-השרשרת (keyless, RPC-ציבורי) — האוצר-לא-רק-מושאל-מקבלה-של-Autonomy
+  // שיכולה-להיות-שעה-ישנה; גם-חושף-גולמי-מול-נטו-והפרש-ההאצלות-במקום-להציג-נטו-בלבד
+  const chainTreasury = push(await wrap("chain-treasury-onchain", async () => {
+    const rpc = async (method, params) => {
+      const r = await fetch("https://api.steemit.com", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ jsonrpc: "2.0", method, params, id: 1 }) });
+      const j = await r.json();
+      if (!j || !j.result) throw new Error("bad-rpc-shape");
+      return j.result;
+    };
+    const gp = await rpc("condenser_api.get_dynamic_global_properties", []);
+    const acc = (await rpc("condenser_api.get_accounts", [["headcorner"]]))[0];
+    const amt = (s) => parseFloat(String(s ?? "0 VESTS").split(" ")[0]);
+    const fund = amt(gp.total_vesting_fund_steem), shares = amt(gp.total_vesting_shares);
+    const toSp = (v) => v * fund / shares;
+    const gross = toSp(amt(acc.vesting_shares));
+    const delOut = toSp(amt(acc.delegated_vesting_shares));
+    const delIn = toSp(amt(acc.received_vesting_shares));
+    return { grossSp: +gross.toFixed(3), delegatedOutSp: +delOut.toFixed(3), delegatedInSp: +delIn.toFixed(3), netSp: +(gross - delOut + delIn).toFixed(3), account: "headcorner", measuredAt: new Date().toISOString() };
   }));
   const fleetBeat = push(await wrap("domain-fleet-heartbeat", async () => {
     const j = await jfetch(`${RAW_DOMAIN}/truth/fleet.json`);
@@ -206,15 +225,18 @@ async function collect() {
     } else x.err = floor.err;
     items.push(x);
   }
-  { // X2 — מספר-המאגרים: הצהרת-status.json מול GitHub-API-חי
-    const x = mk("X2-repos-count", "מספר-המאגרים-המוצהר בstatus.json שונה-מה-API-החי", "low",
-      "המדידה-החיה-כאן-היא-האמת; מכונת-status.json היא-מסילת-אחרת (הסתירה-מתועדת-עד-ריפוי-אצלה)");
+  { // X2 — מספר-המאגרים: השוואה-כמו-לכמו בלבד (roast-t55g-a)
+    // roast-מצא: הגרסה-הקודמת-השוותה-סה\"כ-46-מול-ציבוריים-38 — סתירה-מלאכותית-שלי;
+    // status.json-היה-כן-כל-הזמן (46-סה\"כ = 38-ציבוריים + 8-פרטיים, נמדד-ב-roast)
+    const x = mk("X2-repos-count", "מספר-מאגרים-ציבוריים: הצהרת-status.json מול-GitHub-API-חי (כמו-לכמו)", "low",
+      "תיקון-roast-t55g-a: הסתירה-הקודמת-הייתה-באג-השוואה-שלי-ולא-שקר-של-status.json — השוואה-ציבוריים-מול-ציבוריים");
     if (domStatus.ok && ghRepos.ok) {
-      x.a = { claim: "status.json pulse.repos", value: domStatus.data.repos, src: "Domain/status.json" };
-      x.b = { claim: "GitHub API repos", value: ghRepos.data.count, src: "api.github.com/users/roshpinacare-sys" };
-      const d = domStatus.data.repos != null ? Math.abs(domStatus.data.repos - ghRepos.data.count) : null;
+      x.a = { claim: "status.json pulse.reposPublic", value: domStatus.data.reposPublic, src: "Domain/status.json" };
+      x.b = { claim: "GitHub API public repos", value: ghRepos.data.count, src: "api.github.com/users/roshpinacare-sys (ציבוריים-בלבד)" };
+      const d = (domStatus.data.reposPublic != null && ghRepos.data.count != null) ? Math.abs(domStatus.data.reposPublic - ghRepos.data.count) : null;
       x.verdict = d == null ? "UNMEASURED" : (d >= 2 ? "CONFIRMED" : "OK");
-      if (x.verdict === "CONFIRMED") x.note = `פער-של-${d} מאגרים בין-ההצהרה-למדידה-החיה`;
+      if (x.verdict === "OK") x.note = "אפס-סתירה-בהשוואה-הנכונה; הסה\"כ-המוצהר-46-כולל-גם-פרטיים (46=38ציבוריים+8פרטיים — נמדד-ב-roast-t55g)";
+      if (x.verdict === "CONFIRMED") x.note = `פער-של-${d} מאגרים גם-בהשוואה-הכמו-לכמו`;
     } else x.err = !domStatus.ok ? domStatus.err : ghRepos.err;
     items.push(x);
   }
@@ -281,7 +303,9 @@ async function collect() {
     schema: "AGENT9-FLEET-TRUTH/1",
     at: new Date().toISOString(),
     baker: "Domain/scripts/agent9-fleet-truth.cjs (keyless, fail-closed — מקור-שלא-השיב מדווח-ולא-מומצא)",
-    treasury: floor.ok ? { ok: true, ...floor.data } : { ok: false, err: floor.err },
+    treasury: floor.ok || chainTreasury.ok
+      ? { ok: floor.ok, ...floor.data, chain: chainTreasury.ok ? chainTreasury.data : null, chainErr: chainTreasury.ok ? null : chainTreasury.err }
+      : { ok: false, err: floor.err && chainTreasury.err ? floor.err + " | " + chainTreasury.err : (floor.err || chainTreasury.err) },
     trading: live.ok ? { ok: true, ...live.data } : { ok: false, err: live.err },
     hedgeGate: hedge.ok ? { ok: true, ...hedge.data } : { ok: false, err: hedge.err },
     fixedfloat: ff.ok ? { ok: true, ...ff.data } : { ok: false, err: ff.err },

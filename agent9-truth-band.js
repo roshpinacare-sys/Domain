@@ -56,10 +56,13 @@
         + '<span class="a9-k ' + verdictClass(T.verdict) + '">' + esc(T.verdict) + '</span>'
         + '<span class="a9-k ' + (health && health.indexOf("BELOW") === 0 ? "red" : "") + '" style="font-size:13px">' + esc(health || "UNMEASURED") + '</span></div>'
         + '<div class="a9-line">PASS = הפעולה-המוצעת-חוקית · לא בריאות-האוצר (תיקון-סתירה X1)</div>'
-        + '<div class="a9-line">net ' + esc(T.netSp) + " SP · רצפה " + esc(T.floorSp) + " · עודף " + esc(T.surplus) + "</div>"
-        + '<div class="a9-line">שורות-האצלה-חיות ' + esc(T.rowsOut) + " SP · החזרות-בפייפליין-7-ימים</div>"
+        + (T.chain && T.chain.grossSp != null // roast-t55g-c: שרשרת-מלאה-גולמי→האצלות→נטו — לא-נטו-בלבד-שמטעה
+          ? '<div class="a9-line">גולמי <b>' + esc(T.chain.grossSp) + '</b> SP → מואצל-החוצה −' + esc(T.chain.delegatedOutSp) + ' → נטו ' + esc(T.chain.netSp) + ' SP</div>'
+          : '<div class="a9-line">net ' + esc(T.netSp) + " SP · רצפה " + esc(T.floorSp) + " · עודף " + esc(T.surplus) + "</div>")
+        + '<div class="a9-line">רצפה ' + esc(T.floorSp) + " · עודף " + esc(T.surplus) + " · שורות-האצלה-חיות " + esc(T.rowsOut) + " SP</div>"
       : '<div class="a9-k amber">UNMEASURED</div><div class="a9-line">' + esc(T.err || "המקור-לא-השיב") + "</div>",
       "נמדד: " + ((T.ok || T.measuredAt) ? fmt(T.measuredAt) + " · לפני " + ago(T.measuredAt) : "—")
+      + (T.chain && T.chain.measuredAt ? " · שרשרת-עצמאית: " + ago(T.chain.measuredAt) : "")
       + ' · <a href="https://raw.githubusercontent.com/roshpinacare-sys/Autonomy/main/receipts/treasury-floor/latest.json" target="_blank" rel="noopener">קבלת-מקור</a>'));
 
     // סחר-חי
