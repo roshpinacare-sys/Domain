@@ -173,7 +173,7 @@ async function collect() {
     const gross = toSp(amt(acc.vesting_shares));
     const delOut = toSp(amt(acc.delegated_vesting_shares));
     const delIn = toSp(amt(acc.received_vesting_shares));
-    return { grossSp: +gross.toFixed(3), delegatedOutSp: +delOut.toFixed(3), delegatedInSp: +delIn.toFixed(3), netSp: +(gross - delOut + delIn).toFixed(3), account: Buffer.from("aGVhZGNvcm5lcg==", "base64").toString("utf8"), measuredAt: new Date().toISOString() };
+    return { grossSp: +gross.toFixed(3), delegatedOutSp: +delOut.toFixed(3), delegatedInSp: +delIn.toFixed(3), netSp: +(gross - delOut + delIn).toFixed(3), account: ACCT_TAG, measuredAt: new Date().toISOString() }; // R78 (trace 1a15f4a1e42c9839): the writer decoded the handle and BAKED the raw value — violating this file's own refs-cure law (line 19-22). The baked receipt carries the pseudonym, never the decoded handle.
   }));
   const fleetBeat = push(await wrap("domain-fleet-heartbeat", async () => {
     const j = await jfetch(`${RAW_DOMAIN}/truth/fleet.json`);
