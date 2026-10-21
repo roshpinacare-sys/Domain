@@ -223,10 +223,16 @@ for (const r of matrix.repos) summary[r.verdict] = (summary[r.verdict] || 0) + 1
 const totalArteries = matrix.repos.reduce((n, r) => n + r.arteries.length, 0);
 const beatArteries = matrix.repos.reduce((n, r) => n + r.arteries.filter(a => a.v === 'BEAT' || a.v === 'RUNNING').length, 0);
 
+// R-SCOPE: the token sees private repos too (46 total), while any visitor can only
+// measure the PUBLIC count (38). Publishing both ends the claims-vs-verifiable gap —
+// every page cites "repos (public: N)" from one measured source. Zero extra API calls:
+// visibility is already on each matrix record.
+const reposPublic = matrix.repos.filter(r => r.vis === 'public').length;
+
 const status = {
   schema: 'saos/grid-status/1',
   generatedAt: matrix.generatedAt,
-  pulse: { beatArteries, totalArteries, repos: matrix.repos.length },
+  pulse: { beatArteries, totalArteries, repos: matrix.repos.length, reposPublic },
   summary,
   teeth: matrix.actions,
   apiCalls,
@@ -235,7 +241,7 @@ const status = {
 
 // GRID-STATUS.md — human surface, worst first
 let md = `# GRID-STATUS — פעימת הגריד החיה\n\n`;
-md += `_נמדד אוטומטית: ${matrix.generatedAt} · עורקים: ${totalArteries} · פועמים-עכשיו: ${beatArteries} · סריקות-API: ${apiCalls} (טוקן: ${TOKEN_NAME})_\n\n`;
+md += `_נמדד אוטומטית: ${matrix.generatedAt} · עורקים: ${totalArteries} · פועמים-עכשיו: ${beatArteries} · מאגרים: ${matrix.repos.length} (ציבוריים: ${reposPublic}) · סריקות-API: ${apiCalls} (טוקן: ${TOKEN_NAME})_\n\n`;
 md += `סיכום: ${Object.entries(summary).map(([k, v]) => `${k}=${v}`).join(' · ')}\n\n`;
 md += `| ריפו | נראות | פסק | עורקים (עדכניים ביותר) |\n|---|---|---|---|\n`;
 for (const r of matrix.repos) {
