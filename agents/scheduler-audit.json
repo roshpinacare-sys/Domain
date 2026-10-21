@@ -23,7 +23,7 @@
           "crons": [
             "33 */2 * * *"
           ],
-          "expectedSlots": 11,
+          "expectedSlots": 12,
           "observed": 5,
           "lastScheduledAt": "2026-10-21T07:57:38Z",
           "unparseableCrons": 0,
@@ -67,7 +67,7 @@
           "crons": [
             "23 */2 * * *"
           ],
-          "expectedSlots": 11,
+          "expectedSlots": 12,
           "observed": 5,
           "lastScheduledAt": "2026-10-21T07:44:51Z",
           "unparseableCrons": 0,
@@ -269,8 +269,8 @@
             "45 * * * *"
           ],
           "expectedSlots": 70,
-          "observed": 15,
-          "lastScheduledAt": "2026-10-21T07:49:27Z",
+          "observed": 16,
+          "lastScheduledAt": "2026-10-21T10:36:45Z",
           "unparseableCrons": 0,
           "verdict": "DEGRADED"
         },
@@ -279,8 +279,8 @@
           "crons": [
             "4 */2 * * *"
           ],
-          "expectedSlots": 11,
-          "observed": 5,
+          "expectedSlots": 12,
+          "observed": 4,
           "lastScheduledAt": "2026-10-21T07:29:06Z",
           "unparseableCrons": 0,
           "verdict": "DEGRADED"
@@ -335,8 +335,8 @@
             "*/15 * * * *"
           ],
           "expectedSlots": 0,
-          "observed": 5,
-          "lastScheduledAt": "2026-10-21T05:46:27Z",
+          "observed": 6,
+          "lastScheduledAt": "2026-10-21T11:01:17Z",
           "unparseableCrons": 1,
           "verdict": "UNMEASURED"
         },
@@ -357,10 +357,10 @@
             "54 5 * * *"
           ],
           "expectedSlots": 1,
-          "observed": 0,
-          "lastScheduledAt": "2026-10-20T10:27:55Z",
+          "observed": 1,
+          "lastScheduledAt": "2026-10-21T10:38:30Z",
           "unparseableCrons": 0,
-          "verdict": "STARVED"
+          "verdict": "PULSE"
         },
         {
           "file": "fill-ledger-cron.yml",
@@ -522,8 +522,8 @@
             "*/15 * * * *"
           ],
           "expectedSlots": 0,
-          "observed": 5,
-          "lastScheduledAt": "2026-10-21T05:52:33Z",
+          "observed": 6,
+          "lastScheduledAt": "2026-10-21T11:09:28Z",
           "unparseableCrons": 1,
           "verdict": "UNMEASURED"
         },
@@ -554,7 +554,7 @@
           "crons": [
             "17 */2 * * *"
           ],
-          "expectedSlots": 11,
+          "expectedSlots": 12,
           "observed": 5,
           "lastScheduledAt": "2026-10-21T07:45:42Z",
           "unparseableCrons": 0,
@@ -566,7 +566,7 @@
             "3,33 * * * *"
           ],
           "expectedSlots": 46,
-          "observed": 6,
+          "observed": 5,
           "lastScheduledAt": "2026-10-21T07:25:38Z",
           "unparseableCrons": 0,
           "verdict": "DEGRADED"
@@ -588,8 +588,8 @@
             "*/30 * * * *"
           ],
           "expectedSlots": 0,
-          "observed": 5,
-          "lastScheduledAt": "2026-10-21T05:47:45Z",
+          "observed": 6,
+          "lastScheduledAt": "2026-10-21T11:23:06Z",
           "unparseableCrons": 1,
           "verdict": "UNMEASURED"
         },
@@ -720,7 +720,7 @@
             "13,43 * * * *"
           ],
           "expectedSlots": 47,
-          "observed": 6,
+          "observed": 5,
           "lastScheduledAt": "2026-10-21T06:31:43Z",
           "unparseableCrons": 0,
           "verdict": "DEGRADED"
@@ -763,8 +763,8 @@
           "crons": [
             "11 */2 * * *"
           ],
-          "expectedSlots": 11,
-          "observed": 5,
+          "expectedSlots": 12,
+          "observed": 4,
           "lastScheduledAt": "2026-10-21T07:29:18Z",
           "unparseableCrons": 0,
           "verdict": "DEGRADED"
@@ -829,7 +829,7 @@
           "crons": [
             "23 */2 * * *"
           ],
-          "expectedSlots": 11,
+          "expectedSlots": 12,
           "observed": 5,
           "lastScheduledAt": "2026-10-21T07:48:32Z",
           "unparseableCrons": 0,
@@ -929,7 +929,7 @@
             "9 * * * *"
           ],
           "expectedSlots": 23,
-          "observed": 6,
+          "observed": 5,
           "lastScheduledAt": "2026-10-21T10:04:34Z",
           "unparseableCrons": 0,
           "verdict": "DEGRADED"
@@ -1014,10 +1014,9 @@
       ]
     },
     "boundary": {
-      "schedulerLastSeenAt": "2026-10-21T10:34:42Z",
+      "schedulerLastSeenAt": "2026-10-21T11:23:06Z",
       "starvedNames": [
         "agent9-fleet-truth.yml",
-        "exposure-gate.yml",
         "pages-quality-gate.yml"
       ],
       "degradedNames": [
@@ -1084,17 +1083,16 @@
     "heal": {
       "candidates": [
         "agent9-fleet-truth.yml",
-        "exposure-gate.yml",
         "pages-quality-gate.yml"
       ],
       "cap": 3,
       "law": "STARVED ∧ keyless ∧ not-host ∧ not-keeper"
     },
     "window": {
-      "from": "2026-10-20T10:36:05.152Z",
-      "to": "2026-10-21T10:36:05.152Z",
+      "from": "2026-10-20T11:33:57.623Z",
+      "to": "2026-10-21T11:33:57.623Z",
       "graceMinutes": 40
     }
   },
-  "at": "2026-10-21T10:38:00.354Z"
+  "at": "2026-10-21T11:35:48.216Z"
 }
