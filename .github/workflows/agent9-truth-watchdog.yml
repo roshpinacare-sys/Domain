@@ -70,6 +70,10 @@ jobs:
 
       - name: Heal — commit with measured-staleness evidence
         if: steps.age.outputs.verdict == 'STALE'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}   # זהות-ארעית-לrunner-בלבד — נדרש-גם-לre-bake-בעימות-דחיפה
+          AGE_MIN: ${{ steps.age.outputs.age_min }}
+          BAKED_AT: ${{ steps.age.outputs.baked_at }}
         run: |
           set -Eeuo pipefail
           git config user.name "agent-9"
@@ -77,12 +81,17 @@ jobs:
           git add truth/agent9.json
           OK=$(python3 -c "import json;d=json.load(open('truth/agent9.json'));print(f\"{sum(1 for s in d['sources'] if s['ok'])}/{len(d['sources'])}\")")
           git commit -m "agent-9/t55f: watchdog-heal — main clock was silent ${AGE_MIN}min (bake was from ${BAKED_AT}); secondary clock re-baked [sources ok ${OK}] [skip ci]" || echo "nothing changed"
+          # roast-t55g-d cure (same as the main clock): sibling bake of the same file makes
+          # rebase unresolvable → abort, reset to origin, RE-BAKE fresh, re-commit, retry.
           ok=0
           for i in 1 2 3 4 5; do
             if git pull --rebase -q origin main && git push -q origin HEAD:main; then ok=1; break; fi
+            git rebase --abort 2>/dev/null || true
+            git fetch -q origin main
+            git reset -q --hard origin/main
+            node scripts/agent9-fleet-truth.cjs >/dev/null 2>&1 || true
+            git add truth/agent9.json
+            git commit -m "agent-9/t55f: watchdog-heal re-baked-on-push-race (attempt ${i}) [skip ci]" || true
             sleep $((i * 4))
           done
           [ "$ok" = "1" ] || { echo "PUSH-FAIL after 5 retries — honest red, next watchdog retries"; exit 1; }
-        env:
-          AGE_MIN: ${{ steps.age.outputs.age_min }}
-          BAKED_AT: ${{ steps.age.outputs.baked_at }}
