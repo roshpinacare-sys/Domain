@@ -347,6 +347,128 @@ const NOT_MEASURED = `<p class="na">לא נמדד במהדורה זו — המק
     ? `<ul class="posts">${edList.map((f) => `<li><a href="editions/${f}" style="direction:ltr;unicode-bidi:embed">${f.replace(".html", "")}</a></li>`).join("")}</ul><p class="sub">מהדורת-היום נשמרת אוטומטית כאן ומוחלפת כל-אפייה של אותו-יום; 14 מהדורות אחרונות מוצגות.</p>`
     : `<p class="na">אין עדיין ארכיון — המהדורה של היום תישמר כאן באפייה ראשונה.</p>`;
 
+  /* W29 graft 1) שולחן-השווקים — מחיר-אמת חוץ משלושה מקורות בלתי-תלויים */
+  let deskHtml = NOT_MEASURED, deskIso = null;
+  try {
+    const px = [];
+    try { const b = await jget("https://api.binance.com/api/v3/ticker/24hr?symbol=STEEMUSDT", 9000); if (b?.lastPrice) px.push({ venue: "Binance STEEM/USDT", price: +b.lastPrice, chg: +b.priceChangePercent, vol: +b.quoteVolume }); } catch {}
+    try { const g = await jget("https://api.coingecko.com/api/v3/simple/price?ids=steem&vs_currencies=usd&include_24hr_change=true", 9000); if (g?.steem?.usd) px.push({ venue: "CoinGecko STEEM/USD", price: g.steem.usd, chg: g.steem.usd_24h_change, vol: null }); } catch {}
+    try { const p = await jget("https://api.coinpaprika.com/v1/tickers/steem-steem", 9000); if (p?.quotes?.USD?.price) px.push({ venue: "Coinpaprika STEEM/USD", price: p.quotes.USD.price, chg: p.quotes.USD.percent_change_24h, vol: p.quotes.USD.volume_24h }); } catch {}
+    if (!px.length) throw new Error("no external venue answered");
+    deskIso = new Date().toISOString();
+    const prices = px.map((r) => r.price).sort((a, b) => a - b);
+    const med = prices[Math.floor(prices.length / 2)];
+    const chgs = px.map((r) => r.chg).filter((c) => typeof c === "number").sort((a, b) => a - b);
+    const medChg = chgs.length ? chgs[Math.floor(chgs.length / 2)] : null;
+    const spreadBps = prices.length >= 2 ? Math.round(((prices[prices.length - 1] - prices[0]) / med) * 10000) : null;
+    deskHtml = `
+  <p class="lead">STEEM נסחר סביב <b>$${med.toFixed(5)}</b> (חציון ${px.length} מקורות-ציבוריים, רגע-האפייה) — ${medChg === null ? "שינוי-24ש׳ לא נמדד" : `${medChg >= 0 ? "עלייה" : "ירידה"} של ${Math.abs(medChg).toFixed(2)}% ב-24 השעות`}.</p>
+  <table class="tbl"><thead><tr><th>מקור</th><th>מחיר</th><th>24ש׳</th><th>היקף</th></tr></thead><tbody>
+  ${px.map((r) => `<tr><td>${esc(r.venue)}</td><td class="num">$${r.price.toFixed(5)}</td><td class="num ${r.chg >= 0 ? "ok" : "fail"}">${r.chg >= 0 ? "+" : ""}${r.chg.toFixed(2)}%</td><td class="num">${r.vol ? "$" + Math.round(r.vol).toLocaleString("en-US") : "—"}</td></tr>`).join("")}
+  </tbody></table>
+  ${spreadBps !== null ? `<p class="sub">פער-בין-מקורות ${spreadBps}bps — ${spreadBps <= 100 ? "שוק עקבי, המחיר אמין" : "פער רחב — נזהרים במסקנות"}. הפער בין המחיר החוץ הזה לבין הספר הפנימי («מוסף-השוק» למטה) הוא בדיוק המרווח שהשוק שלנו מנסה לסגור.</p>` : ""}`;
+  } catch (e) {
+    deskHtml = `${NOT_MEASURED}<!-- ${esc(String(e.message || e).slice(0, 80))} -->`;
+  }
+
+  /* W29 graft 2) גל-העדים — קווי-העגינה על השרשרת */
+  let weaveHtml = NOT_MEASURED, weaveIso = null;
+  try {
+    const v = await jgetL(PAGES("weave/vitals.json"), path.join(__dirname, "..", "weave", "vitals.json"));
+    weaveIso = v.generatedAt;
+    const s = v.summary || {};
+    let census = null;
+    try { census = await jgetL(PAGES("weave/census.json"), path.join(__dirname, "..", "weave", "census.json")); } catch {}
+    const rec = census?.recent || {};
+    weaveHtml = `
+  <p class="lead">קווי-עדות: <b>${s.up ?? "?"}/${s.lines ?? "?"}</b> חיים · פסיקה-גרועה <b>${s.worstLatencyMs ?? "—"}ms</b> · מצב: <b class="${v.verdict === "LIVE" ? "ok" : "warn"}">${esc(v.verdict || "—")}</b></p>
+  <ul>
+    ${census ? `<li>מפקד-העגינה (45 יום): «${esc(census.verdict || "—")}» · ב-26 השעות האחרונות <b>${rec.anchorsInWindow ?? "—"}</b> עגינות, פער-מרבי ${rec.maxGapMinutes ?? "—"} דק׳</li>` : ""}
+    ${census?.freshness ? `<li>טריות-העדות האחרונה: ${census.freshness.latestAgeHours?.toFixed?.(1) ?? "?"} ש׳ (סף ${census.freshness.thresholdHours ?? "?"} ש׳)</li>` : ""}
+  </ul>
+  <p class="sub">גל-העדים הוא קו-ההגנה של האמת: כל רגע-מצב נחתם על שרשרת ציבורית, והמפקד קורא את השרשרת ישירות — לא את הספרים שלנו.</p>`;
+  } catch (e) {
+    weaveHtml = `${NOT_MEASURED}<!-- ${esc(String(e.message || e).slice(0, 80))} -->`;
+  }
+
+  /* W29 graft 3) סיקור-ה-DEX — הרשת שלנו + חומת-ההפקדות עם txids */
+  let dexHtml = NOT_MEASURED, dexIso = null;
+  try {
+    const w = await jgetL(PAGES("dex/world.json"), path.join(__dirname, "..", "dex", "world.json"));
+    dexIso = w.publishedAt;
+    const st = w.state || {};
+    let deps = [];
+    try { const d = await jgetL(PAGES("dex/deposits.json"), path.join(__dirname, "..", "dex", "deposits.json")); deps = Array.isArray(d?.deposits) ? d.deposits : []; } catch {}
+    const totalSteem = deps.filter((x) => x.asset === "STEEM").reduce((a, x) => a + (+x.amount || 0), 0);
+    dexHtml = `
+  <p class="lead">הרשת שלנו בגובה <b>#${typeof st.height === "number" ? st.height.toLocaleString("en-US") : "—"}</b> · <b>${typeof st.fills === "number" ? st.fills.toLocaleString("en-US") : "—"}</b> מילויים · <b>${typeof st.swaps === "number" ? st.swaps.toLocaleString("en-US") : "—"}</b> המרות · ${st.tps ?? "—"} tx/שנ׳.</p>
+  ${deps.length ? `
+  <p class="sub">חומת-ההפקדות: <b>${deps.length}</b> הפקדות · סך <b>${totalSteem.toFixed(2)} STEEM</b> — כל אחת עם txid לאימות על השרשרת:</p>
+  <table class="tbl"><thead><tr><th>txid</th><th>כמות</th><th>אל</th><th>מתי</th></tr></thead><tbody>
+  ${deps.slice(0, 5).map((d) => `<tr><td class="mono"><a href="https://steemblockexplorer.com/tx/${esc(d.txid)}" target="_blank" rel="noreferrer">${esc(String(d.txid).slice(0, 10))}…</a></td><td class="num">${(+d.amount).toFixed(2)} ${esc(d.asset)}</td><td>${esc(d.to)}</td><td>${esc(ago(new Date(+d.ts).toISOString()) || "—")}</td></tr>`).join("")}
+  </tbody></table>` : `<p class="na">הפקדות: אין נתון במהדורה זו — הלדגר הציבורי ריק או לא השיב.</p>`}
+  <p class="sub">זה השוק שנבנה על הרשת של עצמנו: ספר דו-צדדי רב-גופי מול כסף-אמיתי חוץ, עם הפקדות שניתן לאמת txid-by-txid בלי לסמוך על מילה שלנו.</p>`;
+  } catch (e) {
+    dexHtml = `${NOT_MEASURED}<!-- ${esc(String(e.message || e).slice(0, 80))} -->`;
+  }
+
+  /* W29 graft 4) מגמות-בין-מהדורות — זיכרון-מהדורות */
+  let prevEd = null;
+  const statePath = path.join(__dirname, "..", "press", "edition-state.json");
+  try { prevEd = JSON.parse(fs.readFileSync(statePath, "utf8")); } catch {}
+  const edNow = { at: new Date().toISOString(), steemUsd: null, depositsCount: null, worldHeight: null, fillsTotal: null };
+  try { const w = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "dex", "world.json"), "utf8")); edNow.worldHeight = w?.state?.height ?? null; edNow.fillsTotal = w?.state?.fills ?? null; } catch {}
+  try { const d = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "dex", "deposits.json"), "utf8")); edNow.depositsCount = Array.isArray(d?.deposits) ? d.deposits.length : null; } catch {}
+  {
+    const px2 = [];
+    try { const b = await jget("https://api.binance.com/api/v3/ticker/price?symbol=STEEMUSDT", 8000); if (b?.price) px2.push(+b.price); } catch {}
+    try { const g = await jget("https://api.coingecko.com/api/v3/simple/price?ids=steem&vs_currencies=usd", 8000); if (g?.steem?.usd) px2.push(+g.steem.usd); } catch {}
+    if (px2.length) { px2.sort((a, b) => a - b); edNow.steemUsd = px2[Math.floor(px2.length / 2)]; }
+  }
+  const trendChip = (label, p, c, d = 5) => {
+    if (typeof p !== "number" || typeof c !== "number" || !isFinite(p) || !isFinite(c)) return "";
+    const diff = c - p;
+    if (Math.abs(diff) < Math.pow(10, -d) / 2) return `<span class="chip">${esc(label)} יציב</span>`;
+    const up = diff > 0;
+    return `<span class="chip ${up ? "up" : "down"}">${esc(label)} ${up ? "▲" : "▼"} ${Math.abs(diff).toFixed(d)} מאז המהדורה הקודמת</span>`;
+  };
+  const trendChips = prevEd ? [trendChip("STEEM", prevEd.steemUsd, edNow.steemUsd), trendChip("הפקדות", prevEd.depositsCount, edNow.depositsCount, 0), trendChip("גובה-רשת", prevEd.worldHeight, edNow.worldHeight, 0), trendChip("מילויים", prevEd.fillsTotal, edNow.fillsTotal, 0)].filter(Boolean) : [];
+  try {
+    const prevJson = fs.existsSync(statePath) ? fs.readFileSync(statePath, "utf8") : null;
+    if (prevJson !== JSON.stringify(edNow, null, 2)) fs.writeFileSync(statePath, JSON.stringify(edNow, null, 2));
+  } catch { /* state never breaks the edition */ }
+
+  /* W29 graft 5) פינת-הכנות — טבלת-כל-המקורות של המהדורה */
+  const stampState = (iso, slaMin) => !iso ? ["FAIL", "—"] : (ago(iso) !== null && (Date.now() - new Date(iso).getTime()) / 60000 <= slaMin ? ["OK", ago(iso)] : ["STALE", ago(iso)]);
+  const edSources = [
+    ["Binance/CoinGecko/Coinpaprika", deskIso, 10, "שולחן-השווקים"],
+    ["FleetHQ office-state", officeIso, 130, "המשרד החי"],
+    ["status.json", fleetIso, 240, "דופק-הצי"],
+    ["moment/moment.json", momIso, 90, "הרגע הכלכלי"],
+    ["feature_list.json", toolsIso, 2880, "מוסף-הכלים"],
+    ["agents/market-grid+arb-mesh+mm-volume", mktIso, 720, "מוסף-השוק"],
+    ["agents/money-ledger+econ-book", moneyIso, 720, "מוסף-הכסף"],
+    ["agents/fill-ledger.json", fillsIso, 1560, "מוסף-המילויים"],
+    ["weave/vitals.json", weaveIso, 360, "גל-העדים"],
+    ["dex/world.json", dexIso, 480, "סיקור-ה-DEX"],
+    ["mirror.json", mirrorIso, 360, "מראת-השרשרת"],
+    ["content/published.json", chainIso, 2880, "בשרשרת"],
+    ["agents/recruitment.json", recIso, 5760, "מודעות-הגיוס"],
+    ["agents/ventures.json", venIso, 5760, "מוסף-המיזמים"],
+    ["press/evidence.json", sovIso, 1560, "מוסף-הריבונות"],
+  ];
+  const edRows = edSources.map(([n, iso, sla, note]) => {
+    const [stt, ag] = stampState(iso, sla);
+    return `<tr><td>${esc(n)}</td><td class="${stt === "OK" ? "ok" : stt === "STALE" ? "warn" : "fail"}">${stt}</td><td class="num">${ag}</td><td>${esc(note || "")}</td></tr>`;
+  }).join("");
+  const edFails = edSources.filter((r) => stampState(r[1], r[2])[0] !== "OK").length;
+  const honestyHtml = `<article class="card wide">
+    <h2>פינת-הכנות<span class="kick">בין-טענות-לאמת · כל מקורות המהדורה, כולל הכישלונות</span></h2>
+    <p class="lead">עיתון שלא מפרסם את כשלונות-המדידה של עצמו הוא יחסות-ציבור, לא עיתון. לפניכם כל מקור שהמהדורה ניסתה:</p>
+    <table class="tbl"><thead><tr><th>מקור</th><th>מצב</th><th>טריות</th><th>תפקיד</th></tr></thead><tbody>${edRows}</tbody></table>
+    <p class="ctx">${edFails ? `<b>${edFails} מקורות לא השיבו או השיבו ישן</b> — הכתבות שלהם מסומנות «לא נמדד» ולא הומצאו. זו המדיניות.` : `כל המקורות השיבו טריים במהדורה זו.`} אפס-JavaScript · אפס-סודות · כל ערך עם קישור-מקור.</p>
+  </article>`;
+
   /* ------------------------------- the page -------------------------------- */
 
   const page = `<!DOCTYPE html>
@@ -402,6 +524,17 @@ header.site{position:sticky;top:0;z-index:50;background:rgba(245,243,241,.92);ba
 .na{color:var(--faint);font-size:13.5px;font-style:italic}
 .src{font-size:11px;color:var(--faint);margin-top:auto;padding-top:6px;border-top:1px dashed var(--line)}
 .src a{direction:ltr;unicode-bidi:embed}
+/* W29 union graft: table + honesty + trends styling */
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px;margin:4px 0}
+.tbl th{text-align:start;color:var(--faint);font-weight:600;border-bottom:1px solid var(--line);padding:4px 6px}
+.tbl td{border-bottom:1px solid #eee9e4;padding:4px 6px;color:var(--dim)}
+.num{text-align:end;font-variant-numeric:tabular-nums}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace;direction:ltr;text-align:start}
+.ctx{color:var(--dim);font-size:12.5px;border-inline-start:3px solid var(--acc-line);padding-inline-start:10px;line-height:1.7}
+.card.wide{grid-column:1/-1}
+.fail{color:#b3261e;font-weight:700}
+.chip.up{background:var(--acc-bg);border-color:var(--acc-line);color:var(--acc-bright)}
+.chip.down{background:#fbeae7;border-color:#e7c4bd;color:#b3261e}
 .strip{display:flex;gap:14px;align-items:center;justify-content:center;flex-wrap:wrap;padding:14px 0 4px}
 .strip img{height:20px}
 footer{border-top:1px solid var(--line);padding:18px 0 30px;color:var(--faint);font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
@@ -426,7 +559,9 @@ footer{border-top:1px solid var(--line);padding:18px 0 30px;color:var(--faint);f
     <a href="${SITE}badges.html"><img src="${SITE}badge/office.svg" alt="SAOS office"></a>
     <a href="${SITE}badges.html"><img src="${SITE}badge/fleet.svg" alt="SAOS fleet"></a>
     <a href="${SITE}badges.html"><img src="${SITE}badge/edge.svg" alt="steem-edge"></a>
+    <a href="${SITE}badges.html"><img src="${SITE}badge/price.svg" alt="STEEM price"></a>
   </div>
+  ${trendChips.length ? `<div class="chips" style="justify-content:center;padding:6px 0 0">${trendChips.join("")}</div>` : ""}
   <section class="grid">
     ${sec("המשרד החי", "כתבה-ראשית · FleetHQ office-state", officeHtml, "https://raw.githubusercontent.com/roshpinacare-sys/FleetHQ/main/office/state/office-state.json", officeIso).replace('class="card"', 'class="card lead-card"')}
     ${sec("דופק-הצי", "מערכת · status.json", fleetHtml, "https://roshpinacare-sys.github.io/Domain/status.json", fleetIso)}
@@ -441,6 +576,10 @@ footer{border-top:1px solid var(--line);padding:18px 0 30px;color:var(--faint);f
     ${sec("מוסף-המיזמים", "venture-desk", venHtml, "https://roshpinacare-sys.github.io/Domain/agents/ventures.json", venIso)}
     ${sec("מוסף-הריבונות", "סוכן-4 · ראיות-ארכיטקטורה חיות · 9 מקורות", sovHtml, "https://roshpinacare-sys.github.io/Domain/press/evidence.json", sovIso)}
     ${sec("ארכיון-המהדורות", "עיתון-אמיתי שומר את ההיסטוריה שלו", archHtml, "https://roshpinacare-sys.github.io/Domain/press/editions/", new Date().toISOString())}
+    ${sec("שולחן-השווקים", "מחיר-אמת · שלושה מקורות בלתי-תלויים · W29", deskHtml, "https://api.binance.com/api/v3/ticker/24hr?symbol=STEEMUSDT", deskIso)}
+    ${sec("גל-העדים", "עגינות-שרשרת · weave · W29", weaveHtml, "https://roshpinacare-sys.github.io/Domain/weave/vitals.json", weaveIso)}
+    ${sec("סיקור-ה-DEX", "השוק על הרשת שלנו · W29", dexHtml, "https://roshpinacare-sys.github.io/Domain/dex/world.json", dexIso).replace('class="card"', 'class="card wide"')}
+    ${honestyHtml}
   </section>
 </main>
 <footer><div class="wrap" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px">

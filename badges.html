@@ -44,12 +44,6 @@ textarea{width:100%;font-family:var(--mono);font-size:11.5px;direction:ltr;text-
 .copy:hover{background:var(--acc-line)}
 .copy:disabled{opacity:.55;cursor:default}
 .laws{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:22px;margin:22px 0 40px}
-.now{font-size:12px;color:var(--acc-bright);background:var(--acc-bg);border:1px dashed var(--acc-line);border-radius:var(--r-sm);padding:6px 12px}
-.now.err{color:var(--faint);border-color:var(--line);background:var(--bg)}
-.pipe{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:22px auto 0;max-width:760px}
-.pipe>span{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-sm);padding:9px 14px;font-size:12.5px;font-weight:650;color:var(--text);line-height:1.5}
-.pipe>span small{font-weight:500;font-size:10.5px;color:var(--faint)}
-.pipe .arr{border:none;background:none;color:var(--acc-bright);font-size:17px;padding:0}
 .laws h2{font-size:17px;margin-bottom:10px}
 .laws li{margin-inline-start:20px;color:var(--dim);font-size:13.5px;line-height:1.85}
 .laws li b{color:var(--text)}
@@ -69,15 +63,6 @@ footer{border-top:1px solid var(--line);padding:18px 0 26px;color:var(--faint);f
   <section class="hero">
     <h1>תגי-<em>הוכחה</em> חיים</h1>
     <p>תגי-SVG שנגזרים אוטומטית ממדידות ציבוריות — משרד-הסוכנים, דופק-הצי, וקריאת-הרגע הכלכלית. מתאפים ב-CI כל 30 דקות, בלי מפתחות ובלי ידיים אנושיות. העתיקו, הדביקו ב-README, וכל העולם רואה את המדידה.</p>
-    <div class="pipe" aria-label="צינור-האפייה">
-      <span>מקור-ציבורי<br><small>status.json · office-state · moment</small></span>
-      <span class="arr">←</span>
-      <span>אפיית-CI keyless<br><small>כל 30 דק׳ · write-on-change</small></span>
-      <span class="arr">←</span>
-      <span>תג-SVG נמדד<br><small>אדום כשהמדידה נכשלת</small></span>
-      <span class="arr">←</span>
-      <span>ה-README שלך<br><small>שורת-מרקדאון אחת</small></span>
-    </div>
   </section>
 
   <section class="grid" id="cards">
@@ -85,7 +70,6 @@ footer{border-top:1px solid var(--line);padding:18px 0 26px;color:var(--faint);f
       <h2>המשרד החי</h2>
       <div class="sub">חיובות-המשרד מתוך state הפורמן: משמרות שעבדו באמת, טריות לפי חוק-130 הדקות. אדום = המשמרת התפזרה, ואתם רואים את זה — כי אנחנו לא מסתירים.</div>
       <div class="badgebox"><img src="badge/office.svg" alt="SAOS office badge" data-live></div>
-      <div class="now" id="now-office">המדידה עכשיו: טוען…</div>
       <textarea readonly rows="2">[![SAOS office](https://roshpinacare-sys.github.io/Domain/badge/office.svg)](https://roshpinacare-sys.github.io/Domain/office3d/)</textarea>
       <button class="copy" type="button">העתקת-README</button>
       <div class="src">מקור: <a href="https://raw.githubusercontent.com/roshpinacare-sys/FleetHQ/main/office/state/office-state.json">FleetHQ raw office-state.json</a></div>
@@ -95,7 +79,6 @@ footer{border-top:1px solid var(--line);padding:18px 0 26px;color:var(--faint);f
       <h2>דופק-הצי</h2>
       <div class="sub">עורקים שפעמו מתוך סך-העורקים על-פני 34 ה-repos של הצי — נמדד מספר-המצב הציבורי, לא מוכרז.</div>
       <div class="badgebox"><img src="badge/fleet.svg" alt="SAOS fleet badge" data-live></div>
-      <div class="now" id="now-fleet">המדידה עכשיו: טוען…</div>
       <textarea readonly rows="2">[![SAOS fleet](https://roshpinacare-sys.github.io/Domain/badge/fleet.svg)](https://roshpinacare-sys.github.io/Domain/status/)</textarea>
       <button class="copy" type="button">העתקת-README</button>
       <div class="src">מקור: <a href="status.json">Domain status.json</a></div>
@@ -105,10 +88,27 @@ footer{border-top:1px solid var(--line);padding:18px 0 26px;color:var(--faint);f
       <h2>steem-edge</h2>
       <div class="sub">הפרש-עומק ההצעות החי בשוק STEEM/SBD (bps) + קריאת-הרגע של moment-watch. המספר שהענקים לא מציגים — כי הוא נמדד ולא משווק.</div>
       <div class="badgebox"><img src="badge/edge.svg" alt="steem edge badge" data-live></div>
-      <div class="now" id="now-edge">המדידה עכשיו: טוען…</div>
       <textarea readonly rows="2">[![steem-edge](https://roshpinacare-sys.github.io/Domain/badge/edge.svg)](https://roshpinacare-sys.github.io/Domain/money.html)</textarea>
       <button class="copy" type="button">העתקת-README</button>
       <div class="src">מקור: <a href="moment/moment.json">Domain moment/moment.json</a></div>
+    </article>
+
+    <article class="card">
+      <h2>מחיר-אמת (STEEM)</h2>
+      <div class="sub">חציון של שלושה מקורות-ציבור בלתי-תלויים (Binance · CoinGecko · Coinpaprika) ברגע-האפייה. לא אומדן שלנו ולא מקור אחד שיכול לשקר — אם אף מקור לא עונה, התג מחזיק את הערך הקודם ולא ממציא.</div>
+      <div class="badgebox"><img src="badge/price.svg" alt="STEEM price badge" data-live></div>
+      <textarea readonly rows="2">[![STEEM price](https://roshpinacare-sys.github.io/Domain/badge/price.svg)](https://roshpinacare-sys.github.io/Domain/money.html)</textarea>
+      <button class="copy" type="button">העתקת-README</button>
+      <div class="src">מקורות: binance.com · coingecko.com · coinpaprika.com (API ציבוריים, keyless)</div>
+    </article>
+
+    <article class="card">
+      <h2>משטח-האיכות</h2>
+      <div class="sub">התג שמדווח על המדידה של עצמנו: כמה עמודי-מפתח עברו את בדיקת-האיכות האוטומטית (עומק-תוכן, טריות-נתונים, קישורים). אדום = עמוד נפל, וזה נראה בפומבי.</div>
+      <div class="badgebox"><img src="badge/quality.svg" alt="SAOS quality badge" data-live></div>
+      <textarea readonly rows="2">[![SAOS quality](https://roshpinacare-sys.github.io/Domain/badge/quality.svg)](https://roshpinacare-sys.github.io/Domain/quality/)</textarea>
+      <button class="copy" type="button">העתקת-README</button>
+      <div class="src">מקור: <a href="quality/report.json">quality/report.json</a> — נמדד כל חצי שעה ב-CI</div>
     </article>
 
     <article class="card">
@@ -127,7 +127,18 @@ footer{border-top:1px solid var(--line);padding:18px 0 26px;color:var(--faint);f
       <li><b>נמדד, לא מוצהר</b> — כל ערך נשלף באפיית-CI ממקור-ציבורי מוכרז בקישור מתחת לכל תג. אפשר לבדוק את המקור בעצמכם.</li>
       <li><b>כישלון נראה</b> — מקור שנפל משאיר את התג הקודם ולא ממציא ערך; פורמן שהזדקן מעל חוק-130 הדקות הופך <b>אדום</b> על התג עצמו.</li>
       <li><b>אפס-סודות</b> — האפייה keyless ומאותו-GitHub-Pages: בלי טוקנים, בלי שרת, בלי תלות בענקים.</li>
-      <li><b>קצב אמיתי</b> — מתאפים כל 30 דקות (<span class="mono">23,53 * * * *</span>), ונכתבים רק כשהתוכן באמת השתנה.</li>
+      <li><b>קצב אמיתי</b> — מתאפים כל 30 דקות, ונכתבים רק כשהתוכן באמת השתנה.</li>
+      <li><b>אימות-עצמאי בשלושה צעדים</b> — (1) פתחו את קובץ-המקור מהקישור מתחת לתג; (2) בדקו שה-stamp «measuredAt/generatedAt» בתוך חלון-ההיגיון; (3) השוו לתג. אם לא תואם — זו דריכה שנרצה לדעת עליה: פתחו issue.</li>
+    </ul>
+  </section>
+
+  <section class="laws">
+    <h2>תגי-הוחכה — מה קיים ומה עדיין לא</h2>
+    <p style="color:var(--dim);font-size:14px;line-height:1.8;margin-bottom:10px">הצי מונע בכוח-מוחכה (delegated stake) — זו הפיזיקה שמאחורי כל פעימה שהתגים מציגים. אבל <b>תג של הוחכה עצמה עדיין לא קיים</b>, והנימוק הוא בדיוק הדוקטרינה של העמוד הזה:</p>
+    <ul>
+      <li><b>מה נמדד כבר</b> — דופק-הצי ומשרד-הסוכנים משקפים את התוצאה של ההוחכה: עורקים שפעמו, משמרות שעבדו, מילויים שנרשמו.</li>
+      <li><b>מה חסר</b> — קריאה keyless ואמינה של יחסי-ההוחכה עצמם (מאיזה חשבון, כמה, לאיזה גוף) ללא חשיפת-קישור-חשבון שמדיניות-החשיפה אוסרת על המשטח הציבורי.</li>
+      <li><b>ההחלטה</b> — במקום תג שמציג מספר לא-מאומת, אנחנו מציגים את ההיעדר בכנות. כשהמקור-הציבורי ייבנה (aggregation לפי מדיניות-החשיפה), התג יצטרף לקטלוג — ולא קודם.</li>
     </ul>
   </section>
 </main>
@@ -155,23 +166,10 @@ footer{border-top:1px solid var(--line);padding:18px 0 26px;color:var(--faint);f
     });
   });
   fetch('badge/office.svg', {cache:'no-store'}).then(function(r){return r.text()}).then(function(t){
+    var m = /re-baked by CI[^\n]*/.test(t) ? '' : '';
     var d = new Date(document.lastModified);
     document.getElementById('baked').textContent = d.toISOString().slice(0,16).replace('T',' ') + ' UTC (דף)';
   }).catch(function(){ document.getElementById('baked').textContent = '—'; });
-  // G45 · המדידה-עכשיו: שליפת-הערך החי מה-SVG עצמו — התג הוא המקור, לא עותק
-  ['office','fleet','edge'].forEach(function(name){
-    fetch('badge/'+name+'.svg?v='+Date.now(), {cache:'no-store'}).then(function(r){return r.text()}).then(function(t){
-      var aria = /aria-label="([^"]+)"/.exec(t);
-      var texts = [];
-      t.replace(/<text[^>]*>([^<]+)<\/text>/g, function(m, v){ texts.push(v); return m; });
-      var val = texts.slice(1).join(' · ') || texts[0] || '';
-      var el = document.getElementById('now-'+name);
-      if(el){ el.textContent = 'המדידה עכשיו: ' + (aria ? aria[1].replace(/^SAOS [a-z]+: /,'').replace(/^steem-edge: /,'') : val); }
-    }).catch(function(){
-      var el = document.getElementById('now-'+name);
-      if(el){ el.className='now err'; el.textContent = 'המדידה עכשיו: התג לא נטען — המקור הציבורי מדווח למעלה'; }
-    });
-  });
 })();
 </script>
 </body>

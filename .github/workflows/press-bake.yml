@@ -34,11 +34,14 @@ jobs:
       - name: Bake daily press (keyless, fail-soft)
         run: node tools/bake-press.mjs
 
+      - name: Bake wallet-truth page (zero-JS, W29)
+        run: node tools/bake-wallet.mjs
+
       - name: Commit (only when baked content changed)
         run: |
           git config user.name "roshpinacare-sys"
           git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
-          git add press
+          git add press wallet-truth.html
           if git diff --cached --quiet; then
             echo "no-change — the previous edition stands"
           else
