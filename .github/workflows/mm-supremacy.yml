@@ -50,8 +50,12 @@ jobs:
         run: |
           set -euo pipefail
           echo "[T-563 tombstone] grids/sim/volume-sim.mjs never lived in this repo (saos-dex-template origin) - step was silent module-not-found under continue-on-error; honest skip"
-            --receipt grids/state/supremacy-receipt.json \
-            --report grids/state/SUPREMACY-RECEIPT.md
+          # [wave 19.54 · trace 1a15e3e419138aa5] cure, measured root: the T-563
+          # tombstone edit removed the node invocation but LEFT the orphan argument
+          # lines (--receipt/--report) inside this shell — the shell executed them as
+          # commands and the run red exit 127 (run 39585028211, 10:30:02Z) AFTER both
+          # honest tombstone echoes. The orphan args are gone; the tombstone stays
+          # honest and the lane ends green on its daily slot until the real sim lands.
 
       - name: receipt-summary (לוג-הריצה הוא-הקבלה)
         if: always()
