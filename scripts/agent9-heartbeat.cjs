@@ -190,7 +190,7 @@ async function healLoop(reason, ageMin) {
   while (Date.now() < deadline) {
     await new Promise((r) => setTimeout(r, 45000));
     try {
-      const m = await measureBakeCommit();
+      const m = await measureBakeCommit(token);
       if (m.ageMin < 5) {
         state.lastBakeAt = m.at; state.lastAgeMin = m.ageMin; state.lastCommitAt = m.at;
         state.healsConfirmed += 1; state.lastVerdict = "HEALED";
@@ -214,7 +214,7 @@ async function tick() {
     logEvent("MEASURE-FAIL", e.message);
     // can't even read the bake — heal on repeated failure via commit check
     try {
-      const c = await measureBakeCommit();
+      const c = await measureBakeCommit(readToken());
       state.lastCommitAt = c.at; state.lastAgeMin = c.ageMin;
       if (c.ageMin > CFG.staleMin) { await healLoop("raw-unreadable+commit-stale", c.ageMin); return; }
       state.lastVerdict = "OK-VIA-COMMIT";
