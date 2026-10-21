@@ -1,16 +1,34 @@
 {
  "schema": "site-audit/1",
- "at": "2026-10-21T05:41:30.099Z",
+ "at": "2026-10-21T05:44:11.095Z",
  "scope": "live-pages:https://roshpinacare-sys.github.io/Domain/",
- "pagesScanned": 91,
+ "pagesScanned": 92,
  "summary": {
-  "findings": 9,
+  "findings": 12,
   "externalBlocked": 3,
   "transientBlocked": 0,
-  "checked": 258,
-  "structuralFindings": 0
+  "checked": 261,
+  "structuralFindings": 2
  },
  "findings": [
+  {
+   "rule": "R-CANONICAL",
+   "file": "press/editions/2026-10-21.html",
+   "note": "canonical https://roshpinacare-sys.github.io/Domain/press/ ≠ https://roshpinacare-sys.github.io/Domain/press/editions/2026-10-21.html"
+  },
+  {
+   "rule": "R-SITEMAP",
+   "file": "press/editions/2026-10-21.html",
+   "note": "indexable page missing from sitemap.xml"
+  },
+  {
+   "code": 404,
+   "url": "https://roshpinacare-sys.github.io/Domain/press/editions/2026-10-21.html",
+   "sources": [
+    "<self>"
+   ],
+   "note": "the page itself does not serve"
+  },
   {
    "code": 404,
    "url": "https://github.com/YuJunZhiXue/dsh-purge",
@@ -114,9 +132,9 @@
  ],
  "transientBlocked": [],
  "structural": {
-  "checked": 91,
-  "scriptsSyntaxChecked": 32,
-  "indexed": 72,
+  "checked": 92,
+  "scriptsSyntaxChecked": 33,
+  "indexed": 73,
   "stubs": 10,
   "rules": [
    "R-BALANCE",
@@ -126,7 +144,7 @@
    "R-SITEMAP",
    "R-TRUTH"
   ],
-  "findings": 0
+  "findings": 2
  },
  "overall": "FAIL",
  "note": "קישורים = אמת-חיה ב-Pages: 404 פנימי/חוץ = עמוד-מת (FINDING); 403/429/502 אצל צד-ג = חסימת-בוט (רמז בלבד); 429/503 מפני-ה-github.com-שלנו = חנק-מדידה (TRANSIENT — ריטרי-3 ואז רשום-בלי-הכשל). קישורים הנבנים ב-JS בזמן-ריצה אינם נסרקים כאן — הם אינם href סטטי. structural = אמת-checkout בלי רשת (R75): R-BALANCE·R-SCRIPT·R-CANONICAL·R-STUB·R-SITEMAP·R-TRUTH — החוקים ב-agents/SELF-CHECKS.md."
