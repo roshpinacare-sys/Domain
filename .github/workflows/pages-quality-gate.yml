@@ -32,11 +32,11 @@ jobs:
         with:
           node-version: 22
 
-      - name: R-bidi self-heal — re-inject bidi-fix.js into any dir=rtl page a parallel writer baked without it
-        run: node scripts/inject-bidi-fix.mjs
-
       - name: Measure every key page (fail-soft)
         run: node tools/pages-quality-audit.mjs
+
+      - name: R-bidi self-heal — re-inject AFTER the bake (the audit rewrites quality/index.html; injecting before it gets wiped — measured live 2026-10-21T08:5xZ)
+        run: node scripts/inject-bidi-fix.mjs
 
       - name: Commit (only when the measurement changed)
         run: |

@@ -21,7 +21,9 @@ let injected = 0, already = 0, skippedNonRtl = 0;
 for (const file of pages) {
   const html = readFileSync(file, 'utf8');
   if (!/dir="rtl"/.test(html)) { skippedNonRtl++; continue; }
-  if (html.includes('bidi-fix.js')) { already++; continue; }
+  /* covered = external tag OR inline variant (base-href pages inline the
+     fix because a relative src is ambiguous under <base>) */
+  if (html.includes('bidi-fix.js') || html.includes('__saosBidiFix')) { already++; continue; }
   const rel = relative(ROOT, file).split(sep);
   const depth = rel.length - 1; /* segments below root */
   const prefix = depth === 0 ? '' : '../'.repeat(depth);
