@@ -562,7 +562,7 @@ const NOT_MEASURED = `<p class="na">לא נמדד במהדורה זו — המק
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8' fill='none' stroke='%2310b981' stroke-width='1.8' stroke-linecap='round'/%3E%3Ccircle cx='12' cy='12' r='3' fill='none' stroke='%2310b981' stroke-width='1.8'/%3E%3C/svg%3E">
 <style>
-:root{ --bg:#f5f3f1; --panel:#fff; --line:#e6e2dd; --acc:#0d9d6d; --acc-bright:#0b8a60; --acc-bg:rgba(13,157,109,.07); --acc-line:rgba(13,157,109,.30); --text:#1d1d1f; --dim:#57534e; --faint:#8a8580; --sans:-apple-system,'Segoe UI',Roboto,'Helvetica Neue','Noto Sans Hebrew',Arial,sans-serif; --r:14px; --r-sm:10px; }
+:root{ --bg:#f5f3f1; --panel:#fff; --line:#e6e2dd; --line2:#c9c2ba; --ink:#17140f; --acc:#0d9d6d; --acc-bright:#0b8a60; --acc-bg:rgba(13,157,109,.07); --acc-line:rgba(13,157,109,.30); --gold:#8a6d1d; --gold-bright:#a98617; --text:#1d1d1f; --dim:#57534e; --faint:#8a8580; --sans:-apple-system,'Segoe UI',Roboto,'Helvetica Neue','Noto Sans Hebrew',Arial,sans-serif; --serif:'Noto Serif Hebrew','Times New Roman',Georgia,serif; --r:6px; --r-sm:4px; }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;-webkit-font-smoothing:antialiased}
 a{color:var(--acc-bright);text-decoration:none}a:hover{text-decoration:underline}
@@ -570,17 +570,27 @@ a{color:var(--acc-bright);text-decoration:none}a:hover{text-decoration:underline
 header.site{position:sticky;top:0;z-index:50;background:rgba(245,243,241,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 .hd{height:58px;display:flex;align-items:center;gap:12px}
 .brand{font-weight:700;font-size:15px}.brand small{display:block;font-weight:500;font-size:10.5px;color:var(--faint)}
-.mast{padding:36px 0 8px;text-align:center;border-bottom:3px double var(--line2,#c9c2ba)}
-.mast h1{font-size:clamp(30px,6vw,46px);font-weight:900;letter-spacing:-1px}
-.mast h1 em{font-style:normal;color:var(--acc-bright)}
-.mast .date{color:var(--dim);font-size:14px;margin-top:6px}
-.mast .laws{color:var(--faint);font-size:12px;margin:8px 0 16px}
-.grid{display:grid;gap:16px;padding:24px 0 10px}
-@media(min-width:760px){.grid{grid-template-columns:1fr 1fr}.card.lead-card{grid-column:1/-1}}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:flex;flex-direction:column;gap:10px}
-.card h2{font-size:17px;font-weight:800}
-.card h2 .kick{display:block;font-size:11.5px;font-weight:500;color:var(--faint);margin-top:2px}
-.lead{font-size:15px;line-height:1.75}
+/* ═══ W30 broadsheet masthead (grafted over wave-19.50/T-109 · trace 1a15d213aca02f45) ═══ */
+.mast{position:relative;text-align:center;padding:0;border-bottom:4px double var(--line2);overflow:hidden;background:#0d0b08}
+.mast .m-art{display:block;width:100%;height:190px;object-fit:cover;object-position:center 30%;opacity:.88}
+.mast .m-plate{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:linear-gradient(180deg,rgba(10,8,5,.25),rgba(10,8,5,.72))}
+.mast h1{font-family:var(--serif);font-size:clamp(34px,7vw,58px);font-weight:900;letter-spacing:-1px;color:#f3e6c4;text-shadow:0 2px 18px rgba(0,0,0,.85);line-height:1.05}
+.mast h1 em{font-style:normal;color:var(--gold-bright)}
+.mast .date{color:#e8dcc0;font-size:14.5px;font-weight:600;margin-top:2px;text-shadow:0 1px 8px rgba(0,0,0,.8)}
+.mast .laws{color:#c9b88f;font-size:11.5px;margin-top:6px;max-width:64ch;line-height:1.7;text-shadow:0 1px 6px rgba(0,0,0,.8)}
+.edband{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:10px 0;border-bottom:1px solid var(--line2);background:#faf8f5}
+.edband .eb{font-size:11.5px;font-weight:700;color:var(--gold);letter-spacing:.6px;border:1px solid var(--gold-bright);border-radius:999px;padding:3px 12px;background:rgba(169,134,23,.06)}
+.edband .dotsep{width:5px;height:5px;border-radius:50%;background:var(--line2)}
+.grid{display:grid;gap:0;padding:0 0 10px}
+@media(min-width:760px){.grid{grid-template-columns:1fr 1fr;gap:0 26px}.card.lead-card{grid-column:1/-1}}
+.card{background:transparent;border:0;border-radius:0;padding:18px 4px 20px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:9px}
+.card h2{font-family:var(--serif);font-size:21px;font-weight:900;letter-spacing:-.3px;line-height:1.3;color:var(--ink)}
+.card h2 .kick{display:block;font-family:var(--sans);font-size:11px;font-weight:600;color:var(--gold);margin-top:3px;letter-spacing:.4px}
+.lead-card{border-bottom:3px double var(--line2)!important;padding-top:22px}
+.lead-card h2{font-size:clamp(24px,4.4vw,34px)}
+.lead-card .lead{font-size:16.5px;line-height:1.85}
+.lead-card .lead::first-letter{font-family:var(--serif);font-size:2.9em;font-weight:900;float:right;line-height:.82;margin-inline-start:7px;color:var(--gold-bright)}
+.lead{font-size:15px;line-height:1.8}
 .body{font-size:13.5px;color:var(--dim);line-height:1.85;margin-top:6px}
 .card ul{list-style:none;display:flex;flex-direction:column;gap:6px}
 .card li{font-size:13.5px;color:var(--dim);line-height:1.65}
@@ -618,7 +628,7 @@ body{font-variant-numeric:tabular-nums}
 .chip.down{background:#fbeae7;border-color:#e7c4bd;color:#b3261e}
 .strip{display:flex;gap:14px;align-items:center;justify-content:center;flex-wrap:wrap;padding:14px 0 4px}
 .strip img{height:20px}
-footer{border-top:1px solid var(--line);padding:18px 0 30px;color:var(--faint);font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+footer{border-top:4px double var(--line2);padding:18px 0 30px;color:var(--faint);font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
 </style>
 </head>
 <body>
@@ -632,10 +642,18 @@ footer{border-top:1px solid var(--line);padding:18px 0 30px;color:var(--faint);f
 </div></header>
 <main class="wrap">
   <section class="mast">
-    <h1>עיתון-<em>הצי</em></h1>
-    <div class="date">מהדורת ${dayHe}</div>
-    <div class="laws">נכתב על-ידי האורגניזם עצמו · כל מספר נמדד ממקור-ציבורי ברגע-האפייה · מקור שלא השיב מדווח בכנות ולא מומצא · אפס-JavaScript — שום-דבר שיכול למות בדפדפן שלך</div>
+    <img class="m-art" src="${SITE}assets/art/art-press-masthead.jpg" alt="מסטהד העיתון — חריתת-זהב של מכבש-דפוס וזרי-דפנה, נוצרה במנוע-AI של הארכיטקטורה">
+    <div class="m-plate">
+      <h1>עיתון-<em>הצי</em></h1>
+      <div class="date">מהדורת ${dayHe}</div>
+      <div class="laws">נכתב על-ידי האורגניזם עצמו · כל מספר נמדד ממקור-ציבורי ברגע-האפייה · מקור שלא השיב מדווח בכנות ולא מומצא · אפס-JavaScript — שום-דבר שיכול למות בדפדפן שלך</div>
+    </div>
   </section>
+  <div class="edband" role="doc-subtitle">
+    <span class="eb">מהדורה חיה · נאפית 2× בשעה</span><span class="dotsep"></span>
+    <span class="eb">${new Date().toISOString().slice(0,16).replace('T',' · ')} UTC</span><span class="dotsep"></span>
+    <span class="eb">ארכיון-מהדורות: <a href="${SITE}press/editions/" style="color:inherit;text-decoration:underline">editions/</a></span>
+  </div>
   <div class="strip">
     <a href="${SITE}badges.html"><img src="${SITE}badge/office.svg" alt="SAOS office"></a>
     <a href="${SITE}badges.html"><img src="${SITE}badge/fleet.svg" alt="SAOS fleet"></a>
@@ -735,7 +753,7 @@ footer{border-top:1px solid var(--line);padding:18px 0 30px;color:var(--faint);f
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8' fill='none' stroke='%2310b981' stroke-width='1.8' stroke-linecap='round'/%3E%3Ccircle cx='12' cy='12' r='3' fill='none' stroke='%2310b981' stroke-width='1.8'/%3E%3C/svg%3E">
 <style>
-:root{ --bg:#f5f3f1; --panel:#fff; --line:#e6e2dd; --acc:#0d9d6d; --acc-bright:#0b8a60; --acc-bg:rgba(13,157,109,.07); --acc-line:rgba(13,157,109,.30); --text:#1d1d1f; --dim:#57534e; --faint:#8a8580; --sans:-apple-system,'Segoe UI',Roboto,'Helvetica Neue','Noto Sans Hebrew',Arial,sans-serif; --r:14px; --r-sm:10px; }
+:root{ --bg:#f5f3f1; --panel:#fff; --line:#e6e2dd; --line2:#c9c2ba; --ink:#17140f; --acc:#0d9d6d; --acc-bright:#0b8a60; --acc-bg:rgba(13,157,109,.07); --acc-line:rgba(13,157,109,.30); --gold:#8a6d1d; --gold-bright:#a98617; --text:#1d1d1f; --dim:#57534e; --faint:#8a8580; --sans:-apple-system,'Segoe UI',Roboto,'Helvetica Neue','Noto Sans Hebrew',Arial,sans-serif; --serif:'Noto Serif Hebrew','Times New Roman',Georgia,serif; --r:6px; --r-sm:4px; }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;-webkit-font-smoothing:antialiased;display:flex;flex-direction:column}
 a{color:var(--acc-bright);text-decoration:none}a:hover{text-decoration:underline}
