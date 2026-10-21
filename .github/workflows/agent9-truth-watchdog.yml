@@ -1,0 +1,88 @@
+# ═════════════════════════════════════════════════════════════════════════════
+# AGENT9-TRUTH-WATCHDOG [t55f · agent-9] — השעון-השני-של-אמת-הצי.
+# פסק-מדידה (t55f): הפנקס-החי-טען "רץ-לבד-לתמיד" אך-היה-שקט-4ש' — 12+-cron-ים-בריפו
+# מתחרים-וגוגל-מדלג-על-כולם (נמדד: 4-workflows-scheduled-שקטים-2ש'+).
+# תרופה: שעון-עצמאי-בדקה-שונה (:41-מול-:09-של-המכונה-הראשית) שמודד-את-גיל-האפייה;
+# אם->90דק' — מרפא-בעצמו (selftest+bake+commit-באותו-ריצה). אותו-concurrency-group =
+# שני-טריגרים-של-כותב-אחד-מסודר — אף-דריסה-אפשרית.
+# fail-closed: ריצה-שקטה-של-השעון-הראשי-היא-הבעיה-שהוא-קיים-לפתור, לא-מצב-לדווח-עליה.
+# ═════════════════════════════════════════════════════════════════════════════
+name: agent9-truth-watchdog
+
+on:
+  schedule:
+    - cron: "41 * * * *"          # שעון-שני-מוסט — בכוונה-לא-על-אותה-דקה-של-המכונה-הראשית
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency:
+  group: agent9-fleet-truth       # אותו-כותב-מסודר-כמו-המכונה-הראשית — אף-דריסה
+  cancel-in-progress: false
+
+jobs:
+  measure-and-heal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Measure bake freshness (fail-closed — honest numbers only)
+        id: age
+        run: |
+          set -Eeuo pipefail
+          T=$(date +%s)
+          RES=$(curl -sf "https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/main/truth/agent9.json?cachebust=${T}" | node -e '
+            let s=""; process.stdin.on("data",d=>s+=d).on("end",()=>{
+              try { const j=JSON.parse(s);
+                const ageMin = Math.round((Date.now()-Date.parse(j.at))/60000);
+                console.log(ageMin + " " + j.at);
+              } catch(e){ console.log("-1 unreadable"); }
+            });') || RES="-1 fetch-failed"
+          AGE=$(echo $RES | cut -d' ' -f1)
+          AT=$(echo $RES | cut -d' ' -f2-)
+          echo "age_min=${AGE}" >> "$GITHUB_OUTPUT"
+          echo "baked_at=${AT}" >> "$GITHUB_OUTPUT"
+          echo "watchdog measured: bake age = ${AGE} min (baked at ${AT})"
+          if [ "$AGE" -ge 90 ] || [ "$AGE" -lt 0 ]; then
+            echo "verdict=STALE" >> "$GITHUB_OUTPUT"
+            echo "→ STALE: the secondary clock heals now (main clock silent ${AGE} min)"
+          else
+            echo "verdict=FRESH" >> "$GITHUB_OUTPUT"
+            echo "→ FRESH: no action, loop closed"
+          fi
+
+      - name: Heal — selftest (a red collector never bakes)
+        if: steps.age.outputs.verdict == 'STALE'
+        run: node scripts/agent9-fleet-truth.cjs --selftest
+        env:
+          GITHUB_TOKEN: ${{ github.token }}   # זהות-ארעית-לrunner-בלבד
+
+      - name: Heal — bake live fleet truth
+        if: steps.age.outputs.verdict == 'STALE'
+        run: node scripts/agent9-fleet-truth.cjs
+        env:
+          GITHUB_TOKEN: ${{ github.token }}   # זהות-ארעית-לrunner-בלבד
+
+      - name: Heal — commit with measured-staleness evidence
+        if: steps.age.outputs.verdict == 'STALE'
+        run: |
+          set -Eeuo pipefail
+          git config user.name "agent-9"
+          git config user.email "agent9@fleet.local"
+          git add truth/agent9.json
+          OK=$(python3 -c "import json;d=json.load(open('truth/agent9.json'));print(f\"{sum(1 for s in d['sources'] if s['ok'])}/{len(d['sources'])}\")")
+          git commit -m "agent-9/t55f: watchdog-heal — main clock was silent ${AGE_MIN}min (bake was from ${BAKED_AT}); secondary clock re-baked [sources ok ${OK}] [skip ci]" || echo "nothing changed"
+          ok=0
+          for i in 1 2 3 4 5; do
+            if git pull --rebase -q origin main && git push -q origin HEAD:main; then ok=1; break; fi
+            sleep $((i * 4))
+          done
+          [ "$ok" = "1" ] || { echo "PUSH-FAIL after 5 retries — honest red, next watchdog retries"; exit 1; }
+        env:
+          AGE_MIN: ${{ steps.age.outputs.age_min }}
+          BAKED_AT: ${{ steps.age.outputs.baked_at }}
