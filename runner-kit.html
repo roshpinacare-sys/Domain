@@ -196,10 +196,19 @@ footer{margin-top:auto;border-top:1px solid var(--line);background:var(--panel);
     <div class="grid2" style="margin-top:14px">
       <div class="card">
         <h3>הפנקס החי, נמדד 2026-10-21</h3>
+        <div id="kit-live" style="margin:0 0 14px" aria-live="polite">
+          <h4 style="margin:0 0 6px">מדידה-חיה מהריפו — העמוד מביא את האמת בעצמו <small>· keyless · fail-soft · כל 5 דק'</small></h4>
+          <ul class="meas">
+            <li><span class="m">receipts</span><span id="live-receipts">מביא מהריפו…</span></li>
+            <li><span class="m">foreman</span><span id="live-foreman">מביא מהריפו…</span></li>
+            <li><span class="m">integrity</span><span id="live-integrity">מביא מהריפו…</span></li>
+          </ul>
+          <p class="limit" id="live-stamp">המדידה-החיה רצה בדפדפן שלך — אפס-סודות, אפס-מפתחות; מקור-שנכשל מדווח בכנות והמספרים-האפויים למטה עומדים.</p>
+        </div>
         <ul class="meas">
           <li><span class="m">receipts</span><span>8 קבלות חתומות נמדדו 2026-10-21T22:28Z · הראשונה <span class="mono">549fbe05</span> · 2026-10-12T16:04Z · ההתחדשות <span class="mono">750a55dd</span> · 11:37Z · השלישית <span class="mono">352a5b1c</span> · 15:59Z · והשלוש הטריות מה-cron-הכפול: <span class="mono">7fc76e8f</span> 17:42Z · <span class="mono">29a2b712</span> 20:41Z · <span class="mono">549547ad</span> 22:01Z · feed foreman חי · המסילה ממשיכה לעגן בלבד</span></li>
           <li><span class="m">fresh-oracle</span><span>9 הזנות נמדדו חי 2026-10-21T11:37Z · foreman 27m/130 fresh · grid 41m fresh · integrity 47m fresh · orders 13262m <b>stale</b> — ה-Sandbox הפרטי-חסום, מדווח בכנות · pulse/recruit/ventures aging</span></li>
-          <li><span class="m">integrity</span><span>verdict <b>honest-green</b> · success10 = 4 · failure10 = 0 · stasis off · 2026-10-21T11:37Z · ותאום-העורקי הציבורי על האתר עצמו: <b>PASS</b> רציף (7 מקורות, אפס-ממצאים · נמדד 2026-10-21T15:58Z, הדגל DEGRADED מ-211 השעות התנקה)</span></li>
+          <li><span class="m">integrity</span><span>verdict <b>honest-green</b> · success10 = 4 · failure10 = 0 · stasis off · 2026-10-21T11:37Z · ותאום-העורקי הציבורי על האתר עצמו: <b>PASS</b> רציף — נמדד 2026-10-21T23:28Z: 0 ממצאים על 7 מקורות (הדגל DEGRADED מ-211 השעות התנקה · נמדד גם 15:58Z)</span></li>
         </ul>
       </div>
       <div class="card">
@@ -296,5 +305,75 @@ footer{margin-top:auto;border-top:1px solid var(--line);background:var(--panel);
   </div>
 </footer>
 <script src="assets/bidi-fix.js" defer></script>
+<script>
+/* מדידה-חיה מהריפו — העמוד מביא את האמת בעצמו (keyless · fail-soft · אפס-סודות).
+ * חוקי-הבית: מקור-שנכשל מדווח בכנות ולא ממציא; המספרים-האפויים למטה נשארים העוגן-ההיסטורי. */
+(function () {
+  "use strict";
+  var RAW = "https://raw.githubusercontent.com";
+  function set(id, txt) { var el = document.getElementById(id); if (el) el.textContent = txt; }
+  function ageMin(iso) { try { return Math.round((Date.now() - new Date(iso).getTime()) / 60000); } catch (e) { return null; } }
+  function ago(m) { return m == null ? "?" : Math.max(0, m) + " דק'"; }
+  function jget(url) {
+    return fetch(url + "?t=" + Date.now(), { cache: "no-store" }).then(function (r) {
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    });
+  }
+  function refresh() {
+    var qs = "?t=" + Date.now();
+    var stamp = document.getElementById("live-stamp");
+    var ok = [];
+    var done = [];
+    function finish() {
+      if (stamp && done.length === 3) {
+        stamp.textContent = "נמדד חי בדפדפן שלך " + new Date().toISOString().slice(0, 16) + "Z · "
+          + ok.length + "/3 מקורות השיבו · keyless · אפס-סודות · fail-soft";
+      }
+    }
+    /* 1) receipts — פנקס הקבלות החתום של sovereign-runner-kit */
+    fetch(RAW + "/roshpinacare-sys/sovereign-runner-kit/main/results/receipts.jsonl" + qs, { cache: "no-store" })
+      .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.text(); })
+      .then(function (t) {
+        var lines = t.trim().split("\n").filter(Boolean).map(function (l) { return JSON.parse(l); });
+        var last = lines[lines.length - 1] || {};
+        var at = (last.body && last.body.at) || last.anchoredAt || "?";
+        var dg = String(last.sha256 || "").slice(0, 8);
+        set("live-receipts", lines.length + " קבלות חתומות · אחרונה " + dg + " · " + at + " · לפני " + ago(ageMin(at)) + " · חי");
+        ok.push("receipts"); done.push(1); finish();
+      })
+      .catch(function (e) {
+        set("live-receipts", "מדידה-חיה לא זמינה עכשיו (" + e.message + ") — המספרים-האפויים למטה עומדים");
+        done.push(1); finish();
+      });
+    /* 2) foreman — חדר-המשרד (FleetHQ office-state) */
+    jget(RAW + "/roshpinacare-sys/FleetHQ/main/office/state/office-state.json")
+      .then(function (o) {
+        var a = ageMin(o.capturedAt);
+        set("live-foreman", "חדר-המשרד " + (o.connected ? "מחובר" : "מנותק") + " · גיל-המדידה " + ago(a)
+          + " · " + (a != null && a <= 130 ? "fresh" : "stale") + " · חי");
+        ok.push("foreman"); done.push(2); finish();
+      })
+      .catch(function (e) {
+        set("live-foreman", "מדידה-חיה לא זמינה עכשיו (" + e.message + ") — המספרים-האפויים למטה עומדים");
+        done.push(2); finish();
+      });
+    /* 3) integrity — תאום-העורקי הציבורי (Domain) */
+    jget(RAW + "/roshpinacare-sys/Domain/main/agents/integrity-verdict.json")
+      .then(function (v) {
+        var s = v.summary || {};
+        set("live-integrity", "verdict " + (v.overall || "?") + " · " + (s.findings != null ? s.findings : "?")
+          + " ממצאים על " + (s.sources != null ? s.sources : "?") + " מקורות · " + String(v.at || "").slice(0, 16) + "Z · חי");
+        ok.push("integrity"); done.push(3); finish();
+      })
+      .catch(function (e) {
+        set("live-integrity", "מדידה-חיה לא זמינה עכשיו (" + e.message + ") — המספרים-האפויים למטה עומדים");
+        done.push(3); finish();
+      });
+  }
+  refresh();
+  setInterval(refresh, 300000);
+})();
+</script>
 </body>
 </html>
