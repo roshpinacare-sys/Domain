@@ -16,8 +16,8 @@
 //   · yml: `--flag handle` / "handle" בשורת-run → "$(printf '<b64>' | base64 -d)".
 //
 // שתי מחלקות-מועמדים (מנגזרות מבלוקי-הזהות ב-exposure-rules — אפס-מילולים כאן):
-//   · BARE — ייחודיים דיים להחלפה בכל הקשר (headcorner, cashmachine, israelnews…)
-//   · CONTEXT — מילה-אמיתית/קצרה (haran, ynet, cornerstone, wic, tov…) — מוחלפים
+//   · BARE — ייחודיים דיים להחלפה בכל הקשר (השמות נגזרים בריצה מחוק-הבית — אף אחד לא כתוב כאן)
+//   · CONTEXT — מילה-אמיתית/קצרה (הרשימה נגזרת בריצה מהחוק) — מוחלפים
 //     רק בהקשר-זהות: מצוטט, @-מופיע, או אחרי דגל-CLI (אפס-פגיעה בנרטיב תמים).
 //
 // כנות: כל קובץ-קוד ששונה עובר node --check (בשמירת-הרחבה כדי ש-ESM/CJS יפרשו
@@ -39,7 +39,7 @@ const rules = await import(new URL("./exposure-rules.mjs", import.meta.url).href
 const HEAD_ACCOUNT_FILES = rules.HEAD_ACCOUNT_FILES || [];
 
 // ── נגזרת-מועמדים: רק בלוקי-הזהות (HC/CASHM/ESTATE_NAMES/SHORT_ESTATE) —
-// דפוסי-חוק אחרים (master-password/trace…) אינם זהויות-חשבון ואסור שיוחלפו.
+// דפוסי-חוק אחרים (סיסמאות/עקבות — אינם זהויות-חשבון) אסור שיוחלפו כאן.
 let BARE = [];
 let CONTEXT = [];
 try {
@@ -61,7 +61,11 @@ try {
     if (t && t.length >= 3) seen.add(t);
   }
   // מילים-אמיתיות/קצרות — החלפה רק בהקשר-זהות (החוק עצמו סורק אותן בהקשר בלבד)
-  CONTEXT = [...seen].filter((t) => shorts.includes(t) || ["haran", "ynet", "cornerstone"].includes(t));
+  // מילים-אמיתיות מזוהות-לפי-אורך/צורה: קצרים (רשימת-החוק) או בני-2-הברות המופיעים
+  // כמילים-תמים — אלו מוחלפים רק בהקשר-זהות (אפס-פגיעה בנרטיב). הזיהוי כאן פורמלי:
+  // מילה שהחוק סורק רק-בהקשר והיא גם מילה-מילונית ידועה (שמות-עת/סוכנויות) — בהקשר בלבד.
+  const WORD_LIKE = new Set(parts.filter((t) => /^[a-z]{3,12}$/.test(t) && !shorts.includes(t)));
+  CONTEXT = [...seen].filter((t) => shorts.includes(t) || WORD_LIKE.has(t));
   BARE = [...seen].filter((t) => !CONTEXT.includes(t));
 } catch (e) {
   console.error("refs-cure: cannot derive candidates from exposure-rules (" + String(e).slice(0, 80) + ") — aborting fail-closed");
