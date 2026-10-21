@@ -8007,5 +8007,44 @@
       }
     },
     "duration_ms": 534
+  },
+  {
+    "ts": "2026-10-21T05:15:10.914Z",
+    "mode": "DRY",
+    "skip_fetch": false,
+    "fill_ledger": {
+      "script": "fill-ledger.cjs",
+      "status": 0,
+      "error": null,
+      "stdout_tail": "[fill-ledger] mode=READ-ONLY new=0 total=0 realized_sbd=-0.403790 vwap=n/a recycle=NO errors=1 in 156ms | [fill-ledger] canon: agents/fill-ledger.json (run #374)",
+      "stderr_tail": ""
+    },
+    "suggestion": {
+      "suggested": false,
+      "reasons": []
+    },
+    "decision": {
+      "executorMode": "DRY",
+      "reason": "MODE-DRY: planning receipt only, zero signatures"
+    },
+    "executor": {
+      "script": "market-exec.cjs",
+      "status": 0,
+      "error": null,
+      "stdout_tail": "[market-exec] mode=DRY_RUN planned=0 skipped=6 errors=0 verify=0/0 in 542ms | [market-exec] canon: agents/market-exec.json (run #196)",
+      "stderr_tail": ""
+    },
+    "errors": [],
+    "run_index": 184,
+    "fill_ledger_row": {
+      "run_index": 374,
+      "new_fills": 0,
+      "realized_sbd": -0.40379,
+      "recycle": {
+        "suggested": false,
+        "reasons": []
+      }
+    },
+    "duration_ms": 757
   }
 ]
