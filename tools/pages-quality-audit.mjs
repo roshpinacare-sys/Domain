@@ -93,9 +93,18 @@ function auditPage(page, sources) {
   /* קישורים-פנימיים: רק כאלה שמובילים לקבצים מקומיים */
   const hrefs = [...html.matchAll(/href="([^"#?]+)\.html/g)].map((m) => m[1] + ".html");
   for (const h of hrefs) {
-    const clean = h.replace(/^\.\//, "");
+    let clean = h.replace(/^\.\//, "");
     if (/^https?:/.test(clean)) continue;
-    if (!fs.existsSync(path.join(ROOT, clean))) res.internalLinksBroken.push(clean);
+    /* AGENT4-LINKFIX BEGIN (agent4 · trace 1a15d16ba3498581) — additive.
+       תיקון-פגם נמדד: קישור-יחסי נפתר מול תיקיית-העמוד שלו, לא מול שורש-האתר.
+       הפגם דגל false-positive על press/index.html (editions/2026-10-21.html
+       מומש ל-ROOT/editions/... במקום ROOT/press/editions/...) — וכל עמוד
+       בתת-תיקייה היה פגיע לאותה רמאות-מדידה. קישור שמתחיל ב-/ נשאר מול ROOT. */
+    let abs;
+    if (clean.startsWith("/")) abs = path.join(ROOT, clean.slice(1));
+    else abs = path.normalize(path.join(ROOT, path.dirname(page), clean));
+    if (!fs.existsSync(abs)) res.internalLinksBroken.push(clean);
+    /* AGENT4-LINKFIX END */
   }
 
   const isToolish = /console|verify|runner-kit|quality/.test(page);
