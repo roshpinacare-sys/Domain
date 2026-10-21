@@ -102,3 +102,31 @@ jobs:
           echo "${{ steps.guard.outputs.reason }}"
           echo "The twin takes over automatically when the original's last success ages past 90 min."
           echo "Nothing was touched — one home, one book, one chain."
+
+      # ── W36 signing-lane pulse (measurement plane 3, roast-grill lineage) ──
+      # נמדד-חי 22:47→23:45Z: סלוטי-הקרון של dex-watchdog דולגו על-ידי GitHub —
+      # מסילת-החתימה התיישנה מעבר לחלון-ה-6h בזמן שכל-המודדים דיווחו "success".
+      # החוק: אף-עורק לא נמדד-ממקור-אחד. שלושה-מישורים (watchdog :05/:25/:45 ·
+      # grid-doctor :19 · כאן :27/:57) — דילול-מקביל-בכל-השעות הוא בלתי-סביר.
+      - name: W36 signing-lane pulse (plane 3 — dilution-proof by diversity)
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.ZIP_PAT }}
+        run: |
+          set -euo pipefail
+          URL="repos/roshpinacare-sys/saos-dex/actions/workflows/dex-grid.yml/runs?per_page=1"
+          LAST=$(gh api "$URL" --jq '.workflow_runs[0] | {created_at: .created_at, status: .status}' 2>/dev/null || true)
+          if [ -z "$LAST" ] || [ "$LAST" = "null" ]; then
+            echo "signing pulse UNKNOWN (API unreachable) — fail-honest, no blind fire"; exit 0
+          fi
+          AT=$(printf '%s' "$LAST" | jq -r '.created_at // empty')
+          ST=$(printf '%s' "$LAST" | jq -r '.status // "none"')
+          if [ -n "$AT" ]; then
+            AGE_S=$(( $(date +%s) - $(date -u -d "$AT" +%s) ))
+            echo "signing lane: ${AT} (status=${ST}, age ${AGE_S}s)"
+            [ "$ST" = "in_progress" ] && { echo "alive: in flight — nothing to wake"; exit 0; }
+            if [ "$AGE_S" -lt 21600 ]; then echo "alive: fresh (6h window, R16-a) — nothing to wake"; exit 0; fi
+          fi
+          echo "stale: waking saos-dex dex-grid (measurement plane 3)"
+          gh workflow run dex-grid.yml --repo roshpinacare-sys/saos-dex
+          echo "grid wake-dispatch accepted — honest wake, no blind fire"

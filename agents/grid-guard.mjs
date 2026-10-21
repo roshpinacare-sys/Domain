@@ -256,6 +256,30 @@ async function rpcHive(method, params) {
         }
       }
     }
+    // W36 signing-lane pulse — measurement plane 2 (measured 2026-10-21T22:47→23:45Z:
+    // dex-watchdog's cron slots were SKIPPED by GitHub dilution — the signed lane
+    // aged past its 6h window while every measuring plane stayed "success". Law:
+    // never ONE measurement plane for an artery this important. This plane wakes
+    // the signed grid past the 6h window (R16-a 4x/day cadence — heals gaps,
+    // never multiplies rate). ZIP_PAT carries the cross-repo authority.
+    try {
+      const rr = await api('/repos/' + OWNER + '/saos-dex/actions/workflows/dex-grid.yml/runs?per_page=1');
+      const run = rr.ok ? (await rr.json())?.workflow_runs?.[0] : null;
+      if (run?.created_at) {
+        const ageH = (Date.now() - Date.parse(run.created_at)) / 36e5;
+        res.signingLaneAgeH = Math.round(ageH * 100) / 100;
+        res.signingLaneStatus = run.status;
+        const inFlight = run.status === 'in_progress';
+        if (ageH > 6 && !inFlight) {
+          const s = await dispatch('saos-dex', 'dex-grid.yml', TOKEN);
+          if (s === 204) res.dispatched.push('saos-dex/dex-grid (signing lane stale ' + res.signingLaneAgeH + 'h)');
+          else res.errors.push('dispatch saos-dex/dex-grid HTTP ' + s);
+        }
+      } else {
+        res.errors.push('signing-pulse: no run data (fail-honest, no blind fire)');
+      }
+    } catch (e) { res.errors.push('signing-pulse: ' + e.message); }
+
     res.ok = true;
   } catch (e) {
     res.ok = false;
