@@ -56,6 +56,11 @@ async function jget(url, timeoutMs = 12000) {
 
 const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
+/* T-561 (agent-5) עוזרי-פרוזה נגזרת-מדידה — בשימוש מוסף-הדלק */
+const fmt = (n, d = 2) => (typeof n === "number" && isFinite(n) ? n.toLocaleString("en-US", { maximumFractionDigits: d, minimumFractionDigits: 0 }) : "—");
+const ageHours = (iso) => (iso ? (Date.now() - new Date(iso).getTime()) / 36e5 : Infinity);
+const prose = (parts) => parts.filter(Boolean).map((p) => `<p class="body">${p}</p>`).join("");
+
 /* סולם-נסיונות + נפילה-מקומית (שיעור-Z14: מקור-ציבורי רעב לא יכול להשתיק כתבה.
  * אם הרשת לא ענתה אבל הקובץ קיים בקומיט הנוכחי — נמדד מהעותק המקומי, וזה נאמר בגלוי) */
 async function jgetL(url, localPath = null, timeoutMs = 12000) {
@@ -124,7 +129,7 @@ const NOT_MEASURED = `<p class="na">לא נמדד במהדורה זו — המק
     <li>חוק-החדר (130 דק׳): <b class="${live ? "ok" : "warn"}">${live ? "בתוך-החוק — פורמן חי" : `מחוץ-לחוק (${ageM} דק׳)`}</b></li>
   </ul>`;
   } catch (e) {
-    officeHtml = `${NOT_MEASURED}<!-- ${esc(String(e.message || e).slice(0, 80))} -->`;
+    console.error("[bake-press] office:", String(e.message || e).slice(0, 120)); // T-561: השגיאה ביומן-הקונסולה בלבד — לא ב-HTML
   }
 
   /* 2) מערכת — דופק-הצי */
@@ -143,7 +148,7 @@ const NOT_MEASURED = `<p class="na">לא נמדד במהדורה זו — המק
   ${srcNote(s) ? `<p class="sub warn">${esc(srcNote(s))}</p>` : ""}
   <p class="sub">עורק = סוכן-משימה מתוזמן. "פעם" = הרצה אמיתית בחלון-המדידה — לא הצהרה.</p>`;
   } catch (e) {
-    fleetHtml = `${NOT_MEASURED}<!-- ${esc(String(e.message || e).slice(0, 80))} -->`;
+    console.error("[bake-press] fleet:", String(e.message || e).slice(0, 120)); // T-561
   }
 
   /* 3) מוסף-כלכלה — moment-watch */
@@ -161,7 +166,7 @@ const NOT_MEASURED = `<p class="na">לא נמדד במהדורה זו — המק
   </ul>
   <p class="sub">קריאת-רגע שנמדדת כל 30 דק׳ ומנוקדת רק אחרי-האופק. אימון-כמדידה, לעולם לא הבטחה.</p>`;
   } catch (e) {
-    momHtml = `${NOT_MEASURED}<!-- ${esc(String(e.message || e).slice(0, 80))} -->`;
+    console.error("[bake-press] moment:", String(e.message || e).slice(0, 120)); // T-561
   }
 
   /* 4) מוסף-השרשרת — מה פורסם באמת */
@@ -178,7 +183,7 @@ const NOT_MEASURED = `<p class="na">לא נמדד במהדורה זו — המק
           .join("")}</ul><p class="sub">כותרות בלבד לפי מדיניות-החשיפה הציבורית — הקבלות המלאות חתומות בשרשרת.</p>`
       : `<p class="na">אין פרסומים במאגר הציבורי כרגע.</p>`;
   } catch (e) {
-    chainHtml = `${NOT_MEASURED}<!-- ${esc(String(e.message || e).slice(0, 80))} -->`;
+    console.error("[bake-press] chain:", String(e.message || e).slice(0, 120)); // T-561
   }
 
   /* 5) מודעות-הגיוס */
@@ -194,7 +199,7 @@ const NOT_MEASURED = `<p class="na">לא נמדד במהדורה זו — המק
           .join("")}</ul><p class="sub">מועמדות: דרך issues בריפו בלבד. תפקיד PROPOSED = הגדרה בהמתנה למימוש.</p>`
       : `<p class="na">אין לוח-תפקידים מוגדר כרגע.</p>`;
   } catch (e) {
-    recHtml = `${NOT_MEASURED}<!-- ${esc(String(e.message || e).slice(0, 80))} -->`;
+    console.error("[bake-press] recruitment:", String(e.message || e).slice(0, 120)); // T-561
   }
 
   /* 6) מוסף-המיזמים */
@@ -212,7 +217,7 @@ const NOT_MEASURED = `<p class="na">לא נמדד במהדורה זו — המק
   <ul><li>אורקל-KPI: ${honest}</li><li>השוואת-מחירים חיה: HIVE ${esc(surf.priceOracle?.hive ?? "—")}$ · STEEM ${esc(surf.priceOracle?.steem ?? "—")}$ · BLURT ${esc(surf.priceOracle?.blurt ?? "—")}$</li></ul>
   <p class="sub">sums לכל-החיים אינם קצב-יומי — הקצב מגיע רק מהאורקל (חוק earn-governor v1.1).</p>`;
   } catch (e) {
-    venHtml = `${NOT_MEASURED}<!-- ${esc(String(e.message || e).slice(0, 80))} -->`;
+    console.error("[bake-press] ventures:", String(e.message || e).slice(0, 120)); // T-561
   }
 
   /* 7) מוסף-הכלים — רישום-היכולות (G45: הדפים מוכיחים את הארכיטקטורה) */
@@ -230,7 +235,7 @@ const NOT_MEASURED = `<p class="na">לא נמדד במהדורה זו — המק
   ${rungs.length ? `<ul class="posts">${rungs.map((f) => `<li><span class="tagc">${esc(f.cr || "CR")}</span> ${esc((f.title || "").split("—")[0].replace(/^Fleet Rung \d+: /, "").slice(0, 60))} <span class="dim">· הדור-החדש ברישום</span></li>`).join("")}</ul>` : ""}
   <p class="sub">הרישום המלא — כל כלי עם סטטוס, ראיות מקושרות ותאריך — חי ב<a href="${SITE}products.html#capabilities">קטלוג-היכולות בדף-המוצרים</a>. הדף הזה מוכיח את העבודה, לא מספר עליה.</p>`;
   } catch (e) {
-    toolsHtml = `${NOT_MEASURED}<!-- ${esc(String(e.message || e).slice(0, 80))} -->`;
+    console.error("[bake-press] tools:", String(e.message || e).slice(0, 120)); // T-561
   }
 
   /* 8) מוסף-השוק — הספר הפנימי, המש, וכיול-הגודל */
@@ -251,7 +256,7 @@ const NOT_MEASURED = `<p class="na">לא נמדד במהדורה זו — המק
   </ul>
   <p class="sub">המכונה ממתינה מתחת לרצפה כשאין פער — זו החוק עובד, לא תקלה. כל מילוי אמיתי נרשם בספר-המילויים.</p>`;
   } catch (e) {
-    mktHtml = `${NOT_MEASURED}<!-- ${esc(String(e.message || e).slice(0, 80))} -->`;
+    console.error("[bake-press] market:", String(e.message || e).slice(0, 120)); // T-561
   }
 
   /* 9) מוסף-הכסף — האוצר האמיתי מהספר-החי */
@@ -271,7 +276,7 @@ const NOT_MEASURED = `<p class="na">לא נמדד במהדורה זו — המק
   </ul>
   <p class="sub">יומן-הכסף המלא חי ב<a href="${SITE}money.html">נתיב-הכסף</a>. אפס-סודות: כתובות מוסקרות, יתרות גלויות.</p>`;
   } catch (e) {
-    moneyHtml = `${NOT_MEASURED}<!-- ${esc(String(e.message || e).slice(0, 80))} -->`;
+    console.error("[bake-press] money-ledger:", String(e.message || e).slice(0, 120)); // T-561
   }
 
   /* 10) מוסף-המילויים — ספר-המילויים האמיתי */
@@ -292,7 +297,51 @@ const NOT_MEASURED = `<p class="na">לא נמדד במהדורה זו — המק
   </ul>
   <p class="sub">מקור: agents/fill-ledger.json בגיט — המספרים מהריצות-האמיתיות, לא מתוכנית-עסקית.</p>`;
   } catch (e) {
-    fillsHtml = `${NOT_MEASURED}<!-- ${esc(String(e.message || e).slice(0, 80))} -->`;
+    fillsHtml = `${NOT_MEASURED}`; console.error("[bake-press] fills:", String(e.message || e).slice(0, 120)); // T-561
+  }
+
+  /* 10-b) מוסף-הדלק — נתיב-הכסף האמיתי מהשרשרת (R39 · agent-5 T-561) — המשלים למוסף-הכסף הפנימי */
+  let fuelHtml = NOT_MEASURED, fuelIso = null;
+  try {
+    const mo = await jget(PAGES("dex/money.json"));
+    fuelIso = mo.publishedAt;
+    const f = mo.fuel || {};
+    const red = mo.redemption || {};
+    const inv = mo.invariant || null;
+    const ageH = ageHours(mo.publishedAt);
+    const parts = [];
+    if (f.ok) {
+      parts.push(
+        `עורק-הדלק של הכלכלה נמדד חי מהשרשרת הציבורית: ${fmt(f.steem, 3)} STEEM ו-${fmt(f.sbd, 3)} SBD בקופת-ראש-הצי. ${
+          f.powerdown?.active
+            ? `עקירת-הכוח פעילה — כ-${fmt(f.powerdown.rateSp, 2)} SP לתשלום, הבא סביב ${esc(String(f.powerdown.nextPayout || "").slice(0, 16).replace("T", " "))}Z. זה נתיב-הערך החוץ היחיד, וסוכן money-watch מזניק את הגריד ברבע-שעה מנחיתת-תשלום.`
+            : `עקירת-הכוח אינה פעילה ברגע זה — הכלכלה מתקיימת מהמלאי הקיים.`
+        }`
+      );
+    } else {
+      parts.push(`מקור-השרשרת לא השיב הרצה זו (${esc(f.error || "לא ידוע")}) — מדווח בכנות, בלי אומדן-יתרות.`);
+    }
+    if (red.ok) parts.push(
+      red.verdict === "SEND-NOW"
+        ? `תיבת-הפדיון מעל הסף: ${fmt(red.outboxTrx, 2)} TRX מול סף ${fmt(red.sendThresholdTrx, 2)} — פסק-הדין האוטומטי SEND-NOW (עלות-שידור נמדדה ~0.35 TRX; סף = פי-3).`
+        : `תיבת-הפדיון מצטברת בסבלנות: ${fmt(red.outboxTrx, 2)} TRX מול סף ${fmt(red.sendThresholdTrx, 2)} (חסר ${fmt(Math.max(0, (red.sendThresholdTrx ?? 0) - (red.outboxTrx ?? 0)), 2)}) — שידור-מוקדם היה מפסיד לרוחב-הפס.`
+    );
+    if (inv && typeof inv.holds === "boolean") parts.push(
+      inv.holds
+        ? `אינווריאנטת-השימור המלאה מתקיימת עד-המיקרו: סכום-כל-ה-WTRX בעולם (${fmt((inv.sumMu ?? 0) / 1e6, 3)} TRX) שווה בדיוק לגיבוי-הקופה (${fmt((inv.backingMu ?? 0) / 1e6, 3)}).`
+        : `<b class="warn">אזהרת-אינווריאנטה</b>: סכום-העולם (${fmt((inv.sumMu ?? 0) / 1e6, 3)}) אינו שווה לגיבוי (${fmt((inv.backingMu ?? 0) / 1e6, 3)}) — הסתירה מודפסת ודורשת-הסבר.`
+    );
+    if (ageH >= 48) parts.push(`<b class="warn">מקור-מזדקן (${fmt(ageH, 0)} שעות)</b>: הצינור שמאפה את הקובץ הזה שקט זמן רב — המספרים לעיל הם האמת של העבר, לא של עכשיו. העיתון אינו מסתיר את גיל-המדידה.`);
+    fuelHtml = `
+  <p class="lead">דלק: <b>${fmt(f.steem, 3)} STEEM</b> + <b>${fmt(f.sbd, 3)} SBD</b> · פדיון: <b>${esc(red.verdict ?? "—")}</b></p>
+  ${prose(parts)}
+  <ul>
+    <li>מדידה אפס-מפתחות: Steem RPC + trongrid + CoinGecko ציבוריים בלבד</li>
+    ${inv ? `<li>אינווריאנטת-שימור: <b class="${inv.holds ? "ok" : "warn"}">${inv.holds ? "מתקיימת" : "נפרמה"}</b></li>` : ""}
+  </ul>
+  <p class="sub">מדור זה נוסף ב-T-561 (agent-5) — השלמת נתיב-הכסף האמיתי ליד הספר-הפנימי: השניים חייבים להיות שווים, והעיתון מדפיס גם את הפער.</p>`;
+  } catch (e) {
+    console.error("[bake-press] fuel:", String(e.message || e).slice(0, 120)); // T-561
   }
 
   /* 11) מראת-השרשרת — העדויות החתומות */
@@ -310,7 +359,7 @@ const NOT_MEASURED = `<p class="na">לא נמדד במהדורה זו — המק
   </ul>
   <p class="sub">מראת-השרשרת נגזרת מהעוגנים הציבוריים בלבד — אפס-מפתחות, אפס-סודות, הקריאה-חזרה היא האמת.</p>`;
   } catch (e) {
-    mirrorHtml = `${NOT_MEASURED}<!-- ${esc(String(e.message || e).slice(0, 80))} -->`;
+    mirrorHtml = `${NOT_MEASURED}`; console.error("[bake-press] mirror:", String(e.message || e).slice(0, 120)); // T-561
   }
 
   /* 7) מוסף-הריבונות — סוכן-4: ראיות-ארכיטקטורה חיות (גשר-הראיות של הרשת עצמה) */
@@ -334,7 +383,7 @@ const NOT_MEASURED = `<p class="na">לא נמדד במהדורה זו — המק
     sovHtml = `<ul>${parts.join("")}</ul>${honest}`;
     if (!parts.length) sovHtml = NOT_MEASURED;
   } catch (e) {
-    sovHtml = `${NOT_MEASURED}<!-- ${esc(String(e.message || e).slice(0, 80))} -->`;
+    sovHtml = `${NOT_MEASURED}`; console.error("[bake-press] sov:", String(e.message || e).slice(0, 120)); // T-561
   }
 
   /* 8) ארכיון-המהדורות — עיתון אמיתי שומר את מהדורותיו */
@@ -509,6 +558,7 @@ header.site{position:sticky;top:0;z-index:50;background:rgba(245,243,241,.92);ba
 .card h2{font-size:17px;font-weight:800}
 .card h2 .kick{display:block;font-size:11.5px;font-weight:500;color:var(--faint);margin-top:2px}
 .lead{font-size:15px;line-height:1.75}
+.body{font-size:13.5px;color:var(--dim);line-height:1.85;margin-top:6px}
 .card ul{list-style:none;display:flex;flex-direction:column;gap:6px}
 .card li{font-size:13.5px;color:var(--dim);line-height:1.65}
 .card li b{color:var(--text)}
@@ -568,6 +618,7 @@ footer{border-top:1px solid var(--line);padding:18px 0 30px;color:var(--faint);f
     ${sec("הרגע הכלכלי", "moment-watch · R62", momHtml, "https://roshpinacare-sys.github.io/Domain/moment/moment.json", momIso)}
     ${sec("מוסף-הכלים", "רישום-היכולות · feature_list.json", toolsHtml, "https://roshpinacare-sys.github.io/Domain/feature_list.json", toolsIso)}
     ${sec("מוסף-השוק", "הספר הפנימי · grid + mesh + volume", mktHtml, "https://roshpinacare-sys.github.io/Domain/agents/market-grid.json", mktIso)}
+    ${sec("מוסף-הדלק", "נתיב-הכסף האמיתי מהשרשרת · R39 · T-561", fuelHtml, "https://roshpinacare-sys.github.io/Domain/dex/money.json", fuelIso)}
     ${sec("מוסף-הכסף", "האוצר מהספר-החי · money-ledger + econ-book", moneyHtml, "https://roshpinacare-sys.github.io/Domain/agents/money-ledger.json", moneyIso)}
     ${sec("מוסף-המילויים", "ספר-המילויים · fill-ledger", fillsHtml, "https://roshpinacare-sys.github.io/Domain/agents/fill-ledger.json", fillsIso)}
     ${sec("מראת-השרשרת", "העדויות החתומות · mirror", mirrorHtml, "https://roshpinacare-sys.github.io/Domain/mirror.json", mirrorIso)}

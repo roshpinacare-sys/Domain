@@ -35,20 +35,20 @@ jobs:
         run: node agents/weave-mirror.mjs
 
       - name: Producer-side redaction (one law, two enforcers — gate stays green by construction)
-        run: node scripts/exposure-redact.mjs mirror.json saos-live.json status.json
+        run: node scripts/exposure-redact.mjs mirror.json saos-live.json  # T-561: status.json אינו בשיקוף עוד (A10/R66 — grid-sentinel הוא הכותב היחיד)
 
       - name: Publish the mirrored books
         if: always()
         run: |
           git config user.name "roshpinacare-sys"
           git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
-          git add mirror.json saos-live.json status.json
+          git add mirror.json saos-live.json
           if git diff --cached --quiet; then
             echo "mirror unchanged - the live books are already ours"
             exit 0
           fi
           for attempt in 1 2 3; do
-            git add mirror.json saos-live.json status.json
+            git add mirror.json saos-live.json
             git commit -m "weave-mirror: $(date -u +%Y-%m-%dT%H:%M:%SZ) · weave books mirrored from the live Console home (keyless) [skip ci]"
             git pull --rebase -X theirs --autostash origin main
             if git push; then echo "mirror published (attempt ${attempt})"; exit 0; fi
@@ -56,8 +56,8 @@ jobs:
             git checkout -- .
             git reset --hard origin/main
             node agents/weave-mirror.mjs
-            node scripts/exposure-redact.mjs mirror.json saos-live.json status.json
-            git add mirror.json saos-live.json status.json
+            node scripts/exposure-redact.mjs mirror.json saos-live.json
+            git add mirror.json saos-live.json
             if git diff --cached --quiet; then
               echo "after re-mirror there is nothing to commit - the live books are already ours"
               exit 0

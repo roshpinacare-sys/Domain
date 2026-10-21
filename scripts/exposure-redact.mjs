@@ -32,7 +32,14 @@ for (const file of process.argv.slice(2)) {
   let n = 0;
   for (const { re, why } of FORBIDDEN_CONTENT) {
     if (!REWRITABLE_WHYS.includes(why)) continue;
-    body = body.replace(new RegExp(re.source, re.flags.includes("g") ? re.flags : re.flags + "g"), (m) => { n++; return ALIAS; });
+    body = body.replace(new RegExp(re.source, re.flags.includes("g") ? re.flags : re.flags + "g"), (m) => {
+      n++;
+      // T-561 (agent-5): שמירת-מרכאות — כשהתאמה בולעת מרכאות-JSON, הכינוי נכתב מצוטט.
+      // בלי זה, החלפת "acct-00" חשוף על טקסט-גולמי שברה את תקינות-ה-JSON של status.json החי.
+      const open = m.startsWith('"') ? '"' : m.startsWith("'") ? "'" : "";
+      const close = m.endsWith('"') ? '"' : m.endsWith("'") ? "'" : "";
+      return open + ALIAS + close;
+    });
   }
   if (body !== before) { writeFileSync(file, body); changed++; console.log(`redact: ${file} — ${n} identity hits aliased to ${ALIAS}`); }
   else console.log(`redact: ${file} — clean (0 hits)`);

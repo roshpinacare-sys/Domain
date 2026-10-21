@@ -28,14 +28,14 @@
 
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 
-// R75: status.json joins the mirror set. The witness status is regenerated
-// hourly on the Console home by console-publish (render.mjs, keyless, from
-// the public chain). Until now this home served its founding copy forever -
-// A10 measured STALE here while the live line had already anchored fresh
-// (INS-R75-001 F-1, Domain side). Same doctrine: keyless read, honest age
-// gate, byte-true writes only.
+// T-561 (agent-5, פסק-מכניזם): status.json יוצא מערכת-השיקוף הזאת.
+// R75 הכניס אותו לשיקוף — אבל A10/R66 (והטענה-הממכונת agent/verify/assertions.json)
+// קבעו שהצורה weave-console-chain-v1 חיה ב-status.json של ה-Console בלבד, ו-grid-status
+// הוא הקאנון ב-Domain. התוצאה המדודה: weave-mirror ו-grid-sentinel נלחמים על אותו קובץ
+// (פינג-פונג מ-03:46), וה-live הציג JSON פגום (acct-00 לא-מצוטט) ששתק כל צרכן.
+// חוק-הבית מעתה: Domain/status.json = grid-sentinel בלבד; העדות-החיה של ה-witness נמדדת ב-Console.
 const SRC = "https://roshpinacare-sys.github.io/Console";
-const FILES = ["mirror.json", "saos-live.json", "status.json"];
+const FILES = ["mirror.json", "saos-live.json"];
 const MAX_SOURCE_AGE_H = 48; // מקור מעופש מזה = צינור מת, לא משקפים אותו
 
 const r2 = (v) => Math.round(v * 100) / 100;
