@@ -1,21 +1,16 @@
 {
  "schema": "site-audit/1",
- "at": "2026-10-21T05:56:03.377Z",
+ "at": "2026-10-21T05:58:17.109Z",
  "scope": "live-pages:https://roshpinacare-sys.github.io/Domain/",
  "pagesScanned": 94,
  "summary": {
-  "findings": 16,
-  "externalBlocked": 3,
+  "findings": 14,
+  "externalBlocked": 4,
   "transientBlocked": 0,
-  "checked": 265,
-  "structuralFindings": 3
+  "checked": 275,
+  "structuralFindings": 2
  },
  "findings": [
-  {
-   "rule": "R-CANONICAL",
-   "file": "press/editions/2026-10-21.html",
-   "note": "canonical https://roshpinacare-sys.github.io/Domain/press/ ≠ https://roshpinacare-sys.github.io/Domain/press/editions/2026-10-21.html"
-  },
   {
    "rule": "R-SITEMAP",
    "file": "quality/index.html",
@@ -25,22 +20,6 @@
    "rule": "R-SITEMAP",
    "file": "wallet-truth.html",
    "note": "indexable page missing from sitemap.xml"
-  },
-  {
-   "code": 404,
-   "url": "https://roshpinacare-sys.github.io/Domain/quality/index.html",
-   "sources": [
-    "<self>"
-   ],
-   "note": "the page itself does not serve"
-  },
-  {
-   "code": 404,
-   "url": "https://roshpinacare-sys.github.io/Domain/wallet-truth.html",
-   "sources": [
-    "<self>"
-   ],
-   "note": "the page itself does not serve"
   },
   {
    "code": 404,
@@ -107,6 +86,13 @@
   },
   {
    "code": 404,
+   "url": "https://roshpinacare-sys.github.io/Domain/badge/quality.svg",
+   "sources": [
+    "badges.html"
+   ]
+  },
+  {
+   "code": 404,
    "url": "https://roshpinacare-sys.github.io/Domain/press/editions/",
    "sources": [
     "press/editions/2026-10-21.html",
@@ -122,6 +108,14 @@
   }
  ],
  "externalBlocked": [
+  {
+   "code": 451,
+   "url": "https://api.binance.com/api/v3/ticker/24hr?symbol=STEEMUSDT",
+   "sources": [
+    "press/editions/2026-10-21.html",
+    "press/index.html"
+   ]
+  },
   {
    "code": 403,
    "url": "https://etherscan.io/tx/0x102ec1935be6cb3ff3acc20189a85377cf57486515f3121472c6611b20e0ef41",
@@ -172,7 +166,7 @@
    "R-SITEMAP",
    "R-TRUTH"
   ],
-  "findings": 3
+  "findings": 2
  },
  "overall": "FAIL",
  "note": "קישורים = אמת-חיה ב-Pages: 404 פנימי/חוץ = עמוד-מת (FINDING); 403/429/502 אצל צד-ג = חסימת-בוט (רמז בלבד); 429/503 מפני-ה-github.com-שלנו = חנק-מדידה (TRANSIENT — ריטרי-3 ואז רשום-בלי-הכשל). קישורים הנבנים ב-JS בזמן-ריצה אינם נסרקים כאן — הם אינם href סטטי. structural = אמת-checkout בלי רשת (R75): R-BALANCE·R-SCRIPT·R-CANONICAL·R-STUB·R-SITEMAP·R-TRUTH — החוקים ב-agents/SELF-CHECKS.md."
