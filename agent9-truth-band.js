@@ -46,10 +46,15 @@
 
   function render(d) {
     var c = [];
-    // אוצר — שער-הרצפה
+    // אוצר — שער-הרצפה · תיקון-סתירה X1 (t55c): פיצול-פסק-הפעולה-המוצעת (PASS/BLOCK) מבריאות-האוצר (OK/BELOW-FLOOR)
     var T = d.treasury || { ok: false };
+    var health = (T.ok && T.netSp != null && T.floorSp != null)
+      ? (T.netSp >= T.floorSp ? "OK" : "BELOW-FLOOR −" + (T.floorSp - T.netSp).toFixed(1) + " SP") : null;
     c.push(card("🛡️ אוצר · שער-הרצפה-3000", T.ok
-      ? '<div class="a9-k ' + verdictClass(T.verdict) + '">' + esc(T.verdict) + '</div>'
+      ? '<div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap">'
+        + '<span class="a9-k ' + verdictClass(T.verdict) + '">' + esc(T.verdict) + '</span>'
+        + '<span class="a9-k ' + (health && health.indexOf("BELOW") === 0 ? "red" : "") + '" style="font-size:13px">' + esc(health || "UNMEASURED") + '</span></div>'
+        + '<div class="a9-line">PASS = הפעולה-המוצעת-חוקית · לא בריאות-האוצר (תיקון-סתירה X1)</div>'
         + '<div class="a9-line">net ' + esc(T.netSp) + " SP · רצפה " + esc(T.floorSp) + " · עודף " + esc(T.surplus) + "</div>"
         + '<div class="a9-line">שורות-האצלה-חיות ' + esc(T.rowsOut) + " SP · החזרות-בפייפליין-7-ימים</div>"
       : '<div class="a9-k amber">UNMEASURED</div><div class="a9-line">' + esc(T.err || "המקור-לא-השיב") + "</div>",
@@ -94,6 +99,20 @@
         + esc((a.id || "").replace("artery-", "")) + " → " + esc(v) + (a.at ? " · " + esc(fmt(a.at)) : "") + "</div>";
     }).join("");
     c.push(card("🫀 עורקי-CI-חיים", ar || '<div class="a9-k amber">UNMEASURED</div>', "כל-עורק = ריצת-CI-מתועדת-בגיט"));
+
+    // פנקס-הסתירות [t55c] — מדידת-סתירות-בין-הטענות-בגיט, כל-שעה (owner: "בוא נוודא הכל")
+    var X = d.contradictions || null;
+    c.push(card("⚔️ פנקס-הסתירות · נמדד-חי", X
+      ? '<div class="a9-k ' + (X.summary.confirmed > 0 ? "red" : "") + '">' + X.summary.confirmed
+        + ' <span style="font-size:12px;color:#a1a1aa">סתירות-מאומתות · מתוך ' + X.summary.total + '-נבדקות</span></div>'
+        + X.items.slice(0, 4).map(function (i) {
+            var col = i.verdict === "CONFIRMED" ? "#ef4444" : (i.verdict === "OK" ? "#22c55e" : "#eab308");
+            return '<div class="a9-line"><span class="a9-dot" style="background:' + col + '"></span>'
+              + esc(String(i.id || "").replace(/^X\d+-/, "")) + " → " + esc(i.verdict) + "</div>";
+          }).join("")
+        + '<div class="a9-line">' + (X.summary.unmeasured > 0 ? esc(X.summary.unmeasured) + " מקורות-לא-השיבו (מדווח-בכנות, לא-מומצא)" : "כל-המקורות-השיבו") + "</div>"
+      : '<div class="a9-k amber">UNMEASURED</div><div class="a9-line">מכונת-הסתירות-טרם-השיבה — fail-closed</div>',
+      X ? '<a href="truth.html#contradictions">פנקס-הסתירות המלא · פסק-אחר-פסק עם-ראיות</a> · נאפה ' + fmt(X.at) : "—"));
 
     var head = '<div class="a9-head"><span class="a9-title">פס-האמת-החי · agent-9</span>'
       + '<span class="a9-sub">כל-מספר = מדידה-חיה עם זמן-ומקור · אפס-טענות-בלי-ודאות · אופה-שעתית-ב-CI · fail-closed</span></div>'

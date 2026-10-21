@@ -30,6 +30,10 @@ const jfetch = async (url, opts, timeoutMs = 20000) => {
     return await r.json();
   } finally { clearTimeout(t); }
 };
+// זהות-CI-ארעית בלבד (מוזרקת-מה-runner, אף-פעם-לא-נשמרת-לא-נרשמת-לא-מוצגת) —
+// מטרתה-יחידה: למנוע-חנק-rate-limit של api.github.com בתוך-Actions. מקומית = keyless מלא.
+const GH_TOKEN = process.env.GITHUB_TOKEN || null;
+const ghHeaders = () => (GH_TOKEN ? { Authorization: `token ${GH_TOKEN}` } : {});
 const rpc = async (method, params) =>
   jfetch(RPC, { method: "POST", body: JSON.stringify({ jsonrpc: "2.0", method, params, id: 1 }) });
 
@@ -125,13 +129,141 @@ async function collect() {
   const arteries = [];
   for (const wf of ["artery-treasury-floor-watch", "artery-autotrade-hedge-gate"]) {
     const r = push(await wrap(`artery:${wf}`, async () => {
-      const j = await jfetch(`${GH_API}/actions/workflows/${wf}.yml/runs?per_page=1`);
+      const j = await jfetch(`${GH_API}/actions/workflows/${wf}.yml/runs?per_page=1`, { headers: ghHeaders() });
       const run = j.workflow_runs?.[0];
       if (!run) throw new Error("no-runs");
       return { status: run.status, conclusion: run.conclusion, at: run.created_at, url: run.html_url };
     }));
     arteries.push({ id: wf, ok: r.ok, ...(r.ok ? r.data : { err: r.err }) });
   }
+
+  // 6. מדידות-הצלבה [t55c] — גלמי-אמת לפנקס-הסתירות (owner trace 1a15d4acc349fc41:
+  //    "יש הרבה סתירות בגיט בין הדברים בוא נוודא הכל"). keyless, fail-closed.
+  const RAW_DOMAIN = "https://raw.githubusercontent.com/roshpinacare-sys/Domain/main";
+  const hrs = (iso) => (Date.now() - Date.parse(iso)) / 360e5;
+  const ghRepos = push(await wrap("gh-repos-count", async () => {
+    let count = 0, page = 1;
+    for (;;) {
+      const arr = await jfetch(`https://api.github.com/users/roshpinacare-sys/repos?per_page=100&page=${page}`, { headers: ghHeaders() });
+      if (!Array.isArray(arr)) throw new Error("bad-shape");
+      count += arr.length;
+      if (arr.length < 100 || page >= 5) break;
+      page++;
+    }
+    return { count };
+  }));
+  const domStatus = push(await wrap("domain-status", async () => {
+    const j = await jfetch(`${RAW_DOMAIN}/status.json`);
+    return { repos: j?.pulse?.repos ?? null, at: j?.generatedAt || null };
+  }));
+  const fleetBeat = push(await wrap("domain-fleet-heartbeat", async () => {
+    const j = await jfetch(`${RAW_DOMAIN}/truth/fleet.json`);
+    return { repos: j?.summary?.repos ?? null, at: j?.at || null };
+  }));
+  const mirror = push(await wrap("domain-mirror", async () => {
+    const j = await jfetch(`${RAW_DOMAIN}/mirror.json`);
+    return { generatedAt: j?.generatedAt || null };
+  }));
+  const mreport = push(await wrap("domain-mirror-report", async () => {
+    const j = await jfetch(`${RAW_DOMAIN}/mirror-report.json`);
+    return { dexMoneyAgeH: j?.data?.["dex/money.json"]?.ageH ?? null, at: j?.generatedAt || null };
+  }));
+  const orgRoot = push(await wrap("org-root-freshness", async () => {
+    const j = await jfetch("https://api.github.com/repos/roshpinacare-sys/roshpinacare-sys.github.io", { headers: ghHeaders() });
+    if (!j || !j.pushed_at) throw new Error("bad-shape");
+    return { pushedAt: j.pushed_at, ageH: +hrs(j.pushed_at).toFixed(2) };
+  }));
+
+  // 7. פנקס-הסתירות [t55c] — כל-בדיקה = שתי-טענות-מגיט מול-הנמדד →
+  //    CONFIRMED (סתירה-אמתית) | OK (תואם) | UNMEASURED (מקור-שלא-השיב — לעולם-לא-מומצא).
+  const items = [];
+  const mk = (id, title, severity, cure) => ({ id, title, severity, cure,
+    a: { claim: null, value: null, src: null }, b: { claim: null, value: null, src: null },
+    verdict: "UNMEASURED", note: "", measuredAt: new Date().toISOString() });
+
+  { // X1 — סמנטיקת-שער-האוצר: פסק-הפעולה PASS מול בריאות-האוצר (קריאה-כפולה-של-אותה-קבלה)
+    const x = mk("X1-treasury-semantics", "פסק-השער PASS מופיע כשהאוצר עצמו מתחת-לרצפה", "medium",
+      "DISPLAY-SPLIT (t55c): פס-האמת-ודף-האמת מפרידים-פסק-הפעולה-המוצעת מבריאות-האוצר");
+    if (floor.ok) {
+      const g = floor.data;
+      const below = (g.netSp != null && g.floorSp != null) ? g.netSp < g.floorSp : null;
+      x.a = { claim: "verdict", value: g.verdict, src: "Autonomy receipts/treasury-floor/latest.json" };
+      x.b = { claim: "health", value: below == null ? null : (below ? "BELOW-FLOOR" : "OK"), src: "נגזר-מאותה-קבלה: netSp מול floorSp" };
+      if (g.verdict == null || below == null) x.verdict = "UNMEASURED";
+      else if (g.verdict === "PASS" && below) { x.verdict = "CONFIRMED"; x.note = "PASS = הפעולה-המוצעת-חוקית (delta ≤ surplus) — לא בריאות-האוצר; קריאה-חד-משמעית-הייתה-מטעה."; }
+      else x.verdict = "OK";
+    } else x.err = floor.err;
+    items.push(x);
+  }
+  { // X2 — מספר-המאגרים: הצהרת-status.json מול GitHub-API-חי
+    const x = mk("X2-repos-count", "מספר-המאגרים-המוצהר בstatus.json שונה-מה-API-החי", "low",
+      "המדידה-החיה-כאן-היא-האמת; מכונת-status.json היא-מסילת-אחרת (הסתירה-מתועדת-עד-ריפוי-אצלה)");
+    if (domStatus.ok && ghRepos.ok) {
+      x.a = { claim: "status.json pulse.repos", value: domStatus.data.repos, src: "Domain/status.json" };
+      x.b = { claim: "GitHub API repos", value: ghRepos.data.count, src: "api.github.com/users/roshpinacare-sys" };
+      const d = domStatus.data.repos != null ? Math.abs(domStatus.data.repos - ghRepos.data.count) : null;
+      x.verdict = d == null ? "UNMEASURED" : (d >= 2 ? "CONFIRMED" : "OK");
+      if (x.verdict === "CONFIRMED") x.note = `פער-של-${d} מאגרים בין-ההצהרה-למדידה-החיה`;
+    } else x.err = !domStatus.ok ? domStatus.err : ghRepos.err;
+    items.push(x);
+  }
+  { // X3 — מכונת-הדופק מדווחת-אפסים-שקטים
+    const x = mk("X3-heartbeat-zeros", "מכונת-fleet-heartbeat מדווחת repos:0 מול-חשבון-עם-מאגרים-חיים", "high",
+      "מכונה-שבורה — מסילת-הסוכן-שלה; נמדד-ונחשף-כאן-בכנות עד-הריפוי");
+    if (fleetBeat.ok && ghRepos.ok) {
+      x.a = { claim: "fleet.json summary.repos", value: fleetBeat.data.repos, src: "Domain/truth/fleet.json" };
+      x.b = { claim: "GitHub API repos", value: ghRepos.data.count, src: "api.github.com/users/roshpinacare-sys" };
+      x.verdict = (fleetBeat.data.repos === 0 && ghRepos.data.count > 0) ? "CONFIRMED" : "OK";
+      if (x.verdict === "CONFIRMED") x.note = "אפסים-שקטים = מכונה-עיוורת; האמת-החיה-בצד-ב";
+    } else x.err = !fleetBeat.ok ? fleetBeat.err : ghRepos.err;
+    items.push(x);
+  }
+  { // X4 — mirror.json מוצג-כמקור-חי אך-ישן->12ש'
+    const x = mk("X4-mirror-stale", "mirror.json מוצג-כמקור-חי אך-נאפה-לפני->12ש'", "low",
+      "מסילת-weave-mirror (אחרת) — נמדד-כאן-בכנות");
+    if (mirror.ok && mirror.data.generatedAt) {
+      const age = hrs(mirror.data.generatedAt);
+      x.a = { claim: "generatedAt", value: mirror.data.generatedAt, src: "Domain/mirror.json" };
+      x.b = { claim: "age", value: +age.toFixed(2) + "h", src: "נגזר" };
+      x.verdict = age > 12 ? "CONFIRMED" : "OK";
+    } else x.err = mirror.err || "no generatedAt";
+    items.push(x);
+  }
+  { // X5 — שורש-הארגון קפוא מול-טענת-"המערכת-החיה"
+    const x = mk("X5-org-root-stale", "שורש-האתר מציג 'המערכת-החיה' אך-הריפו-קפוא->48ש'", "high",
+      "הצגה: הסתירה-מתועדת-פומבית; הריפוי-במסילת-האחראי-לשורש-הארגון");
+    if (orgRoot.ok) {
+      x.a = { claim: "טענת-הדף", value: "המערכת-החיה (living system)", src: "index.html של-השורש" };
+      x.b = { claim: "pushed_at", value: orgRoot.data.pushedAt + " (age " + orgRoot.data.ageH + "h)", src: "GitHub API" };
+      x.verdict = orgRoot.data.ageH > 48 ? "CONFIRMED" : "OK";
+      if (x.verdict === "CONFIRMED") x.note = "דף-שורש-קפוא מול-מערכת-שנדחפת-כל-דקות-בריפואים-הפנימיים";
+    } else x.err = orgRoot.err;
+    items.push(x);
+  }
+  { // X6 — dex/money.json בבית-הקונסולה ישן->24ש' ומוזן-לדפים
+    const x = mk("X6-console-money-stale", "dex/money.json בבית-הקונסולה נשאר->24ש' ומוזן-לדפים", "low",
+      "מסילת-Console — מתועד-בכנות; המירור-מדווח-עליו");
+    if (mreport.ok) {
+      const age = mreport.data.dexMoneyAgeH;
+      x.a = { claim: "dex/money.json ageH", value: age == null ? null : +Number(age).toFixed(2), src: "Domain/mirror-report.json ← Console" };
+      x.b = { claim: "רף-טריות", value: 24, src: "מדיניות-הבית" };
+      x.verdict = age == null ? "UNMEASURED" : (age > 24 ? "CONFIRMED" : "OK");
+    } else x.err = mreport.err;
+    items.push(x);
+  }
+
+  const contradictions = {
+    schema: "AGENT9-CONTRADICTIONS/1",
+    at: new Date().toISOString(),
+    law: "פקודת-הבעלים t55c: 'יש הרבה סתירות בגיט בין הדברים בוא נוודא הכל' — כל-סתירה = שתי-טענות-גיט + נמדד + פסק. fail-closed: מקור-שלא-השיב = UNMEASURED, לעולם-לא-מומצא.",
+    summary: {
+      total: items.length,
+      confirmed: items.filter(i => i.verdict === "CONFIRMED").length,
+      ok: items.filter(i => i.verdict === "OK").length,
+      unmeasured: items.filter(i => i.verdict === "UNMEASURED").length,
+    },
+    items,
+  };
 
   return {
     schema: "AGENT9-FLEET-TRUTH/1",
@@ -142,6 +274,7 @@ async function collect() {
     hedgeGate: hedge.ok ? hedge.data : { ok: false, err: hedge.err },
     fixedfloat: ff.ok ? ff.data : { ok: false, err: ff.err },
     arteries,
+    contradictions,
     sources,
   };
 }
@@ -153,9 +286,16 @@ async function selftest() {
   A(b.schema === "AGENT9-FLEET-TRUTH/1", "schema");
   A(b.sources.every(s => s.ok === true || (s.ok === false && s.err)), "every source is ok-with-data OR fail-closed-with-err (never invented)");
   A(b.at && !Number.isNaN(Date.parse(b.at)), "baked-at is ISO");
+  A(b.contradictions && b.contradictions.schema === "AGENT9-CONTRADICTIONS/1", "contradictions schema");
+  A(b.contradictions.summary.total === b.contradictions.items.length, "contradictions summary matches items");
+  A(b.contradictions.summary.confirmed + b.contradictions.summary.ok + b.contradictions.summary.unmeasured === b.contradictions.items.length, "contradictions verdict counts sum");
+  A(b.contradictions.items.every(i => ["CONFIRMED", "OK", "UNMEASURED"].includes(i.verdict)), "every contradiction verdict in enum");
+  A(b.contradictions.items.every(i => i.verdict !== "UNMEASURED" || i.err || [i.a.value, i.b.value].some(v => v == null)), "UNMEASURED carries err or missing values (fail-closed)");
+  A(b.contradictions.items.every(i => i.verdict !== "CONFIRMED" || (i.a.value != null && i.b.value != null)), "CONFIRMED always carries both measured values");
   console.log("selftest: sources =", b.sources.length,
     "| ok =", b.sources.filter(s => s.ok).length,
-    "| fail-closed =", b.sources.filter(s => !s.ok).length);
+    "| fail-closed =", b.sources.filter(s => !s.ok).length,
+    "| contradictions =", JSON.stringify(b.contradictions.summary));
   process.exit(fail);
 }
 

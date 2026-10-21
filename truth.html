@@ -170,6 +170,15 @@ footer a:hover{color:var(--acc-bright)}
     </table>
   </div></div>
 
+  <h2 class="sb" id="contradictions"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v6M12 15v6M3 12h6M15 12h6"/><circle cx="12" cy="12" r="2.2"/></svg><span data-i="contraH">פנקס-הסתירות המדוד</span> <span class="lang-tag">agent9-contradictions/1</span></h2>
+  <p class="pgsub" data-i="contraLead">פקודת-הבעלים: "יש הרבה סתירות בגיט בין הדברים בוא נוודא הכל". המכונה מציבה זו-מול-זו שתי-טענות-חיות-מגיט — הצהרה-מול-מדידה-חיה — ופוסקת-בפומבי כל-שעה: CONFIRMED = סתירה-אמתית-עם-ראיות-גולמיות · OK = תואם · UNMEASURED = מקור-שלא-השיב — כנות-מלאה, לעולם-לא-מומצא. סתירה-שמוצגת-כאן-היא-לא-האשמה — היא-מדידה; הריפוי-הוא-במסילה-של-המכונה-הבעייתית.</p>
+  <div class="tblwrap"><div class="tblscroll">
+    <table aria-label="Measured contradictions">
+      <thead><tr><th data-i="cId">סימון</th><th data-i="cTitle">הסתירה</th><th data-i="cA">טענה-א</th><th data-i="cB">טענה-ב</th><th data-i="cVerdict">פסק</th></tr></thead>
+      <tbody id="contra-body"><tr><td colspan="5" class="skel">...</td></tr></tbody>
+    </table>
+  </div></div>
+
   <h2 class="sb"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span data-i="gatesH">השערים שנמדדו</span></h2>
   <div class="tblwrap"><div class="tblscroll">
     <table aria-label="Gates">
@@ -268,7 +277,12 @@ var I18N={
   claimQuality:"This repo's (Domain) public page-quality machine — every 30 minutes.",
   tagAudit:"SITE-AUDIT/1",
   claimAudit:"A scan of every live page: an internal 404 is a dead page; every finding is a public commit.",
-  claimArtery:"Live CI artery — last run"
+  claimArtery:"Live CI artery — last run",
+  contraH:"The measured contradiction ledger",
+  contraLead:"The owner's order: 'there are many contradictions in git between the things — let's verify everything'. The machine places two live git claims against each other — a declaration versus a live measurement — and rules publicly every hour: CONFIRMED = a real contradiction with raw evidence · OK = consistent · UNMEASURED = a source that did not answer — full honesty, never invented. A contradiction shown here is not an accusation — it is a measurement; the cure belongs to the lane of the faulty machine.",
+  cId:"Mark", cTitle:"Contradiction", cA:"Claim A", cB:"Claim B", cVerdict:"Verdict",
+  contraNone:"no contradiction source answered yet — fail-closed, nothing invented",
+  contraCure:"cure"
  },
  he:{
   brandSub:"רשת האימות", backConsole:"הקונסולה", h1:"שער האמת",
@@ -309,7 +323,12 @@ var I18N={
   claimQuality:"מכונת-איכות-הדפים-הציבורית-של-ריפו-הזה (Domain) — כל-30-דק'.",
   tagAudit:"SITE-AUDIT/1",
   claimAudit:"סריקת-כל-העמודים-החיים: 404-פנימי = עמוד-מת; כל-ממצא = קומיט-ציבורי.",
-  claimArtery:"עורק-CI חי — ריצה-אחרונה"
+  claimArtery:"עורק-CI חי — ריצה-אחרונה",
+  contraH:"פנקס-הסתירות המדוד",
+  contraLead:"פקודת-הבעלים: \"יש הרבה סתירות בגיט בין הדברים בוא נוודא הכל\". המכונה מציבה זו-מול-זו שתי-טענות-חיות-מגיט — הצהרה-מול-מדידה-חיה — ופוסקת-בפומבי כל-שעה: CONFIRMED = סתירה-אמתית-עם-ראיות-גולמיות · OK = תואם · UNMEASURED = מקור-שלא-השיב — כנות-מלאה, לעולם-לא-מומצא. סתירה-שמוצגת-כאן-היא-לא-האשמה — היא-מדידה; הריפוי-הוא-במסילה-של-המכונה-הבעייתית.",
+  cId:"סימון", cTitle:"הסתירה", cA:"טענה-א", cB:"טענה-ב", cVerdict:"פסק",
+  contraNone:"אף-מקור-סתירות לא השיב עדיין — fail-closed, לא-מומצא-כלום",
+  contraCure:"ריפוי"
  }
 };
 var LANG=localStorage.getItem("saos.lang")||"he";
@@ -415,6 +434,30 @@ function renderProofTags(data){
   tb.innerHTML=rows.join("")||"<tr><td colspan='5' class='skel'>"+esc(t("tagsNone"))+"</td></tr>";
 }
 
+/* ── AGENT9-CONTRADICTIONS/1 — the measured contradiction ledger (t55c).
+   Two live git claims against each other: a declaration versus a live measurement.
+   Verdicts: CONFIRMED = real contradiction with both values measured · OK = consistent ·
+   UNMEASURED = a source did not answer (fail-closed, never invented). */
+function renderContradictions(data){
+  var tb=el("contra-body"); if(!tb) return;
+  var rows=[];
+  var a9=data.agent9;
+  if(a9&&a9.contradictions&&a9.contradictions.schema==="AGENT9-CONTRADICTIONS/1"){
+    (a9.contradictions.items||[]).forEach(function(i){
+      var cls=i.verdict==="CONFIRMED"?"fail":(i.verdict==="OK"?"pass":"skip");
+      function cell(c){
+        if(!c||(c.claim==null&&c.value==null)) return "<span class='skel'>—</span>";
+        return "<b>"+esc(c.claim||"")+"</b><br><span class='mono'>"+esc(c.value==null?"—":c.value)+"</span><br><span class='skel'>"+esc(c.src||"")+"</span>";
+      }
+      rows.push("<tr><td class='mono'><b>"+esc(i.id||"")+"</b>"+(i.severity?"<br><span class='skel'>"+esc(i.severity)+"</span>":"")+"</td><td>"+esc(i.title||"")
+        +(i.note?"<div class='note'>"+esc(i.note)+"</div>":"")
+        +(i.cure?"<div class='note'>"+esc(t("contraCure"))+": "+esc(i.cure)+"</div>":"")+"</td><td>"+cell(i.a)+"</td><td>"+cell(i.b)
+        +"</td><td><span class='st "+cls+"'>"+esc(i.verdict||"UNMEASURED")+"</span>"+(i.err?"<br><span class='skel'>"+esc(i.err)+"</span>":"")+"</td></tr>");
+    });
+  }
+  tb.innerHTML=rows.join("")||"<tr><td colspan='5' class='skel'>"+esc(t("contraNone"))+"</td></tr>";
+}
+
 function renderSlo(slo){
   var tbl=el("slo-table"),ev=el("slo-events"),warmNote=el("slo-warm-note");
   if(!slo||!slo.format||!slo.slos){
@@ -494,6 +537,8 @@ function render(data){
   renderSlo(data.slo);
 
   renderProofTags(data);
+
+  renderContradictions(data);
 
   var rows=runs.slice(-30).reverse().map(function(r){
     var cls=r.verdict==="ALL-GREEN"?"pass":(r.verdict==="PRE-LIVE"?"skip":"fail");

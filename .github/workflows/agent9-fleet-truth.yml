@@ -28,8 +28,12 @@ jobs:
           node-version: 22
       - name: Selftest (fail-closed — a red collector never bakes)
         run: node scripts/agent9-fleet-truth.cjs --selftest
+        env:
+          GITHUB_TOKEN: ${{ github.token }}   # זהות-ארעית-לrunner-בלבד — למניעת-rate-limit של api.github.com
       - name: Bake live fleet truth
         run: node scripts/agent9-fleet-truth.cjs
+        env:
+          GITHUB_TOKEN: ${{ github.token }}   # זהות-ארעית-לrunner-בלבד — למניעת-rate-limit של api.github.com
       - name: Commit baked truth (evidence = commit)
         run: |
           set -Eeuo pipefail
