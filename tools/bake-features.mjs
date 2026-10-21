@@ -41,17 +41,31 @@ const STATUS = {
 const stOf = (f) => STATUS[f.status] || STATUS.documented;
 
 /* ראיות → קישורים במעבר-אחד מבוסס-טוקנים (לעולם לא regex-על-פלט-regex — שיעור-הקישורים-השבורים):
- *   "run(s) <id>" → Actions · "block <n>" → steemworld · נתיב-קובץ → blob · URL → URL */
+ *   "run(s) <id>" → Actions · "block <n>" → steemworld · נתיב-קובץ → blob · URL → URL
+ * מבחן-הצלייה 2026-10-21T22:35Z: האפייה מחדש דרסה תיקון-HTML ידני (site-audit FAIL חזר) —
+ * הריפוי חייב לחיות כאן, במקור-האפייה עצמו:
+ *   (1) קיצור `X.json/.md` → שני-קישורים חיים (שני הקבצים קיימים בעץ — נמדד).
+ *   (2) NO_ANCHOR: נתיבים שאין להם קובץ-קבוע בעץ — ללא עוגן, עם הסבר-כנה (אפס-קישור-מת). */
+const NO_ANCHOR = {
+  "agents/sovereign-pending.json": "תיבת-דואר Tier-E — runtime-only, נדחף רק כשיש דואר; אינו נתיב-קבוע בעץ",
+  "scripts/command-guard.sh": "פרוש SUPERSEDED-BY — היורש החי: agents/command-guard.cjs",
+};
 function linkEvidence(ev) {
   const links = [];
   const put = (html) => `\u0000${links.push(html) - 1}\u0000`;
+  const anchor = (p) =>
+    NO_ANCHOR[p]
+      ? `<code>${p}</code> <em>(${NO_ANCHOR[p]})</em>`
+      : `<a href="${GH}/blob/main/${p}" target="_blank" rel="noreferrer"><code>${p}</code></a>`;
   let out = esc(ev)
     .replace(/\bruns?\s+(\d{9,11})\b/gi, (m, id) =>
       put(`<a href="${GH}/actions/runs/${id}" target="_blank" rel="noreferrer">run ${id}</a>`))
     .replace(/\bblock\s+(\d{7,9})\b/gi, (m, n) =>
       put(`<a href="https://steemworld.org/block/${n}" target="_blank" rel="noreferrer">block ${n}</a>`))
+    .replace(/(^|[\s(;])((?:agents|scripts|tools|\.github|hub|verify|office)\/[\w./-]+)\.json\/\.md\b/g,
+      (m, pre, base) => `${pre}${put(anchor(`${base}.json`))} · ${put(anchor(`${base}.md`))}`)
     .replace(/(^|[\s(;])((?:agents|scripts|tools|\.github|hub|verify|office)\/[\w./-]+\.[\w]{2,6})/g,
-      (m, pre, p) => `${pre}${put(`<a href="${GH}/blob/main/${p}" target="_blank" rel="noreferrer"><code>${p}</code></a>`)}`)
+      (m, pre, p) => `${pre}${put(anchor(p))}`)
     .replace(/(https?:\/\/[^\s<;)"']+)/g, (m, u) =>
       put(`<a href="${u}" target="_blank" rel="noreferrer">${u.replace(/^https?:\/\//, "").slice(0, 48)}</a>`));
   return out.replace(/\u0000(\d+)\u0000/g, (m, i) => links[Number(i)]);

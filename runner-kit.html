@@ -102,6 +102,7 @@ footer{margin-top:auto;border-top:1px solid var(--line);background:var(--panel);
       <span class="chip ok">קבלה חתומה ראשונה · <span class="mono">549fbe05</span> · 2026-10-12T16:04Z</span>
       <span class="chip ok">התחדשות-מכשיר · <span class="mono">750a55dd</span> · 2026-10-21T11:37Z · foreman fresh 27m</span>
       <span class="chip ok">אנקור שלישי · <span class="mono">352a5b1c</span> · 2026-10-21T15:59Z · foreman fresh 122m</span>
+      <span class="chip ok">cron-כפול חי · <span class="mono">7fc76e8f</span> · 17:42Z · <span class="mono">29a2b712</span> · 20:41Z · <span class="mono">549547ad</span> · 22:01Z · 3 ריצות schedule מוצלחות רצופות</span>
       <span class="chip warn">גרסה: pending first tagged release · הצמדה לפי קומיט עד אז</span>
       <span class="chip">רישיון-שימוש: ToS-COMPLIANCE.md בריפו</span>
     </div>
@@ -117,7 +118,8 @@ footer{margin-top:auto;border-top:1px solid var(--line);background:var(--panel);
         <h3>הסוכן שלך טוען. מי מוכיח?</h3>
         <p>הטענה היא מספר כמו כל מספר, עד שיש ראיה שאפשר לחשב מחדש. המשאב הנדיר אינו כוח-חישוב. הוא ראיה ניתנת-לאימות. הקיט הופך כל ריצה לקבלה חתומה SHA-256 שנדחפת לריפו הציבורי. מי שרוצה לבדוק, מחשב את ה-hash בעצמו ומשווה. בלי לסמוך על אף אחד, כולל עלינו.</p>
         <p class="limit"><b>קבלה ראשונה בפנקס:</b> <span class="mono">549fbe05…05b0</span> · נחתמה 2026-10-12T16:04Z · גוף המדידה גלוי לציבור. <b>קבלת-התחדשות:</b> <span class="mono">750a55dd…3439</span> · 2026-10-21T11:37Z · אחרי 211 שעות-שקט (דגל DEGRADED של תאום-השלמות) המסילה חזרה לרוץ — ומ-2026-10-21 היא מתוזמנת כל שעתיים בריפו הציבורי (דפוס-היברידי, דקות-ציבוריות-חינם).</p>
-        <p class="limit"><b>מבחן-התזמון — ומה-נמדד באמת:</b> GitHub השתיק בשקט את שני-חלונות-ה-cron הראשונים (13:53 ו-15:53 עברו באפס-ריצות — נמדד ב-API-הציבורי ב-15:59Z), בעוד שאר-ה-workflows המתוזמנים באותו-ריפו רצו כשורה. שגרה-ידנית ב-15:59:32Z הוכיחה את-הצינור קצה-לקצה: ריצה שהסתיימה בהצלחה וקבלה חתומה <span class="mono">352a5b1c…fbbc</span> עגנה תוך כ-40 שניות. החיסון שנדחף: מסלול-cron כפול-בשני-חלונות-שונים — והכשל-המדוד נרשם כאן, לא מוסתר.</p>
+        <p class="limit"><b>מבחן-התזמון — ומה-נמדד באמת:</b> GitHub השתיק בשקט את שני-חלונות-ה-cron הראשונים (13:53 ו-15:53 עברו באפס-ריצות — נמדד ב-API-הציבורי ב-15:59Z), בעוד שאר-ה-workflows המתוזמנים באותו-ריפו רצו כשורה. שגרה-ידנית ב-15:59:32Z הוכיחה את-הצינור קצה-לקצה: ריצה שהסתיימה בהצלחה וקבלה חתומה <span class="mono">352a5b1c…fbbc</span> עגנה תוך כ-40 שניות. החיסון שנדחף: מסלול-cron כפול-בשני-חלונות-שונים — והכשל-המדוד נרשם כאן, לא מוסתר. <b>והחיסון נמדד חי</b>: מאז ההקשחה, שלוש ריצות schedule רצופות מוצלחות בפנקס (17:42:36Z · 20:41:26Z · 22:01:30Z — נמדד ב-API ב-22:28Z) — הצינור ממשיך לעגן קבלות בלי יד אנושית, גם כשהסנדבוקס עצמו מת ונולד מחדש מתחתיו.</p>
+        <p class="limit"><b>מבחן-הריבונות-העצמית — הכשל הכואב ביותר, והריפוי שלו:</b> ב-22:09Z נמדד reset רביעי של הסנדבוקס: טבעת-המפתחות נמחתה, הגדרות-הגיט חזרו לברירת-מחדל, והקלונים נמחקו. מה ששרד: הכספת (<span class="mono">upload/pat.env</span>), הפנקסים, והצינורות בצד-GitHub שהמשיכו לרוץ לבד. הכשל-המבני שהחשיף המבחן: המפתח-הפרטי היה ללא גיבוי — כל reset שובר את שרשרת-החתימה מחדש. הריפוי הנמדד: המפתח הפרטי כעת <b>מגובה על הנפח-השורד</b> (0600, מחוץ לעץ), מסייע-הרישוי קורא ישירות מהכספת, ולולאת-החייאה אוטומטית משחזרת מפתח+הגדרות+קלונים בפקודה אחת. גם הדריסה נחשפה: lane-אפייה ציבורי החזיר קישורים-מתים מנתוני-מקור מיושנים — הריפוי נעשה במקור-האפייה עצמו, לא ב-HTML.</p>
       </div>
       <div class="card">
         <h3>דקות-CI הן תלות, לא עובדה</h3>
@@ -195,7 +197,7 @@ footer{margin-top:auto;border-top:1px solid var(--line);background:var(--panel);
       <div class="card">
         <h3>הפנקס החי, נמדד 2026-10-21</h3>
         <ul class="meas">
-          <li><span class="m">receipts</span><span>3 קבלות חתומות · הראשונה <span class="mono">549fbe05</span> · 2026-10-12T16:04Z · ההתחדשות <span class="mono">750a55dd</span> · 2026-10-21T11:37Z · השלישית <span class="mono">352a5b1c</span> · 2026-10-21T15:59Z · feed foreman · state fresh · מסילת device-lane ב-cron כפול כל שעתיים</span></li>
+          <li><span class="m">receipts</span><span>8 קבלות חתומות נמדדו 2026-10-21T22:28Z · הראשונה <span class="mono">549fbe05</span> · 2026-10-12T16:04Z · ההתחדשות <span class="mono">750a55dd</span> · 11:37Z · השלישית <span class="mono">352a5b1c</span> · 15:59Z · והשלוש הטריות מה-cron-הכפול: <span class="mono">7fc76e8f</span> 17:42Z · <span class="mono">29a2b712</span> 20:41Z · <span class="mono">549547ad</span> 22:01Z · feed foreman חי · המסילה ממשיכה לעגן בלבד</span></li>
           <li><span class="m">fresh-oracle</span><span>9 הזנות נמדדו חי 2026-10-21T11:37Z · foreman 27m/130 fresh · grid 41m fresh · integrity 47m fresh · orders 13262m <b>stale</b> — ה-Sandbox הפרטי-חסום, מדווח בכנות · pulse/recruit/ventures aging</span></li>
           <li><span class="m">integrity</span><span>verdict <b>honest-green</b> · success10 = 4 · failure10 = 0 · stasis off · 2026-10-21T11:37Z · ותאום-העורקי הציבורי על האתר עצמו: <b>PASS</b> רציף (7 מקורות, אפס-ממצאים · נמדד 2026-10-21T15:58Z, הדגל DEGRADED מ-211 השעות התנקה)</span></li>
         </ul>
