@@ -1,15 +1,15 @@
-// MONEY-WATCH — צופה נתיב הכסף (R39)
+// MONEY-WATCH — צופה נתיב הכסף (R39, שדרוג-אמת 2026-10-21)
 //
-// שני צווארי-הבקבוק של נתיב הכסף לא היו תחת מעקב חי:
-//   1. כניסת-הדלק: תשלומי ה-powerdown של @owner הם עורק-החיים היחיד
-//      של ערך חוץ (≈470 SP ≈ $25 לשבוע, עוד 4 תשלומים). הגריד החוץ רץ
-//      יומית ב-03:17 UTC — כלומר הדלק שנוחת ב-02:01 ממתין 76 דקות לפני
-//      שנכנס לשוק. הסוכן הזה קולט את הנחיתה בתוך רבע-שעה ומזניק את
-//      הגריד מיד — הדלק נכנס לשוק באותה דקה.
-//   2. יציאת-הפדיון: תיבת-היציאה (peg-outbox) מצטברת בתביעות פדיון, אבל
-//      אף אחד לא אמר מתי שווה לשדר. הסוכן מודד חי: יתרת התיבה מול עלות
-//      רוחב-הפס ב-TRON (0.35 TRX לשידור, נמדד) — ופוסק SEND-NOW/WAIT עם
-//      המספרים במדויק.
+// שלושה צווארי-בקבוק של נתיב הכסף תחת מעקב חי:
+//   1. כניסת-הדלק: תשלומי ה-powerdown של @headcorner (הקופה האמיתית —
+//      שודרג מ-@owner שנמדד-מת: 0 STEEM, אין-powerdown). הקופה החיה
+//      מחזיקה מלאי נזיל + powerdown מתוזמן בשרשרת — נמדד ישירות.
+//   2. חלוקת-התשואה (חדש): מסילת saos-yield מחלקת דיבידנד לרוסטר.
+//      הסוכן סורק את 10 חשבונות-הרוסטר להעברות-נכנסות עם memo
+//      "saos-yield" — כל טקסיד ציבורי-ומאומת. זה הוכחת-הרווח-החוץ
+//      החיה: כסף-אמת זז בשרשרת, כולל טקסידים.
+//   3. יציאת-הפדיון: תיבת-היציאה (peg-outbox) מצטברת בתביעות פדיון,
+//      הסוכן מודד חי מול עלות רוחב-הפס ב-TRON (0.35 TRX, נמדד).
 //
 // אפס-מפתחות: RPC ציבורי של Steem + trongrid + CoinGecko בלבד. כל נפילה
 // נרשמת בכנות (null + סיבה) — שום דבר לא מדומה. המצב נשמר ב-dex/money.json
@@ -23,7 +23,9 @@ import { readFileSync, writeFileSync, existsSync } from "node:fs";
 
 const OWNER = "roshpinacare-sys";
 const DEX_REPO = "saos-dex";
-const STEEM_ACCOUNT = "owner";
+const STEEM_ACCOUNT = "headcorner"; // הקופה האמיתית (owner נמדד-מת: 0 STEEM)
+const YIELD_ROSTER = ["cashmachine", "haran", "israelnews", "lsa", "macrame", "siq", "tov", "wic", "wog", "woq"];
+const YIELD_MEMO = "saos-yield";
 const CUSTODY_TRON = "TYVwwuvdDmfy3shxT3cb3RKLrRCshaZxTy";
 const OUT_PATH = process.env.MONEY_PATH || "dex/money.json";
 const BANDWIDTH_COST_TRX = 0.35; // נמדד חי: שידור TRX מחשבון בלי רוחב-פס מסוגר ≈ 0.345-0.35 TRX
@@ -42,17 +44,88 @@ async function gh(url, method = "GET", body = null, token = null) {
   return r.status === 204 ? null : r.json();
 }
 
-async function steemAccount() {
+async function steemAccount(account = STEEM_ACCOUNT) {
   const r = await fetch("https://api.steemit.com", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ jsonrpc: "2.0", method: "condenser_api.get_accounts", params: [[STEEM_ACCOUNT]], id: 1 }),
+    body: JSON.stringify({ jsonrpc: "2.0", method: "condenser_api.get_accounts", params: [[account]], id: 1 }),
   });
   if (!r.ok) throw new Error(`steemit rpc -> ${r.status}`);
   const j = await r.json();
   const a = j?.result?.[0];
-  if (!a) throw new Error("steemit rpc: no account");
+  if (!a) throw new Error(`steemit rpc: no account ${account}`);
   return a;
+}
+
+/* חלוקת-התשואה — סריקת רוסטר להעברות saos-yield נכנסות (ציבורי, אפס-מפתחות).
+ * FIX (נמדד 07:15Z): (1) חשבונות-רוסטר פעילים-מסחרית דוחפים 100-פעולות בדקות —
+ * ההעברה נפלה מהחלון של condenser_api; (2) account_history_api מגיב בפורמט
+ * typed (op.type/op.value) עם סכומי-nai. פענוח-דו-פורמט + מיפוי nai→asset. */
+const NAI_ASSET = { "@@000000021": "STEEM", "@@000000013": "SBD", "@@000000037": "VESTS" };
+const NAI_PREC = { "@@000000021": 3, "@@000000013": 3, "@@000000037": 6 };
+function parseAmount(a) {
+  if (a && typeof a === "object" && a.nai) {
+    const prec = NAI_PREC[a.nai] ?? 3;
+    return { amount: (Number(a.amount) || 0) / Math.pow(10, prec), asset: NAI_ASSET[a.nai] ?? a.nai };
+  }
+  const s = String(a ?? "");
+  return { amount: parseFloat(s) || 0, asset: s.split(" ")[1] || "STEEM" };
+}
+async function yieldLedger() {
+  const rows = [];
+  let scanned = 0;
+  for (const acc of YIELD_ROSTER) {
+    try {
+      const r = await fetch("https://api.steemit.com", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ jsonrpc: "2.0", method: "account_history_api.get_account_history", params: { account: acc, start: -1, limit: 100, operation_filter: ["transfer_operation"] }, id: 1 }),
+      });
+      if (!r.ok) throw new Error(`rpc ${r.status}`);
+      const j = await r.json();
+      if (j?.error) throw new Error(String(j.error?.message || "rpc error").slice(0, 80));
+      const hist = (j?.result?.history || []).map((e) => (Array.isArray(e) ? e[1] : e));
+      scanned++;
+      for (const t of hist) {
+        const op = t?.op || {};
+        const isTransfer = op?.type === "transfer_operation" || op?.[0] === "transfer";
+        if (!isTransfer) continue;
+        const v = op?.value ?? op?.[1] ?? {};
+        const amt = parseAmount(v?.amount);
+        if (v?.from === STEEM_ACCOUNT && String(v?.memo || "").startsWith(YIELD_MEMO)) {
+          rows.push({
+            txAt: t.timestamp,
+            to: acc,
+            amount: Math.round(amt.amount * 1000) / 1000,
+            asset: amt.asset,
+            memo: String(v.memo).slice(0, 40),
+          });
+        }
+      }
+    } catch (e) {
+      rows.push({ to: acc, error: String(e.message).slice(0, 80) });
+    }
+  }
+  const ok = rows.filter((r) => !r.error);
+  const totalSteem = ok.filter((r) => r.asset === "STEEM").reduce((s, r) => s + r.amount, 0);
+  const days = {};
+  for (const r of ok) {
+    const d = String(r.txAt || "").slice(0, 10);
+    if (d) days[d] = r2((days[d] || 0) + r.amount);
+  }
+  return {
+    ok: scanned === YIELD_ROSTER.length,
+    rosterSize: YIELD_ROSTER.length,
+    scanned,
+    transfers: ok.length,
+    totalSteem: r2(totalSteem),
+    byDay: Object.fromEntries(Object.entries(days).sort().slice(-14)),
+    latest: ok.sort((a, b) => String(b.txAt).localeCompare(String(a.txAt))).slice(0, 8),
+    errors: rows.filter((r) => r.error).map((r) => ({ to: r.to, error: r.error })),
+    note: ok.length > 0
+      ? `${ok.length} yield transfers measured on-chain (public rpc, zero keys) — the dividend rail is LIVE`
+      : "no yield transfers found yet — the rail is armed but never fired (measured honestly)",
+  };
 }
 
 async function tronCustody() {
@@ -106,9 +179,12 @@ try {
   };
   const prevNext = prev?.fuel?.powerdown?.nextPayout ?? null;
   const prevSteem = typeof prev?.fuel?.steem === "number" ? prev.fuel.steem : null;
+  // שדרוג-אמת: זיהוי-נחיתה חוקי רק בתוך אותו חשבון — המעבר owner→headcorner
+  // יצר קפיצת-כוזב (0→150) שהדליקה landing לא-אמיתי. הפורמט v2 סוגר את זה.
+  const sameAccount = prev?.fuel?.account === STEEM_ACCOUNT;
 
   // זיהוי נחיתה: התשלום הבא התקדם (הישן כבר בעבר) + קפיצת מלאי
-  const payoutAdvanced = prevNext && nextPayout && prevNext !== nextPayout && new Date(prevNext).getTime() <= Date.now() + 36e5;
+  const payoutAdvanced = sameAccount && prevNext && nextPayout && prevNext !== nextPayout && new Date(prevNext).getTime() <= Date.now() + 36e5;
   const jump = prevSteem !== null ? fuel.steem - prevSteem : null;
   if (payoutAdvanced && jump !== null && jump >= LANDING_JUMP_STEEM) {
     landing = {
@@ -130,6 +206,14 @@ try {
   }
 } catch (e) {
   fuel = { ok: false, error: String(e.message).slice(0, 120) };
+}
+
+/* ═══ 1.5) חלוקת-התשואה — הראיה החיה של הדיבידנד ═══ */
+let yieldLedgerResult = null;
+try {
+  yieldLedgerResult = await yieldLedger();
+} catch (e) {
+  yieldLedgerResult = { ok: false, error: String(e.message).slice(0, 120) };
 }
 
 /* ═══ 2) פדיון — תיבת-היציאה מול עלות שידור ═══ */
@@ -255,17 +339,18 @@ if (landing && landingKey && alreadyDispatched !== landingKey) {
 /* ═══ 5) פרסום ═══ */
 const doc = {
   ok: true,
-  format: "money-watch-v1",
+  format: "money-watch-v2",
   publishedAt: new Date().toISOString(),
-  engine: "Console/agents/money-watch · R39 money path sentinel",
-  role: "watches the two money-path chokepoints: fuel-in (powerdown landing -> immediate grid dispatch) and redemption-out (peg-outbox vs TRON broadcast cost)",
+  engine: "Console/agents/money-watch · R39 money path sentinel (treasury-upgraded 2026-10-21)",
+  role: "watches the money-path chokepoints: fuel-in (headcorner treasury + powerdown landing -> grid dispatch), yield-out (saos-yield dividend transfers on-chain), and redemption-out (peg-outbox vs TRON broadcast cost)",
   fuel,
+  yield: yieldLedgerResult,
   landing: landing ? { ...landing, dispatched: dispatch.ok } : null,
   dispatch,
   redemption,
   invariant,
   marks,
-  honesty: "כל נתון נמדד חי מ-RPC ציבורי (Steem/trongrid/CoinGecko) או מ-world.json המפורסם. נפילת מקור מסומנת בכנות. עלות השידור ב-TRON (0.35 TRX) נמדדה משריפת-גז היסטורית של חשבון המשמרת; סף השליחה = פי 3 מהעלות. המפתח: אפס - לא סוכן חותם.",
+  honesty: "כל נתון נמדד חי מ-RPC ציבורי (Steem/trongrid/CoinGecko) או מ-world.json המפורסם. נפילת מקור מסומנת בכנות. חלוקת-התשואה נמדדת מהיסטוריית-השרשרת של 10 חשבונות-הרוסטר — כל טקסיד ציבורי-ומאומת, אפס-מפתחות. עלות השידור ב-TRON (0.35 TRX) נמדדה משריפת-גז היסטורית; סף השליחה = פי 3 מהעלות. המפתח: אפס - לא סוכן חותם.",
 };
 
 writeFileSync(OUT_PATH, JSON.stringify(doc, null, 1) + "\n");

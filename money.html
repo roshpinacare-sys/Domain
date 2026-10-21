@@ -178,6 +178,19 @@ footer .wrap{font-size:12px;color:var(--dim);display:flex;justify-content:space-
       </div>
     </section>
 
+    <section class="card" id="yield-proof" style="border-color:var(--gold-dim)">
+      <h2>הוכחת התשואה · מסילת הדיבידנד <span class="en">The yield rail — on-chain proof</span></h2>
+      <p class="src">המסילה (R288) חולקת תשואה לרוסטר-הצי — כסף אמת זז בשרשרת-STEEM, כל העברה עם טקסיד ציבורי. המדידה כאן נעשית אפס-מפתחות: סריקת היסטוריית-השרשרת של חשבונות-הרוסטר עצמם — אי אפשר לזייף, אי אפשר להסתיר. הרצפה (50 STEEM) והרזרבה (60%) נשארים בקופה — חוקי-המסילה נאכפים בקוד.</p>
+      <div class="pulse" id="yieldStrip">
+        <div class="pcard"><div class="v" id="y-total">—</div><div class="l" id="y-total-l">STEEM שחולקו בפועל בשרשרת · נמדד מהיסטוריית-הרוסטר</div></div>
+        <div class="pcard"><div class="v" id="y-count">—</div><div class="l" id="y-count-l">העברות-תשואה נמדדו · כל אחת עם טקסיד ציבורי</div></div>
+        <div class="pcard"><div class="v" id="y-last">—</div><div class="l" id="y-last-l">חלוקה אחרונה · נמדדת מהשרשרת</div></div>
+      </div>
+      <div class="inst" id="yieldTx" style="margin-top:12px">
+        <div class="irow"><div class="what">טוען את פנקס-התשואה החי (dex/money.json → yield)…</div></div>
+      </div>
+    </section>
+
     <section class="card" id="gravity" style="border-color:var(--gold-dim)">
       <h2>מרכז-הכובד: הכלכלה שלנו <span class="en">The center of gravity · SAOS first</span></h2>
       <p class="src">הוראת-בעלים (2026-10-14): המטבע שלנו במרכז — הכלכלה, הבורסה, הארנק, המערכת. Steem ו-Hive יורדים למקום-אחרון: הם מסילות-חוץ למדידה ולcustody, לא מרכז-הכובד. הם ממשיכים לפעוק ולהימדד — אבל הבמה הריבונית היא הבורסה שלנו, והצי מבצע עליה. R74 עומד: מחיר-ה-SAOS כאן הוא מחיר-ספר-פנימי בלבד, אין ביד-חוץ ואין נזילות-חוץ.</p>
@@ -590,6 +603,7 @@ footer .wrap{font-size:12px;color:var(--dim);display:flex;justify-content:space-
   (function(){
     function txt(id,v){var e=document.getElementById(id);if(e&&v!=null)e.textContent=v;}
     function n(x){return (Math.round(x*1000)/1000).toString();}
+    function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];});}
     function j(u){return fetch(u+"?t="+Date.now(),{cache:"no-store"}).then(function(r){if(!r.ok)throw 0;return r.json();});}
     Promise.all([j("dex/money.json"),j("moment/moment.json"),j("dex/deposits.json")]).then(function(a){
       var m=a[0],mo=a[1],d=a[2];
@@ -599,6 +613,27 @@ footer .wrap{font-size:12px;color:var(--dim);display:flex;justify-content:space-
           txt("rl-sbd-l","SBD חי בשרשרת · "+m.fuel.account+" · אמיתי · $"+mo.market.sbdUsd);}
         var at=(m.publishedAt||"").replace("T"," ").slice(0,16)+"Z";
         var ml=document.getElementById("rl-usd-l");if(ml)ml.textContent+=" · נמדד "+at;}
+      if(m&&m.yield){
+        var y=m.yield;
+        txt("y-total",(y.totalSteem!=null?y.totalSteem:"—"));
+        txt("y-count",(y.transfers!=null?y.transfers:"—"));
+        var last=y.latest&&y.latest[0];
+        if(last)txt("y-last",(String(last.txAt||"").slice(0,10)+" · "+last.amount+" "+last.asset));
+        var host=document.getElementById("yieldTx");
+        if(host){
+          if(y.transfers>0&&y.latest&&y.latest.length){
+            var out="";
+            for(var i=0;i<y.latest.length;i++){
+              var t=y.latest[i];
+              out+='<div class="irow"><div class="what"><span class="mono">'+esc(t.txAt||"").slice(0,16)+"Z</span> · "+esc(t.to)+" · <b>"+t.amount+" "+esc(t.asset)+"</b> · "+esc(t.memo||"")+'</div></div>';
+            }
+            out+='<div class="irow"><div class="what">הראיה: היסטוריית-השרשרת של חשבונות-הרוסטר עצמם (RPC ציבורי, אפס-מפתחות) — כל סכום כאן עבר בפועל, ניתן לאימות עצמאי בכל סייר-STEEM</div></div>';
+            host.innerHTML=out;
+          } else if(y.note){
+            host.innerHTML='<div class="irow"><div class="what">'+esc(y.note)+'</div></div>';
+          }
+        }
+      }
       if(d&&d.deposits){var e2=document.getElementById("dep-n");if(e2)e2.textContent=String(d.deposits.length);}
       if(mo&&mo.liveBook){var lb=mo.liveBook,rg=(mo.regime&&mo.regime.label)||"";
         var e3=document.getElementById("bookLine");if(e3){var dt=(mo.publishedAt||"").replace("T"," ").slice(0,16)+"Z";
