@@ -57,6 +57,17 @@ footer .wrap{font-size:12px;color:var(--dim);display:flex;justify-content:space-
 @media(max-width:600px){ th,td{padding:8px 6px} .rsum{min-width:0} .rlink a{color:var(--purple)} }
 .archived{font-size:12px;color:#8aa0ad;border:1px dashed #2a3945;border-radius:999px;padding:3px 10px;white-space:nowrap}
 </style>
+<style id="rpt-styles">
+.rpt-strip{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.rpt-pill{font-size:12.5px;border:1px solid var(--border);background:var(--panel2);border-radius:999px;padding:6px 13px;color:var(--mut)}
+.rpt-pill b{color:var(--tx);font-size:14px}
+.rpt-pill.ok{border-color:rgba(212,175,55,.45);color:var(--gold)}
+.rpt-pill.when{margin-inline-start:auto;color:var(--dim);font-size:11.5px}
+.rpt-flat{font-size:12.5px;color:var(--mut);border:1px dashed var(--border2);border-radius:10px;padding:10px 14px;margin:0 0 14px;line-height:1.75}
+.rpt-flat b{color:var(--tx)}
+.rnum{font-family:var(--mono);direction:ltr;unicode-bidi:embed;white-space:nowrap;font-size:12.5px}
+#rpt-live td a{color:var(--gold)}
+</style>
 </head>
 <body>
 <header class="nhead">
@@ -79,7 +90,92 @@ footer .wrap{font-size:12px;color:var(--dim);display:flex;justify-content:space-
       הטבלה הופקה <b>מהקבצים עצמם</b> — אפס מספרים מומצאים.
     </p>
 
-    <div class="card">
+    <!--REPORTS:START-->
+<div class="card" id="rpt-live">
+  <h2>הדוחות-החיים בגיט · מדד-יומי של רופא-הצי</h2>
+  <div class="rpt-strip">
+  <span class="rpt-pill ok"><b>9</b> דוחות-חיים בגיט</span>
+  <span class="rpt-pill"><b>32.3</b> SP נטו · המדידה-האחרונה</span>
+  <span class="rpt-pill"><b>1/12</b> VP≥90% מתוך-הצי</span>
+  <span class="rpt-pill"><b>0%</b> כיסוי-קהל · כן</span>
+  <span class="rpt-pill when">נאפה מהקבצים-עצמם · אותו-קומיט</span>
+</div>
+  <p class="rpt-flat">כנות-מדידה: ערכי-המדידה <b>זהים</b> לאורך <b>9</b> דוחות-רצופים — רופא-הצי רץ-יומית ומדווח על מצב-רשת דומם. יציבות היא-מדידה, לא-המצאה · תנועה-חוזרת-תשתקף-כאן-באפייה-הבאה.</p>
+  <div style="overflow-x:auto">
+    <table>
+      <thead>
+        <tr><th>תאריך</th><th>נמדד (UTC)</th><th>הון-הרשת</th><th>כלכלה</th><th>פער-כן מהדוח</th></tr>
+      </thead>
+      <tbody><tr>
+  <td class="rdate"><a href="https://github.com/roshpinacare-sys/Domain/blob/main/STATE-REPORT-20261020.md" target="_blank" rel="noreferrer">2026-10-20</a></td>
+  <td class="rdate">—</td>
+  <td class="rnum">32.3 · VP90 1/12</td>
+  <td class="rnum">0.000 SBD פנדינג · 0 STEEM נזיל</td>
+  <td class="rsum">content gap: no live posts in 7d window</td>
+</tr>
+<tr>
+  <td class="rdate"><a href="https://github.com/roshpinacare-sys/Domain/blob/main/STATE-REPORT-20261019.md" target="_blank" rel="noreferrer">2026-10-19</a></td>
+  <td class="rdate">—</td>
+  <td class="rnum">32.3 · VP90 1/12</td>
+  <td class="rnum">0.000 SBD פנדינג · 0 STEEM נזיל</td>
+  <td class="rsum">content gap: no live posts in 7d window</td>
+</tr>
+<tr>
+  <td class="rdate"><a href="https://github.com/roshpinacare-sys/Domain/blob/main/STATE-REPORT-20261018.md" target="_blank" rel="noreferrer">2026-10-18</a></td>
+  <td class="rdate">—</td>
+  <td class="rnum">32.3 · VP90 1/12</td>
+  <td class="rnum">0.000 SBD פנדינג · 0 STEEM נזיל</td>
+  <td class="rsum">content gap: no live posts in 7d window</td>
+</tr>
+<tr>
+  <td class="rdate"><a href="https://github.com/roshpinacare-sys/Domain/blob/main/STATE-REPORT-20261017.md" target="_blank" rel="noreferrer">2026-10-17</a></td>
+  <td class="rdate">—</td>
+  <td class="rnum">32.3 · VP90 1/12</td>
+  <td class="rnum">0.000 SBD פנדינג · 0 STEEM נזיל</td>
+  <td class="rsum">content gap: no live posts in 7d window</td>
+</tr>
+<tr>
+  <td class="rdate"><a href="https://github.com/roshpinacare-sys/Domain/blob/main/STATE-REPORT-20261016.md" target="_blank" rel="noreferrer">2026-10-16</a></td>
+  <td class="rdate">—</td>
+  <td class="rnum">32.3 · VP90 1/12</td>
+  <td class="rnum">0.000 SBD פנדינג · 0 STEEM נזיל</td>
+  <td class="rsum">content gap: no live posts in 7d window</td>
+</tr>
+<tr>
+  <td class="rdate"><a href="https://github.com/roshpinacare-sys/Domain/blob/main/STATE-REPORT-20261015.md" target="_blank" rel="noreferrer">2026-10-15</a></td>
+  <td class="rdate">—</td>
+  <td class="rnum">32.3 · VP90 1/12</td>
+  <td class="rnum">0.000 SBD פנדינג · 0 STEEM נזיל</td>
+  <td class="rsum">content gap: no live posts in 7d window</td>
+</tr>
+<tr>
+  <td class="rdate"><a href="https://github.com/roshpinacare-sys/Domain/blob/main/STATE-REPORT-20261014.md" target="_blank" rel="noreferrer">2026-10-14</a></td>
+  <td class="rdate">—</td>
+  <td class="rnum">32.3 · VP90 1/12</td>
+  <td class="rnum">0.000 SBD פנדינג · 0 STEEM נזיל</td>
+  <td class="rsum">content gap: no live posts in 7d window</td>
+</tr>
+<tr>
+  <td class="rdate"><a href="https://github.com/roshpinacare-sys/Domain/blob/main/STATE-REPORT-20261013.md" target="_blank" rel="noreferrer">2026-10-13</a></td>
+  <td class="rdate">—</td>
+  <td class="rnum">32.3 · VP90 1/12</td>
+  <td class="rnum">0.000 SBD פנדינג · 0 STEEM נזיל</td>
+  <td class="rsum">content gap: no live posts in 7d window</td>
+</tr>
+<tr>
+  <td class="rdate"><a href="https://github.com/roshpinacare-sys/Domain/blob/main/STATE-REPORT-20261012.md" target="_blank" rel="noreferrer">2026-10-12</a></td>
+  <td class="rdate">—</td>
+  <td class="rnum">32.3 · VP90 1/12</td>
+  <td class="rnum">0.000 SBD פנדינג · 0 STEEM נזיל</td>
+  <td class="rsum">content gap: no live posts in 7d window</td>
+</tr></tbody>
+    </table>
+  </div>
+  <p class="note">כל-שורה נכרית-בזמן-אפייה מהקובץ-עצמו באותו-קומיט (<a href="https://github.com/roshpinacare-sys/Domain/blob/main/STATE-REPORT-20261020.md" target="_blank" rel="noreferrer">דוגמה-מקור</a>) · אין-מספר-שנכתב-ביד · דוח-שלא-נפרש-מוצג-כך-בגלוי. הטבלה-ההיסטורית-למטה-היא-הארכיון-הסגור-של-מתקפת-החשיפה — נשארת-כעדות, בלי-שחזור-מזויף. מאפה 2026-10-21T06:11Z.</p>
+</div>
+<!--REPORTS:END-->
+
+<div class="card">
       <h2>דוחות שפורסמו · Published reports</h2>
       <div style="overflow-x:auto">
         <table>
@@ -116,7 +212,7 @@ footer .wrap{font-size:12px;color:var(--dim);display:flex;justify-content:space-
       <p class="note">
         עדכון-כנות (2026-10-12): 12 הדוחות-ההיסטוריים — ובהם ארבעת-השורות למעלה — הועברו למשמרת-פרטית
         במתקפת-החשיפה (<span class="mono">commit ae807ca</span>, מדיניות owner-voice) ואינם מפורסמים פומבית עוד.
-        לא שחזרנו אותם מהזיכרון — אין מזויפים. מאז, האמת-החיה של הצי מתפרסמת אוטומטית כל-~17 דקות
+        לא שחזרנו אותם מהזיכרון — אין מזויפים. מאז, הדוחות-היומיים-החיים ממופים-למעלה-מהקבצים-בגיט והאמת-הרציפה מתפרסמת אוטומטית כל-~17 דקות
         על ידי <span class="mono">grid-sentinel</span>: <a href="GRID-STATUS.md">GRID-STATUS.md</a> (טבלת-פעימה) ו־<a href="status.json">status.json</a> (מטריצת-מכונה).
         מפת-כל-העמודים: <a href="sitemap.html">sitemap.html</a>.
       </p>

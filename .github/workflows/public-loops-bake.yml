@@ -38,11 +38,14 @@ jobs:
       - name: Bake capabilities catalog (G45 — the pages prove the architecture)
         run: node tools/bake-features.mjs
 
+      - name: Bake state-reports index (G46 — the 9 daily doctor reports in git get mapped)
+        run: node tools/bake-reports.mjs
+
       - name: Commit (only when baked content changed)
         run: |
           git config user.name "roshpinacare-sys"
           git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
-          git add badge feed.xml products.html
+          git add badge feed.xml products.html reports.html
           if git diff --cached --quiet; then
             echo "no-change — the previous bake stands"
           else
