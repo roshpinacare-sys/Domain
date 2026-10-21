@@ -34,6 +34,13 @@ jobs:
 
       - name: Commit and push books
         run: |
+          # [wave 19.58→19.59 · trace 1a160ad2281f7cd9] the measured tear (run 39687239630,
+          # 22:32:33Z): the settlement COMMITTED but the bare push lost a sibling race
+          # (non-fast-forward) and the books never published — this writer lacked the house
+          # pull-rebase-retry publish law every other committing writer already carries.
+          # Cure: same loop as stale-watchdog/mirror-from-console — commit-first, then
+          # pull-rebase-retry; a REAL failure after the retries still fails loud (the tear
+          # must stay visible), while plain sibling races heal inside the run.
           git config user.name "econ-engine"
           git config user.email "econ-engine@fleet.local"
           git add agents/econ-ledger.jsonl agents/econ-book.json agents/econ-engine-state.json
@@ -41,5 +48,18 @@ jobs:
             echo "no new settlements"
           else
             git commit -m "econ-engine: settlement $(date -u +%FT%TZ) [skip ci]"
-            git push origin main
+            ok=0
+            for i in 1 2 3 4 5; do
+              if git pull --rebase origin main; then
+                if git push origin main; then ok=1; break; fi
+              else
+                git rebase --abort 2>/dev/null || true
+              fi
+              echo "publish race $i — backing off"
+              sleep $((i * 7))
+            done
+            if [ "$ok" != "1" ]; then
+              echo "PUBLISH-DEFERRED after 5 retries — settlement committed locally but not published; failing loud so the next slot re-settles honestly"
+              exit 1
+            fi
           fi
