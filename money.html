@@ -137,6 +137,7 @@ footer .wrap{font-size:12px;color:var(--dim);display:flex;justify-content:space-
         <div class="pcard"><div class="v" id="gr-height">999,424</div><div class="l" id="gr-height-l">גובה-השרשרת של הבורסה שלנו (saos-dex)</div></div>
         <div class="pcard"><div class="v" id="gr-fills">255,685</div><div class="l" id="gr-fills-l">מילויים על הבורסה שלנו · אפייה 2026-10-21 · נמדד חי מ-world.json</div></div>
         <div class="pcard"><div class="v" id="gr-swaps">63,184</div><div class="l" id="gr-swaps-l">swaps · 30 פקודות-חיות לפני הרענון</div></div>
+        <div class="pcard"><div class="v" id="gr-furnace">79 סוופים</div><div class="l" id="gr-furnace-l">התנור · מסחר-אמת על הרשת-שלנו · נמדד חי מספר-התנור (giant)</div></div>
         <div class="pcard" style="border-color:var(--border2)"><div class="v" id="gr-soldiers">תור-חייאה</div><div class="l" id="gr-soldiers-l">חיילי-הצי על הבורסה: פקודות נדחות בכנות עד תדלוק-credits</div></div>
       </div>
       <div class="inst" id="gravityLine" style="margin-top:12px">
@@ -566,6 +567,15 @@ footer .wrap{font-size:12px;color:var(--dim);display:flex;justify-content:space-
       var s=a[0]||{},e=a[1]||{},st=s.state||{};
       var at=((s.publishedAt||"").replace("T"," ").slice(0,16)+"Z");
       if(st.height)txt("gr-height",fmt(st.height));
+      /* R77: התנור — מסחר-אמת על הרשת-העצמית, נמדד מהספר הציבורי של המנוע (raw, keyless) */
+      fetch("https://raw.githubusercontent.com/roshpinacare-sys/giant/main/mini-services/market-furnace/state/furnace-state.json?t="+Date.now(),{cache:"no-store"}).then(function(r){return r.json();}).then(function(f){
+        if(!f) return;
+        var sw=(f.ignitionSwaps||0)+(f.rotationSwaps||0);
+        var vol=(f.rotationVolMu||0), fee=((f.ignitionCostMu||0)+(f.rotationCostMu||0));
+        txt("gr-furnace", fmt(sw) + " סוופים");
+        var l=document.getElementById("gr-furnace-l");
+        if(l) l.textContent = "התנור · מסחר-אמת על הרשת-שלנו · " + fmt(vol) + "µ ווליום · " + fmt(fee) + "µ עמלות-אמת" + (f.at ? " · נמדד " + f.at.slice(0,16).replace("T"," ") + "Z" : "");
+      }).catch(function(){});
       if(st.fills!=null)txt("gr-fills",fmt(st.fills));
       if(st.swaps!=null)txt("gr-swaps",fmt(st.swaps));
       txt("gr-fills-l","מילויים על הבורסה שלנו · "+(st.liveOrders!=null?st.liveOrders+" פקודות-חיות · ":"")+"נמדד "+at);
