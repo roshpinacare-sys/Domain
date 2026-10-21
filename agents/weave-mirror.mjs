@@ -26,7 +26,7 @@
 // :12/:42 · agents-watch :37 · console-publish :45 · dex-mirror :52 ·
 // agent-verify :55 דו-שעתי).
 
-import { readFileSync, writeFileSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
 
 // T-561 (agent-5, פסק-מכניזם): status.json יוצא מערכת-השיקוף הזאת.
 // R75 הכניס אותו לשיקוף — אבל A10/R66 (והטענה-הממכונת agent/verify/assertions.json)
@@ -35,7 +35,18 @@ import { readFileSync, writeFileSync, existsSync } from "node:fs";
 // (פינג-פונג מ-03:46), וה-live הציג JSON פגום (acct-00 לא-מצוטט) ששתק כל צרכן.
 // חוק-הבית מעתה: Domain/status.json = grid-sentinel בלבד; העדות-החיה של ה-witness נמדדת ב-Console.
 const SRC = "https://roshpinacare-sys.github.io/Console";
-const FILES = ["mirror.json", "saos-live.json"];
+// R76 (תיקון-התנגשות נמדד 2026-10-21): root status.json שייך לספר grid-status
+// (grid-sentinel הכותב-החוקי שלו — סכמת saos/grid-status/1). השיקוף של ספר-העד
+// (weave-console-chain) עובר ל-witness/status.json — שני ספרים, שני נתיבים,
+// אפס-דריסה. index.html+badges קוראים root (grid-status), gate.html קורא
+// witness/status.json (weave-chain). נמדד: שתי הסכמות התנגשו על אותו קובץ
+// וכל צרכן נשבר לסירוגין; העתק-מקור שבור נכנס גם דרך דוחף-חוץ — הפרדת
+// הנתיבים מבטלת את הקרב מבנית.
+const PAIRS = [
+  { src: "mirror.json", dst: "mirror.json" },
+  { src: "saos-live.json", dst: "saos-live.json" },
+  { src: "status.json", dst: "witness/status.json" },
+];
 const MAX_SOURCE_AGE_H = 48; // מקור מעופש מזה = צינור מת, לא משקפים אותו
 
 const r2 = (v) => Math.round(v * 100) / 100;
@@ -51,7 +62,9 @@ function timestampOf(doc) {
 let updated = 0, kept = 0, warned = 0;
 const lines = [];
 
-for (const f of FILES) {
+mkdirSync("witness", { recursive: true });
+
+for (const { src: f, dst } of PAIRS) {
   const url = `${SRC}/${f}?t=${Date.now()}`;
   let doc = null;
   try {
@@ -76,17 +89,17 @@ for (const f of FILES) {
     continue;
   }
   let changed = true;
-  if (existsSync(f)) {
+  if (existsSync(dst)) {
     try {
-      changed = JSON.stringify(JSON.parse(readFileSync(f, "utf8"))) !== JSON.stringify(doc);
+      changed = JSON.stringify(JSON.parse(readFileSync(dst, "utf8"))) !== JSON.stringify(doc);
     } catch { changed = true; /* local copy corrupt - replace it */ }
   } else {
     warned++;
-    lines.push(`WARN ${f}: no local copy at all - the book was never served from here`);
+    lines.push(`WARN ${f}: no local copy at ${dst} - the book was never served from here`);
     changed = true;
   }
   if (changed) {
-    writeFileSync(f, JSON.stringify(doc, null, 2) + "\n");
+    writeFileSync(dst, JSON.stringify(doc, null, 2) + "\n");
     updated++;
     lines.push(`MIRRORED ${f}: ${r2(ageH)}h old at source, bytes written`);
   } else {

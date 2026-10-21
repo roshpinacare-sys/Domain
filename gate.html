@@ -358,7 +358,7 @@ function lock() {
 /* ── live network state (status.json) ── */
 async function loadNet() {
   try {
-    const s = await (await fetch("status.json", { cache: "no-store" })).json();
+    const s = await (await fetch("witness/status.json", { cache: "no-store" })).json();
     $("netCp").textContent = "cp#" + s.witness.checkpoint;
     $("netAtt").textContent = (s.witness.attestations != null ? s.witness.attestations : "·") + " אימותים";
     const h = s.freshness.ageHours;
