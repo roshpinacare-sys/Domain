@@ -12,10 +12,37 @@
       /* טעינה טרום-React: רקע אור-יום, אפס הבהוב שחור */
       html, body { margin: 0; background: #f3f1ec; }
     </style>
+    <style>
+      /* ── שכבת-הסבר סטטית (נראית גם בלי JavaScript) ── */
+      section.how { max-width: 860px; margin: 0 auto; padding: 28px 20px 48px; color: #2c2a26; font: 15px/1.8 'Heebo', system-ui, -apple-system, 'Segoe UI', sans-serif; }
+      section.how .box { background: #f7f4ec; border: 1px solid rgba(60,52,40,.16); border-radius: 14px; padding: 18px 22px; }
+      section.how h2 { font-size: 17px; font-weight: 800; margin: 16px 0 4px; }
+      section.how h2:first-child { margin-top: 0; }
+      section.how p, section.how li { font-size: 13.5px; line-height: 1.85; }
+      section.how ul, section.how ol { padding-inline-start: 22px; margin: 6px 0; }
+      section.how a { color: #2c2a26; font-weight: 700; }
+      section.how .lat { direction: ltr; unicode-bidi: embed; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+    </style>
     <script type="module" crossorigin src="./assets/index-B-kpT5EF.js"></script>
     <link rel="stylesheet" crossorigin href="./assets/index-B6BuwR3O.css">
   </head>
   <body>
     <div id="root"></div>
+
+    <section class="how" aria-labelledby="how-h">
+      <div class="box">
+        <h2 id="how-h">מה יש מעל השורה הזאת — ומה קורה בלי JavaScript</h2>
+        <p>מעל השורה הזאת נפתח <b>המשרד התלת-מימדי של מפקדת-הצי</b>: סצנה חיה בקוד-גלוי (<span class="lat">React + three.js</span>, נארזה ל-<span class="lat">assets/index-B-kpT5EF.js</span>) המציגה את הצי כמשרד אמיתי — אור-יום לפי שעון-ירושלים (בספר-העולם: הערות <span class="lat">06:30</span>, כיבוי <span class="lat">22:30</span>), שולחנות-עבודה, נוכחות-חיה של הסוכנים, וקיר-אמת של הגיט עם מד-טריות — אפס בקאנד, אפס סודות. בלי <span class="lat">JavaScript</span> לא תופיע סצנה תלת-מימדית — זו תלות-מוצהרת, לא תקלה; השכבה הסטטית הזאת קיימת בדיוק בשביל המקרה הזה, ומספרת מה יש מעל ומאיפה הוא ניזון.</p>
+        <h2>איך העולם נבנה — ומי רשאי לשנות אותו</h2>
+        <p>העולם מוגדר בספר <a href="./world/world.json">world/world.json</a> (סכימה <span class="lat">office3d.world/2</span>, כרגע גרסה <span class="lat">16</span>): החוקרת, החדר, השולחנות ואור-היום כתובים שם במפורש, ועל הספר חתום חוק-אחד: כל שינוי-עולם חייב קבלה על הגיט, והעולם גדל — לעולם לא נמחק (<span class="lat">append/expand only</span>). ההתפתחות האחרונה נעשתה על-ידי <span class="lat">world-evolver</span> (<span class="lat">llm:openai/gpt-oss-20b</span>) ב-<span class="lat">2026-10-21 00:38 UTC</span>. המצב-הרץ — אירועי-צ׳אט, פעימות וישיבות — נשמר ב-<a href="../office/world-state.json">office/world-state.json</a> ומתקדם על-ידי איבר-עולם-מתמיד.</p>
+        <h2>מה הסצנה קוראת חי בזמן-ריצה</h2>
+        <ul>
+          <li><span class="lat">digest.json</span> מסניף <span class="lat">office-pages</span> של <span class="lat">FleetHQ</span> — סיכום-הפעילות שמזין את קיר-האמת.</li>
+          <li><a href="../agents/STASIS.json">agents/STASIS.json</a> — מפסק-החירום של הכלכלה; המשרד מציג את מצבו בגלוי.</li>
+          <li>יומן-המפעיל <span class="lat">operator-journal.jsonl</span> מריפו <span class="lat">Sandbox</span> — שקיפות מלאה, גם על מי שמפעיל.</li>
+        </ul>
+        <p>ממשיכים: <a href="../network/">מפקד-מצב-הרשת</a> · <a href="../status/">מפקדת-המצב המלאה</a> · <a href="../console.html">הקונסולה</a> · <a href="../index.html">העמוד הראשי</a>.</p>
+      </div>
+    </section>
   </body>
 </html>

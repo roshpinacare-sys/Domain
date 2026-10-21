@@ -161,6 +161,18 @@
   .foot-in { max-width:1060px; margin:0 auto; display:flex; flex-wrap:wrap; gap:10px 22px; align-items:center; font-size:12.5px; color:var(--dim); }
   .foot-in a { color:var(--dim); }
   .foot-in a:hover { color:var(--strong); }
+
+  /* ── שכבת-תוכן סטטית (נראית גם בלי JavaScript) ── */
+  section.proof { background:var(--panel); border:1px solid var(--rule); border-radius:var(--r); padding:20px 22px; margin:18px 0; }
+  section.proof h2 { font-size:17px; margin:16px 0 6px; }
+  section.proof h2:first-child { margin-top:0; }
+  section.proof p, section.proof li { font-size:14px; }
+  section.proof ol, section.proof ul { margin:8px 0; padding-inline-start:22px; }
+  section.proof li { margin:5px 0; }
+  section.proof details { border:1px solid var(--rule); border-radius:10px; padding:10px 14px; margin:8px 0; background:var(--panel2); }
+  section.proof summary { cursor:pointer; color:var(--strong); font-weight:500; }
+  section.proof details[open] summary { margin-bottom:8px; }
+  section.proof .lat { font-family:var(--mono); font-size:.88em; direction:ltr; unicode-bidi:embed; overflow-wrap:anywhere; }
 </style>
 </head>
 <body>
@@ -235,6 +247,31 @@
       <p><strong>USDS ו-SAOS:</strong> USDS הוא יחידת-החשבון הפנימית של הרשת (מוצמדת-כוונה לדולר, עם גילוי-כנות של כיסוי-החוץ ב<a href="truth.html" style="color:inherit">דף-האמת</a>), ו-SAOS הוא מטבע-הרשת שמחולק לפי תרומה-מדודה. החלפות מתבצעות בדקס-הרשת-עצמה, והעמלות חוזרות לאוצר-הרשת — המסלול המלא מתועד ב<a href="money.html" style="color:inherit">נתיב-הכסף</a>.</p>
       <p style="color:var(--faint,#71717a);font-size:13px">הארנק הזה הוא חלק מהמערכת הריבונית SAOS — <a href="index.html" style="color:inherit">הדף-הראשי</a> · <a href="console.html" style="color:inherit">הקונסולה החיה</a> · <a href="deposits.html" style="color:inherit">ספר-הפקדות</a>.</p>
     </div>
+  </section>
+
+  <section class="proof" aria-labelledby="pf-h">
+    <h2 id="pf-h">מה קורה כאן — ההסבר שנשאר גם בלי JavaScript</h2>
+    <p>הדף הזה הוא הארנק הרשמי של ריבונות <span class="lat">SAOS</span>: מכונה חד-דפית בקוד-גלוי — <span class="lat">gate-crypto.js</span> ו-<span class="lat">saos-live.js</span>, שני קבצים שאפשר לקרוא מהריפו, בלי <span class="lat">CDN</span> ובלי תלות חיצונית — שבה המפתח נולד במכשיר שלך, כל פעולה נחתמת מקומית בחתימת <span class="lat">secp256k1</span>, ושום סוד לא נשלח, נרשם או מוצג. הגרף למעלה הוא לוח-מצב חי: כל חלק במכונה הוא תחנה עובדת, והוא נדלק רק כשהמצב שלו נמדד ואומת. בכל טעינה רץ קודם עצמי-בוחן של הפרוטוקול — אם הוא נכשל, המכונה מציגה זאת ומנחה לא לחתום.</p>
+    <details>
+      <summary>תשע התחנות — מה כל חלק עושה בפועל</summary>
+      <ol>
+        <li><b>הכספת</b> — יצירת מפתח אקראי (<span class="lat">CSPRNG</span>) במכשיר, שמירה מוצפנת-סיסמה על המכשיר, או שחזור מ-<span class="lat">WIF</span> / מפתח-כספת / הרשאת-בעלים — עם אימות-תפקידים מול השרשרת מיד.</li>
+        <li><b>הממגורות</b> — יתרות אמת: הספר החתום (<span class="lat">SAOS/CSTEEM/CSBD</span>) לצד יתרות-שרשרת חיות של חשבון מאומת — וכל שורה מראה את מקורה.</li>
+        <li><b>גלגל-ההחלפה</b> — הצעת-מחיר מהמתמטיקה המדויקת של הבריכות (עמלה <span class="lat">0.3%</span>, שימור-<span class="lat">k</span>), עם עמלה והשפעת-מחיר גלויות לפני חתימה.</li>
+        <li><b>שליחה</b> — העברה על הספר החתום: נחתמת כאן, נכנסת למסילה רק אחרי סקירה מלאה של הפעולה.</li>
+        <li><b>מכלי-הבריכות</b> — עומקי-נזילות מהספר (יתרות, עמלה, סה״כ-החלפות); הוספה ונסיגה נחתמות מקומית.</li>
+        <li><b>נציגות</b> — האצת <span class="lat">SP</span> אמיתית לשרשרת-ה-<span class="lat">Steem</span> (פעולת <span class="lat">delegate_vesting_shares</span> במפתח-<span class="lat">active</span>, נשדרת לצמתים הציבוריים, ניתנת לביטול בכל רגע בסכום <span class="lat">0</span>).</li>
+        <li><b>המסילה והממסר</b> — תור פעולות חתומות: מוזרם אוטומטית כשהממסר פתוח, נשמר אצלך עם ייצוא <span class="lat">JSON</span> כשהוא סגור.</li>
+        <li><b>מנורת-האימות</b> — עצמי-בוחן הפרוטוקול, טריות-הספר, קיום-כתובות והצלבת-מספרים מול המקורות — הוכחה על השרשרת, לא הבטחה.</li>
+        <li><b>בטיחות</b> — מה יוצא החוצה ומה לא: חתימות ומפתחות-ציבוריים בלבד; אפשר לנתק את האינטרנט אחרי טעינה והמכונה ממשיכה במצב-מקומי.</li>
+      </ol>
+    </details>
+    <details>
+      <summary>הספרים הציבוריים שהמכונה קוראת — ואיך לאמת בעצמך</summary>
+      <p>כל מספר בדף נקרא חי מספר-מדינה ציבורי, ובראשם <a href="saos-live.json">saos-live.json</a> — ספר-המדינה החתום: לפי ההגדרה שנחתמה בתוך הספר עצמו, הוא fold דטרמיניסטי של פעולות <span class="lat">custom_json</span> מהשרשרת הציבורית, כל חתימה נבדקת מחדש, והממסר הוא תעבורה בלבד. לצדו נקראים <a href="dex/state.json">dex/state.json</a> (מצב-הדקס) ו-<a href="token.json">token.json</a> (ספר-המטבע). את שלושתם אפשר לפתוח ישירות בדפדפן ולהצליב מול מה שהמכונה מציגה — זו בדיוק הנקודה: אין מספר שאי-אפשר למצוא את מקורו.</p>
+    </details>
+    <p class="stamp">כנות-מספרים: היתרות והמחירים מחושבים חי בדפדפן שלך מהספרים הציבוריים — לכן בטקסט הסטטי הזה אין יתרות ואין מחירים. במקום ערכים מיושנים המכונה מעדיפה ריק-כנה עד שהספר נטען, ואומרת ״לא יודעת״ כשמקור חסר. עוגני-מקור שחתומים בספר (מדוד, לא תעמולה): <span class="lat">genesis: done</span> · הנפקה-ראשונית <span class="lat">126682000</span> יחידות — מראה <span class="lat">1:1</span> את אספקת <span class="lat">SAOS-NET v0</span> המאומתת (<span class="lat">126,682 SAOS</span>) · <span class="lat">maxSupply 21000000000</span> (יחידות-הספר) · <span class="lat">stateRoot 7023345ea9c6…</span>. ערכים חיים בדפדפן יכולים להיות חדשים יותר.</p>
+    <p class="stamp">להמשך-קריאה: <a href="money.html">מסוף-הכספים</a> · <a href="receipts.html">פנקס-הקבלות</a> · <a href="console.html">הקונסולה</a> · <a href="changelog.html">יומן-השינויים</a> · <a href="index.html">העמוד הראשי</a></p>
   </section>
 
   <!-- ═══ THE MACHINE — every part does something, every part glows only when true ═══ -->

@@ -34,6 +34,15 @@
   footer{margin-top:22px;color:var(--mut);font-size:13px;border-top:1px solid var(--line);padding-top:14px}
   a{color:var(--amber)}
   .err{border:1px solid #d95c4a55;background:#2a1512;border-radius:14px;padding:16px;color:#e8b0a5;font-size:14.5px}
+  /* ── שכבת-הסבר סטטית ── */
+  section.proof{border:1px solid var(--line);background:var(--card);border-radius:14px;padding:16px 20px;margin:0 0 18px}
+  section.proof h2{font-size:15.5px;margin:14px 0 4px;color:var(--ink)}
+  section.proof h2:first-child{margin-top:0}
+  section.proof p,section.proof li{font-size:13.5px;color:var(--mut);line-height:1.8}
+  section.proof ul,section.proof ol{padding-inline-start:22px;margin:6px 0}
+  section.proof b{color:var(--ink)}
+  section.proof .lat{direction:ltr;unicode-bidi:embed;overflow-wrap:anywhere;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.9em;color:var(--amber)}
+  section.proof .snap{border-top:1px dashed var(--line);padding-top:10px;margin-top:12px}
 </style>
 </head>
 <body>
@@ -44,6 +53,18 @@
   </header>
 
   <div class="law"><b>חוק-חדר-אחד:</b> הספר הזה נושא <b>מדידה ומצביעי-git בלבד</b> — אפס-שכפול-תוכן. כל הפרוזה חיה במקורו ב-<code>roshpinacare-sys/Adsmarket</code>; כאן מוכח שהוא קיים, כמה הוא גדול, כמה הוא טרי, וכמה עדויות-txid הוא נושא — ולאן בדיוק ללכת אליו.</div>
+
+  <section class="proof" aria-labelledby="pf-h">
+    <h2 id="pf-h">מה הפאנל הזה מודד — ואיך הוא נבנה</h2>
+    <p><b>Adsmarket</b> הוא זרוע-השיווק של הריבונות: ריפו נפרד ובו כל נכסי-השיווק — דף-עובדות (fact-sheet) גדול ומגובה-txids, deck למשקיעים, deck מוצר, נחיתה ומסביר באנגלית, press-kit, חבילת-רשתות-חברתיות ומאמרי-<span class="lat">EN</span>. הריפו פרטי, ולכן הפאנל הזה אינו מעתיק ממנו מילה: הוא מוכיח קיום, גודל, טריות ועיגון-שרשרת — המדידה רצה ב-<span class="lat">CI</span> מול המקור בלי לחשוף אותו.</p>
+    <ol>
+      <li>זרימת-העבודה <span class="lat">Domain/adsmarket-panel.yml</span> רצה שבועית (שני <span class="lat">05:41 UTC</span>) ובכל dispatch.</li>
+      <li>איבר-המדידה <span class="lat">agents/adsmarket-panel.cjs</span> סורק את הריפו המקורי וכותב את הספר <a href="adsmarket.json">marketing/adsmarket.json</a>.</li>
+      <li>הטבלה החיה למטה נבנית בדפדפן מהספר; בלי <span class="lat">JS</span> — הספר עצמו פתוח, ותמונת-המצב הנאפה בשורה הבאה מסכמת אותו.</li>
+    </ol>
+    <p class="snap"><b>תמונת-מצב מהספר</b> (<span class="lat">2026-10-19 11:16 UTC</span>, מצב <span class="lat">MEASURED</span>, מקור <span class="lat">Adsmarket@669499c6</span>): <span class="lat">105</span> קבצים בריפו המקורי · <span class="lat">10</span> נכסי-שיווק נמדדו בגודל כולל <span class="lat">295,256</span> בייט · <span class="lat">15</span> עוגני-txid חיים בנכסים · <span class="lat">7</span> מאמרי-<span class="lat">EN</span> · <span class="lat">1</span> מדריך-דריפ אימייל. כנות-חוב: נכס אחד רשום כחסר — <span class="lat">fact-sheet-internal-he.md (MISSING)</span> — ומוצג כך בטבלה, לא נסתר. אחרי האפייה הבאה המספרים יכולים להיות חדשים יותר בספר.</p>
+    <p>המשך: <a href="index.html">קטלוג-המוצרים</a> · <a href="../money.html">מסוף-הכספים</a> · <a href="../tools.html">קטלוג-היכולות</a> · <a href="../receipts.html">פנקס-הקבלות</a> · <a href="../console.html">הקונסולה</a></p>
+  </section>
 
   <div class="meta" id="meta">טוען מדידה…</div>
   <div id="body"><div class="err">טוען…</div></div>

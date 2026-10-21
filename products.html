@@ -121,6 +121,7 @@ footer{margin-top:auto;border-top:1px solid var(--line);background:var(--panel);
       <span><b>דמו</b> · רץ בפריסה ריבונית, לפני הסבה מסחרית</span>
       <span><b>פנימי</b> · כלי-הפעלה של הרשת, לא מוצר-חוץ</span>
     </div>
+    <p class="sub" style="font-size:12.5px;color:var(--faint);margin-top:10px">מקור: <span class="mono">status.json</span> · <span class="mono">pulse.json</span> · <span class="mono">dex/world.json</span> · נמדד 2026-10-21 · מספרים היסטוריים מתויגים בתאריך מדידתם.</p>
   </div>
 </section>
 
@@ -145,7 +146,7 @@ footer{margin-top:auto;border-top:1px solid var(--line);background:var(--panel);
         <p class="what">טרמינל-מסחר עם עיגון-חי, escrow מלא, ואימות עצמאי בכפתור אחד.</p>
         <ul class="meas">
           <li><span class="m">הוכחה</span><span><a href="https://roshpinacare-sys.github.io/Console/" rel="noopener">הטרמינל החי</a> · <a href="dex/world.json">ספר-הרשת dex/world.json</a></span></li>
-          <li><span class="m">נמדד</span><span>26,490 ops/s בקרנל · מרווח 12-82 bps · עמלות 30bps בפיצול 70/30</span></li>
+          <li><span class="m">נמדד</span><span>4,637,680 פעולות מאז ההתחלה · 255,685 מילויים · 18 פקודות חיות (dex/world.json, 2026-10-21) · עמלת בריכה 30bps בפיצול 70% LP / 30% אוצר · בנץ קרנל נפרד: 26,490 ops/s (הקצב החי מוגבל תקציבית)</span></li>
         </ul>
         <p class="limit"><b>גבול כתוב:</b> נזילות-פנימית בספר-סגור. ההשוואה המלאה מול הרשתות המובילות מתפרסמת חיה ב-<a href="giants.html">שולחן-הענקים</a>.</p>
       </div>
@@ -155,7 +156,7 @@ footer{margin-top:auto;border-top:1px solid var(--line);background:var(--panel);
         <p class="what">נוטריון עדויות באצווה: הוכחה על-שרשרתית לטענות של סוכנים וארגונים, בשלוש רמות-אימות, עם חתימה שתמיד נשארת מחוץ למערכת.</p>
         <ul class="meas">
           <li><span class="m">הוכחה</span><span><a href="receipts/">קיר-הקבלות</a> · עוגן ETH קיים בסייר הציבורי</span></li>
-          <li><span class="m">נמדד</span><span>$0.0000081 לרשומה (אצווה 10,000, 1 gwei) · דחיסה 250B ל-51B · 77/77 בדיקות מ-clone טרי</span></li>
+          <li><span class="m">נמדד</span><span>$0.0000081 לרשומה (אצווה 10,000, 1 gwei · נמדד בספטמבר 2026) · דחיסה 250B ל-51B · 77/77 בדיקות מ-clone טרי</span></li>
         </ul>
         <p class="limit"><b>גבול כתוב:</b> ה-API והסייר נמצאים ב-Phase 3. מה שעוד לא חי אינו מוצהר כחי.</p>
       </div>
@@ -184,7 +185,7 @@ footer{margin-top:auto;border-top:1px solid var(--line);background:var(--panel);
         <h3>תגי-הוכחה חיים <span class="tag">חי</span></h3>
         <p class="what">תגי-SVG נמדדים-כנים (משרד · צי · steem-edge) שנאפים ב-CI כל 30 דקות ממקורות-ציבוריים keyless. שורת-README אחת — וכל מי שקורא אותך רואה את המדידה שלנו חיה.</p>
         <ul class="meas">
-          <li><span class="m">הוכחה</span><span><a href="badges.html">עמוד התגים עם מקורות וחוקי-הכנות</a> · עונדים אותם כבר על ה-README של 13 הריפואים של הצי</span></li>
+          <li><span class="m">הוכחה</span><span><a href="badges.html">עמוד התגים עם מקורות וחוקי-הכנות</a> · עונדים אותם על ה-README של ריפואי הצי</span></li>
           <li><span class="m">נמדד</span><span>אפייה כל 30 דק׳ · write-on-change · אדום-כן כשהפורמן חורג מחוק-130 הדק׳</span></li>
         </ul>
         <p class="limit"><b>גבול כתוב:</b> התג משקף את המדידה, לא הבטחה. כשהמערכת נופלת — התג אדום בפומבי.</p>
@@ -297,9 +298,10 @@ footer{margin-top:auto;border-top:1px solid var(--line);background:var(--panel);
 
       <div class="card">
         <h3>מפקד-המצב <span class="tag">חי</span></h3>
-        <p class="what">מדידת-חיות של כל הריפואים הציבוריים ברשת, כל 15 דקות, עם פסק-דין גלוי לכל ריפו.</p>
+        <p class="what">מדידת-חיות של כל הריפואים הציבוריים ברשת, בקצב מתוזמן (שעתי), עם פסק-דין גלוי לכל ריפו.</p>
         <ul class="meas">
-          <li><span class="m">הוכחה</span><span><a href="network/index.html">דף המצב החי</a> · <a href="network/status.json">network/status.json</a></span></li>
+          <li><span class="m">הוכחה</span><span><a href="network/index.html">דף המצב החי</a> · <a href="network/status.json">network/status.json</a> · <a href="status.json">status.json</a></span></li>
+          <li><span class="m">נמדד</span><span>דופק 2026-10-21: 60/387 עורקים פועמים · 46 ריפואים · ALIVE 19 / MIXED 15 / STALE 1 / IDLE 11</span></li>
         </ul>
         <p class="limit"><b>גבול כתוב:</b> ריפו שנכשל נראה אדום כאן, לא מוסתר.</p>
       </div>
@@ -768,7 +770,7 @@ footer{margin-top:auto;border-top:1px solid var(--line);background:var(--panel);
 </main>
 <footer>
   <div class="wrap fw">
-    <span>SAOS Network · קטלוג-המוצרים · כל מספר נמדד, כל גבול כתוב</span>
+    <span>SAOS Network · קטלוג-המוצרים · כל מספר נמדד, כל גבול כתוב · מקור: status.json · dex/world.json · נמדד 2026-10-21</span>
     <span><a href="console.html">תקן-ההפעלה</a> · <a href="marketing/index.html">המוצרים · סקירה</a> · <a href="hub/disclosure-policy.html">מדיניות-חשיפה</a> · <a href="sitemap.html">מפת-האתר</a></span>
   </div>
 </footer>

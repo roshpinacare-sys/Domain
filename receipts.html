@@ -22,6 +22,14 @@
   tr.ok td:nth-child(2) { color:#4cc38a; } tr.bad td:nth-child(2) { color:#e0564a; }
   tr.warn td:nth-child(2) { color:#d8b46a; } tr.faint td:nth-child(2) { color:var(--faint); }
   code { color:#d8b46a; font-size:12px; }
+/* ── שכבת-הסבר סטטית ── */
+  section.proof { background:#14151a; border:1px solid #26272e; border-radius:12px; padding:16px 20px; margin:18px 0 4px; }
+  section.proof h2 { font-size:16px; margin:14px 0 4px; }
+  section.proof h2:first-child { margin-top:0; }
+  section.proof p, section.proof li { font-size:13.5px; }
+  section.proof ul, section.proof ol { padding-inline-start:22px; margin:6px 0; }
+  section.proof li { margin:4px 0; }
+  section.proof a { color:#d8b46a; text-decoration:none; } section.proof a:hover { text-decoration:underline; }
   footer { margin-top:36px; color:var(--faint); font-size:12px; text-align:center; }
 </style>
 </head>
@@ -64,6 +72,19 @@
       <tr class="ok"><td><code>world</code></td><td>תקין</td><td class="num">5 שע׳</td><td class="sub">2026-10-21T00:37:47.112Z</td></tr>
     </tbody>
   </table>
+  <section class="proof" aria-labelledby="pf-h">
+    <h2 id="pf-h">מה הפנקס הזה — ואיך לקרוא אותו</h2>
+    <p>פנקס-הקבלות הוא המדד-הפתוח לבריאות איברי-הריבונות. כל איבר — הבונה, הסייר, הגזבר, מגן-האוטונומיה, מנוע-העולם והשאר — מדווח קבלה לגיט בסיום כל ריצה; איבר-הדופק אופה את הטבלה למעלה ישירות מהספרים (<a href="pulse.json">pulse.json</a>) בכל שעה. הדף הזה סטטי לחלוטין — אפס <span class="lat">JavaScript</span>: מה שאתה רואה הוא בדיוק מה שנכתב בעת-האפייה, ולכן גם מנוע-חיפוש וגם מבקר בלי-<span class="lat">JS</span> רואים את אותה אמת בדיוק.</p>
+    <h2>משמעות הצבעים</h2>
+    <ul>
+      <li><b>תקין</b> (ירוק) — המדידה האחרונה של האיבר הצליחה והיא טרייה; זמן-הקבלה מוצג ב-<span class="lat">UTC</span>.</li>
+      <li><b>פעימה-שקטה</b> (ענבר) — האיבר פעל ודיווח ״שום דבר לא לתקן״ — <span class="lat">no-op</span> כנה הוא גם מדידה.</li>
+      <li><b>אין-מדידה</b> (אפור) — לא התקבלה קבלה. הפנקס לא ממציא נתון ולא מסתיר פער: ריק נראה כריק, וכך נבנה אמון.</li>
+    </ul>
+    <h2>שרשרת-האמת ומקורות-הגלם</h2>
+    <p>איבר → קבלה חתומה-קומיט בגיט → אפייה לדף הזה. הקבלות-הגלם חיות בעץ הריפו: <span class="lat">receipts/&lt;איבר&gt;/latest.json</span> (למשל <a href="receipts/autonomy-guardian/latest.json">receipts/autonomy-guardian/latest.json</a>), וקבלות-אירוע היסטוריות — <a href="receipts/r47-flywheel-proof.json">r47-flywheel-proof</a>, <a href="receipts/r46-public-gates.json">r46-public-gates</a>, <a href="receipts/r44-money-market.json">r44-money-market</a>, <a href="receipts/r40-the-save.json">r40-the-save</a>, <a href="receipts/r35-full-cycle.json">r35-full-cycle</a>. על גבי זה יושב <a href="receipts/index.html">קיר-הקבלות</a> — קבלות חתומות-שרשרת פומביות (<span class="lat">ETHEREUM · SOLANA · STEEM · HIVE</span> ועוד) שאפשר לפתוח בסוקרים עצמם.</p>
+    <p>המצב בטבלה למעלה הוא האפייה הנוכחית — האפייה הבאה, בעוד עד שעה, תעדכן את השורות מהקבלות החדשות בגיט. הפנקס הזה אינו תביעת-תקינות: הוא מסך-מדידה שמראה גם את מה שלא רץ. ההשלמה החיה: <a href="console.html">הקונסולה</a> · <a href="index.html">העמוד הראשי</a>.</p>
+  </section>
   <footer>כל שורה נקראת מ-receipts/&lt;איבר&gt;/latest.json בזמן-בנייה · בלי מדידה כתוב "אין-מדידה" · פגם-מדוד לא מוסתר — כך נבנה אמון</footer>
 </main>
 </body>

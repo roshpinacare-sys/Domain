@@ -47,6 +47,16 @@
   footer { margin-top: 20px; color: var(--ink2); font-size: 12px; line-height: 1.8; }
   footer a { color: var(--ink); }
   .loading { padding: 40px; text-align: center; color: var(--ink2); font-size: 14px; }
+  /* ── שכבת-הסבר סטטית ── */
+  section.how { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 16px 20px; margin: 0 0 22px; }
+  section.how h2 { font-size: 15.5px; font-weight: 800; margin: 14px 0 4px; }
+  section.how h2:first-child { margin-top: 0; }
+  section.how p, section.how li { font-size: 13px; line-height: 1.8; color: var(--ink); }
+  section.how ul, section.how ol { padding-inline-start: 22px; margin: 6px 0; }
+  section.how li { margin: 4px 0; }
+  section.how a { color: var(--ink); font-weight: 700; }
+  section.how .lat { direction: ltr; unicode-bidi: embed; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+  section.how .snap { color: var(--ink2); font-size: 12.5px; border-top: 1px dashed var(--line); padding-top: 10px; margin-top: 12px; }
   @media (max-width: 640px) {
     .hidewf, .hidepush { display: none; }
     h1 { font-size: 19px; }
@@ -64,6 +74,16 @@
     המדידה רצה על הגריד הציבורי כל רבע-שעה, בלי תלות בשום סביבת-עבודה מקומית.
     כשל פרטי נראה כאן כשל גלוי — זו המטרה, לא תקלה.
   </p>
+  <section class="how" aria-labelledby="how-h">
+    <h2 id="how-h">איך המדידה הזאת עובדת — ומה כל מצב אומר</h2>
+    <p>סוקר-הרשת (<span class="lat">agents/network-census.mjs</span>) רץ על הגריד הציבורי (<span class="lat">GitHub Actions</span>) כל רבע-שעה, עובר על כל ריפו בארגון <span class="lat">roshpinacare-sys</span> ורושם לספר <a href="status.json">status.json</a>: כמה זרימות-עבודה פעילות לכל ריפו, מה הריצה האחרונה ומסקנתה, מתי דחפו אליו לאחרונה — ומזה נגזר מצב-הבריאות. הטבלה למטה נבנית בדפדפן שלך מהספר הזה; מי שמעדיף לא להריץ <span class="lat">JS</span> — הספר עצמו פתוח לקריאה ישירה.</p>
+    <ul>
+      <li><b>חי</b> — ריצה מוצלחת וטרייה; <b>רץ עכשיו</b> — מדידה בעיצומה; <b>תקין</b> — מוצלח, מבוגר יותר.</li>
+      <li><b>נכשל</b> — כשל גלוי בריצה אחרונה. זה נראה כאן בכוונה: מדידה שמסתירה כשל אינה מדידה.</li>
+      <li><b>שקט</b> — אין ריצות לאחרונה; <b>בלי ריצות</b> — ריפו בלי זרימות-עבודה פעילות עדיין.</li>
+    </ul>
+    <p class="snap">תמונת-מצב מהספר בשעת עדכון העמוד (<span class="lat">2026-10-21 04:55 UTC</span>): <span class="lat">46</span> ריפואים — <span class="lat">8</span> חיים · <span class="lat">8</span> רצים · <span class="lat">17</span> תקינים · <span class="lat">4</span> נכשלים · <span class="lat">1</span> שקט · <span class="lat">8</span> בלי ריצות. הסקר הבא מתעדכן כל <span class="lat">15</span> דקות — הספר תמיד חדש יותר מהשורה הזאת. המדידה-הרחבה של העורקים (פעימות פר-זרימה בכל הצי) חיה ב-<a href="../status.json">status.json</a> השורשי: <span class="lat">60</span> עורקים פועמים מתוך <span class="lat">387</span>, סיכום <span class="lat">19 ALIVE</span>. המשך: <a href="../status/">מפקדת-המצב המלאה</a> · <a href="../console.html">הקונסולה</a> · <a href="../receipts.html">פנקס-הקבלות</a> · <a href="../index.html">העמוד הראשי</a>.</p>
+  </section>
   <div class="tiles" id="tiles"></div>
   <table>
     <thead>

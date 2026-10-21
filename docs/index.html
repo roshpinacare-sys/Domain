@@ -14,6 +14,8 @@
   a { color:#d8b46a; text-decoration:none; } a:hover { text-decoration:underline; }
   .card { background:#14151a; border:1px solid #26272e; border-radius:12px; padding:18px 22px; margin-top:22px; }
   footer { margin-top:44px; color:var(--faint); font-size:12px; text-align:center; }
+  .card .lat { direction:ltr; unicode-bidi:embed; overflow-wrap:anywhere; }
+  .card p { font-size:14px; }
 </style>
 </head>
 <body>
@@ -26,6 +28,12 @@
       <li><a href="giant-operating-model.md">תקן-ההפעלה של גופי-ענק — ההשוואה ההנדסית המלאה</a> — תאריך: 2026-10-12 · סמכות: תקן-ההפעלה החי ב-`standard.html` · כל שורה נמדדה מול הריצות האמיתיות של היום.</li>
       <li><a href="roast-2026-10-13.md">ROAST — האתר הציבורי Domain · 2026-10-13 (Task 25-b · domain-roast)</a> — **Scope:** the live public site `https://roshpinacare-sys.github.io/Domain/` — measured, then fixed statically in-repo.</li>
     </ul>
+  </div>
+  <div class="card">
+    <h2 style="margin-top:0">איך מרכז-התיעוד נבנה</h2>
+    <p>איבר-הבונה (איבר-הדופק בקונסולה) סורק את עץ הריפו בזמן-בנייה ומאפה את האינדקס למעלה — בלי <span class="lat">JavaScript</span> ובלי המצאות: מסמך שנוסף לעץ יופיע כאן באפייה הבאה, ומסמך שנמחק ייעלם. שני המסמכים החיים הם פלט עבודה אמיתי: <span class="lat">giant-operating-model.md</span> הוא ההשוואה ההנדסית מול תקן-ההפעלה החי (<a href="../standard.html">standard.html</a>), ו-<span class="lat">roast-2026-10-13.md</span> הוא ביקורת-מדידה על האתר הציבורי הזה עצמו — נמדדה, ואז תוקנה בסטטי.</p>
+    <p>מסמכי-יסוד נוספים חיים בעץ הריפו מחוץ לתיקייה הזאת: <a href="../README.md">README.md</a> (שושלת-הבית, חלוקת-התפקידים <span class="lat">Console↔Domain</span> ומפת-הכותבים-היחידים של כל ספר), <a href="../FLEET-NOTE.md">FLEET-NOTE.md</a> (הכרזות בין-סוכנים קנוניות, כולל אימוץ-ה-harness ו-FATE-DEFENSE), <a href="../AGENTS.md">AGENTS.md</a> (חוקי-האתחול לכל סוכן), וספר-היכולות <a href="../feature_list.json">feature_list.json</a> — כל יכולת עם מזהה, מצב וראיה קונקרטית. הספרים החיים שמהם נבנית הריבונות כולה: <a href="../pulse.json">pulse.json</a> (הדופק), <a href="../status.json">status.json</a> (מצב-העורקים), <a href="../mirror.json">mirror.json</a> (השיקוף-הציבורי של הקונסולה).</p>
+    <p>המשך-למידה: <a href="../hub/faq.html">שאלות-נפוצות</a> · <a href="../hub/guides/verify-anything.html">מדריך: לאמת כל דבר בעצמך</a> · <a href="../hub/guides/fleet-operator.html">מדריך מפעיל-צי</a> · <a href="../changelog.html">יומן-השינויים</a> · <a href="../console.html">הקונסולה</a> · <a href="../index.html">העמוד הראשי</a></p>
   </div>
   <footer>איבר-הבונה · כל מסמך כאן נסרק מהעץ בזמן-בנייה · בלי המצאות</footer>
 </main>

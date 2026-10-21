@@ -89,10 +89,33 @@ const srcNote = (v) => v && v.__src === "commit-copy" ? "נמדד מהעותק �
 function ago(iso) {
   if (!iso) return null;
   const m = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
-  if (m < 60) return `${m} דק׳`;
+  if (m < 60) return `<span class="num">${m}</span> דק׳`;
   const h = Math.floor(m / 60);
-  if (h < 24) return `${h} ש׳`;
-  return `${Math.floor(h / 24)} ימ׳`;
+  if (h < 24) return `<span class="num">${h}</span> ש׳`;
+  return `<span class="num">${Math.floor(h / 24)}</span> ימ׳`;
+}
+
+/* T-109 union law: BiDi-safe token isolation at the single exit point.
+   sec() renders EVERY section (present and future), so the wrapper lives here:
+   text nodes (never tag internals) get their Latin/number runs (≥4 chars or
+   ISO timestamps) wrapped in <span class="mono"> ltr islands that wrap instead
+   of clipping. Entities are protected via placeholders so "&amp;" never splits. */
+const TOKRX = /[A-Za-z0-9][A-Za-z0-9._\/:+-]{3,}/g;
+function tokWrapText(text) {
+  const ents = [];
+  let t = text.replace(/&#?\w+;/g, (m) => { ents.push(m); return `\u0000E${ents.length - 1}\u0000`; });
+  t = t.replace(TOKRX, (tok) => `<span class="mono">${tok}</span>`);
+  return t.replace(/\u0000E(\d+)\u0000/g, (_, i) => ents[Number(i)]);
+}
+function tokWrapHtml(html) {
+  return String(html ?? "").split(/(<[^>]*>)/).map((part, i) => (i % 2 === 1 ? part : tokWrapText(part))).join("");
+}
+function srcLabel(url) {
+  const s = String(url).replace(/^https?:\/\//, "");
+  if (s.length <= 64) return s;
+  const head = s.slice(0, 40);
+  const tail = s.slice(-18);
+  return `${head}…${tail}`;
 }
 
 /* ----------------------------- section bakers ----------------------------- */
@@ -100,9 +123,9 @@ function ago(iso) {
 function sec(title, kicker, bodyHtml, source, measuredIso) {
   const when = measuredIso ? `נמדד לפני ${ago(measuredIso)}` : "לא נמדד במהדורה זו";
   return `<article class="card">
-  <h2>${esc(title)}<span class="kick">${esc(kicker)}</span></h2>
-  ${bodyHtml}
-  <div class="src">מקור: <a href="${source}" target="_blank" rel="noreferrer">${source.replace(/^https?:\/\//, "").slice(0, 64)}</a> · ${esc(when)}</div>
+  <h2>${tokWrapText(esc(title))}<span class="kick">${tokWrapText(esc(kicker))}</span></h2>
+  ${tokWrapHtml(bodyHtml)}
+  <div class="src">מקור: <a href="${source}" target="_blank" rel="noreferrer">${esc(srcLabel(source))}</a> · ${when}</div>
 </article>`;
 }
 
@@ -454,7 +477,7 @@ const NOT_MEASURED = `<p class="na">לא נמדד במהדורה זו — המק
   ${deps.length ? `
   <p class="sub">חומת-ההפקדות: <b>${deps.length}</b> הפקדות · סך <b>${totalSteem.toFixed(2)} STEEM</b> — כל אחת עם txid לאימות על השרשרת:</p>
   <table class="tbl"><thead><tr><th>txid</th><th>כמות</th><th>אל</th><th>מתי</th></tr></thead><tbody>
-  ${deps.slice(0, 5).map((d) => `<tr><td class="mono"><a href="https://steemblockexplorer.com/tx/${esc(d.txid)}" target="_blank" rel="noreferrer">${esc(String(d.txid).slice(0, 10))}…</a></td><td class="num">${(+d.amount).toFixed(2)} ${esc(d.asset)}</td><td>${esc(d.to)}</td><td>${esc(ago(new Date(+d.ts).toISOString()) || "—")}</td></tr>`).join("")}
+  ${deps.slice(0, 5).map((d) => `<tr><td class="mono"><a href="https://steemblockexplorer.com/tx/${esc(d.txid)}" target="_blank" rel="noreferrer">${esc(String(d.txid).slice(0, 10))}…</a></td><td class="num">${(+d.amount).toFixed(2)} ${esc(d.asset)}</td><td>${esc(d.to)}</td><td>${ago(new Date(+d.ts).toISOString()) || "—"}</td></tr>`).join("")}
   </tbody></table>` : `<p class="na">הפקדות: אין נתון במהדורה זו — הלדגר הציבורי ריק או לא השיב.</p>`}
   <p class="sub">זה השוק שנבנה על הרשת של עצמנו: ספר דו-צדדי רב-גופי מול כסף-אמיתי חוץ, עם הפקדות שניתן לאמת txid-by-txid בלי לסמוך על מילה שלנו.</p>`;
   } catch (e) {
@@ -573,9 +596,17 @@ header.site{position:sticky;top:0;z-index:50;background:rgba(245,243,241,.92);ba
 .sub{color:var(--faint);font-size:12px;line-height:1.7}
 .na{color:var(--faint);font-size:13.5px;font-style:italic}
 .src{font-size:11px;color:var(--faint);margin-top:auto;padding-top:6px;border-top:1px dashed var(--line)}
-.src a{direction:ltr;unicode-bidi:embed}
+.src a{direction:ltr;unicode-bidi:embed;display:inline-block;max-width:100%;overflow-wrap:anywhere;word-break:break-word}
+/* T-109 union graft: BiDi/clip hardening — tokens never get cut at card edges.
+   Every Latin/number run in Hebrew text is isolated ltr, wraps instead of clipping,
+   and grid cells can shrink (min-width:0) so long tokens cannot blow the layout. */
+.grid>*{min-width:0;max-width:100%}
+.card{min-width:0;max-width:100%}
+h1,h2,.kick,.lead,.body,li,.sub,.ctx,.dim,.na,.laws,.date{overflow-wrap:anywhere;word-break:break-word}
+.num,.mono{direction:ltr;unicode-bidi:isolate;display:inline-block;max-width:100%;overflow-wrap:anywhere;word-break:break-word;font-variant-numeric:tabular-nums}
+body{font-variant-numeric:tabular-nums}
 /* W29 union graft: table + honesty + trends styling */
-.tbl{width:100%;border-collapse:collapse;font-size:12.5px;margin:4px 0}
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px;margin:4px 0;display:block;overflow-x:auto;max-width:100%;-webkit-overflow-scrolling:touch}
 .tbl th{text-align:start;color:var(--faint);font-weight:600;border-bottom:1px solid var(--line);padding:4px 6px}
 .tbl td{border-bottom:1px solid #eee9e4;padding:4px 6px;color:var(--dim)}
 .num{text-align:end;font-variant-numeric:tabular-nums}

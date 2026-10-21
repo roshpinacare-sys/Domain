@@ -16,6 +16,13 @@ main{max-width:560px;width:100%;border:1px solid var(--line);border-radius:16px;
 h1{font-size:19px} h2{font-size:12px;color:#71717a;margin-top:6px;font-family:ui-monospace,monospace}
 p{font-size:14px;color:var(--dim);line-height:1.7;margin-top:14px}
 a.btn{display:inline-block;margin-top:20px;padding:11px 22px;border-radius:10px;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.35);color:#34d399;font-weight:600;font-size:14px;text-decoration:none}
+section.proof{max-width:640px;margin:26px auto 0;text-align:start;border:1px solid var(--line);border-radius:14px;padding:18px 22px}
+section.proof h2{font-size:15px;margin:16px 0 4px;color:var(--text)}
+section.proof h2:first-child{margin-top:0}
+section.proof p,section.proof li{font-size:13.5px;color:var(--dim);line-height:1.8}
+section.proof ul{padding-inline-start:20px;margin:6px 0}
+section.proof .lat{direction:ltr;unicode-bidi:embed;overflow-wrap:anywhere;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.9em;color:#34d399}
+section.proof a{color:#34d399;text-decoration:none}
 </style>
 </head>
 <body>
@@ -24,6 +31,19 @@ a.btn{display:inline-block;margin-top:20px;padding:11px 22px;border-radius:10px;
 <h2>copy retired → one canonical</h2>
 <p>לדף זה היו עותקים-מקבילים שסטו זה-מזה. העותקים אוחדו לקנון אחד: אין-שתי-אמיתות.</p>
 <a class="btn" href="../api/identity-api.html">עבור לקנון · go to canonical</a>
+<section class="proof">
+<h2>למה פרש העותק הזה</h2>
+<p>זהו נתיב-עותק שפרש בחוק-הניפוץ: מדריך-ה-<span class="lat">API</span> לאימות-זהות מוחזק בקנון אחד בלבד — <a href="../api/identity-api.html">hub/api/identity-api.html</a> — כדי שמידע-המדידה לא יתפצל לשני-אמיתות. הקנון מפורט ונשמר מסונכרן לקוד-המשלוח (ולפי הקנון עצמו: אם המסמך סותר את הקוד — הקוד מנצח, ומדווחים על זה).</p>
+<h2>מה הקנון מתעד על המדידה והמכסה</h2>
+<ul>
+  <li>מכסה: <span class="lat">1,000</span> קריאות ליום-<span class="lat">UTC</span> לכל מפתח; מפתחות עם קידומת <span class="lat">saos_live_</span>, מוצגים פעם-אחת, ובשרת נשמר רק <span class="lat">SHA-256</span> שלהם.</li>
+  <li>תוצאות אמת: <span class="lat">PROVEN</span> ו-<span class="lat">FAILED</span> שתיהן תשובות כנות ושתיהן נמדדות — עבודה אמיתית; <span class="lat">401/429</span> אינן נמדדות.</li>
+  <li>כל תשובת-<span class="lat">200</span> נושאת מדדים: <span class="lat">quota (used/limit/remaining/resetAt)</span>, כותרות <span class="lat">rate-limit</span> ו-latency שנמדד בשרת.</li>
+  <li>כנות-גבול: ה-API חי ונמדד בתוך-הפריסה הריבונית והוכח מקצה-לקצה מול בלוק <span class="lat">Steem 109,389,994</span>; פרסום-<span class="lat">npm</span> ושער-ציבורי הם שני צעדי-שחרור שעוד פתוחים — והקנון אומר זאת במפורש.</li>
+</ul>
+<h2>ראיות בריפו</h2>
+<p>ספר-היכולות <a href="../../feature_list.json">feature_list.json</a> · הקבלות <a href="../../receipts.html">receipts.html</a> · ספר-המדינה <a href="../../saos-live.json">saos-live.json</a> · מצב-הרשת <a href="../../status.json">status.json</a>. ההשלמה: <a href="../../console.html">הקונסולה</a> · <a href="../../index.html">הראשי</a> · <a href="../api/index.html">קטלוג-ה-API</a></p>
+</section>
 </main>
 </body>
 </html>

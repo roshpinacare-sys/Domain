@@ -16,6 +16,13 @@ main{max-width:560px;width:100%;border:1px solid var(--line);border-radius:16px;
 h1{font-size:19px} h2{font-size:12px;color:#71717a;margin-top:6px;font-family:ui-monospace,monospace}
 p{font-size:14px;color:var(--dim);line-height:1.7;margin-top:14px}
 a.btn{display:inline-block;margin-top:20px;padding:11px 22px;border-radius:10px;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.35);color:#34d399;font-weight:600;font-size:14px;text-decoration:none}
+section.proof{max-width:640px;margin:26px auto 0;text-align:start;border:1px solid var(--line);border-radius:14px;padding:18px 22px}
+section.proof h2{font-size:15px;margin:16px 0 4px;color:var(--text)}
+section.proof h2:first-child{margin-top:0}
+section.proof p,section.proof li{font-size:13.5px;color:var(--dim);line-height:1.8}
+section.proof ul{padding-inline-start:20px;margin:6px 0}
+section.proof .lat{direction:ltr;unicode-bidi:embed;overflow-wrap:anywhere;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.9em;color:#34d399}
+section.proof a{color:#34d399;text-decoration:none}
 </style>
 </head>
 <body>
@@ -24,6 +31,19 @@ a.btn{display:inline-block;margin-top:20px;padding:11px 22px;border-radius:10px;
 <h2>copy retired → one canonical</h2>
 <p>לדף זה היו עותקים-מקבילים שסטו זה-מזה. העותקים אוחדו לקנון אחד: אין-שתי-אמיתות.</p>
 <a class="btn" href="../api/identity-api.html">עבור לקנון · go to canonical</a>
+<section class="proof">
+<h2>נתיב למפתחים — איפה המדריך האמיתי</h2>
+<p>אם הגעתם לכאן כדי לשלב את אימות-הזהות של <span class="lat">SAOS</span> במוצר שלכם: המדריך המלא חי בקנון אחד בלבד — <a href="../api/identity-api.html">hub/api/identity-api.html</a> — וכל נתיב-עותק אחר פרש, כדי שלא יהיו שתי-אמיתות על נקודת-קצה אחת.</p>
+<h2>מה תמצאו שם כמפתחים</h2>
+<ul>
+  <li>נקודת-הקצה <span class="lat">POST /api/v1/identity/verify</span> עם אימות <span class="lat">Bearer saos_live_...</span> — והסבר מדויק מה כל תוצאה אומרת.</li>
+  <li><span class="lat">SDK</span> בשם <span class="lat">saos-id-verify</span>: שלוש שורות לבדיקה, אפס תלויות (fetch רגיל), רץ על <span class="lat">Node 18+</span>, <span class="lat">Bun</span>, <span class="lat">Deno</span>, דפדפן ו-edge — עם <span class="lat">baseUrl</span> חובה, כי לקוח שממציא נקודת-קצה הוא פתח-תיבה.</li>
+  <li>דפוסי-אינטגרציה מדודים: עמידות-סיביל למשחקי-בלוקצ'יין, ייחוס-הפקדות לשירותי-החלפה, והוכחת-בעלות על חשבון-מורשת בלי סיסמאות ובלי <span class="lat">OAuth</span>.</li>
+  <li>גבולות-כנות: ההוכחה קושרת מפתחות, לא בני-אדם (שאלת-״אותו אדם?״ מחוץ לתחום במכוון); פרסום-<span class="lat">npm</span> ושער-ציבורי ממתינים לצעדי-שחרור.</li>
+</ul>
+<h2>ראיות בריפו</h2>
+<p>ספר-היכולות <a href="../../feature_list.json">feature_list.json</a> · הקבלות <a href="../../receipts.html">receipts.html</a> · ספר-המדינה <a href="../../saos-live.json">saos-live.json</a> · מצב-הרשת <a href="../../status.json">status.json</a>. ההשלמה: <a href="../../dev.html">דף-המפתחים</a> · <a href="../../console.html">הקונסולה</a> · <a href="../../index.html">הראשי</a> · <a href="../api/index.html">קטלוג-ה-API</a></p>
+</section>
 </main>
 </body>
 </html>

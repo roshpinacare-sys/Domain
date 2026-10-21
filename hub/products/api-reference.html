@@ -16,6 +16,13 @@ main{max-width:560px;width:100%;border:1px solid var(--line);border-radius:16px;
 h1{font-size:19px} h2{font-size:12px;color:#71717a;margin-top:6px;font-family:ui-monospace,monospace}
 p{font-size:14px;color:var(--dim);line-height:1.7;margin-top:14px}
 a.btn{display:inline-block;margin-top:20px;padding:11px 22px;border-radius:10px;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.35);color:#34d399;font-weight:600;font-size:14px;text-decoration:none}
+section.proof{max-width:640px;margin:26px auto 0;text-align:start;border:1px solid var(--line);border-radius:14px;padding:18px 22px}
+section.proof h2{font-size:15px;margin:16px 0 4px;color:var(--text)}
+section.proof h2:first-child{margin-top:0}
+section.proof p,section.proof li{font-size:13.5px;color:var(--dim);line-height:1.8}
+section.proof ul{padding-inline-start:20px;margin:6px 0}
+section.proof .lat{direction:ltr;unicode-bidi:embed;overflow-wrap:anywhere;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.9em;color:#34d399}
+section.proof a{color:#34d399;text-decoration:none}
 </style>
 </head>
 <body>
@@ -24,6 +31,19 @@ a.btn{display:inline-block;margin-top:20px;padding:11px 22px;border-radius:10px;
 <h2>copy retired → one canonical</h2>
 <p>לדף זה היו עותקים-מקבילים שסטו זה-מזה. העותקים אוחדו לקנון אחד: אין-שתי-אמיתות.</p>
 <a class="btn" href="../api/identity-api.html">עבור לקנון · go to canonical</a>
+<section class="proof">
+<h2>מה היה כאן — ומה יש בקנון</h2>
+<p>הנתיב הזה היה פעם עותק של המדריך ל-API של אימות-הזהות. בביקורת-הניפוץ נמדד שלעותקים המקבילים היו סטיות זה-מזה — ושני-אמיתות הן דרך-מהירה לשקר בלי לשקר: מספיק שעותק אחד מתיישן. לכן כל העותקים פרשו, והקנון האחד חי ב-<a href="../api/identity-api.html">hub/api/identity-api.html</a> (אנגלית, מלא: נקודת-קצה, תוצאות, <span class="lat">SDK</span>, דפוסי-אינטגרציה וגבולות-כנות).</p>
+<h2>מה ה-API בעצמו מוכיח</h2>
+<p>שאלה אחת נכנסת, תשובה מתמטית אחת יוצאת: האם חשבון <span class="lat">Steem/Hive</span> מסוים וזהות <span class="lat">EVM</span> מסוימת שייכים לאותו מפתח <span class="lat">secp256k1</span>? שרשרת-ההוכחה נקראת כולה מהשרשרות הציבוריות: עוגן <span class="lat">saos.id.v1</span> שפורסם פעם-אחת כ-<span class="lat">custom_json</span>, שחזור <span class="lat">EIP-191</span> (<span class="lat">ecrecover</span>) מהעוגן, והצלבה מול הרשות-הפעילה החיה של החשבון בכל שרשרת. לא מתבקש מפתח-פרטי — לא בעת-האימות ולא אף-פעם.</p>
+<h2>ספרים וראיות</h2>
+<ul>
+  <li>ספר-היכולות המדוד: <a href="../../feature_list.json">feature_list.json</a> — כל יכולת עם מצב וראיה.</li>
+  <li>העוגנים-על-השרשרת: <a href="../../receipts.html">פנקס-הקבלות</a> ו<a href="../../receipts/index.html">קיר-הקבלות</a> (txids פתוחים בסוקרים).</li>
+  <li>ספר-המדינה: <a href="../../saos-live.json">saos-live.json</a> · מצב-הריפואים: <a href="../../status.json">status.json</a>.</li>
+</ul>
+<p>ההשלמה: <a href="../../console.html">הקונסולה</a> · <a href="../../index.html">העמוד הראשי</a> · <a href="../api/index.html">קטלוג-ה-API</a></p>
+</section>
 </main>
 </body>
 </html>
