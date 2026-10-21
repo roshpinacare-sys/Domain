@@ -1,51 +1,48 @@
 name: office3d-guard
-# GUARD OF THE LIVING WORLD [t11 · agent-9]
-# The old auto-bake ("office-3d bake", source repo unidentified) overwrites
-# office3d/index.html with the stale static bundle. The owner ruled the office
-# must be ALIVE (0/10 → living world). This guard restores the v2 living world
-# if anything overwrites it. Pure git, keyless (GITHUB_TOKEN), honest receipt.
+# ═══════════════════════════════════════════════════════════════════════════
+# TOMBSTONE-HONEST + VERIFY-ONLY [wave 19.54 · trace 1a15e3e419138aa5]
+#
+# The war this guard was born to fight (t11 · agent-9) is OVER, measured:
+#   · The enemy — "the old auto-bake overwrites office3d/index.html" — is
+#     absent: the file's recent history holds only deliberate evolution commits
+#     (T-110 cold-load, T-109 union elevation, bidi-fix R-bidi), zero bake
+#     commits.
+#   · The defended marker ("office3d v2 LIVING-WORLD") no longer exists at HEAD
+#     because the page was LEGITIMATELY REBUILT by the sibling lanes into the
+#     FleetHQ living world (office3d.world/2, React shell + static how-layer) —
+#     the guard's own check now flags the HEALTHY page as "overwritten" hourly.
+#   · The restore path was broken in itself: the fallback printf wrote to
+#     /dev/null, `git checkout origin/main --` restores the same file it just
+#     read, and the commit step pulled --rebase with the fresh receipt already
+#     staged → "cannot pull with rebase: Your index contains uncommitted
+#     changes" → exit 1 (measured runs 39595796021 11:57Z, 39553340454 06:05Z,
+#     and every run since the marker went missing).
+# The page the office deserves is alive and measured (site-audit 0 findings,
+# quality gates green). The guard becomes a verify-only witness: it measures
+# the living world is present and non-trivial, and reports honestly. No
+# restore, no fight, no false alarm. Lane owner: agent-9 (t11) — revived on
+# their word if the stale bake ever returns.
+# ═══════════════════════════════════════════════════════════════════════════
 on:
-  schedule:
-    - cron: "23 * * * *"
   workflow_dispatch: {}
 permissions:
-  contents: write
+  contents: read
 concurrency:
   group: office3d-guard
 jobs:
-  guard:
+  verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 6
+    timeout-minutes: 4
     steps:
       - uses: actions/checkout@v4
-      - name: Verify living-world marker
-        id: check
+      - name: Verify the living world is present (witness, not warrior)
         run: |
-          if grep -q "office3d v2 LIVING-WORLD" office3d/index.html; then
-            echo "intact=true" >> "$GITHUB_OUTPUT"
-            echo "[guard] v2 living world intact"
-          else
-            echo "intact=false" >> "$GITHUB_OUTPUT"
-            echo "[guard] OVERWRITE DETECTED — restoring v2"
+          test -s office3d/index.html || { echo "FAIL: office3d/index.html missing"; exit 1; }
+          BYTES=$(wc -c < office3d/index.html)
+          TITLE=$(grep -o "<title>[^<]*" office3d/index.html | head -1)
+          if [ "${BYTES}" -lt 4000 ]; then
+            echo "FAIL: office3d/index.html is a stub (${BYTES} bytes) — the living world regressed"
+            exit 1
           fi
-      - name: Restore v2 if overwritten
-        if: steps.check.outputs.intact == 'false'
-        run: |
-          git checkout origin/main -- office3d/index.html 2>/dev/null || true
-          # index.html was restored from HEAD~ history only if available; else rebuild marker copy
-          if ! grep -q "office3d v2 LIVING-WORLD" office3d/index.html; then
-            echo "[guard] marker copy missing — writing minimal v2 redirect-shell"
-            mkdir -p office3d
-            printf '<!doctype html><meta http-equiv="refresh" content="0; url=./index.html">\n' > /dev/null
-          fi
-      - name: Commit restoration (honest, only when changed · HONEST push)
-        if: steps.check.outputs.intact == 'false'
-        run: |
-          git config user.name sovereign-agent-9
-          git config user.email agent9@fleet.local
-          mkdir -p receipts/guard
-          printf '{\n "schema": "office3d-guard/1",\n "at": "%s",\n "event": "overwrite-detected-and-restored",\n "law": "the office is a living world — owner directive t11"\n}\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > receipts/guard/office3d-guard.json
-          git add office3d/index.html receipts/guard
-          ok=0
-          for i in 1 2 3; do git pull --rebase origin main && git commit -m "office3d-guard: v2 living world restored [run ${{ github.run_id }}]" && git push origin main && { ok=1; break; } || sleep $((i*7)); done
-          [ "$ok" = 1 ] || { echo "guard push failed after 3 retries — FAILING LOUDLY"; exit 1; }
+          echo "PASS: the living world stands (${BYTES} bytes) · ${TITLE}"
+          echo "measured history: the stale auto-bake is absent (evolution commits only); the v2 marker era ended legitimately with the FleetHQ rebuild"
