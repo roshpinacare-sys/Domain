@@ -171,6 +171,12 @@ footer .wrap{font-size:12px;color:var(--dim);display:flex;justify-content:space-
         <div id="pulseBody" class="inst"><div class="irow"><div class="what">טוען את הספר החי (public/pulse.json)…</div></div></div>
       </section>
 
+      <section class="card" id="treasury-books" style="border-color:var(--gold-dim)">
+        <h2>האוצר מהספרים <span class="en">The Treasury Books · G45</span></h2>
+        <p class="src">הספרים המכונים של האורגניזם — money-ledger (האוצר האמיתי, כולל אפסים וחובות), fill-ledger (מילויים מסחריים אמיתיים), econ-book (הכלכלה הפנימית). כל מספר נמדד מהריצות — לא מהצהרה. הספר מדווח גם כשהיתרה אפס: זו הכנות, לא חולשה.</p>
+        <div id="booksBody" class="inst"><div class="irow"><div class="what">טוען את הספרים החיים…</div></div></div>
+      </section>
+
 <section class="card">
       <h2>אנציקלופדיית המכשירים <span class="en">The Instrument Map · מה עושה מה</span></h2>
       <div class="inst">
@@ -573,6 +579,31 @@ footer .wrap{font-size:12px;color:var(--dim);display:flex;justify-content:space-
       if(gl&&st.halted)gl.innerHTML='<div class="irow"><div class="what">המנוע עצור כרגע: '+String(st.haltReason||"")+' — מדווח בכנות, אפס הסתרה</div></div>';
     }).catch(function(){/* כישלון = מדידות-הבטוחות שב-HTML, אפס המצאה */});
   })();
+</script>
+<script>
+/* G45 · האוצר-מהספרים — money-ledger + fill-ledger + econ-book, חי מהגיט הציבורי */
+(function(){
+  function j(u){return fetch(u+"?t="+Date.now(),{cache:"no-store"}).then(function(r){if(!r.ok)throw 0;return r.json();});}
+  function esc(s){var d=document.createElement("div");d.textContent=String(s==null?"":s);return d.innerHTML;}
+  function row(nm,cat,val,sub){
+    return '<div class="irow"><div class="hd"><span class="nm">'+esc(nm)+'</span><span class="cat">'+esc(cat)+'</span><span class="tvln">'+esc(val)+'</span></div>'+(sub?'<div class="what">'+esc(sub)+'</div>':'')+'</div>';
+  }
+  Promise.all([j("agents/money-ledger.json"),j("agents/fill-ledger.json"),j("agents/econ-book.json")]).then(function(rs){
+    var ml=rs[0],fl=rs[1],eb=rs[2];
+    var b=(ml&&ml.book)||{};
+    var runs=Array.isArray(fl)?fl:(fl&&fl.runs)||[];
+    var last=runs[runs.length-1]||{},inv=last.inventory||{};
+    var out=
+      row("STEEM היקף-הספר","money-ledger",b.headSteemStake||"—","נזיל "+(b.headSteemLiquid||"—")+" · חוב "+(b.headSteemDebt||"—")+" · הספר מדווח גם אפסים וחובות — כנות, לא תדמית")+
+      row("HIVE","money-ledger",(b.headHive&&b.headHive.liquid||"—")+" נזיל",(b.headHive&&b.headHive.effStake||"—")+" · RC "+((b.headHive&&b.headHive.rcPct)||"—")+"%")+
+      row("TRON","money-ledger",(b.tron&&b.tron.trx||"—"),"הכתובת מוסקרת לפי מדיניות-החשיפה · היתרה גלויה")+
+      row("מילויים מצטברים","fill-ledger",(inv.n_fills||0)+" מילויים","הריצה האחרונה: "+(last.mode||"—")+" ("+(last.head||"—")+") · מלאי "+((inv.qty||0).toLocaleString("en-US"))+" יחידות-ספר")+
+      row("הכלכלה הפנימית","econ-book",((eb&&eb.day24&&eb.day24.transactions)||0)+" tx/24h",((eb&&eb.day24&&eb.day24.mwu)||0).toLocaleString("en-US")+" mWU ביממה · סה\"כ "+((eb&&eb.totals&&eb.totals.tx)||0).toLocaleString("en-US")+" tx לכל-החיים · "+(eb&&eb.engine||""));
+    document.getElementById("booksBody").innerHTML=out;
+  }).catch(function(){
+    document.getElementById("booksBody").innerHTML='<div class="irow"><div class="what">הספרים לא נענו בטעינה זו — מדווח בכנות, אפס המצאה. המקור: agents/money-ledger.json · agents/fill-ledger.json · agents/econ-book.json בגיט.</div></div>';
+  });
+})();
 </script>
 </body>
 </html>

@@ -1,8 +1,8 @@
-# public-loops-bake — אופה את לולאות-התנועה הציבוריות (Task 44).
-# מה נאפה: badge/office.svg · badge/fleet.svg · badge/edge.svg · feed.xml (Atom)
-# מאיפה: מקורות-ציבוריים בלבד (raw FleetHQ office-state · Domain status/published/moment) —
+# public-loops-bake — אופה את לולאות-התנועה הציבוריות (Task 44 · G45-הרחבה).
+# מה נאפה: badge/office.svg · badge/fleet.svg · badge/edge.svg · feed.xml (Atom) · products.html (רישום-היכולות)
+# מאיפה: מקורות-ציבוריים בלבד (raw FleetHQ office-state · Domain status/published/moment · feature_list.json מקומי) —
 # אפס-סודות, keyless, אותו-חוק-כנות של הבית: מקור שנכשל שומר את התג הקודם, לעולם לא ערך-מזויף.
-# למה: תגי-הוכחה להטמעה ב-GitHub README + פיד-Atom חי = לולאות-תנועה שהענקים לא מציעים.
+# למה: תגי-הוכחה להטמעה ב-GitHub README + פיד-Atom חי + קטלוג-היכולות החי = לולאות-תנועה שהענקים לא מציעים.
 name: public-loops-bake
 
 on:
@@ -35,11 +35,14 @@ jobs:
       - name: Bake badges + feed (keyless, fail-soft)
         run: node tools/bake-public-loops.mjs
 
+      - name: Bake capabilities catalog (G45 — the pages prove the architecture)
+        run: node tools/bake-features.mjs
+
       - name: Commit (only when baked content changed)
         run: |
           git config user.name "roshpinacare-sys"
           git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
-          git add badge feed.xml
+          git add badge feed.xml products.html
           if git diff --cached --quiet; then
             echo "no-change — the previous bake stands"
           else

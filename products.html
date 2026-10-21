@@ -65,6 +65,34 @@ ul.meas .m{color:var(--faint);flex:none;min-width:112px;font-size:11px}
 footer{margin-top:auto;border-top:1px solid var(--line);background:var(--panel);padding:18px 0;padding-bottom:calc(18px + env(safe-area-inset-bottom))}
 .fw{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;font-size:12px;color:var(--faint)}
 </style>
+<style id="fb-styles">
+.fb-strip{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.fb-pill{font-size:12.5px;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:6px 13px;color:var(--dim)}
+.fb-pill b{color:var(--text);font-size:14px}
+.fb-pill.live{border-color:var(--acc-line);background:var(--acc-bg);color:var(--acc-bright)}
+.fb-pill.when{margin-inline-start:auto;color:var(--faint);font-size:11.5px}
+.fb-grp{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px 18px;margin-bottom:12px}
+.fb-grp summary{cursor:pointer;display:flex;align-items:center;gap:10px;list-style:none;min-height:44px}
+.fb-grp summary::-webkit-details-marker{display:none}
+.fb-grp summary::after{content:"▾";color:var(--faint);margin-inline-start:auto;transition:transform .2s}
+.fb-grp[open] summary::after{transform:rotate(180deg)}
+.fb-grp-t{font-size:13px;color:var(--dim)}
+.fb-grid{list-style:none;display:grid;grid-template-columns:1fr;gap:12px;padding:12px 0 4px}
+@media(min-width:820px){.fb-grid{grid-template-columns:1fr 1fr}}
+.fb-card{border:1px solid var(--line);border-radius:var(--r-sm);padding:13px 15px;background:var(--panel2);display:flex;flex-direction:column;gap:7px}
+.fb-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.fb-id{font-family:var(--mono);font-size:10.5px;color:var(--faint);direction:ltr}
+.fb-head h4{font-size:14.5px;font-weight:800;letter-spacing:-.2px;flex:1;min-width:0}
+.fb-tag{font-size:10px;font-weight:700;border-radius:999px;padding:2px 8px;border:1px solid var(--line2);background:var(--bg2);color:var(--dim);white-space:nowrap}
+.fb-tag.live{border-color:var(--acc-line);background:var(--acc-bg);color:var(--acc-bright)}
+.fb-tag.done{border-color:var(--acc-line);color:var(--acc-bright)}
+.fb-tag.open{border-color:rgba(161,98,7,.4);background:rgba(161,98,7,.07);color:var(--amber)}
+.fb-desc{font-size:12.5px;line-height:1.65;color:var(--dim);direction:ltr;unicode-bidi:plaintext;text-align:start}
+.fb-ev{font-size:11.5px;line-height:1.7;color:var(--faint);direction:ltr;unicode-bidi:plaintext;text-align:start}
+.fb-ev code{font-family:var(--mono);font-size:10.5px;background:var(--bg2);border:1px solid var(--line);border-radius:4px;padding:0 4px}
+.fb-when,.fb-dep{font-size:10.5px;color:var(--faint)}
+.fb-law{font-size:12px;color:var(--faint);border-top:1px dashed var(--line2);padding-top:12px;margin-top:6px;line-height:1.7}
+</style>
 </head>
 <body>
 <header class="site">
@@ -279,6 +307,455 @@ footer{margin-top:auto;border-top:1px solid var(--line);background:var(--panel);
     </div>
   </div>
 </section>
+
+<!--CAPABILITIES:START-->
+<section id="capabilities" aria-labelledby="cap-h">
+  <div class="wrap">
+    <h2 class="sec" id="cap-h">רישום-היכולות המלא · 69 כלים בארכיטקטורה</h2>
+    <p class="sub">כל כלי שנבנה בארכיטקטורה, מוצג כאן מהרישום המכונה בגיט (feature_list.json — חלק מפרוטוקול-ההרנס של הבית): סטטוס כנה, ראיות מקושרות לקוד ולריצות, ותאריך-חתימה. אין כאן כלי שנוסף מתוך נימוס, ואין כלי שנמחק מהרישום כשהוא נכשל. הבלוק נאפה אוטונומית ב-CI כל שעה — הארכיטקטורה מראה את עצמה גם בלי שום בן-אדם בחדר.</p>
+    <div class="fb-strip" role="list" aria-label="סיכום רישום-היכולות">
+      <span class="fb-pill live"><b>23</b> חיים · ריצה מדודה</span>
+      <span class="fb-pill done"><b>37</b> בוצעו · ראיות בגיט</span>
+      <span class="fb-pill open"><b>1</b> פתוחים · היעד-הבא</span>
+      <span class="fb-pill doc"><b>8</b> מתועדים · רישומי-דור</span>
+      <span class="fb-pill when">נאפה 2026-10-21T05:26Z מהרישום בגיט · סריקת-ההרנס האחרונה: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/harness-audit.json" target="_blank" rel="noreferrer">2026-10-19T10:17Z</a></span>
+    </div>
+    <details class="fb-grp" open>
+      <summary><span class="fb-tag live">23 חיים</span><span class="fb-grp-t">חי · מדידה ציבורית רצה</span></summary>
+      <ul class="fb-grid"><li class="fb-card" id="feat-033">
+  <div class="fb-head"><span class="fb-id">feat-033</span><h4>Fleet Rung 13 (lane B): the closed cycle loop </h4><span class="fb-tag live">חי</span></div>
+  <p class="fb-desc">The internal-market grid gained its measurement leg and its reflex arc: agents/fill-ledger.cjs captures owner's fill_order virtual ops with the direction law (ours-as-OPEN sells open_pays / ours-as-CURRENT sells current_pays), average-cost …</p>
+  <p class="fb-ev">ראיות: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/fill-ledger.json" target="_blank" rel="noreferrer"><code>agents/fill-ledger.json</code></a>,agents/fill-ledger-fills.jsonl,agents/market-cycle.json,agents/market-exec.json run #10,agents/evals/eval-results.json (E30),on-chain orderid 1791052891</p>
+  <p class="fb-when">נחתם 3 באוק׳ 2026</p>
+</li>
+<li class="fb-card" id="feat-034">
+  <div class="fb-head"><span class="fb-id">feat-034</span><h4>Fleet Rung 14: the fleet census </h4><span class="fb-tag live">חי</span></div>
+  <p class="fb-desc">agents/fleet-census.cjs answers מה יש לנו / מה חוסם / ריבונות / חיבור mechanically: 16 lanes x 61 verified capability markers, sovereignty counters (8/43 keyless workflows, STASIS halt-in-code, 5 gated + 21 offline desks, vault ceremony, 5 …</p>
+  <p class="fb-ev">ראיות: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/fleet-census.json" target="_blank" rel="noreferrer"><code>agents/fleet-census.json</code></a>,agents/fleet-census.md,agents/evals/eval-results.json (E31),agents/change-requests/CR-0040-fleet-census.json</p>
+  <p class="fb-when">נחתם 3 באוק׳ 2026</p>
+</li>
+<li class="fb-card" id="feat-035">
+  <div class="fb-head"><span class="fb-id">feat-035</span><h4>Fleet Rung 15: the estate map joins the cadence </h4><span class="fb-tag live">חי</span></div>
+  <p class="fb-desc">.github/workflows/fleet-census-cron.yml refreshes the CR-0040 fleet census daily at 02:11 UTC, keyless, off the org minute map; publish is deterministic (clean exit on no-drift) with the twin commit idiom; STASIS obeyed twice (scheduler gat…</p>
+  <p class="fb-ev">ראיות: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/.github/workflows/fleet-census-cron.yml" target="_blank" rel="noreferrer"><code>.github/workflows/fleet-census-cron.yml</code></a>,agents/fleet-census.cjs,agents/evals/eval-results.json (E32),agents/change-requests/CR-0041-census-cadence.json</p>
+  <p class="fb-when">נחתם 3 באוק׳ 2026</p>
+</li>
+<li class="fb-card" id="feat-036">
+  <div class="fb-head"><span class="fb-id">feat-036</span><h4>Fleet Rung 16 lane B: flow-catch taker leg (one-sided-tape breaker, pr</h4><span class="fb-tag live">חי</span></div>
+  <p class="fb-desc">market-exec gains FLOW-CATCH (default OFF, MARKET_EXEC_FLOWCATCH=1): ONE marketable sell joins the resting bid (min = bid×0.999, ≤50% liquid) and fills AT the bid, proceeds fund a stack-aware buy ladder (90% of proceeds, dust discipline, de…</p>
+  <p class="fb-ev">ראיות: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/market-exec.json" target="_blank" rel="noreferrer"><code>agents/market-exec.json</code></a> run #13,agents/fill-ledger.json run #6 + fills.jsonl (10 rows),agents/evals/eval-results.json (E33),.github/workflows/fill-ledger-cron.yml,on-chain orderid 1791054505</p>
+  <p class="fb-when">נחתם 3 באוק׳ 2026</p>
+</li>
+<li class="fb-card" id="feat-037">
+  <div class="fb-head"><span class="fb-id">feat-037</span><h4>Fleet Rung 16 lane B: the fleet's ERC-8004-shaped agent registry </h4><span class="fb-tag live">חי</span></div>
+  <p class="fb-desc">agents/agent-registry.cjs implements the ERC-8004 trust shape (ethereum/ERCs receipt via Z-65-b) over rails we own: Identity (6 fleet desks with agentURI/metadata/keyMode/alive honesty), Reputation (evidence-ONLY — every value from canon ro…</p>
+  <p class="fb-ev">ראיות: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/agent-registry.json" target="_blank" rel="noreferrer"><code>agents/agent-registry.json</code></a>,agents/agent-registry.md,agents/evals/eval-results.json (E34),agents/sovereign-convergence.md</p>
+  <p class="fb-when">נחתם 3 באוק׳ 2026</p>
+</li>
+<li class="fb-card" id="feat-038">
+  <div class="fb-head"><span class="fb-id">feat-038</span><h4>Fleet Rung 16: the census-delta reader </h4><span class="fb-tag live">חי</span></div>
+  <p class="fb-desc">agents/fleet-delta.cjs diffs two census stable payloads (reusing censusStable/stasisHalt by require) into a structured transition record: lanes/status/caps, sovereignty leaves, blocker (id,status) transitions with live evidence excluded, wi…</p>
+  <p class="fb-ev">ראיות: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/fleet-delta.cjs" target="_blank" rel="noreferrer"><code>agents/fleet-delta.cjs</code></a>,agents/fleet-census.cjs (single-lane-workspace law),.github/workflows/fleet-census-cron.yml (delta step),agents/evals/eval-results.json (E35),agents/change-requests/CR-0043-census-delta.json</p>
+  <p class="fb-when">נחתם 3 באוק׳ 2026</p>
+</li>
+<li class="fb-card" id="feat-039">
+  <div class="fb-head"><span class="fb-id">feat-039</span><h4>Fleet Rung 17: THE SOVEREIGN TRANSFER </h4><span class="fb-tag live">חי</span></div>
+  <p class="fb-desc">Operator directive 2026-10-03 transferred the decisions sovereign-convergence.md named as operator-held: agents/sovereign-policy.json is the written constitution (delegation receipt verbatim, gate modes sovereign|operator, limits: 900s broa…</p>
+  <p class="fb-ev">ראיות: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/sovereign-policy.json" target="_blank" rel="noreferrer"><code>agents/sovereign-policy.json</code></a> · <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/sovereign.cjs" target="_blank" rel="noreferrer"><code>agents/sovereign.cjs</code></a> · <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/sovereign-tick.cjs" target="_blank" rel="noreferrer"><code>agents/sovereign-tick.cjs</code></a> · <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/sovereign-state.json" target="_blank" rel="noreferrer"><code>agents/sovereign-state.json</code></a> · <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/sovereign-decisions.jsonl" target="_blank" rel="noreferrer"><code>agents/sovereign-decisions.jsonl</code></a> · <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/sovereign-pending.json" target="_blank" rel="noreferrer"><code>agents/sovereign-pending.json</code></a> (Tier-E mailbox) · <a href="https://github.com/roshpinacare-sys/Domain/blob/main/.github/workflows/sovereign-tick-cron.yml" target="_blank" rel="noreferrer"><code>.github/workflows/sovereign-tick-cron.yml</code></a> · market-exec run #14 orderid 1791056833 readback matched · E35 evals 33 PASS / 2 environment-bound (E31/E32 census estate clones lost to the sandbox reset, lane/CI green)</p>
+  <p class="fb-when">נחתם 3 באוק׳ 2026</p>
+</li>
+<li class="fb-card" id="feat-040">
+  <div class="fb-head"><span class="fb-id">feat-040</span><h4>Fleet Rung 18: THE ACQUISITION </h4><span class="fb-tag live">חי</span></div>
+  <p class="fb-desc">Operator directive 2026-10-03 (&quot;אוקי אז תשיג מה שצריך קדימה תמשיך&quot;) — acquire what is needed: (1) ARMING: the repository secret STEEM_ACTIVE_WIF was created/updated (HTTP 204) by encrypting the local derived-keys vault active WIF with the r…</p>
+  <p class="fb-ev">ראיות: [object Object]</p>
+  <p class="fb-when">נחתם 3 באוק׳ 2026</p>
+</li>
+<li class="fb-card" id="feat-041">
+  <div class="fb-head"><span class="fb-id">feat-041</span><h4>Fleet Rung 19: THE FROM-NOTHING PROOF </h4><span class="fb-tag live">חי</span></div>
+  <p class="fb-desc">Operator directive (&quot;אם היית חכם היית יכול לייצר גם מכלום ... אל תסמוך על הטענות שלך ... זרימה&quot;) — every income claim is now MEASURED against the chain, not trusted: (1) agents/earn-audit.cjs — keyless read-only walks of condenser account_h…</p>
+  <p class="fb-ev">ראיות: [object Object]</p>
+  <p class="fb-when">נחתם 3 באוק׳ 2026</p>
+</li>
+<li class="fb-card" id="feat-042">
+  <div class="fb-head"><span class="fb-id">feat-042</span><h4>Fleet Rung 20: THE EDGE OPTIMIZATION </h4><span class="fb-tag live">חי</span></div>
+  <p class="fb-desc">Operator directive (&quot;תמשיך נסה לשפר את זה לייעל משמעותית מאוד&quot;) — the biggest MEASURED inefficiency was the realized edge: the ledger authority now proves it and three layers close it. (1) LEDGER VWAP AUTHORITY: fill-ledger vwapStats (pure,…</p>
+  <p class="fb-ev">ראיות: [object Object]</p>
+  <p class="fb-when">נחתם 3 באוק׳ 2026</p>
+</li>
+<li class="fb-card" id="feat-044">
+  <div class="fb-head"><span class="fb-id">feat-044</span><h4>Self-healing pulse: tick-keeper re-fires starved desks from their own </h4><span class="fb-tag live">חי</span></div>
+  <p class="fb-desc">Self-healing pulse: tick-keeper re-fires starved desks from their own receipts + ledger-first day-truth (negative realized survives, BREAKER-DAILY-LOSS cannot be silently disarmed)</p>
+  <p class="fb-ev">ראיות: measured starvation (keyless GitHub API 2026-10-03): sovereign-tick/earn-audit crons = 0 schedule events since arming (all runs workflow_dispatch); scheduled runs arrive hours late (treasury-route 16:20 slot ran 20:09) — dispatch latency measured 15-30s (21:15:04 dispatch -&gt; 21:15:22 decision),agents/tick-keeper.cjs: reads arc receipts (decisions jsonl / earn-audit / fill-ledger) -&gt; keeperDecide pure -&gt; dispatches stale desks via PAT workflow_dispatch (PAT events bypass the GITHUB_TOKEN recursion block) -&gt; books tick-keeper.json/.md, single-writer, STASIS-first, 20m cooldown, fail-soft exit 0,.github/workflows/tick-keeper.yml: 2,32 (clean minutes, verified zero collisions), STASIS gate, WEAVE_OPS_PAT env-only,agents/minute-map.json: 14 cron collisions reslotted to 0 across 21 workflows (law: one workflow minute = one machine — collisions multiply the starvation surface),ledgerDayTruth defect FIXED: old Math.max(state, ledger) fusion swallowed NEGATIVE realized (losing day read 0.000 SBD -&gt; BREAKER-DAILY-LOSS silently disarmed); ledger row is now the day-book, negative truth reaches the gate,earn-audit depth: MAX_PAGES 4 -&gt; 30 (400 ops hid the drip on rotation days; ~3000 ops/account now walked, pagesUsed booked honestly),suite v1.28.0 on the MERGED tree (with the coordination-bus lane R19): E29/E32 stale fixtures healed to the reslot + E40a (negative realized -178154uSBD survives; ledger wins; state fallback; zeros never NaN) + E40b (stale/fresh/no-receipt/cooldown-20m/per-desk-gaps/arc-registry),live: tick #9 PLAN-DRY DAY-CAPS (fills 57 &gt;= 24, day booked, receipts continue); keeper book <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/tick-keeper.json" target="_blank" rel="noreferrer"><code>agents/tick-keeper.json</code></a> at 21:36:39Z (all three desks fresh)</p>
+  <p class="fb-when">נחתם 3 באוק׳ 2026</p>
+</li>
+<li class="fb-card" id="feat-045">
+  <div class="fb-head"><span class="fb-id">feat-045</span><h4>Fleet Rung 21: THE ROAST RUNG </h4><span class="fb-tag live">חי</span></div>
+  <p class="fb-desc">Owner directive (&quot;תעשה לעצמך roast חריף ... בדוק את כל הטענות שלך ... ייעל תקן וודא שפר הכל&quot;) — the ledger itself is now audited by a re-runnable desk. agents/claims-audit.cjs (offline/keyless/deterministic/fail-soft, STASIS-braked by the c…</p>
+  <p class="fb-ev">ראיות: [object Object]</p>
+  <p class="fb-when">נחתם 3 באוק׳ 2026</p>
+</li>
+<li class="fb-card" id="feat-046">
+  <div class="fb-head"><span class="fb-id">feat-046</span><h4>Fleet Rung 22: THE RESURRECTION RUNG </h4><span class="fb-tag live">חי</span></div>
+  <p class="fb-desc">Fleet Rung 22: THE RESURRECTION RUNG — the estate liveness audit measured dead wires, a starving scheduler, a dying daily desk, and a watchdog whose alarm was silent since day one; everything revived, every fix pinned by E42, and the owner …</p>
+  <p class="fb-ev">ראיות: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/twin-marker-law.cjs" target="_blank" rel="noreferrer"><code>agents/twin-marker-law.cjs</code></a> (the marker-side law: domainMarker lands on the Domain side only — evidenceMarkers pure, E42 matrix-guarded),agents/twin-audit.mjs evidenceMarkers import + absenceCross null-safe markers — money-console-domain measures evidenceOk TRUE on its own correct state (was false-alarm daily since birth),agents/twin-issue-gate.cjs (the alarm rebuilt as a Node desk: buildIssueBody pure + no-backtick liability law + corrupt-marker fail-loud + GH_TOKEN/ZIP_PAT fallback) — wired into <a href="https://github.com/roshpinacare-sys/Domain/blob/main/.github/workflows/twin-audit.yml" target="_blank" rel="noreferrer"><code>.github/workflows/twin-audit.yml</code></a> gate step (the bash backtick bug 'syntax error near unexpected token done' killed the alarm on its first fire),agents/fee-doctrine.json (the registered per-venue fee book: kernel 30bps/treasury-cut-30%, SAOSExchange 20bps/pot-10bps, chains 0-fee + 40bps spacing floor; arbitration rule: price-each-venue-by-its-own-doctrine),agents/fee-doctrine-law.cjs feeArbitration pure (governed per-venue pricing = PASS-ARBITRATED, anonymous drift/lying book = DRIFT) + <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/cross-layer.cjs" target="_blank" rel="noreferrer"><code>agents/cross-layer.cjs</code></a> C1 verdict — cross-layer 7 checks / 0 DRIFT / 0 FAIL,.github/workflows/self-audience.yml commit step rebuilt (git add -A + rebase.autoStash + 3-attempt retry) — root cause measured from <a href="https://github.com/roshpinacare-sys/Domain/actions/runs/37144830642" target="_blank" rel="noreferrer">run 37144830642</a> log: unstaged leftovers blocked the rebase, || true swallowed it, push raced and failed, a full day of receipts (9 files, 3181 insertions) died at push 3 scheduled runs in a row,agents/tick-keeper.cjs THE RESURRECTION ARC: registry 3→9 desks (market-grid-cron.yml, fleet-census-cron.yml, twin-audit.yml, self-audience.yml, public-pulse.yml, audience-analyst.yml) with per-desk max_gap (45m..1560m) + per-desk cooldown_min (60/240m — daily desks retried every 4h, not stormed); keeperDecide purity law (judge the PASSED arc; empty arc = never-born fleet view),agents/public-pulse.cjs THE PUBLIC TRUTH SCOPE LAW: truth.day joins the page from <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/fill-ledger.json" target="_blank" rel="noreferrer"><code>agents/fill-ledger.json</code></a> (last committed walk, DAY scope since 00:00Z, measuredAt stamped) — a day number never laundered into lifetime; composePulse exported + require-guarded (pure-safe for evals),agents/owner-proof.cjs + <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/owner-proof.json" target="_blank" rel="noreferrer"><code>agents/owner-proof.json</code></a> + <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/owner-proof.md" target="_blank" rel="noreferrer"><code>agents/owner-proof.md</code></a> (THE ONE PROVABLE PAGE for the owner, HEBREW surface per the CR-0050 owner-language law): 5 sections — ownership (chain-verifiable treasuries), runway (powerdown drip 475.88 SP/wk, remaining 1903.5 SP, runway 28 days, next 2026-10-10T02:01:27), pnl (lifetime -1.12 SBD + today -0.227 scope-labeled + content measured-dead honesty), autonomy (48 workflows / 43 scheduled / 9-desk keeper arc / STASIS clean), laws (claims WARN 0-offenders suite MATCH, census 16/16) — every number carries {source, measuredAt}, stable payload byte-deterministic, fail-soft,agents/evals/run-evals.cjs v1.29.0→v1.30.0: E42 resurrection suite 43/43 GREEN (marker orientation matrix, feeArbitration real/missing/lying/equal/missing-sources, gate body builder + no-backticks, arc sanity incl. zero ghost receipts + per-desk cooldown cases, pulse day-scope law, owner-proof black-box + byte-determinism + Hebrew surface); E40b empty-arc assertion made registry-agnostic (the law unchanged — the count was registry-bound),Estate liveness census measured via GitHub API 2026-10-03T22:0x (keyless PAT): 48 workflows — fill-ledger-cron 0 runs EVER (dead wire), twin-audit failure (silent alarm), self-audience 3x failure (dying receipts), sovereign-tick/earn-audit/census/market-grid crons 0 scheduled events (scheduler starvation pattern, Z-70 confirmed repo-wide on young crons) — each defect closed or answered by the keeper arc</p>
+  
+</li>
+<li class="fb-card" id="feat-047">
+  <div class="fb-head"><span class="fb-id">feat-047</span><h4>Fleet Rung 22: THE RESURRECTION RUNG (CR-0052) </h4><span class="fb-tag live">חי</span></div>
+  <p class="fb-desc">Fleet Rung 22: THE RESURRECTION RUNG (CR-0052) — the estate liveness audit measured dead wires, a starving scheduler, a dying daily desk, and a watchdog whose alarm was silent since day one; everything revived, every fix pinned by E44, and …</p>
+  <p class="fb-ev">ראיות: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/twin-marker-law.cjs" target="_blank" rel="noreferrer"><code>agents/twin-marker-law.cjs</code></a> (the marker-side law: domainMarker lands on the Domain side only — evidenceMarkers pure, E44 matrix-guarded),agents/twin-audit.mjs evidenceMarkers import + absenceCross null-safe markers — money-console-domain measures evidenceOk TRUE on its own correct state (was false-alarm daily since birth),agents/twin-issue-gate.cjs (the alarm rebuilt as a Node desk: buildIssueBody pure + no-backtick liability law + corrupt-marker fail-loud + GH_TOKEN/ZIP_PAT fallback) — wired into <a href="https://github.com/roshpinacare-sys/Domain/blob/main/.github/workflows/twin-audit.yml" target="_blank" rel="noreferrer"><code>.github/workflows/twin-audit.yml</code></a> gate step (the bash backtick bug 'syntax error near unexpected token done' killed the alarm on its first fire),agents/fee-doctrine.json (the registered per-venue fee book: kernel 30bps/treasury-cut-30%, SAOSExchange 20bps/pot-10bps, chains 0-fee + 40bps spacing floor; arbitration rule: price-each-venue-by-its-own-doctrine),agents/fee-doctrine-law.cjs feeArbitration pure (governed per-venue pricing = PASS-ARBITRATED, anonymous drift/lying book = DRIFT) + <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/cross-layer.cjs" target="_blank" rel="noreferrer"><code>agents/cross-layer.cjs</code></a> C1 verdict — cross-layer 7 checks / 0 DRIFT / 0 FAIL,.github/workflows/self-audience.yml commit step rebuilt (git add -A + rebase.autoStash + 3-attempt retry, fail-loud) — root cause measured from <a href="https://github.com/roshpinacare-sys/Domain/actions/runs/37144830642" target="_blank" rel="noreferrer">run 37144830642</a> log: unstaged leftovers blocked the rebase, || true swallowed it, push raced and failed, a full day of receipts (9 files, 3181 insertions) died at push 3 scheduled runs in a row; merged with the deep-audit lane's [skip ci] adoption,agents/tick-keeper.cjs THE RESURRECTION ARC: registry 3→9 desks (market-grid-cron.yml, fleet-census-cron.yml, twin-audit.yml, self-audience.yml, public-pulse.yml, audience-analyst.yml) with per-desk max_gap (45m..1560m) + per-desk cooldown_min (60/240m — daily desks retried every 4h, not stormed); keeperDecide purity law (judge the PASSED arc; empty arc = never-born fleet view); MERGED with the deep-audit lane's Bearer dispatch fix (token-prefix 404 → Bearer 204, their <a href="https://github.com/roshpinacare-sys/Domain/actions/runs/37157983852" target="_blank" rel="noreferrer">run 37157983852</a> measured),agents/public-pulse.cjs THE PUBLIC TRUTH SCOPE LAW: truth.day joins the page from <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/fill-ledger.json" target="_blank" rel="noreferrer"><code>agents/fill-ledger.json</code></a> (last committed walk, DAY scope since 00:00Z, measuredAt stamped) — a day number never laundered into lifetime; composePulse exported + require-guarded (pure-safe for evals),agents/owner-proof.cjs + <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/owner-proof.json" target="_blank" rel="noreferrer"><code>agents/owner-proof.json</code></a> + <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/owner-proof.md" target="_blank" rel="noreferrer"><code>agents/owner-proof.md</code></a> (THE ONE PROVABLE PAGE for the owner, HEBREW surface per the CR-0050 owner-language law): 5 sections — ownership (chain-verifiable treasuries), runway (powerdown drip 475.88 SP/wk, remaining 1903.5 SP, runway 28 days, next 2026-10-10T02:01:27), pnl (lifetime -1.12 SBD + today -0.227 scope-labeled + content measured-dead honesty), autonomy (48 workflows / 43 scheduled / 9-desk keeper arc / STASIS clean), laws (claims 0 offenders suite MATCH, census 16/16) — every number carries {source, measuredAt}, stable payload byte-deterministic, fail-soft,agents/evals/run-evals.cjs v1.30.0→v1.31.0: E44 resurrection suite appended after the deep-audit lane's kept E42/E43 — 45/45 GREEN (marker orientation matrix, feeArbitration real/missing/lying/equal/missing-sources, gate body builder + no-backticks, arc sanity incl. zero ghost receipts + per-desk cooldown cases, pulse day-scope law, owner-proof black-box + byte-determinism + Hebrew surface); E40b empty-arc assertion made registry-agnostic (the law unchanged — the count was registry-bound),Estate liveness census measured via GitHub API 2026-10-03T22:0x (keyless PAT): 48 workflows — fill-ledger-cron 0 runs EVER (dead wire), twin-audit failure (silent alarm), self-audience 3x failure (dying receipts), sovereign-tick/earn-audit/census/market-grid crons 0 scheduled events (scheduler starvation pattern, Z-70 confirmed repo-wide on young crons) — each defect closed or answered by the keeper arc</p>
+  
+</li>
+<li class="fb-card" id="feat-048">
+  <div class="fb-head"><span class="fb-id">feat-048</span><h4>Fleet Rung 25: THE CADENCE-WEEK READ (CR-0053) </h4><span class="fb-tag live">חי</span></div>
+  <p class="fb-desc">Fleet Rung 25: THE CADENCE-WEEK READ (CR-0053) — the first distributional read of the fleet's own time series: market-grid gaps/spreads/routes, delta verdicts and transitions, the artifact-lag honesty number; the booked R17 rung landed now …</p>
+  <p class="fb-ev">ראיות: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/cadence-week.cjs" target="_blank" rel="noreferrer"><code>agents/cadence-week.cjs</code></a> (the distributional desk: offline/keyless/deterministic/fail-soft, STASIS-braked by require, B2 bar encoded as data, no-write below the bar),agents/cadence-week.json (the first distribution book: verdict CADENCE-WEEK-LIVE, per-market spread stats, gap min/median/max, route frequency, delta verdict split, artifactLagRows),agents/cadence-week.md (the HEBREW owner surface — at-free so it can never cause a publish diff),agents/evals/run-evals.cjs (v1.32.0, E45: reducers edge-exact, byte-determinism on the real series, black-box no-write + live-fixture laws),.github/workflows/fleet-census-cron.yml (the cadence-week leg rides the daily cadence + volatile-list no-noise wiring),agents/change-requests/CR-0053-cadence-week.json (the rung's decision record)</p>
+  
+</li>
+<li class="fb-card" id="feat-049">
+  <div class="fb-head"><span class="fb-id">feat-049</span><h4>Fleet Rung 23: THE MATURITY-LAW RUNG (CR-0054) </h4><span class="fb-tag live">חי</span></div>
+  <p class="fb-desc">Fleet Rung 23: THE MATURITY-LAW RUNG (CR-0054) — the convert schedule the operator was promised MEASURED INTO EXISTENCE: a deep chain walk proved the books told a fiction (&quot;~435 STEEM Oct-7&quot; — chain truth: a 23-row ladder, 117.887 SBD, matu…</p>
+  <p class="fb-ev">ראיות: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/earn-audit.cjs" target="_blank" rel="noreferrer"><code>agents/earn-audit.cjs</code></a> (THE SENSOR, healed: tallyOp receives the op timestamp and computes matures_at = open + 3.5d — the chain `convert` op carries NO conversion_date (measured live: body = {amount, owner, requestid} only); booking `undefined` left the 24h pre-position window dead code since birth; open_ts + matures_at + conversion_date all booked per row),agents/convert-canon.cjs (THE MEMORY, healed ×3: the wire reads per_account with legacy rows fallback — sensor_rows was pinned 0 by every run since the canon's birth because the canon read `rows` while earn-audit writes `per_account`; the walk pushes the op timestamp and the reducer computes the open+3.5d chain law itself; MAX_PAGES 30→90 — the maturity horizon is open+84h so the walk must reach ~2 days back, measured: the full 23-row ladder sits inside 60 pages),agents/convert-canon.cjs convertBook (THE SEQ-RACE LAW: a dated sensor row must survive an undated walked row with a higher seq — the last-open-wins law was LAUNDERING the sensor's computed date away on every compose; plus the undated bucket — a convert with no parseable maturity is never guessed and never NaN-bracketed into pending/matured),agents/convert-canon.json (THE REAL SCHEDULE, live-booked: pending=23 · total 117.887 SBD · next maturity 2026-10-06T00:02:12Z in 48h · undated=0 · sensor_rows=2 · pages 90 walked to 2026-09-11T15:11Z — the wave 10-06T00:02:12 → 10-07T01:38:21 measured from chain ops, requestids 1790976163..1791034699),agents/evals/eval-results.json (suite v1.33.0, 46/46 GREEN on the merged tree: E46 maturity-law suite added (the cadence-week lane's E45 KEPT) — maturity-law-computed, ladder-total-measured, wave-window-10-06-to-10-07, seq-race-date-survives, undated-never-guessed, sensor-book-per-account-shape, sensor-books-matures-at, live-canon-no-phantom-dates, wire-alive-or-honestly-empty, sensor-tally-computes-maturity, sensor-books-closure; E44 and siblings kept),agents/convert-canon.md (the Hebrew-rendered pending table the owner can read — requestid / amount SBD / maturity / hours-left, every row dated by the law),feature_list.json (this book, row 49)</p>
+  
+</li>
+<li class="fb-card" id="feat-050">
+  <div class="fb-head"><span class="fb-id">feat-050</span><h4>Fleet Rung 26: THE KEYLESS WAVE (CR-0055) </h4><span class="fb-tag live">חי</span></div>
+  <p class="fb-desc">Fleet Rung 26: THE KEYLESS WAVE (CR-0055) — the sovereignty bar moved 11/48 -&gt; 15/48 keyless workflows; four same-repo-only flows (twin-audit, audience-analyst, content-reviewer, public-pulse) converted from inherited ZIP_PAT convention to …</p>
+  <p class="fb-ev">ראיות: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/.github/workflows/twin-audit.yml" target="_blank" rel="noreferrer"><code>.github/workflows/twin-audit.yml</code></a> (checkout github.token, ZIP_PAT env removed from the issue gate — the desk keeps its fail-soft token loop),.github/workflows/audience-analyst.yml (checkout github.token, ZIP_PAT env removed from the zero-signal gate),.github/workflows/content-reviewer.yml (checkout github.token, ZIP_PAT env removed from the duplication gate),.github/workflows/public-pulse.yml (checkout github.token, dead PULSE_URL secret-env removed; the optional hook stays in <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/public-pulse.cjs" target="_blank" rel="noreferrer"><code>agents/public-pulse.cjs</code></a>),agents/fleet-census.json (sovereignty recount by the census's own regex: workflowsKeyless 15/48, owner-secret 33),agents/evals/run-evals.cjs (v1.34.0, E47: the count bar pinned, zero non-GITHUB_TOKEN refs in the four files, permissions kept, gate fail-soft proven fresh-process),agents/change-requests/CR-0055-keyless-wave.json (the rung's decision record)</p>
+  
+</li>
+<li class="fb-card" id="feat-051">
+  <div class="fb-head"><span class="fb-id">feat-051</span><h4>Fleet Rung 25: THE NAME-PROOF RUNG (CR-0056) </h4><span class="fb-tag live">חי</span></div>
+  <p class="fb-desc">Fleet Rung 25: THE NAME-PROOF RUNG (CR-0056) — the keeper's first natural dispatch receipts (run 37165106733, my own 204 dispatch) measured the 404 class (legacy bare-name desks 404 while suffixed desks 204 in the same run, same token), the…</p>
+  <p class="fb-ev">ראיות: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/tick-keeper.cjs" target="_blank" rel="noreferrer"><code>agents/tick-keeper.cjs</code></a> (THE SUFFIX LAW: workflowFileOf pure helper exported — the dispatch layer normalizes legacy bare-name registry keys to workflow file names; registry keys stay as-is, they are the arc-book keys pinned by E40b/E44; fail-soft on falsy),agents/tick-keeper.json (THE KEEPER'S NATURAL RECEIPT, 2026-10-04T00:29:41Z: decided 4 desks — sovereign-tick 106.4m stale, fill-ledger 104.1m, market-grid 106.6m, audience-analyst never-born; dispatched: market-grid-cron.yml 204 OK, audience-analyst.yml 204 OK, sovereign-tick-cron 404, fill-ledger-cron 404 — the mixed receipt that MEASURED the 404 class; and the loop closed: market-grid(history) tick 2026-10-04T00:29:56Z committed 21s after the 204),.github/workflows/grid-trigger-twin.yml (the twin-liveness evidence: 238 runs ever, proving the R75 dormant-backup doctrine — the private steem/saos-dex workflows with 0 successes ever are documented dormant backups, not dead wires: their comments book the decision and the Domain twins carry the load),scripts/seal-adopt.mjs (THE SEAL-ADOPT WIRE REVIVED: the r72 Domain workflow pointed at a script that never lived on this tree — measured: 0 commits ever touched the path here, the script lived in the sovereign house history 52bc7ce until the r187 archive pass deleted it; restored intact 237 lines, keyless-safe, parses),agents/evals/eval-results.json (suite v1.35.0, 47/47 GREEN on the merged tree: E48 the suffix law + the wire-name floor — workflowFileOf matrix, ARC×file existence over the live tree, seal-adopt existence+invocation+parse, keeper registry shape intact; E47 keyless-wave and siblings KEPT),feature_list.json (this book, row 51)</p>
+  
+</li>
+<li class="fb-card" id="feat-052">
+  <div class="fb-head"><span class="fb-id">feat-052</span><h4>Fleet Rung 27: THE METRONOME AUDIT (CR-0057, renumbered from CR-0056 p</h4><span class="fb-tag live">חי</span></div>
+  <p class="fb-desc">Fleet Rung 27: THE METRONOME AUDIT (CR-0057, renumbered from CR-0056 per the later-mover law — the name-proof lane landed 051/056/E48 first) — the fleet measures its own TIME: GitHub's scheduler stopped firing scheduled events (boundary mea…</p>
+  <p class="fb-ev">ראיות: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/scheduler-collect.cjs" target="_blank" rel="noreferrer"><code>agents/scheduler-collect.cjs</code></a> (the keyless collector: cron extraction from every workflow file + the scheduled-run census per workflow on the built-in GITHUB_TOKEN, fail-soft per row),agents/scheduler-audit.cjs (the pure desk: slot math with 40-min grace, the verdict machine, the repo-wide scheduler boundary, the bounded heal list, atomic at-free Hebrew md),agents/scheduler-heal.cjs (the bounded healer: reads the desk's list — never invents — dispatch via GITHUB_TOKEN, receipts printed),agents/scheduler-audit.json (the first scheduler book, measured live: verdict SCHEDULER-STARVED, boundary 2026-10-03T20:10:04Z, 6 starved / 15 degraded / heal [earn-audit-cron, fill-ledger-cron, market-grid-cron]),agents/scheduler-raw.json (the raw evidence: 43 scheduled workflows, per-workflow scheduledRuns, window 24h),.github/workflows/fleet-census-cron.yml (the collect -&gt; audit -&gt; heal leg + actions:write + publish/volatile wiring),agents/evals/run-evals.cjs (v1.36.0, E49: parser/slots/verdicts edge-exact, black-box fixture with the secret-carrying starved row excluded from the heal, empty law, host wiring pinned),agents/change-requests/CR-0057-metronome-audit.json (the rung's decision record)</p>
+  
+</li>
+<li class="fb-card" id="feat-053">
+  <div class="fb-head"><span class="fb-id">feat-053</span><h4>Fleet Rung 28: THE VOLUME ENGINE (CR-0058) </h4><span class="fb-tag live">חי</span></div>
+  <p class="fb-desc">Fleet Rung 28: THE VOLUME ENGINE (CR-0058) — the owner's market-maker directive gets its instrument: a keyless deterministic STASIS-braked planner that prices every venue by its own fee doctrine, projects volume/net-edge from measured sprea…</p>
+  <p class="fb-ev">ראיות: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/mm-volume.cjs" target="_blank" rel="noreferrer"><code>agents/mm-volume.cjs</code></a> (the desk: offline/keyless/deterministic/fail-soft, dual STASIS brakes — DIR-local + the borrowed census brake, MMV_SKIP/MMV_DIR seams, atomic book + append-only plan ledger + at-free Hebrew owner surface, require.main guard),agents/mm-volume.json (the first book, measured live: verdict MMV-PLAN-LIVE, 2 venues, projections + guards + blockedReasons=[]),agents/mm-volume.md (the Hebrew owner surface, at-free),agents/mm-volume-plan.jsonl (the append-only plan ledger, one row per run),.github/workflows/fleet-census-cron.yml (the mm-volume leg after scheduler-heal + publish + volatile no-noise wiring),agents/evals/run-evals.cjs (v1.37.0, E50: white-box venueEconomics/partitionLadder/selfFlowPlan/buyEdgeFloor/sellVwapFromRuns edge-exact + black-box fresh-process MMV-PLAN-LIVE, byte-stable payload, STASIS zero-writes, corrupt-inputs honest BLOCKED, host wiring pinned),agents/change-requests/CR-0058-volume-engine.json (the rung's decision record: six engineering queries asked and answered in code)</p>
+  
+</li>
+<li class="fb-card" id="feat-054">
+  <div class="fb-head"><span class="fb-id">feat-054</span><h4>Fleet Rung 29: THE SHARE LADDER (CR-0059) </h4><span class="fb-tag live">חי</span></div>
+  <p class="fb-desc">Fleet Rung 29: THE SHARE LADDER (CR-0059) — 'the biggest market maker' becomes a measured number: market-grid v1.1.0 reads the 24h pond from the chains themselves (condenser get_volume: SBD/STEEM 163.687 SBD, HBD/HIVE 958.712 HBD); mm-volum…</p>
+  <p class="fb-ev">ראיות: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/market-grid.cjs" target="_blank" rel="noreferrer"><code>agents/market-grid.cjs</code></a> (v1.1.0: get_volume per internal market + pure parseVolume + volume24hSbdTerm in the live book + volumeSbdTerm rows in the append-only history),agents/mm-volume.cjs (v1.1.0: sharePct/shareLadder with saturates, realized24h window-relative-to-last with µ-exact sums + unclassified honesty + projectionAccuracyPct, doctrineMap 6 failure→guard rows, live-book pricing with history fallback, HBD/HIVE venue),agents/mm-volume.json (the book, measured live: shares 23.9286%/4.0855%, realized metering, doctrine),agents/mm-volume.md (the Hebrew owner surface with the share ladder + the realized line),agents/evals/run-evals.cjs (v1.38.0, E51: parseVolume/sharePct/shareLadder/realized24h/doctrineMap white-box exact + black-box rich/fixture-null/live-tree),agents/change-requests/CR-0059-share-ladder.json (the rung's decision record: Q7 the pond, Q8 the truth check, Q9 the doctrine map)</p>
+  
+</li>
+<li class="fb-card" id="feat-055">
+  <div class="fb-head"><span class="fb-id">feat-055</span><h4>Fleet Rung 30: THE CALIBRATED ENGINE (CR-0060) </h4><span class="fb-tag live">חי</span></div>
+  <p class="fb-desc">Fleet Rung 30: THE CALIBRATED ENGINE (CR-0060) — 'time of truth' executed on the projection itself: mm-volume v1.2.0 runs the plan on the REAL fill size the ledger measured (calibratedAvgSize: 130 real fills → 0.691 SBD vs the 0.068 planned…</p>
+  <p class="fb-ev">ראיות: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/mm-volume.cjs" target="_blank" rel="noreferrer"><code>agents/mm-volume.cjs</code></a> (v1.2.0: calibratedAvgSize µ-exact with prior carried + labeled fallback chain, shareSeries from the plan ledger, book.calibration + book.series, venue rows with avgSizeSource/avgSizePriorSbd, md calibration+series lines),agents/mm-volume.json (the book measured live: calibration 0.068→0.691 lift +916.1765%, projVol 796.032 SBD/day, series namespace with planLedgerRows),agents/mm-volume.md (the Hebrew owner surface with the calibration + share-time lines),agents/evals/run-evals.cjs (v1.39.0, E52: calibration/series white-box exact + black-box pre-seeded ledger + projection-on-real-size 237.024 + byte-stable with series excluded; E50/E51 determinism strips evolved to the time-born law),agents/change-requests/CR-0060-volume-calibration.json (the rung's decision record: Q10 the true fill size, Q11 does the share move, Q12 what did calibration change)</p>
+  
+</li>
+<li class="fb-card" id="feat-056">
+  <div class="fb-head"><span class="fb-id">feat-056</span><h4>Fleet Rung 31: THE MEASURED BINDING &amp; THE VENUE EXPANSION (CR-0061) </h4><span class="fb-tag live">חי</span></div>
+  <p class="fb-desc">Fleet Rung 31: THE MEASURED BINDING &amp; THE VENUE EXPANSION (CR-0061) — the second calibration dial anchors the projection in reality (calibratedTape: the fill-ledger's REAL capture rate 0.0861 fpm ≈ 124 fills/day vs the 10 fpm market-tape pr…</p>
+  <p class="fb-ev">ראיות: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/mm-volume.cjs" target="_blank" rel="noreferrer"><code>agents/mm-volume.cjs</code></a> (v1.3.0: calibratedTape + captureTradesDay binding min(tape,capacity,capture) + edgeFromSpread per-token pricing + book.tapeCalibration + HE venue rows + darkSurfaces + projections.captureTradesDay/captureFillThroughPct/heVenuesPriced),agents/market-grid.cjs (v1.2.0: per-token marketFeePercentage measured from the tokens contract, probeBlurt probe-first fail-loud, history rows heFees + blurtAlive),agents/fee-doctrine.json (two new venue rows: hive-engine-sidechain per-token law measured absent→zero; blurt-internal-market probe-first, dark at registration),agents/mm-volume.json + <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/mm-volume.md" target="_blank" rel="noreferrer"><code>agents/mm-volume.md</code></a> (the book measured live: tapeCalibration 0.0861 fpm capture 124/day, 5 HE venues priced, blurt dark booked, Hebrew owner surface),agents/evals/run-evals.cjs (v1.40.0, E53: calibratedTape/capture-binding/edgeFromSpread white-box exact + black-box HE-per-token + blurt-dark + both-dials projection 0.823 + byte-stable; E52 evolved WITH the desk — the 237.024 capture-null expectation became the both-dials 0.823, written in the eval itself),agents/change-requests/CR-0061-tape-venues.json (the rung's decision record: Q13 the true tape rate, Q14 which venues can we price, Q15 the real choke, Q16 growth raising capture without lying)</p>
+  
+</li></ul>
+    </details>
+<details class="fb-grp" >
+      <summary><span class="fb-tag done">31 בוצע</span><span class="fb-grp-t">בוצע · עם ראיות בגיט</span></summary>
+      <ul class="fb-grid"><li class="fb-card" id="feat-001">
+  <div class="fb-head"><span class="fb-id">feat-001</span><h4>Autonomous economy engine</h4><span class="fb-tag done">בוצע</span></div>
+  <p class="fb-desc">Daily on-chain curation + self-votes + claims across steem/hive/blurt, keyless in Domain, seal opened only in-runner, receipts as proof</p>
+  <p class="fb-ev">ראיות: economy-engine.yml + <a href="https://github.com/roshpinacare-sys/Domain/blob/main/scripts/economy-engine.mjs" target="_blank" rel="noreferrer"><code>scripts/economy-engine.mjs</code></a>; real <a href="https://github.com/roshpinacare-sys/Domain/actions/runs/37009336549" target="_blank" rel="noreferrer">run 37009336549</a>/37067532580 SUCCESS with chain txid read-back (cbb4bc69… <a href="https://steemworld.org/block/110099406" target="_blank" rel="noreferrer">block 110099406</a>)</p>
+  
+</li>
+<li class="fb-card" id="feat-002">
+  <div class="fb-head"><span class="fb-id">feat-002</span><h4>Harness judge node (five subsystems)</h4><span class="fb-tag done">בוצע</span></div>
+  <p class="fb-desc">Fresh-context checker node auditing instructions/state/verification/scope/lifecycle + anchors, on a schedule, fail-soft</p>
+  <p class="fb-ev">ראיות: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/harness-audit.cjs" target="_blank" rel="noreferrer"><code>agents/harness-audit.cjs</code></a> → harness-audit.json/md; adopted from walkinglabs/learn-harness-engineering (Z-35), extended Task 19 (role→worker wiring + loop primitives)</p>
+  
+</li>
+<li class="fb-card" id="feat-003">
+  <div class="fb-head"><span class="fb-id">feat-003</span><h4>Books pulse (machine state layer)</h4><span class="fb-tag done">בוצע</span></div>
+  <p class="fb-desc">Live measurement books stamp themselves (at/updated) and stay fresh &lt;48h; freshness audited by the judge node</p>
+  <p class="fb-ev">ראיות: 9/9 live books exist; learning-ledger stamping fixed in Task 19 (measure-learn.cjs now stamps at/updated)</p>
+  <p class="fb-dep">תלויות: feat-002</p>
+</li>
+<li class="fb-card" id="feat-004">
+  <div class="fb-head"><span class="fb-id">feat-004</span><h4>Weave core anchor cadence</h4><span class="fb-tag done">בוצע</span></div>
+  <p class="fb-desc">Hourly anchor ping (sandbox-independent) + anchor-execute lines keep saos.weave.core.v1 on chain</p>
+  <p class="fb-ev">ראיות: weave-anchor-ping.yml hourly + weave-anchor-lines.yml; core trx 9b377210393fdec1 2026-10-02T21:42Z</p>
+  
+</li>
+<li class="fb-card" id="feat-005">
+  <div class="fb-head"><span class="fb-id">feat-005</span><h4>Army role→worker wiring (audited)</h4><span class="fb-tag done">בוצע</span></div>
+  <p class="fb-desc">Every FILLED role in recruitment.json must name a worker artifact that exists on disk; the judge node measures the hands</p>
+  <p class="fb-ev">ראיות: harness-audit.cjs graph check 'every FILLED role names a reachable worker artifact' — Task 19</p>
+  <p class="fb-dep">תלויות: feat-002</p>
+</li>
+<li class="fb-card" id="feat-006">
+  <div class="fb-head"><span class="fb-id">feat-006</span><h4>LHE harness protocol adoption (this repo)</h4><span class="fb-tag done">בוצע</span></div>
+  <p class="fb-desc">walkinglabs/learn-harness-engineering minimal harness: AGENTS.md protocol + feature_list.json + progress.md + session-handoff.md + init.sh</p>
+  <p class="fb-ev">ראיות: Task 19 — validator run on this repo post-adoption; scores recorded in the Task 19 worklog section</p>
+  <p class="fb-dep">תלויות: feat-002, feat-003</p>
+</li>
+<li class="fb-card" id="feat-008">
+  <div class="fb-head"><span class="fb-id">feat-008</span><h4>Role-prompt registry (prompts.chat adoption)</h4><span class="fb-tag done">בוצע</span></div>
+  <p class="fb-desc">Declarative role-voice registry in prompts.chat CSV schema (act,prompt,for_devs,type,contributor) + ${Var:default} binding + loader role-prompts.cjs; sovereignty: role behavior is versioned data, a fresh worker adopts a fleet role by loadin…</p>
+  <p class="fb-ev">ראיות: ADOPTION LANDED VIA THE PARALLEL Z-37 CHARTER REGISTRY (superset): <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/role-registry.csv" target="_blank" rel="noreferrer"><code>agents/role-registry.csv</code></a> (act,file,ci,mission,signs,tier,books,owner,status — roles-as-data with enforcement) + sovereignty.md (tier A/B/C + CR flow) + harness-audit v1.2.0 sovereignty checks. My interim role-prompts.csv/cjs (prompts.chat raw schema + ${Var} loader) retired SUPERSEDED-BY; the loader pattern + FILLED-roles completeness idea live on in the charter registry checks.</p>
+  <p class="fb-dep">תלויות: feat-002, feat-005</p>
+</li>
+<li class="fb-card" id="feat-009">
+  <div class="fb-head"><span class="fb-id">feat-009</span><h4>Destructive-command guard (dcg adoption)</h4><span class="fb-tag done">בוצע</span></div>
+  <p class="fb-desc">Mechanical tier-C enforcement adopted from Dicklesworthstone/destructive_command_guard: banned shapes (force-push, reset --hard, clean -x, estate rm -rf, DROP, migrate reset) blocked pre-execution with doctrine reasons + safer tips; data-po…</p>
+  <p class="fb-ev">ראיות: ADOPTION LANDED VIA THE PARALLEL Z-38 FLEET-NATIVE GUARD (superset): <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/command-guard.cjs" target="_blank" rel="noreferrer"><code>agents/command-guard.cjs</code></a> (whitelist-first, DEFAULT-ALLOW, explain/scan/hook modes, decision ledger command-guard.json, evals E7-E9) + my init.sh battery driving it (DENY on force-push/reset --hard/estate rm -rf; allow on rebase law + data-position). My interim <a href="https://github.com/roshpinacare-sys/Domain/blob/main/scripts/command-guard.sh" target="_blank" rel="noreferrer"><code>scripts/command-guard.sh</code></a> retired SUPERSEDED-BY; the workflow shape-scan idea lives in their scan mode.</p>
+  <p class="fb-dep">תלויות: feat-002, feat-008</p>
+</li>
+<li class="fb-card" id="feat-010">
+  <div class="fb-head"><span class="fb-id">feat-010</span><h4>FATE-DEFENSE (Emergence World adoption)</h4><span class="fb-tag done">בוצע</span></div>
+  <p class="fb-desc">Owner directive: study what happened to world.emergence.ai (arXiv 2606.08367 platform + 2609.17320 stress-testing; 5+8 agent worlds, total collapses, injection/misinformation/memory-breach events, 'collapse has no warning shot') and enginee…</p>
+  <p class="fb-ev">ראיות: FATE-DEFENSE.md + agents/fleet-indicators.{cjs,json,md} + <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/STASIS.json" target="_blank" rel="noreferrer"><code>agents/STASIS.json</code></a> + <a href="https://github.com/roshpinacare-sys/Domain/blob/main/scripts/economy-engine.mjs" target="_blank" rel="noreferrer"><code>scripts/economy-engine.mjs</code></a> stasis gate + harness-audit 31/0/0 + evals E10 10/10 + init.sh STASIS-HALT proof</p>
+  <p class="fb-dep">תלויות: feat-001, feat-008, feat-009</p>
+</li>
+<li class="fb-card" id="feat-011">
+  <div class="fb-head"><span class="fb-id">feat-011</span><h4>Skill library (claude-skills adoption, Task 20 residual closed)</h4><span class="fb-tag done">בוצע</span></div>
+  <p class="fb-desc">Owner directive lineage: Task 20 asked for a prompts.chat prompt library (recruitment roles / desk system / mini-services); Task 25 evaluated owner-pointed alirezarezvani/claude-skills (MIT, 27.3k stars) as the format backbone; Task 27 land…</p>
+  <p class="fb-ev">ראיות: agents/skill-library/{SKILL-AUTHORING-STANDARD.md,THIRD-PARTY-NOTICES.md,skills/*/SKILL.md x6} + <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/skill-library-gate.cjs" target="_blank" rel="noreferrer"><code>agents/skill-library-gate.cjs</code></a> GREEN 6/0 + agents/skill-library.{json,md} + harness-audit check + evals E19 + <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/role-registry.csv" target="_blank" rel="noreferrer"><code>agents/role-registry.csv</code></a> row + CR-0006 + &lt;host&gt;/reference-mirrors/claude-skills @19392f7a</p>
+  <p class="fb-dep">תלויות: feat-008, feat-009</p>
+</li>
+<li class="fb-card" id="feat-012">
+  <div class="fb-head"><span class="fb-id">feat-012</span><h4>Authority Map doctrine + strix security lineage (Task 29)</h4><span class="fb-tag done">בוצע</span></div>
+  <p class="fb-desc">Owner constitutional statement (2026-10-03) encoded: 'we have sovereignty — everything is subject to the sovereignty's decision; only for the wallet am I an authority.' Encoded as the Authority Map in fleet-desk-operator v1.1.0 (wallet=owne…</p>
+  <p class="fb-ev">ראיות: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/skill-library/skills/desk-operator/SKILL.md" target="_blank" rel="noreferrer"><code>agents/skill-library/skills/desk-operator/SKILL.md</code></a> (Authority Map, v1.1.0) + <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/skill-library/SKILL-AUTHORING-STANDARD.md" target="_blank" rel="noreferrer"><code>agents/skill-library/SKILL-AUTHORING-STANDARD.md</code></a> (tier-C rewrite) + <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/skill-library/skills/security-strix-operator/SKILL.md" target="_blank" rel="noreferrer"><code>agents/skill-library/skills/security-strix-operator/SKILL.md</code></a> + THIRD-PARTY-NOTICES.md section 3 + <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/skill-library-gate.cjs" target="_blank" rel="noreferrer"><code>agents/skill-library-gate.cjs</code></a> v1.1.0 GREEN 7/0 + agents/skill-library.{json,md} + evals E21 (run-evals v1.11.0, 21/21) + harness-audit v1.13.0 doctrine-anchor check + CR-0008 + &lt;host&gt;/reference-mirrors/strix @99c0711</p>
+  <p class="fb-dep">תלויות: feat-011</p>
+</li>
+<li class="fb-card" id="feat-013">
+  <div class="fb-head"><span class="fb-id">feat-013</span><h4>Agentic-orchestration lineage: google/ax (Task 31)</h4><span class="fb-tag done">בוצע</span></div>
+  <p class="fb-desc">Owner directive 'תבחן את זה גם ויישם מה שניתן וראוי' (https://github.com/google/ax) executed as an evaluation + same-wave adoption under the Authority Map (wallet=owner, rest=sovereignty). google/ax = Google's open agentic orchestration run…</p>
+  <p class="fb-ev">ראיות: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/skill-library/skills/orchestration-ax-operator/SKILL.md" target="_blank" rel="noreferrer"><code>agents/skill-library/skills/orchestration-ax-operator/SKILL.md</code></a> + THIRD-PARTY-NOTICES.md section 4 (sha ac23328, full API sha ac2332829f22360ff97b0ba34d94dd0dd782f17e) + <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/skill-library-gate.cjs" target="_blank" rel="noreferrer"><code>agents/skill-library-gate.cjs</code></a> v1.2.0 GREEN 8/0 + agents/skill-library.{json,md} + evals E22 (run-evals v1.12.0, 22/22) + harness-audit v1.14.0 doctrine anchor (strix+ax) + CR-0010 + &lt;host&gt;/reference-mirrors/ax @ac23328</p>
+  <p class="fb-dep">תלויות: feat-012</p>
+</li>
+<li class="fb-card" id="feat-014">
+  <div class="fb-head"><span class="fb-id">feat-014</span><h4>Applied-AI pattern reference, consult-only (Task 32)</h4><span class="fb-tag done">בוצע</span></div>
+  <p class="fb-desc">Owner directive 'תראה זה יכול לעזור' (Sumanth077/Hands-On-AI-Engineering, 3,832 stars) executed as evaluation + consult-only adoption under the Authority Map. HONESTY FINDING: upstream claims MIT (badge + section) but LICENSE file is 404 / …</p>
+  <p class="fb-ev">ראיות: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/skill-library/skills/applied-ai-patterns-operator/SKILL.md" target="_blank" rel="noreferrer"><code>agents/skill-library/skills/applied-ai-patterns-operator/SKILL.md</code></a> + THIRD-PARTY-NOTICES.md section 5 + CR-0011 + &lt;host&gt;/reference-mirrors/hae-mirror.git @ da0091d6452e18dae9fd3119a194019f35306d27 (bare-blobless 184K) + LICENSE-404 proof (contents API 404, 2026-10-03) + gate GREEN 9/0 + evals 23/23 unique + judge 40/1/0</p>
+  <p class="fb-dep">תלויות: feat-013</p>
+</li>
+<li class="fb-card" id="feat-015">
+  <div class="fb-head"><span class="fb-id">feat-015</span><h4>Minimal-agent doctrine lineage: SWE-agent/mini-swe-agent (Task 33)</h4><span class="fb-tag done">בוצע</span></div>
+  <p class="fb-desc">Owner directive 'תראה מה עם זה' (https://github.com/swe-agent/mini-swe-agent, 8,165 stars) executed as evaluation + same-wave adoption under the Authority Map. MIT verified IN-FILE at mirror sha 04d809c (Copyright (c) 2025 Kilian A. Lieret …</p>
+  <p class="fb-ev">ראיות: CR-0012 PASS; mirror &lt;host&gt;/reference-mirrors/mini-swe-agent @ 04d809ceab9df28f9adaed044884180159172930; skill-library-gate.cjs v1.3.0 fourth lineage pin GREEN (10 packages / 0 offenders); evals v1.13.0 E24 strip-restore; harness-audit v1.15.0 quad-lineage doctrine anchor; THIRD-PARTY-NOTICES.md §6 MIT attribution; init.sh DOMAIN-INIT-OK</p>
+  <p class="fb-dep">תלויות: feat-014</p>
+</li>
+<li class="fb-card" id="feat-016">
+  <div class="fb-head"><span class="fb-id">feat-016</span><h4>AI-review-surface doctrine, consult-only (Task 34)</h4><span class="fb-tag done">בוצע</span></div>
+  <p class="fb-desc">Owner directive 'מה לגבי זה' (https://github.com/vercel-labs/openreview, 1,697 stars — self-hosted AI code review bot by Vercel Labs) executed as evaluation + consult-only adoption under the Authority Map. LICENSE-MISMATCH FINDING (second o…</p>
+  <p class="fb-ev">ראיות: CR-0013 PASS; mirror &lt;host&gt;/reference-mirrors/openreview @ 672deb21e70e471e0536d5ad7a67c14b8359e97e; skill-library-gate.cjs v1.3.0 GREEN 11 packages / 0 offenders (no pin — consult-only); evals v1.13.0 24/24; judge v1.15.0 40/1/0; THIRD-PARTY-NOTICES.md §7; init.sh DOMAIN-INIT-OK</p>
+  <p class="fb-dep">תלויות: feat-015</p>
+</li>
+<li class="fb-card" id="feat-017">
+  <div class="fb-head"><span class="fb-id">feat-017</span><h4>Frugal-routing doctrine lineage, AGPL pinned (Task 35)</h4><span class="fb-tag done">בוצע</span></div>
+  <p class="fb-desc">Owner directive 'תראה מה עם זה' (https://github.com/Alishahryar1/free-claude-code, 56,409 stars — local proxy connecting coding agents to OpenAI-compatible providers, 59 provider integrations / 11 harnesses, Python 3.14, 392 files / 67,669 …</p>
+  <p class="fb-ev">ראיות: CR-0014 PASS; mirror &lt;host&gt;/reference-mirrors/free-claude-code @ 03aca36eb3b9f2bf07805b1c39ec4d61f6f740c1; skill-library-gate.cjs v1.4.0 GREEN 12 packages / 0 offenders (fifth pin + AGPL check); evals v1.14.0 25/25 (E25 strip-restore); judge v1.16.0 40/1/0 (five-lineage anchor); THIRD-PARTY-NOTICES.md §8; init.sh DOMAIN-INIT-OK</p>
+  <p class="fb-dep">תלויות: feat-016</p>
+</li>
+<li class="fb-card" id="feat-018">
+  <div class="fb-head"><span class="fb-id">feat-018</span><h4>Five-repo sweep: lineage constitution five→ten pins (Task 36)</h4><span class="fb-tag done">בוצע</span></div>
+  <p class="fb-desc">Owner five-repo listicle directive evaluated repo-by-repo under the Authority Map: trailhq/Graft (MIT in-file; owner link NanoNets/Graft redirects — org move booked; doctrine: hook-over-note, correction→persistent-rule memory, blast-radius-…</p>
+  <p class="fb-ev">ראיות: CR-0016 PASS; mirrors @ fe30ead/d3f71c4/96c3f41c/08e2151/843607b1 (all in-file license verified); gate v1.5.0 GREEN 14/0 (ten pins); evals v1.15.0 26/26 (E26 ×5 strip-restore); judge v1.17.0 40/1/0 (nine anchors true); notices §9-§13; init.sh DOMAIN-INIT-OK</p>
+  <p class="fb-dep">תלויות: feat-017</p>
+</li>
+<li class="fb-card" id="feat-019">
+  <div class="fb-head"><span class="fb-id">feat-019</span><h4>Ground-truth audit + one-bloc token-mode proposal (Task 37)</h4><span class="fb-tag done">בוצע</span></div>
+  <p class="fb-desc">Owner directive: measure git ground truth without trusting prior claims. FRESH MEASUREMENTS (all live, Task 37): authenticated API sweep 16/16 repos reachable (the standing 'authWall 14' is a keyless-probe artifact — one-bloc.cjs reads toke…</p>
+  <p class="fb-ev">ראיות: CR-0017 PASS; fresh sweep receipts in worklog Task 37; one-bloc token-mode one-shot JSON at 2026-10-03T05:36:36Z; judge 41/0/0 measured; init.sh DOMAIN-INIT-OK</p>
+  <p class="fb-dep">תלויות: feat-018</p>
+</li>
+<li class="fb-card" id="feat-020">
+  <div class="fb-head"><span class="fb-id">feat-020</span><h4>Fleet Rung 3: parallel mini-swe wave over isolated git worktrees (CR-0</h4><span class="fb-tag done">בוצע</span></div>
+  <p class="fb-desc">orca's N agents x N worktrees x 1 tracker pattern landed live: 2 concurrent mini-swe-agent 2.4.6 instances on detached Domain worktrees over the CR-0015 keyless shim, env -i scrubbed, cost-limit armed, both exit 0 with distinct create/appen…</p>
+  <p class="fb-ev">ראיות: CR-0020 PASS (renumbered from CR-0019 — collision with the sibling swe-guard CR-0019, bc63c59; later mover renumbers); live receipts (EXIT1=0 EXIT2=0; RUNG3-WT1-OK / RUNG3-WT2-OK; shim interleave msgs=2,2,4,4; git status ?? wave/ only x2); rebuild receipts (shim from CR spec, mirror sha 04d809c == notices §6, mini 2.4.6); PROBE-LANE orca row QUEUED→LANDED + mini row Rung 3</p>
+  <p class="fb-dep">תלויות: feat-018, feat-019</p>
+</li>
+<li class="fb-card" id="feat-021">
+  <div class="fb-head"><span class="fb-id">feat-021</span><h4>Fleet Rung 4: guarded parallel waves </h4><span class="fb-tag done">בוצע</span></div>
+  <p class="fb-desc">Composed sibling CR-0019 (GuardedLocalEnvironment in execution path) with CR-0020 (parallel worktree wave): 2 concurrent guarded mini-swe 2.4.6 instances per wave, 2 waves, exits 0 ×4, per-instance trajectories via -o (CR-0020 overwrite fin…</p>
+  <p class="fb-ev">ראיות: CR-0021 PASS; guard smoke (rc 0/126/126 + JSONL x2); waves: exits 0 ×2 ×2, RUNG4-WT1-OK / RUNG4-WT2-OK ×2; trajectories traj-gwt1.json + traj-gwt2.json distinct; deny ledger 2→2; PROBE-LANE mini row + Rung 4</p>
+  <p class="fb-dep">תלויות: feat-018, feat-019, feat-020</p>
+</li>
+<li class="fb-card" id="feat-022">
+  <div class="fb-head"><span class="fb-id">feat-022</span><h4>Fleet Rung 5: Graft context-economy multiplier </h4><span class="fb-tag done">בוצע</span></div>
+  <p class="fb-desc">Adopted NanoNets/Graft @ pin fe30ead (MIT, already in the ten-pin constitution) built FROM SOURCE (BAKED_KEY empty → telemetry module inert) + DO_NOT_TRACK=1 before first run. Base graph on Domain worktree: 69 files, 686 nodes, 1524 edges, …</p>
+  <p class="fb-ev">ראיות: CR-0022 PASS (14 receipts, 5 findings); telemetry 4-gate audit (source+dist+self-report+queue: nothing queued, identity never minted); graph 686 nodes/1524 edges; ask hit #1 exact; paired runs traj-g5a (7 calls) / traj-g5b (3 calls); deny ledger 2→2; worktree pruned zero-residue; PROBE-LANE Graft row QUEUED→LANDED</p>
+  <p class="fb-dep">תלויות: feat-020, feat-021</p>
+</li>
+<li class="fb-card" id="feat-023">
+  <div class="fb-head"><span class="fb-id">feat-023</span><h4>Fleet Rung 2.5 (RESTORED ROW): real reef runtime deployed locally + la</h4><span class="fb-tag done">בוצע</span></div>
+  <p class="fb-desc">RESTORED BOOKKEEPING ROW — CR-0023 (sibling lane, renumbered from CR-0021 — third collision) claimed feat-023 in its text but the ledger row was never written; the hole stood through the R6 worklog note and CR-0029 finding #3, and was resto…</p>
+  <p class="fb-ev">ראיות: CR-0023 PASS (sibling lane); row missing from ledger despite being claimed in CR text (hole noted R6, re-noted CR-0029 finding #3); restored by CR-0030 bookkeeping pass with restore marking; PROBE-LANE reef + laya rows carry the full landing detail</p>
+  <p class="fb-dep">תלויות: feat-022</p>
+</li>
+<li class="fb-card" id="feat-024">
+  <div class="fb-head"><span class="fb-id">feat-024</span><h4>Shim v1.1.0 retry/backoff queue </h4><span class="fb-tag done">בוצע</span></div>
+  <p class="fb-desc">Upgraded the CR-0015 shim with a global upstream gate (max 2 in-flight, FIFO queue), exponential backoff retries (1s..16s cap + jitter, SHIM_MAX_RETRIES env-tunable, default 5) and honest per-event logs; fail-loud preserved on exhaustion. R…</p>
+  <p class="fb-ev">ראיות: CR-0026 PASS (renumbered from CR-0024 — fourth collision, see renumber_note) (8 receipts, 5 findings); burst 6/6 200 + queued wait_ms=696 + retry backoff_ms=1046; G6-SHIM-QUEUE-OK via mini-swe; deep rc=0 with 18 concept nodes + concept-tier ask hits; retry 8/8 ladder receipt; /health v1.1.0 additive fields; worktree pruned zero-residue</p>
+  <p class="fb-dep">תלויות: feat-020, feat-022</p>
+</li>
+<li class="fb-card" id="feat-025">
+  <div class="fb-head"><span class="fb-id">feat-025</span><h4>Fleet Rung 7: codebase-memory-mcp structural code intelligence </h4><span class="fb-tag done">בוצע</span></div>
+  <p class="fb-desc">Adopted DeusData/codebase-memory-mcp @ pin 96c3f41c (MIT, already in the ten-pin constitution — no new pin, gate stays v1.5.0) built FROM SOURCE (300MB ELF, 162 tree-sitter grammars embedded, zero runtime deps; NO release binary, NO install…</p>
+  <p class="fb-ev">ראיות: CR-0029 PASS (renumbered from CR-0027 — fifth collision, see renumber_note) (14 receipts, 6 findings); source build at pin 96c3f41c (make -f Makefile.cbm cbm); telemetry clean by source audit + DO_NOT_TRACK=1; index 9.3s rc=0, graph census 7437/11265; search_graph hit #1 exact guard_env.py 61-104; stdio MCP 17-tools transcript; latency ladder 5.5s/2.0s/12-15ms; paired runs traj-g7a (6 calls) / traj-g7b (3 calls); deny ledger 2-&gt;2; mirror diff -q identical; git status 0/0/0 (zero residue); PROBE-LANE codebase-memory-mcp row QUEUED-&gt;LANDED</p>
+  <p class="fb-dep">תלויות: feat-022, feat-024</p>
+</li>
+<li class="fb-card" id="feat-026">
+  <div class="fb-head"><span class="fb-id">feat-026</span><h4>Fleet Rung 8: fleet MCP host </h4><span class="fb-tag done">בוצע</span></div>
+  <p class="fb-desc">New fleet mini-service mini-services/mcp-host (bun, :3041, bun --hot, own package.json) governing the codebase-memory-mcp engine (Rung 7 / CR-0029 source build). Laws IN CODE: defense in depth (host allowlist belt = faithful analysis-profil…</p>
+  <p class="fb-ev">ראיות: CR-0031 PASS (renumbered from CR-0030 — sixth collision, see renumber_note) (10 receipts, 6 findings); deny ledger /tmp/mcp-host-denies.jsonl 3 lines; gateway receipts via :81 XTransformPort; Bun Promise-truth law + per-stream buffer law + stderr-drain law booked; ledger now contiguous feat-022..feat-026</p>
+  <p class="fb-dep">תלויות: feat-025, feat-023</p>
+</li>
+<li class="fb-card" id="feat-027">
+  <div class="fb-head"><span class="fb-id">feat-027</span><h4>Fleet Rung 9: host-consumer wiring </h4><span class="fb-tag done">בוצע</span></div>
+  <p class="fb-desc">agents/cmmq/cmmq.sh: the in-tree consumer wrapper (curl-only, fail-loud, reads-only) — the ONE client shape for desk scripts and guarded episodes to reach the governed structural layer (CR-0031 host). Proven: episode-internal consumption re…</p>
+  <p class="fb-ev">ראיות: CR-0032; /tmp/g9-traj trajectories + answer files + consoles; host log 55 receipted calls; /tmp/mcp-host-denies.jsonl line #4</p>
+  <p class="fb-dep">תלויות: feat-026</p>
+</li>
+<li class="fb-card" id="feat-028">
+  <div class="fb-head"><span class="fb-id">feat-028</span><h4>Fleet Rung 10 (convergence): market-grid desk </h4><span class="fb-tag done">בוצע</span></div>
+  <p class="fb-desc">agents/market-grid.cjs: reads the REAL orderbooks/tickers/tape from the chains' OWN official APIs (api.hive.blog, api.steemit.com condenser_api; api.hive-engine.com JSON-RPC), computes REAL grids (band clamped from 24h change, spacing ≥ 0.4…</p>
+  <p class="fb-ev">ראיות: CR-0034; <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/market-grid.json/.md" target="_blank" rel="noreferrer"><code>agents/market-grid.json/.md</code></a> + market-grid-paper.jsonl; Defi fleet KPI.json; fills-ledger.json; vetted-source digest in CR-0034 receipts</p>
+  <p class="fb-dep">תלויות: feat-027</p>
+</li>
+<li class="fb-card" id="feat-029">
+  <div class="fb-head"><span class="fb-id">feat-029</span><h4>Fleet Rung 11 (convergence unblock): checkout wave 16/16 repos local, </h4><span class="fb-tag done">בוצע</span></div>
+  <p class="fb-desc">The REPO-PROXIMITY GAP closed: all 14 missing org repos cloned into the local estate (~880MB, metadata-only receipts, no secret material echoed) — saos-dex grid-heartbeat + platform Foundry contracts + Zip key vault + steem HE ladder now in…</p>
+  <p class="fb-ev">ראיות: CR-0035; <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/market-grid-history.jsonl" target="_blank" rel="noreferrer"><code>agents/market-grid-history.jsonl</code></a>; local estate table (16/16); trongrid read-back; saos-dex/platform/Zip/steem head receipts</p>
+  <p class="fb-dep">תלויות: feat-028</p>
+</li>
+<li class="fb-card" id="feat-030">
+  <div class="fb-head"><span class="fb-id">feat-030</span><h4>Fleet Rung 12: SIGNED market executor </h4><span class="fb-tag done">בוצע</span></div>
+  <p class="fb-desc">CR-0034 built the keyless grid observer; the operator directive opened the owner gate and this rung claims the signing leg: agents/market-exec.cjs verify-then-sign (derived active WIF byte-checked vs on-chain active_key_auths, DRY_RUN defau…</p>
+  <p class="fb-ev">ראיות: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/market-exec.json" target="_blank" rel="noreferrer"><code>agents/market-exec.json</code></a> run#7,agents/market-exec.md,agents/evm-convergence.md,evals E28</p>
+  <p class="fb-when">נחתם 3 באוק׳ 2026</p>
+</li>
+<li class="fb-card" id="feat-031">
+  <div class="fb-head"><span class="fb-id">feat-031</span><h4>Fleet Rung 12 (cross-layer convergence pass): mechanical offline audit</h4><span class="fb-tag done">בוצע</span></div>
+  <p class="fb-desc">agents/cross-layer.cjs reads the REAL sources of all four layers from the 16/16-local estate (L0 Domain market-grid.cjs, L1 saos-dex kernel/amm/mm/grid-beat + grid-ledger.json, L2 steem he_ladder.cjs + live_gate, L3 platform SAOSExchange.so…</p>
+  <p class="fb-ev">ראיות: CR-0037; <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/cross-layer.json/.md" target="_blank" rel="noreferrer"><code>agents/cross-layer.json/.md</code></a></p>
+  <p class="fb-dep">תלויות: feat-029</p>
+</li>
+<li class="fb-card" id="feat-032">
+  <div class="fb-head"><span class="fb-id">feat-032</span><h4>Fleet Rung 13 (cadence wired): market-grid history time-series on Acti</h4><span class="fb-tag done">בוצע</span></div>
+  <p class="fb-desc">.github/workflows/market-grid-cron.yml turns the market-grid desk from a hand-run snapshot instrument into a scheduled ~48-rows/day time-series at zero capital/zero secrets/zero authority: the twin publish idiom (add -&gt; diff --cached --quie…</p>
+  <p class="fb-ev">ראיות: CR-0038; <a href="https://github.com/roshpinacare-sys/Domain/blob/main/.github/workflows/market-grid-cron.yml" target="_blank" rel="noreferrer"><code>.github/workflows/market-grid-cron.yml</code></a>; <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/market-grid.cjs" target="_blank" rel="noreferrer"><code>agents/market-grid.cjs</code></a> STASIS brake; <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/market-grid-history.jsonl" target="_blank" rel="noreferrer"><code>agents/market-grid-history.jsonl</code></a> 4 rows; run-evals v1.17.0 E29; evals 29/29</p>
+  <p class="fb-dep">תלויות: feat-031</p>
+</li></ul>
+    </details>
+<details class="fb-grp" >
+      <summary><span class="fb-tag done">5 ממומש</span><span class="fb-grp-t">ממומש</span></summary>
+      <ul class="fb-grid"><li class="fb-card" id="feat-057">
+  <div class="fb-head"><span class="fb-id">feat-057</span><h4>Fleet Rung 32: THE SIDECHAIN POND (CR-0062) </h4><span class="fb-tag done">ממומש</span></div>
+  <p class="fb-desc">Fleet Rung 32: THE SIDECHAIN POND (CR-0062) — the venue's own measured 24h volume IS the volume bound: the Hive-Engine projection OPENS on the pond (min(pond, capacity) with the binding NAMED — never a borrowed tape prior), converting SWAP.…</p>
+  <p class="fb-ev">ראיות: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/evals/eval-results.json" target="_blank" rel="noreferrer"><code>agents/evals/eval-results.json</code></a>,agents/mm-volume.cjs,agents/market-grid.cjs,agents/change-requests/CR-0062-sidechain-pond.json,agents/mm-volume.json</p>
+  
+</li>
+<li class="fb-card" id="feat-058">
+  <div class="fb-head"><span class="fb-id">feat-058</span><h4>Fleet Rung 33: THE SOVEREIGN HANDS &amp; THE P&amp;L VERDICT (CR-0063) </h4><span class="fb-tag done">ממומש</span></div>
+  <p class="fb-desc">Fleet Rung 33: THE SOVEREIGN HANDS &amp; THE P&amp;L VERDICT (CR-0063) — the owner moved the last gate into the sovereignty: market-exec law 11 EDGE-CURE (own buys above sellVwap×0.997 cancelled before planning — the pre-law mine cleared LIVE, txid…</p>
+  <p class="fb-ev">ראיות: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/evals/eval-results.json" target="_blank" rel="noreferrer"><code>agents/evals/eval-results.json</code></a>,agents/pnl-book.cjs,agents/sovereign-trade.cjs,agents/sovereign-trade-loop.sh,agents/market-exec.cjs,agents/change-requests/CR-0063-sovereign-hands.json,agents/pnl-book.json,agents/sovereign-trade.json</p>
+  
+</li>
+<li class="fb-card" id="feat-059">
+  <div class="fb-head"><span class="fb-id">feat-059</span><h4>Fleet Rung 34: THE FILL-THROUGH EVOLUTION (CR-0064) </h4><span class="fb-tag done">ממומש</span></div>
+  <p class="fb-desc">Fleet Rung 34: THE FILL-THROUGH EVOLUTION (CR-0064) — the ladder shape evolves with the measured binding (capture, not capacity): market-exec DEFAULTS SELL_LEVELS 4→3 + BUY_LEVELS 2→3 + BUY_SBD 0.25→0.5 (3 sells + 3 buys = exactly MAX_NEW_O…</p>
+  <p class="fb-ev">ראיות: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/evals/eval-results.json" target="_blank" rel="noreferrer"><code>agents/evals/eval-results.json</code></a>,agents/market-exec.cjs,agents/sovereign-trade.cjs,agents/sovereign-trade-loop.sh,agents/change-requests/CR-0064-fill-through-evolution.json</p>
+  
+</li>
+<li class="fb-card" id="feat-060">
+  <div class="fb-head"><span class="fb-id">feat-060</span><h4>Fleet Rung 35: THE HUMAN CADENCE (CR-0065) </h4><span class="fb-tag done">ממומש</span></div>
+  <p class="fb-desc">Fleet Rung 35: THE HUMAN CADENCE (CR-0065) — the burst stack is dead, measured on-chain first: 10 posts in one run ~500ms apart, votes in perfect 18-21s cadence in fixed order, follows at exact 3s intervals, all in 2-3 daily windows; one sh…</p>
+  <p class="fb-ev">ראיות: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/human-cadence.cjs" target="_blank" rel="noreferrer"><code>agents/human-cadence.cjs</code></a>,agents/persona-slots.json,agents/content-library.json,agents/human-cadence-status.json,agents/head-delegate.cjs,agents/evals/eval-results.json,.github/workflows/human-cadence.yml,.github/workflows/self-audience.yml,agents/change-requests/CR-0065-human-cadence.json</p>
+  
+</li>
+<li class="fb-card" id="feat-061">
+  <div class="fb-head"><span class="fb-id">feat-061</span><h4>Fleet Rung 36: THE COMMUNITY HOME (CR-0066) </h4><span class="fb-tag done">ממומש</span></div>
+  <p class="fb-desc">Fleet Rung 36: THE COMMUNITY HOME (CR-0066) — the fleet founded its dedicated Steem community on ground truth measured from the live chain BEFORE a line of code (the PromoSteem ceremony: account_create with the measured 3.000 STEEM fee + co…</p>
+  <p class="fb-ev">ראיות: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/community-founder.cjs" target="_blank" rel="noreferrer"><code>agents/community-founder.cjs</code></a>,agents/community-founder.json,agents/community-founder.md,agents/change-requests/CR-0066-community-home.json,agents/evals/eval-results.json,agents/evals/run-evals.cjs</p>
+  
+</li></ul>
+    </details>
+<details class="fb-grp" >
+      <summary><span class="fb-tag done">1 נשלח</span><span class="fb-grp-t">נשלח</span></summary>
+      <ul class="fb-grid"><li class="fb-card" id="feat-043">
+  <div class="fb-head"><span class="fb-id">feat-043</span><h4>Fleet Rung 19: THE COORDINATION BUS </h4><span class="fb-tag done">נשלח</span></div>
+  <p class="fb-desc">Convergence §4.3 booking executed. Measured live at open: the bus ALREADY carried traffic (33 saos.weave.core.v1 checkpoints + 4 saos.snapshot.v1 digests on owner) with NO reader in the estate. coord-bus.cjs reads it keyless (primary+cross,…</p>
+  
+  <p class="fb-when">נחתם 3 באוק׳ 2026</p>
+</li></ul>
+    </details>
+<details class="fb-grp" >
+      <summary><span class="fb-tag open">1 פתוח</span><span class="fb-grp-t">פתוח · היעד הבא</span></summary>
+      <ul class="fb-grid"><li class="fb-card" id="feat-007">
+  <div class="fb-head"><span class="fb-id">feat-007</span><h4>Daily revenue &gt; 1 cent (owner KPI)</h4><span class="fb-tag open">פתוח</span></div>
+  <p class="fb-desc">Realized chain income (curation + author + claims) maturing above $0.01/day, receipts-provable</p>
+  <p class="fb-ev">ראיות: v3 engine run-rate 0.02–0.06 SBD/day maturing over 7 days; needs days of receipts to show realized &gt;1¢ — SP compounding + daily quality posts are the levers</p>
+  <p class="fb-dep">תלויות: feat-001</p>
+</li></ul>
+    </details>
+<details class="fb-grp" >
+      <summary><span class="fb-tag doc">8 רישומי-דור</span><span class="fb-grp-t">רישומי-דור (CR) · מתועדים בשרשרת</span></summary>
+      <ul class="fb-grid"><li class="fb-card" id="feat-062">
+  <div class="fb-head"><span class="fb-id">feat-062</span><h4>Fleet Rung 37: THE COMMUNITY BREATH (CR-0067) </h4><span class="fb-tag doc">מתועד</span></div>
+  <p class="fb-desc">Fleet Rung 37: THE COMMUNITY BREATH (CR-0067) — the fleet's life moves inside its own house: human-cadence.cjs v2 (community mode + blog retarget) lands every soldier post INSIDE hive-177702 The Clubhouse (first tag = community, hub tag tra…</p>
+  <p class="fb-ev">ראיות: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/human-cadence.cjs" target="_blank" rel="noreferrer"><code>agents/human-cadence.cjs</code></a>,agents/persona-slots.json,agents/community-founder.cjs,agents/change-requests/CR-0067-community-breath.json,.github/workflows/human-cadence.yml,agents/community-founder.json,agents/human-cadence.json,agents/evals/run-evals.cjs</p>
+  
+</li>
+<li class="fb-card" id="feat-063">
+  <div class="fb-head"><span class="fb-id">feat-063</span><h4>Fleet Rung 38: THE CHAIN PROOF (CR-0068) </h4><span class="fb-tag doc">מתועד</span></div>
+  <p class="fb-desc">Fleet Rung 38: THE CHAIN PROOF (CR-0068) — the NAME is not the CHAIN. The owner read hive-177702 as a Hive-network home; both bridges were probed live (steemit.com EXISTS id 1979419 / api.hive.blog asserts does-not-exist) and a STEEM-CHAIN …</p>
+  <p class="fb-ev">ראיות: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/community-founder.cjs" target="_blank" rel="noreferrer"><code>agents/community-founder.cjs</code></a>,agents/community-founder.json,agents/community-founder.md,agents/evals/run-evals.cjs,.github/workflows/human-cadence.yml</p>
+  
+</li>
+<li class="fb-card" id="feat-064">
+  <div class="fb-head"><span class="fb-id">feat-064</span><h4>Fleet Rung 39: THE SWAP NET (CR-0069) </h4><span class="fb-tag doc">מתועד</span></div>
+  <p class="fb-desc">Fleet Rung 39: THE SWAP NET (CR-0069) — the DEX learns to route. dex-router.cjs (keyless, STASIS-obeying, fail-soft) measures the whole venue graph hourly: steem/hive internal markets, Hive-Engine wrapped pools (multi-mirror, HE-RPC-DARK bo…</p>
+  <p class="fb-ev">ראיות: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/dex-router.cjs" target="_blank" rel="noreferrer"><code>agents/dex-router.cjs</code></a>,agents/dex-router.json,agents/dex-router.md,agents/dex-router-history.jsonl,agents/change-requests/CR-0069-swap-net.json,agents/evals/run-evals.cjs,.github/workflows/dex-router-cron.yml,agents/fleet-graph.md</p>
+  
+</li>
+<li class="fb-card" id="feat-065">
+  <div class="fb-head"><span class="fb-id">feat-065</span><h4>Fleet Rung 40: THE EXCHANGE CORE (CR-0070) </h4><span class="fb-tag doc">מתועד</span></div>
+  <p class="fb-desc">Fleet Rung 40: THE EXCHANGE CORE (CR-0070) — the DEX settles. dex-core.cjs: an atomic, deterministic, reserve-backed settlement engine on our own ledger. Two invariants, one engine: Uniswap v2 exact CPMM for volatile pairs (fee-on-input, fl…</p>
+  <p class="fb-ev">ראיות: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/dex-core.cjs" target="_blank" rel="noreferrer"><code>agents/dex-core.cjs</code></a>,agents/dex-core.json,agents/dex-core.md,agents/dex-core-history.jsonl,agents/evals/run-evals.cjs,.github/workflows/dex-core-cron.yml</p>
+  
+</li>
+<li class="fb-card" id="feat-066">
+  <div class="fb-head"><span class="fb-id">feat-066</span><h4>Fleet Rung 41: THE MESH MARKET (CR-0071) </h4><span class="fb-tag doc">מתועד</span></div>
+  <p class="fb-desc">Fleet Rung 41: THE MESH MARKET (CR-0071) — the fleet trades on our own ledger. The owner demanded a networked arbitrage market for the agents and soldiers (&quot;שנסחר גם פה וגם שם וגם שם&quot;), a wide volume of REAL trades and profits on our own ne…</p>
+  
+  
+</li>
+<li class="fb-card" id="feat-067">
+  <div class="fb-head"><span class="fb-id">feat-067</span><h4>Fleet Rung 42: THE MULTI-NETWORK VAULT (CR-0072) </h4><span class="fb-tag doc">מתועד</span></div>
+  <p class="fb-desc">Fleet Rung 42: THE MULTI-NETWORK VAULT (CR-0072) — the vault holds what its keys can move and sees every network. The owner demanded a smart thing on our network that holds real coins/tokens of all networks and ours. dex-core.cjs v1.2.0: th…</p>
+  
+  
+</li>
+<li class="fb-card" id="feat-068">
+  <div class="fb-head"><span class="fb-id">feat-068</span><h4>Fleet Rung 43: THE INTENT GATES (CR-0073) </h4><span class="fb-tag doc">מתועד</span></div>
+  <p class="fb-desc">Fleet Rung 43: THE INTENT GATES (CR-0073) — the DEX learns cross-chain intents. dex-xc.cjs (SAOS-DEX-XC/1, new) + dex-core.cjs v1.3.0 (settleXcOps): ERC-7683 vocabulary (open → resolve → fill → settle/timeout/refund) over ONE deterministic …</p>
+  <p class="fb-ev">ראיות: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/dex-xc.cjs" target="_blank" rel="noreferrer"><code>agents/dex-xc.cjs</code></a>,agents/dex-xc.json,agents/dex-xc.md,agents/dex-xc-history.jsonl,agents/dex-core.cjs,agents/dex-core.json,dex/xc-intents.json,dex/xc-ops.json,dex/pegout-queue.json,agents/evals/run-evals.cjs,.github/workflows/dex-xc-cron.yml,agents/change-requests/CR-0073-intent-gates.json</p>
+  
+</li>
+<li class="fb-card" id="feat-069">
+  <div class="fb-head"><span class="fb-id">feat-069</span><h4>Fleet Rung 44: THE OPPOSING HANDS (CR-0074) </h4><span class="fb-tag doc">מתועד</span></div>
+  <p class="fb-desc">Fleet Rung 44: THE OPPOSING HANDS (CR-0074) — the counter-grids ARM and the pegout hand proves itself. The owner ordered the opposing grids to stand on our own network — &quot;אני רוצה לייצר עוד גרידים מתנגדים על הרשת שלנו מצד שני&quot; (trace 1a10…c…</p>
+  <p class="fb-ev">ראיות: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/dex-core.cjs" target="_blank" rel="noreferrer"><code>agents/dex-core.cjs</code></a>,agents/dex-core.json,agents/dex-core.md,agents/dex-core-history.jsonl,agents/counter-grid.cjs,agents/counter-grid.json,agents/counter-grid.md,agents/counter-grid-history.jsonl,agents/pegout-hand.cjs,agents/pegout-hand.json,agents/pegout-hand.md,agents/pegout-hand-history.jsonl,dex/pegout-queue.json,agents/arb-mesh.cjs,agents/evals/run-evals.cjs,agents/change-requests/CR-0074-counter-grids.json</p>
+  
+</li></ul>
+    </details>
+    <p class="fb-law">חוק-הרישום: הרישום חי ב-<a href="https://github.com/roshpinacare-sys/Domain/blob/main/feature_list.json" target="_blank" rel="noreferrer">feature_list.json</a> בגיט — הקוד הוא האמת, הדף רק מציג אותו. כלי שנוסף שם מופיע כאן באפייה הבאה, בלי יד אנושית.</p>
+  </div>
+</section>
+<!--CAPABILITIES:END-->
 
 <section id="law" aria-labelledby="l-h">
   <div class="wrap">

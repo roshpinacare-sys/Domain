@@ -7,6 +7,11 @@
  *   FleetHQ raw office/state/office-state.json   — כתבה-ראשית: המשרד החי
  *   Domain status.json                            — מערכת: דופק-הצי
  *   Domain moment/moment.json                     — מוסף-כלכלה
+ *   Domain feature_list.json                      — מוסף-הכלים: רישום-היכולות (G45)
+ *   Domain agents/market-grid.json + arb-mesh.json + mm-volume.json — מוסף-השוק
+ *   Domain agents/money-ledger.json + econ-book.json               — מוסף-הכסף
+ *   Domain agents/fill-ledger.json                — מוסף-המילויים
+ *   Domain mirror.json                            — מראת-השרשרת
  *   Domain content/published.json                 — מוסף-השרשרת (כותרות-בלבד לפי מדיניות-החשיפה)
  *   Domain agents/recruitment.json                — מודעות-הגיוס
  *   Domain agents/ventures.json                   — מוסף-המיזמים
@@ -41,6 +46,31 @@ async function jget(url, timeoutMs = 12000) {
 }
 
 const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+/* סולם-נסיונות + נפילה-מקומית (שיעור-Z14: מקור-ציבורי רעב לא יכול להשתיק כתבה.
+ * אם הרשת לא ענתה אבל הקובץ קיים בקומיט הנוכחי — נמדד מהעותק המקומי, וזה נאמר בגלוי) */
+async function jgetL(url, localPath = null, timeoutMs = 12000) {
+  let lastErr;
+  for (let round = 0; round < 2; round++) {
+    try {
+      const v = await jget(url, timeoutMs);
+      v.__src = "live";
+      return v;
+    } catch (e) {
+      lastErr = e;
+      if (round === 0) await new Promise((r) => setTimeout(r, 1500));
+    }
+  }
+  if (localPath) {
+    try {
+      const v = JSON.parse(fs.readFileSync(localPath, "utf8"));
+      v.__src = "commit-copy";
+      return v;
+    } catch { /* fallthrough */ }
+  }
+  throw lastErr;
+}
+const srcNote = (v) => v && v.__src === "commit-copy" ? "נמדד מהעותק המאופה בגיט (אותו-קומיט) — הרשת לא ענתה באפייה זו" : null;
 
 function ago(iso) {
   if (!iso) return null;
@@ -91,7 +121,7 @@ const NOT_MEASURED = `<p class="na">לא נמדד במהדורה זו — המק
   /* 2) מערכת — דופק-הצי */
   let fleetHtml = NOT_MEASURED, fleetIso = null, summaryRow = "";
   try {
-    const s = await jget(PAGES("status.json"));
+    const s = await jgetL(PAGES("status.json"), path.join(__dirname, "..", "status.json"));
     fleetIso = s.generatedAt;
     const p = s.pulse || {};
     const sum = s.summary || {};
@@ -101,6 +131,7 @@ const NOT_MEASURED = `<p class="na">לא נמדד במהדורה זו — המק
     fleetHtml = `
   <p class="lead">${esc(p.beatArteries ?? "?")}/${esc(p.totalArteries ?? "?")} עורקים פעמו עכשיו על פני <b>${esc(p.repos ?? "?")}</b> repos.</p>
   <p class="chips">${summaryRow || ""}</p>
+  ${srcNote(s) ? `<p class="sub warn">${esc(srcNote(s))}</p>` : ""}
   <p class="sub">עורק = סוכן-משימה מתוזמן. "פעם" = הרצה אמיתית בחלון-המדידה — לא הצהרה.</p>`;
   } catch (e) {
     fleetHtml = `${NOT_MEASURED}<!-- ${esc(String(e.message || e).slice(0, 80))} -->`;
@@ -173,6 +204,104 @@ const NOT_MEASURED = `<p class="na">לא נמדד במהדורה זו — המק
   <p class="sub">sums לכל-החיים אינם קצב-יומי — הקצב מגיע רק מהאורקל (חוק earn-governor v1.1).</p>`;
   } catch (e) {
     venHtml = `${NOT_MEASURED}<!-- ${esc(String(e.message || e).slice(0, 80))} -->`;
+  }
+
+  /* 7) מוסף-הכלים — רישום-היכולות (G45: הדפים מוכיחים את הארכיטקטורה) */
+  let toolsHtml = NOT_MEASURED, toolsIso = null;
+  try {
+    const fl = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "feature_list.json"), "utf8")).features;
+    toolsIso = new Date().toISOString();
+    const live = fl.filter((f) => f.status === "LIVE").length;
+    const done = fl.filter((f) => ["done", "implemented", "shipped"].includes(f.status)).length;
+    const open = fl.filter((f) => f.status === "open").length;
+    const doc = fl.length - live - done - open;
+    const rungs = fl.filter((f) => !f.status && (f.title || "").startsWith("Fleet Rung")).slice(-3).reverse();
+    toolsHtml = `
+  <p class="lead"><b>${fl.length} כלים</b> רשומים בארכיטקטורה: <b class="ok">${live} חיים</b> · ${done} בוצעו-עם-ראיות · ${open} פתוחים · ${doc} מתועדים.</p>
+  ${rungs.length ? `<ul class="posts">${rungs.map((f) => `<li><span class="tagc">${esc(f.cr || "CR")}</span> ${esc((f.title || "").split("—")[0].replace(/^Fleet Rung \d+: /, "").slice(0, 60))} <span class="dim">· הדור-החדש ברישום</span></li>`).join("")}</ul>` : ""}
+  <p class="sub">הרישום המלא — כל כלי עם סטטוס, ראיות מקושרות ותאריך — חי ב<a href="${SITE}products.html#capabilities">קטלוג-היכולות בדף-המוצרים</a>. הדף הזה מוכיח את העבודה, לא מספר עליה.</p>`;
+  } catch (e) {
+    toolsHtml = `${NOT_MEASURED}<!-- ${esc(String(e.message || e).slice(0, 80))} -->`;
+  }
+
+  /* 8) מוסף-השוק — הספר הפנימי, המש, וכיול-הגודל */
+  let mktHtml = NOT_MEASURED, mktIso = null;
+  try {
+    const mg = await jgetL(PAGES("agents/market-grid.json"), path.join(__dirname, "..", "agents", "market-grid.json"));
+    const am = await jgetL(PAGES("agents/arb-mesh.json"), path.join(__dirname, "..", "agents", "arb-mesh.json"));
+    const mm = await jgetL(PAGES("agents/mm-volume.json"), path.join(__dirname, "..", "agents", "mm-volume.json"));
+    mktIso = [mg.at, am.at, mm.at].filter(Boolean).sort().reverse()[0] || null;
+    const m = (mg.markets || [])[0] || {};
+    const cal = mm.calibration || {};
+    mktHtml = `
+  <p class="lead">הספר הפנימי ${esc(m.market || "SBD/STEEM")}: פיזור <b>${esc((m.spreadPct ?? 0).toFixed(3))}%</b> · חגורה ${esc((m.band?.low ?? 0).toFixed(5))}–${esc((m.band?.high ?? 0).toFixed(5))}</p>
+  <ul>
+    <li>רשת-הארביטראז: <b>${esc(am.verdict || "?")}</b> · מצב ${esc(am.mode || "?")} · ${esc((am.laws || []).length)} חוקים חיים${am.stasisHalted ? " · <b class=\"warn\">STASIS-עוצר</b>" : ""}</li>
+    <li>כיול-גודל על מילויים אמיתיים: ${esc((cal.avgSizePriorSbd ?? 0).toFixed(3))}→<b>${esc((cal.avgSizeCalibratedSbd ?? 0).toFixed(3))} SBD</b> ממוצע למילוי (n=${esc(cal.avgSizeCalibratedN ?? "?")} · lift ${esc(Math.round(cal.liftPct ?? 0))}%)</li>
+    <li>ממול-הנפח: <b>${esc((mm.verdict || "?").slice(0, 30))}</b> · ${esc((mm.doctrine || []).length)} סעיפי-דוקטרינה</li>
+  </ul>
+  <p class="sub">המכונה ממתינה מתחת לרצפה כשאין פער — זו החוק עובד, לא תקלה. כל מילוי אמיתי נרשם בספר-המילויים.</p>`;
+  } catch (e) {
+    mktHtml = `${NOT_MEASURED}<!-- ${esc(String(e.message || e).slice(0, 80))} -->`;
+  }
+
+  /* 9) מוסף-הכסף — האוצר האמיתי מהספר-החי */
+  let moneyHtml = NOT_MEASURED, moneyIso = null;
+  try {
+    const ml = await jgetL(PAGES("agents/money-ledger.json"), path.join(__dirname, "..", "agents", "money-ledger.json"));
+    const eb = await jgetL(PAGES("agents/econ-book.json"), path.join(__dirname, "..", "agents", "econ-book.json"));
+    moneyIso = [ml.updated, eb.at].filter(Boolean).sort().reverse()[0] || null;
+    const b = ml.book || {};
+    const hist = ml.history || [];
+    moneyHtml = `
+  <p class="lead">האוצר מהספר-החי: <b>${esc(b.headSteemStake || "?")}</b> · ${esc(b.headSteemLiquid || "0 STEEM")} נזיל · חוב ${esc(b.headSteemDebt || "0")}</p>
+  <ul>
+    <li>HIVE: ${esc(b.headHive?.liquid || "0")} נזיל · ${esc(b.headHive?.effStake || "?")} HP · RC ${esc(b.headHive?.rcPct ?? "?")}% · TRON ${esc(b.tron?.trx || "?")}</li>
+    <li>הכלכלה הפנימית (econ-engine/2): <b>${esc((eb.day24?.transactions ?? 0).toLocaleString("en-US"))}</b> התנהלויות ביממה = ${esc((eb.day24?.mwu ?? 0).toLocaleString("en-US"))} mWU · סה\"כ לכל-החיים ${esc((eb.totals?.tx ?? 0).toLocaleString("en-US"))} tx</li>
+    ${hist.length ? `<li>היסטוריית-ספר: ${esc(hist.length)} רשומות · הספר מדווח גם על אפסים וחובות — לא רק על הישגים</li>` : ""}
+  </ul>
+  <p class="sub">יומן-הכסף המלא חי ב<a href="${SITE}money.html">נתיב-הכסף</a>. אפס-סודות: כתובות מוסקרות, יתרות גלויות.</p>`;
+  } catch (e) {
+    moneyHtml = `${NOT_MEASURED}<!-- ${esc(String(e.message || e).slice(0, 80))} -->`;
+  }
+
+  /* 10) מוסף-המילויים — ספר-המילויים האמיתי */
+  let fillsHtml = NOT_MEASURED, fillsIso = null;
+  try {
+    const fl = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "agents", "fill-ledger.json"), "utf8"));
+    const runs = Array.isArray(fl) ? fl : fl.runs || [];
+    const last = runs[runs.length - 1] || {};
+    fillsIso = last.ts || null;
+    const inv = last.inventory || {};
+    const recentFills = runs.slice(-30).reverse().find((r) => (r.new_fills || []).length) || null;
+    fillsHtml = `
+  <p class="lead"><b>${esc(inv.n_fills ?? "?")}</b> מילויים מצטברים בספר · הריצה האחרונה: <b>${esc(last.mode || "?")}</b> (${esc(last.head || "?")})</p>
+  <ul>
+    <li>מלאי-הספר: ${esc((inv.qty ?? 0).toLocaleString("en-US"))} יחידות · עלות ${esc((inv.cost ?? 0).toLocaleString("en-US"))} · ריאליזציה ${esc((inv.realized ?? 0).toLocaleString("en-US"))} (יחידות-הספר, לא המרה-מטבעית)</li>
+    ${recentFills ? `<li>המילוי-האחרון בריצה: ${esc(recentFills.ts?.slice(0, 16) || "?")}Z · ${esc((recentFills.new_fills || []).length)} מילויים בריצה</li>` : "<li>הריצות-האחרונות: אפס-מילויים חדשים — הספר רץ ומודד, הפער מחכה לרצפה</li>"}
+    <li>${esc(runs.length)} ריצות-מדידה ביומן · מנוע שקט הוא מנוע ששומר — לא מנוע מת</li>
+  </ul>
+  <p class="sub">מקור: agents/fill-ledger.json בגיט — המספרים מהריצות-האמיתיות, לא מתוכנית-עסקית.</p>`;
+  } catch (e) {
+    fillsHtml = `${NOT_MEASURED}<!-- ${esc(String(e.message || e).slice(0, 80))} -->`;
+  }
+
+  /* 11) מראת-השרשרת — העדויות החתומות */
+  let mirrorHtml = NOT_MEASURED, mirrorIso = null;
+  try {
+    const mv = await jgetL(PAGES("mirror.json"), path.join(__dirname, "..", "mirror.json"));
+    mirrorIso = mv.generatedAt;
+    const st = mv.stats || {};
+    const vit = st.vitality || {};
+    mirrorHtml = `
+  <p class="lead"><b>${esc((st.attestations ?? 0).toLocaleString("en-US"))}</b> עדויות חתומות · <b>${esc((st.checkpoints ?? 0).toLocaleString("en-US"))}</b> נקודות-צ'ק · ${esc(st.agents ?? "?")} חותמים</p>
+  <ul>
+    <li>ביממה-האחרונה: ${esc(vit.atts24h ?? "?")} עדויות · ${esc(vit.signers24h ?? "?")} חותמים פעילים · ${esc(vit.checkpoints24h ?? "?")} נקודות</li>
+    <li>מעמד-אימות: ${esc(st.attByStatus?.VERIFIED ?? 0)} VERIFIED · ${esc(st.attByStatus?.UNMEASURED ?? 0)} לא-נמדד — מדווח בגלוי</li>
+  </ul>
+  <p class="sub">מראת-השרשרת נגזרת מהעוגנים הציבוריים בלבד — אפס-מפתחות, אפס-סודות, הקריאה-חזרה היא האמת.</p>`;
+  } catch (e) {
+    mirrorHtml = `${NOT_MEASURED}<!-- ${esc(String(e.message || e).slice(0, 80))} -->`;
   }
 
   /* ------------------------------- the page -------------------------------- */
@@ -259,6 +388,11 @@ footer{border-top:1px solid var(--line);padding:18px 0 30px;color:var(--faint);f
     ${sec("המשרד החי", "כתבה-ראשית · FleetHQ office-state", officeHtml, "https://raw.githubusercontent.com/roshpinacare-sys/FleetHQ/main/office/state/office-state.json", officeIso).replace('class="card"', 'class="card lead-card"')}
     ${sec("דופק-הצי", "מערכת · status.json", fleetHtml, "https://roshpinacare-sys.github.io/Domain/status.json", fleetIso)}
     ${sec("הרגע הכלכלי", "moment-watch · R62", momHtml, "https://roshpinacare-sys.github.io/Domain/moment/moment.json", momIso)}
+    ${sec("מוסף-הכלים", "רישום-היכולות · feature_list.json", toolsHtml, "https://roshpinacare-sys.github.io/Domain/feature_list.json", toolsIso)}
+    ${sec("מוסף-השוק", "הספר הפנימי · grid + mesh + volume", mktHtml, "https://roshpinacare-sys.github.io/Domain/agents/market-grid.json", mktIso)}
+    ${sec("מוסף-הכסף", "האוצר מהספר-החי · money-ledger + econ-book", moneyHtml, "https://roshpinacare-sys.github.io/Domain/agents/money-ledger.json", moneyIso)}
+    ${sec("מוסף-המילויים", "ספר-המילויים · fill-ledger", fillsHtml, "https://roshpinacare-sys.github.io/Domain/agents/fill-ledger.json", fillsIso)}
+    ${sec("מראת-השרשרת", "העדויות החתומות · mirror", mirrorHtml, "https://roshpinacare-sys.github.io/Domain/mirror.json", mirrorIso)}
     ${sec("בשרשרת", "מוסף-הפרסומים", chainHtml, "https://roshpinacare-sys.github.io/Domain/content/published.json", chainIso)}
     ${sec("מודעות-הגיוס", "לוח-התפקידים של האורגניזם", recHtml, "https://roshpinacare-sys.github.io/Domain/agents/recruitment.json", recIso)}
     ${sec("מוסף-המיזמים", "venture-desk", venHtml, "https://roshpinacare-sys.github.io/Domain/agents/ventures.json", venIso)}
