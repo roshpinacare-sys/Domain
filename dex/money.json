@@ -1,39 +1,81 @@
 {
+ "ok": true,
+ "format": "money-watch-v2",
+ "publishedAt": "2026-10-21T07:20:11.480Z",
+ "engine": "Console/agents/money-watch · R39 money path sentinel (treasury-upgraded 2026-10-21)",
+ "role": "watches the money-path chokepoints: fuel-in (headcorner treasury + powerdown landing -> grid dispatch), yield-out (saos-yield dividend transfers on-chain), and redemption-out (peg-outbox vs TRON broadcast cost)",
+ "fuel": {
   "ok": true,
-  "format": "money-watch-v1",
-  "publishedAt": "2026-10-21T06:04:46.043Z",
-  "engine": "Console/agents/money-watch · R39 money path sentinel",
-  "role": "watches the two money-path chokepoints: fuel-in (powerdown landing -> immediate grid dispatch) and redemption-out (peg-outbox vs TRON broadcast cost)",
-  "fuel": {
-    "ok": true,
-    "account": "owne…[redacted]",
-    "steem": 0,
-    "sbd": 0.001,
-    "powerdown": {
-      "active": false,
-      "rateVests": 0.000001,
-      "rateSp": 0,
-      "nextPayout": "1969-12-31T23:59:59",
-      "remainingVests": 0
-    }
+  "account": "headcorner",
+  "steem": 158.562,
+  "sbd": 1.266,
+  "powerdown": {
+   "active": true,
+   "rateVests": 0.402925,
+   "rateSp": 0,
+   "nextPayout": "2026-10-25T01:40:51",
+   "remainingVests": 1611699
+  }
+ },
+ "yield": {
+  "ok": true,
+  "rosterSize": 10,
+  "scanned": 10,
+  "transfers": 4,
+  "totalSteem": 27.5,
+  "byDay": {
+   "2026-10-21": 27.48
   },
-  "landing": null,
-  "dispatch": {
-    "attempted": false,
-    "ok": false,
-    "note": "no landing detected"
-  },
-  "redemption": {
-    "ok": false,
-    "error": "peg-outbox wallet not found in world.json"
-  },
-  "invariant": null,
-  "marks": {
-    "steemUsd": 0.054719,
-    "sbdUsd": null,
-    "trxUsd": 0.331035,
-    "error": "coingecko -> 429",
-    "oracleFallback": true
-  },
-  "honesty": "כל נתון נמדד חי מ-RPC ציבורי (Steem/trongrid/CoinGecko) או מ-world.json המפורסם. נפילת מקור מסומנת בכנות. עלות השידור ב-TRON (0.35 TRX) נמדדה משריפת-גז היסטורית של חשבון המשמרת; סף השליחה = פי 3 מהעלות. המפתח: אפס - לא סוכן חותם."
+  "latest": [
+   {
+    "txAt": "2026-10-21T07:10:18",
+    "to": "lsa",
+    "amount": 6.874,
+    "asset": "STEEM",
+    "memo": "saos-yield 2026-10-21"
+   },
+   {
+    "txAt": "2026-10-21T07:10:12",
+    "to": "israelnews",
+    "amount": 6.874,
+    "asset": "STEEM",
+    "memo": "saos-yield 2026-10-21"
+   },
+   {
+    "txAt": "2026-10-21T07:10:09",
+    "to": "cashmachine",
+    "amount": 6.874,
+    "asset": "STEEM",
+    "memo": "saos-yield 2026-10-21"
+   },
+   {
+    "txAt": "2026-10-21T07:10:09",
+    "to": "haran",
+    "amount": 6.874,
+    "asset": "STEEM",
+    "memo": "saos-yield 2026-10-21"
+   }
+  ],
+  "errors": [],
+  "note": "4 yield transfers measured on-chain (public rpc, zero keys) — the dividend rail is LIVE"
+ },
+ "landing": null,
+ "dispatch": {
+  "attempted": false,
+  "ok": false,
+  "note": "no landing detected"
+ },
+ "redemption": {
+  "ok": false,
+  "error": "peg-outbox wallet not found in world.json"
+ },
+ "invariant": null,
+ "marks": {
+  "steemUsd": 0.05518,
+  "sbdUsd": null,
+  "trxUsd": 0.330907,
+  "error": "coingecko -> 429",
+  "oracleFallback": true
+ },
+ "honesty": "כל נתון נמדד חי מ-RPC ציבורי (Steem/trongrid/CoinGecko) או מ-world.json המפורסם. נפילת מקור מסומנת בכנות. חלוקת-התשואה נמדדת מהיסטוריית-השרשרת של 10 חשבונות-הרוסטר — כל טקסיד ציבורי-ומאומת, אפס-מפתחות. עלות השידור ב-TRON (0.35 TRX) נמדדה משריפת-גז היסטורית; סף השליחה = פי 3 מהעלות. המפתח: אפס - לא סוכן חותם."
 }
