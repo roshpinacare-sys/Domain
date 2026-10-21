@@ -5,10 +5,10 @@
 |---|---|---|---|---|---|---|
 | SBD/STEEM (internal steem) | 0 | 2.5562 | 1.2781 | 25.458 | 1884.672 | 1.3508% |
 | saos-dex-kernel (L1 our own DEX) | 30 | — | — | — | — | — |
-| BEE/SWAP.HIVE (hive-engine) | 0 | 0.4642 | — | — | — | — |
+| BEE/SWAP.HIVE (hive-engine) | 0 | 0.6242 | — | — | — | — |
 | CENT/SWAP.HIVE (hive-engine) | 0 | 0.4249 | — | — | — | — |
 | SWAP.DOGE/SWAP.HIVE (hive-engine) | 0 | 1.0394 | — | — | — | — |
-| SWAP.LTC/SWAP.HIVE (hive-engine) | 0 | 0.1009 | — | — | — | — |
+| SWAP.LTC/SWAP.HIVE (hive-engine) | 0 | 0.0051 | — | — | — | — |
 | WAIV/SWAP.HIVE (hive-engine) | 0 | 1.1297 | — | — | — | — |
 סולם הנתח בSBD/STEEM (internal steem) (מימון מהמדידה של השרשרת):
 - N=1 חיילים → 244.3968 SBD/יום = 12.9676% מהבריכה
