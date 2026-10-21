@@ -1,24 +1,19 @@
 {
  "schema": "site-audit/1",
- "at": "2026-10-21T05:58:17.109Z",
+ "at": "2026-10-21T06:01:10.445Z",
  "scope": "live-pages:https://roshpinacare-sys.github.io/Domain/",
  "pagesScanned": 94,
  "summary": {
-  "findings": 14,
-  "externalBlocked": 4,
+  "findings": 13,
+  "externalBlocked": 3,
   "transientBlocked": 0,
   "checked": 275,
-  "structuralFindings": 2
+  "structuralFindings": 1
  },
  "findings": [
   {
    "rule": "R-SITEMAP",
    "file": "quality/index.html",
-   "note": "indexable page missing from sitemap.xml"
-  },
-  {
-   "rule": "R-SITEMAP",
-   "file": "wallet-truth.html",
    "note": "indexable page missing from sitemap.xml"
   },
   {
@@ -109,14 +104,6 @@
  ],
  "externalBlocked": [
   {
-   "code": 451,
-   "url": "https://api.binance.com/api/v3/ticker/24hr?symbol=STEEMUSDT",
-   "sources": [
-    "press/editions/2026-10-21.html",
-    "press/index.html"
-   ]
-  },
-  {
    "code": 403,
    "url": "https://etherscan.io/tx/0x102ec1935be6cb3ff3acc20189a85377cf57486515f3121472c6611b20e0ef41",
    "sources": [
@@ -166,7 +153,7 @@
    "R-SITEMAP",
    "R-TRUTH"
   ],
-  "findings": 2
+  "findings": 1
  },
  "overall": "FAIL",
  "note": "קישורים = אמת-חיה ב-Pages: 404 פנימי/חוץ = עמוד-מת (FINDING); 403/429/502 אצל צד-ג = חסימת-בוט (רמז בלבד); 429/503 מפני-ה-github.com-שלנו = חנק-מדידה (TRANSIENT — ריטרי-3 ואז רשום-בלי-הכשל). קישורים הנבנים ב-JS בזמן-ריצה אינם נסרקים כאן — הם אינם href סטטי. structural = אמת-checkout בלי רשת (R75): R-BALANCE·R-SCRIPT·R-CANONICAL·R-STUB·R-SITEMAP·R-TRUTH — החוקים ב-agents/SELF-CHECKS.md."
