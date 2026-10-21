@@ -25,6 +25,7 @@ name: identity-guard
 
 on:
   push:
+  workflow_dispatch:         # manual activation of the deep sweep (run-ID proof on demand)
   schedule:
     - cron: '33 6 * * 1'   # weekly Monday deep sweep (report-only custody receipt)
 
@@ -72,7 +73,7 @@ jobs:
           echo "identity-guard: PASS — 0 forbidden identities in $RANGE"
 
   deep-sweep:
-    if: github.event_name == 'schedule'
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 9
     permissions:
