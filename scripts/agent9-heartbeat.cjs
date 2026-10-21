@@ -115,8 +115,8 @@ async function measureBakeRaw() {
   return { at: j.at, ageMin: Math.round((Date.now() - Date.parse(j.at)) / 60000) };
 }
 
-async function measureBakeCommit() {
-  const res = await gh(`/repos/${CFG.repo}/commits?path=truth/agent9.json&sha=${CFG.branch}&per_page=1`, null);
+async function measureBakeCommit(token) {
+  const res = await gh(`/repos/${CFG.repo}/commits?path=truth/agent9.json&sha=${CFG.branch}&per_page=1`, token || null);
   if (!res.ok) throw new Error(`commits ${res.status}`);
   const j = await res.json();
   const c = j && j[0] && j[0].commit && j[0].commit.committer && j[0].commit.committer.date;
@@ -230,10 +230,13 @@ async function tick() {
     return;
   }
   // raw says stale — CONFIRM with the authoritative commits API (anti CDN-lag)
-  let c;
-  try { c = await measureBakeCommit(); } catch (e) {
-    state.lastVerdict = "CONFIRM-FAIL";
-    logEvent("CONFIRM-FAIL", e.message);
+  let c = null;
+  try { c = await measureBakeCommit(readToken()); } catch (e) {
+    // bug-t55h-c: confirm failing (403/net) must NOT paralyze healing —
+    // fail-closed protects against fabrication, not against healing.
+    // Redundant bake is harmless; hours of silence is not.
+    logEvent("CONFIRM-FAIL-DISPATCH-ANYWAY", e.message);
+    await healLoop("raw-stale+confirm-unavailable", m.ageMin);
     return;
   }
   state.lastCommitAt = c.at;
