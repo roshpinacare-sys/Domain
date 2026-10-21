@@ -1,6 +1,6 @@
 {
   "protocol": "SAOS-DEX-ROUTER/1",
-  "at": "2026-10-21T04:41:33.707Z",
+  "at": "2026-10-21T04:45:24.897Z",
   "agent": "dex-router v1.0.0 (R39 SWAP-NET, CR-0069)",
   "mode": "KEYLESS-READ",
   "stasisHalted": false,
@@ -17,12 +17,12 @@
       "alive": true,
       "chain": "steem",
       "bid": 0.1034340091021928,
-      "ask": 0.10350801212646167,
-      "mid": 0.10347101,
-      "spreadPct": 0,
+      "ask": 0.10381143430290872,
+      "mid": 0.10362272,
+      "spreadPct": 0.25,
       "pct24h": 2.175,
-      "depthBids": 2022861,
-      "depthAsks": 631698,
+      "depthBids": 2022359,
+      "depthAsks": 726492,
       "node": "api.steemit.com"
     },
     "hive-internal": {
@@ -41,17 +41,38 @@
       "rows": [
         {
           "venue": "Binance",
-          "symbol": "BTCUSDT",
-          "mid": null,
-          "pct24h": null,
-          "why": "HTTP-418"
-        },
-        {
-          "venue": "Binance",
           "symbol": "HIVEUSDT",
           "mid": null,
           "pct24h": null,
-          "why": "HTTP-418"
+          "why": "HTTP-451"
+        },
+        {
+          "venue": "Binance",
+          "symbol": "STEEMUSDT",
+          "mid": null,
+          "pct24h": null,
+          "why": "HTTP-451"
+        },
+        {
+          "venue": "Binance",
+          "symbol": "BTCUSDT",
+          "mid": null,
+          "pct24h": null,
+          "why": "HTTP-451"
+        },
+        {
+          "venue": "Binance",
+          "symbol": "HBDUSDT",
+          "mid": null,
+          "pct24h": null,
+          "why": "HTTP-451"
+        },
+        {
+          "venue": "MEXC",
+          "symbol": "HBDUSDT",
+          "mid": null,
+          "pct24h": null,
+          "why": "HTTP-400"
         },
         {
           "venue": "HTX",
@@ -61,46 +82,25 @@
           "why": "NO-TICK"
         },
         {
-          "venue": "Binance",
-          "symbol": "HBDUSDT",
-          "mid": null,
-          "pct24h": null,
-          "why": "HTTP-418"
+          "venue": "MEXC",
+          "symbol": "STEEMUSDT",
+          "mid": 0.05475,
+          "pct24h": 0.031,
+          "why": null
         },
         {
           "venue": "HTX",
           "symbol": "SBDUSDT",
           "mid": 0.5238,
-          "pct24h": -3.678,
-          "why": null
-        },
-        {
-          "venue": "Binance",
-          "symbol": "STEEMUSDT",
-          "mid": 0.0547,
-          "pct24h": 3.033,
-          "why": null
-        },
-        {
-          "venue": "MEXC",
-          "symbol": "STEEMUSDT",
-          "mid": 0.05474,
-          "pct24h": 0.03,
+          "pct24h": -3.642,
           "why": null
         },
         {
           "venue": "MEXC",
           "symbol": "HIVEUSDT",
-          "mid": 0.0503,
+          "mid": 0.05032,
           "pct24h": 0.026,
           "why": null
-        },
-        {
-          "venue": "MEXC",
-          "symbol": "HBDUSDT",
-          "mid": null,
-          "pct24h": null,
-          "why": "HTTP-400"
         }
       ],
       "primarySymbols": [
@@ -166,7 +166,7 @@
       "alive": true,
       "engine": "saos-dex/1.20 cloud-beat · R23 live-anchor · T25 depth-forge",
       "publishedAt": "2026-10-21T04:02:45.391Z",
-      "mirrorAgeHours": 0.6,
+      "mirrorAgeHours": 0.7,
       "pools": [
         {
           "pair": "SAOS/USDS",
@@ -246,8 +246,8 @@
       "sizeNote": "≤ 1.25 STEEM/rung ×3 (sovereign policy)",
       "quote": {
         "in": "1.000 SBD",
-        "out": "9.661088 STEEM",
-        "impliedPrice": 0.10350801,
+        "out": "9.63285 STEEM",
+        "impliedPrice": 0.10381143,
         "impactBps": null
       },
       "verdict": "LIVE-KEYED",
@@ -380,8 +380,8 @@
       "sizeNote": "large sizes allowed — the designated big-rail",
       "quote": {
         "in": "1.000 STEEM",
-        "out": "0.054673 USDT",
-        "impliedPrice": 0.0547,
+        "out": "0.054723 USDT",
+        "impliedPrice": 0.05475,
         "impactBps": null
       },
       "verdict": "C-GATE-OPERATOR",
@@ -428,8 +428,8 @@
       "sizeNote": "ingress of real value — funds the grid",
       "quote": {
         "in": "100.000 USDT",
-        "out": "1828.153565 STEEM",
-        "impliedPrice": 0.0547,
+        "out": "1826.484018 STEEM",
+        "impliedPrice": 0.05475,
         "impactBps": null
       },
       "verdict": "C-GATE-OPERATOR",
@@ -500,12 +500,12 @@
         "steem-internal",
         "cex:STEEMUSDT+SBDUSDT"
       ],
-      "localMid": 0.10347101,
-      "impliedFair": 0.10442917,
-      "grossBps": -91.75,
+      "localMid": 0.10362272,
+      "impliedFair": 0.10452463,
+      "grossBps": -86.29,
       "feesBps": 0,
       "slipBps": 20,
-      "netBps": 71.75,
+      "netBps": 66.29,
       "thresholdBps": 100,
       "driftPct": null,
       "verdict": "BELOW-FLOOR",
@@ -556,48 +556,48 @@
   "counterGrid": {
     "steem": {
       "market": "SBD/STEEM (STEEM internal)",
-      "anchor": 0.10442917,
+      "anchor": 0.10452463,
       "anchorSource": "CEX-IMPLIED-FAIR (SBDUSDT/STEEMUSDT — lead-lag anchor, the opposing side of the local book)",
-      "localMid": 0.10347101,
-      "spreadPct": 0,
+      "localMid": 0.10362272,
+      "spreadPct": 0.25,
       "spacingPct": 0.4,
-      "anchorAdj": 0.10442917,
+      "anchorAdj": 0.10452463,
       "skewShiftBps": 0,
       "spacingBps": 40,
       "rungs": [
         {
           "side": "buy",
-          "price": 0.10401145,
+          "price": 0.10410653,
           "size": 0,
           "unit": "SBD"
         },
         {
           "side": "buy",
-          "price": 0.10359374,
+          "price": 0.10368843,
           "size": 0,
           "unit": "SBD"
         },
         {
           "side": "buy",
-          "price": 0.10317602,
+          "price": 0.10327033,
           "size": 0,
           "unit": "SBD"
         },
         {
           "side": "sell",
-          "price": 0.10484689,
+          "price": 0.10494273,
           "size": 0,
           "unit": "STEEM"
         },
         {
           "side": "sell",
-          "price": 0.1052646,
+          "price": 0.10536083,
           "size": 0,
           "unit": "STEEM"
         },
         {
           "side": "sell",
-          "price": 0.10568232,
+          "price": 0.10577893,
           "size": 0,
           "unit": "STEEM"
         }
