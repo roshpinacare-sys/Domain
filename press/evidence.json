@@ -1,40 +1,66 @@
 {
   "schema": "agent4.evidence.v1",
-  "generatedAt": "2026-10-21T05:28:09.013Z",
+  "generatedAt": "2026-10-21T05:29:29.370Z",
   "lane": "agent4/p2-sovereign-market",
   "publisher": "fleet-runner:pages-evidence (הארכיטקטורה מפרסמת את עצמה — בלי-סוכן, בלי-בקשה)",
   "honesty": "כל מקור נמדד בנפרד ברגע-האפייה; מקור שלא השיב מדווח available:false — אין אומדן ואין המצאה. אפס-סודות: התוכן עובר שער-סודות לפני-פרסום.",
   "sources": {
     "capability": {
-      "available": false,
-      "reason": "capability-matrix.json לא נקרא"
+      "available": true,
+      "at": "2026-10-21T05:24:18.889Z",
+      "verdict": "CAPABILITY-AUDIT-FAIL",
+      "pass": 13,
+      "fail": 1,
+      "gaps": 5
     },
     "treasury": {
-      "available": false,
-      "reason": "treasury/last.json לא נקרא"
+      "available": true,
+      "at": "2026-10-21T05:25:19.747Z",
+      "feesUsd": 0.154575,
+      "settledTrades": 121,
+      "stakedQuote": 64128181,
+      "marketOk": true,
+      "ledgerOk": true
     },
     "oracle": {
-      "available": false,
-      "reason": "ENOENT: no such file or directory, open '/home/z/my-project/mini-services/fleet-runner/scr"
+      "available": true,
+      "at": null,
+      "ageMin": null,
+      "keys": [
+        "at",
+        "source",
+        "network",
+        "pair",
+        "bid",
+        "ask",
+        "last",
+        "volume24h"
+      ]
     },
     "council": {
       "available": false,
       "reason": "last-decision.json לא נקרא"
     },
     "secretsGate": {
-      "available": false,
-      "reason": "secrets-gate.json לא נקרא"
+      "available": true,
+      "at": "2026-10-21T05:04:51.907Z",
+      "verdict": "CLEAN",
+      "filesScanned": 344
     },
     "schedules": {
-      "available": false,
-      "reason": "schedules.json לא נקרא"
+      "available": true,
+      "total": 20,
+      "enabled": 20,
+      "runsTotal": 3870,
+      "failsTotal": 228,
+      "successRate": 94.1
     },
     "ledger": {
       "available": true,
       "seq": 1321,
       "headPrevHash": "4b7424e24eba",
       "lastTs": "2026-10-21T05:02:47.080Z",
-      "ageMin": 25,
+      "ageMin": 27,
       "records": 1060,
       "settles24h": 160,
       "fees24hUsd": 0.096477,
