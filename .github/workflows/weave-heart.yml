@@ -6,7 +6,18 @@ name: weave-heart
 
 on:
   schedule:
-    - cron: '29 16 * * *'
+    # [wave 19.53 · trace 1a15dcfe6e13c1b9] cadence cure at the writer, measured root:
+    # the daily 16:29 slot (with GitHub drift landing it 20:02Z) left Console mirror.json
+    # 13.7h stale — sovereign.html measured WARN "data 13h old" against the quality
+    # law's 6h threshold (quality/report.json 09:03Z). publishConsoleMirror() runs on
+    # EVERY beat, including attestation-only (weave-beat.ts 3.7: "רץ בכל פעימה - גם
+    # ב-SANDBOX-ALIVE"), and auto mode never takes over while the ledger is fresh
+    # (WEAVE_STALE_MIN 1560 unchanged) — so a 4h schedule only adds honest attestations
+    # + a fresh public mirror, zero takeover risk. Anchor lines keep their own daily
+    # root with Z-18 dedup (already anchored => ALREADY-ANCHORED, honest skip), so the
+    # extra dispatches are no-ops there. Publishing-frequency change inside the 15-c
+    # delegation (owner standing: הפעל הכל · נייעל · trace 1a15d4de19bd1791).
+    - cron: '29 */4 * * *'
   workflow_dispatch:
     inputs:
       mode:
