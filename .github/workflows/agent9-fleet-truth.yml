@@ -42,4 +42,12 @@ jobs:
           git add truth/agent9.json
           OK=$(python3 -c "import json;d=json.load(open('truth/agent9.json'));print(f\"{sum(1 for s in d['sources'] if s['ok'])}/{len(d['sources'])}\")")
           git commit -m "agent-9/t55: fleet-truth bake [sources ok ${OK}] @ $(date -u +%FT%TZ) [skip ci]" || echo "nothing changed"
-          git push origin HEAD:main
+          # wave-19.52 push-race hardening (house pull-rebase-retry law): the bare push lost a
+          # race to a sibling beat at 08:41Z (run 39571102006, "fetch first" → honest red for a
+          # bake that itself succeeded). Retry with rebase before each push.
+          ok=0
+          for i in 1 2 3 4 5; do
+            if git pull --rebase -q origin main && git push -q origin HEAD:main; then ok=1; break; fi
+            sleep $((i * 4))
+          done
+          [ "$ok" = "1" ] || { echo "PUSH-FAIL after 5 retries — honest red, next bake retries"; exit 1; }
