@@ -66,7 +66,7 @@
     <section class="card" id="card-chain">
       <h2><span class="dot live"></span>משמורת-STEEM חיה (RPC-ציבורי)</h2>
       <div class="big" id="hc-steem">…</div>
-      <div class="small">STEEM נזיל · @headcorner — נמדד-עכשיו-מהדפדפן-שלך</div>
+      <div class="small">STEEM נזיל · @acct-h-849e9df7 — נמדד-עכשיו-מהדפדפן-שלך</div>
       <div style="margin-top:10px">
         <div class="row"><span>SBD נזיל</span><b id="hc-sbd">—</b></div>
         <div class="row"><span>STEEM-POWER</span><b id="hc-sp">—</b></div>
@@ -84,7 +84,7 @@
         <table><thead><tr><th>זמן</th><th>צד</th><th>שילם</th><th>קיבל</th></tr></thead>
         <tbody id="book-fills"><tr><td colspan="4" class="small">—</td></tr></tbody></table>
       </div>
-      <div class="src">מקור: history-של-@headcorner על-השרשרת (fill_order אמת) — סוחרים-חוץ אמיתיים, יישוב-על-שרשרת, אפס-עמלה</div>
+      <div class="src">מקור: history-של-@acct-h-849e9df7 על-השרשרת (fill_order אמת) — סוחרים-חוץ אמיתיים, יישוב-על-שרשרת, אפס-עמלה</div>
     </section>
 
     <section class="card" id="card-pnl">
@@ -182,7 +182,7 @@ async function loadLiveChain() {
     body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params })
   })).result;
   try {
-    const a = (await rpc("condenser_api.get_accounts", [["headcorner"]]))[0];
+    const a = (await rpc("condenser_api.get_accounts", [["acct-h-849e9df7"]]))[0];
     const steem = parseFloat(a.balance);
     const sbd = parseFloat(a.sbd_balance);
     const vests = parseFloat(a.vesting_shares);
@@ -204,7 +204,7 @@ async function loadLiveChain() {
     } catch { document.getElementById("hc-px").textContent = "—"; }
   } catch { document.getElementById("hc-steem").textContent = "RPC-לא-זמין"; }
   try {
-    const orders = await rpc("condenser_api.get_open_orders", [["headcorner"]]);
+    const orders = await rpc("condenser_api.get_open_orders", [["acct-h-849e9df7"]]);
     const tb = document.getElementById("book-fills");
     if (Array.isArray(orders) && orders.length) {
       document.getElementById("book-verdict").textContent = orders.length + " פקודות-חיות";
@@ -218,13 +218,13 @@ async function loadLiveChain() {
   } catch { document.getElementById("book-verdict").textContent = "RPC-לא-זמין"; }
   try {
     // מילויים-אמת אחרונים מההיסטוריה
-    const hist = await rpc("condenser_api.get_account_history", ["headcorner", -1, 200]);
+    const hist = await rpc("condenser_api.get_account_history", ["acct-h-849e9df7", -1, 200]);
     const fills = (hist || []).filter(([, it]) => it.op[0] === "fill_order").slice(-6).reverse();
     const tb = document.getElementById("book-fills");
     if (fills.length) {
       tb.innerHTML = fills.map(([, it]) => {
         const f = it.op[1];
-        return `<tr><td>${it.timestamp.slice(5,16)}</td><td>${f.open_owner === "headcorner" ? "maker" : "taker"}</td><td>${f.current_pays}</td><td>${f.open_pays}</td></tr>`;
+        return `<tr><td>${it.timestamp.slice(5,16)}</td><td>${f.open_owner === "acct-h-849e9df7" ? "maker" : "taker"}</td><td>${f.current_pays}</td><td>${f.open_pays}</td></tr>`;
       }).join("");
     }
   } catch { /* כנה: הטבלה נשארת — */ }
