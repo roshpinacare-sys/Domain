@@ -136,6 +136,48 @@ function auditPage(page, sources) {
   fs.mkdirSync(path.join(ROOT, "quality"), { recursive: true });
   fs.writeFileSync(path.join(ROOT, "quality", "report.json"), JSON.stringify(report, null, 2));
 
+  /* AGENT4-QUALITY-BADGE BEGIN (agent4 · trace 1a15d16ba3498581) — additive.
+     badges.html מכריז על תג-איכות (badge/quality.svg) שמעולם לא נאפה → 404 חי
+     (agents/site-audit.json). התיקון-השורש: התג נאפה כאן, מיד אחרי הדוח שהוא מסכם,
+     על-ידי בעל-הנתונים עצמו — לא ידנית, לא ערוך-יד. צבע לפי המדידה: FAIL אדום,
+     WARN ענבר, PASS ירוק. אפייה-מותנית (כמו bakeIfChanged) כדי לא לרענן סתם. */
+  try {
+    const badgeEsc = (s) =>
+      String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    const badgeW = (s) => Math.round(String(s).length * 6.45);
+    const c = counts;
+    const color = c.FAIL > 0 ? "#b3001b" : c.WARN > 0 ? "#a35b00" : "#1a7f37";
+    const qLabel = "SAOS quality";
+    const qValue = `${c.PASS} PASS · ${c.WARN} WARN · ${c.FAIL} FAIL`;
+    const lw = badgeW(qLabel) + 14;
+    const vw = badgeW(qValue) + 14;
+    const bw = lw + vw;
+    const bh = 20;
+    const svg = `<?xml version="1.0" encoding="UTF-8"?>
+<!-- SAOS measured badge — baked from quality/report.json by pages-quality-audit CI. Do not edit by hand; it is re-baked every run. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="${bw}" height="${bh}" role="img" aria-label="${badgeEsc(qLabel)}: ${badgeEsc(qValue)}" viewBox="0 0 ${bw} ${bh}" font-family="Verdana,Geneva,DejaVu Sans,sans-serif">
+<linearGradient id="s" x2="0" y2="100%"><stop offset="0" stop-color="#bbb" stop-opacity=".1"/><stop offset="1" stop-opacity=".1"/></linearGradient>
+<clipPath id="r"><rect width="${bw}" height="${bh}" rx="3" fill="#fff"/></clipPath>
+<g clip-path="url(#r)">
+<rect width="${lw}" height="${bh}" fill="#1d1f24"/>
+<rect x="${lw}" width="${vw}" height="${bh}" fill="${color}"/>
+<rect width="${bw}" height="${bh}" fill="url(#s)"/>
+</g>
+<g fill="#fff" text-anchor="middle" font-size="11">
+<circle cx="9" cy="${bh / 2}" r="3.2" fill="#2fae63"/>
+<text x="${9 + 3.2 + 3.5}" y="${bh / 2 + 3.8}" fill="#c8cdd4" text-anchor="start">${badgeEsc(qLabel)}</text>
+<text x="${lw + vw / 2}" y="${bh / 2 + 3.8}" fill="#ffffff">${badgeEsc(qValue)}</text>
+</g>
+</svg>
+`;
+    const badgeAbs = path.join(ROOT, "badge", "quality.svg");
+    const prev = fs.existsSync(badgeAbs) ? fs.readFileSync(badgeAbs, "utf8") : null;
+    if (prev !== svg) fs.writeFileSync(badgeAbs, svg);
+  } catch {
+    /* fail-soft: התג לעולם לא מפיל את המדידה עצמה */
+  }
+  /* AGENT4-QUALITY-BADGE END */
+
   const cls = { PASS: "ok", WARN: "warn", FAIL: "fail" };
   const rows = pages
     .map(

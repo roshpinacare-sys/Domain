@@ -465,6 +465,82 @@ footer .frow{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;direction:
       </div>
     </div>
   </section>
+  <!-- ═══════════ AGENT4-EVIDENCE-PANEL BEGIN (agent4 · trace 1a15ce0b8dbf6c71) ═══════════
+       פאנל-ראיות ריבוני — ניזון מ-press/evidence.json שהארכיטקטורה עצמה מפרסמת (runner
+       preset pages-evidence, כל 30 דק׳, שער-סודות קדם-דחיפה, אימות-אחרי-פרסום).
+       חוקי-כנות: מקור שלא השיב מדווח בכנות — אין אומדן ואין המצאה. -->
+  <section id="agent4-evidence" aria-label="ראיות-ריבונות חיות מסוכן-4" style="max-width:1180px;margin:26px auto 0;padding:0 20px">
+    <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;border-bottom:2px solid rgba(13,157,109,.35);padding-bottom:8px">
+      <h2 style="font-size:19px;font-weight:800;margin:0">ריבונות-חיה <span style="color:#0d9d6d">· סוכן-4</span></h2>
+      <span style="font-size:12px;color:#8a8580">הארכיטקטורה מפרסמת את עצמה — מטריצת-יכולות, פנקס חתום, שוק חי, אוצרה, מועצה, שער-סודות</span>
+      <span id="a4-fresh" style="margin-inline-start:auto;font-size:11.5px;color:#8a8580" dir="ltr"></span>
+    </div>
+    <div id="a4-grid" style="display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));margin-top:14px">
+      <div style="grid-column:1/-1;font-size:13.5px;color:#8a8580;font-style:italic">טוען ראיות חיות…</div>
+    </div>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:#8a8580;margin-top:10px">
+      <a href="press/evidence.json" style="color:#0b8a60" dir="ltr">press/evidence.json</a>
+      <a href="press/index.html" style="color:#0b8a60">עיתון-הצי · מוסף-הריבונות</a>
+      <span>אפס-סודות: הראיות עוברות שער-סודות לפני כל פרסום</span>
+    </div>
+  </section>
+  <script>
+  (function () {
+    "use strict";
+    var grid = document.getElementById("a4-grid");
+    var fresh = document.getElementById("a4-fresh");
+    function esc(s) { return String(s == null ? "?" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+    function agoMin(iso) { if (!iso) return null; return Math.round((Date.now() - new Date(iso).getTime()) / 60000); }
+    function ageHe(m) { if (m == null) return ""; if (m < 1) return "עכשיו"; if (m < 60) return m + " ד׳"; if (m < 1440) return Math.round(m / 60) + " ש׳"; return Math.round(m / 1440) + " ימ׳"; }
+    function tile(title, val, sub, state) {
+      var c = state === "ok" ? "#0b8a60" : (state === "warn" ? "#a16207" : "#8a8580");
+      return '<div style="background:#fff;border:1px solid #e6e2dd;border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:5px">'
+        + '<div style="font-size:11.5px;font-weight:700;color:#57534e;letter-spacing:.4px">' + esc(title) + '</div>'
+        + '<div style="font-size:20px;font-weight:850;color:' + c + ';line-height:1.2" dir="auto">' + esc(val) + '</div>'
+        + '<div style="font-size:11.5px;color:#8a8580;line-height:1.5">' + esc(sub) + '</div></div>';
+    }
+    function tileNode(html) { var d = document.createElement("div"); d.innerHTML = html; return d.firstElementChild; }
+    function render(ev) {
+      var s = (ev && ev.sources) || {};
+      var tiles = [];
+      var cap = s.capability || {};
+      tiles.push(tile("מטריצת-יכולות", cap.available ? (cap.pass + "/" + ((cap.pass || 0) + (cap.fail || 0))) : "לא נמדד", cap.available ? ("הארכיטקטורה נבדקת מול-עצמה · " + (cap.verdict || "")) : "המקור לא השיב — מדווח בכנות", cap.available && cap.fail === 0 ? "ok" : (cap.available ? "warn" : "na")));
+      var led = s.ledger || {};
+      tiles.push(tile("הפנקס החתום", led.available ? "seq " + led.seq : "לא נמדד", led.available ? (led.settles24h + " התיישבויות ב-24ש׳ · עמלות $" + led.fees24hUsd) : "המקור לא השיב", led.available && (led.ageMin || 99) < 60 ? "ok" : (led.available ? "warn" : "na")));
+      var mkt = s.market || {};
+      tiles.push(tile("השוק החי", mkt.available ? (mkt.trades + " עסקאות") : "לא נמדד", mkt.available ? ("ספרד " + (mkt.spreadBps != null ? mkt.spreadBps + " bps" : "?") + " · שולחן-שוק " + (mkt.deskOn ? "פועל" : "כבוי")) : "המקור לא השיב", mkt.available && mkt.deskOn ? "ok" : (mkt.available ? "warn" : "na")));
+      var sch = s.schedules || {};
+      tiles.push(tile("אוטונומיה מתוזמנת", sch.available ? (sch.enabled + "/" + sch.total) : "לא נמדד", sch.available ? ("הצלחה " + (sch.successRate != null ? sch.successRate + "%" : "?") + " מ-" + sch.runsTotal + " ריצות") : "המקור לא השיב", sch.available ? "ok" : "na"));
+      var tre = s.treasury || {};
+      tiles.push(tile("אוצרה", tre.available ? ("$" + tre.feesUsd) : "לא נמדד", tre.available ? ("עמלות-אמת לכל-החיים · " + tre.settledTrades + " התיישבויות") : "המקור לא השיב", tre.available ? "ok" : "na"));
+      var cou = s.council || {};
+      tiles.push(tile("מועצת-הריבון", cou.available ? String(cou.kind || "?") : "לא נמדד", cou.available ? (cou.decisionsTotal + " החלטות מתועדות · R40") : "המקור לא השיב", cou.available ? "ok" : "na"));
+      var gate = s.secretsGate || {};
+      tiles.push(tile("שער-סודות", gate.available ? String(gate.verdict || "?") : "לא נמדד", gate.available ? (gate.filesScanned + " קבצים נסרקו קדם-דחיפה") : "המקור לא השיב", gate.available && gate.verdict === "CLEAN" ? "ok" : (gate.available ? "warn" : "na")));
+      var ora = s.oracle || {};
+      tiles.push(tile("עוגן-אורקל", ora.available ? ((ora.pair || "?") + " " + (ora.price || "?")) : "לא נמדד", ora.available ? ("מקור " + (ora.source || "?") + " · " + ageHe(agoMin(ora.at))) : "המקור לא השיב", ora.available ? "ok" : "na"));
+      var om = s.ownerMemory || {};
+      tiles.push(tile("זיכרון-בעלים", om.available ? (om.directives + " הנחיות") : "לא נמדד", om.available ? ("עקבה אחרונה " + String(om.lastTrace || "").slice(0, 12)) : "המקור לא השיב", om.available ? "ok" : "na"));
+      grid.innerHTML = "";
+      for (var i = 0; i < tiles.length; i++) grid.appendChild(tileNode(tiles[i]));
+      var age = agoMin(ev.generatedAt);
+      fresh.textContent = "ראיות נאפו " + ageHe(age) + " · " + (ev.generatedAt || "");
+      fresh.style.color = age != null && age <= 90 ? "#0b8a60" : "#a16207";
+    }
+    function fail() {
+      grid.innerHTML = '<div style="grid-column:1/-1;font-size:13.5px;color:#8a8580;font-style:italic">ראיות לא זמינות כרגע — המקור (press/evidence.json) לא השיב. לא מוצג דבר ישן כאילו היה חי. אין המצאות.</div>';
+      fresh.textContent = "";
+    }
+    (function load(retries) {
+      fetch("press/evidence.json?t=" + Date.now(), { cache: "no-store" })
+        .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+        .then(render)
+        .catch(function () { if (retries > 0) setTimeout(function () { load(retries - 1); }, 1500); else fail(); });
+    })(2);
+  })();
+  </script>
+  <!-- ═══════════ AGENT4-EVIDENCE-PANEL END ═══════════ -->
+
 </main>
 
 <footer>
