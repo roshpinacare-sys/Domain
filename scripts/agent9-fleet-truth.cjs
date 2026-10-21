@@ -140,7 +140,7 @@ async function collect() {
   // 6. מדידות-הצלבה [t55c] — גלמי-אמת לפנקס-הסתירות (owner trace 1a15d4acc349fc41:
   //    "יש הרבה סתירות בגיט בין הדברים בוא נוודא הכל"). keyless, fail-closed.
   const RAW_DOMAIN = "https://raw.githubusercontent.com/roshpinacare-sys/Domain/main";
-  const hrs = (iso) => (Date.now() - Date.parse(iso)) / 360e5;
+  const hrs = (iso) => (Date.now() - Date.parse(iso)) / 36e5; // 36e5=3,600,000ms=שעה-אחת · תיקון-bug-t55c-a (360e5=10ש' שינה-את-פסק-X5)
   const ghRepos = push(await wrap("gh-repos-count", async () => {
     let count = 0, page = 1;
     for (;;) {
