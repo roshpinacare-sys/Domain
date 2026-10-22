@@ -26,6 +26,19 @@
 # full-history sweep publishes the measured count + exact commits as a custody
 # receipt — the historical wound stays loud WITHOUT daily storming. History
 # rewrite itself is irreversible → owner-side (DECISIONS #29).
+#
+# [wave 19.64 · trace 1a161b5c5db3c7f9] v3 DENY-BY-DEFAULT: the enumerated classes
+# kept lagging the sandbox defaults — the estate sweep measured z@user.local,
+# agent5@zai.local, agent@saos.local, agent@sovereign-fleet,
+# zai11c@agents.noreply.github.com and grid-keeper@roshpinacare-sys alongside
+# z@container and the noreply class. The law is now stated positively (the lane
+# law itself): ONLY <lane>@fleet.local, <lane>@agents.roshpinacare-sys, the
+# owner org identities (326012154+roshpinacare-sys@ and roshpinacare-sys@
+# users.noreply), github-actions[bot] (both noreply forms), actions@github.com
+# and roshpinacare@gmail.com may author or commit. Anything else is an
+# unidentified writer — torn loudly on push, counted weekly by the census.
+# The same law text lands in Zip and sovereign-runner-kit this wave — the
+# estate-wide law, one text.
 
 name: identity-guard
 
@@ -52,11 +65,16 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Scan pushed commits for forbidden identities (author + committer)
+      - name: Scan pushed commits for unlawful identities (author + committer)
         shell: bash
         run: |
           set -euo pipefail
-          ALLOWED='^(326012154\+roshpinacare-sys@users\.noreply\.github\.com|roshpinacare-sys@users\.noreply\.github\.com|github-actions\[bot\]@users\.noreply\.github\.com)$'
+          # identity law v3 — deny-by-default (wave 19.64): the allowlist IS the
+          # lane law. Enumerated classes (noreply, container) were approximations;
+          # every sandbox default (z@user.local, @zai.local, @saos.local,
+          # @sovereign-fleet, @agents.noreply.github.com, ...) now falls to the
+          # same single rule: no allowlist match = violation.
+          ALLOWED='^([0-9]+\+roshpinacare-sys@users\.noreply\.github\.com|roshpinacare-sys@users\.noreply\.github\.com|([0-9]+\+)?github-actions\[bot\]@users\.noreply\.github\.com|[^@]+@fleet\.local|[^@]+@agents\.roshpinacare-sys|roshpinacare@gmail\.com|actions@github\.com)$'
           BEFORE="${{ github.event.before }}"
           AFTER="${{ github.sha }}"
           if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ] || ! git cat-file -e "$BEFORE" 2>/dev/null; then
@@ -64,20 +82,16 @@ jobs:
           else
             RANGE="$BEFORE..$AFTER"
           fi
-          echo "identity-guard: scanning $RANGE"
-          VIOLATIONS="$(git log --pretty='%H|%ae|%ce|%s' "$RANGE" 2>/dev/null | awk -F'|' '
-            (($2 ~ /@users\.noreply\.github\.com$/ || $3 ~ /@users\.noreply\.github\.com$/) &&
-             $2 !~ /^326012154\+roshpinacare-sys@/ && $3 !~ /^326012154\+roshpinacare-sys@/ &&
-             $2 !~ /^github-actions\[bot\]@/ && $3 !~ /^github-actions\[bot\]@/ &&
-             $2 !~ /^roshpinacare-sys@/ && $3 !~ /^roshpinacare-sys@/) ||
-            ($2 ~ /@container$/ || $3 ~ /@container$/)
+          echo "identity-guard: scanning $RANGE (law v3 deny-by-default)"
+          VIOLATIONS="$(git log --pretty='%H|%ae|%ce|%s' "$RANGE" 2>/dev/null | awk -F'|' -v ALLOWED="$ALLOWED" '
+            $2 !~ ALLOWED || $3 !~ ALLOWED
           ' || true)"
           if [ -n "$VIOLATIONS" ]; then
-            echo "::error::DECISIONS #10 VIOLATION — forbidden identities in pushed commits (NAME@users.noreply.github.com maps to a real foreign GitHub account; *@container is the unidentified sandbox-default class — lane law: <lane>@fleet.local)"
+            echo "::error::DECISIONS #10 VIOLATION — unlawful identities in pushed commits (identity law v3 deny-by-default: only <lane>@fleet.local, <lane>@agents.roshpinacare-sys, the owner org identities, github-actions[bot], actions@github.com and roshpinacare@gmail.com are lawful; anything else is an unidentified sandbox writer)"
             echo "$VIOLATIONS"
             exit 1
           fi
-          echo "identity-guard: PASS — 0 forbidden identities in $RANGE"
+          echo "identity-guard: PASS — 0 unlawful identities in $RANGE"
 
   deep-sweep:
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
@@ -98,12 +112,10 @@ jobs:
           # forbidden-identity commit. This job NEVER fails on findings (report-only,
           # org-gitleaks T-w class) — the wound stays registered and counted; only a
           # scan error fails.
-          VIOLATIONS="$(git log --pretty='%H|%ae|%ce|%ad|%s' --date=iso origin/main 2>/dev/null | awk -F'|' '
-            (($2 ~ /@users\.noreply\.github\.com$/ || $3 ~ /@users\.noreply\.github\.com$/) &&
-             $2 !~ /^326012154\+roshpinacare-sys@/ && $3 !~ /^326012154\+roshpinacare-sys@/ &&
-             $2 !~ /^github-actions\[bot\]@/ && $3 !~ /^github-actions\[bot\]@/ &&
-             $2 !~ /^roshpinacare-sys@/ && $3 !~ /^roshpinacare-sys@/) ||
-            ($2 ~ /@container$/ || $3 ~ /@container$/)
+          # identity law v3 — deny-by-default: same allowlist as the push scan.
+          ALLOWED='^([0-9]+\+roshpinacare-sys@users\.noreply\.github\.com|roshpinacare-sys@users\.noreply\.github\.com|([0-9]+\+)?github-actions\[bot\]@users\.noreply\.github\.com|[^@]+@fleet\.local|[^@]+@agents\.roshpinacare-sys|roshpinacare@gmail\.com|actions@github\.com)$'
+          VIOLATIONS="$(git log --pretty='%H|%ae|%ce|%ad|%s' --date=iso origin/main 2>/dev/null | awk -F'|' -v ALLOWED="$ALLOWED" '
+            $2 !~ ALLOWED || $3 !~ ALLOWED
           ' || true)"
           COUNT="$(printf '%s' "$VIOLATIONS" | grep -c . || true)"
           echo "identity-guard deep-sweep: FULL-HISTORY census — ${COUNT} forbidden-identity commits on record"
@@ -114,9 +126,11 @@ jobs:
           count = int(sys.argv[1])
           receipt = {
               "schema": "identity-guard/deep-sweep/1",
+              "law": "deny-by-default/1 (wave 19.64)",
               "at": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
               "mode": "report-only",
               "forbiddenIdentityCommits": count,
+              "allowedClasses": ["*@fleet.local", "*@agents.roshpinacare-sys", "326012154+roshpinacare-sys@users.noreply.github.com", "roshpinacare-sys@users.noreply.github.com", "github-actions[bot]@users.noreply.github.com", "actions@github.com", "roshpinacare@gmail.com"],
               "note": "landed violations never re-tear on push ranges; this weekly receipt keeps the count loud; history rewrite = owner-side (DECISIONS #29)",
           }
           with open(sys.argv[2], "w") as fh:
