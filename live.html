@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SAOS — חי-עכשיו · רווח-חוץ מדוד ומוכח</title>
-<meta name="description" content="הדשבורד-החי של הריבונות: רווח-חוץ מדוד-מהשרשרת עם-txid, גריד-אמת על ספר-STEEM הציבורי, והחלפות-אמת על SAOS-DEX — כל-מספר עם המקור-שלו.">
+<title>SAOS — חי-עכשיו · הרשת שמריצה את עצמה · מסילת-הדלק מדודה</title>
+<meta name="description" content="הדשבורד-החי של הרשת: החלפות-אמת על SAOS-DEX — הבורסה-שלנו, ביקורת-PnL על fills אמת, גריד-אמת על הספר-הציבורי — ומסילת-הדלק-החוץ (STEEM/SBD) מדודה-מהשרשרת עם-txid: הדלק שמממן את הארכיטקטורה, לא המרכז · כל-מספר עם המקור-שלו.">
 <style>
   :root{
     --bg:#0b0d10; --panel:#12151a; --panel2:#171b22; --line:#232a33;
@@ -44,47 +44,24 @@
 <body>
 <header>
   <h1>SAOS <span>·</span> חי-עכשיו</h1>
-  <div class="sub">רווח-חוץ מדוד-מהשרשרת · גריד-אמת על הספר-הציבורי · החלפות-אמת על הבורסה-שלנו</div>
+  <div class="sub">הרשת בזמן-אמת: החלפות-אמת על הבורסה-שלנו · ביקורת-PnL על fills אמת · גריד-אמת על הספר-הציבורי · ומסילת-הדלק-החוץ המדודה שמממנת את-הכל</div>
   <div class="law">חוק-האמת: כל-מספר כאן נמדד — עם המקור-שלו מוצג. אין-המצאות. מה שלא נמדד — מדווח-כנה כלא-זמין.</div>
+  <div class="law">חוק מרכז-הכובד: הארכיטקטורה שלנו היא המרכז — מטבעות-החוץ הם מסילת-הדלק שמחזקת, מממנת ומעשירה אותה</div>
 </header>
 <main>
   <div class="grid">
 
-    <section class="card" id="card-ext">
-      <h2><span class="dot live"></span>רווח-חוץ מדוד (התגשמות-VESTS)</h2>
-      <div class="big" id="ext-usd">…</div>
-      <div class="small">USD — חלון-24ש׳ · curation+author-rewards עם-block/provenance לכל-אירוע</div>
-      <div style="margin-top:10px">
-        <div class="row"><span>VESTS-נמדדו</span><b id="ext-vests">—</b></div>
-        <div class="row"><span>תמחור</span><b id="ext-price">—</b></div>
-        <div class="row"><span>מקור-מחיר-חוץ</span><b id="ext-src">—</b></div>
-        <div class="row"><span>נמדד-לאחרונה</span><b id="ext-at">—</b></div>
-      </div>
-      <div class="src">מקור: evidence/external-profit-public.json (אטום-מהגיט · ה-banker מודד-מהשרשרת ובונק ל-ledger-החתום)</div>
-    </section>
+    
 
-    <section class="card" id="card-chain">
-      <h2><span class="dot live"></span>משמורת-STEEM חיה (RPC-ציבורי)</h2>
-      <div class="big" id="hc-steem">…</div>
-      <div class="small">STEEM נזיל · @acct-h-849e9df7 — נמדד-עכשיו-מהדפדפן-שלך</div>
+    <section class="card" id="card-dex">
+      <h2><span class="dot"></span>SAOS-DEX — ההחלפות-על-הרשת-שלנו</h2>
+      <div class="big" id="dex-fills">…</div>
+      <div class="small">מילויים מצטברים על הספר-הריבוני · גריד-האורקל סוחר-סביב-מחירי-אמת</div>
       <div style="margin-top:10px">
-        <div class="row"><span>SBD נזיל</span><b id="hc-sbd">—</b></div>
-        <div class="row"><span>STEEM-POWER</span><b id="hc-sp">—</b></div>
-        <div class="row"><span>מחיר-STEEM/USD</span><b id="hc-px">—</b></div>
-        <div class="row"><span>powerdown הבא</span><b id="hc-pd">—</b></div>
+        <div class="row"><span>רווח-ממומש (גריד-האורקל)</span><b id="dex-pnl">—</b></div>
+        <div class="row"><span>מלאי-בסיס שנצבר</span><b id="dex-inv">—</b></div>
       </div>
-      <div class="src">מקור: api.steemit.com (condenser_api) — קריאה-חיה-מהדפדפן · ללא-שרת</div>
-    </section>
-
-    <section class="card" id="card-book">
-      <h2><span class="dot live"></span>הגריד-על-הספר-הציבורי (STEEM internal market)</h2>
-      <div class="big" id="book-verdict">…</div>
-      <div class="small" id="book-spread">—</div>
-      <div style="margin-top:10px">
-        <table><thead><tr><th>זמן</th><th>צד</th><th>שילם</th><th>קיבל</th></tr></thead>
-        <tbody id="book-fills"><tr><td colspan="4" class="small">—</td></tr></tbody></table>
-      </div>
-      <div class="src">מקור: history-של-@acct-h-849e9df7 על-השרשרת (fill_order אמת) — סוחרים-חוץ אמיתיים, יישוב-על-שרשרת, אפס-עמלה</div>
+      <div class="src">מקור: evidence/oracle-grid-pnl.json · הפנקס-המלא: grids/state/oracle-grid.jsonl בריפו-הקנוני</div>
     </section>
 
     <section class="card" id="card-pnl">
@@ -100,15 +77,41 @@
       <div class="src">מקור: evidence/pnl-audit.json — סריקת-השרשרת הציבורית (LAW-P0..P4)</div>
     </section>
 
-    <section class="card" id="card-dex">
-      <h2><span class="dot"></span>SAOS-DEX — ההחלפות-על-הרשת-שלנו</h2>
-      <div class="big" id="dex-fills">…</div>
-      <div class="small">מילויים מצטברים על הספר-הריבוני · גריד-האורקל סוחר-סביב-מחירי-אמת</div>
+    <section class="card" id="card-ext">
+      <h2><span class="dot live"></span>מסילת-הדלק-החוץ · רווח מדוד (התגשמות-VESTS) — מממן את הארכיטקטורה</h2>
+      <div class="big" id="ext-usd">…</div>
+      <div class="small">USD — חלון-24ש׳ · curation+author-rewards עם-block/provenance לכל-אירוע</div>
       <div style="margin-top:10px">
-        <div class="row"><span>רווח-ממומש (גריד-האורקל)</span><b id="dex-pnl">—</b></div>
-        <div class="row"><span>מלאי-בסיס שנצבר</span><b id="dex-inv">—</b></div>
+        <div class="row"><span>VESTS-נמדדו</span><b id="ext-vests">—</b></div>
+        <div class="row"><span>תמחור</span><b id="ext-price">—</b></div>
+        <div class="row"><span>מקור-מחיר-חוץ</span><b id="ext-src">—</b></div>
+        <div class="row"><span>נמדד-לאחרונה</span><b id="ext-at">—</b></div>
       </div>
-      <div class="src">מקור: evidence/oracle-grid-pnl.json · הפנקס-המלא: grids/state/oracle-grid.jsonl בריפו-הקנוני</div>
+      <div class="src">מקור: evidence/external-profit-public.json (אטום-מהגיט · ה-banker מודד-מהשרשרת ובונק ל-ledger-החתום)</div>
+    </section>
+
+    <section class="card" id="card-chain">
+      <h2><span class="dot live"></span>מסילת-משמורת-STEEM חיה (RPC-ציבורי) · בשירות הרשת</h2>
+      <div class="big" id="hc-steem">…</div>
+      <div class="small">STEEM נזיל · @acct-h-849e9df7 — נמדד-עכשיו-מהדפדפן-שלך</div>
+      <div style="margin-top:10px">
+        <div class="row"><span>SBD נזיל</span><b id="hc-sbd">—</b></div>
+        <div class="row"><span>STEEM-POWER</span><b id="hc-sp">—</b></div>
+        <div class="row"><span>מחיר-STEEM/USD</span><b id="hc-px">—</b></div>
+        <div class="row"><span>powerdown הבא</span><b id="hc-pd">—</b></div>
+      </div>
+      <div class="src">מקור: api.steemit.com (condenser_api) — קריאה-חיה-מהדפדפן · ללא-שרת</div>
+    </section>
+
+    <section class="card" id="card-book">
+      <h2><span class="dot live"></span>הגריד-על-הספר-החוץ (STEEM internal market) · מסילת-מימון</h2>
+      <div class="big" id="book-verdict">…</div>
+      <div class="small" id="book-spread">—</div>
+      <div style="margin-top:10px">
+        <table><thead><tr><th>זמן</th><th>צד</th><th>שילם</th><th>קיבל</th></tr></thead>
+        <tbody id="book-fills"><tr><td colspan="4" class="small">—</td></tr></tbody></table>
+      </div>
+      <div class="src">מקור: history-של-@acct-h-849e9df7 על-השרשרת (fill_order אמת) — סוחרים-חוץ אמיתיים, יישוב-על-שרשרת, אפס-עמלה</div>
     </section>
 
     <section class="card" id="card-bank">
