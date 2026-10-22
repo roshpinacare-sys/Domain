@@ -1,16 +1,24 @@
 {
  "schema": "site-audit/1",
- "at": "2026-10-22T00:00:55.389Z",
+ "at": "2026-10-22T00:32:40.902Z",
  "scope": "live-pages:https://roshpinacare-sys.github.io/Domain/",
  "pagesScanned": 97,
  "summary": {
-  "findings": 0,
+  "findings": 1,
   "externalBlocked": 4,
   "transientBlocked": 0,
-  "checked": 307,
+  "checked": 308,
   "structuralFindings": 0
  },
- "findings": [],
+ "findings": [
+  {
+   "code": 404,
+   "url": "https://github.com/YuJunZhiXue/dsh-purge",
+   "sources": [
+    "tools.html"
+   ]
+  }
+ ],
  "externalBlocked": [
   {
    "code": 451,
@@ -72,6 +80,6 @@
   ],
   "findings": 0
  },
- "overall": "PASS",
+ "overall": "FAIL",
  "note": "קישורים = אמת-חיה ב-Pages: 404 פנימי/חוץ = עמוד-מת (FINDING); 403/429/502 אצל צד-ג = חסימת-בוט (רמז בלבד); 429/503 מפני-ה-github.com-שלנו = חנק-מדידה (TRANSIENT — ריטרי-3 ואז רשום-בלי-הכשל). קישורים הנבנים ב-JS בזמן-ריצה אינם נסרקים כאן — הם אינם href סטטי. structural = אמת-checkout בלי רשת (R75): R-BALANCE·R-SCRIPT·R-CANONICAL·R-STUB·R-SITEMAP·R-TRUTH — החוקים ב-agents/SELF-CHECKS.md."
 }
