@@ -20,7 +20,7 @@
 כיול הטייפ (Q13): קצב הלכידה שלנו נמדד **0.0417 מילויים/דק׳ = 60 מילויים/יום** (60 מילויים בחלון) מול טייפ-השוק 10/דק׳ — **החנק האמיתי הוא הלכידה, לא היכולת** (מילוי-דרך 10.4167% מתקרת הפקודות); הלכידה צומחת בדיוק כפי שההוראה קובעת: עוד מדרגות × מילוי-דרך × חיילים ממומנים × זרימה פנימי מגובלת
 הרחבת הזירות (Q14/Q16): 5 זירות Hive-Engine מתומחרות per-token מהחוזה החי — והבריכה הנמדדת פותחת את הפרויקציה: הבריכה של כל טוקן (BEE בריכה — SBD/24ש׳ · CENT בריכה — SBD/24ש׳ · SWAP.DOGE בריכה — SBD/24ש׳ · SWAP.LTC בריכה — SBD/24ש׳ · WAIV בריכה — SBD/24ש׳) מתורגמת מ-SWAP.HIVE לשער HBD/HIVE **נמדד** (חוק ההמרה: SBD≈HBD, שניהם נכסי-דולר של השרשרות; השער נמדד — לא מוצק)
 משטחים חשוכים (כנים, מדודים): he-daily-history — HE-DAILY-HISTORY-DARK: marketHistory/history answered null (not RPC-exposed) — the day it answers, the pond becomes a series · blurt-internal-market — BLURT-SURFACE-DARK: getaddrinfo ENOTFOUND api.blurt.world
-נתח-זמן (Q11): SBD/STEEM (internal steem): 24 נקודות — אחרון 1.2638% (פנקס התוכניות הוא הסדרה — הנתח כמגמה, לא תמונה)
+נתח-זמן (Q11): SBD/STEEM (internal steem): 24 נקודות — אחרון 1.2051% (פנקס התוכניות הוא הסדרה — הנתח כמגמה, לא תמונה)
 סולם הצי: 1 חשבון/ות ממומנים (owner) · חלוקת סולמות מכסה את כל ה-10 המדרגות
 זרימה פנימית (מסחר בין החיילים): זמינה — תקרה 6.3645 SBD/יום, מתויגת INTERNAL-FLOW, מוחרגת מה-VWAP
 חוקי הבטיחות: SELL-CAP-85% of liquid inventory · MAX-NEW-ORDERS 6/run/account · BUY-EDGE: no buy above realized sell VWAP − 0.3% · SPACING-FLOOR 0.4% (market-grid) · INTERNAL-FLOW capped 25% + labeled + VWAP-excluded · STASIS halt-before-read
