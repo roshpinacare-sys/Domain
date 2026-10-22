@@ -1,9 +1,30 @@
 {
-  "date": "2026-10-22",
-  "fills_today": 0,
-  "realized_today_micro": 0,
-  "decisions_today": 2,
-  "consecutive_loss_fills": 0,
-  "last_broadcast_ts": null,
-  "last_tick_ts": "2026-10-22T12:40:19.601Z"
+  "at": "2026-10-22T15:21:30.286Z",
+  "ok": true,
+  "verdict": "sovereignty: infrastructure live; operation continuous (owner release 2026-10-10); boot needs one command after sandbox death",
+  "houses": {
+    "public_fleethq": {
+      "last_commit": "f9ebe9bcf vault-seal [auto-economy]: 1 files — אטימה-חוזרת, כלום לא מת עם הסנדבוקס",
+      "remote_commits": 9014
+    },
+    "private_fleet_vault": {
+      "pushed_via": "vault/push-vaults.sh",
+      "sealed": "vault/keys.env.enc + wraps registry"
+    }
+  },
+  "laws": {
+    "evening_quota": "per-family attempt budgets (Task 27)",
+    "telemetry": "proactive family re-index from 1h rolling window, adaptive 429 cooldown (Task 28-b)",
+    "legality": "routing, not spoofing — no TLS fingerprints, no ToS bending",
+    "owner_release": "2026-10-10: full continuous operation, production shifts first-class, broadcast released to the dryrun-sign gate"
+  },
+  "airgap": {
+    "tier_measured": "qwen2.5-3b-instruct-q4-k-m (2 cores, 4041MB RAM, no GPU — cgroup-measured)",
+    "armed_here": false,
+    "reason": "RAM headroom too small to bet the office on; model partially downloaded, resumable — a HARDWARE fact, not a policy choice"
+  },
+  "known_gaps": [
+    "boot after sandbox death still needs one human-less command: git clone + bash vault/boot-sovereign.sh",
+    "public broadcast signing waits for the custody-bridge keys on the SAOS machine — everything before the signature is live here"
+  ]
 }
