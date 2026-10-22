@@ -1,6 +1,6 @@
 {
   "schema": "SAOS-EXECUTION-LEDGER/1",
-  "at": "2026-10-22T14:25:00Z",
+  "at": "2026-10-22T15:02:00Z",
   "generator": "agent round 26 (Z.ai) — hand-curated from the real worklog + measured books",
   "sourceWorklog": "worklog task-24 (458+ sections)",
   "law": "כל-שורה-כאן-נגזרת-מפנקס-העבודה-האמיתי-ומהספרים-המדודים · מה-שלא-הוכח-רשום-כלא-בוצע · אסור-לקשט",
@@ -14,7 +14,7 @@
     "externalFlowUsdHistoric": 0.784335,
     "realFillsLifetime": 6,
     "fillRecordsLedger": 118,
-    "gridVerdict": "ARMED-LIVE (round-26 run 39781537302) · N8 run dispatching",
+    "gridVerdict": "ARMED-LIVE (N8-f live · runs 39781537302/39794568467/39797431541/39798908482) · tier T2",
     "hiveVerdict": "ARMED-WAITING",
     "priceTruth": {
       "verdict": "TRIANGLE-ARMED (measured 13:49Z)",
@@ -25,13 +25,22 @@
       "impliedSbdUsdFromFeed": 0.5063,
       "sbdDepegBps": -107,
       "bookTouchSbdPerSteem": 0.1028,
-      "note": "SBD דה-פג מדוד ~$0.50 — שתי סמכויות עצמאיות מצטלבות תוך 1.1% · המגע 340bps מתחת לקו-הערך · המדף הישן parity+60bps היה 400bps מעל המגע = שורש 19-ימי-אפס-מילויים"
+      "note": "SBD דה-פג מדוד ~$0.50 · המגע 340bps מתחת לקו-הערך · N8 חי ב-CI (4 ריצות מדודות היום)"
     },
     "externalFillEvidence": {
-      "at": "2026-10-22T13:37:51Z",
-      "counterparty": "cashly",
-      "detail": "0.500 STEEM -> 0.051 SBD (0.102 SBD/STEEM, במגע)",
-      "note": "מילוי-חוץ אמת על השרשרת מהסולם-המתחבק-מגע של הרץ-התאום — הראיה שהזרימה חיה במגע, לא במדף-400bps-מעליו"
+      "fillsToday": [
+        {
+          "at": "2026-10-22T13:37:51Z",
+          "counterparty": "cashly",
+          "detail": "0.500 STEEM -> 0.051 SBD (0.102, במגע)"
+        },
+        {
+          "at": "2026-10-22T14:48:12Z",
+          "counterparty": "quicktrades",
+          "detail": "0.500 STEEM -> 0.051 SBD (0.102, במגע)"
+        }
+      ],
+      "tierEvidence": "7 מילויי-חוץ נספרו בפנקס-הראיות (אחרי חלון-החוק 01:43Z, לא-wash, edge≠0) → SPREAD-TIER T2 פתוח (30/60bps) · T3 בעוד 5"
     }
   },
   "done": [
@@ -163,12 +172,16 @@
   ],
   "next": [
     {
-      "id": "N6",
-      "title": "צבירת-2-מילויי-חוץ-אחרי-החוק → T1-נפתח-אוטומטית (cashly 13:37:51Z = 1-ראיה-בדרך-לפנקס-הראיות כשתיקלט בריצה-הבאה)"
+      "id": "N8-g",
+      "title": "preserve-conforming ב-market-exec refresh: ה-refresh-המקומי (dexFamily :11/:41) מבטל-ספר-שלם-תוך-3-דקות — כולל את מדף-הערך של grid-beat; נדרש שימור-פקודות-תואמות גם שם (שיתוף-פעולה-בין-מנדטים)"
     },
     {
       "id": "N8-c",
-      "title": "דלק-הבידים: 0.270 SBD נחסם-על-ידי-חוק-האבק (צריך-≥0.31) — מילוי-אסק-ראשון או תביעת-פרס-curation מזרים-דלק והבידים-מתחבקי-המגע נפרשים אוטומטית"
+      "title": "דלק-הבידים: 0.270 SBD < 0.31-נדרש (חוק-אבק) — מילוי-אסק-ראשון או תביעת-פרס-curation מזרים-דלק והבידים-מתחבקי-המגע נפרשים אוטומטית"
+    },
+    {
+      "id": "N6",
+      "title": "T3: עוד 5 מילויי-חוץ → 18/45bps דו-ספרתי (הזרימה-החיה-מממשת-את-זה-כבר-היום)"
     },
     {
       "id": "N3",
@@ -181,10 +194,6 @@
     {
       "id": "N5",
       "title": "ריענון-הפנקס-הזה בכל-מחזור"
-    },
-    {
-      "id": "N7",
-      "title": "חוק-בין-סנדבוקסים: אין-mover-refresh-שמבטל-ספר-אחר (הרץ-התאום-מושהה-מ-14:03:09Z — מדוד)"
     }
   ]
 }
