@@ -1,4 +1,4 @@
-# COGNITION-BEAT · 2026-10-22T06:33:01.512Z
+# COGNITION-BEAT · 2026-10-22T08:55:51.430Z
 
 self-model regenerated from live measurements (runs API + chain RPC + grid-truth + STASIS + directives chain verify: {"ok":true,"entries":7,"breakAt":null,"reason":null})
 
@@ -6,5 +6,5 @@ self-model regenerated from live measurements (runs API + chain RPC + grid-truth
 - contradictions open: C-002(grid)
 - haltCoverage: ORGANISM_ONLY (honest — money-family-live + external key-holders unreachable)
 - STASIS: active=false mode=staged allow=[grid,claims,dex-batch-settle,powerup,delegation,connect,general,dex-core,arb-mesh,dex-activation]
-- workflows seen (24h): pages build and deployment, cognition-beat, operator-console, weave-mirror, office-worldbeat, cloud-pulse, artery-integrity-twin, arb-mesh, grid-sentinel, estate-scrub, network-census, exposure-gate, identity-guard, sovereign-pulse, pulse-bake, office-artery, market-grid-cron, dex-router, grid-trigger-twin, public-loops-bake, dex-activation, office-pulse, agent9-fleet-truth
+- workflows seen (24h): cognition-beat, cloud-pulse, artery-integrity-twin, pages build and deployment, office-feed, identity-guard, pages-deploy, exposure-gate, grid-sentinel, office-worldbeat, agent9-fleet-truth, dex-grid, weave-anchor-lines, weave-heart, vault-transfer, stale-watchdog, dex-mirror, earn-audit-cron, dex-xc, dex-beat, arb-mesh, dex-activation
 
