@@ -79,7 +79,8 @@ footer{margin-top:auto;border-top:1px solid var(--line);background:var(--panel);
 .fb-grp-t{font-size:13px;color:var(--dim)}
 .fb-grid{list-style:none;display:grid;grid-template-columns:1fr;gap:12px;padding:12px 0 4px}
 @media(min-width:820px){.fb-grid{grid-template-columns:1fr 1fr}}
-.fb-card{border:1px solid var(--line);border-radius:var(--r-sm);padding:13px 15px;background:var(--panel2);display:flex;flex-direction:column;gap:7px}
+.fb-card{border:1px solid var(--line);border-radius:var(--r-sm);padding:13px 15px;background:var(--panel2);display:flex;flex-direction:column;gap:7px;min-width:0;max-width:100%}
+.fb-desc,.fb-ev{overflow-wrap:anywhere;min-width:0} /* mobile-390 measured 00:35Z: long unbroken evidence tokens blew grid min-width:auto → RTL left-overflow 118px · fixed at bake source too */
 .fb-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .fb-id{font-family:var(--mono);font-size:10.5px;color:var(--faint);direction:ltr}
 .fb-head h4{font-size:14.5px;font-weight:800;letter-spacing:-.2px;flex:1;min-width:0}
