@@ -1,0 +1,141 @@
+{
+  "schema": "SAOS-EXECUTION-LEDGER/1",
+  "at": "2026-10-22T05:40:00Z",
+  "generator": "agent round 22 (Z.ai) — hand-curated from the real worklog + measured books",
+  "sourceWorklog": "/home/z/my-project/worklog.md · 444 recorded cycles · head 319c815",
+  "law": "כל-שורה-כאן-נגזרת-מפנקס-העבודה-האמיתי-ומהספרים-המדודים · מה-שלא-הוכח-רשום-כלא-בוצע · אסור-לקשט",
+  "freshness": {
+    "howToVerify": "כל-ראיה-נבדקת-בגיט: github.com/roshpinacare-sys/Domain → commits, ו-github.com/roshpinacare-sys/saos-dex/actions → הריצות",
+    "staleAfterHours": 48,
+    "renewedBy": "מחזור-סוכן (תמשיך-ודחוף) או plant-books watchdog"
+  },
+  "measuredSnapshot": {
+    "at": "2026-10-22T05:35:00Z",
+    "services": "15/15 פורטים חיים (3010 DEX · 3011 gateway · 3016 fleet-economy · 3040 selfcheck · 3042 boot-verifier ועוד)",
+    "reposInSync": "giant 0/0 · saos-dex 0/0 · FleetHQ 0/0 · Domain מדוד ב-mirror.json",
+    "gridVerdict": "ARMED-WAITING (כנה — לא-שקר STABLE): STEEM keyGate PASS אך 2× שידורים-נדחו; HIVE סירוב-מכני לשוק-שבור (7608bps)",
+    "valueGuard": "פעיל — 21+5 ביטולי asks-תת-פאריטי מוכחים-על-השרשרת (9e359fed + ריצה 39723306632)",
+    "externalProfit24hUsd": 0.0096,
+    "externalProfitSource": "curation-אקרואל keyless · מפרסם-חי כל-2ש׳-scheduled · טרי 04:16Z (ריצה 39721424777)",
+    "externalFlowUsdHistoric": 0.784335,
+    "realFillsLifetime": 6,
+    "fillRecordsLedger": 118
+  },
+  "done": [
+    {
+      "id": "D1",
+      "title": "עצירת-דימום-הערך (R-GRID-WAR)",
+      "detail": "רצפת-פאריטי ב-army-ladder (sell ≥ parity+80bps) + VALUE-GUARD שמבטל כל-ask-תת-פאריטי על-החשבון. הדימום-המדוד (asks-במחיר-הפסד) הופסק-מכנית.",
+      "evidence": "saos-dex commit 9e359fed · הריצה 39723306632 · 21+5 ביטולים-מתועדים-בלוג"
+    },
+    {
+      "id": "D2",
+      "title": "race-safety לקבלות-הריצות",
+      "detail": "rebase --abort + retry loops בשלבי evidence-commit — מירוץ-ה-git מול-האוטו-סילר שהפיל ריצה 39722815915 נסגר.",
+      "evidence": "saos-dex commit 17b8af88 · הוכח-בייצור: ריצה 39723306632 success על אותו-HEAD"
+    },
+    {
+      "id": "D3",
+      "title": "מפרסם-רווח-החוץ keyless — חי-ומתוזמן",
+      "detail": "external-profit-publish.yml: מדידת-אקרואל 24ש׳ מ-RPC-ציבורי-בלבד (אפס-מפתחות), כל-שעתיים + dispatch. הכתובת-המתה-של-דף-הכסף-נסגרה.",
+      "evidence": "ריצה 39721424777 success 04:16Z · grids/state/external-profit-public.json טרי"
+    },
+    {
+      "id": "D4",
+      "title": "החייאת-הצי + שחרור-דיסק",
+      "detail": "דיסק 100% (שהפיל שירותים) → 68%. 15/15 פורטים הוקמו-מחדש ומנוטרים ב-watchdog דו-שכבתי.",
+      "evidence": "worklog 21-b/21-c · supervise-dev + watchdog-fleethq רצים"
+    },
+    {
+      "id": "D5",
+      "title": "כנות-verdict מלאה",
+      "detail": "חוק 9-c: אסור ARMED-STABLE עם-כישלונות. ARMED-WAITING הנוכחי מפורק-לגורמים-אמיתיים (שידורים-נדחים STEEM · שוק-שבור HIVE) — כלום לא מוסתר.",
+      "evidence": "worklog task-22 · grid-public.json blocker-מדוד"
+    },
+    {
+      "id": "D6",
+      "title": "אפס-כפילויות/אפס-דריסות בכל-הריפוים",
+      "detail": "saos-dex ff-pull נקי, giant/FleetHQ ב-sync 0/0, Domain נדחף-ללא-סתירה. 444 מחזורים-מתועדים בפנקס-העבודה.",
+      "evidence": "worklog.md 444 sections · git 0 ahead/0 behind בשלושת-הבתים"
+    }
+  ],
+  "partial": [
+    {
+      "id": "P1",
+      "title": "רווח-חוץ אמיתי — זורם-אך-קטן",
+      "detail": "curation $0.0096/24h נמדד-ומפורסם-בראיות (290 vests). היעד-המוצהר של-הבעלים — רווח-חוץ-מוכח-ומשמעותי — טרם-הושג. externalFlowUsd=0.784 הוא-היסטורי-ולא-מעוצב.",
+      "evidence": "external-profit-public.json · worklog task-22"
+    },
+    {
+      "id": "P2",
+      "title": "ערוץ-STEEM חמוש-אך-אינטרמיטנטי",
+      "keyGate": "PASS — הרשות-מאומתת-מול-השרשרת",
+      "detail": "2/15 שידורים נדחים 'broadcast answered without id' — חוסם-ידוע-אינטרמיטנטי. הגריד-מציב-כשהוא-מצליח ומדווח-WAITING-כשלא.",
+      "evidence": "לוג ריצה 39723306632 04:37:04Z"
+    },
+    {
+      "id": "P3",
+      "title": "office-selfcheck מאזין-אך-חוסם",
+      "detail": "execFileSync חוסם-event-loop בזמן-בדיקה — מתועד-בכנות מ-21-d; התיקון-הארכיטקטוני (async) נדחה-בכוונה-כדי-לא-לסכן-שירות-ליבה-בלי-בדיקה.",
+      "evidence": "worklog task-21-d"
+    }
+  ],
+  "gaps": [
+    {
+      "id": "G1",
+      "title": "ערוץ-HIVE משותק — השוק-הפנימי-שבור",
+      "detail": "book-mid סוטה 7608bps מהפאריטי-החוץ — הגריד-מסרב-מכנית לסחור-בשוק-שבור (סירוב-כנה, לא-תקלה). נדרש מקור-נזילות/פאריטי או השבתה-מוצהרת-של-הערוץ.",
+      "evidence": "grid-public.json blocker: 'hive book mid deviates 7608bps'"
+    },
+    {
+      "id": "G2",
+      "title": "אין-רוכש-חוץ-פעיל נגד-הספר",
+      "detail": "filledTotal-ריאלי=6 (היסטורי) מול 188 הצבות — הספר-מוצב-אך אין-נגד-מי-להימדד-ברציפות. בלי-נגד, אין-הוכחת-רווח-מסחר.",
+      "evidence": "grid ops API: placedTotal 188 / filledTotal 6"
+    },
+    {
+      "id": "G3",
+      "title": "spread 229bps — רחוק-מתחרות",
+      "detail": "bid 0.101012 / ask 0.103333 — הפער-גדול-מדי כדי-למשוך-מילוי-שלישי; הידוק-מדורג-נדרש-תחת-value-guard.",
+      "evidence": "worklog task-21 · grid-public.json book"
+    },
+    {
+      "id": "G4",
+      "title": "טריות-הדפים-עצמם — הבעיה-שהדף-הזה-סוגר",
+      "detail": "הדפים-הציגו 'פעילות-שוטפת' בלי-סטטוס-ביצוע (מה-בוצע/מה-לא/מה-חסר/מה-הבא). מאז-הדף-הזה: פנקס-הביצוע-הוא-הכתובת-הקבועה, וריענונו-מחויב-בכל-מחזור-סוכן.",
+      "evidence": "פקודת-הבעלים trace 1a1620ac9ca0c0f9 · הוספת execution.html + metrics-אוטומטיים"
+    }
+  ],
+  "next": [
+    {
+      "id": "N1",
+      "title": "הידוק-מדורג של ה-spread",
+      "detail": "הצעדה-הדרגתית bid/ask לכיוון-הפאריטי-תחת-value-guard (אסור-לחזור-לדימום) — מטרה: spread דו-ספרתי שמזמין-מילוי-שלישי.",
+      "owner": "סוכן-הגריד · מחזור-הבא"
+    },
+    {
+      "id": "N2",
+      "title": "אמינות-שידור (broadcast-without-id)",
+      "detail": "retry-עם-id-מתועד או node-גיבוי — להוריד-את-שיעור-הדחיות-מ-2/15-ל-0 ולהחזיר-ARMED-LIVE-יציב.",
+      "owner": "סוכן-הגריד · מחזור-הבא"
+    },
+    {
+      "id": "N3",
+      "title": "ערוץ-HIVE: נזילות-או-השבתה-מוצהרת",
+      "detail": "לא-להשאיר-ערוץ-משותק-בשקט: או-מקור-פאריטי/נזילות-אמיתי, או-DISARMED-מוצהר-בדפים.",
+      "owner": "הבעלים-מחליט · הסוכנים-מבצעים"
+    },
+    {
+      "id": "N4",
+      "title": "הכפלת-ה-curation",
+      "detail": "delegation-עצמית/הגברת-משקל-הצבעה — להגדיל את-ההכנסה-המדודה-היחידה-שכבר-מוכחת-וזורמת.",
+      "owner": "סוכן-הקרנות · מחזור-הבא"
+    },
+    {
+      "id": "N5",
+      "title": "ריענון-הפנקס-הזה בכל-מחזור",
+      "detail": "plant-books יכתוב agents/execution-metrics.json מדוד מה-worklog; כל-מחזור-סוכן-מעדכן את-השורות-המאוישות כאן. אם-הפנקס-זקן-מ-48ש׳ — הדף-מציג-אזהרת-זקנה.",
+      "owner": "watchdog + מחזור-סוכן"
+    }
+  ]
+}
