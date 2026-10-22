@@ -8,7 +8,7 @@
  */
 (function () {
   "use strict";
-  var SRC = "truth/agent9.json";
+  var SRC = (window.AGENT9_TRUTH_SRC || "truth/agent9.json"); // t55i: parametric — host pages set window.AGENT9_TRUTH_SRC (e.g. org root)
   var el = document.getElementById("agent9-truth-band");
   if (!el) return;
   var css = document.createElement("style");

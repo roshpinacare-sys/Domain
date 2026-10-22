@@ -248,6 +248,7 @@ async function collect() {
       x.b = { claim: "GitHub API repos", value: ghRepos.data.count, src: "api.github.com/users/roshpinacare-sys" };
       x.verdict = (fleetBeat.data.repos === 0 && ghRepos.data.count > 0) ? "CONFIRMED" : "OK";
       if (x.verdict === "CONFIRMED") x.note = "אפסים-שקטים = מכונה-עיוורת; האמת-החיה-בצד-ב";
+      else x.note = "הצי-נראה-שוב: repos=" + fleetBeat.data.repos + " מול-API-ציבורי " + ghRepos.data.count + " (הפער-פרטיים); השורש-היה-secret-מת-401-שרוטט-ב-t55i";
     } else x.err = !fleetBeat.ok ? fleetBeat.err : ghRepos.err;
     items.push(x);
   }
@@ -270,6 +271,7 @@ async function collect() {
       x.b = { claim: "pushed_at", value: orgRoot.data.pushedAt + " (age " + orgRoot.data.ageH + "h)", src: "GitHub API" };
       x.verdict = orgRoot.data.ageH > 48 ? "CONFIRMED" : "OK";
       if (x.verdict === "CONFIRMED") x.note = "דף-שורש-קפוא מול-מערכת-שנדחפת-כל-דקות-בריפואים-הפנימיים";
+      else x.note = "השורש-חי-שוב: פס-האמת-החי-מוצג-בו-מאז-t55i (חי-ממדידה, לא-מהצהרה)";
     } else x.err = orgRoot.err;
     items.push(x);
   }
