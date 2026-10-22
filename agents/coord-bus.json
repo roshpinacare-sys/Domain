@@ -1,52 +1,25 @@
 {
- "at": "2026-10-22T05:58:40.538Z",
- "ok": true,
- "agent": "coord-bus v1.0.0 (R19, CR-0048) — the keyless coordination bus reader",
- "verdict": "BUS-EMPTY",
- "account": "owner",
- "namespace": "saos.* (custom_json id prefix)",
- "scan": {
-  "pages": 1,
-  "scannedOps": 11,
-  "customJsonOps": 0,
-  "foreignOps": 0,
-  "minSeq": 0,
-  "maxSeq": 10,
-  "node": "https://api.steemit.com",
-  "watermark": null,
-  "watermarkReached": false,
-  "crossNode": "https://api.justyy.com",
-  "crossPages": 1
- },
- "messageCount": 0,
- "messages": [],
- "namespaces": {},
- "heads": {},
- "watermark": null,
- "fingerprint": "44136fa355b3678a",
- "receipts": [
-  {
-   "name": "bus-fingerprint",
-   "value": "44136fa355b3678a"
-  },
-  {
-   "name": "split-brain-guard",
-   "ok": true,
-   "cross": "https://api.justyy.com"
-  },
-  {
-   "name": "limit-100-pages",
-   "pages": 1
-  }
- ],
- "laws": [
-  "keyless read-only (no secrets, nothing signed)",
-  "split-brain guard: primary+cross HEAD-VECTOR fingerprints must match or nothing is written (head content digested)",
-  "limit-100 law: get_account_history pages at <=100 (measured -32801 live); the account_history_api operation_filter is a GHOST (measured live, unfiltered on both nodes) — filtering is client-side",
-  "floor-chain watermark: pages stop at the previous book's lowest SEEN seq (heads ∪ scan floor) — no gaps between books; a truncated walk (cap bound) writes NOTHING (BUS-TRUNCATED receipt, the last complete book stands)",
-  "head-vector fingerprint: the bus STATE is the per-namespace head, not the sliding window — a silent bus books no noise",
-  "namespace whitelist: saos.* only; unknown saos.* kept + flagged, foreign ignored",
-  "no-noise: the book is written only when the fingerprint changed",
-  "stasis halt-before-read: zero network, zero writes under an ACTIVE breaker"
- ]
+  "at": "2026-10-22T08:22:25.098Z",
+  "ok": true,
+  "active_tasks": [
+    {
+      "id": "28-a",
+      "by": "twin session (sovereign-stack)",
+      "status": "shipped",
+      "proof": "selftest 9/9, commit 544c62c"
+    },
+    {
+      "id": "28-b",
+      "by": "main session (gateway live rail)",
+      "status": "shipped",
+      "proof": "telemetry re-index live-proven 6→1 attempts, commit f1ea1b8"
+    }
+  ],
+  "decisions": [
+    {
+      "at": "2026-10-22T08:22:25.098Z",
+      "what": "plant books from measured data only — never synthetic",
+      "why": "honesty law §2"
+    }
+  ]
 }
