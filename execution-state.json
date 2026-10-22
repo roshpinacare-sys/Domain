@@ -1,8 +1,8 @@
 {
   "schema": "SAOS-EXECUTION-LEDGER/1",
-  "at": "2026-10-22T05:40:00Z",
+  "at": "2026-10-22T08:30:00Z",
   "generator": "agent round 22 (Z.ai) — hand-curated from the real worklog + measured books",
-  "sourceWorklog": "worklog.md (operator-side mount; host path withheld per public-surface law — wave 19.68)",
+  "sourceWorklog": "worklog.md (operator-side mount; host path withheld per public-surface law — wave 19.68) · 460+ recorded cycles · saos-dex head c44a99cd",
   "law": "כל-שורה-כאן-נגזרת-מפנקס-העבודה-האמיתי-ומהספרים-המדודים · מה-שלא-הוכח-רשום-כלא-בוצע · אסור-לקשט",
   "freshness": {
     "howToVerify": "כל-ראיה-נבדקת-בגיט: github.com/roshpinacare-sys/Domain → commits, ו-github.com/roshpinacare-sys/saos-dex/actions → הריצות",
@@ -10,13 +10,14 @@
     "renewedBy": "מחזור-סוכן (תמשיך-ודחוף) או plant-books watchdog"
   },
   "measuredSnapshot": {
-    "at": "2026-10-22T05:35:00Z",
-    "services": "15/15 פורטים חיים (3010 DEX · 3011 gateway · 3016 fleet-economy · 3040 selfcheck · 3042 boot-verifier ועוד)",
-    "reposInSync": "giant 0/0 · saos-dex 0/0 · FleetHQ 0/0 · Domain מדוד ב-mirror.json",
-    "gridVerdict": "ARMED-WAITING (כנה — לא-שקר STABLE): STEEM keyGate PASS אך 2× שידורים-נדחו; HIVE סירוב-מכני לשוק-שבור (7608bps)",
-    "valueGuard": "פעיל — 21+5 ביטולי asks-תת-פאריטי מוכחים-על-השרשרת (9e359fed + ריצה 39723306632)",
+    "at": "2026-10-22T08:17:00Z",
+    "services": "15/15 פורטים חיים",
+    "reposInSync": "giant 0/0 · saos-dex 0/0 · FleetHQ 0/0",
+    "gridVerdict": "ARMED-LIVE (חזר! run 39746309859): 6 placed · 5 cancels · keyGate PASS",
+    "trimToCap": "POLICY-FIT: cycle 33.063 > cap 19 SBD → commit scaled ×0.575 — ההצבות-חזרו-מבלי-לשבור-משמעת-הון",
+    "ladder": "asks @parity+60bps-המהודק (0.10612/0.10676/0.10739) · bids @touch-100bps-המהודק (0.10073/0.09972/0.09870) — 6 txids אמיתיים",
     "externalProfit24hUsd": 0.0096,
-    "externalProfitSource": "curation-אקרואל keyless · מפרסם-חי כל-2ש׳-scheduled · טרי 04:16Z (ריצה 39721424777)",
+    "externalProfitSource": "curation-אקרואל keyless · מפרסם-מתוזמן-כל-2ש׳ · טרי 07:58Z",
     "externalFlowUsdHistoric": 0.784335,
     "realFillsLifetime": 6,
     "fillRecordsLedger": 118
@@ -57,6 +58,18 @@
       "title": "אפס-כפילויות/אפס-דריסות בכל-הריפוים",
       "detail": "saos-dex ff-pull נקי, giant/FleetHQ ב-sync 0/0, Domain נדחף-ללא-סתירה. 444 מחזורים-מתועדים בפנקס-העבודה.",
       "evidence": "worklog.md 444 sections · git 0 ahead/0 behind בשלושת-הבתים"
+    },
+    {
+      "id": "D7",
+      "title": "trim-to-cap — מלכודת-ה-DEADLOCK-הכלכלית נשברה",
+      "detail": "ה-POLICY-ENGINE (kelly-cap) חסם-כל-מחזור כי-ה-commit המלא (33 SBD) חרג-מהתקרה (19) — ובלי-הצבות-אין-קבלות-ACTED → הילוך-לא-עולה → חסימה-לנצח. עתה: הגריד-מתאים-את-עצמו-מטה-אל-תוך-התקרה (×0.575 מדוד), משמעת-ההון-נשמרת, וההילוך-יכול-לטפס-על-הקבלות.",
+      "evidence": "saos-dex commit c44a99cd · run 39746309859: 'POLICY-FIT: 33.063 > cap 19 — scaled ×0.575' + 6 placed"
+    },
+    {
+      "id": "D8",
+      "title": "הידוק-ה-spread (N1) — מוכח-על-השרשרת",
+      "detail": "grid-params: bidStep 150→100bps · askStep 80→60bps (רציונל-מדוד: value-guard נושא-עתה-את-הגנת-הסחיפה-ש-9-c-הניחה). הסולם-המהודק-הוצב-בפועל: asks parity+0.6%/1.2%/1.8%, bids touch-1%/2%/3%.",
+      "evidence": "saos-dex commit fb7b0519 · validator OK 100/60bps · run 39746309859 txids 06582ffd/c7fa9a0f/2e70460d/59fd0375/94bc72ee/341709e5"
     }
   ],
   "partial": [
@@ -68,9 +81,9 @@
     },
     {
       "id": "P2",
-      "title": "ערוץ-STEEM חמוש-אך-אינטרמיטנטי",
+      "title": "ערוץ-STEEM חמוש-ולייב — N2-מוכח",
       "keyGate": "PASS — הרשות-מאומתת-מול-השרשרת",
-      "detail": "2/15 שידורים נדחים 'broadcast answered without id' — חוסם-ידוע-אינטרמיטנטי. הגריד-מציב-כשהוא-מצליח ומדווח-WAITING-כשלא.",
+      "detail": "2/13 שידורים נדחים עדיין (ביטולי-value-guard). עם N2: השגיאה-מדווחת-כנה '3 node attempts' (סבב-הצמתים-רץ), וההצבות משיגות-השתקמות-על-השרשרת (orderid verification) — ההצבות-האמיתיות-עברו-כולן-עם-txid.",
       "evidence": "לוג ריצה 39723306632 04:37:04Z"
     },
     {
@@ -90,13 +103,13 @@
     {
       "id": "G2",
       "title": "אין-רוכש-חוץ-פעיל נגד-הספר",
-      "detail": "filledTotal-ריאלי=6 (היסטורי) מול 188 הצבות — הספר-מוצב-אך אין-נגד-מי-להימדד-ברציפות. בלי-נגד, אין-הוכחת-רווח-מסחר.",
+      "detail": "ההזמנה-לרוכש-חוץ-חיה: 3 asks ב-parity+0.6%+ ו-3 bids ב-touch-1%-, עם-תוקף-27-יום. נשאר-לראות-מילוי-שלישי-ראשון-בפנקס.",
       "evidence": "grid ops API: placedTotal 188 / filledTotal 6"
     },
     {
       "id": "G3",
       "title": "spread 229bps — רחוק-מתחרות",
-      "detail": "bid 0.101012 / ask 0.103333 — הפער-גדול-מדי כדי-למשוך-מילוי-שלישי; הידוק-מדורג-נדרש-תחת-value-guard.",
+      "detail": "נסגר-חלקית: הסולם-מהודק-ל-100/60bps (היה 150/80) — spread-הספר-האמיתי-עתה ask 0.10612 מול bids מ-0.10073. עדיין-רחוק-מהתחרות-אך-הכיוון-מדוד-ונפרס.",
       "evidence": "worklog task-21 · grid-public.json book"
     },
     {
@@ -108,10 +121,10 @@
   ],
   "next": [
     {
-      "id": "N1",
-      "title": "הידוק-מדורג של ה-spread",
-      "detail": "הצעדה-הדרגתית bid/ask לכיוון-הפאריטי-תחת-value-guard (אסור-לחזור-לדימום) — מטרה: spread דו-ספרתי שמזמין-מילוי-שלישי.",
-      "owner": "סוכן-הגריד · מחזור-הבא"
+      "id": "N6",
+      "title": "צפייה-על-הקבלות: ACTED → הילוך-עולה",
+      "detail": "עם-הסולם-המהודק-בתוך-התקרה — הריצות-הבאות-צריכות-להניב-קבלות-LADDER-ACTED שיקפיצו-את-ה-gearbox (cap 19→25+). אם-מילוי-שלישי-נופל-על-ask-ב-parity+60bps — זו-הראיה-הראשונה-לרווח-חוץ-ממסחר.",
+      "owner": "סוכן-הגריד · כל-ריצה"
     },
     {
       "id": "N2",
