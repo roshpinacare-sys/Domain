@@ -1,6 +1,6 @@
 # fill-ledger — fill measurement leg (CR-0039)
 
-Last run: 2026-10-22T17:35:57.269Z · mode **READ-ONLY** · head **owner** · since 2026-10-03T00:00:00Z
+Last run: 2026-10-22T18:38:44.089Z · mode **READ-ONLY** · head **owner** · since 2026-10-03T00:00:00Z
 
 | metric | value |
 |---|---|
@@ -16,4 +16,4 @@ Last run: 2026-10-22T17:35:57.269Z · mode **READ-ONLY** · head **owner** · si
 
 ## errors (0)
 
-Run history: 418 rows in canon. Ledger: fill-ledger-fills.jsonl (append-only, replay-derived state).
+Run history: 419 rows in canon. Ledger: fill-ledger-fills.jsonl (append-only, replay-derived state).
