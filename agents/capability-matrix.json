@@ -1,32 +1,430 @@
 {
-  "at": "2026-10-22T08:22:25.098Z",
-  "ok": true,
-  "live": [
-    "sovereign gateway: 44+ brains, failover, compaction, telemetry re-index",
-    "reception (עמית) in Hebrew on :3000",
-    "vault: sealed keys + wraps + boot-sovereign (destroy-drill proven)",
-    "two git houses pushed (public FleetHQ + private fleet-vault)",
-    "web research lanes: web_search (Tavily ×2 failover) + read_page (Jina, SSRF-guarded) — armed and INVITED by production shifts (owner release 2026-10-10)",
-    "production shifts: network research + content drafting — the office produces, not only audits (owner release 2026-10-10)",
-    "continuous operation: patrol cooldown 2min — constant activation (owner release 2026-10-10)"
-  ],
-  "waiting": [
-    {
-      "capability": "public broadcast signing",
-      "needs": "Steem WIFs via the custody bridge (steem/mini-services/saos-engine/.env) — present on the SAOS machine, absent here; owner release is on record, the dryrun-sign gate is the next step when keys land",
-      "since": "owner release 2026-10-10"
+  "at": "2026-10-22T09:57:52.211Z",
+  "agent": "capability-matrix",
+  "chains": {
+    "steem": {
+      "acct-01": {
+        "effStake": "75.393 SP",
+        "liquid": 75.576,
+        "votingPower": 33.81,
+        "posting": "NOT-OURS",
+        "postingAuthorityCount": 1,
+        "active": "NO-KEY-IN-VAULT",
+        "activeAuthorityCount": 1,
+        "recentOps": {
+          "__unavailable": "condenser_api.get_account_history upper "
+        }
+      },
+      "acct-02": {
+        "effStake": "78.436 SP",
+        "liquid": 30.509,
+        "votingPower": 53.34,
+        "posting": "NOT-OURS",
+        "postingAuthorityCount": 1,
+        "active": "NO-KEY-IN-VAULT",
+        "activeAuthorityCount": 1,
+        "recentOps": {
+          "__unavailable": "condenser_api.get_account_history upper "
+        }
+      },
+      "acct-03": {
+        "effStake": "60.003 SP",
+        "liquid": 14.777,
+        "votingPower": 33.49,
+        "posting": "NOT-OURS",
+        "postingAuthorityCount": 1,
+        "active": "NO-KEY-IN-VAULT",
+        "activeAuthorityCount": 1,
+        "recentOps": {
+          "__unavailable": "condenser_api.get_account_history upper "
+        }
+      },
+      "acct-04": {
+        "effStake": "44.818 SP",
+        "liquid": 33.708,
+        "votingPower": 34.45,
+        "posting": "NOT-OURS",
+        "postingAuthorityCount": 1,
+        "active": "NO-KEY-IN-VAULT",
+        "activeAuthorityCount": 1,
+        "recentOps": {
+          "__unavailable": "condenser_api.get_account_history upper "
+        }
+      },
+      "acct-05": {
+        "effStake": "40.137 SP",
+        "liquid": 15.011,
+        "votingPower": 16.16,
+        "posting": "NOT-OURS",
+        "postingAuthorityCount": 1,
+        "active": "NO-KEY-IN-VAULT",
+        "activeAuthorityCount": 1,
+        "recentOps": {
+          "__unavailable": "condenser_api.get_account_history upper "
+        }
+      },
+      "acct-06": {
+        "effStake": "41.139 SP",
+        "liquid": 9.5,
+        "votingPower": 52.94,
+        "posting": "NOT-OURS",
+        "postingAuthorityCount": 1,
+        "active": "NO-KEY-IN-VAULT",
+        "activeAuthorityCount": 1,
+        "recentOps": {
+          "__unavailable": "condenser_api.get_account_history upper "
+        }
+      },
+      "acct-07": {
+        "effStake": "41.176 SP",
+        "liquid": 18.679,
+        "votingPower": 46.78,
+        "posting": "NOT-OURS",
+        "postingAuthorityCount": 1,
+        "active": "NO-KEY-IN-VAULT",
+        "activeAuthorityCount": 1,
+        "recentOps": {
+          "__unavailable": "condenser_api.get_account_history upper "
+        }
+      },
+      "acct-08": {
+        "effStake": "42.726 SP",
+        "liquid": 13.304,
+        "votingPower": 55.48,
+        "posting": "NOT-OURS",
+        "postingAuthorityCount": 1,
+        "active": "NO-KEY-IN-VAULT",
+        "activeAuthorityCount": 1,
+        "recentOps": {
+          "__unavailable": "condenser_api.get_account_history upper "
+        }
+      },
+      "acct-09": {
+        "effStake": "41.183 SP",
+        "liquid": 15,
+        "votingPower": 54.47,
+        "posting": "NOT-OURS",
+        "postingAuthorityCount": 1,
+        "active": "NO-KEY-IN-VAULT",
+        "activeAuthorityCount": 1,
+        "recentOps": {
+          "__unavailable": "condenser_api.get_account_history upper "
+        }
+      },
+      "acct-10": {
+        "effStake": "43.557 SP",
+        "liquid": 15,
+        "votingPower": 72.08,
+        "posting": "NOT-OURS",
+        "postingAuthorityCount": 1,
+        "active": "NO-KEY-IN-VAULT",
+        "activeAuthorityCount": 1,
+        "recentOps": {
+          "__unavailable": "condenser_api.get_account_history upper "
+        }
+      },
+      "acct-00": {
+        "effStake": "2196.31 SP",
+        "liquid": 115.057,
+        "votingPower": 34.35,
+        "posting": "OURS",
+        "postingAuthorityCount": 6,
+        "active": "NO-KEY-IN-VAULT",
+        "activeAuthorityCount": 4,
+        "recentOps": {
+          "__unavailable": "condenser_api.get_account_history upper "
+        }
+      }
     },
-    {
-      "capability": "air-gapped local brain",
-      "needs": "machine with RAM headroom (llama.cpp + 3B GGUF, kit ready in airgap/)"
+    "hive": {
+      "acct-01": {
+        "effStake": "0.052 HP",
+        "liquid": 0.001,
+        "votingPower": 99.49,
+        "posting": "NOT-OURS",
+        "postingAuthorityCount": 2,
+        "active": "NO-KEY-IN-VAULT",
+        "activeAuthorityCount": 2,
+        "recentOps": {
+          "effective_comment_vote": 64,
+          "vote": 63,
+          "expired_account_notification": 1,
+          "transfer_to_vesting": 1,
+          "transfer_to_vesting_completed": 1,
+          "account_update": 3,
+          "comment": 4,
+          "comment_options": 2,
+          "transfer": 1,
+          "comment_payout_update": 3,
+          "delegate_vesting_shares": 1,
+          "delayed_voting": 1,
+          "custom_json": 53,
+          "account_update2": 2
+        }
+      },
+      "acct-02": {
+        "effStake": "0.152 HP",
+        "liquid": 0,
+        "votingPower": 99.49,
+        "posting": "NOT-OURS",
+        "postingAuthorityCount": 2,
+        "active": "NO-KEY-IN-VAULT",
+        "activeAuthorityCount": 2,
+        "recentOps": {
+          "vote": 70,
+          "effective_comment_vote": 70,
+          "expired_account_notification": 1,
+          "account_update": 4,
+          "comment": 10,
+          "comment_options": 1,
+          "transfer": 3,
+          "comment_payout_update": 4,
+          "custom_json": 35,
+          "account_update2": 2
+        }
+      },
+      "acct-03": {
+        "effStake": "0.128 HP",
+        "liquid": 0,
+        "votingPower": 99.49,
+        "posting": "NOT-OURS",
+        "postingAuthorityCount": 2,
+        "active": "NO-KEY-IN-VAULT",
+        "activeAuthorityCount": 2,
+        "recentOps": {
+          "vote": 69,
+          "effective_comment_vote": 69,
+          "account_update2": 3,
+          "update_proposal_votes": 1,
+          "custom_json": 37,
+          "transfer": 1,
+          "comment": 10,
+          "comment_payout_update": 2,
+          "account_update": 8
+        }
+      },
+      "acct-04": {
+        "effStake": "1.165 HP",
+        "liquid": 0,
+        "votingPower": 99.59,
+        "posting": "NOT-OURS",
+        "postingAuthorityCount": 2,
+        "active": "NO-KEY-IN-VAULT",
+        "activeAuthorityCount": 2,
+        "recentOps": {
+          "effective_comment_vote": 47,
+          "comment_payout_update": 11,
+          "delegate_vesting_shares": 3,
+          "vote": 46,
+          "return_vesting_delegation": 1,
+          "delayed_voting": 2,
+          "custom_json": 74,
+          "account_update": 9,
+          "comment": 5,
+          "account_update2": 2
+        }
+      },
+      "acct-05": {
+        "effStake": "1.343 HP",
+        "liquid": 0,
+        "votingPower": 99.49,
+        "posting": "NOT-OURS",
+        "postingAuthorityCount": 2,
+        "active": "NO-KEY-IN-VAULT",
+        "activeAuthorityCount": 2,
+        "recentOps": {
+          "custom_json": 26,
+          "vote": 81,
+          "effective_comment_vote": 81,
+          "transfer": 2,
+          "comment": 4,
+          "account_update2": 2,
+          "comment_payout_update": 3,
+          "account_update": 1
+        }
+      },
+      "acct-06": {
+        "effStake": "0.167 HP",
+        "liquid": 0,
+        "votingPower": 99.27,
+        "posting": "NOT-OURS",
+        "postingAuthorityCount": 2,
+        "active": "NO-KEY-IN-VAULT",
+        "activeAuthorityCount": 2,
+        "recentOps": {
+          "vote": 51,
+          "effective_comment_vote": 51,
+          "delegate_vesting_shares": 3,
+          "transfer": 8,
+          "hardfork_hive": 1,
+          "expired_account_notification": 1,
+          "transfer_to_vesting": 2,
+          "transfer_to_vesting_completed": 2,
+          "comment": 15,
+          "comment_options": 2,
+          "account_update": 10,
+          "comment_payout_update": 6,
+          "author_reward": 1,
+          "comment_reward": 1,
+          "claim_reward_balance": 1,
+          "delayed_voting": 2,
+          "custom_json": 41,
+          "account_update2": 2
+        }
+      },
+      "acct-07": {
+        "skip": "posting-not-ours (byte-verified 09-30)"
+      },
+      "acct-08": {
+        "effStake": "0.663 HP",
+        "liquid": 0,
+        "votingPower": 99.49,
+        "posting": "NOT-OURS",
+        "postingAuthorityCount": 2,
+        "active": "NO-KEY-IN-VAULT",
+        "activeAuthorityCount": 2,
+        "recentOps": {
+          "vote": 57,
+          "effective_comment_vote": 57,
+          "delegate_vesting_shares": 4,
+          "transfer": 5,
+          "hardfork_hive": 1,
+          "expired_account_notification": 1,
+          "comment": 8,
+          "comment_options": 2,
+          "comment_payout_update": 6,
+          "custom_json": 53,
+          "account_update": 4,
+          "account_update2": 2
+        }
+      },
+      "acct-09": {
+        "effStake": "0.78 HP",
+        "liquid": 0,
+        "votingPower": 99.59,
+        "posting": "NOT-OURS",
+        "postingAuthorityCount": 2,
+        "active": "NO-KEY-IN-VAULT",
+        "activeAuthorityCount": 2,
+        "recentOps": {
+          "effective_comment_vote": 53,
+          "vote": 52,
+          "delegate_vesting_shares": 4,
+          "transfer": 5,
+          "hardfork_hive": 1,
+          "expired_account_notification": 1,
+          "account_update": 9,
+          "comment": 10,
+          "comment_options": 1,
+          "comment_payout_update": 5,
+          "custom_json": 57,
+          "account_update2": 2
+        }
+      },
+      "acct-10": {
+        "effStake": "0.157 HP",
+        "liquid": 0,
+        "votingPower": 99.59,
+        "posting": "NOT-OURS",
+        "postingAuthorityCount": 2,
+        "active": "NO-KEY-IN-VAULT",
+        "activeAuthorityCount": 2,
+        "recentOps": {
+          "effective_comment_vote": 60,
+          "vote": 59,
+          "delegate_vesting_shares": 4,
+          "transfer": 5,
+          "hardfork_hive": 1,
+          "expired_account_notification": 1,
+          "comment": 11,
+          "comment_options": 2,
+          "account_update": 10,
+          "comment_payout_update": 4,
+          "custom_json": 41,
+          "account_update2": 2
+        }
+      },
+      "acct-00": {
+        "effStake": "25.424 HP",
+        "liquid": 0.034,
+        "votingPower": 98,
+        "posting": "NOT-OURS",
+        "postingAuthorityCount": 1,
+        "active": "NO-KEY-IN-VAULT",
+        "activeAuthorityCount": 1,
+        "recentOps": {
+          "custom_json": 171,
+          "delayed_voting": 1,
+          "comment": 1,
+          "vote": 13,
+          "effective_comment_vote": 13,
+          "comment_payout_update": 1
+        }
+      }
     },
-    {
-      "capability": "duckai free bridge",
-      "needs": "network with DDG access (source in mini-services/duckai)"
-    },
-    {
-      "capability": "zero-touch boot",
-      "needs": "platform-level git clone + vault/boot-sovereign.sh on respawn"
+    "blurt": {
+      "acct-01": {
+        "error": "bad-rpc"
+      },
+      "acct-02": {
+        "error": "bad-rpc"
+      },
+      "acct-03": {
+        "error": "bad-rpc"
+      },
+      "acct-04": {
+        "error": "bad-rpc"
+      },
+      "acct-05": {
+        "error": "bad-rpc"
+      },
+      "acct-06": {
+        "error": "bad-rpc"
+      },
+      "acct-07": {
+        "error": "bad-rpc"
+      },
+      "acct-08": {
+        "error": "bad-rpc"
+      },
+      "acct-09": {
+        "error": "bad-rpc"
+      },
+      "acct-10": {
+        "error": "bad-rpc"
+      },
+      "acct-00": {
+        "error": "bad-rpc"
+      }
     }
-  ]
+  },
+  "idle": [],
+  "notes": [],
+  "roster": [
+    "acct-01",
+    "acct-02",
+    "acct-03",
+    "acct-04",
+    "acct-05",
+    "acct-06",
+    "acct-07",
+    "acct-08",
+    "acct-09",
+    "acct-10",
+    "acct-00"
+  ],
+  "summary": {
+    "postingOurs": {
+      "steem": 1,
+      "hive": 0,
+      "blurt": 0
+    },
+    "activeOurs": {
+      "steem": 0,
+      "hive": 0,
+      "blurt": 0
+    },
+    "idleFlags": 0,
+    "ms": 18439
+  }
 }
