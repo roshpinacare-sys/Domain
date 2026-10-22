@@ -255,7 +255,7 @@ footer{border-top:1px solid var(--line);background:var(--bg2);margin-top:24px;pa
       <div class="pcard"><div class="v num" id="pv-pulse">50 עורקים חיים</div><div class="l">דופק-הגריד · עורקים פועמים מתוך הכל</div><span class="t" id="pt-pulse">measured · artery-builder אפייה 03:07Z</span></div>
       <div class="pcard"><div class="v num" id="pv-book">RISK_ON · −141bps edge</div><div class="l">הספר החי · קו-הפאריטי מול הספר הפנימי (SIM)</div><span class="t" id="pt-book">measured · moment-watch · 10-21 06:27Z</span></div>
       <div class="pcard"><div class="v num" id="pv-furnace">—</div><div class="l" id="pv-furnace-l">התנור · מסחר-אמת על הרשת-העצמית · סוופים ועמלות-אמת</div><span class="t" id="pt-furnace">measured · נמדד חי מספר-התנור</span></div>
-      <div class="pcard"><div class="v num" id="pv-cash">≈ $11.9</div><div class="l">הקופה האמיתית · יתרות-שרשרת במחירי-שוק חיים · קווים-מסומנות בלבד</div><span class="t" id="pt-cash">measured · money-watch v2 · 10-21 07:36Z · fuel acct-h-849e9df7 · 201.144 STEEM + 1.608 SBD</span></div>
+      <div class="pcard"><div class="v num" id="pv-cash">≈ $11.9</div><div class="l">דלק-החוץ המדוד · מסילת-מימון שמחזקת, מממנת ומעשירה את הארכיטקטורה · קווים-מסומנות בלבד</div><span class="t" id="pt-cash">measured · money-watch v2 · 10-21 07:36Z · fuel acct-h-849e9df7 · 201.144 STEEM + 1.608 SBD</span></div>
     </div>
     <p style="text-align:center;font-size:12px;color:var(--faint);margin-top:14px">ארבעת המספרים נמדדים מהזנות-ציבוריות בזמן הפתיחה · כישלון-רשת מציג את מדידת-הביטחון האחרונה, בלי להמציא כלום</p>
   </section>
@@ -347,6 +347,7 @@ footer{border-top:1px solid var(--line);background:var(--bg2);margin-top:24px;pa
         <li>גם מה שאין מפורסם<small>אפס הפקדות, אין ביד-חוץ למטבע הפנימי — כתוב בגלוי, באותה גדולת אמת כמו הישנים.</small></li>
         <li>אפס-כתיבה מחדש של עבר<small>ההזנות append-only; קבלות ישנות לא נמחקות, גם כשהן מביכות.</small></li>
         <li>בדיקה עצמאית אפשרית תמיד<small>לכל טענה יש מקור-ציבורי מקושר — אמת-בעצמך בלי לסמוך עלינו.</small></li>
+        <li>הארכיטקטורה במרכז — המטבעות בשירותה<small>STEEM/SBD/SP מדודים בכנות כדלק ומסילת-מימון חוץ שמחזקת, מממנת ומעשירה את הרשת — לא המרכז ולא הוויטרינה.</small></li>
       </ol>
     </div>
   </section>
@@ -438,7 +439,7 @@ footer{border-top:1px solid var(--line);background:var(--bg2);margin-top:24px;pa
       txt("pv-cash", "≈ $" + (Math.round(usd*10)/10));
       txt("pv-cash-l", null);
       var l=document.querySelector("#pv-cash + .l");
-      if(l) l.textContent = "הקופה האמיתית · " + mo.fuel.steem + " STEEM + " + mo.fuel.sbd + " SBD · " + mo.fuel.account;
+      if(l) l.textContent = "דלק-חוץ מדוד · " + mo.fuel.steem + " STEEM + " + mo.fuel.sbd + " SBD · " + mo.fuel.account + " · מסילת-מימון בשירות הארכיטקטורה, לא המרכז";
     }
     stamp("pt-cash", mo && mo.publishedAt);
   }).catch(function(){ stamp("pt-cash", null); });
