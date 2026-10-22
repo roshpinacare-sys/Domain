@@ -1,0 +1,246 @@
+{
+ "tool": "twin-audit.mjs",
+ "runAt": "2026-10-22T12:28:38.419Z",
+ "day": "2026-10-22",
+ "method": {
+  "textSimilarity": "Jaccard over 5-token shingles of stripped live HTML",
+  "nearDupThreshold": 0.95,
+  "sources": {
+   "Console": "https://roshpinacare-sys.github.io/Console/",
+   "Domain": "https://roshpinacare-sys.github.io/Domain/"
+  }
+ },
+ "measured": {
+  "crossPairsMeasured": 16,
+  "crossNearDupPairs": 0,
+  "crossMeanJaccard": null,
+  "intraPairsMeasured": 3,
+  "unknownNearDupPairs": 0,
+  "errors": 0
+ },
+ "crossPages": {
+  "index.html": {
+   "domainStatus": 200,
+   "consoleStatus": 200,
+   "textLen": {
+    "Domain": 4092,
+    "Console": 11277
+   },
+   "jaccard5": null
+  },
+  "defi.html": {
+   "domainStatus": 200,
+   "consoleStatus": 200,
+   "textLen": {
+    "Domain": 14838,
+    "Console": 13820
+   },
+   "jaccard5": null
+  },
+  "deposits.html": {
+   "domainStatus": 200,
+   "consoleStatus": 200,
+   "textLen": {
+    "Domain": 9552,
+    "Console": 9506
+   },
+   "jaccard5": null
+  },
+  "money.html": {
+   "domainStatus": 200,
+   "consoleStatus": 200,
+   "textLen": {
+    "Domain": 14961,
+    "Console": 10288
+   },
+   "jaccard5": null
+  },
+  "versus.html": {
+   "domainStatus": 200,
+   "consoleStatus": 200,
+   "textLen": {
+    "Domain": 7112,
+    "Console": 6738
+   },
+   "jaccard5": null
+  },
+  "sovereign.html": {
+   "domainStatus": 200,
+   "consoleStatus": 200,
+   "textLen": {
+    "Domain": 12187,
+    "Console": 288
+   },
+   "jaccard5": null
+  },
+  "readiness.html": {
+   "domainStatus": 200,
+   "consoleStatus": 200,
+   "textLen": {
+    "Domain": 10750,
+    "Console": 9887
+   },
+   "jaccard5": null
+  },
+  "gate.html": {
+   "domainStatus": 200,
+   "consoleStatus": 200,
+   "textLen": {
+    "Domain": 1779,
+    "Console": 1803
+   },
+   "jaccard5": null
+  },
+  "truth.html": {
+   "domainStatus": 200,
+   "consoleStatus": 200,
+   "textLen": {
+    "Domain": 4040,
+    "Console": 1597
+   },
+   "jaccard5": null
+  },
+  "wallet.html": {
+   "domainStatus": 200,
+   "consoleStatus": 200,
+   "textLen": {
+    "Domain": 6813,
+    "Console": 9233
+   },
+   "jaccard5": null
+  },
+  "acid.html": {
+   "domainStatus": 200,
+   "consoleStatus": 200,
+   "textLen": {
+    "Domain": 2462,
+    "Console": 2455
+   },
+   "jaccard5": null
+  },
+  "net.html": {
+   "domainStatus": 200,
+   "consoleStatus": 200,
+   "textLen": {
+    "Domain": 1528,
+    "Console": 1515
+   },
+   "jaccard5": null
+  },
+  "reports.html": {
+   "domainStatus": 200,
+   "consoleStatus": 404
+  },
+  "roast.html": {
+   "domainStatus": 200,
+   "consoleStatus": 200,
+   "textLen": {
+    "Domain": 309,
+    "Console": 310
+   },
+   "jaccard5": null
+  },
+  "404.html": {
+   "domainStatus": 200,
+   "consoleStatus": 200,
+   "textLen": {
+    "Domain": 656,
+    "Console": 653
+   },
+   "jaccard5": null
+  },
+  "about/index.html": {
+   "domainStatus": 200,
+   "consoleStatus": 200,
+   "textLen": {
+    "Domain": 19324,
+    "Console": 593
+   },
+   "jaccard5": null
+  },
+  "receipts/index.html": {
+   "domainStatus": 200,
+   "consoleStatus": 200,
+   "textLen": {
+    "Domain": 9061,
+    "Console": 9412
+   },
+   "jaccard5": null
+  }
+ },
+ "intraPairs": [
+  {
+   "a": "about/index.html",
+   "b": "market/index-en.html",
+   "domainStatus": {
+    "a": 200,
+    "b": 200
+   },
+   "jaccard5": null
+  },
+  {
+   "a": "market/onepager-en.html",
+   "b": "onepager/index.html",
+   "domainStatus": {
+    "a": 200,
+    "b": 200
+   },
+   "jaccard5": null
+  },
+  {
+   "a": "pitch/index.html",
+   "b": "pitch/en.html",
+   "domainStatus": {
+    "a": 200,
+    "b": 200
+   },
+   "jaccard5": null
+  }
+ ],
+ "registeredChecks": [
+  {
+   "id": "money-console-domain",
+   "registered": true,
+   "differentiated": true,
+   "status": "DIFFERENTIATED",
+   "book": {
+    "url": "public/pulse.json",
+    "status": 200,
+    "formatOk": true
+   },
+   "markerOnB": true,
+   "absenceOnA": true,
+   "evidenceOk": true
+  },
+  {
+   "id": "about-vs-market-index-en",
+   "registered": true,
+   "differentiated": true,
+   "status": "DIFFERENTIATED",
+   "books": {
+    "about/team.json": 404,
+    "dex/money.json": 200,
+    "dex/watch.json": 200
+   },
+   "markerOnA": false,
+   "markerOnB": false,
+   "absenceCross": true,
+   "evidenceOk": false
+  },
+  {
+   "id": "onepager-en-vs-onepager",
+   "registered": true,
+   "differentiated": false,
+   "status": "REGISTERED-PENDING"
+  }
+ ],
+ "unknownNearDups": [],
+ "gate": {
+  "rule": "issue fires when an UNKNOWN pair measures >= 0.95 with no registered distinct function, or a DIFFERENTIATED pair loses its capability evidence",
+  "lostEvidence": [
+   "about-vs-market-index-en"
+  ],
+  "fire": true
+ },
+ "verdict": "no live cross-repo page pair measures >= 0.95"
+}
