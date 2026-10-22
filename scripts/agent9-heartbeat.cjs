@@ -31,12 +31,29 @@
  *  - Every await guarded (bug-t55h-a): a network throw degrades to a logged verdict,
  *    NEVER kills the process.
  *  - Missing/invalid token: stays alive, reports CRITICAL, keeps retrying.
+ *
+ * CHAIN-REVIVAL LAW (t55m):
+ *  The clock chain (agent9-clock self-chaining ring, t55l — the artery-pacer
+ *  pattern) is a GUARANTEED layer; a dead chain silently downgrades the whole
+ *  system to bonus layers only. The daemon therefore owns a second duty:
+ *  every tick it MEASURES the chain (live rings? newest ring dead/quiet?) and,
+ *  if measured dead, ignites one revival tick. Fail-open for revival — a
+ *  redundant ignition is cheap and the clock's ONE-CHAIN law makes it
+ *  harmless; a dead chain for hours is the forbidden outcome (same reasoning
+ *  as bug-t55h-c). Opt-in via AGENT9_CHAIN_REVIVE=1 so every other copy of
+ *  this file (Actions, cron) keeps byte-identical DEFAULT behavior.
+ *
+ * TICK-REENTRANCY LAW (t55m):
+ *  A heal verification can outlive the 5min interval; an overlapping tick
+ *  could double-dispatch. A tick that starts while another is in flight is
+ *  SKIPPED and logged (TICK-SKIP-BUSY) — duplicates are noise, never value.
  */
 
 const http = require("http");
 const fs = require("fs");
 
 const ONCE = process.argv.includes("--once");
+const CHAIN_PROBE = process.argv.includes("--chain-probe"); // measure-only, prints JSON, exits
 
 const CFG = {
   repo: process.env.AGENT9_REPO || "roshpinacare-sys/Domain",
@@ -45,6 +62,9 @@ const CFG = {
   tokenFile: process.env.AGENT9_TOKEN_FILE || "",
   staleMin: Number(process.env.AGENT9_STALE_MIN || 25),
   intervalMs: Number(process.env.AGENT9_INTERVAL_MS || 5 * 60 * 1000),
+  chainRepo: process.env.AGENT9_CHAIN_REPO || "roshpinacare-sys/agent9-clock",
+  chainRevive: process.env.AGENT9_CHAIN_REVIVE === "1",
+  chainStaleMin: Number(process.env.AGENT9_CHAIN_STALE_MIN || 20),
   verifyTimeoutMs: Number(process.env.AGENT9_VERIFY_TIMEOUT_MS || 8 * 60 * 1000),
   port: Number(process.env.PORT || 3040),
   stateFile: process.env.AGENT9_STATE_FILE || "",
@@ -66,6 +86,8 @@ const state = {
   verifyFailures: 0,
   tokenPresent: false,
   tokenValid: null,
+  chain: null,
+  tickInFlight: false,
   events: [],
 };
 
@@ -139,6 +161,76 @@ async function dispatch(token) {
   return res.status;
 }
 
+async function chainMeasure(token) {
+  const res = await gh(`/repos/${CFG.chainRepo}/actions/runs?per_page=8`, token);
+  if (!res.ok) throw new Error(`chain-runs ${res.status}`);
+  const j = await res.json();
+  const runs = j.workflow_runs || [];
+  const live = runs.filter((r) => r.status === "queued" || r.status === "in_progress").length;
+  const last = runs[0] || null;
+  const lastDispatch = runs.find((r) => r.event === "repository_dispatch") || null;
+  return {
+    live,
+    total: j.total_count ?? null,
+    lastRunAt: last ? last.run_started_at : null,
+    lastConclusion: last ? last.conclusion : null,
+    lastDispatchAt: lastDispatch ? lastDispatch.run_started_at : null,
+  };
+}
+
+async function dispatchChain(token) {
+  const res = await gh(`/repos/${CFG.chainRepo}/dispatches`, token, {
+    method: "POST",
+    body: JSON.stringify({ event_type: "agent9-tick", client_payload: { from: "local-daemon-revival" } }),
+  });
+  return res.status;
+}
+
+// t55m — measure the chain; ignite one revival tick if and only if measured dead.
+// CHAIN_PROBE (--chain-probe) measures and reports even with revival disabled,
+// and NEVER dispatches — measure-only by construction.
+async function chainWatch() {
+  if (!CFG.chainRevive && !CHAIN_PROBE) return;
+  let d;
+  try { d = await chainMeasure(readToken()); } catch (e) {
+    logEvent("CHAIN-MEASURE-FAIL", e.message);
+    return; // cannot measure — cannot act (no fabrication)
+  }
+  const quietMin = d.lastDispatchAt ? Math.round((Date.now() - Date.parse(d.lastDispatchAt)) / 60000) : null;
+  state.chain = {
+    checkedAt: new Date().toISOString(),
+    liveRuns: d.live,
+    totalRuns: d.total,
+    lastRunAt: d.lastRunAt,
+    lastConclusion: d.lastConclusion,
+    lastDispatchAt: d.lastDispatchAt,
+    quietMin,
+    revivedAt: state.chain ? state.chain.revivedAt : null,
+    revivals: state.chain ? state.chain.revivals : 0,
+  };
+  const dead = d.live === 0 && (d.lastConclusion === "failure" || quietMin == null || quietMin > CFG.chainStaleMin);
+  if (!dead) {
+    logEvent("CHAIN-OK", `live=${d.live} quiet=${quietMin == null ? "never" : quietMin + "min"} last=${d.lastConclusion}`);
+    return;
+  }
+  if (CHAIN_PROBE) {
+    logEvent("CHAIN-DEAD-PROBE", `would revive: live=${d.live} last=${d.lastConclusion} quiet=${quietMin == null ? "never" : quietMin + "min"}`);
+    return;
+  }
+  if (state.chain.revivedAt && Date.now() - Date.parse(state.chain.revivedAt) < CFG.chainStaleMin * 60000) {
+    logEvent("CHAIN-REVIVE-SKIP", "rate-limited within window");
+    return;
+  }
+  try {
+    const code = await dispatchChain(readToken());
+    state.chain.revivedAt = new Date().toISOString();
+    state.chain.revivals += 1;
+    logEvent("CHAIN-REVIVE", `dispatch http=${code} (live=${d.live} last=${d.lastConclusion} quiet=${quietMin == null ? "never" : quietMin + "min"})`);
+  } catch (e) {
+    logEvent("CHAIN-REVIVE-FAIL", e.message);
+  }
+}
+
 async function latestRunCreatedAt(token) {
   const res = await gh(`/repos/${CFG.repo}/actions/workflows/${CFG.workflow}/runs?per_page=1`, token);
   if (!res.ok) throw new Error(`runs ${res.status}`);
@@ -205,7 +297,7 @@ async function healLoop(reason, ageMin) {
   return false;
 }
 
-async function tick() {
+async function tickBake() {
   state.ticks += 1;
   state.lastTickAt = new Date().toISOString();
   let m;
@@ -249,6 +341,22 @@ async function tick() {
   await healLoop(`raw=${m.ageMin}+commit=${c.ageMin}`, c.ageMin);
 }
 
+// t55m — one tick = bake duty + chain duty; overlapping ticks are SKIPPED
+// (TICK-SKIP-BUSY) so a long heal verification can never double-dispatch.
+async function tick() {
+  if (state.tickInFlight) {
+    logEvent("TICK-SKIP-BUSY", "previous tick still in flight — skipped");
+    return;
+  }
+  state.tickInFlight = true;
+  try {
+    await tickBake();
+  } finally {
+    state.tickInFlight = false;
+  }
+  try { await chainWatch(); } catch (e) { logEvent("CHAIN-WATCH-FAIL", e.message); }
+}
+
 function startDaemon() {
   const server = http.createServer((req, res) => {
     const url = req.url.split("?")[0];
@@ -269,7 +377,12 @@ function startDaemon() {
   process.on("unhandledRejection", (e) => logEvent("UNHANDLED", String(e).slice(0, 200)));
 }
 
-if (ONCE) {
+if (CHAIN_PROBE) {
+  // measure-only: print the chain verdict as JSON and exit — no dispatch, no server.
+  chainWatch()
+    .then(() => { console.log(JSON.stringify(state.chain, null, 2)); process.exit(0); })
+    .catch((e) => { console.error("CHAIN-PROBE-ERR", e.message); process.exit(1); });
+} else if (ONCE) {
   tick()
     .then(() => { logEvent("ONCE-DONE", state.lastVerdict); process.exit(0); })
     .catch((e) => { logEvent("ONCE-ERR", e.message); process.exit(1); });
