@@ -1,6 +1,6 @@
 {
   "protocol": "SAOS-ARB-MESH/1",
-  "at": "2026-10-22T12:39:02.399Z",
+  "at": "2026-10-22T14:05:18.018Z",
   "agent": "arb-mesh v1.0.0 (R41 MESH MARKET, CR-0071)",
   "mode": "KEYLESS-MESH-DEMAND",
   "stasisHalted": false,
@@ -22,13 +22,13 @@
     "multi-network vault (R42): custody classes — MEASURED-KEYED is the only mintable class; adjacent networks are OBSERVED (seen, never custody, never a reserve); redeem is ALWAYS honored 1:1 in-ledger (burn before payout); the chain payout is queued for the keyed desks — keyless code never fires a broadcast",
     "uniform batch clearing (R76): the queue clears as ONE batch - canonical order, two-sided netting at the measured fair, one uniform clearing price for every trader, the solver absorbs the remainder; order-invariance (a permuted queue clears byte-identical) is the anti-sandwich proof · the proof lane is DRY (moves nothing), the settle gate stays the owner's"
   ],
-  "verdict": "GATED-WIRE (edge above floor but no free capital to arm the agents — named, never faked)",
-  "batch": "MESH-2026102212-21aaa6b4",
+  "verdict": "NO-EDGE (every row below the floor — the machinery waits, the floor law protects the P&L)",
+  "batch": null,
   "settledBatch": null,
   "coreLedger": {
     "seq": 372,
-    "at": "2026-10-22T12:22:59.242Z",
-    "ageHours": 0.27,
+    "at": "2026-10-22T13:53:47.303Z",
+    "ageHours": 0.19,
     "conservationOk": false,
     "attestation": "a4790702171ed56e",
     "feedFresh": true
@@ -40,21 +40,7 @@
   "roster": [
     "operator"
   ],
-  "candidates": [
-    {
-      "id": "A1",
-      "name": "P3 STEEM/SBD pool mid vs CEX-implied fair",
-      "poolMidNano": "104473707",
-      "fairNano": "106430290",
-      "netBps": 148.84,
-      "thresholdBps": 100,
-      "from": "SBD",
-      "to": "STEEM",
-      "railOwner": "treasury (our own pool — atomic, no bridge)",
-      "source": "dex-core.json (our pool — atomic, no bridge)",
-      "at": "2026-10-22T12:39:02.399Z"
-    }
-  ],
+  "candidates": [],
   "keyedRailPlans": [
     {
       "id": "A1",
