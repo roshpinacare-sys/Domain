@@ -83,7 +83,7 @@ jobs:
           fs.writeFileSync("vault-blob/blob2.json", JSON.stringify({ format: "WEAVE-VAULT-TRANSFER-1", recipient: "vault-home-1", at: new Date().toISOString(), items: items2 }, null, 1));
           console.log("sealed items:", items.filter(i => !i.missing).length, "/", names.length, "(zero values printed)");
           SEALEOF
-          echo "[T-563 tombstone] seal.mjs never lived in this repo (saos-dex-template origin) - step was silent module-not-found under continue-on-error; honest skip"
+          node seal.mjs
 
       - name: Commit sealed blob to vault-transfer branch
         run: |
