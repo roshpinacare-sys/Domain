@@ -122,7 +122,15 @@ jobs:
           (am, tsm) = age_h(MONEY_BOOK, keys=("updated", "at"))
           (at_, tst) = age_h(TRUTH_LATEST, keys=("at", "ts"))
 
-          BOOK_STALE_H, COPY_LAG_H, QUALITY_STALE_H, MONEY_STALE_H, TRUTH_STALE_H, HOLD_MIN = 3.5, 1.0, 0.75, 4.5, 3.5, 45
+          # truth/latest contract (measured wave 19.61, trace 1a160f64df51f979): the Console truth-gate is
+          # semantically gated — on an unchanged verdict it commits NOTHING until the 6h liveness heartbeat
+          # ("no commit, Pages quota spared"), so the stamp legitimately ages to ~6h while ALL-GREEN.
+          # The 01:21:18Z organic dispatch (run 39705186428) copied an UNCHANGED file — honest proof that a
+          # 3.5h threshold mismatches the writer and loops no-op dispatches between 3.5h and 6h.
+          # Sensor law: fire only past the SOURCE's own ceiling (6h) + hop margin (1h) = 7h — i.e. only when
+          # the 6h heartbeat itself died or the copy hop died. Repair is Domain-local and keyless; if the
+          # Console clock itself is dead the mirror copies honestly and Console's gate owns that clock.
+          BOOK_STALE_H, COPY_LAG_H, QUALITY_STALE_H, MONEY_STALE_H, TRUTH_STALE_H, HOLD_MIN = 3.5, 1.0, 0.75, 4.5, 7.0, 45
 
           holds = {}
           try:
