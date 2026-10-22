@@ -1,7 +1,13 @@
 # IDENTITY-GUARD — DECISIONS #10 enforcement (keyless, fail-loud)
 #
 # Law: no commit may carry NAME@users.noreply.github.com as author OR
-# committer, except the owner identities and github-actions[bot].
+# committer, except the owner identities and github-actions[bot] — and no
+# commit may carry *@container (the sandbox default identity class, e.g.
+# "Z User <z@container>"): the lane law requires <lane>@fleet.local, and a
+# container-default commit is an UNIDENTIFIED lane. [wave 19.62 · trace
+# 1a16145d1d245e5d] measured live: a sibling sandbox landed d4547bb as
+# "Z User <z@container>" @01:45:50Z and the guard passed it — the encoded
+# law lagged the lane law; this clause closes that gap.
 # Any other NAME in that namespace maps to a REAL foreign GitHub account —
 # measured 2026-10-13 (T-74/T-76): 5 innocent people (Agent-Z/Agent-4/zai-code/
 # noreply/R39) were being attributed commits they never made.
@@ -60,13 +66,14 @@ jobs:
           fi
           echo "identity-guard: scanning $RANGE"
           VIOLATIONS="$(git log --pretty='%H|%ae|%ce|%s' "$RANGE" 2>/dev/null | awk -F'|' '
-            ($2 ~ /@users\.noreply\.github\.com$/ || $3 ~ /@users\.noreply\.github\.com$/) &&
-            $2 !~ /^326012154\+roshpinacare-sys@/ && $3 !~ /^326012154\+roshpinacare-sys@/ &&
-            $2 !~ /^github-actions\[bot\]@/ && $3 !~ /^github-actions\[bot\]@/ &&
-            $2 !~ /^roshpinacare-sys@/ && $3 !~ /^roshpinacare-sys@/
+            (($2 ~ /@users\.noreply\.github\.com$/ || $3 ~ /@users\.noreply\.github\.com$/) &&
+             $2 !~ /^326012154\+roshpinacare-sys@/ && $3 !~ /^326012154\+roshpinacare-sys@/ &&
+             $2 !~ /^github-actions\[bot\]@/ && $3 !~ /^github-actions\[bot\]@/ &&
+             $2 !~ /^roshpinacare-sys@/ && $3 !~ /^roshpinacare-sys@/) ||
+            ($2 ~ /@container$/ || $3 ~ /@container$/)
           ' || true)"
           if [ -n "$VIOLATIONS" ]; then
-            echo "::error::DECISIONS #10 VIOLATION — NAME@users.noreply.github.com identities in pushed commits (maps to a real foreign GitHub account)"
+            echo "::error::DECISIONS #10 VIOLATION — forbidden identities in pushed commits (NAME@users.noreply.github.com maps to a real foreign GitHub account; *@container is the unidentified sandbox-default class — lane law: <lane>@fleet.local)"
             echo "$VIOLATIONS"
             exit 1
           fi
@@ -92,10 +99,11 @@ jobs:
           # org-gitleaks T-w class) — the wound stays registered and counted; only a
           # scan error fails.
           VIOLATIONS="$(git log --pretty='%H|%ae|%ce|%ad|%s' --date=iso origin/main 2>/dev/null | awk -F'|' '
-            ($2 ~ /@users\.noreply\.github\.com$/ || $3 ~ /@users\.noreply\.github\.com$/) &&
-            $2 !~ /^326012154\+roshpinacare-sys@/ && $3 !~ /^326012154\+roshpinacare-sys@/ &&
-            $2 !~ /^github-actions\[bot\]@/ && $3 !~ /^github-actions\[bot\]@/ &&
-            $2 !~ /^roshpinacare-sys@/ && $3 !~ /^roshpinacare-sys@/
+            (($2 ~ /@users\.noreply\.github\.com$/ || $3 ~ /@users\.noreply\.github\.com$/) &&
+             $2 !~ /^326012154\+roshpinacare-sys@/ && $3 !~ /^326012154\+roshpinacare-sys@/ &&
+             $2 !~ /^github-actions\[bot\]@/ && $3 !~ /^github-actions\[bot\]@/ &&
+             $2 !~ /^roshpinacare-sys@/ && $3 !~ /^roshpinacare-sys@/) ||
+            ($2 ~ /@container$/ || $3 ~ /@container$/)
           ' || true)"
           COUNT="$(printf '%s' "$VIOLATIONS" | grep -c . || true)"
           echo "identity-guard deep-sweep: FULL-HISTORY census — ${COUNT} forbidden-identity commits on record"
