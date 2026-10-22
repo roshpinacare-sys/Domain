@@ -1,33 +1,33 @@
 {
  "ok": true,
  "format": "moment-watch-v1",
- "publishedAt": "2026-10-22T05:46:35.311Z",
+ "publishedAt": "2026-10-22T06:33:26.421Z",
  "engine": "Domain/agents/moment-watch · R62 sovereign moment",
  "role": "reads the live moment every 30 minutes (market regime, our parity line vs the live internal book, fuel runway, measured anomalies) and records a deterministic directional call that is only ever scored after its horizon has passed - training as measurement, never as promise",
  "market": {
-  "steemUsd": 0.053124,
-  "steem24h": -2.8982404699563764,
-  "sbdUsd": 0.500229,
-  "btcUsd": 82740,
-  "btc24h": 0.10066523169362052,
+  "steemUsd": 0.052994,
+  "steem24h": -4.403200235249125,
+  "sbdUsd": 0.499308,
+  "btcUsd": 82536,
+  "btc24h": -0.26062852267186415,
   "fearGreed": {
    "value": 68,
    "label": "Greed"
   }
  },
- "paritySbdPerSteem": 0.10619936069280268,
+ "paritySbdPerSteem": 0.10613489068871318,
  "liveBook": {
   "bestBid": 0.10184336490477645,
-  "bestAsk": 0.1018452441635233,
-  "bidsDepthSbd": 2043.01,
-  "asksDepthSteem": 215.84,
-  "levels": 15,
-  "bidSurplusBps": -410
+  "bestAsk": 0.10185373803218578,
+  "bidsDepthSbd": 2040.66,
+  "asksDepthSteem": 211.73,
+  "levels": 14,
+  "bidSurplusBps": -404
  },
  "regime": {
   "label": "RISK_ON",
   "drivers": [
-   "BTC +0.1%",
+   "BTC -0.3%",
    "F&G 68"
   ],
   "thresholds": {
@@ -40,18 +40,18 @@
  },
  "runway": {
   "active": false,
-  "weeklySp": 6.20632476141525e-10,
+  "weeklySp": 6.206338401144345e-10,
   "nextPayment": "1969-12-31T23:59:59",
   "remainingSp": 0,
   "weeklyUsd": 0,
-  "treasuryUsd": 1.72
+  "treasuryUsd": 1.71
  },
  "grid": {
-  "verdict": "ARMED-WAITING",
+  "verdict": "ARMED-LIVE",
   "armed": true,
-  "blocker": "buy-side waiting for SBD inventory: 0.143 SBD commitable < 0.15 needed",
+  "blocker": null,
   "externalFlowUsd": 0.784335,
-  "publishedAt": "2026-10-22T04:37:05.899Z"
+  "publishedAt": "2026-10-22T06:27:46.221Z"
  },
  "moneyPath": {
   "fuel": {
@@ -71,7 +71,7 @@
   },
   "redemption": null
  },
- "call": "FLAT",
+ "call": "DOWN",
  "callStats": {
   "resolved": 84,
   "hits": 42,
@@ -84,12 +84,7 @@
   {
    "kind": "parity-edge",
    "tone": "good",
-   "text": "עומק-קנייה חי 410bps מתחת לקו-הזהות (bid 0.1018 מול parity 0.1062) — עודף מדוד לגריד."
-  },
-  {
-   "kind": "sbd-inventory",
-   "tone": "warn",
-   "text": "צוואר-הקנייה של הגריד: buy-side waiting for SBD inventory: 0.143 SBD commitable < 0.15 needed"
+   "text": "עומק-קנייה חי 404bps מתחת לקו-הזהות (bid 0.1018 מול parity 0.1061) — עודף מדוד לגריד."
   },
   {
    "kind": "fuel",
