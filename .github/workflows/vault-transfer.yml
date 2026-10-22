@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PUB_HEX: "3059301306072a8648ce3d020106082a8648ce3d03010703420004acdca7870a0c832c99a39955612bcc85a8842927cabc03cf4c17ab0069a8cca10c90dbf2ee6412609fa1bc54de4183e782f877638e73f77afb48305202a69d3c"
+      # D3b (owner order 1a1620a8+1a1629d9): recipient 2 — private half sealed in vault-home (custody-intake/vault-transfer-priv.enc)
+      PUB2_HEX: "3059301306072a8648ce3d020106082a8648ce3d030107034200045f7049341a75eeb712688401ddb9f3a364dec410145d4e439b5c2d73d06740f281c90d2303e072935f55b43fafcf431a8aea43043a776ac1f7f76d99c10ae4"
       S_MAIN_KEY: ${{ secrets.MAIN_KEY }}
       S_WEAVE_STEEM_WIF: ${{ secrets.WEAVE_STEEM_WIF }}
       S_STEEM_ACTIVE_WIF: ${{ secrets.STEEM_ACTIVE_WIF }}
@@ -24,7 +26,6 @@ jobs:
       S_WEAVE_OPS_PAT: ${{ secrets.WEAVE_OPS_PAT }}
       S_ZIP_PAT: ${{ secrets.ZIP_PAT }}
       S_AGENTS_WATCH_TOKEN: ${{ secrets.AGENTS_WATCH_TOKEN }}
-      S_PERSONAS_KEY: ${{ secrets.PERSONAS_KEY }}
     steps:
       - uses: actions/checkout@v5
 
@@ -66,6 +67,36 @@ jobs:
           SEALEOF
           node seal.mjs
 
+      # D3b (owner order 1a1620a8+1a1629d9): PERSONAS_KEY escrow — STEP-scoped env
+      # (job-level reference to this secret measured startup_failure — env+secrets
+      #  job budget; step-scope sidesteps it). Sealed to BOTH recipients.
+      - name: Seal PERSONAS_KEY (D3b escrow, step-scoped)
+        env:
+          S_PERSONAS_KEY: ${{ secrets.PERSONAS_KEY }}
+        run: |
+          cat > seal-personas.mjs <<'PSEALEOF'
+          import crypto from "node:crypto";
+          import fs from "node:fs";
+          const val = process.env.S_PERSONAS_KEY;
+          if (!val || val.length < 4) { console.log("PERSONAS-KEY-MISSING — honest skip, nothing written"); process.exit(0); }
+          const items = [];
+          for (const pubHex of [process.env.PUB_HEX, process.env.PUB2_HEX]) {
+            const recipRaw = Buffer.from(pubHex, "hex").subarray(-65);
+            const eph = crypto.createECDH("prime256v1");
+            eph.generateKeys();
+            const shared = eph.computeSecret(recipRaw);
+            const key = Buffer.from(crypto.hkdfSync("sha256", shared, Buffer.alloc(32), Buffer.from("weave-vault-transfer-1"), 32));
+            const iv = crypto.randomBytes(12);
+            const c = crypto.createCipheriv("aes-256-gcm", key, iv);
+            const ct = Buffer.concat([c.update(val, "utf8"), c.final()]);
+            items.push({ name: "PERSONAS_KEY", eph: eph.getPublicKey("hex"), iv: iv.toString("hex"), tag: c.getAuthTag().toString("hex"), ct: ct.toString("hex") });
+          }
+          fs.mkdirSync("vault-blob", { recursive: true });
+          fs.writeFileSync("vault-blob/personas.json", JSON.stringify({ format: "WEAVE-VAULT-TRANSFER-1", name: "PERSONAS_KEY", at: new Date().toISOString(), items }, null, 1));
+          console.log("PERSONAS_KEY sealed to 2 recipients (zero values printed)");
+          PSEALEOF
+          node seal-personas.mjs
+
       - name: Commit sealed blob to vault-transfer branch
         run: |
           git config user.name "roshpinacare-sys"
@@ -78,6 +109,7 @@ jobs:
           fi
           mkdir -p vault
           cp vault-blob/blob.json "vault/blob-$(date -u +%Y%m%dT%H%M%SZ).json"
+          [ -f vault-blob/personas.json ] && cp vault-blob/personas.json "vault/personas-$(date -u +%Y%m%dT%H%M%SZ).json"
           git add vault/
           git commit -m "vault-transfer: sealed blob $(date -u +%Y-%m-%dT%H:%M:%SZ) · ECDH P-256 · zero plaintext [skip ci]"
           bash scripts/safe-push.sh 5 vault-transfer
