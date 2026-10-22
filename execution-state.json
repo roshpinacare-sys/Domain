@@ -1,183 +1,190 @@
 {
- "schema": "SAOS-EXECUTION-LEDGER/1",
- "at": "2026-10-22T13:26:00Z",
- "generator": "agent round 26 (Z.ai) — hand-curated from the real worklog + measured books",
- "sourceWorklog": "worklog task-24 (458+ sections)",
- "law": "כל-שורה-כאן-נגזרת-מפנקס-העבודה-האמיתי-ומהספרים-המדודים · מה-שלא-הוכח-רשום-כלא-בוצע · אסור-לקשט",
- "freshness": {
-  "howToVerify": "כל-ראיה-נבדקת-בגיט: github.com/roshpinacare-sys/Domain → commits, ו-github.com/roshpinacare-sys/saos-dex/actions → הריצות",
-  "staleAfterHours": 48,
-  "renewedBy": "מחזור-סוכן (תמשיך-ודחוף) או plant-books watchdog"
- },
- "measuredSnapshot": {
-  "at": "2026-10-22T13:25:00Z",
-  "services": "15/15 פורטים חיים · local-beats scheduler UP · flush DRAINED 4/4",
-  "reposInSync": "giant 0/0 · saos-dex 84ee856d pushed · FleetHQ 0/0 · Domain 0/0 · Sandbox 0/0 · Console 0/0 — האחוזה-כולה מנוקזת",
-  "gridVerdict": "ARMED-LIVE (run 43, dex-grid dispatch 12:49Z · success): SPREAD-TIER T0 מפורסם-בלוג-ובספר · 6 ביטולי-VALUE-GUARD כולם-עם-txid (sub-parity -218/-142bps נעצרו) · 3 אסקים parity+0.6/1.2/1.8% tier-מסומן · 0 כישלונות-שידור · hive=ARMED-WAITING",
-  "broadcastReliability": "N2 מלא: place-recovery (fb7b0519) + cancel-recovery N2-b (aad11a38) + N2-c הוכחת-כפילות (84ee856d — duplicate-transaction-מצומת-שני = ראיה-על-השרשרת-שהשידור-נחת, txid-מחולץ-מההודעה) · הריצה-המדודה 43: 0/0 כישלונות",
-  "spreadTiers": "סולם-המדרגות-מבוסס-הראיות חי (grids/spread-tiers.mjs · 84ee856d): T0=בסיס-החתום 60/100bps · T1(≥2 מילויי-חוץ)=45/80 · T2(≥5)=30/60 · T3(≥12)=18/45 דו-ספרתי · חלון-ראיות ≥ 2026-10-22T01:43Z — 97-המילויים-הקדם-חוק (עידן-מלחמת-הבוטים) אינם-ראיה · 21-חוקי-selftest ירוקים",
-  "externalProfit": "curation 24h $0.0096 (290.128 vests) · externalFlowUsd historic $0.784335 · realFills 118-רשומות/6-מילויי-אמת · 0 מילויי-חוץ-אחרי-חוק-הראיות",
-  "estateDrain": "flush.sh תוקן-מקצה-לקצה: קרדנציאל-ווק (source-33 · pat.env נמדד-401-מת) + askpass (/home/z/.gitcred/askpass.sh) חיווט-ל-git · מדוד-חי: DRAINED any_push=1 — כל-4-הריפו 0/0 · הסולר-אטם-את-התיקונים-בעצמו (FleetHQ 9fbff7816 · Sandbox 5d24faa6)",
-  "arteries": "sbx-seal מצביע-על-הנתיב-החי (t19b מת → estate/Domain · exit-0 מדוד) · sbx-grid ECO_WALLET_TOKEN משוחזר (VERDICT: PASS) · office-heartbeat capture exit=0 (13:08Z) · דיסק 100%→78% (2.1G שוחררו: npm-cache/tectonic/node-gyp)",
-  "hive": "ARMED-WAITING — השוק-הפנימי-השבור-מסורב-מכנית (7608bps) — החלטת-בעלים (N3)"
- },
- "done": [
-  {
-   "id": "D1",
-   "title": "עצירת-דימום-הערך (R-GRID-WAR)",
-   "detail": "רצפת-פאריטי ב-army-ladder (sell ≥ parity+80bps) + VALUE-GUARD שמבטל כל-ask-תת-פאריטי על-החשבון. הדימום-המדוד (asks-במחיר-הפסד) הופסק-מכנית.",
-   "evidence": "saos-dex commit 9e359fed · הריצה 39723306632 · 21+5 ביטולים-מתועדים-בלוג"
+  "schema": "SAOS-EXECUTION-LEDGER/1",
+  "at": "2026-10-22T14:25:00Z",
+  "generator": "agent round 26 (Z.ai) — hand-curated from the real worklog + measured books",
+  "sourceWorklog": "worklog task-24 (458+ sections)",
+  "law": "כל-שורה-כאן-נגזרת-מפנקס-העבודה-האמיתי-ומהספרים-המדודים · מה-שלא-הוכח-רשום-כלא-בוצע · אסור-לקשט",
+  "freshness": {
+    "howToVerify": "כל-ראיה-נבדקת-בגיט: github.com/roshpinacare-sys/Domain → commits, ו-github.com/roshpinacare-sys/saos-dex/actions → הריצות",
+    "staleAfterHours": 48,
+    "renewedBy": "מחזור-סוכן (תמשיך-ודחוף) או plant-books watchdog"
   },
-  {
-   "id": "D2",
-   "title": "race-safety לקבלות-הריצות",
-   "detail": "rebase --abort + retry loops בשלבי evidence-commit — מירוץ-ה-git מול-האוטו-סילר שהפיל ריצה 39722815915 נסגר.",
-   "evidence": "saos-dex commit 17b8af88 · הוכח-בייצור: ריצה 39723306632 success על אותו-HEAD"
+  "measuredSnapshot": {
+    "externalProfit24hUsd": 0.0096,
+    "externalFlowUsdHistoric": 0.784335,
+    "realFillsLifetime": 6,
+    "fillRecordsLedger": 118,
+    "gridVerdict": "ARMED-LIVE (round-26 run 39781537302) · N8 run dispatching",
+    "hiveVerdict": "ARMED-WAITING",
+    "priceTruth": {
+      "verdict": "TRIANGLE-ARMED (measured 13:49Z)",
+      "chainFeedSbdPerSteem": 0.10408,
+      "usdParitySbdPerSteem": 0.10519,
+      "binanceSteemUsd": 0.0527,
+      "measuredSbdUsd": 0.5009,
+      "impliedSbdUsdFromFeed": 0.5063,
+      "sbdDepegBps": -107,
+      "bookTouchSbdPerSteem": 0.1028,
+      "note": "SBD דה-פג מדוד ~$0.50 — שתי סמכויות עצמאיות מצטלבות תוך 1.1% · המגע 340bps מתחת לקו-הערך · המדף הישן parity+60bps היה 400bps מעל המגע = שורש 19-ימי-אפס-מילויים"
+    },
+    "externalFillEvidence": {
+      "at": "2026-10-22T13:37:51Z",
+      "counterparty": "cashly",
+      "detail": "0.500 STEEM -> 0.051 SBD (0.102 SBD/STEEM, במגע)",
+      "note": "מילוי-חוץ אמת על השרשרת מהסולם-המתחבק-מגע של הרץ-התאום — הראיה שהזרימה חיה במגע, לא במדף-400bps-מעליו"
+    }
   },
-  {
-   "id": "D3",
-   "title": "מפרסם-רווח-החוץ keyless — חי-ומתוזמן",
-   "detail": "external-profit-publish.yml: מדידת-אקרואל 24ש׳ מ-RPC-ציבורי-בלבד (אפס-מפתחות), כל-שעתיים + dispatch. הכתובת-המתה-של-דף-הכסף-נסגרה.",
-   "evidence": "ריצה 39721424777 success 04:16Z · grids/state/external-profit-public.json טרי"
-  },
-  {
-   "id": "D4",
-   "title": "החייאת-הצי + שחרור-דיסק",
-   "detail": "דיסק 100% (שהפיל שירותים) → 68%. 15/15 פורטים הוקמו-מחדש ומנוטרים ב-watchdog דו-שכבתי.",
-   "evidence": "worklog 21-b/21-c · supervise-dev + watchdog-fleethq רצים"
-  },
-  {
-   "id": "D5",
-   "title": "כנות-verdict מלאה",
-   "detail": "חוק 9-c: אסור ARMED-STABLE עם-כישלונות. ARMED-WAITING הנוכחי מפורק-לגורמים-אמיתיים (שידורים-נדחים STEEM · שוק-שבור HIVE) — כלום לא מוסתר.",
-   "evidence": "worklog task-22 · grid-public.json blocker-מדוד"
-  },
-  {
-   "id": "D6",
-   "title": "אפס-כפילויות/אפס-דריסות בכל-הריפוים",
-   "detail": "saos-dex ff-pull נקי, giant/FleetHQ ב-sync 0/0, Domain נדחף-ללא-סתירה. 444 מחזורים-מתועדים בפנקס-העבודה.",
-   "evidence": "worklog.md 444 sections · git 0 ahead/0 behind בשלושת-הבתים"
-  },
-  {
-   "id": "D7",
-   "title": "trim-to-cap — מלכודת-ה-DEADLOCK-הכלכלית נשברה",
-   "detail": "ה-POLICY-ENGINE (kelly-cap) חסם-כל-מחזור כי-ה-commit המלא (33 SBD) חרג-מהתקרה (19) — ובלי-הצבות-אין-קבלות-ACTED → הילוך-לא-עולה → חסימה-לנצח. עתה: הגריד-מתאים-את-עצמו-מטה-אל-תוך-התקרה (×0.575 מדוד), משמעת-ההון-נשמרת, וההילוך-יכול-לטפס-על-הקבלות.",
-   "evidence": "saos-dex commit c44a99cd · run 39746309859: 'POLICY-FIT: 33.063 > cap 19 — scaled ×0.575' + 6 placed"
-  },
-  {
-   "id": "D8",
-   "title": "הידוק-ה-spread (N1) — מוכח-על-השרשרת",
-   "detail": "grid-params: bidStep 150→100bps · askStep 80→60bps (רציונל-מדוד: value-guard נושא-עתה-את-הגנת-הסחיפה-ש-9-c-הניחה). הסולם-המהודק-הוצב-בפועל: asks parity+0.6%/1.2%/1.8%, bids touch-1%/2%/3%.",
-   "evidence": "saos-dex commit fb7b0519 · validator OK 100/60bps · run 39746309859 txids 06582ffd/c7fa9a0f/2e70460d/59fd0375/94bc72ee/341709e5"
-  },
-  {
-   "id": "D9",
-   "title": "אמינות-שידור מלאה (N2) — הריצה-הראשונה blocker=None",
-   "detail": "שתי-הזרועות מוגנות-עתה: place (fb7b0519) + cancel (N2-b aad11a38) — 'הפקודה-נעלמה-מהספר-אחרי-no-id' = הושג-בראיה, עם-guard-נגד-הכרזת-השתקמות-מתוך-RPC-כושל. הפורנזיה: 2/13-הכישלונות בריצה 39746309859 היו ביטולי-VALUE-GUARD שנחתו-בעצם.",
-   "evidence": "saos-dex commit aad11a38 · run 39752394708 (09:03Z) success: 4 ביטולי-ערך txids 6bd93b98/4172654d/7f6a7bb1/7802aae1 · 6 הצבות txids 765cf489/afc2761e/ed90c5aa/8c8c2e0d/46633862/4c63e2ec · db/grid-public.json blocker=None publishedAt 09:04:06Z"
-  },
-  {
-   "id": "D10",
-   "title": "סולם-המדרגות-מבוסס-הראיות (N1-המשך) — חי-על-השרשרת",
-   "detail": "grids/spread-tiers.mjs: הבסיס-החתום (60/100bps) הוא-עתה תקרת-T0; הצעדים-החיים-נגזרים-בכל-ריצה-ממילויי-חוץ-אחרי-חלון-הראיות (≥2026-10-22T01:43Z — 97-המילויים-הקדם-חוק-עמומי-המקור אינם-ראיה; שיעור-R-GRID-WAR). T1≥2→45/80 · T2≥5→30/60 · T3≥12→18/45 דו-ספרתי. wash-מילויים-מסומנים-על-הפנקס (selfCross) · רצפות-השומר (ask≥10/bid≥25) מוחלטות · לעולם-לא-מעל-הבסיס · המדרגה-מפורסמת-בגלוי-בכל-ריצה (policy.spreadTiers ב-dex/grid.json).",
-   "evidence": "saos-dex commit 84ee856d · selftest 21-חוקים-ירוקים · run 43 (12:51:56Z): 'SPREAD-TIER T0: ask 60bps / bid 100bps · 0 third-party fills · next: T1 after 2 more' — כנות-מלאה: הסולם-עומד-ב-T0 עד-ראיות-אמת"
-  },
-  {
-   "id": "D11",
-   "title": "N2-c הוכחת-כפילות — המחסום-האחרון-של-כישלונות-הדמה",
-   "detail": "signAndBroadcast: תשובת-'Duplicate transaction' מצומת-שני (אחרי-no-id-מהראשון) = ראיה-חד-משמעית-על-השרשרת-שהשידור-נחת (אותו-tx-חתום-בדיוק-נראה-פעמיים). הקוד-הישן-בלע-את-השגיאה-וזרק-כישלון-פנטום-שמזהם-verdict. txid-מחולץ-מההודעה-כשאפשר; recovered-duplicate-כנה-אחרת.",
-   "evidence": "saos-dex commit 84ee856d · המדידה-החיה run 43: 0/0 כישלונות-שידור · המנגנון-חמוש-למחזורי-העומס"
-  },
-  {
-   "id": "D12",
-   "title": "עורקי-האחוזה-האוטונומיים — תיקון-מקצה-לקצה-מדוד",
-   "detail": "(א) flush.sh: קרדנציאל-ווק-מורחב (source-33 · pat.env-נמדד-401-מת · Tt.txt-חסר) + askpass-חיווט (/home/z/.gitcred/askpass.sh — ה-PAT-המאומת-מעולם-לא-הגיע-ל-git) → DRAINED-מדוד: כל-4-הריפו 0/0. (ב) sbx-seal: נתיב-מת (t19b-פורק) → estate/Domain · exit-0. (ג) sbx-grid: ECO_WALLET_TOKEN-משוחזר-מ-.env.local-האחוזה (runtime-only, מחוץ-לכל-ריפו) → VERDICT: PASS. (ד) office-heartbeat: capture exit=0. (ה) דיסק 100%→78%.",
-   "evidence": "local-beats.log 13:08-13:19Z: 'office-heartbeat capture exit=0' · 'flush: DRAINED (any_push=1)' · Sandbox 'VERDICT: PASS' · df: 9.4G→7.2G used · הסולר-אטם-את-התיקונים: FleetHQ 9fbff7816 · Sandbox 5d24faa6"
-  }
- ],
- "partial": [
-  {
-   "id": "P1",
-   "title": "רווח-חוץ אמיתי — זורם-אך-קטן",
-   "detail": "curation $0.0096/24h נמדד-ומפורסם-בראיות (290 vests). היעד-המוצהר של-הבעלים — רווח-חוץ-מוכח-ומשמעותי — טרם-הושג. externalFlowUsd=0.784 הוא-היסטורי-ולא-מעוצב.",
-   "evidence": "external-profit-public.json · worklog task-22"
-  },
-  {
-   "id": "P2",
-   "title": "ערוץ-STEEM חמוש-ולייב — עם-שכבת-הגנה-מלאה",
-   "keyGate": "PASS — הרשות-מאומתת-מול-השרשרת",
-   "detail": "שכבות-ההגנה-מלאות: keyGate-fail-closed לפני-חתימה · place-recovery · cancel-recovery (N2-b) · הוכחת-כפילות (N2-c). הריצה-המדודה 43: 0-כישלונות. נשאר-כ-partial-משמעת: רק-סדרה-ארוכה-של-ריצות-נקיות-תסגור-את-הסעיף-סופית.",
-   "evidence": "run 43 (12:49Z) success · 0/0 broadcast-failures · שכבות-מאומתות ב-84ee856d"
-  },
-  {
-   "id": "P3",
-   "title": "office-selfcheck מאזין-אך-חוסם",
-   "detail": "execFileSync חוסם-event-loop בזמן-בדיקה — מתועד-בכנות מ-21-d; התיקון-הארכיטקטוני (async) נדחה-בכוונה-כדי-לא-לסכן-שירות-ליבה-בלי-בדיקה.",
-   "evidence": "worklog task-21-d"
-  }
- ],
- "gaps": [
-  {
-   "id": "G1",
-   "title": "ערוץ-HIVE משותק — השוק-הפנימי-שבור",
-   "detail": "book-mid סוטה 7608bps מהפאריטי-החוץ — הגריד-מסרב-מכנית לסחור-בשוק-שבור (סירוב-כנה, לא-תקלה). נדרש מקור-נזילות/פאריטי או השבתה-מוצהרת-של-הערוץ.",
-   "evidence": "grid-public.json blocker: 'hive book mid deviates 7608bps'"
-  },
-  {
-   "id": "G2",
-   "title": "אין-רוכש-חוץ-פעיל נגד-הספר",
-   "detail": "ההזמנה-לרוכש-חוץ-חיה: 3 asks ב-parity+0.6%+ ו-3 bids ב-touch-1%-, עם-תוקף-27-יום. נשאר-לראות-מילוי-שלישי-ראשון-בפנקס.",
-   "evidence": "grid ops API: placedTotal 188 / filledTotal 6"
-  },
-  {
-   "id": "G3",
-   "title": "spread 229bps — רחוק-מתחרות",
-   "detail": "spread-הספר-האמיתי-הודק-ל-9bps-מדוד (היה 229) — אך-המגע-הפנימי-נסחר-~350bps-מתחת-לפאריטי-החוץ, ולכן-הסולם-שלנו-עומד-מעל-המגע-ולא-נאכל. אין-רוכש-חוץ-שמביא-את-המחיר-אל-הפאריטי — זה-הפער-האמיתי, לא-רוחב-הפוזה.",
-   "evidence": "grid-public.json book (mid 0.101799 vs parity 0.105613) · run 39752394708"
-  },
-  {
-   "id": "G4",
-   "title": "טריות-הדפים-עצמם — הבעיה-שהדף-הזה-סוגר",
-   "detail": "הדפים-הציגו 'פעילות-שוטפת' בלי-סטטוס-ביצוע (מה-בוצע/מה-לא/מה-חסר/מה-הבא). מאז-הדף-הזה: פנקס-הביצוע-הוא-הכתובת-הקבועה, וריענונו-מחויב-בכל-מחזור-סוכן.",
-   "evidence": "פקודת-הבעלים trace 1a1620ac9ca0c0f9 · הוספת execution.html + metrics-אוטומטיים"
-  },
-  {
-   "id": "G5",
-   "title": "מלחמת-סנדבוקסים — בידי-הסולם נרצחים כל-דקות-ספורות",
-   "detail": "הבידים-2026102218-20-שהוצבו-08:17:39-45 בוטלו-בידי-סנדבוקס-אח-ב-08:23:42 (cancel-כל-הספר). האסקים-שרדו-משום-שהרץ-האח-בטל-רק-עד-אותו-רגע. הסדר-האמיתי: מי-רשאי-לגעת-בספר-acct-h-849e9df7-ובאיזו-שעה — החלטת-בעלים (N7).",
-   "evidence": "get_account_history acct-h-849e9df7 ops 166169-166179 · cancels 08:23:42Z"
-  }
- ],
- "next": [
-  {
-   "id": "N6",
-   "title": "צבירת-2-מילויי-חוץ-אחרי-החוק → T1-נפתח-אוטומטית",
-   "detail": "הסולם-חי-עתה: שני-מילויי-חוץ-מדודים-אחרי-חלון-הראיות פותחים-T1 (45/80bps) בלי-טקס-אנושי — המעקה-מודד, המדרגה-נגזרת, השידורים-מסומנים-tier-בגלוי. הראיה-המבוקשת: fill_order-שלישי-בפנקס-עם-edge≠0-ולא-wash.",
-   "owner": "סוכן-הגריד · כל-ריצה"
-  },
-  {
-   "id": "N3",
-   "title": "ערוץ-HIVE: נזילות-או-השבתה-מוצהרת",
-   "detail": "לא-להשאיר-ערוץ-משותק-בשקט: או-מקור-פאריטי/נזילות-אמיתי, או-DISARMED-מוצהר-בדפים.",
-   "owner": "הבעלים-מחליט · הסוכנים-מבצעים"
-  },
-  {
-   "id": "N4",
-   "title": "הכפלת-ה-curation",
-   "detail": "delegation-עצמית/הגברת-משקל-הצבעה — להגדיל את-ההכנסה-המדודה-היחידה-שכבר-מוכחת-וזורמת.",
-   "owner": "סוכן-הקרנות · מחזור-הבא"
-  },
-  {
-   "id": "N5",
-   "title": "ריענון-הפנקס-הזה בכל-מחזור",
-   "detail": "plant-books יכתוב agents/execution-metrics.json מדוד מה-worklog; כל-מחזור-סוכן-מעדכן את-השורות-המאוישות כאן. אם-הפנקס-זקן-מ-48ש׳ — הדף-מציג-אזהרת-זקנה.",
-   "owner": "watchdog + מחזור-סוכן"
-  },
-  {
-   "id": "N7",
-   "title": "חוק-בין-סנדבוקסים: אין-mover-refresh-שמבטל-ספר-אחר",
-   "detail": "מדוד-חי 08:23:42Z (ops 166169-166179 על-השרשרת): סנדבוקס-אח שידר ביטול-סערה-על-כל-הספר-של-acct-h-849e9df7 ורצח-את-3-הבידים-הטריים-של-הגריד-6-דקות-אחרי-הצבתם — מלחמת-הסנדבוקסים-המתועדת (FleetHQ task-20: 'churn prefixes 1500000xx/2100000xx vs 20261022xx'). נדרש: מפתח-בעלים-אחד-לרץ-מקומי-או-שימור-תור-בכל-הרצים (Z-81-בכולם).",
-   "owner": "הבעלים-מחליט-על-מדיניות-הרצים · הסוכנים-מבצעים"
-  }
- ]
+  "done": [
+    {
+      "id": "D1",
+      "title": "עצירת-דימום-הערך (R-GRID-WAR)",
+      "detail": "רצפת-פאריטי ב-army-ladder (sell ≥ parity+80bps) + VALUE-GUARD שמבטל כל-ask-תת-פאריטי על-החשבון. הדימום-המדוד (asks-במחיר-הפסד) הופסק-מכנית.",
+      "evidence": "saos-dex commit 9e359fed · הריצה 39723306632 · 21+5 ביטולים-מתועדים-בלוג"
+    },
+    {
+      "id": "D2",
+      "title": "race-safety לקבלות-הריצות",
+      "detail": "rebase --abort + retry loops בשלבי evidence-commit — מירוץ-ה-git מול-האוטו-סילר שהפיל ריצה 39722815915 נסגר.",
+      "evidence": "saos-dex commit 17b8af88 · הוכח-בייצור: ריצה 39723306632 success על אותו-HEAD"
+    },
+    {
+      "id": "D3",
+      "title": "מפרסם-רווח-החוץ keyless — חי-ומתוזמן",
+      "detail": "external-profit-publish.yml: מדידת-אקרואל 24ש׳ מ-RPC-ציבורי-בלבד (אפס-מפתחות), כל-שעתיים + dispatch. הכתובת-המתה-של-דף-הכסף-נסגרה.",
+      "evidence": "ריצה 39721424777 success 04:16Z · grids/state/external-profit-public.json טרי"
+    },
+    {
+      "id": "D4",
+      "title": "החייאת-הצי + שחרור-דיסק",
+      "detail": "דיסק 100% (שהפיל שירותים) → 68%. 15/15 פורטים הוקמו-מחדש ומנוטרים ב-watchdog דו-שכבתי.",
+      "evidence": "worklog 21-b/21-c · supervise-dev + watchdog-fleethq רצים"
+    },
+    {
+      "id": "D5",
+      "title": "כנות-verdict מלאה",
+      "detail": "חוק 9-c: אסור ARMED-STABLE עם-כישלונות. ARMED-WAITING הנוכחי מפורק-לגורמים-אמיתיים (שידורים-נדחים STEEM · שוק-שבור HIVE) — כלום לא מוסתר.",
+      "evidence": "worklog task-22 · grid-public.json blocker-מדוד"
+    },
+    {
+      "id": "D6",
+      "title": "אפס-כפילויות/אפס-דריסות בכל-הריפוים",
+      "detail": "saos-dex ff-pull נקי, giant/FleetHQ ב-sync 0/0, Domain נדחף-ללא-סתירה. 444 מחזורים-מתועדים בפנקס-העבודה.",
+      "evidence": "worklog.md 444 sections · git 0 ahead/0 behind בשלושת-הבתים"
+    },
+    {
+      "id": "D7",
+      "title": "trim-to-cap — מלכודת-ה-DEADLOCK-הכלכלית נשברה",
+      "detail": "ה-POLICY-ENGINE (kelly-cap) חסם-כל-מחזור כי-ה-commit המלא (33 SBD) חרג-מהתקרה (19) — ובלי-הצבות-אין-קבלות-ACTED → הילוך-לא-עולה → חסימה-לנצח. עתה: הגריד-מתאים-את-עצמו-מטה-אל-תוך-התקרה (×0.575 מדוד), משמעת-ההון-נשמרת, וההילוך-יכול-לטפס-על-הקבלות.",
+      "evidence": "saos-dex commit c44a99cd · run 39746309859: 'POLICY-FIT: 33.063 > cap 19 — scaled ×0.575' + 6 placed"
+    },
+    {
+      "id": "D8",
+      "title": "הידוק-ה-spread (N1) — מוכח-על-השרשרת",
+      "detail": "grid-params: bidStep 150→100bps · askStep 80→60bps (רציונל-מדוד: value-guard נושא-עתה-את-הגנת-הסחיפה-ש-9-c-הניחה). הסולם-המהודק-הוצב-בפועל: asks parity+0.6%/1.2%/1.8%, bids touch-1%/2%/3%.",
+      "evidence": "saos-dex commit fb7b0519 · validator OK 100/60bps · run 39746309859 txids 06582ffd/c7fa9a0f/2e70460d/59fd0375/94bc72ee/341709e5"
+    },
+    {
+      "id": "D9",
+      "title": "אמינות-שידור מלאה (N2) — הריצה-הראשונה blocker=None",
+      "detail": "שתי-הזרועות מוגנות-עתה: place (fb7b0519) + cancel (N2-b aad11a38) — 'הפקודה-נעלמה-מהספר-אחרי-no-id' = הושג-בראיה, עם-guard-נגד-הכרזת-השתקמות-מתוך-RPC-כושל. הפורנזיה: 2/13-הכישלונות בריצה 39746309859 היו ביטולי-VALUE-GUARD שנחתו-בעצם.",
+      "evidence": "saos-dex commit aad11a38 · run 39752394708 (09:03Z) success: 4 ביטולי-ערך txids 6bd93b98/4172654d/7f6a7bb1/7802aae1 · 6 הצבות txids 765cf489/afc2761e/ed90c5aa/8c8c2e0d/46633862/4c63e2ec · db/grid-public.json blocker=None publishedAt 09:04:06Z"
+    },
+    {
+      "id": "D10",
+      "title": "סולם-המדרגות-מבוסס-הראיות (N1-המשך) — חי-על-השרשרת",
+      "detail": "grids/spread-tiers.mjs: הבסיס-החתום (60/100bps) הוא-עתה תקרת-T0; הצעדים-החיים-נגזרים-בכל-ריצה-ממילויי-חוץ-אחרי-חלון-הראיות (≥2026-10-22T01:43Z — 97-המילויים-הקדם-חוק-עמומי-המקור אינם-ראיה; שיעור-R-GRID-WAR). T1≥2→45/80 · T2≥5→30/60 · T3≥12→18/45 דו-ספרתי. wash-מילויים-מסומנים-על-הפנקס (selfCross) · רצפות-השומר (ask≥10/bid≥25) מוחלטות · לעולם-לא-מעל-הבסיס · המדרגה-מפורסמת-בגלוי-בכל-ריצה (policy.spreadTiers ב-dex/grid.json).",
+      "evidence": "saos-dex commit 84ee856d · selftest 21-חוקים-ירוקים · run 43 (12:51:56Z): 'SPREAD-TIER T0: ask 60bps / bid 100bps · 0 third-party fills · next: T1 after 2 more' — כנות-מלאה: הסולם-עומד-ב-T0 עד-ראיות-אמת"
+    },
+    {
+      "id": "D11",
+      "title": "N2-c הוכחת-כפילות — המחסום-האחרון-של-כישלונות-הדמה",
+      "detail": "signAndBroadcast: תשובת-'Duplicate transaction' מצומת-שני (אחרי-no-id-מהראשון) = ראיה-חד-משמעית-על-השרשרת-שהשידור-נחת (אותו-tx-חתום-בדיוק-נראה-פעמיים). הקוד-הישן-בלע-את-השגיאה-וזרק-כישלון-פנטום-שמזהם-verdict. txid-מחולץ-מההודעה-כשאפשר; recovered-duplicate-כנה-אחרת.",
+      "evidence": "saos-dex commit 84ee856d · המדידה-החיה run 43: 0/0 כישלונות-שידור · המנגנון-חמוש-למחזורי-העומס"
+    },
+    {
+      "id": "D12",
+      "title": "עורקי-האחוזה-האוטונומיים — תיקון-מקצה-לקצה-מדוד",
+      "detail": "(א) flush.sh: קרדנציאל-ווק-מורחב (source-33 · pat.env-נמדד-401-מת · Tt.txt-חסר) + askpass-חיווט (/home/z/.gitcred/askpass.sh — ה-PAT-המאומת-מעולם-לא-הגיע-ל-git) → DRAINED-מדוד: כל-4-הריפו 0/0. (ב) sbx-seal: נתיב-מת (t19b-פורק) → estate/Domain · exit-0. (ג) sbx-grid: ECO_WALLET_TOKEN-משוחזר-מ-.env.local-האחוזה (runtime-only, מחוץ-לכל-ריפו) → VERDICT: PASS. (ד) office-heartbeat: capture exit=0. (ה) דיסק 100%→78%.",
+      "evidence": "local-beats.log 13:08-13:19Z: 'office-heartbeat capture exit=0' · 'flush: DRAINED (any_push=1)' · Sandbox 'VERDICT: PASS' · df: 9.4G→7.2G used · הסולר-אטם-את-התיקונים: FleetHQ 9fbff7816 · Sandbox 5d24faa6"
+    }
+  ],
+  "partial": [
+    {
+      "id": "P1",
+      "title": "רווח-חוץ אמיתי — זורם-אך-קטן",
+      "detail": "curation $0.0096/24h נמדד-ומפורסם-בראיות (290 vests). היעד-המוצהר של-הבעלים — רווח-חוץ-מוכח-ומשמעותי — טרם-הושג. externalFlowUsd=0.784 הוא-היסטורי-ולא-מעוצב.",
+      "evidence": "external-profit-public.json · worklog task-22"
+    },
+    {
+      "id": "P2",
+      "title": "ערוץ-STEEM חמוש-ולייב — עם-שכבת-הגנה-מלאה",
+      "keyGate": "PASS — הרשות-מאומתת-מול-השרשרת",
+      "detail": "שכבות-ההגנה-מלאות: keyGate-fail-closed לפני-חתימה · place-recovery · cancel-recovery (N2-b) · הוכחת-כפילות (N2-c). הריצה-המדודה 43: 0-כישלונות. נשאר-כ-partial-משמעת: רק-סדרה-ארוכה-של-ריצות-נקיות-תסגור-את-הסעיף-סופית.",
+      "evidence": "run 43 (12:49Z) success · 0/0 broadcast-failures · שכבות-מאומתות ב-84ee856d"
+    },
+    {
+      "id": "P3",
+      "title": "office-selfcheck מאזין-אך-חוסם",
+      "detail": "execFileSync חוסם-event-loop בזמן-בדיקה — מתועד-בכנות מ-21-d; התיקון-הארכיטקטוני (async) נדחה-בכוונה-כדי-לא-לסכן-שירות-ליבה-בלי-בדיקה.",
+      "evidence": "worklog task-21-d"
+    }
+  ],
+  "gaps": [
+    {
+      "id": "G1",
+      "title": "ערוץ-HIVE משותק — השוק-הפנימי-שבור",
+      "detail": "book-mid סוטה 7608bps מהפאריטי-החוץ — הגריד-מסרב-מכנית לסחור-בשוק-שבור (סירוב-כנה, לא-תקלה). נדרש מקור-נזילות/פאריטי או השבתה-מוצהרת-של-הערוץ.",
+      "evidence": "grid-public.json blocker: 'hive book mid deviates 7608bps'"
+    },
+    {
+      "id": "G2",
+      "title": "אין-רוכש-חוץ-פעיל נגד-הספר",
+      "detail": "ההזמנה-לרוכש-חוץ-חיה: 3 asks ב-parity+0.6%+ ו-3 bids ב-touch-1%-, עם-תוקף-27-יום. נשאר-לראות-מילוי-שלישי-ראשון-בפנקס.",
+      "evidence": "grid ops API: placedTotal 188 / filledTotal 6"
+    },
+    {
+      "id": "G3",
+      "title": "spread 229bps — רחוק-מתחרות",
+      "detail": "spread-הספר-האמיתי-הודק-ל-9bps-מדוד (היה 229) — אך-המגע-הפנימי-נסחר-~350bps-מתחת-לפאריטי-החוץ, ולכן-הסולם-שלנו-עומד-מעל-המגע-ולא-נאכל. אין-רוכש-חוץ-שמביא-את-המחיר-אל-הפאריטי — זה-הפער-האמיתי, לא-רוחב-הפוזה.",
+      "evidence": "grid-public.json book (mid 0.101799 vs parity 0.105613) · run 39752394708"
+    },
+    {
+      "id": "G4",
+      "title": "טריות-הדפים-עצמם — הבעיה-שהדף-הזה-סוגר",
+      "detail": "הדפים-הציגו 'פעילות-שוטפת' בלי-סטטוס-ביצוע (מה-בוצע/מה-לא/מה-חסר/מה-הבא). מאז-הדף-הזה: פנקס-הביצוע-הוא-הכתובת-הקבועה, וריענונו-מחויב-בכל-מחזור-סוכן.",
+      "evidence": "פקודת-הבעלים trace 1a1620ac9ca0c0f9 · הוספת execution.html + metrics-אוטומטיים"
+    },
+    {
+      "id": "G5",
+      "title": "מלחמת-סנדבוקסים — בידי-הסולם נרצחים כל-דקות-ספורות",
+      "detail": "הבידים-2026102218-20-שהוצבו-08:17:39-45 בוטלו-בידי-סנדבוקס-אח-ב-08:23:42 (cancel-כל-הספר). האסקים-שרדו-משום-שהרץ-האח-בטל-רק-עד-אותו-רגע. הסדר-האמיתי: מי-רשאי-לגעת-בספר-acct-h-849e9df7-ובאיזו-שעה — החלטת-בעלים (N7).",
+      "evidence": "get_account_history acct-h-849e9df7 ops 166169-166179 · cancels 08:23:42Z"
+    }
+  ],
+  "next": [
+    {
+      "id": "N6",
+      "title": "צבירת-2-מילויי-חוץ-אחרי-החוק → T1-נפתח-אוטומטית (cashly 13:37:51Z = 1-ראיה-בדרך-לפנקס-הראיות כשתיקלט בריצה-הבאה)"
+    },
+    {
+      "id": "N8-c",
+      "title": "דלק-הבידים: 0.270 SBD נחסם-על-ידי-חוק-האבק (צריך-≥0.31) — מילוי-אסק-ראשון או תביעת-פרס-curation מזרים-דלק והבידים-מתחבקי-המגע נפרשים אוטומטית"
+    },
+    {
+      "id": "N3",
+      "title": "ערוץ-HIVE: נזילות-או-השבתה-מוצהרת"
+    },
+    {
+      "id": "N4",
+      "title": "הכפלת-ה-curation"
+    },
+    {
+      "id": "N5",
+      "title": "ריענון-הפנקס-הזה בכל-מחזור"
+    },
+    {
+      "id": "N7",
+      "title": "חוק-בין-סנדבוקסים: אין-mover-refresh-שמבטל-ספר-אחר (הרץ-התאום-מושהה-מ-14:03:09Z — מדוד)"
+    }
+  ]
 }
