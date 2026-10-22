@@ -1,6 +1,6 @@
 {
   "protocol": "SAOS-ARB-MESH/1",
-  "at": "2026-10-22T10:41:45.210Z",
+  "at": "2026-10-22T11:11:45.052Z",
   "agent": "arb-mesh v1.0.0 (R41 MESH MARKET, CR-0071)",
   "mode": "KEYLESS-MESH-DEMAND",
   "stasisHalted": false,
@@ -22,25 +22,39 @@
     "multi-network vault (R42): custody classes — MEASURED-KEYED is the only mintable class; adjacent networks are OBSERVED (seen, never custody, never a reserve); redeem is ALWAYS honored 1:1 in-ledger (burn before payout); the chain payout is queued for the keyed desks — keyless code never fires a broadcast",
     "uniform batch clearing (R76): the queue clears as ONE batch - canonical order, two-sided netting at the measured fair, one uniform clearing price for every trader, the solver absorbs the remainder; order-invariance (a permuted queue clears byte-identical) is the anti-sandwich proof · the proof lane is DRY (moves nothing), the settle gate stays the owner's"
   ],
-  "verdict": "NO-EDGE (every row below the floor — the machinery waits, the floor law protects the P&L)",
-  "batch": null,
+  "verdict": "GATED-WIRE (edge above floor but no free capital to arm the agents — named, never faked)",
+  "batch": "MESH-2026102211-8996c1e1",
   "settledBatch": null,
   "coreLedger": {
     "seq": 372,
-    "at": "2026-10-22T10:38:48.299Z",
-    "ageHours": 0.05,
+    "at": "2026-10-22T10:41:45.304Z",
+    "ageHours": 0.5,
     "conservationOk": false,
     "attestation": "a4790702171ed56e",
     "feedFresh": true
   },
   "routerSeen": {
-    "at": "2026-10-22T10:41:44.012Z",
+    "at": "2026-10-22T11:11:43.906Z",
     "arbRows": 4
   },
   "roster": [
     "operator"
   ],
-  "candidates": [],
+  "candidates": [
+    {
+      "id": "A1",
+      "name": "P3 STEEM/SBD pool mid vs CEX-implied fair",
+      "poolMidNano": "104473707",
+      "fairNano": "106509110",
+      "netBps": 156.1,
+      "thresholdBps": 100,
+      "from": "SBD",
+      "to": "STEEM",
+      "railOwner": "treasury (our own pool — atomic, no bridge)",
+      "source": "dex-core.json (our pool — atomic, no bridge)",
+      "at": "2026-10-22T11:11:45.052Z"
+    }
+  ],
   "keyedRailPlans": [
     {
       "id": "A1",
