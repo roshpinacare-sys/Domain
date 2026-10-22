@@ -1,60 +1,60 @@
 {
- "protocol": "SAOS-DEX-XC/1",
- "at": "2026-10-22T00:51:43.271Z",
- "agent": "dex-xc v1.0.0 (R43 INTENT GATES, CR-0073)",
- "verdict": "XC-DOORS-WAITING (no healthy core book — the doors wait, nothing is drafted)",
- "stasisHalted": false,
- "intents": [],
- "stats": {},
- "doors": {
-  "EVM": {
-   "band": "PLAN-KEYED-DOOR",
-   "finalityHardS": 780,
-   "asset": null,
-   "source": "ethereum.org PoS 2-epoch 768s + pad; L2 rails settle via L1 — the conservative number governs large sums"
+  "protocol": "SAOS-DEX-XC/1",
+  "at": "2026-10-22T01:12:01.178Z",
+  "agent": "dex-xc v1.0.0 (R43 INTENT GATES, CR-0073)",
+  "verdict": "XC-DOORS-WAITING (no healthy core book — the doors wait, nothing is drafted)",
+  "stasisHalted": false,
+  "intents": [],
+  "stats": {},
+  "doors": {
+    "EVM": {
+      "band": "PLAN-KEYED-DOOR",
+      "finalityHardS": 780,
+      "asset": null,
+      "source": "ethereum.org PoS 2-epoch 768s + pad; L2 rails settle via L1 — the conservative number governs large sums"
+    },
+    "TRON": {
+      "band": "PLAN-KEYED-DOOR",
+      "finalityHardS": 60,
+      "asset": null,
+      "source": "developers.tron.network — solidified at 19 distinct SRs (~57-60s)"
+    },
+    "SOL": {
+      "band": "PLAN-KEYED-DOOR",
+      "finalityHardS": 13,
+      "asset": null,
+      "source": "32 slots x 400ms = 12.8s (Circle CCTP ops table)"
+    },
+    "STEEM": {
+      "band": "KEYED-DESK",
+      "finalityHardS": 60,
+      "asset": "STEEM",
+      "source": "3s blocks (steem whitepaper); hard gate = 2/3-witness round (canonical-knowledge 45-63s, taken 60)"
+    },
+    "SBD": {
+      "band": "KEYED-DESK",
+      "finalityHardS": 60,
+      "asset": "SBD",
+      "source": "same chain clock as STEEM"
+    },
+    "HIVE": {
+      "band": "PLAN-PEGOUT-KEYED-OPERATOR",
+      "finalityHardS": 60,
+      "asset": "HIVE",
+      "source": "3s blocks; hive.io one-block \"irreversibility\" is SOFT finality — large sums gate on the 2/3-witness round (canonical-knowledge)"
+    },
+    "HBD": {
+      "band": "PLAN-PEGOUT-KEYED-OPERATOR",
+      "finalityHardS": 60,
+      "asset": "HBD",
+      "source": "same chain clock as HIVE"
+    },
+    "BLURT": {
+      "band": "PLAN-PEGOUT-KEYED-OPERATOR",
+      "finalityHardS": 63,
+      "asset": "BLURT",
+      "source": "blurtwallet FAQ — 3s blocks, full 21-witness round 63s"
+    }
   },
-  "TRON": {
-   "band": "PLAN-KEYED-DOOR",
-   "finalityHardS": 60,
-   "asset": null,
-   "source": "developers.tron.network — solidified at 19 distinct SRs (~57-60s)"
-  },
-  "SOL": {
-   "band": "PLAN-KEYED-DOOR",
-   "finalityHardS": 13,
-   "asset": null,
-   "source": "32 slots x 400ms = 12.8s (Circle CCTP ops table)"
-  },
-  "STEEM": {
-   "band": "KEYED-DESK",
-   "finalityHardS": 60,
-   "asset": "STEEM",
-   "source": "3s blocks (steem whitepaper); hard gate = 2/3-witness round (canonical-knowledge 45-63s, taken 60)"
-  },
-  "SBD": {
-   "band": "KEYED-DESK",
-   "finalityHardS": 60,
-   "asset": "SBD",
-   "source": "same chain clock as STEEM"
-  },
-  "HIVE": {
-   "band": "PLAN-PEGOUT-KEYED-OPERATOR",
-   "finalityHardS": 60,
-   "asset": "HIVE",
-   "source": "3s blocks; hive.io one-block \"irreversibility\" is SOFT finality — large sums gate on the 2/3-witness round (canonical-knowledge)"
-  },
-  "HBD": {
-   "band": "PLAN-PEGOUT-KEYED-OPERATOR",
-   "finalityHardS": 60,
-   "asset": "HBD",
-   "source": "same chain clock as HIVE"
-  },
-  "BLURT": {
-   "band": "PLAN-PEGOUT-KEYED-OPERATOR",
-   "finalityHardS": 63,
-   "asset": "BLURT",
-   "source": "blurtwallet FAQ — 3s blocks, full 21-witness round 63s"
-  }
- },
- "errors": []
+  "errors": []
 }
