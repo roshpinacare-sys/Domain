@@ -123,7 +123,7 @@ footer{margin-top:auto;border-top:1px solid var(--line);background:var(--panel);
       <span><b>דמו</b> · רץ בפריסה ריבונית, לפני הסבה מסחרית</span>
       <span><b>פנימי</b> · כלי-הפעלה של הרשת, לא מוצר-חוץ</span>
     </div>
-    <p class="sub" style="font-size:12.5px;color:var(--faint);margin-top:10px">מקור: <span class="mono">status.json</span> · <span class="mono">pulse.json</span> · <span class="mono">dex/world.json</span> · נמדד 2026-10-21 · מספרים היסטוריים מתויגים בתאריך מדידתם.</p>
+    <p class="sub" style="font-size:12.5px;color:var(--faint);margin-top:10px" id="lv-src">מקור: <span class="mono">status.json</span> · <span class="mono">pulse.json</span> · <span class="mono">dex/world.json</span> · <span id="lv-src-when">נמדד 2026-10-22 04:28Z</span> · מספרים היסטוריים מתויגים בתאריך מדידתם · המספרים החיים מתרעננים בכל צפייה.</p>
   </div>
 </section>
 
@@ -148,7 +148,7 @@ footer{margin-top:auto;border-top:1px solid var(--line);background:var(--panel);
         <p class="what">טרמינל-מסחר עם עיגון-חי, escrow מלא, ואימות עצמאי בכפתור אחד.</p>
         <ul class="meas">
           <li><span class="m">הוכחה</span><span><a href="https://roshpinacare-sys.github.io/Console/" rel="noopener">הטרמינל החי</a> · <a href="dex/world.json">ספר-הרשת dex/world.json</a></span></li>
-          <li><span class="m">נמדד</span><span>4,637,680 פעולות מאז ההתחלה · 255,685 מילויים · 18 פקודות חיות (dex/world.json, 2026-10-21) · עמלת בריכה 30bps בפיצול 70% LP / 30% אוצר · בנץ קרנל נפרד: 26,490 ops/s (הקצב החי מוגבל תקציבית)</span></li>
+          <li><span class="m">נמדד</span><span id="lv-dex">4,863,718 פעולות מאז ההתחלה · 255,690 מילויים · 18 פקודות חיות (dex/world.json, 2026-10-22 04:30Z) · עמלת בריכה 30bps בפיצול 70% LP / 30% אוצר · בנץ קרנל נפרד: 26,490 ops/s (הקצב החי מוגבל תקציבית)</span></li>
         </ul>
         <p class="limit"><b>גבול כתוב:</b> נזילות-פנימית בספר-סגור. ההשוואה המלאה מול הרשתות המובילות מתפרסמת חיה ב-<a href="giants.html">שולחן-הענקים</a>.</p>
       </div>
@@ -303,7 +303,7 @@ footer{margin-top:auto;border-top:1px solid var(--line);background:var(--panel);
         <p class="what">מדידת-חיות של כל הריפואים הציבוריים ברשת, בקצב מתוזמן (שעתי), עם פסק-דין גלוי לכל ריפו.</p>
         <ul class="meas">
           <li><span class="m">הוכחה</span><span><a href="network/index.html">דף המצב החי</a> · <a href="network/status.json">network/status.json</a> · <a href="status.json">status.json</a></span></li>
-          <li><span class="m">נמדד</span><span>דופק 2026-10-21: 60/387 עורקים פועמים · 46 ריפואים · ALIVE 19 / MIXED 15 / STALE 1 / IDLE 11</span></li>
+          <li><span class="m">נמדד</span><span id="lv-net">דופק 2026-10-22 04:28Z: 69/394 עורקים פועמים · 47 ריפואים · ALIVE 18 / MIXED 11 / <b style="color:var(--red)">STALE 7</b> / IDLE 11 (status.json)</span></li>
         </ul>
         <p class="limit"><b>גבול כתוב:</b> ריפו שנכשל נראה אדום כאן, לא מוסתר.</p>
       </div>
@@ -322,7 +322,7 @@ footer{margin-top:auto;border-top:1px solid var(--line);background:var(--panel);
       <span class="fb-pill done"><b>37</b> בוצעו · ראיות בגיט</span>
       <span class="fb-pill open"><b>1</b> פתוחים · היעד-הבא</span>
       <span class="fb-pill doc"><b>8</b> מתועדים · רישומי-דור</span>
-      <span class="fb-pill when">נאפה 2026-10-22T01:00Z מהרישום בגיט · סריקת-ההרנס האחרונה: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/harness-audit.json" target="_blank" rel="noreferrer">2026-10-19T10:17Z</a></span>
+      <span class="fb-pill when" id="lv-fl-when">נאפה 2026-10-22T01:00Z מהרישום בגיט · סריקת-ההרנס האחרונה: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/harness-audit.json" target="_blank" rel="noreferrer">2026-10-19T10:17Z</a></span>
     </div>
     <details class="fb-grp" open>
       <summary><span class="fb-tag live">23 חיים</span><span class="fb-grp-t">חי · מדידה ציבורית רצה</span></summary>
@@ -772,10 +772,75 @@ footer{margin-top:auto;border-top:1px solid var(--line);background:var(--panel);
 </main>
 <footer>
   <div class="wrap fw">
-    <span>SAOS Network · קטלוג-המוצרים · כל מספר נמדד, כל גבול כתוב · מקור: status.json · dex/world.json · נמדד 2026-10-21</span>
+    <span id="lv-foot">SAOS Network · קטלוג-המוצרים · כל מספר נמדד, כל גבול כתוב · מקור: status.json · dex/world.json · <span id="lv-foot-when">נמדד 2026-10-22 04:28Z · מדידה-חיה בכל צפייה</span></span>
     <span><a href="console.html">תקן-ההפעלה</a> · <a href="marketing/index.html">המוצרים · סקירה</a> · <a href="hub/disclosure-policy.html">מדיניות-חשיפה</a> · <a href="sitemap.html">מפת-האתר</a></span>
   </div>
 </footer>
+<script>
+/* מדידה-חיה של הקטלוג (t55n): המספרים מובאים מן-המקורות בכל-צפייה.
+   fail-soft מוחלט: מקור-שלא-נענה משאיר-את-המדידה-האפויה-על-מקומה ומסמן-זאת-באדום.
+   אפס-המצאה: מספר-בלי-מדידה-לא-מוצג. */
+(function () {
+  "use strict";
+  function fmt(n) { return Number(n).toLocaleString("en-US"); }
+  function stampZ(iso) { try { return new Date(iso).toISOString().slice(0,16).replace("T"," ") + "Z"; } catch (e) { return "?"; } }
+  function nowZ() { return stampZ(new Date().toISOString()); }
+  function markFail(id) {
+    var el = document.getElementById(id);
+    if (el && !el.getAttribute("data-live-fail")) {
+      el.setAttribute("data-live-fail", "1");
+      var b = document.createElement("b");
+      b.style.color = "var(--red)";
+      b.textContent = " · המקור החי לא נענה — מוצגת המדידה האפויה";
+      el.appendChild(b);
+    }
+  }
+  function get(url) {
+    return fetch(url + (url.indexOf("?") > -1 ? "&" : "?") + "t=" + Date.now(), { cache: "no-store" })
+      .then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.json(); });
+  }
+  // רשת — status.json (עורקים · ריפואים · פסקי-דין)
+  get("status.json").then(function (s) {
+    var el = document.getElementById("lv-net");
+    if (!el || !s || !s.pulse || !s.summary) return;
+    var p = s.pulse, m = s.summary;
+    el.innerHTML = "דופק " + stampZ(s.generatedAt) + ": " + fmt(p.beatArteries) + "/" + fmt(p.totalArteries) +
+      " עורקים פועמים · " + fmt(p.repos) + " ריפואים · ALIVE " + fmt(m.ALIVE) + " / MIXED " + fmt(m.MIXED) +
+      " / <b style=\"color:var(--red)\">STALE " + fmt(m.STALE) + "</b> / IDLE " + fmt(m.IDLE) +
+      ' (<a href="status.json" class="mono">status.json</a> · חי)';
+    var w1 = document.getElementById("lv-src-when"); if (w1) w1.textContent = "נמדד " + nowZ() + " (חי)";
+    var w2 = document.getElementById("lv-foot-when"); if (w2) w2.textContent = "נמדד " + nowZ() + " · מדידה-חיה בכל צפייה";
+  }).catch(function () { markFail("lv-net"); });
+  // DEX — dex/world.json (פעולות · מילויים · פקודות-חיות)
+  get("dex/world.json").then(function (w) {
+    var el = document.getElementById("lv-dex");
+    if (!el || !w || !w.state) return;
+    var st = w.state;
+    el.innerHTML = "<b>חי</b> " + fmt(st.opsTotal) + " פעולות מאז ההתחלה · " + fmt(st.fills) + " מילויים · " +
+      fmt(st.liveOrders) + " פקודות חיות (dex/world.json, נמדד " + stampZ(w.publishedAt) + ") · עמלת בריכה 30bps בפיצול 70% LP / 30% אוצר · בנץ קרנל נפרד: 26,490 ops/s (הקצב החי מוגבל תקציבית)";
+  }).catch(function () { markFail("lv-dex"); });
+  // רישום-היכולות — feature_list.json (raw.githubusercontent, CORS פתוח)
+  get("https://raw.githubusercontent.com/roshpinacare-sys/Domain/main/feature_list.json").then(function (f) {
+    var feats = (f && f.features) || [];
+    if (!feats.length) return;
+    var live = 0, done = 0, open = 0, doc = 0;
+    feats.forEach(function (x) {
+      var st = String(x.status || "?");
+      if (st === "LIVE") live++;
+      else if (st === "done" || st === "shipped" || st === "implemented") done++;
+      else if (st === "open") open++;
+      else doc++;
+    });
+    var set = function (sel, v) { var el = document.querySelector(sel); if (el) el.textContent = fmt(v); };
+    set(".fb-strip .fb-pill.live b", live);
+    set(".fb-strip .fb-pill.done b", done);
+    set(".fb-strip .fb-pill.open b", open);
+    set(".fb-strip .fb-pill.doc b", doc);
+    var w = document.getElementById("lv-fl-when");
+    if (w) w.innerHTML = '<b>חי</b> ' + fmt(live) + ' חיים נמדדו בצפייה-זו (' + nowZ() + ') מהרישום בגיט · סריקת-ההרנס האחרונה: <a href="https://github.com/roshpinacare-sys/Domain/blob/main/agents/harness-audit.json" target="_blank" rel="noreferrer">2026-10-19T10:17Z</a>';
+  }).catch(function () { /* הפס-האפוי-נשאר כשהוא — מתויג בזמן-אפייתו */ });
+})();
+</script>
 <script src="assets/bidi-fix.js" defer></script>
 </body>
 </html>
