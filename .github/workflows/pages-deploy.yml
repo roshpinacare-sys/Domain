@@ -1,0 +1,83 @@
+# agent-9/t55o: staged migration to Actions-based Pages deployment.
+#
+# WHY: the legacy "pages build and deployment" flaps under the fleet push flood —
+# measured 2026-10-22 07:53-08:02Z: 13 of the 15 most recent runs CANCELLED
+# (25/60 cancelled in the last-60-runs window), plus the 05:18-05:21Z error burst.
+# Legacy is also the deprecated build path. Actions-based deploys are artifact-based,
+# Jekyll-free, and serialized by the concurrency group below (latest push wins).
+#
+# ARMING (inert by design): the deploy job runs ONLY when the repo Pages source is
+# "GitHub Actions". Switching build_type via API is BLOCKED — measured 2026-10-22:
+# PATCH /repos/{owner}/{repo}/pages returns HTTP 404 on 3 org repos x 5 payloads,
+# while POST /pages is reachable (409 conflict). So arming needs the one-click
+# owner action: Settings -> Pages -> Build and deployment -> Source: GitHub Actions.
+# Until then the guard job fails soft: deploy job SKIPS (grey) — never red,
+# never deploys blind.
+#
+# ARTIFACT SAFETY: include-hidden-files=true is REQUIRED — upload-pages-artifact
+# defaults exclude dotfiles (--exclude=.[^/]*), which would silently drop .nojekyll
+# and re-introduce Jekyll processing after the switch. .git and .github remain
+# excluded by the action itself (verified in action source, 2026-10-22).
+
+name: pages-deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    outputs:
+      deploy: ${{ steps.check.outputs.deploy }}
+    steps:
+      - id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          set +e
+          RESP=$(curl -sS -m 15 -H "Authorization: Bearer ${GH_TOKEN}" \
+            "https://api.github.com/repos/${REPO}/pages")
+          BT=$(echo "$RESP" | grep -o '"build_type": *"[^"]*"' | head -1 | sed 's/.*"\([^"]*\)"$/\1/')
+          echo "measured build_type: ${BT:-<unreachable>}"
+          if [ "$BT" = "workflow" ]; then
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+            echo "Pages source is still legacy — deploy-pages would be rejected."
+            echo "Arm via Settings -> Pages -> Build and deployment -> Source: GitHub Actions."
+            echo "Skipping deploy (grey) by design."
+          fi
+
+  deploy:
+    needs: guard
+    if: needs.guard.outputs.deploy == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.dep.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+          include-hidden-files: true
+      - id: dep
+        uses: actions/deploy-pages@v4
