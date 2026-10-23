@@ -1,33 +1,33 @@
 {
  "ok": true,
  "format": "moment-watch-v1",
- "publishedAt": "2026-10-23T19:05:23.167Z",
+ "publishedAt": "2026-10-23T21:06:28.458Z",
  "engine": "Domain/agents/moment-watch · R62 sovereign moment",
  "role": "reads the live moment every 30 minutes (market regime, our parity line vs the live internal book, fuel runway, measured anomalies) and records a deterministic directional call that is only ever scored after its horizon has passed - training as measurement, never as promise",
  "market": {
-  "steemUsd": 0.052036,
-  "steem24h": 0.1739126332753993,
-  "sbdUsd": 0.48134,
-  "btcUsd": 81333,
-  "btc24h": 0.05396916421343757,
+  "steemUsd": 0.051992,
+  "steem24h": 0.4418404011370917,
+  "sbdUsd": 0.484972,
+  "btcUsd": 81382,
+  "btc24h": 0.2688920992834501,
   "fearGreed": {
    "value": 50,
    "label": "Neutral"
   }
  },
- "paritySbdPerSteem": 0.10810653592055512,
+ "paritySbdPerSteem": 0.10720618922329536,
  "liveBook": {
-  "bestBid": 0.1035523566287439,
-  "bestAsk": 0.10398667638180493,
-  "bidsDepthSbd": 2041.97,
-  "asksDepthSteem": 151,
-  "levels": 16,
-  "bidSurplusBps": -421
+  "bestBid": 0.10384041759880686,
+  "bestAsk": 0.10404744563520965,
+  "bidsDepthSbd": 2044.36,
+  "asksDepthSteem": 234.72,
+  "levels": 21,
+  "bidSurplusBps": -314
  },
  "regime": {
   "label": "NEUTRAL",
   "drivers": [
-   "BTC +0.1%",
+   "BTC +0.3%",
    "F&G 50"
   ],
   "thresholds": {
@@ -40,27 +40,27 @@
  },
  "runway": {
   "active": false,
-  "weeklySp": 6.20697584177174e-10,
+  "weeklySp": 6.207011193363584e-10,
   "nextPayment": "1969-12-31T23:59:59",
   "remainingSp": 0,
   "weeklyUsd": 0,
   "treasuryUsd": 1.68
  },
  "grid": {
-  "verdict": "ARMED-WAITING",
+  "verdict": "ARMED-LIVE",
   "armed": true,
-  "blocker": "broadcast failing: 6/6 chain ops rejected this run (\"broadcast answered without id\") — stale key/authority or node fault; verdict cannot be stable until signing succeeds",
-  "externalFlowUsd": -0.001468,
-  "publishedAt": "2026-10-23T18:58:05.347Z"
+  "blocker": null,
+  "externalFlowUsd": -0.020766,
+  "publishedAt": "2026-10-23T20:55:21.681Z"
  },
  "moneyPath": {
   "fuel": {
    "ok": true,
    "account": "acct-00",
-   "steem": 8.327,
-   "sbd": 2.018,
-   "sp": 2216.31,
-   "spVests": 3570732.7245850004,
+   "steem": 20.094,
+   "sbd": 0.039,
+   "sp": 2216.45,
+   "spVests": 3570911.6115260003,
    "powerdown": {
     "active": true,
     "rateVests": 0.402925,
@@ -73,7 +73,7 @@
  },
  "call": "FLAT",
  "callStats": {
-  "resolved": 89,
+  "resolved": 88,
   "hits": 46,
   "hitRatePct": 52,
   "horizonH": 6,
@@ -84,12 +84,7 @@
   {
    "kind": "parity-edge",
    "tone": "good",
-   "text": "עומק-קנייה חי 421bps מתחת לקו-הזהות (bid 0.1036 מול parity 0.1081) — עודף מדוד לגריד."
-  },
-  {
-   "kind": "sbd-inventory",
-   "tone": "warn",
-   "text": "צוואר-הקנייה של הגריד: broadcast failing: 6/6 chain ops rejected this run (\"broadcast answered without id\") — stale key/authority or node fault; verdict cannot be stable until signing succeeds"
+   "text": "עומק-קנייה חי 314bps מתחת לקו-הזהות (bid 0.1038 מול parity 0.1072) — עודף מדוד לגריד."
   },
   {
    "kind": "fuel",
@@ -104,7 +99,7 @@
   {
    "kind": "external-flow",
    "tone": "info",
-   "text": "זרימת-חוץ מצטברת: -0.0015$ מ-236 מילויים (txids בספר הציבורי)."
+   "text": "זרימת-חוץ מצטברת: -0.0208$ מ-240 מילויים (txids בספר הציבורי)."
   }
  ],
  "sources": [
