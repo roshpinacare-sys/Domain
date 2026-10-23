@@ -1,26 +1,29 @@
 {
  "schema": "integrity-guard/2",
  "scope": "public-twin (Domain home)",
- "at": "2026-10-23T04:12:25.709Z",
- "overall": "FAIL",
+ "at": "2026-10-23T05:55:05.887Z",
+ "overall": "PASS",
  "summary": {
   "sources": 7,
-  "verified": 8,
-  "findings": 1,
-  "counts": {
-   "stale": 1
-  }
+  "verified": 9,
+  "findings": 0,
+  "counts": {}
  },
  "verified": [
   {
    "where": "self:agents/integrity-verdict.json",
    "law": "L0-verified",
-   "detail": "פסק-קודם תקין (PASS) מלפני 2ש'"
+   "detail": "פסק-קודם תקין (FAIL) מלפני 2ש'"
   },
   {
    "where": "Domain:agents/work-orders.json",
    "law": "fresh+parsed",
-   "detail": "גיל 0.4ש' ≤ SLA 4ש'"
+   "detail": "גיל 2.1ש' ≤ SLA 4ש'"
+  },
+  {
+   "where": "Domain:agents/grid-truth.json",
+   "law": "fresh+parsed",
+   "detail": "גיל 1.4ש' ≤ SLA 2ש'"
   },
   {
    "where": "Domain:office/data.json",
@@ -30,22 +33,22 @@
   {
    "where": "Domain:agents/office-live.json",
    "law": "fresh+parsed",
-   "detail": "גיל 1.7ש' ≤ SLA 4ש'"
+   "detail": "גיל 1.2ש' ≤ SLA 4ש'"
   },
   {
    "where": "FleetHQ:office/state/office-state.json",
    "law": "fresh+parsed",
-   "detail": "גיל 0.1ש' ≤ SLA 4ש'"
+   "detail": "גיל 0.2ש' ≤ SLA 4ש'"
   },
   {
    "where": "sovereign-runner-kit:results/receipts.jsonl",
    "law": "fresh+parsed",
-   "detail": "גיל 2.6ש' ≤ SLA 72ש' · 22 קבלות"
+   "detail": "גיל 0.4ש' ≤ SLA 72ש' · 23 קבלות"
   },
   {
    "where": "Domain:office/data.json",
    "law": "producer-green",
-   "detail": "ריצת-יצרן ירוקה לפני 61 דק'"
+   "detail": "ריצת-יצרן ירוקה לפני 12 דק'"
   },
   {
    "where": "Domain:agents/work-orders.json",
@@ -53,15 +56,9 @@
    "detail": "3 פקודות-פתוחות · schema work-orders/2"
   }
  ],
- "findings": [
-  {
-   "where": "Domain:agents/grid-truth.json",
-   "law": "stale",
-   "detail": "גיל 2.6ש' > SLA 2ש'"
-  }
- ],
+ "findings": [],
  "provenance": {
-  "runUrl": "https://github.com/roshpinacare-sys/Domain/actions/runs/39899066826",
+  "runUrl": "https://github.com/roshpinacare-sys/Domain/actions/runs/39908404916",
   "workflow": "artery-integrity-twin"
  }
 }
