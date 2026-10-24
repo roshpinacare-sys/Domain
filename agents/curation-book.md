@@ -1,6 +1,6 @@
 # Soldiers curation book · 2026-10-24
 
-run 2026-10-24T03:06:49.632Z · verified 0/0 · keys 0/10
+run 2026-10-24T21:09:57.526Z · verified 0/0 · keys 0/10
 
 > INCIDENT 2026-10-02: first run cast 41 repeat votes (read-back-throws loop + weak bot filter) — standing evidence, corrected in v1.1
 
