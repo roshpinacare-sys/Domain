@@ -1,10 +1,8 @@
-# דופק-הצי (fleet-heartbeat) — 2026-10-24T13:09:08.939Z
+# דופק-הצי (fleet-heartbeat) — 2026-10-24T14:51:20.792Z
 
 מדידת-מנועים של כל-הריפואים: מה פועם, מה שקט, מה הפלטפורמה נטרלה, מה נרפא בריצה זו.
 
-**סיכום:** 48 ריפואים · פועמים 30 · ללא-קרון-אך-פעילים 3 · חמימים 3 · שקטים 0 · מעולם-לא-רצו 0 · ללא-workflows 12 · נטרולי-חוסר-פעילות 0 · חסומי-קיר-המכסה 0
-
-**דופק-מונע:** Domain/cognition-beat.yml=http 422
+**סיכום:** 48 ריפואים · פועמים 29 · ללא-קרון-אך-פעילים 4 · חמימים 3 · שקטים 0 · מעולם-לא-רצו 0 · ללא-workflows 12 · נטרולי-חוסר-פעילות 0 · חסומי-קיר-המכסה 0
 
 
 ## גבולות-משמורת מדודים (לא כישלונות קוד)
@@ -27,9 +25,9 @@
 - sanbox — NO-WORKFLOWS
 - saos-console-zai — NO-WORKFLOWS
 - saos-coordination — NO-WORKFLOWS
-- saos-desk — NO-WORKFLOWS · שקט 227.6 שעות
-- saos-markets — NO-WORKFLOWS · שקט 178.4 שעות
-- saos-owner-channel — NO-WORKFLOWS · שקט 145.1 שעות
+- saos-desk — NO-WORKFLOWS · שקט 229.3 שעות
+- saos-markets — NO-WORKFLOWS · שקט 180.1 שעות
+- saos-owner-channel — NO-WORKFLOWS · שקט 146.9 שעות
 - SovereignConsole — NO-WORKFLOWS
 - vault-home — NO-WORKFLOWS
 
