@@ -1,6 +1,6 @@
 {
   "protocol": "SAOS-ARB-MESH/1",
-  "at": "2026-10-24T14:50:00.932Z",
+  "at": "2026-10-24T16:11:08.325Z",
   "agent": "arb-mesh v1.0.0 (R41 MESH MARKET, CR-0071)",
   "mode": "KEYLESS-MESH-DEMAND",
   "stasisHalted": false,
@@ -22,30 +22,88 @@
     "multi-network vault (R42): custody classes — MEASURED-KEYED is the only mintable class; adjacent networks are OBSERVED (seen, never custody, never a reserve); redeem is ALWAYS honored 1:1 in-ledger (burn before payout); the chain payout is queued for the keyed desks — keyless code never fires a broadcast",
     "uniform batch clearing (R76): the queue clears as ONE batch - canonical order, two-sided netting at the measured fair, one uniform clearing price for every trader, the solver absorbs the remainder; order-invariance (a permuted queue clears byte-identical) is the anti-sandwich proof · the proof lane is DRY (moves nothing), the settle gate stays the owner's"
   ],
-  "verdict": "NO-EDGE (every row below the floor — the machinery waits, the floor law protects the P&L)",
-  "batch": null,
-  "settledBatch": null,
+  "verdict": "MESH-LIVE",
+  "batch": "MESH-2026102416-6870fa5d",
+  "settledBatch": "MESH-2026102416-6870fa5d",
   "coreLedger": {
     "seq": 378,
-    "at": "2026-10-24T14:22:57.550Z",
-    "ageHours": 0.45,
+    "at": "2026-10-24T16:08:47.843Z",
+    "ageHours": 0.04,
     "conservationOk": false,
     "attestation": "f2e108565d2fe45d",
     "feedFresh": true
   },
   "routerSeen": {
-    "at": "2026-10-24T12:59:20.893Z",
+    "at": "2026-10-24T16:11:06.750Z",
     "arbRows": 4
   },
   "roster": [
     "operator"
   ],
-  "candidates": [],
-  "keyedRailPlans": [],
-  "intentsDrafted": 0,
-  "intents": [],
-  "wires": 0,
-  "fills": [],
+  "candidates": [
+    {
+      "id": "A1",
+      "name": "P3 STEEM/SBD pool mid vs CEX-implied fair",
+      "poolMidNano": "102778701",
+      "fairNano": "100142890",
+      "netBps": 228.2,
+      "thresholdBps": 100,
+      "from": "STEEM",
+      "to": "SBD",
+      "railOwner": "treasury (our own pool — atomic, no bridge)",
+      "source": "dex-core.json (our pool — atomic, no bridge)",
+      "at": "2026-10-24T16:11:08.325Z"
+    }
+  ],
+  "keyedRailPlans": [
+    {
+      "id": "A1",
+      "name": "SBD/STEEM internal vs CEX-implied fair (lead-lag)",
+      "railOwner": "owner (STEEM active — LIVE)",
+      "verdict": "PLAN-KEYED-RAIL (the signing desks own this rail — the keyless mesh never signs)"
+    }
+  ],
+  "intentsDrafted": 1,
+  "intents": [
+    {
+      "agent": "operator",
+      "from": "STEEM",
+      "to": "SBD",
+      "amountIn": "4121",
+      "minOut": "419",
+      "quote": "421",
+      "rowId": "A1",
+      "share": "OPERATOR-40%",
+      "heldMu": "0",
+      "wireExpected": "4121"
+    }
+  ],
+  "wires": 1,
+  "fills": [
+    {
+      "seq": 380,
+      "type": "AGENT_FILL",
+      "agent": "operator",
+      "from": "STEEM",
+      "to": "SBD",
+      "amountIn": "4121",
+      "amountOut": "421",
+      "routeIds": [
+        "P3"
+      ],
+      "hops": [
+        {
+          "pool": "P3",
+          "in": "4121",
+          "out": "421",
+          "fee": "10"
+        }
+      ],
+      "edgeMu": "12",
+      "fairUsed": "CEX-FAIR (SBD per STEEM)",
+      "feesMu": "10"
+    }
+  ],
   "rejects": [],
   "sizeLadder": [
     {
@@ -154,20 +212,20 @@
         "operator": {
           "fills": 1,
           "volumeInMu": "4121",
-          "edgeMu": "4",
+          "edgeMu": "12",
           "feesMu": "10"
         }
       },
-      "fills": 192,
-      "edgeMu": "-868633",
-      "feesMu": "2280",
-      "volumeInMu": "1678990"
+      "fills": 193,
+      "edgeMu": "-868621",
+      "feesMu": "2290",
+      "volumeInMu": "1683111"
     },
     "batch": {
-      "id": "MESH-2026102411-bb5da29d",
+      "id": "MESH-2026102416-6870fa5d",
       "fills": 1,
       "rejects": 0,
-      "edgeMu": "4",
+      "edgeMu": "12",
       "feesMu": "10",
       "volumeInMu": "4121"
     }
