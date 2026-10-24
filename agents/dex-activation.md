@@ -1,6 +1,6 @@
 # dex-activation — THE IGNITION DESK (CR-0077)
 
-At: 2026-10-24T01:18:14.778Z · Verdict: **REFUSED-CONSERVATION (the core book is broken — the desk never trades on a broken book)** · batch: — · lane: dex-activation
+At: 2026-10-24T02:30:30.643Z · Verdict: **REFUSED-CONSERVATION (the core book is broken — the desk never trades on a broken book)** · batch: — · lane: dex-activation
 
 Owner word (trace 1a135897157a1d75): "saos dex עמלות 0 נפח כמעט 0 מצטבר כלום" — הדלפק הזה הוא התיקון: זרימה דו-צדדית רציפה סביב המיד של כל בריכה חיה, דרך חוקי-ה-settle של הליבה עצמה.
 
