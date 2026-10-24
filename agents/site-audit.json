@@ -1,16 +1,24 @@
 {
  "schema": "site-audit/1",
- "at": "2026-10-24T18:12:02.007Z",
+ "at": "2026-10-24T19:41:31.644Z",
  "scope": "live-pages:https://roshpinacare-sys.github.io/Domain/",
  "pagesScanned": 98,
  "summary": {
-  "findings": 0,
+  "findings": 1,
   "externalBlocked": 4,
   "transientBlocked": 0,
   "checked": 312,
   "structuralFindings": 0
  },
- "findings": [],
+ "findings": [
+  {
+   "code": 404,
+   "url": "https://github.com/roshpinacare-sys/steem/blob/saos-cockpit/sovereign/node/wallets-public.json",
+   "sources": [
+    "wallet-truth.html"
+   ]
+  }
+ ],
  "externalBlocked": [
   {
    "code": 451,
@@ -72,6 +80,6 @@
   ],
   "findings": 0
  },
- "overall": "PASS",
+ "overall": "FAIL",
  "note": "קישורים = אמת-חיה ב-Pages: 404 פנימי/חוץ = עמוד-מת (FINDING); 403/429/502 אצל צד-ג = חסימת-בוט (רמז בלבד); 429/503 מפני-ה-github.com-שלנו = חנק-מדידה (TRANSIENT — ריטרי-3 ואז רשום-בלי-הכשל). קישורים הנבנים ב-JS בזמן-ריצה אינם נסרקים כאן — הם אינם href סטטי. structural = אמת-checkout בלי רשת (R75): R-BALANCE·R-SCRIPT·R-CANONICAL·R-STUB·R-SITEMAP·R-TRUTH — החוקים ב-agents/SELF-CHECKS.md."
 }
