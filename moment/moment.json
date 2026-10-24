@@ -1,33 +1,33 @@
 {
  "ok": true,
  "format": "moment-watch-v1",
- "publishedAt": "2026-10-24T08:14:15.726Z",
+ "publishedAt": "2026-10-24T08:22:36.309Z",
  "engine": "Domain/agents/moment-watch · R62 sovereign moment",
  "role": "reads the live moment every 30 minutes (market regime, our parity line vs the live internal book, fuel runway, measured anomalies) and records a deterministic directional call that is only ever scored after its horizon has passed - training as measurement, never as promise",
  "market": {
-  "steemUsd": 0.04977009,
-  "steem24h": -5.49068564346726,
-  "sbdUsd": 0.489643,
-  "btcUsd": 80679,
-  "btc24h": -1.1861492189163694,
+  "steemUsd": 0.04963717,
+  "steem24h": -5.8922734702591235,
+  "sbdUsd": 0.48963,
+  "btcUsd": 80657,
+  "btc24h": -1.341896053764093,
   "fearGreed": {
    "value": 51,
    "label": "Neutral"
   }
  },
- "paritySbdPerSteem": 0.10164566837471382,
+ "paritySbdPerSteem": 0.10137689684047138,
  "liveBook": {
   "bestBid": 0.102047,
   "bestAsk": 0.1043187982474442,
-  "bidsDepthSbd": 1958.81,
-  "asksDepthSteem": 87.68,
-  "levels": 16,
-  "bidSurplusBps": 39
+  "bidsDepthSbd": 1956.1,
+  "asksDepthSteem": 292.57,
+  "levels": 21,
+  "bidSurplusBps": 66
  },
  "regime": {
   "label": "NEUTRAL",
   "drivers": [
-   "BTC -1.2%",
+   "BTC -1.3%",
    "F&G 51"
   ],
   "thresholds": {
@@ -40,18 +40,18 @@
  },
  "runway": {
   "active": false,
-  "weeklySp": 6.20720581177767e-10,
+  "weeklySp": 6.207208215827556e-10,
   "nextPayment": "1969-12-31T23:59:59",
   "remainingSp": 0,
   "weeklyUsd": 0,
   "treasuryUsd": 1.61
  },
  "grid": {
-  "verdict": "ARMED-WAITING",
+  "verdict": "ARMED-LIVE",
   "armed": true,
-  "blocker": "broadcast failing: 6/6 chain ops rejected this run (\"broadcast answered without id\") — stale key/authority or node fault; verdict cannot be stable until signing succeeds",
+  "blocker": null,
   "externalFlowUsd": 0.033075,
-  "publishedAt": "2026-10-24T08:06:04.719Z"
+  "publishedAt": "2026-10-24T08:20:52.261Z"
  },
  "moneyPath": {
   "fuel": {
@@ -84,17 +84,12 @@
   {
    "kind": "parity-edge",
    "tone": "warn",
-   "text": "הספר החי 39bps מעל קו-הזהות — אין עודף-קנייה כרגע; הגריד ממתין."
-  },
-  {
-   "kind": "sbd-inventory",
-   "tone": "warn",
-   "text": "צוואר-הקנייה של הגריד: broadcast failing: 6/6 chain ops rejected this run (\"broadcast answered without id\") — stale key/authority or node fault; verdict cannot be stable until signing succeeds"
+   "text": "הספר החי 66bps מעל קו-הזהות — אין עודף-קנייה כרגע; הגריד ממתין."
   },
   {
    "kind": "steem-move",
    "tone": "info",
-   "text": "STEEM -5.5% ביממה — סימוני-הגריד ייגזרו מחדש בפעימה הבאה; תוכניות-עבר עלולות לא-רלוונטיות."
+   "text": "STEEM -5.9% ביממה — סימוני-הגריד ייגזרו מחדש בפעימה הבאה; תוכניות-עבר עלולות לא-רלוונטיות."
   },
   {
    "kind": "fuel",
