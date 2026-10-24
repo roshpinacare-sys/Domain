@@ -1,6 +1,6 @@
 {
   "protocol": "SAOS-ARB-MESH/1",
-  "at": "2026-10-24T16:37:03.039Z",
+  "at": "2026-10-24T16:41:10.140Z",
   "agent": "arb-mesh v1.0.0 (R41 MESH MARKET, CR-0071)",
   "mode": "KEYLESS-MESH-DEMAND",
   "stasisHalted": false,
@@ -23,18 +23,18 @@
     "uniform batch clearing (R76): the queue clears as ONE batch - canonical order, two-sided netting at the measured fair, one uniform clearing price for every trader, the solver absorbs the remainder; order-invariance (a permuted queue clears byte-identical) is the anti-sandwich proof · the proof lane is DRY (moves nothing), the settle gate stays the owner's"
   ],
   "verdict": "MESH-LIVE",
-  "batch": "MESH-2026102416-fdf5cd17",
-  "settledBatch": "MESH-2026102416-fdf5cd17",
+  "batch": "MESH-2026102416-157e8231",
+  "settledBatch": "MESH-2026102416-157e8231",
   "coreLedger": {
-    "seq": 380,
-    "at": "2026-10-24T16:11:09.002Z",
-    "ageHours": 0.43,
+    "seq": 382,
+    "at": "2026-10-24T16:37:03.080Z",
+    "ageHours": 0.07,
     "conservationOk": false,
-    "attestation": "f62c2021b48d5934",
+    "attestation": "50776418d50d8b92",
     "feedFresh": true
   },
   "routerSeen": {
-    "at": "2026-10-24T16:11:06.750Z",
+    "at": "2026-10-24T16:41:08.235Z",
     "arbRows": 4
   },
   "roster": [
@@ -52,7 +52,7 @@
       "to": "SBD",
       "railOwner": "treasury (our own pool — atomic, no bridge)",
       "source": "dex-core.json (our pool — atomic, no bridge)",
-      "at": "2026-10-24T16:37:03.039Z"
+      "at": "2026-10-24T16:41:10.140Z"
     }
   ],
   "keyedRailPlans": [
@@ -70,8 +70,8 @@
       "from": "STEEM",
       "to": "SBD",
       "amountIn": "4121",
-      "minOut": "417",
-      "quote": "419",
+      "minOut": "414",
+      "quote": "416",
       "rowId": "A1",
       "share": "OPERATOR-40%",
       "heldMu": "0",
@@ -81,13 +81,13 @@
   "wires": 1,
   "fills": [
     {
-      "seq": 382,
+      "seq": 384,
       "type": "AGENT_FILL",
       "agent": "operator",
       "from": "STEEM",
       "to": "SBD",
       "amountIn": "4121",
-      "amountOut": "419",
+      "amountOut": "416",
       "routeIds": [
         "P3"
       ],
@@ -95,11 +95,11 @@
         {
           "pool": "P3",
           "in": "4121",
-          "out": "419",
+          "out": "416",
           "fee": "10"
         }
       ],
-      "edgeMu": "10",
+      "edgeMu": "8",
       "fairUsed": "CEX-FAIR (SBD per STEEM)",
       "feesMu": "10"
     }
@@ -173,28 +173,28 @@
       "pair": "STEEM/SBD",
       "kind": "VOLATILE",
       "feeBps": 25,
-      "mid": 0.10222268,
+      "mid": 0.10167099,
       "unit": "SBD",
       "rungs": [
         {
           "sizeBps": 10,
-          "sizeIn": "1518",
+          "sizeIn": "1523",
           "out": "154",
-          "execPrice": 0.10144928,
-          "slipBps": -0.75
+          "execPrice": 0.10111622,
+          "slipBps": -0.54
         },
         {
           "sizeBps": 100,
-          "sizeIn": "15189",
-          "out": "1533",
-          "execPrice": 0.1009283,
-          "slipBps": -1.26
+          "sizeIn": "15230",
+          "out": "1529",
+          "execPrice": 0.10039396,
+          "slipBps": -1.25
         },
         {
           "sizeBps": 500,
-          "sizeIn": "75946",
-          "out": "7376",
-          "execPrice": 0.09712164,
+          "sizeIn": "76152",
+          "out": "7356",
+          "execPrice": 0.09659628,
           "slipBps": -4.99
         }
       ]
@@ -212,20 +212,20 @@
         "operator": {
           "fills": 1,
           "volumeInMu": "4121",
-          "edgeMu": "10",
+          "edgeMu": "8",
           "feesMu": "10"
         }
       },
-      "fills": 194,
-      "edgeMu": "-868611",
-      "feesMu": "2300",
-      "volumeInMu": "1687232"
+      "fills": 195,
+      "edgeMu": "-868603",
+      "feesMu": "2310",
+      "volumeInMu": "1691353"
     },
     "batch": {
-      "id": "MESH-2026102416-fdf5cd17",
+      "id": "MESH-2026102416-157e8231",
       "fills": 1,
       "rejects": 0,
-      "edgeMu": "10",
+      "edgeMu": "8",
       "feesMu": "10",
       "volumeInMu": "4121"
     }
