@@ -1,13 +1,12 @@
-# Scheduled evolution windows — 2026-10-18T08:01:14Z
+# Scheduled evolution windows — 2026-10-25T08:24:23Z
 
 CR-0033: the CR-0030 GEPA-class harness evolution runs on a pulled cadence (no daemon); outcomes land here as evidence the pulse carries (verify-only: adoption via judged CR).
 
 - **decision this invocation:** SKIPPED-NO-DESK-RUNTIME — venv=false runner=true shim=false — honest skip, no invention
-- **cadence:** 20h · **next due:** 2026-10-12T19:46:55Z · **windows:** 133 (1 complete)
+- **cadence:** 20h · **next due:** 2026-10-12T19:46:55Z · **windows:** 134 (1 complete)
 
 | at | mode | status | detail |
 |---|---|---|---|
-| 2026-10-04T11:17:39Z | — | SKIPPED-EVAL-CONTEXT | EVO_WINDOWS_SKIP_RUN=1 — the measured batch is off-budget in eval/CI contexts (the CR-0030 CI law, mirrored up |
 | 2026-10-04T11:20:32Z | — | SKIPPED-EVAL-CONTEXT | EVO_WINDOWS_SKIP_RUN=1 — the measured batch is off-budget in eval/CI contexts (the CR-0030 CI law, mirrored up |
 | 2026-10-04T11:21:53Z | — | SKIPPED-EVAL-CONTEXT | EVO_WINDOWS_SKIP_RUN=1 — the measured batch is off-budget in eval/CI contexts (the CR-0030 CI law, mirrored up |
 | 2026-10-04T11:25:54Z | — | SKIPPED-EVAL-CONTEXT | EVO_WINDOWS_SKIP_RUN=1 — the measured batch is off-budget in eval/CI contexts (the CR-0030 CI law, mirrored up |
@@ -27,3 +26,4 @@ CR-0033: the CR-0030 GEPA-class harness evolution runs on a pulled cadence (no d
 | 2026-10-11T23:45:26Z | FORCED | INCUMBENT-RETAINED | winner=v1-incumbent meanReward=1 meanTurns=4 leak=PASS (17s) |
 | 2026-10-11T23:46:55Z | FORCED | WINDOW-COMPLETE | winner=v1-incumbent meanReward=1 meanTurns=4 leak=PASS (74s) |
 | 2026-10-18T08:01:14Z | — | SKIPPED-NO-DESK-RUNTIME | venv=false runner=true shim=false — honest skip, no invention |
+| 2026-10-25T08:24:23Z | — | SKIPPED-NO-DESK-RUNTIME | venv=false runner=true shim=false — honest skip, no invention |
