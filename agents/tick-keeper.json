@@ -1,22 +1,22 @@
 {
  "protocol": "SAOS-TICK-KEEPER/1",
- "at": "2026-10-25T21:19:10.529Z",
+ "at": "2026-10-25T22:39:14.231Z",
  "repo": "roshpinacare-sys/Domain",
  "stasis": false,
  "arc": {
   "sovereign-tick-cron": {
    "receipt": "agents/sovereign-decisions.jsonl",
-   "last_ts": "2026-10-25T19:49:26.043Z",
+   "last_ts": "2026-10-25T21:20:12.442Z",
    "max_gap_min": 20
   },
   "earn-audit-cron": {
    "receipt": "agents/earn-audit.json",
-   "last_ts": "2026-10-25T19:44:01.030Z",
+   "last_ts": "2026-10-25T21:19:55.062Z",
    "max_gap_min": 45
   },
   "fill-ledger-cron": {
    "receipt": "agents/fill-ledger.json",
-   "last_ts": "2026-10-25T21:10:26.794Z",
+   "last_ts": "2026-10-25T22:31:33.721Z",
    "max_gap_min": 45
   },
   "market-grid-cron.yml": {
@@ -56,7 +56,7 @@
   },
   "office-pulse.yml": {
    "receipt": "office/data.json",
-   "last_ts": "2026-10-25T20:43:50.456Z",
+   "last_ts": "2026-10-25T22:30:52.069Z",
    "max_gap_min": 90
   },
   "audience-analyst.yml": {
@@ -78,23 +78,23 @@
  "decided": [
   {
    "desk": "sovereign-tick-cron",
-   "stale_min": 89.7,
-   "reason": "book stale 89.7m > 20m"
+   "stale_min": 79,
+   "reason": "book stale 79.0m > 20m"
   },
   {
    "desk": "earn-audit-cron",
-   "stale_min": 95.2,
-   "reason": "book stale 95.2m > 45m"
+   "stale_min": 79.3,
+   "reason": "book stale 79.3m > 45m"
+  },
+  {
+   "desk": "market-grid-cron.yml",
+   "stale_min": 86.5,
+   "reason": "book stale 86.5m > 45m"
   },
   {
    "desk": "cognition-beat.yml",
-   "stale_min": 399.1,
-   "reason": "book stale 399.1m > 90m"
-  },
-  {
-   "desk": "soldiers-curate.yml",
-   "stale_min": 1449.2,
-   "reason": "book stale 1449.2m > 1440m"
+   "stale_min": 479.2,
+   "reason": "book stale 479.2m > 90m"
   }
  ],
  "dispatched": [
@@ -111,13 +111,13 @@
    "error": null
   },
   {
-   "desk": "cognition-beat.yml",
+   "desk": "market-grid-cron.yml",
    "http_status": 204,
    "ok": true,
    "error": null
   },
   {
-   "desk": "soldiers-curate.yml",
+   "desk": "cognition-beat.yml",
    "http_status": 204,
    "ok": true,
    "error": null
@@ -126,58 +126,58 @@
  "skipped": [
   {
    "desk": "fill-ledger-cron",
-   "reason": "fresh 8.7m <= 45m"
-  },
-  {
-   "desk": "market-grid-cron.yml",
-   "reason": "fresh 6.4m <= 45m"
+   "reason": "fresh 7.7m <= 45m"
   },
   {
    "desk": "fleet-census-cron.yml",
-   "reason": "cooldown: dispatched 138m ago < 240m"
+   "reason": "cooldown: dispatched 218m ago < 240m"
   },
   {
    "desk": "twin-audit.yml",
-   "reason": "fresh 558.6m <= 1560m"
+   "reason": "fresh 638.7m <= 1560m"
   },
   {
    "desk": "self-audience.yml",
-   "reason": "cooldown: dispatched 138m ago < 240m"
+   "reason": "cooldown: dispatched 218m ago < 240m"
   },
   {
    "desk": "public-pulse.yml",
-   "reason": "cooldown: dispatched 138m ago < 240m"
+   "reason": "cooldown: dispatched 218m ago < 240m"
   },
   {
    "desk": "fleet-heartbeat.yml",
-   "reason": "fresh 6.0m <= 90m"
+   "reason": "fresh 86.1m <= 90m"
   },
   {
    "desk": "office-pulse.yml",
-   "reason": "fresh 35.3m <= 90m"
+   "reason": "fresh 8.4m <= 90m"
   },
   {
    "desk": "audience-analyst.yml",
-   "reason": "cooldown: dispatched 138m ago < 240m"
+   "reason": "cooldown: dispatched 218m ago < 240m"
+  },
+  {
+   "desk": "soldiers-curate.yml",
+   "reason": "cooldown: dispatched 80m ago < 720m"
   },
   {
    "desk": "books-revival-t28.yml",
-   "reason": "fresh 3.0m <= 1440m"
+   "reason": "fresh 83.1m <= 1440m"
   }
  ],
  "errors": [],
- "duration_ms": 4132,
+ "duration_ms": 4545,
  "cooldown_book": {
-  "earn-audit-cron": "2026-10-25T21:19:10.529Z",
-  "sovereign-tick-cron": "2026-10-25T21:19:10.529Z",
+  "earn-audit-cron": "2026-10-25T22:39:14.231Z",
+  "sovereign-tick-cron": "2026-10-25T22:39:14.231Z",
   "market-grid-cron": "2026-10-03T22:18:37.142Z",
   "fill-ledger-cron": "2026-10-25T11:10:49.227Z",
-  "market-grid-cron.yml": "2026-10-25T19:46:05.008Z",
+  "market-grid-cron.yml": "2026-10-25T22:39:14.231Z",
   "audience-analyst.yml": "2026-10-25T19:00:34.418Z",
   "fleet-census-cron.yml": "2026-10-25T19:00:34.418Z",
   "self-audience.yml": "2026-10-25T19:00:34.418Z",
   "fleet-heartbeat.yml": "2026-10-25T16:34:14.072Z",
-  "cognition-beat.yml": "2026-10-25T21:19:10.529Z",
+  "cognition-beat.yml": "2026-10-25T22:39:14.231Z",
   "soldiers-curate.yml": "2026-10-25T21:19:10.529Z",
   "books-revival-t28.yml": "2026-10-19T04:26:07.838Z",
   "public-pulse.yml": "2026-10-25T19:00:34.418Z"
