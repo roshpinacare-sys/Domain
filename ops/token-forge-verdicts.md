@@ -6,9 +6,11 @@
 
 
 
+
 2026-10-11T21:36:48Z | mode=probe | want=ALL | MAIN_KEY DEAD HTTP-000 - - - - ; ZIP_PAT ALIVE fine-grained 2026-12-12 13:08:14 UTC 61 4919 roshpinacare-sys
 2026-10-11T21:37:35Z | mode=probe | want=MAIN_KEY | MAIN_KEY DEAD HTTP-000 - - - -
 2026-10-11T21:38:35Z | mode=probe | want=MAIN_KEY | MAIN_KEY DEAD HTTP-401 - - - -
 2026-10-11T21:39:41Z | mode=probe | want=MAIN_KEY | MAIN_KEY DEAD HTTP-401 - - - -
 2026-10-11T21:40:41Z | mode=route | want=ZIP_PAT | ZIP_PAT ALIVE fine-grained 2026-12-12 13:08:14 UTC 61 4906 roshpinacare-sys | routed=True Sandbox:ZIP_PAT=OK,saos-runtime:ZIP_PAT=OK,FleetHQ:ZIP_PAT=OK,fire:Sandbox:token-watchdog.yml=OK
 2026-10-18T11:23:19Z | mode=probe-weekly | want=ALL | MAIN_KEY DEAD HTTP-401 - - - - ; ZIP_PAT ALIVE fine-grained 2026-12-12 13:08:14 UTC 55 4757 roshpinacare-sys
+2026-10-25T11:47:45Z | mode=probe-weekly | want=ALL | MAIN_KEY DEAD HTTP-401 - - - - ; ZIP_PAT ALIVE classic-non-expiring non-expiring 9999 4463 roshpinacare-sys
