@@ -44,14 +44,26 @@ jobs:
         run: |
           git config user.name "roshpinacare-sys"
           git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
-          git add press wallet-truth.html
+          # stall-fix 2026-10-25 (trace 1a173c9512866c89): bake-press also refreshes
+          # sitemap.xml (press/editions lastmod, wave-19.50) — leaving it unstaged
+          # made `git pull --rebase` refuse ("You have unstaged changes") on EVERY
+          # run since Oct 21, so the baked edition was committed but never pushed:
+          # 4 days of green-but-dead pipeline. Stage ALL baker outputs and make a
+          # failed push loud (exit 1) instead of a silent green lie.
+          git add press wallet-truth.html sitemap.xml
           if git diff --cached --quiet; then
             echo "no-change — the previous edition stands"
           else
             git commit -m "press: daily edition baked $(date -u +%Y-%m-%dT%H:%M:%SZ) [skip ci]"
+            pushed=0
             for i in 1 2 3; do
-              git pull --rebase -q && git push origin main && break
+              if git pull --rebase -q && git push origin main; then pushed=1; break; fi
               echo "push race #$i — rebasing on the fleet and retrying"
               sleep 3
             done
+            if [ "$pushed" != "1" ]; then
+              echo "FATAL: baked edition could not be pushed after 3 attempts — failing loudly (no more silent stalls)"
+              git status --short
+              exit 1
+            fi
           fi
