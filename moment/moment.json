@@ -1,33 +1,33 @@
 {
  "ok": true,
  "format": "moment-watch-v1",
- "publishedAt": "2026-10-25T21:03:42.561Z",
+ "publishedAt": "2026-10-25T21:14:29.590Z",
  "engine": "Domain/agents/moment-watch · R62 sovereign moment",
  "role": "reads the live moment every 30 minutes (market regime, our parity line vs the live internal book, fuel runway, measured anomalies) and records a deterministic directional call that is only ever scored after its horizon has passed - training as measurement, never as promise",
  "market": {
-  "steemUsd": 0.0493802,
-  "steem24h": -0.18420704006829747,
-  "sbdUsd": 0.48661,
-  "btcUsd": 80389,
-  "btc24h": -0.022659986680802543,
+  "steemUsd": 0.050078,
+  "steem24h": 1.1785947842101987,
+  "sbdUsd": 0.486411,
+  "btcUsd": 80394,
+  "btc24h": 0.17407911783833538,
   "fearGreed": {
    "value": 54,
    "label": "Neutral"
   }
  },
- "paritySbdPerSteem": 0.10147798031277615,
+ "paritySbdPerSteem": 0.10295408615347926,
  "liveBook": {
   "bestBid": 0.10206538266599088,
   "bestAsk": 0.10255851141154237,
-  "bidsDepthSbd": 307.76,
-  "asksDepthSteem": 281.9,
+  "bidsDepthSbd": 307.78,
+  "asksDepthSteem": 168.03,
   "levels": 21,
-  "bidSurplusBps": 58
+  "bidSurplusBps": -86
  },
  "regime": {
   "label": "NEUTRAL",
   "drivers": [
-   "BTC -0.0%",
+   "BTC +0.2%",
    "F&G 54"
   ],
   "thresholds": {
@@ -40,18 +40,18 @@
  },
  "runway": {
   "active": false,
-  "weeklySp": 6.207849932216095e-10,
+  "weeklySp": 6.207853047217234e-10,
   "nextPayment": "1969-12-31T23:59:59",
   "remainingSp": 0,
   "weeklyUsd": 0,
-  "treasuryUsd": 1.6
+  "treasuryUsd": 1.62
  },
  "grid": {
   "verdict": "ARMED-WAITING",
   "armed": true,
   "blocker": "broadcast failing: 6/6 chain ops rejected this run (\"broadcast answered without id\") — stale key/authority or node fault; verdict cannot be stable until signing succeeds",
   "externalFlowUsd": 0.295419,
-  "publishedAt": "2026-10-25T20:50:16.121Z"
+  "publishedAt": "2026-10-25T21:04:44.939Z"
  },
  "moneyPath": {
   "fuel": {
@@ -83,8 +83,8 @@
  "insights": [
   {
    "kind": "parity-edge",
-   "tone": "warn",
-   "text": "הספר החי 58bps מעל קו-הזהות — אין עודף-קנייה כרגע; הגריד ממתין."
+   "tone": "good",
+   "text": "עומק-קנייה חי 86bps מתחת לקו-הזהות (bid 0.1021 מול parity 0.1030) — עודף מדוד לגריד."
   },
   {
    "kind": "sbd-inventory",
