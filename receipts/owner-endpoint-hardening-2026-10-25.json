@@ -1,0 +1,88 @@
+{
+  "receipt": "owner-endpoint-hardening-2026-10-25",
+  "directive": "EMERGENCY SYSTEM DIRECTIVE: OWNER ENDPOINT HARDENING, STALLED PIPELINE RESUMPTION & AUDIT RECONCILIATION",
+  "trace": "1a173caa7370ea61",
+  "at": "2026-10-25T16:20:00Z",
+  "sections": {
+    "s1_owner_endpoint_hardening": {
+      "status": "GREEN",
+      "surface_found": [
+        "fleet-runner :3031 — POST /jobs, POST /schedules, PATCH/DELETE /schedules/:id, GET /jobs/:id(full output) were unauthenticated with CORS *",
+        "console :3000 proxies forwarded all of the above + /api/agents/license"
+      ],
+      "surface_locked": [
+        "vault-derived owner token: sha256(vault.passphrase || 'owner-gate-v1'), derived at boot, never stored on disk",
+        "fail-closed: passphrase unreadable => token null => every mutation denied",
+        "enforcement at the runner; console proxies forward x-owner-token only",
+        "GET /api/owner/unlock flow: passphrase verified server-side (timing-safe), token returned for the tab's session (sessionStorage)",
+        "every denial journaled append-only to fleet-runner/data/security/denials.jsonl + stderr",
+        "health exposes ownerGate: armed | fail-closed (no secret material)"
+      ],
+      "proof": {
+        "post_jobs_no_token": 401,
+        "get_job_full_no_token": 401,
+        "console_proxy_post_schedules_no_token": 401,
+        "unlock_wrong_passphrase": 401,
+        "unlock_correct": "ok (64-hex token, never logged)",
+        "post_jobs_with_token_unknown_preset": 400,
+        "get_job_full_with_token": 200,
+        "console_proxy_patch_with_token_nonexistent": 404,
+        "denials_journal_lines": 3
+      },
+      "already_gated_measured": [
+        "roshpina serve.ts :3032 — every POST requires Ed25519 operator signature, else 503 fail-closed",
+        "market-serve :3033 — agents sign every order with their own Ed25519; operator actions operator-only"
+      ]
+    },
+    "s2_pipeline_resumption": {
+      "status": "GREEN",
+      "root_cause_measured": [
+        "host was down ~3.5 days: state-snapshots gap 2026-10-22T07:34 → 2026-10-25T15:39",
+        "GHA kept running on GitHub infra: press-bake runs #65-71 succeeded during the freeze",
+        "run #71 (14:22Z) created press/editions/2026-10-25.html (commit 68045bf) — then the revived fleet's first pushes from the restored stale lineage rewrote main and orphaned it (commit unreachable, not even in local objects)",
+        "a sibling lane landed stall-fix 26490666b (16:04Z) and dispatched bake #72 (16:07Z) which re-landed the Oct 25 edition (1cd0674a9)"
+      ],
+      "state_now": "press/editions/2026-10-25.html live on origin/main; editions archive + sitemap self-maintained; runner schedules all green (market-report 60s, ledger-sync 300s, economy-cycle 600s, economy-run 300s, plan-executor 1200s, site-builder 1800s, dr-drill daily)",
+      "heartbeats": "pulse.json fresh (14:24Z), grid-doctor + agent9-fleet-truth commits today, agent9 truth bake 13/13 sources ok",
+      "residual": "scheduled press-bake runs are GitHub-throttled to ~4-6/day instead of the 48/day cron; editions still land daily (date embedded in the page); watch next 24h"
+    },
+    "s3_audit_reconciliation": {
+      "status": "GREEN",
+      "multi_soldier_trading": {
+        "verdict": "NOT stalled — measured multi-agent, not headcorner-only",
+        "evidence": {
+          "market_journal_records": 22855,
+          "freshest_fill": "2026-10-25T16:07:58Z",
+          "agents_with_fills": { "alpha": 988, "bravo": 1158, "gamma": 34, "delta": 4, "epsilon": 51, "zeta": 10 },
+          "book": { "bids": 9, "asks": 11, "trades": 663, "settledTrades": 121 },
+          "conservation": "quote+base holds:true both sides"
+        }
+      },
+      "key_loading": {
+        "operator": "Ed25519 provisioned at boot (provisionOperatorKeys), errors reported loudly",
+        "soldiers": "ROSHPINA_AGENT_KEY_<id> env + fleet-runner/data/keys/*.pem (operator/alpha/bravo/gamma/delta/theta/iota/kappa...); kid→agentId derived, every order signed",
+        "no key-loading defect found in the live path"
+      },
+      "receipts_to_fleet_economy": {
+        "agent_pnl": "65 records, freshest 2026-10-25T16:09:13Z, covers kappa/theta/iota/zeta/delta/epsilon/mm-grid/mm-oracle",
+        "fleet_econ_ledger": "46,953 records (GHA economy engine)",
+        "chain_audit": "ok=true, seq 1436, anchored fold@1321"
+      },
+      "failing_schedules_triaged": {
+        "ai-sentinel": "vault-sealed race at boot 15:38:13 (unseal landed 15:38 same minute); manual run GREEN with real NIM analysis",
+        "ai-architect": "same vault race; then external NIM capacity 503 16/16 + timeout + empty fallback — fail-closed honest; scheduled 16:38 auto-retry",
+        "self-audit/capability-audit/roast-grill": "boot-window artifacts; capability-audit journal already CAPABILITY-AUDIT-OK 14/0 at 15:39:45; next hourly runs refresh lastStatus"
+      }
+    },
+    "s4_architect_daemon": {
+      "status": "RUNNING",
+      "evidence": "fleet-runner :3031 alive (revived 16:12Z, 22 schedules restored, watchdog armed); the architect chain = ai-architect → plan-executor (107 runs, 3 fails) → code-executor → site-builder (72 runs, 0 fails, cycle 74 @16:08Z); nightly build via night-heartbeat.sh; dr-drill daily (last succeeded 15:38Z)"
+    }
+  },
+  "honest_gaps": [
+    "NIM upstream capacity (503 16/16) is external; the architect lane is fail-closed and retries on schedule",
+    "GitHub schedule throttling on press-bake (4-6/day observed vs 48/day declared) — external platform limit",
+    "the orphaning force-push at ~15:37-15:40 could not be attributed post-mortem (dangling commits unqueryable); cure recorded: writers must fetch/rebase onto true origin/main right after any environment restore",
+    "zero-trade soldiers (iota/kappa) flagged by the sentinel — allocation/strategy question for the fleet's own desks, not a key defect"
+  ]
+}
