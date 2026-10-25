@@ -1,4 +1,4 @@
-# Earn audit · 2026-10-25T21:19:55.062Z (window 7d, keyless chain-truth)
+# Earn audit · 2026-10-25T22:45:50.363Z (window 7d, keyless chain-truth)
 
 | account | author SBD | author STEEM | curation SP | claimed vests SP | drip arrived STEEM | sold STEEM | recv SBD | bought STEEM | spent SBD | converts SBD | fills | votes | posts |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -6,4 +6,4 @@
 
 **fleet totals:** {"author_sbd":0,"author_steem":0,"author_vests":0,"curation_vests":0,"claimed_steem":0,"claimed_sbd":0,"claimed_vests":0,"drip_arrived_steem":0,"transfer_in_steem":0,"transfer_in_sbd":0,"transfer_out_steem":0,"sold_steem":0,"recv_sbd":0,"bought_steem":0,"spent_sbd":0,"fills":0,"votes":0,"posts":0,"converts_sbd":0,"ops":0,"curation_sp":0,"author_vests_sp":0,"claimed_vests_sp":0,"walk_pages":1}
 
-_feed: {"base":"58439817.675 SBD","quote":"561495688.442 STEEM","steem_usd_implied":0.104079} — every number above is counted from chain ops, not from books_
+_feed: {"base":"58440163.275 SBD","quote":"561499106.581 STEEM","steem_usd_implied":0.104079} — every number above is counted from chain ops, not from books_
