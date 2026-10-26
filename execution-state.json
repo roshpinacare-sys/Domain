@@ -1,6 +1,6 @@
 {
  "schema": "SAOS-EXECUTION-LEDGER/1",
- "at": "2026-10-26T15:43:44Z",
+ "at": "2026-10-26T18:40:00Z",
  "generator": "agent-renewed — swarm-36c-ledger (Z.ai cycle-36 worker, lane 36-c, פנקס-מורה 36-c) — hand-curated from worklog Task ID 27 (cycles 33-35 consolidated) + orchestrator live measurements 2026-10-26 ~15:20Z · additive G77-b refresh (cycle/generatedAt minted + measured blocks, 15:24–15:41Z)",
  "sourceWorklog": "worklog Task ID 27 (cycles 33-35 consolidated) · Task ID 36-c (cycle 36)",
  "law": "כל-שורה-כאן-נגזרת-מפנקס-העבודה-האמיתי-ומהספרים-המדודים · מה-שלא-הוכח-רשום-כלא-בוצע · אסור-לקשט",
@@ -301,6 +301,12 @@
    "title": "ff.io — הרשאות-API ממתינות-לבעלים",
    "detail": "החתימה-מתקבלת; כל-הקריאות code:501 עד-שהבעלים מפעיל-הרשאות-API-בצד-החשבון ב-ff.io. אחר-כך :3055 מגיש-שערים-אמיתיים.",
    "evidence": "worklog Task ID 27 (honest blocker, zero fabricated rates) · :3055"
+  },
+  {
+   "id": "GAP-6",
+   "title": "saos-0001..0004 — keyless custody gap (measured, fail-closed) — G77-c gate audit",
+   "detail": "four new soldier identities exist on-chain (creator headcorner: saos-0001 2026-10-24T20:52:06 · saos-0002 20:56:54 · saos-0003 21:26:15 · saos-0004 2026-10-25T17:50:54 block 110750412; 0.600 STEEM + 0.150 SBD + 1.2-2.0k VESTS each) but their WIFs are in ZERO measurable custody: scc repo-vault manifest 0 mentions · engine roster 14/14 excludes · army-keys.json MASTER-era excludes · fleet-economy seals absent · capital-router: 'external — not custody'. FUEL LAW: streaming fuel/RC to them stays REFUSED until custody-verified (T-80 bug class). Redemption: recall-of-own-delegation amendment → headcorner recalls the parked VESTS; owner-side import if creation-era secrets survive; re-mint via the custody-law path when operator re-arms",
+   "evidence": "steem RPC account_create block 110750412 · :3040/health 17:05Z · capital-router.json recall refusals 15:05Z · scc repo-vault/manifest.json · giant verdict c2d963ef8c66 (custody-gap-verdict, chain-verified 8/8)"
   }
  ],
  "next": [
@@ -404,5 +410,9 @@
    "X5 G77-f gap receipts"
   ],
   "numberingNote": "מיספור-השורה-העליונה=36-לפי-הלינאז'-שירד-קודם (36-c-איחד-33–35) · מקטע-זה-מתעד-את-חידוש-G77-b-בפועל (מדידות 15:24–15:41Z) — שני-הליינים-חיים, אף-מספר-לא-נמחק"
+ },
+ "erasureGuard": {
+  "law": "rows-are-APPEND-ONLY · history lives in git · any renewal MUST merge existing rows and cycle*/wave* sections — replacement = erasure (three measured strikes: verdicts chain, wave block, this ledger; rescued at 493ac99d2 from commit-object d6b48a04a)",
+  "note": "additive key — renewals may keep, never drop, this block"
  }
 }
