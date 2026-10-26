@@ -173,21 +173,34 @@ footer a{color:var(--dim)}
     return '<div class="kv"><span>'+esc(k)+'</span><b class="'+(cls||'')+'">'+esc(v)+'</b></div>';
   }
 
-  // רשת-ניסיון-הטעינה: כל-כתובת-נוסה-בתורה · הראשונה-שמשיבה-200 זוכה · כשל-גורף = אבחון-כנה-של-כל-הכתובות-והמצבים
-  var STATE_CANDIDATES=['execution-state.json','../execution-state.json','/Domain/execution-state.json'];
-  var stateAttempts=[];
-  function stateFailAll(){
-    var rows=stateAttempts.map(function(a){
-      return '<li class="mono" style="font-weight:400;word-break:break-all">'+esc(a.url)+' → '+esc(a.status)+'</li>';
-    }).join('');
-    var err=el('loadErr');
-    err.innerHTML='⚠️ פנקס-הביצוע (execution-state.json) לא-נטען — נוסו-'+stateAttempts.length+'-כתובות-וכולן-כשלו. זו-בעיה-אמיתית-ולא-מסך-נסתר. אבחון-מלא:‏'+
-      '<ul style="margin:8px 0 0;padding-inline-start:20px">'+rows+'</ul>';
-    err.style.display='block';
-    el('chips').innerHTML='<span class="chip"><b class="bad">מקור-לא-נגיש</b></span>';
-    if(window.console) console.warn('execution-state load failed after all candidates:', stateAttempts);
+  /* G77-c accessibility law (trace 1a178c71c10d38c5): the ledger load must NEVER
+   * depend on a single origin. Source chain: page-adjacent file first, then the
+   * raw canonical (Domain main), then the raw giant mirror. The chip names the
+   * source that actually fed the render — no silent fallback. */
+  var LEDGER_SOURCES = [
+    {name:'Domain pages (סמוך-לדף)', url:'execution-state.json'},
+    {name:'raw · Domain main', url:'https://raw.githubusercontent.com/roshpinacare-sys/Domain/main/execution-state.json'},
+    {name:'raw · giant mirror', url:'https://raw.githubusercontent.com/roshpinacare-sys/giant/main/state/execution/execution-state.json'}
+  ];
+  function loadLedgerFrom(i){
+    if(i>=LEDGER_SOURCES.length){
+      el('loadErr').style.display='block';
+      el('chips').innerHTML='<span class="chip"><b class="bad">מקור-לא-נגיש — כל '+LEDGER_SOURCES.length+' המקורות בשרשרת נכשלו</b></span>';
+      if(window.console) console.warn('execution-state load failed: all sources exhausted');
+      return;
+    }
+    var src=LEDGER_SOURCES[i];
+    fetch(src.url,{cache:'no-store'}).then(function(r){
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      return r.json();
+    }).then(function(d){
+      renderLedger(d, src.name);
+    }).catch(function(e){
+      if(window.console) console.warn('execution-state source failed ('+src.name+'):', e);
+      loadLedgerFrom(i+1);
+    });
   }
-  function renderState(d){
+  function renderLedger(d, sourceName){
     el('loadErr').style.display='none';
     var age=fmtAgo(d.at);
     var hours=(Date.now()-Date.parse(d.at))/36e5;
@@ -202,10 +215,10 @@ footer a{color:var(--dim)}
     var chips=el('chips');
     chips.innerHTML =
       '<span class="chip">עודכן: <b class="mono">'+esc((d.at||'').slice(0,16).replace('T',' '))+'Z</b> ('+esc(age||'?')+')</span>'+
-      (d.freshness&&d.freshness.verifiedAt?'<span class="chip">אימות-רענון אוטומטי: <b class="mono">'+esc(String(d.freshness.verifiedAt).slice(0,16).replace('T',' '))+'Z</b></span>':'')+
       '<span class="chip">סכימה: <b class="mono">'+esc(d.schema||'')+'</b></span>'+
       '<span class="chip">מחזורים-מתועדים בפנקס-העבודה: <b class="mono">444</b></span>'+
-      '<span class="chip">חוק: <b>אין-ראיה = לא-קרה</b></span>';
+      '<span class="chip">חוק: <b>אין-ראיה = לא-קרה</b></span>'+
+      '<span class="chip">מקור-בטעינה: <b>'+esc(sourceName||'—')+'</b></span>';
 
     var s=d.measuredSnapshot||{};
     var cls=function(v){return (v&&v.indexOf&&v.indexOf('ARMED-LIVE')>=0)?'good':(v&&v.indexOf&&v.indexOf('WAITING')>=0)?'warn':'bad'};
@@ -227,22 +240,7 @@ footer a{color:var(--dim)}
         '<div class="ev"><b>אחריות:</b> '+esc(x.owner||'—')+'</div></article>';
     }).join('');
   }
-  function stateTry(i){
-    if(i>=STATE_CANDIDATES.length){ stateFailAll(); return; }
-    var url=STATE_CANDIDATES[i]+(STATE_CANDIDATES[i].indexOf('?')>=0?'&':'?')+'t='+Date.now();
-    fetch(url,{cache:'no-store'}).then(function(r){
-      if(!r.ok) throw {stateStatus:'HTTP '+r.status};
-      return r.json();
-    }).then(function(d){
-      stateAttempts.push({url:url,status:'HTTP 200'});
-      renderState(d);
-    }).catch(function(e){
-      if(e&&e.stateStatus) stateAttempts.push({url:url,status:e.stateStatus});
-      else stateAttempts.push({url:url,status:'ERR '+(e&&e.message||'network')});
-      stateTry(i+1);
-    });
-  }
-  stateTry(0);
+  loadLedgerFrom(0);
 
   // רצועת-חיות: הספרים-האוטומטיים שרופא-הצי כותב — אם-הם-טריים, המשרד-חי
   fetch('mirror.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(m){

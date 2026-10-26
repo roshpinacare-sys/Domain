@@ -1,32 +1,37 @@
 {
-  "schema": "SAOS-EXECUTION-LEDGER/1",
-  "at": "2026-10-26T15:36:50Z",
-  "generator": "fleet-runner/execution-ledger-renew.ts (directive-42 §2)",
-  "sourceWorklog": "giant worklog task-55 (directive 42, trace 1a178c71bcb7ddad)",
-  "law": "אין-ראיה = לא-קרה · כל-מספר נמדד-מהקרקע בזמן-החידוש",
-  "freshness": {
-    "staleAfterHours": 48,
-    "renewedBy": "execution-ledger-renew (12h schedule)",
-    "howToVerify": "compare .at against the runner job journal"
-  },
-  "measuredSnapshot": {
-    "services": "market:3033-UP ledger:3032-UP runner:3031-UP",
-    "gridVerdict": "ARMED-LIVE",
-    "valueGuard": "conservation-HOLDS",
-    "realFillsLifetime": 394,
-    "fillRecordsLedger": 394,
-    "fillsByAgent": "alpha:1028 bravo:1430 gamma:38 delta:4 epsilon:91 zeta:84 eta:73 theta:8 iota:0 kappa:0 mm-grid:108 mm-oracle:0 saos-0004:0",
-    "runner": "jobs=5388 schedules=23",
-    "ledger": "seq=1662 accounts=31"
-  },
-  "done": [
-    {
-      "title": "פנקס-הביצוע חי ומתחדש-אוטומטית (צו 42 §2)",
-      "detail": "הפנקס חודש מהקרקע: market:3033-UP ledger:3032-UP runner:3031-UP; מסחר ריבוני 394 עסקאות-מאושרות; שימור מלא",
-      "evidence": "http://127.0.0.1:3033/economy/report + /health measured at renew time"
-    }
-  ],
-  "partial": [],
-  "gaps": [],
-  "next": []
+ "schema": "SAOS-EXECUTION-LEDGER/1",
+ "at": "2026-10-26T15:36:50Z",
+ "generator": "fleet-runner/execution-ledger-renew.ts (directive-42 §2)",
+ "sourceWorklog": "giant worklog task-55 (directive 42, trace 1a178c71bcb7ddad)",
+ "law": "אין-ראיה = לא-קרה · כל-מספר נמדד-מהקרקע בזמן-החידוש",
+ "freshness": {
+  "staleAfterHours": 48,
+  "renewedBy": "execution-ledger-renew (12h schedule)",
+  "howToVerify": "compare .at against the runner job journal"
+ },
+ "measuredSnapshot": {
+  "services": "market:3033-UP ledger:3032-UP runner:3031-UP",
+  "gridVerdict": "ARMED-LIVE",
+  "valueGuard": "conservation-HOLDS",
+  "realFillsLifetime": 394,
+  "fillRecordsLedger": 394,
+  "fillsByAgent": "alpha:1028 bravo:1430 gamma:38 delta:4 epsilon:91 zeta:84 eta:73 theta:8 iota:0 kappa:0 mm-grid:108 mm-oracle:0 saos-0004:0",
+  "runner": "jobs=5388 schedules=23",
+  "ledger": "seq=1662 accounts=31"
+ },
+ "done": [
+  {
+   "title": "פנקס-הביצוע חי ומתחדש-אוטומטית (צו 42 §2)",
+   "detail": "הפנקס חודש מהקרקע: market:3033-UP ledger:3032-UP runner:3031-UP; מסחר ריבוני 394 עסקאות-מאושרות; שימור מלא",
+   "evidence": "http://127.0.0.1:3033/economy/report + /health measured at renew time"
+  }
+ ],
+ "partial": [],
+ "gaps": [],
+ "next": [],
+ "erasureGuard": {
+  "law": "rows-are-APPEND-ONLY · history lives in git · any renewal robot MUST merge existing done/partial/gaps/next rows and prior cycle*/wave* sections — replacement = erasure (third measured strike of the class: verdicts chain, wave block, this ledger)",
+  "lastRescue": "2026-10-26T17:5xZ G77-c (trace 1a178c71c10d38c5) restored round-29 core + cycle30/31 + wave81 + D20-D23 + G6 after fleet-runner skeleton clobber 8ec40aa33 (-176 rows)",
+  "rescueSource": "commit-object archaeology: local d6b48a04a (lineage-honest renewal) rebased over the clobber"
+ }
 }
