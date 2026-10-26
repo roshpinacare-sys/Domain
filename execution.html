@@ -196,17 +196,19 @@ footer a{color:var(--dim)}
   };
 
   // ===== מצב-טעינה כנה: LOADED / STALE-עם-אזהרה / UNREACHABLE =====
-  // נתיב-1: יחסי (אותו-מקור, המקרה-הסטנדרטי ב-/Domain/) · נתיב-2: מוחלט (כיסוי-בסיס-הגשה-אחר)
-  var SOURCES=['execution-state.json','/Domain/execution-state.json'];
+  // נתיב-1: יחסי (אותו-מקור, המקרה-הסטנדרטי ב-/Domain/) · נתיב-2: אב-יחסי (כיסוי-התקנה-בשורש-אחר) · נתיב-3: מוחלט (כיסוי-בסיס-הגשה-אחר)
+  // רשת-הניסיון-המלאה של wave-#82 (trace 1a178c614313ad05) — אבחון-כנה-מלא-בכשל-גורף, בלי-מיסוך-שקט
+  var SOURCES=['execution-state.json','../execution-state.json','/Domain/execution-state.json'];
   var RETRY_PER_SOURCE=1, RETRY_DELAY_MS=1500, TIMEOUT_MS=10000;
   var MAX_PASSES=3, PASS_DELAY_MS=20000;
   var mirrorChip=null; // צ'יפ-חיות-רופא-הצי — נשמר-מול-רינדור-מאוחר-של-הצ'יפים
 
   function tryFetch(url,triesLeft){
     return new Promise(function(resolve,reject){
+      var busted=url+(url.indexOf('?')>=0?'&':'?')+'t='+Date.now(); // cache-buster (wave-#82) — נגד-מטמון-ביניים, מעל-cache:'no-store'
       var ctl=('AbortController' in window)?new AbortController():null;
       var timer=ctl?setTimeout(function(){ctl.abort()},TIMEOUT_MS):null;
-      fetch(url,{cache:'no-store',signal:ctl?ctl.signal:undefined}).then(function(r){
+      fetch(busted,{cache:'no-store',signal:ctl?ctl.signal:undefined}).then(function(r){
         if(timer)clearTimeout(timer);
         if(!r.ok){var e=new Error('HTTP '+r.status);e.httpStatus=r.status;throw e;}
         return r.json().catch(function(pe){var e2=new Error('תוכן-לא-JSON: '+(pe&&pe.message||pe));e2.parseError=true;throw e2;});
@@ -223,7 +225,8 @@ footer a{color:var(--dim)}
       if(i>=SOURCES.length) return Promise.reject(new Error(attempts.join(' | ')||'no-source'));
       var url=SOURCES[i++];
       return tryFetch(url,RETRY_PER_SOURCE).catch(function(e){
-        attempts.push((url==='execution-state.json'?'יחסי':'מוחלט')+' → '+(e.httpStatus?('HTTP '+e.httpStatus):(e.parseError?'JSON-לא-תקין':'רשת/פסק-זמן')));
+        // אבחון-כנה-מלא: הכתובת-המילולית-שנוסתה + המצב-האמיתי (wave-#82: no-silent-masking)
+        attempts.push(url+' → '+(e.httpStatus?('HTTP '+e.httpStatus):(e.parseError?'JSON-לא-תקין':'רשת/פסק-זמן')));
         return tryNext();
       });
     }
@@ -254,6 +257,7 @@ footer a{color:var(--dim)}
     safe('chips',function(){
       el('chips').innerHTML =
         '<span class="chip">עודכן: <b class="mono">'+esc((d.at||'').slice(0,16).replace('T',' '))+'Z</b> ('+esc(age||'לא-רשום')+')</span>'+
+        (d.freshness&&d.freshness.verifiedAt?'<span class="chip">אימות-רענון אוטומטי: <b class="mono">'+esc(String(d.freshness.verifiedAt).slice(0,16).replace('T',' '))+'Z</b></span>':'')+
         '<span class="chip">סכימה: <b class="mono">'+esc(d.schema||'')+'</b></span>'+
         '<span class="chip">מקור: <b>'+esc(d.sourceWorklog||'פנקס-העבודה')+'</b></span>'+
         '<span class="chip">חוק: <b>אין-ראיה = לא-קרה</b></span>';
