@@ -156,7 +156,7 @@ footer a{color:var(--dim)}
 (function(){
   "use strict";
   function el(id){return document.getElementById(id)}
-  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
   function fmtAgo(iso){
     var t=Date.parse(iso); if(!t) return null;
     var h=(Date.now()-t)/36e5;
@@ -165,82 +165,134 @@ footer a{color:var(--dim)}
     return 'לפני-'+Math.round(h/24)+'-ימים';
   }
   function card(item, tagCls, tagTxt){
-    return '<article class="card"><h3><span class="tag '+tagCls+'">'+tagTxt+'</span>'+esc(item.title)+'</h3>'+
-      '<p>'+esc(item.detail)+'</p>'+
+    return '<article class="card"><h3><span class="tag '+tagCls+'">'+tagTxt+'</span>'+esc(item.title||'—')+'</h3>'+
+      (item.detail?'<p>'+esc(item.detail)+'</p>':'')+
       '<div class="ev"><b>ראיה:</b> '+esc(item.evidence||'—')+'</div></article>';
   }
-  function snapRow(k,v,cls){
-    return '<div class="kv"><span>'+esc(k)+'</span><b class="'+(cls||'')+'">'+esc(v)+'</b></div>';
+  function nextCard(item){
+    return '<article class="card"><h3><span class="tag next">לבצע</span>'+esc(item.title||'—')+'</h3>'+
+      (item.detail?'<p>'+esc(item.detail)+'</p>':'')+
+      '<div class="ev"><b>אחריות:</b> '+esc(item.owner||'—')+'</div></article>';
   }
+  function fmtVal(v){
+    if(v==null) return '—';
+    if(Array.isArray(v)) return v.map(fmtVal).join(' · ');
+    if(typeof v==='object') return JSON.stringify(v);
+    return String(v);
+  }
+  function snapRow(k,v){
+    var ascii=(typeof v==='string')&&/^[\x00-\x7F]*$/.test(v);
+    return '<div class="kv"><span>'+esc(k)+'</span><b'+(ascii?' class="mono"':'')+'>'+esc(fmtVal(v))+'</b></div>';
+  }
+  var SNAP_LABELS={
+    portsListening:'פורטים-מאזינים (מדוד)',
+    realFillsCumulative:'מילויים-ריאליים-מצטברים (lifetime)',
+    vaultKeys:'מפתחות-כספת-פרוסים (מטא-דאטה-בלבד)',
+    treasuryNetSp:'אוצר-נטו (SP)',
+    minOperatorSp:'מפעיל-מינימלי (SP)',
+    soldierDelegations:'האצלות-חיילים (SP)',
+    statusJsonTs:'חותמת-status.json (FleetHQ)',
+    measuredAt:'נמדד-בשעה'
+  };
 
-  /* G77-c accessibility law (trace 1a178c71c10d38c5): the ledger load must NEVER
-   * depend on a single origin. Source chain: page-adjacent file first, then the
-   * raw canonical (Domain main), then the raw giant mirror. The chip names the
-   * source that actually fed the render — no silent fallback. */
-  var LEDGER_SOURCES = [
-    {name:'Domain pages (סמוך-לדף)', url:'execution-state.json'},
-    {name:'raw · Domain main', url:'https://raw.githubusercontent.com/roshpinacare-sys/Domain/main/execution-state.json'},
-    {name:'raw · giant mirror', url:'https://raw.githubusercontent.com/roshpinacare-sys/giant/main/state/execution/execution-state.json'}
-  ];
-  function loadLedgerFrom(i){
-    if(i>=LEDGER_SOURCES.length){
-      el('loadErr').style.display='block';
-      el('chips').innerHTML='<span class="chip"><b class="bad">מקור-לא-נגיש — כל '+LEDGER_SOURCES.length+' המקורות בשרשרת נכשלו</b></span>';
-      if(window.console) console.warn('execution-state load failed: all sources exhausted');
-      return;
-    }
-    var src=LEDGER_SOURCES[i];
-    fetch(src.url,{cache:'no-store'}).then(function(r){
-      if(!r.ok) throw new Error('HTTP '+r.status);
-      return r.json();
-    }).then(function(d){
-      renderLedger(d, src.name);
-    }).catch(function(e){
-      if(window.console) console.warn('execution-state source failed ('+src.name+'):', e);
-      loadLedgerFrom(i+1);
+  // ===== מצב-טעינה כנה: LOADED / STALE-עם-אזהרה / UNREACHABLE =====
+  // נתיב-1: יחסי (אותו-מקור, המקרה-הסטנדרטי ב-/Domain/) · נתיב-2: מוחלט (כיסוי-בסיס-הגשה-אחר)
+  var SOURCES=['execution-state.json','/Domain/execution-state.json'];
+  var RETRY_PER_SOURCE=1, RETRY_DELAY_MS=1500, TIMEOUT_MS=10000;
+  var MAX_PASSES=3, PASS_DELAY_MS=20000;
+  var mirrorChip=null; // צ'יפ-חיות-רופא-הצי — נשמר-מול-רינדור-מאוחר-של-הצ'יפים
+
+  function tryFetch(url,triesLeft){
+    return new Promise(function(resolve,reject){
+      var ctl=('AbortController' in window)?new AbortController():null;
+      var timer=ctl?setTimeout(function(){ctl.abort()},TIMEOUT_MS):null;
+      fetch(url,{cache:'no-store',signal:ctl?ctl.signal:undefined}).then(function(r){
+        if(timer)clearTimeout(timer);
+        if(!r.ok){var e=new Error('HTTP '+r.status);e.httpStatus=r.status;throw e;}
+        return r.json().catch(function(pe){var e2=new Error('תוכן-לא-JSON: '+(pe&&pe.message||pe));e2.parseError=true;throw e2;});
+      }).then(resolve,function(e){
+        if(timer)clearTimeout(timer);
+        if(triesLeft>0){setTimeout(function(){tryFetch(url,triesLeft-1).then(resolve,reject)},RETRY_DELAY_MS);}
+        else reject(e);
+      });
     });
   }
-  function renderLedger(d, sourceName){
-    el('loadErr').style.display='none';
-    var age=fmtAgo(d.at);
-    var hours=(Date.now()-Date.parse(d.at))/36e5;
-    var banner=el('staleBanner');
-    if(hours>=(d.freshness&&d.freshness.staleAfterHours||48)){
-      banner.className='banner stale';
-      banner.textContent='⚠️ פנקס-הביצוע זקן: עודכן '+age+' — מעבר לסף-ה-48ש׳. נדרש מחזור-סוכן לרענון. המספרים-למטה-הם-המצב-בעת-הכתיבה, לא-עכשיו.';
-    }else{
-      banner.className='banner fresh-ok';
-      banner.textContent='✔ פנקס-טרי: עודכן '+age+' · מקור: פנקס-העבודה בגיט ('+esc(d.sourceWorklog||'')+')';
+  function loadLedger(){
+    var attempts=[]; var i=0;
+    function tryNext(){
+      if(i>=SOURCES.length) return Promise.reject(new Error(attempts.join(' | ')||'no-source'));
+      var url=SOURCES[i++];
+      return tryFetch(url,RETRY_PER_SOURCE).catch(function(e){
+        attempts.push((url==='execution-state.json'?'יחסי':'מוחלט')+' → '+(e.httpStatus?('HTTP '+e.httpStatus):(e.parseError?'JSON-לא-תקין':'רשת/פסק-זמן')));
+        return tryNext();
+      });
     }
-    var chips=el('chips');
-    chips.innerHTML =
-      '<span class="chip">עודכן: <b class="mono">'+esc((d.at||'').slice(0,16).replace('T',' '))+'Z</b> ('+esc(age||'?')+')</span>'+
-      '<span class="chip">סכימה: <b class="mono">'+esc(d.schema||'')+'</b></span>'+
-      '<span class="chip">מחזורים-מתועדים בפנקס-העבודה: <b class="mono">444</b></span>'+
-      '<span class="chip">חוק: <b>אין-ראיה = לא-קרה</b></span>'+
-      '<span class="chip">מקור-בטעינה: <b>'+esc(sourceName||'—')+'</b></span>';
-
-    var s=d.measuredSnapshot||{};
-    var cls=function(v){return (v&&v.indexOf&&v.indexOf('ARMED-LIVE')>=0)?'good':(v&&v.indexOf&&v.indexOf('WAITING')>=0)?'warn':'bad'};
-    el('snap').innerHTML =
-      snapRow('שירותים-חיים', s.services||'—','good')+
-      snapRow('סנכרון-הריפוים', s.reposInSync||'—','good')+
-      snapRow('verdict-הגריד', s.gridVerdict||'—','warn')+
-      snapRow('שומר-הערך (VALUE-GUARD)', s.valueGuard||'—','good')+
-      snapRow('רווח-חוץ מדוד-24ש׳ (USD)', '$'+(s.externalProfit24hUsd!=null?s.externalProfit24hUsd:'—')+' · '+(s.externalProfitSource||''),'warn')+
-      snapRow('רווח-חוץ היסטורי (USD, לא-מעוצב)', '$'+(s.externalFlowUsdHistoric!=null?s.externalFlowUsdHistoric:'—'),'warn')+
-      snapRow('מילויים-ריאליים-של-צד-שלישי (lifetime)', String(s.realFillsLifetime!=null?s.realFillsLifetime:'—')+' · מול '+String(s.fillRecordsLedger!=null?s.fillRecordsLedger:'—')+' רשומות-ראיה','bad');
-
-    el('done').innerHTML=(d.done||[]).map(function(x){return card(x,'done','בוצע')}).join('');
-    el('partial').innerHTML=(d.partial||[]).map(function(x){return card(x,'part','חלקי')}).join('');
-    el('gaps').innerHTML=(d.gaps||[]).map(function(x){return card(x,'gap','פער')}).join('');
-    el('next').innerHTML=(d.next||[]).map(function(x){
-      return '<article class="card"><h3><span class="tag next">לבצע</span>'+esc(x.title)+'</h3>'+
-        '<p>'+esc(x.detail)+'</p>'+
-        '<div class="ev"><b>אחריות:</b> '+esc(x.owner||'—')+'</div></article>';
-    }).join('');
+    return tryNext();
   }
-  loadLedgerFrom(0);
+
+  function render(d){
+    el('loadErr').style.display='none';
+    var errs=[];
+    function safe(name,fn){try{fn()}catch(x){errs.push(name+': '+(x&&x.message||x));if(window.console)console.warn('render '+name,x)}}
+    var age=fmtAgo(d.at);
+    var parsed=Date.parse(d.at);
+    var hours=parsed?((Date.now()-parsed)/36e5):null;
+    var staleAfter=(d.freshness&&d.freshness.staleAfterHours)||48;
+    var stale=(hours==null)||hours>=staleAfter;
+    safe('banner',function(){
+      var banner=el('staleBanner');
+      if(stale){
+        banner.className='banner stale';
+        banner.textContent=(hours==null)
+          ?'⚠️ פנקס-הביצוע: תאריך-העדכון-חסר-או-לא-ניתן-לפענוח — יש-להתייחס-אל-הנתונים-בזהירות.'
+          :'⚠️ פנקס-הביצוע זקן: עודכן '+age+' — מעבר-לסף-ה-'+staleAfter+'ש׳. הנתונים-למטה-הם-המצב-בעת-הכתיבה, לא-עכשיו. נדרש-מחזור-סוכן-לרענון.';
+      }else{
+        banner.className='banner fresh-ok';
+        banner.textContent='✔ פנקס-טרי: עודכן '+age+' · מקור: פנקס-העבודה בגיט ('+(d.sourceWorklog||'')+')';
+      }
+    });
+    safe('chips',function(){
+      el('chips').innerHTML =
+        '<span class="chip">עודכן: <b class="mono">'+esc((d.at||'').slice(0,16).replace('T',' '))+'Z</b> ('+esc(age||'לא-רשום')+')</span>'+
+        '<span class="chip">סכימה: <b class="mono">'+esc(d.schema||'')+'</b></span>'+
+        '<span class="chip">מקור: <b>'+esc(d.sourceWorklog||'פנקס-העבודה')+'</b></span>'+
+        '<span class="chip">חוק: <b>אין-ראיה = לא-קרה</b></span>';
+      if(mirrorChip)el('chips').appendChild(mirrorChip);
+    });
+    safe('snap',function(){
+      var s=d.measuredSnapshot||{};
+      var keys=Object.keys(s);
+      el('snap').innerHTML=keys.length
+        ?keys.map(function(k){return snapRow(SNAP_LABELS[k]||k,s[k])}).join('')
+        :'<div class="kv"><span>אין-חטיבת-מדידה-בפנקס</span><b>—</b></div>';
+    });
+    safe('done',function(){var a=d.done||[];el('done').innerHTML=a.length?a.map(function(x){return card(x,'done','בוצע')}).join(''):'<p class="sub">ריק-בפנקס-הזה</p>'});
+    safe('partial',function(){var a=d.partial||[];el('partial').innerHTML=a.length?a.map(function(x){return card(x,'part','חלקי')}).join(''):'<p class="sub">ריק-בפנקס-הזה</p>'});
+    safe('gaps',function(){var a=d.gaps||[];el('gaps').innerHTML=a.length?a.map(function(x){return card(x,'gap','פער')}).join(''):'<p class="sub">ריק-בפנקס-הזה</p>'});
+    safe('next',function(){var a=d.next||[];el('next').innerHTML=a.length?a.map(nextCard).join(''):'<p class="sub">ריק-בפנקס-הזה</p>'});
+    if(errs.length&&window.console)console.warn('render warnings:',errs.join(' | '));
+  }
+
+  function fail(e){
+    if(pass<MAX_PASSES){setTimeout(attempt,PASS_DELAY_MS);return;}
+    // UNREACHABLE — רק-כאשר-אין-שום-נתון: הודעה-כנה-עם-פירוט-הניסיונות
+    el('chips').innerHTML='<span class="chip"><b class="bad">מקור-לא-נגיש אחרי-'+MAX_PASSES+'-מעברים-מלאים</b></span>';
+    var box=el('loadErr');
+    box.style.display='block';
+    box.innerHTML='⚠️ פנקס-הביצוע (execution-state.json) לא-נטען.<br>'+
+      '<span style="font-weight:500">פירוט-הניסיונות: '+esc(e&&e.message?e.message:'—')+'</span><br>'+
+      '<span style="font-weight:500">הסבר-אפשרי: הצי-דוחף-לריפו-ברציפות ו-GitHub-Pages נמצא-בחלון-בנייה (תקלה-זמנית, לא-בעיה-תוכן), או-שאין-רשת. רענון-ידני (F5) בדרך-כלל-יצליח.</span>';
+    if(window.console)console.warn('execution-state load failed:', e);
+  }
+
+  var pass=0;
+  function attempt(){
+    pass++;
+    if(pass===1)el('chips').innerHTML='<span class="chip">טוען-פנקס…</span>';
+    else el('chips').innerHTML='<span class="chip">טוען-פנקס… (ניסיון-חוזר '+pass+'/'+MAX_PASSES+' — ייתכן-חלון-בנייה-של-Pages)</span>';
+    loadLedger().then(render,function(e){fail(e)});
+  }
+  attempt();
 
   // רצועת-חיות: הספרים-האוטומטיים שרופא-הצי כותב — אם-הם-טריים, המשרד-חי
   fetch('mirror.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(m){
@@ -250,6 +302,7 @@ footer a{color:var(--dim)}
     c.className='chip';
     var h=(Date.now()-Date.parse(m.at))/36e5;
     c.innerHTML='רופא-הצי (mirror.json): <b class="'+(h<6?'ok':(h<24?'warn':'bad'))+'">'+esc(age||'—')+'</b> · בית-ציבורי: '+esc((m.public&&m.public.head||'').slice(0,28));
+    mirrorChip=c;
     el('chips').appendChild(c);
   }).catch(function(){});
 })();
