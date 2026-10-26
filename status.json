@@ -1,6 +1,6 @@
 {
  "schema": "saos/grid-status/1",
- "generatedAt": "2026-10-26T14:29:25.694Z",
+ "generatedAt": "2026-10-26T15:12:30.364Z",
  "pulse": {
   "beatArteries": 119,
   "totalArteries": 399,
@@ -3235,5 +3235,68 @@
    "verdict": "IDLE",
    "arteries": []
   }
- ]
+ ],
+ "facts": {
+  "measuredAt": "2026-10-26T14:54:28Z",
+  "measuredBy": "pipeline-recovery agent P1 (EMERGENCY DIRECTIVE §2 + SWARM §5) — live HTTP, zero fabrication",
+  "dexEngineUp": true,
+  "dexEngineProbe": "GET http://127.0.0.1:3010/saos-dex/api/dex/state → HTTP 200 (earlier probes returned the engine's own 429 honest-budget guard — live limiter, budget consumed by mesh)",
+  "engineHeight": 1747367,
+  "wallets": 24,
+  "hftMesh": {
+   "alive": 6,
+   "total": 6,
+   "soldiers": [
+    {
+     "issuer": "hft-soldier",
+     "port": 3049,
+     "alive": true,
+     "mode": "trade"
+    },
+    {
+     "issuer": "bot-e",
+     "port": 3040,
+     "alive": true,
+     "mode": "trade"
+    },
+    {
+     "issuer": "yarden",
+     "port": 3041,
+     "alive": true,
+     "mode": "trade"
+    },
+    {
+     "issuer": "tamar",
+     "port": 4042,
+     "alive": true,
+     "mode": "trade"
+    },
+    {
+     "issuer": "shachar",
+     "port": 4043,
+     "alive": true,
+     "mode": "trade"
+    },
+    {
+     "issuer": "aluf",
+     "port": 3044,
+     "alive": true,
+     "mode": "trade"
+    }
+   ]
+  },
+  "engineFlags": {
+   "dbOk": true,
+   "halted": false,
+   "lastBlockAgoMs": 1576,
+   "stateRoot": "d3ef6a60d06d0a20eb27e7a76f80242efedced2d029205315853f2960879631c"
+  },
+  "operatorGate": "enabled — DEX_OPERATOR_TOKEN configured in vault (presence verified, value never printed); anonymous probes answered by engine guard and logged; live 401 no-operator-credential measured 2026-10-25 (Task-138)",
+  "multiSoldierRootCause": "FIXED — was: missing DEX_OPERATOR_TOKEN + engine down; now: tokenized + 6 instances live in trade mode (measured 2026-10-26)",
+  "organs": {
+   "architectDaemon": ":3051 up",
+   "selfFinancingEngine": ":3061 up",
+   "dexBeat": ":3046 up (last beat 13:53Z, next 14:53Z)"
+  }
+ }
 }
