@@ -79,5 +79,29 @@ jobs:
         with:
           path: .
           include-hidden-files: true
-      - id: dep
+      # G77-c (measured 2026-10-26): the wave-81 ledger-refresh push 80f37a416 FAILED its
+      # only deploy attempt — deploy-pages "Failed to create deployment (status: 502)"
+      # (run 40339677407) — and the fresh ledger reached Pages only via the NEXT unrelated
+      # push, 6 minutes later. GitHub's own error text says "Please re-run the deployment
+      # at a later time." So: native 3-attempt retry (no third-party actions). If attempts
+      # 1-2 succeed, attempt 3 is skipped and the job stays green; if all 3 fail, the job
+      # fails honestly.
+      - name: deploy-pages (attempt 1)
+        id: dep1
+        uses: actions/deploy-pages@v4
+        continue-on-error: true
+      - name: cool-down before attempt 2
+        if: steps.dep1.outcome == 'failure'
+        run: sleep 20
+      - name: deploy-pages (attempt 2)
+        id: dep2
+        if: steps.dep1.outcome == 'failure'
+        uses: actions/deploy-pages@v4
+        continue-on-error: true
+      - name: cool-down before attempt 3
+        if: steps.dep2.outcome == 'failure'
+        run: sleep 40
+      - name: deploy-pages (attempt 3 — final; failure here fails the job honestly)
+        id: dep
+        if: steps.dep2.outcome == 'failure'
         uses: actions/deploy-pages@v4

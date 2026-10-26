@@ -74,6 +74,11 @@ h2{font-size:19px;margin:0 0 4px;letter-spacing:-.2px}
 footer{border-top:1px solid var(--line);background:var(--panel);padding:20px 0;margin-top:34px;font-size:12.5px;color:var(--faint)}
 footer a{color:var(--dim)}
 .err{display:none;margin:14px 0;padding:12px 16px;border-radius:var(--r);background:rgba(194,65,12,.08);border:1px solid rgba(194,65,12,.35);color:var(--red);font-size:13.5px;font-weight:600}
+.lawline{margin:10px 0 0;font-size:12px;color:var(--dim);border-inline-start:3px solid var(--acc);padding:4px 10px;background:var(--acc-bg);border-radius:8px;line-height:1.6}
+.srcprobe{margin:10px 0 0;font-family:var(--mono);direction:ltr;unicode-bidi:embed;text-align:left;font-size:11px;line-height:1.75;color:var(--dim);word-break:break-all;white-space:pre-wrap}
+.srcprobe .good{color:var(--green);font-weight:700}
+.srcprobe .bad{color:var(--red);font-weight:700}
+.chip .mono-sm{font-family:var(--mono);font-size:11px;direction:ltr;unicode-bidi:embed}
 </style>
 </head>
 <body>
@@ -99,7 +104,18 @@ footer a{color:var(--dim)}
         <span class="chip">טוען-פנקס…</span>
       </div>
       <div class="banner" id="staleBanner" role="alert"></div>
-      <div class="err" id="loadErr">⚠️ פנקס-הביצוע (execution-state.json) לא-נטען — הכתובת-קיימת-אך-המקור-לא-נגיש. זו-בעיה-אמיתית-ולא-מסך-נסתר.</div>
+      <div class="err" id="loadErr">⚠️ פנקס-הביצוע (execution-state.json) לא-נטען — כל-המקורות-נמדדו-שורה-שורה-למטה ונכשלו. זו-בעיה-אמיתית-ולא-מסך-נסתר.
+        <div class="srcprobe" id="errProbe"></div>
+      </div>
+      <div class="lawline" id="lawLine" hidden>חוק-הפנקס: <span id="lawText"></span></div>
+    </section>
+
+    <section class="blk" aria-label="מקורות-הפנקס · בדיקת-נגישות חיה">
+      <h2>מקורות-הפנקס · נגישות נמדדת</h2>
+      <p class="sub">שרשרת-הטעינה (G77-c): raw.githubusercontent (ראש-הריפו בגיט — בלי-תלות-בחלונות-הבנייה-של-Pages) → Pages (יחסי + מוחלט) → jsDelivr (מראה-אחרון — נמדד: מטמון-עד-12ש׳). כל-מקור-נמדד-שורה-שורה: סטטוס · גודל · זמן. הרינדור-מוצג-רק-ממקור-שעבר-אימות-סכימה-מלא; בכשל-גורף — כנות-מלאה, אפס-שורות-מומצאות.</p>
+      <div class="snap">
+        <div class="srcprobe" id="srcProbe">[ … מודד-מקורות … ]</div>
+      </div>
     </section>
 
     <section class="blk" aria-label="מצב-מדוד-עכשיו">
@@ -138,6 +154,7 @@ footer a{color:var(--dim)}
         · פנקס-העבודה המלא (444 מחזורים): <code>github.com/roshpinacare-sys/my-project → worklog.md</code><br>
         · הריצות-חיות של הגריד: <code>github.com/roshpinacare-sys/saos-dex/actions</code><br>
         · ספר-הרווח-החוץ הטרי: <code>saos-dex → grids/state/external-profit-public.json</code><br>
+        · סנאפשוט-מנוע-כלכלת-הצי (G77-b): <code>fleet-economy → state/audit/ledger-cycle-32.json</code> — נבדק-חי בצ'יפ-הטריות למעלה<br>
         · הספרים-החיים-של-המשרד: <code>mirror.json</code> ו-<code>agents/execution-metrics.json</code> בריפו-הזה (נכתבים-אוטומטית על-ידי רופא-הצי)<br>
         · החוק: <b>אם-אין-ראיה-בגיט — זה-לא-קרה.</b> הדף-הזה-מציג-רק-מה-שיש-לו-ראיה, ומדווח-על-זקנה-בעצמו.
       </div>
@@ -152,6 +169,7 @@ footer a{color:var(--dim)}
   </div>
 </footer>
 
+<script src="assets/execution-ledger-loader.js"></script>
 <script>
 (function(){
   "use strict";
@@ -219,12 +237,16 @@ footer a{color:var(--dim)}
       });
     });
   }
+  var attempts=[]; /* G77-c: hoisted — נראה-ל-render()/fail() לשורות-המדידה */
   function loadLedger(){
-    var attempts=[]; var i=0;
+    var i=0;
     function tryNext(){
       if(i>=SOURCES.length) return Promise.reject(new Error(attempts.join(' | ')||'no-source'));
       var url=SOURCES[i++];
-      return tryFetch(url,RETRY_PER_SOURCE).catch(function(e){
+      return tryFetch(url,RETRY_PER_SOURCE).then(function(d){
+        if(d&&typeof d==='object'){d.__loadedFrom=url;} /* שורת-המקור-המדוד */
+        return d;
+      }).catch(function(e){
         // אבחון-כנה-מלא: הכתובת-המילולית-שנוסתה + המצב-האמיתי (wave-#82: no-silent-masking)
         attempts.push(url+' → '+(e.httpStatus?('HTTP '+e.httpStatus):(e.parseError?'JSON-לא-תקין':'רשת/פסק-זמן')));
         return tryNext();
@@ -260,8 +282,13 @@ footer a{color:var(--dim)}
         (d.freshness&&d.freshness.verifiedAt?'<span class="chip">אימות-רענון אוטומטי: <b class="mono">'+esc(String(d.freshness.verifiedAt).slice(0,16).replace('T',' '))+'Z</b></span>':'')+
         '<span class="chip">סכימה: <b class="mono">'+esc(d.schema||'')+'</b></span>'+
         '<span class="chip">מקור: <b>'+esc(d.sourceWorklog||'פנקס-העבודה')+'</b></span>'+
+        (d.__loadedFrom?'<span class="chip">נטען-מ: <b class="mono-sm">'+esc(String(d.__loadedFrom).replace(/^https?:\/\//,'').slice(0,72))+'</b></span>':'')+
+        '<span class="chip">שורות: <b class="mono">'+esc(String((d.done||[]).length+(d.partial||[]).length+(d.gaps||[]).length+(d.next||[]).length))+'</b></span>'+
         '<span class="chip">חוק: <b>אין-ראיה = לא-קרה</b></span>';
       if(mirrorChip)el('chips').appendChild(mirrorChip);
+      safe('lawline',function(){
+        if(d.law){el('lawText').textContent=d.law;el('lawLine').hidden=false;}
+      });
     });
     safe('snap',function(){
       var s=d.measuredSnapshot||{};
@@ -283,6 +310,8 @@ footer a{color:var(--dim)}
     el('chips').innerHTML='<span class="chip"><b class="bad">מקור-לא-נגיש אחרי-'+MAX_PASSES+'-מעברים-מלאים</b></span>';
     var box=el('loadErr');
     box.style.display='block';
+    var ep=el('errProbe'); if(ep)ep.textContent=attempts.join('\n')+'\n['+new Date().toISOString().slice(0,16)+'] verdict → fail-honest · no ledger rendered · zero fabricated rows';
+    var sp=el('srcProbe'); if(sp)sp.textContent=attempts.join('\n');
     box.innerHTML='⚠️ פנקס-הביצוע (execution-state.json) לא-נטען.<br>'+
       '<span style="font-weight:500">פירוט-הניסיונות: '+esc(e&&e.message?e.message:'—')+'</span><br>'+
       '<span style="font-weight:500">הסבר-אפשרי: הצי-דוחף-לריפו-ברציפות ו-GitHub-Pages נמצא-בחלון-בנייה (תקלה-זמנית, לא-בעיה-תוכן), או-שאין-רשת. רענון-ידני (F5) בדרך-כלל-יצליח.</span>';
@@ -296,7 +325,58 @@ footer a{color:var(--dim)}
     else el('chips').innerHTML='<span class="chip">טוען-פנקס… (ניסיון-חוזר '+pass+'/'+MAX_PASSES+' — ייתכן-חלון-בנייה-של-Pages)</span>';
     loadLedger().then(render,function(e){fail(e)});
   }
-  attempt();
+  /* ── G77-c: loader-first (אימות-סכימה-מלא + מקורות-חוץ-ל-Pages, נבדק-ב-selftest) —
+     מנוע-המעברים-באותו-המקור-למעלה-נשאר-כדה-גרייד כנה ── */
+  var LDR=window.SAOSLedger;
+  function probeLines(lines){var sp=el('srcProbe'); if(sp)sp.innerHTML=lines;}
+  if(LDR&&typeof LDR.loadLedger==='function'){
+    LDR.loadLedger({timeoutMs:8000}).then(function(r){
+      var lines=(r.attempts||[]).concat(r.ok?[r.source]:[]).map(function(a){
+        var st=(a.ok||( !a.error&&a.status===200))?'<span class="good">HTTP '+(a.status||'?')+' OK</span>':'<span class="bad">'+esc(a.error||'failed')+'</span>';
+        return '['+esc(String(r.clock||'').replace(/Z$/,''))+'] '+esc(String(a.url||'').replace(/^https?:\/\//,''))+' → '+st+(typeof a.size==='number'?' · '+a.size+'ch':'')+(typeof a.ms==='number'?' · '+a.ms+'ms':'');
+      }).join('\n');
+      if(!r.ok){
+        probeLines(lines+'\n['+esc(String(r.clock||'').replace(/Z$/,''))+'] loader-chain exhausted → מעבר-למנוע-המעברים-באותו-המקור');
+        throw new Error(r.error||'loader chain failed');
+      }
+      probeLines(lines);
+      r.ledger.__loadedFrom=r.source.url; /* שורת-המקור-המדוד בצ'יפים */
+      render(r.ledger);
+    }).catch(function(){attempt();}); /* שני-מנועים-עצמאיים: ה-loader נכשל → מנוע-המעברים */
+  }else{
+    attempt(); /* ה-loader לא-נטען (למשל-ארטיפקט-Pages-ישן) — המנוע-המקורי-ממשיך-לעבוד */
+  }
+
+  /* ── סנאפשוט-מנוע-כלכלת-הצי (G77-b, saos.ledger-cycle/1) — בדיקת-חיות חיה.
+     נמדד 2026-10-26: raw-main 404 (הענף feat/fuel-stream-saos0004 טרם-נחתך) —
+     לכן: main → ענף-G77-b → כנות-מלאה-על-תלות-מוצהרת. אפס-המצאה. ── */
+  (function(){
+    var FE_MAIN='https://raw.githubusercontent.com/roshpinacare-sys/fleet-economy/main/state/audit/ledger-cycle-32.json';
+    var FE_BRANCH='https://raw.githubusercontent.com/roshpinacare-sys/fleet-economy/feat/fuel-stream-saos0004/state/audit/ledger-cycle-32.json';
+    function chipHTML(){var c=document.createElement('span');c.className='chip';c.id='feChip';el('chips').appendChild(c);return c;}
+    function paint(c,st,txt){c.innerHTML='כלכלת-הצי · ledger-cycle-32 (G77-b): <b class="'+(st==='ok'?'ok':'bad')+'">'+esc(txt)+'</b>';}
+    function probe(url,label){
+      var t=Date.now();
+      return fetch(url,{cache:'no-store'}).then(function(res){
+        return res.text().then(function(txt){
+          if(!res.ok)throw new Error(label+' → HTTP '+res.status);
+          var d=null;try{d=JSON.parse(txt)}catch(e){}
+          var c=chipHTML(),ago=d&&d.at?fmtAgo(d.at):null;
+          var grid=d&&d.roster&&d.roster.grid||[];
+          var s4=grid.some(function(g){return g&&g.id==='saos-0004'});
+          c.innerHTML='כלכלת-הצי · ledger-cycle-32 (G77-b): <b class="ok">HTTP '+res.status+'</b> · סנאפשוט-מנוע-הדלק חי'+
+            (d?['seq '+(d.seq!=null?d.seq:'?'),'head '+(d.headHash?String(d.headHash).slice(0,16):'?'),(ago?'עודכן '+ago:'at '+(d.at||'?')),'saos-0004 '+(s4?'רשום':'לא-ברוסטר')].join(' · '):' · JSON בלי-חותמת')+
+            ' · '+esc(String(txt.length))+'ch · '+(Date.now()-t)+'ms';
+        });
+      });
+    }
+    probe(FE_MAIN,'raw-main').catch(function(e1){
+      return probe(FE_BRANCH,'branch').catch(function(e2){
+        var c=chipHTML();
+        paint(c,'bad','טרם-נחתך-ל-main ולא-בענף-G77-b · תלות-מוצהרת (G77-b feat/fuel-stream-saos0004 → Instance-0) · '+esc(e1.message)+' / '+esc(e2.message));
+      });
+    });
+  })();
 
   // רצועת-חיות: הספרים-האוטומטיים שרופא-הצי כותב — אם-הם-טריים, המשרד-חי
   fetch('mirror.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(m){
