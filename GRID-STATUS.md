@@ -1,36 +1,36 @@
 # GRID-STATUS — פעימת הגריד החיה
 
-_נמדד אוטומטית: 2026-10-26T20:20:03.251Z · עורקים: 399 · פועמים-עכשיו: 120 · מאגרים: 49 (ציבוריים: 40) · סריקות-API: 94 (טוקן: GH_PAT)_
+_נמדד אוטומטית: 2026-10-26T22:22:55.950Z · עורקים: 399 · פועמים-עכשיו: 77 · מאגרים: 49 (ציבוריים: 40) · סריקות-API: 92 (טוקן: GH_PAT)_
 
-סיכום: ALIVE=20 · MIXED=5 · STALE=11 · IDLE=13
+סיכום: ALIVE=18 · MIXED=7 · STALE=11 · IDLE=13
 
 | ריפו | נראות | פסק | עורקים (עדכניים ביותר) |
 |---|---|---|---|
-| Autonomy | public | ALIVE | agent-9-clock-guard:BEAT@19m · agent-9-org-revival:NEVER · agent-9-vault-sync:NEVER · artery-autotrade-hedge-gate:BEAT@29m · artery-builder:BEAT@26m · artery-catchup:BEAT@24m |
-| Console | public | ALIVE | agent-verify:NEVER · agents-watch:NEVER · chain-vitals:BEAT@9m · console-publish:NEVER · dex-watch:NEVER · estate-scrub:NEVER |
-| Domain | public | ALIVE | adsmarket-panel:NEVER · agent-verify:NEVER · agent9-fleet-truth:BEAT@4m · agent9-truth-watchdog:BEAT@13m · anchor-execute:NEVER · arb-mesh-cron:BEAT@13m |
-| execution-fabric | public | ALIVE | codelint:WARM@90m |
-| fleet-economy | public | ALIVE | ci-probe:SILENT@7d · economy-beat:COOL@293m · receipts-guard:WARM@40m |
-| FleetHQ | public | ALIVE | claims-triage:BEAT@20m · fresh-oracle:WARM@152m · identity-guard:NEVER · identity-patrol:BEAT@20m · office-3d:NEVER · office-ci:NEVER |
-| giant | public | ALIVE | architect-daemon:WARM@165m · ext-audit:COOL@543m · fleet-rail-guardian:COOL@202m · identity-guard:WARM@99m · swallow-watch:BEAT@11m · trust-heartbeat:COOL@238m |
-| GridWatch | public | ALIVE | flow-map:NEVER · grid-watch:WARM@58m · identity-guard:WARM@54m · pages-deploy:WARM@54m · dynamic/pages/pages-build-deployment:NEVER |
-| ops-forge | public | ALIVE | forge:WARM@92m |
-| ops-intake | public | ALIVE | intake:WARM@172m |
-| Pulse | public | ALIVE | heartbeat:BEAT@7m · identity-guard:COOL@245m · pages-deploy:COOL@245m · sovereign-voice:WARM@91m · dynamic/pages/pages-build-deployment:NEVER |
-| roshpinacare-sys.github.io | public | ALIVE | identity-guard:WARM@101m · pages-deploy:WARM@115m · swallow-watch:WARM@159m · dynamic/pages/pages-build-deployment:COOL@247m |
-| Sandbox | public | ALIVE | agent-access:NEVER · agent-roster-reseal:NEVER · artery-catchup:WARM@40m · artery-decision-truth:BEAT@14m · artery-fleet:WARM@54m · artery-flow:WARM@134m |
-| saos-dex | public | ALIVE | arb-scan:NEVER · ci:BEAT@6m · curate:NEVER · dex-beat:BEAT@14m · dex-grid:WARM@55m · external-profit-publish:NEVER |
-| saos-runtime | public | ALIVE | agent-9-vault-sync:NEVER · arb-grid:BEAT@19m · army-ladder:RUNNING@15m · arsenal-sentinel:COOL@412m · blurt-revival:COOL@355m · builder-catchup:BEAT@9m |
-| saos-sovereign-platform | public | ALIVE | foundry-tests:SILENT@7d · gitleaks:SILENT@7d · platform-selftest:WARM@48m · workflow-yaml-guard:SILENT@7d |
-| Saosmartwallet | public | ALIVE | ci:COOL@208m · gitleaks:COOL@208m · wallet-verify:BEAT@12m · workflow-yaml-guard:COOL@346m |
-| sovereign-beacon | public | ALIVE | beacon-pulse:BEAT@18m · keepalive:RUNNING@5m · dynamic/pages/pages-build-deployment:NEVER |
-| sovereign-lighthouse | public | ALIVE | estate-redboard:WARM@63m · lighthouse-pulse:BEAT@20m · dynamic/pages/pages-build-deployment:NEVER |
-| sovereign-runner-kit | public | ALIVE | agent-shield:COOL@416m · capability-gate:COOL@345m · deploy-gate:COOL@451m · device-lane:BEAT@9m · fleet-keeper:BEAT@24m · identity-guard:WARM@89m |
-| agent9-clock | public | MIXED | chain-revival:COOL@201m · clock:RUNNING@5m |
-| roshpina | public | MIXED | controls-audit:SILENT@7d · gitleaks:SILENT@20d · sovereign-invariants-i38:COOL@251m · workflow-yaml-guard:SILENT@7d |
-| saos-agents | public | MIXED | gitleaks:COOL@549m · selftest-gate:COOL@543m |
+| agent9-clock | public | ALIVE | chain-revival:WARM@50m · clock:RUNNING@6m |
+| Autonomy | public | ALIVE | agent-9-clock-guard:BEAT@16m · agent-9-org-revival:NEVER · agent-9-vault-sync:NEVER · artery-autotrade-hedge-gate:WARM@99m · artery-builder:RE-LIT · artery-catchup:BEAT@14m |
+| Console | public | ALIVE | agent-verify:WARM@69m · agents-watch:WARM@71m · chain-vitals:WARM@132m · console-publish:WARM@99m · dex-watch:WARM@77m · estate-scrub:BEAT@28m |
+| Domain | public | ALIVE | adsmarket-panel:NEVER · agent-verify:WARM@73m · agent9-fleet-truth:BEAT@18m · agent9-truth-watchdog:NEVER · anchor-execute:WARM@84m · arb-mesh-cron:WARM@43m |
+| fleet-economy | public | ALIVE | ci-probe:SILENT@7d · economy-beat:WARM@72m · receipts-guard:BEAT@30m |
+| FleetHQ | public | ALIVE | claims-triage:BEAT@29m · fresh-oracle:BEAT@23m · identity-guard:NEVER · identity-patrol:WARM@31m · office-3d:NEVER · office-ci:NEVER |
+| giant | public | ALIVE | architect-daemon:COOL@288m · ext-audit:COOL@665m · fleet-rail-guardian:WARM@60m · identity-guard:COOL@222m · swallow-watch:WARM@134m · trust-heartbeat:BEAT@16m |
+| GridWatch | public | ALIVE | flow-map:NEVER · grid-watch:BEAT@29m · identity-guard:BEAT@27m · pages-deploy:BEAT@27m · dynamic/pages/pages-build-deployment:NEVER |
+| ops-intake | public | ALIVE | intake:WARM@38m |
+| roshpinacare-sys.github.io | public | ALIVE | identity-guard:COOL@224m · pages-deploy:COOL@237m · swallow-watch:BEAT@27m · dynamic/pages/pages-build-deployment:COOL@370m |
+| Sandbox | public | ALIVE | agent-access:NEVER · agent-roster-reseal:NEVER · artery-catchup:WARM@53m · artery-decision-truth:BEAT@26m · artery-fleet:BEAT@26m · artery-flow:WARM@39m |
+| saos-dex | public | ALIVE | arb-scan:NEVER · ci:BEAT@6m · curate:NEVER · dex-beat:WARM@137m · dex-grid:WARM@177m · external-profit-publish:WARM@71m |
+| saos-runtime | public | ALIVE | agent-9-vault-sync:NEVER · arb-grid:BEAT@25m · army-ladder:RUNNING@22m · arsenal-sentinel:NEVER · blurt-revival:WARM@105m · builder-catchup:WARM@132m |
+| saos-sovereign-platform | public | ALIVE | foundry-tests:SILENT@7d · gitleaks:SILENT@7d · platform-selftest:WARM@171m · workflow-yaml-guard:SILENT@7d |
+| Saosmartwallet | public | ALIVE | ci:COOL@331m · gitleaks:COOL@331m · wallet-verify:WARM@135m · workflow-yaml-guard:COOL@470m |
+| sovereign-beacon | public | ALIVE | beacon-pulse:BEAT@22m · keepalive:RUNNING@2m · dynamic/pages/pages-build-deployment:NEVER |
+| sovereign-lighthouse | public | ALIVE | estate-redboard:WARM@36m · lighthouse-pulse:WARM@36m · dynamic/pages/pages-build-deployment:NEVER |
+| sovereign-runner-kit | public | ALIVE | agent-shield:COOL@539m · capability-gate:COOL@468m · deploy-gate:COOL@574m · device-lane:WARM@109m · fleet-keeper:WARM@147m · identity-guard:COOL@212m |
+| execution-fabric | public | MIXED | codelint:COOL@213m |
+| ops-forge | public | MIXED | forge:COOL@215m |
+| Pulse | public | MIXED | heartbeat:RUNNING@23m · identity-guard:COOL@367m · pages-deploy:COOL@367m · sovereign-voice:COOL@214m · dynamic/pages/pages-build-deployment:NEVER |
+| roshpina | public | MIXED | controls-audit:SILENT@7d · gitleaks:SILENT@20d · sovereign-invariants-i38:COOL@374m · workflow-yaml-guard:SILENT@7d |
+| saos-agents | public | MIXED | gitleaks:COOL@672m · selftest-gate:COOL@666m |
 | sovereign-executor | public | MIXED | fleet-beat:RUNNING@30m |
-| TruthRail | public | MIXED | exposure-gate:COOL@561m · dynamic/pages/pages-build-deployment:SILENT@15d |
+| TruthRail | public | MIXED | exposure-gate:COOL@684m · dynamic/pages/pages-build-deployment:SILENT@15d |
 | Adsmarket | public | STALE | claims-guard:SILENT@2d · gitleaks:SILENT@2d · workflow-yaml-guard:SILENT@7d |
 | anchor-baseline | public | STALE | baseline-integrity:SILENT@2d · conformance-selftest:SILENT@7d · gitleaks:SILENT@6d · workflow-yaml-guard:SILENT@7d |
 | Defi | public | STALE | canary:SILENT@7d · gitleaks:SILENT@7d · workflow-yaml-guard:SILENT@6d |
@@ -58,4 +58,4 @@ _נמדד אוטומטית: 2026-10-26T20:20:03.251Z · עורקים: 399 · פ�
 
 פסקי-דין: **BEAT** פועם ≤30ד · WARM ≤3ש · COOL ≤24ש · SILENT >24ש · NEVER מעולם-לא · **QUOTA-DEAD** = ריפו-פרטי מאחורת-מכסת-דקות (חיים-מתוכננים עברו לציבורי) · IDLE אין-עורקים.
 
-שיניים בסריקה זו: re-enabled=0 · re-lit=5 · issue=updated#68(ok)
+שיניים בסריקה זו: re-enabled=0 · re-lit=3 · issue=updated#68(ok)
