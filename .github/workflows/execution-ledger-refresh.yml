@@ -1,0 +1,62 @@
+name: execution-ledger-refresh
+# ═══════════════════════════════════════════════════════════════════════════
+# פעימת-רענון פנקס-הביצוע (wave #82 · trace 1a178c614313ad05)
+# הבעיה-שנמדדה: execution-state.json מתרענן-רק-ידנית-במחזורי-סוכן — בחלון-לא-מרוענן
+# הדף execution.html מציג-זקנה-כנה (חוק-ה-48ש׳ מהקובץ-עצמו).
+# החוק הזה: לעולם-לא-לזייף-טריות. שדה `at` מתקדם רק אם קיימת ראיה-טרייה מדודה —
+# קומיט-טרי בריפו-הזה וריצת-dex-beat מוצלחת-טרייה ב-saos-dex (GitHub API).
+# אין-ראיה → "stale-but-no-fresh-evidence" → לא-נוגעים-בכלום. כל-שגיאת-API →
+# fail-soft עם יומן-כנה. מצב-עדכון: כירורגי — רק `at` + `freshness.verifiedAt`,
+# סימון-הראיה חי בהודעת-הקומיט. אף-פעם-לא-force.
+# ═══════════════════════════════════════════════════════════════════════════
+on:
+  schedule:
+    - cron: '23 */6 * * *'
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency:
+  group: execution-ledger-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: sovereign-clone (git native — אפס-תלות · היסטוריה-מלאה ל-rebase-בטוח)
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git clone "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" repo
+          git -C repo config user.name "github-actions[bot]"
+          git -C repo config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: freshness-verdict (מדוד-בלבד · אפס-זיוף · fail-soft)
+        id: freshness
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        working-directory: repo
+        run: node scripts/execution-ledger-freshness.mjs
+
+      - name: commit+push (רק-אם-נכתב · ריבייס-בטוח · לעולם-לא-force)
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          EVIDENCE: ${{ steps.freshness.outputs.evidence }}
+          BUMPED_AT: ${{ steps.freshness.outputs.bumpedAt }}
+        working-directory: repo
+        run: |
+          set -euo pipefail
+          if [ -z "$(git status --porcelain -- execution-state.json)" ]; then
+            echo "no ledger change — nothing to commit (honest no-op)"
+            exit 0
+          fi
+          git add execution-state.json
+          git commit -m "execution-ledger refresh: at=${BUMPED_AT:-unknown} (evidence: ${EVIDENCE:-unrecorded}) · zero-fabrication freshness bump"
+          if ! git push origin HEAD:main; then
+            echo "push rejected — pull --rebase and retry once (race with sibling writers)"
+            git pull --rebase origin main || { echo "rebase conflict — honest skip, next scheduled cycle retries (no force ever)"; exit 0; }
+            git push origin HEAD:main || { echo "push still rejected — honest skip, next scheduled cycle retries"; exit 0; }
+          fi
+          echo "pushed: at-field bump with measured evidence"
