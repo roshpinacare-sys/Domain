@@ -1,6 +1,6 @@
 {
   "protocol": "SAOS-DEX-ROUTER/1",
-  "at": "2026-10-27T05:39:17.329Z",
+  "at": "2026-10-27T07:51:44.411Z",
   "agent": "dex-router v1.0.0 (R39 SWAP-NET, CR-0069)",
   "mode": "KEYLESS-READ",
   "stasisHalted": false,
@@ -22,23 +22,30 @@
       "spreadPct": 0.25,
       "pct24h": 0,
       "depthBids": 204320,
-      "depthAsks": 457700,
+      "depthAsks": 11049590,
       "node": "api.steemit.com"
     },
     "hive-internal": {
       "alive": true,
       "chain": "hive",
-      "bid": 0.04794612794612794,
-      "ask": 0.04800707483037815,
-      "mid": 0.0479766,
+      "bid": 0.04806582603120325,
+      "ask": 0.04819,
+      "mid": 0.04812791,
       "spreadPct": 0.25,
-      "pct24h": -1.17,
+      "pct24h": 0.417,
       "depthBids": 0,
       "depthAsks": 0,
       "node": "api.hive.blog"
     },
     "cex-refs": {
       "rows": [
+        {
+          "venue": "Binance",
+          "symbol": "HIVEUSDT",
+          "mid": null,
+          "pct24h": null,
+          "why": "HTTP-451"
+        },
         {
           "venue": "Binance",
           "symbol": "BTCUSDT",
@@ -55,17 +62,17 @@
         },
         {
           "venue": "Binance",
-          "symbol": "HIVEUSDT",
+          "symbol": "HBDUSDT",
           "mid": null,
           "pct24h": null,
           "why": "HTTP-451"
         },
         {
-          "venue": "Binance",
-          "symbol": "HBDUSDT",
-          "mid": null,
-          "pct24h": null,
-          "why": "HTTP-451"
+          "venue": "HTX",
+          "symbol": "SBDUSDT",
+          "mid": 0.4537,
+          "pct24h": -2.493,
+          "why": null
         },
         {
           "venue": "HTX",
@@ -75,17 +82,17 @@
           "why": "NO-TICK"
         },
         {
-          "venue": "HTX",
-          "symbol": "SBDUSDT",
-          "mid": 0.4526,
-          "pct24h": -6.507,
+          "venue": "MEXC",
+          "symbol": "HIVEUSDT",
+          "mid": 0.04765,
+          "pct24h": -0.001,
           "why": null
         },
         {
           "venue": "MEXC",
-          "symbol": "HIVEUSDT",
-          "mid": 0.04749,
-          "pct24h": -0.02,
+          "symbol": "STEEMUSDT",
+          "mid": 0.04853,
+          "pct24h": -0.012,
           "why": null
         },
         {
@@ -94,13 +101,6 @@
           "mid": null,
           "pct24h": null,
           "why": "HTTP-400"
-        },
-        {
-          "venue": "MEXC",
-          "symbol": "STEEMUSDT",
-          "mid": 0.04864,
-          "pct24h": 0.003,
-          "why": null
         }
       ],
       "primarySymbols": [
@@ -119,9 +119,9 @@
           "pair": "SWAP.HIVE:SWAP.BTC",
           "base": "SWAP.HIVE",
           "quote": "SWAP.BTC",
-          "baseReserve": 888479.23081275,
-          "quoteReserve": 0.53255655,
-          "priceQuotePerBase": 1668328.4259910989,
+          "baseReserve": 886927.89882076,
+          "quoteReserve": 0.53349112,
+          "priceQuotePerBase": 1662497.9602673799,
           "feeBps": 25,
           "mirror": "api.hive-engine.com"
         },
@@ -129,9 +129,9 @@
           "pair": "SWAP.HIVE:SWAP.LTC",
           "base": "SWAP.HIVE",
           "quote": "SWAP.LTC",
-          "baseReserve": 182863.13451731,
-          "quoteReserve": 153.03853669,
-          "priceQuotePerBase": 1194.8829260418,
+          "baseReserve": 182861.82980142,
+          "quoteReserve": 153.03964411,
+          "priceQuotePerBase": 1194.8657543269,
           "feeBps": 25,
           "mirror": "api.hive-engine.com"
         },
@@ -165,8 +165,8 @@
     "saos-mirror": {
       "alive": true,
       "engine": "saos-dex/1.20 cloud-beat · R23 live-anchor · T25 depth-forge",
-      "publishedAt": "2026-10-27T03:54:48.065Z",
-      "mirrorAgeHours": 1.7,
+      "publishedAt": "2026-10-27T05:19:10.926Z",
+      "mirrorAgeHours": 2.5,
       "pools": [
         {
           "pair": "SAOS/USDS",
@@ -290,8 +290,8 @@
       "sizeNote": "—",
       "quote": {
         "in": "1.000 HBD",
-        "out": "20.830263 HIVE",
-        "impliedPrice": 0.04800707,
+        "out": "20.751193 HIVE",
+        "impliedPrice": 0.04819,
         "impactBps": null
       },
       "verdict": "GATED-KEYS",
@@ -312,8 +312,8 @@
       "sizeNote": "—",
       "quote": {
         "in": "1.000 HIVE",
-        "out": "0.047946 HBD",
-        "impliedPrice": 0.04794613,
+        "out": "0.048066 HBD",
+        "impliedPrice": 0.04806583,
         "impactBps": null
       },
       "verdict": "GATED-KEYS",
@@ -339,14 +339,14 @@
       ],
       "sizeNote": "≤ 2% of pool depth per trade (MEV/peg cap law)",
       "quote": {
-        "in": "8884.792 SWAP.HIVE (1% pool)",
-        "out": "0.00526 SWAP.BTC",
-        "impliedPrice": "1668328.425991 HIVE/BTC",
+        "in": "8869.279 SWAP.HIVE (1% pool)",
+        "out": "0.005269 SWAP.BTC",
+        "impliedPrice": "1662497.960267 HIVE/BTC",
         "impactBps": 99.01
       },
       "verdict": "GATED-CAPITAL",
       "unlock": "HIVE keys + HIVE inventory (0.034 HIVE dust today — R38 measured)",
-      "why": "deepest real-value corridor (pool ~888479 HIVE side)"
+      "why": "deepest real-value corridor (pool ~886928 HIVE side)"
     },
     {
       "id": "R6",
@@ -380,8 +380,8 @@
       "sizeNote": "large sizes allowed — the designated big-rail",
       "quote": {
         "in": "1.000 STEEM",
-        "out": "0.048616 USDT",
-        "impliedPrice": 0.04864,
+        "out": "0.048506 USDT",
+        "impliedPrice": 0.04853,
         "impactBps": null
       },
       "verdict": "C-GATE-OPERATOR",
@@ -402,8 +402,8 @@
       "sizeNote": "the only deep SBD book is HTX (Upbit ended SBD support 2025-02)",
       "quote": {
         "in": "1.000 SBD",
-        "out": "0.452374 USDT",
-        "impliedPrice": 0.4526,
+        "out": "0.453473 USDT",
+        "impliedPrice": 0.4537,
         "impactBps": null
       },
       "verdict": "C-GATE-OPERATOR",
@@ -428,8 +428,8 @@
       "sizeNote": "ingress of real value — funds the grid",
       "quote": {
         "in": "100.000 USDT",
-        "out": "2055.921053 STEEM",
-        "impliedPrice": 0.04864,
+        "out": "2060.581084 STEEM",
+        "impliedPrice": 0.04853,
         "impactBps": null
       },
       "verdict": "C-GATE-OPERATOR",
@@ -501,11 +501,11 @@
         "cex:STEEMUSDT+SBDUSDT"
       ],
       "localMid": 0.10222965,
-      "impliedFair": 0.10746796,
-      "grossBps": -487.43,
+      "impliedFair": 0.10696495,
+      "grossBps": -442.7,
       "feesBps": 0,
       "slipBps": 20,
-      "netBps": 467.43,
+      "netBps": 422.7,
       "thresholdBps": 100,
       "driftPct": null,
       "verdict": "CANDIDATE-FOK",
@@ -556,48 +556,48 @@
   "counterGrid": {
     "steem": {
       "market": "SBD/STEEM (STEEM internal)",
-      "anchor": 0.10746796,
+      "anchor": 0.10696495,
       "anchorSource": "CEX-IMPLIED-FAIR (SBDUSDT/STEEMUSDT — lead-lag anchor, the opposing side of the local book)",
       "localMid": 0.10222965,
       "spreadPct": 0.25,
       "spacingPct": 0.4,
-      "anchorAdj": 0.10746796,
+      "anchorAdj": 0.10696495,
       "skewShiftBps": 0,
       "spacingBps": 40,
       "rungs": [
         {
           "side": "buy",
-          "price": 0.10703809,
+          "price": 0.10653709,
           "size": 0,
           "unit": "SBD"
         },
         {
           "side": "buy",
-          "price": 0.10660822,
+          "price": 0.10610923,
           "size": 0,
           "unit": "SBD"
         },
         {
           "side": "buy",
-          "price": 0.10617834,
+          "price": 0.10568137,
           "size": 0,
           "unit": "SBD"
         },
         {
           "side": "sell",
-          "price": 0.10789783,
+          "price": 0.10739281,
           "size": 0,
           "unit": "STEEM"
         },
         {
           "side": "sell",
-          "price": 0.1083277,
+          "price": 0.10782067,
           "size": 0,
           "unit": "STEEM"
         },
         {
           "side": "sell",
-          "price": 0.10875758,
+          "price": 0.10824853,
           "size": 0,
           "unit": "STEEM"
         }
@@ -609,48 +609,48 @@
     },
     "hive": {
       "market": "HBD/HIVE (HIVE internal)",
-      "anchor": 0.0479766,
+      "anchor": 0.04812791,
       "anchorSource": "LOCAL-MID-FALLBACK (CEX feed stale)",
-      "localMid": 0.0479766,
+      "localMid": 0.04812791,
       "spreadPct": 0.25,
       "spacingPct": 0.4,
-      "anchorAdj": 0.0479766,
+      "anchorAdj": 0.04812791,
       "skewShiftBps": 0,
       "spacingBps": 40,
       "rungs": [
         {
           "side": "buy",
-          "price": 0.04778469,
+          "price": 0.0479354,
           "size": 0,
           "unit": "HBD"
         },
         {
           "side": "buy",
-          "price": 0.04759279,
+          "price": 0.04774289,
           "size": 0,
           "unit": "HBD"
         },
         {
           "side": "buy",
-          "price": 0.04740088,
+          "price": 0.04755038,
           "size": 0,
           "unit": "HBD"
         },
         {
           "side": "sell",
-          "price": 0.04816851,
+          "price": 0.04832042,
           "size": 0,
           "unit": "HIVE"
         },
         {
           "side": "sell",
-          "price": 0.04836041,
+          "price": 0.04851293,
           "size": 0,
           "unit": "HIVE"
         },
         {
           "side": "sell",
-          "price": 0.04855232,
+          "price": 0.04870544,
           "size": 0,
           "unit": "HIVE"
         }
