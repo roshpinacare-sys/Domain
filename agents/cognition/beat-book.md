@@ -1,4 +1,4 @@
-# COGNITION-BEAT · 2026-10-27T15:07:45.343Z
+# COGNITION-BEAT · 2026-10-27T16:50:08.072Z
 
 self-model regenerated from live measurements (runs API + chain RPC + grid-truth + STASIS + directives chain verify: {"ok":true,"entries":7,"breakAt":null,"reason":null})
 
@@ -6,5 +6,5 @@ self-model regenerated from live measurements (runs API + chain RPC + grid-truth
 - contradictions open: C-002(grid)
 - haltCoverage: ORGANISM_ONLY (honest — money-family-live + external key-holders unreachable)
 - STASIS: active=false mode=staged allow=[grid,claims,dex-batch-settle,powerup,delegation,connect,general,dex-core,arb-mesh,dex-activation]
-- workflows seen (24h): public-pulse, fleet-census-cron, dex-core, dex-beat, cognition-beat, office-pulse, office-worldbeat, grid-sentinel, exposure-gate, site-link-audit, bidi-guardian, identity-guard, pages-deploy, treasury-route, pages-quality-gate, weave-mirror, grid-doctor, ladder-refresh, stale-watchdog, press-bake, office-artery, sovereign-decider-twin, dex-grid, hive-beat-t21, sovereign-tick-cron, pulse-bake, market-grid-cron, human-cadence, agent-verify, network-census, office-pulse-twin, weave-anchor-lines, weave-heart, grid-trigger-twin, sovereign-pulse, agent9-fleet-truth, dex-activation, office-orders-twin, artery-integrity-twin, estate-scrub
+- workflows seen (24h): cognition-beat, grid-sentinel, agent9-truth-watchdog, office-worldbeat, dex-beat, autonomy-guardian, dex-watchdog, dex-grid, market-grid-cron, earn-audit-cron, sovereign-tick-cron, tick-keeper, office-artery, hive-beat-t21, voice-artery, agent9-fleet-truth, network-census, office-pulse, identity-guard, pages-deploy, site-link-audit, exposure-gate, bidi-guardian, office-pulse-twin, pulse-bake, human-cadence, sovereign-pulse, artery-integrity-twin, public-loops-bake, grid-doctor, published-ledger, dex-activation, moment-watch
 
