@@ -1,89 +1,23 @@
 {
   "schema": "SAOS-EXECUTION-LEDGER/1",
-  "at": "2026-10-27T14:21:21Z",
+  "at": "2026-10-27T15:31:16Z",
   "generator": "fleet-runner/execution-ledger-renew.ts (directive-42 §2, lineage-preserving renewal)",
   "sourceWorklog": "giant worklog task-55 (directive 42, trace 1a178c71bcb7ddad)",
   "law": "אין-ראיה = לא-קרה · כל-מספר נמדד-מהקרקע בזמן-החידוש · מורשת-מאומתת-לעולם-לא-נמחקת",
   "freshness": {
-    "source": "execution-state.json",
     "staleAfterHours": 48,
-    "note": "renewed live at cycle-37 close"
+    "renewedBy": "execution-ledger-renew (12h schedule, lineage-preserving)",
+    "howToVerify": "compare .at against the runner job journal; history rows append-only"
   },
   "measuredSnapshot": {
     "services": "market:3033-UP ledger:3032-UP runner:3031-UP",
     "gridVerdict": "ARMED-LIVE",
     "valueGuard": "conservation-HOLDS",
-    "realFillsLifetime": 241,
-    "fillRecordsLedger": 241,
-    "fillsByAgent": "alpha:990 bravo:1276 gamma:34 delta:4 epsilon:114 zeta:14 eta:68 theta:5 iota:0 kappa:0 mm-grid:53 mm-oracle:0 saos-0004:0",
-    "runner": "jobs=5730 schedules=24",
-    "ledger": "seq=1578 accounts=31",
-    "cycle37": {
-      "dbSalvage": {
-        "rows": 193087,
-        "lost": 0,
-        "integrity": "ok",
-        "tables": [
-          "DexCandle 47648",
-          "DexTrade 6527",
-          "DexLedger 112814",
-          "DexOrder 25981",
-          "DexPair 18",
-          "DexConfig 14",
-          "DexApiKey 12"
-        ]
-      },
-      "dbProxyCures": [
-        "client-method this-binding ($transaction _tracingHelper)",
-        "PrismaPromise brand via real Promise subclass (toStringTag law)"
-      ],
-      "walletHsm": {
-        "port": 3062,
-        "mode": "armed",
-        "keys": "6/7 steem",
-        "realSignMeasured": true,
-        "pubFp": "3f90c9f86ca7a5ba",
-        "vaultLaw": "SAOS-HSM-VAULT/1 local (Saosmartwallet repo absent from cloud — honest replacement)"
-      },
-      "secretsRestore": {
-        "file": "/home/z/.secrets/.env.local",
-        "slots": 9,
-        "chainJudged": [
-          "owner 82aa2e31",
-          "active 3f90c9f8",
-          "posting 5eefa735",
-          "memo b497dc6f"
-        ],
-        "source": "saos-control-center repo-vault sovereign-01-r2 (in git)"
-      },
-      "daemonFleet": {
-        "issue-forge": 3046,
-        "supervisor": 3047,
-        "architect-daemon": 3051,
-        "self-financing": 3061,
-        "wallet-hsm": 3062,
-        "health_monitor": "90s loop",
-        "boot-heal": "300s",
-        "local-beat": "240s"
-      },
-      "soldierMesh": {
-        "soldiers": 8,
-        "law": "api-key-accounts-only · zero-mint",
-        "placedMeasured": 24,
-        "repegs": 11,
-        "errors": 0,
-        "vol24hBefore": 11019,
-        "vol24hAfter": 12875,
-        "fees24hBefore": 33.06,
-        "fees24hAfter": 38.63
-      },
-      "dexKpis": {
-        "tvl": 240814,
-        "pairs": 18,
-        "gridRealFillsCumulative": 730,
-        "gridWorkflowCadence": "2min"
-      }
-    }
+    "realFillsLifetime": 121,
+    "fillRecordsLedger": 121,
+    "fillsByAgent": "alpha:988 bravo:1158 gamma:34 delta:4 epsilon:51 zeta:10 eta:68 theta:5 iota:0 kappa:0 mm-grid:0 mm-oracle:0 saos-0004:0",
+    "runner": "jobs=5354 schedules=22",
+    "ledger": "seq=1503 accounts=29"
   },
   "done": [
     {
@@ -286,7 +220,12 @@
     "cycle-37: secrets restored from git vault (sovereign-01-r2) — 9 slots, 4 A-set WIFs chain-judged CHAIN-MATCH",
     "cycle-37: daemon fleet revived — 3046/3047/3051/3061/3062 + health_monitor 90s + boot-heal 300s + local-beat 240s",
     "cycle-37: soldier-mesh :3063 — 8 parallel API-key traders LIVE, zero-mint law, measured vol/fees rise",
-    "cycle-37: giant pushed main=94f98ef (28 commits incl. G78-i union merge)"
+    "cycle-37: giant pushed main=94f98ef (28 commits incl. G78-i union merge)",
+    {
+      "title": "חידוש-נמדד 2026-10-27T15:31:16Z (צו 42 §2) — מורשת נשמרה (40 שורות-קודמות)",
+      "detail": "market:3033-UP ledger:3032-UP runner:3031-UP; מסחר ריבוני 121 עסקאות-מאושרות; שימור מלא",
+      "evidence": "http://127.0.0.1:3033/economy/report + /health measured at renew time"
+    }
   ],
   "partial": [
     {
