@@ -1,33 +1,33 @@
 {
  "schema": "office.pulse/1",
- "generatedAt": "2026-10-28T16:00:41.334Z",
+ "generatedAt": "2026-10-28T16:36:33.893Z",
  "generatedAgeNote": "this file is rewritten by the office-pulse workflow; judge freshness by generatedAt",
- "verdict": "AGING",
+ "verdict": "ALIVE",
  "verdictChecks": [
   {
    "name": "office-push",
    "state": "fresh",
-   "detail": "19min <= 2880min"
+   "detail": "9min <= 2880min"
   },
   {
    "name": "office-ci",
-   "state": "pending",
-   "detail": "HTTP 404 contents:receipts/office-ci/verdict.json"
+   "state": "fresh",
+   "detail": "9min <= 1560min"
   },
   {
    "name": "wallet-artery",
    "state": "fresh",
-   "detail": "13min <= 2880min · PASS"
+   "detail": "20min <= 2880min · PASS"
   },
   {
    "name": "grid-artery",
    "state": "fresh",
-   "detail": "42min <= 720min · BLOCKED: grid credential-blocked — BLOCKED-SILENT LAW v2: measured honestly, owner words "
+   "detail": "32min <= 720min · BLOCKED: grid credential-blocked — BLOCKED-SILENT LAW v2: measured honestly, owner words "
   },
   {
    "name": "fleet-artery",
    "state": "fresh",
-   "detail": "12min <= 2880min · FAIL: steem=FAIL · saos-dex=FAIL · saos-agents=PASS · Saosmartwallet=PASS · Adsmarket="
+   "detail": "7min <= 2880min · FAIL: steem=FAIL · saos-dex=FAIL · saos-agents=PASS · Saosmartwallet=PASS · Adsmarket="
   },
   {
    "name": "sovereign-tick",
@@ -37,7 +37,7 @@
   {
    "name": "runtime-heartbeat",
    "state": "fresh",
-   "detail": "5min <= 90min"
+   "detail": "20min <= 90min"
   }
  ],
  "degraded": [],
@@ -51,51 +51,51 @@
  },
  "office": {
   "repo": "roshpinacare-sys/FleetHQ",
-  "pushedAt": "2026-10-28T15:41:57Z",
-  "pushedAgeMin": 19,
+  "pushedAt": "2026-10-28T16:27:28Z",
+  "pushedAgeMin": 9,
   "openIssues": 45,
   "wire": [
+   {
+    "sha": "1143050",
+    "msg": "office-ci receipt: build pass, types pass [skip ci]",
+    "at": "2026-10-28T16:27:26Z",
+    "ageMin": 9,
+    "author": "roshpinacare-sys"
+   },
+   {
+    "sha": "1862c49",
+    "msg": "office-3d receipt: bake log + latest.json pointer [skip ci]",
+    "at": "2026-10-28T16:27:02Z",
+    "ageMin": 9,
+    "author": "roshpinacare-sys"
+   },
+   {
+    "sha": "7569417",
+    "msg": "Land P1 honesty repair (diff of PR #201)",
+    "at": "2026-10-28T16:26:00Z",
+    "ageMin": 11,
+    "author": "Z User"
+   },
+   {
+    "sha": "4055811",
+    "msg": "P1 honesty repair: receipts law restored, false-greens removed, docs aligned with code",
+    "at": "2026-10-28T16:10:16Z",
+    "ageMin": 26,
+    "author": "Z User"
+   },
    {
     "sha": "a4b80b7",
     "msg": "office-ci receipt: build pass, types pass [skip ci]",
     "at": "2026-10-28T15:41:56Z",
-    "ageMin": 19,
+    "ageMin": 55,
     "author": "roshpinacare-sys"
    },
    {
     "sha": "b5b9aca",
     "msg": "P1 (final): CI triggers as YAML block lists — root cause found and bypassed",
     "at": "2026-10-28T15:37:27Z",
-    "ageMin": 23,
+    "ageMin": 59,
     "author": "P0 Remediation"
-   },
-   {
-    "sha": "f71fef6",
-    "msg": "office-ci receipt: build pass, types pass [skip ci]",
-    "at": "2026-10-28T15:35:17Z",
-    "ageMin": 25,
-    "author": "roshpinacare-sys"
-   },
-   {
-    "sha": "2ba3c5f",
-    "msg": "P1: restore CI trigger fixes (lost to stale-fs reads at P0 commit time) + consolidate 21 t",
-    "at": "2026-10-28T15:33:43Z",
-    "ageMin": 27,
-    "author": "roshpinacare-sys"
-   },
-   {
-    "sha": "56b91ed",
-    "msg": "decide: sovereign decision cycle (SOV-POLICY/1) — sense/decide/record, evidence-anchored",
-    "at": "2026-10-28T15:32:06Z",
-    "ageMin": 29,
-    "author": "roshpinacare-sys"
-   },
-   {
-    "sha": "f25339d",
-    "msg": "policy-gate: verdicts on the live capital books (stasis=false)",
-    "at": "2026-10-28T15:30:45Z",
-    "ageMin": 30,
-    "author": "roshpinacare-sys"
    }
   ],
   "worklog": {
@@ -115,54 +115,64 @@
     }
    ]
   },
-  "worklogLastTouchAgeMin": 11472,
+  "worklogLastTouchAgeMin": 11508,
   "boot": {
    "error": "HTTP 404 contents:receipts/boot-verify.json"
   },
   "ci": {
-   "pending": "first office-ci receipt not landed yet",
-   "error": "HTTP 404 contents:receipts/office-ci/verdict.json"
+   "overall": "PASS",
+   "at": "2026-10-28T16:27:24.303Z",
+   "ageMin": 9,
+   "reason": "all five checks ran and passed",
+   "runUrl": "https://github.com/roshpinacare-sys/FleetHQ/actions/runs/40725922738",
+   "checks": {
+    "install": "pass",
+    "prismaGenerate": "pass",
+    "typecheck": "pass",
+    "productionBuild": "pass",
+    "connectivityAudit": "pass"
+   }
   }
  },
  "arteries": {
   "wallet": {
    "source": "Autonomy/receipts/wallet/verdict.json",
-   "at": "2026-10-28T15:48:03.582Z",
-   "ageMin": 13,
+   "at": "2026-10-28T16:16:49.236Z",
+   "ageMin": 20,
    "overall": "PASS",
    "reason": "install, prisma, typecheck, build and all wallet laws pass",
    "alerts": 0,
-   "runUrl": "https://github.com/roshpinacare-sys/Autonomy/actions/runs/40719500517"
+   "runUrl": "https://github.com/roshpinacare-sys/Autonomy/actions/runs/40724345197"
   },
   "grid": {
    "source": "Autonomy/receipts/grid/verdict.json",
-   "at": "2026-10-28T15:18:54.424Z",
-   "ageMin": 42,
+   "at": "2026-10-28T16:04:22.334Z",
+   "ageMin": 32,
    "overall": "BLOCKED",
    "reason": "grid credential-blocked — BLOCKED-SILENT LAW v2: measured honestly, owner words decide",
    "alerts": 0,
-   "runUrl": "https://github.com/roshpinacare-sys/Autonomy/actions/runs/40714622093"
+   "runUrl": "https://github.com/roshpinacare-sys/Autonomy/actions/runs/40721989115"
   },
   "fleet": {
    "source": "Autonomy/receipts/fleet/verdict.json",
-   "at": "2026-10-28T15:48:17.578Z",
-   "ageMin": 12,
+   "at": "2026-10-28T16:29:30.348Z",
+   "ageMin": 7,
    "overall": "FAIL",
    "reason": "steem=FAIL · saos-dex=FAIL · saos-agents=PASS · Saosmartwallet=PASS · Adsmarket=PASS",
    "alerts": 4,
-   "runUrl": "https://github.com/roshpinacare-sys/Autonomy/actions/runs/40719504770"
+   "runUrl": "https://github.com/roshpinacare-sys/Autonomy/actions/runs/40726442735"
   },
   "tick": {
    "source": "Autonomy/receipts/latest.json",
-   "at": "2026-10-28T15:29:41.563Z",
+   "at": "2026-10-28T16:05:07.267Z",
    "ageMin": 31,
-   "chain": "def1761631be"
+   "chain": "f180d7348238"
   }
  },
  "runtime": {
-  "lastSuccessAt": "2026-10-28T15:55:38Z",
-  "lastSuccessAgeMin": 5,
-  "lastSuccessName": "operator-triage",
+  "lastSuccessAt": "2026-10-28T16:16:36Z",
+  "lastSuccessAgeMin": 20,
+  "lastSuccessName": "signing-health (runtime-host)",
   "lastConclusion": "success"
  }
 }
