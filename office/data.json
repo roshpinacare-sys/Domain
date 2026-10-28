@@ -1,43 +1,43 @@
 {
  "schema": "office.pulse/1",
- "generatedAt": "2026-10-28T22:42:49.017Z",
+ "generatedAt": "2026-10-28T22:51:28.720Z",
  "generatedAgeNote": "this file is rewritten by the office-pulse workflow; judge freshness by generatedAt",
  "verdict": "ALIVE",
  "verdictChecks": [
   {
    "name": "office-push",
    "state": "fresh",
-   "detail": "129min <= 2880min"
+   "detail": "138min <= 2880min"
   },
   {
    "name": "office-ci",
    "state": "fresh",
-   "detail": "130min <= 1560min"
+   "detail": "138min <= 1560min"
   },
   {
    "name": "wallet-artery",
    "state": "fresh",
-   "detail": "11min <= 2880min · PASS"
+   "detail": "20min <= 2880min · PASS"
   },
   {
    "name": "grid-artery",
    "state": "fresh",
-   "detail": "12min <= 720min · BLOCKED: grid credential-blocked — BLOCKED-SILENT LAW v2: measured honestly, owner words "
+   "detail": "21min <= 720min · BLOCKED: grid credential-blocked — BLOCKED-SILENT LAW v2: measured honestly, owner words "
   },
   {
    "name": "fleet-artery",
    "state": "fresh",
-   "detail": "12min <= 2880min · FAIL: steem=FAIL · saos-dex=FAIL · saos-agents=PASS · Saosmartwallet=PASS · Adsmarket="
+   "detail": "8min <= 2880min · FAIL: steem=FAIL · saos-dex=FAIL · saos-agents=PASS · Saosmartwallet=PASS · Adsmarket="
   },
   {
    "name": "sovereign-tick",
    "state": "fresh",
-   "detail": "9min <= 360min"
+   "detail": "18min <= 360min"
   },
   {
    "name": "runtime-heartbeat",
    "state": "fresh",
-   "detail": "6min <= 90min"
+   "detail": "2min <= 90min"
   }
  ],
  "degraded": [],
@@ -52,49 +52,49 @@
  "office": {
   "repo": "roshpinacare-sys/FleetHQ",
   "pushedAt": "2026-10-28T20:33:40Z",
-  "pushedAgeMin": 129,
+  "pushedAgeMin": 138,
   "openIssues": 45,
   "wire": [
    {
     "sha": "04833ca",
     "msg": "office-ci receipt: build pass, types pass [skip ci]",
     "at": "2026-10-28T20:32:58Z",
-    "ageMin": 130,
+    "ageMin": 138,
     "author": "roshpinacare-sys"
    },
    {
     "sha": "dd404e0",
     "msg": "office-3d receipt: bake log + latest.json pointer [skip ci]",
     "at": "2026-10-28T20:31:41Z",
-    "ageMin": 131,
+    "ageMin": 140,
     "author": "roshpinacare-sys"
    },
    {
     "sha": "3947bd3",
     "msg": "Merge pull request #202 from roshpinacare-sys/deep-audit-1",
     "at": "2026-10-28T20:30:13Z",
-    "ageMin": 133,
+    "ageMin": 141,
     "author": "roshpinacare-sys"
    },
    {
     "sha": "13fd0a2",
     "msg": "deep-audit round 1: archive 29 one-off agent scripts + 11 task-scratch dirs (161 files, gi",
     "at": "2026-10-28T20:29:26Z",
-    "ageMin": 133,
+    "ageMin": 142,
     "author": "z-audit"
    },
    {
     "sha": "c4ee1e9",
     "msg": "ops-forge: agent line to operator-inbox.jsonl [skip ci]",
     "at": "2026-10-28T17:00:43Z",
-    "ageMin": 342,
+    "ageMin": 351,
     "author": "roshpinacare-sys"
    },
    {
     "sha": "1143050",
     "msg": "office-ci receipt: build pass, types pass [skip ci]",
     "at": "2026-10-28T16:27:26Z",
-    "ageMin": 375,
+    "ageMin": 384,
     "author": "roshpinacare-sys"
    }
   ],
@@ -115,14 +115,14 @@
     }
    ]
   },
-  "worklogLastTouchAgeMin": 11874,
+  "worklogLastTouchAgeMin": 11883,
   "boot": {
    "error": "HTTP 404 contents:receipts/boot-verify.json"
   },
   "ci": {
    "overall": "PASS",
    "at": "2026-10-28T20:32:57.684Z",
-   "ageMin": 130,
+   "ageMin": 138,
    "reason": "all five checks ran and passed",
    "runUrl": "https://github.com/roshpinacare-sys/FleetHQ/actions/runs/40763863457",
    "checks": {
@@ -138,7 +138,7 @@
   "wallet": {
    "source": "Autonomy/receipts/wallet/verdict.json",
    "at": "2026-10-28T22:31:19.207Z",
-   "ageMin": 11,
+   "ageMin": 20,
    "overall": "PASS",
    "reason": "install, prisma, typecheck, build and all wallet laws pass",
    "alerts": 0,
@@ -147,7 +147,7 @@
   "grid": {
    "source": "Autonomy/receipts/grid/verdict.json",
    "at": "2026-10-28T22:30:48.567Z",
-   "ageMin": 12,
+   "ageMin": 21,
    "overall": "BLOCKED",
    "reason": "grid credential-blocked — BLOCKED-SILENT LAW v2: measured honestly, owner words decide",
    "alerts": 0,
@@ -155,24 +155,24 @@
   },
   "fleet": {
    "source": "Autonomy/receipts/fleet/verdict.json",
-   "at": "2026-10-28T22:30:38.124Z",
-   "ageMin": 12,
+   "at": "2026-10-28T22:43:12.439Z",
+   "ageMin": 8,
    "overall": "FAIL",
    "reason": "steem=FAIL · saos-dex=FAIL · saos-agents=PASS · Saosmartwallet=PASS · Adsmarket=PASS",
    "alerts": 4,
-   "runUrl": "https://github.com/roshpinacare-sys/Autonomy/actions/runs/40780479177"
+   "runUrl": "https://github.com/roshpinacare-sys/Autonomy/actions/runs/40782085066"
   },
   "tick": {
    "source": "Autonomy/receipts/latest.json",
    "at": "2026-10-28T22:33:31.855Z",
-   "ageMin": 9,
+   "ageMin": 18,
    "chain": "7d45d8a10ade"
   }
  },
  "runtime": {
-  "lastSuccessAt": "2026-10-28T22:36:44Z",
-  "lastSuccessAgeMin": 6,
-  "lastSuccessName": "sovereign-runtime",
+  "lastSuccessAt": "2026-10-28T22:49:33Z",
+  "lastSuccessAgeMin": 2,
+  "lastSuccessName": "self-memory",
   "lastConclusion": "success"
  }
 }
