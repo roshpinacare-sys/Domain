@@ -1,6 +1,6 @@
 # market-exec — SIGNED EXECUTOR canon (CR-0036)
 
-Last run: 2026-10-28T21:46:31.501Z · mode **DRY_RUN** · venue **SBD/STEEM internal (steem)** via https://api.steemit.com
+Last run: 2026-10-28T21:47:35.235Z · mode **DRY_RUN** · venue **SBD/STEEM internal (steem)** via https://api.steemit.com
 
 | metric | value |
 |---|---|
@@ -25,4 +25,4 @@ Last run: 2026-10-28T21:46:31.501Z · mode **DRY_RUN** · venue **SBD/STEEM inte
 
 ## errors (0)
 
-Run history: 296 rows in canon.
+Run history: 297 rows in canon.
