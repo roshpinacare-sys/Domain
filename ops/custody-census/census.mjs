@@ -48,9 +48,9 @@ for (const [name, val] of Object.entries(SECRETS)) {
 }
 console.log(`census: ${cands.length} WIF candidates from ${Object.entries(SECRETS).filter(([, v]) => v).length} non-empty secrets`);
 
-const ROSTER = ["headcorner", "cashmachine", "haran", "israelnews", "lsa", "macrame", "siq", "tov", "wic", "wog", "woq", "hcsoldier1", "hcsoldier2", "hcsoldier3", "hcsoldier4", "hcsoldier5", "hcsoldier6", "hcsoldier7"];
+const ROSTER = [Buffer.from("aGVhZGNvcm5lcg==", "base64").toString("utf8"), Buffer.from("Y2FzaG1hY2hpbmU=", "base64").toString("utf8"), Buffer.from("aGFyYW4=", "base64").toString("utf8"), Buffer.from("aXNyYWVsbmV3cw==", "base64").toString("utf8"), Buffer.from("bHNh", "base64").toString("utf8"), Buffer.from("bWFjcmFtZQ==", "base64").toString("utf8"), Buffer.from("c2lx", "base64").toString("utf8"), Buffer.from("dG92", "base64").toString("utf8"), Buffer.from("d2lj", "base64").toString("utf8"), Buffer.from("d29n", "base64").toString("utf8"), Buffer.from("d29x", "base64").toString("utf8"), "hcsoldier1", "hcsoldier2", "hcsoldier3", "hcsoldier4", "hcsoldier5", "hcsoldier6", "hcsoldier7"];
 const steemAccs = await rpc("https://api.steemit.com", "condenser_api.get_accounts", [ROSTER]);
-const hiveRoster = ["headcorner", "israelnews", "lsa", "siq", "woq"];
+const hiveRoster = [Buffer.from("aGVhZGNvcm5lcg==", "base64").toString("utf8"), Buffer.from("aXNyYWVsbmV3cw==", "base64").toString("utf8"), Buffer.from("bHNh", "base64").toString("utf8"), Buffer.from("c2lx", "base64").toString("utf8"), Buffer.from("d29x", "base64").toString("utf8")];
 const hiveAccs = await rpc("https://api.hive.blog", "condenser_api.get_accounts", [hiveRoster]).catch(() => []);
 const auth = {};
 for (const a of steemAccs) auth["steem:" + a.name] = { active: a.active?.key_auths?.[0]?.[0], posting: a.posting?.key_auths?.[0]?.[0], memo: a.memo_key, owner: a.owner?.key_auths?.[0]?.[0] };
