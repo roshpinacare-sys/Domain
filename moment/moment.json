@@ -1,33 +1,33 @@
 {
  "ok": true,
  "format": "moment-watch-v1",
- "publishedAt": "2026-10-29T15:57:30.830Z",
+ "publishedAt": "2026-10-29T16:52:00.963Z",
  "engine": "Domain/agents/moment-watch · R62 sovereign moment",
  "role": "reads the live moment every 30 minutes (market regime, our parity line vs the live internal book, fuel runway, measured anomalies) and records a deterministic directional call that is only ever scored after its horizon has passed - training as measurement, never as promise",
  "market": {
-  "steemUsd": 0.04987398,
-  "steem24h": 1.668632196910184,
-  "sbdUsd": 0.453018,
-  "btcUsd": 81647,
-  "btc24h": 1.499327729267042,
+  "steemUsd": 0.04968239,
+  "steem24h": 1.7937399705648651,
+  "sbdUsd": 0.453492,
+  "btcUsd": 81172,
+  "btc24h": 1.011963504713917,
   "fearGreed": {
    "value": 51,
    "label": "Neutral"
   }
  },
- "paritySbdPerSteem": 0.11009271154788551,
+ "paritySbdPerSteem": 0.10955516304587512,
  "liveBook": {
   "bestBid": 0.10140501226743205,
   "bestAsk": 0.10293432696786213,
-  "bidsDepthSbd": 429.18,
-  "asksDepthSteem": 340.61,
+  "bidsDepthSbd": 429.29,
+  "asksDepthSteem": 308.73,
   "levels": 21,
-  "bidSurplusBps": -789
+  "bidSurplusBps": -744
  },
  "regime": {
   "label": "NEUTRAL",
   "drivers": [
-   "BTC +1.5%",
+   "BTC +1.0%",
    "F&G 51"
   ],
   "thresholds": {
@@ -40,7 +40,7 @@
  },
  "runway": {
   "active": false,
-  "weeklySp": 6.209437657160262e-10,
+  "weeklySp": 6.20945351199695e-10,
   "nextPayment": "1969-12-31T23:59:59",
   "remainingSp": 0,
   "weeklyUsd": 0,
@@ -49,9 +49,9 @@
  "grid": {
   "verdict": "ARMED-LIVE",
   "armed": true,
-  "blocker": null,
+  "blocker": "broadcast failing: 3/6 chain ops rejected this run (\"broadcast answered without id\") — stale key/authority or node fault; verdict cannot be stable until signing succeeds",
   "externalFlowUsd": -0.06819,
-  "publishedAt": "2026-10-29T15:43:57.807Z"
+  "publishedAt": "2026-10-29T16:42:48.161Z"
  },
  "moneyPath": {
   "fuel": {
@@ -73,7 +73,7 @@
  },
  "call": "FLAT",
  "callStats": {
-  "resolved": 101,
+  "resolved": 100,
   "hits": 43,
   "hitRatePct": 43,
   "horizonH": 6,
@@ -84,7 +84,12 @@
   {
    "kind": "parity-edge",
    "tone": "good",
-   "text": "עומק-קנייה חי 789bps מתחת לקו-הזהות (bid 0.1014 מול parity 0.1101) — עודף מדוד לגריד."
+   "text": "עומק-קנייה חי 744bps מתחת לקו-הזהות (bid 0.1014 מול parity 0.1096) — עודף מדוד לגריד."
+  },
+  {
+   "kind": "sbd-inventory",
+   "tone": "warn",
+   "text": "צוואר-הקנייה של הגריד: broadcast failing: 3/6 chain ops rejected this run (\"broadcast answered without id\") — stale key/authority or node fault; verdict cannot be stable until signing succeeds"
   },
   {
    "kind": "fuel",
