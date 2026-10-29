@@ -1,12 +1,12 @@
 {
  "protocol": "SAOS-TICK-KEEPER/1",
- "at": "2026-10-29T18:53:38.716Z",
+ "at": "2026-10-29T18:59:36.986Z",
  "repo": "roshpinacare-sys/Domain",
  "stasis": false,
  "arc": {
   "sovereign-tick-cron": {
    "receipt": "agents/sovereign-decisions.jsonl",
-   "last_ts": "2026-10-29T17:06:02.041Z",
+   "last_ts": "2026-10-29T18:53:53.931Z",
    "max_gap_min": 20
   },
   "earn-audit-cron": {
@@ -16,12 +16,12 @@
   },
   "fill-ledger-cron": {
    "receipt": "agents/fill-ledger.json",
-   "last_ts": "2026-10-29T17:24:57.481Z",
+   "last_ts": "2026-10-29T18:53:54.001Z",
    "max_gap_min": 45
   },
   "market-grid-cron.yml": {
    "receipt": "agents/market-grid.json",
-   "last_ts": "2026-10-29T16:56:06.163Z",
+   "last_ts": "2026-10-29T18:54:05.690Z",
    "max_gap_min": 45
   },
   "fleet-census-cron.yml": {
@@ -77,47 +77,14 @@
  },
  "decided": [
   {
-   "desk": "sovereign-tick-cron",
-   "stale_min": 107.6,
-   "reason": "book stale 107.6m > 20m"
-  },
-  {
-   "desk": "fill-ledger-cron",
-   "stale_min": 88.7,
-   "reason": "book stale 88.7m > 45m"
-  },
-  {
-   "desk": "market-grid-cron.yml",
-   "stale_min": 117.5,
-   "reason": "book stale 117.5m > 45m"
-  },
-  {
-   "desk": "cognition-beat.yml",
-   "stale_min": 110,
-   "reason": "book stale 110.0m > 90m"
+   "desk": "fleet-heartbeat.yml",
+   "stale_min": 94.5,
+   "reason": "book stale 94.5m > 90m"
   }
  ],
  "dispatched": [
   {
-   "desk": "sovereign-tick-cron",
-   "http_status": 204,
-   "ok": true,
-   "error": null
-  },
-  {
-   "desk": "fill-ledger-cron",
-   "http_status": 204,
-   "ok": true,
-   "error": null
-  },
-  {
-   "desk": "market-grid-cron.yml",
-   "http_status": 204,
-   "ok": true,
-   "error": null
-  },
-  {
-   "desk": "cognition-beat.yml",
+   "desk": "fleet-heartbeat.yml",
    "http_status": 204,
    "ok": true,
    "error": null
@@ -125,48 +92,60 @@
  ],
  "skipped": [
   {
+   "desk": "sovereign-tick-cron",
+   "reason": "cooldown: dispatched 5m ago < 20m"
+  },
+  {
    "desk": "earn-audit-cron",
-   "reason": "fresh 29.3m <= 45m"
+   "reason": "fresh 35.2m <= 45m"
+  },
+  {
+   "desk": "fill-ledger-cron",
+   "reason": "cooldown: dispatched 5m ago < 20m"
+  },
+  {
+   "desk": "market-grid-cron.yml",
+   "reason": "cooldown: dispatched 5m ago < 60m"
   },
   {
    "desk": "fleet-census-cron.yml",
-   "reason": "cooldown: dispatched 117m ago < 240m"
+   "reason": "cooldown: dispatched 123m ago < 240m"
   },
   {
    "desk": "twin-audit.yml",
-   "reason": "fresh 308.2m <= 1560m"
+   "reason": "fresh 314.1m <= 1560m"
   },
   {
    "desk": "self-audience.yml",
-   "reason": "cooldown: dispatched 117m ago < 240m"
+   "reason": "cooldown: dispatched 123m ago < 240m"
   },
   {
    "desk": "public-pulse.yml",
-   "reason": "cooldown: dispatched 117m ago < 240m"
+   "reason": "cooldown: dispatched 123m ago < 240m"
   },
   {
-   "desk": "fleet-heartbeat.yml",
-   "reason": "fresh 88.6m <= 90m"
+   "desk": "cognition-beat.yml",
+   "reason": "cooldown: dispatched 5m ago < 60m"
   },
   {
    "desk": "office-pulse.yml",
-   "reason": "fresh 36.1m <= 90m"
+   "reason": "fresh 42.1m <= 90m"
   },
   {
    "desk": "audience-analyst.yml",
-   "reason": "cooldown: dispatched 117m ago < 240m"
+   "reason": "cooldown: dispatched 123m ago < 240m"
   },
   {
    "desk": "soldiers-curate.yml",
-   "reason": "cooldown: dispatched 399m ago < 720m"
+   "reason": "cooldown: dispatched 405m ago < 720m"
   },
   {
    "desk": "books-revival-t28.yml",
-   "reason": "fresh 107.9m <= 1440m"
+   "reason": "fresh 113.9m <= 1440m"
   }
  ],
  "errors": [],
- "duration_ms": 5082,
+ "duration_ms": 1425,
  "cooldown_book": {
   "earn-audit-cron": "2026-10-29T13:18:11.999Z",
   "sovereign-tick-cron": "2026-10-29T18:53:38.716Z",
@@ -176,7 +155,7 @@
   "audience-analyst.yml": "2026-10-29T16:55:47.884Z",
   "fleet-census-cron.yml": "2026-10-29T16:55:47.884Z",
   "self-audience.yml": "2026-10-29T16:55:47.884Z",
-  "fleet-heartbeat.yml": "2026-10-29T03:38:40.657Z",
+  "fleet-heartbeat.yml": "2026-10-29T18:59:36.986Z",
   "cognition-beat.yml": "2026-10-29T18:53:38.716Z",
   "soldiers-curate.yml": "2026-10-29T12:13:53.188Z",
   "books-revival-t28.yml": "2026-10-19T04:26:07.838Z",
