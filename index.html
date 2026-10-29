@@ -139,6 +139,34 @@ footer{border-top:1px solid var(--line);background:var(--bg2);margin-top:24px;pa
 .fcol a{display:block;font-size:13.5px;color:var(--dim);padding:4px 0}
 .fcol a:hover{color:var(--acc-bright)}
 .fbottom{margin-top:30px;padding-top:18px;border-top:1px solid var(--line);display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between;font-size:12px;color:var(--faint)}
+
+/* dex-live — נתיבי-ההמרה החיים (route-map + dex-router) */
+.dm-grid{display:grid;grid-template-columns:1.35fr 1fr;gap:16px;max-width:1080px;margin:0 auto}
+@media(max-width:860px){.dm-grid{grid-template-columns:1fr}}
+.dm-panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;min-width:0}
+.dm-panel h3{margin:0 0 10px;font-size:15px;color:var(--text);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.dm-stamp{font-size:11.5px;font-weight:400;color:var(--dim);border:1px solid var(--line2);border-radius:999px;padding:2px 10px;background:var(--panel2);white-space:nowrap}
+.dm-stamp.live{color:var(--green);border-color:var(--acc-line);background:var(--acc-bg)}
+.dm-stamp.stale{color:var(--red);border-color:rgba(194,65,12,.45);background:rgba(194,65,12,.07)}
+.dm-identity{font-size:13px;color:var(--dim);margin:0 0 6px}
+.dm-scroll{overflow-x:auto;margin-top:8px}
+.dm-table{width:100%;border-collapse:collapse;font-size:13px;min-width:560px}
+.dm-table th{text-align:start;color:var(--faint);font-weight:600;border-bottom:1px solid var(--line);padding:6px 8px;white-space:nowrap}
+.dm-table td{border-bottom:1px solid var(--bg2);padding:7px 8px;vertical-align:top}
+.dm-table td.num,.dm-table th.num{text-align:end;font-variant-numeric:tabular-nums}
+.dm-table td.mono{font-size:12.5px}
+.dm-badge{display:inline-block;font-size:11px;border-radius:6px;padding:1px 8px;border:1px solid var(--line2);color:var(--dim);white-space:nowrap}
+.dm-badge.crit{color:#fff;background:var(--red);border-color:var(--red)}
+.dm-badge.warn{color:var(--amber);border-color:rgba(161,98,7,.4);background:rgba(161,98,7,.07)}
+.dm-note{font-size:12px;color:var(--faint);margin:8px 0 0;line-height:1.6}
+.dm-alert{display:flex;gap:10px;align-items:baseline;padding:8px 10px;border:1px solid var(--line);border-radius:var(--r-sm);margin:8px 0 0;background:var(--panel2);font-size:13px;flex-wrap:wrap}
+.dm-alert b{color:var(--text)}
+.dm-alert p{margin:0;color:var(--dim);font-size:12.5px}
+.dm-nodata{border:1px dashed var(--line2);border-radius:var(--r);padding:18px;text-align:center;color:var(--dim);font-size:14px;background:var(--panel2);max-width:1080px;margin:14px auto 0}
+.dm-retry{margin-top:10px;font:inherit;font-size:13px;padding:7px 18px;border-radius:999px;border:1px solid var(--acc-line);background:var(--panel);color:var(--acc-bright);cursor:pointer}
+.dm-retry:hover{background:var(--acc-bg)}
+.dm-src{font-size:11.5px;color:var(--faint);margin-top:12px;line-height:1.8}
+.dm-src a{color:var(--dim);text-decoration:underline}
 </style>
 </head>
 <body>
@@ -275,6 +303,43 @@ footer{border-top:1px solid var(--line);background:var(--bg2);margin-top:24px;pa
     <p style="text-align:center;font-size:12px;color:var(--faint);margin-top:14px">פס-זה נבנה אוטונומית על-ידי איבר-הבונה בכל שעה עגולה מהקבלות בגיט · כל מספר מדידה-אמיתית עם גיל-מדידה · בלי מדידה כתוב "אין-מדידה" ולא המצאה · <a href="changelog.html" style="color:var(--fg)">יומן-הבנייה</a> · <a href="tools.html" style="color:var(--fg)">קטלוג-היכולות</a> · <a href="receipts.html" style="color:var(--fg)">פנקס-הקבלות</a></p>
   </section>
 <!--/builder:pulse-->
+
+  <!-- ═══ dex-live · נתיבי-ההמרה החיים (route-map + dex-router · מקורות-גלויים עם cache-busting) ═══ -->
+  <section class="wrap blk" id="dex-live" aria-label="נתיבי-ההמרה החיים">
+    <div class="blk-head">
+      <h2>נתיבי-ההמרה החיים</h2>
+      <p>מנוע-הנתיבים הריבוני, נמדד חי בכל פתיחה מהמקורות הציבוריים. הציר SAOS↔USDS הוא הזהות — נכסי-חוץ הם דלתות, לא זהות. אין-מספר בלי חותמת-מדידה.</p>
+    </div>
+    <div class="dm-grid">
+      <div class="dm-panel">
+        <h3>מפת-הנתיבים · route-map <span class="dm-stamp" id="dm-stamp">נטען…</span></h3>
+        <p class="dm-identity" id="dm-identity"></p>
+        <p class="dm-note" id="dm-meta"></p>
+        <div class="dm-scroll">
+          <table class="dm-table">
+            <thead><tr><th>נתיב</th><th class="num">פלט</th><th class="num">מחיר-אפקטיבי</th><th>רמת-אמת</th><th class="num">סטיית-אורקל</th><th>פסק</th></tr></thead>
+            <tbody id="dm-routes"><tr><td colspan="6">נטען מהמקור החי…</td></tr></tbody>
+          </table>
+        </div>
+        <p class="dm-note" id="dm-nomap"></p>
+        <p class="dm-note" id="dm-arb"></p>
+        <div id="dm-alerts"></div>
+      </div>
+      <div class="dm-panel">
+        <h3>מסילות-הסוופים · dex-router <span class="dm-stamp" id="dr-stamp">נטען…</span></h3>
+        <p class="dm-note" id="dr-strip" style="font-size:13px;color:var(--dim)">נטען…</p>
+        <p class="dm-note" id="dm-honesty"></p>
+        <p class="dm-src">מקורות-חי (raw · cache-busting · אמת-בעצמך):<br>
+          <a href="https://raw.githubusercontent.com/roshpinacare-sys/saos-dex/main/grids/state/route-map.json" rel="noopener">saos-dex · grids/state/route-map.json</a><br>
+          <a href="https://raw.githubusercontent.com/roshpinacare-sys/Domain/main/agents/dex-router.json" rel="noopener">Domain · agents/dex-router.json</a></p>
+        <button class="dm-retry" id="dm-retry" type="button">רענון-מדידה</button>
+      </div>
+    </div>
+    <div class="dm-nodata" id="dm-nodata" hidden>
+      אין-נתונים חיים זמינים כרגע — המקורות לא נענו. כלום לא מומצא כאן.
+      <br><button class="dm-retry" id="dm-retry2" type="button">נסה שוב</button>
+    </div>
+  </section>
 
   <!-- ═══ surfaces ═══ -->
   <section class="wrap blk" aria-label="המשטחים">
@@ -465,6 +530,149 @@ footer{border-top:1px solid var(--line);background:var(--bg2);margin-top:24px;pa
       if(f) f.textContent = "office measured " + String(at).replace("T"," ").slice(0,16) + "Z";
     }
   }).catch(function(){});
+})();
+</script>
+<script>
+/* dex-live — מסלולי-ההמרה החיים · route-map (saos-dex, הבית-הקנוני) + dex-router (Domain)
+   כל-מספר שנציג מגיע מה-JSON בלבד — אין-חישוב-המצאה, אין-fallback מדומה.
+   כישלון-רשת = "אין-נתונים חיים זמינים כרגע" + כפתור-ניסיון-חוזר. */
+(function(){
+  "use strict";
+  var RM_URL = "https://raw.githubusercontent.com/roshpinacare-sys/saos-dex/main/grids/state/route-map.json";
+  var DR_URL = "https://raw.githubusercontent.com/roshpinacare-sys/Domain/main/agents/dex-router.json";
+  var STALE_MS = 6 * 3600 * 1000; /* סף-טריות: 6 שעות (כמו pages-quality-gate) */
+  var NODATA = "אין-נתונים חיים זמינים כרגע";
+
+  function esc(s){ return String(s == null ? "" : s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+  function num(v){ if(v == null) return null; var n = Number(v); return isFinite(n) ? n : null; }
+  function fmt(v){ var n = num(v); if(n == null) return "—"; return Math.abs(n) >= 1000 ? n.toLocaleString("en-US",{maximumFractionDigits:2}) : String(n); }
+  function tsOf(x){ if(x == null) return null; var t = (typeof x === "number") ? x : Date.parse(x); return isFinite(t) ? t : null; }
+  function jget(u){ return fetch(u + (u.indexOf("?") > -1 ? "&" : "?") + "t=" + Date.now(), {cache:"no-store"}).then(function(r){ if(!r.ok) throw new Error("HTTP " + r.status); return r.json(); }); }
+
+  var REALNESS = { ONCHAIN_REAL:"אמת-על-שרשרת", DOOR_MEASURED:"דלת-מדודה", REF:"אסמכתא", REF_ONLY:"אסמכתא-בלבד", EXTBOOK:"ספר-חוץ" };
+  function realLbl(r){ return REALNESS[r] || r || "—"; }
+
+  function setStamp(id, at, where, mode){
+    var e = document.getElementById(id); if(!e) return;
+    e.classList.remove("live","stale");
+    if(mode === "loading"){ e.textContent = "טוען… · " + where; return; }
+    if(mode === "nodata"){ e.textContent = NODATA + " · " + where; e.classList.add("stale"); return; }
+    var t = tsOf(at);
+    if(t == null){ e.textContent = "חותמת-זמן חסרה במקור · " + where; e.classList.add("stale"); return; }
+    var age = Math.max(0, Date.now() - t), stale = age > STALE_MS, lbl;
+    if(age < 60000) lbl = "פחות-מדקה";
+    else if(age < 3600000) lbl = Math.round(age/60000) + " דק'";
+    else lbl = Math.floor(age/3600000) + " ש׳ " + Math.round((age % 3600000)/60000) + " דק'";
+    e.textContent = (stale ? "מיושן · STALE · נמדד לפני " : "חי · נמדד לפני ") + lbl + " · " + where;
+    e.classList.add(stale ? "stale" : "live");
+  }
+
+  var state = { rm: null, dr: null };
+
+  function renderRouteMap(rm){
+    var tb = document.getElementById("dm-routes");
+    var idEl = document.getElementById("dm-identity");
+    var metaEl = document.getElementById("dm-meta");
+    var nomapEl = document.getElementById("dm-nomap");
+    var honEl = document.getElementById("dm-honesty");
+    if(!rm){
+      if(tb) tb.innerHTML = "<tr><td colspan='6'>" + NODATA + " · מקור route-map לא נענה</td></tr>";
+      if(nomapEl) nomapEl.textContent = "";
+      renderAlerts(null);
+      return;
+    }
+    if(idEl && rm.identity) idEl.textContent = rm.identity;
+    if(honEl && rm.honesty) honEl.textContent = "כשרות-המנוע: " + rm.honesty;
+    if(metaEl){
+      var g = rm.graph || {}, bits = [];
+      if(Array.isArray(g.nodes) && g.nodes.length) bits.push(g.nodes.length + " צמתים");
+      if(g.edgeCount != null) bits.push(g.edgeCount + " קשתות");
+      if(g.byKind){ var ks = Object.keys(g.byKind).map(function(k){ return k + " " + g.byKind[k]; }); if(ks.length) bits.push(ks.join(" · ")); }
+      if(rm.engineSource && rm.engineSource.savedAt) bits.push("מנוע: snapshot " + String(rm.engineSource.savedAt).replace("T"," ").slice(0,16) + "Z");
+      metaEl.textContent = bits.join(" · ");
+    }
+    var rows = "", noMeas = [];
+    (Array.isArray(rm.routes) ? rm.routes : []).forEach(function(r){
+      var b = r && r.best;
+      if(b && num(b.amountOut) != null){
+        var dev = num(b.oracleDevPct);
+        rows += "<tr>" +
+          "<td class='mono'>" + esc(r.from) + " → " + esc(r.to) + "</td>" +
+          "<td class='num'>" + esc(fmt(b.amountOut)) + " " + esc(r.to) + "</td>" +
+          "<td class='num'>" + esc(fmt(b.effPrice)) + "</td>" +
+          "<td><span class='dm-badge'>" + esc(realLbl(b.realness)) + "</span></td>" +
+          "<td class='num'>" + (dev != null ? esc(fmt(dev)) + "%" : "—") + "</td>" +
+          "<td>" + esc(b.verdict || "—") + "</td></tr>";
+      } else { noMeas.push((r && r.from) + " → " + (r && r.to)); }
+    });
+    if(tb) tb.innerHTML = rows ? rows : "<tr><td colspan='6'>" + NODATA + " · אין-מסלול-מדוד במקור</td></tr>";
+    if(nomapEl) nomapEl.textContent = noMeas.length ? ("בלי-מסלול-מדוד כרגע (נרשם במקור, לא מומצא): " + noMeas.join(" · ")) : "";
+    renderAlerts(rm);
+  }
+
+  function renderAlerts(rm){
+    var box = document.getElementById("dm-alerts"); if(!box) return;
+    if(!rm){ box.innerHTML = "<p class='dm-note'>" + NODATA + " · מקור route-map לא נענה</p>"; return; }
+    var al = (rm && Array.isArray(rm.mispricingAlerts)) ? rm.mispricingAlerts : [];
+    if(!al.length){ box.innerHTML = "<p class='dm-note'>התראות-תמחור: אין (נמדד)</p>"; return; }
+    var h = "<p class='dm-note'>התראות-ניקוז/תמחור (" + al.length + "):</p>";
+    al.forEach(function(a){
+      var sev = a && a.severity === "CRITICAL" ? "crit" : (a && a.severity === "WARNING" ? "warn" : "");
+      h += "<div class='dm-alert'><span class='dm-badge " + sev + "'>" + esc(a.severity || "—") + "</span>" +
+        "<b>" + esc(a.pool || "—") + "</b>" +
+        "<p>מחיר-בריכה " + esc(fmt(a.impliedUsdPer)) + " מול-אסמכתא " + esc(fmt(a.refUsdPer)) + " · סטייה " + esc(fmt(a.devPct)) + "%</p>" +
+        (a.action ? "<p>פעולה: " + esc(a.action) + "</p>" : "") + "</div>";
+    });
+    box.innerHTML = h;
+  }
+
+  function renderRouter(dr){
+    var e = document.getElementById("dr-strip"); if(!e) return;
+    if(!dr){ e.textContent = NODATA + " · מקור dex-router לא נענה"; return; }
+    var s = dr.summary || {}, parts = [];
+    if(s.verdict) parts.push("פסק-מנוע: " + s.verdict);
+    if(s.routesTotal != null) parts.push(s.routesTotal + " מסילות");
+    if(Array.isArray(s.routesLiveKeyed)) parts.push(s.routesLiveKeyed.length + " חיות-מפתח");
+    if(Array.isArray(s.routesGated)) parts.push(s.routesGated.length + " סגורות-שער");
+    if(Array.isArray(s.routesNoRail) && s.routesNoRail.length) parts.push(s.routesNoRail.length + " בלי-מסילה");
+    if(Array.isArray(s.arbCandidates)) parts.push("מועמדי-ארביטראז': " + s.arbCandidates.length);
+    if(Array.isArray(s.venuesAlive) && s.venuesAlive.length) parts.push("עורקים-חיים: " + s.venuesAlive.join(", "));
+    e.textContent = parts.length ? parts.join(" · ") : NODATA;
+  }
+
+  function renderArb(){
+    var e = document.getElementById("dm-arb"); if(!e) return;
+    var parts = [];
+    if(state.rm && Array.isArray(state.rm.arb) && state.rm.arb.length){
+      var ex = state.rm.arb.filter(function(a){ return a && a.executable === true; }).length;
+      parts.push("מועמדי-ארביטראז' במפת-הנתיבים: " + state.rm.arb.length + " · ברי-ביצוע: " + ex);
+    }
+    e.textContent = parts.join(" · ");
+  }
+
+  function load(){
+    var nd = document.getElementById("dm-nodata"); if(nd) nd.hidden = true;
+    setStamp("dm-stamp", null, "route-map", "loading");
+    setStamp("dr-stamp", null, "dex-router", "loading");
+    var pRM = jget(RM_URL).then(function(d){
+      state.rm = d; renderRouteMap(d); renderArb(); setStamp("dm-stamp", d && d.at, "route-map");
+    }).catch(function(){
+      state.rm = null; renderRouteMap(null); renderArb(); setStamp("dm-stamp", null, "route-map", "nodata");
+    });
+    var pDR = jget(DR_URL).then(function(d){
+      state.dr = d; renderRouter(d); setStamp("dr-stamp", d && d.at, "dex-router");
+    }).catch(function(){
+      state.dr = null; renderRouter(null); setStamp("dr-stamp", null, "dex-router", "nodata");
+    });
+    Promise.all([pRM, pDR]).then(function(){
+      var nd2 = document.getElementById("dm-nodata");
+      if(nd2 && !state.rm && !state.dr) nd2.hidden = false;
+    });
+  }
+
+  var r1 = document.getElementById("dm-retry"); if(r1) r1.addEventListener("click", load);
+  var r2 = document.getElementById("dm-retry2"); if(r2) r2.addEventListener("click", load);
+  load();
 })();
 </script>
 <script src="assets/bidi-fix.js" defer></script>
