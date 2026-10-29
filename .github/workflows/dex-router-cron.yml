@@ -36,12 +36,37 @@ jobs:
           FLEET_ACCOUNT: ${{ secrets.FLEET_ACCOUNT }}
         run: node agents/dex-router.cjs status
 
+      # ROUTE-GRAPH (owner mandate trace 1a185071c4aab695 «לסדר נתיבי-ההמרה על-הרשת-שלנו»):
+      # מריץ את מנוע-הנתיבים-הריבוני מ-saos-dex ומפרסם את המפה-החיה גם-כאן (agents/route-map.json)
+      # וגם-לבית-הקנוני (saos-dex/grids/state/route-map.json). keyless — אפס-סודות-חוץ.
+      - name: sovereign route-map (saos-dex route-graph — live conversion paths)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          git clone --depth 1 "https://x-access-token:${GITHUB_TOKEN}@github.com/roshpinacare-sys/saos-dex.git" saos-dex
+          cd saos-dex
+          node grids/route-map.mjs
+          cp grids/state/route-map.json ../agents/route-map.json
+          git config user.name "roshpinacare-sys"
+          git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
+          if ! git diff --quiet grids/state/route-map.json; then
+            git add grids/state/route-map.json
+            git commit -m "route-map: live conversion paths $(date -u +%Y-%m-%dT%H:%M:%SZ) [skip ci]"
+            for i in 1 2 3; do
+              git -c rebase.autoStash=true pull --rebase origin main && git push origin HEAD:main && break
+              echo "rebase-push retry $i"; sleep $((i * 5))
+            done
+          else
+            echo "route-map: no delta — quiet tick"
+          fi
+
       - name: commit swap-net books
         run: |
           git config user.name "roshpinacare-sys"
           git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
           node agents/redact-telemetry.mjs agents/dex-router.json
-          git add agents/dex-router.json agents/dex-router.md agents/dex-router-history.jsonl
+          git add agents/dex-router.json agents/dex-router.md agents/dex-router-history.jsonl agents/route-map.json
           if git diff --cached --quiet; then
             echo "no book delta — quiet tick"
           else
