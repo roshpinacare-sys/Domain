@@ -1,4 +1,4 @@
-# COGNITION-BEAT · 2026-10-29T23:35:06.510Z
+# COGNITION-BEAT · 2026-10-30T02:07:41.482Z
 
 self-model regenerated from live measurements (runs API + chain RPC + grid-truth + STASIS + directives chain verify: {"ok":true,"entries":7,"breakAt":null,"reason":null})
 
@@ -6,5 +6,5 @@ self-model regenerated from live measurements (runs API + chain RPC + grid-truth
 - contradictions open: C-002(grid)
 - haltCoverage: ORGANISM_ONLY (honest — money-family-live + external key-holders unreachable)
 - STASIS: active=false mode=staged allow=[grid,claims,dex-batch-settle,powerup,delegation,connect,general,dex-core,arb-mesh,dex-activation]
-- workflows seen (24h): pulse-bake, human-cadence, cognition-beat, grid-sentinel, agent9-truth-watchdog, arb-mesh, office-worldbeat, dex-grid, weave-mirror, office-pulse, autonomy-guardian, dex-beat, dex-watchdog, grid-trigger-twin, dex-activation, treasury-route, pages-quality-gate, market-grid-cron, fill-ledger-cron, sovereign-tick-cron, stale-watchdog, tick-keeper, dex-core, sovereign-pulse, agent9-fleet-truth, pf-artery-keeper, earn-audit-cron, network-census, moment-watch, office-artery, hive-beat-t21, fleet-heartbeat, dex-router, artery-integrity-twin, estate-scrub, office-pulse-twin, soldiers-curate, content-gate, econ-engine, execution-ledger-refresh, dex-xc, cloud-pulse, grid-doctor
+- workflows seen (24h): cognition-beat, office-worldbeat, dex-router, cloud-pulse, grid-sentinel, weave-anchor-lines, dex-grid, econ-desk, office-pulse, moment-watch, office-pulse-twin, sovereign-pulse, public-pulse, pf-artery-keeper, fleet-census-cron, agent9-fleet-truth, dex-beat, dex-watchdog, operator-console, pulse-bake, human-cadence, dex-xc, artery-integrity-twin, grid-doctor, network-census, sandbox-arteries, market-grid-cron, arb-mesh, fill-ledger-cron, economy-engine, public-loops-bake, pages-deploy, identity-guard, site-link-audit, bidi-guardian
 
