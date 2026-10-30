@@ -1,17 +1,17 @@
 # community-founder — הבית הקהילתי (CR-0066)
 
-עודכן: 2026-10-30T21:16:21.390Z
+עודכן: 2026-10-30T21:33:29.152Z
 
 ## מצב: הקהילה טרם נוצרה (כנות מלאה)
 
 ## ריצות אחרונות
-- [2026-10-30T21:16:20.665Z] rc → COMMUNITY-ABSENT · no community in the book — nothing to top up
-- [2026-10-30T21:16:20.706Z] status → COMMUNITY-ABSENT · אין קהילה בפנקס — כנות מלאה, אפס המצאה
+- [2026-10-30T21:33:28.011Z] rc → COMMUNITY-ABSENT · no community in the book — nothing to top up
+- [2026-10-30T21:33:28.056Z] status → COMMUNITY-ABSENT · אין קהילה בפנקס — כנות מלאה, אפס המצאה
   - fee=3.000 STEEM · liquid=0.000 · need=3.050
   - open_orders=0 · funding=IDLE-CAPITAL-TOO-SMALL · cancels=0
   - names_free=hive-180901 (of 6)
   - vault=absent · stasis=clear
-- [2026-10-30T21:16:21.071Z] hive → HOME-ABSENT-UNKEYED · no Hive key material is held (measured: owner hive active pub STM782KMx… ≠ the held steem pub) — the desk cannot sign what it does not hold
+- [2026-10-30T21:33:28.604Z] hive → HOME-ABSENT-UNKEYED · no Hive key material is held (measured: owner hive active pub STM782KMx… ≠ the held steem pub) — the desk cannot sign what it does not hold
   - hive fee=3.000 HIVE · owner liquid=0.000 · need=3.050 · orders=0
   - soldiers-on-hive=0/0 · names-free=hive-177702 · steem-house-on-hive=no
   - authority=NO-KEYS · vault=absent · stasis=clear
