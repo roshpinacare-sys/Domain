@@ -1,6 +1,6 @@
 {
   "protocol": "SAOS-ARB-MESH/1",
-  "at": "2026-10-30T12:33:56.212Z",
+  "at": "2026-10-30T14:18:22.883Z",
   "agent": "arb-mesh v1.0.0 (R41 MESH MARKET, CR-0071)",
   "mode": "KEYLESS-MESH-DEMAND",
   "stasisHalted": false,
@@ -22,39 +22,25 @@
     "multi-network vault (R42): custody classes — MEASURED-KEYED is the only mintable class; adjacent networks are OBSERVED (seen, never custody, never a reserve); redeem is ALWAYS honored 1:1 in-ledger (burn before payout); the chain payout is queued for the keyed desks — keyless code never fires a broadcast",
     "uniform batch clearing (R76): the queue clears as ONE batch - canonical order, two-sided netting at the measured fair, one uniform clearing price for every trader, the solver absorbs the remainder; order-invariance (a permuted queue clears byte-identical) is the anti-sandwich proof · the proof lane is DRY (moves nothing), the settle gate stays the owner's"
   ],
-  "verdict": "GATED-WIRE (edge above floor but no free capital to arm the agents — named, never faked)",
-  "batch": "MESH-2026103012-19d3b5c6",
+  "verdict": "NO-EDGE (every row below the floor — the machinery waits, the floor law protects the P&L)",
+  "batch": null,
   "settledBatch": null,
   "coreLedger": {
     "seq": 386,
-    "at": "2026-10-30T11:35:02.785Z",
-    "ageHours": 0.98,
+    "at": "2026-10-30T13:09:11.993Z",
+    "ageHours": 1.15,
     "conservationOk": false,
     "attestation": "efcb651b22c6023a",
     "feedFresh": true
   },
   "routerSeen": {
-    "at": "2026-10-30T12:19:02.513Z",
+    "at": "2026-10-30T13:39:30.503Z",
     "arbRows": 4
   },
   "roster": [
     "operator"
   ],
-  "candidates": [
-    {
-      "id": "A1",
-      "name": "P3 STEEM/SBD pool mid vs CEX-implied fair",
-      "poolMidNano": "100581730",
-      "fairNano": "103095440",
-      "netBps": 208.82,
-      "thresholdBps": 100,
-      "from": "SBD",
-      "to": "STEEM",
-      "railOwner": "treasury (our own pool — atomic, no bridge)",
-      "source": "dex-core.json (our pool — atomic, no bridge)",
-      "at": "2026-10-30T12:33:56.212Z"
-    }
-  ],
+  "candidates": [],
   "keyedRailPlans": [],
   "intentsDrafted": 0,
   "intents": [],
