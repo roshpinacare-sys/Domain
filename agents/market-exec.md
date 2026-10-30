@@ -1,12 +1,12 @@
 # market-exec — SIGNED EXECUTOR canon (CR-0036)
 
-Last run: 2026-10-30T06:55:09.818Z · mode **DRY_RUN** · venue **SBD/STEEM internal (steem)** via https://api.steemit.com
+Last run: 2026-10-30T09:07:14.006Z · mode **DRY_RUN** · venue **SBD/STEEM internal (steem)** via https://api.steemit.com
 
 | metric | value |
 |---|---|
 | bid / ask / mid | 0.10143 / 0.10433117970806413 / 0.102881 |
 | spread | 2.8199% |
-| feed (SBD per STEEM) | 0.104076 |
+| feed (SBD per STEEM) | 0.104074 |
 | cross-check | {"ok":true,"dBid":0,"dAsk":0} |
 | liquid before | 0.000 STEEM / 0.001 SBD |
 | own orders on book (pre) | 0 |
@@ -25,4 +25,4 @@ Last run: 2026-10-30T06:55:09.818Z · mode **DRY_RUN** · venue **SBD/STEEM inte
 
 ## errors (0)
 
-Run history: 314 rows in canon.
+Run history: 315 rows in canon.
