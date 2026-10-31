@@ -1,13 +1,9 @@
 # arb-mesh — THE MESH MARKET (R41, CR-0071)
 
-At: 2026-10-31T08:49:26.652Z · Verdict: **GATED-WIRE (edge above floor but no free capital to arm the agents — named, never faked)** · batch: MESH-2026103108-4b3a49b0 · protocol: SAOS-ARB-MESH/1
+At: 2026-10-31T10:40:38.932Z · Verdict: **NO-EDGE (every row below the floor — the machinery waits, the floor law protects the P&L)** · batch: — · protocol: SAOS-ARB-MESH/1
 
-Roster: 1 accounts (owner + 0 soldiers) · Edge candidates: 1 · Intents drafted: 0 · Fills settled: 0 · Refusals: 0
+Roster: 1 accounts (owner + 0 soldiers) · Edge candidates: 0 · Intents drafted: 0 · Fills settled: 0 · Refusals: 0
 
-
-| Edge row | Direction | Net bps | Floor | Source |
-|---|---|---|---|---|
-| A1 P3 STEEM/SBD pool mid vs CEX-implied fair | SBD→STEEM (sell the rich side) | 179.88 | 100 | dex-core.json (our pool — atomic, no bridge) |
 
 ## Size ladder (the large-sums law — exact BigInt, honest slippage)
 
