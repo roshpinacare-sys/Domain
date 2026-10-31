@@ -53,19 +53,28 @@ try {
   const hc = rulesSrc.match(/const HC = \["([^"]+)", "([^"]+)"\]/);
   const cashm = rulesSrc.match(/const CASHM = \["([^"]+)", "([^"]+)"\]/);
   const estateBlock = block("const ESTATE_NAMES = [", "].map(");
-  const parts = [...estateBlock.matchAll(/\["([^"]+)", "([^"]+)"\]/g)].map((m) => m[1] + m[2]);
+  // per-entry parse — BARE vs CONTEXT derive from THE LAW'S OWN scan mode (one law,
+  // two enforcers, zero heuristics). measured failure (#71 loop): the old length-based
+  // WORD_LIKE heuristic classified a law-bare substring token as context-only, so the
+  // curer never cured the bare narrative storm while the gate kept flagging it for days.
+  const estateWords = []; // the law scans these ONLY word-bounded (context)
+  const estateBare = [];  // the law scans these bare (substring) — curer must match that
+  for (const e of [...estateBlock.matchAll(/\{([^}]*)\}/g)].map((m) => m[1])) {
+    const pm = e.match(/\["([^"]+)", "([^"]+)"\]/);
+    if (!pm) continue;
+    (/\bword\s*:\s*true\b/.test(e) ? estateWords : estateBare).push(pm[1] + pm[2]);
+  }
+  const parts = [...estateBare, ...estateWords];
   const shortsBlock = block("const SHORT_ESTATE = [", "]");
   const shorts = [...shortsBlock.matchAll(/"([^"]+)"/g)].map((m) => m[1]);
   const seen = new Set();
   for (const t of [hc && hc[1] + hc[2], cashm && cashm[1].replace(/^@/, "") + cashm[2], ...parts, ...shorts]) {
     if (t && t.length >= 3) seen.add(t);
   }
-  // מילים-אמיתיות/קצרות — החלפה רק בהקשר-זהות (החוק עצמו סורק אותן בהקשר בלבד)
-  // מילים-אמיתיות מזוהות-לפי-אורך/צורה: קצרים (רשימת-החוק) או בני-2-הברות המופיעים
-  // כמילים-תמים — אלו מוחלפים רק בהקשר-זהות (אפס-פגיעה בנרטיב). הזיהוי כאן פורמלי:
-  // מילה שהחוק סורק רק-בהקשר והיא גם מילה-מילונית ידועה (שמות-עת/סוכנויות) — בהקשר בלבד.
-  const WORD_LIKE = new Set(parts.filter((t) => /^[a-z]{3,12}$/.test(t) && !shorts.includes(t)));
-  CONTEXT = [...seen].filter((t) => shorts.includes(t) || WORD_LIKE.has(t));
+  // BARE = the law scans it bare (HC/CASHM/law-bare estate names) → cure everywhere guarded.
+  // CONTEXT = the law scans it only in identity contexts (law-word tokens + short tokens)
+  // → cure only quoted / @-mentioned / after CLI flag (zero narrative damage, by doctrine).
+  CONTEXT = [...seen].filter((t) => shorts.includes(t) || estateWords.includes(t));
   BARE = [...seen].filter((t) => !CONTEXT.includes(t));
 } catch (e) {
   console.error("refs-cure: cannot derive candidates from exposure-rules (" + String(e).slice(0, 80) + ") — aborting fail-closed");
@@ -93,6 +102,20 @@ function trackedFiles() {
   return out.filter((f) => pathArgs.some((p) => f === p || f.startsWith(p.endsWith("/") ? p : p + "/")));
 }
 
+// identity-safe boundary guards (hardening 2026-10-31, measured storm = Domain#71):
+//   · GUARD_L — a match must not sit inside a longer identifier or property access
+//     (process.env.X / secrets.X / obj.X stay untouched — curing those would silently
+//     break runtime semantics; the gate still flags them honestly. a5d2224d lesson).
+//   · GUARD_R — letters may not follow (blocks a short token inside a longer word),
+//     digits may — base+digit inflections are the measured storm class and ARE matched.
+//   · COLON — key positions (NAME: value / {NAME: ...}) stay untouched; renaming a
+//     key desyncs its consumer. The gate catches key-position literals honestly.
+const GUARD_L = '(?<![A-Za-z0-9._$])';
+const GUARD_R = '(?![A-Za-z])';
+const COLON = '(?!\\s*:)';
+const infl = (esc) => GUARD_L + esc + '\\d*' + COLON + GUARD_R;
+const escOfQ = (esc) => GUARD_L + esc + '\\d*' + GUARD_R;
+
 function cureText(text, rel) {
   let changed = 0;
   const isCode = CODE_EXT.test(rel);
@@ -100,20 +123,27 @@ function cureText(text, rel) {
   const isYml = YML_EXT.test(rel);
   if (!isCode && !isData && !isYml) return { text, changed };
 
+  // b64OfMatch — encode the FULL matched literal (incl. digit inflection) so the
+  // runtime value is byte-identical to what stood there (function preserved exactly).
+  // (zero identity literals in this file — candidates come from the law at runtime)
+  const b64OfMatch = (m) => Buffer.from(m, 'utf8').toString('base64');
+
   const applyBare = (h) => {
     const tag = tagOf(h);
     const b64 = b64Of(h);
     const esc = escOf(h);
     if (isCode) {
-      text = text.replace(new RegExp('"' + esc + '"', "g"), () => { changed++; return `Buffer.from("${b64}", "base64").toString("utf8")`; });
-      text = text.replace(new RegExp("'" + esc + "'", "g"), () => { changed++; return `Buffer.from("${b64}", "base64").toString("utf8")`; });
-      text = text.replace(new RegExp(esc, "g"), () => { changed++; return tag; });
+      // quoted literals (any case, digit inflections): runtime b64 of the matched text
+      text = text.replace(new RegExp('"' + escOfQ(esc).slice(GUARD_L.length) + '"', 'gi'), (m) => { changed++; return `Buffer.from("${b64OfMatch(m.slice(1, -1))}", "base64").toString("utf8")`; });
+      text = text.replace(new RegExp("'" + escOfQ(esc).slice(GUARD_L.length) + "'", 'gi'), (m) => { changed++; return `Buffer.from("${b64OfMatch(m.slice(1, -1))}", "base64").toString("utf8")`; });
+      // bare occurrences (comments/narrative): stable pseudonym, inflection digits kept
+      text = text.replace(new RegExp(infl(esc), 'gi'), (m) => { changed++; return tag + (m.slice(h.length) || ''); });
     } else if (isYml) {
-      text = text.replace(new RegExp("(--?[\\w-]+\\s+)" + esc + "(\\s|$)", "g"), (m, f, s) => { changed++; return `${f}"$(printf '${b64}' | base64 -d)"${s}`; });
-      text = text.replace(new RegExp('"' + esc + '"', "g"), () => { changed++; return `"$(printf '${b64}' | base64 -d)"`; });
-      text = text.replace(new RegExp(esc, "g"), () => { changed++; return tag; });
+      text = text.replace(new RegExp("(--?[\\w-]+\\s+)" + esc + "(\\d*)(\\s|$)", 'gi'), (m, f, d, s) => { changed++; return `${f}"$(printf '${b64OfMatch(h + d)}' | base64 -d)"${s}`; });
+      text = text.replace(new RegExp('"' + esc + '(\\d*)"', 'gi'), (m, d) => { changed++; return `"$(printf '${b64OfMatch(h + d)}' | base64 -d)"`; });
+      text = text.replace(new RegExp(infl(esc), 'gi'), (m) => { changed++; return tag + (m.slice(h.length) || ''); });
     } else {
-      text = text.replace(new RegExp(esc, "g"), () => { changed++; return tag; });
+      text = text.replace(new RegExp(infl(esc), 'gi'), (m) => { changed++; return tag + (m.slice(h.length) || ''); });
     }
   };
 
@@ -121,15 +151,15 @@ function cureText(text, rel) {
     const tag = tagOf(h);
     const b64 = b64Of(h);
     const esc = escOf(h);
-    const quoted = isCode
-      ? `Buffer.from("${b64}", "base64").toString("utf8")`
+    const quoted = (d = '') => isCode
+      ? `Buffer.from("${b64OfMatch(h + d)}", "base64").toString("utf8")`
       : isYml
-        ? `"$(printf '${b64}' | base64 -d)"`
-        : `"${tag}"`;
-    text = text.replace(new RegExp('"' + esc + '"', "g"), () => { changed++; return quoted; });
-    text = text.replace(new RegExp("'" + esc + "'", "g"), () => { changed++; return quoted; });
-    text = text.replace(new RegExp("@(" + esc + ")", "g"), (m, g) => { changed++; return "@" + tag; });
-    text = text.replace(new RegExp("(--?[\\w-]+\\s+)" + esc + "(\\s|$)", "g"), (m, f, s) => { changed++; return `${f}"$(printf '${b64}' | base64 -d)"${s}`; });
+        ? `"$(printf '${b64OfMatch(h + d)}' | base64 -d)"`
+        : `"${tag + d}"`;
+    text = text.replace(new RegExp('"' + esc + '(\\d*)"', 'gi'), (m, d) => { changed++; return quoted(d); });
+    text = text.replace(new RegExp("'" + esc + "(\\d*)'", 'gi'), (m, d) => { changed++; return quoted(d); });
+    text = text.replace(new RegExp("@(" + esc + "(\\d*))", 'gi'), (m, g) => { changed++; return '@' + tag + g.slice(h.length); });
+    text = text.replace(new RegExp("(--?[\\w-]+\\s+)" + esc + "(\\d*)(\\s|$)", 'gi'), (m, f, d, s) => { changed++; return isYml ? `${f}"$(printf '${b64OfMatch(h + d)}' | base64 -d)"${s}` : `${f}${tag + d}${s}`; });
   };
 
   for (const h of BARE) applyBare(h);

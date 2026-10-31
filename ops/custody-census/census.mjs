@@ -31,7 +31,7 @@ async function rpc(url, method, params) {
 const SECRETS = {
   SA_HEAD_ACTIVE: process.env.SA_HEAD_ACTIVE, SA_FLEET_KEYS: process.env.SA_FLEET_KEYS,
   STEEM_ACTIVE_WIF: process.env.STEEM_ACTIVE_WIF, STEEM_POSTING_WIF: process.env.STEEM_POSTING_WIF,
-  HEADCORNER: process.env.HEADCORNER, HEADCORNER_CRED: process.env.HEADCORNER_CRED,
+  ACCT00_KEY: process.env.ACCT00_KEY, ACCT00_CRED: process.env.ACCT00_CRED,
   WEAVE_STEEM_WIF: process.env.WEAVE_STEEM_WIF, WEAVE_HIVE_WIF: process.env.WEAVE_HIVE_WIF,
   HIVE_ACTIVE_WIF: process.env.HIVE_ACTIVE_WIF, HIVE_POSTING_WIF: process.env.HIVE_POSTING_WIF,
   BLURT_ACTIVE_WIF: process.env.BLURT_ACTIVE_WIF, BLURT_POSTING_WIF: process.env.BLURT_POSTING_WIF,
@@ -48,7 +48,7 @@ for (const [name, val] of Object.entries(SECRETS)) {
 }
 console.log(`census: ${cands.length} WIF candidates from ${Object.entries(SECRETS).filter(([, v]) => v).length} non-empty secrets`);
 
-const ROSTER = [Buffer.from("aGVhZGNvcm5lcg==", "base64").toString("utf8"), Buffer.from("Y2FzaG1hY2hpbmU=", "base64").toString("utf8"), Buffer.from("aGFyYW4=", "base64").toString("utf8"), Buffer.from("aXNyYWVsbmV3cw==", "base64").toString("utf8"), Buffer.from("bHNh", "base64").toString("utf8"), Buffer.from("bWFjcmFtZQ==", "base64").toString("utf8"), Buffer.from("c2lx", "base64").toString("utf8"), Buffer.from("dG92", "base64").toString("utf8"), Buffer.from("d2lj", "base64").toString("utf8"), Buffer.from("d29n", "base64").toString("utf8"), Buffer.from("d29x", "base64").toString("utf8"), "hcsoldier1", "hcsoldier2", "hcsoldier3", "hcsoldier4", "hcsoldier5", "hcsoldier6", "hcsoldier7"];
+const ROSTER = [Buffer.from("aGVhZGNvcm5lcg==", "base64").toString("utf8"), Buffer.from("Y2FzaG1hY2hpbmU=", "base64").toString("utf8"), Buffer.from("aGFyYW4=", "base64").toString("utf8"), Buffer.from("aXNyYWVsbmV3cw==", "base64").toString("utf8"), Buffer.from("bHNh", "base64").toString("utf8"), Buffer.from("bWFjcmFtZQ==", "base64").toString("utf8"), Buffer.from("c2lx", "base64").toString("utf8"), Buffer.from("dG92", "base64").toString("utf8"), Buffer.from("d2lj", "base64").toString("utf8"), Buffer.from("d29n", "base64").toString("utf8"), Buffer.from("d29x", "base64").toString("utf8"), Buffer.from("aGNzb2xkaWVyMQ==", "base64").toString("utf8"), Buffer.from("aGNzb2xkaWVyMg==", "base64").toString("utf8"), Buffer.from("aGNzb2xkaWVyMw==", "base64").toString("utf8"), Buffer.from("aGNzb2xkaWVyNA==", "base64").toString("utf8"), Buffer.from("aGNzb2xkaWVyNQ==", "base64").toString("utf8"), Buffer.from("aGNzb2xkaWVyNg==", "base64").toString("utf8"), Buffer.from("aGNzb2xkaWVyNw==", "base64").toString("utf8")];
 const steemAccs = await rpc("https://api.steemit.com", "condenser_api.get_accounts", [ROSTER]);
 const hiveRoster = [Buffer.from("aGVhZGNvcm5lcg==", "base64").toString("utf8"), Buffer.from("aXNyYWVsbmV3cw==", "base64").toString("utf8"), Buffer.from("bHNh", "base64").toString("utf8"), Buffer.from("c2lx", "base64").toString("utf8"), Buffer.from("d29x", "base64").toString("utf8")];
 const hiveAccs = await rpc("https://api.hive.blog", "condenser_api.get_accounts", [hiveRoster]).catch(() => []);
