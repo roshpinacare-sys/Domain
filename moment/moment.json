@@ -1,33 +1,28 @@
 {
- "ok": true,
+ "ok": false,
  "format": "moment-watch-v1",
- "publishedAt": "2026-10-31T17:30:09.899Z",
+ "publishedAt": "2026-10-31T18:26:48.150Z",
  "engine": "Domain/agents/moment-watch · R62 sovereign moment",
  "role": "reads the live moment every 30 minutes (market regime, our parity line vs the live internal book, fuel runway, measured anomalies) and records a deterministic directional call that is only ever scored after its horizon has passed - training as measurement, never as promise",
  "market": {
-  "steemUsd": 0.04936235,
-  "steem24h": 2.604145729568542,
-  "sbdUsd": 0.474828,
-  "btcUsd": 77518,
-  "btc24h": 0.4669348320082475,
+  "error": "coingecko -> 429",
   "fearGreed": {
    "value": 30,
    "label": "Fear"
   }
  },
- "paritySbdPerSteem": 0.10395838071891296,
+ "paritySbdPerSteem": null,
  "liveBook": {
-  "bestBid": 0.10371522149072021,
+  "bestBid": 0.10145,
   "bestAsk": 0.10416,
-  "bidsDepthSbd": 405.92,
-  "asksDepthSteem": 10200.47,
+  "bidsDepthSbd": 413.56,
+  "asksDepthSteem": 10223.92,
   "levels": 21,
-  "bidSurplusBps": -23
+  "bidSurplusBps": null
  },
  "regime": {
-  "label": "NEUTRAL",
+  "label": "UNKNOWN",
   "drivers": [
-   "BTC +0.5%",
    "F&G 30"
   ],
   "thresholds": {
@@ -40,44 +35,51 @@
  },
  "runway": {
   "active": false,
-  "weeklySp": 6.21030334100641e-10,
+  "weeklySp": 6.210319812731338e-10,
   "nextPayment": "1969-12-31T23:59:59",
   "remainingSp": 0,
-  "weeklyUsd": 0,
-  "treasuryUsd": 1.6
+  "weeklyUsd": null,
+  "treasuryUsd": null
  },
  "grid": {
   "verdict": "ARMED-WAITING",
   "armed": true,
   "blocker": "sell-side waiting for fuel: 0.000 STEEM commitable < 3 needed (next powerdown: 2026-11-05T10:58:15)",
   "externalFlowUsd": -0.059618,
-  "publishedAt": "2026-10-31T17:17:16.625Z"
+  "publishedAt": "2026-10-31T18:14:57.961Z"
  },
- "moneyPath": null,
- "call": "FLAT",
+ "moneyPath": {
+  "fuel": {
+   "ok": true,
+   "account": "acct-00",
+   "steem": 1.811,
+   "sbd": 3.075,
+   "sp": 1511.37,
+   "spVests": 2433677.242466001,
+   "powerdown": {
+    "active": true,
+    "rateVests": 507200.804661,
+    "rateSp": 311.07,
+    "nextPayout": "2026-11-05T10:58:15",
+    "remainingVests": 2028803218642
+   }
+  },
+  "redemption": null
+ },
+ "call": null,
  "callStats": {
-  "resolved": 86,
-  "hits": 23,
-  "hitRatePct": 27,
+  "resolved": 85,
+  "hits": 22,
+  "hitRatePct": 26,
   "horizonH": 6,
   "thresholdPct": 3
  },
  "resolvedNow": 0,
  "insights": [
   {
-   "kind": "parity-edge",
-   "tone": "good",
-   "text": "עומק-קנייה חי 23bps מתחת לקו-הזהות (bid 0.1037 מול parity 0.1040) — עודף מדוד לגריד."
-  },
-  {
    "kind": "sbd-inventory",
    "tone": "warn",
    "text": "צוואר-הקנייה של הגריד: sell-side waiting for fuel: 0.000 STEEM commitable < 3 needed (next powerdown: 2026-11-05T10:58:15)"
-  },
-  {
-   "kind": "fuel",
-   "tone": "info",
-   "text": "דלק נוחת 1969-12-31 — ≈0 SP ≈ 0.0$ בסימון חי."
   },
   {
    "kind": "deposits",
