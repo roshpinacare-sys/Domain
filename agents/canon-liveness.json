@@ -1,9 +1,9 @@
 {
  "ok": true,
- "at": "2026-10-19T10:18:01.117Z",
+ "at": "2026-10-31T10:37:32.832Z",
  "agent": "canon-liveness v1.0.0 (Z-42, CR-0005 — one-bloc nerves)",
  "origin": "the 2026-10-02T23:44Z honest null was root-caused to a structurally dead fallback leg (anonymous raw on a PRIVATE canon repo → 404 forever); reachability is now a booked fact with named legs, not an environment surprise",
- "verdict": "CANON-DARK",
+ "verdict": "RAIL-REACHABLE",
  "legs": [
   {
    "id": "L1",
@@ -15,19 +15,19 @@
   {
    "id": "L2",
    "name": "authenticated git rail (embedded remote creds, never printed)",
-   "reachable": false,
-   "verdict": "RAIL-DOWN",
-   "detail": "Defi=unreachable(anonymous-https(no-prompt)) Domain@8b560a15fb52(local-clone(origin)) steem=unreachable(anonymous-https(no-prompt))"
+   "reachable": true,
+   "verdict": "RAIL-UP",
+   "detail": "Defi@2d1a13931e76(anonymous-https(no-prompt)) Domain@be335a86847f(local-clone(origin)) steem@0854732230c3(anonymous-https(no-prompt))"
   },
   {
    "id": "L3",
    "name": "anonymous raw probe (the proven-dead fallback, kept as a standing fact-check)",
-   "status": 404,
-   "verdict": "DEAD-AS-EXPECTED-PRIVATE",
-   "detail": "anonymous GET fleet/KPI.json → HTTP 404 (private canon: 404 expected; 200 would mean the canon went public — book it, never assume it)"
+   "status": 200,
+   "verdict": "PUBLIC-FACT-CHANGE",
+   "detail": "anonymous GET fleet/KPI.json → HTTP 200 (private canon: 404 expected; 200 would mean the canon went public — book it, never assume it)"
   }
  ],
- "deskGuidance": "CANON-DARK: every cross-repo desk is an island — fix the legs before trusting any cross-repo number",
+ "deskGuidance": "content not adjacent: desks book honest nulls (never estimated) and name this verdict as the reason",
  "doctrineMarker": {
   "law": "CANON-REACHABILITY LAW + ONE-CANON LAW (Defi/fleet/DOCTRINE-economics.md v1.7)"
  }

@@ -1,13 +1,13 @@
 # Ventures — the fleet's public business board (two-sided ledger)
 
-_venture-desk v1.2.0 · 2026-10-19T10:17:43.765Z · doctrine: check failed this run (honest) · leg: not readable in this context (canon-liveness names the legs)_
+_venture-desk v1.2.0 · 2026-10-31T10:37:16.268Z · doctrine: check failed this run (honest) · leg: not readable in this context (canon-liveness names the legs)_
 
 Born from the clodfarm study (Z-31): they built the best stop-spending governor we have seen and no earn side at all. We adopt the governor math and bind the missing half as law. Standing truth:
 
 **measured ledger unreachable this run — booked as null, never estimated**
 
-- **EARN-GOVERNOR (measured surfaces):** market desk realized lifetime **3.466847 SWAP.HIVE** ≈ **$0.1689** across 3 fills (fills-ledger, deduped, chain-truthed)
-- **Price oracle (measured this run):** HIVE $0.04871854 · STEEM $0.052505 · BLURT $0.00130526
+- **EARN-GOVERNOR (measured surfaces):** market desk realized lifetime **3.466847 SWAP.HIVE** ≈ **$0.162287** across 3 fills (fills-ledger, deduped, chain-truthed)
+- **Price oracle (measured this run):** HIVE $0.0468111 · STEEM $0.04857093 · BLURT $0.00130526
 
 ## V1 · Curation house — OPEN
 - **Thesis:** disciplined public-external curation (10 soldiers lane; owner lanes steem/hive/blurt owned by the weave daemon) — our votes ARE the traffic
@@ -15,9 +15,9 @@ Born from the clodfarm study (Z-31): they built the best stop-spending governor 
 - **Earn line:** pending accrual measured per cycle; per-day line set after 7d of book (honest TBD)
 - **Kill rule:** no measurable curation accrual in 3 consecutive cycles → weight→0 (IDLE)
 - **Evidence:** curation-book.json (marker "soldiers lane of the fleet curation") ✓ · soldiers-curate.cjs (marker "verify-then-sign") ✓ · money-ledger.json (marker "headBlurt") ✓ → mechanism PROVEN in-repo
-- **lastRun:** {"day":"2026-10-19","verified":0,"attempted":0,"soldiersWithKey":10}
-- **laneSurfaces:** {"steem":{"stake":"32.344 SP","liquid":"0.000 STEEM","debt":"0.001 SBD"},"hive":{"stake":"32.451 HP","votingPower":100,"pending":{"liquid":"0.000 HIVE","debt":"0.000 HBD","vests":"0.000000 VESTS"},"rcPct":100},"blurt":null}
-- **earn:** measured pending $0 (0 HIVE @$0.04871854)
+- **lastRun:** {"day":"2026-10-29","verified":0,"attempted":0,"soldiersWithKey":0}
+- **laneSurfaces:** {"steem":{"stake":"2414.131 SP","liquid":"4.061 STEEM","debt":"0.153 SBD"},"hive":{"stake":"32.466 HP","votingPower":100,"pending":{"liquid":"0.000 HIVE","debt":"0.000 HBD","vests":"0.000000 VESTS"},"rcPct":100},"blurt":null}
+- **earn:** measured pending $0 (0 HIVE @$0.0468111)
 - **z34Probe:** soldiers lane verified ALIVE by DRYRUN probe (78 candidates/8 soldiers, 2026-10-02T21:4xZ) — the zero tally that morning was transient, kill-rule NOT triggered
 
 ## V2 · Market desk — PROPOSED
@@ -29,10 +29,10 @@ Born from the clodfarm study (Z-31): they built the best stop-spending governor 
 - **swapHiveTreasury:** null
 - **hiveLiquid:** null
 - **railFrontier:** null
-- **lastDeskRun:** 2026-10-19T06:19:44.158Z
+- **lastDeskRun:** 2026-10-31T05:57:19.973Z
 - **realizedLifetime:** 3.466847 SWAP.HIVE across 3 fills (fills-ledger, deduped, chain-truthed)
-- **realizedLifetimeUsd:** $0.1689 at measured HIVE $0.04871854
-- **earnLineProgress:** one settled wave ($0.1689) already exceeds the 7d line budget ($0.14) — line on pace, rate still measured per-day by KPI oracle
+- **realizedLifetimeUsd:** $0.162287 at measured HIVE $0.0468111
+- **earnLineProgress:** one settled wave ($0.162287) already exceeds the 7d line budget ($0.14) — line on pace, rate still measured per-day by KPI oracle
 
 ## V3 · Knowledge house — OPEN
 - **Thesis:** public verified playbooks (rail-health, verify-then-sign, delta-settlement, the two-sided ledger itself) as the authority funnel

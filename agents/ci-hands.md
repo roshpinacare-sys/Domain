@@ -1,33 +1,33 @@
 # CI Hands — the fleet's hands on its own CI estate (trycua/cua adoption)
 
-_ci-hands v1.0.0 · 2026-10-19T10:18:16.982Z · env-token (redacted) · stasis armed/free_
+_ci-hands v1.0.0 · 2026-10-31T10:38:12.652Z · env-token (redacted) · stasis armed/free_
 
-**CI-HANDS keyless floor: 3/16 reached — the rest booked UNREACHABLE (never invented)**
+**CI-HANDS REACHED 16/16 · lanes 38/70 green (54%) · 5 active-red · 0 startup-failures**
 
 | repo | lanes | green | active-red | self-healed | history-transient | verdict |
 |---|---|---|---|---|---|---|
-| saos-sovereign-platform | — | — | — | — | — | UNREACHABLE (HTTP 404) |
-| steem | — | — | — | — | — | UNREACHABLE (HTTP 404) |
-| Domain | 13 | 11 | 2 | 0 | 0 | measured |
-| Console | 7 | 7 | 0 | 0 | 0 | measured |
-| Zip | — | — | — | — | — | UNREACHABLE (HTTP 404) |
-| roshpina | — | — | — | — | — | UNREACHABLE (HTTP 404) |
-| anchor-baseline | — | — | — | — | — | UNREACHABLE (HTTP 404) |
-| Saosmartwallet | — | — | — | — | — | UNREACHABLE (HTTP 404) |
-| Sdk | — | — | — | — | — | UNREACHABLE (HTTP 404) |
-| Project-files | — | — | — | — | — | UNREACHABLE (HTTP 404) |
-| Adsmarket | — | — | — | — | — | UNREACHABLE (HTTP 404) |
-| Defi | — | — | — | — | — | UNREACHABLE (HTTP 404) |
-| saos-dex | 7 | 4 | 3 | 0 | 0 | measured |
-| saos-jummper | — | — | — | — | — | UNREACHABLE (HTTP 404) |
-| saos-control-center | — | — | — | — | — | UNREACHABLE (HTTP 404) |
-| saos-sovereign-foundry | — | — | — | — | — | UNREACHABLE (HTTP 404) |
+| saos-sovereign-platform | 1 | 1 | 0 | 0 | 0 | measured |
+| steem | 6 | 3 | 2 | 0 | 0 | measured |
+| Domain | 21 | 21 | 0 | 0 | 0 | measured |
+| Console | 6 | 6 | 0 | 0 | 0 | measured |
+| Zip | 2 | 1 | 0 | 1 | 0 | measured |
+| roshpina | 1 | 1 | 0 | 0 | 0 | measured |
+| anchor-baseline | 4 | 0 | 0 | 2 | 2 | measured |
+| Saosmartwallet | 3 | 1 | 1 | 0 | 0 | measured |
+| Sdk | 3 | 0 | 0 | 2 | 1 | measured |
+| Project-files | 3 | 0 | 0 | 1 | 2 | measured |
+| Adsmarket | 3 | 0 | 0 | 1 | 1 | measured |
+| Defi | 3 | 0 | 0 | 0 | 3 | measured |
+| saos-dex | 5 | 4 | 1 | 0 | 0 | measured |
+| saos-jummper | 3 | 0 | 0 | 0 | 3 | measured |
+| saos-control-center | 3 | 0 | 0 | 0 | 0 | measured |
+| saos-sovereign-foundry | 3 | 0 | 1 | 0 | 1 | measured |
 
 **Proposals (booked, not auto-opened — tier law):**
-- Domain/.github/workflows/office3d-guard.yml: ACTIVE-RED — diagnose via jobs+logs (Task 25 method), fix, prove by dispatch/push
-- Domain/.github/workflows/daily-digest.yml: ACTIVE-RED — diagnose via jobs+logs (Task 25 method), fix, prove by dispatch/push
+- steem/.github/workflows/gitleaks.yml: ACTIVE-RED+RECURRING — diagnose via jobs+logs (Task 25 method), fix, prove by dispatch/push
+- steem/.github/workflows/workflow-yaml-guard.yml: ACTIVE-RED — diagnose via jobs+logs (Task 25 method), fix, prove by dispatch/push
+- Saosmartwallet/.github/workflows/ci.yml: ACTIVE-RED+RECURRING — diagnose via jobs+logs (Task 25 method), fix, prove by dispatch/push
 - saos-dex/.github/workflows/selftest.yml: ACTIVE-RED+RECURRING — diagnose via jobs+logs (Task 25 method), fix, prove by dispatch/push
-- saos-dex/.github/workflows/gitleaks.yml: ACTIVE-RED+RECURRING — diagnose via jobs+logs (Task 25 method), fix, prove by dispatch/push
-- saos-dex/.github/workflows/hive-heartbeat.yml: ACTIVE-RED — diagnose via jobs+logs (Task 25 method), fix, prove by dispatch/push
+- saos-sovereign-foundry/.github/workflows/gitleaks.yml: ACTIVE-RED+RECURRING — diagnose via jobs+logs (Task 25 method), fix, prove by dispatch/push
 
 _cua-bench contract adopted: this book IS the summary.json; results + trajectory are in ci-hands.json. GUI layer = future tier-C rung (CUA-ADOPTION.md)._
