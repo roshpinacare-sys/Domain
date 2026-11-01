@@ -1,30 +1,559 @@
 {
   "protocol": "SAOS-DEX-ACTIVATION/1",
-  "at": "2026-11-01T14:21:38.470Z",
+  "at": "2026-11-01T14:49:28.832Z",
   "agent": "dex-activation v1.0.0 (CR-0077 THE DEX IGNITION · two-sided ladder flow)",
-  "verdict": "REFUSED-CONSERVATION (the core book is broken — the desk never trades on a broken book)",
+  "mode": "KEYLESS-ACTIVATION-LADDER",
   "stasisHalted": false,
   "lane": "dex-activation",
-  "intentsDrafted": 0,
-  "fills": [],
+  "verdict": "IGNITED (3/3 rounds filled)",
+  "batch": "ACT-2026110114-e30bfd23",
+  "settledBatch": "ACT-2026110114-e30bfd23",
+  "coreLedger": {
+    "seq": 388,
+    "at": "2026-11-01T14:48:27.429Z",
+    "ageHours": 0.02,
+    "conservationOk": true,
+    "attestation": "13018c4b6c382926"
+  },
+  "roster": [
+    "acct-00"
+  ],
+  "poolsArmed": [
+    "P1",
+    "P2",
+    "P3"
+  ],
+  "rounds": {
+    "configured": 3,
+    "run": 3,
+    "filled": 3
+  },
+  "intentsDrafted": 18,
+  "intents": [],
+  "wires": 12,
+  "fills": [
+    {
+      "seq": 390,
+      "type": "AGENT_FILL",
+      "agent": "operator",
+      "from": "STEEM",
+      "to": "WSTEEM",
+      "amountIn": "1030",
+      "amountOut": "66",
+      "routeIds": [
+        "P1"
+      ],
+      "hops": [
+        {
+          "pool": "P1",
+          "in": "1030",
+          "out": "66",
+          "fee": "0"
+        }
+      ],
+      "edgeMu": "-964",
+      "fairUsed": "PEG-1:1",
+      "feesMu": "0"
+    },
+    {
+      "seq": 392,
+      "type": "AGENT_FILL",
+      "agent": "operator",
+      "from": "STEEM",
+      "to": "WSTEEM",
+      "amountIn": "10304",
+      "amountOut": "638",
+      "routeIds": [
+        "P1"
+      ],
+      "hops": [
+        {
+          "pool": "P1",
+          "in": "10304",
+          "out": "638",
+          "fee": "0"
+        }
+      ],
+      "edgeMu": "-9666",
+      "fairUsed": "PEG-1:1",
+      "feesMu": "0"
+    },
+    {
+      "seq": 394,
+      "type": "AGENT_FILL",
+      "agent": "operator",
+      "from": "STEEM",
+      "to": "WSTEEM",
+      "amountIn": "51521",
+      "amountOut": "2685",
+      "routeIds": [
+        "P1"
+      ],
+      "hops": [
+        {
+          "pool": "P1",
+          "in": "51521",
+          "out": "2685",
+          "fee": "0"
+        }
+      ],
+      "edgeMu": "-48836",
+      "fairUsed": "PEG-1:1",
+      "feesMu": "0"
+    },
+    {
+      "seq": 396,
+      "type": "AGENT_FILL",
+      "agent": "operator",
+      "from": "WSBD",
+      "to": "SBD",
+      "amountIn": "3816",
+      "amountOut": "3664",
+      "routeIds": [
+        "P2"
+      ],
+      "hops": [
+        {
+          "pool": "P2",
+          "in": "3816",
+          "out": "3664",
+          "fee": "0"
+        }
+      ],
+      "edgeMu": "-152",
+      "fairUsed": "PEG-1:1",
+      "feesMu": "0"
+    },
+    {
+      "seq": 397,
+      "type": "AGENT_FILL",
+      "agent": "operator",
+      "from": "SBD",
+      "to": "WSBD",
+      "amountIn": "2511",
+      "amountOut": "2614",
+      "routeIds": [
+        "P2"
+      ],
+      "hops": [
+        {
+          "pool": "P2",
+          "in": "2511",
+          "out": "2614",
+          "fee": "0"
+        }
+      ],
+      "edgeMu": "103",
+      "fairUsed": "PEG-1:1",
+      "feesMu": "0"
+    },
+    {
+      "seq": 399,
+      "type": "AGENT_FILL",
+      "agent": "operator",
+      "from": "WSBD",
+      "to": "SBD",
+      "amountIn": "38161",
+      "amountOut": "36593",
+      "routeIds": [
+        "P2"
+      ],
+      "hops": [
+        {
+          "pool": "P2",
+          "in": "38161",
+          "out": "36593",
+          "fee": "7"
+        }
+      ],
+      "edgeMu": "-1568",
+      "fairUsed": "PEG-1:1",
+      "feesMu": "7"
+    },
+    {
+      "seq": 400,
+      "type": "AGENT_FILL",
+      "agent": "operator",
+      "from": "SBD",
+      "to": "WSBD",
+      "amountIn": "7701",
+      "amountOut": "8036",
+      "routeIds": [
+        "P2"
+      ],
+      "hops": [
+        {
+          "pool": "P2",
+          "in": "7701",
+          "out": "8036",
+          "fee": "1"
+        }
+      ],
+      "edgeMu": "335",
+      "fairUsed": "PEG-1:1",
+      "feesMu": "1"
+    },
+    {
+      "seq": 402,
+      "type": "AGENT_FILL",
+      "agent": "operator",
+      "from": "WSBD",
+      "to": "SBD",
+      "amountIn": "190806",
+      "amountOut": "181546",
+      "routeIds": [
+        "P2"
+      ],
+      "hops": [
+        {
+          "pool": "P2",
+          "in": "190806",
+          "out": "181546",
+          "fee": "36"
+        }
+      ],
+      "edgeMu": "-9260",
+      "fairUsed": "PEG-1:1",
+      "feesMu": "36"
+    },
+    {
+      "seq": 403,
+      "type": "AGENT_FILL",
+      "agent": "operator",
+      "from": "SBD",
+      "to": "WSBD",
+      "amountIn": "7701",
+      "amountOut": "8148",
+      "routeIds": [
+        "P2"
+      ],
+      "hops": [
+        {
+          "pool": "P2",
+          "in": "7701",
+          "out": "8148",
+          "fee": "1"
+        }
+      ],
+      "edgeMu": "447",
+      "fairUsed": "PEG-1:1",
+      "feesMu": "1"
+    },
+    {
+      "seq": 405,
+      "type": "AGENT_FILL",
+      "agent": "operator",
+      "from": "STEEM",
+      "to": "SBD",
+      "amountIn": "1531",
+      "amountOut": "153",
+      "routeIds": [
+        "P3"
+      ],
+      "hops": [
+        {
+          "pool": "P3",
+          "in": "1531",
+          "out": "153",
+          "fee": "3"
+        }
+      ],
+      "edgeMu": "-12",
+      "fairUsed": "CEX-FAIR (SBD per STEEM)",
+      "feesMu": "3"
+    },
+    {
+      "seq": 407,
+      "type": "AGENT_FILL",
+      "agent": "operator",
+      "from": "STEEM",
+      "to": "SBD",
+      "amountIn": "15312",
+      "amountOut": "1518",
+      "routeIds": [
+        "P3"
+      ],
+      "hops": [
+        {
+          "pool": "P3",
+          "in": "15312",
+          "out": "1518",
+          "fee": "38"
+        }
+      ],
+      "edgeMu": "-136",
+      "fairUsed": "CEX-FAIR (SBD per STEEM)",
+      "feesMu": "38"
+    },
+    {
+      "seq": 408,
+      "type": "AGENT_FILL",
+      "agent": "operator",
+      "from": "SBD",
+      "to": "STEEM",
+      "amountIn": "1540",
+      "amountOut": "15454",
+      "routeIds": [
+        "P3"
+      ],
+      "hops": [
+        {
+          "pool": "P3",
+          "in": "1540",
+          "out": "15454",
+          "fee": "3"
+        }
+      ],
+      "edgeMu": "1201",
+      "fairUsed": "CEX-FAIR (STEEM per SBD)",
+      "feesMu": "3"
+    },
+    {
+      "seq": 410,
+      "type": "AGENT_FILL",
+      "agent": "operator",
+      "from": "STEEM",
+      "to": "SBD",
+      "amountIn": "54664",
+      "amountOut": "5286",
+      "routeIds": [
+        "P3"
+      ],
+      "hops": [
+        {
+          "pool": "P3",
+          "in": "54664",
+          "out": "5286",
+          "fee": "136"
+        }
+      ],
+      "edgeMu": "-620",
+      "fairUsed": "CEX-FAIR (SBD per STEEM)",
+      "feesMu": "136"
+    },
+    {
+      "seq": 411,
+      "type": "AGENT_FILL",
+      "agent": "operator",
+      "from": "SBD",
+      "to": "STEEM",
+      "amountIn": "7430",
+      "amountOut": "75406",
+      "routeIds": [
+        "P3"
+      ],
+      "hops": [
+        {
+          "pool": "P3",
+          "in": "7430",
+          "out": "75406",
+          "fee": "18"
+        }
+      ],
+      "edgeMu": "6638",
+      "fairUsed": "CEX-FAIR (STEEM per SBD)",
+      "feesMu": "18"
+    },
+    {
+      "seq": 412,
+      "type": "AGENT_FILL",
+      "agent": "operator",
+      "from": "WSBD",
+      "to": "WSTEEM",
+      "amountIn": "3816",
+      "amountOut": "1408",
+      "routeIds": [
+        "P2",
+        "P3",
+        "P1"
+      ],
+      "hops": [
+        {
+          "pool": "P2",
+          "in": "3816",
+          "out": "3606",
+          "fee": "0"
+        },
+        {
+          "pool": "P3",
+          "in": "3606",
+          "out": "34068",
+          "fee": "9"
+        },
+        {
+          "pool": "P1",
+          "in": "34068",
+          "out": "1408",
+          "fee": "0"
+        }
+      ],
+      "edgeMu": "-33911",
+      "fairUsed": "CEX-FAIR (STEEM per SBD)",
+      "feesMu": "9"
+    },
+    {
+      "seq": 414,
+      "type": "AGENT_FILL",
+      "agent": "operator",
+      "from": "WSBD",
+      "to": "WSTEEM",
+      "amountIn": "38161",
+      "amountOut": "6007",
+      "routeIds": [
+        "P2",
+        "P3",
+        "P1"
+      ],
+      "hops": [
+        {
+          "pool": "P2",
+          "in": "38161",
+          "out": "36001",
+          "fee": "7"
+        },
+        {
+          "pool": "P3",
+          "in": "36001",
+          "out": "271397",
+          "fee": "90"
+        },
+        {
+          "pool": "P1",
+          "in": "271397",
+          "out": "6007",
+          "fee": "1"
+        }
+      ],
+      "edgeMu": "-347192",
+      "fairUsed": "CEX-FAIR (STEEM per SBD)",
+      "feesMu": "98"
+    },
+    {
+      "seq": 416,
+      "type": "AGENT_FILL",
+      "agent": "operator",
+      "from": "STEEM",
+      "to": "WSTEEM",
+      "amountIn": "1398",
+      "amountOut": "17",
+      "routeIds": [
+        "P1"
+      ],
+      "hops": [
+        {
+          "pool": "P1",
+          "in": "1398",
+          "out": "17",
+          "fee": "0"
+        }
+      ],
+      "edgeMu": "-1381",
+      "fairUsed": "PEG-1:1",
+      "feesMu": "0"
+    },
+    {
+      "seq": 419,
+      "type": "AGENT_FILL",
+      "agent": "operator",
+      "from": "STEEM",
+      "to": "WSTEEM",
+      "amountIn": "1400",
+      "amountOut": "17",
+      "routeIds": [
+        "P1"
+      ],
+      "hops": [
+        {
+          "pool": "P1",
+          "in": "1400",
+          "out": "17",
+          "fee": "0"
+        }
+      ],
+      "edgeMu": "-1383",
+      "fairUsed": "PEG-1:1",
+      "feesMu": "0"
+    }
+  ],
   "rejects": [],
   "measure24h": {
     "windowHours": 24,
-    "at": "2026-11-01T14:21:38.470Z",
-    "fills": 0,
-    "volumeInMu": "0",
-    "volumeOutMu": "0",
-    "fees24hMu": "0",
-    "perPool": {},
-    "perAgent": {},
+    "at": "2026-11-01T14:49:28.832Z",
+    "fills": 18,
+    "volumeInMu": "438803",
+    "volumeOutMu": "349256",
+    "fees24hMu": "350",
+    "perPool": {
+      "P1": {
+        "swaps": 7,
+        "inMu": "371118",
+        "outMu": "10838",
+        "feesMu": "1"
+      },
+      "P2": {
+        "swaps": 8,
+        "inMu": "292673",
+        "outMu": "280208",
+        "feesMu": "52"
+      },
+      "P3": {
+        "swaps": 7,
+        "inMu": "120084",
+        "outMu": "403282",
+        "feesMu": "297"
+      }
+    },
+    "perAgent": {
+      "operator": {
+        "fills": 18,
+        "volumeInMu": "438803",
+        "feesMu": "350"
+      }
+    },
     "_raw": {
-      "fills": 0,
-      "volumeInMu": "0",
-      "volumeOutMu": "0",
-      "feesMu": "0",
-      "perPool": {},
-      "perAgent": {}
+      "fills": 18,
+      "volumeInMu": "438803",
+      "volumeOutMu": "349256",
+      "feesMu": "350",
+      "perPool": {
+        "P1": {
+          "swaps": 7,
+          "inMu": "371118",
+          "outMu": "10838",
+          "feesMu": "1"
+        },
+        "P2": {
+          "swaps": 8,
+          "inMu": "292673",
+          "outMu": "280208",
+          "feesMu": "52"
+        },
+        "P3": {
+          "swaps": 7,
+          "inMu": "120084",
+          "outMu": "403282",
+          "feesMu": "297"
+        }
+      },
+      "perAgent": {
+        "operator": {
+          "fills": 18,
+          "volumeInMu": "438803",
+          "feesMu": "350"
+        }
+      }
     }
   },
+  "laws": [
+    "keyless + internal-only (SIM units; zero broadcast, zero keys, zero real-money)",
+    "staged-lane law (CR-0077): STASIS halts only when the lane is not allowed; the master brake never flips",
+    "two-sided ladder on every live pool — a one-sided book is a direction bet and it is REFUSED",
+    "sizes 10/100/500bps of input-side depth; dust refuses honestly; 5%-depth cap is the core's own law",
+    "minOut = core route quote −0.5%; a minOut miss refuses (REFUSED-MINOUT) — never a hope",
+    "roster split: operator 40% / soldiers the rest; wire ≤10% of free treasury per batch (the core's law)",
+    "single-writer per queue file: the desk owns dex-activation-queue.json, the mesh owns dex-intents.json",
+    "idempotency: deterministic batch id — a replayed hour settles nothing twice",
+    "the 24h numbers are measured from the append-only ledger — fail-closed honest zeros when absent"
+  ],
   "errors": []
 }
