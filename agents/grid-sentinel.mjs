@@ -134,9 +134,19 @@ for (const repo of repos) {
     if (v === 'BEAT' || v === 'WARM') hasWarmOrBetter = true;
     if (success24) anySuccess24h = true;
     if (lastConcl === 'failure') anyFailureRecent = true;
+    // trigger-truth (false-alarm cure, 2026-11-01): a workflow whose history carries
+    // event='schedule' runs is a SCHEDULED artery; push/dispatch-only workflows that
+    // merely sit idle are NOT silence — measured, not name-guessed.
+    let everScheduled = wr.some(r => r.event === 'schedule')
+      || runs.some(r => r.workflow_id === w.id && r.event === 'schedule');
+    if (!everScheduled && (v === 'SILENT' || v === 'NEVER')) {
+      const wfRuns = await gh(`/repos/${OWNER}/${name}/actions/workflows/${w.id}/runs?per_page=20`);
+      if (!wfRuns.__err) everScheduled = (wfRuns.workflow_runs || []).some(r => r.event === 'schedule');
+    }
     rec.arteries.push({
       p: w.path.replace('.github/workflows/', ''), st: w.state,
       last: lastAge, concl: lastConcl, ev: lastEvent, running, v,
+      sched: everScheduled,
     });
     // T1 — 60-day-law counter: wake workflows disabled by inactivity
     if (w.state === 'disabled_inactivity') {
@@ -154,9 +164,15 @@ for (const repo of repos) {
   else if (silentOrNever.length === rec.arteries.length && rec.arteries.length > 0) rec.verdict = 'STALE';
   else rec.verdict = 'MIXED';
 
-  // T3 candidates: public-repo silent scheduled arteries
+  // T3 candidates: public-repo silent arteries that are SCHEDULED by measurement.
+  // The old filter flagged ANY silent workflow — dispatch-only lanes (key-census-relay,
+  // gitleaks, identity-guard, pages-deploy — measured 2026-11-01: none has on:schedule)
+  // fired GRID-SILENCE forever as false alarms and the issue never cleared.
+  // Now: SILENT alarms only a workflow that history proves is scheduled (event=schedule
+  // runs); a NEVER-run workflow stays a candidate only under the pulse-name law (T2 lane).
   if (publicRepo) {
-    rec.silentPublic = rec.arteries.filter(a => a.v === 'SILENT' || (a.v === 'NEVER' && PULSE_RX.test(a.p)));
+    rec.silentPublic = rec.arteries.filter(a =>
+      (a.v === 'SILENT' && a.sched) || (a.v === 'NEVER' && PULSE_RX.test(a.p)));
   }
   matrix.repos.push(rec);
   await sleep(120); // gentle pacing
@@ -182,7 +198,7 @@ for (const rec of matrix.repos) {
 // ---- 3. T3 — ONE idempotent silence issue (public repos only) ----
 const publicSilent = matrix.repos
   .filter(r => r.vis === 'public' && r.silentPublic && r.silentPublic.length)
-  .map(r => ({ repo: r.repo, arteries: r.silentPublic.map(a => `${a.p} (${a.v}, last=${a.last ?? 'never'}m)`) }));
+  .map(r => ({ repo: r.repo, arteries: r.silentPublic.map(a => `${a.p} (${a.v}, last=${a.last ?? 'never'}m, sched=${a.sched ? 'yes' : 'no'})`) }));
 const ISSUE_TITLE = 'GRID-SILENCE: public arteries measured silent';
 const bodyNow =
   `> grid-sentinel — automated. Measured ${matrix.generatedAt}.\n` +
