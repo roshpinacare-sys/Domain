@@ -1,6 +1,6 @@
 {
  "format": "twin-registry-v1",
- "updatedAt": "2026-10-02T11:20:00Z",
+ "updatedAt": "2026-11-01T14:30:00Z",
  "registeredBy": "r147-c domain-power wave",
  "law": "every near-duplicate public pair carries ONE distinct real function per side, or it is registered pending with an owner. The audit below measures this daily, on the live sites, not on names.",
  "pairs": [
@@ -26,14 +26,27 @@
    "b": "Domain:/market/index-en.html",
    "baselineJaccard5": 0.981,
    "baselineMeasuredAt": "2026-10-02T11:16Z (live fetch, r147-c audit)",
-   "differentiated": true,
+   "differentiated": false,
    "distinctA": "about = THE DESKS: the community page — renders about/team.json (11 desks, own briefs, chain-measured stake/voting-power, 48h external engagement). The public face of the people behind the accounts.",
    "distinctB": "market/index-en = LIVE MARKET DESK: the investor page — renders the mirrored dex books (dex/money.json + dex/watch.json, hourly from the Console truth machines) with honest staleness stamps. Neither capability existed on either page before 2026-10-02 (both pages loaded zero JSON).",
    "evidence": {
     "aMarker": "about/team.json",
     "bMarker": "dex/money.json",
-    "books": ["about/team.json", "dex/money.json", "dex/watch.json"],
+    "books": [
+     "about/team.json",
+     "dex/money.json",
+     "dex/watch.json"
+    ],
     "absenceCross": "about must NOT load dex/money.json; market/index-en must NOT load about/team.json (checked every run)"
+   },
+   "status": "RETIRED-DEDUP",
+   "retiredAt": "2026-11-01T14:30:00Z",
+   "note": "RETIRED-DEDUP (honest re-registration, 2026-11-01): the twin concern is dissolved by measured reality. Side B (market/index-en.html) was retired to a copy-redirect tombstone under the one-canonical law (\"one generation, one truth\") — it no longer renders any book and no longer measures as a near-duplicate (intra-pair jaccard5 = null on 2026-11-01 live report). Side A (about/index.html) is the surviving canonical. The team book (about/team.json) was removed from the public surface under the P0-1 exposure law (estate-scrub) — the roster renders its honest unavailable fallback instead. No distinct-function requirement applies to a tombstone-vs-canonical pair. Owner: estate operator.",
+   "priorState": {
+    "differentiated": true,
+    "baselineJaccard5": 0.981,
+    "baselineMeasuredAt": "2026-10-02T11:16Z (live fetch, r147-c audit)",
+    "reasonRetired": "daily lost-evidence fires 2026-10-12→11-01 (issues #10, #79-#81): evidence was never comitted (about/team.json absent from git history) and side B was later tombstoned by the dedup law"
    }
   },
   {
