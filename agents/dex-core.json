@@ -1,6 +1,6 @@
 {
   "protocol": "SAOS-DEX-CORE/1",
-  "at": "2026-11-01T14:20:55.659Z",
+  "at": "2026-11-01T14:48:27.429Z",
   "agent": "dex-core v1.6.0 (R77 THE OWNER GATES)",
   "mode": "KEYLESS-ATOMIC-INTERNAL",
   "stasisHalted": false,
@@ -103,7 +103,7 @@
     "measured": true,
     "node": "https://api.steemit.com"
   },
-  "seq": 386,
+  "seq": 388,
   "vault": {
     "custody": {
       "STEEM": "697820000",
@@ -114,8 +114,8 @@
       "SAOS": "0"
     },
     "custodyProvenance": {
-      "STEEM": "MEASURED condenser owner @https://api.steemit.com 2026-11-01T14:20:55.659Z (CUSTODY-DROP)",
-      "SBD": "MEASURED condenser owner @https://api.steemit.com 2026-11-01T14:20:55.659Z (CUSTODY-DROP)",
+      "STEEM": "MEASURED condenser owner @https://api.steemit.com 2026-11-01T14:48:27.429Z (CUSTODY-DROP)",
+      "SBD": "MEASURED condenser owner @https://api.steemit.com 2026-11-01T14:48:27.429Z (CUSTODY-DROP)",
       "HIVE": "CUSTODY-CLASS OBSERVED-UNCONTROLLED — observed on-chain, never custody, until key material verifies (R42/R38 law)",
       "HBD": "CUSTODY-CLASS OBSERVED-UNCONTROLLED — observed on-chain, never custody, until key material verifies (R42/R38 law)",
       "BLURT": "CUSTODY-CLASS OBSERVED-POST-KEYED — observed on-chain, never custody, until key material verifies (R42/R38 law)",
@@ -132,9 +132,9 @@
     "observedProvenance": {
       "STEEM": null,
       "SBD": null,
-      "HIVE": "MEASURED HIVE owner @https://api.hive.blog 2026-11-01T14:20:55.659Z (class OBSERVED-UNCONTROLLED)",
-      "HBD": "MEASURED HIVE owner @https://api.hive.blog 2026-11-01T14:20:55.659Z (class OBSERVED-UNCONTROLLED)",
-      "BLURT": "MEASURED BLURT owner @https://blurt-rpc.saboin.com 2026-11-01T14:20:55.659Z (class OBSERVED-POST-KEYED)",
+      "HIVE": "MEASURED HIVE owner @https://api.hive.blog 2026-11-01T14:48:27.429Z (class OBSERVED-UNCONTROLLED)",
+      "HBD": "MEASURED HIVE owner @https://api.hive.blog 2026-11-01T14:48:27.429Z (class OBSERVED-UNCONTROLLED)",
+      "BLURT": "MEASURED BLURT owner @https://blurt-rpc.saboin.com 2026-11-01T14:48:27.429Z (class OBSERVED-POST-KEYED)",
       "SAOS": null
     },
     "wrappedReserve": {
@@ -164,8 +164,8 @@
   "accounts": {
     "treasury": {
       "claims": {
-        "STEEM": "694446389",
-        "SBD": "69023966",
+        "STEEM": "694496379",
+        "SBD": "69644174",
         "HIVE": "0",
         "HBD": "0",
         "BLURT": "0",
@@ -1660,19 +1660,19 @@
       "asset": "STEEM",
       "custody": "697820000",
       "reserve": "761900",
-      "claims": "694446389",
+      "claims": "694496379",
       "pooled": "2561721",
-      "diff": "49990",
-      "ok": false
+      "diff": "0",
+      "ok": true
     },
     {
       "asset": "SBD",
       "custody": "78626000",
       "reserve": "6314850",
-      "claims": "69025349",
+      "claims": "69645557",
       "pooled": "2665593",
-      "diff": "620208",
-      "ok": false
+      "diff": "0",
+      "ok": true
     },
     {
       "asset": "HIVE",
@@ -1711,8 +1711,8 @@
       "ok": true
     }
   ],
-  "conservationOk": false,
-  "attestation": "efcb651b22c6023a",
+  "conservationOk": true,
+  "attestation": "13018c4b6c382926",
   "processedBatches": [
     "ACT-2026101621-2d467578",
     "ACT-2026101621-bd92390d",
@@ -1753,6 +1753,26 @@
   "genesisDone": true,
   "opsThisTick": [
     {
+      "seq": 387,
+      "type": "RECONCILE",
+      "asset": "STEEM",
+      "amount": "49990",
+      "side": "CLAIM-CREDIT",
+      "custody": "697820000",
+      "capBps": 100,
+      "law": "self-heal: the chain-measured custody side is ground truth — the unexplained residual is receipted to the treasury claim; tiny drifts heal in one tick, big holes stay loud"
+    },
+    {
+      "seq": 388,
+      "type": "RECONCILE",
+      "asset": "SBD",
+      "amount": "620208",
+      "side": "CLAIM-CREDIT",
+      "custody": "78626000",
+      "capBps": 100,
+      "law": "self-heal: the chain-measured custody side is ground truth — the unexplained residual is receipted to the treasury claim; tiny drifts heal in one tick, big holes stay loud"
+    },
+    {
       "seq": 386,
       "type": "GRID-ARM",
       "pool": "P2",
@@ -1792,7 +1812,7 @@
     }
   ],
   "summary": {
-    "verdict": "CONSERVATION-BROKEN",
+    "verdict": "EXCHANGE-CORE-LIVE",
     "poolsLive": 3,
     "poolsPlanned": 2,
     "routesLive": 12,
