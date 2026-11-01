@@ -1,6 +1,6 @@
 {
  "schema": "SAOS-ROUTE-MAP/1",
- "at": 1793536155713,
+ "at": 1793542266185,
  "identity": "הציר-הריבוני SAOS↔USDS · נכסי-חוץ הם דלתות, לא-זהות",
  "graph": {
   "nodes": [
@@ -74,10 +74,10 @@
       }
      ],
      "amountIn": 100,
-     "amountOut": 10709.233547,
+     "amountOut": 10765.204707,
      "hops": 3,
      "realness": "DOOR_MEASURED",
-     "effPrice": 107.092335,
+     "effPrice": 107.652047,
      "legs": [
       {
        "kind": "EXTBOOK",
@@ -170,10 +170,10 @@
       }
      ],
      "amountIn": 100,
-     "amountOut": 10.1472,
+     "amountOut": 10.687451,
      "hops": 3,
      "realness": "DOOR_MEASURED",
-     "effPrice": 0.101472,
+     "effPrice": 0.106875,
      "legs": [
       {
        "kind": "EXTBOOK",
@@ -932,21 +932,115 @@
     {
      "from": "STEEM",
      "to": "SBD",
-     "venue": "chain-median-feed",
-     "kind": "REF",
-     "rate": 0.104073,
-     "ref": true
+     "venue": "steem-internal",
+     "kind": "EXTBOOK",
+     "rate": 0.107644,
+     "ref": false
     },
     {
-     "from": "WSTEEM",
+     "from": "SBD",
      "to": "STEEM",
-     "venue": "wrap-door:STEEM⇄WSTEEM",
+     "venue": "chain-median-feed",
+     "kind": "REF",
+     "rate": 9.608606,
+     "ref": true
+    }
+   ],
+   "profitBps": 1415862829.784741,
+   "executable": false,
+   "sizeCap": null
+  },
+  {
+   "legs": [
+    {
+     "from": "USDS",
+     "to": "PHIVE",
+     "venue": "pool:PHIVE/USDS",
+     "kind": "POOL",
+     "rate": 1.43688,
+     "ref": false
+    },
+    {
+     "from": "WSBD",
+     "to": "USDS",
+     "venue": "book:USDS/WSBD",
+     "kind": "BOOK",
+     "rate": 7164.802,
+     "ref": false
+    },
+    {
+     "from": "SBD",
+     "to": "WSBD",
+     "venue": "wrap-door:SBD⇄WSBD",
      "kind": "DOOR",
      "rate": 1,
      "ref": false
+    },
+    {
+     "from": "STEEM",
+     "to": "SBD",
+     "venue": "steem-internal",
+     "kind": "EXTBOOK",
+     "rate": 0.107644,
+     "ref": false
+    },
+    {
+     "from": "SBD",
+     "to": "STEEM",
+     "venue": "chain-median-feed",
+     "kind": "REF",
+     "rate": 9.608606,
+     "ref": true
     }
    ],
-   "profitBps": 142456287.878472,
+   "profitBps": 106471682.833458,
+   "executable": false,
+   "sizeCap": null
+  },
+  {
+   "legs": [
+    {
+     "from": "USDS",
+     "to": "SAOS",
+     "venue": "book:SAOS/USDS",
+     "kind": "BOOK",
+     "rate": 1.019,
+     "ref": false
+    },
+    {
+     "from": "WSBD",
+     "to": "USDS",
+     "venue": "book:USDS/WSBD",
+     "kind": "BOOK",
+     "rate": 7164.802,
+     "ref": false
+    },
+    {
+     "from": "SBD",
+     "to": "WSBD",
+     "venue": "wrap-door:SBD⇄WSBD",
+     "kind": "DOOR",
+     "rate": 1,
+     "ref": false
+    },
+    {
+     "from": "STEEM",
+     "to": "SBD",
+     "venue": "steem-internal",
+     "kind": "EXTBOOK",
+     "rate": 0.107644,
+     "ref": false
+    },
+    {
+     "from": "SBD",
+     "to": "STEEM",
+     "venue": "chain-median-feed",
+     "kind": "REF",
+     "rate": 9.608606,
+     "ref": true
+    }
+   ],
+   "profitBps": 75504193.813884,
    "executable": false,
    "sizeCap": null
   },
@@ -971,29 +1065,21 @@
     {
      "from": "STEEM",
      "to": "SBD",
+     "venue": "steem-internal",
+     "kind": "EXTBOOK",
+     "rate": 0.107644,
+     "ref": false
+    },
+    {
+     "from": "SBD",
+     "to": "STEEM",
      "venue": "chain-median-feed",
      "kind": "REF",
-     "rate": 0.104073,
+     "rate": 9.608606,
      "ref": true
-    },
-    {
-     "from": "WSTEEM",
-     "to": "STEEM",
-     "venue": "wrap-door:STEEM⇄WSTEEM",
-     "kind": "DOOR",
-     "rate": 1,
-     "ref": false
-    },
-    {
-     "from": "USDS",
-     "to": "WSTEEM",
-     "venue": "pool:USDS/WSTEEM",
-     "kind": "POOL",
-     "rate": 19.106003,
-     "ref": false
     }
    ],
-   "profitBps": 142456287.878472,
+   "profitBps": 74096176.461123,
    "executable": false,
    "sizeCap": null
   },
@@ -1010,37 +1096,44 @@
     {
      "from": "STEEM",
      "to": "SBD",
+     "venue": "steem-internal",
+     "kind": "EXTBOOK",
+     "rate": 0.107644,
+     "ref": false
+    },
+    {
+     "from": "SBD",
+     "to": "STEEM",
      "venue": "chain-median-feed",
      "kind": "REF",
-     "rate": 0.104073,
+     "rate": 9.608606,
      "ref": true
-    },
-    {
-     "from": "WSTEEM",
-     "to": "STEEM",
-     "venue": "wrap-door:STEEM⇄WSTEEM",
-     "kind": "DOOR",
-     "rate": 1,
-     "ref": false
-    },
-    {
-     "from": "USDS",
-     "to": "WSTEEM",
-     "venue": "pool:USDS/WSTEEM",
-     "kind": "POOL",
-     "rate": 19.106003,
-     "ref": false
-    },
-    {
-     "from": "WSBD",
-     "to": "USDS",
-     "venue": "book:USDS/WSBD",
-     "kind": "BOOK",
-     "rate": 7164.802,
-     "ref": false
     }
    ],
-   "profitBps": 142456287.878472,
+   "profitBps": 343.087843,
+   "executable": false,
+   "sizeCap": null
+  },
+  {
+   "legs": [
+    {
+     "from": "STEEM",
+     "to": "SBD",
+     "venue": "steem-internal",
+     "kind": "EXTBOOK",
+     "rate": 0.107644,
+     "ref": false
+    },
+    {
+     "from": "SBD",
+     "to": "STEEM",
+     "venue": "chain-median-feed",
+     "kind": "REF",
+     "rate": 9.608606,
+     "ref": true
+    }
+   ],
+   "profitBps": 343.087843,
    "executable": false,
    "sizeCap": null
   }
