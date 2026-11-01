@@ -12,7 +12,8 @@
  *   Domain dex/world.json          — מצב-הרשת (גובה, fills, swaps, tps)
  *   Domain dex/deposits.json       — חומת-ההפקדות עם txids אמיתיים
  *   Domain moment/moment.json      — מחירי-אמת (steemUsd, sbdUsd, btcUsd) + הספר החי
- *   steem wallets-public.json      — כתובות-ציבור של הגופים (מה-ענף saos-cockpit)
+ *   (retired) steem wallets-public.json — removed from the public tree per the refs law;
+ *             the chain itself is the verifiable public truth (census judges vs live authorities)
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -50,14 +51,13 @@ function ago(iso) {
     jget(PAGES("dex/world.json")).catch(() => null),
     jget(PAGES("dex/deposits.json")).catch(() => null),
     jget(PAGES("moment/moment.json")).catch(() => null),
-    jget("https://raw.githubusercontent.com/roshpinacare-sys/steem/saos-cockpit/sovereign/node/wallets-public.json").catch(() => null),
+    Promise.resolve(null), // wallets-public.json retired under the refs law — the chain is the public truth now
   ]);
 
   const st = world?.state || {};
   const deps = Array.isArray(dep?.deposits) ? dep.deposits : [];
   const mk = mom?.market || {};
   const book = mom?.liveBook || {};
-  const agents = Array.isArray(wallets?.agents) ? wallets.agents : [];
   const totalSteem = deps.filter((d) => d.asset === "STEEM").reduce((a, d) => a + (+d.amount || 0), 0);
   const totalSbd = deps.filter((d) => d.asset === "SBD").reduce((a, d) => a + (+d.amount || 0), 0);
 
@@ -73,14 +73,6 @@ function ago(iso) {
   <td>${esc(ago(new Date(+d.ts).toISOString()))}</td>
 </tr>`
     )
-    .join("");
-
-  const walletRows = agents
-    .map((a) => {
-      const name = a.name || a.id || "?";
-      const keys = a.keys ? Object.keys(a.keys) : Array.isArray(a.publicKeys) ? a.publicKeys.map((k) => k.type || k.name || "?") : [];
-      return `<tr><td><b>${esc(name)}</b></td><td>${keys.length ? esc(keys.join(", ")) : "—"}</td><td>${esc(a.role || a.note || "")}</td></tr>`;
-    })
     .join("");
 
   const page = `<!doctype html>
@@ -182,10 +174,10 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
   </div>
 
   <div class="card">
-    <h2>הגופים הציבוריים<span class="kick">wallets-public.json — מה שפתוח לעין כל, בלי סודות</span></h2>
-    ${agents.length ? `<table class="tbl"><thead><tr><th>גוף</th><th>מפתחות-ציבור</th><th>תפקיד</th></tr></thead><tbody>${walletRows}</tbody></table>` : `<p class="na">ספר-הכתובות הציבורי לא השיב באפייה זו — מדווח בכנות ולא מומצא.</p>`}
+    <h2>הגופים הציבוריים<span class="kick">ספר-הכתובות הציבורי הועבר-משירות (refs law) — האמת-הפומבית היא השרשרת עצמה</span></h2>
+    <p class="na">ספר-הכתובות הציבורי (wallets-public.json) הוסר מהעץ-הפומבי לפי חוק-ה-refs — אימות-הכתובות נעשה ישירות מול רשויות-השרשרת החיות (steem · hive) בקנסוס-הגנרי, לא מקובץ סטטי.</p>
     <p class="ctx">מדיניות-חשיפה: יתרות-מסחר פרטיות ומפוקחות ב-<a href="${SITE}console.html">קונסול המפעיל</a> — בעמוד הציבורי מפורסמות רק כתובות ומפתחות-ציבור. ההיפוך הזה הוא הכוונה: הכול שאפשר לאמת — פומבי; הכול שמסוכן — לא נוגעים.</p>
-    <div class="src">מקור: <a href="https://github.com/roshpinacare-sys/steem/blob/saos-cockpit/sovereign/node/wallets-public.json" target="_blank" rel="noreferrer">steem/saos-cockpit · wallets-public.json</a> · ${esc(ago(wallets?.derivedAt))}</div>
+    <div class="src">מקור: <a href="https://github.com/roshpinacare-sys/Autonomy/blob/main/ops/custody-census/census-all.mjs" target="_blank" rel="noreferrer">census-all.mjs — שיפוט-מול-השרשרת החיה</a> · מדידה, לא הצהרה</div>
   </div>
 
   <div class="card">
