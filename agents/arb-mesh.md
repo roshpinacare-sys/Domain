@@ -1,13 +1,17 @@
 # arb-mesh — THE MESH MARKET (R41, CR-0071)
 
-At: 2026-11-01T16:21:09.455Z · Verdict: **GATED-WIRE (edge above floor but no free capital to arm the agents — named, never faked)** · batch: MESH-2026110116-a7f1f073 · protocol: SAOS-ARB-MESH/1
+At: 2026-11-01T18:31:15.733Z · Verdict: **MESH-LIVE** · batch: MESH-2026110118-c11fed9a · protocol: SAOS-ARB-MESH/1
 
-Roster: 1 accounts (owner + 0 soldiers) · Edge candidates: 1 · Intents drafted: 0 · Fills settled: 0 · Refusals: 0
+Roster: 1 accounts (owner + 0 soldiers) · Edge candidates: 1 · Intents drafted: 1 · Fills settled: 1 · Refusals: 0
 
 
 | Edge row | Direction | Net bps | Floor | Source |
 |---|---|---|---|---|
-| A1 P3 STEEM/SBD pool mid vs CEX-implied fair | SBD→STEEM (sell the rich side) | 655.65 | 100 | dex-core.json (our pool — atomic, no bridge) |
+| A1 P3 STEEM/SBD pool mid vs CEX-implied fair | STEEM→SBD (sell the rich side) | 5103.4 | 100 | dex-core.json (our pool — atomic, no bridge) |
+
+| Agent | Fill | Route | Out | Edge (marked) | Fees |
+|---|---|---|---|---|---|
+| operator | STEEM 4825µ → SBD | P3 | 777µ SBD | 261µ (CEX-FAIR (SBD per STEEM)) | 12µ |
 
 ## Size ladder (the large-sums law — exact BigInt, honest slippage)
 
@@ -38,9 +42,9 @@ Roster: 1 accounts (owner + 0 soldiers) · Edge candidates: 1 · Intents drafted
 
 ## Mesh P&L (lifetime, from the ledger — the core book is the source of truth)
 
-Fills: 214 · Volume in: 2134277µ · Edge captured: -1314955µ · Fees paid (LP revenue): 2670µ
+Fills: 215 · Volume in: 2139102µ · Edge captured: -1314694µ · Fees paid (LP revenue): 2682µ
 - acct-00: 1 fills · vol 3859µ · edge 580µ · fees 9µ
-- operator: 1 fills · vol 1400µ · edge -1383µ · fees 0µ
+- operator: 1 fills · vol 4825µ · edge 261µ · fees 12µ
 
 Laws: L1 L2 L3 L4 L5 L6 L7 L8 L9 L10 L11 L12 L13 L14 L15 L16 · Gate law: the counter-grid gate follows CR-0074 (open = GATED-ARMED-BROADCAST-READY, closed = PLAN-POOL-GATED-NOT-BROADCAST) — the mesh never fires a keyed rail either way.
 

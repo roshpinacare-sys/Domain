@@ -1,6 +1,6 @@
 {
   "protocol": "SAOS-ARB-MESH/1",
-  "at": "2026-11-01T16:21:09.455Z",
+  "at": "2026-11-01T18:31:15.733Z",
   "agent": "arb-mesh v1.0.0 (R41 MESH MARKET, CR-0071)",
   "mode": "KEYLESS-MESH-DEMAND",
   "stasisHalted": false,
@@ -22,19 +22,19 @@
     "multi-network vault (R42): custody classes — MEASURED-KEYED is the only mintable class; adjacent networks are OBSERVED (seen, never custody, never a reserve); redeem is ALWAYS honored 1:1 in-ledger (burn before payout); the chain payout is queued for the keyed desks — keyless code never fires a broadcast",
     "uniform batch clearing (R76): the queue clears as ONE batch - canonical order, two-sided netting at the measured fair, one uniform clearing price for every trader, the solver absorbs the remainder; order-invariance (a permuted queue clears byte-identical) is the anti-sandwich proof · the proof lane is DRY (moves nothing), the settle gate stays the owner's"
   ],
-  "verdict": "GATED-WIRE (edge above floor but no free capital to arm the agents — named, never faked)",
-  "batch": "MESH-2026110116-a7f1f073",
-  "settledBatch": null,
+  "verdict": "MESH-LIVE",
+  "batch": "MESH-2026110118-c11fed9a",
+  "settledBatch": "MESH-2026110118-c11fed9a",
   "coreLedger": {
     "seq": 421,
-    "at": "2026-11-01T14:49:28.977Z",
-    "ageHours": 1.53,
+    "at": "2026-11-01T18:14:54.791Z",
+    "ageHours": 0.27,
     "conservationOk": true,
-    "attestation": "f67e3496a5c9985c",
+    "attestation": "1af655ba2750b6b2",
     "feedFresh": true
   },
   "routerSeen": {
-    "at": "2026-11-01T15:32:18.146Z",
+    "at": "2026-11-01T17:26:22.914Z",
     "arbRows": 4
   },
   "roster": [
@@ -44,22 +44,59 @@
     {
       "id": "A1",
       "name": "P3 STEEM/SBD pool mid vs CEX-implied fair",
-      "poolMidNano": "100581730",
-      "fairNano": "108043800",
-      "netBps": 655.65,
+      "poolMidNano": "162158488",
+      "fairNano": "107117290",
+      "netBps": 5103.4,
       "thresholdBps": 100,
-      "from": "SBD",
-      "to": "STEEM",
+      "from": "STEEM",
+      "to": "SBD",
       "railOwner": "treasury (our own pool — atomic, no bridge)",
       "source": "dex-core.json (our pool — atomic, no bridge)",
-      "at": "2026-11-01T16:21:09.455Z"
+      "at": "2026-11-01T18:31:15.733Z"
     }
   ],
   "keyedRailPlans": [],
-  "intentsDrafted": 0,
-  "intents": [],
-  "wires": 0,
-  "fills": [],
+  "intentsDrafted": 1,
+  "intents": [
+    {
+      "agent": "operator",
+      "from": "STEEM",
+      "to": "SBD",
+      "amountIn": "4825",
+      "minOut": "774",
+      "quote": "777",
+      "rowId": "A1",
+      "share": "OPERATOR-40%",
+      "heldMu": "0",
+      "wireExpected": "4825"
+    }
+  ],
+  "wires": 1,
+  "fills": [
+    {
+      "seq": 423,
+      "type": "AGENT_FILL",
+      "agent": "operator",
+      "from": "STEEM",
+      "to": "SBD",
+      "amountIn": "4825",
+      "amountOut": "777",
+      "routeIds": [
+        "P3"
+      ],
+      "hops": [
+        {
+          "pool": "P3",
+          "in": "4825",
+          "out": "777",
+          "fee": "12"
+        }
+      ],
+      "edgeMu": "261",
+      "fairUsed": "CEX-FAIR (SBD per STEEM)",
+      "feesMu": "12"
+    }
+  ],
   "rejects": [],
   "sizeLadder": [
     {
@@ -167,23 +204,23 @@
         },
         "operator": {
           "fills": 1,
-          "volumeInMu": "1400",
-          "edgeMu": "-1383",
-          "feesMu": "0"
+          "volumeInMu": "4825",
+          "edgeMu": "261",
+          "feesMu": "12"
         }
       },
-      "fills": 214,
-      "edgeMu": "-1314955",
-      "feesMu": "2670",
-      "volumeInMu": "2134277"
+      "fills": 215,
+      "edgeMu": "-1314694",
+      "feesMu": "2682",
+      "volumeInMu": "2139102"
     },
     "batch": {
-      "id": "ACT-2026110114-e30bfd23",
+      "id": "MESH-2026110118-c11fed9a",
       "fills": 1,
       "rejects": 0,
-      "edgeMu": "-1383",
-      "feesMu": "0",
-      "volumeInMu": "1400"
+      "edgeMu": "261",
+      "feesMu": "12",
+      "volumeInMu": "4825"
     }
   },
   "gridGate": "GATED-ARMED-BROADCAST-READY (CR-0074 open — the kernel arms the opposing grids; the mesh still never fires a keyed rail)",
