@@ -4,7 +4,7 @@
 | זירה | עמלה (bps) | מרווח נמדד % | קצה שמרני % | נפח מוקרן SBD/יום | נפח שוק 24ש׳ | נתח חייל אחד |
 |---|---|---|---|---|---|---|
 | SBD/STEEM (internal steem) | 0 | 25 | 12.5 | 25.458 | 131.667 | 19.3351% |
-| HBD/HIVE (internal hive) | 0 | 0.25 | 0.125 | 244.3968 | 4613.474 | 5.2975% |
+| HBD/HIVE (internal hive) | 0 | 0.25 | 0.125 | 244.3968 | 4612.522 | 5.2986% |
 | saos-dex-kernel (L1 our own DEX) | 30 | — | — | — | — | — |
 | BEE/SWAP.HIVE (hive-engine) | 0 | 0.5 | 0.25 | 22.9122 | — | 99.62% |
 | CENT/SWAP.HIVE (hive-engine) | 0 | 0 | 0 | 4.6673 | — | 98.0876% |
@@ -17,10 +17,10 @@
 - N=3 חיילים → 733.1904 SBD/יום = 556.8521% מהבריכה — **הבריכה נשבעת: התקרה היא הטייפ, לא היכולת**
 - N=5 חיילים → 1221.984 SBD/יום = 928.0868% מהבריכה — **הבריכה נשבעת: התקרה היא הטייפ, לא היכולת**
 סולם הנתח בHBD/HIVE (internal hive) (מימון מהמדידה של השרשרת):
-- N=1 חיילים → 244.3968 SBD/יום = 5.2975% מהבריכה
-- N=2 חיילים → 488.7936 SBD/יום = 10.5949% מהבריכה
-- N=3 חיילים → 733.1904 SBD/יום = 15.8924% מהבריכה
-- N=5 חיילים → 1221.984 SBD/יום = 26.4873% מהבריכה
+- N=1 חיילים → 244.3968 SBD/יום = 5.2986% מהבריכה
+- N=2 חיילים → 488.7936 SBD/יום = 10.5971% מהבריכה
+- N=3 חיילים → 733.1904 SBD/יום = 15.8957% מהבריכה
+- N=5 חיילים → 1221.984 SBD/יום = 26.4928% מהבריכה
 סולם הנתח בBEE/SWAP.HIVE (hive-engine) (מימון מהמדידה של השרשרת):
 - N=1 חיילים → 22.9122 SBD/יום = 99.62% מהבריכה
 - N=2 חיילים → 22.9122 SBD/יום = 99.62% מהבריכה
@@ -52,7 +52,7 @@
 הרחבת הזירות (Q14/Q16): 5 זירות Hive-Engine מתומחרות per-token מהחוזה החי — והבריכה הנמדדת פותחת את הפרויקציה: הבריכה של כל טוקן (BEE בריכה 22.9996 SBD/24ש׳ · CENT בריכה 4.7583 SBD/24ש׳ · SWAP.DOGE בריכה 5.1451 SBD/24ש׳ · SWAP.LTC בריכה 250.0389 SBD/24ש׳ · WAIV בריכה 0.2616 SBD/24ש׳) מתורגמת מ-SWAP.HIVE לשער HBD/HIVE **נמדד** (חוק ההמרה: SBD≈HBD, שניהם נכסי-דולר של השרשרות; השער נמדד — לא מוצק)
 פרויקציית הבריכה (Q16): אף אחד לא יכול לסחור יותר מכל מה שנסחר — הנפח נפתח על min(בריכה, יכולת) עם החוסם **מתויג**; 5 זירות HE עם נפח מוקרן: 277.0679 SBD/יום (בריכה כוללת 283.2035 SBD) · רווח נטו מוקרן 0.3628 SBD/יום — בלי שאילת טייפ אחת מושאלת
 משטחים חשוכים (כנים, מדודים): he-daily-history — HE-DAILY-HISTORY-DARK: marketHistory/history answered null (not RPC-exposed) — the day it answers, the pond becomes a series · blurt-internal-market — BLURT-SURFACE-DARK: getaddrinfo ENOTFOUND api.blurt.world
-נתח-זמן (Q11): SBD/STEEM (internal steem): 24 נקודות — אחרון 19.3351% · HBD/HIVE (internal hive): 24 נקודות — אחרון 4.3808% · BEE/SWAP.HIVE (hive-engine): 24 נקודות — אחרון 99.2863% · CENT/SWAP.HIVE (hive-engine): 24 נקודות — אחרון 97.7404% · SWAP.DOGE/SWAP.HIVE (hive-engine): 24 נקודות — אחרון 98.6114% · SWAP.LTC/SWAP.HIVE (hive-engine): 24 נקודות — אחרון 97.4142% (פנקס התוכניות הוא הסדרה — הנתח כמגמה, לא תמונה)
+נתח-זמן (Q11): SBD/STEEM (internal steem): 24 נקודות — אחרון 19.3351% · HBD/HIVE (internal hive): 24 נקודות — אחרון 5.2975% · BEE/SWAP.HIVE (hive-engine): 24 נקודות — אחרון 99.62% · CENT/SWAP.HIVE (hive-engine): 24 נקודות — אחרון 98.0876% · SWAP.DOGE/SWAP.HIVE (hive-engine): 24 נקודות — אחרון 98.9602% · SWAP.LTC/SWAP.HIVE (hive-engine): 24 נקודות — אחרון 97.7435% (פנקס התוכניות הוא הסדרה — הנתח כמגמה, לא תמונה)
 סולם הצי: 1 חשבון/ות ממומנים (owner) · חלוקת סולמות מכסה את כל ה-10 המדרגות
 זרימה פנימית (מסחר בין החיילים): זמינה — תקרה 136.7307 SBD/יום, מתויגת INTERNAL-FLOW, מוחרגת מה-VWAP
 חוקי הבטיחות: SELL-CAP-85% of liquid inventory · MAX-NEW-ORDERS 6/run/account · BUY-EDGE: no buy above realized sell VWAP − 0.3% · SPACING-FLOOR 0.4% (market-grid) · INTERNAL-FLOW capped 25% + labeled + VWAP-excluded · STASIS halt-before-read
