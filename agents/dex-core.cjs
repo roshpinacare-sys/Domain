@@ -789,7 +789,32 @@ function redeem(prev, wrapped, amountMu, account, now) {
 }
 
 // ── tick: the deterministic settle path ─────────────────────────────────────
-function settle(prev, feed, custodyProbe, now, networkProbe, gridGate) {
+/** RECONCILE-SELF-HEAL LAW (R78.1): a conservation breach is either the stale-drift class
+ *  (unbooked state — merge residue, a past writer bug, dust the probe never booked) or a real
+ *  hole. The chain-measured custody side is ground truth (the DEPOSIT_DELTA law's own rule),
+ *  so a breach WITHIN the cap receipts the residual to the treasury claim and the book returns
+ *  to === 0 in the same tick — the desk never dies on a stale drift. A breach BEYOND the cap
+ *  (1% of that asset's booked custody per tick) stays broken and loud — never papered over.
+ *  Every heal books a RECONCILE op: receipted, deterministic, capped. */
+const RECONCILE_CAP_BPS = 100n; // max drift healed per tick: 1% of the asset's booked custody
+function reconcileDrift(st, ops, op, now) {
+  let cons = conservation(st.vault, st.accounts, st.pools);
+  if (cons.every((c) => c.ok)) return { cons, healed: false };
+  let healed = false;
+  for (const row of cons) {
+    const d = ub(row.diff);
+    if (d === 0n) continue;
+    const cust = ub(st.vault.custody[row.asset] || '0');
+    if (cust <= 0n) continue;                                  // observed-only assets stay loud
+    if (absb(d) * 10000n > cust * RECONCILE_CAP_BPS) continue; // beyond cap: stay broken, loud
+    const claims = ub(st.accounts.treasury.claims[row.asset] || '0');
+    if (d < 0n && claims < -d) continue;                       // a debit the treasury can't cover stays loud
+    st.accounts.treasury.claims[row.asset] = mu(claims + d);
+    op('RECONCILE', { asset: row.asset, amount: mu(d), side: d > 0n ? 'CLAIM-CREDIT' : 'CLAIM-DEBIT', custody: mu(cust), capBps: Number(RECONCILE_CAP_BPS), law: 'self-heal: the chain-measured custody side is ground truth — the unexplained residual is receipted to the treasury claim; tiny drifts heal in one tick, big holes stay loud' });
+    healed = true;
+  }
+  return { cons: conservation(st.vault, st.accounts, st.pools), healed };
+}function settle(prev, feed, custodyProbe, now, networkProbe, gridGate) {
   const st = { vault: prev.vault, accounts: prev.accounts, pools: prev.pools, seq: prev.seq || 0 };
   const ops = [];
   const op = (type, payload) => { st.seq += 1; ops.push({ seq: st.seq, type, at: now, ...payload }); };
@@ -964,12 +989,14 @@ function settle(prev, feed, custodyProbe, now, networkProbe, gridGate) {
   for (const o of ops) if (o.type === 'REBALANCE') edgeMu += ub(o.edgeMu || '0');
   const prevEdge = ub((prev.treasuryPnl || {}).rebalanceEdgeMu || '0');
   edgeMu += prevEdge;
-  // 6) conservation + attestation
-  const cons = conservation(st.vault, st.accounts, st.pools);
+  // 6) conservation + attestation — R78.1 self-heal first: tiny drifts receipt-and-heal in one
+  //    tick, holes beyond the reconcile cap stay broken and loud (never papered over)
+  const rec = reconcileDrift(st, ops, op, now);
+  const cons = rec.cons;
   const consOk = cons.every((c) => c.ok);
   st.vault.reserveRatio = reserveRatios(st.vault);
   const att = attestationHash(st.vault, st.accounts, st.pools, st.seq);
-  return { st, ops: ops.concat(gridArmOps), routes, arb, counterGrids: armedGrids, gridGate: gate44, cons, consOk, att, feesMu, edgeMu, notes, rebalanceBooked };
+  return { st, ops: ops.concat(gridArmOps), routes, arb, counterGrids: armedGrids, gridGate: gate44, cons, consOk, att, feesMu, edgeMu, notes, rebalanceBooked, reconciled: rec.healed };
 }
 
 // ── R41 THE MESH MARKET: the fleet settles on this ledger ───────────────────
@@ -1031,7 +1058,8 @@ function settleIntents(prev, queue, feed, now) {
   const fairNano = (feed && feed.fresh && feed.fair) ? BigInt(feed.fair) : null;
 
   const finish = (extra) => {
-    const cons = conservation(st.vault, st.accounts, st.pools);
+    const recF = reconcileDrift(st, ops, op, now); // R78.1: the mesh path heals the same way
+    const cons = recF.cons;
     const consOk = cons.every((c) => c.ok);
     st.vault.reserveRatio = reserveRatios(st.vault);
     const att = attestationHash(st.vault, st.accounts, st.pools, st.seq);
@@ -2143,7 +2171,8 @@ function settleXcOps(prev, queue, feed, now) {
   const batch = (queue && queue.batch) || null;
 
   const finish = (extra) => {
-    const cons = conservation(st.vault, st.accounts, st.pools);
+    const recX = reconcileDrift(st, ops, op, now); // R78.1: the XC corridor path heals the same way
+    const cons = recX.cons;
     const consOk = cons.every((c) => c.ok);
     st.vault.reserveRatio = reserveRatios(st.vault);
     const att = attestationHash(st.vault, st.accounts, st.pools, st.seq);
@@ -2607,6 +2636,23 @@ function selftest() {
     && redeem({ vault: rv0, accounts: ra0, pools: [], seq: 1 }, 'WSTEEM', '9999999', 'treasury', 't').refused === 'OVER-MINT'
     && redeem({ vault: rv0, accounts: ra0, pools: [], seq: 1 }, 'WNOPE', '100', 'treasury', 't').refused === 'UNKNOWN-WRAPPER'
     && redeem({ vault: rv0, accounts: { ghost: { claims: emptyClaims(), lp: {} } }, pools: [], seq: 1 }, 'WSTEEM', '500000', 'ghost', 't').refused === 'INSUFFICIENT-CLAIM');
+  // R78.1 reconcile self-heal: a tiny drift receipts-and-heals in the same tick, a hole beyond
+  // the cap stays loud, and a negative (over-accounted) drift debits the treasury claim
+  const rs0 = { vault: JSON.parse(JSON.stringify(rv0)), accounts: JSON.parse(JSON.stringify(ra0)), pools: JSON.parse(JSON.stringify(rp0)), seq: 5 };
+  rs0.accounts.treasury.claims.STEEM = '999990'; // the book under-accounts custody by 10µ
+  const rsOps0 = []; const rsOp0 = (t, p) => { rs0.seq += 1; rsOps0.push({ seq: rs0.seq, type: t, at: 't', ...p }); };
+  const recH = reconcileDrift(rs0, rsOps0, rsOp0, 't');
+  ok('r78-reconcile-heals-tiny-drift', recH.healed === true && recH.cons.every((r) => r.ok) && rsOps0.some((o) => o.type === 'RECONCILE' && o.amount === '10' && o.side === 'CLAIM-CREDIT' && o.asset === 'STEEM'));
+  const rs1 = { vault: JSON.parse(JSON.stringify(rv0)), accounts: JSON.parse(JSON.stringify(ra0)), pools: JSON.parse(JSON.stringify(rp0)), seq: 5 };
+  rs1.accounts.treasury.claims.STEEM = '970000'; // a 30,000µ hole — beyond the 1% cap (20,000µ)
+  const rsOps1 = []; const rsOp1 = (t, p) => { rs1.seq += 1; rsOps1.push({ seq: rs1.seq, type: t, at: 't', ...p }); };
+  const recL = reconcileDrift(rs1, rsOps1, rsOp1, 't');
+  ok('r78-reconcile-cap-stays-loud', recL.healed === false && recL.cons.some((r) => r.asset === 'STEEM' && r.ok === false) && !rsOps1.some((o) => o.type === 'RECONCILE'));
+  const rs2 = { vault: JSON.parse(JSON.stringify(rv0)), accounts: JSON.parse(JSON.stringify(ra0)), pools: JSON.parse(JSON.stringify(rp0)), seq: 5 };
+  rs2.accounts.treasury.claims.STEEM = '1000010'; // the book over-accounts custody by 10µ
+  const rsOps2 = []; const rsOp2 = (t, p) => { rs2.seq += 1; rsOps2.push({ seq: rs2.seq, type: t, at: 't', ...p }); };
+  const recD = reconcileDrift(rs2, rsOps2, rsOp2, 't');
+  ok('r78-reconcile-negative-debit', recD.healed === true && recD.cons.every((r) => r.ok) && rsOps2.some((o) => o.type === 'RECONCILE' && o.amount === '-10' && o.side === 'CLAIM-DEBIT'));
   // the blurt pegout corridor: posting key only — transfers gated (the honest PLAN band)
   // (the synthetic book must be BORN balanced: custody 500000 = reserve + claims, the mint law's own shape)
   const rb0 = emptyVault(); rb0.custody.BLURT = '500000'; rb0.custodyProvenance.BLURT = 'test';
@@ -2684,7 +2730,7 @@ module.exports = {
   // pools + routing
   poolDefs, genesisPlan, genesis, poolSwap, routeBest,
   // vault + ledger
-  emptyVault, emptyClaims, conservation, reserveRatios, attestationHash,
+  emptyVault, emptyClaims, conservation, reserveRatios, attestationHash, reconcileDrift, RECONCILE_CAP_BPS,
   // multi-network vault (R42)
   redeem, crossFair, custodyClassRows, issuerIdentity, reconcilePools, custodyProbeFrom, observedFrom,
   WRAP_UNDERLYING, CUSTODY_CLASSES, PEGOUT_CORRIDORS, MINT_SHARE_BPS, REDEEM_DUST,
