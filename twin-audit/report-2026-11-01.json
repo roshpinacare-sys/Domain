@@ -1,6 +1,6 @@
 {
  "tool": "twin-audit.mjs",
- "runAt": "2026-11-01T13:48:39.066Z",
+ "runAt": "2026-11-01T14:14:49.341Z",
  "day": "2026-11-01",
  "method": {
   "textSimilarity": "Jaccard over 5-token shingles of stripped live HTML",
@@ -215,17 +215,8 @@
   {
    "id": "about-vs-market-index-en",
    "registered": true,
-   "differentiated": true,
-   "status": "DIFFERENTIATED",
-   "books": {
-    "about/team.json": 404,
-    "dex/money.json": 200,
-    "dex/watch.json": 200
-   },
-   "markerOnA": false,
-   "markerOnB": false,
-   "absenceCross": true,
-   "evidenceOk": false
+   "differentiated": false,
+   "status": "RETIRED-DEDUP"
   },
   {
    "id": "onepager-en-vs-onepager",
@@ -237,10 +228,8 @@
  "unknownNearDups": [],
  "gate": {
   "rule": "issue fires when an UNKNOWN pair measures >= 0.95 with no registered distinct function, or a DIFFERENTIATED pair loses its capability evidence",
-  "lostEvidence": [
-   "about-vs-market-index-en"
-  ],
-  "fire": true
+  "lostEvidence": [],
+  "fire": false
  },
  "verdict": "no live cross-repo page pair measures >= 0.95"
 }
