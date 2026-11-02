@@ -1,12 +1,12 @@
 {
  "schema": "SAOS-EXECUTION-LEDGER/1",
- "at": "2026-11-01T06:27:51Z",
+ "at": "2026-11-02T13:12:44Z",
  "generator": "fleet-runner/execution-ledger-renew.ts (directive-42 §2, lineage-preserving renewal)",
  "sourceWorklog": "giant worklog task-55 (directive 42, trace 1a178c71bcb7ddad)",
  "law": "אין-ראיה = לא-קרה · כל-מספר נמדד-מהקרקע בזמן-החידוש · מורשת-מאומתת-לעולם-לא-נמחקת",
  "freshness": {
   "staleAfterHours": 48,
-  "verifiedAt": "2026-11-01T06:27:51Z",
+  "verifiedAt": "2026-11-02T13:12:44Z",
   "renewedBy": "execution-ledger-renew (12h schedule, lineage-preserving)",
   "howToVerify": "compare .at against the runner job journal; history rows append-only"
  },
@@ -14,7 +14,7 @@
   "services": "market:3033-UP ledger:3032-UP runner:3031-UP",
   "gridVerdict": "ARMED-LIVE",
   "valueGuard": "conservation-HOLDS",
-  "realFillsLifetime": 121,
+  "realFillsLifetime": 730,
   "fillRecordsLedger": 121,
   "fillsByAgent": "alpha:988 bravo:1158 gamma:34 delta:4 epsilon:51 zeta:10 eta:68 theta:5 iota:0 kappa:0 mm-grid:0 mm-oracle:0 saos-0004:0",
   "runner": "jobs=5360 schedules=24",
@@ -256,6 +256,11 @@
    "id": "G105-4",
    "title": "Rootfs disk wound triaged in-wave (recurred twice) — systemic gap recorded",
    "detail": "df / 100% blocked branch creation (git mkdir ENOSPC) and later corrupted dex.db. Freed lawfully: fleet-economy-builder quarantine forensics compressed 771M→~100M (gzip -6, gzip -t ALL OK, today's 2 quarantines kept raw, per-file names preserved as .gz) · bun install cache 2.8G · puppeteer 601M · node-gyp 67M · .next/cache 1.17G (refilled once — recurring) · /tmp watchdog dirs ~400M (refill too). Measured lesson: platform rootfs quota ~9.9G refills in hours under swarm load — needs a janitor lane or bigger quota (recorded as gap G-DISK)."
+  },
+  {
+   "id": "P7-RESOLVED",
+   "title": "Pulse — FLEET_TOKEN auth verified live",
+   "evidence": "state/network.json auth.pat.ok=true status=200 measured 2026-11-02 (fleet watch)"
   }
  ],
  "partial": [
@@ -294,12 +299,6 @@
    "title": "דלק/RC — זרימה-אוטומטית",
    "detail": "נתיב 36-b באוויר: אוטומציה-לזרימת-דלק/RC. לא-הושלם.",
    "evidence": "orchestrator wave-36 dispatch (lane 36-b in flight)"
-  },
-  {
-   "id": "P7",
-   "title": "Pulse — FLEET_TOKEN 401 → נפילה-ל-tokenless",
-   "detail": "ראש-הארכיטקטורה: 401-על-טוקן-צי → מעבר-לתדלוק-tokenless בזמן-המחזור. חלקי-עד-אימות-חי.",
-   "evidence": "orchestrator cycle-36 dispatch (in flight)"
   },
   {
    "id": "P8",
@@ -463,7 +462,7 @@
   ]
  },
  "cycle": 37,
- "generatedAt": "2026-10-27T16:05:09Z",
+ "generatedAt": "2026-11-02T13:12:44Z",
  "cycle33": {
   "at": "2026-10-26T15:40:52Z",
   "worker": "G77-b (execution-ledger lane · swarm G77)",
@@ -538,6 +537,52 @@
     "bot-c": 11396,
     "rail": 10473
    }
+  }
+ },
+ "waveA43FAMINE": {
+  "at": "2026-11-02T13:12:44Z",
+  "trace": "1a19c5234084c0cd",
+  "directive": "owner 2026-11-02: implement all partial+gaps; fix schedule failures",
+  "landed": [
+   {
+    "repo": "saos-dex",
+    "branch": "fix/a43-famine-keeper",
+    "commit": "9a5b9b5",
+    "what": "A43-FAMINE-FIX wip: treasury gas mint from fee meter (credits↑===feeMinted↑), 5th declared bucket treasuryGasMintedMu (seal exact), G77-e recycle law wired in-tick (stale 437x/15147x treasury orders), pool-swap re-arm, zombie-order guard, probe tooling",
+    "measured": "P2-A43 green transiently (bestAsk=49); seal-audit HALT eliminated; P3 conservation exact; NOT merged — one anomaly left (t2 tombstone order: live=true + escrow released + book-invisible), truth-gate still 5/6"
+   },
+   {
+    "repo": "saos-dex",
+    "branch": "main",
+    "commit": "3dc612d-era",
+    "what": "grid measured alive: 730 realFills lifetime, 99 fills/window, dex-selftest red = the A43 famine above (not theater)"
+   },
+   {
+    "repo": "Autonomy",
+    "branch": "main",
+    "commit": "9b734af",
+    "what": "premise-fix: dropped stale root bun-install check for steem-cockpit (root is custody/ops tree; engine dir is the bun surface) — clears Pulse 'Actions red: Autonomy'"
+   },
+   {
+    "repo": "vault-repo (custody)",
+    "branch": "main",
+    "commit": "17986e3",
+    "what": "lifecycle-audit tolerates optional army-keys.json — audit survives custody gaps and flags them; first full 13-row lifecycle receipt"
+   },
+   {
+    "repo": "Domain",
+    "branch": "main",
+    "what": "execution-state renewed (this commit) — freshness clock reset with measured snapshot"
+   }
+  ],
+  "schedule": {
+   "measured": "cron triggers firing but failing 'model concurrency limit exceeded' (patrol 06:00, beat 06:00, heartbeat 06:10, lifecycle×2 04:20)",
+   "fix": "de-duplicated lifecycle jobs (was 2×/2h) and staggered all loops: patrol :00 · beat :06/:21/:36/:51 · heartbeat :10/:40 · fleet-watch :12/:32/:52 (B8 self-heal authorized) · lifecycle :25/2h — zero same-minute collisions",
+   "wipes": "wipe-8/9/10/11 measured (04:15/06:40/07:15/09:1x) — B8-law self-heals executed, kit seeded to vault-home"
+  },
+  "lifecycle": {
+   "operable": "11/13 unsealed + hcsoldier4/5 actives sealed in REKEY6 + hcsoldier6 NO-KEYS-IN-CENSUS",
+   "rc": "RC-DEAD 12/13 (headcorner RC-THIN) — measured 2026-11-02, fuel-lane P6 remains the hard gap"
   }
  }
 }
