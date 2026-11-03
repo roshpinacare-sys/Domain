@@ -146,7 +146,7 @@ jget(RAW + '/roshpinacare-sys/Pulse/main/state/network.json').then(function(d){
     ['code-level', t.actionsRedActionable, (d.actionsRedActionable || []).join(', ') || '—', 'נדרש תיקון אמיתי בקוד או בתצורה'],
     ['שער-חיוב (מכסת דקות)', t.actionsQuotaGated, (d.actionsQuotaGated || []).join(', ') || '—', 'owner-gated; job נכשל בשניות עם אפס צעדים; הציבורי ממשיך חופשי'],
     ['אודיט-מידע', t.actionsRedInfo, '—', 'פלט-עבודה של שערי-סריקה; מתועד, לא מדביק'],
-    ['טריות 24h', null, (d.stale<span data-canon="verdicts.STALE">11</span>h || []).length + ' ריפואים', (d.stale<span data-canon="verdicts.STALE">11</span>h || []).join(', ') || '—'],
+    ['טריות <span data-canon="verdicts.STALE">11</span>h', null, (d.stale<span data-canon="verdicts.STALE">11</span>h || []).length + ' ריפואים', (d.stale<span data-canon="verdicts.STALE">11</span>h || []).join(', ') || '—'],
   ];
   document.getElementById('calib-body').innerHTML = rows.map(function(r){
     return '<tr><td>' + r[0] + '</td><td class="mono">' + (r[1] === null ? '—' : r[1]) + '</td><td class="mono" style="max-width:220px">' + r[2] + '</td><td>' + r[3] + '</td></tr>';
