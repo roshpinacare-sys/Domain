@@ -1,16 +1,22 @@
 {
  "schema": "site-audit/1",
- "at": "2026-11-03T09:06:29.084Z",
+ "at": "2026-11-03T10:26:54.351Z",
  "scope": "live-pages:https://roshpinacare-sys.github.io/Domain/",
  "pagesScanned": 108,
  "summary": {
-  "findings": 0,
+  "findings": 1,
   "externalBlocked": 4,
   "transientBlocked": 0,
-  "checked": 336,
-  "structuralFindings": 0
+  "checked": 337,
+  "structuralFindings": 1
  },
- "findings": [],
+ "findings": [
+  {
+   "rule": "R-SCRIPT",
+   "file": "archive/2026-10-11/index.html",
+   "note": "syntax: Unexpected identifier 'repos'"
+  }
+ ],
  "externalBlocked": [
   {
    "code": 451,
@@ -76,8 +82,8 @@
    "R-SITEMAP",
    "R-TRUTH"
   ],
-  "findings": 0
+  "findings": 1
  },
- "overall": "PASS",
+ "overall": "FAIL",
  "note": "קישורים = אמת-חיה ב-Pages: 404 פנימי/חוץ = עמוד-מת (FINDING); 403/429/502 אצל צד-ג = חסימת-בוט (רמז בלבד); 429/503 מפני-ה-github.com-שלנו = חנק-מדידה (TRANSIENT — ריטרי-3 ואז רשום-בלי-הכשל). קישורים הנבנים ב-JS בזמן-ריצה אינם נסרקים כאן — הם אינם href סטטי. structural = אמת-checkout בלי רשת (R75): R-BALANCE·R-SCRIPT·R-CANONICAL·R-STUB·R-SITEMAP·R-TRUTH — החוקים ב-agents/SELF-CHECKS.md."
 }
