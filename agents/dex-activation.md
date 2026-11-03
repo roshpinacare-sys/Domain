@@ -1,44 +1,44 @@
 # dex-activation — THE IGNITION DESK (CR-0077)
 
-At: 2026-11-03T02:40:16.712Z · Verdict: **IGNITED (3/3 rounds filled)** · batch: ACT-2026110302-6923e2d1 · lane: dex-activation
+At: 2026-11-03T10:06:53.739Z · Verdict: **IGNITED (3/3 rounds filled)** · batch: ACT-2026110310-7b76a4bc · lane: dex-activation
 
 Owner word (trace 1a135897157a1d75): "saos dex עמלות 0 נפח כמעט 0 מצטבר כלום" — הדלפק הזה הוא התיקון: זרימה דו-צדדית רציפה סביב המיד של כל בריכה חיה, דרך חוקי-ה-settle של הליבה עצמה.
 
 Pools armed: P1, P2, P3 · Intents drafted: 17 · Fills settled: 17 · Refusals: 0 · Wires: 11
 
-Core ledger: seq 634 @ 2026-11-03T01:55:04.926Z · conservation true · att d1df79a007c9c775
+Core ledger: seq 675 @ 2026-11-03T09:58:52.374Z · conservation true · att 27f4c37d545267ad
 
 
 | Agent | Fill | Out | Edge (marked) | Fees |
 |---|---|---|---|---|
-| operator | STEEM 2406µ | 3µ WSTEEM | -2403µ | 0µ |
-| operator | STEEM 24067µ | 32µ WSTEEM | -24035µ | 0µ |
-| operator | STEEM 30743µ | 40µ WSTEEM | -30703µ | 0µ |
-| operator | WSBD 5295µ | 4094µ SBD | -1201µ | 0µ |
-| operator | SBD 1199µ | 1551µ WSBD | 352µ | 0µ |
-| operator | WSBD 52951µ | 40597µ SBD | -12354µ | 8µ |
-| operator | SBD 11999µ | 15735µ WSBD | 3736µ | 3µ |
-| operator | WSBD 112034µ | 84056µ SBD | -27978µ | 16µ |
-| operator | SBD 19261µ | 26041µ WSBD | 6780µ | 5µ |
-| operator | STEEM 6148µ | 3804µ SBD | 3199µ | 15µ |
-| operator | SBD 3852µ | 6193µ STEEM | -32911µ | 9µ |
-| operator | STEEM 30740µ | 18301µ SBD | 15273µ | 76µ |
-| operator | SBD 18348µ | 30667µ STEEM | -155595µ | 45µ |
-| operator | WSBD 5295µ | 7µ WSTEEM | -53745µ | 9µ |
-| operator | WSBD 52951µ | 67µ WSTEEM | -537472µ | 104µ |
-| operator | STEEM 2525µ | 2µ WSTEEM | -2523µ | 0µ |
-| operator | STEEM 2527µ | 2µ WSTEEM | -2525µ | 0µ |
+| operator | STEEM 2530µ | 2µ WSTEEM | -2528µ | 0µ |
+| operator | STEEM 2532µ | 2µ WSTEEM | -2530µ | 0µ |
+| operator | STEEM 2535µ | 2µ WSTEEM | -2533µ | 0µ |
+| operator | STEEM 25354µ | 28µ WSTEEM | -25326µ | 0µ |
+| operator | STEEM 28122µ | 30µ WSTEEM | -28092µ | 0µ |
+| operator | WSBD 5480µ | 3982µ SBD | -1498µ | 0µ |
+| operator | SBD 1060µ | 1460µ WSBD | 400µ | 0µ |
+| operator | WSBD 54803µ | 39385µ SBD | -15418µ | 7µ |
+| operator | SBD 10608µ | 14871µ WSBD | 4263µ | 2µ |
+| operator | WSBD 92437µ | 64881µ SBD | -27556µ | 12µ |
+| operator | SBD 21068µ | 30396µ WSBD | 9328µ | 6µ |
+| operator | STEEM 5624µ | 4161µ SBD | 3576µ | 14µ |
+| operator | SBD 4213µ | 5665µ STEEM | -34815µ | 10µ |
+| operator | STEEM 28120µ | 20019µ SBD | 17093µ | 70µ |
+| operator | SBD 20070µ | 28053µ STEEM | -164788µ | 50µ |
+| operator | WSBD 5480µ | 5µ WSTEEM | -52649µ | 9µ |
+| operator | WSBD 54803µ | 46µ WSTEEM | -526526µ | 101µ |
 
 ## Rolling 24h (measured from the ledger — never invented)
 
-Fills: 65 · Volume in: 1250137µ · Volume out: 785218µ · Fees accrued: 993µ
+Fills: 64 · Volume in: 1182225µ · Volume out: 717832µ · Fees accrued: 948µ
 
 
 | Pool | Swaps 24h | In µ | Out µ | Fees µ |
 |---|---|---|---|---|
-| P1 | 21 | 422315 | 677 | 0 |
-| P2 | 24 | 837154 | 712339 | 129 |
-| P3 | 32 | 351777 | 433311 | 864 |
+| P2 | 24 | 784995 | 647780 | 116 |
+| P3 | 31 | 338092 | 385037 | 832 |
+| P1 | 21 | 374605 | 482 | 0 |
 
 Laws: keyless internal-only · staged-lane (CR-0077) · two-sided (never a direction bet) · 10/100/500bps depth ladder · dust 1000µ · minOut −0.5% · roster split op-40% · bounded 30 intents/run · single-writer queue (DEX_SETTLE_QUEUE) · idempotent batch · measured 24h only
 
