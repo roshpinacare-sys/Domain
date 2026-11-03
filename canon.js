@@ -1,4 +1,4 @@
-/*! SAOS-CANON/1 · מספר-אחד, מקור-אחד, חי · sovereign-union-forge 2026-11-03T08:42:30.112Z
+/*! SAOS-CANON/1 · מספר-אחד, מקור-אחד, חי · sovereign-union-forge 2026-11-03T10:18:05.140Z
  * שימוש: <script src="/Domain/canon.js" defer></script>
  * ואז בכל-מקום-בדף: <span data-canon="repos.total">49</span> — הערך-הסטטי-הוא-קנון-הבנייה,
  * ו-canon.js מרים-אותו-חי מ-/Domain/canon.json.
