@@ -58,6 +58,13 @@ jobs:
         if: steps.brake.outputs.active != 'true'
         env:
           SA_FLEET_KEYS: ${{ secrets.SA_FLEET_KEYS }}
+          # T3 doctrine unseal (persona-store resolution-2): the sealed personas.enc +
+          # persona-slots.enc need a passphrase in env — without it slots() fail-softs
+          # to {} and the whole lane runs keys=0/0 as an honest empty shell (measured
+          # 2026-11-03: keys=0/0 · authority=NO-KEYS · vault=absent · zero votes cast).
+          PERSONAS_KEY: ${{ secrets.PERSONAS_KEY }}
+          MAIN_KEY: ${{ secrets.MAIN_KEY }}
+          WEAVE_SEAL_PASSPHRASE: ${{ secrets.WEAVE_SEAL_PASSPHRASE }}
         run: node agents/human-cadence.cjs ${{ github.event.inputs.mode || 'all' }}
 
       - name: community RC top-up gate (honest bookkeeping; LIVE only when armed)
