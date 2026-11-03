@@ -1,33 +1,33 @@
 {
  "ok": true,
  "format": "moment-watch-v1",
- "publishedAt": "2026-11-03T07:25:52.448Z",
+ "publishedAt": "2026-11-03T09:05:44.809Z",
  "engine": "Domain/agents/moment-watch · R62 sovereign moment",
  "role": "reads the live moment every 30 minutes (market regime, our parity line vs the live internal book, fuel runway, measured anomalies) and records a deterministic directional call that is only ever scored after its horizon has passed - training as measurement, never as promise",
  "market": {
-  "steemUsd": 0.0466751,
-  "steem24h": -4.114239152889636,
-  "sbdUsd": 0.422801,
-  "btcUsd": 76624,
-  "btc24h": -1.8309682002968533,
+  "steemUsd": 0.04688453,
+  "steem24h": -2.8679755309063024,
+  "sbdUsd": 0.42283,
+  "btcUsd": 76575,
+  "btc24h": -2.091548733123899,
   "fearGreed": {
    "value": 26,
    "label": "Fear"
   }
  },
- "paritySbdPerSteem": 0.1103949612228921,
+ "paritySbdPerSteem": 0.11088269517300098,
  "liveBook": {
-  "bestBid": 0.10591537361648043,
-  "bestAsk": 0.1063,
-  "bidsDepthSbd": 2307.53,
-  "asksDepthSteem": 11332.44,
+  "bestBid": 0.10381651376146789,
+  "bestAsk": 0.10433319310054691,
+  "bidsDepthSbd": 453.61,
+  "asksDepthSteem": 767.47,
   "levels": 21,
-  "bidSurplusBps": -406
+  "bidSurplusBps": -637
  },
  "regime": {
   "label": "NEUTRAL",
   "drivers": [
-   "BTC -1.8%",
+   "BTC -2.1%",
    "F&G 26"
   ],
   "thresholds": {
@@ -40,18 +40,18 @@
  },
  "runway": {
   "active": false,
-  "weeklySp": 6.211385441088181e-10,
+  "weeklySp": 6.211414523075482e-10,
   "nextPayment": "1969-12-31T23:59:59",
   "remainingSp": 0,
   "weeklyUsd": 0,
-  "treasuryUsd": 1.51
+  "treasuryUsd": 1.52
  },
  "grid": {
-  "verdict": "ARMED-WAITING",
+  "verdict": "ARMED-LIVE",
   "armed": true,
-  "blocker": "broadcast failing: 3/3 chain ops rejected this run (\"broadcast answered without id\") — stale key/authority or node fault; verdict cannot be stable until signing succeeds",
-  "externalFlowUsd": -0.288235,
-  "publishedAt": "2026-11-03T07:20:07.186Z"
+  "blocker": "broadcast failing: 1/7 chain ops rejected this run (\"broadcast answered without id\") — stale key/authority or node fault; verdict cannot be stable until signing succeeds",
+  "externalFlowUsd": -0.294407,
+  "publishedAt": "2026-11-03T09:02:49.020Z"
  },
  "moneyPath": {
   "fuel": {
@@ -71,25 +71,25 @@
   },
   "redemption": null
  },
- "call": "DOWN",
+ "call": "FLAT",
  "callStats": {
-  "resolved": 89,
-  "hits": 26,
-  "hitRatePct": 29,
+  "resolved": 92,
+  "hits": 28,
+  "hitRatePct": 30,
   "horizonH": 6,
   "thresholdPct": 3
  },
- "resolvedNow": 1,
+ "resolvedNow": 4,
  "insights": [
   {
    "kind": "parity-edge",
    "tone": "good",
-   "text": "עומק-קנייה חי 406bps מתחת לקו-הזהות (bid 0.1059 מול parity 0.1104) — עודף מדוד לגריד."
+   "text": "עומק-קנייה חי 637bps מתחת לקו-הזהות (bid 0.1038 מול parity 0.1109) — עודף מדוד לגריד."
   },
   {
    "kind": "sbd-inventory",
    "tone": "warn",
-   "text": "צוואר-הקנייה של הגריד: broadcast failing: 3/3 chain ops rejected this run (\"broadcast answered without id\") — stale key/authority or node fault; verdict cannot be stable until signing succeeds"
+   "text": "צוואר-הקנייה של הגריד: broadcast failing: 1/7 chain ops rejected this run (\"broadcast answered without id\") — stale key/authority or node fault; verdict cannot be stable until signing succeeds"
   },
   {
    "kind": "fuel",
@@ -104,7 +104,7 @@
   {
    "kind": "external-flow",
    "tone": "info",
-   "text": "זרימת-חוץ מצטברת: -0.2882$ מ-110 מילויים (txids בספר הציבורי)."
+   "text": "זרימת-חוץ מצטברת: -0.2944$ מ-111 מילויים (txids בספר הציבורי)."
   }
  ],
  "sources": [
