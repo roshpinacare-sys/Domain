@@ -366,7 +366,7 @@ footer a{color:var(--dim)}
           var h=(Date.now()-Date.parse(d.at))/36e5;
           var cls=h<6?'ok':(h<48?'warn':'bad');
           var ms=d.measuredSnapshot||{};
-          var chainBits=(ms.chain?String(ms.chain).split(' headcorner')[0]:'');
+          var chainBits=(ms.chain?String(ms.chain).split(' acct-h-849e9df7')[0]:'');
           c.innerHTML='פנקס-הביצוע · execution-state (חי): <b class="'+cls+'">cycle '+(d.cycle!=null?d.cycle:'?')+'</b> · עודכן '+(ago||esc(d.at))+
             (chainBits?' · '+esc(chainBits):'')+
             ' · מקור: '+esc(label)+' · '+esc(String(txt.length))+'ch · '+(Date.now()-t)+'ms';
