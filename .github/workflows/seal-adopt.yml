@@ -40,7 +40,14 @@ jobs:
           node-version: '22'
 
       - name: Adopt the operator's delivered master key as the seal passphrase
+        # [revived 2026-11-04] the tombstone was stale: scripts/seal-adopt.mjs DOES live in
+        # Domain now (237 lines, self-verifying). Measured: the operator delivered a new
+        # master key under MAIN_KEY (2026-11-04) and runs 500/501 still refuse the old
+        # envelope — the designed adoption path (r72 precedent) is the honest cure:
+        # recover the SAME key material from lineage, verify addresses against the live
+        # ledger, re-encrypt with the operator's value, prove the round-trip, push.
+        # No chain keys are touched (cloud/network identical), no passphrase ever printed.
         env:
           MAIN_KEY: ${{ secrets.MAIN_KEY }}
         working-directory: zip
-        run: echo "[T-563 tombstone] ../domain/scripts/seal-adopt.mjs never lived in this repo (saos-dex-template origin) - step was silent module-not-found under continue-on-error; honest skip"
+        run: node ../domain/scripts/seal-adopt.mjs
