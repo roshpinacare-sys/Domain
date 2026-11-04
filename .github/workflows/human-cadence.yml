@@ -58,7 +58,7 @@ jobs:
         if: steps.brake.outputs.active != 'true'
         env:
           SA_FLEET_KEYS: ${{ secrets.SA_FLEET_KEYS }}
-          PERSONAS_KEY: ${{ secrets.PERSONAS_KEY }}
+          MAIN_KEY: ${{ secrets.MAIN_KEY }}
         run: node agents/human-cadence.cjs ${{ github.event.inputs.mode || 'all' }}
 
       - name: community RC top-up gate (honest bookkeeping; LIVE only when armed)
