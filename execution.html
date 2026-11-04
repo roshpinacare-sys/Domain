@@ -286,6 +286,7 @@ footer a{color:var(--dim)}
         '<span class="chip">שורות: <b class="mono">'+esc(String((d.done||[]).length+(d.partial||[]).length+(d.gaps||[]).length+(d.next||[]).length))+'</b></span>'+
         '<span class="chip">חוק: <b>אין-ראיה = לא-קרה</b></span>';
       if(mirrorChip)el('chips').appendChild(mirrorChip);
+      if(window.esChipLive)el('chips').appendChild(window.esChipLive);
       safe('lawline',function(){
         if(d.law){el('lawText').textContent=d.law;el('lawLine').hidden=false;}
       });
@@ -354,7 +355,7 @@ footer a{color:var(--dim)}
   (function(){
     var ES_SITE='https://roshpinacare-sys.github.io/Domain/execution-state.json';
     var ES_DEX='https://raw.githubusercontent.com/roshpinacare-sys/saos-dex/main/execution-state.json';
-    function chipHTML(){var c=document.createElement('span');c.className='chip';c.id='esChip';el('chips').appendChild(c);return c;}
+    function chipHTML(){var c=document.createElement('span');c.className='chip';c.id='esChip';window.esChipLive=c;el('chips').appendChild(c);return c;}
     function probe(url,label){
       var t=Date.now();
       return fetch(url,{cache:'no-store'}).then(function(res){
