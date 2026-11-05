@@ -1,6 +1,6 @@
 # dex-xc — THE INTENT GATES (R43, CR-0073)
 
-At: 2026-11-05T05:44:19.013Z · Verdict: **XC-DOORS-LIVE** · mode: undefined · batch: — · attestation: `ac4e471ed75c7a81`
+At: 2026-11-05T07:56:20.244Z · Verdict: **XC-DOORS-LIVE** · mode: undefined · batch: — · attestation: `ac4e471ed75c7a81`
 
 Doors law: fill window 3600s · refund unlock 7200s (the 2:1 HTLC interlock) · bond exposure ≤ 2× custody · guard 0.5% · dust 1000µ
 
