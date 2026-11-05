@@ -1,7 +1,7 @@
 {
   "format": "SAOS-SCHEDULER-AUDIT/1",
   "agent": "scheduler-audit",
-  "verdict": "SCHEDULER-STARVED",
+  "verdict": "SCHEDULER-DEGRADED",
   "ownerLanguage": "he",
   "ownerLanguageRule": "owner-facing replies: עברית (Hebrew) — the owner reads Hebrew; repo/CI artifacts stay English",
   "sections": {
@@ -56,11 +56,11 @@
           "crons": [
             "8 */4 * * *"
           ],
-          "expectedSlots": 6,
+          "expectedSlots": 5,
           "observed": 3,
           "lastScheduledAt": "2026-11-05T00:51:21Z",
           "unparseableCrons": 0,
-          "verdict": "DEGRADED"
+          "verdict": "PULSE"
         },
         {
           "file": "arb-mesh-cron.yml",
@@ -78,7 +78,7 @@
           "crons": [
             "23 */2 * * *"
           ],
-          "expectedSlots": 12,
+          "expectedSlots": 11,
           "observed": 3,
           "lastScheduledAt": "2026-11-05T00:55:50Z",
           "unparseableCrons": 0,
@@ -100,8 +100,8 @@
           "crons": [
             "26 * * * *"
           ],
-          "expectedSlots": 24,
-          "observed": 4,
+          "expectedSlots": 23,
+          "observed": 3,
           "lastScheduledAt": "2026-11-05T03:34:59Z",
           "unparseableCrons": 0,
           "verdict": "DEGRADED"
@@ -123,7 +123,7 @@
             "53 * * * *"
           ],
           "expectedSlots": 23,
-          "observed": 4,
+          "observed": 3,
           "lastScheduledAt": "2026-11-05T02:53:42Z",
           "unparseableCrons": 0,
           "verdict": "DEGRADED"
@@ -134,7 +134,7 @@
             "51 * * * *"
           ],
           "expectedSlots": 23,
-          "observed": 4,
+          "observed": 3,
           "lastScheduledAt": "2026-11-05T02:49:56Z",
           "unparseableCrons": 0,
           "verdict": "DEGRADED"
@@ -144,7 +144,7 @@
           "crons": [
             "23 */4 * * *"
           ],
-          "expectedSlots": 6,
+          "expectedSlots": 5,
           "observed": 1,
           "lastScheduledAt": "2026-11-05T00:56:29Z",
           "unparseableCrons": 0,
@@ -211,17 +211,17 @@
             "2 1 * * *"
           ],
           "expectedSlots": 1,
-          "observed": 0,
-          "lastScheduledAt": "2026-11-04T07:14:33Z",
+          "observed": 1,
+          "lastScheduledAt": "2026-11-05T07:42:19Z",
           "unparseableCrons": 0,
-          "verdict": "STARVED"
+          "verdict": "PULSE"
         },
         {
           "file": "dex-activation.yml",
           "crons": [
             "24,50 * * * *"
           ],
-          "expectedSlots": 47,
+          "expectedSlots": 46,
           "observed": 4,
           "lastScheduledAt": "2026-11-05T06:59:23Z",
           "unparseableCrons": 0,
@@ -255,7 +255,7 @@
           "crons": [
             "26 * * * *"
           ],
-          "expectedSlots": 24,
+          "expectedSlots": 23,
           "observed": 3,
           "lastScheduledAt": "2026-11-05T02:35:57Z",
           "unparseableCrons": 0,
@@ -267,7 +267,7 @@
             "52 * * * *"
           ],
           "expectedSlots": 23,
-          "observed": 4,
+          "observed": 3,
           "lastScheduledAt": "2026-11-05T02:53:20Z",
           "unparseableCrons": 0,
           "verdict": "DEGRADED"
@@ -277,7 +277,7 @@
           "crons": [
             "46 */2 * * *"
           ],
-          "expectedSlots": 11,
+          "expectedSlots": 12,
           "observed": 3,
           "lastScheduledAt": "2026-11-05T02:49:56Z",
           "unparseableCrons": 0,
@@ -292,7 +292,7 @@
           ],
           "expectedSlots": 70,
           "observed": 11,
-          "lastScheduledAt": "2026-11-05T03:34:01Z",
+          "lastScheduledAt": "2026-11-05T07:26:36Z",
           "unparseableCrons": 0,
           "verdict": "DEGRADED"
         },
@@ -301,7 +301,7 @@
           "crons": [
             "4 */2 * * *"
           ],
-          "expectedSlots": 12,
+          "expectedSlots": 11,
           "observed": 3,
           "lastScheduledAt": "2026-11-05T02:17:29Z",
           "unparseableCrons": 0,
@@ -312,11 +312,11 @@
           "crons": [
             "5 8 * * *"
           ],
-          "expectedSlots": 1,
+          "expectedSlots": 0,
           "observed": 1,
           "lastScheduledAt": "2026-11-04T16:09:31Z",
           "unparseableCrons": 0,
-          "verdict": "PULSE"
+          "verdict": "UNMEASURED"
         },
         {
           "file": "econ-desk.yml",
@@ -445,8 +445,8 @@
             "19 * * * *"
           ],
           "expectedSlots": 23,
-          "observed": 3,
-          "lastScheduledAt": "2026-11-05T00:26:15Z",
+          "observed": 4,
+          "lastScheduledAt": "2026-11-05T07:57:49Z",
           "unparseableCrons": 0,
           "verdict": "DEGRADED"
         },
@@ -456,7 +456,7 @@
             "*/20 * * * *"
           ],
           "expectedSlots": 0,
-          "observed": 4,
+          "observed": 3,
           "lastScheduledAt": "2026-11-05T01:54:29Z",
           "unparseableCrons": 1,
           "verdict": "UNMEASURED"
@@ -466,7 +466,7 @@
           "crons": [
             "27,57 * * * *"
           ],
-          "expectedSlots": 47,
+          "expectedSlots": 46,
           "observed": 3,
           "lastScheduledAt": "2026-11-05T01:31:20Z",
           "unparseableCrons": 0,
@@ -534,9 +534,9 @@
           "crons": [
             "48 * * * *"
           ],
-          "expectedSlots": 23,
-          "observed": 3,
-          "lastScheduledAt": "2026-11-05T00:32:56Z",
+          "expectedSlots": 24,
+          "observed": 4,
+          "lastScheduledAt": "2026-11-05T07:26:29Z",
           "unparseableCrons": 0,
           "verdict": "DEGRADED"
         },
@@ -600,7 +600,7 @@
           "crons": [
             "17 */2 * * *"
           ],
-          "expectedSlots": 12,
+          "expectedSlots": 11,
           "observed": 4,
           "lastScheduledAt": "2026-11-05T06:56:44Z",
           "unparseableCrons": 0,
@@ -699,8 +699,8 @@
           "crons": [
             "17,47 * * * *"
           ],
-          "expectedSlots": 46,
-          "observed": 4,
+          "expectedSlots": 47,
+          "observed": 3,
           "lastScheduledAt": "2026-11-05T01:48:48Z",
           "unparseableCrons": 0,
           "verdict": "DEGRADED"
@@ -733,8 +733,8 @@
             "23,53 * * * *"
           ],
           "expectedSlots": 46,
-          "observed": 3,
-          "lastScheduledAt": "2026-11-05T00:26:41Z",
+          "observed": 4,
+          "lastScheduledAt": "2026-11-05T07:27:30Z",
           "unparseableCrons": 0,
           "verdict": "DEGRADED"
         },
@@ -755,8 +755,8 @@
             "13,43 * * * *"
           ],
           "expectedSlots": 47,
-          "observed": 3,
-          "lastScheduledAt": "2026-11-05T01:26:27Z",
+          "observed": 4,
+          "lastScheduledAt": "2026-11-05T08:28:32Z",
           "unparseableCrons": 0,
           "verdict": "DEGRADED"
         },
@@ -798,7 +798,7 @@
           "crons": [
             "11 */2 * * *"
           ],
-          "expectedSlots": 12,
+          "expectedSlots": 11,
           "observed": 3,
           "lastScheduledAt": "2026-11-05T00:51:34Z",
           "unparseableCrons": 0,
@@ -864,7 +864,7 @@
           "crons": [
             "23 */2 * * *"
           ],
-          "expectedSlots": 12,
+          "expectedSlots": 11,
           "observed": 4,
           "lastScheduledAt": "2026-11-05T07:00:11Z",
           "unparseableCrons": 0,
@@ -920,7 +920,7 @@
             "23 * * * *"
           ],
           "expectedSlots": 23,
-          "observed": 4,
+          "observed": 3,
           "lastScheduledAt": "2026-11-05T03:32:35Z",
           "unparseableCrons": 0,
           "verdict": "DEGRADED"
@@ -974,11 +974,11 @@
           "crons": [
             "47 6 * * *"
           ],
-          "expectedSlots": 0,
+          "expectedSlots": 1,
           "observed": 1,
           "lastScheduledAt": "2026-11-04T14:52:57Z",
           "unparseableCrons": 0,
-          "verdict": "UNMEASURED"
+          "verdict": "PULSE"
         },
         {
           "file": "voice-artery.yml",
@@ -1029,22 +1029,22 @@
           "crons": [
             "55 6 * * *"
           ],
-          "expectedSlots": 0,
+          "expectedSlots": 1,
           "observed": 1,
           "lastScheduledAt": "2026-11-04T14:54:08Z",
           "unparseableCrons": 0,
-          "verdict": "UNMEASURED"
+          "verdict": "PULSE"
         },
         {
           "file": "weave-heart.yml",
           "crons": [
             "29 */4 * * *"
           ],
-          "expectedSlots": 6,
+          "expectedSlots": 5,
           "observed": 3,
           "lastScheduledAt": "2026-11-05T00:56:48Z",
           "unparseableCrons": 0,
-          "verdict": "DEGRADED"
+          "verdict": "PULSE"
         },
         {
           "file": "weave-mirror.yml",
@@ -1062,24 +1062,21 @@
           "crons": [
             "53 7 * * *"
           ],
-          "expectedSlots": 1,
+          "expectedSlots": 0,
           "observed": 1,
           "lastScheduledAt": "2026-11-04T15:47:56Z",
           "unparseableCrons": 0,
-          "verdict": "PULSE"
+          "verdict": "UNMEASURED"
         }
       ]
     },
     "boundary": {
-      "schedulerLastSeenAt": "2026-11-05T07:22:18Z",
-      "starvedNames": [
-        "daily-digest.yml"
-      ],
+      "schedulerLastSeenAt": "2026-11-05T08:28:32Z",
+      "starvedNames": [],
       "degradedNames": [
         "agent-verify.yml",
         "agent9-fleet-truth.yml",
         "agent9-truth-watchdog.yml",
-        "anchor-execute.yml",
         "arb-mesh-cron.yml",
         "artery-integrity-twin.yml",
         "autonomy-guardian.yml",
@@ -1125,12 +1122,12 @@
         "tick-keeper.yml",
         "treasury-route.yml",
         "voice-artery.yml",
-        "weave-anchor-lines.yml",
-        "weave-heart.yml"
+        "weave-anchor-lines.yml"
       ],
       "unmeasuredNames": [
         "adsmarket-panel.yml",
         "audience-analyst.yml",
+        "earn-audit-cron.yml",
         "estate-scrub.yml",
         "evo-windows.yml",
         "foundry-mesh-tests.yml",
@@ -1143,9 +1140,8 @@
         "sovereign-selftests.yml",
         "stale-watchdog.yml",
         "token-forge.yml",
-        "twin-audit.yml",
-        "weave-ecosystem.yml",
-        "weave-mirror.yml"
+        "weave-mirror.yml",
+        "web-publish.yml"
       ]
     },
     "heal": {
@@ -1154,10 +1150,10 @@
       "law": "STARVED ∧ keyless ∧ not-host ∧ not-keeper"
     },
     "window": {
-      "from": "2026-11-04T07:23:08.567Z",
-      "to": "2026-11-05T07:23:08.567Z",
+      "from": "2026-11-04T08:29:49.278Z",
+      "to": "2026-11-05T08:29:49.278Z",
       "graceMinutes": 40
     }
   },
-  "at": "2026-11-05T07:26:54.056Z"
+  "at": "2026-11-05T08:33:04.470Z"
 }
