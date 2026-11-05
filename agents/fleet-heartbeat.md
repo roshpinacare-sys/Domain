@@ -1,4 +1,4 @@
-# דופק-הצי (fleet-heartbeat) — 2026-11-05T04:36:49.279Z
+# דופק-הצי (fleet-heartbeat) — 2026-11-05T06:34:08.332Z
 
 מדידת-מנועים של כל-הריפואים: מה פועם, מה שקט, מה הפלטפורמה נטרלה, מה נרפא בריצה זו.
 
@@ -20,20 +20,20 @@
 
 ## שורות-שקט (QUIET/NEVER-RAN/NO-WORKFLOWS/AUTO-DISABLED)
 
-- Defi — QUIET · שקט 359.6 שעות
+- Defi — QUIET · שקט 361.6 שעות
 - estate-agent-9 — NO-WORKFLOWS
 - negen — NO-WORKFLOWS
 - ops-control — NO-WORKFLOWS
 - oss-scanner — NO-WORKFLOWS
 - sanbox — NO-WORKFLOWS
-- sandbox-private — QUIET · שקט 376.9 שעות
+- sandbox-private — QUIET · שקט 378.8 שעות
 - saos-console — NO-WORKFLOWS
 - saos-console-zai — NO-WORKFLOWS
 - saos-coordination — NO-WORKFLOWS
-- saos-desk — NO-WORKFLOWS · שקט 507.1 שעות
-- saos-markets — NO-WORKFLOWS · שקט 457.9 שעות
-- saos-owner-channel — NO-WORKFLOWS · שקט 424.6 שעות
-- saos-sovereign-foundry — QUIET · שקט 383 שעות
+- saos-desk — NO-WORKFLOWS · שקט 509 שעות
+- saos-markets — NO-WORKFLOWS · שקט 459.8 שעות
+- saos-owner-channel — NO-WORKFLOWS · שקט 426.6 שעות
+- saos-sovereign-foundry — QUIET · שקט 385 שעות
 - SovereignConsole — NO-WORKFLOWS
 - vault-home — NO-WORKFLOWS
 
