@@ -43,6 +43,9 @@ const DATA = [
   { path: "weave/census.json", ts: (d) => d.generatedAt },
   { path: "weave/vitals.json", ts: (d) => d.generatedAt },
   { path: "weave/agreement.json", ts: (d) => d.generatedAt },
+  // r145: המראה-החיה + מצב-ה-SAOS — הסוכן weave-mirror (:57) מת-מאז 22:17Z, התפקיד-עובר-לכאן
+  { path: "mirror.json", ts: (d) => d.generatedAt },
+  { path: "saos-live.json", ts: (d) => d.generatedAt },
 ];
 
 // HTML: שטחי-התנועה הכפולים — הוסרו מהשיקוף ב-Task 14-b (2026-10-02):
