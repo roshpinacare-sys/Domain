@@ -1,33 +1,33 @@
 {
  "ok": true,
  "format": "moment-watch-v1",
- "publishedAt": "2026-11-05T17:05:03.455Z",
+ "publishedAt": "2026-11-05T18:39:40.645Z",
  "engine": "Domain/agents/moment-watch · R62 sovereign moment",
  "role": "reads the live moment every 30 minutes (market regime, our parity line vs the live internal book, fuel runway, measured anomalies) and records a deterministic directional call that is only ever scored after its horizon has passed - training as measurement, never as promise",
  "market": {
-  "steemUsd": 0.04657939,
-  "steem24h": -5.4391455508784405,
-  "sbdUsd": 0.458039,
-  "btcUsd": 76164,
-  "btc24h": -5.281484007998641,
+  "steemUsd": 0.04684605,
+  "steem24h": -5.174343644562607,
+  "sbdUsd": 0.458164,
+  "btcUsd": 76003,
+  "btc24h": -5.436533488561268,
   "fearGreed": {
    "value": 50,
    "label": "Neutral"
   }
  },
- "paritySbdPerSteem": 0.10169306543765924,
+ "paritySbdPerSteem": 0.10224733938065846,
  "liveBook": {
-  "bestBid": 0.10224089635854341,
+  "bestBid": 0.10225,
   "bestAsk": 0.10366826156299841,
-  "bidsDepthSbd": 467.79,
+  "bidsDepthSbd": 467.8,
   "asksDepthSteem": 91.58,
   "levels": 21,
-  "bidSurplusBps": 54
+  "bidSurplusBps": 0
  },
  "regime": {
   "label": "RISK_OFF",
   "drivers": [
-   "BTC -5.3%",
+   "BTC -5.4%",
    "F&G 50"
   ],
   "thresholds": {
@@ -40,26 +40,26 @@
  },
  "runway": {
   "active": false,
-  "weeklySp": 6.212393008966877e-10,
+  "weeklySp": 6.212420569601401e-10,
   "nextPayment": "1969-12-31T23:59:59",
   "remainingSp": 0,
   "weeklyUsd": 0,
-  "treasuryUsd": 1.51
+  "treasuryUsd": 1.52
  },
  "grid": {
   "verdict": "ARMED-WAITING",
   "armed": true,
-  "blocker": "POLICY-HALT (steem leg): cycle ops est 145 > cap 128 ; kelly-cap: gear cap 50→2 SBD (mode=kelly; winRate=0.518 WLR=0.970 kelly=0.021 safe=0.010 ×4 → 2/50) — atomic refresh skipped, ladder untouched",
+  "blocker": "POLICY-HALT (steem leg): cycle ops est 149 > cap 128 ; kelly-cap: gear cap 50→2 SBD (mode=kelly; winRate=0.518 WLR=0.970 kelly=0.021 safe=0.010 ×4 → 2/50) — atomic refresh skipped, ladder untouched",
   "externalFlowUsd": 0.262946,
-  "publishedAt": "2026-11-05T17:00:00.194Z"
+  "publishedAt": "2026-11-05T18:28:01.509Z"
  },
  "moneyPath": {
   "fuel": {
    "ok": true,
    "account": "acct-00",
-   "steem": 29.702,
+   "steem": 113.12,
    "sbd": 0.106,
-   "sp": 2323.49,
+   "sp": 2323.52,
    "spVests": 3740142.4522049995,
    "powerdown": {
     "active": true,
@@ -84,17 +84,17 @@
   {
    "kind": "parity-edge",
    "tone": "warn",
-   "text": "הספר החי 54bps מעל קו-הזהות — אין עודף-קנייה כרגע; הגריד ממתין."
+   "text": "הספר החי 0bps מעל קו-הזהות — אין עודף-קנייה כרגע; הגריד ממתין."
   },
   {
    "kind": "sbd-inventory",
    "tone": "warn",
-   "text": "צוואר-הקנייה של הגריד: POLICY-HALT (steem leg): cycle ops est 145 > cap 128 ; kelly-cap: gear cap 50→2 SBD (mode=kelly; winRate=0.518 WLR=0.970 kelly=0.021 safe=0.010 ×4 → 2/50) — atomic refresh skipped, ladder untouched"
+   "text": "צוואר-הקנייה של הגריד: POLICY-HALT (steem leg): cycle ops est 149 > cap 128 ; kelly-cap: gear cap 50→2 SBD (mode=kelly; winRate=0.518 WLR=0.970 kelly=0.021 safe=0.010 ×4 → 2/50) — atomic refresh skipped, ladder untouched"
   },
   {
    "kind": "steem-move",
    "tone": "info",
-   "text": "STEEM -5.4% ביממה — סימוני-הגריד ייגזרו מחדש בפעימה הבאה; תוכניות-עבר עלולות לא-רלוונטיות."
+   "text": "STEEM -5.2% ביממה — סימוני-הגריד ייגזרו מחדש בפעימה הבאה; תוכניות-עבר עלולות לא-רלוונטיות."
   },
   {
    "kind": "fuel",
