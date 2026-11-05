@@ -237,3 +237,130 @@ nav.nhead { padding-top: env(safe-area-inset-top); }
   --sop-fs-xs: 12px; --sop-fs-sm: 13px; --sop-fs-md: 15px;
   --sop-fs-lg: 18px; --sop-fs-xl: 22px; --sop-fs-2xl: 28px; /* type scale */
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   Design Elevation Layer · v1 · 2026-11-05 (owner directive)
+   Sources applied: navbar.gallery (nav pills) · footer.design (footer
+   hairline) · cta.gallery (primary/ghost CTAs) · glass.samasante.com
+   (glass panels) · 3dicons.co (3D glyph shadows) · supahero.io +
+   scrolltide.co (hero aura, scroll motion) · styles.refero.design
+   (typographic rhythm). Zinc+gold law kept — no indigo, no blue.
+   All rules low-specificity (:where) so page-inline styles still win.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* 1 · motion, scroll & selection */
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+  :where(.card, .pcard, .box) { transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+}
+:where(h1, h2, h3) { scroll-margin-top: 84px; }
+::selection { background: rgba(212, 175, 55, .28); color: #fff; }
+
+/* 2 · glass system — glass.samasante.com */
+:where(.card, .pcard, .box) {
+  position: relative;
+  background: linear-gradient(160deg, rgba(255,255,255,.045), rgba(255,255,255,.015) 42%), var(--panel, rgba(24,24,27,.85));
+  border: 1px solid rgba(255,255,255,.09);
+  backdrop-filter: blur(14px) saturate(1.15);
+  -webkit-backdrop-filter: blur(14px) saturate(1.15);
+  box-shadow: 0 1px 0 rgba(255,255,255,.05) inset, 0 14px 40px -22px rgba(0,0,0,.75);
+  border-radius: 16px;
+}
+:where(.card, .pcard):hover {
+  transform: translateY(-2px);
+  border-color: rgba(212,175,55,.35);
+  box-shadow: 0 1px 0 rgba(255,255,255,.07) inset, 0 22px 50px -24px rgba(0,0,0,.85), 0 0 0 1px rgba(212,175,55,.12);
+}
+
+/* 3 · navbar — navbar.gallery */
+:where(header.nhead, header.site) {
+  background: rgba(9,9,11,.72);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+:where(nav.links a, nav.top a, .sitenav-panel a) {
+  border-radius: 999px;
+  transition: color .2s ease, background .2s ease, box-shadow .2s ease;
+}
+:where(nav.links a:hover, nav.top a:hover) {
+  background: rgba(212,175,55,.10);
+  color: var(--gold, #d4af37);
+  box-shadow: 0 0 18px -6px rgba(212,175,55,.45);
+}
+:where(nav.links a[aria-current="page"], nav.top a[aria-current="page"]) {
+  color: var(--gold, #d4af37);
+  box-shadow: inset 0 -2px 0 -1px var(--gold, #d4af37);
+}
+
+/* 4 · CTAs — cta.gallery */
+:where(.btn.primary) {
+  background: linear-gradient(135deg, #e6c662, #d4af37 55%, #b8952e);
+  color: #18181b;
+  border: 0;
+  box-shadow: 0 10px 30px -12px rgba(212,175,55,.55);
+}
+:where(.btn.primary:hover) {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 38px -12px rgba(212,175,55,.7);
+}
+:where(.btn.ghost) {
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.04);
+}
+:where(.btn.ghost:hover) {
+  border-color: rgba(212,175,55,.5);
+  color: var(--gold, #d4af37);
+  background: rgba(212,175,55,.08);
+}
+:where(.btn) { transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease; }
+:where(.cta-row, .ctas) { gap: 12px; }
+
+/* 5 · chips & tags — refero polish */
+:where(.chip, .tag) {
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.045);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+:where(.tag.y, .chip.warn) { border-color: rgba(212,175,55,.35); }
+:where(.tag.g, .chip.ok)   { border-color: rgba(74,222,128,.30); }
+:where(.tag.r)             { border-color: rgba(248,113,113,.30); }
+
+/* 6 · footer — footer.design */
+:where(footer) {
+  position: relative;
+  border-top: 1px solid rgba(255,255,255,.08);
+  background:
+    radial-gradient(60% 120% at 50% 0%, rgba(212,175,55,.06), transparent 60%),
+    rgba(9,9,11,.6);
+}
+:where(footer)::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: -1px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212,175,55,.55), transparent);
+}
+
+/* 7 · 3D glyphs — 3dicons.co */
+:where(.shot3d-btn, .ph) { filter: drop-shadow(0 10px 18px rgba(0,0,0,.5)); }
+
+/* 8 · hero aura — supahero.io */
+:where(header.nhead + section:first-of-type, .hero)::before {
+  content: "";
+  position: absolute;
+  inset: -40% 0 auto;
+  height: 420px;
+  background: radial-gradient(50% 60% at 50% 0%, rgba(212,175,55,.10), transparent 70%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* 9 · scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: #0b0b0d; }
+::-webkit-scrollbar-thumb { background: #27272a; border-radius: 999px; border: 2px solid #0b0b0d; }
+::-webkit-scrollbar-thumb:hover { background: rgba(212,175,55,.55); }
