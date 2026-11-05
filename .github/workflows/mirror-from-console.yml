@@ -39,17 +39,19 @@ jobs:
 
       - name: Publish the mirrored surfaces
         if: always()
+        env:
+          FLEET_ROSTER_MAP: ${{ secrets.FLEET_ROSTER_MAP }}
         run: |
           git config user.name "roshpinacare-sys"
           git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
-          node agents/redact-telemetry.mjs agents/registry.json agents/gh-snapshot.json dex/pnl-desk.json dex/money.json dex/deposits.json dex/watch.json truth/latest.json truth/history.json truth/slo.json weave/census.json weave/vitals.json weave/agreement.json
+          node agents/redact-telemetry.mjs agents/registry.json agents/gh-snapshot.json dex/pnl-desk.json dex/money.json dex/deposits.json dex/watch.json truth/latest.json truth/history.json truth/slo.json weave/census.json weave/vitals.json weave/agreement.json mirror.json saos-live.json
           git add agents/registry.json agents/gh-snapshot.json dex/pnl-desk.json dex/money.json dex/deposits.json dex/watch.json truth/latest.json truth/history.json truth/slo.json mirror-report.json weave/census.json weave/vitals.json weave/agreement.json
           if git diff --cached --quiet; then
             echo "mirror unchanged - the bloc books are already ours"
             exit 0
           fi
           for attempt in 1 2 3; do
-            node agents/redact-telemetry.mjs agents/registry.json agents/gh-snapshot.json dex/pnl-desk.json dex/money.json dex/deposits.json dex/watch.json truth/latest.json truth/history.json truth/slo.json weave/census.json weave/vitals.json weave/agreement.json
+            node agents/redact-telemetry.mjs agents/registry.json agents/gh-snapshot.json dex/pnl-desk.json dex/money.json dex/deposits.json dex/watch.json truth/latest.json truth/history.json truth/slo.json weave/census.json weave/vitals.json weave/agreement.json mirror.json saos-live.json
             git add agents/registry.json agents/gh-snapshot.json dex/pnl-desk.json dex/money.json dex/deposits.json dex/watch.json truth/latest.json truth/history.json truth/slo.json mirror-report.json weave/census.json weave/vitals.json weave/agreement.json
             git commit -m "mirror-from-console: $(date -u +%Y-%m-%dT%H:%M:%SZ) · truth outputs mirrored from the Console home (one-bloc, keyless) [skip ci]"
             git pull --rebase -X theirs --autostash origin main
@@ -58,7 +60,7 @@ jobs:
             git checkout -- .
             git reset --hard origin/main
             node agents/mirror-from-console.mjs
-            node agents/redact-telemetry.mjs agents/registry.json agents/gh-snapshot.json dex/pnl-desk.json dex/money.json dex/deposits.json dex/watch.json truth/latest.json truth/history.json truth/slo.json weave/census.json weave/vitals.json weave/agreement.json
+            node agents/redact-telemetry.mjs agents/registry.json agents/gh-snapshot.json dex/pnl-desk.json dex/money.json dex/deposits.json dex/watch.json truth/latest.json truth/history.json truth/slo.json weave/census.json weave/vitals.json weave/agreement.json mirror.json saos-live.json
             git add agents/registry.json agents/gh-snapshot.json dex/pnl-desk.json dex/money.json dex/deposits.json dex/watch.json truth/latest.json truth/history.json truth/slo.json mirror-report.json weave/census.json weave/vitals.json weave/agreement.json
             if git diff --cached --quiet; then
               echo "after re-mirror there is nothing to commit - the bloc books are already ours"
