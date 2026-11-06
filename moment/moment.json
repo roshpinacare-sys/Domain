@@ -1,28 +1,28 @@
 {
  "ok": true,
  "format": "moment-watch-v1",
- "publishedAt": "2026-11-06T00:04:04.579Z",
+ "publishedAt": "2026-11-06T00:10:45.842Z",
  "engine": "Domain/agents/moment-watch · R62 sovereign moment",
  "role": "reads the live moment every 30 minutes (market regime, our parity line vs the live internal book, fuel runway, measured anomalies) and records a deterministic directional call that is only ever scored after its horizon has passed - training as measurement, never as promise",
  "market": {
-  "steemUsd": 0.04670003,
-  "steem24h": -6.950186935950765,
-  "sbdUsd": 0.457134,
-  "btcUsd": 76058,
-  "btc24h": -5.503531089927351,
+  "steemUsd": 0.04690185,
+  "steem24h": -6.120508897484585,
+  "sbdUsd": 0.457331,
+  "btcUsd": 76173,
+  "btc24h": -5.490729980525658,
   "fearGreed": {
    "value": 28,
    "label": "Fear"
   }
  },
- "paritySbdPerSteem": 0.1021582949419645,
+ "paritySbdPerSteem": 0.10255558884046785,
  "liveBook": {
   "bestBid": 0.10217501955432608,
   "bestAsk": 0.10366826156299841,
   "bidsDepthSbd": 438.34,
   "asksDepthSteem": 101.99,
   "levels": 21,
-  "bidSurplusBps": 2
+  "bidSurplusBps": -37
  },
  "regime": {
   "label": "RISK_OFF",
@@ -40,11 +40,11 @@
  },
  "runway": {
   "active": false,
-  "weeklySp": 6.212515214924604e-10,
+  "weeklySp": 6.212517175335658e-10,
   "nextPayment": "1969-12-31T23:59:59",
   "remainingSp": 0,
   "weeklyUsd": 0,
-  "treasuryUsd": 1.51
+  "treasuryUsd": 1.52
  },
  "grid": {
   "verdict": "ARMED-WAITING",
@@ -79,12 +79,12 @@
   "horizonH": 6,
   "thresholdPct": 3
  },
- "resolvedNow": 1,
+ "resolvedNow": 0,
  "insights": [
   {
    "kind": "parity-edge",
-   "tone": "warn",
-   "text": "הספר החי 2bps מעל קו-הזהות — אין עודף-קנייה כרגע; הגריד ממתין."
+   "tone": "good",
+   "text": "עומק-קנייה חי 37bps מתחת לקו-הזהות (bid 0.1022 מול parity 0.1026) — עודף מדוד לגריד."
   },
   {
    "kind": "sbd-inventory",
@@ -94,7 +94,7 @@
   {
    "kind": "steem-move",
    "tone": "info",
-   "text": "STEEM -7.0% ביממה — סימוני-הגריד ייגזרו מחדש בפעימה הבאה; תוכניות-עבר עלולות לא-רלוונטיות."
+   "text": "STEEM -6.1% ביממה — סימוני-הגריד ייגזרו מחדש בפעימה הבאה; תוכניות-עבר עלולות לא-רלוונטיות."
   },
   {
    "kind": "fuel",
