@@ -217,3 +217,12 @@
 | 2026-11-05T13:24:46.325Z | census | @owner no candidate secret matches live active authority | refused |
 | 2026-11-05T13:24:46.325Z | summary | no blurt account connected this run — census lines above say exactly which secrets were tried | BLOCKED-NO-BLURT-AUTHORITY |
 
+
+## BLURT-CONNECT RUN · 2026-11-06T13:07:03.680Z
+
+| at | op | detail | status |
+|---|---|---|---|
+| 2026-11-06T13:07:02.953Z | config | chain_id=cd8d90f29a… (official blurtjs config) | ok |
+| 2026-11-06T13:07:03.680Z | census | @owner no candidate secret matches live active authority | refused |
+| 2026-11-06T13:07:03.680Z | summary | no blurt account connected this run — census lines above say exactly which secrets were tried | BLOCKED-NO-BLURT-AUTHORITY |
+
