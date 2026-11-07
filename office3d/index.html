@@ -1018,7 +1018,7 @@
             STALE: { heb: "דועך", col: "#d9b877", rank: 2 },
             IDLE:  { heb: "רדום", col: "#9a9284", rank: 3 }
           };
-          function normVer(v) { var k = String(v || "").toUpperCase().trim(); if (VERD[k]) return k; if (k === "ALIVE2") return "ALIVE"; return "IDLE"; }
+          function normVer(v) { var k = String(v || "").toUpperCase().trim(); if (VERD[k]) return k; if (k === "ALIVE<span data-canon="verdicts.ALIVE">23</span>") return "ALIVE"; return "IDLE"; }
           var ARTV = {
             BEAT:    { heb: "פועם", col: "#43d17c", hot: 1 },
             RUNNING: { heb: "בריצה", col: "#e8b45a", hot: 1 },
@@ -1042,11 +1042,11 @@
             at: EMBED.at || null,
             canonAt: EMBED.canonAt || null,
             live: { statusAt: null, canonAt: null, pullOk: false, pullErr: false },
-            summary: { ALIVE: 0, MIXED: 0, STALE: 0, IDLE: 0 } // נגזר-מהריפואים-עצמן · מקור-אמת-אחד
+            summary: { ALIVE: <span data-canon="verdicts.ALIVE">23</span>, MIXED: <span data-canon="verdicts.MIXED">3</span>, STALE: <span data-canon="verdicts.STALE">11</span>, IDLE: <span data-canon="verdicts.IDLE">13</span> } // נגזר-מהריפואים-עצמן · מקור-אמת-אחד
           };
           var ART_CAP = 12;
           function normalizeRepos(list) {
-            var out = [], sum = { ALIVE: 0, MIXED: 0, STALE: 0, IDLE: 0 };
+            var out = [], sum = { ALIVE: <span data-canon="verdicts.ALIVE">23</span>, MIXED: <span data-canon="verdicts.MIXED">3</span>, STALE: <span data-canon="verdicts.STALE">11</span>, IDLE: <span data-canon="verdicts.IDLE">13</span> };
             (list || []).forEach(function (raw) {
               var v = normVer(raw.verdict);
               var arts = (raw.arteries || []).map(function (a) {
@@ -1156,7 +1156,7 @@
               var p = ellipse(plaza.x, plaza.y, a2, b2, ang);
               rooms.push(mkRoom(r, p.x, p.y, 2.0, 1.5, false));
             });
-            if (annex.length) headers.push({ district: "ALIVE2", x: plaza.x + a2 * Math.cos(-Math.PI / 2) * 0, y: plaza.y - b2 - 2.0, count: annex.length });
+            if (annex.length) headers.push({ district: "ALIVE<span data-canon="verdicts.ALIVE">23</span>", x: plaza.x + a2 * Math.cos(-Math.PI / 2) * 0, y: plaza.y - b2 - 2.0, count: annex.length });
             // טבעת-חיצונית: מעורב → דועך → רדום (קשתות-רצופות-לפי-דירוג)
             var outer = byRank.MIXED.concat(byRank.STALE, byRank.IDLE);
             var a3 = 15.0, b3 = 8.3, start3 = -Math.PI / 2 + 0.30;
@@ -1653,7 +1653,7 @@
           function headerSig(hh) { return hh.district + "|" + hh.count; }
           function renderHeader(hh) {
             var v = VERD[hh.district] || VERD.ALIVE;
-            var name = hh.district === "ALIVE2" ? "רובע-החיים-הנוספים" : "רובע-" + v.heb;
+            var name = hh.district === "ALIVE<span data-canon="verdicts.ALIVE">23</span>" ? "רובע-החיים-הנוספים" : "רובע-" + v.heb;
             hh.el.innerHTML = "<span class=\"dot\" style=\"background:" + v.col + ";\"></span>" + name + "<span class=\"cnt\">" + hh.count + "</span>";
           }
           function hideTip() { tip.classList.remove("on"); tip.style.display = "none"; tip._rm = null; }
@@ -2077,7 +2077,7 @@
             return null;
           }
           function districtRooms(key) {
-            if (key === "ALIVE2") return rooms.filter(function (r) { return !r.hero && r.verdict === "ALIVE"; });
+            if (key === "ALIVE<span data-canon="verdicts.ALIVE">23</span>") return rooms.filter(function (r) { return !r.hero && r.verdict === "ALIVE"; });
             return rooms.filter(function (r) { return r.verdict === key; });
           }
           function showTip(rm, px, py) {
