@@ -1,10 +1,10 @@
-# CONTENT-GATE · 2026-11-05T23:49:41.732Z
+# CONTENT-GATE · 2026-11-07T13:30:58.543Z
 
 policy: <=7 posts/7d/account · >=600 chars · dup-ratio <=0.2 · disclosure on automated posts
 
 | account | posts7d | short-bodies | disclosed | status |
 |---|---|---|---|---|
-| @owner | 0 | 0 | 0/0 | ok |
+| owner | RPC-ERR | - | - | - | - |
 | acct-18 | RPC-ERR | - | - | - | - |
 | acct-02 | RPC-ERR | - | - | - | - |
 | acct-01 | RPC-ERR | - | - | - | - |
