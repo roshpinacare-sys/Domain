@@ -1,6 +1,6 @@
 {
   "protocol": "SAOS-DEX-CORE/1",
-  "at": "2026-11-07T15:54:33.896Z",
+  "at": "2026-11-07T16:37:27.655Z",
   "agent": "dex-core v1.6.0 (R77 THE OWNER GATES)",
   "mode": "KEYLESS-ATOMIC-INTERNAL (mesh batch)",
   "stasisHalted": false,
@@ -103,7 +103,7 @@
     "measured": false,
     "node": null
   },
-  "seq": 1345,
+  "seq": 1348,
   "vault": {
     "custody": {
       "STEEM": "697820000",
@@ -164,8 +164,8 @@
   "accounts": {
     "treasury": {
       "claims": {
-        "STEEM": "693066452",
-        "SBD": "70969246",
+        "STEEM": "693065205",
+        "SBD": "70972312",
         "HIVE": "0",
         "HBD": "0",
         "BLURT": "0",
@@ -201,7 +201,7 @@
     "operator": {
       "claims": {
         "STEEM": "0",
-        "SBD": "3054",
+        "SBD": "3042",
         "HIVE": "0",
         "HBD": "0",
         "BLURT": "0",
@@ -257,12 +257,12 @@
       "feeBps": 25,
       "amp": 0,
       "planned": false,
-      "ra": "311807",
-      "rb": "765769",
-      "feeMeter": "8248",
+      "ra": "313054",
+      "rb": "762727",
+      "feeMeter": "8251",
       "verdict": "LIVE-INTERNAL",
       "plannedWhy": null,
-      "mid": 2.45590702
+      "mid": 2.43640714
     },
     {
       "id": "P4",
@@ -1722,8 +1722,8 @@
       "asset": "STEEM",
       "custody": "697820000",
       "reserve": "761900",
-      "claims": "693066452",
-      "pooled": "3991648",
+      "claims": "693065205",
+      "pooled": "3992895",
       "diff": "0",
       "ok": true
     },
@@ -1731,8 +1731,8 @@
       "asset": "SBD",
       "custody": "78626000",
       "reserve": "6314850",
-      "claims": "70976335",
-      "pooled": "1334815",
+      "claims": "70979377",
+      "pooled": "1331773",
       "diff": "0",
       "ok": true
     },
@@ -1774,7 +1774,7 @@
     }
   ],
   "conservationOk": true,
-  "attestation": "23cb38ee68ddf13e",
+  "attestation": "8265ccc50e371e3c",
   "processedBatches": [
     "MESH-2026110322-63c71cca",
     "ACT-2026110322-46a9391a",
@@ -1853,67 +1853,77 @@
         },
         "operator": {
           "fills": 1,
-          "volumeInMu": "1242",
-          "edgeMu": "2924",
+          "volumeInMu": "1247",
+          "edgeMu": "2911",
           "feesMu": "3"
         }
       },
-      "fills": 651,
-      "edgeMu": "-19494420",
-      "feesMu": "8959",
-      "volumeInMu": "9094013"
+      "fills": 652,
+      "edgeMu": "-19491509",
+      "feesMu": "8962",
+      "volumeInMu": "9095260"
     },
     "batch": {
-      "id": "MESH-2026110715-0c5ffabd",
+      "id": "MESH-2026110716-8c5d1f75",
       "fills": 1,
       "rejects": 0,
-      "edgeMu": "2924",
+      "edgeMu": "2911",
       "feesMu": "3",
-      "volumeInMu": "1242"
+      "volumeInMu": "1247"
     }
   },
   "genesisDone": true,
   "opsThisTick": [
     {
-      "seq": 1344,
+      "seq": 1346,
       "type": "MESH-WIRE",
       "agent": "operator",
       "asset": "STEEM",
-      "amount": "1242",
+      "amount": "1247",
       "why": "edge-funding wire (cap 10% of free treasury per batch); conservation moves claims, never creates them"
     },
     {
-      "seq": 1345,
+      "seq": 1347,
       "type": "AGENT_FILL",
       "agent": "operator",
       "from": "STEEM",
       "to": "SBD",
-      "amountIn": "1242",
-      "amountOut": "3054",
+      "amountIn": "1247",
+      "amountOut": "3042",
       "routeIds": [
         "P3"
       ],
       "hops": [
         {
           "pool": "P3",
-          "in": "1242",
-          "out": "3054",
+          "in": "1247",
+          "out": "3042",
           "fee": "3"
         }
       ],
-      "edgeMu": "2924",
+      "edgeMu": "2911",
       "fairUsed": "CEX-FAIR (SBD per STEEM)",
       "feesMu": "3"
+    },
+    {
+      "seq": 1348,
+      "type": "RECONCILE",
+      "asset": "SBD",
+      "amount": "3066",
+      "side": "CLAIM-CREDIT",
+      "custody": "78626000",
+      "capBps": 100,
+      "law": "self-heal: the chain-measured custody side is ground truth — the unexplained residual is receipted to the treasury claim; tiny drifts heal in one tick, big holes stay loud"
     }
   ],
   "summary": {
-    "verdict": "MESH-SETTLED",
+    "verdict": "CONSERVATION-BROKEN",
     "poolsLive": 3,
     "poolsPlanned": 2,
     "routesLive": 8,
     "routesPlanned": 80,
     "meshFills": 1,
-    "meshBatch": "MESH-2026110715-0c5ffabd",
+    "meshBatch": "MESH-2026110716-8c5d1f75",
     "notes": []
   }
 }
