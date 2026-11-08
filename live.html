@@ -61,7 +61,7 @@
         <div class="row"><span>רווח-ממומש (גריד-האורקל)</span><b id="dex-pnl">—</b></div>
         <div class="row"><span>מלאי-בסיס שנצבר</span><b id="dex-inv">—</b></div>
       </div>
-      <div class="src">מקור: evidence/oracle-grid-pnl.json · הפנקס-המלא: grids/state/oracle-grid.jsonl בריפו-הקנוני</div>
+      <div class="src">מקור: saos-dex/main → grids/state/oracle-grid-pnl.json (מנוע-חי) · הפנקס-המלא: grids/state/oracle-grid.jsonl</div>
     </section>
 
     <section class="card" id="card-pnl">
@@ -74,7 +74,7 @@
         <div class="row"><span>mid-הספר</span><b id="pnl-mid">—</b></div>
         <div class="row"><span>נמדד</span><b id="pnl-at">—</b></div>
       </div>
-      <div class="src">מקור: evidence/pnl-audit.json — סריקת-השרשרת הציבורית (LAW-P0..P4)</div>
+      <div class="src">מקור: saos-dex/main → grids/state/pnl-audit.json — סריקת-השרשרת הציבורית (LAW-P0..P4)</div>
     </section>
 
     <section class="card" id="card-ext">
@@ -87,13 +87,13 @@
         <div class="row"><span>מקור-מחיר-חוץ</span><b id="ext-src">—</b></div>
         <div class="row"><span>נמדד-לאחרונה</span><b id="ext-at">—</b></div>
       </div>
-      <div class="src">מקור: evidence/external-profit-public.json (אטום-מהגיט · ה-banker מודד-מהשרשרת ובונק ל-ledger-החתום)</div>
+      <div class="src">מקור: saos-dex/main → grids/state/external-profit-public.json (ה-banker מודד-מהשרשרת ובונק ל-ledger-החתום)</div>
     </section>
 
     <section class="card" id="card-chain">
       <h2><span class="dot live"></span>מסילת-משמורת-STEEM חיה (RPC-ציבורי) · בשירות הרשת</h2>
       <div class="big" id="hc-steem">…</div>
-      <div class="small">STEEM נזיל · @acct-h-849e9df7 — נמדד-עכשיו-מהדפדפן-שלך</div>
+      <div class="small">STEEM נזיל · @headcorner — נמדד-עכשיו-מהדפדפן-שלך</div>
       <div style="margin-top:10px">
         <div class="row"><span>SBD נזיל</span><b id="hc-sbd">—</b></div>
         <div class="row"><span>STEEM-POWER</span><b id="hc-sp">—</b></div>
@@ -111,7 +111,7 @@
         <table><thead><tr><th>זמן</th><th>צד</th><th>שילם</th><th>קיבל</th></tr></thead>
         <tbody id="book-fills"><tr><td colspan="4" class="small">—</td></tr></tbody></table>
       </div>
-      <div class="src">מקור: history-של-@acct-h-849e9df7 על-השרשרת (fill_order אמת) — סוחרים-חוץ אמיתיים, יישוב-על-שרשרת, אפס-עמלה</div>
+      <div class="src">מקור: history-של-@headcorner על-השרשרת (fill_order אמת) — סוחרים-חוץ אמיתיים, יישוב-על-שרשרת, אפס-עמלה</div>
     </section>
 
     <section class="card" id="card-bank">
@@ -136,6 +136,10 @@
 <script>
 const N = (v, d=4) => (typeof v === "number" && isFinite(v)) ? v.toLocaleString("en-US",{maximumFractionDigits:d}) : "—";
 const fmtSbd = (v) => N(v, 6);
+// מקורות-חי · המנוע-מפרסם-בעצמו-מ-github-actions (לא-עותקים-מוקפאים)
+const SRC_EXT  = "https://raw.githubusercontent.com/roshpinacare-sys/saos-dex/main/grids/state/external-profit-public.json";
+const SRC_PNL  = "https://raw.githubusercontent.com/roshpinacare-sys/saos-dex/main/grids/state/pnl-audit.json";
+const SRC_GRID = "https://raw.githubusercontent.com/roshpinacare-sys/saos-dex/main/grids/state/oracle-grid-pnl.json";
 
 async function fetchJSON(url, opt) {
   const r = await fetch(url, opt || {});
@@ -143,40 +147,49 @@ async function fetchJSON(url, opt) {
   return r.json();
 }
 
+const AGO = (iso) => { const t = Date.parse(iso || ""); if (!isFinite(t)) return null; const h = (Date.now() - t) / 36e5; return h < 1 ? Math.max(1, Math.round(h*60)) + " דק'" : h < 48 ? (Math.round(h*10)/10) + " ש'" : Math.round(h/24) + " ימ'"; };
+const AT = (iso) => { const a = AGO(iso); return (iso || "").replace("T"," ").slice(0,19) + (a ? " UTC · לפני " + a : " UTC"); };
+
 async function loadEvidence() {
+  // חוק-הכנות: מוצג-רק-מה-נמדד · null = "לא-נמדד" · ראיה-ישנה = תג-אזהרה · אין-אפס-מזויף
   try {
-    const e = await fetchJSON("evidence/external-profit-public.json?t=" + Date.now());
+    const e = await fetchJSON(SRC_EXT + "?t=" + Date.now());
+    const ageH = (Date.now() - Date.parse(e.at || "")) / 36e5;
+    const stale = !(isFinite(ageH)) || ageH > 48;
     document.getElementById("ext-usd").textContent = "$" + N(e.measuredUsd24h, 6);
-    document.getElementById("ext-usd").className = "big " + (e.measuredUsd24h > 0 ? "ok" : "");
+    document.getElementById("ext-usd").className = "big " + (!stale && e.measuredUsd24h > 0 ? "ok" : stale ? "warn" : "");
     document.getElementById("ext-vests").textContent = N(e.measuredVests24h, 3) + " VESTS";
     const p = e.pricing || {};
     document.getElementById("ext-price").textContent = "vestSteem=" + String(p.vestSteem ?? "—").slice(0,10) + " · sbdPerSteem=" + String(p.sbdPerSteem ?? "—").slice(0,8);
     document.getElementById("ext-src").textContent = (p.external && p.external.source) || "—";
-    document.getElementById("ext-at").textContent = (e.at || "").replace("T"," ").slice(0,19) + " UTC";
-  } catch { document.getElementById("ext-usd").textContent = "לא-זמין"; }
+    document.getElementById("ext-at").textContent = AT(e.at);
+    const bank = document.getElementById("bank-verdict");
+    if (isFinite(ageH) && ageH < 6) { bank.textContent = "חיה ✓ · נמדד לפני " + AGO(e.at); bank.className = "big ok"; }
+    else { bank.textContent = stale ? "איטם — לא-נמדד-לאחרונה" : "עומד"; bank.className = "big " + (stale ? "warn" : ""); }
+  } catch { document.getElementById("ext-usd").textContent = "לא-זמין";
+            document.getElementById("bank-verdict").textContent = "לא-זמין"; document.getElementById("bank-verdict").className = "big"; }
   try {
-    const a = await fetchJSON("evidence/pnl-audit.json?t=" + Date.now());
+    const a = await fetchJSON(SRC_PNL + "?t=" + Date.now());
     const real = (a.totalFills||0) - (a.selfCrosses||0);
     document.getElementById("pnl-real").textContent = N(real, 0);
     document.getElementById("pnl-self").textContent = N(a.selfCrosses, 0);
     document.getElementById("pnl-mid").textContent = fmtSbd(a.mid) + " SBD/STEEM";
-    document.getElementById("pnl-at").textContent = (a.at || "").replace("T"," ").slice(0,19) + " UTC";
+    document.getElementById("pnl-at").textContent = AT(a.at);
     const ee = a.engineEra || {};
     const per = ee.perAccount || {};
-    let pnl = 0; for (const v of Object.values(per)) pnl += Number(v.pnlSbd || 0);
+    const vals = Object.values(per).map(v => Number(v && v.pnlSbd)).filter(x => isFinite(x));
     const el = document.getElementById("pnl-verdict");
-    el.textContent = (pnl >= 0 ? "+" : "") + N(pnl, 4) + " SBD";
-    el.className = "big " + (pnl > 0 ? "ok" : pnl < 0 ? "bad" : "");
+    if (vals.length) { const pnl = vals.reduce((s,x)=>s+x,0);
+      el.textContent = (pnl >= 0 ? "+" : "") + N(pnl, 4) + " SBD";
+      el.className = "big " + (pnl > 0 ? "ok" : pnl < 0 ? "bad" : ""); }
+    else { el.textContent = "לא-נמדד"; el.className = "big"; }
   } catch { document.getElementById("pnl-verdict").textContent = "לא-זמין"; }
   try {
-    const g = await fetchJSON("evidence/oracle-grid-pnl.json?t=" + Date.now());
-    document.getElementById("dex-fills").textContent = N(g.fills ?? 0, 0) + " מילויים";
-    const realized = (g.realizedQuoteMu || 0) / 1e6;
-    document.getElementById("dex-pnl").textContent = (realized >= 0 ? "+" : "") + realized.toFixed(6) + " USDS";
-    document.getElementById("dex-inv").textContent = N((g.invBaseMu || 0)/1e6, 6) + " WSTEEM";
+    const g = await fetchJSON(SRC_GRID + "?t=" + Date.now());
+    document.getElementById("dex-fills").textContent = (typeof g.fills === "number") ? (N(g.fills, 0) + " מילויים") : "לא-נמדד";
+    document.getElementById("dex-pnl").textContent = (typeof g.realizedQuoteMu === "number") ? ((g.realizedQuoteMu >= 0 ? "+" : "") + (g.realizedQuoteMu/1e6).toFixed(6) + " USDS") : "לא-נמדד";
+    document.getElementById("dex-inv").textContent = (typeof g.invBaseMu === "number") ? (N(g.invBaseMu/1e6, 6) + " WSTEEM") : "לא-נמדד";
   } catch { document.getElementById("dex-fills").textContent = "לא-זמין"; }
-  document.getElementById("bank-verdict").textContent = "חיה ✓";
-  document.getElementById("bank-verdict").className = "big ok";
 }
 
 async function loadLiveChain() {
@@ -185,7 +198,7 @@ async function loadLiveChain() {
     body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params })
   })).result;
   try {
-    const a = (await rpc("condenser_api.get_accounts", [["acct-h-849e9df7"]]))[0];
+    const a = (await rpc("condenser_api.get_accounts", [["headcorner"]]))[0];
     const steem = parseFloat(a.balance);
     const sbd = parseFloat(a.sbd_balance);
     const vests = parseFloat(a.vesting_shares);
@@ -207,7 +220,7 @@ async function loadLiveChain() {
     } catch { document.getElementById("hc-px").textContent = "—"; }
   } catch { document.getElementById("hc-steem").textContent = "RPC-לא-זמין"; }
   try {
-    const orders = await rpc("condenser_api.get_open_orders", [["acct-h-849e9df7"]]);
+    const orders = await rpc("condenser_api.get_open_orders", [["headcorner"]]);
     const tb = document.getElementById("book-fills");
     if (Array.isArray(orders) && orders.length) {
       document.getElementById("book-verdict").textContent = orders.length + " פקודות-חיות";
@@ -221,13 +234,13 @@ async function loadLiveChain() {
   } catch { document.getElementById("book-verdict").textContent = "RPC-לא-זמין"; }
   try {
     // מילויים-אמת אחרונים מההיסטוריה
-    const hist = await rpc("condenser_api.get_account_history", ["acct-h-849e9df7", -1, 200]);
+    const hist = await rpc("condenser_api.get_account_history", ["headcorner", -1, 200]);
     const fills = (hist || []).filter(([, it]) => it.op[0] === "fill_order").slice(-6).reverse();
     const tb = document.getElementById("book-fills");
     if (fills.length) {
       tb.innerHTML = fills.map(([, it]) => {
         const f = it.op[1];
-        return `<tr><td>${it.timestamp.slice(5,16)}</td><td>${f.open_owner === "acct-h-849e9df7" ? "maker" : "taker"}</td><td>${f.current_pays}</td><td>${f.open_pays}</td></tr>`;
+        return `<tr><td>${it.timestamp.slice(5,16)}</td><td>${f.open_owner === "headcorner" ? "maker" : "taker"}</td><td>${f.current_pays}</td><td>${f.open_pays}</td></tr>`;
       }).join("");
     }
   } catch { /* כנה: הטבלה נשארת — */ }
