@@ -1,8 +1,8 @@
 {
   "protocol": "SAOS-DEX-CORE/1",
-  "at": "2026-11-08T21:34:01.519Z",
+  "at": "2026-11-08T22:39:19.918Z",
   "agent": "dex-core v1.6.0 (R77 THE OWNER GATES)",
-  "mode": "KEYLESS-ATOMIC-INTERNAL",
+  "mode": "KEYLESS-ATOMIC-INTERNAL (mesh batch)",
   "stasisHalted": false,
   "laws": [
     "counter-grid arm (R44): the owner gate is the CR-0074 ARTIFACT (present = open); the arm adds deterministic rung ids, the 2%-of-depth cap law, the dust refusal (GRID-TOO-THIN) and the two-sided law (a one-sided grid is a direction bet — REFUSED); settle stays pure (the gate is an argument)",
@@ -87,23 +87,23 @@
       "unlock": "a measured SAOS claim in the vault (dex/credits.json)"
     }
   },
-  "redeemBook": [],
+  "redeemBook": null,
   "feed": {
     "source": "agents/dex-router.json",
-    "routerAt": "2026-11-08T20:27:24.770Z",
+    "routerAt": "2026-11-08T21:33:54.930Z",
     "fresh": true,
-    "fairNano": 101329850,
+    "fairNano": 101461610,
     "fairSource": "CEX-IMPLIED-FAIR (SBDUSDT/STEEMUSDT — lead-lag anchor, the opposing side of the local book)",
-    "hiveFairNano": 42805070,
-    "crossFairNano": "2367239441",
+    "hiveFairNano": 42537430,
+    "crossFairNano": "2385231312",
     "fairSource2": "LOCAL-MID-FALLBACK (CEX feed stale)",
     "verdict": "FEED-LIVE"
   },
   "custodyProbe": {
-    "measured": true,
-    "node": "https://api.steemit.com"
+    "measured": false,
+    "node": null
   },
-  "seq": 1571,
+  "seq": 1573,
   "vault": {
     "custody": {
       "STEEM": "697820000",
@@ -164,7 +164,7 @@
   "accounts": {
     "treasury": {
       "claims": {
-        "STEEM": "692772164",
+        "STEEM": "692771005",
         "SBD": "70914357",
         "HIVE": "0",
         "HBD": "0",
@@ -201,7 +201,7 @@
     "operator": {
       "claims": {
         "STEEM": "0",
-        "SBD": "3290",
+        "SBD": "3278",
         "HIVE": "0",
         "HBD": "0",
         "BLURT": "0",
@@ -257,12 +257,12 @@
       "feeBps": 25,
       "amp": 0,
       "planned": false,
-      "ra": "289941",
-      "rb": "825482",
-      "feeMeter": "9550",
+      "ra": "291100",
+      "rb": "822204",
+      "feeMeter": "9552",
       "verdict": "LIVE-INTERNAL",
       "plannedWhy": null,
-      "mid": 2.84706889
+      "mid": 2.82447269
     },
     {
       "id": "P4",
@@ -1702,7 +1702,7 @@
     }
   },
   "treasuryPnl": {
-    "feesMu": "10609",
+    "feesMu": "0",
     "rebalanceEdgeMu": "15510",
     "note": "fees are LP revenue (treasury owns the LP); rebalance edges are marked to the CEX fair at execution — the LVR defense on our own pool"
   },
@@ -1711,8 +1711,8 @@
       "asset": "STEEM",
       "custody": "697820000",
       "reserve": "761900",
-      "claims": "692772164",
-      "pooled": "4285936",
+      "claims": "692771005",
+      "pooled": "4287095",
       "diff": "0",
       "ok": true
     },
@@ -1720,8 +1720,8 @@
       "asset": "SBD",
       "custody": "78626000",
       "reserve": "6314850",
-      "claims": "70918616",
-      "pooled": "1392534",
+      "claims": "70921894",
+      "pooled": "1389256",
       "diff": "0",
       "ok": true
     },
@@ -1763,9 +1763,8 @@
     }
   ],
   "conservationOk": true,
-  "attestation": "997d99e3378e6c26",
+  "attestation": "228c2f47f4b94015",
   "processedBatches": [
-    "MESH-2026110507-135b6658",
     "MESH-2026110509-810486dc",
     "MESH-2026110511-27da4a75",
     "MESH-2026110512-265c3358",
@@ -1828,7 +1827,8 @@
     "MESH-2026110817-95bd71fa",
     "MESH-2026110820-98a96fd9",
     "ACT-2026110820-38b3d4e9",
-    "MESH-2026110821-829671b6"
+    "MESH-2026110821-829671b6",
+    "MESH-2026110822-97a7a1b3"
   ],
   "xcExposure": {},
   "meshPnl": {
@@ -1842,77 +1842,67 @@
         },
         "operator": {
           "fills": 1,
-          "volumeInMu": "1154",
-          "edgeMu": "3174",
+          "volumeInMu": "1159",
+          "edgeMu": "3161",
           "feesMu": "2"
         }
       },
-      "fills": 750,
-      "edgeMu": "-24948442",
-      "feesMu": "10381",
-      "volumeInMu": "10362242"
+      "fills": 751,
+      "edgeMu": "-24945281",
+      "feesMu": "10383",
+      "volumeInMu": "10363401"
     },
     "batch": {
-      "id": "MESH-2026110821-829671b6",
+      "id": "MESH-2026110822-97a7a1b3",
       "fills": 1,
       "rejects": 0,
-      "edgeMu": "3174",
+      "edgeMu": "3161",
       "feesMu": "2",
-      "volumeInMu": "1154"
+      "volumeInMu": "1159"
     }
   },
   "genesisDone": true,
   "opsThisTick": [
     {
-      "seq": 1571,
-      "type": "GRID-ARM",
-      "pool": "P2",
-      "pair": "WSBD/SBD",
-      "anchor": 0.08982263,
-      "verdict": "GATED-ARMED-BROADCAST-READY",
-      "rungs": 6,
-      "sizeMu": "84173",
-      "capBps": 200,
-      "ids": [
-        "b25802bdfd58350d",
-        "4b0d93e92a06a835",
-        "3e0b482e70f4251b",
-        "6852cd9ec4b25bd3",
-        "9767654e5be8da1e",
-        "730f12c9e57b638f"
-      ]
+      "seq": 1572,
+      "type": "MESH-WIRE",
+      "agent": "operator",
+      "asset": "STEEM",
+      "amount": "1159",
+      "why": "edge-funding wire (cap 10% of free treasury per batch); conservation moves claims, never creates them"
     },
     {
-      "seq": 1571,
-      "type": "GRID-ARM",
-      "pool": "P3",
-      "pair": "STEEM/SBD",
-      "anchor": 2.84706889,
-      "verdict": "GATED-ARMED-BROADCAST-READY",
-      "rungs": 6,
-      "sizeMu": "3865",
-      "capBps": 200,
-      "ids": [
-        "49f713ad6baeec3d",
-        "45400bda70ea6a90",
-        "db7852e639dfd75d",
-        "730a0e940cd5b88a",
-        "8f3f1188a361c798",
-        "3799fe9755d5312e"
-      ]
+      "seq": 1573,
+      "type": "AGENT_FILL",
+      "agent": "operator",
+      "from": "STEEM",
+      "to": "SBD",
+      "amountIn": "1159",
+      "amountOut": "3278",
+      "routeIds": [
+        "P3"
+      ],
+      "hops": [
+        {
+          "pool": "P3",
+          "in": "1159",
+          "out": "3278",
+          "fee": "2"
+        }
+      ],
+      "edgeMu": "3161",
+      "fairUsed": "CEX-FAIR (SBD per STEEM)",
+      "feesMu": "2"
     }
   ],
   "summary": {
-    "verdict": "EXCHANGE-CORE-LIVE",
+    "verdict": "MESH-SETTLED",
     "poolsLive": 3,
     "poolsPlanned": 2,
     "routesLive": 7,
     "routesPlanned": 80,
-    "meshFills": 0,
-    "meshBatch": null,
-    "notes": [
-      "STEEM custody DROP -637820000µ measured — trading HALTED this tick (safety law: the vault never trades on shrinking custody)",
-      "SBD custody DROP -78529000µ measured — trading HALTED this tick (safety law: the vault never trades on shrinking custody)"
-    ]
+    "meshFills": 1,
+    "meshBatch": "MESH-2026110822-97a7a1b3",
+    "notes": []
   }
 }
