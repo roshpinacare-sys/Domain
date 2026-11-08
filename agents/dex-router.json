@@ -1,6 +1,6 @@
 {
   "protocol": "SAOS-DEX-ROUTER/1",
-  "at": "2026-11-07T23:37:24.354Z",
+  "at": "2026-11-08T00:02:11.529Z",
   "agent": "dex-router v1.0.0 (R39 SWAP-NET, CR-0069)",
   "mode": "KEYLESS-READ",
   "stasisHalted": false,
@@ -32,13 +32,27 @@
       "ask": 0.04377788400254939,
       "mid": 0.04373894,
       "spreadPct": 0.25,
-      "pct24h": -1.659,
+      "pct24h": -1.215,
       "depthBids": 0,
       "depthAsks": 0,
       "node": "api.hive.blog"
     },
     "cex-refs": {
       "rows": [
+        {
+          "venue": "Binance",
+          "symbol": "HIVEUSDT",
+          "mid": null,
+          "pct24h": null,
+          "why": "HTTP-451"
+        },
+        {
+          "venue": "Binance",
+          "symbol": "STEEMUSDT",
+          "mid": null,
+          "pct24h": null,
+          "why": "HTTP-451"
+        },
         {
           "venue": "Binance",
           "symbol": "BTCUSDT",
@@ -48,52 +62,10 @@
         },
         {
           "venue": "Binance",
-          "symbol": "STEEMUSDT",
-          "mid": null,
-          "pct24h": null,
-          "why": "HTTP-451"
-        },
-        {
-          "venue": "Binance",
-          "symbol": "HIVEUSDT",
-          "mid": null,
-          "pct24h": null,
-          "why": "HTTP-451"
-        },
-        {
-          "venue": "Binance",
           "symbol": "HBDUSDT",
           "mid": null,
           "pct24h": null,
           "why": "HTTP-451"
-        },
-        {
-          "venue": "HTX",
-          "symbol": "HBDUSDT",
-          "mid": null,
-          "pct24h": null,
-          "why": "NO-TICK"
-        },
-        {
-          "venue": "HTX",
-          "symbol": "SBDUSDT",
-          "mid": 0.4581,
-          "pct24h": 0.066,
-          "why": null
-        },
-        {
-          "venue": "MEXC",
-          "symbol": "HIVEUSDT",
-          "mid": 0.04365,
-          "pct24h": -0.016,
-          "why": null
-        },
-        {
-          "venue": "MEXC",
-          "symbol": "STEEMUSDT",
-          "mid": 0.04755,
-          "pct24h": -0.007,
-          "why": null
         },
         {
           "venue": "MEXC",
@@ -101,6 +73,34 @@
           "mid": null,
           "pct24h": null,
           "why": "HTTP-400"
+        },
+        {
+          "venue": "MEXC",
+          "symbol": "HIVEUSDT",
+          "mid": 0.04373,
+          "pct24h": -0.014,
+          "why": null
+        },
+        {
+          "venue": "MEXC",
+          "symbol": "STEEMUSDT",
+          "mid": 0.0478,
+          "pct24h": -0.007,
+          "why": null
+        },
+        {
+          "venue": "HTX",
+          "symbol": "SBDUSDT",
+          "mid": 0.4574,
+          "pct24h": -0.218,
+          "why": null
+        },
+        {
+          "venue": "HTX",
+          "symbol": "HBDUSDT",
+          "mid": null,
+          "pct24h": null,
+          "why": "NO-TICK"
         }
       ],
       "primarySymbols": [
@@ -119,9 +119,9 @@
           "pair": "SWAP.HIVE:SWAP.BTC",
           "base": "SWAP.HIVE",
           "quote": "SWAP.BTC",
-          "baseReserve": 905906.6124701,
-          "quoteReserve": 0.52785126,
-          "priceQuotePerBase": 1716215.6863471349,
+          "baseReserve": 905865.01460078,
+          "quoteReserve": 0.52787556,
+          "priceQuotePerBase": 1716057.880385256,
           "feeBps": 25,
           "mirror": "api.hive-engine.com"
         },
@@ -166,7 +166,7 @@
       "alive": true,
       "engine": "saos-dex/1.20 cloud-beat · R23 live-anchor · T25 depth-forge",
       "publishedAt": "2026-11-07T22:32:53.958Z",
-      "mirrorAgeHours": 1.1,
+      "mirrorAgeHours": 1.5,
       "pools": [
         {
           "pair": "SAOS/USDS",
@@ -222,11 +222,11 @@
     },
     "inherited": {
       "dexBook": {
-        "at": "2026-11-07T20:31:08.260Z",
+        "at": "2026-11-07T23:54:55.528Z",
         "verdictAuthority": "Z-27"
       },
       "bridgeBook": {
-        "at": "2026-11-07T20:31:14.666Z",
+        "at": "2026-11-07T23:55:00.276Z",
         "verdictAuthority": "Z-27"
       }
     }
@@ -339,14 +339,14 @@
       ],
       "sizeNote": "≤ 2% of pool depth per trade (MEV/peg cap law)",
       "quote": {
-        "in": "9059.066 SWAP.HIVE (1% pool)",
+        "in": "9058.65 SWAP.HIVE (1% pool)",
         "out": "0.005213 SWAP.BTC",
-        "impliedPrice": "1716215.686347 HIVE/BTC",
+        "impliedPrice": "1716057.880385 HIVE/BTC",
         "impactBps": 99.01
       },
       "verdict": "GATED-CAPITAL",
       "unlock": "HIVE keys + HIVE inventory (0.034 HIVE dust today — R38 measured)",
-      "why": "deepest real-value corridor (pool ~905907 HIVE side)"
+      "why": "deepest real-value corridor (pool ~905865 HIVE side)"
     },
     {
       "id": "R6",
@@ -380,8 +380,8 @@
       "sizeNote": "large sizes allowed — the designated big-rail",
       "quote": {
         "in": "1.000 STEEM",
-        "out": "0.047526 USDT",
-        "impliedPrice": 0.04755,
+        "out": "0.047776 USDT",
+        "impliedPrice": 0.0478,
         "impactBps": null
       },
       "verdict": "C-GATE-OPERATOR",
@@ -402,8 +402,8 @@
       "sizeNote": "the only deep SBD book is HTX (Upbit ended SBD support 2025-02)",
       "quote": {
         "in": "1.000 SBD",
-        "out": "0.457871 USDT",
-        "impliedPrice": 0.4581,
+        "out": "0.457171 USDT",
+        "impliedPrice": 0.4574,
         "impactBps": null
       },
       "verdict": "C-GATE-OPERATOR",
@@ -428,8 +428,8 @@
       "sizeNote": "ingress of real value — funds the grid",
       "quote": {
         "in": "100.000 USDT",
-        "out": "2103.049422 STEEM",
-        "impliedPrice": 0.04755,
+        "out": "2092.050209 STEEM",
+        "impliedPrice": 0.0478,
         "impactBps": null
       },
       "verdict": "C-GATE-OPERATOR",
@@ -501,11 +501,11 @@
         "cex:STEEMUSDT+SBDUSDT"
       ],
       "localMid": 0.10305363,
-      "impliedFair": 0.1037983,
-      "grossBps": -71.74,
+      "impliedFair": 0.10450372,
+      "grossBps": -138.76,
       "feesBps": 0,
       "slipBps": 20,
-      "netBps": 51.74,
+      "netBps": 118.76,
       "thresholdBps": 200,
       "driftPct": null,
       "verdict": "BELOW-FLOOR",
@@ -556,48 +556,48 @@
   "counterGrid": {
     "steem": {
       "market": "SBD/STEEM (STEEM internal)",
-      "anchor": 0.1037983,
+      "anchor": 0.10450372,
       "anchorSource": "CEX-IMPLIED-FAIR (SBDUSDT/STEEMUSDT — lead-lag anchor, the opposing side of the local book)",
       "localMid": 0.10305363,
       "spreadPct": 0,
       "spacingPct": 0.4,
-      "anchorAdj": 0.1037983,
+      "anchorAdj": 0.10450372,
       "skewShiftBps": 0,
       "spacingBps": 40,
       "rungs": [
         {
           "side": "buy",
-          "price": 0.10338311,
+          "price": 0.10408571,
           "size": 0,
           "unit": "SBD"
         },
         {
           "side": "buy",
-          "price": 0.10296791,
+          "price": 0.10366769,
           "size": 0,
           "unit": "SBD"
         },
         {
           "side": "buy",
-          "price": 0.10255272,
+          "price": 0.10324968,
           "size": 0,
           "unit": "SBD"
         },
         {
           "side": "sell",
-          "price": 0.10421349,
+          "price": 0.10492173,
           "size": 0,
           "unit": "STEEM"
         },
         {
           "side": "sell",
-          "price": 0.10462869,
+          "price": 0.10533975,
           "size": 0,
           "unit": "STEEM"
         },
         {
           "side": "sell",
-          "price": 0.10504388,
+          "price": 0.10575776,
           "size": 0,
           "unit": "STEEM"
         }
@@ -674,7 +674,7 @@
       "venue": "CEX (MEXC/Binance/HTX) + no-account exchangers",
       "state": "C-GATE-OPERATOR for size; no-account STEEM/HIVE paths measured disabled/blocked (Z-27 books embedded below)",
       "inheritedBridge": {
-        "at": "2026-11-07T20:31:14.666Z",
+        "at": "2026-11-07T23:55:00.276Z",
         "agent": "bridge-desk",
         "exchangers": {
           "godex": {
@@ -683,14 +683,14 @@
               "listed": true,
               "disabled": false,
               "isActive": true,
-              "minAmount": 3200,
+              "minAmount": 3300,
               "network": "STEEM"
             },
             "hive": {
               "listed": true,
               "disabled": true,
               "isActive": false,
-              "minAmount": 3500,
+              "minAmount": 3600,
               "network": "HIVE"
             },
             "btc": {
@@ -702,7 +702,7 @@
             }
           },
           "blocktrades": {
-            "http": "write EPROTO 00FDCEB3D97A0000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert inte"
+            "http": "write EPROTO 006D0BE698740000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert inte"
           },
           "changenow": {
             "http": 200,
@@ -738,7 +738,7 @@
           },
           "BTC:STEEM → godex (no-account)": {
             "status": "OPEN",
-            "detail": "godex steem disabled=false, min=3200 STEEM"
+            "detail": "godex steem disabled=false, min=3300 STEEM"
           },
           "BTC:STEEM/HIVE → MEXC (account exchange)": {
             "status": "C-GATE-OPERATOR",
