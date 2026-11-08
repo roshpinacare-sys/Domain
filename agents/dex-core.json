@@ -1,6 +1,6 @@
 {
   "protocol": "SAOS-DEX-CORE/1",
-  "at": "2026-11-08T16:04:05.362Z",
+  "at": "2026-11-08T17:06:38.939Z",
   "agent": "dex-core v1.6.0 (R77 THE OWNER GATES)",
   "mode": "KEYLESS-ATOMIC-INTERNAL (mesh batch)",
   "stasisHalted": false,
@@ -103,7 +103,7 @@
     "measured": false,
     "node": null
   },
-  "seq": 1528,
+  "seq": 1530,
   "vault": {
     "custody": {
       "STEEM": "697820000",
@@ -164,7 +164,7 @@
   "accounts": {
     "treasury": {
       "claims": {
-        "STEEM": "692811013",
+        "STEEM": "692809849",
         "SBD": "70912783",
         "HIVE": "0",
         "HBD": "0",
@@ -200,13 +200,13 @@
     },
     "operator": {
       "claims": {
-        "STEEM": "11730",
-        "SBD": "8300",
+        "STEEM": "0",
+        "SBD": "3265",
         "HIVE": "0",
         "HBD": "0",
         "BLURT": "0",
         "SAOS": "0",
-        "WSTEEM": "11",
+        "WSTEEM": "0",
         "WSBD": "0",
         "WHIVE": "0",
         "WHBD": "0",
@@ -257,12 +257,12 @@
       "feeBps": 25,
       "amp": 0,
       "planned": false,
-      "ra": "291098",
-      "rb": "821868",
-      "feeMeter": "9332",
+      "ra": "292262",
+      "rb": "818603",
+      "feeMeter": "9334",
       "verdict": "LIVE-INTERNAL",
       "plannedWhy": null,
-      "mid": 2.82333784
+      "mid": 2.80092177
     },
     {
       "id": "P4",
@@ -1711,8 +1711,8 @@
       "asset": "STEEM",
       "custody": "697820000",
       "reserve": "761900",
-      "claims": "692822743",
-      "pooled": "4235357",
+      "claims": "692821579",
+      "pooled": "4236521",
       "diff": "0",
       "ok": true
     },
@@ -1720,8 +1720,8 @@
       "asset": "SBD",
       "custody": "78626000",
       "reserve": "6314850",
-      "claims": "70922052",
-      "pooled": "1389098",
+      "claims": "70925317",
+      "pooled": "1385833",
       "diff": "0",
       "ok": true
     },
@@ -1763,9 +1763,8 @@
     }
   ],
   "conservationOk": true,
-  "attestation": "ee3580d150550c5f",
+  "attestation": "03920c1869c6f5ec",
   "processedBatches": [
-    "MESH-2026110501-4d45a27f",
     "MESH-2026110503-fe6d3e25",
     "MESH-2026110505-c521f34d",
     "ACT-2026110506-625b9282",
@@ -1828,7 +1827,8 @@
     "MESH-2026110811-4928d2a5",
     "MESH-2026110813-cd7a17be",
     "MESH-2026110815-ca4ef89c",
-    "ACT-2026110816-c533e113"
+    "ACT-2026110816-c533e113",
+    "MESH-2026110817-95bd71fa"
   ],
   "xcExposure": {},
   "meshPnl": {
@@ -1841,374 +1841,58 @@
           "feesMu": "9"
         },
         "operator": {
-          "fills": 11,
-          "volumeInMu": "198563",
-          "edgeMu": "-913656",
-          "feesMu": "229"
+          "fills": 1,
+          "volumeInMu": "1164",
+          "edgeMu": "3146",
+          "feesMu": "2"
         }
       },
-      "fills": 732,
-      "edgeMu": "-24028363",
-      "feesMu": "10143",
-      "volumeInMu": "10150279"
+      "fills": 733,
+      "edgeMu": "-24025217",
+      "feesMu": "10145",
+      "volumeInMu": "10151443"
     },
     "batch": {
-      "id": "ACT-2026110816-c533e113",
-      "fills": 11,
+      "id": "MESH-2026110817-95bd71fa",
+      "fills": 1,
       "rejects": 0,
-      "edgeMu": "-913656",
-      "feesMu": "229",
-      "volumeInMu": "198563"
+      "edgeMu": "3146",
+      "feesMu": "2",
+      "volumeInMu": "1164"
     }
   },
   "genesisDone": true,
   "opsThisTick": [
     {
-      "seq": 1508,
+      "seq": 1529,
       "type": "MESH-WIRE",
       "agent": "operator",
       "asset": "STEEM",
-      "amount": "3900",
+      "amount": "1164",
       "why": "edge-funding wire (cap 10% of free treasury per batch); conservation moves claims, never creates them"
     },
     {
-      "seq": 1509,
+      "seq": 1530,
       "type": "AGENT_FILL",
       "agent": "operator",
       "from": "STEEM",
-      "to": "WSTEEM",
-      "amountIn": "3900",
-      "amountOut": "1",
+      "to": "SBD",
+      "amountIn": "1164",
+      "amountOut": "3265",
       "routeIds": [
-        "P1"
+        "P3"
       ],
       "hops": [
         {
-          "pool": "P1",
-          "in": "3900",
-          "out": "1",
-          "fee": "0"
-        }
-      ],
-      "edgeMu": "-3899",
-      "fairUsed": "PEG-1:1",
-      "feesMu": "0"
-    },
-    {
-      "seq": 1510,
-      "type": "MESH-WIRE",
-      "agent": "operator",
-      "asset": "STEEM",
-      "amount": "14917",
-      "why": "edge-funding wire (cap 10% of free treasury per batch); conservation moves claims, never creates them"
-    },
-    {
-      "seq": 1511,
-      "type": "AGENT_FILL",
-      "agent": "operator",
-      "from": "STEEM",
-      "to": "WSTEEM",
-      "amountIn": "14917",
-      "amountOut": "4",
-      "routeIds": [
-        "P1"
-      ],
-      "hops": [
-        {
-          "pool": "P1",
-          "in": "14917",
-          "out": "4",
-          "fee": "0"
-        }
-      ],
-      "edgeMu": "-14913",
-      "fairUsed": "PEG-1:1",
-      "feesMu": "0"
-    },
-    {
-      "seq": 1512,
-      "type": "MESH-WIRE",
-      "agent": "operator",
-      "asset": "STEEM",
-      "amount": "14917",
-      "why": "edge-funding wire (cap 10% of free treasury per batch); conservation moves claims, never creates them"
-    },
-    {
-      "seq": 1513,
-      "type": "AGENT_FILL",
-      "agent": "operator",
-      "from": "STEEM",
-      "to": "WSTEEM",
-      "amountIn": "14917",
-      "amountOut": "4",
-      "routeIds": [
-        "P1"
-      ],
-      "hops": [
-        {
-          "pool": "P1",
-          "in": "14917",
-          "out": "4",
-          "fee": "0"
-        }
-      ],
-      "edgeMu": "-14913",
-      "fairUsed": "PEG-1:1",
-      "feesMu": "0"
-    },
-    {
-      "seq": 1514,
-      "type": "MESH-WIRE",
-      "agent": "operator",
-      "asset": "SBD",
-      "amount": "5674",
-      "why": "edge-funding wire (cap 10% of free treasury per batch); conservation moves claims, never creates them"
-    },
-    {
-      "seq": 1515,
-      "type": "AGENT_FILL",
-      "agent": "operator",
-      "from": "SBD",
-      "to": "WSBD",
-      "amountIn": "5674",
-      "amountOut": "12631",
-      "routeIds": [
-        "P2"
-      ],
-      "hops": [
-        {
-          "pool": "P2",
-          "in": "5674",
-          "out": "12631",
+          "pool": "P3",
+          "in": "1164",
+          "out": "3265",
           "fee": "2"
         }
       ],
-      "edgeMu": "6957",
-      "fairUsed": "PEG-1:1",
+      "edgeMu": "3146",
+      "fairUsed": "CEX-FAIR (SBD per STEEM)",
       "feesMu": "2"
-    },
-    {
-      "seq": 1516,
-      "type": "MESH-WIRE",
-      "agent": "operator",
-      "asset": "WSBD",
-      "amount": "278",
-      "why": "edge-funding wire (cap 10% of free treasury per batch); conservation moves claims, never creates them"
-    },
-    {
-      "seq": 1517,
-      "type": "AGENT_FILL",
-      "agent": "operator",
-      "from": "WSBD",
-      "to": "SBD",
-      "amountIn": "12909",
-      "amountOut": "5796",
-      "routeIds": [
-        "P2"
-      ],
-      "hops": [
-        {
-          "pool": "P2",
-          "in": "12909",
-          "out": "5796",
-          "fee": "1"
-        }
-      ],
-      "edgeMu": "-7113",
-      "fairUsed": "PEG-1:1",
-      "feesMu": "1"
-    },
-    {
-      "seq": 1518,
-      "type": "MESH-WIRE",
-      "agent": "operator",
-      "asset": "SBD",
-      "amount": "22570",
-      "why": "edge-funding wire (cap 10% of free treasury per batch); conservation moves claims, never creates them"
-    },
-    {
-      "seq": 1519,
-      "type": "AGENT_FILL",
-      "agent": "operator",
-      "from": "SBD",
-      "to": "WSBD",
-      "amountIn": "28366",
-      "amountOut": "61931",
-      "routeIds": [
-        "P2"
-      ],
-      "hops": [
-        {
-          "pool": "P2",
-          "in": "28366",
-          "out": "61931",
-          "fee": "12"
-        }
-      ],
-      "edgeMu": "33565",
-      "fairUsed": "PEG-1:1",
-      "feesMu": "12"
-    },
-    {
-      "seq": 1520,
-      "type": "MESH-WIRE",
-      "agent": "operator",
-      "asset": "STEEM",
-      "amount": "2983",
-      "why": "edge-funding wire (cap 10% of free treasury per batch); conservation moves claims, never creates them"
-    },
-    {
-      "seq": 1521,
-      "type": "AGENT_FILL",
-      "agent": "operator",
-      "from": "STEEM",
-      "to": "SBD",
-      "amountIn": "2983",
-      "amountOut": "7915",
-      "routeIds": [
-        "P3"
-      ],
-      "hops": [
-        {
-          "pool": "P3",
-          "in": "2983",
-          "out": "7915",
-          "fee": "7"
-        }
-      ],
-      "edgeMu": "7609",
-      "fairUsed": "CEX-FAIR (SBD per STEEM)",
-      "feesMu": "7"
-    },
-    {
-      "seq": 1522,
-      "type": "MESH-WIRE",
-      "agent": "operator",
-      "asset": "SBD",
-      "amount": "101",
-      "why": "edge-funding wire (cap 10% of free treasury per batch); conservation moves claims, never creates them"
-    },
-    {
-      "seq": 1523,
-      "type": "AGENT_FILL",
-      "agent": "operator",
-      "from": "SBD",
-      "to": "STEEM",
-      "amountIn": "8016",
-      "amountOut": "3005",
-      "routeIds": [
-        "P3"
-      ],
-      "hops": [
-        {
-          "pool": "P3",
-          "in": "8016",
-          "out": "3005",
-          "fee": "20"
-        }
-      ],
-      "edgeMu": "-74944",
-      "fairUsed": "CEX-FAIR (STEEM per SBD)",
-      "feesMu": "20"
-    },
-    {
-      "seq": 1524,
-      "type": "MESH-WIRE",
-      "agent": "operator",
-      "asset": "STEEM",
-      "amount": "11911",
-      "why": "edge-funding wire (cap 10% of free treasury per batch); conservation moves claims, never creates them"
-    },
-    {
-      "seq": 1525,
-      "type": "AGENT_FILL",
-      "agent": "operator",
-      "from": "STEEM",
-      "to": "SBD",
-      "amountIn": "14916",
-      "amountOut": "38084",
-      "routeIds": [
-        "P3"
-      ],
-      "hops": [
-        {
-          "pool": "P3",
-          "in": "14916",
-          "out": "38084",
-          "fee": "37"
-        }
-      ],
-      "edgeMu": "36551",
-      "fairUsed": "CEX-FAIR (SBD per STEEM)",
-      "feesMu": "37"
-    },
-    {
-      "seq": 1526,
-      "type": "AGENT_FILL",
-      "agent": "operator",
-      "from": "SBD",
-      "to": "STEEM",
-      "amountIn": "29784",
-      "amountOut": "11730",
-      "routeIds": [
-        "P3"
-      ],
-      "hops": [
-        {
-          "pool": "P3",
-          "in": "29784",
-          "out": "11730",
-          "fee": "74"
-        }
-      ],
-      "edgeMu": "-277896",
-      "fairUsed": "CEX-FAIR (STEEM per SBD)",
-      "feesMu": "74"
-    },
-    {
-      "seq": 1527,
-      "type": "MESH-WIRE",
-      "agent": "operator",
-      "asset": "WSBD",
-      "amount": "250",
-      "why": "edge-funding wire (cap 10% of free treasury per batch); conservation moves claims, never creates them"
-    },
-    {
-      "seq": 1528,
-      "type": "AGENT_FILL",
-      "agent": "operator",
-      "from": "WSBD",
-      "to": "WSTEEM",
-      "amountIn": "62181",
-      "amountOut": "2",
-      "routeIds": [
-        "P2",
-        "P3",
-        "P1"
-      ],
-      "hops": [
-        {
-          "pool": "P2",
-          "in": "62181",
-          "out": "28467",
-          "fee": "5"
-        },
-        {
-          "pool": "P3",
-          "in": "28467",
-          "out": "10418",
-          "fee": "71"
-        },
-        {
-          "pool": "P1",
-          "in": "10418",
-          "out": "2",
-          "fee": "0"
-        }
-      ],
-      "edgeMu": "-604660",
-      "fairUsed": "CEX-FAIR (STEEM per SBD)",
-      "feesMu": "76"
     }
   ],
   "summary": {
@@ -2217,8 +1901,8 @@
     "poolsPlanned": 2,
     "routesLive": 7,
     "routesPlanned": 80,
-    "meshFills": 11,
-    "meshBatch": "ACT-2026110816-c533e113",
+    "meshFills": 1,
+    "meshBatch": "MESH-2026110817-95bd71fa",
     "notes": []
   }
 }
