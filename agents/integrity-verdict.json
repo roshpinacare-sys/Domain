@@ -1,27 +1,26 @@
 {
  "schema": "integrity-guard/2",
  "scope": "public-twin (Domain home)",
- "at": "2026-11-08T08:26:02.659Z",
+ "at": "2026-11-08T09:05:37.613Z",
  "overall": "FAIL",
  "summary": {
   "sources": 7,
-  "verified": 6,
-  "findings": 3,
+  "verified": 7,
+  "findings": 2,
   "counts": {
-   "stale": 2,
-   "producer-red": 1
+   "stale": 2
   }
  },
  "verified": [
   {
    "where": "self:agents/integrity-verdict.json",
    "law": "L0-verified",
-   "detail": "פסק-קודם תקין (FAIL) מלפני 2ש'"
+   "detail": "פסק-קודם תקין (FAIL) מלפני 1ש'"
   },
   {
    "where": "Domain:agents/work-orders.json",
    "law": "fresh+parsed",
-   "detail": "גיל 0.9ש' ≤ SLA 4ש'"
+   "detail": "גיל 1.6ש' ≤ SLA 4ש'"
   },
   {
    "where": "Domain:office/data.json",
@@ -31,12 +30,17 @@
   {
    "where": "Domain:agents/office-live.json",
    "law": "fresh+parsed",
-   "detail": "גיל 1.8ש' ≤ SLA 4ש'"
+   "detail": "גיל 0.7ש' ≤ SLA 4ש'"
   },
   {
    "where": "sovereign-runner-kit:results/receipts.jsonl",
    "law": "fresh+parsed",
-   "detail": "גיל 1ש' ≤ SLA 72ש' · 157 קבלות"
+   "detail": "גיל 1.6ש' ≤ SLA 72ש' · 157 קבלות"
+  },
+  {
+   "where": "Domain:office/data.json",
+   "law": "producer-green",
+   "detail": "ריצת-יצרן ירוקה לפני 41 דק'"
   },
   {
    "where": "Domain:agents/work-orders.json",
@@ -48,21 +52,16 @@
   {
    "where": "Domain:agents/grid-truth.json",
    "law": "stale",
-   "detail": "גיל 2.3ש' > SLA 2ש'"
+   "detail": "גיל 3ש' > SLA 2ש'"
   },
   {
    "where": "FleetHQ:office/state/office-state.json",
    "law": "stale",
-   "detail": "גיל 257.6ש' > SLA 4ש'"
-  },
-  {
-   "where": "Domain:office/data.json",
-   "law": "producer-red",
-   "detail": "היצרן רץ null לפני 1 דק' — הספר חייב-בדיקה"
+   "detail": "גיל 258.3ש' > SLA 4ש'"
   }
  ],
  "provenance": {
-  "runUrl": "https://github.com/roshpinacare-sys/Domain/actions/runs/42462804871",
+  "runUrl": "https://github.com/roshpinacare-sys/Domain/actions/runs/42465685034",
   "workflow": "artery-integrity-twin"
  }
 }
