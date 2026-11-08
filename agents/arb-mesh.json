@@ -1,6 +1,6 @@
 {
   "protocol": "SAOS-ARB-MESH/1",
-  "at": "2026-11-08T09:29:50.457Z",
+  "at": "2026-11-08T11:40:10.832Z",
   "agent": "arb-mesh v1.0.0 (R41 MESH MARKET, CR-0071)",
   "mode": "KEYLESS-MESH-DEMAND",
   "stasisHalted": false,
@@ -23,18 +23,18 @@
     "uniform batch clearing (R76): the queue clears as ONE batch - canonical order, two-sided netting at the measured fair, one uniform clearing price for every trader, the solver absorbs the remainder; order-invariance (a permuted queue clears byte-identical) is the anti-sandwich proof · the proof lane is DRY (moves nothing), the settle gate stays the owner's"
   ],
   "verdict": "MESH-LIVE",
-  "batch": "MESH-2026110809-fd7c9cd9",
-  "settledBatch": "MESH-2026110809-fd7c9cd9",
+  "batch": "MESH-2026110811-4928d2a5",
+  "settledBatch": "MESH-2026110811-4928d2a5",
   "coreLedger": {
-    "seq": 1489,
-    "at": "2026-11-08T09:14:15.412Z",
-    "ageHours": 0.26,
+    "seq": 1493,
+    "at": "2026-11-08T11:23:21.479Z",
+    "ageHours": 0.28,
     "conservationOk": true,
-    "attestation": "cf4037ab03f2abea",
+    "attestation": "3b19147621823e2d",
     "feedFresh": true
   },
   "routerSeen": {
-    "at": "2026-11-08T08:25:54.086Z",
+    "at": "2026-11-08T10:02:22.935Z",
     "arbRows": 4
   },
   "roster": [
@@ -44,15 +44,15 @@
     {
       "id": "A1",
       "name": "P3 STEEM/SBD pool mid vs CEX-implied fair",
-      "poolMidNano": "2773788603",
-      "fairNano": "102856520",
-      "netBps": 259640.52,
+      "poolMidNano": "2751768983",
+      "fairNano": "103117510",
+      "netBps": 256822.59,
       "thresholdBps": 100,
       "from": "STEEM",
       "to": "SBD",
       "railOwner": "treasury (our own pool — atomic, no bridge)",
       "source": "dex-core.json (our pool — atomic, no bridge)",
-      "at": "2026-11-08T09:29:50.457Z"
+      "at": "2026-11-08T11:40:10.832Z"
     }
   ],
   "keyedRailPlans": [],
@@ -62,37 +62,37 @@
       "agent": "operator",
       "from": "STEEM",
       "to": "SBD",
-      "amountIn": "1174",
-      "minOut": "3219",
-      "quote": "3235",
+      "amountIn": "1179",
+      "minOut": "3207",
+      "quote": "3223",
       "rowId": "A1",
       "share": "OPERATOR-40%",
       "heldMu": "0",
-      "wireExpected": "1174"
+      "wireExpected": "1179"
     }
   ],
   "wires": 1,
   "fills": [
     {
-      "seq": 1491,
+      "seq": 1495,
       "type": "AGENT_FILL",
       "agent": "operator",
       "from": "STEEM",
       "to": "SBD",
-      "amountIn": "1174",
-      "amountOut": "3235",
+      "amountIn": "1179",
+      "amountOut": "3223",
       "routeIds": [
         "P3"
       ],
       "hops": [
         {
           "pool": "P3",
-          "in": "1174",
-          "out": "3235",
+          "in": "1179",
+          "out": "3223",
           "fee": "2"
         }
       ],
-      "edgeMu": "3115",
+      "edgeMu": "3102",
       "fairUsed": "CEX-FAIR (SBD per STEEM)",
       "feesMu": "2"
     }
@@ -165,29 +165,29 @@
       "pair": "STEEM/SBD",
       "kind": "VOLATILE",
       "feeBps": 25,
-      "mid": 2.7737886,
+      "mid": 2.75176898,
       "unit": "SBD",
       "rungs": [
         {
           "sizeBps": 10,
-          "sizeIn": "293",
-          "out": "809",
-          "execPrice": 2.76109215,
-          "slipBps": -0.45
+          "sizeIn": "294",
+          "out": "806",
+          "execPrice": 2.7414966,
+          "slipBps": -0.37
         },
         {
           "sizeBps": 100,
-          "sizeIn": "2936",
-          "out": "8043",
-          "execPrice": 2.73944142,
+          "sizeIn": "2948",
+          "out": "8012",
+          "execPrice": 2.71777476,
           "slipBps": -1.23
         },
         {
           "sizeBps": 500,
-          "sizeIn": "14681",
-          "out": "38690",
-          "execPrice": 2.63537906,
-          "slipBps": -4.98
+          "sizeIn": "14740",
+          "out": "38537",
+          "execPrice": 2.61445047,
+          "slipBps": -4.99
         }
       ]
     }
@@ -203,23 +203,23 @@
         },
         "operator": {
           "fills": 1,
-          "volumeInMu": "1174",
-          "edgeMu": "3115",
+          "volumeInMu": "1179",
+          "edgeMu": "3102",
           "feesMu": "2"
         }
       },
-      "fills": 716,
-      "edgeMu": "-23116184",
-      "feesMu": "9908",
-      "volumeInMu": "9940378"
+      "fills": 717,
+      "edgeMu": "-23113082",
+      "feesMu": "9910",
+      "volumeInMu": "9941557"
     },
     "batch": {
-      "id": "MESH-2026110809-fd7c9cd9",
+      "id": "MESH-2026110811-4928d2a5",
       "fills": 1,
       "rejects": 0,
-      "edgeMu": "3115",
+      "edgeMu": "3102",
       "feesMu": "2",
-      "volumeInMu": "1174"
+      "volumeInMu": "1179"
     }
   },
   "gridGate": "GATED-ARMED-BROADCAST-READY (CR-0074 open — the kernel arms the opposing grids; the mesh still never fires a keyed rail)",
