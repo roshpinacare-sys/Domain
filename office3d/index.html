@@ -189,7 +189,7 @@
       nav.links a small { display: block; font-weight: 400; color: var(--muted); font-size: 11.5px; }
       .law { margin-top: 26px; border-top: 1px solid var(--line); padding-top: 10px; font-size: 12px; color: var(--muted); text-align: center; }
       .law a { color: inherit; }
-      @media (max-width: 560px) { .clock { margin-inline-start: 0; } h1 { font-size: 19px; } #campus { height: 70vh; } #drawer { width: 100%; border-inline-start: none; border-top: 1px solid var(--line); top: auto; height: 62%; border-radius: 16px 16px 0 0; } #hudVerds, #hudDir { display: none; } #sidepanel, #attention { display: none; } #camctrl { bottom: 52px; } #filters { top: 44px; overflow-x: auto; flex-wrap: nowrap; } #ticker { bottom: calc(10px + env(safe-area-inset-bottom, 0px)); } }
+      @media (max-width: 560px) { .clock { margin-inline-start: 0; } h1 { font-size: 19px; } #campus { height: 70vh; } #drawer { width: 100%; border-inline-start: none; border-top: 1px solid var(--line); top: auto; height: 62%; border-radius: 16px 16px 0 0; } #hudVerds, #hudDir { display: none; } #sidepanel, #attention { display: none; } #camctrl { bottom: 52px; } #filters { top: 44px; flex-wrap: wrap; max-width: calc(100% - 20px); row-gap: 4px; } #ticker { bottom: calc(10px + env(safe-area-inset-bottom, 0px)); } }
       @media (prefers-reduced-motion: reduce) { .hud-pill.alert, #ticker .live, .glasswin h4 .live { animation: none; } .diorama-wrap { animation: none; } }
       #scrollbars ::-webkit-scrollbar, .res::-webkit-scrollbar, .db::-webkit-scrollbar, .fb::-webkit-scrollbar { width: 8px; }
       .res::-webkit-scrollbar-thumb, .db::-webkit-scrollbar-thumb, .fb::-webkit-scrollbar-thumb { background: rgba(240,232,214,0.18); border-radius: 8px; }
@@ -295,10 +295,11 @@
       <style>
       /* ================= v10 · "משמעת-התצוגה" · שכבת-על ================= */
       /* חוק-1 · HUD: שורה-אחת-בלבד — גלילה-אופקית-עדינה, אף-פעם-לא-נערם-על-הקנבס */
-      .hud-top { flex-wrap: nowrap !important; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; -ms-overflow-style: none; padding-bottom: 2px; }
+      .hud-top { flex-wrap: wrap; max-width: 100%; row-gap: 4px; }
       .hud-top::-webkit-scrollbar { display: none; }
       .hud-top > * { flex: 0 0 auto; }
       .hud-top .hud-pill { max-width: 230px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .hud-top > *, #filters > * { flex: 0 1 auto; min-width: 0; }
       #hudSrc { max-width: 320px; }
       /* חוק-3 · אף-תווית-לא-מסתירה-את-השליטה-במצלמה */
       #camctrl { z-index: 9; }
@@ -812,7 +813,7 @@
       <header class="hero">
         <div>
           <h1>מפקדת הצי · המחנה החי</h1>
-          <div class="eyebrow">מנוע v10 · "משמעת-התצוגה" · חוקי-האיפוק-של-משמרת-הלילה-חוזרים (ערפל-עומק · תוויות-ראשיים-בזום-נמוך · כותרות-רק-בזום-רחוק) + HUD-שורה-אחת · אף-חיתוך-ואף-כיסוי-שליטה · אפס-תלות · אפס-bundle</div>
+          <div class="eyebrow">מנוע v11 · "העיצוב-הישן-חוזר" · דיורמת-פיקוד איזומטרית · רובעים-חיים · פנים-חדרים · חיפוש-ומפה · אפס-תלות · אפס-bundle</div>
         </div>
         <div class="clock" aria-live="off">
           <b id="jl-clock">--:--:--</b>
@@ -1000,7 +1001,7 @@
          אזעקה-אחת-במקום-חמש · EMBED-עקבי-מהקרקע · אפס-קריסה-שתיקה · אפס-תלות · קובץ-אחד. */
       (function () {
         "use strict";
-        var ENGINE = "v10";
+        var ENGINE = "v11";
         var cv = document.getElementById("campus");
         var bootErr = null;
         window.SAOS_OFFICE3D = { ok: false, engine: ENGINE, err: null, rooms: 0, districts: 0, camZ: 0, atMin: null, lastPullOk: false, errs: [], at: null, fitZ: 0 };
