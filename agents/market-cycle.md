@@ -1,11 +1,11 @@
 # market-cycle — pulled-schedule cycle composer (CR-0039)
 
-Last cycle: 2026-11-09T19:44:44.364Z · mode **DRY**
-- fill-ledger: exit 0 — [fill-ledger] mode=READ-ONLY new=0 total=243 realized_sbd=-0.403790 vwap=sell 0.100346 / buy 0.102346 (edge -1.9936%) recycle=NO errors=0 in 82ms | [fill-ledger] canon: agents/fill-ledger.json (run #925)
-- ledger row: run #925, new fills 0, realized -0.403790 SBD
+Last cycle: 2026-11-09T21:08:48.135Z · mode **DRY**
+- fill-ledger: exit 0 — [fill-ledger] mode=READ-ONLY new=0 total=243 realized_sbd=-0.403790 vwap=sell 0.100346 / buy 0.102346 (edge -1.9936%) recycle=NO errors=0 in 86ms | [fill-ledger] canon: agents/fill-ledger.json (run #926)
+- ledger row: run #926, new fills 0, realized -0.403790 SBD
 - suggestion: NO — NO-FUNDS
 - decision: **DRY** — MODE-DRY: planning receipt only, zero signatures
-- executor: exit 0 — [market-exec] mode=DRY_RUN planned=0 skipped=6 errors=0 verify=0/0 in 433ms | [market-exec] canon: agents/market-exec.json (run #465)
+- executor: exit 0 — [market-exec] mode=DRY_RUN planned=0 skipped=6 errors=0 verify=0/0 in 444ms | [market-exec] canon: agents/market-exec.json (run #466)
 - errors: none
 
-Cycle history: 453 rows.
+Cycle history: 454 rows.
