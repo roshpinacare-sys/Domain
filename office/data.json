@@ -1,43 +1,43 @@
 {
  "schema": "office.pulse/1",
- "generatedAt": "2026-11-10T06:01:08.153Z",
+ "generatedAt": "2026-11-10T06:36:48.733Z",
  "generatedAgeNote": "this file is rewritten by the office-pulse workflow; judge freshness by generatedAt",
  "verdict": "ALIVE",
  "verdictChecks": [
   {
    "name": "office-push",
    "state": "fresh",
-   "detail": "136min <= 2880min"
+   "detail": "172min <= 2880min"
   },
   {
    "name": "office-ci",
    "state": "fresh",
-   "detail": "1034min <= 1560min"
+   "detail": "1069min <= 1560min"
   },
   {
    "name": "wallet-artery",
    "state": "fresh",
-   "detail": "64min <= 2880min · PASS"
+   "detail": "18min <= 2880min · PASS"
   },
   {
    "name": "grid-artery",
    "state": "fresh",
-   "detail": "37min <= 720min · PASS"
+   "detail": "19min <= 720min · PASS"
   },
   {
    "name": "fleet-artery",
    "state": "fresh",
-   "detail": "37min <= 2880min · PASS"
+   "detail": "73min <= 2880min · PASS"
   },
   {
    "name": "sovereign-tick",
    "state": "fresh",
-   "detail": "24min <= 360min"
+   "detail": "2min <= 360min"
   },
   {
    "name": "runtime-heartbeat",
    "state": "fresh",
-   "detail": "36min <= 90min"
+   "detail": "25min <= 90min"
   }
  ],
  "degraded": [],
@@ -52,49 +52,49 @@
  "office": {
   "repo": "roshpinacare-sys/FleetHQ",
   "pushedAt": "2026-11-10T03:45:10Z",
-  "pushedAgeMin": 136,
+  "pushedAgeMin": 172,
   "openIssues": 37,
   "wire": [
    {
     "sha": "b425c8b",
     "msg": "ops-forge: agent line to operator-inbox.jsonl [skip ci]",
     "at": "2026-11-10T03:23:14Z",
-    "ageMin": 158,
+    "ageMin": 194,
     "author": "roshpinacare-sys"
    },
    {
     "sha": "656356a",
     "msg": "ops-forge: agent line to operator-inbox.jsonl [skip ci]",
     "at": "2026-11-10T03:23:09Z",
-    "ageMin": 158,
+    "ageMin": 194,
     "author": "roshpinacare-sys"
    },
    {
     "sha": "94a8deb",
     "msg": "office-ci receipt: build pass, types pass [skip ci]",
     "at": "2026-11-09T12:47:23Z",
-    "ageMin": 1034,
+    "ageMin": 1069,
     "author": "roshpinacare-sys"
    },
    {
     "sha": "7539b2e",
     "msg": "ops-forge: agent line to operator-inbox.jsonl [skip ci]",
     "at": "2026-11-09T10:07:12Z",
-    "ageMin": 1194,
+    "ageMin": 1230,
     "author": "roshpinacare-sys"
    },
    {
     "sha": "03f414a",
     "msg": "ops-forge: agent line to operator-inbox.jsonl [skip ci]",
     "at": "2026-11-09T10:07:07Z",
-    "ageMin": 1194,
+    "ageMin": 1230,
     "author": "roshpinacare-sys"
    },
    {
     "sha": "c00d1db",
     "msg": "ops-forge: agent line to operator-inbox.jsonl [skip ci]",
     "at": "2026-11-09T10:07:05Z",
-    "ageMin": 1194,
+    "ageMin": 1230,
     "author": "roshpinacare-sys"
    }
   ],
@@ -115,14 +115,14 @@
     }
    ]
   },
-  "worklogLastTouchAgeMin": 29592,
+  "worklogLastTouchAgeMin": 29628,
   "boot": {
    "error": "HTTP 404 contents:receipts/boot-verify.json"
   },
   "ci": {
    "overall": "PASS",
    "at": "2026-11-09T12:47:22.607Z",
-   "ageMin": 1034,
+   "ageMin": 1069,
    "reason": "all five checks ran and passed",
    "runUrl": "https://github.com/roshpinacare-sys/FleetHQ/actions/runs/42619772366",
    "checks": {
@@ -137,26 +137,26 @@
  "arteries": {
   "wallet": {
    "source": "Autonomy/receipts/wallet/verdict.json",
-   "at": "2026-11-10T04:57:08.616Z",
-   "ageMin": 64,
+   "at": "2026-11-10T06:18:20.168Z",
+   "ageMin": 18,
    "overall": "PASS",
    "reason": "install, prisma, typecheck, build and all wallet laws pass",
    "alerts": 0,
-   "runUrl": "https://github.com/roshpinacare-sys/Autonomy/actions/runs/42759019651"
+   "runUrl": "https://github.com/roshpinacare-sys/Autonomy/actions/runs/42767547370"
   },
   "grid": {
    "source": "Autonomy/receipts/grid/verdict.json",
-   "at": "2026-11-10T05:23:41.172Z",
-   "ageMin": 37,
+   "at": "2026-11-10T06:17:49.192Z",
+   "ageMin": 19,
    "overall": "PASS",
    "reason": "grid state measured from git; laws pass",
    "alerts": 0,
-   "runUrl": "https://github.com/roshpinacare-sys/Autonomy/actions/runs/42761836275"
+   "runUrl": "https://github.com/roshpinacare-sys/Autonomy/actions/runs/42767536323"
   },
   "fleet": {
    "source": "Autonomy/receipts/fleet/verdict.json",
    "at": "2026-11-10T05:24:01.752Z",
-   "ageMin": 37,
+   "ageMin": 73,
    "overall": "PASS",
    "reason": "steem=PASS · saos-dex=PASS · saos-agents=PASS · Saosmartwallet=PASS · Adsmarket=PASS",
    "alerts": 4,
@@ -164,14 +164,14 @@
   },
   "tick": {
    "source": "Autonomy/receipts/latest.json",
-   "at": "2026-11-10T05:37:25.759Z",
-   "ageMin": 24,
-   "chain": "2cb1a2a203b6"
+   "at": "2026-11-10T06:35:12.158Z",
+   "ageMin": 2,
+   "chain": "6cc507a1b361"
   }
  },
  "runtime": {
-  "lastSuccessAt": "2026-11-10T05:25:07Z",
-  "lastSuccessAgeMin": 36,
+  "lastSuccessAt": "2026-11-10T06:12:13Z",
+  "lastSuccessAgeMin": 25,
   "lastSuccessName": "grid-watchdog",
   "lastConclusion": "success"
  }
