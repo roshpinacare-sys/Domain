@@ -1,10 +1,10 @@
-# דופק-הצי (fleet-heartbeat) — 2026-11-10T17:59:39.364Z
+# דופק-הצי (fleet-heartbeat) — 2026-11-10T18:13:36.969Z
 
 מדידת-מנועים של כל-הריפואים: מה פועם, מה שקט, מה הפלטפורמה נטרלה, מה נרפא בריצה זו.
 
-**סיכום:** 50 ריפואים · פועמים 24 · ללא-קרון-אך-פעילים 2 · חמימים 2 · שקטים 8 · מעולם-לא-רצו 0 · ללא-workflows 13 · נטרולי-חוסר-פעילות 0 · חסומי-קיר-המכסה 0
+**סיכום:** 50 ריפואים · פועמים 23 · ללא-קרון-אך-פעילים 3 · חמימים 2 · שקטים 8 · מעולם-לא-רצו 0 · ללא-workflows 13 · נטרולי-חוסר-פעילות 0 · חסומי-קיר-המכסה 0
 
-**דופק-מונע:** Domain/tick-keeper.yml=http 422 · Domain/cognition-beat.yml=http 422
+**דופק-מונע:** Domain/cognition-beat.yml=http 422
 
 
 ## גבולות-משמורת מדודים (לא כישלונות קוד)
@@ -20,25 +20,25 @@
 
 ## שורות-שקט (QUIET/NEVER-RAN/NO-WORKFLOWS/AUTO-DISABLED)
 
-- Adsmarket — QUIET · שקט 405.9 שעות
-- anchor-baseline — QUIET · שקט 410 שעות
-- Defi — QUIET · שקט 493 שעות
+- Adsmarket — QUIET · שקט 406.1 שעות
+- anchor-baseline — QUIET · שקט 410.2 שעות
+- Defi — QUIET · שקט 493.2 שעות
 - estate-agent-9 — NO-WORKFLOWS
 - negen — NO-WORKFLOWS
 - ops-control — NO-WORKFLOWS
 - oss-scanner — NO-WORKFLOWS
-- roshpina — QUIET · שקט 361.8 שעות
+- roshpina — QUIET · שקט 362.1 שעות
 - sanbox — NO-WORKFLOWS
-- sandbox-private — QUIET · שקט 510.3 שעות
+- sandbox-private — QUIET · שקט 510.5 שעות
 - saos-console — NO-WORKFLOWS
 - saos-console-zai — NO-WORKFLOWS
-- saos-control-center — QUIET · שקט 410 שעות
+- saos-control-center — QUIET · שקט 410.2 שעות
 - saos-coordination — NO-WORKFLOWS
-- saos-desk — NO-WORKFLOWS · שקט 640.5 שעות
-- saos-markets — NO-WORKFLOWS · שקט 591.3 שעות
-- saos-owner-channel — NO-WORKFLOWS · שקט 558 שעות
-- saos-sovereign-foundry — QUIET · שקט 516.4 שעות
-- Sdk — QUIET · שקט 410 שעות
+- saos-desk — NO-WORKFLOWS · שקט 640.7 שעות
+- saos-markets — NO-WORKFLOWS · שקט 591.5 שעות
+- saos-owner-channel — NO-WORKFLOWS · שקט 558.2 שעות
+- saos-sovereign-foundry — QUIET · שקט 516.7 שעות
+- Sdk — QUIET · שקט 410.2 שעות
 - SovereignConsole — NO-WORKFLOWS
 - vault-home — NO-WORKFLOWS
 
