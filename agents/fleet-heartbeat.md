@@ -1,10 +1,10 @@
-# דופק-הצי (fleet-heartbeat) — 2026-11-10T04:13:20.741Z
+# דופק-הצי (fleet-heartbeat) — 2026-11-10T06:05:29.808Z
 
 מדידת-מנועים של כל-הריפואים: מה פועם, מה שקט, מה הפלטפורמה נטרלה, מה נרפא בריצה זו.
 
-**סיכום:** 50 ריפואים · פועמים 22 · ללא-קרון-אך-פעילים 4 · חמימים 2 · שקטים 8 · מעולם-לא-רצו 0 · ללא-workflows 13 · נטרולי-חוסר-פעילות 0 · חסומי-קיר-המכסה 0
+**סיכום:** 50 ריפואים · פועמים 18 · ללא-קרון-אך-פעילים 8 · חמימים 2 · שקטים 8 · מעולם-לא-רצו 0 · ללא-workflows 13 · נטרולי-חוסר-פעילות 0 · חסומי-קיר-המכסה 0
 
-**דופק-מונע:** Domain/tick-keeper.yml=http 422 · Domain/cognition-beat.yml=http 422
+**דופק-מונע:** Domain/cognition-beat.yml=http 422
 
 
 ## גבולות-משמורת מדודים (לא כישלונות קוד)
@@ -20,25 +20,25 @@
 
 ## שורות-שקט (QUIET/NEVER-RAN/NO-WORKFLOWS/AUTO-DISABLED)
 
-- Adsmarket — QUIET · שקט 392.1 שעות
-- anchor-baseline — QUIET · שקט 396.2 שעות
-- Defi — QUIET · שקט 479.2 שעות
+- Adsmarket — QUIET · שקט 394 שעות
+- anchor-baseline — QUIET · שקט 398.1 שעות
+- Defi — QUIET · שקט 481.1 שעות
 - estate-agent-9 — NO-WORKFLOWS
 - negen — NO-WORKFLOWS
 - ops-control — NO-WORKFLOWS
 - oss-scanner — NO-WORKFLOWS
-- roshpina — QUIET · שקט 348.1 שעות
+- roshpina — QUIET · שקט 349.9 שעות
 - sanbox — NO-WORKFLOWS
-- sandbox-private — QUIET · שקט 496.5 שעות
+- sandbox-private — QUIET · שקט 498.4 שעות
 - saos-console — NO-WORKFLOWS
 - saos-console-zai — NO-WORKFLOWS
-- saos-control-center — QUIET · שקט 396.2 שעות
+- saos-control-center — QUIET · שקט 398.1 שעות
 - saos-coordination — NO-WORKFLOWS
-- saos-desk — NO-WORKFLOWS · שקט 626.7 שעות
-- saos-markets — NO-WORKFLOWS · שקט 577.5 שעות
-- saos-owner-channel — NO-WORKFLOWS · שקט 544.2 שעות
-- saos-sovereign-foundry — QUIET · שקט 502.6 שעות
-- Sdk — QUIET · שקט 396.2 שעות
+- saos-desk — NO-WORKFLOWS · שקט 628.6 שעות
+- saos-markets — NO-WORKFLOWS · שקט 579.3 שעות
+- saos-owner-channel — NO-WORKFLOWS · שקט 546.1 שעות
+- saos-sovereign-foundry — QUIET · שקט 504.5 שעות
+- Sdk — QUIET · שקט 398.1 שעות
 - SovereignConsole — NO-WORKFLOWS
 - vault-home — NO-WORKFLOWS
 
