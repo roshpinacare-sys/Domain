@@ -1,14 +1,14 @@
 # dex-core — EXCHANGE CORE (R40, CR-0070)
 
-At: 2026-11-11T22:58:39.312Z · Verdict: **MESH-SETTLED** · mode: KEYLESS-ATOMIC-INTERNAL (mesh batch) · seq: 1956 · attestation: `5349be65b6aebd16`
+At: 2026-11-11T23:43:28.642Z · Verdict: **MESH-SETTLED** · mode: KEYLESS-ATOMIC-INTERNAL (mesh batch) · seq: 1981 · attestation: `9a81a8493fd664e4`
 
 Feed: FEED-LIVE (router book @ 2026-11-11T20:17:15.032Z) · conservation: **OK** · custody probe: unreachable (booked custody stands)
 
 | Pool | Pair | Kind | Fee | Reserves (a/b µ) | Mid | Verdict |
 |---|---|---|---|---|---|---|
-| P1 | WSTEEM/STEEM | PEG | 2bps | 359 / 4632451 | 12903.7632312 | LIVE-INTERNAL |
-| P2 | WSBD/SBD | PEG | 2bps | 6314624 / 566472 | 0.08970795 | LIVE-INTERNAL |
-| P3 | STEEM/SBD | VOLATILE | 25bps | 277859 / 864789 | 3.11233035 | LIVE-INTERNAL |
+| P1 | WSTEEM/STEEM | PEG | 2bps | 350 / 4697040 | 13420.11428571 | LIVE-INTERNAL |
+| P2 | WSBD/SBD | PEG | 2bps | 6314666 / 566467 | 0.08970657 | LIVE-INTERNAL |
+| P3 | STEEM/SBD | VOLATILE | 25bps | 272570 / 881873 | 3.23540008 | LIVE-INTERNAL |
 | P4 | SAOS/WSTEEM | VOLATILE | 25bps | 0 / 0 | — | PLANNED-NO-CLAIM |
 | P5 | WHIVE/HIVE | PEG | 2bps | 0 / 0 | — | AWAITING-CUSTODY |
 | P6 | WHBD/HBD | PEG | 2bps | 0 / 0 | — | AWAITING-CUSTODY |
@@ -125,5 +125,5 @@ Vault: minted WSTEEM 761900µ · WSBD 6314850µ · WHIVE 0µ · WHBD 0µ · WBLU
 
 Treasury P&L: fees 0µ (LP revenue) · rebalance edges 15510µ (marked to fair at execution — the LVR defense on our own pool)
 
-Attestation sha256(seq, custody, reserves, minted, claims) = `5349be65b6aebd16` — recomputable by any node; the cron book commit is the publication.
+Attestation sha256(seq, custody, reserves, minted, claims) = `9a81a8493fd664e4` — recomputable by any node; the cron book commit is the publication.
 
