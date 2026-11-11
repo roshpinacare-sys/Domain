@@ -1,10 +1,10 @@
 # market-grid — internal-market sovereignty instrument (Z-60+)
 
-At: 2026-11-11T03:37:21.857Z · Verdict: **MARKET-GRID-LIVE** · Markets read: 3 · Errors: 0
+At: 2026-11-11T03:37:38.330Z · Verdict: **MARKET-GRID-LIVE** · Markets read: 3 · Errors: 0
 
 | Market | Bid | Ask | Spread% | 24h% | Grid rungs | Step | Paper fills (snapshot) |
 |---|---|---|---|---|---|---|---|
-| HBD/HIVE (internal hive) | 0.04322200392927308 | 0.04334402090013063 | 0.2819 | 0.494 | 10 | 0.00017313 | 5 |
+| HBD/HIVE (internal hive) | 0.04322450158913609 | 0.04334402090013063 | 0.2761 | 0.494 | 10 | 0.00017314 | 5 |
 | SBD/STEEM (internal steem) | 0.1024008590933497 | 0.10317460317460317 | 0.7528 | 0 | 10 | 0.00041115 | 5 |
 
 Hive-Engine basket (keyless RPC, per-token fee measured from the tokens contract): BEE spread 1.3514% fee 0bps pond 369.77742023 SWAP.HIVE/24h FEASIBLE · SWAP.LTC spread 0.1037% fee 0bps pond 13597.81003773 SWAP.HIVE/24h thin · SWAP.DOGE spread 0.6308% fee 0bps pond 307.9705925 SWAP.HIVE/24h FEASIBLE · CENT spread 1.0569% fee 0bps pond 143.1370267 SWAP.HIVE/24h FEASIBLE · WAIV spread 5.1508% fee 0bps pond 19.06716687 SWAP.HIVE/24h FEASIBLE
