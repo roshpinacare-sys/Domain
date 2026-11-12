@@ -1,8 +1,8 @@
 {
   "protocol": "SAOS-DEX-CORE/1",
-  "at": "2026-11-12T03:36:48.908Z",
+  "at": "2026-11-12T03:53:18.786Z",
   "agent": "dex-core v1.6.0 (R77 THE OWNER GATES)",
-  "mode": "KEYLESS-ATOMIC-INTERNAL (mesh batch)",
+  "mode": "KEYLESS-ATOMIC-INTERNAL",
   "stasisHalted": false,
   "laws": [
     "counter-grid arm (R44): the owner gate is the CR-0074 ARTIFACT (present = open); the arm adds deterministic rung ids, the 2%-of-depth cap law, the dust refusal (GRID-TOO-THIN) and the two-sided law (a one-sided grid is a direction bet — REFUSED); settle stays pure (the gate is an argument)",
@@ -87,7 +87,7 @@
       "unlock": "a measured SAOS claim in the vault (dex/credits.json)"
     }
   },
-  "redeemBook": null,
+  "redeemBook": [],
   "feed": {
     "source": "agents/dex-router.json",
     "routerAt": "2026-11-12T03:03:31.267Z",
@@ -100,10 +100,10 @@
     "verdict": "FEED-LIVE"
   },
   "custodyProbe": {
-    "measured": false,
-    "node": null
+    "measured": true,
+    "node": "https://api.steemit.com"
   },
-  "seq": 1987,
+  "seq": 1988,
   "vault": {
     "custody": {
       "STEEM": "697820000",
@@ -114,8 +114,8 @@
       "SAOS": "0"
     },
     "custodyProvenance": {
-      "STEEM": "MEASURED condenser owner @https://api.steemit.com 2026-11-12T01:09:03.336Z (CUSTODY-DROP)",
-      "SBD": "MEASURED condenser owner @https://api.steemit.com 2026-11-12T01:09:03.336Z (CUSTODY-DROP)",
+      "STEEM": "MEASURED condenser owner @https://api.steemit.com 2026-11-12T03:53:18.786Z (CUSTODY-DROP)",
+      "SBD": "MEASURED condenser owner @https://api.steemit.com 2026-11-12T03:53:18.786Z (CUSTODY-DROP)",
       "HIVE": "CUSTODY-CLASS OBSERVED-UNCONTROLLED — observed on-chain, never custody, until key material verifies (R42/R38 law)",
       "HBD": "CUSTODY-CLASS OBSERVED-UNCONTROLLED — observed on-chain, never custody, until key material verifies (R42/R38 law)",
       "BLURT": "CUSTODY-CLASS OBSERVED-POST-KEYED — observed on-chain, never custody, until key material verifies (R42/R38 law)",
@@ -132,9 +132,9 @@
     "observedProvenance": {
       "STEEM": null,
       "SBD": null,
-      "HIVE": "MEASURED HIVE owner @https://api.hive.blog 2026-11-12T01:09:03.336Z (class OBSERVED-UNCONTROLLED)",
-      "HBD": "MEASURED HIVE owner @https://api.hive.blog 2026-11-12T01:09:03.336Z (class OBSERVED-UNCONTROLLED)",
-      "BLURT": "MEASURED BLURT owner @https://blurt-rpc.saboin.com 2026-11-12T01:09:03.336Z (class OBSERVED-POST-KEYED)",
+      "HIVE": "MEASURED HIVE owner @https://api.hive.blog 2026-11-12T03:53:18.786Z (class OBSERVED-UNCONTROLLED)",
+      "HBD": "MEASURED HIVE owner @https://api.hive.blog 2026-11-12T03:53:18.786Z (class OBSERVED-UNCONTROLLED)",
+      "BLURT": "MEASURED BLURT owner @https://blurt-rpc.saboin.com 2026-11-12T03:53:18.786Z (class OBSERVED-POST-KEYED)",
       "SAOS": null
     },
     "wrappedReserve": {
@@ -165,7 +165,7 @@
     "treasury": {
       "claims": {
         "STEEM": "692086306",
-        "SBD": "70861841",
+        "SBD": "70865344",
         "HIVE": "0",
         "HBD": "0",
         "BLURT": "0",
@@ -369,8 +369,8 @@
       "via": [
         "P3"
       ],
-      "quote": "8707",
-      "quoteFor": "2725 µ STEEM (~1% first-hop depth)",
+      "quote": "8639",
+      "quoteFor": "2747 µ STEEM (~1% first-hop depth)",
       "verdict": "LIVE-INTERNAL"
     },
     {
@@ -381,8 +381,8 @@
         "P3",
         "P2"
       ],
-      "quote": "19366",
-      "quoteFor": "2725 µ STEEM (~1% first-hop depth)",
+      "quote": "19216",
+      "quoteFor": "2747 µ STEEM (~1% first-hop depth)",
       "verdict": "LIVE-INTERNAL"
     },
     {
@@ -392,7 +392,7 @@
       "via": [
         "P3"
       ],
-      "quote": "1735",
+      "quote": "1762",
       "quoteFor": "5664 µ SBD (~1% first-hop depth)",
       "verdict": "LIVE-INTERNAL"
     },
@@ -855,7 +855,7 @@
         "P2",
         "P3"
       ],
-      "quote": "8207",
+      "quote": "8337",
       "quoteFor": "63146 µ WSBD (~1% first-hop depth)",
       "verdict": "LIVE-INTERNAL"
     },
@@ -1332,12 +1332,12 @@
         "P3-POOL",
         "cex:STEEMUSDT+SBDUSDT"
       ],
-      "poolMidNano": "3235400080",
-      "fairNano": "100523100",
+      "poolMidNano": "3184237536",
+      "fairNano": "100021800",
       "fairSource": "CEX-IMPLIED-FAIR (SBDUSDT/STEEMUSDT — lead-lag anchor, the opposing side of the local book)",
-      "grossBps": 311856.38,
+      "grossBps": 308354.35,
       "feesBps": 35,
-      "netBps": 311821.38,
+      "netBps": 308319.35,
       "thresholdBps": 100,
       "verdict": "CANDIDATE-FOK",
       "railOwner": "treasury (our own pool — atomic, no bridge)"
@@ -1361,7 +1361,7 @@
     {
       "id": "A2",
       "name": "P8 HIVE/STEEM cross-network bridge",
-      "crossFairNano": "2328882136",
+      "crossFairNano": "2321421235",
       "fairSource": "cross of CEX-IMPLIED-FAIR (SBDUSDT/STEEMUSDT — lead-lag anchor, the opposing side of the local book) / LOCAL-MID-FALLBACK (CEX feed stale)",
       "verdict": "NO-CUSTODY",
       "why": "HIVE custody is OBSERVED-UNCONTROLLED — the bridge arms when hive active key material verifies into the estate (R38 law)",
@@ -1563,61 +1563,61 @@
     },
     "P3": {
       "pair": "STEEM/SBD",
-      "anchor": 3.23540008,
+      "anchor": 3.18423754,
       "anchorSource": "POOL-MID (our side of the book)",
       "spacingPct": 0.42,
       "skewShiftBps": 50,
-      "inventoryShareBase": 236105,
-      "depthBaseMu": "272570",
-      "depthQuoteMu": "881873",
+      "inventoryShareBase": 238992,
+      "depthBaseMu": "274754",
+      "depthQuoteMu": "874882",
       "rungs": [
         {
           "side": "buy",
-          "price": 3.20570234,
+          "price": 3.15500942,
           "unit": "SBD",
           "level": 1,
-          "id": "2a6e91258d055960",
-          "sizeMu": "3634"
+          "id": "ba39f281bc60cdde",
+          "sizeMu": "3663"
         },
         {
           "side": "buy",
-          "price": 3.19218161,
+          "price": 3.14170249,
           "unit": "SBD",
           "level": 2,
-          "id": "9c6d3becc9cbdc1c",
-          "sizeMu": "3634"
+          "id": "b3d5a1bb09772ce7",
+          "sizeMu": "3663"
         },
         {
           "side": "buy",
-          "price": 3.17866087,
+          "price": 3.12839556,
           "unit": "SBD",
           "level": 3,
-          "id": "571048f2d1d3fa7c",
-          "sizeMu": "3634"
+          "id": "e9e9ad9b5b5b2717",
+          "sizeMu": "3663"
         },
         {
           "side": "sell",
-          "price": 3.23274382,
+          "price": 3.18162328,
           "unit": "STEEM",
           "level": 1,
-          "id": "8bebfb8d56ec0fe7",
-          "sizeMu": "3634"
+          "id": "78d976437a678024",
+          "sizeMu": "3663"
         },
         {
           "side": "sell",
-          "price": 3.24626455,
+          "price": 3.19493021,
           "unit": "STEEM",
           "level": 2,
-          "id": "3b93c82e9b8a49ce",
-          "sizeMu": "3634"
+          "id": "9691c5eccf7be2b0",
+          "sizeMu": "3663"
         },
         {
           "side": "sell",
-          "price": 3.25978529,
+          "price": 3.20823713,
           "unit": "STEEM",
           "level": 3,
-          "id": "62c4eea371047d5e",
-          "sizeMu": "3634"
+          "id": "f5e1b0db1b3247e5",
+          "sizeMu": "3663"
         }
       ],
       "verdict": "GATED-ARMED-BROADCAST-READY",
@@ -1627,82 +1627,82 @@
         "source": "owner-directive-recorded (traces 1a1…c3a5 + rung 1a1…c3ed) — the opposing grids are ordered to stand"
       },
       "sizeLaw": {
-        "capNotionalQuote": 35274,
-        "sizeMu": "3634",
+        "capNotionalQuote": 34995,
+        "sizeMu": "3663",
         "capBps": 200
       },
       "broadcastPayload": [
         {
           "op": "GRID-RUNG",
-          "id": "2a6e91258d055960",
+          "id": "ba39f281bc60cdde",
           "pool": "P3",
           "pair": "STEEM/SBD",
           "side": "buy",
           "level": 1,
-          "price": 3.20570234,
-          "sizeMu": "3634",
+          "price": 3.15500942,
+          "sizeMu": "3663",
           "unit": "SBD"
         },
         {
           "op": "GRID-RUNG",
-          "id": "9c6d3becc9cbdc1c",
+          "id": "b3d5a1bb09772ce7",
           "pool": "P3",
           "pair": "STEEM/SBD",
           "side": "buy",
           "level": 2,
-          "price": 3.19218161,
-          "sizeMu": "3634",
+          "price": 3.14170249,
+          "sizeMu": "3663",
           "unit": "SBD"
         },
         {
           "op": "GRID-RUNG",
-          "id": "571048f2d1d3fa7c",
+          "id": "e9e9ad9b5b5b2717",
           "pool": "P3",
           "pair": "STEEM/SBD",
           "side": "buy",
           "level": 3,
-          "price": 3.17866087,
-          "sizeMu": "3634",
+          "price": 3.12839556,
+          "sizeMu": "3663",
           "unit": "SBD"
         },
         {
           "op": "GRID-RUNG",
-          "id": "8bebfb8d56ec0fe7",
+          "id": "78d976437a678024",
           "pool": "P3",
           "pair": "STEEM/SBD",
           "side": "sell",
           "level": 1,
-          "price": 3.23274382,
-          "sizeMu": "3634",
+          "price": 3.18162328,
+          "sizeMu": "3663",
           "unit": "STEEM"
         },
         {
           "op": "GRID-RUNG",
-          "id": "3b93c82e9b8a49ce",
+          "id": "9691c5eccf7be2b0",
           "pool": "P3",
           "pair": "STEEM/SBD",
           "side": "sell",
           "level": 2,
-          "price": 3.24626455,
-          "sizeMu": "3634",
+          "price": 3.19493021,
+          "sizeMu": "3663",
           "unit": "STEEM"
         },
         {
           "op": "GRID-RUNG",
-          "id": "62c4eea371047d5e",
+          "id": "f5e1b0db1b3247e5",
           "pool": "P3",
           "pair": "STEEM/SBD",
           "side": "sell",
           "level": 3,
-          "price": 3.25978529,
-          "sizeMu": "3634",
+          "price": 3.20823713,
+          "sizeMu": "3663",
           "unit": "STEEM"
         }
       ]
     }
   },
   "treasuryPnl": {
-    "feesMu": "0",
+    "feesMu": "13196",
     "rebalanceEdgeMu": "15510",
     "note": "fees are LP revenue (treasury owns the LP); rebalance edges are marked to the CEX fair at execution — the LVR defense on our own pool"
   },
@@ -1763,7 +1763,7 @@
     }
   ],
   "conservationOk": true,
-  "attestation": "4ae759c44510f241",
+  "attestation": "9af839e0ad3b9f1e",
   "processedBatches": [
     "MESH-2026110805-c757f264",
     "MESH-2026110806-336a8d43",
@@ -1864,65 +1864,65 @@
   "genesisDone": true,
   "opsThisTick": [
     {
-      "seq": 1984,
-      "type": "MESH-WIRE",
-      "agent": "operator",
-      "asset": "STEEM",
-      "amount": "1094",
-      "why": "edge-funding wire (cap 10% of free treasury per batch); conservation moves claims, never creates them"
-    },
-    {
-      "seq": 1985,
-      "type": "AGENT_FILL",
-      "agent": "operator",
-      "from": "STEEM",
-      "to": "SBD",
-      "amountIn": "1094",
-      "amountOut": "3488",
-      "routeIds": [
-        "P3"
-      ],
-      "hops": [
-        {
-          "pool": "P3",
-          "in": "1094",
-          "out": "3488",
-          "fee": "2"
-        }
-      ],
-      "edgeMu": "3379",
-      "fairUsed": "CEX-FAIR (SBD per STEEM)",
-      "feesMu": "2"
-    },
-    {
-      "seq": 1986,
+      "seq": 1988,
       "type": "RECONCILE",
-      "asset": "STEEM",
-      "amount": "10139",
+      "asset": "SBD",
+      "amount": "3503",
       "side": "CLAIM-CREDIT",
-      "custody": "697820000",
+      "custody": "78626000",
       "capBps": 100,
       "law": "self-heal: the chain-measured custody side is ground truth — the unexplained residual is receipted to the treasury claim; tiny drifts heal in one tick, big holes stay loud"
     },
     {
       "seq": 1987,
-      "type": "RECONCILE",
-      "asset": "SBD",
-      "amount": "11345",
-      "side": "CLAIM-CREDIT",
-      "custody": "78626000",
-      "capBps": 100,
-      "law": "self-heal: the chain-measured custody side is ground truth — the unexplained residual is receipted to the treasury claim; tiny drifts heal in one tick, big holes stay loud"
+      "type": "GRID-ARM",
+      "pool": "P2",
+      "pair": "WSBD/SBD",
+      "anchor": 0.08970657,
+      "verdict": "GATED-ARMED-BROADCAST-READY",
+      "rungs": 6,
+      "sizeMu": "84193",
+      "capBps": 200,
+      "ids": [
+        "94ee1bc67f5ab73f",
+        "b091c422709fc4c7",
+        "3ecb7ad094db4b65",
+        "c0756a6f1b261929",
+        "4c98f69948ede129",
+        "55b59103a3868a3c"
+      ]
+    },
+    {
+      "seq": 1987,
+      "type": "GRID-ARM",
+      "pool": "P3",
+      "pair": "STEEM/SBD",
+      "anchor": 3.18423754,
+      "verdict": "GATED-ARMED-BROADCAST-READY",
+      "rungs": 6,
+      "sizeMu": "3663",
+      "capBps": 200,
+      "ids": [
+        "ba39f281bc60cdde",
+        "b3d5a1bb09772ce7",
+        "e9e9ad9b5b5b2717",
+        "78d976437a678024",
+        "9691c5eccf7be2b0",
+        "f5e1b0db1b3247e5"
+      ]
     }
   ],
   "summary": {
-    "verdict": "CONSERVATION-BROKEN",
+    "verdict": "EXCHANGE-CORE-LIVE",
     "poolsLive": 3,
     "poolsPlanned": 2,
     "routesLive": 7,
     "routesPlanned": 80,
-    "meshFills": 1,
-    "meshBatch": "MESH-2026111203-4cec4509",
-    "notes": []
+    "meshFills": 0,
+    "meshBatch": null,
+    "notes": [
+      "STEEM custody DROP -682944000µ measured — trading HALTED this tick (safety law: the vault never trades on shrinking custody)",
+      "SBD custody DROP -78531000µ measured — trading HALTED this tick (safety law: the vault never trades on shrinking custody)"
+    ]
   }
 }
