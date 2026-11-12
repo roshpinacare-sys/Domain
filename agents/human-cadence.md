@@ -21,5 +21,5 @@
 
 | חברתי | חוק |
 |---|---|
-| cashmachine | תגובה: NO-CANDIDATE · הצבעה: - · reblog: NO-CANDIDATE |
-| hcsoldier4 | תגובה: NO-CANDIDATE · הצבעה: - · reblog: NO-CANDIDATE |
+| acct-h-61d20179 | תגובה: NO-CANDIDATE · הצבעה: - · reblog: NO-CANDIDATE |
+| acct-h-6f3025804 | תגובה: NO-CANDIDATE · הצבעה: - · reblog: NO-CANDIDATE |
