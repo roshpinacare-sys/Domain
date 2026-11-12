@@ -1,6 +1,6 @@
 # arb-mesh — THE MESH MARKET (R41, CR-0071)
 
-At: 2026-11-12T13:05:23.453Z · Verdict: **MESH-LIVE** · batch: MESH-2026111213-a27cfe3f · protocol: SAOS-ARB-MESH/1
+At: 2026-11-12T13:10:27.084Z · Verdict: **MESH-LIVE** · batch: MESH-2026111213-3fca9e79 · protocol: SAOS-ARB-MESH/1
 
 Roster: 1 accounts (owner + 0 soldiers) · Edge candidates: 1 · Intents drafted: 1 · Fills settled: 1 · Refusals: 0
 
@@ -11,7 +11,7 @@ Roster: 1 accounts (owner + 0 soldiers) · Edge candidates: 1 · Intents drafted
 
 | Agent | Fill | Route | Out | Edge (marked) | Fees |
 |---|---|---|---|---|---|
-| operator | STEEM 1076µ → SBD | P3 | 3552µ SBD | 3445µ (CEX-FAIR (SBD per STEEM)) | 2µ |
+| operator | STEEM 1080µ → SBD | P3 | 3537µ SBD | 3430µ (CEX-FAIR (SBD per STEEM)) | 2µ |
 
 ## Size ladder (the large-sums law — exact BigInt, honest slippage)
 
@@ -32,19 +32,19 @@ Roster: 1 accounts (owner + 0 soldiers) · Edge candidates: 1 · Intents drafted
 | 1% | 63147µ | 27450µ | 0.43469999 | 384.58bps |
 | 5% | 315736µ | 123576µ | 0.39139028 | 336.3bps |
 
-**P3 STEEM/SBD** (mid 3.32334225 SBD/, fee 25bps):
+**P3 STEEM/SBD** (mid 3.2969539 SBD/, fee 25bps):
 
 | Size (% depth) | In | Out | Exec price | Slippage |
 |---|---|---|---|---|
-| 0.1% | 269µ | 890µ | 3.30855019 | -0.44bps |
-| 1% | 2690µ | 8829µ | 3.28215613 | -1.23bps |
-| 5% | 13452µ | 42475µ | 3.15752304 | -4.98bps |
+| 0.1% | 270µ | 887µ | 3.28518519 | -0.35bps |
+| 1% | 2701µ | 8795µ | 3.25620141 | -1.23bps |
+| 5% | 13505µ | 42304µ | 3.13246945 | -4.98bps |
 
 ## Mesh P&L (lifetime, from the ledger — the core book is the source of truth)
 
-Fills: 959 · Volume in: 13256125µ · Edge captured: -37134132µ · Fees paid (LP revenue): 13428µ
+Fills: 960 · Volume in: 13257205µ · Edge captured: -37130702µ · Fees paid (LP revenue): 13430µ
 - acct-00: 1 fills · vol 3859µ · edge 580µ · fees 9µ
-- operator: 1 fills · vol 1076µ · edge 3445µ · fees 2µ
+- operator: 1 fills · vol 1080µ · edge 3430µ · fees 2µ
 
 Laws: L1 L2 L3 L4 L5 L6 L7 L8 L9 L10 L11 L12 L13 L14 L15 L16 · Gate law: the counter-grid gate follows CR-0074 (open = GATED-ARMED-BROADCAST-READY, closed = PLAN-POOL-GATED-NOT-BROADCAST) — the mesh never fires a keyed rail either way.
 
