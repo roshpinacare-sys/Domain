@@ -1,7 +1,7 @@
 {
   "format": "SAOS-SCHEDULER-AUDIT/1",
   "agent": "scheduler-audit",
-  "verdict": "SCHEDULER-DEGRADED",
+  "verdict": "SCHEDULER-STARVED",
   "ownerLanguage": "he",
   "ownerLanguageRule": "owner-facing replies: עברית (Hebrew) — the owner reads Hebrew; repo/CI artifacts stay English",
   "sections": {
@@ -34,9 +34,9 @@
           "crons": [
             "9 * * * *"
           ],
-          "expectedSlots": 24,
-          "observed": 3,
-          "lastScheduledAt": "2026-11-12T02:54:37Z",
+          "expectedSlots": 23,
+          "observed": 4,
+          "lastScheduledAt": "2026-11-12T10:56:49Z",
           "unparseableCrons": 0,
           "verdict": "DEGRADED"
         },
@@ -133,7 +133,7 @@
           "crons": [
             "51 * * * *"
           ],
-          "expectedSlots": 23,
+          "expectedSlots": 24,
           "observed": 3,
           "lastScheduledAt": "2026-11-12T04:20:04Z",
           "unparseableCrons": 0,
@@ -144,11 +144,11 @@
           "crons": [
             "23 */4 * * *"
           ],
-          "expectedSlots": 6,
+          "expectedSlots": 5,
           "observed": 3,
           "lastScheduledAt": "2026-11-12T07:26:07Z",
           "unparseableCrons": 0,
-          "verdict": "DEGRADED"
+          "verdict": "PULSE"
         },
         {
           "file": "cloud-pulse.yml",
@@ -189,10 +189,10 @@
             "3 5 * * *"
           ],
           "expectedSlots": 1,
-          "observed": 1,
+          "observed": 0,
           "lastScheduledAt": "2026-11-11T12:35:36Z",
           "unparseableCrons": 0,
-          "verdict": "PULSE"
+          "verdict": "STARVED"
         },
         {
           "file": "daily-claim.yml",
@@ -221,7 +221,7 @@
           "crons": [
             "24,50 * * * *"
           ],
-          "expectedSlots": 46,
+          "expectedSlots": 47,
           "observed": 3,
           "lastScheduledAt": "2026-11-12T04:19:52Z",
           "unparseableCrons": 0,
@@ -233,9 +233,9 @@
             "41 * * * *",
             "12 * * * *"
           ],
-          "expectedSlots": 47,
-          "observed": 6,
-          "lastScheduledAt": "2026-11-12T03:20:54Z",
+          "expectedSlots": 46,
+          "observed": 8,
+          "lastScheduledAt": "2026-11-12T11:50:09Z",
           "unparseableCrons": 0,
           "verdict": "DEGRADED"
         },
@@ -266,7 +266,7 @@
           "crons": [
             "52 * * * *"
           ],
-          "expectedSlots": 23,
+          "expectedSlots": 24,
           "observed": 3,
           "lastScheduledAt": "2026-11-12T08:52:16Z",
           "unparseableCrons": 0,
@@ -345,9 +345,9 @@
           "crons": [
             "31 */3 * * *"
           ],
-          "expectedSlots": 8,
-          "observed": 2,
-          "lastScheduledAt": "2026-11-12T00:55:12Z",
+          "expectedSlots": 7,
+          "observed": 3,
+          "lastScheduledAt": "2026-11-12T11:38:19Z",
           "unparseableCrons": 0,
           "verdict": "DEGRADED"
         },
@@ -357,8 +357,8 @@
             "*/15 * * * *"
           ],
           "expectedSlots": 0,
-          "observed": 3,
-          "lastScheduledAt": "2026-11-12T03:33:19Z",
+          "observed": 4,
+          "lastScheduledAt": "2026-11-12T11:51:26Z",
           "unparseableCrons": 1,
           "verdict": "UNMEASURED"
         },
@@ -378,7 +378,7 @@
           "crons": [
             "23 */6 * * *"
           ],
-          "expectedSlots": 4,
+          "expectedSlots": 3,
           "observed": 2,
           "lastScheduledAt": "2026-11-12T07:26:59Z",
           "unparseableCrons": 0,
@@ -400,9 +400,9 @@
           "crons": [
             "39 */3 * * *"
           ],
-          "expectedSlots": 8,
-          "observed": 2,
-          "lastScheduledAt": "2026-11-12T00:57:16Z",
+          "expectedSlots": 7,
+          "observed": 3,
+          "lastScheduledAt": "2026-11-12T11:45:35Z",
           "unparseableCrons": 0,
           "verdict": "DEGRADED"
         },
@@ -423,8 +423,8 @@
             "41 * * * *"
           ],
           "expectedSlots": 23,
-          "observed": 3,
-          "lastScheduledAt": "2026-11-12T03:20:03Z",
+          "observed": 4,
+          "lastScheduledAt": "2026-11-12T11:48:30Z",
           "unparseableCrons": 0,
           "verdict": "DEGRADED"
         },
@@ -456,7 +456,7 @@
             "*/20 * * * *"
           ],
           "expectedSlots": 0,
-          "observed": 4,
+          "observed": 3,
           "lastScheduledAt": "2026-11-12T08:20:12Z",
           "unparseableCrons": 1,
           "verdict": "UNMEASURED"
@@ -467,8 +467,8 @@
             "27,57 * * * *"
           ],
           "expectedSlots": 47,
-          "observed": 3,
-          "lastScheduledAt": "2026-11-12T03:55:13Z",
+          "observed": 4,
+          "lastScheduledAt": "2026-11-12T11:58:34Z",
           "unparseableCrons": 0,
           "verdict": "DEGRADED"
         },
@@ -477,11 +477,11 @@
           "crons": [
             "37 */4 * * *"
           ],
-          "expectedSlots": 6,
+          "expectedSlots": 5,
           "observed": 3,
           "lastScheduledAt": "2026-11-12T07:39:03Z",
           "unparseableCrons": 0,
-          "verdict": "DEGRADED"
+          "verdict": "PULSE"
         },
         {
           "file": "human-cadence.yml",
@@ -501,7 +501,7 @@
             "11 9 * * *",
             "17 12 * * *"
           ],
-          "expectedSlots": 2,
+          "expectedSlots": 1,
           "observed": 2,
           "lastScheduledAt": "2026-11-11T19:34:14Z",
           "unparseableCrons": 1,
@@ -523,9 +523,9 @@
           "crons": [
             "41 */3 * * *"
           ],
-          "expectedSlots": 8,
-          "observed": 2,
-          "lastScheduledAt": "2026-11-12T00:58:27Z",
+          "expectedSlots": 7,
+          "observed": 3,
+          "lastScheduledAt": "2026-11-12T11:48:12Z",
           "unparseableCrons": 0,
           "verdict": "DEGRADED"
         },
@@ -557,7 +557,7 @@
             "7 * * * *"
           ],
           "expectedSlots": 24,
-          "observed": 3,
+          "observed": 4,
           "lastScheduledAt": "2026-11-12T10:53:48Z",
           "unparseableCrons": 0,
           "verdict": "DEGRADED"
@@ -591,7 +591,7 @@
           ],
           "expectedSlots": 1,
           "observed": 1,
-          "lastScheduledAt": "2026-11-11T11:26:21Z",
+          "lastScheduledAt": "2026-11-12T11:48:49Z",
           "unparseableCrons": 0,
           "verdict": "PULSE"
         },
@@ -612,8 +612,8 @@
             "3,33 * * * *"
           ],
           "expectedSlots": 47,
-          "observed": 3,
-          "lastScheduledAt": "2026-11-12T03:17:42Z",
+          "observed": 4,
+          "lastScheduledAt": "2026-11-12T11:43:49Z",
           "unparseableCrons": 0,
           "verdict": "DEGRADED"
         },
@@ -623,8 +623,8 @@
             "9,29,49 * * * *"
           ],
           "expectedSlots": 70,
-          "observed": 3,
-          "lastScheduledAt": "2026-11-12T03:12:31Z",
+          "observed": 4,
+          "lastScheduledAt": "2026-11-12T11:38:42Z",
           "unparseableCrons": 0,
           "verdict": "DEGRADED"
         },
@@ -634,8 +634,8 @@
             "*/30 * * * *"
           ],
           "expectedSlots": 0,
-          "observed": 3,
-          "lastScheduledAt": "2026-11-12T03:39:42Z",
+          "observed": 4,
+          "lastScheduledAt": "2026-11-12T12:19:31Z",
           "unparseableCrons": 1,
           "verdict": "UNMEASURED"
         },
@@ -645,8 +645,8 @@
             "0,39 * * * *"
           ],
           "expectedSlots": 47,
-          "observed": 3,
-          "lastScheduledAt": "2026-11-12T03:38:55Z",
+          "observed": 4,
+          "lastScheduledAt": "2026-11-12T11:48:47Z",
           "unparseableCrons": 0,
           "verdict": "DEGRADED"
         },
@@ -667,7 +667,7 @@
             "58 3 * * 3"
           ],
           "expectedSlots": 0,
-          "observed": 1,
+          "observed": 0,
           "lastScheduledAt": "2026-11-11T11:40:44Z",
           "unparseableCrons": 1,
           "verdict": "UNMEASURED"
@@ -677,7 +677,7 @@
           "crons": [
             "11,41 * * * *"
           ],
-          "expectedSlots": 47,
+          "expectedSlots": 46,
           "observed": 3,
           "lastScheduledAt": "2026-11-12T08:12:47Z",
           "unparseableCrons": 0,
@@ -700,7 +700,7 @@
             "17,47 * * * *"
           ],
           "expectedSlots": 46,
-          "observed": 4,
+          "observed": 3,
           "lastScheduledAt": "2026-11-12T08:18:33Z",
           "unparseableCrons": 0,
           "verdict": "DEGRADED"
@@ -711,10 +711,10 @@
             "23 4 * * *"
           ],
           "expectedSlots": 1,
-          "observed": 1,
+          "observed": 0,
           "lastScheduledAt": "2026-11-11T11:58:19Z",
           "unparseableCrons": 0,
-          "verdict": "PULSE"
+          "verdict": "STARVED"
         },
         {
           "file": "proof-pipeline.yml",
@@ -722,10 +722,10 @@
             "44 4 * * *"
           ],
           "expectedSlots": 1,
-          "observed": 1,
+          "observed": 0,
           "lastScheduledAt": "2026-11-11T12:08:39Z",
           "unparseableCrons": 0,
-          "verdict": "PULSE"
+          "verdict": "STARVED"
         },
         {
           "file": "public-loops-bake.yml",
@@ -777,10 +777,10 @@
             "44 4 * * *"
           ],
           "expectedSlots": 1,
-          "observed": 1,
+          "observed": 0,
           "lastScheduledAt": "2026-11-11T12:09:23Z",
           "unparseableCrons": 0,
-          "verdict": "PULSE"
+          "verdict": "STARVED"
         },
         {
           "file": "sandbox-arteries.yml",
@@ -798,7 +798,7 @@
           "crons": [
             "11 */2 * * *"
           ],
-          "expectedSlots": 12,
+          "expectedSlots": 11,
           "observed": 3,
           "lastScheduledAt": "2026-11-12T09:42:45Z",
           "unparseableCrons": 0,
@@ -853,7 +853,7 @@
           "crons": [
             "11,41 * * * *"
           ],
-          "expectedSlots": 47,
+          "expectedSlots": 46,
           "observed": 3,
           "lastScheduledAt": "2026-11-12T08:12:55Z",
           "unparseableCrons": 0,
@@ -886,11 +886,11 @@
           "crons": [
             "49 10 * * *"
           ],
-          "expectedSlots": 0,
+          "expectedSlots": 1,
           "observed": 1,
           "lastScheduledAt": "2026-11-11T18:06:17Z",
           "unparseableCrons": 0,
-          "verdict": "UNMEASURED"
+          "verdict": "PULSE"
         },
         {
           "file": "stale-watchdog.yml",
@@ -909,8 +909,8 @@
             "41 * * * *"
           ],
           "expectedSlots": 23,
-          "observed": 3,
-          "lastScheduledAt": "2026-11-12T03:20:05Z",
+          "observed": 4,
+          "lastScheduledAt": "2026-11-12T11:48:33Z",
           "unparseableCrons": 0,
           "verdict": "DEGRADED"
         },
@@ -943,7 +943,7 @@
           ],
           "expectedSlots": 1,
           "observed": 1,
-          "lastScheduledAt": "2026-11-11T11:49:00Z",
+          "lastScheduledAt": "2026-11-12T12:34:01Z",
           "unparseableCrons": 0,
           "verdict": "PULSE"
         },
@@ -952,11 +952,11 @@
           "crons": [
             "37 */4 * * *"
           ],
-          "expectedSlots": 6,
+          "expectedSlots": 5,
           "observed": 3,
           "lastScheduledAt": "2026-11-12T07:39:47Z",
           "unparseableCrons": 0,
-          "verdict": "DEGRADED"
+          "verdict": "PULSE"
         },
         {
           "file": "tri-bridge.yml",
@@ -985,9 +985,9 @@
           "crons": [
             "9 * * * *"
           ],
-          "expectedSlots": 24,
-          "observed": 3,
-          "lastScheduledAt": "2026-11-12T02:55:32Z",
+          "expectedSlots": 23,
+          "observed": 4,
+          "lastScheduledAt": "2026-11-12T10:57:37Z",
           "unparseableCrons": 0,
           "verdict": "DEGRADED"
         },
@@ -1040,11 +1040,11 @@
           "crons": [
             "29 */4 * * *"
           ],
-          "expectedSlots": 6,
+          "expectedSlots": 5,
           "observed": 3,
           "lastScheduledAt": "2026-11-12T07:28:07Z",
           "unparseableCrons": 0,
-          "verdict": "DEGRADED"
+          "verdict": "PULSE"
         },
         {
           "file": "weave-mirror.yml",
@@ -1052,8 +1052,8 @@
             "*/15 * * * *"
           ],
           "expectedSlots": 0,
-          "observed": 3,
-          "lastScheduledAt": "2026-11-12T03:50:38Z",
+          "observed": 4,
+          "lastScheduledAt": "2026-11-12T12:30:02Z",
           "unparseableCrons": 1,
           "verdict": "UNMEASURED"
         },
@@ -1071,8 +1071,13 @@
       ]
     },
     "boundary": {
-      "schedulerLastSeenAt": "2026-11-12T10:53:48Z",
-      "starvedNames": [],
+      "schedulerLastSeenAt": "2026-11-12T12:34:01Z",
+      "starvedNames": [
+        "content-reviewer.yml",
+        "products-feed.yml",
+        "proof-pipeline.yml",
+        "recruit.yml"
+      ],
       "degradedNames": [
         "agent-verify.yml",
         "agent9-fleet-truth.yml",
@@ -1083,7 +1088,6 @@
         "autonomy-guardian.yml",
         "book-audit.yml",
         "books-revival-t28.yml",
-        "bridge-keeper.yml",
         "cognition-beat.yml",
         "dex-activation.yml",
         "dex-beat.yml",
@@ -1099,7 +1103,6 @@
         "fleet-heartbeat.yml",
         "grid-doctor.yml",
         "grid-trigger-twin.yml",
-        "hive-beat-t21.yml",
         "ladder-refresh.yml",
         "market-grid-cron.yml",
         "mirror-from-console.yml",
@@ -1121,10 +1124,8 @@
         "sovereign-pulse.yml",
         "swallow-watch.yml",
         "tick-keeper.yml",
-        "treasury-route.yml",
         "voice-artery.yml",
-        "weave-anchor-lines.yml",
-        "weave-heart.yml"
+        "weave-anchor-lines.yml"
       ],
       "unmeasuredNames": [
         "adsmarket-panel.yml",
@@ -1139,22 +1140,23 @@
         "org-selftests.yml",
         "social-audit.yml",
         "sovereign-selftests.yml",
-        "sovereign-tick-cron.yml",
         "stale-watchdog.yml",
         "token-forge.yml",
         "weave-mirror.yml"
       ]
     },
     "heal": {
-      "candidates": [],
+      "candidates": [
+        "content-reviewer.yml"
+      ],
       "cap": 3,
       "law": "STARVED ∧ keyless ∧ not-host ∧ not-keeper"
     },
     "window": {
-      "from": "2026-11-11T10:52:10.474Z",
-      "to": "2026-11-12T10:52:10.474Z",
+      "from": "2026-11-11T12:48:21.446Z",
+      "to": "2026-11-12T12:48:21.446Z",
       "graceMinutes": 40
     }
   },
-  "at": "2026-11-12T10:55:52.195Z"
+  "at": "2026-11-12T12:52:20.687Z"
 }
