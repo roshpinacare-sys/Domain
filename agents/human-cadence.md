@@ -1,6 +1,6 @@
 # הקצב האנושי · 2026-11-12
 
-ריצה 2026-11-12T22:44:13.735Z · פורסמו 0 · הצבעות-פנים 0 · תגובות 0 · הצטרפו 0
+ריצה 2026-11-12T22:45:09.687Z · פורסמו 0 · הצבעות-פנים 0 · תגובות 0 · הצטרפו 0
 
 > חוק CR-0065+CR-0067: רגע-אחד, בעל-אחד. אין-פיצוצים. כל-חייל בחלון-השעות-שלו, רטט-מזריע-ליום,
 > שעות-דממה 00:00-04:59 UTC. הקהילה - היא הבית: הפוסטים נוחתים בתוכה, וההצטרפות
@@ -19,5 +19,5 @@
 
 | חברתי | חוק |
 |---|---|
-| hcsoldier4 | תגובה: NO-CANDIDATE · הצבעה: - · reblog: NO-CANDIDATE |
-| hcsoldier5 | תגובה: NO-CANDIDATE · הצבעה: - · reblog: NO-CANDIDATE |
+| hcsoldier4 | תגובה: SKIP-BUDGET-USED-TODAY · הצבעה: - · reblog: SKIP-BUDGET-USED-TODAY |
+| hcsoldier5 | תגובה: SKIP-BUDGET-USED-TODAY · הצבעה: - · reblog: SKIP-BUDGET-USED-TODAY |
