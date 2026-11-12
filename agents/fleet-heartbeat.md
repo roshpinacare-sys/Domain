@@ -1,8 +1,10 @@
-# דופק-הצי (fleet-heartbeat) — 2026-11-12T13:22:43.160Z
+# דופק-הצי (fleet-heartbeat) — 2026-11-12T15:22:44.705Z
 
 מדידת-מנועים של כל-הריפואים: מה פועם, מה שקט, מה הפלטפורמה נטרלה, מה נרפא בריצה זו.
 
-**סיכום:** 50 ריפואים · פועמים 22 · ללא-קרון-אך-פעילים 4 · חמימים 2 · שקטים 8 · מעולם-לא-רצו 0 · ללא-workflows 13 · נטרולי-חוסר-פעילות 0 · חסומי-קיר-המכסה 0
+**סיכום:** 50 ריפואים · פועמים 21 · ללא-קרון-אך-פעילים 5 · חמימים 2 · שקטים 8 · מעולם-לא-רצו 0 · ללא-workflows 13 · נטרולי-חוסר-פעילות 0 · חסומי-קיר-המכסה 0
+
+**דופק-מונע:** Domain/tick-keeper.yml=http 422 · Domain/cognition-beat.yml=http 422
 
 
 ## גבולות-משמורת מדודים (לא כישלונות קוד)
@@ -18,25 +20,25 @@
 
 ## שורות-שקט (QUIET/NEVER-RAN/NO-WORKFLOWS/AUTO-DISABLED)
 
-- Adsmarket — QUIET · שקט 449.3 שעות
-- anchor-baseline — QUIET · שקט 453.4 שעות
-- Defi — QUIET · שקט 536.4 שעות
+- Adsmarket — QUIET · שקט 451.3 שעות
+- anchor-baseline — QUIET · שקט 455.4 שעות
+- Defi — QUIET · שקט 538.4 שעות
 - estate-agent-9 — NO-WORKFLOWS
 - negen — NO-WORKFLOWS
 - ops-control — NO-WORKFLOWS
 - oss-scanner — NO-WORKFLOWS
-- roshpina — QUIET · שקט 405.2 שעות
+- roshpina — QUIET · שקט 407.2 שעות
 - sanbox — NO-WORKFLOWS
-- sandbox-private — QUIET · שקט 553.7 שעות
+- sandbox-private — QUIET · שקט 555.7 שעות
 - saos-console — NO-WORKFLOWS
 - saos-console-zai — NO-WORKFLOWS
-- saos-control-center — QUIET · שקט 453.4 שעות
+- saos-control-center — QUIET · שקט 455.4 שעות
 - saos-coordination — NO-WORKFLOWS
-- saos-desk — NO-WORKFLOWS · שקט 683.8 שעות
-- saos-markets — NO-WORKFLOWS · שקט 634.6 שעות
-- saos-owner-channel — NO-WORKFLOWS · שקט 601.4 שעות
-- saos-sovereign-foundry — QUIET · שקט 559.8 שעות
-- Sdk — QUIET · שקט 453.4 שעות
+- saos-desk — NO-WORKFLOWS · שקט 685.8 שעות
+- saos-markets — NO-WORKFLOWS · שקט 636.6 שעות
+- saos-owner-channel — NO-WORKFLOWS · שקט 603.4 שעות
+- saos-sovereign-foundry — QUIET · שקט 561.8 שעות
+- Sdk — QUIET · שקט 455.4 שעות
 - SovereignConsole — NO-WORKFLOWS
 - vault-home — NO-WORKFLOWS
 
