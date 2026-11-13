@@ -1,13 +1,13 @@
 # market-grid — internal-market sovereignty instrument (Z-60+)
 
-At: 2026-11-13T14:19:41.910Z · Verdict: **MARKET-GRID-LIVE** · Markets read: 3 · Errors: 0
+At: 2026-11-13T17:12:06.485Z · Verdict: **MARKET-GRID-LIVE** · Markets read: 3 · Errors: 0
 
 | Market | Bid | Ask | Spread% | 24h% | Grid rungs | Step | Paper fills (snapshot) |
 |---|---|---|---|---|---|---|---|
-| HBD/HIVE (internal hive) | 0.04346373579974504 | 0.04348 | 0.0374 | 2.613 | 10 | 0.00022721 | 5 |
-| SBD/STEEM (internal steem) | 0.10269963096599273 | 0.10298146655922644 | 0.2741 | 0 | 10 | 0.00041136 | 5 |
+| HBD/HIVE (internal hive) | 0.04327999763390612 | 0.04333974912059468 | 0.138 | 1.725 | 10 | 0.00017324 | 5 |
+| SBD/STEEM (internal steem) | 0.10639038829879854 | 0.10668429003021149 | 0.2759 | 0 | 10 | 0.00042615 | 6 |
 
-Hive-Engine basket (keyless RPC, per-token fee measured from the tokens contract): BEE spread 0.4254% fee 0bps pond 849.09645981 SWAP.HIVE/24h FEASIBLE · SWAP.LTC spread 0.7175% fee 0bps pond 27418.56980371 SWAP.HIVE/24h FEASIBLE · SWAP.DOGE spread 0.4882% fee 0bps pond 213.37546367 SWAP.HIVE/24h FEASIBLE · CENT spread 6.3647% fee 0bps pond 52.89759341 SWAP.HIVE/24h FEASIBLE · WAIV spread 6.1582% fee 0bps pond 5.37119678 SWAP.HIVE/24h FEASIBLE
+Hive-Engine basket (keyless RPC, per-token fee measured from the tokens contract): BEE spread 1.5354% fee 0bps pond 906.11347347 SWAP.HIVE/24h FEASIBLE · SWAP.LTC spread 0.6556% fee 0bps pond 25713.41134275 SWAP.HIVE/24h FEASIBLE · SWAP.DOGE spread 0.5698% fee 0bps pond 214.90796367 SWAP.HIVE/24h FEASIBLE · CENT spread 6.3647% fee 0bps pond 53.02846709 SWAP.HIVE/24h FEASIBLE · WAIV spread 5.9088% fee 0bps pond 5.75302889 SWAP.HIVE/24h FEASIBLE
 HE daily-history probe: DARK (probed, honest) — HE-DAILY-HISTORY-DARK: marketHistory/history answered null (not RPC-exposed) — the day it answers, the pond becomes a series
 
 Blurt internal market: DARK (probed, honest) — BLURT-SURFACE-DARK: getaddrinfo ENOTFOUND api.blurt.world
