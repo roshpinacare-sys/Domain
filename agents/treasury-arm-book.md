@@ -632,3 +632,24 @@
 |---|---|---|---|---|---|
 | 2026-11-12T12:34:12.898Z | blurt | gate | source ref unresolved — roster map unavailable in this run; refusing (fail-honest) | refused |  |
 
+
+## TREASURY-ARM RUN · 2026-11-13T12:05:55.729Z · chain=steem
+
+| at | chain | op | detail | status | extra |
+|---|---|---|---|---|---|
+| 2026-11-13T12:05:55.728Z | steem | gate | no candidate secret matches live active authority of owner — owner must provision (see CENSUS lines) | refused |  |
+
+
+## TREASURY-ARM RUN · 2026-11-13T12:05:55.831Z · chain=hive
+
+| at | chain | op | detail | status | extra |
+|---|---|---|---|---|---|
+| 2026-11-13T12:05:55.830Z | hive | gate | source ref unresolved — roster map unavailable in this run; refusing (fail-honest) | refused |  |
+
+
+## TREASURY-ARM RUN · 2026-11-13T12:05:55.935Z · chain=blurt
+
+| at | chain | op | detail | status | extra |
+|---|---|---|---|---|---|
+| 2026-11-13T12:05:55.934Z | blurt | gate | source ref unresolved — roster map unavailable in this run; refusing (fail-honest) | refused |  |
+
