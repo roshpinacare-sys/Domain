@@ -1,43 +1,43 @@
 {
  "schema": "office.pulse/1",
- "generatedAt": "2026-11-13T02:03:30.141Z",
+ "generatedAt": "2026-11-13T02:16:28.730Z",
  "generatedAgeNote": "this file is rewritten by the office-pulse workflow; judge freshness by generatedAt",
  "verdict": "ALIVE",
  "verdictChecks": [
   {
    "name": "office-push",
    "state": "fresh",
-   "detail": "1min <= 2880min"
+   "detail": "14min <= 2880min"
   },
   {
    "name": "office-ci",
    "state": "fresh",
-   "detail": "807min <= 1560min"
+   "detail": "820min <= 1560min"
   },
   {
    "name": "wallet-artery",
    "state": "fresh",
-   "detail": "36min <= 2880min · PASS"
+   "detail": "49min <= 2880min · PASS"
   },
   {
    "name": "grid-artery",
    "state": "fresh",
-   "detail": "26min <= 720min · PASS"
+   "detail": "39min <= 720min · PASS"
   },
   {
    "name": "fleet-artery",
    "state": "fresh",
-   "detail": "48min <= 2880min · PASS"
+   "detail": "61min <= 2880min · PASS"
   },
   {
    "name": "sovereign-tick",
    "state": "fresh",
-   "detail": "8min <= 360min"
+   "detail": "21min <= 360min"
   },
   {
    "name": "runtime-heartbeat",
    "state": "fresh",
-   "detail": "6min <= 90min"
+   "detail": "9min <= 90min"
   }
  ],
  "degraded": [],
@@ -52,49 +52,49 @@
  "office": {
   "repo": "roshpinacare-sys/FleetHQ",
   "pushedAt": "2026-11-13T02:02:44Z",
-  "pushedAgeMin": 1,
+  "pushedAgeMin": 14,
   "openIssues": 38,
   "wire": [
    {
     "sha": "fe58bb0",
     "msg": "office-ci receipt: build pass, types pass [skip ci]",
     "at": "2026-11-12T12:36:57Z",
-    "ageMin": 807,
+    "ageMin": 820,
     "author": "roshpinacare-sys"
    },
    {
     "sha": "2e3dfea",
     "msg": "ops-forge: agent line to operator-inbox.jsonl [skip ci]",
     "at": "2026-11-12T10:42:48Z",
-    "ageMin": 921,
+    "ageMin": 934,
     "author": "roshpinacare-sys"
    },
    {
     "sha": "9a88903",
     "msg": "ops-forge: agent line to operator-inbox.jsonl [skip ci]",
     "at": "2026-11-12T02:43:37Z",
-    "ageMin": 1400,
+    "ageMin": 1413,
     "author": "roshpinacare-sys"
    },
    {
     "sha": "e5edd3a",
     "msg": "ops-forge: agent line to operator-inbox.jsonl [skip ci]",
     "at": "2026-11-12T02:43:35Z",
-    "ageMin": 1400,
+    "ageMin": 1413,
     "author": "roshpinacare-sys"
    },
    {
     "sha": "46dd762",
     "msg": "ops-forge: agent line to operator-inbox.jsonl [skip ci]",
     "at": "2026-11-12T02:43:30Z",
-    "ageMin": 1400,
+    "ageMin": 1413,
     "author": "roshpinacare-sys"
    },
    {
     "sha": "0b467fd",
     "msg": "ops-forge: agent line to operator-inbox.jsonl [skip ci]",
     "at": "2026-11-12T02:43:25Z",
-    "ageMin": 1400,
+    "ageMin": 1413,
     "author": "roshpinacare-sys"
    }
   ],
@@ -115,14 +115,14 @@
     }
    ]
   },
-  "worklogLastTouchAgeMin": 33675,
+  "worklogLastTouchAgeMin": 33688,
   "boot": {
    "error": "HTTP 404 contents:receipts/boot-verify.json"
   },
   "ci": {
    "overall": "PASS",
    "at": "2026-11-12T12:36:56.863Z",
-   "ageMin": 807,
+   "ageMin": 820,
    "reason": "all five checks ran and passed",
    "runUrl": "https://github.com/roshpinacare-sys/FleetHQ/actions/runs/43219312890",
    "checks": {
@@ -138,7 +138,7 @@
   "wallet": {
    "source": "Autonomy/receipts/wallet/verdict.json",
    "at": "2026-11-13T01:27:44.772Z",
-   "ageMin": 36,
+   "ageMin": 49,
    "overall": "PASS",
    "reason": "install, prisma, typecheck, build and all wallet laws pass",
    "alerts": 0,
@@ -147,7 +147,7 @@
   "grid": {
    "source": "Autonomy/receipts/grid/verdict.json",
    "at": "2026-11-13T01:37:31.395Z",
-   "ageMin": 26,
+   "ageMin": 39,
    "overall": "PASS",
    "reason": "grid state measured from git; laws pass",
    "alerts": 0,
@@ -156,7 +156,7 @@
   "fleet": {
    "source": "Autonomy/receipts/fleet/verdict.json",
    "at": "2026-11-13T01:15:10.374Z",
-   "ageMin": 48,
+   "ageMin": 61,
    "overall": "PASS",
    "reason": "steem=PASS · saos-dex=PASS · saos-agents=PASS · Saosmartwallet=PASS · Adsmarket=PASS",
    "alerts": 4,
@@ -165,14 +165,14 @@
   "tick": {
    "source": "Autonomy/receipts/latest.json",
    "at": "2026-11-13T01:55:30.020Z",
-   "ageMin": 8,
+   "ageMin": 21,
    "chain": "691a68545b65"
   }
  },
  "runtime": {
-  "lastSuccessAt": "2026-11-13T01:57:14Z",
-  "lastSuccessAgeMin": 6,
-  "lastSuccessName": "fleet-fuel",
+  "lastSuccessAt": "2026-11-13T02:07:54Z",
+  "lastSuccessAgeMin": 9,
+  "lastSuccessName": "signing-health (runtime-host)",
   "lastConclusion": "success"
  }
 }
