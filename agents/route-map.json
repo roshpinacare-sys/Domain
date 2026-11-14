@@ -1,6 +1,6 @@
 {
  "schema": "SAOS-ROUTE-MAP/1",
- "at": 1794624104110,
+ "at": 1794631032161,
  "identity": "הציר-הריבוני SAOS↔USDS · נכסי-חוץ הם דלתות, לא-זהות",
  "graph": {
   "nodes": [
@@ -74,10 +74,10 @@
       }
      ],
      "amountIn": 100,
-     "amountOut": 10742.149754,
+     "amountOut": 10719.228921,
      "hops": 3,
      "realness": "DOOR_MEASURED",
-     "effPrice": 107.421498,
+     "effPrice": 107.192289,
      "legs": [
       {
        "kind": "EXTBOOK",
@@ -170,10 +170,10 @@
       }
      ],
      "amountIn": 100,
-     "amountOut": 10.458787,
+     "amountOut": 10.240036,
      "hops": 3,
      "realness": "DOOR_MEASURED",
-     "effPrice": 0.104588,
+     "effPrice": 0.1024,
      "legs": [
       {
        "kind": "EXTBOOK",
@@ -217,10 +217,10 @@
       }
      ],
      "amountIn": 100,
-     "amountOut": 4.610106,
+     "amountOut": 4.50067,
      "hops": 2,
      "realness": "DOOR_MEASURED",
-     "effPrice": 0.046101,
+     "effPrice": 0.045007,
      "legs": [
       {
        "kind": "DOOR",
@@ -413,10 +413,10 @@
       }
      ],
      "amountIn": 100,
-     "amountOut": 4.610106,
+     "amountOut": 4.50067,
      "hops": 3,
      "realness": "DOOR_MEASURED",
-     "effPrice": 0.046101,
+     "effPrice": 0.045007,
      "legs": [
       {
        "kind": "EXTBOOK",
@@ -513,10 +513,10 @@
       }
      ],
      "amountIn": 100,
-     "amountOut": 2127.42048,
+     "amountOut": 2170.262614,
      "hops": 4,
      "realness": "DOOR_MEASURED",
-     "effPrice": 21.274205,
+     "effPrice": 21.702626,
      "legs": [
       {
        "kind": "BOOK",
@@ -566,10 +566,10 @@
       }
      ],
      "amountIn": 100,
-     "amountOut": 2120.938445,
+     "amountOut": 2163.650289,
      "hops": 2,
      "realness": "DOOR_MEASURED",
-     "effPrice": 21.209384,
+     "effPrice": 21.636503,
      "legs": [
       {
        "kind": "POOL",
@@ -623,10 +623,10 @@
       }
      ],
      "amountIn": 100,
-     "amountOut": 2112.314267,
+     "amountOut": 2154.852762,
      "hops": 4,
      "realness": "DOOR_MEASURED",
-     "effPrice": 21.123143,
+     "effPrice": 21.548528,
      "legs": [
       {
        "kind": "POOL",
@@ -692,10 +692,10 @@
       }
      ],
      "amountIn": 100,
-     "amountOut": 1310.690344,
+     "amountOut": 1337.104254,
      "hops": 4,
      "realness": "DOOR_MEASURED",
-     "effPrice": 13.106903,
+     "effPrice": 13.371043,
      "legs": [
       {
        "kind": "POOL",
@@ -761,10 +761,10 @@
       }
      ],
      "amountIn": 100,
-     "amountOut": 1269.401712,
+     "amountOut": 1294.984483,
      "hops": 4,
      "realness": "DOOR_MEASURED",
-     "effPrice": 12.694017,
+     "effPrice": 12.949845,
      "legs": [
       {
        "kind": "POOL",
@@ -830,10 +830,10 @@
       }
      ],
      "amountIn": 100,
-     "amountOut": 4.51376,
+     "amountOut": 4.413454,
      "hops": 4,
      "realness": "DOOR_MEASURED",
-     "effPrice": 0.045138,
+     "effPrice": 0.044135,
      "legs": [
       {
        "kind": "BOOK",
@@ -910,7 +910,7 @@
      "to": "WSTEEM",
      "venue": "pool:USDS/WSTEEM",
      "kind": "POOL",
-     "rate": 21.22054,
+     "rate": 21.64868,
      "ref": false
     },
     {
@@ -932,42 +932,73 @@
     {
      "from": "STEEM",
      "to": "SBD",
-     "venue": "steem-internal",
-     "kind": "EXTBOOK",
-     "rate": 0.106232,
-     "ref": false
-    },
-    {
-     "from": "SBD",
-     "to": "STEEM",
      "venue": "chain-median-feed",
      "kind": "REF",
-     "rate": 9.609085,
+     "rate": 0.104068,
      "ref": true
+    },
+    {
+     "from": "WSTEEM",
+     "to": "STEEM",
+     "venue": "wrap-door:STEEM⇄WSTEEM",
+     "kind": "DOOR",
+     "rate": 1,
+     "ref": false
     }
    ],
-   "profitBps": 1552002117.697227,
+   "profitBps": 161407238.367014,
    "executable": false,
    "sizeCap": null
   },
   {
    "legs": [
     {
+     "from": "WSBD",
+     "to": "USDS",
+     "venue": "book:USDS/WSBD",
+     "kind": "BOOK",
+     "rate": 7164.754,
+     "ref": false
+    },
+    {
+     "from": "SBD",
+     "to": "WSBD",
+     "venue": "wrap-door:SBD⇄WSBD",
+     "kind": "DOOR",
+     "rate": 1,
+     "ref": false
+    },
+    {
+     "from": "STEEM",
+     "to": "SBD",
+     "venue": "chain-median-feed",
+     "kind": "REF",
+     "rate": 0.104068,
+     "ref": true
+    },
+    {
+     "from": "WSTEEM",
+     "to": "STEEM",
+     "venue": "wrap-door:STEEM⇄WSTEEM",
+     "kind": "DOOR",
+     "rate": 1,
+     "ref": false
+    },
+    {
      "from": "USDS",
-     "to": "PHIVE",
-     "venue": "pool:PHIVE/USDS",
+     "to": "WSTEEM",
+     "venue": "pool:USDS/WSTEEM",
      "kind": "POOL",
-     "rate": 1.43688,
+     "rate": 21.64868,
      "ref": false
-    },
-    {
-     "from": "WSBD",
-     "to": "USDS",
-     "venue": "book:USDS/WSBD",
-     "kind": "BOOK",
-     "rate": 7164.754,
-     "ref": false
-    },
+    }
+   ],
+   "profitBps": 161407238.367014,
+   "executable": false,
+   "sizeCap": null
+  },
+  {
+   "legs": [
     {
      "from": "SBD",
      "to": "WSBD",
@@ -979,32 +1010,25 @@
     {
      "from": "STEEM",
      "to": "SBD",
-     "venue": "steem-internal",
-     "kind": "EXTBOOK",
-     "rate": 0.106232,
-     "ref": false
-    },
-    {
-     "from": "SBD",
-     "to": "STEEM",
      "venue": "chain-median-feed",
      "kind": "REF",
-     "rate": 9.609085,
+     "rate": 0.104068,
      "ref": true
-    }
-   ],
-   "profitBps": 105079463.872116,
-   "executable": false,
-   "sizeCap": null
-  },
-  {
-   "legs": [
+    },
+    {
+     "from": "WSTEEM",
+     "to": "STEEM",
+     "venue": "wrap-door:STEEM⇄WSTEEM",
+     "kind": "DOOR",
+     "rate": 1,
+     "ref": false
+    },
     {
      "from": "USDS",
-     "to": "SAOS",
-     "venue": "book:SAOS/USDS",
-     "kind": "BOOK",
-     "rate": 1.008,
+     "to": "WSTEEM",
+     "venue": "pool:USDS/WSTEEM",
+     "kind": "POOL",
+     "rate": 21.64868,
      "ref": false
     },
     {
@@ -1014,126 +1038,9 @@
      "kind": "BOOK",
      "rate": 7164.754,
      "ref": false
-    },
-    {
-     "from": "SBD",
-     "to": "WSBD",
-     "venue": "wrap-door:SBD⇄WSBD",
-     "kind": "DOOR",
-     "rate": 1,
-     "ref": false
-    },
-    {
-     "from": "STEEM",
-     "to": "SBD",
-     "venue": "steem-internal",
-     "kind": "EXTBOOK",
-     "rate": 0.106232,
-     "ref": false
-    },
-    {
-     "from": "SBD",
-     "to": "STEEM",
-     "venue": "chain-median-feed",
-     "kind": "REF",
-     "rate": 9.609085,
-     "ref": true
     }
    ],
-   "profitBps": 73712356.482861,
-   "executable": false,
-   "sizeCap": null
-  },
-  {
-   "legs": [
-    {
-     "from": "WSBD",
-     "to": "USDS",
-     "venue": "book:USDS/WSBD",
-     "kind": "BOOK",
-     "rate": 7164.754,
-     "ref": false
-    },
-    {
-     "from": "SBD",
-     "to": "WSBD",
-     "venue": "wrap-door:SBD⇄WSBD",
-     "kind": "DOOR",
-     "rate": 1,
-     "ref": false
-    },
-    {
-     "from": "STEEM",
-     "to": "SBD",
-     "venue": "steem-internal",
-     "kind": "EXTBOOK",
-     "rate": 0.106232,
-     "ref": false
-    },
-    {
-     "from": "SBD",
-     "to": "STEEM",
-     "venue": "chain-median-feed",
-     "kind": "REF",
-     "rate": 9.609085,
-     "ref": true
-    }
-   ],
-   "profitBps": 73127258.415536,
-   "executable": false,
-   "sizeCap": null
-  },
-  {
-   "legs": [
-    {
-     "from": "SBD",
-     "to": "WSBD",
-     "venue": "wrap-door:SBD⇄WSBD",
-     "kind": "DOOR",
-     "rate": 1,
-     "ref": false
-    },
-    {
-     "from": "STEEM",
-     "to": "SBD",
-     "venue": "steem-internal",
-     "kind": "EXTBOOK",
-     "rate": 0.106232,
-     "ref": false
-    },
-    {
-     "from": "SBD",
-     "to": "STEEM",
-     "venue": "chain-median-feed",
-     "kind": "REF",
-     "rate": 9.609085,
-     "ref": true
-    }
-   ],
-   "profitBps": 207.923177,
-   "executable": false,
-   "sizeCap": null
-  },
-  {
-   "legs": [
-    {
-     "from": "STEEM",
-     "to": "SBD",
-     "venue": "steem-internal",
-     "kind": "EXTBOOK",
-     "rate": 0.106232,
-     "ref": false
-    },
-    {
-     "from": "SBD",
-     "to": "STEEM",
-     "venue": "chain-median-feed",
-     "kind": "REF",
-     "rate": 9.609085,
-     "ref": true
-    }
-   ],
-   "profitBps": 207.923177,
+   "profitBps": 161407238.367014,
    "executable": false,
    "sizeCap": null
   }
@@ -1148,7 +1055,7 @@
  "honesty": "כל-קצה ממקור-מדוד · PLAN-ONLY · realness=הרגל-החלשה · נתיב-חורג-מ-REF±25% מסומן-ORACLE-ALERT · אין-הצהרה-שלא-נמדדה",
  "engineSource": {
   "kind": "REPO_SNAPSHOT",
-  "savedAt": "2026-11-14T01:55:37.331Z",
+  "savedAt": "2026-11-14T04:04:13.331Z",
   "url": null
  }
 }
