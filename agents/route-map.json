@@ -1,6 +1,6 @@
 {
  "schema": "SAOS-ROUTE-MAP/1",
- "at": 1794654652812,
+ "at": 1794661493785,
  "identity": "הציר-הריבוני SAOS↔USDS · נכסי-חוץ הם דלתות, לא-זהות",
  "graph": {
   "nodes": [
@@ -74,10 +74,10 @@
       }
      ],
      "amountIn": 100,
-     "amountOut": 10720.111545,
+     "amountOut": 10720.656636,
      "hops": 3,
      "realness": "DOOR_MEASURED",
-     "effPrice": 107.201115,
+     "effPrice": 107.206566,
      "legs": [
       {
        "kind": "EXTBOOK",
@@ -631,61 +631,6 @@
     {
      "path": [
       {
-       "kind": "BOOK",
-       "key": "USDS/WSBD@book-sell",
-       "from": "USDS",
-       "to": "WSBD",
-       "venue": "book:USDS/WSBD",
-       "realness": "ONCHAIN_REAL"
-      },
-      {
-       "kind": "DOOR",
-       "key": "wrap-door:SBD⇄WSBD|WSBD->SBD",
-       "from": "WSBD",
-       "to": "SBD",
-       "venue": "wrap-door:SBD⇄WSBD",
-       "realness": "DOOR_MEASURED",
-       "note": "R42 THE-SBD-RAIL · wrap 1:1 · עוגן-backing מדוד"
-      },
-      {
-       "kind": "EXTBOOK",
-       "key": "STEEM/SBD@steem-internal|SBD->STEEM",
-       "from": "SBD",
-       "to": "STEEM",
-       "venue": "steem-internal",
-       "realness": "ONCHAIN_REAL"
-      }
-     ],
-     "amountIn": 100,
-     "amountOut": 1491.657,
-     "hops": 3,
-     "realness": "DOOR_MEASURED",
-     "effPrice": 14.91657,
-     "legs": [
-      {
-       "kind": "BOOK",
-       "venue": "book:USDS/WSBD",
-       "from": "USDS",
-       "to": "WSBD"
-      },
-      {
-       "kind": "DOOR",
-       "venue": "wrap-door:SBD⇄WSBD",
-       "from": "WSBD",
-       "to": "SBD"
-      },
-      {
-       "kind": "EXTBOOK",
-       "venue": "steem-internal",
-       "from": "SBD",
-       "to": "STEEM"
-      }
-     ],
-     "verdict": "UNREFERENCED"
-    },
-    {
-     "path": [
-      {
        "kind": "POOL",
        "key": "pool:PHIVE/USDS|USDS->PHIVE",
        "from": "USDS",
@@ -751,6 +696,61 @@
       }
      ],
      "verdict": "UNREFERENCED"
+    },
+    {
+     "path": [
+      {
+       "kind": "BOOK",
+       "key": "USDS/WSBD@book-sell",
+       "from": "USDS",
+       "to": "WSBD",
+       "venue": "book:USDS/WSBD",
+       "realness": "ONCHAIN_REAL"
+      },
+      {
+       "kind": "DOOR",
+       "key": "wrap-door:SBD⇄WSBD|WSBD->SBD",
+       "from": "WSBD",
+       "to": "SBD",
+       "venue": "wrap-door:SBD⇄WSBD",
+       "realness": "DOOR_MEASURED",
+       "note": "R42 THE-SBD-RAIL · wrap 1:1 · עוגן-backing מדוד"
+      },
+      {
+       "kind": "EXTBOOK",
+       "key": "STEEM/SBD@steem-internal|SBD->STEEM",
+       "from": "SBD",
+       "to": "STEEM",
+       "venue": "steem-internal",
+       "realness": "ONCHAIN_REAL"
+      }
+     ],
+     "amountIn": 100,
+     "amountOut": 1169.139,
+     "hops": 3,
+     "realness": "DOOR_MEASURED",
+     "effPrice": 11.69139,
+     "legs": [
+      {
+       "kind": "BOOK",
+       "venue": "book:USDS/WSBD",
+       "from": "USDS",
+       "to": "WSBD"
+      },
+      {
+       "kind": "DOOR",
+       "venue": "wrap-door:SBD⇄WSBD",
+       "from": "WSBD",
+       "to": "SBD"
+      },
+      {
+       "kind": "EXTBOOK",
+       "venue": "steem-internal",
+       "from": "SBD",
+       "to": "STEEM"
+      }
+     ],
+     "verdict": "UNREFERENCED"
     }
    ],
    "verdict": "UNREFERENCED"
@@ -809,6 +809,37 @@
      "venue": "book:USDS/WSBD",
      "kind": "BOOK",
      "rate": 7159.994,
+     "ref": false
+    }
+   ],
+   "profitBps": 395079695660.1435,
+   "executable": true,
+   "sizeCap": null
+  },
+  {
+   "legs": [
+    {
+     "from": "WSBD",
+     "to": "SBD",
+     "venue": "wrap-door:SBD⇄WSBD",
+     "kind": "DOOR",
+     "rate": 1,
+     "ref": false
+    },
+    {
+     "from": "USDS",
+     "to": "WSBD",
+     "venue": "book:USDS/WSBD",
+     "kind": "BOOK",
+     "rate": 7159.994,
+     "ref": false
+    },
+    {
+     "from": "WSBD",
+     "to": "USDS",
+     "venue": "pool:USDS/WSBD",
+     "kind": "POOL",
+     "rate": 5517.877608,
      "ref": false
     }
    ],
@@ -889,7 +920,7 @@
  "honesty": "כל-קצה ממקור-מדוד · PLAN-ONLY · realness=הרגל-החלשה · נתיב-חורג-מ-REF±25% מסומן-ORACLE-ALERT · אין-הצהרה-שלא-נמדדה",
  "engineSource": {
   "kind": "REPO_SNAPSHOT",
-  "savedAt": "2026-11-14T10:55:39.900Z",
+  "savedAt": "2026-11-14T12:55:39.597Z",
   "url": null
  }
 }
