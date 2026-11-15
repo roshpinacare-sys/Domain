@@ -19,5 +19,5 @@
 
 | חברתי | חוק |
 |---|---|
-| cashmachine | תגובה: NO-CANDIDATE · הצבעה: - · reblog: NO-CANDIDATE |
+| acct-h-61d20179 | תגובה: NO-CANDIDATE · הצבעה: - · reblog: NO-CANDIDATE |
 | siq | תגובה: NO-CANDIDATE · הצבעה: - · reblog: NO-CANDIDATE |
