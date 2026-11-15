@@ -1,10 +1,10 @@
-# דופק-הצי (fleet-heartbeat) — 2026-11-15T07:37:50.391Z
+# דופק-הצי (fleet-heartbeat) — 2026-11-15T08:25:44.477Z
 
 מדידת-מנועים של כל-הריפואים: מה פועם, מה שקט, מה הפלטפורמה נטרלה, מה נרפא בריצה זו.
 
-**סיכום:** 51 ריפואים · פועמים 23 · ללא-קרון-אך-פעילים 3 · חמימים 2 · שקטים 8 · מעולם-לא-רצו 0 · ללא-workflows 14 · נטרולי-חוסר-פעילות 0 · חסומי-קיר-המכסה 0
+**סיכום:** 51 ריפואים · פועמים 22 · ללא-קרון-אך-פעילים 4 · חמימים 2 · שקטים 8 · מעולם-לא-רצו 0 · ללא-workflows 14 · נטרולי-חוסר-פעילות 0 · חסומי-קיר-המכסה 0
 
-**דופק-מונע:** Domain/tick-keeper.yml=http 422 · Domain/cognition-beat.yml=http 422
+**דופק-מונע:** Domain/cognition-beat.yml=http 422
 
 
 ## גבולות-משמורת מדודים (לא כישלונות קוד)
@@ -20,25 +20,25 @@
 
 ## שורות-שקט (QUIET/NEVER-RAN/NO-WORKFLOWS/AUTO-DISABLED)
 
-- Adsmarket — QUIET · שקט 515.5 שעות
-- anchor-baseline — QUIET · שקט 519.6 שעות
-- Defi — QUIET · שקט 602.6 שעות
+- Adsmarket — QUIET · שקט 516.3 שעות
+- anchor-baseline — QUIET · שקט 520.4 שעות
+- Defi — QUIET · שקט 603.4 שעות
 - estate-agent-9 — NO-WORKFLOWS
 - negen — NO-WORKFLOWS
 - ops-control — NO-WORKFLOWS
 - oss-scanner — NO-WORKFLOWS
-- roshpina — QUIET · שקט 471.5 שעות
+- roshpina — QUIET · שקט 472.3 שעות
 - sanbox — NO-WORKFLOWS
-- sandbox-private — QUIET · שקט 619.9 שעות
+- sandbox-private — QUIET · שקט 620.7 שעות
 - saos-console — NO-WORKFLOWS
 - saos-console-zai — NO-WORKFLOWS
-- saos-control-center — QUIET · שקט 519.6 שעות
+- saos-control-center — QUIET · שקט 520.4 שעות
 - saos-coordination — NO-WORKFLOWS
-- saos-desk — NO-WORKFLOWS · שקט 750.1 שעות
-- saos-markets — NO-WORKFLOWS · שקט 700.9 שעות
-- saos-owner-channel — NO-WORKFLOWS · שקט 667.6 שעות
-- saos-sovereign-foundry — QUIET · שקט 626.1 שעות
-- Sdk — QUIET · שקט 519.6 שעות
+- saos-desk — NO-WORKFLOWS · שקט 750.9 שעות
+- saos-markets — NO-WORKFLOWS · שקט 701.7 שעות
+- saos-owner-channel — NO-WORKFLOWS · שקט 668.4 שעות
+- saos-sovereign-foundry — QUIET · שקט 626.9 שעות
+- Sdk — QUIET · שקט 520.4 שעות
 - sovereign-desk — NO-WORKFLOWS
 - SovereignConsole — NO-WORKFLOWS
 - vault-home — NO-WORKFLOWS
