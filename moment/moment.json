@@ -1,33 +1,33 @@
 {
  "ok": true,
  "format": "moment-watch-v1",
- "publishedAt": "2026-11-15T20:06:22.668Z",
+ "publishedAt": "2026-11-15T21:15:54.561Z",
  "engine": "Domain/agents/moment-watch · R62 sovereign moment",
  "role": "reads the live moment every 30 minutes (market regime, our parity line vs the live internal book, fuel runway, measured anomalies) and records a deterministic directional call that is only ever scored after its horizon has passed - training as measurement, never as promise",
  "market": {
-  "steemUsd": 0.04305792,
-  "steem24h": 1.6901728465057557,
-  "sbdUsd": 0.446491,
-  "btcUsd": 64801,
-  "btc24h": -1.456625356941561,
+  "steemUsd": 0.04328267,
+  "steem24h": 5.749400644736123,
+  "sbdUsd": 0.447396,
+  "btcUsd": 64993,
+  "btc24h": 1.0232343514821653,
   "fearGreed": {
    "value": 10,
    "label": "Extreme Fear"
   }
  },
- "paritySbdPerSteem": 0.09643625515407925,
+ "paritySbdPerSteem": 0.09674353369274648,
  "liveBook": {
-  "bestBid": 0.10271158586688578,
+  "bestBid": 0.10281429745275267,
   "bestAsk": 0.10342316096139839,
-  "bidsDepthSbd": 784.23,
+  "bidsDepthSbd": 783.6,
   "asksDepthSteem": 2512,
   "levels": 21,
-  "bidSurplusBps": 651
+  "bidSurplusBps": 628
  },
  "regime": {
   "label": "RISK_OFF",
   "drivers": [
-   "BTC -1.5%",
+   "BTC +1.0%",
    "F&G 10"
   ],
   "thresholds": {
@@ -40,7 +40,7 @@
  },
  "runway": {
   "active": false,
-  "weeklySp": 6.216635357364601e-10,
+  "weeklySp": 6.21665548997046e-10,
   "nextPayment": "1969-12-31T23:59:59",
   "remainingSp": 0,
   "weeklyUsd": 0,
@@ -51,7 +51,7 @@
   "armed": true,
   "blocker": "sell-side waiting for fuel: 1.058 STEEM commitable < 3 needed (next powerdown: 2026-11-22T18:25:30)",
   "externalFlowUsd": 0,
-  "publishedAt": "2026-11-15T20:02:59.794Z"
+  "publishedAt": "2026-11-15T20:59:46.848Z"
  },
  "moneyPath": {
   "fuel": {
@@ -71,7 +71,7 @@
   },
   "redemption": null
  },
- "call": "FLAT",
+ "call": "UP",
  "callStats": {
   "resolved": 65,
   "hits": 20,
@@ -84,12 +84,17 @@
   {
    "kind": "parity-edge",
    "tone": "warn",
-   "text": "הספר החי 651bps מעל קו-הזהות — אין עודף-קנייה כרגע; הגריד ממתין."
+   "text": "הספר החי 628bps מעל קו-הזהות — אין עודף-קנייה כרגע; הגריד ממתין."
   },
   {
    "kind": "sbd-inventory",
    "tone": "warn",
    "text": "צוואר-הקנייה של הגריד: sell-side waiting for fuel: 1.058 STEEM commitable < 3 needed (next powerdown: 2026-11-22T18:25:30)"
+  },
+  {
+   "kind": "steem-move",
+   "tone": "info",
+   "text": "STEEM +5.7% ביממה — סימוני-הגריד ייגזרו מחדש בפעימה הבאה; תוכניות-עבר עלולות לא-רלוונטיות."
   },
   {
    "kind": "fuel",
@@ -104,7 +109,7 @@
   {
    "kind": "external-flow",
    "tone": "info",
-   "text": "זרימת-חוץ מצטברת: 0.0000$ מ-8 מילויים (txids בספר הציבורי)."
+   "text": "זרימת-חוץ מצטברת: 0.0000$ מ-16 מילויים (txids בספר הציבורי)."
   }
  ],
  "sources": [
