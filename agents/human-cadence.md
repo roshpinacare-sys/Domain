@@ -13,12 +13,12 @@
 | הצטרפות-לבית | חוק |
 |---|---|
 | - -> - | SKIP-NO-COMMUNITY |
-| cashmachine  | SKIP-NO-FRESH-PIECE |
+| acct-h-61d20179  | SKIP-NO-FRESH-PIECE |
 
 | הצבעות-פנים | חוק |
 |---|---|
 
 | חברתי | חוק |
 |---|---|
-| cashmachine | תגובה: NO-CANDIDATE · הצבעה: - · reblog: FAIL |
+| acct-h-61d20179 | תגובה: NO-CANDIDATE · הצבעה: - · reblog: FAIL |
 | siq | תגובה: NO-CANDIDATE · הצבעה: - · reblog: FAIL |
