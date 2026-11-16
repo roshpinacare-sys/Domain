@@ -19,5 +19,5 @@
 
 | חברתי | חוק |
 |---|---|
-| cashmachine | תגובה: SKIP-BUDGET-USED-TODAY · הצבעה: - · reblog: SKIP-BUDGET-USED-TODAY |
-| hcsoldier4 | תגובה: SKIP-BUDGET-USED-TODAY · הצבעה: - · reblog: SKIP-BUDGET-USED-TODAY |
+| acct-h-61d20179 | תגובה: SKIP-BUDGET-USED-TODAY · הצבעה: - · reblog: SKIP-BUDGET-USED-TODAY |
+| acct-h-6f3025804 | תגובה: SKIP-BUDGET-USED-TODAY · הצבעה: - · reblog: SKIP-BUDGET-USED-TODAY |
