@@ -1,4 +1,4 @@
-# CONTENT-GATE · 2026-11-16T16:23:26.242Z
+# CONTENT-GATE · 2026-11-17T02:03:59.399Z
 
 policy: <=7 posts/7d/account · >=600 chars · dup-ratio <=0.2 · disclosure on automated posts
 
