@@ -1,18 +1,18 @@
 {
  "schema": "office.pulse/1",
- "generatedAt": "2026-11-17T21:57:47.186Z",
+ "generatedAt": "2026-11-17T21:57:52.718Z",
  "generatedAgeNote": "this file is rewritten by the office-pulse workflow; judge freshness by generatedAt",
  "verdict": "STALE",
  "verdictChecks": [
   {
    "name": "office-push",
-   "state": "unknown",
-   "detail": "age not measured"
+   "state": "fresh",
+   "detail": "193min <= 2880min"
   },
   {
    "name": "office-ci",
-   "state": "pending",
-   "detail": "no receipt yet"
+   "state": "fresh",
+   "detail": "523min <= 1560min"
   },
   {
    "name": "wallet-artery",
@@ -36,8 +36,8 @@
   },
   {
    "name": "runtime-heartbeat",
-   "state": "unknown",
-   "detail": "age not measured"
+   "state": "fresh",
+   "detail": "5min <= 90min"
   }
  ],
  "degraded": [
@@ -53,7 +53,89 @@
   "runtime": "error"
  },
  "office": {
-  "__error": "HTTP 403 for /repos/roshpinacare-sys/FleetHQ/commits?per_page=14"
+  "repo": "roshpinacare-sys/FleetHQ",
+  "pushedAt": "2026-11-17T18:44:53Z",
+  "pushedAgeMin": 193,
+  "openIssues": 38,
+  "wire": [
+   {
+    "sha": "72a27e3",
+    "msg": "ops-forge: agent line to operator-inbox.jsonl [skip ci]",
+    "at": "2026-11-17T18:24:26Z",
+    "ageMin": 213,
+    "author": "roshpinacare-sys"
+   },
+   {
+    "sha": "abe0707",
+    "msg": "office-ci receipt: build pass, types pass [skip ci]",
+    "at": "2026-11-17T13:14:58Z",
+    "ageMin": 523,
+    "author": "roshpinacare-sys"
+   },
+   {
+    "sha": "27090cf",
+    "msg": "ops-forge: agent line to operator-inbox.jsonl [skip ci]",
+    "at": "2026-11-17T09:28:07Z",
+    "ageMin": 750,
+    "author": "roshpinacare-sys"
+   },
+   {
+    "sha": "2e5d213",
+    "msg": "ops-forge: agent line to operator-inbox.jsonl [skip ci]",
+    "at": "2026-11-17T00:57:43Z",
+    "ageMin": 1260,
+    "author": "roshpinacare-sys"
+   },
+   {
+    "sha": "0de7e9b",
+    "msg": "office-ci receipt: build pass, types pass [skip ci]",
+    "at": "2026-11-16T12:40:21Z",
+    "ageMin": 1998,
+    "author": "roshpinacare-sys"
+   },
+   {
+    "sha": "875a86c",
+    "msg": "ops-forge: agent line to operator-inbox.jsonl [skip ci]",
+    "at": "2026-11-16T07:04:25Z",
+    "ageMin": 2333,
+    "author": "roshpinacare-sys"
+   }
+  ],
+  "worklog": {
+   "tasks": 93,
+   "last": [
+    {
+     "id": "9-b",
+     "title": "המשך Task 9 — ביעור-השורש של התקיעה-האינטרמיטנטית (command-buffer death spiral)"
+    },
+    {
+     "id": "9",
+     "title": "trace 1a146372b6842acd — \"מה שאני רואה ב-preview ירד... פי 2 יותר גרוע... מה אני רואה בעצם באמת?\" — מציאת-האמת של מה שהמ"
+    },
+    {
+     "id": "8",
+     "title": "תמשיך (trace 1a146034ec3ae255) — roast-נגד-המשרד: \"המשרד המכוער, הסרט הקבוע, הבוס תקוע בשולחן, הלוחות המתים, הפעילות-הענ"
+    }
+   ]
+  },
+  "worklogLastTouchAgeMin": 40629,
+  "boot": {
+   "error": "HTTP 404 contents:receipts/boot-verify.json"
+  },
+  "ci": {
+   "overall": "PASS",
+   "at": "2026-11-17T13:14:58.093Z",
+   "ageMin": 523,
+   "reason": "all five checks ran and passed",
+   "runUrl": "https://github.com/roshpinacare-sys/FleetHQ/actions/runs/44090652573",
+   "checks": {
+    "install": "pass",
+    "prismaGenerate": "pass",
+    "typecheck": "pass",
+    "productionBuild": "pass",
+    "connectivityAudit": "pass"
+   }
+  }
  },
  "arteries": {
   "wallet": {
@@ -91,6 +173,9 @@
   }
  },
  "runtime": {
-  "__error": "HTTP 403 for /repos/roshpinacare-sys/saos-runtime/actions/runs?per_page=8"
+  "lastSuccessAt": "2026-11-17T21:52:45Z",
+  "lastSuccessAgeMin": 5,
+  "lastSuccessName": "sovereign-evolution",
+  "lastConclusion": "success"
  }
 }
