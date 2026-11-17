@@ -1,14 +1,14 @@
 # dex-core — EXCHANGE CORE (R40, CR-0070)
 
-At: 2026-11-17T09:17:47.515Z · Verdict: **EXCHANGE-CORE-LIVE** · mode: KEYLESS-ATOMIC-INTERNAL · seq: 2680 · attestation: `8eaced05533cc467`
+At: 2026-11-17T09:18:34.574Z · Verdict: **CONSERVATION-BROKEN** · mode: KEYLESS-ATOMIC-INTERNAL (mesh batch) · seq: 2705 · attestation: `afd1c84c7b9593d8`
 
 Feed: FEED-LIVE (router book @ 2026-11-17T08:18:43.408Z) · conservation: **OK** · custody probe: unreachable (booked custody stands)
 
 | Pool | Pair | Kind | Fee | Reserves (a/b µ) | Mid | Verdict |
 |---|---|---|---|---|---|---|
-| P1 | WSTEEM/STEEM | PEG | 2bps | 249 / 5877943 | 23606.19678715 | LIVE-INTERNAL |
-| P2 | WSBD/SBD | PEG | 2bps | 6062547 / 690754 | 0.11393792 | LIVE-INTERNAL |
-| P3 | STEEM/SBD | VOLATILE | 25bps | 312185 / 775627 | 2.48451079 | LIVE-INTERNAL |
+| P1 | WSTEEM/STEEM | PEG | 2bps | 244 / 5951973 | 24393.33196721 | LIVE-INTERNAL |
+| P2 | WSBD/SBD | PEG | 2bps | 6060330 / 691964 | 0.11417926 | LIVE-INTERNAL |
+| P3 | STEEM/SBD | VOLATILE | 25bps | 299623 / 808467 | 2.69828084 | LIVE-INTERNAL |
 | P4 | SAOS/WSTEEM | VOLATILE | 25bps | 0 / 0 | — | PLANNED-NO-CLAIM |
 | P5 | WHIVE/HIVE | PEG | 2bps | 0 / 0 | — | AWAITING-CUSTODY |
 | P6 | WHBD/HBD | PEG | 2bps | 0 / 0 | — | AWAITING-CUSTODY |
@@ -123,7 +123,7 @@ Observed (adjacent networks — seen, never custody): HIVE 34000µ (OBSERVED-UNC
 Custody classes: STEEM=MEASURED-KEYED · SBD=MEASURED-KEYED · HIVE=OBSERVED-UNCONTROLLED · HBD=OBSERVED-UNCONTROLLED · BLURT=OBSERVED-POST-KEYED · SAOS=PLANNED-NO-CLAIM
 Vault: minted WSTEEM 761900µ · WSBD 6314850µ · WHIVE 0µ · WHBD 0µ · WBLURT 0µ · redeem is ALWAYS honored 1:1 (burn before payout) — the real-value law
 
-Treasury P&L: fees 17519µ (LP revenue) · rebalance edges 90148µ (marked to fair at execution — the LVR defense on our own pool)
+Treasury P&L: fees 0µ (LP revenue) · rebalance edges 90148µ (marked to fair at execution — the LVR defense on our own pool)
 
-Attestation sha256(seq, custody, reserves, minted, claims) = `8eaced05533cc467` — recomputable by any node; the cron book commit is the publication.
+Attestation sha256(seq, custody, reserves, minted, claims) = `afd1c84c7b9593d8` — recomputable by any node; the cron book commit is the publication.
 
