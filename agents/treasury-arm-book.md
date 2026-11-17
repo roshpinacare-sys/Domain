@@ -716,3 +716,10 @@
 |---|---|---|---|---|---|
 | 2026-11-16T12:38:59.115Z | blurt | gate | source ref unresolved — roster map unavailable in this run; refusing (fail-honest) | refused |  |
 
+
+## TREASURY-ARM RUN · 2026-11-17T13:10:50.810Z · chain=steem
+
+| at | chain | op | detail | status | extra |
+|---|---|---|---|---|---|
+| 2026-11-17T13:10:50.810Z | steem | fatal | Unexpected token '<', "<!DOCTYPE "... is not valid JSON | RED-FATAL |  |
+
