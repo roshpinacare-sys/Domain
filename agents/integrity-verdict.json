@@ -1,46 +1,51 @@
 {
  "schema": "integrity-guard/2",
  "scope": "public-twin (Domain home)",
- "at": "2026-11-17T09:17:42.362Z",
+ "at": "2026-11-17T11:02:08.848Z",
  "overall": "FAIL",
  "summary": {
   "sources": 7,
-  "verified": 7,
-  "findings": 2,
+  "verified": 8,
+  "findings": 1,
   "counts": {
-   "stale": 2
+   "stale": 1
   }
  },
  "verified": [
   {
    "where": "self:agents/integrity-verdict.json",
    "law": "L0-verified",
-   "detail": "פסק-קודם תקין (FAIL) מלפני 1ש'"
+   "detail": "פסק-קודם תקין (FAIL) מלפני 2ש'"
   },
   {
    "where": "Domain:agents/work-orders.json",
    "law": "fresh+parsed",
-   "detail": "גיל 0.2ש' ≤ SLA 4ש'"
+   "detail": "גיל 2ש' ≤ SLA 4ש'"
+  },
+  {
+   "where": "Domain:agents/grid-truth.json",
+   "law": "fresh+parsed",
+   "detail": "גיל 0.2ש' ≤ SLA 2ש'"
   },
   {
    "where": "Domain:office/data.json",
    "law": "fresh+parsed",
-   "detail": "גיל 0.3ש' ≤ SLA 2ש'"
+   "detail": "גיל 0.7ש' ≤ SLA 2ש'"
   },
   {
    "where": "Domain:agents/office-live.json",
    "law": "fresh+parsed",
-   "detail": "גיל 0.7ש' ≤ SLA 4ש'"
+   "detail": "גיל 2.5ש' ≤ SLA 4ש'"
   },
   {
    "where": "sovereign-runner-kit:results/receipts.jsonl",
    "law": "fresh+parsed",
-   "detail": "גיל 5.3ש' ≤ SLA 72ש' · 214 קבלות"
+   "detail": "גיל 7.1ש' ≤ SLA 72ש' · 214 קבלות"
   },
   {
    "where": "Domain:office/data.json",
    "law": "producer-green",
-   "detail": "ריצת-יצרן ירוקה לפני 53 דק'"
+   "detail": "ריצת-יצרן ירוקה לפני 30 דק'"
   },
   {
    "where": "Domain:agents/work-orders.json",
@@ -50,18 +55,13 @@
  ],
  "findings": [
   {
-   "where": "Domain:agents/grid-truth.json",
-   "law": "stale",
-   "detail": "גיל 3.1ש' > SLA 2ש'"
-  },
-  {
    "where": "FleetHQ:office/state/office-state.json",
    "law": "stale",
-   "detail": "גיל 474.5ש' > SLA 4ש'"
+   "detail": "גיל 476.2ש' > SLA 4ש'"
   }
  ],
  "provenance": {
-  "runUrl": "https://github.com/roshpinacare-sys/Domain/actions/runs/44054234252",
+  "runUrl": "https://github.com/roshpinacare-sys/Domain/actions/runs/44070270977",
   "workflow": "artery-integrity-twin"
  }
 }
