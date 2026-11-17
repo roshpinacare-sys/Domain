@@ -1,6 +1,6 @@
 # Reconciliation Book (Z-30 books-consul desk)
 
-Updated: 2026-11-02T12:51:50.085Z UTC. Single-writer law: one desk owns each topic. Every capital claim is cross-checked against LIVE chain state per run.
+Updated: 2026-11-17T13:50:56.868Z UTC. Single-writer law: one desk owns each topic. Every capital claim is cross-checked against LIVE chain state per run.
 
 | topic | canonical book | writer | exists | age h |
 |---|---|---|---|---|

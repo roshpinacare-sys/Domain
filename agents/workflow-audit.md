@@ -1,6 +1,6 @@
 # Workflow Audit (Z-30 workflow-pruner desk)
 
-Updated: 2026-11-02T12:51:51.880Z UTC. Domain workflows: 112 · Console workflows: 0
+Updated: 2026-11-17T13:50:58.405Z UTC. Domain workflows: 114 · Console workflows: 0
 
 ## Twin groups (same script-set, same repo)
 - `Domain`: office-pulse-twin.yml, office-pulse.yml

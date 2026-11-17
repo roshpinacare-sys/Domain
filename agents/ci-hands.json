@@ -1,30 +1,29 @@
 {
  "ok": true,
- "at": "2026-11-02T12:53:38.316Z",
- "ms": 35841,
+ "at": "2026-11-17T13:52:54.292Z",
+ "ms": 37044,
  "agent": "ci-hands v1.0.0 (Task 26 — trycua/cua adoption: the fleet gets HANDS on its own CI estate; cua-bench contract: trajectory + result + pass-rate; read-only actuator, STASIS-safe, tier law kept)",
  "reposDeclared": 16,
  "reposReached": 16,
  "reposUnreachable": 0,
  "window": 30,
  "sampledRuns": 480,
- "lanes": 66,
- "green": 34,
- "activeRed": 4,
+ "lanes": 76,
+ "green": 48,
+ "activeRed": 3,
  "selfHealed": 7,
  "historyTransient": 13,
- "recurring": 8,
+ "recurring": 5,
  "startupFailures": 0,
- "passRate": 52,
+ "passRate": 63,
  "stasis": {
   "parseable": true,
   "active": false
  },
  "tokenMode": "env-token (redacted)",
  "proposals": [
-  "steem/.github/workflows/gitleaks.yml: ACTIVE-RED+RECURRING — diagnose via jobs+logs (Task 25 method), fix, prove by dispatch/push",
-  "steem/.github/workflows/workflow-yaml-guard.yml: ACTIVE-RED — diagnose via jobs+logs (Task 25 method), fix, prove by dispatch/push",
-  "saos-dex/.github/workflows/selftest.yml: ACTIVE-RED+RECURRING — diagnose via jobs+logs (Task 25 method), fix, prove by dispatch/push",
+  "Domain/.github/workflows/weave-anchor-lines.yml: ACTIVE-RED — diagnose via jobs+logs (Task 25 method), fix, prove by dispatch/push",
+  "saos-sovereign-foundry/dynamic/dependabot/dependabot-updates: ACTIVE-RED — diagnose via jobs+logs (Task 25 method), fix, prove by dispatch/push",
   "saos-sovereign-foundry/.github/workflows/gitleaks.yml: ACTIVE-RED+RECURRING — diagnose via jobs+logs (Task 25 method), fix, prove by dispatch/push"
  ],
  "results": [
@@ -37,7 +36,7 @@
     ".github/workflows/platform-selftest.yml": {
      "display": "platform-selftest",
      "latest": "success",
-     "latestAt": "2026-11-01T18:33:04Z",
+     "latestAt": "2026-11-16T23:01:09Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
@@ -48,104 +47,20 @@
    "repo": "steem",
    "status": "REACHED",
    "sampled": 30,
-   "failures": [
-    {
-     "id": 40864611429,
-     "lane": ".github/workflows/crown-vault-recovery.yml",
-     "event": "workflow_dispatch",
-     "at": "2026-10-29T11:20:22Z",
-     "class": "STEP-FAILURE"
-    },
-    {
-     "id": 40863420957,
-     "lane": ".github/workflows/crown-vault-recovery.yml",
-     "event": "workflow_dispatch",
-     "at": "2026-10-29T11:11:14Z",
-     "class": "STEP-FAILURE"
-    },
-    {
-     "id": 40863363604,
-     "lane": ".github/workflows/crown-vault-recovery.yml",
-     "event": "workflow_dispatch",
-     "at": "2026-10-29T11:10:48Z",
-     "class": "STEP-FAILURE"
-    },
-    {
-     "id": 40862630976,
-     "lane": ".github/workflows/crown-vault-recovery.yml",
-     "event": "workflow_dispatch",
-     "at": "2026-10-29T11:05:13Z",
-     "class": "STEP-FAILURE"
-    },
-    {
-     "id": 40773208124,
-     "lane": ".github/workflows/gitleaks.yml",
-     "event": "pull_request",
-     "at": "2026-10-28T21:35:28Z",
-     "class": "STEP-FAILURE"
-    },
-    {
-     "id": 40773208123,
-     "lane": ".github/workflows/workflow-yaml-guard.yml",
-     "event": "pull_request",
-     "at": "2026-10-28T21:35:28Z",
-     "class": "STEP-FAILURE"
-    }
-   ],
+   "failures": [],
    "lanes": {
-    ".github/workflows/crown-vault-recovery.yml": {
-     "display": "crown-vault-recovery",
+    ".github/workflows/engine-selftest.yml": {
+     "display": "engine-selftest",
      "latest": "success",
-     "latestAt": "2026-11-01T11:50:51Z",
-     "failures": 4,
-     "verdict": "RECURRING",
-     "classes": {
-      "40864611429": "STEP-FAILURE",
-      "40863420957": "STEP-FAILURE",
-      "40863363604": "STEP-FAILURE",
-      "40862630976": "STEP-FAILURE"
-     }
-    },
-    ".github/workflows/key-census-relay-v2.yml": {
-     "display": "key-census-relay-v2",
-     "latest": "success",
-     "latestAt": "2026-10-29T19:05:34Z",
+     "latestAt": "2026-11-17T13:48:32Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
     },
-    ".github/workflows/key-census-relay.yml": {
-     "display": "key-census-relay",
+    ".github/workflows/engine-ci.yml": {
+     "display": "engine-ci",
      "latest": "success",
-     "latestAt": "2026-10-29T10:23:00Z",
-     "failures": 0,
-     "verdict": "GREEN",
-     "classes": {}
-    },
-    ".github/workflows/gitleaks.yml": {
-     "display": "gitleaks-secret-scan",
-     "latest": "failure",
-     "latestAt": "2026-10-28T21:35:28Z",
-     "failures": 4,
-     "verdict": "ACTIVE-RED+RECURRING",
-     "classes": {
-      "40773208124": "STEP-FAILURE"
-     }
-    },
-    ".github/workflows/workflow-yaml-guard.yml": {
-     "display": "workflow-yaml-guard",
-     "latest": "failure",
-     "latestAt": "2026-10-28T21:35:28Z",
-     "failures": 1,
-     "verdict": "ACTIVE-RED",
-     "classes": {
-      "40773208123": "STEP-FAILURE"
-     }
-    },
-    ".github/workflows/identity-guard.yml": {
-     "display": "identity-guard",
-     "latest": "skipped",
-     "latestAt": "2026-10-24T19:02:29Z",
+     "latestAt": "2026-11-17T13:48:32Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
@@ -156,100 +71,44 @@
    "repo": "Domain",
    "status": "REACHED",
    "sampled": 30,
-   "failures": [],
+   "failures": [
+    {
+     "id": 44095328091,
+     "lane": ".github/workflows/weave-anchor-lines.yml",
+     "event": "workflow_dispatch",
+     "at": "2026-11-17T13:41:56Z",
+     "class": "STEP-FAILURE"
+    }
+   ],
    "lanes": {
+    ".github/workflows/dex-router-cron.yml": {
+     "display": "dex-router",
+     "latest": null,
+     "latestAt": "2026-11-17T13:52:55Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
     ".github/workflows/recruit.yml": {
      "display": "recruit",
      "latest": null,
-     "latestAt": "2026-11-02T12:51:36Z",
+     "latestAt": "2026-11-17T13:50:47Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
     },
-    ".github/workflows/dex-grid.yml": {
-     "display": "dex-grid",
-     "latest": null,
-     "latestAt": "2026-11-02T12:51:26Z",
-     "failures": 0,
-     "verdict": "GREEN",
-     "classes": {}
-    },
-    ".github/workflows/proof-pipeline.yml": {
-     "display": "proof-pipeline",
+    ".github/workflows/office-artery.yml": {
+     "display": "office-artery",
      "latest": "success",
-     "latestAt": "2026-11-02T12:51:16Z",
+     "latestAt": "2026-11-17T13:49:38Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
     },
-    ".github/workflows/network-census.yml": {
-     "display": "network-census",
+    ".github/workflows/sovereign-tick-cron.yml": {
+     "display": "sovereign-tick-cron",
      "latest": "success",
-     "latestAt": "2026-11-02T12:49:41Z",
-     "failures": 0,
-     "verdict": "GREEN",
-     "classes": {}
-    },
-    ".github/workflows/office-worldbeat.yml": {
-     "display": "office-worldbeat",
-     "latest": null,
-     "latestAt": "2026-11-02T12:49:23Z",
-     "failures": 0,
-     "verdict": "GREEN",
-     "classes": {}
-    },
-    ".github/workflows/grid-sentinel.yml": {
-     "display": "grid-sentinel",
-     "latest": null,
-     "latestAt": "2026-11-02T12:46:58Z",
-     "failures": 0,
-     "verdict": "GREEN",
-     "classes": {}
-    },
-    ".github/workflows/agent9-fleet-truth.yml": {
-     "display": "agent9-fleet-truth",
-     "latest": "success",
-     "latestAt": "2026-11-02T12:43:58Z",
-     "failures": 0,
-     "verdict": "GREEN",
-     "classes": {}
-    },
-    ".github/workflows/office-orders-twin.yml": {
-     "display": "office-orders-twin",
-     "latest": "success",
-     "latestAt": "2026-11-02T12:40:36Z",
-     "failures": 0,
-     "verdict": "GREEN",
-     "classes": {}
-    },
-    ".github/workflows/products-feed.yml": {
-     "display": "products-feed",
-     "latest": "success",
-     "latestAt": "2026-11-02T12:39:53Z",
-     "failures": 0,
-     "verdict": "GREEN",
-     "classes": {}
-    },
-    ".github/workflows/treasury-route.yml": {
-     "display": "treasury-route",
-     "latest": "success",
-     "latestAt": "2026-11-02T12:34:06Z",
-     "failures": 0,
-     "verdict": "GREEN",
-     "classes": {}
-    },
-    ".github/workflows/pages-quality-gate.yml": {
-     "display": "pages-quality-gate",
-     "latest": "success",
-     "latestAt": "2026-11-02T12:34:04Z",
-     "failures": 0,
-     "verdict": "GREEN",
-     "classes": {}
-    },
-    ".github/workflows/stale-watchdog.yml": {
-     "display": "stale-watchdog",
-     "latest": "success",
-     "latestAt": "2026-11-02T12:33:57Z",
+     "latestAt": "2026-11-17T13:49:35Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
@@ -257,31 +116,153 @@
     ".github/workflows/pulse-bake.yml": {
      "display": "pulse-bake",
      "latest": "success",
-     "latestAt": "2026-11-02T12:33:39Z",
+     "latestAt": "2026-11-17T13:49:34Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
     },
-    ".github/workflows/dex-core-cron.yml": {
-     "display": "dex-core",
+    ".github/workflows/public-pulse.yml": {
+     "display": "public-pulse",
      "latest": "success",
-     "latestAt": "2026-11-02T12:33:38Z",
+     "latestAt": "2026-11-17T13:49:32Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
     },
-    ".github/workflows/grid-doctor.yml": {
-     "display": "grid-doctor",
+    ".github/workflows/market-grid-cron.yml": {
+     "display": "market-grid-cron",
      "latest": "success",
-     "latestAt": "2026-11-02T12:31:56Z",
+     "latestAt": "2026-11-17T13:49:29Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
     },
-    ".github/workflows/cloud-pulse.yml": {
-     "display": "cloud-pulse",
+    ".github/workflows/proof-pipeline.yml": {
+     "display": "proof-pipeline",
      "latest": "success",
-     "latestAt": "2026-11-02T12:16:58Z",
+     "latestAt": "2026-11-17T13:49:18Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/office-worldbeat.yml": {
+     "display": "office-worldbeat",
+     "latest": null,
+     "latestAt": "2026-11-17T13:49:14Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/treasury-route.yml": {
+     "display": "treasury-route",
+     "latest": "success",
+     "latestAt": "2026-11-17T13:47:20Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/hive-beat-t21.yml": {
+     "display": "hive-beat-t21",
+     "latest": "success",
+     "latestAt": "2026-11-17T13:47:17Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/agent9-fleet-truth.yml": {
+     "display": "agent9-fleet-truth",
+     "latest": "success",
+     "latestAt": "2026-11-17T13:46:58Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/agent-verify.yml": {
+     "display": "agent-verify",
+     "latest": "success",
+     "latestAt": "2026-11-17T13:46:19Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/grid-sentinel.yml": {
+     "display": "grid-sentinel",
+     "latest": null,
+     "latestAt": "2026-11-17T13:45:51Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/pf-artery-keeper.yml": {
+     "display": "pf-artery-keeper",
+     "latest": "success",
+     "latestAt": "2026-11-17T13:45:13Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/dex-grid.yml": {
+     "display": "dex-grid",
+     "latest": null,
+     "latestAt": "2026-11-17T13:43:10Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/weave-anchor-lines.yml": {
+     "display": "weave-anchor-lines",
+     "latest": "failure",
+     "latestAt": "2026-11-17T13:41:56Z",
+     "failures": 1,
+     "verdict": "ACTIVE-RED",
+     "classes": {
+      "44095328091": "STEP-FAILURE"
+     }
+    },
+    ".github/workflows/weave-heart.yml": {
+     "display": "weave-heart",
+     "latest": "success",
+     "latestAt": "2026-11-17T13:41:28Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/products-feed.yml": {
+     "display": "products-feed",
+     "latest": "success",
+     "latestAt": "2026-11-17T13:39:20Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/bridge-keeper.yml": {
+     "display": "bridge-keeper",
+     "latest": "success",
+     "latestAt": "2026-11-17T13:38:54Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/grid-trigger-twin.yml": {
+     "display": "grid-trigger-twin",
+     "latest": "success",
+     "latestAt": "2026-11-17T13:38:29Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/sovereign-pulse.yml": {
+     "display": "sovereign-pulse",
+     "latest": "success",
+     "latestAt": "2026-11-17T13:38:00Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/office-orders-twin.yml": {
+     "display": "office-orders-twin",
+     "latest": "success",
+     "latestAt": "2026-11-17T13:34:03Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
@@ -289,23 +270,7 @@
     ".github/workflows/artery-integrity-twin.yml": {
      "display": "artery-integrity-twin",
      "latest": "success",
-     "latestAt": "2026-11-02T12:16:57Z",
-     "failures": 0,
-     "verdict": "GREEN",
-     "classes": {}
-    },
-    ".github/workflows/arb-mesh-cron.yml": {
-     "display": "arb-mesh",
-     "latest": "success",
-     "latestAt": "2026-11-02T12:16:55Z",
-     "failures": 0,
-     "verdict": "GREEN",
-     "classes": {}
-    },
-    ".github/workflows/treasury-arm.yml": {
-     "display": "treasury-arm",
-     "latest": "success",
-     "latestAt": "2026-11-02T12:15:46Z",
+     "latestAt": "2026-11-17T13:33:21Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
@@ -318,10 +283,18 @@
    "sampled": 30,
    "failures": [],
    "lanes": {
+    ".github/workflows/agents-watch.yml": {
+     "display": "agents-watch",
+     "latest": null,
+     "latestAt": "2026-11-17T13:51:30Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
     ".github/workflows/runtime-pacemaker.yml": {
      "display": "runtime-pacemaker",
-     "latest": null,
-     "latestAt": "2026-11-02T12:53:15Z",
+     "latest": "success",
+     "latestAt": "2026-11-17T13:47:41Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
@@ -329,7 +302,7 @@
     ".github/workflows/truth-gate.yml": {
      "display": "truth-gate",
      "latest": "success",
-     "latestAt": "2026-11-02T12:52:03Z",
+     "latestAt": "2026-11-17T13:47:18Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
@@ -337,15 +310,23 @@
     ".github/workflows/identity-guard.yml": {
      "display": "identity-guard",
      "latest": "success",
-     "latestAt": "2026-11-02T12:51:49Z",
+     "latestAt": "2026-11-17T13:43:44Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
     },
     ".github/workflows/pages-deploy.yml": {
      "display": "pages-deploy",
-     "latest": null,
-     "latestAt": "2026-11-02T12:51:49Z",
+     "latest": "success",
+     "latestAt": "2026-11-17T13:43:44Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/money-watch.yml": {
+     "display": "money-watch",
+     "latest": "success",
+     "latestAt": "2026-11-17T13:43:10Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
@@ -356,30 +337,20 @@
    "repo": "Zip",
    "status": "REACHED",
    "sampled": 30,
-   "failures": [
-    {
-     "id": 41324535633,
-     "lane": ".github/workflows/identity-guard.yml",
-     "event": "schedule",
-     "at": "2026-11-01T16:05:51Z",
-     "class": "STEP-FAILURE"
-    }
-   ],
+   "failures": [],
    "lanes": {
     ".github/workflows/identity-guard.yml": {
      "display": "identity-guard",
      "latest": "success",
-     "latestAt": "2026-11-02T10:24:51Z",
-     "failures": 1,
-     "verdict": "SELF-HEALED",
-     "classes": {
-      "41324535633": "STEP-FAILURE"
-     }
+     "latestAt": "2026-11-17T13:44:52Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
     },
     ".github/workflows/swallow-watch.yml": {
      "display": "swallow-watch",
      "latest": "success",
-     "latestAt": "2026-11-02T08:19:18Z",
+     "latestAt": "2026-11-17T04:46:22Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
@@ -511,59 +482,34 @@
      "event": "push",
      "at": "2026-10-27T13:08:10Z",
      "class": "STEP-FAILURE"
-    },
-    {
-     "id": 40499124392,
-     "lane": ".github/workflows/ci.yml",
-     "event": "push",
-     "at": "2026-10-27T11:50:17Z",
-     "class": "STEP-FAILURE"
-    },
-    {
-     "id": 40392943272,
-     "lane": ".github/workflows/wallet-verify.yml",
-     "event": "schedule",
-     "at": "2026-10-26T20:08:16Z",
-     "class": "STEP-FAILURE"
-    },
-    {
-     "id": 40364736215,
-     "lane": ".github/workflows/wallet-verify.yml",
-     "event": "workflow_dispatch",
-     "at": "2026-10-26T17:01:39Z",
-     "class": "STEP-FAILURE"
-    },
-    {
-     "id": 40364095365,
-     "lane": ".github/workflows/wallet-verify.yml",
-     "event": "workflow_dispatch",
-     "at": "2026-10-26T16:57:37Z",
-     "class": "STEP-FAILURE"
     }
    ],
    "lanes": {
     ".github/workflows/wallet-verify.yml": {
      "display": "wallet-verify",
      "latest": "success",
-     "latestAt": "2026-11-01T19:11:03Z",
-     "failures": 4,
-     "verdict": "RECURRING",
-     "classes": {
-      "40392943272": "STEP-FAILURE",
-      "40364736215": "STEP-FAILURE",
-      "40364095365": "STEP-FAILURE"
-     }
+     "latestAt": "2026-11-16T23:29:56Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    "dynamic/dependabot/update-graph": {
+     "display": "Graph Update: pip in /skills/aminer-daily-paper, /skills/experiment-suite/figure_examples, /skills/gaokao-fetch-volunteers, /skills/gaokao-generate-report #1678809183",
+     "latest": "success",
+     "latestAt": "2026-11-03T21:37:19Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
     },
     ".github/workflows/ci.yml": {
      "display": "wallet-core-tests",
      "latest": "success",
      "latestAt": "2026-11-01T14:25:44Z",
-     "failures": 4,
-     "verdict": "RECURRING",
+     "failures": 2,
+     "verdict": "SELF-HEALED",
      "classes": {
       "40513931414": "STEP-FAILURE",
-      "40509395023": "STEP-FAILURE",
-      "40499124392": "STEP-FAILURE"
+      "40509395023": "STEP-FAILURE"
      }
     },
     ".github/workflows/gitleaks.yml": {
@@ -914,49 +860,36 @@
    "repo": "saos-dex",
    "status": "REACHED",
    "sampled": 30,
-   "failures": [
-    {
-     "id": 41448140905,
-     "lane": ".github/workflows/selftest.yml",
-     "event": "push",
-     "at": "2026-11-02T12:51:50Z",
-     "class": "STEP-FAILURE"
-    },
-    {
-     "id": 41446214841,
-     "lane": ".github/workflows/selftest.yml",
-     "event": "push",
-     "at": "2026-11-02T12:37:27Z",
-     "class": "STEP-FAILURE"
-    },
-    {
-     "id": 41444243016,
-     "lane": ".github/workflows/selftest.yml",
-     "event": "push",
-     "at": "2026-11-02T12:23:03Z",
-     "class": "STEP-FAILURE"
-    },
-    {
-     "id": 41442884772,
-     "lane": ".github/workflows/selftest.yml",
-     "event": "push",
-     "at": "2026-11-02T12:13:10Z",
-     "class": "STEP-FAILURE"
-    }
-   ],
+   "failures": [],
    "lanes": {
-    ".github/workflows/identity-guard.yml": {
-     "display": "identity-guard",
-     "latest": "skipped",
-     "latestAt": "2026-11-02T12:51:50Z",
+    ".github/workflows/external-profit-publish.yml": {
+     "display": "external-profit-publish",
+     "latest": "success",
+     "latestAt": "2026-11-17T13:51:49Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
     },
-    ".github/workflows/workflow-yaml-guard.yml": {
-     "display": "workflow-yaml-guard",
+    ".github/workflows/identity-guard.yml": {
+     "display": "identity-guard",
+     "latest": "skipped",
+     "latestAt": "2026-11-17T13:43:46Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/selftest.yml": {
+     "display": "dex-selftest",
      "latest": "success",
-     "latestAt": "2026-11-02T12:51:50Z",
+     "latestAt": "2026-11-17T13:43:46Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/ci.yml": {
+     "display": "dex-ci",
+     "latest": "success",
+     "latestAt": "2026-11-17T13:43:46Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
@@ -964,28 +897,39 @@
     ".github/workflows/gitleaks.yml": {
      "display": "gitleaks-secret-scan",
      "latest": "success",
-     "latestAt": "2026-11-02T12:51:50Z",
+     "latestAt": "2026-11-17T13:43:46Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
     },
-    ".github/workflows/selftest.yml": {
-     "display": "dex-selftest",
-     "latest": "failure",
-     "latestAt": "2026-11-02T12:51:50Z",
-     "failures": 4,
-     "verdict": "ACTIVE-RED+RECURRING",
-     "classes": {
-      "41448140905": "STEP-FAILURE",
-      "41446214841": "STEP-FAILURE",
-      "41444243016": "STEP-FAILURE",
-      "41442884772": "STEP-FAILURE"
-     }
-    },
-    ".github/workflows/ci.yml": {
-     "display": "dex-ci",
+    ".github/workflows/workflow-yaml-guard.yml": {
+     "display": "workflow-yaml-guard",
      "latest": "success",
-     "latestAt": "2026-11-02T12:51:50Z",
+     "latestAt": "2026-11-17T13:43:46Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/dex-grid.yml": {
+     "display": "dex-grid",
+     "latest": "success",
+     "latestAt": "2026-11-17T13:38:37Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/hive-heartbeat.yml": {
+     "display": "hive-heartbeat",
+     "latest": "success",
+     "latestAt": "2026-11-17T13:32:31Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
+    ".github/workflows/dex-beat.yml": {
+     "display": "dex-beat",
+     "latest": "success",
+     "latestAt": "2026-11-17T13:32:30Z",
      "failures": 0,
      "verdict": "GREEN",
      "classes": {}
@@ -1041,6 +985,14 @@
     }
    ],
    "lanes": {
+    "dynamic/dependabot/update-graph": {
+     "display": "Graph Update: pip in /. #1678808930",
+     "latest": "success",
+     "latestAt": "2026-11-03T21:37:09Z",
+     "failures": 0,
+     "verdict": "GREEN",
+     "classes": {}
+    },
     ".github/workflows/jumpper-tests.yml": {
      "display": "jumpper-tests",
      "latest": "success",
@@ -1164,6 +1116,13 @@
    "sampled": 30,
    "failures": [
     {
+     "id": 43977080457,
+     "lane": "dynamic/dependabot/dependabot-updates",
+     "event": "dynamic",
+     "at": "2026-11-16T23:11:28Z",
+     "class": "STEP-FAILURE"
+    },
+    {
      "id": 39370999551,
      "lane": ".github/workflows/ci.yml",
      "event": "workflow_dispatch",
@@ -1197,16 +1156,19 @@
      "event": "push",
      "at": "2026-10-07T00:57:39Z",
      "class": "JOB-STARTUP"
-    },
-    {
-     "id": 37554661062,
-     "lane": ".github/workflows/gitleaks.yml",
-     "event": "push",
-     "at": "2026-10-07T00:57:39Z",
-     "class": "JOB-STARTUP"
     }
    ],
    "lanes": {
+    "dynamic/dependabot/dependabot-updates": {
+     "display": "npm_and_yarn in /. for next - Update #1710519815",
+     "latest": "failure",
+     "latestAt": "2026-11-16T23:11:28Z",
+     "failures": 1,
+     "verdict": "ACTIVE-RED",
+     "classes": {
+      "43977080457": "STEP-FAILURE"
+     }
+    },
     ".github/workflows/ci.yml": {
      "display": "CI",
      "latest": "success",
@@ -1224,7 +1186,7 @@
      "display": "workflow-yaml-guard",
      "latest": "success",
      "latestAt": "2026-10-20T05:00:35Z",
-     "failures": 12,
+     "failures": 11,
      "verdict": "HISTORY-TRANSIENT",
      "classes": {
       "37554661122": "JOB-STARTUP"
@@ -1236,581 +1198,481 @@
      "latestAt": "2026-10-07T00:57:39Z",
      "failures": 12,
      "verdict": "ACTIVE-RED+RECURRING",
-     "classes": {
-      "37554661062": "JOB-STARTUP"
-     }
+     "classes": {}
     }
    }
   }
  ],
  "trajectory": [
   {
-   "ts": "2026-11-02T12:53:39.183Z",
+   "ts": "2026-11-17T13:52:55.643Z",
    "action": "list-runs",
    "target": "saos-sovereign-platform",
    "outcome": 200,
-   "ms": 866
+   "ms": 1351
   },
   {
-   "ts": "2026-11-02T12:53:39.832Z",
+   "ts": "2026-11-17T13:52:56.352Z",
    "action": "list-runs",
    "target": "steem",
    "outcome": 200,
-   "ms": 635
+   "ms": 701
   },
   {
-   "ts": "2026-11-02T12:53:40.130Z",
-   "action": "probe-jobs",
-   "target": "steem/40864611429",
-   "outcome": 200,
-   "ms": 291
-  },
-  {
-   "ts": "2026-11-02T12:53:40.397Z",
-   "action": "probe-jobs",
-   "target": "steem/40863420957",
-   "outcome": 200,
-   "ms": 266
-  },
-  {
-   "ts": "2026-11-02T12:53:40.667Z",
-   "action": "probe-jobs",
-   "target": "steem/40863363604",
-   "outcome": 200,
-   "ms": 270
-  },
-  {
-   "ts": "2026-11-02T12:53:40.991Z",
-   "action": "probe-jobs",
-   "target": "steem/40862630976",
-   "outcome": 200,
-   "ms": 323
-  },
-  {
-   "ts": "2026-11-02T12:53:41.264Z",
-   "action": "probe-jobs",
-   "target": "steem/40773208124",
-   "outcome": 200,
-   "ms": 271
-  },
-  {
-   "ts": "2026-11-02T12:53:41.533Z",
-   "action": "probe-jobs",
-   "target": "steem/40773208123",
-   "outcome": 200,
-   "ms": 268
-  },
-  {
-   "ts": "2026-11-02T12:53:42.352Z",
+   "ts": "2026-11-17T13:52:57.238Z",
    "action": "list-runs",
    "target": "Domain",
    "outcome": 200,
-   "ms": 819
+   "ms": 882
   },
   {
-   "ts": "2026-11-02T12:53:43.099Z",
+   "ts": "2026-11-17T13:52:57.550Z",
+   "action": "probe-jobs",
+   "target": "Domain/44095328091",
+   "outcome": 200,
+   "ms": 306
+  },
+  {
+   "ts": "2026-11-17T13:52:58.609Z",
    "action": "list-runs",
    "target": "Console",
    "outcome": 200,
-   "ms": 741
+   "ms": 1059
   },
   {
-   "ts": "2026-11-02T12:53:43.945Z",
+   "ts": "2026-11-17T13:52:59.756Z",
    "action": "list-runs",
    "target": "Zip",
    "outcome": 200,
-   "ms": 842
+   "ms": 1143
   },
   {
-   "ts": "2026-11-02T12:53:44.231Z",
-   "action": "probe-jobs",
-   "target": "Zip/41324535633",
-   "outcome": 200,
-   "ms": 281
-  },
-  {
-   "ts": "2026-11-02T12:53:45.125Z",
+   "ts": "2026-11-17T13:53:00.646Z",
    "action": "list-runs",
    "target": "roshpina",
    "outcome": 200,
-   "ms": 894
+   "ms": 886
   },
   {
-   "ts": "2026-11-02T12:53:45.862Z",
+   "ts": "2026-11-17T13:53:01.461Z",
    "action": "list-runs",
    "target": "anchor-baseline",
    "outcome": 200,
-   "ms": 731
+   "ms": 811
   },
   {
-   "ts": "2026-11-02T12:53:46.191Z",
+   "ts": "2026-11-17T13:53:01.900Z",
    "action": "probe-jobs",
    "target": "anchor-baseline/38341550931",
    "outcome": 200,
-   "ms": 324
+   "ms": 435
   },
   {
-   "ts": "2026-11-02T12:53:46.590Z",
+   "ts": "2026-11-17T13:53:02.369Z",
    "action": "probe-jobs",
    "target": "anchor-baseline/38341549053",
    "outcome": 200,
-   "ms": 398
+   "ms": 468
   },
   {
-   "ts": "2026-11-02T12:53:46.965Z",
+   "ts": "2026-11-17T13:53:02.762Z",
    "action": "probe-jobs",
    "target": "anchor-baseline/38306209025",
-   "outcome": 200,
-   "ms": 374
-  },
-  {
-   "ts": "2026-11-02T12:53:47.301Z",
-   "action": "probe-jobs",
-   "target": "anchor-baseline/38306205323",
-   "outcome": 200,
-   "ms": 336
-  },
-  {
-   "ts": "2026-11-02T12:53:47.617Z",
-   "action": "probe-jobs",
-   "target": "anchor-baseline/38303255576",
-   "outcome": 200,
-   "ms": 315
-  },
-  {
-   "ts": "2026-11-02T12:53:47.941Z",
-   "action": "probe-jobs",
-   "target": "anchor-baseline/38303252344",
-   "outcome": 200,
-   "ms": 324
-  },
-  {
-   "ts": "2026-11-02T12:53:48.608Z",
-   "action": "list-runs",
-   "target": "Saosmartwallet",
-   "outcome": 200,
-   "ms": 667
-  },
-  {
-   "ts": "2026-11-02T12:53:48.906Z",
-   "action": "probe-jobs",
-   "target": "Saosmartwallet/40513931414",
-   "outcome": 200,
-   "ms": 293
-  },
-  {
-   "ts": "2026-11-02T12:53:49.215Z",
-   "action": "probe-jobs",
-   "target": "Saosmartwallet/40509395023",
-   "outcome": 200,
-   "ms": 308
-  },
-  {
-   "ts": "2026-11-02T12:53:49.484Z",
-   "action": "probe-jobs",
-   "target": "Saosmartwallet/40499124392",
-   "outcome": 200,
-   "ms": 268
-  },
-  {
-   "ts": "2026-11-02T12:53:49.746Z",
-   "action": "probe-jobs",
-   "target": "Saosmartwallet/40392943272",
-   "outcome": 200,
-   "ms": 261
-  },
-  {
-   "ts": "2026-11-02T12:53:50.026Z",
-   "action": "probe-jobs",
-   "target": "Saosmartwallet/40364736215",
-   "outcome": 200,
-   "ms": 280
-  },
-  {
-   "ts": "2026-11-02T12:53:50.288Z",
-   "action": "probe-jobs",
-   "target": "Saosmartwallet/40364095365",
-   "outcome": 200,
-   "ms": 262
-  },
-  {
-   "ts": "2026-11-02T12:53:51.158Z",
-   "action": "list-runs",
-   "target": "Sdk",
-   "outcome": 200,
-   "ms": 870
-  },
-  {
-   "ts": "2026-11-02T12:53:51.518Z",
-   "action": "probe-jobs",
-   "target": "Sdk/38341544478",
-   "outcome": 200,
-   "ms": 317
-  },
-  {
-   "ts": "2026-11-02T12:53:51.868Z",
-   "action": "probe-jobs",
-   "target": "Sdk/38306187977",
-   "outcome": 200,
-   "ms": 350
-  },
-  {
-   "ts": "2026-11-02T12:53:52.177Z",
-   "action": "probe-jobs",
-   "target": "Sdk/38303229734",
-   "outcome": 200,
-   "ms": 309
-  },
-  {
-   "ts": "2026-11-02T12:53:52.514Z",
-   "action": "probe-jobs",
-   "target": "Sdk/37456218928",
-   "outcome": 200,
-   "ms": 337
-  },
-  {
-   "ts": "2026-11-02T12:53:52.902Z",
-   "action": "probe-jobs",
-   "target": "Sdk/37456218866",
-   "outcome": 200,
-   "ms": 388
-  },
-  {
-   "ts": "2026-11-02T12:53:53.291Z",
-   "action": "probe-jobs",
-   "target": "Sdk/37444292830",
-   "outcome": 200,
-   "ms": 389
-  },
-  {
-   "ts": "2026-11-02T12:53:53.939Z",
-   "action": "list-runs",
-   "target": "Project-files",
-   "outcome": 200,
-   "ms": 648
-  },
-  {
-   "ts": "2026-11-02T12:53:54.268Z",
-   "action": "probe-jobs",
-   "target": "Project-files/38347374517",
-   "outcome": 200,
-   "ms": 324
-  },
-  {
-   "ts": "2026-11-02T12:53:54.584Z",
-   "action": "probe-jobs",
-   "target": "Project-files/38347372731",
-   "outcome": 200,
-   "ms": 316
-  },
-  {
-   "ts": "2026-11-02T12:53:54.935Z",
-   "action": "probe-jobs",
-   "target": "Project-files/38341525111",
-   "outcome": 200,
-   "ms": 348
-  },
-  {
-   "ts": "2026-11-02T12:53:55.327Z",
-   "action": "probe-jobs",
-   "target": "Project-files/38341523360",
    "outcome": 200,
    "ms": 392
   },
   {
-   "ts": "2026-11-02T12:53:55.722Z",
+   "ts": "2026-11-17T13:53:03.091Z",
    "action": "probe-jobs",
-   "target": "Project-files/38335786237",
-   "outcome": 200,
-   "ms": 395
-  },
-  {
-   "ts": "2026-11-02T12:53:56.030Z",
-   "action": "probe-jobs",
-   "target": "Project-files/38335784557",
-   "outcome": 200,
-   "ms": 308
-  },
-  {
-   "ts": "2026-11-02T12:53:56.802Z",
-   "action": "list-runs",
-   "target": "Adsmarket",
-   "outcome": 200,
-   "ms": 772
-  },
-  {
-   "ts": "2026-11-02T12:53:57.073Z",
-   "action": "probe-jobs",
-   "target": "Adsmarket/39372466334",
-   "outcome": 200,
-   "ms": 266
-  },
-  {
-   "ts": "2026-11-02T12:53:57.472Z",
-   "action": "probe-jobs",
-   "target": "Adsmarket/39242691600",
-   "outcome": 200,
-   "ms": 399
-  },
-  {
-   "ts": "2026-11-02T12:53:57.795Z",
-   "action": "probe-jobs",
-   "target": "Adsmarket/39192473143",
-   "outcome": 200,
-   "ms": 322
-  },
-  {
-   "ts": "2026-11-02T12:53:58.100Z",
-   "action": "probe-jobs",
-   "target": "Adsmarket/38341553359",
-   "outcome": 200,
-   "ms": 305
-  },
-  {
-   "ts": "2026-11-02T12:53:58.396Z",
-   "action": "probe-jobs",
-   "target": "Adsmarket/38306181613",
-   "outcome": 200,
-   "ms": 296
-  },
-  {
-   "ts": "2026-11-02T12:53:58.724Z",
-   "action": "probe-jobs",
-   "target": "Adsmarket/38303222493",
+   "target": "anchor-baseline/38306205323",
    "outcome": 200,
    "ms": 328
   },
   {
-   "ts": "2026-11-02T12:53:59.538Z",
-   "action": "list-runs",
-   "target": "Defi",
-   "outcome": 200,
-   "ms": 813
-  },
-  {
-   "ts": "2026-11-02T12:53:59.917Z",
+   "ts": "2026-11-17T13:53:03.482Z",
    "action": "probe-jobs",
-   "target": "Defi/39099904733",
-   "outcome": 200,
-   "ms": 372
-  },
-  {
-   "ts": "2026-11-02T12:54:00.258Z",
-   "action": "probe-jobs",
-   "target": "Defi/38341560742",
-   "outcome": 200,
-   "ms": 341
-  },
-  {
-   "ts": "2026-11-02T12:54:00.624Z",
-   "action": "probe-jobs",
-   "target": "Defi/38306194296",
-   "outcome": 200,
-   "ms": 366
-  },
-  {
-   "ts": "2026-11-02T12:54:00.996Z",
-   "action": "probe-jobs",
-   "target": "Defi/38303239026",
-   "outcome": 200,
-   "ms": 372
-  },
-  {
-   "ts": "2026-11-02T12:54:01.482Z",
-   "action": "probe-jobs",
-   "target": "Defi/37459125652",
-   "outcome": 200,
-   "ms": 485
-  },
-  {
-   "ts": "2026-11-02T12:54:01.964Z",
-   "action": "probe-jobs",
-   "target": "Defi/37459125554",
-   "outcome": 200,
-   "ms": 481
-  },
-  {
-   "ts": "2026-11-02T12:54:02.795Z",
-   "action": "list-runs",
-   "target": "saos-dex",
-   "outcome": 200,
-   "ms": 830
-  },
-  {
-   "ts": "2026-11-02T12:54:03.064Z",
-   "action": "probe-jobs",
-   "target": "saos-dex/41448140905",
-   "outcome": 200,
-   "ms": 265
-  },
-  {
-   "ts": "2026-11-02T12:54:03.311Z",
-   "action": "probe-jobs",
-   "target": "saos-dex/41446214841",
-   "outcome": 200,
-   "ms": 246
-  },
-  {
-   "ts": "2026-11-02T12:54:03.549Z",
-   "action": "probe-jobs",
-   "target": "saos-dex/41444243016",
-   "outcome": 200,
-   "ms": 237
-  },
-  {
-   "ts": "2026-11-02T12:54:03.840Z",
-   "action": "probe-jobs",
-   "target": "saos-dex/41442884772",
-   "outcome": 200,
-   "ms": 290
-  },
-  {
-   "ts": "2026-11-02T12:54:04.629Z",
-   "action": "list-runs",
-   "target": "saos-jummper",
-   "outcome": 200,
-   "ms": 788
-  },
-  {
-   "ts": "2026-11-02T12:54:05.084Z",
-   "action": "probe-jobs",
-   "target": "saos-jummper/38341530266",
-   "outcome": 200,
-   "ms": 450
-  },
-  {
-   "ts": "2026-11-02T12:54:05.531Z",
-   "action": "probe-jobs",
-   "target": "saos-jummper/38306178410",
-   "outcome": 200,
-   "ms": 447
-  },
-  {
-   "ts": "2026-11-02T12:54:05.964Z",
-   "action": "probe-jobs",
-   "target": "saos-jummper/38303218572",
-   "outcome": 200,
-   "ms": 432
-  },
-  {
-   "ts": "2026-11-02T12:54:06.418Z",
-   "action": "probe-jobs",
-   "target": "saos-jummper/37456012378",
-   "outcome": 200,
-   "ms": 453
-  },
-  {
-   "ts": "2026-11-02T12:54:06.867Z",
-   "action": "probe-jobs",
-   "target": "saos-jummper/37456012229",
-   "outcome": 200,
-   "ms": 449
-  },
-  {
-   "ts": "2026-11-02T12:54:07.313Z",
-   "action": "probe-jobs",
-   "target": "saos-jummper/37451357288",
-   "outcome": 200,
-   "ms": 445
-  },
-  {
-   "ts": "2026-11-02T12:54:08.173Z",
-   "action": "list-runs",
-   "target": "saos-control-center",
-   "outcome": 200,
-   "ms": 860
-  },
-  {
-   "ts": "2026-11-02T12:54:08.615Z",
-   "action": "probe-jobs",
-   "target": "saos-control-center/39395547987",
-   "outcome": 200,
-   "ms": 436
-  },
-  {
-   "ts": "2026-11-02T12:54:09.076Z",
-   "action": "probe-jobs",
-   "target": "saos-control-center/39388313505",
-   "outcome": 200,
-   "ms": 461
-  },
-  {
-   "ts": "2026-11-02T12:54:09.527Z",
-   "action": "probe-jobs",
-   "target": "saos-control-center/38341532816",
-   "outcome": 200,
-   "ms": 451
-  },
-  {
-   "ts": "2026-11-02T12:54:09.918Z",
-   "action": "probe-jobs",
-   "target": "saos-control-center/38306212008",
+   "target": "anchor-baseline/38303255576",
    "outcome": 200,
    "ms": 391
   },
   {
-   "ts": "2026-11-02T12:54:10.373Z",
+   "ts": "2026-11-17T13:53:03.884Z",
    "action": "probe-jobs",
-   "target": "saos-control-center/38303259491",
+   "target": "anchor-baseline/38303252344",
+   "outcome": 200,
+   "ms": 402
+  },
+  {
+   "ts": "2026-11-17T13:53:04.583Z",
+   "action": "list-runs",
+   "target": "Saosmartwallet",
+   "outcome": 200,
+   "ms": 698
+  },
+  {
+   "ts": "2026-11-17T13:53:04.890Z",
+   "action": "probe-jobs",
+   "target": "Saosmartwallet/40513931414",
+   "outcome": 200,
+   "ms": 304
+  },
+  {
+   "ts": "2026-11-17T13:53:05.224Z",
+   "action": "probe-jobs",
+   "target": "Saosmartwallet/40509395023",
+   "outcome": 200,
+   "ms": 333
+  },
+  {
+   "ts": "2026-11-17T13:53:05.988Z",
+   "action": "list-runs",
+   "target": "Sdk",
+   "outcome": 200,
+   "ms": 764
+  },
+  {
+   "ts": "2026-11-17T13:53:06.464Z",
+   "action": "probe-jobs",
+   "target": "Sdk/38341544478",
+   "outcome": 200,
+   "ms": 472
+  },
+  {
+   "ts": "2026-11-17T13:53:06.812Z",
+   "action": "probe-jobs",
+   "target": "Sdk/38306187977",
+   "outcome": 200,
+   "ms": 348
+  },
+  {
+   "ts": "2026-11-17T13:53:07.235Z",
+   "action": "probe-jobs",
+   "target": "Sdk/38303229734",
+   "outcome": 200,
+   "ms": 423
+  },
+  {
+   "ts": "2026-11-17T13:53:07.769Z",
+   "action": "probe-jobs",
+   "target": "Sdk/37456218928",
+   "outcome": 200,
+   "ms": 534
+  },
+  {
+   "ts": "2026-11-17T13:53:08.336Z",
+   "action": "probe-jobs",
+   "target": "Sdk/37456218866",
+   "outcome": 200,
+   "ms": 567
+  },
+  {
+   "ts": "2026-11-17T13:53:08.817Z",
+   "action": "probe-jobs",
+   "target": "Sdk/37444292830",
+   "outcome": 200,
+   "ms": 480
+  },
+  {
+   "ts": "2026-11-17T13:53:09.565Z",
+   "action": "list-runs",
+   "target": "Project-files",
+   "outcome": 200,
+   "ms": 748
+  },
+  {
+   "ts": "2026-11-17T13:53:10.049Z",
+   "action": "probe-jobs",
+   "target": "Project-files/38347374517",
+   "outcome": 200,
+   "ms": 481
+  },
+  {
+   "ts": "2026-11-17T13:53:10.452Z",
+   "action": "probe-jobs",
+   "target": "Project-files/38347372731",
+   "outcome": 200,
+   "ms": 402
+  },
+  {
+   "ts": "2026-11-17T13:53:11.343Z",
+   "action": "probe-jobs",
+   "target": "Project-files/38341525111",
+   "outcome": 200,
+   "ms": 891
+  },
+  {
+   "ts": "2026-11-17T13:53:11.723Z",
+   "action": "probe-jobs",
+   "target": "Project-files/38341523360",
+   "outcome": 200,
+   "ms": 380
+  },
+  {
+   "ts": "2026-11-17T13:53:12.156Z",
+   "action": "probe-jobs",
+   "target": "Project-files/38335786237",
+   "outcome": 200,
+   "ms": 432
+  },
+  {
+   "ts": "2026-11-17T13:53:12.538Z",
+   "action": "probe-jobs",
+   "target": "Project-files/38335784557",
+   "outcome": 200,
+   "ms": 381
+  },
+  {
+   "ts": "2026-11-17T13:53:13.557Z",
+   "action": "list-runs",
+   "target": "Adsmarket",
+   "outcome": 200,
+   "ms": 1018
+  },
+  {
+   "ts": "2026-11-17T13:53:13.879Z",
+   "action": "probe-jobs",
+   "target": "Adsmarket/39372466334",
+   "outcome": 200,
+   "ms": 318
+  },
+  {
+   "ts": "2026-11-17T13:53:14.292Z",
+   "action": "probe-jobs",
+   "target": "Adsmarket/39242691600",
+   "outcome": 200,
+   "ms": 412
+  },
+  {
+   "ts": "2026-11-17T13:53:14.636Z",
+   "action": "probe-jobs",
+   "target": "Adsmarket/39192473143",
+   "outcome": 200,
+   "ms": 344
+  },
+  {
+   "ts": "2026-11-17T13:53:14.978Z",
+   "action": "probe-jobs",
+   "target": "Adsmarket/38341553359",
+   "outcome": 200,
+   "ms": 342
+  },
+  {
+   "ts": "2026-11-17T13:53:16.077Z",
+   "action": "probe-jobs",
+   "target": "Adsmarket/38306181613",
+   "outcome": 200,
+   "ms": 1098
+  },
+  {
+   "ts": "2026-11-17T13:53:16.469Z",
+   "action": "probe-jobs",
+   "target": "Adsmarket/38303222493",
+   "outcome": 200,
+   "ms": 392
+  },
+  {
+   "ts": "2026-11-17T13:53:17.499Z",
+   "action": "list-runs",
+   "target": "Defi",
+   "outcome": 200,
+   "ms": 1030
+  },
+  {
+   "ts": "2026-11-17T13:53:17.851Z",
+   "action": "probe-jobs",
+   "target": "Defi/39099904733",
+   "outcome": 200,
+   "ms": 348
+  },
+  {
+   "ts": "2026-11-17T13:53:18.183Z",
+   "action": "probe-jobs",
+   "target": "Defi/38341560742",
+   "outcome": 200,
+   "ms": 331
+  },
+  {
+   "ts": "2026-11-17T13:53:18.509Z",
+   "action": "probe-jobs",
+   "target": "Defi/38306194296",
+   "outcome": 200,
+   "ms": 327
+  },
+  {
+   "ts": "2026-11-17T13:53:18.955Z",
+   "action": "probe-jobs",
+   "target": "Defi/38303239026",
+   "outcome": 200,
+   "ms": 444
+  },
+  {
+   "ts": "2026-11-17T13:53:19.351Z",
+   "action": "probe-jobs",
+   "target": "Defi/37459125652",
+   "outcome": 200,
+   "ms": 396
+  },
+  {
+   "ts": "2026-11-17T13:53:19.676Z",
+   "action": "probe-jobs",
+   "target": "Defi/37459125554",
+   "outcome": 200,
+   "ms": 325
+  },
+  {
+   "ts": "2026-11-17T13:53:20.413Z",
+   "action": "list-runs",
+   "target": "saos-dex",
+   "outcome": 200,
+   "ms": 736
+  },
+  {
+   "ts": "2026-11-17T13:53:21.265Z",
+   "action": "list-runs",
+   "target": "saos-jummper",
+   "outcome": 200,
+   "ms": 847
+  },
+  {
+   "ts": "2026-11-17T13:53:21.702Z",
+   "action": "probe-jobs",
+   "target": "saos-jummper/38341530266",
+   "outcome": 200,
+   "ms": 433
+  },
+  {
+   "ts": "2026-11-17T13:53:22.148Z",
+   "action": "probe-jobs",
+   "target": "saos-jummper/38306178410",
+   "outcome": 200,
+   "ms": 445
+  },
+  {
+   "ts": "2026-11-17T13:53:22.592Z",
+   "action": "probe-jobs",
+   "target": "saos-jummper/38303218572",
+   "outcome": 200,
+   "ms": 443
+  },
+  {
+   "ts": "2026-11-17T13:53:23.000Z",
+   "action": "probe-jobs",
+   "target": "saos-jummper/37456012378",
+   "outcome": 200,
+   "ms": 407
+  },
+  {
+   "ts": "2026-11-17T13:53:23.454Z",
+   "action": "probe-jobs",
+   "target": "saos-jummper/37456012229",
+   "outcome": 200,
+   "ms": 454
+  },
+  {
+   "ts": "2026-11-17T13:53:23.910Z",
+   "action": "probe-jobs",
+   "target": "saos-jummper/37451357288",
    "outcome": 200,
    "ms": 455
   },
   {
-   "ts": "2026-11-02T12:54:10.840Z",
+   "ts": "2026-11-17T13:53:24.571Z",
+   "action": "list-runs",
+   "target": "saos-control-center",
+   "outcome": 200,
+   "ms": 662
+  },
+  {
+   "ts": "2026-11-17T13:53:25.122Z",
+   "action": "probe-jobs",
+   "target": "saos-control-center/39395547987",
+   "outcome": 200,
+   "ms": 547
+  },
+  {
+   "ts": "2026-11-17T13:53:25.423Z",
+   "action": "probe-jobs",
+   "target": "saos-control-center/39388313505",
+   "outcome": 200,
+   "ms": 301
+  },
+  {
+   "ts": "2026-11-17T13:53:25.816Z",
+   "action": "probe-jobs",
+   "target": "saos-control-center/38341532816",
+   "outcome": 200,
+   "ms": 393
+  },
+  {
+   "ts": "2026-11-17T13:53:26.281Z",
+   "action": "probe-jobs",
+   "target": "saos-control-center/38306212008",
+   "outcome": 200,
+   "ms": 464
+  },
+  {
+   "ts": "2026-11-17T13:53:26.659Z",
+   "action": "probe-jobs",
+   "target": "saos-control-center/38303259491",
+   "outcome": 200,
+   "ms": 378
+  },
+  {
+   "ts": "2026-11-17T13:53:27.084Z",
    "action": "probe-jobs",
    "target": "saos-control-center/38168255022",
    "outcome": 200,
-   "ms": 466
+   "ms": 425
   },
   {
-   "ts": "2026-11-02T12:54:11.597Z",
+   "ts": "2026-11-17T13:53:28.043Z",
    "action": "list-runs",
    "target": "saos-sovereign-foundry",
    "outcome": 200,
-   "ms": 757
+   "ms": 959
   },
   {
-   "ts": "2026-11-02T12:54:11.958Z",
+   "ts": "2026-11-17T13:53:29.043Z",
+   "action": "probe-jobs",
+   "target": "saos-sovereign-foundry/43977080457",
+   "outcome": 200,
+   "ms": 994
+  },
+  {
+   "ts": "2026-11-17T13:53:29.412Z",
    "action": "probe-jobs",
    "target": "saos-sovereign-foundry/39370999551",
    "outcome": 200,
-   "ms": 356
+   "ms": 370
   },
   {
-   "ts": "2026-11-02T12:54:12.434Z",
+   "ts": "2026-11-17T13:53:29.885Z",
    "action": "probe-jobs",
    "target": "saos-sovereign-foundry/38341539837",
    "outcome": 200,
-   "ms": 476
+   "ms": 470
   },
   {
-   "ts": "2026-11-02T12:54:12.842Z",
+   "ts": "2026-11-17T13:53:30.333Z",
    "action": "probe-jobs",
    "target": "saos-sovereign-foundry/38306201374",
    "outcome": 200,
-   "ms": 408
+   "ms": 448
   },
   {
-   "ts": "2026-11-02T12:54:13.283Z",
+   "ts": "2026-11-17T13:53:30.895Z",
    "action": "probe-jobs",
    "target": "saos-sovereign-foundry/38303248095",
    "outcome": 200,
-   "ms": 441
+   "ms": 562
   },
   {
-   "ts": "2026-11-02T12:54:13.740Z",
+   "ts": "2026-11-17T13:53:31.336Z",
    "action": "probe-jobs",
    "target": "saos-sovereign-foundry/37554661122",
    "outcome": 200,
-   "ms": 456
-  },
-  {
-   "ts": "2026-11-02T12:54:14.157Z",
-   "action": "probe-jobs",
-   "target": "saos-sovereign-foundry/37554661062",
-   "outcome": 200,
-   "ms": 417
+   "ms": 440
   }
  ],
- "verdict": "CI-HANDS REACHED 16/16 · lanes 34/66 green (52%) · 4 active-red · 0 startup-failures"
+ "verdict": "CI-HANDS REACHED 16/16 · lanes 48/76 green (63%) · 3 active-red · 0 startup-failures"
 }
