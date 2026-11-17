@@ -1,33 +1,34 @@
 {
   "schema": "saos/grid-truth/4-aggregate",
-  "generatedAt": "2026-11-17T06:10:00.277Z",
+  "generatedAt": "2026-11-17T10:49:25.478Z",
   "by": "grid-doctor v2.3-aggregate",
   "source": "live chain RPC (api.steemit.com, api.hive.blog, blurt-rpc.saboin.com) — zero self-reports; aggregate-only public book (exposure audit P0)",
   "kRates": {
     "steem": {
-      "k": 0.0006217229404898507,
-      "vestsPerSP": 1608.4334916323141,
-      "at": "2026-11-17T06:09:56.954Z"
+      "k": 0.000001,
+      "vestsPerSP": 1000000,
+      "at": "2026-11-17T10:47:37.669Z",
+      "fallback": true
     },
     "hive": {
-      "k": 0.000623984955546293,
-      "vestsPerSP": 1602.6027408377329,
-      "at": "2026-11-17T06:09:59.485Z"
+      "k": 0.0006239948318057415,
+      "vestsPerSP": 1602.5773756910128,
+      "at": "2026-11-17T10:49:24.989Z"
     },
     "blurt": {
       "k": 0.000001,
       "vestsPerSP": 1000000,
-      "at": "2026-11-17T06:10:00.137Z",
+      "at": "2026-11-17T10:49:25.408Z",
       "fallback": true
     }
   },
-  "driftVs": "2026-11-17T04:39:35.894Z",
+  "driftVs": "2026-11-17T06:10:00.277Z",
   "totals": {
     "steem": {
-      "effective_power": 106.611,
+      "effective_power": 0,
       "liquid": 0,
       "locked_in_orders": 0,
-      "accounts_alive": 4
+      "accounts_alive": 22
     },
     "hive": {
       "effective_power": 32.526,
@@ -46,7 +47,7 @@
     "steem": {
       "rpc": "https://api.steemit.com",
       "accounts_audited": 22,
-      "accounts_alive": 4
+      "accounts_alive": 22
     },
     "hive": {
       "rpc": "https://api.hive.blog",
@@ -60,11 +61,12 @@
     }
   },
   "alertKinds": {
-    "VP-EMPTY": 3,
-    "SP-UNDERFLOOR": 1,
-    "TREASURY-UNDERFLOOR": 1,
-    "ACCOUNT-MISSING": 20,
+    "steem": 1,
+    "RPC-DEAD": 22,
+    "ACCOUNT-MISSING": 2,
+    "VP-EMPTY": 2,
     "blurt": 1,
-    "PHANTOM-CLAIM": 3
+    "PHANTOM-CLAIM": 3,
+    "DRIFT-POWER": 1
   }
 }
