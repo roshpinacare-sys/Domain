@@ -54,7 +54,7 @@ concurrency:
 jobs:
   scan:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 30 # heal 2026-11-18: steem full-history leg measured cancelled at exactly 10 min twice (runs 44275999215, 44282130254) — the scan JOB timeout was the killer; receipts timeout already raised
     strategy:
       fail-fast: false
       matrix:
