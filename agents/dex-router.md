@@ -1,6 +1,6 @@
 # dex-router — SWAP-NET (R39, CR-0069)
 
-At: 2026-11-18T03:36:51.282Z · Verdict: **PARTIAL** · mode: KEYLESS-READ (the router plans; owner-gated desks sign)
+At: 2026-11-18T03:53:04.923Z · Verdict: **PARTIAL** · mode: KEYLESS-READ (the router plans; owner-gated desks sign)
 
 Venues alive: hive-internal, he-pools, saos-mirror · Routes: 12 (LIVE-KEYED: R1,R2) · Arb candidates: none · Peg halts: none
 
@@ -12,9 +12,9 @@ Venues alive: hive-internal, he-pools, saos-mirror · Routes: 12 (LIVE-KEYED: R1
 | R4 HIVE-INTERNAL | HIVE→HBD | GATED-KEYS | 1.000 HIVE → 0.0386 HBD | HIVE active key material + inventory |
 | R5 HIVE-ENGINE (SWAP.HIVE→SWAP.BTC) | HIVE→BTC | GATED-CAPITAL | 8971.2 SWAP.HIVE (1% pool) → 0.005301 SWAP.BTC | HIVE keys + HIVE inventory (0.034 HIVE dust today — R38 measured) |
 | R6 HIVE-ENGINE | SWAP.HIVE→SWAP.LTC | GATED-CAPITAL | — | HIVE keys + SWAP.HIVE inventory |
-| R7 CEX (MEXC/Binance native deposit → sell) | STEEM→USDT | C-GATE-OPERATOR | 1.000 STEEM → 0.042689 USDT | operator MEXC/Binance account + API keys (tier-C operator lock, keys never in repos) |
-| R8 CEX (HTX native deposit → sell) | SBD→USDT | C-GATE-OPERATOR | 1.000 SBD → 0.445777 USDT | operator HTX account + API keys |
-| R9 CEX → native withdraw → internal market | BTC/USDT→STEEM | C-GATE-OPERATOR | 100.000 USDT → 2341.372044 STEEM | operator CEX keys + withdrawal whitelist (deposit doors already live in dex/watch.json) |
+| R7 CEX (MEXC/Binance native deposit → sell) | STEEM→USDT | C-GATE-OPERATOR | 1.000 STEEM → 0.042679 USDT | operator MEXC/Binance account + API keys (tier-C operator lock, keys never in repos) |
+| R8 CEX (HTX native deposit → sell) | SBD→USDT | C-GATE-OPERATOR | 1.000 SBD → 0.445577 USDT | operator HTX account + API keys |
+| R9 CEX → native withdraw → internal market | BTC/USDT→STEEM | C-GATE-OPERATOR | 100.000 USDT → 2341.920375 STEEM | operator CEX keys + withdrawal whitelist (deposit doors already live in dex/watch.json) |
 | R10 none | BLURT→BTC | NO-RAIL | — | a blurt book coming alive (engine/pool/CEX) would be measured by market-grid before this route opens |
 | R11 SAOS-AMM (SAOS→USDS→WSTEEM) | SAOS→WSTEEM | INTERNAL-SIM | 0.994 SAOS (1% pool) → 3.30558 WSTEEM | exit corridor WSTEEM→STEEM runs on the engine rail (armed-needs-sovereign-identity, dex/agent.json); then R7 |
 | R12 TRON-RAIL | WTRX→TRX→USDT | GATED-KEYS | — | sovereign TRON identity (relay identities.tron = null; custody 2.0 TRX, peg-outbox threshold 1.05 TRX) |
