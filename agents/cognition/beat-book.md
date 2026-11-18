@@ -1,4 +1,4 @@
-# COGNITION-BEAT · 2026-11-17T23:07:48.643Z
+# COGNITION-BEAT · 2026-11-18T03:04:24.492Z
 
 self-model regenerated from live measurements (runs API + chain RPC + grid-truth + STASIS + directives chain verify: {"ok":true,"entries":7,"breakAt":null,"reason":null})
 
@@ -6,5 +6,5 @@ self-model regenerated from live measurements (runs API + chain RPC + grid-truth
 - contradictions open: C-002(grid)
 - haltCoverage: ORGANISM_ONLY (honest — money-family-live + external key-holders unreachable)
 - STASIS: active=false mode=staged allow=[grid,claims,dex-batch-settle,powerup,delegation,connect,general,dex-core,arb-mesh,dex-activation]
-- workflows seen (24h): cognition-beat, agent9-truth-watchdog, arb-mesh, office-worldbeat, watchdog, autonomy-guardian, moment-watch, dex-grid, dex-watchdog, grid-doctor, fleet-heartbeat, weave-anchor-lines, stale-watchdog, tick-keeper, dex-core, bidi-guardian, pages-deploy, identity-guard, exposure-gate, site-link-audit, grid-sentinel, dex-mirror, agent9-fleet-truth, dex-beat, tri-bridge, office-pulse, pages-quality-gate, book-audit
+- workflows seen (24h): cognition-beat, cloud-pulse, office-worldbeat, grid-sentinel, network-census, press-bake, agent9-fleet-truth, pages-quality-gate, sovereign-decider-twin, dex-grid, office-pulse, stale-watchdog, sovereign-tick-cron, fleet-census-cron, earn-audit-cron, dex-core, arb-mesh, moment-watch, dex-mirror, dex-beat, swallow-watch, fleet-heartbeat, estate-scrub, published-ledger, grid-doctor, econ-engine
 
