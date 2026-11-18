@@ -1,4 +1,4 @@
-# דופק-הצי (fleet-heartbeat) — 2026-11-18T09:55:13.075Z
+# דופק-הצי (fleet-heartbeat) — 2026-11-18T09:56:05.731Z
 
 מדידת-מנועים של כל-הריפואים: מה פועם, מה שקט, מה הפלטפורמה נטרלה, מה נרפא בריצה זו.
 
@@ -24,7 +24,7 @@
 - Adsmarket — QUIET · שקט 589.8 שעות
 - anchor-baseline — QUIET · שקט 593.9 שעות
 - awesome-x402 — NO-WORKFLOWS
-- Defi — QUIET · שקט 676.9 שעות
+- Defi — QUIET · שקט 677 שעות
 - estate-agent-9 — NO-WORKFLOWS
 - negen — NO-WORKFLOWS
 - ops-control — NO-WORKFLOWS
