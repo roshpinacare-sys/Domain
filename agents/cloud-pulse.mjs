@@ -39,7 +39,7 @@ import { readFileSync, existsSync } from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
 
-const STEEM_RPC = "https://api.steemit.com";
+const STEEM_RPCS = (process.env.STEEM_RPCS || "https://api.justyy.com,https://api.steemit.com,https://steemapi.boylikegirl.club,https://api.steem.buzz").split(",").map((s) => s.trim()).filter(Boolean); // §68: רוטציית-צמתים — 403/5xx בצומת-אחד כבר לא מפיל את הפעימה
 const POSTER = "owner"; // קול הרשת היומי — אותו חשבון שהדופק מפרסם ממנו
 const TAGS = ["saos", "network", "truth"];
 const STEEM_JS_DIR = process.env.STEEM_JS_DIR || "/tmp/steemjs";
@@ -56,22 +56,27 @@ function log(msg) { console.log(`[cloud-pulse] ${msg}`); }
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function rpc(method, params, retries = 3) {
+  let lastErr = null;
   for (let a = 1; a <= retries; a++) {
-    try {
-      const res = await fetch(STEEM_RPC, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
-      });
-      if (!res.ok) throw new Error(`http-${res.status}`);
-      const j = await res.json();
-      if (j.error) throw new Error(String(j.error.message || "rpc-error").slice(0, 120));
-      return j.result;
-    } catch (e) {
-      if (a === retries) throw e;
-      await sleep(1500 * a);
+    for (const node of STEEM_RPCS) { // §68: רוטציית-צמתים בתוך כל ניסיון
+      try {
+        const res = await fetch(node, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
+        });
+        if (!res.ok) throw new Error(`http-${res.status}`);
+        const j = await res.json();
+        if (j.error) throw new Error(String(j.error.message || "rpc-error").slice(0, 120));
+        return j.result;
+      } catch (e) {
+        lastErr = e;
+        await sleep(400);
+      }
     }
+    if (a < retries) await sleep(1500 * a);
   }
+  throw lastErr;
 }
 
 // תאריך UTC של היום + פרמאלינק דטרמיניסטי לאותו יום
