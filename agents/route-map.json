@@ -1,6 +1,6 @@
 {
  "schema": "SAOS-ROUTE-MAP/1",
- "at": 1794958444478,
+ "at": 1794965200797,
  "identity": "הציר-הריבוני SAOS↔USDS · נכסי-חוץ הם דלתות, לא-זהות",
  "graph": {
   "nodes": [
@@ -631,6 +631,61 @@
     {
      "path": [
       {
+       "kind": "BOOK",
+       "key": "USDS/WSBD@book-sell",
+       "from": "USDS",
+       "to": "WSBD",
+       "venue": "book:USDS/WSBD",
+       "realness": "ONCHAIN_REAL"
+      },
+      {
+       "kind": "DOOR",
+       "key": "wrap-door:SBD⇄WSBD|WSBD->SBD",
+       "from": "WSBD",
+       "to": "SBD",
+       "venue": "wrap-door:SBD⇄WSBD",
+       "realness": "DOOR_MEASURED",
+       "note": "R42 THE-SBD-RAIL · wrap 1:1 · עוגן-backing מדוד"
+      },
+      {
+       "kind": "EXTBOOK",
+       "key": "STEEM/SBD@steem-internal|SBD->STEEM",
+       "from": "SBD",
+       "to": "STEEM",
+       "venue": "steem-internal",
+       "realness": "ONCHAIN_REAL"
+      }
+     ],
+     "amountIn": 100,
+     "amountOut": 2244.021,
+     "hops": 3,
+     "realness": "DOOR_MEASURED",
+     "effPrice": 22.44021,
+     "legs": [
+      {
+       "kind": "BOOK",
+       "venue": "book:USDS/WSBD",
+       "from": "USDS",
+       "to": "WSBD"
+      },
+      {
+       "kind": "DOOR",
+       "venue": "wrap-door:SBD⇄WSBD",
+       "from": "WSBD",
+       "to": "SBD"
+      },
+      {
+       "kind": "EXTBOOK",
+       "venue": "steem-internal",
+       "from": "SBD",
+       "to": "STEEM"
+      }
+     ],
+     "verdict": "UNREFERENCED"
+    },
+    {
+     "path": [
+      {
        "kind": "POOL",
        "key": "pool:PHIVE/USDS|USDS->PHIVE",
        "from": "USDS",
@@ -692,61 +747,6 @@
        "kind": "DOOR",
        "venue": "wrap-door:STEEM⇄WSTEEM",
        "from": "WSTEEM",
-       "to": "STEEM"
-      }
-     ],
-     "verdict": "UNREFERENCED"
-    },
-    {
-     "path": [
-      {
-       "kind": "BOOK",
-       "key": "USDS/WSBD@book-sell",
-       "from": "USDS",
-       "to": "WSBD",
-       "venue": "book:USDS/WSBD",
-       "realness": "ONCHAIN_REAL"
-      },
-      {
-       "kind": "DOOR",
-       "key": "wrap-door:SBD⇄WSBD|WSBD->SBD",
-       "from": "WSBD",
-       "to": "SBD",
-       "venue": "wrap-door:SBD⇄WSBD",
-       "realness": "DOOR_MEASURED",
-       "note": "R42 THE-SBD-RAIL · wrap 1:1 · עוגן-backing מדוד"
-      },
-      {
-       "kind": "EXTBOOK",
-       "key": "STEEM/SBD@steem-internal|SBD->STEEM",
-       "from": "SBD",
-       "to": "STEEM",
-       "venue": "steem-internal",
-       "realness": "ONCHAIN_REAL"
-      }
-     ],
-     "amountIn": 100,
-     "amountOut": 1239.409,
-     "hops": 3,
-     "realness": "DOOR_MEASURED",
-     "effPrice": 12.39409,
-     "legs": [
-      {
-       "kind": "BOOK",
-       "venue": "book:USDS/WSBD",
-       "from": "USDS",
-       "to": "WSBD"
-      },
-      {
-       "kind": "DOOR",
-       "venue": "wrap-door:SBD⇄WSBD",
-       "from": "WSBD",
-       "to": "SBD"
-      },
-      {
-       "kind": "EXTBOOK",
-       "venue": "steem-internal",
-       "from": "SBD",
        "to": "STEEM"
       }
      ],
@@ -920,7 +920,7 @@
  "honesty": "כל-קצה ממקור-מדוד · PLAN-ONLY · realness=הרגל-החלשה · נתיב-חורג-מ-REF±25% מסומן-ORACLE-ALERT · אין-הצהרה-שלא-נמדדה",
  "engineSource": {
   "kind": "REPO_SNAPSHOT",
-  "savedAt": "2026-11-17T22:55:53.592Z",
+  "savedAt": "2026-11-18T00:56:13.570Z",
   "url": null
  }
 }
