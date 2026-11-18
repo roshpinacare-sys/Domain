@@ -186,7 +186,7 @@ jobs:
     needs: scan
     if: always()
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 30 # heal 2026-11-18: steem leg (full history, saos-cockpit) exceeds 10 min — measured cancelled mid-scan (run 44275999215); 15/16 legs green
     permissions:
       contents: write
     steps:
