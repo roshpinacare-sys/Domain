@@ -19,5 +19,5 @@
 
 | חברתי | חוק |
 |---|---|
-| hcsoldier5 | תגובה: SKIP-BUDGET-USED-TODAY · הצבעה: - · reblog: SKIP-BUDGET-USED-TODAY |
+| acct-h-6f3025805 | תגובה: SKIP-BUDGET-USED-TODAY · הצבעה: - · reblog: SKIP-BUDGET-USED-TODAY |
 | lsa | תגובה: SKIP-BUDGET-USED-TODAY · הצבעה: - · reblog: SKIP-BUDGET-USED-TODAY |
