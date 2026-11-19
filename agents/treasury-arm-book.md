@@ -730,3 +730,10 @@
 |---|---|---|---|---|---|
 | 2026-11-18T12:57:30.262Z | steem | fatal | Unexpected token '<', "<!DOCTYPE "... is not valid JSON | RED-FATAL |  |
 
+
+## TREASURY-ARM RUN · 2026-11-19T12:53:10.352Z · chain=steem
+
+| at | chain | op | detail | status | extra |
+|---|---|---|---|---|---|
+| 2026-11-19T12:53:10.352Z | steem | fatal | Unexpected token '<', "<!DOCTYPE "... is not valid JSON | RED-FATAL |  |
+
