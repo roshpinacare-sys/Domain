@@ -19,5 +19,5 @@
 
 | חברתי | חוק |
 |---|---|
-| hcsoldier5 | תגובה: NO-CANDIDATE · הצבעה: - · reblog: NO-CANDIDATE |
+| acct-h-6f3025805 | תגובה: NO-CANDIDATE · הצבעה: - · reblog: NO-CANDIDATE |
 | lsa | תגובה: NO-CANDIDATE · הצבעה: - · reblog: NO-CANDIDATE |
