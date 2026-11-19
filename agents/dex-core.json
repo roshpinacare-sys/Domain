@@ -1,6 +1,6 @@
 {
   "protocol": "SAOS-DEX-CORE/1",
-  "at": "2026-11-19T09:11:54.942Z",
+  "at": "2026-11-19T11:09:38.319Z",
   "agent": "dex-core v1.6.0 (R77 THE OWNER GATES)",
   "mode": "KEYLESS-ATOMIC-INTERNAL",
   "stasisHalted": false,
@@ -90,12 +90,12 @@
   "redeemBook": [],
   "feed": {
     "source": "agents/dex-router.json",
-    "routerAt": "2026-11-19T08:01:28.460Z",
+    "routerAt": "2026-11-19T09:28:36.210Z",
     "fresh": true,
-    "fairNano": 94917150,
-    "fairSource": "CEX-IMPLIED-FAIR (SBDUSDT/STEEMUSDT — lead-lag anchor, the opposing side of the local book)",
-    "hiveFairNano": 38124140,
-    "crossFairNano": "2489686324",
+    "fairNano": null,
+    "fairSource": null,
+    "hiveFairNano": 37994860,
+    "crossFairNano": null,
     "fairSource2": "LOCAL-MID-FALLBACK (CEX feed stale)",
     "verdict": "FEED-LIVE"
   },
@@ -132,9 +132,9 @@
     "observedProvenance": {
       "STEEM": null,
       "SBD": null,
-      "HIVE": "MEASURED HIVE owner @https://api.hive.blog 2026-11-19T09:11:54.942Z (class OBSERVED-UNCONTROLLED)",
-      "HBD": "MEASURED HIVE owner @https://api.hive.blog 2026-11-19T09:11:54.942Z (class OBSERVED-UNCONTROLLED)",
-      "BLURT": "MEASURED BLURT owner @https://blurt-rpc.saboin.com 2026-11-19T09:11:54.942Z (class OBSERVED-POST-KEYED)",
+      "HIVE": "MEASURED HIVE owner @https://api.hive.blog 2026-11-19T11:09:38.319Z (class OBSERVED-UNCONTROLLED)",
+      "HBD": "MEASURED HIVE owner @https://api.hive.blog 2026-11-19T11:09:38.319Z (class OBSERVED-UNCONTROLLED)",
+      "BLURT": "MEASURED BLURT owner @https://blurt-rpc.saboin.com 2026-11-19T11:09:38.319Z (class OBSERVED-POST-KEYED)",
       "SAOS": null
     },
     "wrappedReserve": {
@@ -369,8 +369,8 @@
       "via": [
         "P3"
       ],
-      "quote": "8659",
-      "quoteFor": "2773 µ STEEM (~1% first-hop depth)",
+      "quote": "7872",
+      "quoteFor": "3050 µ STEEM (~1% first-hop depth)",
       "verdict": "LIVE-INTERNAL"
     },
     {
@@ -381,8 +381,8 @@
         "P3",
         "P2"
       ],
-      "quote": "11158",
-      "quoteFor": "2773 µ STEEM (~1% first-hop depth)",
+      "quote": "10145",
+      "quoteFor": "3050 µ STEEM (~1% first-hop depth)",
       "verdict": "LIVE-INTERNAL"
     },
     {
@@ -392,8 +392,8 @@
       "via": [
         "P3"
       ],
-      "quote": "2738",
-      "quoteFor": "8767 µ SBD (~1% first-hop depth)",
+      "quote": "3012",
+      "quoteFor": "7972 µ SBD (~1% first-hop depth)",
       "verdict": "LIVE-INTERNAL"
     },
     {
@@ -403,8 +403,8 @@
       "via": [
         "P2"
       ],
-      "quote": "11297",
-      "quoteFor": "8767 µ SBD (~1% first-hop depth)",
+      "quote": "10274",
+      "quoteFor": "7972 µ SBD (~1% first-hop depth)",
       "verdict": "LIVE-INTERNAL"
     },
     {
@@ -855,7 +855,7 @@
         "P2",
         "P3"
       ],
-      "quote": "12263",
+      "quote": "14770",
       "quoteFor": "52936 µ WSBD (~1% first-hop depth)",
       "verdict": "LIVE-INTERNAL"
     },
@@ -867,6 +867,19 @@
         "P2"
       ],
       "quote": "40670",
+      "quoteFor": "52936 µ WSBD (~1% first-hop depth)",
+      "verdict": "LIVE-INTERNAL"
+    },
+    {
+      "id": "C-WSBD-WSTEEM",
+      "from": "WSBD",
+      "to": "WSTEEM",
+      "via": [
+        "P2",
+        "P3",
+        "P1"
+      ],
+      "quote": "1",
       "quoteFor": "52936 µ WSBD (~1% first-hop depth)",
       "verdict": "LIVE-INTERNAL"
     },
@@ -1315,24 +1328,8 @@
     {
       "id": "A1",
       "name": "P3 STEEM/SBD pool mid vs CEX-implied fair",
-      "legs": [
-        "P3-POOL",
-        "cex:STEEMUSDT+SBDUSDT"
-      ],
-      "poolMidNano": "3161698045",
-      "fairNano": "94917150",
-      "fairSource": "CEX-IMPLIED-FAIR (SBDUSDT/STEEMUSDT — lead-lag anchor, the opposing side of the local book)",
-      "grossBps": 323100.82,
-      "feesBps": 35,
-      "netBps": 323065.82,
-      "thresholdBps": 100,
-      "verdict": "REBALANCE-BOOKED",
-      "railOwner": "treasury (our own pool — atomic, no bridge)",
-      "executed": {
-        "amountIn": "27730",
-        "amountOut": "79522",
-        "edgeMu": "76890"
-      }
+      "verdict": "FEED-STALE",
+      "why": "the router feed is absent or stale — rebalancing stays a plan, never a guess"
     },
     {
       "id": "A-P1",
@@ -1353,11 +1350,8 @@
     {
       "id": "A2",
       "name": "P8 HIVE/STEEM cross-network bridge",
-      "crossFairNano": "2489686324",
-      "fairSource": "cross of CEX-IMPLIED-FAIR (SBDUSDT/STEEMUSDT — lead-lag anchor, the opposing side of the local book) / LOCAL-MID-FALLBACK (CEX feed stale)",
-      "verdict": "NO-CUSTODY",
-      "why": "HIVE custody is OBSERVED-UNCONTROLLED — the bridge arms when hive active key material verifies into the estate (R38 law)",
-      "railOwner": "treasury (our own pool — atomic, no bridge)"
+      "verdict": "FEED-STALE",
+      "why": "no cross fair (router anchors absent) — the bridge row waits, never guesses"
     }
   ],
   "counterGrids": {
@@ -1857,21 +1851,6 @@
   "opsThisTick": [
     {
       "seq": 2932,
-      "type": "REBALANCE",
-      "pool": "P3",
-      "sell": "STEEM",
-      "buy": "SBD",
-      "amountIn": "27730",
-      "amountOut": "79522",
-      "execPriceNano": "2867724486",
-      "fairNano": "94917150",
-      "edgeMu": "76890",
-      "feeMu": "69",
-      "grossBps": 323100.82,
-      "netBps": 323065.82
-    },
-    {
-      "seq": 2932,
       "type": "GRID-ARM",
       "pool": "P2",
       "pair": "WSBD/SBD",
@@ -1910,10 +1889,10 @@
     }
   ],
   "summary": {
-    "verdict": "EXCHANGE-CORE-LIVE-REBALANCED",
+    "verdict": "EXCHANGE-CORE-LIVE",
     "poolsLive": 3,
     "poolsPlanned": 2,
-    "routesLive": 6,
+    "routesLive": 7,
     "routesPlanned": 80,
     "meshFills": 0,
     "meshBatch": null,
