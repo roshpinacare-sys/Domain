@@ -1,26 +1,26 @@
 {
  "ok": true,
  "format": "moment-watch-v1",
- "publishedAt": "2026-11-19T17:36:33.028Z",
+ "publishedAt": "2026-11-19T18:11:13.942Z",
  "engine": "Domain/agents/moment-watch · R62 sovereign moment",
  "role": "reads the live moment every 30 minutes (market regime, our parity line vs the live internal book, fuel runway, measured anomalies) and records a deterministic directional call that is only ever scored after its horizon has passed - training as measurement, never as promise",
  "market": {
-  "steemUsd": 0.04232047,
-  "steem24h": 1.0836285842234639,
-  "sbdUsd": 0.445805,
-  "btcUsd": 63282,
-  "btc24h": -0.19700987795610686,
+  "steemUsd": 0.04218213,
+  "steem24h": 0.8939139425077051,
+  "sbdUsd": 0.445473,
+  "btcUsd": 62628,
+  "btc24h": -0.7581338672613908,
   "fearGreed": {
    "value": 10,
    "label": "Extreme Fear"
   }
  },
- "paritySbdPerSteem": 0.09493045165487152,
+ "paritySbdPerSteem": 0.09469065465247052,
  "liveBook": null,
  "regime": {
   "label": "RISK_OFF",
   "drivers": [
-   "BTC -0.2%",
+   "BTC -0.8%",
    "F&G 10"
   ],
   "thresholds": {
@@ -33,11 +33,11 @@
  },
  "runway": null,
  "grid": {
-  "verdict": "ARMED-LIVE",
+  "verdict": "ARMED-WAITING",
   "armed": true,
-  "blocker": null,
+  "blocker": "sell-side waiting for fuel: 2.182 STEEM commitable < 3 needed (next powerdown: 2026-11-22T18:25:30)",
   "externalFlowUsd": 0.312919,
-  "publishedAt": "2026-11-19T17:33:33.451Z"
+  "publishedAt": "2026-11-19T18:02:23.977Z"
  },
  "moneyPath": {
   "fuel": {
@@ -56,6 +56,11 @@
  },
  "resolvedNow": 0,
  "insights": [
+  {
+   "kind": "sbd-inventory",
+   "tone": "warn",
+   "text": "צוואר-הקנייה של הגריד: sell-side waiting for fuel: 2.182 STEEM commitable < 3 needed (next powerdown: 2026-11-22T18:25:30)"
+  },
   {
    "kind": "deposits",
    "tone": "good",
