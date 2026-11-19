@@ -1,6 +1,6 @@
 {
  "schema": "SAOS-ROUTE-MAP/1",
- "at": 1795048849029,
+ "at": 1795054688465,
  "identity": "הציר-הריבוני SAOS↔USDS · נכסי-חוץ הם דלתות, לא-זהות",
  "graph": {
   "nodes": [
@@ -74,10 +74,10 @@
       }
      ],
      "amountIn": 100,
-     "amountOut": 10721.953232,
+     "amountOut": 10721.954082,
      "hops": 3,
      "realness": "DOOR_MEASURED",
-     "effPrice": 107.219532,
+     "effPrice": 107.219541,
      "legs": [
       {
        "kind": "EXTBOOK",
@@ -162,10 +162,10 @@
       }
      ],
      "amountIn": 100,
-     "amountOut": 4.395139,
+     "amountOut": 4.298547,
      "hops": 2,
      "realness": "DOOR_MEASURED",
-     "effPrice": 0.043951,
+     "effPrice": 0.042985,
      "legs": [
       {
        "kind": "DOOR",
@@ -317,10 +317,10 @@
       }
      ],
      "amountIn": 100,
-     "amountOut": 4.395139,
+     "amountOut": 4.298547,
      "hops": 3,
      "realness": "DOOR_MEASURED",
-     "effPrice": 0.043951,
+     "effPrice": 0.042985,
      "legs": [
       {
        "kind": "EXTBOOK",
@@ -417,10 +417,10 @@
       }
      ],
      "amountIn": 100,
-     "amountOut": 247921.510771,
+     "amountOut": 253610.848008,
      "hops": 4,
      "realness": "DOOR_MEASURED",
-     "effPrice": 2479.215108,
+     "effPrice": 2536.10848,
      "legs": [
       {
        "kind": "BOOK",
@@ -432,6 +432,75 @@
        "kind": "POOL",
        "venue": "pool:USDS/WSBD",
        "from": "WSBD",
+       "to": "USDS"
+      },
+      {
+       "kind": "POOL",
+       "venue": "pool:USDS/WSTEEM",
+       "from": "USDS",
+       "to": "WSTEEM"
+      },
+      {
+       "kind": "DOOR",
+       "venue": "wrap-door:STEEM⇄WSTEEM",
+       "from": "WSTEEM",
+       "to": "STEEM"
+      }
+     ],
+     "verdict": "UNREFERENCED"
+    },
+    {
+     "path": [
+      {
+       "kind": "BOOK",
+       "key": "SAOS/USDS@book-buy",
+       "from": "USDS",
+       "to": "SAOS",
+       "venue": "book:SAOS/USDS",
+       "realness": "ONCHAIN_REAL"
+      },
+      {
+       "kind": "POOL",
+       "key": "pool:SAOS/USDS|SAOS->USDS",
+       "from": "SAOS",
+       "to": "USDS",
+       "venue": "pool:SAOS/USDS",
+       "realness": "ONCHAIN_REAL"
+      },
+      {
+       "kind": "POOL",
+       "key": "pool:USDS/WSTEEM|USDS->WSTEEM",
+       "from": "USDS",
+       "to": "WSTEEM",
+       "venue": "pool:USDS/WSTEEM",
+       "realness": "ONCHAIN_REAL"
+      },
+      {
+       "kind": "DOOR",
+       "key": "wrap-door:STEEM⇄WSTEEM|WSTEEM->STEEM",
+       "from": "WSTEEM",
+       "to": "STEEM",
+       "venue": "wrap-door:STEEM⇄WSTEEM",
+       "realness": "DOOR_MEASURED",
+       "note": "wrap_mint/wrap_burn 1:1 · אפס-עמלה · ZFB"
+      }
+     ],
+     "amountIn": 100,
+     "amountOut": 2276.439805,
+     "hops": 4,
+     "realness": "DOOR_MEASURED",
+     "effPrice": 22.764398,
+     "legs": [
+      {
+       "kind": "BOOK",
+       "venue": "book:SAOS/USDS",
+       "from": "USDS",
+       "to": "SAOS"
+      },
+      {
+       "kind": "POOL",
+       "venue": "pool:SAOS/USDS",
+       "from": "SAOS",
        "to": "USDS"
       },
       {
@@ -478,10 +547,10 @@
       }
      ],
      "amountIn": 100,
-     "amountOut": 2612.75,
+     "amountOut": 2273.465,
      "hops": 3,
      "realness": "DOOR_MEASURED",
-     "effPrice": 26.1275,
+     "effPrice": 22.73465,
      "legs": [
       {
        "kind": "BOOK",
@@ -507,22 +576,6 @@
     {
      "path": [
       {
-       "kind": "BOOK",
-       "key": "SAOS/USDS@book-buy",
-       "from": "USDS",
-       "to": "SAOS",
-       "venue": "book:SAOS/USDS",
-       "realness": "ONCHAIN_REAL"
-      },
-      {
-       "kind": "POOL",
-       "key": "pool:SAOS/USDS|SAOS->USDS",
-       "from": "SAOS",
-       "to": "USDS",
-       "venue": "pool:SAOS/USDS",
-       "realness": "ONCHAIN_REAL"
-      },
-      {
        "kind": "POOL",
        "key": "pool:USDS/WSTEEM|USDS->WSTEEM",
        "from": "USDS",
@@ -541,63 +594,10 @@
       }
      ],
      "amountIn": 100,
-     "amountOut": 2223.72157,
-     "hops": 4,
-     "realness": "DOOR_MEASURED",
-     "effPrice": 22.237216,
-     "legs": [
-      {
-       "kind": "BOOK",
-       "venue": "book:SAOS/USDS",
-       "from": "USDS",
-       "to": "SAOS"
-      },
-      {
-       "kind": "POOL",
-       "venue": "pool:SAOS/USDS",
-       "from": "SAOS",
-       "to": "USDS"
-      },
-      {
-       "kind": "POOL",
-       "venue": "pool:USDS/WSTEEM",
-       "from": "USDS",
-       "to": "WSTEEM"
-      },
-      {
-       "kind": "DOOR",
-       "venue": "wrap-door:STEEM⇄WSTEEM",
-       "from": "WSTEEM",
-       "to": "STEEM"
-      }
-     ],
-     "verdict": "UNREFERENCED"
-    },
-    {
-     "path": [
-      {
-       "kind": "POOL",
-       "key": "pool:USDS/WSTEEM|USDS->WSTEEM",
-       "from": "USDS",
-       "to": "WSTEEM",
-       "venue": "pool:USDS/WSTEEM",
-       "realness": "ONCHAIN_REAL"
-      },
-      {
-       "kind": "DOOR",
-       "key": "wrap-door:STEEM⇄WSTEEM|WSTEEM->STEEM",
-       "from": "WSTEEM",
-       "to": "STEEM",
-       "venue": "wrap-door:STEEM⇄WSTEEM",
-       "realness": "DOOR_MEASURED",
-       "note": "wrap_mint/wrap_burn 1:1 · אפס-עמלה · ZFB"
-      }
-     ],
-     "amountIn": 100,
-     "amountOut": 2216.946375,
+     "amountOut": 2269.504036,
      "hops": 2,
      "realness": "DOOR_MEASURED",
-     "effPrice": 22.169464,
+     "effPrice": 22.69504,
      "legs": [
       {
        "kind": "POOL",
@@ -651,10 +651,10 @@
       }
      ],
      "amountIn": 100,
-     "amountOut": 2207.932156,
+     "amountOut": 2260.276176,
      "hops": 4,
      "realness": "DOOR_MEASURED",
-     "effPrice": 22.079322,
+     "effPrice": 22.602762,
      "legs": [
       {
        "kind": "POOL",
@@ -720,10 +720,10 @@
       }
      ],
      "amountIn": 100,
-     "amountOut": 1363.671147,
+     "amountOut": 1396.003612,
      "hops": 4,
      "realness": "DOOR_MEASURED",
-     "effPrice": 13.636711,
+     "effPrice": 13.960036,
      "legs": [
       {
        "kind": "POOL",
@@ -823,7 +823,7 @@
      "to": "WSTEEM",
      "venue": "book:USDS/WSTEEM",
      "kind": "BOOK",
-     "rate": 0.043,
+     "rate": 0.042,
      "ref": false
     },
     {
@@ -843,7 +843,7 @@
      "ref": false
     }
    ],
-   "profitBps": 16988407852.636683,
+   "profitBps": 16593328367.691645,
    "executable": true,
    "sizeCap": null
   },
@@ -889,7 +889,7 @@
  "honesty": "כל-קצה ממקור-מדוד · PLAN-ONLY · realness=הרגל-החלשה · נתיב-חורג-מ-REF±25% מסומן-ORACLE-ALERT · אין-הצהרה-שלא-נמדדה",
  "engineSource": {
   "kind": "REPO_SNAPSHOT",
-  "savedAt": "2026-11-19T00:06:00.583Z",
+  "savedAt": "2026-11-19T01:56:11.871Z",
   "url": null
  }
 }
