@@ -24484,5 +24484,44 @@
       }
     },
     "duration_ms": 572
+  },
+  {
+    "ts": "2026-11-19T22:04:55.822Z",
+    "mode": "DRY",
+    "skip_fetch": false,
+    "fill_ledger": {
+      "script": "fill-ledger.cjs",
+      "status": 0,
+      "error": null,
+      "stdout_tail": "[fill-ledger] mode=READ-ONLY new=0 total=0 realized_sbd=-0.403790 vwap=n/a recycle=NO errors=1 in 153ms | [fill-ledger] canon: agents/fill-ledger.json (run #1181)",
+      "stderr_tail": ""
+    },
+    "suggestion": {
+      "suggested": false,
+      "reasons": []
+    },
+    "decision": {
+      "executorMode": "DRY",
+      "reason": "MODE-DRY: planning receipt only, zero signatures"
+    },
+    "executor": {
+      "script": "market-exec.cjs",
+      "status": 0,
+      "error": null,
+      "stdout_tail": "",
+      "stderr_tail": "[market-exec] FATAL Cannot read properties of null (reading 'steem')"
+    },
+    "errors": [],
+    "run_index": 571,
+    "fill_ledger_row": {
+      "run_index": 1181,
+      "new_fills": 0,
+      "realized_sbd": -0.40379,
+      "recycle": {
+        "suggested": false,
+        "reasons": []
+      }
+    },
+    "duration_ms": 477
   }
 ]
