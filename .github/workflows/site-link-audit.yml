@@ -43,6 +43,16 @@ jobs:
         run: |
           git config user.name "roshpinacare-sys"
           git config user.email "326012154+roshpinacare-sys@users.noreply.github.com"
+          # §73 (measured run 44508740085): on push triggers the checkout sits
+          # on the TRIGGER branch (e.g. saos/union-apply-*) and `git push
+          # origin main` tore with "src refspec main does not match any" ×6 —
+          # the verdict never published and the run went red on MECHANICS,
+          # not on truth. Fix: always publish from a fresh local main built
+          # on origin/main (the verdict file travels with us).
+          cp agents/site-audit.json /tmp/site-audit.verdict.json
+          git fetch origin main
+          git checkout -B main origin/main
+          cp /tmp/site-audit.verdict.json agents/site-audit.json
           git add agents/site-audit.json
           if git diff --cached --quiet; then
             echo "no verdict change"
