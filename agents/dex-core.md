@@ -1,6 +1,6 @@
 # dex-core — EXCHANGE CORE (R40, CR-0070)
 
-At: 2026-11-20T20:59:59.898Z · Verdict: **EXCHANGE-CORE-LIVE** · mode: KEYLESS-ATOMIC-INTERNAL · seq: 3126 · attestation: `5b55639ba5538341`
+At: 2026-11-20T21:15:41.645Z · Verdict: **EXCHANGE-CORE-LIVE** · mode: KEYLESS-ATOMIC-INTERNAL · seq: 3126 · attestation: `5b55639ba5538341`
 
 Feed: FEED-LIVE (router book @ 2026-11-20T20:42:17.836Z) · conservation: **OK** · custody probe: unreachable (booked custody stands)
 
