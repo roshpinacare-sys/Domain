@@ -1,0 +1,50 @@
+# evm-address-proof-88.yml — §88 פקודת-$2800-ETH (trace 1a1f9c3ad28314ad): הוכחת-שליטה-בחתימה
+# מפתח-את'יום-ראשי (EVM_ANCHOR_PK) — גזירת-הכתובת + יתרות-קריאה בלבד.
+# אפס-סוד-בפלט (רק-כתובת-ציבורית + יתרות) · אפס-טרנזקציות · fail-closed.
+name: evm-address-proof-88
+on:
+  workflow_dispatch: {}
+permissions:
+  contents: read
+concurrency:
+  group: evm-address-proof-88
+  cancel-in-progress: false
+jobs:
+  derive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      EVM_ANCHOR_PK: ${{ secrets.EVM_ANCHOR_PK }}
+    steps:
+      - name: Node 22
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      - name: Install ethers
+        run: npm install ethers@6.13.4 --prefix /tmp/ethers --omit=dev --no-audit --no-fund --loglevel=error
+      - name: Derive address + read balances (read-only, zero signatures)
+        run: |
+          set -Eeuo pipefail
+          node << 'EOS'
+          (async () => {
+            const { ethers } = require('/tmp/ethers/node_modules/ethers');
+            if (!process.env.EVM_ANCHOR_PK) { console.log(JSON.stringify({ ok: false, reason: 'KEYLESS' })); process.exit(0); }
+            const pk = process.env.EVM_ANCHOR_PK.trim();
+            const w = new ethers.Wallet(pk.startsWith('0x') ? pk : '0x' + pk);
+            const addr = w.address;
+            const out = { ok: true, derivedAddress: addr, networks: {} };
+            for (const [name, rpc] of [
+              ['mainnet', 'https://ethereum-rpc.publicnode.com'],
+              ['optimism', 'https://optimism-rpc.publicnode.com'],
+            ]) {
+              try {
+                const p = new ethers.JsonRpcProvider(rpc);
+                const [bal, nonce] = await Promise.all([p.getBalance(addr), p.getTransactionCount(addr)]);
+                out.networks[name] = { balanceEth: ethers.formatEther(bal), nonce };
+              } catch (e) { out.networks[name] = { err: String(e && e.message || e).slice(0, 80) }; }
+            }
+            out.expected = '0x01Bd2879Cd9990Cb4B25cD6DE47f378Dc5D18B37';
+            out.match = addr.toLowerCase() === String(out.expected).toLowerCase();
+            console.log('EVM-PROOF-88 ' + JSON.stringify(out));
+          })().catch(e => { console.log('EVM-PROOF-88 ' + JSON.stringify({ ok: false, err: String(e && e.message || e).slice(0, 120) })); process.exit(1); });
+          EOS
