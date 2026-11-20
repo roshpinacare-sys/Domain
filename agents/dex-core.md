@@ -1,14 +1,14 @@
 # dex-core — EXCHANGE CORE (R40, CR-0070)
 
-At: 2026-11-20T10:42:22.380Z · Verdict: **EXCHANGE-CORE-LIVE** · mode: KEYLESS-ATOMIC-INTERNAL · seq: 3040 · attestation: `ae0d2bbe5c51b0da`
+At: 2026-11-20T12:13:03.349Z · Verdict: **CONSERVATION-BROKEN** · mode: KEYLESS-ATOMIC-INTERNAL (mesh batch) · seq: 3080 · attestation: `9a4548a2bb2f105b`
 
-Feed: FEED-LIVE (router book @ 2026-11-20T09:01:29.424Z) · conservation: **OK** · custody probe: unreachable (booked custody stands)
+Feed: FEED-LIVE (router book @ 2026-11-20T10:42:28.848Z) · conservation: **OK** · custody probe: unreachable (booked custody stands)
 
 | Pool | Pair | Kind | Fee | Reserves (a/b µ) | Mid | Verdict |
 |---|---|---|---|---|---|---|
-| P1 | WSTEEM/STEEM | PEG | 2bps | 208 / 6467190 | 31092.25961538 | LIVE-INTERNAL |
-| P2 | WSBD/SBD | PEG | 2bps | 4927806 / 1499793 | 0.30435309 | LIVE-INTERNAL |
-| P3 | STEEM/SBD | VOLATILE | 25bps | 319074 / 763774 | 2.39372058 | LIVE-INTERNAL |
+| P1 | WSTEEM/STEEM | PEG | 2bps | 203 / 6545931 | 32245.96551724 | LIVE-INTERNAL |
+| P2 | WSBD/SBD | PEG | 2bps | 4844345 / 1570987 | 0.32429296 | LIVE-INTERNAL |
+| P3 | STEEM/SBD | VOLATILE | 25bps | 302518 / 806152 | 2.66480672 | LIVE-INTERNAL |
 | P4 | SAOS/WSTEEM | VOLATILE | 25bps | 0 / 0 | — | PLANNED-NO-CLAIM |
 | P5 | WHIVE/HIVE | PEG | 2bps | 0 / 0 | — | AWAITING-CUSTODY |
 | P6 | WHBD/HBD | PEG | 2bps | 0 / 0 | — | AWAITING-CUSTODY |
@@ -123,7 +123,7 @@ Observed (adjacent networks — seen, never custody): HIVE 55000µ (OBSERVED-UNC
 Custody classes: STEEM=MEASURED-KEYED · SBD=MEASURED-KEYED · HIVE=OBSERVED-UNCONTROLLED · HBD=OBSERVED-UNCONTROLLED · BLURT=OBSERVED-POST-KEYED · SAOS=PLANNED-NO-CLAIM
 Vault: minted WSTEEM 761900µ · WSBD 6314850µ · WHIVE 0µ · WHBD 0µ · WBLURT 0µ · redeem is ALWAYS honored 1:1 (burn before payout) — the real-value law
 
-Treasury P&L: fees 21373µ (LP revenue) · rebalance edges 240606µ (marked to fair at execution — the LVR defense on our own pool)
+Treasury P&L: fees 0µ (LP revenue) · rebalance edges 240606µ (marked to fair at execution — the LVR defense on our own pool)
 
-Attestation sha256(seq, custody, reserves, minted, claims) = `ae0d2bbe5c51b0da` — recomputable by any node; the cron book commit is the publication.
+Attestation sha256(seq, custody, reserves, minted, claims) = `9a4548a2bb2f105b` — recomputable by any node; the cron book commit is the publication.
 
