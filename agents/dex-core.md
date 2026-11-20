@@ -1,14 +1,14 @@
 # dex-core — EXCHANGE CORE (R40, CR-0070)
 
-At: 2026-11-20T16:15:16.861Z · Verdict: **EXCHANGE-CORE-LIVE** · mode: KEYLESS-ATOMIC-INTERNAL · seq: 3083 · attestation: `6ac196168d1ed670`
+At: 2026-11-20T17:39:26.482Z · Verdict: **EXCHANGE-CORE-LIVE-REBALANCED** · mode: KEYLESS-ATOMIC-INTERNAL · seq: 3084 · attestation: `95d1ac5240e7ab54`
 
-Feed: FEED-LIVE (router book @ 2026-11-20T15:08:58.086Z) · conservation: **OK** · custody probe: unreachable (booked custody stands)
+Feed: FEED-LIVE (router book @ 2026-11-20T16:48:56.080Z) · conservation: **OK** · custody probe: unreachable (booked custody stands)
 
 | Pool | Pair | Kind | Fee | Reserves (a/b µ) | Mid | Verdict |
 |---|---|---|---|---|---|---|
 | P1 | WSTEEM/STEEM | PEG | 2bps | 203 / 6545931 | 32245.96551724 | LIVE-INTERNAL |
 | P2 | WSBD/SBD | PEG | 2bps | 4844345 / 1570987 | 0.32429296 | LIVE-INTERNAL |
-| P3 | STEEM/SBD | VOLATILE | 25bps | 302518 / 806152 | 2.66480672 | LIVE-INTERNAL |
+| P3 | STEEM/SBD | VOLATILE | 25bps | 332769 / 733034 | 2.20283139 | LIVE-INTERNAL |
 | P4 | SAOS/WSTEEM | VOLATILE | 25bps | 0 / 0 | — | PLANNED-NO-CLAIM |
 | P5 | WHIVE/HIVE | PEG | 2bps | 0 / 0 | — | AWAITING-CUSTODY |
 | P6 | WHBD/HBD | PEG | 2bps | 0 / 0 | — | AWAITING-CUSTODY |
@@ -107,14 +107,14 @@ Routes: 6 LIVE-INTERNAL (atomic settlement in our own ledger) · 80 planned/thin
 | C-SAOS-WHBD | — | — | PLANNED-NO-CLAIM · unlock: no measured SAOS claim exists in the estate books (dex/credi |
 | C-SAOS-WBLURT | — | — | PLANNED-NO-CLAIM · unlock: no measured SAOS claim exists in the estate books (dex/credi |
 
-- A1 P3 STEEM/SBD pool mid vs CEX-implied fair: FEED-STALE
+- A1 P3 STEEM/SBD pool mid vs CEX-implied fair: REBALANCE-BOOKED · net 289031.81bps vs threshold 120bps · EXECUTED in 30251µ → 73118µ (edge 70423µ marked to fair)
 - A-P1 WSTEEM/STEEM peg guard: PEG-DRIFT-HALT · drift 3224496.55%
 - A-P2 WSBD/SBD peg guard: PEG-DRIFT-HALT · drift 67.57%
-- A2 P8 HIVE/STEEM cross-network bridge: FEED-STALE
+- A2 P8 HIVE/STEEM cross-network bridge: NO-CUSTODY
 
 - Counter-grid P1 WSTEEM/STEEM: anchor 32245.96551724 (POOL-MID (our side of the book)) · skew 50bps · spacing 0.42% · rungs 6 · GRID-TOO-THIN · size 0µ/rung (cap 200bps) · gate OPEN
 - Counter-grid P2 WSBD/SBD: anchor 0.32429296 (POOL-MID (our side of the book)) · skew 50bps · spacing 0.42% · rungs 6 · GATED-ARMED-BROADCAST-READY · size 64590µ/rung (cap 200bps) · gate OPEN
-- Counter-grid P3 STEEM/SBD: anchor 2.66480672 (POOL-MID (our side of the book)) · skew 50bps · spacing 0.42% · rungs 6 · GATED-ARMED-BROADCAST-READY · size 4033µ/rung (cap 200bps) · gate OPEN
+- Counter-grid P3 STEEM/SBD: anchor 2.20283139 (POOL-MID (our side of the book)) · skew 50bps · spacing 0.42% · rungs 6 · GATED-ARMED-BROADCAST-READY · size 4436µ/rung (cap 200bps) · gate OPEN
 
 Issuer: SAOS-DEX-ISSUER/1 — identity `d7ff39690365bfa8` · mint law 1:1 against MEASURED-KEYED custody only
 Peg-out corridors: STEEM=KEYED-DESK, SBD=KEYED-DESK, HIVE=PLAN-KEYED, HBD=PLAN-KEYED, BLURT=PLAN-KEYED, SAOS=INTERNAL
@@ -122,7 +122,7 @@ Observed (adjacent networks — seen, never custody): HIVE 110000µ (OBSERVED-UN
 Custody classes: STEEM=MEASURED-KEYED · SBD=MEASURED-KEYED · HIVE=OBSERVED-UNCONTROLLED · HBD=OBSERVED-UNCONTROLLED · BLURT=OBSERVED-POST-KEYED · SAOS=PLANNED-NO-CLAIM
 Vault: minted WSTEEM 761900µ · WSBD 6314850µ · WHIVE 0µ · WHBD 0µ · WBLURT 0µ · redeem is ALWAYS honored 1:1 (burn before payout) — the real-value law
 
-Treasury P&L: fees 21822µ (LP revenue) · rebalance edges 240606µ (marked to fair at execution — the LVR defense on our own pool)
+Treasury P&L: fees 21897µ (LP revenue) · rebalance edges 311029µ (marked to fair at execution — the LVR defense on our own pool)
 
-Attestation sha256(seq, custody, reserves, minted, claims) = `6ac196168d1ed670` — recomputable by any node; the cron book commit is the publication.
+Attestation sha256(seq, custody, reserves, minted, claims) = `95d1ac5240e7ab54` — recomputable by any node; the cron book commit is the publication.
 
