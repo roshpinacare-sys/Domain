@@ -1,47 +1,48 @@
 # dex-activation — THE IGNITION DESK (CR-0077)
 
-At: 2026-11-20T12:13:02.960Z · Verdict: **IGNITED (3/3 rounds filled)** · batch: ACT-2026112012-2a6116cc · lane: dex-activation
+At: 2026-11-20T20:31:24.664Z · Verdict: **IGNITED (3/3 rounds filled)** · batch: ACT-2026112020-57545e2e · lane: dex-activation
 
 Owner word (trace 1a135897157a1d75): "saos dex עמלות 0 נפח כמעט 0 מצטבר כלום" — הדלפק הזה הוא התיקון: זרימה דו-צדדית רציפה סביב המיד של כל בריכה חיה, דרך חוקי-ה-settle של הליבה עצמה.
 
-Pools armed: P1, P2, P3 · Intents drafted: 20 · Fills settled: 20 · Refusals: 0 · Wires: 19
+Pools armed: P1, P2, P3 · Intents drafted: 21 · Fills settled: 21 · Refusals: 0 · Wires: 19
 
-Core ledger: seq 3040 @ 2026-11-20T10:42:22.380Z · conservation true · att ae0d2bbe5c51b0da
+Core ledger: seq 3084 @ 2026-11-20T19:36:09.673Z · conservation true · att 95d1ac5240e7ab54
 
 
 | Agent | Fill | Out | Edge (marked) | Fees |
 |---|---|---|---|---|
-| operator | STEEM 15953µ | 1µ WSTEEM | -15952µ | 0µ |
-| operator | STEEM 15953µ | 1µ WSTEEM | -15952µ | 0µ |
-| operator | SBD 1499µ | 1771µ WSBD | 272µ | 0µ |
-| operator | SBD 14997µ | 17687µ WSBD | 2690µ | 3µ |
-| operator | SBD 38188µ | 44777µ WSBD | 6589µ | 8µ |
-| operator | STEEM 3190µ | 7541µ SBD | null (honest) | 7µ |
-| operator | SBD 7637µ | 3213µ STEEM | null (honest) | 19µ |
-| operator | STEEM 15952µ | 36286µ SBD | null (honest) | 39µ |
-| operator | SBD 36379µ | 15914µ STEEM | null (honest) | 90µ |
-| operator | WSBD 49278µ | 1µ WSTEEM | null (honest) | 112µ |
-| operator | STEEM 15125µ | 1µ WSTEEM | -15124µ | 0µ |
-| operator | STEEM 15125µ | 1µ WSTEEM | -15124µ | 0µ |
-| operator | SBD 1512µ | 1781µ WSBD | 269µ | 0µ |
-| operator | SBD 15124µ | 17786µ WSBD | 2662µ | 3µ |
-| operator | SBD 40297µ | 47111µ WSBD | 6814µ | 9µ |
-| operator | STEEM 3025µ | 7959µ SBD | null (honest) | 7µ |
-| operator | SBD 8059µ | 3047µ STEEM | null (honest) | 20µ |
-| operator | STEEM 15124µ | 38291µ SBD | null (honest) | 37µ |
-| operator | SBD 38388µ | 15088µ STEEM | null (honest) | 95µ |
-| operator | SBD 1569µ | 1826µ WSBD | 257µ | 0µ |
+| operator | STEEM 16638µ | 1µ WSTEEM | -16637µ | 0µ |
+| operator | STEEM 16638µ | 1µ WSTEEM | -16637µ | 0µ |
+| operator | SBD 1570µ | 1827µ WSBD | 257µ | 0µ |
+| operator | SBD 15709µ | 18248µ WSBD | 2539µ | 3µ |
+| operator | SBD 36651µ | 42357µ WSBD | 5706µ | 8µ |
+| operator | STEEM 3327µ | 7238µ SBD | null (honest) | 8µ |
+| operator | SBD 7330µ | 3352µ STEEM | null (honest) | 18µ |
+| operator | STEEM 16637µ | 34827µ SBD | null (honest) | 41µ |
+| operator | SBD 34914µ | 16597µ STEEM | null (honest) | 87µ |
+| operator | WSBD 48443µ | 1µ WSTEEM | null (honest) | 112µ |
+| operator | STEEM 15742µ | 1µ WSTEEM | -15741µ | 0µ |
+| operator | STEEM 15742µ | 1µ WSTEEM | -15741µ | 0µ |
+| operator | SBD 1583µ | 1838µ WSBD | 255µ | 0µ |
+| operator | SBD 15830µ | 18345µ WSBD | 2515µ | 3µ |
+| operator | SBD 38754µ | 44676µ WSBD | 5922µ | 8µ |
+| operator | STEEM 3148µ | 7654µ SBD | null (honest) | 7µ |
+| operator | SBD 7750µ | 3171µ STEEM | null (honest) | 19µ |
+| operator | STEEM 15741µ | 36825µ SBD | null (honest) | 39µ |
+| operator | SBD 36918µ | 15703µ STEEM | null (honest) | 92µ |
+| operator | WSBD 48303µ | 1µ WSTEEM | null (honest) | 112µ |
+| operator | SBD 1597µ | 1849µ WSBD | 252µ | 0µ |
 
 ## Rolling 24h (measured from the ledger — never invented)
 
-Fills: 70 · Volume in: 1211166µ · Volume out: 1070618µ · Fees accrued: 1605µ
+Fills: 71 · Volume in: 1244814µ · Volume out: 1057366µ · Fees accrued: 1705µ
 
 
 | Pool | Swaps 24h | In µ | Out µ | Fees µ |
 |---|---|---|---|---|
-| P2 | 29 | 554155 | 634962 | 116 |
-| P3 | 34 | 604337 | 550765 | 1489 |
-| P1 | 11 | 167794 | 11 | 0 |
+| P2 | 31 | 601270 | 668162 | 120 |
+| P3 | 35 | 642371 | 565554 | 1585 |
+| P1 | 11 | 177534 | 11 | 0 |
 
 Laws: keyless internal-only · staged-lane (CR-0077) · two-sided (never a direction bet) · 10/100/500bps depth ladder · dust 1000µ · minOut −0.5% · roster split op-40% · bounded 30 intents/run · single-writer queue (DEX_SETTLE_QUEUE) · idempotent batch · measured 24h only
 
