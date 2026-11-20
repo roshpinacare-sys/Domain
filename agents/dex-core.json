@@ -1,6 +1,6 @@
 {
   "protocol": "SAOS-DEX-CORE/1",
-  "at": "2026-11-20T09:01:36.349Z",
+  "at": "2026-11-20T10:42:22.380Z",
   "agent": "dex-core v1.6.0 (R77 THE OWNER GATES)",
   "mode": "KEYLESS-ATOMIC-INTERNAL",
   "stasisHalted": false,
@@ -61,14 +61,14 @@
     "HIVE": {
       "class": "OBSERVED-UNCONTROLLED",
       "mintable": false,
-      "observed": "34000",
+      "observed": "55000",
       "keyProof": "the name exists on the chain but its active pub ≠ any held key (R38 law)",
       "unlock": "verified active key material in a protected desk (key-check law) — the class upgrades the same tick, no new code"
     },
     "HBD": {
       "class": "OBSERVED-UNCONTROLLED",
       "mintable": false,
-      "observed": "3000",
+      "observed": "2000",
       "keyProof": "the name exists on the chain but its active pub ≠ any held key (R38 law)",
       "unlock": "verified active key material in a protected desk (key-check law) — the class upgrades the same tick, no new code"
     },
@@ -90,12 +90,12 @@
   "redeemBook": [],
   "feed": {
     "source": "agents/dex-router.json",
-    "routerAt": "2026-11-20T07:22:23.862Z",
+    "routerAt": "2026-11-20T09:01:29.424Z",
     "fresh": true,
-    "fairNano": 90212770,
-    "fairSource": "CEX-IMPLIED-FAIR (SBDUSDT/STEEMUSDT — lead-lag anchor, the opposing side of the local book)",
-    "hiveFairNano": 36869840,
-    "crossFairNano": "2446790384",
+    "fairNano": null,
+    "fairSource": null,
+    "hiveFairNano": 36879490,
+    "crossFairNano": null,
     "fairSource2": "LOCAL-MID-FALLBACK (CEX feed stale)",
     "verdict": "FEED-LIVE"
   },
@@ -103,7 +103,7 @@
     "measured": false,
     "node": null
   },
-  "seq": 3038,
+  "seq": 3040,
   "vault": {
     "custody": {
       "STEEM": "697820000",
@@ -124,17 +124,17 @@
     "observed": {
       "STEEM": "0",
       "SBD": "0",
-      "HIVE": "34000",
-      "HBD": "3000",
+      "HIVE": "55000",
+      "HBD": "2000",
       "BLURT": "83000",
       "SAOS": "0"
     },
     "observedProvenance": {
       "STEEM": null,
       "SBD": null,
-      "HIVE": "MEASURED HIVE owner @https://api.hive.blog 2026-11-20T09:01:36.349Z (class OBSERVED-UNCONTROLLED)",
-      "HBD": "MEASURED HIVE owner @https://api.hive.blog 2026-11-20T09:01:36.349Z (class OBSERVED-UNCONTROLLED)",
-      "BLURT": "MEASURED BLURT owner @https://blurt-rpc.saboin.com 2026-11-20T09:01:36.349Z (class OBSERVED-POST-KEYED)",
+      "HIVE": "MEASURED HIVE owner @https://api.hive.blog 2026-11-20T10:42:22.380Z (class OBSERVED-UNCONTROLLED)",
+      "HBD": "MEASURED HIVE owner @https://api.hive.blog 2026-11-20T10:42:22.380Z (class OBSERVED-UNCONTROLLED)",
+      "BLURT": "MEASURED BLURT owner @https://blurt-rpc.saboin.com 2026-11-20T10:42:22.380Z (class OBSERVED-POST-KEYED)",
       "SAOS": null
     },
     "wrappedReserve": {
@@ -369,8 +369,8 @@
       "via": [
         "P3"
       ],
-      "quote": "8293",
-      "quoteFor": "2900 µ STEEM (~1% first-hop depth)",
+      "quote": "7541",
+      "quoteFor": "3190 µ STEEM (~1% first-hop depth)",
       "verdict": "LIVE-INTERNAL"
     },
     {
@@ -381,8 +381,8 @@
         "P3",
         "P2"
       ],
-      "quote": "9791",
-      "quoteFor": "2900 µ STEEM (~1% first-hop depth)",
+      "quote": "8904",
+      "quoteFor": "3190 µ STEEM (~1% first-hop depth)",
       "verdict": "LIVE-INTERNAL"
     },
     {
@@ -392,8 +392,8 @@
       "via": [
         "P3"
       ],
-      "quote": "2864",
-      "quoteFor": "8399 µ SBD (~1% first-hop depth)",
+      "quote": "3151",
+      "quoteFor": "7637 µ SBD (~1% first-hop depth)",
       "verdict": "LIVE-INTERNAL"
     },
     {
@@ -403,8 +403,8 @@
       "via": [
         "P2"
       ],
-      "quote": "9916",
-      "quoteFor": "8399 µ SBD (~1% first-hop depth)",
+      "quote": "9017",
+      "quoteFor": "7637 µ SBD (~1% first-hop depth)",
       "verdict": "LIVE-INTERNAL"
     },
     {
@@ -855,7 +855,7 @@
         "P2",
         "P3"
       ],
-      "quote": "13618",
+      "quote": "16397",
       "quoteFor": "49278 µ WSBD (~1% first-hop depth)",
       "verdict": "LIVE-INTERNAL"
     },
@@ -867,6 +867,19 @@
         "P2"
       ],
       "quote": "41481",
+      "quoteFor": "49278 µ WSBD (~1% first-hop depth)",
+      "verdict": "LIVE-INTERNAL"
+    },
+    {
+      "id": "C-WSBD-WSTEEM",
+      "from": "WSBD",
+      "to": "WSTEEM",
+      "via": [
+        "P2",
+        "P3",
+        "P1"
+      ],
+      "quote": "1",
       "quoteFor": "49278 µ WSBD (~1% first-hop depth)",
       "verdict": "LIVE-INTERNAL"
     },
@@ -1315,24 +1328,8 @@
     {
       "id": "A1",
       "name": "P3 STEEM/SBD pool mid vs CEX-implied fair",
-      "legs": [
-        "P3-POOL",
-        "cex:STEEMUSDT+SBDUSDT"
-      ],
-      "poolMidNano": "2895727898",
-      "fairNano": "90212770",
-      "fairSource": "CEX-IMPLIED-FAIR (SBDUSDT/STEEMUSDT — lead-lag anchor, the opposing side of the local book)",
-      "grossBps": 310988.69,
-      "feesBps": 35,
-      "netBps": 310953.69,
-      "thresholdBps": 100,
-      "verdict": "REBALANCE-BOOKED",
-      "railOwner": "treasury (our own pool — atomic, no bridge)",
-      "executed": {
-        "amountIn": "29006",
-        "amountOut": "76184",
-        "edgeMu": "73568"
-      }
+      "verdict": "FEED-STALE",
+      "why": "the router feed is absent or stale — rebalancing stays a plan, never a guess"
     },
     {
       "id": "A-P1",
@@ -1353,11 +1350,8 @@
     {
       "id": "A2",
       "name": "P8 HIVE/STEEM cross-network bridge",
-      "crossFairNano": "2446790384",
-      "fairSource": "cross of CEX-IMPLIED-FAIR (SBDUSDT/STEEMUSDT — lead-lag anchor, the opposing side of the local book) / LOCAL-MID-FALLBACK (CEX feed stale)",
-      "verdict": "NO-CUSTODY",
-      "why": "HIVE custody is OBSERVED-UNCONTROLLED — the bridge arms when hive active key material verifies into the estate (R38 law)",
-      "railOwner": "treasury (our own pool — atomic, no bridge)"
+      "verdict": "FEED-STALE",
+      "why": "no cross fair (router anchors absent) — the bridge row waits, never guesses"
     }
   ],
   "counterGrids": {
@@ -1755,7 +1749,7 @@
     }
   ],
   "conservationOk": true,
-  "attestation": "28789578879429e1",
+  "attestation": "ae0d2bbe5c51b0da",
   "processedBatches": [
     "MESH-2026111413-2adf089e",
     "MESH-2026111414-c1c0e147",
@@ -1856,22 +1850,29 @@
   "genesisDone": true,
   "opsThisTick": [
     {
-      "seq": 3038,
-      "type": "REBALANCE",
-      "pool": "P3",
-      "sell": "STEEM",
-      "buy": "SBD",
-      "amountIn": "29006",
-      "amountOut": "76184",
-      "execPriceNano": "2626491070",
-      "fairNano": "90212770",
-      "edgeMu": "73568",
-      "feeMu": "72",
-      "grossBps": 310988.69,
-      "netBps": 310953.69
+      "seq": 3039,
+      "type": "OBSERVE",
+      "asset": "HIVE",
+      "network": "HIVE",
+      "node": "https://api.hive.blog",
+      "amount": "55000",
+      "prior": "34000",
+      "keyClass": "OBSERVED-UNCONTROLLED",
+      "note": "observed, NOT custody — minting and conservation never touch it"
     },
     {
-      "seq": 3038,
+      "seq": 3040,
+      "type": "OBSERVE",
+      "asset": "HBD",
+      "network": "HIVE",
+      "node": "https://api.hive.blog",
+      "amount": "2000",
+      "prior": "3000",
+      "keyClass": "OBSERVED-UNCONTROLLED",
+      "note": "observed, NOT custody — minting and conservation never touch it"
+    },
+    {
+      "seq": 3040,
       "type": "GRID-ARM",
       "pool": "P2",
       "pair": "WSBD/SBD",
@@ -1890,7 +1891,7 @@
       ]
     },
     {
-      "seq": 3038,
+      "seq": 3040,
       "type": "GRID-ARM",
       "pool": "P3",
       "pair": "STEEM/SBD",
@@ -1910,10 +1911,10 @@
     }
   ],
   "summary": {
-    "verdict": "EXCHANGE-CORE-LIVE-REBALANCED",
+    "verdict": "EXCHANGE-CORE-LIVE",
     "poolsLive": 3,
     "poolsPlanned": 2,
-    "routesLive": 6,
+    "routesLive": 7,
     "routesPlanned": 80,
     "meshFills": 0,
     "meshBatch": null,
