@@ -1,8 +1,8 @@
 # dex-core — EXCHANGE CORE (R40, CR-0070)
 
-At: 2026-11-20T12:38:23.216Z · Verdict: **EXCHANGE-CORE-LIVE** · mode: KEYLESS-ATOMIC-INTERNAL · seq: 3081 · attestation: `0bf4c317e7a947e8`
+At: 2026-11-20T13:08:00.324Z · Verdict: **EXCHANGE-CORE-LIVE** · mode: KEYLESS-ATOMIC-INTERNAL · seq: 3081 · attestation: `0bf4c317e7a947e8`
 
-Feed: FEED-LIVE (router book @ 2026-11-20T10:42:28.848Z) · conservation: **OK** · custody probe: unreachable (booked custody stands)
+Feed: FEED-LIVE (router book @ 2026-11-20T12:38:30.819Z) · conservation: **OK** · custody probe: unreachable (booked custody stands)
 
 | Pool | Pair | Kind | Fee | Reserves (a/b µ) | Mid | Verdict |
 |---|---|---|---|---|---|---|
