@@ -1,6 +1,6 @@
 {
   "protocol": "SAOS-DEX-CORE/1",
-  "at": "2026-11-20T05:58:53.563Z",
+  "at": "2026-11-20T07:22:18.320Z",
   "agent": "dex-core v1.6.0 (R77 THE OWNER GATES)",
   "mode": "KEYLESS-ATOMIC-INTERNAL",
   "stasisHalted": false,
@@ -90,18 +90,18 @@
   "redeemBook": [],
   "feed": {
     "source": "agents/dex-router.json",
-    "routerAt": "2026-11-20T03:44:05.617Z",
+    "routerAt": "2026-11-20T05:59:04.567Z",
     "fresh": true,
     "fairNano": null,
     "fairSource": null,
-    "hiveFairNano": 36674490,
+    "hiveFairNano": 36721460,
     "crossFairNano": null,
     "fairSource2": "LOCAL-MID-FALLBACK (CEX feed stale)",
     "verdict": "FEED-LIVE"
   },
   "custodyProbe": {
-    "measured": false,
-    "node": null
+    "measured": true,
+    "node": "https://api.steemit.com"
   },
   "seq": 3037,
   "vault": {
@@ -114,8 +114,8 @@
       "SAOS": "0"
     },
     "custodyProvenance": {
-      "STEEM": "MEASURED condenser owner @https://api.steemit.com 2026-11-20T03:30:54.582Z (CUSTODY-DROP)",
-      "SBD": "MEASURED condenser owner @https://api.steemit.com 2026-11-20T03:30:54.582Z (CUSTODY-DROP)",
+      "STEEM": "MEASURED condenser owner @https://api.steemit.com 2026-11-20T07:22:18.320Z (CUSTODY-DROP)",
+      "SBD": "MEASURED condenser owner @https://api.steemit.com 2026-11-20T07:22:18.320Z (CUSTODY-DROP)",
       "HIVE": "CUSTODY-CLASS OBSERVED-UNCONTROLLED — observed on-chain, never custody, until key material verifies (R42/R38 law)",
       "HBD": "CUSTODY-CLASS OBSERVED-UNCONTROLLED — observed on-chain, never custody, until key material verifies (R42/R38 law)",
       "BLURT": "CUSTODY-CLASS OBSERVED-POST-KEYED — observed on-chain, never custody, until key material verifies (R42/R38 law)",
@@ -132,9 +132,9 @@
     "observedProvenance": {
       "STEEM": null,
       "SBD": null,
-      "HIVE": "MEASURED HIVE owner @https://api.hive.blog 2026-11-20T05:58:53.563Z (class OBSERVED-UNCONTROLLED)",
-      "HBD": "MEASURED HIVE owner @https://api.hive.blog 2026-11-20T05:58:53.563Z (class OBSERVED-UNCONTROLLED)",
-      "BLURT": "MEASURED BLURT owner @https://blurt-rpc.saboin.com 2026-11-20T05:58:53.563Z (class OBSERVED-POST-KEYED)",
+      "HIVE": "MEASURED HIVE owner @https://api.hive.blog 2026-11-20T07:22:18.320Z (class OBSERVED-UNCONTROLLED)",
+      "HBD": "MEASURED HIVE owner @https://api.hive.blog 2026-11-20T07:22:18.320Z (class OBSERVED-UNCONTROLLED)",
+      "BLURT": "MEASURED BLURT owner @https://blurt-rpc.saboin.com 2026-11-20T07:22:18.320Z (class OBSERVED-POST-KEYED)",
       "SAOS": null
     },
     "wrappedReserve": {
@@ -1883,6 +1883,9 @@
     "routesPlanned": 80,
     "meshFills": 0,
     "meshBatch": null,
-    "notes": []
+    "notes": [
+      "STEEM custody DROP -696820000µ measured — trading HALTED this tick (safety law: the vault never trades on shrinking custody)",
+      "SBD custody DROP -50050000µ measured — trading HALTED this tick (safety law: the vault never trades on shrinking custody)"
+    ]
   }
 }
