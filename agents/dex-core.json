@@ -1,6 +1,6 @@
 {
   "protocol": "SAOS-DEX-CORE/1",
-  "at": "2026-11-20T03:30:54.582Z",
+  "at": "2026-11-20T05:58:53.563Z",
   "agent": "dex-core v1.6.0 (R77 THE OWNER GATES)",
   "mode": "KEYLESS-ATOMIC-INTERNAL",
   "stasisHalted": false,
@@ -90,18 +90,18 @@
   "redeemBook": [],
   "feed": {
     "source": "agents/dex-router.json",
-    "routerAt": "2026-11-20T01:53:44.085Z",
+    "routerAt": "2026-11-20T03:44:05.617Z",
     "fresh": true,
     "fairNano": null,
     "fairSource": null,
-    "hiveFairNano": 36967350,
+    "hiveFairNano": 36674490,
     "crossFairNano": null,
     "fairSource2": "LOCAL-MID-FALLBACK (CEX feed stale)",
     "verdict": "FEED-LIVE"
   },
   "custodyProbe": {
-    "measured": true,
-    "node": "https://api.steemit.com"
+    "measured": false,
+    "node": null
   },
   "seq": 3037,
   "vault": {
@@ -132,9 +132,9 @@
     "observedProvenance": {
       "STEEM": null,
       "SBD": null,
-      "HIVE": "MEASURED HIVE owner @https://api.hive.blog 2026-11-20T03:30:54.582Z (class OBSERVED-UNCONTROLLED)",
-      "HBD": "MEASURED HIVE owner @https://api.hive.blog 2026-11-20T03:30:54.582Z (class OBSERVED-UNCONTROLLED)",
-      "BLURT": "MEASURED BLURT owner @https://blurt-rpc.saboin.com 2026-11-20T03:30:54.582Z (class OBSERVED-POST-KEYED)",
+      "HIVE": "MEASURED HIVE owner @https://api.hive.blog 2026-11-20T05:58:53.563Z (class OBSERVED-UNCONTROLLED)",
+      "HBD": "MEASURED HIVE owner @https://api.hive.blog 2026-11-20T05:58:53.563Z (class OBSERVED-UNCONTROLLED)",
+      "BLURT": "MEASURED BLURT owner @https://blurt-rpc.saboin.com 2026-11-20T05:58:53.563Z (class OBSERVED-POST-KEYED)",
       "SAOS": null
     },
     "wrappedReserve": {
@@ -1838,16 +1838,6 @@
   "opsThisTick": [
     {
       "seq": 3037,
-      "type": "RECONCILE",
-      "asset": "STEEM",
-      "amount": "14467",
-      "side": "CLAIM-CREDIT",
-      "custody": "697820000",
-      "capBps": 100,
-      "law": "self-heal: the chain-measured custody side is ground truth — the unexplained residual is receipted to the treasury claim; tiny drifts heal in one tick, big holes stay loud"
-    },
-    {
-      "seq": 3036,
       "type": "GRID-ARM",
       "pool": "P2",
       "pair": "WSBD/SBD",
@@ -1866,7 +1856,7 @@
       ]
     },
     {
-      "seq": 3036,
+      "seq": 3037,
       "type": "GRID-ARM",
       "pool": "P3",
       "pair": "STEEM/SBD",
@@ -1893,9 +1883,6 @@
     "routesPlanned": 80,
     "meshFills": 0,
     "meshBatch": null,
-    "notes": [
-      "STEEM custody DROP -694502000µ measured — trading HALTED this tick (safety law: the vault never trades on shrinking custody)",
-      "SBD custody DROP -48238000µ measured — trading HALTED this tick (safety law: the vault never trades on shrinking custody)"
-    ]
+    "notes": []
   }
 }
