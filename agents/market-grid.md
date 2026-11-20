@@ -1,10 +1,10 @@
 # market-grid — internal-market sovereignty instrument (Z-60+)
 
-At: 2026-11-20T19:52:36.728Z · Verdict: **PARTIAL** · Markets read: 2 · Errors: 1
+At: 2026-11-20T19:52:56.179Z · Verdict: **PARTIAL** · Markets read: 2 · Errors: 1
 
 | Market | Bid | Ask | Spread% | 24h% | Grid rungs | Step | Paper fills (snapshot) |
 |---|---|---|---|---|---|---|---|
-| HBD/HIVE (internal hive) | 0.03492052075091707 | 0.03501436441523603 | 0.2684 | -6.844 | 10 | 0.00041961 | 0 |
+| HBD/HIVE (internal hive) | 0.0350143488801711 | 0.03501436441523603 | 0 | -6.844 | 10 | 0.00042017 | 0 |
 
 Hive-Engine basket (keyless RPC, per-token fee measured from the tokens contract): BEE spread 3.6934% fee 0bps pond 951.31100654 SWAP.HIVE/24h FEASIBLE · SWAP.LTC spread 0.3782% fee 0bps pond 5469.60242073 SWAP.HIVE/24h thin · SWAP.DOGE spread 37.8378% fee 0bps pond 271.76653166 SWAP.HIVE/24h FEASIBLE · CENT spread 5.3089% fee 0bps pond 130.31138727 SWAP.HIVE/24h FEASIBLE · WAIV spread 9.1819% fee 0bps pond 17.00665793 SWAP.HIVE/24h FEASIBLE
 HE daily-history probe: DARK (probed, honest) — HE-DAILY-HISTORY-DARK: marketHistory/history answered null (not RPC-exposed) — the day it answers, the pond becomes a series
