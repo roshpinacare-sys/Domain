@@ -1,26 +1,26 @@
 {
  "ok": true,
  "format": "moment-watch-v1",
- "publishedAt": "2026-11-20T09:10:12.533Z",
+ "publishedAt": "2026-11-20T11:00:52.442Z",
  "engine": "Domain/agents/moment-watch · R62 sovereign moment",
  "role": "reads the live moment every 30 minutes (market regime, our parity line vs the live internal book, fuel runway, measured anomalies) and records a deterministic directional call that is only ever scored after its horizon has passed - training as measurement, never as promise",
  "market": {
-  "steemUsd": 0.04234575,
-  "steem24h": -0.36248994482767183,
-  "sbdUsd": 0.469696,
-  "btcUsd": 61645,
-  "btc24h": -3.410340917489741,
+  "steemUsd": 0.0429123,
+  "steem24h": 1.2187828175297504,
+  "sbdUsd": 0.4697,
+  "btcUsd": 61995,
+  "btc24h": -2.7657566936241182,
   "fearGreed": {
    "value": 12,
    "label": "Extreme Fear"
   }
  },
- "paritySbdPerSteem": 0.09015565386973702,
+ "paritySbdPerSteem": 0.09136108154140941,
  "liveBook": null,
  "regime": {
   "label": "RISK_OFF",
   "drivers": [
-   "BTC -3.4%",
+   "BTC -2.8%",
    "F&G 12"
   ],
   "thresholds": {
@@ -35,31 +35,42 @@
  "grid": {
   "verdict": "ARMED-LIVE",
   "armed": true,
-  "blocker": "sell-side waiting for fuel: 0.425 STEEM commitable < 3 needed (next powerdown: 2026-11-22T18:25:30)",
-  "externalFlowUsd": 0.432575,
-  "publishedAt": "2026-11-20T09:02:51.533Z"
+  "blocker": "sell-side waiting for fuel: 0.628 STEEM commitable < 3 needed (next powerdown: 2026-11-22T18:25:30)",
+  "externalFlowUsd": 0.432333,
+  "publishedAt": "2026-11-20T11:00:10.031Z"
  },
  "moneyPath": {
   "fuel": {
-   "ok": false,
-   "error": "steemit rpc -> 403"
+   "ok": true,
+   "account": "acct-00",
+   "steem": 1,
+   "sbd": 0.736,
+   "sp": 2492.33,
+   "spVests": 4007913.870014,
+   "powerdown": {
+    "active": true,
+    "rateVests": 64404.576214,
+    "rateSp": 39.5,
+    "nextPayout": "2026-11-22T18:25:30",
+    "remainingVests": 128809152426
+   }
   },
   "redemption": null
  },
  "call": "FLAT",
  "callStats": {
-  "resolved": 50,
+  "resolved": 51,
   "hits": 13,
-  "hitRatePct": 26,
+  "hitRatePct": 25,
   "horizonH": 6,
   "thresholdPct": 3
  },
- "resolvedNow": 0,
+ "resolvedNow": 1,
  "insights": [
   {
    "kind": "sbd-inventory",
    "tone": "warn",
-   "text": "צוואר-הקנייה של הגריד: sell-side waiting for fuel: 0.425 STEEM commitable < 3 needed (next powerdown: 2026-11-22T18:25:30)"
+   "text": "צוואר-הקנייה של הגריד: sell-side waiting for fuel: 0.628 STEEM commitable < 3 needed (next powerdown: 2026-11-22T18:25:30)"
   },
   {
    "kind": "deposits",
@@ -69,7 +80,7 @@
   {
    "kind": "external-flow",
    "tone": "info",
-   "text": "זרימת-חוץ מצטברת: 0.4326$ מ-49 מילויים (txids בספר הציבורי)."
+   "text": "זרימת-חוץ מצטברת: 0.4323$ מ-52 מילויים (txids בספר הציבורי)."
   }
  ],
  "sources": [
