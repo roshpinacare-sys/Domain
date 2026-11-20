@@ -1,6 +1,6 @@
 # dex-router — SWAP-NET (R39, CR-0069)
 
-At: 2026-11-20T10:42:28.848Z · Verdict: **PARTIAL** · mode: KEYLESS-READ (the router plans; owner-gated desks sign)
+At: 2026-11-20T12:38:30.819Z · Verdict: **PARTIAL** · mode: KEYLESS-READ (the router plans; owner-gated desks sign)
 
 Venues alive: hive-internal, he-pools, saos-mirror · Routes: 12 (LIVE-KEYED: R1,R2) · Arb candidates: none · Peg halts: none
 
@@ -8,15 +8,15 @@ Venues alive: hive-internal, he-pools, saos-mirror · Routes: 12 (LIVE-KEYED: R1
 |---|---|---|---|---|
 | R1 STEEM-INTERNAL | SBD→STEEM | LIVE-KEYED | — | — |
 | R2 STEEM-INTERNAL | STEEM→SBD | LIVE-KEYED | — | — |
-| R3 HIVE-INTERNAL | HBD→HIVE | GATED-KEYS | 1.000 HBD → 27.312566 HIVE | HIVE active key material (R38 measured: none held) + ≥0.2 HIVE/HBD level fuel |
-| R4 HIVE-INTERNAL | HIVE→HBD | GATED-KEYS | 1.000 HIVE → 0.036605 HBD | HIVE active key material + inventory |
-| R5 HIVE-ENGINE (SWAP.HIVE→SWAP.BTC) | HIVE→BTC | GATED-CAPITAL | 9009.344 SWAP.HIVE (1% pool) → 0.005287 SWAP.BTC | HIVE keys + HIVE inventory (0.034 HIVE dust today — R38 measured) |
+| R3 HIVE-INTERNAL | HBD→HIVE | GATED-KEYS | 1.000 HBD → 27.400739 HIVE | HIVE active key material (R38 measured: none held) + ≥0.2 HIVE/HBD level fuel |
+| R4 HIVE-INTERNAL | HIVE→HBD | GATED-KEYS | 1.000 HIVE → 0.0363 HBD | HIVE active key material + inventory |
+| R5 HIVE-ENGINE (SWAP.HIVE→SWAP.BTC) | HIVE→BTC | GATED-CAPITAL | 9010.961 SWAP.HIVE (1% pool) → 0.005286 SWAP.BTC | HIVE keys + HIVE inventory (0.034 HIVE dust today — R38 measured) |
 | R6 HIVE-ENGINE | SWAP.HIVE→SWAP.LTC | GATED-CAPITAL | — | HIVE keys + SWAP.HIVE inventory |
-| R7 CEX (MEXC/Binance native deposit → sell) | STEEM→USDT | C-GATE-OPERATOR | 1.000 STEEM → 0.042978 USDT | operator MEXC/Binance account + API keys (tier-C operator lock, keys never in repos) |
+| R7 CEX (MEXC/Binance native deposit → sell) | STEEM→USDT | C-GATE-OPERATOR | 1.000 STEEM → 0.042619 USDT | operator MEXC/Binance account + API keys (tier-C operator lock, keys never in repos) |
 | R8 CEX (HTX native deposit → sell) | SBD→USDT | C-GATE-OPERATOR | 1.000 SBD → 0.469765 USDT | operator HTX account + API keys |
-| R9 CEX → native withdraw → internal market | BTC/USDT→STEEM | C-GATE-OPERATOR | 100.000 USDT → 2325.581395 STEEM | operator CEX keys + withdrawal whitelist (deposit doors already live in dex/watch.json) |
+| R9 CEX → native withdraw → internal market | BTC/USDT→STEEM | C-GATE-OPERATOR | 100.000 USDT → 2345.21576 STEEM | operator CEX keys + withdrawal whitelist (deposit doors already live in dex/watch.json) |
 | R10 none | BLURT→BTC | NO-RAIL | — | a blurt book coming alive (engine/pool/CEX) would be measured by market-grid before this route opens |
-| R11 SAOS-AMM (SAOS→USDS→WSTEEM) | SAOS→WSTEEM | INTERNAL-SIM | 0.994 SAOS (1% pool) → 3.166815 WSTEEM | exit corridor WSTEEM→STEEM runs on the engine rail (armed-needs-sovereign-identity, dex/agent.json); then R7 |
+| R11 SAOS-AMM (SAOS→USDS→WSTEEM) | SAOS→WSTEEM | INTERNAL-SIM | 0.994 SAOS (1% pool) → 3.16217 WSTEEM | exit corridor WSTEEM→STEEM runs on the engine rail (armed-needs-sovereign-identity, dex/agent.json); then R7 |
 | R12 TRON-RAIL | WTRX→TRX→USDT | GATED-KEYS | — | sovereign TRON identity (relay identities.tron = null; custody 2.0 TRX, peg-outbox threshold 1.05 TRX) |
 
 Arb net (floor law: net must beat 2×(capture+0.4% floor); FOK legs only, single block):
@@ -26,7 +26,7 @@ Arb net (floor law: net must beat 2×(capture+0.4% floor); FOK legs only, single
 - A4 SAOS/USDS pool vs booked ref price (internal): net 28.9bps vs threshold 120bps → **BELOW-FLOOR** · internal-AMM honesty: the pool may not wander from the booked ref unnoticed
 
 Counter-grids (opposing grids anchored to the CEX-implied fair, skewed by inventory, PLAN-OWNER-GATED-NOT-BROADCAST):
-- HBD/HIVE (HIVE internal): anchor 0.03660886 (LOCAL-MID-FALLBACK (CEX feed stale)) · spacing 0.4% · skew 0bps · rungs 6 · executor saos-dex grid-beat HIVE leg (owner-gated; keys measured absent — CR-0068)
+- HBD/HIVE (HIVE internal): anchor 0.03639768 (LOCAL-MID-FALLBACK (CEX feed stale)) · spacing 0.4% · skew 0bps · rungs 6 · executor saos-dex grid-beat HIVE leg (owner-gated; keys measured absent — CR-0068)
 
 Laws: official sources only · keyless: the router plans, owner-gated desks sign · fail-soft exit 0 (dark feeds are honest rows) · verdict authority inherited from Z-27 (dex-book/bridge-desk) · single canon book + append-only history · honest money: the powerdown drip is the booked fuel law
 
