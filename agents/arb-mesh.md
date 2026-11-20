@@ -1,6 +1,6 @@
 # arb-mesh — THE MESH MARKET (R41, CR-0071)
 
-At: 2026-11-20T09:01:54.680Z · Verdict: **NO-EDGE (every row below the floor — the machinery waits, the floor law protects the P&L)** · batch: — · protocol: SAOS-ARB-MESH/1
+At: 2026-11-20T10:42:17.702Z · Verdict: **NO-EDGE (every row below the floor — the machinery waits, the floor law protects the P&L)** · batch: — · protocol: SAOS-ARB-MESH/1
 
 Roster: 1 accounts (owner + 0 soldiers) · Edge candidates: 0 · Intents drafted: 0 · Fills settled: 0 · Refusals: 0
 
@@ -24,13 +24,13 @@ Roster: 1 accounts (owner + 0 soldiers) · Edge candidates: 0 · Intents drafted
 | 1% | 49278µ | 41481µ | 0.84177523 | 176.57bps |
 | 5% | 246390µ | 203054µ | 0.82411624 | 170.77bps |
 
-**P3 STEEM/SBD** (mid 2.8957279 SBD/, fee 25bps):
+**P3 STEEM/SBD** (mid 2.39372058 SBD/, fee 25bps):
 
 | Size (% depth) | In | Out | Exec price | Slippage |
 |---|---|---|---|---|
-| 0.1% | 290µ | 836µ | 2.88275862 | -0.44bps |
-| 1% | 2900µ | 8293µ | 2.85965517 | -1.24bps |
-| 5% | 14503µ | 39901µ | 2.75122388 | -4.99bps |
+| 0.1% | 319µ | 760µ | 2.38244514 | -0.47bps |
+| 1% | 3190µ | 7541µ | 2.36394984 | -1.24bps |
+| 5% | 15953µ | 36282µ | 2.27430577 | -4.98bps |
 
 ## Mesh P&L (lifetime, from the ledger — the core book is the source of truth)
 
