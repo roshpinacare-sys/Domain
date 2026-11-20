@@ -1,33 +1,26 @@
 {
  "ok": true,
  "format": "moment-watch-v1",
- "publishedAt": "2026-11-20T19:54:29.280Z",
+ "publishedAt": "2026-11-20T19:58:14.184Z",
  "engine": "Domain/agents/moment-watch · R62 sovereign moment",
  "role": "reads the live moment every 30 minutes (market regime, our parity line vs the live internal book, fuel runway, measured anomalies) and records a deterministic directional call that is only ever scored after its horizon has passed - training as measurement, never as promise",
  "market": {
-  "steemUsd": 0.04132331,
-  "steem24h": -2.516518872632633,
-  "sbdUsd": 0.469527,
-  "btcUsd": 58509,
-  "btc24h": -6.2046158658996875,
+  "steemUsd": 0.04125073,
+  "steem24h": -2.5764838297802983,
+  "sbdUsd": 0.469548,
+  "btcUsd": 58604,
+  "btc24h": -5.884805492026399,
   "fearGreed": {
    "value": 12,
    "label": "Extreme Fear"
   }
  },
- "paritySbdPerSteem": 0.08801050844786348,
- "liveBook": {
-  "bestBid": 0.1027643613194944,
-  "bestAsk": 0.10290183165260341,
-  "bidsDepthSbd": 1923.45,
-  "asksDepthSteem": 162.14,
-  "levels": 21,
-  "bidSurplusBps": 1676
- },
+ "paritySbdPerSteem": 0.08785199809178187,
+ "liveBook": null,
  "regime": {
   "label": "RISK_OFF",
   "drivers": [
-   "BTC -6.2%",
+   "BTC -5.9%",
    "F&G 12"
   ],
   "thresholds": {
@@ -38,14 +31,7 @@
    "gridStaleHours": 26
   }
  },
- "runway": {
-  "active": false,
-  "weeklySp": 6.218726165107155e-10,
-  "nextPayment": "1969-12-31T23:59:59",
-  "remainingSp": 0,
-  "weeklyUsd": 0,
-  "treasuryUsd": 1.34
- },
+ "runway": null,
  "grid": {
   "verdict": "ARMED-LIVE",
   "armed": true,
@@ -71,19 +57,9 @@
  "resolvedNow": 0,
  "insights": [
   {
-   "kind": "parity-edge",
-   "tone": "warn",
-   "text": "הספר החי 1676bps מעל קו-הזהות — אין עודף-קנייה כרגע; הגריד ממתין."
-  },
-  {
    "kind": "sbd-inventory",
    "tone": "warn",
    "text": "צוואר-הקנייה של הגריד: sell-side waiting for fuel: 0.000 STEEM commitable < 3 needed (next powerdown: 2026-11-22T18:25:30)"
-  },
-  {
-   "kind": "fuel",
-   "tone": "info",
-   "text": "דלק נוחת 1969-12-31 — ≈0 SP ≈ 0.0$ בסימון חי."
   },
   {
    "kind": "deposits",
