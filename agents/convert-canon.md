@@ -1,6 +1,6 @@
-# Convert maturity canon · 2026-11-20T14:35:19.144Z
+# Convert maturity canon · 2026-11-20T16:33:10.911Z
 
-account: owner · window 90d · pages 1 (floor reached)
+account: owner · window 90d · pages 0 (floor NOT reached — depth-honest)
 **pending converts: 0 · 0 SBD maturing to STEEM at the feed price**
 no pending converts
 
