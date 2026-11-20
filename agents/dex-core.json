@@ -1,6 +1,6 @@
 {
   "protocol": "SAOS-DEX-CORE/1",
-  "at": "2026-11-20T13:08:00.324Z",
+  "at": "2026-11-20T14:34:58.521Z",
   "agent": "dex-core v1.6.0 (R77 THE OWNER GATES)",
   "mode": "KEYLESS-ATOMIC-INTERNAL",
   "stasisHalted": false,
@@ -61,14 +61,14 @@
     "HIVE": {
       "class": "OBSERVED-UNCONTROLLED",
       "mintable": false,
-      "observed": "55000",
+      "observed": "110000",
       "keyProof": "the name exists on the chain but its active pub ≠ any held key (R38 law)",
       "unlock": "verified active key material in a protected desk (key-check law) — the class upgrades the same tick, no new code"
     },
     "HBD": {
       "class": "OBSERVED-UNCONTROLLED",
       "mintable": false,
-      "observed": "2000",
+      "observed": "0",
       "keyProof": "the name exists on the chain but its active pub ≠ any held key (R38 law)",
       "unlock": "verified active key material in a protected desk (key-check law) — the class upgrades the same tick, no new code"
     },
@@ -90,11 +90,11 @@
   "redeemBook": [],
   "feed": {
     "source": "agents/dex-router.json",
-    "routerAt": "2026-11-20T12:38:30.819Z",
+    "routerAt": "2026-11-20T13:38:19.170Z",
     "fresh": true,
     "fairNano": null,
     "fairSource": null,
-    "hiveFairNano": 36397680,
+    "hiveFairNano": 36220820,
     "crossFairNano": null,
     "fairSource2": "LOCAL-MID-FALLBACK (CEX feed stale)",
     "verdict": "FEED-LIVE"
@@ -103,7 +103,7 @@
     "measured": false,
     "node": null
   },
-  "seq": 3081,
+  "seq": 3083,
   "vault": {
     "custody": {
       "STEEM": "697820000",
@@ -124,17 +124,17 @@
     "observed": {
       "STEEM": "0",
       "SBD": "0",
-      "HIVE": "55000",
-      "HBD": "2000",
+      "HIVE": "110000",
+      "HBD": "0",
       "BLURT": "83000",
       "SAOS": "0"
     },
     "observedProvenance": {
       "STEEM": null,
       "SBD": null,
-      "HIVE": "MEASURED HIVE owner @https://api.hive.blog 2026-11-20T13:08:00.324Z (class OBSERVED-UNCONTROLLED)",
-      "HBD": "MEASURED HIVE owner @https://api.hive.blog 2026-11-20T13:08:00.324Z (class OBSERVED-UNCONTROLLED)",
-      "BLURT": "MEASURED BLURT owner @https://blurt-rpc.saboin.com 2026-11-20T13:08:00.324Z (class OBSERVED-POST-KEYED)",
+      "HIVE": "MEASURED HIVE owner @https://api.hive.blog 2026-11-20T14:34:58.521Z (class OBSERVED-UNCONTROLLED)",
+      "HBD": "MEASURED HIVE owner @https://api.hive.blog 2026-11-20T14:34:58.521Z (class OBSERVED-UNCONTROLLED)",
+      "BLURT": "MEASURED BLURT owner @https://blurt-rpc.saboin.com 2026-11-20T14:34:58.521Z (class OBSERVED-POST-KEYED)",
       "SAOS": null
     },
     "wrappedReserve": {
@@ -1736,7 +1736,7 @@
     }
   ],
   "conservationOk": true,
-  "attestation": "0bf4c317e7a947e8",
+  "attestation": "6ac196168d1ed670",
   "processedBatches": [
     "ACT-2026111416-592d2085",
     "MESH-2026111416-64fb455b",
@@ -1837,7 +1837,29 @@
   "genesisDone": true,
   "opsThisTick": [
     {
-      "seq": 3081,
+      "seq": 3082,
+      "type": "OBSERVE",
+      "asset": "HIVE",
+      "network": "HIVE",
+      "node": "https://api.hive.blog",
+      "amount": "110000",
+      "prior": "55000",
+      "keyClass": "OBSERVED-UNCONTROLLED",
+      "note": "observed, NOT custody — minting and conservation never touch it"
+    },
+    {
+      "seq": 3083,
+      "type": "OBSERVE",
+      "asset": "HBD",
+      "network": "HIVE",
+      "node": "https://api.hive.blog",
+      "amount": "0",
+      "prior": "2000",
+      "keyClass": "OBSERVED-UNCONTROLLED",
+      "note": "observed, NOT custody — minting and conservation never touch it"
+    },
+    {
+      "seq": 3083,
       "type": "GRID-ARM",
       "pool": "P2",
       "pair": "WSBD/SBD",
@@ -1856,7 +1878,7 @@
       ]
     },
     {
-      "seq": 3081,
+      "seq": 3083,
       "type": "GRID-ARM",
       "pool": "P3",
       "pair": "STEEM/SBD",
