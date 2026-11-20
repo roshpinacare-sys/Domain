@@ -1,13 +1,13 @@
 # community-founder — הבית הקהילתי (CR-0066)
 
-עודכן: 2026-11-19T23:37:14.404Z
+עודכן: 2026-11-20T01:37:18.582Z
 
 ## מצב: הקהילה טרם נוצרה (כנות מלאה)
 
 ## ריצות אחרונות
-- [2026-11-19T23:37:13.963Z] rc → COMMUNITY-ABSENT · no community in the book — nothing to top up
-- [2026-11-19T23:37:14.013Z] status → ERROR · Unexpected token '<', "<!DOCTYPE "... is not valid JSON
-- [2026-11-19T23:37:14.136Z] hive → HOME-ABSENT-UNKEYED · no Hive key material is held (measured: owner hive active pub STM782KMx… ≠ the held steem pub) — the desk cannot sign what it does not hold
+- [2026-11-20T01:37:17.886Z] rc → COMMUNITY-ABSENT · no community in the book — nothing to top up
+- [2026-11-20T01:37:17.930Z] status → ERROR · Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+- [2026-11-20T01:37:18.019Z] hive → HOME-ABSENT-UNKEYED · no Hive key material is held (measured: owner hive active pub STM782KMx… ≠ the held steem pub) — the desk cannot sign what it does not hold
   - hive fee=3.000 HIVE · owner liquid=0.000 · need=3.050 · orders=0
   - soldiers-on-hive=0/0 · names-free=hive-177702 · steem-house-on-hive=no
   - authority=NO-KEYS · vault=absent · stasis=clear
