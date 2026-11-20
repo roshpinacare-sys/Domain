@@ -1,6 +1,6 @@
 {
  "schema": "AGENT9-FLEET-TRUTH/1",
- "at": "2026-11-20T16:35:25.991Z",
+ "at": "2026-11-20T17:01:55.740Z",
  "baker": "Domain/scripts/agent9-fleet-truth.cjs (keyless, fail-closed — מקור-שלא-השיב מדווח-ולא-מומצא)",
  "treasury": {
   "ok": true,
@@ -53,7 +53,7 @@
  ],
  "contradictions": {
   "schema": "AGENT9-CONTRADICTIONS/1",
-  "at": "2026-11-20T16:35:25.991Z",
+  "at": "2026-11-20T17:01:55.740Z",
   "law": "פקודת-הבעלים t55c: 'יש הרבה סתירות בגיט בין הדברים בוא נוודא הכל' — כל-סתירה = שתי-טענות-גיט + נמדד + פסק. fail-closed: מקור-שלא-השיב = UNMEASURED, לעולם-לא-מומצא.",
   "summary": {
    "total": 6,
@@ -79,7 +79,7 @@
     },
     "verdict": "UNMEASURED",
     "note": "",
-    "measuredAt": "2026-11-20T16:35:25.991Z"
+    "measuredAt": "2026-11-20T17:01:55.740Z"
    },
    {
     "id": "X2-repos-count",
@@ -98,7 +98,7 @@
     },
     "verdict": "OK",
     "note": "אפס-סתירה-בהשוואה-הנכונה; הסה\"כ-המוצהר-46-כולל-גם-פרטיים (46=38ציבוריים+8פרטיים — נמדד-ב-roast-t55g)",
-    "measuredAt": "2026-11-20T16:35:25.991Z"
+    "measuredAt": "2026-11-20T17:01:55.740Z"
    },
    {
     "id": "X3-heartbeat-zeros",
@@ -117,7 +117,7 @@
     },
     "verdict": "OK",
     "note": "הצי-נראה-שוב: repos=55 מול-API-ציבורי 45 (הפער-פרטיים); השורש-היה-secret-מת-401-שרוטט-ב-t55i",
-    "measuredAt": "2026-11-20T16:35:25.991Z"
+    "measuredAt": "2026-11-20T17:01:55.740Z"
    },
    {
     "id": "X4-mirror-stale",
@@ -126,17 +126,17 @@
     "cure": "מסילת-weave-mirror (אחרת) — נמדד-כאן-בכנות",
     "a": {
      "claim": "generatedAt",
-     "value": "2026-11-20T11:48:52.222Z",
+     "value": "2026-11-20T16:16:17.721Z",
      "src": "Domain/mirror.json"
     },
     "b": {
      "claim": "age",
-     "value": "4.78h",
+     "value": "0.76h",
      "src": "נגזר"
     },
     "verdict": "OK",
     "note": "",
-    "measuredAt": "2026-11-20T16:35:25.991Z"
+    "measuredAt": "2026-11-20T17:01:55.740Z"
    },
    {
     "id": "X5-org-root-stale",
@@ -150,12 +150,12 @@
     },
     "b": {
      "claim": "pushed_at",
-     "value": "2026-11-20T16:05:15Z (age 0.5h)",
+     "value": "2026-11-20T16:39:59Z (age 0.37h)",
      "src": "GitHub API"
     },
     "verdict": "OK",
     "note": "השורש-חי-שוב: פס-האמת-החי-מוצג-בו-מאז-t55i (חי-ממדידה, לא-מהצהרה)",
-    "measuredAt": "2026-11-20T16:35:25.991Z"
+    "measuredAt": "2026-11-20T17:01:55.740Z"
    },
    {
     "id": "X6-console-money-stale",
@@ -164,8 +164,8 @@
     "cure": "מסילת-Console — מתועד-בכנות; המירור-מדווח-עליו",
     "a": {
      "claim": "dex/money.json ageH (מפורש-מ-string-age-במירור)",
-     "value": 2.59,
-     "src": "Domain/mirror-report.json@2026-11-20T10:35:12.411Z ← Console (shape: status,age)"
+     "value": 3.44,
+     "src": "Domain/mirror-report.json@2026-11-20T16:51:04.343Z ← Console (shape: status,age)"
     },
     "b": {
      "claim": "רף-טריות",
@@ -174,7 +174,7 @@
     },
     "verdict": "OK",
     "note": "bug-t55d-a: הבדיקה-הקודמת-קראה-שדה-ageH-שלא-קיים-והדביקה-את-X6-בUNMEASURED-תמידי — תוקן: פירוש-השדה-age-המיתרי",
-    "measuredAt": "2026-11-20T16:35:25.991Z"
+    "measuredAt": "2026-11-20T17:01:55.740Z"
    }
   ]
  },
@@ -182,7 +182,7 @@
   {
    "id": "treasury-floor",
    "ok": true,
-   "at": "2026-11-20T16:35:23.975Z",
+   "at": "2026-11-20T17:01:54.294Z",
    "data": {
     "verdict": "UNMEASURED",
     "netSp": null,
@@ -195,7 +195,7 @@
   {
    "id": "autotrade-hedge",
    "ok": true,
-   "at": "2026-11-20T16:35:24.060Z",
+   "at": "2026-11-20T17:01:54.369Z",
    "data": {
     "verdict": "UNMEASURED",
     "blocked": 0,
@@ -209,7 +209,7 @@
   {
    "id": "fixedfloat",
    "ok": true,
-   "at": "2026-11-20T16:35:24.074Z",
+   "at": "2026-11-20T17:01:54.380Z",
    "data": {
     "verdict": "HONEST-FAIL",
     "pairErr": null,
@@ -219,13 +219,13 @@
   {
    "id": "acct-h-849e9df7-live",
    "ok": false,
-   "at": "2026-11-20T16:35:24.087Z",
+   "at": "2026-11-20T17:01:54.389Z",
    "err": "http-403"
   },
   {
    "id": "artery:artery-treasury-floor-watch",
    "ok": true,
-   "at": "2026-11-20T16:35:24.145Z",
+   "at": "2026-11-20T17:01:54.513Z",
    "data": {
     "status": "completed",
     "conclusion": "success",
@@ -236,7 +236,7 @@
   {
    "id": "artery:artery-autotrade-hedge-gate",
    "ok": true,
-   "at": "2026-11-20T16:35:24.581Z",
+   "at": "2026-11-20T17:01:54.732Z",
    "data": {
     "status": "completed",
     "conclusion": "success",
@@ -247,7 +247,7 @@
   {
    "id": "gh-repos-count",
    "ok": true,
-   "at": "2026-11-20T16:35:24.924Z",
+   "at": "2026-11-20T17:01:54.960Z",
    "data": {
     "count": 45
    }
@@ -255,7 +255,7 @@
   {
    "id": "domain-status",
    "ok": true,
-   "at": "2026-11-20T16:35:25.512Z",
+   "at": "2026-11-20T17:01:55.332Z",
    "data": {
     "repos": 55,
     "reposPublic": 45,
@@ -265,13 +265,13 @@
   {
    "id": "chain-treasury-onchain",
    "ok": false,
-   "at": "2026-11-20T16:35:25.525Z",
+   "at": "2026-11-20T17:01:55.341Z",
    "err": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON"
   },
   {
    "id": "domain-fleet-heartbeat",
    "ok": true,
-   "at": "2026-11-20T16:35:25.569Z",
+   "at": "2026-11-20T17:01:55.389Z",
    "data": {
     "repos": 55,
     "at": "2026-11-20T15:42:06.320Z"
@@ -280,28 +280,28 @@
   {
    "id": "domain-mirror",
    "ok": true,
-   "at": "2026-11-20T16:35:25.580Z",
+   "at": "2026-11-20T17:01:55.400Z",
    "data": {
-    "generatedAt": "2026-11-20T11:48:52.222Z"
+    "generatedAt": "2026-11-20T16:16:17.721Z"
    }
   },
   {
    "id": "domain-mirror-report",
    "ok": true,
-   "at": "2026-11-20T16:35:25.592Z",
+   "at": "2026-11-20T17:01:55.412Z",
    "data": {
-    "dexMoneyAgeH": 2.59,
-    "mirrorGenAt": "2026-11-20T10:35:12.411Z",
+    "dexMoneyAgeH": 3.44,
+    "mirrorGenAt": "2026-11-20T16:51:04.343Z",
     "rawShape": "status,age"
    }
   },
   {
    "id": "org-root-freshness",
    "ok": true,
-   "at": "2026-11-20T16:35:25.603Z",
+   "at": "2026-11-20T17:01:55.421Z",
    "data": {
-    "pushedAt": "2026-11-20T16:05:15Z",
-    "ageH": 0.5
+    "pushedAt": "2026-11-20T16:39:59Z",
+    "ageH": 0.37
    }
   }
  ]
