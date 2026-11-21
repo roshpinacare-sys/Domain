@@ -1,14 +1,14 @@
 {
  "schema": "integrity-guard/2",
  "scope": "public-twin (Domain home)",
- "at": "2026-11-21T09:37:53.240Z",
+ "at": "2026-11-21T11:16:24.713Z",
  "overall": "FAIL",
  "summary": {
   "sources": 7,
-  "verified": 8,
-  "findings": 1,
+  "verified": 7,
+  "findings": 2,
   "counts": {
-   "stale": 1
+   "stale": 2
   }
  },
  "verified": [
@@ -20,12 +20,7 @@
   {
    "where": "Domain:agents/work-orders.json",
    "law": "fresh+parsed",
-   "detail": "גיל 0.3ש' ≤ SLA 4ש'"
-  },
-  {
-   "where": "Domain:agents/grid-truth.json",
-   "law": "fresh+parsed",
-   "detail": "גיל 0.9ש' ≤ SLA 2ש'"
+   "detail": "גיל 1.9ש' ≤ SLA 4ש'"
   },
   {
    "where": "Domain:office/data.json",
@@ -35,17 +30,17 @@
   {
    "where": "Domain:agents/office-live.json",
    "law": "fresh+parsed",
-   "detail": "גיל 1.9ש' ≤ SLA 4ש'"
+   "detail": "גיל 1.6ש' ≤ SLA 4ש'"
   },
   {
    "where": "sovereign-runner-kit:results/receipts.jsonl",
    "law": "fresh+parsed",
-   "detail": "גיל 5.6ש' ≤ SLA 72ש' · 238 קבלות"
+   "detail": "גיל 7.3ש' ≤ SLA 72ש' · 238 קבלות"
   },
   {
    "where": "Domain:office/data.json",
    "law": "producer-green",
-   "detail": "ריצת-יצרן ירוקה לפני 13 דק'"
+   "detail": "ריצת-יצרן ירוקה לפני 34 דק'"
   },
   {
    "where": "Domain:agents/work-orders.json",
@@ -55,13 +50,18 @@
  ],
  "findings": [
   {
+   "where": "Domain:agents/grid-truth.json",
+   "law": "stale",
+   "detail": "גיל 2.5ש' > SLA 2ש'"
+  },
+  {
    "where": "FleetHQ:office/state/office-state.json",
    "law": "stale",
-   "detail": "גיל 570.8ש' > SLA 4ש'"
+   "detail": "גיל 572.5ש' > SLA 4ש'"
   }
  ],
  "provenance": {
-  "runUrl": "https://github.com/roshpinacare-sys/Domain/actions/runs/44890475140",
+  "runUrl": "https://github.com/roshpinacare-sys/Domain/actions/runs/44898247592",
   "workflow": "artery-integrity-twin"
  }
 }
