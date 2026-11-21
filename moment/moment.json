@@ -1,29 +1,22 @@
 {
  "ok": true,
  "format": "moment-watch-v1",
- "publishedAt": "2026-11-20T23:54:18.843Z",
+ "publishedAt": "2026-11-21T00:12:36.515Z",
  "engine": "Domain/agents/moment-watch · R62 sovereign moment",
  "role": "reads the live moment every 30 minutes (market regime, our parity line vs the live internal book, fuel runway, measured anomalies) and records a deterministic directional call that is only ever scored after its horizon has passed - training as measurement, never as promise",
  "market": {
-  "steemUsd": 0.04184024,
-  "steem24h": 0.7463810436323043,
-  "sbdUsd": 0.469099,
-  "btcUsd": 58779,
-  "btc24h": -5.042744670651893,
+  "steemUsd": 0.04148685,
+  "steem24h": -0.7075810237087613,
+  "sbdUsd": 0.469201,
+  "btcUsd": 58897,
+  "btc24h": -4.984584775426347,
   "fearGreed": {
    "value": 12,
    "label": "Extreme Fear"
   }
  },
- "paritySbdPerSteem": 0.08919277167506219,
- "liveBook": {
-  "bestBid": 0.10275775260327269,
-  "bestAsk": 0.10290183165260341,
-  "bidsDepthSbd": 639.04,
-  "asksDepthSteem": 203.77,
-  "levels": 21,
-  "bidSurplusBps": 1521
- },
+ "paritySbdPerSteem": 0.08842020797057125,
+ "liveBook": null,
  "regime": {
   "label": "RISK_OFF",
   "drivers": [
@@ -38,20 +31,13 @@
    "gridStaleHours": 26
   }
  },
- "runway": {
-  "active": false,
-  "weeklySp": 6.218795899196929e-10,
-  "nextPayment": "1969-12-31T23:59:59",
-  "remainingSp": 0,
-  "weeklyUsd": 0,
-  "treasuryUsd": 1.36
- },
+ "runway": null,
  "grid": {
   "verdict": "ARMED-LIVE",
   "armed": true,
   "blocker": "sell-side waiting for fuel: 0.000 STEEM commitable < 3 needed (next powerdown: 2026-11-22T18:25:30)",
   "externalFlowUsd": 0.439774,
-  "publishedAt": "2026-11-20T23:51:48.822Z"
+  "publishedAt": "2026-11-21T00:06:42.540Z"
  },
  "moneyPath": {
   "fuel": {
@@ -71,19 +57,9 @@
  "resolvedNow": 0,
  "insights": [
   {
-   "kind": "parity-edge",
-   "tone": "warn",
-   "text": "הספר החי 1521bps מעל קו-הזהות — אין עודף-קנייה כרגע; הגריד ממתין."
-  },
-  {
    "kind": "sbd-inventory",
    "tone": "warn",
    "text": "צוואר-הקנייה של הגריד: sell-side waiting for fuel: 0.000 STEEM commitable < 3 needed (next powerdown: 2026-11-22T18:25:30)"
-  },
-  {
-   "kind": "fuel",
-   "tone": "info",
-   "text": "דלק נוחת 1969-12-31 — ≈0 SP ≈ 0.0$ בסימון חי."
   },
   {
    "kind": "deposits",
