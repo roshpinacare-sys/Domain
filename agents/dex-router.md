@@ -1,6 +1,6 @@
 # dex-router — SWAP-NET (R39, CR-0069)
 
-At: 2026-11-21T03:26:30.532Z · Verdict: **PARTIAL** · mode: KEYLESS-READ (the router plans; owner-gated desks sign)
+At: 2026-11-21T03:30:00.453Z · Verdict: **PARTIAL** · mode: KEYLESS-READ (the router plans; owner-gated desks sign)
 
 Venues alive: hive-internal, he-pools, saos-mirror · Routes: 12 (LIVE-KEYED: R1,R2) · Arb candidates: none · Peg halts: none
 
