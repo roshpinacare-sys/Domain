@@ -1,6 +1,6 @@
 {
   "protocol": "SAOS-ARB-MESH/1",
-  "at": "2026-11-21T01:14:41.103Z",
+  "at": "2026-11-21T02:37:50.636Z",
   "agent": "arb-mesh v1.0.0 (R41 MESH MARKET, CR-0071)",
   "mode": "KEYLESS-MESH-DEMAND",
   "stasisHalted": false,
@@ -26,22 +26,29 @@
   "batch": null,
   "settledBatch": null,
   "coreLedger": {
-    "seq": 3126,
-    "at": "2026-11-20T23:52:47.780Z",
-    "ageHours": 1.36,
+    "seq": 3159,
+    "at": "2026-11-21T02:32:44.369Z",
+    "ageHours": 0.09,
     "conservationOk": true,
-    "attestation": "5b55639ba5538341",
+    "attestation": "1a18fa8b15ed7737",
     "feedFresh": true
   },
   "routerSeen": {
-    "at": "2026-11-21T00:41:49.735Z",
+    "at": "2026-11-21T02:04:28.602Z",
     "arbRows": 4
   },
   "roster": [
     "operator"
   ],
   "candidates": [],
-  "keyedRailPlans": [],
+  "keyedRailPlans": [
+    {
+      "id": "A1",
+      "name": "SBD/STEEM internal vs CEX-implied fair (lead-lag)",
+      "railOwner": "owner (STEEM active — LIVE)",
+      "verdict": "PLAN-KEYED-RAIL (the signing desks own this rail — the keyless mesh never signs)"
+    }
+  ],
   "intentsDrafted": 0,
   "intents": [],
   "wires": 0,
@@ -83,29 +90,29 @@
       "pair": "WSBD/SBD",
       "kind": "PEG",
       "feeBps": 2,
-      "mid": 0.3322831,
+      "mid": 0.36749322,
       "unit": "SBD",
       "rungs": [
         {
           "sizeBps": 10,
-          "sizeIn": "4811",
-          "out": "4154",
-          "execPrice": 0.86343795,
-          "slipBps": 159.85
+          "sizeIn": "4675",
+          "out": "4123",
+          "execPrice": 0.88192513,
+          "slipBps": 139.98
         },
         {
           "sizeBps": 100,
-          "sizeIn": "48119",
-          "out": "41388",
-          "execPrice": 0.86011762,
-          "slipBps": 158.85
+          "sizeIn": "46754",
+          "out": "41107",
+          "execPrice": 0.87921889,
+          "slipBps": 139.24
         },
         {
           "sizeBps": 500,
-          "sizeIn": "240597",
-          "out": "203244",
-          "execPrice": 0.84474869,
-          "slipBps": 154.22
+          "sizeIn": "233771",
+          "out": "202488",
+          "execPrice": 0.86618101,
+          "slipBps": 135.69
         }
       ]
     },
@@ -114,28 +121,28 @@
       "pair": "STEEM/SBD",
       "kind": "VOLATILE",
       "feeBps": 25,
-      "mid": 2.73509368,
+      "mid": 2.26184159,
       "unit": "SBD",
       "rungs": [
         {
           "sizeBps": 10,
-          "sizeIn": "298",
-          "out": "812",
-          "execPrice": 2.72483221,
-          "slipBps": -0.37
+          "sizeIn": "328",
+          "out": "739",
+          "execPrice": 2.25304878,
+          "slipBps": -0.38
         },
         {
           "sizeBps": 100,
-          "sizeIn": "2987",
-          "out": "8068",
-          "execPrice": 2.70103783,
+          "sizeIn": "3286",
+          "out": "7340",
+          "execPrice": 2.23371881,
           "slipBps": -1.24
         },
         {
           "sizeBps": 500,
-          "sizeIn": "14938",
-          "out": "38818",
-          "execPrice": 2.59860758,
+          "sizeIn": "16433",
+          "out": "35314",
+          "execPrice": 2.14896854,
           "slipBps": -4.99
         }
       ]
@@ -152,23 +159,23 @@
         },
         "operator": {
           "fills": 1,
-          "volumeInMu": "1597",
-          "edgeMu": "252",
+          "volumeInMu": "1716",
+          "edgeMu": "228",
           "feesMu": "0"
         }
       },
-      "fills": 1441,
-      "edgeMu": "-51448998",
-      "feesMu": "21940",
-      "volumeInMu": "20634547"
+      "fills": 1456,
+      "edgeMu": "-51431729",
+      "feesMu": "22286",
+      "volumeInMu": "20883848"
     },
     "batch": {
-      "id": "ACT-2026112020-57545e2e",
+      "id": "ACT-2026112101-464f9963",
       "fills": 1,
       "rejects": 0,
-      "edgeMu": "252",
+      "edgeMu": "228",
       "feesMu": "0",
-      "volumeInMu": "1597"
+      "volumeInMu": "1716"
     }
   },
   "gridGate": "GATED-ARMED-BROADCAST-READY (CR-0074 open — the kernel arms the opposing grids; the mesh still never fires a keyed rail)",
