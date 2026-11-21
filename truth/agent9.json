@@ -1,6 +1,6 @@
 {
  "schema": "AGENT9-FLEET-TRUTH/1",
- "at": "2026-11-21T03:13:51.027Z",
+ "at": "2026-11-21T03:40:22.361Z",
  "baker": "Domain/scripts/agent9-fleet-truth.cjs (keyless, fail-closed — מקור-שלא-השיב מדווח-ולא-מומצא)",
  "treasury": {
   "ok": true,
@@ -10,12 +10,29 @@
   "surplus": null,
   "floorSp": null,
   "measuredAt": null,
-  "chain": null,
-  "chainErr": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON"
+  "chain": {
+   "grossSp": 4371.98,
+   "delegatedOutSp": 2084.205,
+   "delegatedInSp": 244.861,
+   "netSp": 2532.636,
+   "account": "acct-h-849e9df7",
+   "measuredAt": "2026-11-21T03:40:22.100Z"
+  },
+  "chainErr": null
  },
  "trading": {
-  "ok": false,
-  "err": "http-403"
+  "ok": true,
+  "steem": "0.020 STEEM",
+  "sbd": "25.128 SBD",
+  "sp": 4372,
+  "delegatedFieldSp": 2084.2,
+  "receivedSp": 244.9,
+  "openOrders": 24,
+  "fillsWindowHours": 2,
+  "fills": 0,
+  "fillRate": 0,
+  "lastFillAt": null,
+  "lastFillPair": null
  },
  "hedgeGate": {
   "ok": true,
@@ -53,7 +70,7 @@
  ],
  "contradictions": {
   "schema": "AGENT9-CONTRADICTIONS/1",
-  "at": "2026-11-21T03:13:51.027Z",
+  "at": "2026-11-21T03:40:22.361Z",
   "law": "פקודת-הבעלים t55c: 'יש הרבה סתירות בגיט בין הדברים בוא נוודא הכל' — כל-סתירה = שתי-טענות-גיט + נמדד + פסק. fail-closed: מקור-שלא-השיב = UNMEASURED, לעולם-לא-מומצא.",
   "summary": {
    "total": 6,
@@ -79,7 +96,7 @@
     },
     "verdict": "UNMEASURED",
     "note": "",
-    "measuredAt": "2026-11-21T03:13:51.027Z"
+    "measuredAt": "2026-11-21T03:40:22.361Z"
    },
    {
     "id": "X2-repos-count",
@@ -98,7 +115,7 @@
     },
     "verdict": "OK",
     "note": "אפס-סתירה-בהשוואה-הנכונה; הסה\"כ-המוצהר-46-כולל-גם-פרטיים (46=38ציבוריים+8פרטיים — נמדד-ב-roast-t55g)",
-    "measuredAt": "2026-11-21T03:13:51.027Z"
+    "measuredAt": "2026-11-21T03:40:22.361Z"
    },
    {
     "id": "X3-heartbeat-zeros",
@@ -117,7 +134,7 @@
     },
     "verdict": "OK",
     "note": "הצי-נראה-שוב: repos=55 מול-API-ציבורי 45 (הפער-פרטיים); השורש-היה-secret-מת-401-שרוטט-ב-t55i",
-    "measuredAt": "2026-11-21T03:13:51.027Z"
+    "measuredAt": "2026-11-21T03:40:22.361Z"
    },
    {
     "id": "X4-mirror-stale",
@@ -131,12 +148,12 @@
     },
     "b": {
      "claim": "age",
-     "value": "1.6h",
+     "value": "2.04h",
      "src": "נגזר"
     },
     "verdict": "OK",
     "note": "",
-    "measuredAt": "2026-11-21T03:13:51.027Z"
+    "measuredAt": "2026-11-21T03:40:22.361Z"
    },
    {
     "id": "X5-org-root-stale",
@@ -150,12 +167,12 @@
     },
     "b": {
      "claim": "pushed_at",
-     "value": "2026-11-21T03:11:52Z (age 0.03h)",
+     "value": "2026-11-21T03:11:52Z (age 0.48h)",
      "src": "GitHub API"
     },
     "verdict": "OK",
     "note": "השורש-חי-שוב: פס-האמת-החי-מוצג-בו-מאז-t55i (חי-ממדידה, לא-מהצהרה)",
-    "measuredAt": "2026-11-21T03:13:51.027Z"
+    "measuredAt": "2026-11-21T03:40:22.361Z"
    },
    {
     "id": "X6-console-money-stale",
@@ -174,7 +191,7 @@
     },
     "verdict": "OK",
     "note": "bug-t55d-a: הבדיקה-הקודמת-קראה-שדה-ageH-שלא-קיים-והדביקה-את-X6-בUNMEASURED-תמידי — תוקן: פירוש-השדה-age-המיתרי",
-    "measuredAt": "2026-11-21T03:13:51.027Z"
+    "measuredAt": "2026-11-21T03:40:22.361Z"
    }
   ]
  },
@@ -182,7 +199,7 @@
   {
    "id": "treasury-floor",
    "ok": true,
-   "at": "2026-11-21T03:13:49.929Z",
+   "at": "2026-11-21T03:40:21.256Z",
    "data": {
     "verdict": "UNMEASURED",
     "netSp": null,
@@ -195,7 +212,7 @@
   {
    "id": "autotrade-hedge",
    "ok": true,
-   "at": "2026-11-21T03:13:50.002Z",
+   "at": "2026-11-21T03:40:21.303Z",
    "data": {
     "verdict": "UNMEASURED",
     "blocked": 0,
@@ -209,7 +226,7 @@
   {
    "id": "fixedfloat",
    "ok": true,
-   "at": "2026-11-21T03:13:50.015Z",
+   "at": "2026-11-21T03:40:21.310Z",
    "data": {
     "verdict": "HONEST-FAIL",
     "pairErr": null,
@@ -218,14 +235,26 @@
   },
   {
    "id": "acct-h-849e9df7-live",
-   "ok": false,
-   "at": "2026-11-21T03:13:50.036Z",
-   "err": "http-403"
+   "ok": true,
+   "at": "2026-11-21T03:40:21.315Z",
+   "data": {
+    "steem": "0.020 STEEM",
+    "sbd": "25.128 SBD",
+    "sp": 4372,
+    "delegatedFieldSp": 2084.2,
+    "receivedSp": 244.9,
+    "openOrders": 24,
+    "fillsWindowHours": 2,
+    "fills": 0,
+    "fillRate": 0,
+    "lastFillAt": null,
+    "lastFillPair": null
+   }
   },
   {
    "id": "artery:artery-treasury-floor-watch",
    "ok": true,
-   "at": "2026-11-21T03:13:50.072Z",
+   "at": "2026-11-21T03:40:21.383Z",
    "data": {
     "status": "completed",
     "conclusion": "success",
@@ -236,7 +265,7 @@
   {
    "id": "artery:artery-autotrade-hedge-gate",
    "ok": true,
-   "at": "2026-11-21T03:13:50.261Z",
+   "at": "2026-11-21T03:40:21.569Z",
    "data": {
     "status": "completed",
     "conclusion": "success",
@@ -247,7 +276,7 @@
   {
    "id": "gh-repos-count",
    "ok": true,
-   "at": "2026-11-21T03:13:50.447Z",
+   "at": "2026-11-21T03:40:21.763Z",
    "data": {
     "count": 45
    }
@@ -255,7 +284,7 @@
   {
    "id": "domain-status",
    "ok": true,
-   "at": "2026-11-21T03:13:50.716Z",
+   "at": "2026-11-21T03:40:22.068Z",
    "data": {
     "repos": 55,
     "reposPublic": 45,
@@ -264,14 +293,21 @@
   },
   {
    "id": "chain-treasury-onchain",
-   "ok": false,
-   "at": "2026-11-21T03:13:50.734Z",
-   "err": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON"
+   "ok": true,
+   "at": "2026-11-21T03:40:22.073Z",
+   "data": {
+    "grossSp": 4371.98,
+    "delegatedOutSp": 2084.205,
+    "delegatedInSp": 244.861,
+    "netSp": 2532.636,
+    "account": "acct-h-849e9df7",
+    "measuredAt": "2026-11-21T03:40:22.100Z"
+   }
   },
   {
    "id": "domain-fleet-heartbeat",
    "ok": true,
-   "at": "2026-11-21T03:13:50.750Z",
+   "at": "2026-11-21T03:40:22.100Z",
    "data": {
     "repos": 55,
     "at": "2026-11-21T02:53:54.693Z"
@@ -280,7 +316,7 @@
   {
    "id": "domain-mirror",
    "ok": true,
-   "at": "2026-11-21T03:13:50.765Z",
+   "at": "2026-11-21T03:40:22.105Z",
    "data": {
     "generatedAt": "2026-11-21T01:37:52.125Z"
    }
@@ -288,7 +324,7 @@
   {
    "id": "domain-mirror-report",
    "ok": true,
-   "at": "2026-11-21T03:13:50.775Z",
+   "at": "2026-11-21T03:40:22.113Z",
    "data": {
     "dexMoneyAgeH": 3.05,
     "mirrorGenAt": "2026-11-21T00:57:51.013Z",
@@ -298,10 +334,10 @@
   {
    "id": "org-root-freshness",
    "ok": true,
-   "at": "2026-11-21T03:13:50.786Z",
+   "at": "2026-11-21T03:40:22.119Z",
    "data": {
     "pushedAt": "2026-11-21T03:11:52Z",
-    "ageH": 0.03
+    "ageH": 0.48
    }
   }
  ]
