@@ -1,4 +1,4 @@
-# דופק-הצי (fleet-heartbeat) — 2026-11-21T07:12:16.571Z
+# דופק-הצי (fleet-heartbeat) — 2026-11-21T07:13:00.884Z
 
 מדידת-מנועים של כל-הריפואים: מה פועם, מה שקט, מה הפלטפורמה נטרלה, מה נרפא בריצה זו.
 
@@ -23,7 +23,7 @@
 - .github — NO-WORKFLOWS
 - awesome-x402 — NO-WORKFLOWS
 - estate-agent-9 — NO-WORKFLOWS
-- execution-fabric — QUIET · שקט 356 שעות
+- execution-fabric — QUIET · שקט 356.1 שעות
 - negen — NO-WORKFLOWS
 - ops-control — NO-WORKFLOWS
 - oss-scanner — NO-WORKFLOWS
